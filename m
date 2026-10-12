@@ -1,118 +1,117 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1334A8A39
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 16:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392AC4A4983
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 16:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791821947; cv=none; b=cvE/8SRjuyh8gpEuRadqiWhoMzR+8zVQzQi7pPsmbifXwAZ7lumh7b7qIwThhR1lcbYDpQePm6uk5cNDVb27tUHFo1vsxHsaj+PTEA9sLDqP5fUEh45oCxzOvCKzW2M+M44XjCacjgWK3zp7sb5bNTNDxJlvI7QUhvDMyNyRHe8=
+	t=1791822236; cv=none; b=cAdOqae1gLjrM07bIcg95N7e2khOU/PQgdCUYe4WYR7gdf5As5tnjwe2E4Z9Y6K0fx0rA1hDAmW+2tiPXwObQECug5k4cTQSud6Mym/MUGxbyKHz36hJ73AQ73UjSkD6n/KRttVPn+fGmbfvKvy6fY/YBO1qBAA7MUG+dL/Jv38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791821947; c=relaxed/simple;
-	bh=Dp44+brKrFOcP235mSwYDZ9WIHnNlOH7BQXjO8CdbhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sJpZ8j70iQxYGNE+bHC8WeY4bM/XeJ54HZNdBWsMQiLMnnLaYY3dAfMD0nRSMn/MgwXlhrve323d6fmuN2lEcaU2lWrL/jJm7eFdunJaVLhfZepry5gCPp8+zfTjxo+iQnzR1VjesSB7/e030JKuZyi09OO1Bn8uH8zRxHhr+m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=dBO8t4AF; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1791822236; c=relaxed/simple;
+	bh=+K1XIz46GJ404dJ+A2h7se6kaFw8wz7isoVls2hjwTs=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bem76tnN13aEJE9xiswXu46hxCYdcf6Lo6trkWeec+myzc17d5fBIAJsBAqOiRSEhjjADR2p3Rd8GvzHHboFziWRDLAFi7ACb6pUBiiSFHKe1WJ5OvJ+XuQry90qlFwMoA+UQH1Za06q0m1WEcmiqRcuotObExLk1Ur5Yu7/fJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0iI8pLB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="dBO8t4AF"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BEFF169E;
-	Mon, 12 Oct 2026 09:19:01 -0700 (PDT)
-Received: from [10.57.54.85] (unknown [10.57.54.85])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58A6B3F673;
-	Mon, 12 Oct 2026 09:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1791821944; bh=Dp44+brKrFOcP235mSwYDZ9WIHnNlOH7BQXjO8CdbhU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dBO8t4AFnImNqcxlYS0vJVpSo5zXWMe2+9dIzuGX3Gz5nRD9nHD2INz4P6mL0cW2I
-	 sCTb9jsidwpDuDZTzXAaO8DRlJb+LPU3+/y/iKd9pAHb0jbbCgYpEPB2+BlmQ9Xn+X
-	 NpgH1St4absap8pjW2SJF+EgP+16PRA3cSJZFeZc=
-Message-ID: <cb32f0e2-3c49-4228-bb45-e1855a992c6b@arm.com>
-Date: Mon, 12 Oct 2026 18:18:47 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0iI8pLB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98491F0089E
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 16:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791822234;
+	bh=8mUsVhEO8X0riRfn9RAaQkAs5HEGM5yagnRl+IHqAg8=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=i0iI8pLBMsgae6c6nDWDdYWHHJ0zXoTC3ScTVdgn1MlGOeB3NQL4GKdx7WYrHLH8R
+	 zJhvrs3W68nmLkVATdvQvhiuRGmIb/SeNjTGBdx24nXoM0TDJAhSCiFqqcHMssBpi9
+	 qu9h9yCusHEXfbA8PkLLMKNmWKKOm5VpW4euBJ3n3XxLvNn39Ot1KTrhhgNjLoXuoo
+	 sxUhRSyslWnqp1BTANKGVv48UpjlFZHXRhuLyxA5KnjqDSEwbVP0h9rALPCiVcB8TJ
+	 04zIKWEX0gTWA1xJtPZK81KvrT8sz2Chl1INUAtmUxYnr1mr6NLMFliB+Y/9mZr0OY
+	 4QkREZdj7n9rw==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5bcd17f3a93so1723720e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 09:23:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzYc7VcZRl49DinUZzeuoM5Jd9bo7f15oq/bBcX/c9YRBIgcf7LHzRfuMdMqlpQjo5uiSB5kCXgaWcs@vger.kernel.org
+X-Gm-Message-State: AFq9FYKCdMO77qULvfg12ob+RxKmrGL9LZYJDsCAfM7IU+TtAoMrqbj/
+	JqrnhQyBT1cVlaxaUFqT9C28peGhwjoGAKlO/X6veQnt+Ju3JvFlqxHHg2dY8qrVNeOaEc9jrtO
+	h9gwa1OZirD6djZX8/H/DzvraGH7GMwOP0/FPmoLKXQ==
+X-Received: by 2002:a05:6512:3a95:b0:5b6:183b:d21c with SMTP id
+ 2adb3069b0e04-5bcde8d5c24mr3156378e87.67.1791822233454; Mon, 12 Oct 2026
+ 09:23:53 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 12 Oct 2026 09:23:52 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 12 Oct 2026 09:23:52 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <sashiko-outbox-168284@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] pinctrl: sunxi: Add Allwinner A733 support
-To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Yixun Lan <dlan@gentoo.org>,
- Enzo Adriano <enzo.adriano.code@gmail.com>, linux-gpio@vger.kernel.org,
- linux-sunxi@lists.linux.dev
-References: <20260910133519.459011-1-andre.przywara@arm.com>
- <20261008194719.328146-1-vinicius.eduardo.pedrosa@gmail.com>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261008194719.328146-1-vinicius.eduardo.pedrosa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20261012-gpio-kunit-plat-lookup-v2-0-553b0d6446b9@oss.qualcomm.com>
+ <20261012-gpio-kunit-plat-lookup-v2-4-553b0d6446b9@oss.qualcomm.com> <sashiko-outbox-168284@kernel.org>
+Date: Mon, 12 Oct 2026 09:23:52 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Md=TJ1A=uaFCqzFRM-Ph+G95a0vzL2bn-TOBks8r_LT+A@mail.gmail.com>
+X-Gm-Features: AclHuK_Gr0IM3Bam-xX7rdAQVjbsQEE7izB36uR9CV2cGSfK-0Gl1et_FcffzbM
+Message-ID: <CAMRc=Md=TJ1A=uaFCqzFRM-Ph+G95a0vzL2bn-TOBks8r_LT+A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] gpio: kunit: add a test case for platform lookup tables
+To: sashiko-reviews@lists.linux.dev
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, sashiko-bot@kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Mon, 12 Oct 2026 16:48:15 +0200, sashiko-bot@kernel.org said:
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [Medium] gpio: kunit: test failure due to missing wait_for_device_probe()
+> --
+>
+> commit 743d1cf187f180e4ac825a86d7858ccb06076671
+> Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+>
+> gpio: kunit: add a test case for platform lookup tables
+>
+> Add a kunit test-case for retrieving GPIOs using platform lookup tables.
+>
+>> diff --git a/drivers/gpio/gpiolib-kunit.c b/drivers/gpio/gpiolib-kunit.c
+>> index b662be88a0871..5d04b134d5774 100644
+>> --- a/drivers/gpio/gpiolib-kunit.c
+>> +++ b/drivers/gpio/gpiolib-kunit.c
+> [ ... ]
+>> @@ -828,11 +829,110 @@ static struct kunit_suite gpio_swnode_hog_test_suite = {
+> [ ... ]
+>> +static void gpio_lookup_table_global(struct kunit *test)
+>> +{
+>> +	struct platform_device_info pdevinfo;
+>> +	struct platform_device *pdev;
+>> +	struct gpio_desc *desc;
+>> +	int ret;
+>> +
+>> +	ret = kunit_gpiod_add_lookup_table(test, &gpio_test_lookup_table_global);
+>> +	KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +	pdevinfo = (struct platform_device_info){
+>> +		.name = GPIO_TEST_PROVIDER,
+>> +		.id = PLATFORM_DEVID_NONE,
+>> +	};
+>> +
+>> +	pdev = kunit_platform_device_register_full(test, &pdevinfo);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
+>> +
+>> +	desc = gpiod_get_index(NULL, "foo", 0, GPIOD_OUT_HIGH);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, desc);
+>
+> [Severity: Medium]
+> Will this test sporadically fail if the kernel is booted with system-wide
+> asynchronous probing enabled (e.g., driver_async_probe=*)?
+>
+> The test queries the GPIO immediately after registering the provider device.
+> If the provider's probe function runs concurrently, gpiod_get_index() could
+> execute before the GPIO chip is registered and return -EPROBE_DEFER, failing
+> the assertion.
+>
+> Is a call to wait_for_device_probe() or gpio_test_device_check_bound() needed
+> here before calling gpiod_get_index() to ensure the probe completes?
+>
 
-thanks for the report!
+Yes, it is.
 
-On 10/8/26 21:47, Vinicius Pedrosa wrote:
-> Hi Andre,
-> 
-> While bringing up the Radxa Cubie A7Z on mainline, I went through the
-> A733 io-bias code against the user manual (v0.92). The register layout
-> doesn't match, on both controllers.
-
-Just for the records: this paragraph above would have been enough, with 
-that hint it's pretty obvious that it's wrong.
-If you have tested it in a before-after/broken-works fashion, you could 
-mention this, but there is little need in going full bit details on 
-something that's quite obvious.
-So could you show that something doesn't work with the current code, but 
-got fixed with some changes? Like the eMMC situation on the A523?
-
-> On the main PIO, GPIO_POW_MOD_SEL (0x040) has two-bit fields per supply
-> domain: PF is bits 11:10, PK is 21:20, and PB falls under the VCC-IO
-> field at 25:24. sunxi_pinctrl_set_io_bias_cfg() treats it as one bit
-> per bank, so a PF request writes bit 5 (inside the PC field) and a PK
-> request writes bit 10, the low bit of PF.
-> 
-> The R-PIO has the same layout, PL at 1:0 and PM at 3:2. The a733-r
-> compatible shares the A523-R descriptor, so it also gets the inverted
-> encoding and the RMW at 0x344, which the A733 manual doesn't list.
-> 
-> PL is the case I like least. Running the unmodified helper on the host
-> with the R-PIO state I read on my board (SEL 0x000aaaaa, 0x344 = 0) and
-> a 3.3 V vcc-pl supply, SEL becomes 0x000aaaab. Per the manual table PL
-> goes from 10 (fixed 3.3 V) to 11 (fixed 1.8 V). I haven't run that
-> path on the board. With no A733 board DT upstream yet, I don't think
-> anyone hits it today.
-> 
-> Locally I set BIAS_VOLTAGE_NONE for the A733 and gave the A733-R its
-> own descriptor with NONE, leaving A523/A523-R as they are. That's
-> roughly what the vendor BSP does too: its kernel never programs these
-> registers and keeps the firmware setup (all auto on the main PIO here,
-> PL/PM fixed at 3.3 V).
-> 
-> Tested on one board (the vendor kernel reports SoC version B),
-> RAM-booted over FEL, with your pinctrl patches on an integration tree
-> and fixed regulators for the 3.3 V PB and PM supplies. With a few
-> printks I checked that UART0 (PB9) and a gpio-led on PM2 reach the
-> helper on the first request of their bank and that SEL and SEL+4 stay
-> unchanged. Same registers without the printks, and UART and the LED
-> work. A523 is build-tested only.
-> 
-> Would you be OK with disabling the io-bias programming for A733/A733-R
-> as a fix for now, and doing proper voltage mode support later? If so
-> I'll send the two patches, with Fixes: tags for 0535bfbfa97b and
-> 31d68e10381c.
-
-What is the big problem with just extending the code to use 2 bits, for 
-the A733? I sketched that here, looks pretty harmless, and is just a few 
-lines.
-The A523-R problem is more annoying, since Allwinner mixes and matches 
-again here: the A733 register layout, but at an A523 offset. And I 
-missed that part, which means it effectively breaks compatibility with 
-the A523-R, so this needs more fixes, including the DT binding.
-
-Cheers,
-Andre
-
+Bart
