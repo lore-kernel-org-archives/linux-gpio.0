@@ -1,146 +1,258 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E28477998;
-	Mon, 12 Oct 2026 14:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6731148EBF7
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 14:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791814916; cv=none; b=JpOZlQ32/K8v2ddHvfCsfhM1lfazV+aOZbdF9pOHCD9PjjGYc0FYTp5w87+2CxJ665Eiq8wzLqEEQzhLzkHQIQGoFA8SyAr2ohI3cFo3Yk//lNqqPzq4UVOS8O8zUSUyD1MbnumID75EDhRO1ZF0BSh30LtbZRza2iTMXZr0umQ=
+	t=1791815337; cv=none; b=U8dNUP+DxMSGjKnT2B5humgtaGLtBRUS6PQb4EEK28q7brwnwsDu6l8sEcpbOiJutwzJaAEMD4AqmGh5yCipwY/UyDDziefDR7ZGVLEDRuiYNI58KrS6ItJssy0kWQIc/iiK94Y8YUHiC4MAOKWyUihuo7gWuvgdPV+rjyyFNGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791814916; c=relaxed/simple;
-	bh=Vg8qtqe35r+n7+lLL9hjcQLC1/Pn3jMa4OL43xmJpNU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=l4IZYhmona3FzVu9tS4qnT0kVcurkbKafroGgGD+RFuzTsdGkZILiVyK3aBRXT+TfXSFCk9VD125VpaxM54QX8wZdUhdA+HP4xk3GGgzE15uw83WGewRAyDx9zTSe2C1Q4swVVcPNi0y6vsPCUZCNk05gK25AuB/LyNoEQ7OtJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ZyJysnj5; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1791815337; c=relaxed/simple;
+	bh=coh97i91GMzxgaGzGrlbpw70oGHkJw68wM+Zt07XG1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HAzUd8+h0Nn7p2A5NYVZw72s7/oAYgWYfslNWYCcVPbIhIoXIFZqEGmj4vgfqROrMtBENdl0SizzAlntj6s5vKvZRnSg3M2CI5vKgZX0DRi3y+GdVpfxOZELBL4SglqeSGFxl4EGhvCjH3NoZivvmAqhlxeVMEPheFdGftHxjpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Wkzof3rD; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ZyJysnj5"
-Received: from mail01.layka.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9B45D80ED7;
-	Mon, 12 Oct 2026 16:21:52 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id vzAE_5ILlWc4; Mon, 12 Oct 2026 16:21:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1791814911; bh=Vg8qtqe35r+n7+lLL9hjcQLC1/Pn3jMa4OL43xmJpNU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=ZyJysnj5rjc1lVTrs77e8lt1BEF1SCkcnNroAuCIyd12rJCXnTtv5R3SUoXtDP/iq
-	 LrajYNqBaRXzxM9dP0hyFlEneq0/gGSrAmgMcrZTZE1bvxD4WwaXAW+BrlO5D/52up
-	 kPDZ64nVBHhWPzKKWTFxy55yrTrsRNi8RpyhNXfKUFv4k6OK5YwJr07gKXsG5QnCHb
-	 NNtQV4PKZpyYwFTdalGhw0e5XWbto0GeCdyp4aiun9qXbIUcFv83Oq/1sUYD+BxWV0
-	 H1Ez050OLQGbhVL1gRjaLMZdRbZyqUsWe8vtGFQNnhe+6irsu2OXufiQ2MrwYeyUEB
-	 BS412UTqakOLA==
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Wkzof3rD"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B48FC1A1122;
+	Mon, 12 Oct 2026 14:28:53 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7F930601A6;
+	Mon, 12 Oct 2026 14:28:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E780111D70508;
+	Mon, 12 Oct 2026 16:28:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1791815330; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=wUOs5uXVmY1mRqqy3/QemKBbWww+Uoitwg1gZJXQ6Tg=;
+	b=Wkzof3rD5kKIsOEnRGDp7BVqKeR2NLQY2ze9BkjKCjB5QmBIA++Z9+Y6MhDw8UAa35Svg5
+	7Ukcj+YB9/Qpx93I4NVY6Lm+YpRxajp1iVVOLDfgmdrwy2SX2D0UuNP+BBo84Yu36ngRYo
+	lZohkHjBtsxFR1rmVtCl+jhIGH9Z3PqPSyeAMdBja3kfu8lEvSnTgyevgnY+yHVEUwrGtJ
+	CsgPL9tpndp1sOi4EgOyif9Bs2F2VkeprFPZ4X8bAP28Zz4fWnWgWbBYcfwNxKn3OBdai/
+	7KhMuBb7CqhWVMStvYFupmc3rDQYDoX7D0uVfzCk65jFcbDVngqIf6eiJDpuvg==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Richard Cheng <icheng@nvidia.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <djbw@kernel.org>,
+	Ira Weiny <iweiny@kernel.org>,
+	Li Ming <ming.li@zohomail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Lizhi Hou <lizhi.hou@amd.com>
+Cc: driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v13 00/10] lan966x pci device: Add support for SFPs, PCI part
+Date: Mon, 12 Oct 2026 16:28:14 +0200
+Message-ID: <20261012142826.159178-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 12 Oct 2026 14:21:51 +0000
-From: Rustam Adilov <adilov@disroot.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang
- <haojian.zhuang@linaro.org>, linux-arm-kernel@lists.infradead.org,
- linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl: single: add big endian support
-In-Reply-To: <CAD++jLnTOc+n2PGpK1NDnNJXwgzTQ8shO_6NqNuADzxY8SyYsA@mail.gmail.com>
-References: <20261010175721.76213-1-adilov@disroot.org>
- <CAD++jLnTOc+n2PGpK1NDnNJXwgzTQ8shO_6NqNuADzxY8SyYsA@mail.gmail.com>
-Message-ID: <03f84f8678f0a6a09e10e57c77ce82f9@disroot.org>
-X-Sender: adilov@disroot.org
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2026-10-11 20:14, Linus Walleij wrote:
-> On Sat, Oct 10, 2026 at 7:57 PM Rustam Adilov <adilov@disroot.org> wrote:
-> 
->> Add support for big endian pin controllers by taking into account
->> a big-endian device tree property.
->>
->> This is needed on big endian MIPS platforms like RTL930X, RTL931X
->> and RTL9607C who use pinctrl-single, because when SWAP_IO_SPACE is
->> enabled, the mmio accessors in pinctrl-single perform a byte swap.
->>
->> Signed-off-by: Rustam Adilov <adilov@disroot.org>
-> 
-> I'm not so sure about expanding the usage of pinctrl-single, we have
-> said that this is used in the cases when you want to stash all the
-> hardware data into the device tree (such as which groups and functions
-> that exist) and it seems mostly done to save memory for the kernel
-> so you don't need to compile in that data for all systems.
-> 
-> The argument that this is "simple" if you just have some hardware
-> data in a file is moot these days IMO, because you can now just
-> give that data to an LLM and it will spit out any group and function
-> definitions you want.
-> 
-> So I'd like to hear some of the reasoning about why you want to
-> do this thing, we have other drivers doing this but without using
-> pinctrl-single.
+Hi,
 
-Um, what? I don't understand how that is related to anything with my
-commit message.
+Previously, I sent a big picture series adding support for SFP ports
+available on the LAN966x PCI device [0].
 
-In MIPS context, SWAP_IO_SPACE is only about [1].
+In this series patches touch several parts and sub-system in the kernel.
+Reviews have be done and it makes sense to split the series and send
+parts separately.
 
-[1] - https://elixir.bootlin.com/linux/v7.2.9/source/arch/mips/include/asm/mach-generic/mangle-port.h#L28
+This current series is the extraction of patches related to issues in
+the PCI subsystem. It has to be seen as a continuation of the big
+picture series but related to this specific core part.
 
-> One of the driver maintainers have to ACK it too.
-> 
->> +static unsigned int pcs_readw_be(void __iomem *reg)
->> +{
->> +       return ioread16be(reg);
->> +}
->> +
->> +static unsigned int pcs_readl_be(void __iomem *reg)
->> +{
->> +       return ioread32be(reg);
->> +}
->> +
->> +static void pcs_writew_be(unsigned int val, void __iomem *reg)
->> +{
->> +       iowrite16be(val, reg);
->> +}
->> +
->> +static void pcs_writel_be(unsigned int val, void __iomem *reg)
->> +{
->> +       iowrite32be(val, reg);
->> +}
-> 
-> Why this indirection? Can't you just assign the standard
-> accessors directly?
+Patches 1 to 6 introduce and use fw_devlink_set_device() in already
+existing code. No functional change but the introduction of the
+fw_devlink_set_device() wrapper.
 
-To mirror the normal pcs_read/write? And yes we can just as easily
-assign them to io functions directly.
+Patch 7 avoids a dangling pointer.
 
->>         case 16:
->> -               pcs->read = pcs_readw;
->> -               pcs->write = pcs_writew;
->> +               if (byte_be) {
->> +                       pcs->read = pcs_readw_be;
->> +                       pcs->write = pcs_writew_be;
->> +               } else {
->> +                       pcs->read = pcs_readw;
->> +                       pcs->write = pcs_writew;
-> 
-> Maybe they should all do that actually, can't we rewrite
-> this so we just:
-> 
-> if (byte_be) {
->   pcs->read = ioread16be;
->   pcs->write = iowrite16be;
-> } else {
->   pcs->read = ioread16;
->   pcs->write = iowrite16;
-> 
-> I don't see how the wrappers help and I hope the compiler
-> just optimize them away anyway.
+Patches 8 and 9 fix fw_devlink issues specific to PCI and the
+device-tree nodes created during enumeration.
 
-A little out of scope but i am cool with a extending this patch to
-a 2 part series to do that.
+Patch 10 avoids the usage of np->data and adds guards to prevent
+incorrect nodes removal.
 
-Best,
-Rustam
+[0] https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
+
+Best regards,
+Hervé
+
+Changes:
+
+v12 -> v13
+  v12: https://lore.kernel.org/all/20261001142815.277550-1-herve.codina@bootlin.com/
+
+  - Patches 1 to 9
+    No changes
+
+  - Patch 10
+    Split a test condition into two distinct checks as suggested by
+    Andy. No functional change but readability improvement. Split done
+    in both of_pci_remove_node() and of_pci_remove_host_bridge_node().
+
+v11 -> v12
+  v11: https://lore.kernel.org/all/20260909080114.591938-1-herve.codina@bootlin.com/
+
+  - Patches 1 to 7
+    Add 'Reviewed-by: Bartosz Golaszewski'
+
+  - Patches 8 and 9
+    No changes
+
+  - Patch 10
+    Add a NULL check for the retrieved OF node in removal functions to
+    avoid any NULL pointer dereferences.
+    Robustify the guard setting cset to NULL after freeing it.
+    Those issues have been reported by Shashiko:
+    https://lore.kernel.org/all/20260909081755.444E91F00A3A@smtp.kernel.org/
+
+v10 -> v11
+  v10: https://lore.kernel.org/all/20260717145147.823749-1-herve.codina@bootlin.com/
+
+  Rebase on top of v7.3-rc1
+
+  - Patches 1 to 5
+    Add 'Reviewed-by: Richard Cheng'
+
+  - Patches 6, 7 and 8
+    Add 'Reviewed-by: Richard Cheng'
+    Add 'Acked-by: Manivannan Sadhasivam'
+
+  - Patch 9
+    Add 'Reviewed-by: Richard Cheng'
+
+  - Patch 10
+    Rework removing np->data usage in the PCI devicetree node creation
+    and removal.
+
+v9 -> v10
+  v9: https://lore.kernel.org/all/20260708100302.517792-1-herve.codina@bootlin.com/
+
+  - Patches 1 to 6
+    No changes
+
+  - Patch 7
+    Clear fwnode->dev also on error path.
+
+  - Patch 8
+    Clear fwnode->dev also on error path.
+
+  - Patch 9
+    No changes
+
+  - Patch 10 (New patch in v10)
+    Guard against node removal with incorrect np->data.
+
+v8 -> v9
+  v8: https://lore.kernel.org/all/20260630102804.413563-1-herve.codina@bootlin.com/
+
+  - Patch 7 (new patch in v9)
+    Clear fwnode->dev during root bridge node removal (avoid a dangling
+    pointer).
+
+  - Patch 8 (patch 7 in v8)
+    Clear fwnode->dev during PCI device node removal.
+
+v7 -> v8
+  v7: https://lore.kernel.org/all/20260511155930.34604-1-herve.codina@bootlin.com/
+
+  Rebase on top of v7.2-rc1
+
+  - patches 4 and 5
+    Add 'Reviewed-by: Andy Shevchenko'
+
+  - Other Patches
+    No other changes
+
+v6 -> v7
+
+  Rebase on top of v7.1-rc1
+
+  - Patch 1
+     Add Cc stable. Needed for patches 11 and 12
+
+  - Patches 2 to 5
+    No changes
+
+  - Patch 6
+     Add Cc stable. Needed for patch 13
+     Add 'Acked-by: Bjorn Helgaas'
+
+  - Patch 7
+     Fix a typo in commit log
+     Add Fixes tag + Cc stable
+     Add 'Acked-by: Bjorn Helgaas'
+
+  - Patch 8
+     Add Fixes tag + Cc stable
+     Add 'Acked-by: Bjorn Helgaas'
+Older iterations:
+  Patches 6 to 13 in the big picture series
+  https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
+
+Herve Codina (10):
+  driver core: fw_devlink: Introduce fw_devlink_set_device()
+  drivers: core: Use fw_devlink_set_device()
+  pinctrl: cs42l43: Use fw_devlink_set_device()
+  cxl/test: Use device_set_node()
+  cxl/test: Use fw_devlink_set_device()
+  PCI: of: Use fw_devlink_set_device()
+  PCI: of: Clear fwnode->dev during root bridge node removal and error
+    path
+  PCI: of: Set fwnode device of newly created PCI device nodes
+  PCI: of: Remove fwnode_dev_initialized() call for a PCI root bridge
+    node
+  PCI: of: Avoid np->data usage for the node changeset
+
+ drivers/base/core.c                      |  4 +-
+ drivers/pci/of.c                         | 52 ++++++++++++++++--------
+ drivers/pinctrl/cirrus/pinctrl-cs42l43.c |  2 +-
+ include/linux/fwnode.h                   |  6 +++
+ include/linux/pci.h                      | 11 +++++
+ tools/testing/cxl/test/cxl.c             |  4 +-
+ 6 files changed, 58 insertions(+), 21 deletions(-)
+
+-- 
+2.55.0
+
