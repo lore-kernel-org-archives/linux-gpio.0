@@ -1,132 +1,83 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAA353977D;
-	Tue, 13 Oct 2026 22:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA2E559CB2
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791929637; cv=none; b=HIne1Gc6DF88g/G1C7mfN185EjyTTuvFk4Lkoj1MFnaiiN8lole/1QU5deyhgmyc2h6ONAgXFbHno0aNnabNG/cER60KIHcVkAIGbORZLlxn/tylbAk6G7dRHY10R/U/Gzj0gGPoR6QJjYdAbLQ2WlMlZWJfOUq460ULWHsxnIM=
+	t=1791932770; cv=none; b=q4310Nur5ReIWGk0v62rcuzMifjdX95X26bSTbJ/4e8nKi2C0pw5/svzdDi3iN/d3Av3kNSAtACd3zTAOJx5jFoNIUcBFvueYI08RxnuBKi07SWcm2bvSdPZ9pATR7FN6bAGVhZqaP2NnY2OGtg3zfC4yosZzCbtePMma8UKsVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791929637; c=relaxed/simple;
-	bh=b9BtCWGkJHn0bMKGND0IyL2uVXPmtmkcN+nYesDBUN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gLWbkd3bpNrWWDFaUYHF6lW1ame2/SFgexzI6v+zmrltSlGci5uIA9eqWR0767WNU+lJb+yGH9PvLE73FdhxdqR9hCs209prtGkwX2gNx4o7qMoDETGfGQMWbZ+IdZKcjm7SUy78WOcbouUgO6VVICItQfaD3DAj7HOTX4K5adY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=C1rfY83B; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1791932770; c=relaxed/simple;
+	bh=P0iTojnRLPumAawJoInXYGshTudeegPaLeQs4sXNs0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ps4fYm+fbsJI4ImCBD4xP8HqHaRgQDc+f+8Son0f+rNI1ofNT9jVO2pNfMU0Sl7WlYssv/xZEPQhxHiAjIfBLWWshuntlXUZmUCQ7zBD8v1sTW7HHKMvVXsWb6DCPseRtPPSf/Pzzr3Z9tK97RSeC0Tb2SbF8vFQ+EL2fbIus8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpfF/OW4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="C1rfY83B"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE8101688;
-	Tue, 13 Oct 2026 15:13:50 -0700 (PDT)
-Received: from ryzen.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D28A93F871;
-	Tue, 13 Oct 2026 15:13:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1791929634; bh=b9BtCWGkJHn0bMKGND0IyL2uVXPmtmkcN+nYesDBUN0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C1rfY83BkHnie2RRXlgSM0spEEod8PgaPuxpFHc0TfWCkwwT6A+J9lbPVQbi8/Zob
-	 ds7qUjs0sZ6cvcThatuxZSggPOanDyou4n0L/87Y0HuAIEiVR1Tc0g8g8GPkxnWb+f
-	 wWG5VvHpBfAHhVr89J/Rly0sMuxkD70ypumHEPhs=
-Date: Wed, 14 Oct 2026 00:13:34 +0200
-From: Andre Przywara <andre.przywara@arm.com>
-To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Jerome Brunet <jbrunet@baylibre.com>, Yixun Lan
- <dlan@gentoo.org>, Enzo Adriano <enzo.adriano.code@gmail.com>,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT] pinctrl: sunxi: Fix A733 withstand programming
-Message-ID: <20261014001334.54dcf0b5@ryzen.lan>
-In-Reply-To: <20261013172427.328177-1-vinicius.eduardo.pedrosa@gmail.com>
-References: <20261013142351.771229-1-andre.przywara@arm.com>
-	<20261013172427.328177-1-vinicius.eduardo.pedrosa@gmail.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpfF/OW4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BB5A1F00893
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791932769;
+	bh=P0iTojnRLPumAawJoInXYGshTudeegPaLeQs4sXNs0A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=DpfF/OW4mKOx30gioxVGakYZvb1rnYKq60hNsIPEL0ThNR5o/pSMaAb3DYO4yBRIO
+	 VkBYYa+Evu8HW/Ox2K+VQUlNzuBo0yV0j8g8eTFmG79PZxQEORjR3iyB+AEvJfGYWd
+	 6Irow+pk8Hum50eltvGcVVOJLi/YiiKtD4Sg1GaVAfL72WC0ryOo6bALfeGbe7vfQA
+	 c+Flt5sMqhiBooh2FiuHP6wa+qm9X6WFpZGjIZn6uBdaXCHeyGlUXqOWJ5t4p9XGkt
+	 RBCcUmg/XNQIRHl+iA1pOs6DaZNSrlt4/075APcVz/R261IPRrKuYzCgm90+8L1ivN
+	 grzoFspvolw1A==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3aae7df0971so6937771fa.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 16:06:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByLs9a5qWx9dZ+xM5GxVXoiHVqx36xA5pQDBI2F1FROw3+qtddeR/X2UT76uhngsSMDJc+4t0v7rYaH@vger.kernel.org
+X-Gm-Message-State: AFq9FYIByWBmevrLa6WQ+Mi6GR4B5Yzt+sW3xZdoz4RRK4EEBhsBzE6V
+	x4jDQynJNZnGrsNo2o/U6rrY8u0kVHiYJmrAFFE3lWUX59cnVZX5iK9H1nBive0r1NwQZuFhkWD
+	wKzymQph7RW+4+OTU90sdlWttYppsp1M=
+X-Received: by 2002:a05:651c:b27:b0:3a9:9b67:25f7 with SMTP id
+ 38308e7fff4ca-3a9c53b0b19mr34618061fa.4.1791932768205; Tue, 13 Oct 2026
+ 16:06:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20261010175721.76213-1-adilov@disroot.org> <CAD++jLnTOc+n2PGpK1NDnNJXwgzTQ8shO_6NqNuADzxY8SyYsA@mail.gmail.com>
+ <03f84f8678f0a6a09e10e57c77ce82f9@disroot.org>
+In-Reply-To: <03f84f8678f0a6a09e10e57c77ce82f9@disroot.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 14 Oct 2026 01:05:55 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmGBFJBACn5NuzjbDpNVySjjxVDbP76mHKjKetSnouESQ@mail.gmail.com>
+X-Gm-Features: AclHuK-kqMedjz2wi0_AS5MYo3t5JfIsaXDJBJEGuyzQd9O3yegy0ZIw5takxV0
+Message-ID: <CAD++jLmGBFJBACn5NuzjbDpNVySjjxVDbP76mHKjKetSnouESQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: single: add big endian support
+To: Rustam Adilov <adilov@disroot.org>
+Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 13 Oct 2026 14:23:38 -0300
-Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com> wrote:
+On Mon, Oct 12, 2026 at 4:21=E2=80=AFPM Rustam Adilov <adilov@disroot.org> =
+wrote:
 
-Hi Vinicius,
+> >> This is needed on big endian MIPS platforms like RTL930X, RTL931X
+> >> and RTL9607C who use pinctrl-single, because when SWAP_IO_SPACE is
+> >> enabled, the mmio accessors in pinctrl-single perform a byte swap.
+(...)
+> > So I'd like to hear some of the reasoning about why you want to
+> > do this thing, we have other drivers doing this but without using
+> > pinctrl-single.
+>
+> Um, what? I don't understand how that is related to anything with my
+> commit message.
 
-thanks for having a look and testing it!
+I understood is as the usage on RTL9[3|6]* SoCs was something
+new and this patch was needed for this new thing to work.
 
-> Thanks for the RFT. I found two things when checking it against the A733
-> manual and my Cubie A7Z.
-> 
-> PB is an exception to bank * 2: its VCC-IO field is at bits 25:24, while
-> bits 3:2 are reserved.
+I see pinctrl-single is already in their device trees...
 
-So PortB has no supply of its own, instead it's always supplied by
-VCC-IO. That was even more common on older SoCs, with also PortH and
-PortF being supplied by that. Which somewhat means that this is broken
-there as well?
+If I can get an ACK from the maintainers we can just apply
+this, the cleanup I'd like can be made at a different time.
 
-> With the board's SEL value (0x01155550), a 3.3 V
-
-What do you mean with "the board's SEL value"? That's not the SoC reset
-value, is it? So who programs that value, and why?
-
-> request produces 0x01155558, leaving VCC-IO untouched.
-
-... naturally, because nothing in mainline sets VCC-IO, which is beyond
-the SoC's GPIO bank offset.
-
-> I also think we should preserve AUTO (01). On my A7Z with vendor 5.15,
-> PF=10 resulted in 22 SDR104 read timeouts and no rootfs, while PF=01 and
-> PF=11 reached login.
-
-So this means you hacked the register in the vendor kernel, for the
-sake of an experiment? And I guess this just means that the vendor
-kernel uses UHS, and uses register 0x70 to switch PortF to 1.8V? So you
-need either auto or 1.8V for it to work, the same problem we hit with
-PortC on the A523.
-
-> This was one run per setting with one card, not a
-> mainline before/after test. In my mainline setup, MMC0 already requests PF
-> with a fixed 3.3 V supply, so the RFT would replace AUTO with 10 even
-> without voltage switching. Preserving AUTO requires no special case for PF.
-
-So can you say whether you observed a real problem with either the
-current (broken) code, or with one the fixes? I am still confused about
-your reports, whether they are just experiments, and comparing to the
-BSP, or looking at the manual, or whether there is an actually observed
-problem.
-
-> I boot-tested your RFT with two small fixups for PB and AUTO on my Cubie
-> A7Z (rev B). UART0 and MMC0 work, and GPIO_POW_MOD_SEL remains at
-> 0x01155550. No voltage-field writes were expected with this DT. I haven't
-> tested the RFT as posted.
-> 
-> I agree the full table and PI exclusion aren't needed, and found no
-> evidence for restricting the encoding to revision B.
-
-Thanks for the confirmation, and just curious where this revB
-restriction came from, originally?
-
-> A733-R still needs its own descriptor for the two-bit PL/PM fields. I'm
-> happy for your RFT to supersede my patch 1 once PB and AUTO are addressed,
-> and I'll rebase the A733-R fix on it.
-> 
-> I have the PB/AUTO fixups and the A733-R patch ready, and can send them if
-> useful.
-
-Well, this is getting really messy, isn't it? I never understood why
-the IP even allows manual programming if there is an automatic setting.
-Did you find any recommendation? IIRC manuals for other SoCs did
-recommend one or the other method. If AUTO works, and is used by the
-BSP, then we can just use that, but in a much simpler way: either use 
-BIAS_VOLTAGE_NONE, or create a new AUTO name (better), and then skip
-the whole action in sunxi_pinctrl_set_io_bias_cfg(). Instead just once
-program the GPIO_POW_MOD_SEL to "all auto", once at init time.
-Curious what others think about this.
-
-Cheers,
-Andre
+Yours,
+Linus Walleij
