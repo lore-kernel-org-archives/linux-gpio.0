@@ -1,101 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BAE503BD4
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 13:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B873AFCE6;
+	Tue, 13 Oct 2026 13:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791897272; cv=none; b=pH1ODEKK7YU+aDpgv4f8OD4DARmXxwlL2o1dj27rbncSeZ5jVuvkToT/IjKMynpFhHcZQ4Rwq55c6J+0NKzMjYnGVi/jRWRZsGTq6du7vLUFm2lKxQqLDfIWqQNmMxKR9tgFDu2lhY4DA3NMLdZVeR3vF3BItAZV1m8gDNavYSo=
+	t=1791897409; cv=none; b=lqZjtC3wI+IT+DEjkW0p/U6XGwOtCL71GFV5le4lT019zNBnWbB1qaxboYLlEHh4EtVS9tlmDflVI0HIG4fNWit8j+e0sr/yIU2GuEqkanOpefD3ZGKOcXc+aLNVyAyLj3DLr7R8cD3M2E7c50deqZo3aLfApJai22EkKiasKJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791897272; c=relaxed/simple;
-	bh=0ohOqvgCKD0QH86zJhtHkQbEVmgIzjPJ4YzsGaOvLTA=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=GF9oLG7pc5sGChHifpJ3+hLQcJaYZB/OF3rCrzdkgcO8eKd77bRafissvXiv1E7ajzLXlGAPn+IJYuOYo7DPv9hLgpJzP/7dtfaXtK+suwakacUerpT8jQxQbX2uKzH+qsvGx4+pVyFkbdWo2KiU9YvxylorNMgSxybo3PccysY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRvDGeWG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791897409; c=relaxed/simple;
+	bh=FIPSuuAhJUZjRKHszZhAldZlUkr1RYeuYNKC12aR3Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nw7NbyC2eaU6XZ6+W4kUjbpbmipW+EV5MMhbjHDymmjimNKjzJG+ZOanHlzXZsktwQC6i6GtlBx2mSr2XUxFhxQHPwxWjIfGNeIEdi4sir+5gVUREfaSqGF8EcPyxLfCXd+6/3H8hIV8c3nmeq+J343ck1VCsaqJji509Rn2KMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lp4/79zN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRvDGeWG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF951F00893;
-	Tue, 13 Oct 2026 13:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791897270;
-	bh=B7u6Xf6N8+sxrS3N09WAO4STSxLe5TleH8OmY3IMUUs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=WRvDGeWGgPyiaAEJVLGIAYdCD9i9AG72lAMMb0fPwzsp6ooKPFe1JCC7dgz64V3Ow
-	 d4fD9tUDt8OfiNeSZbEgCAn1eYX3bVHI3ll1PseRioZlIsPlVuX7qgjYQ+0vwnq1An
-	 tLiylWbm8ehYKuxLa04bCh9RrenGsfkXFd12YmpxSqHrkNtO1/SaNav18Hqs1hgj7N
-	 8FrBKvLGXLyy/J66g/E68osys7SYc2KoA13N0i5ejpHwgd3ob/N0aCqVKWFjv1G5qx
-	 VJCfhmB0BqJWb/n2yG8qgUetrv3AxCdiiRkEmO/cDlVrzWVs3SpOsXBWBM8jJhFgBr
-	 bfM/EB6jnnjow==
-Message-ID: <sashiko-outbox-169786@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 1/4] gpio: kunit: fix the label of the dummy GPIO
- chip
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261013-gpio-kunit-plat-lookup-v3-1-3907f913e964@oss.qualcomm.com>
-References: <20261013-gpio-kunit-plat-lookup-v3-0-3907f913e964@oss.qualcomm.com>
- <20261013-gpio-kunit-plat-lookup-v3-1-3907f913e964@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 13:14:30 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lp4/79zN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791897409; x=1823433409;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FIPSuuAhJUZjRKHszZhAldZlUkr1RYeuYNKC12aR3Nk=;
+  b=Lp4/79zN8HEbIVOG+qG6R8jFSlbNv78t0I9W1sqEuBibvFTpFq3lN6iU
+   p3xDeK5MkP1b/XNz5pfWLLo/el2T4MAH8DLLPnFxoiW/yviKMvVwUf+1S
+   MdW09QPWtdML4mjWAm4ID9al+xfQIKAhKvr33EPjtER3l1iLWoi7xE3wH
+   6KkKtKmEkCLGeZEA8cr41UTjrxGc24UNCgATED7X/O6A5ZnXqByNRlXdw
+   5/XlURqWFDt8cWEls+GZh684zID8hlYR0aJyTHUoVjQP9mx0ITJ+NoG5I
+   7oZFL8Il6Qltb7jZuP+046GSsOAh7sKfnvIajKKOtKkvHicUNYrrEyg+t
+   w==;
+X-CSE-ConnectionGUID: TAuF8MoZScyrZ7FS+1Oq1g==
+X-CSE-MsgGUID: 2SRmDVnHTIKQwUp7qKhcoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="716911"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="716911"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:16:48 -0700
+X-CSE-ConnectionGUID: SurxRxWWR++Z/RD+iIDdww==
+X-CSE-MsgGUID: s+kdQgkrTRKlo3wJuiMFgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1091049"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:16:44 -0700
+Date: Tue, 13 Oct 2026 16:16:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ma Ke <make_ruc2021@163.com>
+Cc: antonio.borneo@foss.st.com, linusw@kernel.org,
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+	fabien.dessenne@foss.st.com, linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, stable@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: stm32: Fix fwnode reference leak in
+ stm32_gpiolib_register_bank()
+Message-ID: <as4vOoSRE0zjh8NT@ashevche-desk.local>
+References: <20261011061722.3159941-1-make_ruc2021@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261011061722.3159941-1-make_ruc2021@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] gpio: resource leak of gdev on KUnit test assertion failure
---
+On Sun, Oct 11, 2026 at 02:17:22PM +0800, Ma Ke wrote:
+> stm32_gpiolib_register_bank() walks the "gpio-ranges" property with
+> fwnode_property_get_reference_args().  As documented in
+> drivers/base/property.c:
+> 
+>  * The caller is responsible for calling fwnode_handle_put() on the
+>  * returned @args->fwnode pointer.
+> 
+> The returned reference is never put.  The function calls the helper
+> twice, once directly and then repeatedly in a while loop, and each
+> call overwrites args, so only the last reference is even reachable
+> and all the earlier ones are leaked for good.
+> 
+> Put the reference as soon as args.args[] has been consumed, both for
+> the initial call and for every iteration of the loop.
+> 
+> Found by code review.
 
-commit b7e40967a53cb1589f5bac90dea8c80d8d27bce0
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+...
 
-gpio: kunit: fix the label of the dummy GPIO chip
+>  		/* get the last defined gpio line (offset + nb of pins) */
+>  		npins = args.args[0] + args.args[2];
+> -		while (!fwnode_property_get_reference_args(fwnode, "gpio-ranges", NULL, 3, ++i, &args))
+> +		fwnode_handle_put(args.fwnode);
+> +
+> +		while (!fwnode_property_get_reference_args(fwnode, "gpio-ranges", NULL, 3, ++i, &args)) {
+>  			npins = max(npins, (int)(args.args[0] + args.args[2]));
+> +			fwnode_handle_put(args.fwnode);
+> +		}
 
-The label of the test GPIO provider is currently set to the consumer
-name. Use the provider name instead.
+Can we use GPIOLIB facility to fulfil the task? Yeah, it seems non-trivial
+change, so for the quick fix the above seems okay.
 
-> diff --git a/drivers/gpio/gpiolib-kunit.c b/drivers/gpio/gpiolib-kunit.c
-> --- a/drivers/gpio/gpiolib-kunit.c
-> +++ b/drivers/gpio/gpiolib-kunit.c
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[ ... ]
 
-> @@ -780,7 +779,7 @@ static void gpio_hog_assert(struct kunit *test, unsig=
-ned int offset,
-> =20
->  	/* The hog must have configured the line with the expected direction. */
->  	struct gpio_device *gdev __free(gpio_device_put) =3D
-> -		gpio_device_find_by_label(GPIO_CONSUMER_NAME);
-> +			gpio_device_find_by_label(GPIO_TEST_PROVIDER);
->  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, gdev);
-> =20
->  	desc =3D gpio_device_get_desc(gdev, offset);
->  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, desc);
-> =20
->  	ret =3D gpiod_get_direction(desc);
->  	KUNIT_ASSERT_EQ(test, ret, expected_direction);
-
-[Severity: Medium]
-Does this code leak the gdev reference when KUnit assertions fail?
-
-If KUNIT_ASSERT_NOT_ERR_OR_NULL(test, desc) or the subsequent KUNIT_ASSERT_=
-EQ()
-fails in gpio_hog_assert(), KUnit aborts the test thread immediately using
-kthread_exit().
-
-Because kthread_exit() bypasses normal C scope exit, compiler-generated
-cleanup handlers like __free(gpio_device_put) are skipped, causing a refere=
-nce
-count leak of the gpio_device.
-
-This leaked reference could prevent the dummy device from being properly fr=
-eed,
-which might wedge subsequent test runs or module unloads.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013-gpio-kunit=
--plat-lookup-v3-0-3907f913e964@oss.qualcomm.com?part=3D1
