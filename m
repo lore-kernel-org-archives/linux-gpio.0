@@ -1,76 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847A74D37C4
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6754E4C24
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791934264; cv=none; b=oyy/g6bg/WFCWTVA6VuiBe0jDFL+9IjxKxMkL/sou/Qcx6wxPz4upfVk5ft+CUu7Ti56FKVtHB8kp2KkqpTpQvC1L82n7cZkSAMwATw1uuzTsXuUBhi94AT8hfK6aMkCU/qiwlK6G9CFLKDlsLg4LvFRe9z7SfuPOtxZttnrm/g=
+	t=1791934669; cv=none; b=ZHMsp53cK+KL+NsS0sLftYoMKgLHJIqGCTFhmCIKdBaWHDGEh6vpNSss0UDhS8msqEAxyza0CqHD8ST8w6UBGA1pwJ41fNRnKmKRHyP/WgSSEkS+RIqbOrs4kgiJ0rCK//WvPHT0AkCDE9gERWYm1aP5SOMVBSbTr9nuaIYjGK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791934264; c=relaxed/simple;
-	bh=9f9NLdM3DRtuPBkjP7egipXAuBf5O2ZQpTJ6081sC5U=;
+	s=arc-20240116; t=1791934669; c=relaxed/simple;
+	bh=NRYL7unWirl86XjxWCIqaCAbuQfLBqkk+D9GKLD5pWg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PYF5SSQHr8aiNDUChMlxLZKvR7Z/fTL8MgQnhI+T+sa4i/T3Lb5PeCLbPeQBe0GAqm2yT9lJUytVHyIH4XgAUvntFHN/eWAX6m0dd1OErHCyjJyjCs/+9Tfj1U3p5RMNI7SaBEwHR22Qfmo7tJ0tOyehop46TLlDsz2WIFuYz9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOvYKe6/; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=k/OlNmhJyXV8k8jozl2DlIg/PyXfq/nvmNL29Ad5cbJ3qfTrJV4cX5nfc/pEimARKH+E8b92Am8kTtxrpSJ09K+5gPdNecfpsD0dcLoPwkpZXiPEMmQvVTecg44UA5Lt/GM4X4D3mRME2v46nx/FIRF1xaoFtdwLYlOblurUhTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QoqZ6dxe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOvYKe6/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE981F00893
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:31:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QoqZ6dxe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B5FB1F0089B
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:37:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791934262;
-	bh=9f9NLdM3DRtuPBkjP7egipXAuBf5O2ZQpTJ6081sC5U=;
+	s=k20260515; t=1791934665;
+	bh=wiNbuPmyHWvBDHH4TW2Sjy48ZttxSv2iyqaxH8oE7rE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=cOvYKe6/RHWICOEYmRDgV1/CJfXN6zxTPVa/ggFa8azzpJRLfZ2Vo/2Ar2YsPfWVm
-	 0/8zH8osSU/5FsuZbN/LhW8CcX74hIAMvAaMLVB6dWGyntAQI3WxOTDZFW0uMH5HY+
-	 3xv67x1AfqlxAzDEKm14sUDvJ6vWbFZkM8YOKNlydXNENR2kCs5FHFg+m6x7/+LIvV
-	 bayGrYm9IetFKRECdnvKYl4H+hz8yHgWPNfraagJ4b45VPzUv3be/HNt7SgC69VETq
-	 9YZC4+oEPyEj02C9Et6IFBeJ/ho9EA2SQnr51gMlTunqFsvVApghEiDoo65ysfpy3K
-	 pjgmnHQbLaF9w==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3a9761758adso29065771fa.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 16:31:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzaklqJLv7z+bqJ6iHnzAxNgd8Ssyudpb2igZ7wiqbGbG0dmlYULJ7HvNKRLjyYCSIAFaiLy4Gik/tU@vger.kernel.org
-X-Gm-Message-State: AFq9FYJjaUmD8RUeqlLmAv2HNUOy714fRjdLcEiaiIAgr0UT3a2V17bw
-	+2i1vziEzlfAkMBp2k4gNyYuYmBB/DgpbfXCQeOypnydjGHsZwbZLnKzhvKF01bnRuV36sJety8
-	fRgeIY9C01mfs6bkdA+cijUV9dr6LVWs=
-X-Received: by 2002:a05:651c:e17:b0:3aa:e460:a1e with SMTP id
- 38308e7fff4ca-3aae4600da8mr7501681fa.8.1791934261486; Tue, 13 Oct 2026
- 16:31:01 -0700 (PDT)
+	b=QoqZ6dxeYqGlPOIJat6pK5YMTTV3YTmEo3O5ZvSlYHMd2jbkMyWMXEc9EeCYwxXYP
+	 SNs3OR9kY82yBuz2xQG6HyB61dkjVXw3q52Hur7ulfucGANvW57mi5Es9FXSum4vLS
+	 R1jE9ExOCHairEE2iK/vBAufAtYJ32IiD7MzbDC8HEY1Q75YaIW9Itet9MFtm2xICF
+	 pO5Xw+NEd/IPnTqAEgI+KkWZxoeHZyhriOz6yzoTntwX/gzuW7CsY4V7t7JJiZraCM
+	 6A1HdIJIs1USLZvuza6wmhZvm6FEe+/6/5l4vZ+fP+RDm6A60MToCoTzaDRI+L3Icn
+	 XHy9Y8rJ1ulDg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso4484555e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 16:37:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwQJarrut0fvvN9oL7wCdc0/dEhPhuKzxgJNFdO2hOqHOqCxz5HXoKtOhHBUnEnmgr2yhPPWm2r30LQ@vger.kernel.org
+X-Gm-Message-State: AFq9FYIOn+tmNrCzzC1FTHVbzJJULeMO8vvSuaWDIg5TTY63OEzz0Gi5
+	Kzqit0/AvSPJfqB1+Ksj1LTu7D0oxJG4p9iS7NhsD/resAb3PGPg6RCySHMQmndRxopSMOhzY+g
+	8+1qGsC1AwZYi5Lbw0zb+5PCsLild7r4=
+X-Received: by 2002:a05:6512:3b24:b0:5bb:7829:741c with SMTP id
+ 2adb3069b0e04-5bcde35ea87mr4836395e87.1.1791934664181; Tue, 13 Oct 2026
+ 16:37:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261013074327.4961-1-Chloe_Chen@asmedia.com.tw>
-In-Reply-To: <20261013074327.4961-1-Chloe_Chen@asmedia.com.tw>
+References: <20261011061722.3159941-1-make_ruc2021@163.com>
+In-Reply-To: <20261011061722.3159941-1-make_ruc2021@163.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 14 Oct 2026 01:30:49 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkyvp+DAQTFT2oyydjyCwqSO1DmCgQExbsVsOBYRuQLAQ@mail.gmail.com>
-X-Gm-Features: AclHuK--NzRkxrMOOurKIIgZ9lTUtEMpVE9dR3r-rR7PD9mLnaGJV8p3MYT60oY
-Message-ID: <CAD++jLkyvp+DAQTFT2oyydjyCwqSO1DmCgQExbsVsOBYRuQLAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: amdptpci: add support for AMD PT PCI controller
-To: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-Cc: brgl@kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Yd_Tseng@asmedia.com.tw, Jesse1_Chang@asmedia.com.tw, 
-	Richard_Hsu@asmedia.com.tw
+Date: Wed, 14 Oct 2026 01:37:31 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnHiKZ0OuD4Yb=+YoB7mM7KVPCNAzy4qRuRq1P3LEQDLQ@mail.gmail.com>
+X-Gm-Features: AclHuK9TqHDzu3p9JgxKkHBWbUqRTWvhKXq68f01GBj1YgfR4EN8Zm8P75JUKC4
+Message-ID: <CAD++jLnHiKZ0OuD4Yb=+YoB7mM7KVPCNAzy4qRuRq1P3LEQDLQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: stm32: Fix fwnode reference leak in stm32_gpiolib_register_bank()
+To: Ma Ke <make_ruc2021@163.com>
+Cc: antonio.borneo@foss.st.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, andriy.shevchenko@linux.intel.com, 
+	fabien.dessenne@foss.st.com, linux-gpio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 13, 2026 at 9:43=E2=80=AFAM Szuying Chen <Chloe_Chen@asmedia.co=
-m.tw> wrote:
+On Sun, Oct 11, 2026 at 8:17=E2=80=AFAM Ma Ke <make_ruc2021@163.com> wrote:
 
-> This commit implements the new gpio-amdptpci driver to support the
-> GPIO functionality on AMD PT PCI platforms.
+> stm32_gpiolib_register_bank() walks the "gpio-ranges" property with
+> fwnode_property_get_reference_args().  As documented in
+> drivers/base/property.c:
 >
-> Signed-off-by: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-> Co-authored-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
+>  * The caller is responsible for calling fwnode_handle_put() on the
+>  * returned @args->fwnode pointer.
 >
-> v1->v2:
+> The returned reference is never put.  The function calls the helper
+> twice, once directly and then repeatedly in a while loop, and each
+> call overwrites args, so only the last reference is even reachable
+> and all the earlier ones are leaked for good.
+>
+> Put the reference as soon as args.args[] has been consumed, both for
+> the initial call and for every iteration of the loop.
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: bb949ed9b16b ("pinctrl: stm32: Switch to use for_each_gpiochip_nod=
+e() helper")
+> Signed-off-by: Ma Ke <make_ruc2021@163.com>
 
-NACK
-
-I have provided feedback on v1 which was ignored.
-Read it and incorporate it.
+Patch applied as nonurgent fix, look into Andy's comment
+and see if you can follow up with a thorough fix.
 
 Yours,
 Linus Walleij
