@@ -1,148 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCF2499F06;
-	Tue, 13 Oct 2026 10:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D901F4499B3
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791885886; cv=none; b=HtIbVxhvwgQZaAaJM0dFJSNgdEHuZIBuNesJ7ikBu9um2k6Gu6lLncM2mRuso2lDcdgyNhL+im+ExyxchyHOpmjv+w2eX8dVxk+EKHvv6YlNW1Vn39WTMbdm70AfHoibb0fTw3ng3RSChi4ZES2Ocy/9vzFXFVCUWUSrWbU6/gI=
+	t=1791887069; cv=none; b=Z+32giluyexGxQ+cnIKZj+5FrIsJZ4c+Hhp23mdwhj1MhwLe5CZUApeIjeq9PR3oZHVH/ykF+qBkHykuWf9xPnEL0+YseWlcrqEdO0rXrsjytsuaVpANUs/6aAMQGBsxw/WyfR63sA68qbRQex5RdanbtqmXDwxlmXhkDBK02ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791885886; c=relaxed/simple;
-	bh=5JcdeAiKTWy0dD+QP6OXsvdJrgJIDd1DQZJHKJFTdx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iRGCjUzkEeSjKQoPJBBQSs1ez4MzG9jG0oRa/pD2Ezt39GRb9CPMLxMLCusKH+bNKxxO6Nw6P+Cuf+N9uKvLt8h5D1JLtAIb3joDPPsxtujWXnfdlPS7HQliQzuHGvmvUwVOh0ZIXMGiKomIeGv7ODqX6Lq0sHyTpxXr9UBsiTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1KEXPaa; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1KEXPaa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B90B11F000FF;
-	Tue, 13 Oct 2026 10:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791885885;
-	bh=wbMTid+XwavP1p4m02Prc6L/vMSCXFM1JSHEuUd95RU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=M1KEXPaaXx7tpwj2Ez7jYY30sjnGyaNNM2HbgfQiJC5jSSxKp/mon/NQJXO37TKx/
-	 M4cKI5g39D/s9ysX0ewwY3m29FAs988gGDtTEdtCyQcmuYN5LrnzCbbkZFyJccZwG0
-	 YhNoqviyFBQEECXF2DUBiwUvxvxI9GlI0BKmv8jsQkmI5IkkYZJwrdkqGzQjdhscU+
-	 MpGBQ1pqirK3wxeOgkT415SbsyZFr2UmD5Isfd+MfRwnZsf+sDq+UL5j/TZx8OJ8rv
-	 bdiJCLBC1s1oe+kIsKtPElLPd7moXyT0VTqceBZZZOH0cRk0t5z3largQDJgQov56I
-	 OfSE6r32G2Iog==
-Message-ID: <d5508a2a-518e-46ee-a821-b6209ef35bfb@kernel.org>
-Date: Tue, 13 Oct 2026 12:04:41 +0200
+	s=arc-20240116; t=1791887069; c=relaxed/simple;
+	bh=km1G/HHhK4mc4byWSgOHYVTFBTlTfLPGrUqU5+gvS1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tUpxm1oJ05eb2b60VmxsOj2+Wh4vR6XKenx3FpMKyZM8jQivRHwzfaJR4TPfsHsAW6++Zn4PDQTHGFdslxuPB2u8VrXt9qRZAVnmw/BRuXoXHRHASOKY9kdtYLG7rj4qHSzsGWqLIqXmgTzxRLB2irrlnC11aimR4lH93ZdLpo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-988d33f8fc1so1341025241.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 03:24:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791887067; x=1792491867;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=mGQ/GpRO6vnxq7fb84hh6aj2KXsZIXY1TgeovdND5Hc=;
+        b=FuFnUoBY55U8STnCQFpP1EiYfPnifGtfq1VeLv4hTvzojVmuWxCJemqRMWl97srtCb
+         qeKOh5/yrJUHWjyniQNA/x+VEqmi3CwAorlBbn+aHbzQzpGc5QYtPiss+Ya5aK4E3qMQ
+         VgatIDna6p7wMn4lpGYTK9JMAp/oTfuTVgsyDaG5JMsJjhk5+jE6COO9DqAqcE4nGsj+
+         9y20bkIvcUOl7v+urXpsOuSUAihbqynghuXNceI8AP8BIBc2TU2dkJn6PZDqiW1U8oGq
+         GBIzY+dCbHbCKiXsStaFt5CIW5/JSZaLwQYUlAKFp0RJmTQc4PYSh6cweU0SInsWsNLg
+         FSbQ==
+X-Forwarded-Encrypted: i=1; AKwUvBytqAIjbCOe/AYHNH7dOwKrKnHUObFepvJJPPHbfSM8r2MF6ikoeWmU4vlD8z6E2HBptAQv9A91Pmwn@vger.kernel.org
+X-Gm-Message-State: AFq9FYLIvWRVIpLa8BWI5VdgrCElhpdKnyedDd/FQfmwMZ4dMwzx+QjG
+	WdWYvqNk8sm1gn9mWKWmYR8u9WWaNMXyuseCqyR8UEYGtYbYW4xXVtsS9h7BEAiZ
+X-Gm-Gg: AYBFou1N/ydHooGVVhlFerk6PoSgoXss9vbBZjPiiLIZ7FJDUEjj2UryedAmlCJda4W
+	b9CCTHTLrgnVKwxd+tS7/lXTn4XdyT64JqfFdI8x8AqDZDoHiXj0G9EYi/uctL8Q59YJVMPLVuh
+	uN178PB3GSqxChBxthN0EPlAvhyboIMBwIUhcBnIlj3VqSHas9wUy5Tqx8gtwcYNN+V43ZHki8k
+	BrSCEvdgXig3P/iepWIRU18aLGArpjija8+HHCP5xITaT/F+8JTsNtMSY6u8IZj26LsMmXLrpuZ
+	5Iczfh4jTIK1cog6yqvfofebhYDg4rWTvuKZSkVxe60RJs3PTLVx6VXpt332Tzmll60gqmhZ691
+	FfVIdMdhW8IQ3/ATGXFotuB1gQ9khqcdBgy1jnzil7o4ZN3KGAQBhNOABQWqIh+AlLVHk7L8gSX
+	g4IpJtS31th3WQRIU50eK5sFSAgllM/0cRc3PQRqHP+HUsc0eqH0gfDxLIEPvPcV5EdHTa0rnAr
+	YeLLXx7ip/3FZwFplRfJ/kAXO4SG2Nsq7HUVT1YbaqZchI=
+X-Received: by 2002:a05:6102:418c:b0:7c8:3b8c:82b8 with SMTP id ada2fe7eead31-7cb3730ba80mr3521804137.17.1791887066690;
+        Tue, 13 Oct 2026 03:24:26 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7cb35391722sm8302989137.4.2026.10.13.03.24.25
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2026 03:24:26 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7c3b75caad1so1703138137.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 03:24:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByeQEx64wQYwKve2lV2Z/pmS2yVnv7UhJxJI5YPVf8BPn9EQjezakYRj43QgU9pyTxQZ7z/atfMhmA6@vger.kernel.org
+X-Received: by 2002:a05:6102:149d:b0:7a7:ad9f:53e2 with SMTP id
+ ada2fe7eead31-7cb36987a53mr4125862137.1.1791887065725; Tue, 13 Oct 2026
+ 03:24:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] gpiolib: shared: Don't define variable in the
- middle of the code
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-References: <20261013094412.945609-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20261013094412.945609-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250718152500.2656391-1-demonsingur@gmail.com> <20250718152500.2656391-22-demonsingur@gmail.com>
+In-Reply-To: <20250718152500.2656391-22-demonsingur@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Oct 2026 12:24:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXA83Dm=Mf9MFdGNH+-J6dPrZJGS0R_6hPNgC0x1suBHw@mail.gmail.com>
+X-Gm-Features: AclHuK9EzHrMNGZ9VqEt7mZlsF4wljWQ4a5mjitwSzx9DSYBvOK99D8Xhx8xmLo
+Message-ID: <CAMuHMdXA83Dm=Mf9MFdGNH+-J6dPrZJGS0R_6hPNgC0x1suBHw@mail.gmail.com>
+Subject: Re: [PATCH v7 21/24] arm64: defconfig: disable deprecated MAX96712 driver
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Julien Massot <julien.massot@collabora.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 13. 10. 26, 11:44, Andy Shevchenko wrote:
-> While the C11 allows us to define variables in the code, we do not
-> do this style (see more at [1]). Move the declaration to the top of
-> the function.
-> 
-> Link: https://lore.kernel.org/lkml/58fd478f408a34b578ee8d949c5c4b4da4d4f41d.camel@HansenPartnership.com/ [1]
+Hi Cosmin,
 
- From the link, I have just learnt two things:
-1) I am not alone preferring declarations in the middle of blocks (it 
-has more pros than cons IMO). But again, I spend a lot of time in the 
-c++ universe.
-2) the kernel defines "auto" even for < c23. Therefore:
+On Fri, 18 Jul 2025 at 17:33, Cosmin Tanislav <demonsingur@gmail.com> wrote:
+> The staging MAX96712 driver will be removed as its functionality has
+> been moved to the MAX96724 driver which makes use of the Maxim
+> GMSL2/3 deserializer framework.
+>
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/gpio/gpiolib-shared.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
-> index 5f9623e40b0f..40c08f1ae5f0 100644
-> --- a/drivers/gpio/gpiolib-shared.c
-> +++ b/drivers/gpio/gpiolib-shared.c
-> @@ -196,6 +196,7 @@ static int gpio_shared_of_traverse(struct device_node *curr)
->   		for (i = 0; i < count; i++) {
->   			struct device_node *np __free(device_node) = NULL;
->   			char *con_id __free(kfree) = NULL;
-> +			struct fwnode_handle *curr_fwnode;
->   
->   			ret = of_parse_phandle_with_args(curr, prop->name,
->   							 "#gpio-cells", i,
-> @@ -261,8 +262,7 @@ static int gpio_shared_of_traverse(struct device_node *curr)
->   				con_id[con_id_len - suffix_len] = '\0';
->   			}
->   
-> -			struct fwnode_handle *curr_fwnode =
-> -				fwnode_handle_get(of_fwnode_handle(curr));
-> +			curr_fwnode = fwnode_handle_get(of_fwnode_handle(curr));
+Thanks for your patch, which is now commit e8d5a57e6d0ce827 ("arm64:
+defconfig: disable deprecated MAX96712 driver") in media/master.
 
-For me, much cleaner would be the c++ way. Ie. doing:
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1300,7 +1300,6 @@ CONFIG_GREYBUS=m
+>  CONFIG_GREYBUS_BEAGLEPLAY=m
+>  CONFIG_STAGING=y
+>  CONFIG_STAGING_MEDIA=y
+> -CONFIG_VIDEO_MAX96712=m
 
-   auto curr_fwnode = fwnode_handle_get(of_fwnode_handle(curr));
+As Niklas has already pointed out in a reply to v5, you forgot to enable
+the replacement CONFIG_VIDEO_MAX96724, thus breaking operation.
 
-Everyone is supposed to use clangd, tree-sitter or alike nowadays. So 
-inferring the type is the very same for start-of-block-declaration 
-(which is miles away from the assignment now) and auto-declaration. 
-While the latter obfuscates the code less (and eases local vars addition 
-w/o jumping back and forth).
+>  CONFIG_VIDEO_MESON_VDEC=m
+>  CONFIG_SND_BCM2835=m
+>  CONFIG_CHROME_PLATFORMS=y
 
->   			ref = gpio_shared_make_ref(curr_fwnode, con_id, args.args[1]);
->   			if (!ref) {
->   				fwnode_handle_put(curr_fwnode);
+Gr{oetje,eeting}s,
 
-thanks,
--- 
-js
-suse labs
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
