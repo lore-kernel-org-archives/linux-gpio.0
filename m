@@ -1,135 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D381051CF74;
-	Tue, 13 Oct 2026 16:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C51523790
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791910364; cv=none; b=EcXOSB92cctJcY+d+uiqfCHNa7UwK5wMa43/SDfPyHa06iIJ4nsbJyOH1o0iYeuhZMIZfbR4VsQJAUK7t8O/AVmYBT46OIM61UzxDjWwE5il23j87Y5zCNFBWMfx4z+303Mq44S8SRiLWsmrkF8kD2EJeZMB9SfEgYO66YHpWVw=
+	t=1791912307; cv=none; b=QqQa8ZvGsAfBdY+6S4JvM8vCl3TTQF4jBDBgPTx+bgjrYSo2AROj3ljJELUvwXVi1XPIASan5e4Fl/sohMvP2uesLr+FB/nLgwCN88T6y/6RZ1ltKHgasxjilmimAydHNbOn1xcVh6D6+BMPMnomVHpjwoQTqp76ztEquPg/t2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791910364; c=relaxed/simple;
-	bh=EjjAyjBU3ZHFg4z47azZ/Od4tQNOANc9AyJ546IQj+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ie/gYNHLjuYs1P+HC0fPYLliHFBEBlUnx+iKJ0TednAVyjvq23pTPB+qmtupHyYmexWh4kg7DeipOqXYnM2JE/nxzbo6JcBaPt9vBhIbU+qR8DC3nqchxipj7QosTDTY+aI4edDPhFIqLFIo1Dm/6aVeDv/nuJTzKfT1TX+U758=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRPfkvSg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791912307; c=relaxed/simple;
+	bh=0NoOIN3mJ4hVaMYqdXrnVr467zs4yRLZ/cjKUHp4vTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kIStAI40mlpwf4jy808HZIEoxATLQ4fIZwn++27i/B1b6mipHe91jGTQCCUIZhor9EwicbcSREufnG0z+iDYJNuSSPx4AWYTbpa+kc8JExycl4H8N9U3Z3plcbf0+TwcvguTVRrxEYLXcpGWacOaEo/5ZJ1QXi6eJaQ98s7BEsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZquZLUN; arc=none smtp.client-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRPfkvSg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146A91F000FF;
-	Tue, 13 Oct 2026 16:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791910362;
-	bh=EjjAyjBU3ZHFg4z47azZ/Od4tQNOANc9AyJ546IQj+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MRPfkvSgsYreau+FlHK4l6TZdXeSqfxnlgeH9mTyZ9Tdhh/jUk7nIuHdL5nWMD6dL
-	 xIKpbWEVPRTEGIOLFJDOlY13m9j7GcE4j74wOihgmaYupV5Bf4NgDk+6185bis5igm
-	 ddUoR6y297V6TZBDvPVXDjCSrdyKGjpPDMXjeMTzmKcMEHSQJZQXG8TMV0VL98K3cL
-	 iRzm+WGF1GOuTevubpBPove9gRDCwSDOXlgCCX9vHR8m6RBQZICTlmgTMVKlHk5dsW
-	 mdrSrGflAyn1USuBrRaCGDmxPgvwe/wZX6mew2neQm9cIuAD+cEprS4j4kLiykr3iN
-	 6FQLVdx7Jrx6w==
-Date: Tue, 13 Oct 2026 17:52:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Fil Dunsky <filipp.dunsky@gmail.com>
-Cc: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 00/11] Cortina Systems CS75xx: interrupt controller,
- GPIO, I2C and TWD watchdog
-Message-ID: <20261013-plastic-dragging-8232efb058ef@spud>
-References: <20261012-b4-cs75xx-s2-v1-0-8a7641b7b79c@gmail.com>
- <20261012-dreamlike-hazily-19bb60326f0a@spud>
- <179187542217.3247897.4323160442877168450@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZquZLUN"
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3535a54bed9so122626eec.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791912305; x=1792517105; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=0NoOIN3mJ4hVaMYqdXrnVr467zs4yRLZ/cjKUHp4vTM=;
+        b=XZquZLUNvZGS7Dqtyk99CBWZ2mctza4orye/gcmmpRe0Wzu3zEUDimzpN0O9ompO2J
+         Q//o+ll+2/tdGNKN2SjXZT7NE0+S0OW1stcepNH0e3sPXiuNhErbo6ZO5ZHQYSf6Ug9G
+         uJ7DWaSnjd/VfAOTF43Xehp/ZQPFVIE2LrLdQFtLN2Yr7ZFpwbwOVwlTvJRbKU6auI+j
+         iAVXqD2FyNMWU5IeZ7fC3D0TYWAeg7QNmmOQBTWwaJAeQht94hmKAsgfAZlq7mmLQFgQ
+         EJqCW0Q7CaM7QUftTTKzhLC7HIAIi4qQB2Vt+YLweTVd/6kFDg7LmIp+pBcxzzEbAO4I
+         MNng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791912305; x=1792517105;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0NoOIN3mJ4hVaMYqdXrnVr467zs4yRLZ/cjKUHp4vTM=;
+        b=ivQsk/9jtirSKoJWsMG3LrOx/Tw7r5+a9n65QUcb0M9GMUv3lrrAll8/9ijBK6XxQz
+         VADvqV69wsqWxB3Os04orPdJlnV7U5msmK5Ihs8SZ26Y1813J9uAVLckZsFqn+4b2Oz1
+         yemFSjJQ/BMNJ9VLRQNx5ujvcyZoha9uou9ktlorGk00MOti0ECB9JAOm8kQaK+C3xHN
+         WSndv2IWHoFSoUnas2pd08+eWIh3b6H6wPyIJBLddM0eePMNl8727CiA86akf7Sg8RYz
+         7YSrc6kd/sX3fd4R4MiyH2sWzXVpgT8xHM0Ksm/7N0E9yN/fL3ZIYQaW/Y2tIu/ikbEl
+         e32A==
+X-Forwarded-Encrypted: i=1; AKwUvBzM3UWuJbCzx3Z4gYDJ8qAG7pVbrNRZOpAq9K69jCaDClx4sLGZM+Fvx7hf/18ZjZBb4Sxd9SEFwRub@vger.kernel.org
+X-Gm-Message-State: AFq9FYLm+ucneS2ZRA1FCtvTgUvcVOeQFanutJ64C+T/ROSuj/4JfW0W
+	SMGOm5SH8etrK3IVlO0Q8JDWei1vrTNxXlN2X36e1JeiFaHfbKF/x4l23nD6ba5JHZ4elw==
+X-Gm-Gg: AYBFou33erev7xJTzI58FxC13hfkfq/DnQ1qGuZknbPzsC5idOUe9odFKre6EeB6XbN
+	weJndzAdv3UukC5OtsGcr8t+umGcc1fE39l6BMKKahqrUutCXysVxoswbHEH1e8bisZmSY99TCb
+	ZLie0x+tqFbzi5MRUGsGhNmVt2ZpLMzyjtMsKHKfy7m6XgCvuZ2qdWpiM+OfIlEj0A1M+TnYGdE
+	ckexwXEMG5DgELgrnD8XKIpZ+Z3U1DiR8amVTH9Rax1vXAy3jAk7rqwErH9ltULFvd7QdaXX4WW
+	+FVwqD468UUP0GAc6JvnTeFyRa4co9KLBoQpNYry8x6skcPiTtAfyrBAjCSXEGLBjMoAj3QweeR
+	r3BAZ1xhewn/I8QB5rS3pDNfm5/rE8G6lvRuerK6ZSb8w1HjpA4hGafKv8S/bDYz4Kbc1QkASXE
+	Omoi4dtnafI9NEBhiz+OzVE5Y/KyTRuzizSEo8GJJ/ri0gKcZu1ZTU9kNRgo43sreps5XJfVKqC
+	FcepFIckNH3FogPSYRy8drBiX49dRKRIIW1ypxU2+F85EFEzcLPocQhVLcn+cALXxJCdtMhYglS
+	tQpSkWw=
+X-Received: by 2002:a05:7300:ae30:b0:35c:8b96:94d9 with SMTP id 5a478bee46e88-35c8b969a6dmr3374472eec.19.1791912304982;
+        Tue, 13 Oct 2026 10:25:04 -0700 (PDT)
+Received: from MaquinaLab.. ([179.179.244.163])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-353814b556esm50303555eec.18.2026.10.13.10.25.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 10:25:04 -0700 (PDT)
+From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Enzo Adriano <enzo.adriano.code@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFT] pinctrl: sunxi: Fix A733 withstand programming
+Date: Tue, 13 Oct 2026 14:23:38 -0300
+Message-ID: <20261013172427.328177-1-vinicius.eduardo.pedrosa@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261013142351.771229-1-andre.przywara@arm.com>
+References: <20261013142351.771229-1-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9WsB/PUlVzPaxjR8"
-Content-Disposition: inline
-In-Reply-To: <179187542217.3247897.4323160442877168450@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---9WsB/PUlVzPaxjR8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Andre,
 
-On Tue, Oct 13, 2026 at 10:10:22AM +0300, Fil Dunsky wrote:
-> Hi Conor,
->=20
-> Sorry for the late reply, and for sending v2 and v3 without addressing
-> this - I missed your mail.
->=20
-> On Mon, Oct 12, 2026 at 07:48:00PM +0100, Conor Dooley wrote:
-> > I think what's here looks really suspect - regions of two registers
-> > wide, interlaced between devices etc.
-> > You mention syscons here, and really that's where I think that this
-> > should go. The region at 0xf007_0000 looks exactly like a syscon to me
-> > and should be modelled as one.
->=20
-> Understood. The block at 0xf007_0000 is the "peripheral" register block
-> of the vendor kernel: the interrupt status/enable pairs, the UARTs, GPIO
-> banks, the I2C (BIW), SPI, MDIO and timer registers are all packed into
-> it. Would you be fine with a "cortina,cs7542-peripheral", "syscon",
-> "simple-mfd" node covering it, with the interrupt controller as a child
-> node without its own reg that gets a regmap from the parent? The UART,
-> GPIO and I2C nodes would stay separate devices with their own reg, as
-> you suggest below.
+Thanks for the RFT. I found two things when checking it against the A733
+manual and my Cubie A7Z.
 
-If things are just tightly packed, that's fine and you don't need to
-make it a syscon. Just because something looks suspect doesn't mean that
-it is actually wrong.
+PB is an exception to bank * 2: its VCC-IO field is at bits 25:24, while
+bits 3:2 are reserved. With the board's SEL value (0x01155550), a 3.3 V
+request produces 0x01155558, leaving VCC-IO untouched.
 
-In your shoes, I think what I would do is leave i2c/interrupt
-controller/gpios etc all as independent nodes.
+I also think we should preserve AUTO (01). On my A7Z with vendor 5.15,
+PF=10 resulted in 22 SDR104 read timeouts and no rootfs, while PF=01 and
+PF=11 reached login. This was one run per setting with one card, not a
+mainline before/after test. In my mainline setup, MMC0 already requests PF
+with a fixed 3.3 V supply, so the RFT would replace AUTO with 10 even
+without voltage switching. Preserving AUTO requires no special case for PF.
 
-I would however model the pinctrl as a single node, with
-reg =3D <0xf000001c 0x14>
-I think, rather than 5 instances 0x4 wide.
+I boot-tested your RFT with two small fixups for PB and AUTO on my Cubie
+A7Z (rev B). UART0 and MMC0 work, and GPIO_POW_MOD_SEL remains at
+0x01155550. No voltage-field writes were expected with this DT. I haven't
+tested the RFT as posted.
 
->=20
-> > I think it's fine to make a GPIO controller at this point, and leave
-> > pinctrl to later, but I don't think that it is acceptable to pretend
-> > that the mux registers are part of the GPIO controller. The pinctrl-less
-> > GPIO controller would have to either rely on something else (e.g.
-> > firmware) setting the mux registers or be not entirely functional until
-> > the pinctrl arrives
->=20
-> Agreed. The next version drops the mux register from the GPIO binding
-> and driver and relies on the boot loader's pin mux. A line that the
-> boot loader leaves muxed to a peripheral then stays unusable as a GPIO
-> until the pin controller exists; I will check which of the Almond+
-> lines (reset button, touchscreen interrupt) that affects before
-> sending, and leave those out of the dts if needed.
->=20
-> I will not send it before the interrupt controller question is settled,
-> and not before 48 hours have passed in any case.
+I agree the full table and PI exclusion aren't needed, and found no
+evidence for restricting the encoding to revision B.
 
-My take would probably be not sending new versions until at least 48h
-has passed since the last reply on the current version, rather than 48h
-or w/e from time of posting. Of course, exceptions apply, and you can
-use common sense to guide you.
+A733-R still needs its own descriptor for the two-bit PL/PM fields. I'm
+happy for your RFT to supersede my patch 1 once PB and AUTO are addressed,
+and I'll rebase the A733-R fix on it.
 
---9WsB/PUlVzPaxjR8
-Content-Type: application/pgp-signature; name=signature.asc
+I have the PB/AUTO fixups and the A733-R patch ready, and can send them if
+useful.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCas5h1AAKCRB4tDGHoIJi
-0udqAP0WM0sBTq4yEA+F6vKgUmE8ocwVivM3NUIF83HuZso3pgEAivB/61eJBing
-IjaFuZ7tEIoxs6shBuwSTj5im/+qbQk=
-=Hfgz
------END PGP SIGNATURE-----
-
---9WsB/PUlVzPaxjR8--
+Thanks,
+Vinicius
