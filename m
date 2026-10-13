@@ -1,101 +1,92 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F194D3F1077;
-	Tue, 13 Oct 2026 13:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099712DF6E9;
+	Tue, 13 Oct 2026 13:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791896964; cv=none; b=sZ5M1qWoxAd3IFqNR5ltXlGrCaD6QVptPGH2v6N71MEP3Gxeq0rAXxgqEJzm4gtf+wR/Gc5xRhx2BrpHV0yHnzi4OFOteUsMofP7bzJ97PT65ZZ/5wq3HepycPxttZn9b94lxK3tboncxZAltZ1VWiRCR5KD90tgtLaBuEVIJlc=
+	t=1791897039; cv=none; b=OmFm47/KmumcQ3WuFrLWMThkRhm+2k1iElsIy7TQ1VVg1IrG4ne6+ZSEtR3vDk621afOnWXhIhZGKAZ+wZ5rnXlZ8vVDo9iz0575y9MCc8SH93G2XK1btvgquRFUmHFxjZ/5dGN8sxaX6ckhLknRDt63WWSps5CdXIasJiLco+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791896964; c=relaxed/simple;
-	bh=UpLDrnSBhRg6iXoSIzOWUiTrJH1KftLjMwLndDqjc5g=;
+	s=arc-20240116; t=1791897039; c=relaxed/simple;
+	bh=60zYTUoV8B3oGIExYebQM8JC+ndZibirMqEzKZI6lSc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XiHW8k60au/40grs4FzOpk3qtizKFBJnllmGMzF1AhQzmX9dk84CvRGbRgv1Uv+mnIxkAEsk1etoVfRi+yojYMlOsnHCV74i4lxLroR2HUzP3POARvUDh/rnN7C2nnc6Wahs9KdvKryytepUgEZ/2s83QbqIK2e27OxdNcQoh7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CBBJRMHs; arc=none smtp.client-ip=198.175.65.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8rKkXoup21FKpcrZ1r015dEbn686zy+9o1OscQSjqteVnS7/Xxu22T22ioWZOiN679jQuV6O4S9A2WQiFsd/LlcxaVVvcbPDLlPVglianO9y89q4uqJKU1b91bKhCzVjKB18LcYNt5TbLD0TcspyIDpOTQOm1fsbqot5uRQd9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=khkQuIIb; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CBBJRMHs"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="khkQuIIb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1791896964; x=1823432964;
+  t=1791897039; x=1823433039;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UpLDrnSBhRg6iXoSIzOWUiTrJH1KftLjMwLndDqjc5g=;
-  b=CBBJRMHs0auIPkZWo6VOF7xjbLLBzq9VWv31I+VUkwRN/st70qamHeRn
-   Sf5Pb1jCeozpNJAMGp5NZYOYk3YEuTjEqIB2DrGYTKDcLFXw2/WT8qlqL
-   1EPlO5oQlqTCCFU5TlS05X2WGkzDPVft1slqrx8PieZ9vNcvMbJeT9zud
-   RclhS7oeItwg/RNcjUy6B6jE0lx724EOX/5FDSg9XP2ohbfCfs34Qy3Rn
-   hpP4zBOfI0rj9nt2j4bXpvMFqi0EG+1KXBVEjWBP4Mf/aDvXGVIjCra/3
-   uOQLfArcxfDti7qN0SR8uWnxgnXBsftmKv/e49g1sor4mBKJy2IyJ1oGR
+   mime-version:in-reply-to;
+  bh=60zYTUoV8B3oGIExYebQM8JC+ndZibirMqEzKZI6lSc=;
+  b=khkQuIIbqln2p1hfkXjm/20EgGJqcTBTnS8g/I0+e10r/vhOr2oWHbv/
+   DAmsNisCbb7SzLmoPtGJyHBxShyGY9L7NylWWDxXSUzYWB8vi0VnOAJzC
+   aOT9b3DnMFOEJUJpUXB0KjTbOWn3nmWyX1ClGdC2vZ+KUPon/43iKCxjg
+   cGq032kaR5PW6Tuq3MwVuYERJpSd6Gq0XHyraaPcjB2TGECVyHqciuEyg
+   uzDuJjEyNCOjEzrk+wmC0GJ1sMmcZWgUcuUSa7MfePmlF9xFtPuQXHZbr
+   vPMMNnhv2g7DHXGcEE/TlAbU9/aZRIk01T3zFuzgfM4Sf0nVISWPbOTil
    g==;
-X-CSE-ConnectionGUID: Nd8VW3g5RES3cUnYDU0AOQ==
-X-CSE-MsgGUID: LC/fuKMIQeGjj+3hmxNzew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="505934"
+X-CSE-ConnectionGUID: K4AE4r6fRhi8DWYfXdyGSA==
+X-CSE-MsgGUID: xXRWZu56TAOl9OeYLgXYOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="630316"
 X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
-   d="scan'208";a="505934"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:09:22 -0700
-X-CSE-ConnectionGUID: oYbbfUsLQUuknHb9gH/1MQ==
-X-CSE-MsgGUID: UOJ0k6MYQCCqCp2CcQRkoQ==
+   d="scan'208";a="630316"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:10:38 -0700
+X-CSE-ConnectionGUID: 6FHVWf9ORVSR7iiFQnvaJw==
+X-CSE-MsgGUID: DAt8C0HxTbSMXmS+OwIFog==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
-   d="scan'208";a="1269436"
+   d="scan'208";a="1084964"
 Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:09:18 -0700
-Date: Tue, 13 Oct 2026 16:09:14 +0300
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:10:34 -0700
+Date: Tue, 13 Oct 2026 16:10:25 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Bradford Love <brad@nextdimension.cc>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-media@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v1 0/7] gpiolib: kill gpio_request_one()
-Message-ID: <as4tep73cAI57Yk7@ashevche-desk.local>
-References: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
- <CAD++jL=prd1KDZQawqsRmW3qp1-cJ=18-yhp861CQirOOjE5Ag@mail.gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>, Lee Jones <lee@kernel.org>,
+	mfd@lists.linux.dev,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v1 1/1] gpio: legacy: Kill gpio_set_value_cansleep()
+Message-ID: <as4twfDzv23p25yU@ashevche-desk.local>
+References: <20260715192415.1326037-1-andriy.shevchenko@linux.intel.com>
+ <178418869936.4524.15759697748852640442.b4-ty@oss.qualcomm.com>
+ <aliWiN1EaGziNZ7f@ashevche-desk.local>
+ <CAMRc=Meen-m7FohCe-uU89R60SNU=gJFXkwpBjpTZMw+3+1b6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jL=prd1KDZQawqsRmW3qp1-cJ=18-yhp861CQirOOjE5Ag@mail.gmail.com>
+In-Reply-To: <CAMRc=Meen-m7FohCe-uU89R60SNU=gJFXkwpBjpTZMw+3+1b6A@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jul 24, 2026 at 11:40:59PM +0200, Linus Walleij wrote:
-> On Wed, Jul 15, 2026 at 8:51 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > This is the finilazation of the work announced in the commit 61e1fd2abca4
-> > ("gpiolib: legacy: Make sure we kill gpio_request_one() first"). With this
-> > small series we kill gpio_request_one() and leave only two legacy calls
-> > devm_gpio_request_one() and gpio_request(), where the managed one has only
-> > a few users and high chances to be killed soon as well.
+On Thu, Jul 16, 2026 at 01:35:18AM -0700, Bartosz Golaszewski wrote:
+> On Thu, 16 Jul 2026 10:30:00 +0200, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > On Thu, Jul 16, 2026 at 09:58:42AM +0200, Bartosz Golaszewski wrote:
+> >>
+> >> On Wed, 15 Jul 2026 21:23:30 +0200, Andy Shevchenko wrote:
+> >> > No more users.
+> >>
+> >> Yes please! Thank you!
 > >
-> > The series is supposed to go via GPIO tree (due to nature of the last patch)
-> > with possible immutable branch for others. Please, ack.
+> >> [1/1] gpio: legacy: Kill gpio_set_value_cansleep()
+> >>       https://git.kernel.org/brgl/c/aa4bc3b7d36d52caf7c3d3214ae4ce96d609e8c5
+> >
+> > Not sure, I put in the comment that this should be part of MFD, otherwise
+> > the one driver will fail (the conversion change in MFD tree only).
 > 
-> The kernel is clearly a better place after these patches than before it, so:
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> Ah dang it, should have read what's below the commit message. Backed out now.
 
-Thanks!
-Bart, anything needs to be done for this series to go in?
-
+Now it can be applied, can't it?
 
 -- 
 With Best Regards,
