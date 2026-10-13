@@ -1,83 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA2E559CB2
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C964853A894
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791932770; cv=none; b=q4310Nur5ReIWGk0v62rcuzMifjdX95X26bSTbJ/4e8nKi2C0pw5/svzdDi3iN/d3Av3kNSAtACd3zTAOJx5jFoNIUcBFvueYI08RxnuBKi07SWcm2bvSdPZ9pATR7FN6bAGVhZqaP2NnY2OGtg3zfC4yosZzCbtePMma8UKsVs=
+	t=1791933065; cv=none; b=JZKmftPjLYJOY4iI4ImfcNmB0JeonXgxyoLtm4FOCmHNOF25KE2pn2UtmCp0ZE7n+zxKr1v4uKyxq+V9/VBfke/33H0fabCLKy0ZjK+1vwxwuMXK6C9bLXbckQHL7jf4ffjNMbwocQukynni96u6QyN/neS9H6NYj2vR0G+9Lgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791932770; c=relaxed/simple;
-	bh=P0iTojnRLPumAawJoInXYGshTudeegPaLeQs4sXNs0A=;
+	s=arc-20240116; t=1791933065; c=relaxed/simple;
+	bh=L9F6PA2N+WOVHYi9v7Bq2XrIKM0xEoyFhvJzFmeoaAk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ps4fYm+fbsJI4ImCBD4xP8HqHaRgQDc+f+8Son0f+rNI1ofNT9jVO2pNfMU0Sl7WlYssv/xZEPQhxHiAjIfBLWWshuntlXUZmUCQ7zBD8v1sTW7HHKMvVXsWb6DCPseRtPPSf/Pzzr3Z9tK97RSeC0Tb2SbF8vFQ+EL2fbIus8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpfF/OW4; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=I4xSIEacYqPnvSaoGsS5BYv8Ao1oBwfkoLPmWBeMDvIo9hB8mfp84uCRiob+JLKPBZb9u1UWXs1DDvBSJwNjr6fIDmexxMtAKg9BYiCQ2q8pPI/KVGCaXYsHnlK3VKe6HCp3KYvcJ9gPdRrznBfaF8+ckvTEXOzkVPLtIOm9XiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXnoMKNU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpfF/OW4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BB5A1F00893
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:06:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXnoMKNU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0591F008A2
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791932769;
-	bh=P0iTojnRLPumAawJoInXYGshTudeegPaLeQs4sXNs0A=;
+	s=k20260515; t=1791933064;
+	bh=tQzVrs0c3UvtqevA7XvTO2dEu5Cjq2oDofNx0flPKCg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=DpfF/OW4mKOx30gioxVGakYZvb1rnYKq60hNsIPEL0ThNR5o/pSMaAb3DYO4yBRIO
-	 VkBYYa+Evu8HW/Ox2K+VQUlNzuBo0yV0j8g8eTFmG79PZxQEORjR3iyB+AEvJfGYWd
-	 6Irow+pk8Hum50eltvGcVVOJLi/YiiKtD4Sg1GaVAfL72WC0ryOo6bALfeGbe7vfQA
-	 c+Flt5sMqhiBooh2FiuHP6wa+qm9X6WFpZGjIZn6uBdaXCHeyGlUXqOWJ5t4p9XGkt
-	 RBCcUmg/XNQIRHl+iA1pOs6DaZNSrlt4/075APcVz/R261IPRrKuYzCgm90+8L1ivN
-	 grzoFspvolw1A==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3aae7df0971so6937771fa.1
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 16:06:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByLs9a5qWx9dZ+xM5GxVXoiHVqx36xA5pQDBI2F1FROw3+qtddeR/X2UT76uhngsSMDJc+4t0v7rYaH@vger.kernel.org
-X-Gm-Message-State: AFq9FYIByWBmevrLa6WQ+Mi6GR4B5Yzt+sW3xZdoz4RRK4EEBhsBzE6V
-	x4jDQynJNZnGrsNo2o/U6rrY8u0kVHiYJmrAFFE3lWUX59cnVZX5iK9H1nBive0r1NwQZuFhkWD
-	wKzymQph7RW+4+OTU90sdlWttYppsp1M=
-X-Received: by 2002:a05:651c:b27:b0:3a9:9b67:25f7 with SMTP id
- 38308e7fff4ca-3a9c53b0b19mr34618061fa.4.1791932768205; Tue, 13 Oct 2026
- 16:06:08 -0700 (PDT)
+	b=cXnoMKNUewpGzi0kloDWjmhf/SKeTwdAKWxZK63VS3RqXI1gGkv9WbEss/R+6NtR5
+	 afV8Xzak+mL1HcsPdSp3rfi/MDJSfxhvtOd/OApINRNvaemiYhrj5zxjh5Ab6isQ/d
+	 43/RrcdFOTfW6rRhkyGbA446qMibkxdBosJUebvyj8ypY2Q0RKkjG3FyHVVgSLuaTW
+	 Fjj1ki7atePwDeCeOF2BGAXzuC/UnB4J9eX2hNkmE5GJ5NS3izVSe2aBgyhhR+j1X9
+	 p8+N41kn5vQntFvsR6l2BNYwhq3xn8q18tRqjDxPDzwiQqiyhsxksyPHlyoDn4xyU/
+	 +jslPJBjMyGQw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5bcb2eceb3eso3077795e87.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 16:11:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwQ5jwU1VpuB/gMPBYCJYRBeT2otDBY5rWantH1MAVb1t+lutuyVkw+dj2mUDfF2JvgMbUlTgS1H6cE@vger.kernel.org
+X-Gm-Message-State: AFq9FYKfeUT0CSF+M9ONnNV2UknuwO7o9VMgqOSV8QbxNG2e1Y+8Dq9e
+	1PmDpzRAGP9py5DegpXwZzUbQFFOkX70F2yye0KsjLF77PEa8UndwoeMHvsC2WJt/i9RMD73JCP
+	Cpt0wkgazD6p/RNGBucucT+zFrtHFIl0=
+X-Received: by 2002:a05:6512:1586:b0:5ba:3c5e:2b20 with SMTP id
+ 2adb3069b0e04-5bcde6c08a8mr4390697e87.29.1791933063163; Tue, 13 Oct 2026
+ 16:11:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261010175721.76213-1-adilov@disroot.org> <CAD++jLnTOc+n2PGpK1NDnNJXwgzTQ8shO_6NqNuADzxY8SyYsA@mail.gmail.com>
- <03f84f8678f0a6a09e10e57c77ce82f9@disroot.org>
-In-Reply-To: <03f84f8678f0a6a09e10e57c77ce82f9@disroot.org>
+References: <20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com> <20261011-gpio-mxc-cleanup-v6-7-cb47ce2ad758@nxp.com>
+In-Reply-To: <20261011-gpio-mxc-cleanup-v6-7-cb47ce2ad758@nxp.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 14 Oct 2026 01:05:55 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmGBFJBACn5NuzjbDpNVySjjxVDbP76mHKjKetSnouESQ@mail.gmail.com>
-X-Gm-Features: AclHuK-kqMedjz2wi0_AS5MYo3t5JfIsaXDJBJEGuyzQd9O3yegy0ZIw5takxV0
-Message-ID: <CAD++jLmGBFJBACn5NuzjbDpNVySjjxVDbP76mHKjKetSnouESQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: single: add big endian support
-To: Rustam Adilov <adilov@disroot.org>
-Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 14 Oct 2026 01:10:48 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnDxTAz2=ge5RgvO02mp+BJyLBV0zR8xqsm8LSsSEcRYQ@mail.gmail.com>
+X-Gm-Features: AclHuK849G_ijc3QWZ7kME4RYf6sglZkaE0fzQjq6-hvA40gFn4QJl3T4CzdDQE
+Message-ID: <CAD++jLnDxTAz2=ge5RgvO02mp+BJyLBV0zR8xqsm8LSsSEcRYQ@mail.gmail.com>
+Subject: Re: [PATCH v6 07/13] gpio: mxc: convert pad wakeup compatible checks
+ to hwdata flags
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 12, 2026 at 4:21=E2=80=AFPM Rustam Adilov <adilov@disroot.org> =
-wrote:
+Hi Peng,
 
-> >> This is needed on big endian MIPS platforms like RTL930X, RTL931X
-> >> and RTL9607C who use pinctrl-single, because when SWAP_IO_SPACE is
-> >> enabled, the mmio accessors in pinctrl-single perform a byte swap.
-(...)
-> > So I'd like to hear some of the reasoning about why you want to
-> > do this thing, we have other drivers doing this but without using
-> > pinctrl-single.
->
-> Um, what? I don't understand how that is related to anything with my
-> commit message.
+On Sun, Oct 11, 2026 at 1:51=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 
-I understood is as the usage on RTL9[3|6]* SoCs was something
-new and this patch was needed for this new thing to work.
+>  static bool mxc_gpio_generic_config(struct mxc_gpio_port *port,
+>                 unsigned int offset, unsigned long conf)
+>  {
+> -       struct device_node *np =3D port->dev->of_node;
+> +       int ret;
+> +
+> +       if (!mxc_gpio_has_pad_wakeup(port))
+> +               return false;
 
-I see pinctrl-single is already in their device trees...
+Why is the entire call to mxc_gpio_generic_config()
+bailing out here if the port does not have pad wakeup?
 
-If I can get an ACK from the maintainers we can just apply
-this, the cleanup I'd like can be made at a different time.
+> -       if (of_device_is_compatible(np, "fsl,imx8dxl-gpio") ||
+> -           of_device_is_compatible(np, "fsl,imx8qxp-gpio") ||
+> -           of_device_is_compatible(np, "fsl,imx8qm-gpio"))
+> -               return (gpiochip_generic_config(&port->gen_gc.gc,
+> -                                               offset, conf) =3D=3D 0);
+> +       ret =3D gpiochip_generic_config(&port->gen_gc.gc, offset, conf);
+> +       if (ret)
+> +               return false;
+
+Then no generic config can happen.
+
+This looks weird, isn't it just some of the configs that
+don't work?
 
 Yours,
 Linus Walleij
