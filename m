@@ -1,119 +1,134 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D901F4499B3
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791887069; cv=none; b=Z+32giluyexGxQ+cnIKZj+5FrIsJZ4c+Hhp23mdwhj1MhwLe5CZUApeIjeq9PR3oZHVH/ykF+qBkHykuWf9xPnEL0+YseWlcrqEdO0rXrsjytsuaVpANUs/6aAMQGBsxw/WyfR63sA68qbRQex5RdanbtqmXDwxlmXhkDBK02ng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791887069; c=relaxed/simple;
-	bh=km1G/HHhK4mc4byWSgOHYVTFBTlTfLPGrUqU5+gvS1U=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FFC47CC8A
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791887676; cv=pass; b=sRxw6i/aU5VSXasWr2GX4rPdfVq5VtnmlPS/lj4+Lal6+wZfirT2kAGEf5bk7PeEnP0zOj29xRYx5Js87aa9pmNrzyjc7WTjqVsSJvRSeq8c5kkJhFgF1BqFDwOVE3RhjGFmZB5lB2qGUnj60PN2ShTkV7czJJd20ajm1++oyb4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791887676; c=relaxed/simple;
+	bh=2/XbkPvotlo2FMeFWtqxRV4vlKCzaudhesaSk0ZFHqE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUpxm1oJ05eb2b60VmxsOj2+Wh4vR6XKenx3FpMKyZM8jQivRHwzfaJR4TPfsHsAW6++Zn4PDQTHGFdslxuPB2u8VrXt9qRZAVnmw/BRuXoXHRHASOKY9kdtYLG7rj4qHSzsGWqLIqXmgTzxRLB2irrlnC11aimR4lH93ZdLpo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=Xygv7pxXVini8iQOPA+3Jzn6dii8ANTgoTRUJ19UZQ0wpoegXxCtawB5I+uFJmNZOKQdkCdW2XOxzVQp7pa7MD90uTn+001QM7AhQJS/uilB29KK1KJNAhs2DWakpKS5oClU9avcq8jxFhOZFjwCIqpkGdj5LhT3B/U9rmujT8E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=modQlBSG; arc=pass smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-988d33f8fc1so1341025241.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 03:24:27 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="modQlBSG"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6afbc363efeso3267067a12.3
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 03:34:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791887673; cv=none;
+        d=google.com; s=arc-20260327;
+        b=h2XXOFsJ1Z2W9tl80BU+naxhIX4YjloCEfYLrFphZv3gp9sAYdaDnrc1wYoBmgtJw8
+         n8oF71L/+SnqaGdrYhuJWA2fK77jilIfbqqkWqnhjihGTA9WG+Cve3nYzdA4l7NcrwJx
+         pSbzclyr8G/dTBr6KMXYTwf/uC9+wYdkxX66TU2rXiuXg/NxBEpSFvjvGZuqxnAZ56iL
+         5vzLlrWGDHvkr9j4QbL+xHNEar4MnHv5PxGCy/ukfLTxTVW+ngTwpPyJK3txCu/A+o3+
+         A9jFGfl1Vl28GocUnkGQ/BejaQVzX828TaDx+i7WwV+R2oZzBQ5X85v+dIZ+Tfepsr6J
+         urZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=2/XbkPvotlo2FMeFWtqxRV4vlKCzaudhesaSk0ZFHqE=;
+        fh=M5Ev+bK95etWT8ng6/ZLQRVX3CpSSfnnNN/XMpvSgCo=;
+        b=Dnbd/527oe9OQ69FEly7+ba5TRCBJkVLSncCp6OJI05CxfQJmaWK17O7DL4EJDm14J
+         hUWXWv61ebm1/MYJXgEWcFlBZm13F8UvGUuZXsgJKETy/5c+FPDon73cWPqQ7+mIfF/E
+         cDATB93WO5K8jd0/XPj0+kzonj5FoMeIvDeGVLnEvK8sej8Wq8Nd6R6rDuqS3XwX0nW8
+         Ln2kN1HMh2SKGuyEB+y+EH3AERFIvsRzv4j60jSepmheD/QvwonQFaMmah2wbdKVbr1d
+         uTivGB1c431J8i4JBXOM/eYHGV93FidSqJQJIAmnm1joN19WvXqh5JsFcpHQPLdW7gMm
+         3yow==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791887673; x=1792492473; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=2/XbkPvotlo2FMeFWtqxRV4vlKCzaudhesaSk0ZFHqE=;
+        b=modQlBSGfgzv3q0bNjcyiwK30WKaPqitYEsHfpfBs/TQmJTgRJEumDwiDTqIfJc7wO
+         1VL0Y0Na0+Zjuj/UYULc6EZ6QP3/7abos+mTyJb3dpspZ8FOJ3KpLtIaan+N3vyZ+zAh
+         r8ZKo3dwoLAkUqHep1xMNoxsSXwwJb7M109U3Y81061wTtiVunL+QQL2Uq+EeU4wcpCX
+         OAPs/V4+BNonjTHuEouVUreJZkY0rW3X0KmIdI7Leyc+eHm+RzzcjQt7QLRkSCX/kVMF
+         pUZRIMzXzSTBlEpiY4kyFDRkejNyYQ6BHe51FtH2dIru6Gt5V6gtkyex3HUHWZLLSbZd
+         +RXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791887067; x=1792491867;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=mGQ/GpRO6vnxq7fb84hh6aj2KXsZIXY1TgeovdND5Hc=;
-        b=FuFnUoBY55U8STnCQFpP1EiYfPnifGtfq1VeLv4hTvzojVmuWxCJemqRMWl97srtCb
-         qeKOh5/yrJUHWjyniQNA/x+VEqmi3CwAorlBbn+aHbzQzpGc5QYtPiss+Ya5aK4E3qMQ
-         VgatIDna6p7wMn4lpGYTK9JMAp/oTfuTVgsyDaG5JMsJjhk5+jE6COO9DqAqcE4nGsj+
-         9y20bkIvcUOl7v+urXpsOuSUAihbqynghuXNceI8AP8BIBc2TU2dkJn6PZDqiW1U8oGq
-         GBIzY+dCbHbCKiXsStaFt5CIW5/JSZaLwQYUlAKFp0RJmTQc4PYSh6cweU0SInsWsNLg
-         FSbQ==
-X-Forwarded-Encrypted: i=1; AKwUvBytqAIjbCOe/AYHNH7dOwKrKnHUObFepvJJPPHbfSM8r2MF6ikoeWmU4vlD8z6E2HBptAQv9A91Pmwn@vger.kernel.org
-X-Gm-Message-State: AFq9FYLIvWRVIpLa8BWI5VdgrCElhpdKnyedDd/FQfmwMZ4dMwzx+QjG
-	WdWYvqNk8sm1gn9mWKWmYR8u9WWaNMXyuseCqyR8UEYGtYbYW4xXVtsS9h7BEAiZ
-X-Gm-Gg: AYBFou1N/ydHooGVVhlFerk6PoSgoXss9vbBZjPiiLIZ7FJDUEjj2UryedAmlCJda4W
-	b9CCTHTLrgnVKwxd+tS7/lXTn4XdyT64JqfFdI8x8AqDZDoHiXj0G9EYi/uctL8Q59YJVMPLVuh
-	uN178PB3GSqxChBxthN0EPlAvhyboIMBwIUhcBnIlj3VqSHas9wUy5Tqx8gtwcYNN+V43ZHki8k
-	BrSCEvdgXig3P/iepWIRU18aLGArpjija8+HHCP5xITaT/F+8JTsNtMSY6u8IZj26LsMmXLrpuZ
-	5Iczfh4jTIK1cog6yqvfofebhYDg4rWTvuKZSkVxe60RJs3PTLVx6VXpt332Tzmll60gqmhZ691
-	FfVIdMdhW8IQ3/ATGXFotuB1gQ9khqcdBgy1jnzil7o4ZN3KGAQBhNOABQWqIh+AlLVHk7L8gSX
-	g4IpJtS31th3WQRIU50eK5sFSAgllM/0cRc3PQRqHP+HUsc0eqH0gfDxLIEPvPcV5EdHTa0rnAr
-	YeLLXx7ip/3FZwFplRfJ/kAXO4SG2Nsq7HUVT1YbaqZchI=
-X-Received: by 2002:a05:6102:418c:b0:7c8:3b8c:82b8 with SMTP id ada2fe7eead31-7cb3730ba80mr3521804137.17.1791887066690;
-        Tue, 13 Oct 2026 03:24:26 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7cb35391722sm8302989137.4.2026.10.13.03.24.25
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Oct 2026 03:24:26 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7c3b75caad1so1703138137.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 03:24:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByeQEx64wQYwKve2lV2Z/pmS2yVnv7UhJxJI5YPVf8BPn9EQjezakYRj43QgU9pyTxQZ7z/atfMhmA6@vger.kernel.org
-X-Received: by 2002:a05:6102:149d:b0:7a7:ad9f:53e2 with SMTP id
- ada2fe7eead31-7cb36987a53mr4125862137.1.1791887065725; Tue, 13 Oct 2026
- 03:24:25 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791887673; x=1792492473;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=2/XbkPvotlo2FMeFWtqxRV4vlKCzaudhesaSk0ZFHqE=;
+        b=hvfNa9PnSAjRJ3NTwPUmfksKk5+TqCQMldmYF+bKRg6u6pREhj71MVXf/OVyZlUkrv
+         u/KGeBHCN7j42higNi0b1NNlCpK8IEK3i26g1ZaO3WJOjQUzuCMbW+2EXDt+HWa23xPQ
+         sBaSj7VRtTvzkvbibztwMWNEw6erpVXV59KsT4samTj/539T8zcDFROsbrnLYeefkyFP
+         /n3H9WWKyTmlrUZsh1EX0q+tJXu0l1pTMWKh9GvIU9FqhwDLRr+65R7u1Hf82A6PTb4B
+         RnmwWJGDI2OkraMvGLvH2NZ2PfQI3JQ51ZJ8PDH3vtIyIF4p1FzIl59pGdS4v2QwHFEP
+         XKmQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzjKzKeGj8P6xIaPmDiE9/+TLre7v44TWowBqiaFXo1DNFd9yWG/bMNpUR0WuY2aZfYYbw6xQh3HIMd@vger.kernel.org
+X-Gm-Message-State: AFq9FYK3CU6Heow8JrxCp7veXBfX9c6SYeYnhcv5EY0dmJLad3UDACpI
+	Wa3V7RdDcW9GcKgxptf2P3grew3+ruoow1LDGVmgQju9WMFDKduUbgTFnTp+HCO8FYatjiLxxiR
+	v0jJJElnmzRsdzYhAay5i1yqP3mNKGQ0=
+X-Gm-Gg: AYBFou1x2Bl4Nm+o4EjB4RgDpUIXxUnzDXmKKfAUSmUFNl4idG4FplARN97Tl4J5pAW
+	iAGa+AG+fRPJWWCH7UdVDSTvHsU1eU0eHLn/uXUMzTltNNjbR9CuIw6cQV7c+CeWwuqdN3xETS7
+	Epou867TnOBw8qyTloN/Lju7uqEuCRSd+6CVwe4nOnf+manZ3G/3GCXqxxEs2JUiGxvQJynbipZ
+	F8xkIdQx5NdRIny07yjBUVCY+mbD7p0nsJEMMOwrfZqmmD4BL5W66qvwnsCVM6sEDN2hckvqvXm
+	hql5iY+BHqnOYLWu4oU7SXh+54aLONmqO5dWXO0/zIHYS4PGerLrbpCXsf1wC8zCBwrbRX7ux4E
+	pJ3Xc9Sxy/z/NetEittR5pL1li3E9k3+RK+pwjuPeZOTDjdjbg48PH/wA2GYMlGJMTnY43AisEC
+	NAEZUbgmwdJFMp0B569a+/RcSVLhY5CElN0M+06o2Q3UvbUa21I2I=
+X-Received: by 2002:a17:906:6206:b0:c2e:7da9:6e6 with SMTP id
+ a640c23a62f3a-c31a9b0b9bcmr1021852966b.11.1791887672983; Tue, 13 Oct 2026
+ 03:34:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718152500.2656391-1-demonsingur@gmail.com> <20250718152500.2656391-22-demonsingur@gmail.com>
-In-Reply-To: <20250718152500.2656391-22-demonsingur@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Oct 2026 12:24:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXA83Dm=Mf9MFdGNH+-J6dPrZJGS0R_6hPNgC0x1suBHw@mail.gmail.com>
-X-Gm-Features: AclHuK9EzHrMNGZ9VqEt7mZlsF4wljWQ4a5mjitwSzx9DSYBvOK99D8Xhx8xmLo
-Message-ID: <CAMuHMdXA83Dm=Mf9MFdGNH+-J6dPrZJGS0R_6hPNgC0x1suBHw@mail.gmail.com>
-Subject: Re: [PATCH v7 21/24] arm64: defconfig: disable deprecated MAX96712 driver
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Julien Massot <julien.massot@collabora.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+References: <20261013-gpio-mxc-cleanup-v7-0-c4d769587d3e@nxp.com> <20261013-gpio-mxc-cleanup-v7-3-c4d769587d3e@nxp.com>
+In-Reply-To: <20261013-gpio-mxc-cleanup-v7-3-c4d769587d3e@nxp.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Oct 2026 13:33:55 +0300
+X-Gm-Features: AclHuK_kuegeo_16KZLM0-Cx7ehUYRa3QfvyF2aUqaBfecJPa1rxTPSqFEfgNHU
+Message-ID: <CAHp75Ve6KduhGHyaNDBM9MqjQV4dTzOz-_1o2Zieq0EKyCtiSQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] gpio: mxc: fix wakeup_pads bit operations
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, linux-gpio@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Cosmin,
-
-On Fri, 18 Jul 2025 at 17:33, Cosmin Tanislav <demonsingur@gmail.com> wrote:
-> The staging MAX96712 driver will be removed as its functionality has
-> been moved to the MAX96724 driver which makes use of the Maxim
-> GMSL2/3 deserializer framework.
+On Tue, Oct 13, 2026 at 9:04=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 >
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> gpio_set_wake_irq() can be called concurrently for different pins on
+> the same port. The writer-vs-writer race is the concern: two concurrent
+> gpio_set_wake_irq() calls for different pins on the same port both do
+> a non-atomic read-modify-write on the same wakeup_pads word. The old
+> |=3D and &=3D compile to separate load/modify/store instructions that can
+> interleave, losing one CPU's update.
+>
+> assign_bit() uses an atomic RMW instruction, so concurrent writers to
+> different bits in the same word are safe.
+>
+> The reader side (for_each_set_bit in noirq_suspend, wakeup_pads > 0)
 
-Thanks for your patch, which is now commit e8d5a57e6d0ce827 ("arm64:
-defconfig: disable deprecated MAX96712 driver") in media/master.
+for_each_set_bit()
 
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1300,7 +1300,6 @@ CONFIG_GREYBUS=m
->  CONFIG_GREYBUS_BEAGLEPLAY=m
->  CONFIG_STAGING=y
->  CONFIG_STAGING_MEDIA=y
-> -CONFIG_VIDEO_MAX96712=m
+> runs in noirq context where no concurrent writer can execute, so
+> reader atomicity is not needed.
+>
+> wakeup_pads is a u32, while assign_bit() operates on unsigned long
+> pointers. On 64-bit platforms, this causes an 8-byte read-modify-write
+> on a 4-byte field, corrupting the adjacent is_pad_wakeup. So change
+> wakeup_pads to unsigned long and reorder to avoid wasting words.
+>
+> And fix the enable/disable path unconditionally sets/clears the
+> wakeup_pads bit even when enable_irq_wake()/disable_irq_wake() fails.
+> Only update the bit on success.
 
-As Niklas has already pointed out in a reply to v5, you forgot to enable
-the replacement CONFIG_VIDEO_MAX96724, thus breaking operation.
-
->  CONFIG_VIDEO_MESON_VDEC=m
->  CONFIG_SND_BCM2835=m
->  CONFIG_CHROME_PLATFORMS=y
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+With Best Regards,
+Andy Shevchenko
