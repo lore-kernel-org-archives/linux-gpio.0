@@ -1,183 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23D34EFFA3
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 13:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3C85038E6;
+	Tue, 13 Oct 2026 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791898315; cv=none; b=Pz6IudQwOoOn+hQvAwFl70sYqUxNeDtpyLH/djEnLmtoKXkPdwOv38BRiQimlVmjD+WOIXj7AJMEFVw5ylmfaTlx+c0vU2bvf+2QiQ/Qiau6GF4TxrfNCa/y42+8wGs+D3KFSFK7vF5iH0TPwNSx4JxW2a8jAQd7OAW7b8DiMU4=
+	t=1791898365; cv=none; b=ZzPlFyh+6QYS45Wbr6EnxBJQQaZ8zK6mypi7a4gSvKvcJJaS4T3HdeSPole2ji1+3p1es8e73PsGDQsGjDP2hAWDLWPVNd6yFRxcmGdBKx+95jtnn7HL/YHZ9XWFcrf+M8gxlVUYCnnz1FFVnduIj6NyQU+hgcGGFQf4mcGbXI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791898315; c=relaxed/simple;
-	bh=wFNTQ2nZU4QtHU6goZz2SAYzf9BglrIMy6umwPUf+no=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=JOEf9XdiZIwhoPdOK71ju0UnwtHrh65bFZMXuTT9elY2Pe/MNGBfbsFGzeJEFZcT3zjjNE8gvqLJdSSoz/pE6o70M09dmCs6jUy7XpZ6YclcRtB4MqaLuACxbmuqWlXj+a/CCeZrTMMXrkelC6Jaij2Lmlqe/JFvmPHlVPl8XrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4pBx1VF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791898365; c=relaxed/simple;
+	bh=vQUw9d5mOCImQNTh4NmNa0chp12gTHeAMoIthh/5IVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUkGJ+ui76jgmj6JuPUZL1bFI5KEzYR9Kv44C6DNXyFiCSkMJPoHGDU3gRvQDz8gfYIW/O6NPFdDnfqY+VrxsehG+HR6xZ6XskMtj77KNoJcFU6hU01hqFiW+tfVRMub2asUBJhwmYAn5B1LT351KuzXpcF3kUq/i+44qy17wRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTp2hKrs; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4pBx1VF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E27A1F000FF;
-	Tue, 13 Oct 2026 13:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791898314;
-	bh=RNsq8gmeEDqi+oHIeRIiruP67TLPE+IQSYMJq4kmA7k=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=T4pBx1VFMdv+8qRmtfWSTFTh78uCWXwJjxw5hU6DDG10M6KU3dkHYgKriyQwacEuQ
-	 zYRROdhiG6oyNog1+QDVcOZ7yoZ0CTcePSwNXQ55j9nHh+nKYIazICJHkfO+OfkmvM
-	 gb/wyCR8n1+B10jzMYjOwid3yvIgkJQDTWH+wvXVcPAfJn588QKqo2vMClL6B56BVp
-	 cf3cA2cgLzbno7jHmy6OmdzOvtOspUBkcqSGUJusOixGQ/lgRUMiwG2ke/VzXjtghC
-	 9PQGA+CfxXN28Lnl+8kZnc1MnHP2RF3o9VuJgsDzPUdInp1Z0LjMyomChNZjsIPZRV
-	 YEI5gFF/bQwiQ==
-Message-ID: <sashiko-outbox-169821@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 3/4] gpio: shared: detach the proxy device from
- struct gpio_shared_ref
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261013-gpio-shared-fwnode-lookup-v3-3-4553c1a7d80f@oss.qualcomm.com>
-References: <20261013-gpio-shared-fwnode-lookup-v3-0-4553c1a7d80f@oss.qualcomm.com>
- <20261013-gpio-shared-fwnode-lookup-v3-3-4553c1a7d80f@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 13:31:53 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTp2hKrs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791898364; x=1823434364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vQUw9d5mOCImQNTh4NmNa0chp12gTHeAMoIthh/5IVg=;
+  b=WTp2hKrsfUhHaK0a+eOAKk5AtpB0TW/mgsTApmwPkbQYdbUZpf7flJyI
+   6LgmufgwwCyaYY29FMcwRiPNHFvOQNaEgLCJp4ESASaSk5YtveXFvNmHo
+   reVBnfEBb9haT/oNmsDo8yHIq4Sj/dq2/y5F2vhHfVZws6NcbThBZjiIR
+   sc5GYptU4JSERG9/eSJ/+caSw1/Vo7Tco0L8diw9ojhK/g3HYLDIcE5cX
+   At+pioDtoFMcQOmFk9sV6Niri1vInSZB15CBbaESyHI3vbnVHcOewdKhq
+   LOlQm6bWHIrqwtHn2cjG5Rb85t7VC+e16kD7PMXK/kqOe6SRvUOoEwyap
+   A==;
+X-CSE-ConnectionGUID: NkzaQZMxRmy1bXB7FVFlZQ==
+X-CSE-MsgGUID: YOoQ9LqgTV+2E5+bYIHHwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="630823"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="630823"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:32:43 -0700
+X-CSE-ConnectionGUID: 1hK0v/C/QQ2j2ewLkyInpw==
+X-CSE-MsgGUID: gbpn0AaXRyCVKs4ZOR2rsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1528720"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 06:31:43 -0700
+Date: Tue, 13 Oct 2026 16:31:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] gpiolib: shared: Don't define variable in the
+ middle of the code
+Message-ID: <as4yvFgW9R5HPHX4@ashevche-desk.local>
+References: <20261013094412.945609-1-andriy.shevchenko@linux.intel.com>
+ <d5508a2a-518e-46ee-a821-b6209ef35bfb@kernel.org>
+ <CAMRc=McSCMS0PB69k0tnKMvBRkB1t-4HOhsvGr82yse4FuNtCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McSCMS0PB69k0tnKMvBRkB1t-4HOhsvGr82yse4FuNtCw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
-- [Critical] gpio: shared: race returns wrong GPIO desc on uninitialized pr=
-oxy_fwnode
-- [High] gpio: shared: teardown unconditionally dereferences NULL proxy_dev
-- [High] gpio: shared: NULL pointer evaluation misidentifies virtual chips =
-as proxies
-- [Medium] gpio: shared: memory leak of dynamically allocated proxy devices=
- on error path
---
+On Tue, Oct 13, 2026 at 02:42:59PM +0300, Bartosz Golaszewski wrote:
+> On Tue, 13 Oct 2026 12:04:41 +0200, Jiri Slaby <jirislaby@kernel.org> said:
+> > On 13. 10. 26, 11:44, Andy Shevchenko wrote:
+> >> While the C11 allows us to define variables in the code, we do not
+> >> do this style (see more at [1]). Move the declaration to the top of
+> >> the function.
+> >>
+> >> Link: https://lore.kernel.org/lkml/58fd478f408a34b578ee8d949c5c4b4da4d4f41d.camel@HansenPartnership.com/ [1]
+> >
+> >  From the link, I have just learnt two things:
+> > 1) I am not alone preferring declarations in the middle of blocks (it
+> > has more pros than cons IMO). But again, I spend a lot of time in the
+> > c++ universe.
 
-commit 5669c21b32e82fcb8daf60473942426be156bbb3
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+True, but there is also old style and it's kept like this.
 
-gpio: shared: detach the proxy device from struct gpio_shared_ref
+> I actually do prefer declaring variables at the top of the function. This is
+> a leftover from when this variable was managed with __free().
+> 
+> > 2) the kernel defines "auto" even for < c23. Therefore:
 
-This commit moves the auxiliary device struct out of the shared reference
-structure and dynamically allocates its memory during proxy setup. It also
-renames the field to proxy_dev to better reflect its purpose.
+True, but using auto in the code will make it really hard to follow. I find it
+nice in the macros, though.
 
-> diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
-> index 8c9ac9d933049..a57a2dd5ca00e 100644
-> --- a/drivers/gpio/gpiolib-shared.c
-> +++ b/drivers/gpio/gpiolib-shared.c
-[ ... ]
-> @@ -511,10 +522,11 @@ int gpio_shared_add_proxy_lookup(struct device *con=
-sumer, struct fwnode_handle *
->  	return -ENOENT;
->  }
-> =20
-> -static void gpio_shared_remove_adev(struct auxiliary_device *adev)
-> +static void gpio_shared_remove_proxy_dev(struct gpio_shared_ref *ref)
->  {
-> -	auxiliary_device_delete(adev);
-> -	auxiliary_device_uninit(adev);
-> +	auxiliary_device_delete(ref->proxy_dev);
+> Excuse me, what?! :O
+> 
+> That's the first time I'm learning that we can use C++-like auto in the kernel
+> C code. Thanks for bringing this to my attention!
 
-[Severity: High]
-Does this code crash if ref->proxy_dev is NULL?
+Yeah, with some version we eventually get it standardized.
 
-If a shared GPIO entry has 1 or fewer consumers, gpiochip_setup_shared() sk=
-ips
-creating the proxy device, leaving ref->proxy_dev as NULL. Alternatively, i=
-f a
-GPIO controller probes before gpio_shared_init populates the list, proxy_dev
-remains NULL. Later, when the controller is removed,
-gpio_device_teardown_shared() unconditionally calls
-gpio_shared_remove_proxy_dev().
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Because dev is at offset 0 of struct auxiliary_device, &auxdev->dev evaluat=
-es
-to NULL, and device_del(NULL) dereferences NULL->parent, causing a panic.
 
-> +	auxiliary_device_uninit(ref->proxy_dev);
-> +	ref->proxy_dev =3D NULL;
->  }
-> =20
->  int gpiochip_setup_shared(struct gpio_chip *gc)
-> @@ -527,7 +539,7 @@ int gpiochip_setup_shared(struct gpio_chip *gc)
-> =20
->  	list_for_each_entry(entry, &gpio_shared_list, list) {
->  		list_for_each_entry(ref, &entry->refs, list) {
-> -			if (gdev->dev.parent =3D=3D &ref->adev.dev) {
-> +			if (gdev->dev.parent =3D=3D &ref->proxy_dev->dev) {
-
-[Severity: High]
-Can this evaluate to NULL =3D=3D NULL and incorrectly identify virtual cont=
-rollers
-as shared proxies?
-
-Because ref->proxy_dev is initially NULL before setup, and dev is at offset=
- 0,
-&ref->proxy_dev->dev evaluates to NULL. If a virtual GPIO controller like
-gpio-mockup or gpio-sim probes with no parent device, gdev->dev.parent is a=
-lso
-NULL. This early return would abort the actual shared setup.
-
->  				/*
->  				 * This is a shared GPIO proxy. Mark its
->  				 * descriptor as such and return here.
-[ ... ]
-> @@ -592,7 +604,7 @@ int gpiochip_setup_shared(struct gpio_chip *gc)
->  				 fwnode_get_name(ref->fwnode) ?: "(no fwnode)",
->  				 ref->con_id ?: "(none)");
-> =20
-> -			ret =3D gpio_shared_make_adev(gdev, entry, ref);
-> +			ret =3D gpio_shared_make_proxy_dev(gdev, entry, ref);
->  			if (ret) {
->  				gpiod_free_commit(desc);
->  				return ret;
-
-[Severity: Medium]
-Does this leak memory and IDA identifiers if a subsequent consumer allocati=
-on
-fails?
-
-If gpio_shared_make_proxy_dev() fails, the function immediately returns
-without rolling back the dynamically allocated proxy devices from earlier
-iterations in the loop. Also, in the caller gpiochip_add_data_with_key(),
-a failure here jumps directly to err_remove_irqchip, bypassing
-err_teardown_shared and permanently leaking the auxiliary devices.
-
-[Severity: Critical]
-Does setting the shared flag earlier in this function expose an uninitializ=
-ed
-proxy to concurrent consumers?
-
-Since the provider is already on the gpio_devices list, setting
-GPIOD_FLAG_SHARED before creating the proxy device can allow a concurrent
-gpiod_get() to enter gpio_shared_get_proxy().
-
-Because the proxy and its fwnode are not yet initialized, the consumer will
-read NULL. It then calls gpio_device_find_by_fwnode(NULL). In
-gpio_chip_match_by_fwnode(), the condition:
-    return node && node->secondary =3D=3D fwnode;
-evaluates to node->secondary =3D=3D NULL, incorrectly matching the first GP=
-IO
-controller in the system that has a primary fwnode but no secondary. This
-could return an unrelated GPIO descriptor and cause cross-device hardware
-corruption.
-
->  			}
-> @@ -624,7 +636,7 @@ void gpio_device_teardown_shared(struct gpio_device *=
-gdev)
->  				ref->lookup =3D NULL;
->  			}
-> =20
-> -			gpio_shared_remove_adev(&ref->adev);
-> +			gpio_shared_remove_proxy_dev(ref);
->  		}
->  	}
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013-gpio-share=
-d-fwnode-lookup-v3-0-4553c1a7d80f@oss.qualcomm.com?part=3D3
