@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D33490C0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955D2494831;
 	Tue, 13 Oct 2026 06:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791871633; cv=none; b=GzljVUi56eP6V8mEIDBO1fijtnCYl6mEoFDbSEIi2pyx/X1DeeVrDu4ypIE1h19HSXqeeKO8axFAhSKCzOayZ6LOTT6enyCC7VVS+63CmD7G8E+daKSiH1WcVfwDhbWcZOyU+FUcM/dRl9ofUukmTnayEencqQm3cR8d57qmBHw=
+	t=1791871633; cv=none; b=I/Y8rc7iTe9QoffQ/TsIVAORWm0jgD2jr92Hp4lAo0VDTfFpqrsvfOsodQq6flvS1bXwLfNxwbiwJQs1w5/ZCOWKNQIpRsjsXmsFBsA/LLySmz0n4/rHWDifJ+7cik5KwVnNkcatWTjwEjzZqGIQWQVAM4yD/QTD4A242MmqdvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791871633; c=relaxed/simple;
-	bh=31t7A4ec1Xhu+LA6GuFAzpvU2Mlareg98Anh2jPt2bA=;
+	bh=2K57Ukhh2ZtD8p9cC8o3YJWWaJ88JHj5YgPFCwXr2bY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ld1hNJhE3qVIzMKN8zJpC7Ia3itxgi9jy3ZDk+wrarslZovm/cgnBApvUgl+Yh763mTOmVFcbn4joCbSA1pV39y9BIu0wJia3myUu0PtM7Aoz5tZXym+2el9bMLAi6sh6+/mBcic0a7pNy3V5TuMIAY6EyEONHOIRM/CokkaPLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6Eouc+i; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=DpTuY3zgDfQSZa5VJGwMaU1F3mZO8vHHV4Q/AbUy4j7tDQVLhvcmgtefEGvYVsAv2tvLDpzS3Mh47MKrKg3Y3HdsVG4aqbVEBq0GcygSwL6QK2x/YaP00ZCPUQtAXT+AKntUlm6urZ1DUARJ8qrPnh9H41RaW6ahvXBl1Pdt2Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMbmH9Qv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6Eouc+i"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 017FCC4AF61;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMbmH9Qv"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C71FC2BD05;
 	Tue, 13 Oct 2026 06:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1791871633;
-	bh=31t7A4ec1Xhu+LA6GuFAzpvU2Mlareg98Anh2jPt2bA=;
+	bh=2K57Ukhh2ZtD8p9cC8o3YJWWaJ88JHj5YgPFCwXr2bY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=q6Eouc+iwsDZ1Tc2nl7lv5s+qJsNlZTUeug6JL27u1YBLtf2V1p9FCnawLwQMWrk0
-	 7E1ADsWDNPQXpne352e19gFlBk2j1SaDOqvuUt5AXqjMSLf6u6cKERmXZ2m4IyG37T
-	 RmdVkFCjmE/zYUrouwm6P6VOR7uk+0Gvn8n6FX824ALuSDHLv8MDj/KopfH3oCCaE6
-	 gw9ZkjzVL5MuAcoP+U34wQHxILEMewc6Yef5FsqoIVqpEj9zI03bS92ws0uj9P6abs
-	 8Y2y9aJvfI2zAZshCMLX+INl7YYsNDAcjx+osT8x7+ErNBu0XUGHZgPf/6LTwpA4OM
-	 31XRAy4DRG2rg==
+	b=CMbmH9Qvk2dMe+WS1ZEv5SRxVdgfME5Kew/jBOgMj2yM6H1iiXmHG31scWy4YBBJB
+	 CxDTXZMM20aX5Hnov+d03DMlbMX1X3cAMbYIdh2yuIL3ihpFjV1S9PkEUbD3T8ogtQ
+	 p+KMVy2o01IlTE2pLQXGx07WFqtrrS+Eav95JvYUxdf8NiWX9Nc3LvjtDnoGuFl7ug
+	 M+aYonLAHVE7gfx0rPr8H32D/MnLunNCoR7eFP1TbyP7ILDNzGYqKFnUWZQlptuqL/
+	 7cQyv7wfg2wxHTd+L57KDNgZlEELbLSlROOYs4mrQ9iUeHaueRyKaWWjC+elVrUXZm
+	 c2LZVcarhM6ig==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E471ECC6B03;
-	Tue, 13 Oct 2026 06:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48463CC6B0E;
+	Tue, 13 Oct 2026 06:07:13 +0000 (UTC)
 From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Tue, 13 Oct 2026 09:07:15 +0300
-Subject: [PATCH v3 05/11] dt-bindings: i2c: Add Cortina Systems CS7542 I2C
- controller
+Date: Tue, 13 Oct 2026 09:07:19 +0300
+Subject: [PATCH v3 09/11] ARM: dts: cortina: almondplus: Add reset button
+ and enable I2C
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261013-b4-cs75xx-s2-v3-5-181bb0d23f4c@gmail.com>
+Message-Id: <20261013-b4-cs75xx-s2-v3-9-181bb0d23f4c@gmail.com>
 References: <20261013-b4-cs75xx-s2-v3-0-181bb0d23f4c@gmail.com>
 In-Reply-To: <20261013-b4-cs75xx-s2-v3-0-181bb0d23f4c@gmail.com>
 To: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
@@ -56,11 +56,11 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, 
  Fil Dunsky <filipp.dunsky@gmail.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791871630; l=1834;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791871630; l=1441;
  i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=aHpVqUhA73R0k52i9jHgHCikRVBzEr4JeY2wk8AHGqM=;
- b=BvBe0dp7LRyf33W6ob5ftfJITrc53jAxputWPz0/dY/ALoBZtzZEQUxOq/wfgAN/MfeG9x1HV
- LD5UoLEMK0YCtD8Vn4uTcyElZ1b13DIxPhHA2hE6pk/iZNaWBTp63nP
+ bh=2Dx/b8/3JsG/5KBFCzsSYSUq7LHO1maolj27mYLmFbc=;
+ b=7fbgBpySB6PGY2S7I5unTWm+I9hy3FPsKQdnoUJTTk135b0RLR1eny3evGhNZBvCryWAP6f3C
+ Yoq4l+qZaZJAP3U40xdhxFiZ5jyrIg3PjjGqYIrOQwXBgoL9tAyn/UA
 X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
  pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
 X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
@@ -70,76 +70,62 @@ Reply-To: filipp.dunsky@gmail.com
 
 From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Add a binding for the I2C ("Bi-Wire") controller of the Cortina Systems
-CS75xx SoCs.
+The pinhole button on the back of the Almond+ is connected to GPIO 37
+(bank 1, line 5), active low. The stock firmware uses it for restart
+and factory reset.
+
+Enable the I2C bus, which has the touchscreen controller on it; the
+touchscreen itself will be added together with its driver changes.
 
 Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 ---
- .../bindings/i2c/cortina,cs7542-i2c.yaml           | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ .../boot/dts/cortina/cs7542-securifi-almondplus.dts   | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/cortina,cs7542-i2c.yaml b/Documentation/devicetree/bindings/i2c/cortina,cs7542-i2c.yaml
-new file mode 100644
-index 000000000..f70984bd7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/cortina,cs7542-i2c.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/i2c/cortina,cs7542-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/cortina/cs7542-securifi-almondplus.dts b/arch/arm/boot/dts/cortina/cs7542-securifi-almondplus.dts
+index e2988c687..0619bd754 100644
+--- a/arch/arm/boot/dts/cortina/cs7542-securifi-almondplus.dts
++++ b/arch/arm/boot/dts/cortina/cs7542-securifi-almondplus.dts
+@@ -5,6 +5,9 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
 +
-+title: Cortina Systems CS7542 I2C controller
+ #include "cs7542.dtsi"
+ 
+ / {
+@@ -19,6 +22,16 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	keys {
++		compatible = "gpio-keys";
 +
-+maintainers:
-+  - Fil Dunsky <filipp.dunsky@gmail.com>
++		button-reset {
++			label = "reset";
++			gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++	};
 +
-+description:
-+  The I2C ("Bi-Wire") controller of the Cortina Systems CS75xx (Goldengate
-+  G2) SoCs. It transfers one byte per command and runs from the peripheral
-+  (APB) clock through a 16-bit prescaler.
+ 	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+@@ -50,6 +63,12 @@ &apb_clk {
+ 	clock-frequency = <150000000>;
+ };
+ 
++&i2c {
++	clock-frequency = <400000>;
 +
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
++	status = "okay";
++};
 +
-+properties:
-+  compatible:
-+    const: cortina,cs7542-i2c
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-frequency:
-+    enum: [100000, 400000]
-+    default: 100000
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c@f00700e8 {
-+        compatible = "cortina,cs7542-i2c";
-+        reg = <0xf00700e8 0x28>;
-+        interrupt-parent = <&intc>;
-+        interrupts = <11>;
-+        clocks = <&apb_clk>;
-+        clock-frequency = <400000>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
+ &uart0 {
+ 	status = "okay";
+ };
 
 -- 
 2.53.0
