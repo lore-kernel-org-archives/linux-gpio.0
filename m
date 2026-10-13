@@ -1,169 +1,197 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD46F3CE4B5;
-	Tue, 13 Oct 2026 07:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8411B3E5A1F;
+	Tue, 13 Oct 2026 07:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791875017; cv=none; b=Sg/F6RxB44Q8jOsyMBQ4UgIjTzdkUWqvqo8KxCdGRZMo8P1oYniqGlcms6j4pum97RMp1AwpAHJAUFtRp3WacxxNb640V/3k6eo74vecesNxZpaK0p2JZVcmW5YAphs7jQaFG1Xw3VtvCzxNs5FtNnlvB+DiSaORkALfMFqN+0s=
+	t=1791875424; cv=none; b=cVyu2FJsQZHgaOrR5tvRNK/xIowzfOhOx/8UNc410hWVDyS12wYTJTrZmR8gQ/PSwStNzyZdk2NemkUpsbyNmuVE+udUoG1//AIifX5CqKxiWnKdO3usOHqQIMHjkmfE1731CTLtpNSGe3S1oczLH6hcWPk2ud3sevk4I85d9ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791875017; c=relaxed/simple;
-	bh=+GkHhUFoHl24xkNvl//jHs5d+SUTjNgLF4a17pSlxD0=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=JhTGBiMRE8P7wuo65317kr4fapVgDRiUVusGwU8OikeWxCo1dEQyMt0+tj91CVtmZWUa/fZVWRABqN9YsomZa8tG/LOtfIVoHzBgJdtFn32Ge8ykapKS8Ce9xR44t/p4bMofnRMKvy1VgiO7jcJGqyTOJHl1zPgbec1OWXLaB6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5xzRJtE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791875424; c=relaxed/simple;
+	bh=40UxKO6+x+fC3YVsdc6BFyvhZNRTxQba4nAox1wImeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdhN/N1TJXJPrzcRSuhRBDbmmgzLFitMTDhrt1obbORAAtBOKj0YmslD4ulPArRtsSnXthPQ8JCOPFvrrnWGzIf+HjGNXQFc/yH/Z62xpFKPVxrBV2NTB//VAs0v0XIePtjLxqOBR0WAEGhrBnoNFxrE5RVFPo9EqUcM+3bJurE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PCbX5wNo; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5xzRJtE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 469EB1F000FF;
-	Tue, 13 Oct 2026 07:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791875016;
-	bh=4lqjhpdu+A5kK9msUbydoo48CEzbPiUZcGuZ/DLuQ18=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=n5xzRJtExvmuFIOJ7z/tXRIO84Y5bhw6RyPOLIc9O3RTLXv5DOee7xWa2+mwsTU+N
-	 KYyb6YtbpZkA9i5GIJNtwa+svUk1ZixDSXNdLPHd/RibVd5ajSeIKhkPn+NxifhnJx
-	 QYkFSEiQiZ3m43J5b+uAozln1RMWARTJKNVIl6vfG1hlJPjB0j3TigBGdefESQTtk3
-	 YXYcZ9/mZBXmItqqZrWrvKBT0oTafWJ9ZqC24yXFsTdSavsaNhSCDV2x9K4HwTRkxQ
-	 K0xBkeMUTnprtMzXW/JLm8aqd9q5+LNuUJbbt6FaG9Elvvtjd2AP8o/ajdwu+XIgLq
-	 UiiSCfscFq1YQ==
-Message-ID: <sashiko-outbox-169158@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 07/11] watchdog: Add ARM TWD (MPCore private)
- watchdog driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Fil Dunsky" <filipp.dunsky@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261013-b4-cs75xx-s2-v3-7-181bb0d23f4c@gmail.com>
-References: <20261013-b4-cs75xx-s2-v3-0-181bb0d23f4c@gmail.com>
- <20261013-b4-cs75xx-s2-v3-7-181bb0d23f4c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 07:03:35 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PCbX5wNo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791875422; x=1823411422;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=40UxKO6+x+fC3YVsdc6BFyvhZNRTxQba4nAox1wImeo=;
+  b=PCbX5wNoYcAiylQDo1OfObH0UOGieWz0wsjFNpU0n/rxIMm5J07hCY6i
+   DvLU1Vn92Z2QYzTOhVmP7pmmWS4/519hx9QB3ZiX7Yqyo2gpJ8JRsK9w+
+   sLafMpQjWOsxizkrSx8lbFgcgRTqo1fYi2hs2WRSIhgh3o4njnlHpIVsv
+   QAw08x9RP/frertG1XKuC9sSLM7WKPfeLX4y1DUzB6mH6GciuUMsHve6H
+   /HFAAOT3SMtgIYVHXQhjgLMnE98jzYRU2y1PqwBixYnE6lJ96DnMOZhXN
+   Ev/Yn16NYHDCo5BpPy1bT5y6CsIgarDlXDH0yNd7ZYsg/l6XMGS3U633e
+   w==;
+X-CSE-ConnectionGUID: GJES+LywRNuVl8XaEyDxxA==
+X-CSE-MsgGUID: TAA7S5EWSjyyBcHmzUl3Pw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="488229"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="488229"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 00:10:21 -0700
+X-CSE-ConnectionGUID: 1W9NQU1kQm6uPTwR4G1eDA==
+X-CSE-MsgGUID: yTGA8lL0QdqXc4qqXsqUpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1065334"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 00:10:18 -0700
+Date: Tue, 13 Oct 2026 10:10:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org,
+	Chanho Min <chanho.min@lge.com>
+Subject: Re: [PATCH 3/7] gpio: pl061: convert register access to regmap
+Message-ID: <as3ZUgUkZbqw40e6@ashevche-desk.local>
+References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+ <20261009-cv75-gpio-v1-3-5836bd438423@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261009-cv75-gpio-v1-3-5836bd438423@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] watchdog: acquiring cpus_read_lock() in clock notifier causes dead=
-lock
-- [High] watchdog: arm_twd_wdt: watchdog silently disabled across cpuidle d=
-eep sleep
-- [High] watchdog: arm_twd_wdt: missed ping on concurrent clock rate change
---
+On Fri, Oct 09, 2026 at 06:57:56PM +0800, Long Zhao via B4 Relay wrote:
 
-commit 3df85baea3ae83b30f30fe157567af6f425f2a20
-Author: Fil Dunsky <filipp.dunsky@gmail.com>
+> Replace readb()/writeb() with a MMIO regmap while keeping the existing
+> gpio_chip and girq irqchip. Use a raw spinlock so irq_ack() can run
+> under the irq descriptor lock.
 
-watchdog: Add ARM TWD (MPCore private) watchdog driver
+...
 
-This patch adds a watchdog driver for the ARM Cortex-A9/A5 and ARM11
-MPCore private watchdog. It programs, pings and stops the watchdog on
-all online CPUs and registers a hotplug state to handle CPUs coming
-online and going offline.
+> +static const struct regmap_config pl061_regmap_config = {
+> +	.reg_bits = 16,
+> +	.val_bits = 8,
+> +	.reg_stride = 4,
+> +	.max_register = GPIOIC,
+> +	.volatile_reg = pl061_volatile_reg,
 
-> diff --git a/drivers/watchdog/arm_twd_wdt.c b/drivers/watchdog/arm_twd_wd=
-t.c
-> new file mode 100644
-> index 0000000000000..18875ae24a243
-> --- /dev/null
-> +++ b/drivers/watchdog/arm_twd_wdt.c
-[ ... ]
-> +static void twd_wdt_cpu_ping(void *data)
-> +{
-> +	struct twd_wdt *wdt =3D data;
-> +
-> +	/* In watchdog mode a write to the load register reloads the counter */
-> +	writel(twd_wdt_ticks(wdt, wdt->wdd.timeout), wdt->base + TWD_WDT_LOAD);
-> +}
+But this might be a dead code as long as there is no regcache defined.
+Should we specify the cache type here?
 
-[Severity: High]
-Does this ping routine silently fail to re-enable the watchdog if the CPU
-previously entered a deep cpuidle sleep state?
+> +	.fast_io = true,
 
-If cpuidle cuts power to the CPU's power domain, TWD_WDT_CONTROL might be
-lost. Writing to TWD_WDT_LOAD alone without restoring TWD_WDT_CONTROL could
-leave the watchdog permanently disabled upon wakeup.
+No need, this is provided by struct regmap_bus::regmap_mmio in regmap-mmio.c.
 
-[ ... ]
-> +static int twd_wdt_start(struct watchdog_device *wdd)
-> +{
-> +	struct twd_wdt *wdt =3D watchdog_get_drvdata(wdd);
-> +
-> +	cpus_read_lock();
-> +	on_each_cpu(twd_wdt_cpu_start, wdt, 1);
-> +	wdt->armed =3D true;
-> +	cpus_read_unlock();
-> +
-> +	return 0;
-> +}
+> +	.use_raw_spinlock = true,
+> +};
 
-[Severity: High]
-Could setting wdt->armed =3D true after calling on_each_cpu() cause a race
-condition with a concurrent clock rate change?
+...
 
-Because this function uses a shared reader lock (cpus_read_lock()), it can
-run concurrently with twd_wdt_clk_notify(). If the clock rate increases just
-as the watchdog is started, twd_wdt_clk_notify() might see wdt->armed =3D=
-=3D false
-and skip resynchronizing the ping, resulting in the hardware running with a
-timeout calculated for the old, slower clock rate.
+> static int pl061_direction_output(struct gpio_chip *gc, unsigned offset,
 
-[ ... ]
-> +static int twd_wdt_clk_notify(struct notifier_block *nb, unsigned long e=
-vent,
-> +			      void *data)
-> +{
-> +	struct twd_wdt *wdt =3D container_of(nb, struct twd_wdt, clk_nb);
-> +	struct clk_notifier_data *cnd =3D data;
-> +	unsigned long rate;
-[ ... ]
-> +	cpus_read_lock();
-> +	wdt->rate =3D rate;
-> +	if (wdt->armed)
-> +		on_each_cpu(twd_wdt_cpu_ping, wdt, 1);
-> +	cpus_read_unlock();
-> +
-> +	return NOTIFY_OK;
-> +}
+>  {
+>  	struct pl061 *pl061 = gpiochip_get_data(gc);
+>  	unsigned long flags;
+> -	unsigned char gpiodir;
+> +	unsigned int mask = BIT(offset);
+>  
+>  	raw_spin_lock_irqsave(&pl061->lock, flags);
+> -	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+> -	gpiodir = readb(pl061->base + GPIODIR);
+> -	gpiodir |= BIT(offset);
+> -	writeb(gpiodir, pl061->base + GPIODIR);
+> +	regmap_write(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
+> +		     !!value << offset);
 
-[Severity: High]
-Can acquiring cpus_read_lock() here cause an AB-BA deadlock with CPU
-hotplug?
+regmap_assign_bits()
 
-The clock framework's prepare_lock is already held when this notifier is
-called. The CPU hotplug path acquires the global hotplug lock for writing
-via cpus_write_lock() and invokes callbacks, including cpuhp_cpufreq_online=
-().
+> +	regmap_set_bits(pl061->regmap, GPIODIR, mask);
+>  
+>  	/*
+>  	 * gpio value is set again, because pl061 doesn't allow to set value of
+>  	 * a gpio pin before configuring it in OUT mode.
+>  	 */
+> -	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+> +	regmap_write(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
+> +		     !!value << offset);
 
-Cpufreq drivers update CPU frequencies during hotplug by calling
-clk_set_rate(), which acquires the clock framework's prepare_lock mutex,
-establishing a locking order of cpu_hotplug_lock -> prepare_lock.
+Ditto.
 
-Acquiring cpus_read_lock() here creates an inverted lock order of
-prepare_lock -> cpu_hotplug_lock.
+I already pointed out twice to this...
 
-[ ... ]
-> +static int twd_wdt_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct twd_wdt *wdt;
-> +	struct clk *clk;
-> +	int ret;
-[ ... ]
-> +	ret =3D cpuhp_state_add_instance(twd_wdt_hp_state, &wdt->node);
-> +	if (ret)
-> +		return ret;
+>  	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+>  
+>  	return 0;
+>  }
 
-[Severity: High]
-Is a call to cpu_pm_register_notifier() missing here to ensure the watchdog
-context is saved and restored across deep CPU idle states?
+...
 
-Without this, the watchdog could remain disabled if TWD hardware loses its
-state during deep sleep.
+>  static int pl061_set_value(struct gpio_chip *gc, unsigned int offset, int value)
+>  {
+>  	struct pl061 *pl061 = gpiochip_get_data(gc);
+>  
+> -	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+> +	regmap_write(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
+> +		     !!value << offset);
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013-b4-cs75xx-=
-s2-v3-0-181bb0d23f4c@gmail.com?part=3D7
+Ditto.
+
+>  	return 0;
+>  }
+
+...
+
+> static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+
+>  	struct pl061 *pl061 = gpiochip_get_data(gc);
+>  	int offset = irqd_to_hwirq(d);
+>  	unsigned long flags;
+> -	u8 gpiois, gpioibe, gpioiev;
+> -	u8 bit = BIT(offset);
+> +	unsigned int gpiois = 0, gpioibe = 0, gpioiev = 0;
+> +	unsigned int bit = BIT(offset);
+
+Since these are long lines, try to move them up to follow the reversed xmas
+tree order.
+
+...
+
+>  static void pl061_irq_handler(struct irq_desc *desc)
+>  {
+>  	unsigned long pending;
+> +	unsigned int mis = 0;
+>  	int offset;
+>  	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+>  	struct pl061 *pl061 = gpiochip_get_data(gc);
+
+>  	chained_irq_enter(irqchip, desc);
+>  
+> -	pending = readb(pl061->base + GPIOMIS);
+> -	if (pending) {
+
+This is a dup check, please, add a precursor patch that just drops this
+redundant 'if (pending) { }' check.
+
+> +	regmap_read(pl061->regmap, GPIOMIS, &mis);
+> +	if (mis) {
+> +		pending = mis;
+>  		for_each_set_bit(offset, &pending, PL061_GPIO_NR)
+>  			generic_handle_domain_irq(gc->irq.domain,
+>  						  offset);
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
