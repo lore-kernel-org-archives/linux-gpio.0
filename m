@@ -1,228 +1,151 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC98453FD34
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 15:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791905918; cv=pass; b=LmD3JgDGZCcfJnCJNH7fFKQMIpmipnRZWocRnWX+FJOyVksehy40yYlxtRJ4zLYHF9OrcyB7hV5QQqrsq3VVANmwqxWiqwoc+Ai1V/kNQU9Ljvhph/IHjR+psaJmvsRolgI38ggck6UQan2KG9QI2QvovaWmzCqdR5sXFBOdy6E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791905918; c=relaxed/simple;
-	bh=MmxvBPYPduVdw8BoM1SgfvslPMhQ/xEwnTrDO4SQWvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OnwLODMikOiiQkTiayUI2HPZsjrhWTMNGtYc82Ph2lm38qedYv1chf8ZpYqiWw3WITBri5Tp8IMOwUt8V+eF7KeV93aVP7mcHoAhDro+KPSVAN5b8OUlcky1b+tC5IKt9nqXEd0xwHZckfWfQCwCoKwOaZGdPwF/Qa4S/Dz3qw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qUKyraRL; arc=pass smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC44522690;
+	Tue, 13 Oct 2026 15:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791905925; cv=none; b=gAWrJjdJO0Lo5pZ1ESZMMytH4/VOH/aGokAE0AxqSGS1I1Azi9r5M7gAfH2tfwUK/f7VWpc7KMGWbXLk443a+gGdgfdFmcEXAe15zmBM78h+OLytvCh883tVyta10E5ZtVdSFGt0TREuTQwmQV9LzV9C+JAXB/YQHWlCGAeab+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791905925; c=relaxed/simple;
+	bh=CnWWEy/ddbqgJgBpiyf6uiuVBIV4KpQJhpSdyAUwKRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGJuldVkZ9fYubulXhXpwqN5fQJaeUnyedbJP58q52FGpRAS8GZ/K97e7p7XFZeN8KxOYMTjAiQvRTSIQZOc+bCX8puBJlYKaXMCAb9Y4Kf1HNLJTBxipgSJusYFXWzElrDAbdgvlrPbdH3v8nsbt/qjdVJTcXTrMNk3ygEpDMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ABw4N1PW; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qUKyraRL"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-88bd2b44f3aso1468593b3a.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 08:38:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791905914; cv=none;
-        d=google.com; s=arc-20260327;
-        b=kqWen+bk8ZmQyq0ESPuAgASU5/IiKjHVmRKw+7cOykMTSQ3x2lZ54IX1OsjpaGVuhX
-         Bpyfr4z6hqPmpjzJxOo+f7o+EoVE+7OGsFOOpaSpH//GwY818XVWyqKjUY0doh33maZY
-         uwFYwLov+uOAQBhtviW8oF/NuKXfv9lVQ3lt5RZvDyTKloAM/tNCcIQcGOvlbz2kZMOq
-         u386iCzAVla/z+1q+CaB68QJvY1njfYa27hnT4rIyxgJ2kdeVyq3qKuv6Dk/lYh925HV
-         VX297sB1iOUnwcv9v2gL0fSBWp1jTZtfn9oRlw1Ju2jgR3ntj01iSIb+np6jV/LF1e4K
-         Q8oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bNxkY3u/s5WVXvWEK0xK5d2WbLkBdvB2WEBpPBk1aiw=;
-        fh=9ovdg4Fdcs5mQM/VccV33FRJmStOLyqnxwhwrw3xLx4=;
-        b=IjJW7/duL8AlrOgiXG3SxYngW2eUAFV2aP/XbrU633IwdsbyvYG5/ixSuowHNwm20f
-         5Cvov7WOJDq79yA5SrjlIQfD/7GL8UBjPYoDsqhKDcdPiyw8mzu4tEp7oDywk6w9DlcA
-         smETlkFEXooRxZQBqaFxvDUG3c1FbqK60dsleGYu3F/54xfn3qvBclEqSxHVm1IB0rip
-         eXBadqbW1pJVLuGCKBUBdupz9vapaNtqQyh0hr5KLTX3C2UiTxz3+URzGDK5JmpkQLiK
-         7eO802bAKsM+NeD6OGGvXT8dGEdsw0j3VuDXY8KW2+BV1nle7ebcWc2193DPyca/gQg+
-         WNWw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791905914; x=1792510714; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bNxkY3u/s5WVXvWEK0xK5d2WbLkBdvB2WEBpPBk1aiw=;
-        b=qUKyraRLcnMTeW7uOXDgHtdhRLQzZbtDruJlc5VIjft1eOZdsQwImWfNIRehkcbDuR
-         +JgFZVYeanFVXnyWxeT4A7LR8NOu0tzEIUWy2nWQMUAoyjVzaJu8S0R3Y1FB9PRBA0Sq
-         WFn/EcRNbp7jQTyv1iAEXktcWz8YKQyZIyMpIrXfBqUdyV675bArAmSHmI6p115TPvde
-         VL7wkEDz9pY7gEP1PgO0scGyAxO7D5/t7LBtx062tWOYnLLGijr0tImZR5bZD5nFa35M
-         BsXvDM+yJgb/VQPuVmBzcB9GZLFPr65roNiBxPATG49pMnZaA9MboblfIK4UNe/zhH7x
-         5fTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791905914; x=1792510714;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bNxkY3u/s5WVXvWEK0xK5d2WbLkBdvB2WEBpPBk1aiw=;
-        b=zfrGOgBhMVHyG+rCz8Sgu7ri2Ps/OG9rBSJFTYvdpYEy+3y4Y+/ZZydSZSPJWM5Brr
-         vwQdW5MaAoc+c1xr2qJtWUnQmdL8MIHeLd3fNLHvO3xowhOlpLDAQNKRBAd7jYdwoNYR
-         cYaM7AQl2XEymNrObQZITUaP28j1+M7+B4fp3eEwaqaMtx7m5iApCd4cy6JLcQuEBMsF
-         L4oDi1aAZswgNVOKTl71B8WPqV0PjVFTvbOWMmyvz5EvV6J6g7iTkxgvIX0cqpwT3gJK
-         +HbBhZwl/OUzBLOjsp35PaYrfVgHK4aGjBD5VcqQgEYGgo+0DBfBGPH6N5DLrVk840fU
-         HBiw==
-X-Forwarded-Encrypted: i=1; AKwUvBxMWXaHQRC4/cxfkUU2d7Mguu/MhSR4xGVPN+JyPsYlkheMT/iMtBE3pR6Ebk7EEZaZSO60zVOBQCzu@vger.kernel.org
-X-Gm-Message-State: AFq9FYL8ShO2AGXNIazuS0bIereQJvfojhcig0qOJHMPP5P5QRod15lT
-	XvgO3FXCjyIgd1Iz8eRnSKA6fpSeI6xZG88E76wT59HoFt1Dp+aUMooZAetScoHVHANJRD7fwEV
-	mPcxFAm5kdpCUebTbJVAN/vFmWJeZoWw=
-X-Gm-Gg: AYBFou1Ja6Fxb0tqegUc22BtykQOINozCaHYtO5mAXgefyV91+EzJueVk63xsfspz70
-	MBV7on+f/uu+HhW09EAP5pRivru2Svy5sk3TreOzR1zozPAgmfk3PgUlSD5iux+qQnLiCkKYw/U
-	uAMxtdp4Ov7g6LtTWv4W0kz1rPUYYxS7eCcX4gDJFcE7FJ4uIdh4rGZANeNqPGvtxGDLoTR4/5M
-	b/m7n5gpn1NhhhinKwuLdCqtcnZyvcH7dNRZ6PSQp77BWPJheuD6+GJYkLGale7uCKsB6SzvtEA
-	FeThDjsPk/1O73Th1j8Z9T3GIVcuIehdrF/m2cPK+dQoKdi5gijdjuS6wtghGNlwvFPIB3Y=
-X-Received: by 2002:a05:6a00:bb8d:b0:878:34d7:6994 with SMTP id
- d2e1a72fcca58-897c73f479amr10672060b3a.36.1791905914108; Tue, 13 Oct 2026
- 08:38:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ABw4N1PW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791905924; x=1823441924;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CnWWEy/ddbqgJgBpiyf6uiuVBIV4KpQJhpSdyAUwKRI=;
+  b=ABw4N1PW2ttBxGfT4Th3wONADz2jGNzaS3qT/TSZgjhfbzG2jzXlwdkr
+   ZFyF5/wjsSCWMzTK6+3rtz28hx3uTZrlNTKZNAGMxKvfOroIiUu4XGj55
+   jmhZgVy3MCylBqhrDRfMjLjvhg1KSZM3jc7DAOsQEUJx5tblLTjqnMHi4
+   Eqk3MGJC6xynfsdopOU5hWqDCulsuwjNlXTqj+IMNJgvM+uj9wRoaNPed
+   XqezrCAF0NvhZ4o99xVbdImslGdSXsZLq3XJB1T5YSDkp+hvov1p0D+9e
+   ty1uqRgVdsixF6GAzGWlvugO22hiaDJPRzw4vODbtVcyduc9OEOXeT0mj
+   g==;
+X-CSE-ConnectionGUID: 4KTNyfbkS7CWFso0pI68Ig==
+X-CSE-MsgGUID: MF5v0vJLRau6+Wh3pPR/3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="646646"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="646646"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 08:38:43 -0700
+X-CSE-ConnectionGUID: 2RemoOKoSWiO6bLMBLSNCQ==
+X-CSE-MsgGUID: dmxwydZrQOyan6SyCnVJsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1515449"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 08:38:41 -0700
+Date: Tue, 13 Oct 2026 18:38:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/6] gpiolib: free the label of lines released after
+ their chip was removed
+Message-ID: <as5QfrAaQQO_q0dr@ashevche-desk.local>
+References: <20261012-gpiolib-chip-removal-v1-0-aambrozewicz@nvidia.com>
+ <20261012-gpiolib-chip-removal-v1-2-aambrozewicz@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261012100816.331033-1-pmazzini@gmail.com> <20261012100816.331033-5-pmazzini@gmail.com>
- <sashiko-outbox-167955@kernel.org>
-In-Reply-To: <sashiko-outbox-167955@kernel.org>
-From: Pablo Mazzini <pmazzini@gmail.com>
-Date: Tue, 13 Oct 2026 16:38:08 +0100
-X-Gm-Features: AclHuK-szTY3pRI5JWHXFDmrUzH8TEpBh3ImxWAXWDJL8aPlx3tl18XJIvM_QJ8
-Message-ID: <CAAxh=jthj+HhtfuHpxBiDhG09dTiojg_zcFReczeHojnRzzyQg@mail.gmail.com>
-Subject: Re: [PATCH v4 04/11] pinctrl: sunxi: add Allwinner B288 pin
- controller driver
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-sunxi@lists.linux.dev, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261012-gpiolib-chip-removal-v1-2-aambrozewicz@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The first two come from the IRQ bank numbering in
-prepare_function_table(), which this patch depends on [1]. Andre plans
-to send a fix after -rc1 [2].
+On Mon, Oct 12, 2026 at 04:49:56PM +0300, Adrian Ambrozewicz wrote:
+> gpiod_free_commit() only drops the consumer label while the chip is
+> still there:
+> 
+> 	if (guard.gc && test_bit(GPIOD_FLAG_REQUESTED, &flags)) {
+> 		...
+> 		desc_set_label(desc, NULL);
+> 
+> A line that is still requested when gpiochip_remove() runs, for instance
+> by a character device line request that user space keeps open, is
+> released only afterwards, when gdev->chip is already NULL. Its label is
+> then never freed, as gpiodev_release() frees the descriptor array but
+> not the labels, and kmemleak reports one object per such line:
+> 
+>   unreferenced object 0xff110000057b63c0 (size 32):
+>     comm "gpio-hold", pid 111, jiffies 4294696675
+>     hex dump (first 32 bytes):
+>       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>       3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ?...............
+>     backtrace (crc 7ff222d9):
+>       __kmalloc_noprof+0x4ee/0x670
+>       desc_set_label+0x32/0x110
+>       gpiod_request_commit+0x1dd/0x320
+>       gpiod_request+0x28/0x100
+>       linereq_create+0x61a/0xce0
+>       gpio_ioctl+0x49c/0xc80
+>       __x64_sys_ioctl+0x134/0x1c0
+>       do_syscall_64+0x109/0x5d0
+>       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Commit 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
+> cleared the label unconditionally; it moved under the chip check with
+> the removal of gpio_lock. Clear it when the chip is gone as well. The
+> ->free() callback and the line state notification still need the chip
+> and stay where they are.
+> 
+> The label is now often freed just before the last reference to the GPIO
+> device goes away, which depends on gpiodev_release() waiting for pending
+> label frees (previous patch).
+> 
+> Reproduced with gpio-sim: request a line through the character device,
+> set the chip's configfs "live" attribute to 0 while the request is open,
+> then close it. Without this change kmemleak reports between 15 and 30
+> such objects after 30 cycles; with it, none after 100.
 
-The third is fixed by "pinctrl: sunxi: dt: do not accumulate npins
-across probe attempts" [3], which Linus has applied.
+...
 
-[1] https://lore.kernel.org/linux-sunxi/20260929203634.32998-1-pmazzini@gma=
-il.com/
-[2] https://lore.kernel.org/r/20261004225724.0b821e9c@ryzen.lan
-[3] https://lore.kernel.org/r/20261007060107.62221-1-pmazzini@gmail.com
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2689,6 +2689,9 @@ void gpiod_free_commit(struct gpio_desc *desc)
+>  		WRITE_ONCE(desc->debounce_period_us, 0);
+>  #endif
+>  		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_RELEASED);
+> +	} else if (!guard.gc) {
+> +		/* The chip is gone but the consumer label is still ours. */
+> +		desc_set_label(desc, NULL);
+>  	}
+>  }
 
-On Mon, Oct 12, 2026 at 11:29=E2=80=AFAM <sashiko-bot@kernel.org> wrote:
->
-> Thank you for your contribution! Sashiko AI review found 3 potential issu=
-e(s) to consider:
-> - [High] pinctrl: sunxi: out-of-bounds write in irq_array when Bank 0 has=
- 0 pins
-> - [High] pinctrl: sunxi: Missing irq_bank_map breaks B288 IRQ offsets and=
- domain size
-> - [High] pinctrl: sunxi: probe deferral crash due to npins accumulation
-> --
->
-> commit 6057aa70ee139132fe0176fd6bf4d482c87bdc64
-> Author: Pablo Mazzini <pmazzini@gmail.com>
->
-> pinctrl: sunxi: add Allwinner B288 pin controller driver
->
-> This commit adds a new pin controller driver for the Allwinner B288 SoC,
-> supporting 80 pins across ports B, C, D, F, and G. It uses DT-provided
-> mux values and specifies 4 banks of external interrupts.
->
-> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c b/drivers/pinct=
-rl/sunxi/pinctrl-sun8i-b288.c
-> > new file mode 100644
-> > index 0000000000000..f973c2b3f2eba
-> > --- /dev/null
-> > +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c
-> > @@ -0,0 +1,49 @@
-> [ ... ]
-> > +/* PH0 exists only on the BSP's FPGA platform and is omitted. */
-> > +static const u8 b288_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =3D
-> > +/*     PA  PB  PC  PD  PE  PF  PG */
-> > +     {  0, 17, 15, 29,  0,  7, 12 };
->
-> [Severity: High]
-> Since Bank 0 (PA) has 0 pins, does this cause an out-of-bounds write in
-> the core sunxi pinctrl driver?
->
-> In drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c:prepare_function_table(),
-> last_bank and irq_bank are initialized to 0. When processing PB (bank 1),
-> the condition (bank > last_bank) evaluates to true (1 > 0), causing irq_b=
-ank
-> to erroneously increment to 1.
->
-> This shifts the logical IRQ bank indices for PB, PD, PF, and PG to
-> 1, 2, 3, and 4 instead of 0, 1, 2, and 3.
->
-> Later, sunxi_pinctrl_build_state() configures the interrupts:
->
->     int irqnum =3D func->irqnum + func->irqbank * IRQ_PER_BANK;
->     pctl->irq_array[irqnum] =3D pin->pin.number;
->
-> For PG (irqbank 4), irqnum will be between 128 and 139. However, irq_arra=
-y
-> is allocated for exactly 4 banks (128 elements) in
-> sunxi_pinctrl_init_with_flags(), which would result in an out-of-bounds
-> write past the end of the array.
->
-> > +
-> > +static const u8 b288_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =3D
-> > +/*     PA  PB  PC  PD  PE  PF  PG */
-> > +     {  0,  6,  0,  6,  0,  6,  6 };
-> > +
-> > +static struct sunxi_pinctrl_desc b288_pinctrl_data =3D {
-> > +     .irq_banks      =3D 4,
-> > +};
->
-> [Severity: High]
-> Does omitting the irq_bank_map array break external interrupts?
->
-> Without an irq_bank_map, drivers/pinctrl/sunxi/pinctrl-sunxi.h:
-> sunxi_irq_hw_bank_num() returns the sequential logical irqbank indices.
->
-> Because the irq_bank offset is already shifted to 1, 2, 3, and 4, these
-> logical indices will be used as physical hardware bank offsets.
->
-> This incorrectly maps PD, PF, and PG to hardware banks 2, 3, and 4 instea=
-d
-> of their actual hardware indices 3, 5, and 6.
->
-> Additionally, because PG receives irqbank 4, its out_hwirq is calculated
-> as 4 * 32 + irqnum (>=3D 128), which exceeds the bounds of the 128-entry
-> IRQ domain created during probe.
->
-> > +
-> > +static int b288_pinctrl_probe(struct platform_device *pdev)
-> > +{
-> > +     return sunxi_pinctrl_dt_table_init(pdev, b288_nr_bank_pins,
-> > +                                        b288_irq_bank_muxes,
-> > +                                        &b288_pinctrl_data, 0);
-> > +}
->
-> [Severity: High]
-> Could this lead to a kernel panic during a probe deferral?
->
-> The driver passes the static b288_pinctrl_data descriptor to
-> sunxi_pinctrl_dt_table_init(), which calls init_pins_table() and
-> accumulates the total pin count:
->
->     desc->npins +=3D pins_per_bank[i];
->
-> If the driver probe defers, desc->npins will double on the next attempt
-> (from 80 to 160) because the static descriptor is reused.
->
-> The pins array is then allocated for 160 elements, but only the first 80
-> will have their .pin.name populated.
->
-> During DT parsing in fill_pin_function(), if an unrecognized pin name is
-> encountered, the search loops over the oversized array and evaluates:
->
->     if (!strcmp(pins[pin].pin.name, name))
->         break;
->
-> Iterating past index 79 would call strcmp() with a NULL pointer for
-> .pin.name, causing a panic.
->
-> --
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012100816.33=
-1033-1-pmazzini@gmail.com?part=3D4
+I have two questions here.
+
+1/ Do we still need to notify user space in the case of the chip gone?
+2/ Can we write the above as
+
+	if (guard.gc && !test_bit(GPIOD_FLAG_REQUESTED, &flags))
+		return;
+
+	desc_set_label(desc, NULL);
+
+	if (guard_gc) {
+		...current code...
+	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
