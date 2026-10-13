@@ -1,102 +1,141 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFE30C606;
-	Tue, 13 Oct 2026 14:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2049A3F0A9B;
+	Tue, 13 Oct 2026 14:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791900742; cv=none; b=i8GuOBXbXsekufnD1s8KMTZBAHzFzP16liFcvzKFs0SI+peSo2txNPrEsvqkBkAaxCwKO5t1IZ+i9JmwXX85Lt+HFvyL0Biau/LkPvTqOVmX1kx/x8QqXAocoVwOtQX8nZjnTOKA+xx/RLsrjBY8EcuyWlbizWIA3NAdVuZpSn0=
+	t=1791901443; cv=none; b=lEsp7M7aQsJkLp9+IeJ0M3oAnAOkwZj78QjqlM1On6DIqV7jdU23mXpDfDp2tJqaM90mgQ9uuYAcwEyuU3afeA400MAFmUguvHb5hPc73uPrhGpOWmLHeLNBuftj0Hkn2JCvjVJueyR+LabwZ/+rA1ijnBPhq1TFMnkrbBxQajs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791900742; c=relaxed/simple;
-	bh=9hCI+KLlF44LjYuZ2V43HBQqMnF64LjM3PfDokYjQ0U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=iBHLqsVb24jJkzpw7EycDMpsMGdwSJGSIKffFR0qQXJAXIzqVhWRIIk7ngLd+368KFvZyKhJRy8F5WejPdNDIFRl31Zh84SbJrNTGdaYJM0uNA+9UX575O3gZ2m9WIg43qiBCfUOP6ga0Gx3WU1C5sTdKfoL30uuLL1WEg9UzlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NxFy8Uyl; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1791901443; c=relaxed/simple;
+	bh=whUjOSqtfOK9pxOtHaz50htccwvvfbQtHEljKwrDPWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bBeDsvXod8ELyStGY/7FFyytYZQKnv1REgBp9Pj2vjjxoijUzsHbV/YHjz58Kj5/7rhi1CXuRcyvEPs9qvgynmTMWfFiDm9zReX1+5phGIjpACq/erFdz9pyPy30ZknVeiQqsHA/fnUu67UCLJnBekl89UnjhWrwS6kdkKyApNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=pXbS3sdN; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NxFy8Uyl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=9hCI+KLlF44LjYuZ2V43HBQqMnF64LjM3PfDokYjQ0U=; b=N
-	xFy8UylF7Z9Eh+XhQPDIDNqOP9M2CP8vbAIYSs+teya2vK/Tk7boOafHkRC4Zzow
-	QOFFPvFHhzQtJI1b07yhfki8bM5VRUBNhl3LbUT9Z/nbdyogVabgth9C5K5NwCbA
-	m/RWbf+cKJT/WKJmrEW6hB6Sz5ar4WDPGAWODdrgwg=
-Date: Tue, 13 Oct 2026 22:10:41 +0800 (CST)
-From: zl020895  <zl020895@163.com>
-To: "Bartosz Golaszewski" <brgl@kernel.org>
-Cc: longzhao@ambarella.com,
-	"Long Zhao via B4 Relay" <devnull+longzhao.ambarella.com@kernel.org>,
-	"Linus Walleij" <linusw@kernel.org>,
-	"Michael Walle" <mwalle@kernel.org>,
-	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
-	"Conor Dooley" <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Conor Dooley" <conor.dooley@microchip.com>,
-	"Chanho Min" <chanho.min@lge.com>, linux-gpio@vger.kernel.org
-Subject: Re:Re: [PATCH 0/7] gpio: add Ambarella CV75 PL061 support
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
-References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
- <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
-X-NTES-SC: AL_Qu2SA/Wbv04v5ySfZekdnUoTj+Y/XMK0uvwk1YdVc84FkSfp3wMjT35qOEXs9/qoFCWqvTu+SwFvxuB9c7JXbkDZ1ziFg3nW8RhAFZ01ug==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="pXbS3sdN"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3FC0F169E;
+	Tue, 13 Oct 2026 07:23:56 -0700 (PDT)
+Received: from e142021.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F5F23F7B4;
+	Tue, 13 Oct 2026 07:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791901439; bh=whUjOSqtfOK9pxOtHaz50htccwvvfbQtHEljKwrDPWo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pXbS3sdNnJAfqEGVkOA7dZb/w7Lrk7RzRAv0U4smbTPNTcOJCSE8VABrDftx8j6KX
+	 pdzzXYC4OsY/fxxVl36ImPa66t4rWupakqeM5Qup7nd8pa7Z37XlcuFOJNXsgblbNP
+	 bQFXLKy57px6ktdEHaF1lir8YqLXXahxA34AdV0I=
+From: Andre Przywara <andre.przywara@arm.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Enzo Adriano <enzo.adriano.code@gmail.com>,
+	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFT] pinctrl: sunxi: Fix A733 withstand programming
+Date: Tue, 13 Oct 2026 16:23:51 +0200
+Message-ID: <20261013142351.771229-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <73c4ceaf.9c2f.1a13599e8ca.Coremail.zl020895@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:gygvCgD3fzvhO85qYSchAA--.60W
-X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7gFVxmrOO+FTVgAA3H
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-SGkgQmFydCwKClllcy4gVGhpcyBpcyBlZmZlY3RpdmVseSBhIHYxMCBvZiB0aGUgR1BJTyBwYXRj
-aGVzIGZyb20gdGhlIGNvbWJpbmVkIENWNzUgc2VyaWVzLiBJIHNwbGl0IHRoZW0gb3V0IGFuZCBy
-ZXN0YXJ0ZWQgdGhlIG51bWJlcmluZyBhdCB2MSBiZWNhdXNlIHNvbWUgbWFpbnRhaW5lcnMgcHJl
-ZmVycmVkIHNlcGFyYXRlIHNlcmllcywgc28gSSBhbSB0cnlpbmcgdGhhdC4KCkJlc3QgcmVnYXJk
-cywKTG9uZyBaaGFvCgpBdCAyMDI2LTEwLTEzIDIwOjU4OjA4LCAiQmFydG9zeiBHb2xhc3pld3Nr
-aSIgPGJyZ2xAa2VybmVsLm9yZz4gd3JvdGU6Cj5PbiBGcmksIDkgT2N0IDIwMjYgMTI6NTc6NTMg
-KzAyMDAsIExvbmcgWmhhbyB2aWEgQjQgUmVsYXkKPjxkZXZudWxsK2xvbmd6aGFvLmFtYmFyZWxs
-YS5jb21Aa2VybmVsLm9yZz4gc2FpZDoKPj4gU3BsaXQgZnJvbSB0aGUgY29tYmluZWQgQ1Y3NSBi
-cmluZy11cCBzZXJpZXMuIFRoZXNlIHBhdGNoZXMgY29udmVydAo+PiB0aGUgQVJNIFBMMDYxIGRh
-dGEgcGF0aCB0byByZWdtYXAsIHRoZW4gYWRkIHRoZSBDVjc1IGxheW91dC4KPj4KPj4gUGxlYXNl
-IHRha2UgdGhpcyBzZXJpZXMgdGhyb3VnaCB0aGUgR1BJTyB0cmVlLiBUaGUgcXVpcmssIHRoZSBQ
-TDA2MQo+PiBjb252ZXJzaW9uIGFuZCB0aGUgQW1iYXJlbGxhIGxheW91dCBiZWxvbmcgdG9nZXRo
-ZXIuCj4+Cj4+IFRoZSBHUElPIGRyaXZlciBkb2VzIG5vdCBkZXBlbmQgb24gQVJDSF9BTUJBUkVM
-TEEuIFRoZSBiaW5kaW5nIHVzZXMKPj4gdGhlIGFtYmFyZWxsYSB2ZW5kb3IgcHJlZml4LCB3aGlj
-aCBpcyBhZGRlZCBieSB0aGUgU29DIHNlcmllcyBhbmQgaXMKPj4gbm90IGluIG1haW5saW5lIHll
-dDsgZHRfYmluZGluZ19jaGVjayBuZWVkcyB0aGF0IHByZWZpeC4KPj4KPj4gR1BJTyBkYXRhIHBh
-dGggdXNlcyBncGlvLXJlZ21hcCB3aXRoIHR3byBsYXlvdXRzIChBUk0gUHJpbWVDZWxsIGFuZAo+
-PiBBbWJhcmVsbGEpLiBBUk0gUEwwNjEgc2V0cyBHUElPX1JFR01BUF9RVUlSS19TRVRfQUZURVJf
-RElSLiBJUlEgc3RheXMKPj4gYSBjdXN0b20gUEwwNjEgaXJxY2hpcC4gVGhlIGxpbmVhciBkb21h
-aW4gaXMgY3JlYXRlZCB3aXRoIHRoZSBQTDA2MQo+PiBwcml2YXRlIGRhdGEgYW5kIGF0dGFjaGVk
-IGJ5IGdwaW8tcmVnbWFwLiByZWdtYXAtaXJxIGlzIG5vdCB1c2VkLgo+Pgo+PiBUZXN0ZWQgb24g
-dGhlIENWNzUgRVZLLiBUaGUgYm9hcmQgYm9vdHMuIGdwaW8taGFtbWVyIHRvZ2dsZXMgZ3Bpb2No
-aXAwIGxpbmUgMjYgdGVuIHRpbWVzLCBhbmQgZ3Bpby1ldmVudC1tb24gb24gbGluZSAyNyByZWNv
-cmRzIHRlbiBhbHRlcm5hdGluZyByaXNpbmcgYW5kIGZhbGxpbmcgZWRnZXMuCj4+Cj4+IENoYW5n
-ZXMgc2luY2UgdGhlIHBhdGNoZXMgaW4gdGhlIGNvbWJpbmVkIHY5Ogo+PiAtIGR0LWJpbmRpbmdz
-OiBleHBsYWluIHRoYXQgQ1Y3NSBpcyBhIG1vZGlmaWVkIFBMMDYxIChDb25vcikKPj4gLSBncGlv
-LXJlZ21hcDogbW92ZSBxdWlya3MgYWZ0ZXIgZml4ZWRfZGlyZWN0aW9uX291dHB1dCAoQW5keSkK
-Pj4gLSBncGlvOiBwbDA2MTogdXNlIHJlZ21hcF90ZXN0X2JpdHMoKSwgcmVnbWFwX2NsZWFyX2Jp
-dHMoKSBhbmQKPj4gICByZWdtYXBfc2V0X2JpdHMoKSBmb3IgZGlyZWN0aW9uIGFuZCBpbnRlcnJ1
-cHQgZW5hYmxlIChBbmR5KS4KPj4gICBUaGUgZGF0YSByZWdpc3RlciBzdGF5cyByZWdtYXBfd3Jp
-dGUoKTogcmVnbWFwX3NldF9iaXRzKCkgY2FuCj4+ICAgb25seSBzZXQgYml0cyB0byAxLCBzbyBp
-dCBjYW5ub3QgZHJpdmUgYSBwaW4gbG93Lgo+PiAtIGdwaW86IHBsMDYxOiBhZGQgQW1iYXJlbGxh
-IHJlZ2lzdGVyLWxheW91dCB2YXJpYW50OiBjYWNoZSBEQVQKPj4gICAoUkVHQ0FDSEVfRkxBVF9T
-LCBub3Qgdm9sYXRpbGUpIHNvIGdwaW9fc2V0KCkgZG9lcyBub3QKPj4gICByZWFkLW1vZGlmeS13
-cml0ZSB0aGUgcGluIGxldmVsIChTYXNoaWtvKS4gRHJvcCB0aGUgUmV2aWV3ZWQtYnkKPj4gICBm
-cm9tIEFuZHkgYW5kIExpbnVzIG9uIHRoaXMgY29tbWl0OyB0aGUgY29kZSBjaGFuZ2VkIGFmdGVy
-Cj4+ICAgdGhvc2UgdGFncy4KPj4KPj4gTGluazogaHR0cHM6Ly9wYXRjaC5tc2dpZC5saW5rLzIw
-MjYxMDAxLWN2NzUtdjUtdjktMC00ODZjYzI4OWE0YjhAYW1iYXJlbGxhLmNvbQo+Pgo+Cj5JcyB0
-aGlzIGVmZmVjdGl2ZWx5IGEgdjEwIG9mIHRoaXMgc2VyaWVzIG9yIHNvbWV0aGluZyBlbnRpcmVs
-eSBuZXc/Cj4KPkJhcnQK
+On top of the other pinctrl changes that the Allwinner A733 introduced, it
+also uses a different layout for the GPIO_POW_MOD_SEL register, to set up
+the GPIO input threshold voltage for each port. For no apparent reason,
+it uses now 2 bits per bank, though effectively just always setting the
+higher bit to 1 is all that's needed to make it work.
+
+Add a new BIAS_VOLTAGE_PIO_POW_SEL variant, that behaves similar to the
+existing one, but uses the 2-bit encoding. Use that variant for the A733
+pinctrl driver.
+
+Fixes: 0535bfbfa97b ("pinctrl: sunxi: add support for the Allwinner A733")
+Reported-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+Hi,
+
+this goes on top of LinusW's pinctrl/for-next branch, which contains
+both the A523 withstand fix and the A733 pinctrl bits.
+Did not test on hardware, please have a look!
+
+Cheers,
+Andre
+
+ drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c       | 12 +++++++++---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h       |  4 ++++
+ 3 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+index ca82f08a3a65b..dcc2254e4089f 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+@@ -24,7 +24,7 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
+ static struct sunxi_pinctrl_desc a733_pinctrl_data = {
+ 	.irq_banks = 10,
+ 	.irq_read_needs_mux = true,
+-	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
++	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT,
+ };
+ 
+ static int a733_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 3ee5012463da3..7f4ce73bdc670 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -783,6 +783,7 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
+ 		raw_spin_unlock_irqrestore(&pctl->lock, flags);
+ 
+ 		fallthrough;
++	case BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT:
+ 	case BIAS_VOLTAGE_PIO_POW_MODE_SEL:
+ 		val = uV <= 1800000 ? 1 : 0;
+ 		if (inverted)
+@@ -790,9 +791,14 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
+ 
+ 		raw_spin_lock_irqsave(&pctl->lock, flags);
+ 		reg = readl(pctl->membase + pctl->pow_mod_sel_offset);
+-		reg &= ~(1 << bank);
+-		writel(reg | val << bank,
+-		       pctl->membase + pctl->pow_mod_sel_offset);
++		if (pctl->desc->io_bias_cfg_variant == BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT) {
++			reg &= ~(3U << (bank * 2));
++			reg |= (val | 0x2) << (bank * 2);
++		} else {
++			reg &= ~BIT(bank);
++			reg |= val << bank;
++		}
++		writel(reg, pctl->membase + pctl->pow_mod_sel_offset);
+ 		raw_spin_unlock_irqrestore(&pctl->lock, flags);
+ 		return 0;
+ 	default:
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 7c2f29e75519a..0945890a921b6 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -122,6 +122,10 @@ enum sunxi_desc_bias_voltage {
+ 	 * register, as seen on H6 SoC, for example.
+ 	 */
+ 	BIAS_VOLTAGE_PIO_POW_MODE_SEL,
++	/*
++	 * Same as above, but using a 2-bits-per-bank encoding.
++	 */
++	BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT,
+ 	/*
+ 	 * Bias voltage is set through PIO_POW_MOD_SEL_REG
+ 	 * and PIO_POW_MOD_CTL_REG register, as seen on
+-- 
+2.43.0
+
