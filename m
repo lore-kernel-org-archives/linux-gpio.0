@@ -1,310 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9563A4F50
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 08:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0D13BADB2
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 08:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791880243; cv=none; b=LgjO/xZYcf7aol3m9BSEuBkJ7Fsijz17gtWl6eIFMmHED35T+m+6huR5JXRurtUaFGjZV9jxOVsR3MHqh2JTAieHY1t8anm4gtGR4hQnqLSOLNH2qHlDd9vrsIv7r4MvHp2CdAv4EMag5aZbIPsJ0u8ky2poxggXRn6/SxqCOio=
+	t=1791881089; cv=none; b=VXUbFkUMcYFfWKs5X2ZExRK1hGp46EbHqzAXgpADaWL/ddeV88B+FBqxB5dCGZflNIkYTY5miI/ScfGGnIVdTEBASCnxNAkm7AJl+WgWrNG4cVTQy8LAJWoQNsLC0xow5NuMhcUWCGYemC0wAyXcsA/kVUxEg/MTOQICR+aRATc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791880243; c=relaxed/simple;
-	bh=yLrk0cBqYH3PFeizMjg50U6BDvhrPR6Q3MKWYVZWpNQ=;
-	h=Message-ID:From:Subject:To:In-Reply-To:References:Content-Type:
-	 Date; b=LX8l+JX+h+n7pg7sOfl94h1+kcejv+NPiq4vukg/tv+LcGJYD7fGsP+Bcexhcigz4ApTnxxbTSlxDX7evI5Xjw6HSQn2jHiomPp50/bXGTejn5OfBEzCJfh0DJAxFdA0jxinj/x7BWM0C9qnD7uWPhaaG0UuSIAMlNCLLMpjNJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrgQuUVs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791881089; c=relaxed/simple;
+	bh=vxqqcKeLdquDIj2KN23L6bIhx0QnUrefdPPqJUxyJLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIYtp94OB6cYziFmlYOy59zW2LLX52yvEydCLt4bWkPvXpdOq4AylGdFiLZcvONHSdoitGiMEbgDOVkVMDlcKLTxHCkNkm4onuhCgccGNIFkMI29jLNE9uZDWOMMcMaKo2fCX2zAZcasmIEkMKMz2oCbSChfmVmiTX033Q1LzcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBJto5vs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrgQuUVs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BB4A1F000FF;
-	Tue, 13 Oct 2026 08:30:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBJto5vs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B9E1F008A6
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 08:44:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791880241;
-	bh=fCSiJyTJIE41ceTY249+de+LcOZlP20VVQj7xRdloY4=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=HrgQuUVsgtLY0CMWb1zxxMin9e6f1LzT9996mllrb7AjMjJLaTzH9NvtUUk2J2X7q
-	 jlqaVf6ABR91hWmsluD0c2xjG77ezjDg+UuSWiMHaCOT9I34NxWPaCAnHyWiS2cQbu
-	 hr0MNMvQN7g0dzto5HG7yu9bg7gaBsuLPJ+5xKqW7HR/R8jMuf8H7S/qjzNlZDIpoS
-	 BTEAR2nDOZxMZCrtY7RGKgi0JsaPQfdevLJknydDlnfChtRgdnwNMsDAG3TK/Fuyxh
-	 MPhGyhHm8Ivuqhrx/CT+TmQ6I4yQyDmajTmC1YdSyKVPmWqXrV34ClYS9RYgVu6xBJ
-	 NRvECh0rXEvKQ==
-Message-ID: <sashiko-outbox-169255@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] gpio: amdptpci: add support for AMD PT PCI
- controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Szuying Chen" <Chloe_Chen@asmedia.com.tw>, linux-gpio@vger.kernel.org
-In-Reply-To: <20261013081631.5841-1-Chloe_Chen@asmedia.com.tw>
-References: <20261013081631.5841-1-Chloe_Chen@asmedia.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 08:30:41 +0000
+	s=k20260515; t=1791881085;
+	bh=vxqqcKeLdquDIj2KN23L6bIhx0QnUrefdPPqJUxyJLc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=JBJto5vs6Ta5E/laTRijxncLWHwZSeMl1+SClQ5oFUvXM0v718q+e20I6pYu0DfxG
+	 w/4fRxhonEgkDArXFln4ElPzOKrrcRqsZSUYu2sA4YrUbFnUE9/8M2Nfq3o4T30bj7
+	 7Y/IEqCfZlmcDKyap6K5e9RbVvosULTeXnkkcS9NSDl/k8EL2VWgbiClg+50O+sqBQ
+	 R9LHUbOIC2nEqLkWIQaNSlkAAQhg8DxTJuWeCljZPmF27WHT31I3sJvHfnzrf0STWR
+	 7qmGGRHb0aHs5PSjp7DSOsNQ+xxCV5dpANwf8GOPmcxRC8w8SM1S/g8H3NMfkwoXCw
+	 cjAe+fGH6sbBQ==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3a65ed9c7cfso20148881fa.3
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 01:44:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwDa8o8bQfCzYZdSL0W7r1BFGd7JHGRS2TIRBVFr9es2Q534qNy7USZ5YQFFfUOmc85GmAXXk2oYhcS@vger.kernel.org
+X-Gm-Message-State: AFq9FYJaX+7CIzLT+Tul9w1VWzc/kmiHU2L/9tl205HVyzP+t8gGEW3P
+	V7PxJ8kTRZLcF1i0qwVDR94r/RK6ijuYscB1tsLDDXSoFeJ/vAI1ujMBvEVoG2DJ/uSXIjMCo6g
+	XB8DAjjFLS3dBNGUAqlB7Y6XvfVaoZ/g=
+X-Received: by 2002:a2e:be0b:0:b0:3a9:abd6:1ab9 with SMTP id
+ 38308e7fff4ca-3a9c514fd25mr26402801fa.8.1791881083577; Tue, 13 Oct 2026
+ 01:44:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com>
+ <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com> <CAD++jLmKF5XxHsJX29sdXC_6JHKn-7HkE=N+TKtk5xODtQj3_w@mail.gmail.com>
+ <b2256847-3ec1-47e8-ac79-ceca86eb09e7@kernel.org> <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
+ <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
+In-Reply-To: <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 13 Oct 2026 10:44:31 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
+X-Gm-Features: AclHuK8uOkUyYpjHvZrw-87c6Tq4ZbkYSTxyMDm1V9n2PMOjyOCFsNCXto0ZE_s
+Message-ID: <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
+Subject: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 8 potential issue(=
-s) to consider:
-- [High] gpio: amdptpci: hardware access occurs after failed device resume
-- [High] gpio: amdptpci: pending wakeup interrupts are destroyed during res=
-ume
-- [High] pm: ISR accesses suspended MMIO due to irq_pm_held flag race
-- [High] gpio: interrupt storm due to registering GPIO chip before parent I=
-RQ
-- [Medium] gpio: amdptpci: invalid bitmask writes to reserved bits during s=
-uspend
-- [Medium] gpio: amdptpci: device can never runtime suspend if wake IRQ is =
-configured
-- [Medium] gpio: amdptpci: S3 wakeups broken if device autosuspends before =
-system suspend
-- [Low] gpio: amdptpci: missing pm_runtime_dont_use_autosuspend() on probe =
-error path
---
+On Mon, Oct 12, 2026 at 9:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+> On 12/10/2026 09:06, Linus Walleij wrote:
+> > On Fri, Oct 9, 2026 at 8:17=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >> On 01/10/2026 09:03, Linus Walleij wrote:
+> >
+> >>> On Mon, Sep 21, 2026 at 6:23=E2=80=AFAM Long Zhao via B4 Relay
+> >>> <devnull+longzhao.ambarella.com@kernel.org> wrote:
+> >>>
+> >>>> From: Long Zhao <longzhao@ambarella.com>
+> >>>>
+> >>>> Document the CV75 pin controller binding using generic function and
+> >>>> groups properties for pinmux configuration.
+> >>>>
+> >>>> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> >>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.c=
+om>
+> >>>> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> >>>
+> >>> This patch 4/18 applied to the pinctrl tree.
+> >>
+> >> There is a dependency, you cannot take this patch alone.
+> >
+> > Oops, but is it a DTS dependency so if none of the other patches go in =
+through
+>
+> No, it is a bindings dependency, introducing new DT bindings warning for
+> both your tree and next.
 
-commit 84767db1836e202d0ec481c787ac2cf3407a669a
-Author: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+Is there a problem with the bindings patch itself?
 
-gpio: amdptpci: add support for AMD PT PCI controller
+In that case Long can just send an incremental patch to
+fix it right?
 
-This commit implements the new gpio-amdptpci driver to support the
-GPIO functionality on AMD PT PCI platforms.
+> Your tree is fine in this case as long as next
+> is also fine... but next is not, because that patch did not make it there=
+.
 
-> diff --git a/drivers/gpio/gpio-amdptpci.c b/drivers/gpio/gpio-amdptpci.c
-> new file mode 100644
-> index 0000000000000..c63e9b6dcf7ad
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-amdptpci.c
-[ ... ]
-> +static void pt27_restore_regs(struct pt27_gpio *chip)
-> +{
-[ ... ]
-> +	pt27_wr16(chip, PT27_REG_WAKE_LVL,  chip->saved.wake_lvl);
-> +	pt27_wr16(chip, PT27_REG_WAKE_MODE, chip->saved.wake_mode);
-> +	pt27_wr16(chip, PT27_REG_WAKE_EN,   chip->saved.wake_en);
-> +
-> +	pt27_wr32(chip, PT27_REG_INT_STAT,  PT27_GPIO_MASK);
-> +	pt27_wr16(chip, PT27_REG_WAKE_STAT, PT27_WAKE_MASK);
+But the patch is in -next?
 
-[Severity: High]
-Does writing the mask to the status register here clear all pending interru=
-pts
-unconditionally before the ISR can service them?=20
+~/linux-next$ ls
+Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
+Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
 
-When the system wakes up due to a GPIO event, the hardware logs the event in
-the status register. If pt27_restore_regs() clears them assuming W1C
-semantics, won't the core IRQ handler read 0 pending interrupts and return
-IRQ_NONE, permanently losing the wakeup interrupt?
+> We cannot have any new DT bindings warnings in next.
 
-> +
-> +	pt27_wr32(chip, PT27_REG_INT_EN,   chip->saved.int_en);
-> +	pt27_wr32(chip, PT27_REG_INT_MASK, chip->saved.int_mask);
-> +
-> +}
-[ ... ]
-> +static bool pt27_irq_regs_accessible(struct pt27_gpio *chip)
-> +{
-> +
-> +	return READ_ONCE(chip->irq_bus_active) ||
-> +	       READ_ONCE(chip->irq_pm_held);
-> +}
+I guess I just don't get it :D
 
-[Severity: High]
-Will this OR condition cause the device to be accessed even if it failed to
-resume?=20
+To me it seems like a fairly normal situation: ACKed bindings merged
+together with the driver, no dependence on anything.
 
-In pt27_irq_bus_lock() below, a failed resume sets chip->irq_bus_active to
-false, but chip->irq_pm_held is already set to true by
-pt27_irq_request_resources(). This means pt27_irq_regs_accessible() will
-evaluate to true, and subsequent IRQ operations will attempt to write to MM=
-IO
-registers of a powered-down device.
+But if you tell me "revert the patch" I will simply revert the patch
+because I trust you, it doesn't really matter why.
 
-[ ... ]
-> +static int pt27_irq_request_resources(struct irq_data *d)
-> +{
-[ ... ]
-> +	raw_spin_lock_irqsave(&chip->lock, flags);
-> +	chip->requested_irq_mask |=3D BIT(hwirq);
-> +	if (!chip->irq_pm_held) {
-> +		chip->irq_pm_held =3D true;
-> +
-> +		pm_runtime_get_noresume(chip->dev);
-> +	}
-> +	raw_spin_unlock_irqrestore(&chip->lock, flags);
-
-[Severity: High]
-Is there a race condition here where the ISR might access suspended MMIO
-hardware?=20
-
-This sets chip->irq_pm_held to true and calls pm_runtime_get_noresume(),
-which only increments the usage counter but does not wake the device from D=
-3.
-The device is not actually woken until pt27_irq_bus_lock() runs.=20
-
-If a shared PCI INTx interrupt fires in this window, the ISR pt27_gpio_isr()
-will see chip->irq_pm_held is true and bypass its suspend safeguard, leading
-to an invalid MMIO read. Should this use pm_runtime_get_if_active() instead?
-
-[ ... ]
-> +static void pt27_irq_bus_lock(struct irq_data *d)
-> +{
-> +	struct gpio_chip *gc   =3D irq_data_get_irq_chip_data(d);
-> +	struct pt27_gpio *chip =3D gpiochip_get_data(gc);
-> +	int ret;
-> +
-> +	mutex_lock(&chip->irq_bus_lock);
-> +
-> +	ret =3D pm_runtime_resume_and_get(chip->dev);
-> +	if (ret < 0) {
-> +		WRITE_ONCE(chip->irq_bus_active, false);
-> +		dev_err_ratelimited(chip->dev,
-> +				    "%s: cannot resume for IRQ configuration: %d\n",
-> +				     __func__, ret);
-> +		return;
-> +	}
-
-[Severity: High]
-If pm_runtime_resume_and_get() fails here, it correctly records that the bus
-is inactive. Since the core IRQ operation is not aborted, and the static fl=
-ag
-forces pt27_irq_regs_accessible() to evaluate to true, will the outer IRQ
-code proceed to interact with the device despite this failure?
-
-[ ... ]
-> +static irqreturn_t pt27_gpio_isr(int irq, void *data)
-> +{
-> +	struct pt27_gpio *chip =3D data;
-> +	unsigned long pending;
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&chip->lock, flags);
-> +	/*
-> +	 * No requested IRQ means nothing to dispatch, and the device may be
-> +	 * runtime-suspended (D3): a shared INTx line can still call us, so do
-> +	 * not touch MMIO unless the PM hold keeps the device in D0.
-> +	 */
-> +	if (!chip->irq_pm_held) {
-> +		raw_spin_unlock_irqrestore(&chip->lock, flags);
-> +		return IRQ_NONE;
-> +	}
-> +	pending =3D pt27_pending_irqs_locked(chip);
-
-[Severity: High]
-Could this ISR bypass its suspend safeguard based on the static flag race
-discussed earlier? If the hardware is suspended but the flag evaluates to
-true, could this lead to a bus error or spurious interrupt?
-
-[ ... ]
-> +static int pt27_gpio_probe(struct pci_dev *pdev, const struct pci_device=
-_id *id)
-> +{
-[ ... ]
-> +	ret =3D devm_gpiochip_add_data(dev, &chip->gc, chip);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register GPIO chip\n");
-> +
-> +	ret =3D devm_request_irq(dev, chip->irq, pt27_gpio_isr, irq_flags | IRQ=
-F_NO_THREAD, dev_name(dev), chip);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to request IRQ %d\n", chip->irq=
-);
-
-[Severity: High]
-Can this initialization sequence lead to an unhandled interrupt storm?=20
-
-By calling devm_gpiochip_add_data() before devm_request_irq(), the GPIO chip
-is exposed to consumers before its parent ISR is registered. If a consumer
-immediately requests and unmasks a GPIO IRQ, the hardware will assert the
-shared PCI IRQ line, but pt27_gpio_isr() will not yet be registered to hand=
-le
-it.
-
-Reversing the order is safe because if a spurious shared interrupt occurs
-before the domain is initialized, chip->irq_pm_held will be false, and the
-ISR will safely return IRQ_NONE without dereferencing anything.
-
-[Severity: Low]
-If either of these registration steps fail, the probe function returns
-directly. Does this leak the PM configuration by missing a call to
-pm_runtime_dont_use_autosuspend(dev) to revert the PM state?
-
-[ ... ]
-> +static int __maybe_unused pt27_gpio_suspend(struct device *dev)
-> +{
-> +	struct pt27_gpio *chip =3D dev_get_drvdata(dev);
-> +	unsigned long flags;
-> +	u32 int_mask;
-> +
-> +	if (pm_runtime_status_suspended(dev)) {
-> +		dev_dbg(dev, "%s: already runtime-suspended, skipping save\n",
-> +			__func__);
-> +		return 0;
-> +	}
-
-[Severity: Medium]
-Will returning early here break S3 wakeups if the device autosuspends before
-system suspend?=20
-
-pt27_gpio_runtime_suspend() masks all interrupts, configuring no wake event=
-s.
-By skipping the resume preparation when already suspended, this function
-never unmasks wake-capable pins, completely breaking the controller's abili=
-ty
-to wake the system.
-
-> +
-> +	raw_spin_lock_irqsave(&chip->lock, flags);
-> +	pt27_save_regs(chip);
-> +	pt27_wr32(chip, PT27_REG_INT_EN,    0);
-> +	int_mask =3D 0xFFFFFFFF & ~chip->wake_mask;
-> +	//int_mask =3D PT27_REG_INT_MASK & ~chip->wake_mask;
-> +	pt27_wr32(chip, PT27_REG_INT_MASK,  int_mask);
-
-[Severity: Medium]
-Does this write invalid bitmasks to reserved hardware bits?=20
-
-The controller supports 24 GPIOs (PT27_GPIO_MASK is 0x00FFFFFF). By using
-0xFFFFFFFF, the bitwise NOT operation will write 1s to bits 24-31 of the
-PT27_REG_INT_MASK register, which could trigger unintended hardware faults.
-
-> +	pt27_wr32(chip, PT27_REG_INT_STAT,  PT27_GPIO_MASK);
-> +	pt27_wr16(chip, PT27_REG_WAKE_STAT, PT27_WAKE_MASK);
-> +	raw_spin_unlock_irqrestore(&chip->lock, flags);
-> +
-> +	synchronize_irq(chip->irq);
-> +	return 0;
-> +}
-[ ... ]
-> +static int __maybe_unused pt27_gpio_runtime_suspend(struct device *dev)
-> +{
-> +	struct pt27_gpio *chip =3D dev_get_drvdata(dev);
-> +	unsigned long flags;
-> +	int ret =3D 0;
-> +
-> +	raw_spin_lock_irqsave(&chip->lock, flags);
-> +
-> +	if (chip->irq_pm_held || chip->requested_irq_mask) {
-> +		ret =3D -EBUSY;
-> +		goto out_unlock;
-> +	}
-> +
-> +	if (chip->wake_mask && !device_may_wakeup(dev)) {
-> +		ret =3D -EBUSY;
-> +		goto out_unlock;
-> +	}
-
-[Severity: Medium]
-Does the first check unintentionally prevent the device from ever entering
-runtime suspend when a wake IRQ is configured?=20
-
-A wake IRQ is inherently a requested IRQ, meaning chip->requested_irq_mask
-will always be non-zero if chip->wake_mask is non-zero. The first block will
-therefore unconditionally abort the suspend with -EBUSY, making the
-subsequent wake_mask check dead code and preventing the PCI device from
-reaching D3.
-
-[ ... ]
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013081631.5841=
--1-Chloe_Chen@asmedia.com.tw?part=3D1
+Yours,
+Linus Walleij
