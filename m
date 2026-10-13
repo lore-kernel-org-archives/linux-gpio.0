@@ -1,114 +1,104 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D431D456DE9
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 12:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CD24FC8E3
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 12:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791895759; cv=none; b=LJdbrgcV35vO9jabylCr+yjpC2bo2C7IiIJ099+v3KcOYVeHyGFSKRDieaCTJFei+O0U96oS2a8jEDT0HpBYCQXOxEiqeX/T4hv1x3i7dcFdzzyRB+wPPOAqYz1RnX2C4IkSyK0VJK6hg7oIvKnTqhPNU7fqfUj03X1ijF5MSh0=
+	t=1791896292; cv=none; b=YgcYdmRxv26PPE2JnnAnBppcRaku+hsDFndJbPBf0ZiCif8lcMHFimhFiyq6fWijf7VA7t6FGnoBw6lqy1F/p0LzsLBbTDgvx9/FjYkly38k3xe5QqkLCw6VMH8FIJrs7ZpFL7H9x8/Z7JGeLdykCbN8EqDfbME6K+TZXBkzQDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791895759; c=relaxed/simple;
-	bh=hy3ocuhI/6vDP5S05nfHI6W3yZv4jEsBq9cAYewde9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYN7YfVO+zMRC+GeQz7amnlKVC7nmz8LkCXf4PKyyzXoD3s3CBYk2qOq93/7JWsj/Xldml7bg+tY0yBqC4YYR4V66AvuT/6DvYXfv4qC0SmpDluupYUTxkpp11DGZJ9w/NSANhtyu8DQVTnrahYqhFjo9uJfeIwcrATeRpioI9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVCTX84K; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791896292; c=relaxed/simple;
+	bh=G9hb6jKl8UlE+usc+L20xv9P4Y+vxG9zesENWv1W3mE=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JP+sPqs3HOYDJFQxREKngdLbo1feuIqq+ETeGXBEC0hJSiaRsxjuTSolxtaP+swKQ3e87BnNn5eu+CwI1soXpxv6/tDbfhFWIuiqAMnx8qK0aypP05KImjNJUscXSr1vVM3N2QLQB7JD1KSm+OebRjgV5hwTXswqiU3LkOEB3Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkkmVRNG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVCTX84K"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48af27fe287so2529028f8f.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 05:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791895756; x=1792500556; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=WOn8xr8BpKgnJ6Gee1th0C/2r3v4X6hPgJGRiiP13Cg=;
-        b=SVCTX84KQfto6of6LOHGl3AqeZAJ+IvR7PH8JEDFO4Pu8f5ibtZGa52ECm+9eZ5q2G
-         G9i6uFz6yxKB88p3Ik0eEnZMTiaKmfe2FsP9cnmz3Vm/YLt1AhLv37zDXLBNsKMXmHK1
-         OZAH1PUxY1RPUo8d7lLFDJ53rhPQJgHJz4i5InK+TxG+cqK7E60amYjxXbqsbxOFcp1+
-         II1+oRL3mRc6cA4czMw/Z+tqS04ofJn1xiJfzP4F4Arqbzv5np3dtY4rsCRn7Mf2kaAl
-         w9kOFpvu3VW6Q5hXd/tB+ldamMByklC8+nBXyG53wt4L3Y8EnDvQ+5Th3Bs8DbLnz+Sw
-         QlrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791895756; x=1792500556;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=WOn8xr8BpKgnJ6Gee1th0C/2r3v4X6hPgJGRiiP13Cg=;
-        b=hVg8MLpul/VHmnD84lfCz0JhOvVQ3bz3e3r+h17PTUVtWX1Vz6/+Nzl8wonTphyn2E
-         tCnDySZ6bnnKFVYWFJ8KG7QJX5TzSh3lfTXtVboF0a5r+/zjID541vs0fqOjFVuysM58
-         HUv/UVOws+GpeMTrL/jjnnUbIquasY4KCFc2dFSmlU/xyVh9oKbtI7wwPVetLNoUqDHo
-         agxSlHyzZCS0VeVpgWLrrUx3N6UI58YInNn1oZZPfm8oGHzPdK2AsmCgPp9TsLN1d8WX
-         dmolms/Mc7N3wFRfTdTP+H3xJVn5BgS3bNXOLQLXoNKc9F8Ncgp0Fz0fX8cGQZljlCBc
-         5qSw==
-X-Forwarded-Encrypted: i=1; AKwUvBxKvMsdy0fjthkVsOeC6BQ9WQgw/7M6NZt2+w4i4K7PAf3e8yEEiud61a3hc1IdbDyYChsUhPx4x8RA@vger.kernel.org
-X-Gm-Message-State: AFq9FYK7eRQa+sDJZLbp7Su8mXitqo47YGLs02VaLy1lIokIAvTUUGm+
-	1d0xdYfmRzkCb1LEQDljZBCgtEjHZ+ZGNjUuTbKqhjBaREI04g/43tBU
-X-Gm-Gg: AYBFou1KVGPJ1zuLiU7x7nxtXDvcEn2gdbAPk7Yx33e/1CQhtxVNotYQ4H1MEVMgteY
-	4DnXnntckrUIUwuhqwkWdt8nozL60dTmDa6txqXBbvCbyhWLzARkWSPnMbSNhc3Vl0lOlKYNq+p
-	p8f7ERrlM1zmfdGO6eI4XsEKysFvTkJV/0OfOedANsT9YdVuFevvdA0eaA6feqMyD4WJghpYTQw
-	TU4/0cx0nLnB2WXnVNNp7HMQhNH9TwxaIeMhrKiJTtXPf09Dis1XD6k5forXn4gb3Nkh4ov4PRi
-	oCxcakEr34ikL5wUX1Xguet9JUOW6QlfBCn8ahR0WJefMBbK6ovMIn3AoS3nJLnchoCgYCDIAmA
-	KocSRJHoW1C2APTTLo/0XAy5wHacjAVb/bPqEK6OLZv1WQiXSrwTR7s0Hre5GiGwyQBocs4e3/1
-	+6q5vmmwRcyEJ6ZpZbnCbrs+mewqN+Nh/5qx3VhauylhIukq6J9ZWCz79jufBp0/SbRsp2x7+hX
-	zdQqwo0nVen9Z7DRBXqF80zs4hS0nkuEJcScX3FKEhDSTc3n7pv1jhOzaF5wQhcWhU+1rwB9s2D
-	1cTQKU59
-X-Received: by 2002:a05:6000:454c:b0:487:c3e:8df8 with SMTP id ffacd0b85a97d-48dba77cf87mr16911311f8f.5.1791895755870;
-        Tue, 13 Oct 2026 05:49:15 -0700 (PDT)
-Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0aaaa05sm4447635f8f.13.2026.10.13.05.49.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 05:49:15 -0700 (PDT)
-Date: Tue, 13 Oct 2026 14:49:13 +0200
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-To: Frieder Schrempf <frieder.schrempf@kontron.de>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Herve Codina <herve.codina@bootlin.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Leonardo Costa <leonardo.costa@toradex.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] of: property: Make fw_devlink follow GPIO, PWM
- and clock nexus maps
-Message-ID: <xipbz3gva66o56fjszlhioxgprcspwae7dwcqe7snub7wblts3@qqryckq5fau7>
-References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
- <a754faba-f904-458c-8ddb-7502e684c868@kontron.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkkmVRNG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F4B1F00893
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 12:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791896291;
+	bh=IJOU2P73B89wyUs2vsB9RdkOQRiMfy7aYrzIbJQvdG0=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=YkkmVRNGGXlC8aGnDr4PEDmS+YkO4qfnPMQHyzgWbTJgsuy+Q2LJr31CJaG0y8hc/
+	 JO1gAK69uQoWf/qVNPrnrw1yfFSCn1zpU0mB+ExIcDcZHt2x5ym8PfCPSL/izzrHJq
+	 RtemW3AVyRvZpkN9i4qKbbdvbwZKMnnSv4RaO770f3Q5zTbDBvAOH1hT8n/uKcJ4MA
+	 R0x7KkgweQnhPbt05lJJNOhkcEFHoTRlm5Z2HlG4mxSZ3GW2TIVG+/2cytHQ+uP9fe
+	 XsvuJo4Ei1FzVO/hxP53/HdkK+au8vAq4woRaWPxQcGEE7Es+jCvxga4BMwdjOK0eo
+	 ji2XlFpf81Iig==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5bcb0f245e0so2175226e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 05:58:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy9Y0g3hxLzfTsOjqGBqW8pHGTz2PZFsg/OWmMJp/Wpwcsr40ej87GH9uNlVqyJtfJmadze/UPJbI8z@vger.kernel.org
+X-Gm-Message-State: AFq9FYIK6XOhHVW5nEMqA/gvWSAS5rthvuCi0VeOUWzNqCXb68w4xhvx
+	38S0bCifetW/5rsrdY3TBpl0B6Dpec6OqIIbQbFrS302WJbsHsGWoR+LY9x1+GzwmiDPW/6K2Ps
+	BWHe/81RBXYpkM4IDtJ//xDzeEQ0L+Xz1Ni+/SOSbwg==
+X-Received: by 2002:a05:6512:138d:b0:5b9:8480:88c7 with SMTP id
+ 2adb3069b0e04-5bcde6c26famr4166694e87.27.1791896290157; Tue, 13 Oct 2026
+ 05:58:10 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 13 Oct 2026 08:58:09 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 13 Oct 2026 08:58:08 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a754faba-f904-458c-8ddb-7502e684c868@kontron.de>
+References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+Date: Tue, 13 Oct 2026 08:58:08 -0400
+X-Gmail-Original-Message-ID: <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
+X-Gm-Features: AclHuK9cgQ7ogKo5VXavvrflaGlOdqf2MwKtjZOXUbuoM4CIGR_5JcC_LbQsVv4
+Message-ID: <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] gpio: add Ambarella CV75 PL061 support
+To: longzhao@ambarella.com
+Cc: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Conor Dooley <conor+dt@kernel.org>, 
+	devicetree@vger.kernel.org, Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Chanho Min <chanho.min@lge.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 13, 2026 at 02:09:37PM +0200, Frieder Schrempf wrote:
-> Hi Ernest,
-> 
-> On 10.09.26 16:16, Ernest Van Hoecke wrote:
-> > [...]
-> What is the status of this? Can you send a follow-up?
-> 
-> Frank is asking me to use nexus connector nodes and it looks like I will
-> run into this issue.
-> 
-> Thanks
-> Frieder
+On Fri, 9 Oct 2026 12:57:53 +0200, Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> said:
+> Split from the combined CV75 bring-up series. These patches convert
+> the ARM PL061 data path to regmap, then add the CV75 layout.
+>
+> Please take this series through the GPIO tree. The quirk, the PL061
+> conversion and the Ambarella layout belong together.
+>
+> The GPIO driver does not depend on ARCH_AMBARELLA. The binding uses
+> the ambarella vendor prefix, which is added by the SoC series and is
+> not in mainline yet; dt_binding_check needs that prefix.
+>
+> GPIO data path uses gpio-regmap with two layouts (ARM PrimeCell and
+> Ambarella). ARM PL061 sets GPIO_REGMAP_QUIRK_SET_AFTER_DIR. IRQ stays
+> a custom PL061 irqchip. The linear domain is created with the PL061
+> private data and attached by gpio-regmap. regmap-irq is not used.
+>
+> Tested on the CV75 EVK. The board boots. gpio-hammer toggles gpiochip0 line 26 ten times, and gpio-event-mon on line 27 records ten alternating rising and falling edges.
+>
+> Changes since the patches in the combined v9:
+> - dt-bindings: explain that CV75 is a modified PL061 (Conor)
+> - gpio-regmap: move quirks after fixed_direction_output (Andy)
+> - gpio: pl061: use regmap_test_bits(), regmap_clear_bits() and
+>   regmap_set_bits() for direction and interrupt enable (Andy).
+>   The data register stays regmap_write(): regmap_set_bits() can
+>   only set bits to 1, so it cannot drive a pin low.
+> - gpio: pl061: add Ambarella register-layout variant: cache DAT
+>   (REGCACHE_FLAT_S, not volatile) so gpio_set() does not
+>   read-modify-write the pin level (Sashiko). Drop the Reviewed-by
+>   from Andy and Linus on this commit; the code changed after
+>   those tags.
+>
+> Link: https://patch.msgid.link/20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com
+>
 
-Hi Frieder,
+Is this effectively a v10 of this series or something entirely new?
 
-I'll be sending a follow up very soon and address all the valuable
-feedback I got here. Thanks for your interest!
-
-Apologies for the delay, it's been quite busy here, but I also had some
-nice chats about the topic at ELC 2026 last week so I'll follow up soon.
-
-Kind regards,
-Ernest
+Bart
