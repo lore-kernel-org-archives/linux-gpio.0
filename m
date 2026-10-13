@@ -1,99 +1,102 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3F6501F45;
-	Tue, 13 Oct 2026 14:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFE30C606;
+	Tue, 13 Oct 2026 14:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791900459; cv=none; b=I7NsYF8rS6/haL75Bot/8QEuYeokNqVpy4cekGfjPxpW00WSD4ThUD7Gfh4s150lMXYOXu7mk3xDZAygVHNM/qi0J4+GO+SlJOnC4ypSQmj04TOosH9rDY+YnSeCsEhKUSWGS5KgPddCIouzkIINRX/ff70Smyi1FFTy17uziac=
+	t=1791900742; cv=none; b=i8GuOBXbXsekufnD1s8KMTZBAHzFzP16liFcvzKFs0SI+peSo2txNPrEsvqkBkAaxCwKO5t1IZ+i9JmwXX85Lt+HFvyL0Biau/LkPvTqOVmX1kx/x8QqXAocoVwOtQX8nZjnTOKA+xx/RLsrjBY8EcuyWlbizWIA3NAdVuZpSn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791900459; c=relaxed/simple;
-	bh=W88mS6YBE8sTQ1nme8JepyXgE86BvQHetXAgV3IwrYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knCV3TpkbuibH4a3v5z+DnQubNFqRm8SOCfeioEKsyXG59v0Mvl+4GZOTqbYhiXnsJasfiAKF/kRry9jMtFwZoyqgOCx9ZHcJM9SdQ48D9gTg+y7cnV73v0KtdaHRlQcEtPaygpwysxYxXMjwEyVn1hkM24KHiG4C0gnTRGl7Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g2ogaP+E; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1791900742; c=relaxed/simple;
+	bh=9hCI+KLlF44LjYuZ2V43HBQqMnF64LjM3PfDokYjQ0U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=iBHLqsVb24jJkzpw7EycDMpsMGdwSJGSIKffFR0qQXJAXIzqVhWRIIk7ngLd+368KFvZyKhJRy8F5WejPdNDIFRl31Zh84SbJrNTGdaYJM0uNA+9UX575O3gZ2m9WIg43qiBCfUOP6ga0Gx3WU1C5sTdKfoL30uuLL1WEg9UzlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NxFy8Uyl; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g2ogaP+E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1791900458; x=1823436458;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W88mS6YBE8sTQ1nme8JepyXgE86BvQHetXAgV3IwrYI=;
-  b=g2ogaP+ExlWuLvDFDfk1Xq4RifkML1d7HkG+F+txTLDwp/O1K2KCWoZO
-   CU5jrNQVV0iXGjCBtCc9fc9zZoDZ6403XXf+SGBO2gxeZoQIBMJiQGptW
-   m+gaIiHB1A/31kEbr8hefw7l8VFYnSFBU/b7d17ltpIV95YSInqn8iW81
-   BWxxKo0/1cCvdlytTlIdta3ealAwW9ShGxzvbnRV6yWVrvX3gzHngOVQ8
-   dubioI6AhkpfFPCGlv7J0q1l36dsoiHdRoj+WyVM2MkiD9gSVn+vbwW9M
-   ej0Dvf3osbh7P8A0afozo7rO8a3z5vlYQtKsLvbc5vS0FunNoxwG9SXjj
-   A==;
-X-CSE-ConnectionGUID: X4VICJTTSx2F0pOrKnvOUA==
-X-CSE-MsgGUID: MSan89ZXS7eyZmCJ9W1pYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="642338"
-X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
-   d="scan'208";a="642338"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 07:07:33 -0700
-X-CSE-ConnectionGUID: 6cANfGRZTGmuiPQL/vdfhw==
-X-CSE-MsgGUID: XIeAE0B5R32LAOgDkfUP3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
-   d="scan'208";a="1509260"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 07:07:30 -0700
-Date: Tue, 13 Oct 2026 17:07:28 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: "David Lechner (TI)" <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Chris Hall <c-hall@ti.com>, Patrick Edwards <pedwards@ti.com>,
-	Kurt Borja <kuurtb@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: ti-ads112c14: add gpio support
-Message-ID: <as47IMM9rtBCAH0-@ashevche-desk.local>
-References: <20261009-iio-adc-ti-ads112c14-gpio-v2-0-3231a795fa63@baylibre.com>
- <20261009-iio-adc-ti-ads112c14-gpio-v2-2-3231a795fa63@baylibre.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NxFy8Uyl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=9hCI+KLlF44LjYuZ2V43HBQqMnF64LjM3PfDokYjQ0U=; b=N
+	xFy8UylF7Z9Eh+XhQPDIDNqOP9M2CP8vbAIYSs+teya2vK/Tk7boOafHkRC4Zzow
+	QOFFPvFHhzQtJI1b07yhfki8bM5VRUBNhl3LbUT9Z/nbdyogVabgth9C5K5NwCbA
+	m/RWbf+cKJT/WKJmrEW6hB6Sz5ar4WDPGAWODdrgwg=
+Date: Tue, 13 Oct 2026 22:10:41 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Bartosz Golaszewski" <brgl@kernel.org>
+Cc: longzhao@ambarella.com,
+	"Long Zhao via B4 Relay" <devnull+longzhao.ambarella.com@kernel.org>,
+	"Linus Walleij" <linusw@kernel.org>,
+	"Michael Walle" <mwalle@kernel.org>,
+	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
+	"Conor Dooley" <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Conor Dooley" <conor.dooley@microchip.com>,
+	"Chanho Min" <chanho.min@lge.com>, linux-gpio@vger.kernel.org
+Subject: Re:Re: [PATCH 0/7] gpio: add Ambarella CV75 PL061 support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
+References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+ <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
+X-NTES-SC: AL_Qu2SA/Wbv04v5ySfZekdnUoTj+Y/XMK0uvwk1YdVc84FkSfp3wMjT35qOEXs9/qoFCWqvTu+SwFvxuB9c7JXbkDZ1ziFg3nW8RhAFZ01ug==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261009-iio-adc-ti-ads112c14-gpio-v2-2-3231a795fa63@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Message-ID: <73c4ceaf.9c2f.1a13599e8ca.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:gygvCgD3fzvhO85qYSchAA--.60W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7gFVxmrOO+FTVgAA3H
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, Oct 09, 2026 at 06:25:52PM -0500, David Lechner (TI) wrote:
-> Add support for using the AIN4/GPIO0 to AIN7/GPIO3 pins as GPIOs when
-> the gpio-controller property is present.
-> 
-> Pins that are already used for something else according to the
-> devicetree are excluded from the valid GPIO mask. This includes analog
-> inputs and excitation current outputs used by channels, REFP/REFN when
-> an external reference is used, the /FAULT and /DRDY interrupts and the
-> external clock input.
-
-...
-
-> +	for (unsigned int i = 0; i < ADS112C14_NUM_GPIO; i++) {
-> +		data->gpio_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s:GPIO%u",
-> +						     dev_name(&indio_dev->dev), i);
-> +		if (!data->gpio_names[i])
-> +			return -ENOMEM;
-> +	}
-
-I am sorry, I still didn't get what's wrong with the dash (technically
-speaking)? So, this may use devm_kasprintf_strarray().
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+SGkgQmFydCwKClllcy4gVGhpcyBpcyBlZmZlY3RpdmVseSBhIHYxMCBvZiB0aGUgR1BJTyBwYXRj
+aGVzIGZyb20gdGhlIGNvbWJpbmVkIENWNzUgc2VyaWVzLiBJIHNwbGl0IHRoZW0gb3V0IGFuZCBy
+ZXN0YXJ0ZWQgdGhlIG51bWJlcmluZyBhdCB2MSBiZWNhdXNlIHNvbWUgbWFpbnRhaW5lcnMgcHJl
+ZmVycmVkIHNlcGFyYXRlIHNlcmllcywgc28gSSBhbSB0cnlpbmcgdGhhdC4KCkJlc3QgcmVnYXJk
+cywKTG9uZyBaaGFvCgpBdCAyMDI2LTEwLTEzIDIwOjU4OjA4LCAiQmFydG9zeiBHb2xhc3pld3Nr
+aSIgPGJyZ2xAa2VybmVsLm9yZz4gd3JvdGU6Cj5PbiBGcmksIDkgT2N0IDIwMjYgMTI6NTc6NTMg
+KzAyMDAsIExvbmcgWmhhbyB2aWEgQjQgUmVsYXkKPjxkZXZudWxsK2xvbmd6aGFvLmFtYmFyZWxs
+YS5jb21Aa2VybmVsLm9yZz4gc2FpZDoKPj4gU3BsaXQgZnJvbSB0aGUgY29tYmluZWQgQ1Y3NSBi
+cmluZy11cCBzZXJpZXMuIFRoZXNlIHBhdGNoZXMgY29udmVydAo+PiB0aGUgQVJNIFBMMDYxIGRh
+dGEgcGF0aCB0byByZWdtYXAsIHRoZW4gYWRkIHRoZSBDVjc1IGxheW91dC4KPj4KPj4gUGxlYXNl
+IHRha2UgdGhpcyBzZXJpZXMgdGhyb3VnaCB0aGUgR1BJTyB0cmVlLiBUaGUgcXVpcmssIHRoZSBQ
+TDA2MQo+PiBjb252ZXJzaW9uIGFuZCB0aGUgQW1iYXJlbGxhIGxheW91dCBiZWxvbmcgdG9nZXRo
+ZXIuCj4+Cj4+IFRoZSBHUElPIGRyaXZlciBkb2VzIG5vdCBkZXBlbmQgb24gQVJDSF9BTUJBUkVM
+TEEuIFRoZSBiaW5kaW5nIHVzZXMKPj4gdGhlIGFtYmFyZWxsYSB2ZW5kb3IgcHJlZml4LCB3aGlj
+aCBpcyBhZGRlZCBieSB0aGUgU29DIHNlcmllcyBhbmQgaXMKPj4gbm90IGluIG1haW5saW5lIHll
+dDsgZHRfYmluZGluZ19jaGVjayBuZWVkcyB0aGF0IHByZWZpeC4KPj4KPj4gR1BJTyBkYXRhIHBh
+dGggdXNlcyBncGlvLXJlZ21hcCB3aXRoIHR3byBsYXlvdXRzIChBUk0gUHJpbWVDZWxsIGFuZAo+
+PiBBbWJhcmVsbGEpLiBBUk0gUEwwNjEgc2V0cyBHUElPX1JFR01BUF9RVUlSS19TRVRfQUZURVJf
+RElSLiBJUlEgc3RheXMKPj4gYSBjdXN0b20gUEwwNjEgaXJxY2hpcC4gVGhlIGxpbmVhciBkb21h
+aW4gaXMgY3JlYXRlZCB3aXRoIHRoZSBQTDA2MQo+PiBwcml2YXRlIGRhdGEgYW5kIGF0dGFjaGVk
+IGJ5IGdwaW8tcmVnbWFwLiByZWdtYXAtaXJxIGlzIG5vdCB1c2VkLgo+Pgo+PiBUZXN0ZWQgb24g
+dGhlIENWNzUgRVZLLiBUaGUgYm9hcmQgYm9vdHMuIGdwaW8taGFtbWVyIHRvZ2dsZXMgZ3Bpb2No
+aXAwIGxpbmUgMjYgdGVuIHRpbWVzLCBhbmQgZ3Bpby1ldmVudC1tb24gb24gbGluZSAyNyByZWNv
+cmRzIHRlbiBhbHRlcm5hdGluZyByaXNpbmcgYW5kIGZhbGxpbmcgZWRnZXMuCj4+Cj4+IENoYW5n
+ZXMgc2luY2UgdGhlIHBhdGNoZXMgaW4gdGhlIGNvbWJpbmVkIHY5Ogo+PiAtIGR0LWJpbmRpbmdz
+OiBleHBsYWluIHRoYXQgQ1Y3NSBpcyBhIG1vZGlmaWVkIFBMMDYxIChDb25vcikKPj4gLSBncGlv
+LXJlZ21hcDogbW92ZSBxdWlya3MgYWZ0ZXIgZml4ZWRfZGlyZWN0aW9uX291dHB1dCAoQW5keSkK
+Pj4gLSBncGlvOiBwbDA2MTogdXNlIHJlZ21hcF90ZXN0X2JpdHMoKSwgcmVnbWFwX2NsZWFyX2Jp
+dHMoKSBhbmQKPj4gICByZWdtYXBfc2V0X2JpdHMoKSBmb3IgZGlyZWN0aW9uIGFuZCBpbnRlcnJ1
+cHQgZW5hYmxlIChBbmR5KS4KPj4gICBUaGUgZGF0YSByZWdpc3RlciBzdGF5cyByZWdtYXBfd3Jp
+dGUoKTogcmVnbWFwX3NldF9iaXRzKCkgY2FuCj4+ICAgb25seSBzZXQgYml0cyB0byAxLCBzbyBp
+dCBjYW5ub3QgZHJpdmUgYSBwaW4gbG93Lgo+PiAtIGdwaW86IHBsMDYxOiBhZGQgQW1iYXJlbGxh
+IHJlZ2lzdGVyLWxheW91dCB2YXJpYW50OiBjYWNoZSBEQVQKPj4gICAoUkVHQ0FDSEVfRkxBVF9T
+LCBub3Qgdm9sYXRpbGUpIHNvIGdwaW9fc2V0KCkgZG9lcyBub3QKPj4gICByZWFkLW1vZGlmeS13
+cml0ZSB0aGUgcGluIGxldmVsIChTYXNoaWtvKS4gRHJvcCB0aGUgUmV2aWV3ZWQtYnkKPj4gICBm
+cm9tIEFuZHkgYW5kIExpbnVzIG9uIHRoaXMgY29tbWl0OyB0aGUgY29kZSBjaGFuZ2VkIGFmdGVy
+Cj4+ICAgdGhvc2UgdGFncy4KPj4KPj4gTGluazogaHR0cHM6Ly9wYXRjaC5tc2dpZC5saW5rLzIw
+MjYxMDAxLWN2NzUtdjUtdjktMC00ODZjYzI4OWE0YjhAYW1iYXJlbGxhLmNvbQo+Pgo+Cj5JcyB0
+aGlzIGVmZmVjdGl2ZWx5IGEgdjEwIG9mIHRoaXMgc2VyaWVzIG9yIHNvbWV0aGluZyBlbnRpcmVs
+eSBuZXc/Cj4KPkJhcnQK
