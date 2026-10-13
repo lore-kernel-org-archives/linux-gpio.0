@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CA947FB14;
-	Tue, 13 Oct 2026 03:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E393481666;
+	Tue, 13 Oct 2026 03:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791863221; cv=none; b=HworycsIguQvR2eyW/ctmdZVVytKMPQGYRVlHcpkmD/QFL61DcbdJw8CMt+rgPUqaTVGz+btN2lJhAbS7RBDq/vvQI6oLZF+kdk0Dpmablg/ZQrDe8FCgmGqXPDL50tshftwwaH1R2DQZREfrK8X3wrGTVOzHgA7/MCmg2zOTA0=
+	t=1791863221; cv=none; b=gV6RcOKeOohU8mf9VIlL9pbjKwUnUWooskHFH5ptAQu5Tgj+nfte1OK5kNFOOIZK01ZF9GNZ8GjykJkmvuawfSxLAUwKRry1fI8mjFVlszMfeYrp6RomQaYOiAB+VqjGH0qmxMyxvUM6wgaQC1jH3ur8uJX83C4+TBw6gdbFly8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791863221; c=relaxed/simple;
-	bh=0IherSgUZp+qx8n/zoiTHO4dLFTG7gL2QizrFJvg3NE=;
+	bh=31t7A4ec1Xhu+LA6GuFAzpvU2Mlareg98Anh2jPt2bA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ncWF1MZ1kOxIQVbEXeYjcX1kDd2Sg0DWrXg2v2iY1YXxdRA+0gDV07U62OmywGm4tg7EXSV+ZvXW6D4et/BItqMdB/Eg/dvJ4rak866OAYKXw2GWJJiPa7UJylquiuyINzY1qHPKzn9YbF5h9cAp7+3bGZxRKgWJS8j2tF5HUAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ut01q3gw; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=L24MVZ4tVTK1x/lDPb4HE4WqTMiA1x0ng4YmphbEpzuYm0TGG4e1eZG1owXBVrPLmA0DXVwyq8XK2XWwEr44H0E3xXsFBhtiFXH85sZFSEb6ZVm410GIsOdYzNoH5AAksydYzugcgzOQLWWJPPKcBv6yF/x0YA58ETdLN/R2sCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czj03W+1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ut01q3gw"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B56F8C2BD00;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czj03W+1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E62D7C4DDE8;
 	Tue, 13 Oct 2026 03:47:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1791863220;
-	bh=0IherSgUZp+qx8n/zoiTHO4dLFTG7gL2QizrFJvg3NE=;
+	s=k20201202; t=1791863221;
+	bh=31t7A4ec1Xhu+LA6GuFAzpvU2Mlareg98Anh2jPt2bA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ut01q3gwXY6hbUZCPxSaR7HfCVlTJgfIDuvGXeyDGVDOgYugJZvSjphfyrE5uqE9+
-	 WlCyTI4v1FKkaflg+bCb+edIOLsV3mNCsSYZ5uxlFr3z9TUXQY/a3AO4Jl0Id1OhiD
-	 WJHzfkWHUpSxrhLIuXN3bHLo8Gj5m0E8XZLh4vEHk8m3isAXk3YswNTdhRJytQQBGJ
-	 D1v1N0IUGVRkbqyToZNyKVUt2n+9GCAebBi+NEIgAL4g5X8r7o72KN50++QtkAClN2
-	 5hXcsfzFLl86fkczOj8hE+IjOGTJ4OzJZc9UzeiHjuzTQNNIfvop2sa4egGZlMXiGG
-	 2DZFcGTlNUNYQ==
+	b=czj03W+1j+/sCUR5y+xkyOyUIv2vlbqth8Y/gZmJBxgCOfyNr3DXMhMSmjSEtqpmU
+	 ZsUKTmmO4gGuprspho6Pt7AKEzGKdgMnIGJmFCF3kszrFPYbOMEcYCUylSZYA0vSyc
+	 XRbDudEU61VeAwNS6QM1Uutg7Q+VPbL73QdrjM80zgS+5y8bdBQGnpQbuPGv/S00aE
+	 SOPEKWoH2esR/EzmqI7jMsK2af+zxzw8SetjFXPB8FXKFKPSa4rDL7bxcAZgc//QHw
+	 FBJoMhl8GhmSm1VBHc4BKLo70Wrzdo5Zi/4VQxAoRD+CxIsB/m1Db3JJs1v6Qv8Nqq
+	 deviyxKc49qMg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A444FCA9ECF;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AF9CA9ECF;
 	Tue, 13 Oct 2026 03:47:00 +0000 (UTC)
 From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Tue, 13 Oct 2026 06:47:00 +0300
-Subject: [PATCH v2 02/11] irqchip: Add Cortina Systems CS75xx peripheral
- interrupt controller
+Date: Tue, 13 Oct 2026 06:47:03 +0300
+Subject: [PATCH v2 05/11] dt-bindings: i2c: Add Cortina Systems CS7542 I2C
+ controller
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261013-b4-cs75xx-s2-v2-2-94f8c0a90cda@gmail.com>
+Message-Id: <20261013-b4-cs75xx-s2-v2-5-94f8c0a90cda@gmail.com>
 References: <20261013-b4-cs75xx-s2-v2-0-94f8c0a90cda@gmail.com>
 In-Reply-To: <20261013-b4-cs75xx-s2-v2-0-94f8c0a90cda@gmail.com>
 To: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
@@ -56,11 +56,11 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, 
  Fil Dunsky <filipp.dunsky@gmail.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791863218; l=5108;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791863218; l=1834;
  i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=dVnYRSFKL+LSEcILFZg7klvO04qbeUQDgo8bY0Rcrxs=;
- b=WsPhL/x9ISCOzBwTM1hiTdq4KhqRMq0j7MqnfHzIXRI4TTCcyNACmb0xOJwHGcWU8jfaT7iyd
- aiT6xClFBHLCHUEyuvzNCX9FFe6wftaKwhK9etnNKFylyEd9SvQYt8V
+ bh=aHpVqUhA73R0k52i9jHgHCikRVBzEr4JeY2wk8AHGqM=;
+ b=ekKpXYzC0XO6AI578jN3+5rLSx/f5aoJnY7HnRsb2LP6027sUxT50AFq+CGUQPz7Unp81U8E1
+ 32i5GephyemAEqlezrxEeFBr5PXqV3FT52ApABrarkom86Mbx8hxPrH
 X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
  pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
 X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
@@ -70,162 +70,76 @@ Reply-To: filipp.dunsky@gmail.com
 
 From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-The timers, GPIO banks, I2C, MDIO, SPI and a few other low speed
-peripherals of the Cortina Systems CS75xx SoCs share a single GIC
-interrupt. A status register shows the level of the 15 sources and an
-enable register masks them; there is nothing to acknowledge, each source
-is cleared in its peripheral.
-
-Add a chained driver using a generic chip on a linear domain.
+Add a binding for the I2C ("Bi-Wire") controller of the Cortina Systems
+CS75xx SoCs.
 
 Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 ---
- drivers/irqchip/Kconfig      |  12 +++++
- drivers/irqchip/Makefile     |   1 +
- drivers/irqchip/irq-cs75xx.c | 103 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 116 insertions(+)
+ .../bindings/i2c/cortina,cs7542-i2c.yaml           | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index a8f8c423b..89afb4580 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -187,6 +187,18 @@ config BRCMSTB_L2_IRQ
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN
- 
-+config CS75XX_INTC
-+	bool "Cortina Systems CS75xx peripheral interrupt controller"
-+	depends on ARCH_CORTINA_ACCESS || COMPILE_TEST
-+	default ARCH_CORTINA_ACCESS
-+	select GENERIC_IRQ_CHIP
-+	select IRQ_DOMAIN
-+	help
-+	  Support for the interrupt controller of the Cortina Systems
-+	  CS75xx SoCs that combines the interrupts of the low speed
-+	  peripherals (timers, GPIO banks, I2C, MDIO, SPI) into a single
-+	  GIC interrupt. Say Y if you have a board with such an SoC.
-+
- config DAVINCI_CP_INTC
- 	bool
- 	select GENERIC_IRQ_CHIP
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index ab33cccd8..38c94bfb3 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -135,3 +135,4 @@ obj-$(CONFIG_APPLE_AIC)			+= irq-apple-aic.o
- obj-$(CONFIG_MCHP_EIC)			+= irq-mchp-eic.o
- obj-$(CONFIG_SOPHGO_SG2042_MSI)		+= irq-sg2042-msi.o
- obj-$(CONFIG_SUNPLUS_SP7021_INTC)	+= irq-sp7021-intc.o
-+obj-$(CONFIG_CS75XX_INTC)		+= irq-cs75xx.o
-diff --git a/drivers/irqchip/irq-cs75xx.c b/drivers/irqchip/irq-cs75xx.c
+diff --git a/Documentation/devicetree/bindings/i2c/cortina,cs7542-i2c.yaml b/Documentation/devicetree/bindings/i2c/cortina,cs7542-i2c.yaml
 new file mode 100644
-index 000000000..4d458039a
+index 000000000..f70984bd7
 --- /dev/null
-+++ b/drivers/irqchip/irq-cs75xx.c
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Cortina Systems CS75xx peripheral interrupt controller
-+ *
-+ * The low speed peripherals on the register bus (timers, GPIO banks, I2C,
-+ * MDIO, SPI, ...) share a single GIC interrupt. A status register shows
-+ * the level of the 15 sources and an enable register masks them; there is
-+ * nothing to acknowledge, the sources are cleared in the peripherals.
-+ */
++++ b/Documentation/devicetree/bindings/i2c/cortina,cs7542-i2c.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/cortina,cs7542-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/bitops.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
++title: Cortina Systems CS7542 I2C controller
 +
-+#define CS75XX_INTC_STATUS	0x00
-+#define CS75XX_INTC_ENABLE	0x04
++maintainers:
++  - Fil Dunsky <filipp.dunsky@gmail.com>
 +
-+#define CS75XX_INTC_NR_IRQS	15
++description:
++  The I2C ("Bi-Wire") controller of the Cortina Systems CS75xx (Goldengate
++  G2) SoCs. It transfers one byte per command and runs from the peripheral
++  (APB) clock through a 16-bit prescaler.
 +
-+static void cs75xx_intc_handler(struct irq_desc *desc)
-+{
-+	struct irq_domain *domain = irq_desc_get_handler_data(desc);
-+	struct irq_chip_generic *gc = irq_get_domain_generic_chip(domain, 0);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned long pending;
-+	unsigned int hwirq;
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
 +
-+	chained_irq_enter(chip, desc);
++properties:
++  compatible:
++    const: cortina,cs7542-i2c
 +
-+	pending = readl(gc->reg_base + CS75XX_INTC_STATUS) & gc->mask_cache;
-+	for_each_set_bit(hwirq, &pending, CS75XX_INTC_NR_IRQS)
-+		generic_handle_domain_irq(domain, hwirq);
++  reg:
++    maxItems: 1
 +
-+	chained_irq_exit(chip, desc);
-+}
++  interrupts:
++    maxItems: 1
 +
-+static int __init cs75xx_intc_init(struct device_node *np,
-+				   struct device_node *parent)
-+{
-+	struct irq_chip_generic *gc;
-+	struct irq_domain *domain;
-+	void __iomem *base;
-+	int parent_irq;
-+	int ret;
++  clocks:
++    maxItems: 1
 +
-+	base = of_io_request_and_map(np, 0, of_node_full_name(np));
-+	if (IS_ERR(base)) {
-+		pr_err("%pOF: unable to map registers\n", np);
-+		return PTR_ERR(base);
-+	}
++  clock-frequency:
++    enum: [100000, 400000]
++    default: 100000
 +
-+	/* Mask everything before the chained handler is installed */
-+	writel(0, base + CS75XX_INTC_ENABLE);
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
 +
-+	parent_irq = irq_of_parse_and_map(np, 0);
-+	if (!parent_irq) {
-+		pr_err("%pOF: unable to map parent interrupt\n", np);
-+		ret = -EINVAL;
-+		goto err_unmap;
-+	}
++unevaluatedProperties: false
 +
-+	domain = irq_domain_create_linear(of_fwnode_handle(np),
-+					  CS75XX_INTC_NR_IRQS,
-+					  &irq_generic_chip_ops, NULL);
-+	if (!domain) {
-+		ret = -ENOMEM;
-+		goto err_dispose;
-+	}
-+
-+	ret = irq_alloc_domain_generic_chips(domain, CS75XX_INTC_NR_IRQS, 1,
-+					     "cs75xx-intc", handle_level_irq,
-+					     IRQ_NOREQUEST | IRQ_NOPROBE, 0,
-+					     IRQ_GC_INIT_MASK_CACHE);
-+	if (ret)
-+		goto err_domain;
-+
-+	gc = irq_get_domain_generic_chip(domain, 0);
-+	gc->reg_base = base;
-+	gc->chip_types[0].regs.mask = CS75XX_INTC_ENABLE;
-+	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-+	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-+
-+	irq_set_chained_handler_and_data(parent_irq, cs75xx_intc_handler,
-+					 domain);
-+
-+	return 0;
-+
-+err_domain:
-+	irq_domain_remove(domain);
-+err_dispose:
-+	irq_dispose_mapping(parent_irq);
-+err_unmap:
-+	iounmap(base);
-+	return ret;
-+}
-+
-+IRQCHIP_DECLARE(cs7542_intc, "cortina,cs7542-intc", cs75xx_intc_init);
++examples:
++  - |
++    i2c@f00700e8 {
++        compatible = "cortina,cs7542-i2c";
++        reg = <0xf00700e8 0x28>;
++        interrupt-parent = <&intc>;
++        interrupts = <11>;
++        clocks = <&apb_clk>;
++        clock-frequency = <400000>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
 
 -- 
 2.53.0
