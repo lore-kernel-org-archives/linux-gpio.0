@@ -1,81 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE6B51991F
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 15:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252505221D3;
+	Tue, 13 Oct 2026 15:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791904169; cv=none; b=Vi6lQ706RNCy/Ezt40EFXI+vzfHmwpZBJ/VmLig0BtzY68tnD1CwKRwJDfldDms5cMlfNa9OoNPe10f4Tr3CgoPUpBIKyV5mDX4ZkRPIcPvkefLovS3Y99IeZSionfi8RlpxpnfhX9kJHNiY7HHtN3l0eXJnt2/SMrsUTs2FGEU=
+	t=1791905836; cv=none; b=amPxFAp/rb9r0EfdOlCo6nA7N/3e3BUwOpaqyWpL/REcJCitQXl40WV5X0suv62O08s9BJhvXqY66rzyfW9iL183XhccZPFiMDUJuRsS3KTmD7H9P/fT/eO2NIYoVLtlz5Aw+vKhPJXNxc5tAsB1UM+wTkhAh+wX9jNNL+HO9ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791904169; c=relaxed/simple;
-	bh=JzJnXJjt5k2C2q3Rf1h7pvRovHT6SYws8/FAHg3gXmg=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IH/8a+s2dCDoCqoDoZDErFCGP5q8lbyLkztpZAVUgIz9sBqvbw45XCjDw22aLylG3IY+Bt/r8S3MvKQMxRRJAvijhJbbR+WJeCRJbbWNd0bPe0xp+adI+rMAvDVK8tA8aikAc8HXSt1QSQU3IMgb0gfUUtV0mqZao0LaH7aF+40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myMw8iUM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791905836; c=relaxed/simple;
+	bh=Qkbn0WuH2H9J22IDpkqhPIsmmDiKKL7qr4cIGjwzim0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=qSUYARNdvy8Ow3488maC64jslJZXlfd6GunNAOkrU4y7Vpxcu5zqGPwjhS5fRTkP3qHtaozWB0jWMneGuVYZwLKPMU95YEhb60WOVUM9Xl5EvqPELGAf3rhcNAc1+5Wcq4UAdJXK+9TjFQQ6CAHkIMiZ8EoeERgd7G58LUkQnoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Eat++qsN; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myMw8iUM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51B001F0089D
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 15:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791904168;
-	bh=JzJnXJjt5k2C2q3Rf1h7pvRovHT6SYws8/FAHg3gXmg=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=myMw8iUMj8ew/uSlXxWwXPm4SGmUAylivxBH3Gtr5ryhM1aXUudamajMyG1T0//yX
-	 wjfRLyWFmmxEwYVxFE4cyRZFLN7XXUuHq8TfDtwYWFMv0qIFKBPdWwgguJHYvcTPJJ
-	 Og48A37aKhX7l5Q0gHD2wZCLihKWyDu4C5qYcqjVwUfxliCuZzgMunHcSupxf1wfCq
-	 tbCn6aowlBmrVsXcttEQrEmdxJINOfhfjeeNOsIMu30QcV+naUhhyM7h5kBm49qCxD
-	 1hWBzRbDtObqnYMs0h7D6tNOnZykf+Kw11BAEj6WhqkwSmunmMYakW7L1LsaJbOIlG
-	 NTwaavOCFr1Kg==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5ba41ea31ccso3478162e87.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 08:09:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBypH8fStYFLua7e2LZgrqOleTYVl/XYTdW0LgYANedzk2qxJffJGcUILUWO8e9TLEV+Ok9QCzbeP//U@vger.kernel.org
-X-Gm-Message-State: AFq9FYIiMHWyh7lZ99KKft5WL9Lwl20TAbH1Bx9hRxogLa9LSlST1s0V
-	M/dpQMxnmva5+Gs7/A/uvZLK3UPYAvcbRLvV9gpVBJDjCsNmj+6EuUZ+uzVmdl/cC5pRiIIYMxG
-	Xxnz67BupIpy6BFKMBNErsPqYHXZi/2POYsjwf7fPAA==
-X-Received: by 2002:a05:6512:6c4:b0:5ba:3abe:425b with SMTP id
- 2adb3069b0e04-5bcde5aa70bmr4129065e87.40.1791904167039; Tue, 13 Oct 2026
- 08:09:27 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 13 Oct 2026 11:09:25 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 13 Oct 2026 11:09:25 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <73c4ceaf.9c2f.1a13599e8ca.Coremail.zl020895@163.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Eat++qsN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Qkbn0WuH2H9J22IDpkqhPIsmmDiKKL7qr4cIGjwzim0=; b=E
+	at++qsNsOrRp9wxPXUR2fEsuVrAjdzoyKw/xspfwfQHzDv8ATwc8d7y8dHvSe+bb
+	7EgG/0BpYjyg1Ni90pn6stLxP5GOTfcwvGnuF6eujF2c4GNz8K5ozL+pCqVddifO
+	jVYU5MWe5HDkwYMcMS+BO96WCFPSZTbFptmRv9QFDA=
+Date: Tue, 13 Oct 2026 23:36:20 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Bartosz Golaszewski" <brgl@kernel.org>
+Cc: longzhao@ambarella.com,
+	"Long Zhao via B4 Relay" <devnull+longzhao.ambarella.com@kernel.org>,
+	"Linus Walleij" <linusw@kernel.org>,
+	"Michael Walle" <mwalle@kernel.org>,
+	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
+	"Conor Dooley" <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Conor Dooley" <conor.dooley@microchip.com>,
+	"Chanho Min" <chanho.min@lge.com>, linux-gpio@vger.kernel.org
+Subject: Re:Re: Re:Re: [PATCH 0/7] gpio: add Ambarella CV75 PL061 support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <CAMRc=MeDEfaqciXt+u6a7riof=KObrWB2qJ96LjFEzoGwi=eSQ@mail.gmail.com>
+References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+ <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com>
+ <73c4ceaf.9c2f.1a13599e8ca.Coremail.zl020895@163.com>
+ <CAMRc=MeDEfaqciXt+u6a7riof=KObrWB2qJ96LjFEzoGwi=eSQ@mail.gmail.com>
+X-NTES-SC: AL_Qu2SA/Wbuk8j5iCebekdnUoTj+Y/XMK0uvwk1YdVc+MEpS7JyCwnWU9tAFfdweisFT6RohuNQSVQzMdUe413VehHBbQVcItEaM2+sBTpGQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
- <CAMRc=MezU71ByUoO-GMxSwsFsGZTUmQisYYrYEwtdbwyFiEqsw@mail.gmail.com> <73c4ceaf.9c2f.1a13599e8ca.Coremail.zl020895@163.com>
-Date: Tue, 13 Oct 2026 11:09:25 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MeDEfaqciXt+u6a7riof=KObrWB2qJ96LjFEzoGwi=eSQ@mail.gmail.com>
-X-Gm-Features: AclHuK9_9YzpLfejzw7rn-1jwhqIoegOlkZSxzlWKn2bfBr_tjHwRd0W1yQHDBo
-Message-ID: <CAMRc=MeDEfaqciXt+u6a7riof=KObrWB2qJ96LjFEzoGwi=eSQ@mail.gmail.com>
-Subject: Re: Re:Re: [PATCH 0/7] gpio: add Ambarella CV75 PL061 support
-To: zl020895 <zl020895@163.com>
-Cc: longzhao@ambarella.com, 
-	Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Chanho Min <chanho.min@lge.com>, 
-	linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <1e8db23.a299.1a135e85172.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bCgvCgBn9_z0T85qiRhYAA--.381W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7hRf0GrOT-SNyAAA3v
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, 13 Oct 2026 16:10:41 +0200, zl020895 <zl020895@163.com> said:
-> Hi Bart,
->
-> Yes. This is effectively a v10 of the GPIO patches from the combined CV75 series. I split them out and restarted the numbering at v1 because some maintainers preferred separate series, so I am trying that.
->
-
-Please don't top post on mailing lists and wrap your messages around 80 lines.
-
-May I ask which maintainer asked you to reset the numbering? This doesn't make
-any sense, this is a continuation of the other series and should be numbered as
-v10 and include the changelog.
-
-Bart
+QXQgMjAyNi0xMC0xMyAyMzowOToyNSwgIkJhcnRvc3ogR29sYXN6ZXdza2kiIDxicmdsQGtlcm5l
+bC5vcmc+IHdyb3RlOgo+T24gVHVlLCAxMyBPY3QgMjAyNiAxNjoxMDo0MSArMDIwMCwgemwwMjA4
+OTUgPHpsMDIwODk1QDE2My5jb20+IHNhaWQ6Cj4+IEhpIEJhcnQsCj4+Cj4+IFllcy4gVGhpcyBp
+cyBlZmZlY3RpdmVseSBhIHYxMCBvZiB0aGUgR1BJTyBwYXRjaGVzIGZyb20gdGhlIGNvbWJpbmVk
+IENWNzUgc2VyaWVzLiBJIHNwbGl0IHRoZW0gb3V0IGFuZCByZXN0YXJ0ZWQgdGhlIG51bWJlcmlu
+ZyBhdCB2MSBiZWNhdXNlIHNvbWUgbWFpbnRhaW5lcnMgcHJlZmVycmVkIHNlcGFyYXRlIHNlcmll
+cywgc28gSSBhbSB0cnlpbmcgdGhhdC4KPj4KPgo+UGxlYXNlIGRvbid0IHRvcCBwb3N0IG9uIG1h
+aWxpbmcgbGlzdHMgYW5kIHdyYXAgeW91ciBtZXNzYWdlcyBhcm91bmQgODAgbGluZXMuCj4KPk1h
+eSBJIGFzayB3aGljaCBtYWludGFpbmVyIGFza2VkIHlvdSB0byByZXNldCB0aGUgbnVtYmVyaW5n
+PyBUaGlzIGRvZXNuJ3QgbWFrZQo+YW55IHNlbnNlLCB0aGlzIGlzIGEgY29udGludWF0aW9uIG9m
+IHRoZSBvdGhlciBzZXJpZXMgYW5kIHNob3VsZCBiZSBudW1iZXJlZCBhcwo+djEwIGFuZCBpbmNs
+dWRlIHRoZSBjaGFuZ2Vsb2cuCj4KPkJhcnQKSGkgQmFydCwKCk5vYm9keSBhc2tlZCBtZSB0byBy
+ZXNldCB0aGUgbnVtYmVyaW5nLiBJIHRob3VnaHQgdGhhdCBvbmNlIHRoZSAKcGF0Y2hlcyB3ZXJl
+IHNwbGl0IG91dCB0aGV5IGNvdW50ZWQgYXMgYSBuZXcgc2VyaWVzLCBzbyBJIHN0YXJ0ZWQKYWdh
+aW4gYXQgdjEuIEkgd2lsbCBzZW5kIHRoZSBuZXh0IHBhdGNoIHZlcnNpb24gYXMgdjEwLgoKQmVz
+dCByZWdhcmRzLApMb25nIFpoYW8=
