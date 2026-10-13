@@ -1,245 +1,101 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38DB3D0BE1;
-	Tue, 13 Oct 2026 14:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BB33EC699;
+	Tue, 13 Oct 2026 14:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791900205; cv=none; b=nA8KhbE7+wqEYx40m0jSQoDRI1WSKFNrXv2QfUOdpvPOemmow2VwmiBr8v427EKdHGph4hZH9TQX9R3XaV1vGZQCB3VdeHQcMkpK2w5+brR3NJ308AO1cNYNFq8CKIkH1pbOSIkZUDqAA5iq2BUHGOVLtTXC6QBXdaGZK+an2ek=
+	t=1791900205; cv=none; b=lTGYLwoSUX0BSLm3chroAXCDj54i03zmHWgE5VTWiRh9eBbQVR0JasWXJ7hId1QLCTwiY5AaSDxXTXMfsOEewE72XrpJdDoQzvf39cofQJnlt57XvEp6z+KN1O5cmoVcskvbqCSP++9WX2GtGOWVAVOLei9joHiL9wlX07q09oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791900205; c=relaxed/simple;
-	bh=1IefC3iuQUrnFqoYEi0MFPNxQjrKAvxqtbUvGiWeLsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rpKi/5ZX/35Ue+gXAe8JxbEOOV9AMxlwvufI9Bve6cA0rEKdzw83aE3PD/jsdv581szU89oVJTJ6+3r9bCacWzbpNb3Gppqx5ftTTZye4LRfOsOfT3mohXhx2+fflTvrICrAEmwMsDS0JB17+OKNaD01qfzZK6y7nSfeJIwmALA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Z2Cw41gu; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	bh=u+V/iK8jw/8LANpRM3jBSBG3EkByTpLSxWUoc3Org94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjmyMJ83asV3/fEjBbMO+p5+aCqa0FGZbueM8TwtJrx6F2uHyGjEpyzrPcv51i9/cxJ/ZNIsZiVgh3hu1QybgG6y3HElZh44/qIprJGRWWzYu84DGcOcoONPOpjl2MJqZlcCi1ffsR1/Wf/aK5VtWbrREQdKvqApRxe+ydk6oUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ncYu1Cg2; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Z2Cw41gu"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D04F9169E;
-	Tue, 13 Oct 2026 07:03:18 -0700 (PDT)
-Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C3F03F7B4;
-	Tue, 13 Oct 2026 07:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1791900202; bh=1IefC3iuQUrnFqoYEi0MFPNxQjrKAvxqtbUvGiWeLsc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z2Cw41guH8GdudzEKSB7rd8ujbuphgZqVU4LW2T+IQrL6T21Zy11jE3OaKQsDLwRC
-	 othZfQKLHSspMreGKNHWL9k0xpwsRfwXQfuc3DCcvZUhCbY4ofr3q2EKx605NiZGtL
-	 pjM52We2Gi12vcgotT+j2A4R9qWqC8yg14Yd9xIw=
-Message-ID: <35a421f1-c3f2-4863-938b-b516f5e3d2e6@arm.com>
-Date: Tue, 13 Oct 2026 16:03:17 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ncYu1Cg2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791900205; x=1823436205;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u+V/iK8jw/8LANpRM3jBSBG3EkByTpLSxWUoc3Org94=;
+  b=ncYu1Cg2HvHw4wdaqppp+M4HRjoeC1hOTxqQv0P7veyF3/uqecFs3+CJ
+   c6B452Idi3vUxL672/9WnBEvlvqVfrH6BVELo2smoYbiQYGDTNWVtJbW6
+   MbjMdpU527c3DfAYIPeY+J09dmEH5AyE3A1NEyyNztOzhasRZhZAw+PwP
+   Czel2SbrJr7Mr97ucH/wfwXVa5uMySBMfG4lwId6C0dUErlC2pWoymSw4
+   m5HA4w+P0SOJa9fcK4PpgfhNLXksesX2I9rxgcRQ4jBxUHkqL54br/AX9
+   OmUGaNiC09wb5y0L6uQWYexSEUQs8q77XMGb35Yn8Et3uO7vyWVFVJIsJ
+   w==;
+X-CSE-ConnectionGUID: 9VYMGr5jQlKGuIOCmDGusA==
+X-CSE-MsgGUID: efYogt2FRH6XcrRGFthkuA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="500104"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="500104"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 07:03:24 -0700
+X-CSE-ConnectionGUID: v0W2HnSAQqelZQCTHreGWg==
+X-CSE-MsgGUID: cNa3D2sUTJ+3wWDWrzfblQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1240681"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 07:03:21 -0700
+Date: Tue, 13 Oct 2026 17:03:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Chris Hall <c-hall@ti.com>, Patrick Edwards <pedwards@ti.com>,
+	Kurt Borja <kuurtb@gmail.com>
+Subject: Re: [PATCH] iio: adc: ti-ads112c14: add gpio support
+Message-ID: <as46JtMAij8yqcVQ@ashevche-desk.local>
+References: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
+ <arom9T0azKX9jV5m@ashevche-desk.local>
+ <f4ddbc02-1fdd-4205-b511-fb39329fa5f3@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] pinctrl: sunxi: a733: program the two-bit I/O voltage
- fields
-To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>, linusw@kernel.org
-Cc: wens@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20261012184130.548261-1-vinicius.eduardo.pedrosa@gmail.com>
- <20261012184130.548261-2-vinicius.eduardo.pedrosa@gmail.com>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261012184130.548261-2-vinicius.eduardo.pedrosa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4ddbc02-1fdd-4205-b511-fb39329fa5f3@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
+On Fri, Oct 09, 2026 at 06:04:21PM -0500, David Lechner wrote:
+> On 9/28/26 3:36 AM, Andy Shevchenko wrote:
+> > On Fri, Sep 25, 2026 at 04:50:47PM -0500, David Lechner (TI) wrote:
 
-On 10/12/26 20:41, Vinicius Pedrosa wrote:
-> The A733 GPIO_POW_MOD_SEL register has a two-bit field per bank, but
-> the A733 uses the helper written for one bit per bank, so a request
-> for one bank can change the field of another one. With the register
-> as firmware leaves it on a Radxa Cubie A7Z (the fields of PB, PC, PD,
-> PE, PG, PH, PJ and PK in automatic mode, 0x01155550), a PJ request at
-> 1.8 V turns the PE field into fixed 1.8 V (0x01155750).
-> 
-> Add a variant that takes the field of each bank from a mask table. It
+...
 
-Why do we need a table? The bit assignment is a linear
-[bank * 2 + 1:bank * 2], no?
+> >> +static int ads112c14_gpio_init(struct iio_dev *indio_dev)
+> >> +{
+> >> +	struct ads112c14_data *data = iio_priv(indio_dev);
+> >> +	struct device *dev = indio_dev->dev.parent;
+> >> +
+> >> +	for (unsigned int i = 0; i < ADS112C14_NUM_GPIO; i++) {
+> >> +		data->gpio_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s:GPIO%u",
+> >> +						     dev_name(&indio_dev->dev), i);
+> >> +		if (!data->gpio_names[i])
+> >> +			return -ENOMEM;
+> > 
+> > Wondering if you can utilise devm_kasprintf_strarray().
+> > 
+> That uses "%s-%zu" internally, so would add a "-" where I don't want it.
 
-> keeps automatic mode and a fixed 3.3 V mode that already fits, and
-> writes only the field of the requested bank. PF is left out: its field
-> (11:10) is known, but it is tied to the MMC vqmmc voltage switching.
+What's the problem with a dash?
 
-I don't think this redirection is legit. Yes, PortF could be supplied by 
-VCC-IO, but surely that port always has to stay at 3.3V, as the 
-datasheet requires.
-So I would not treat PortF special here.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> PI is left out as well, since its supply domain is not documented.
-
-Mmmh, but isn't that just because it's not exposed on the A733 package? 
-Similar to what we saw on the A523: the registers for the banks are 
-clearly there, it's just the manual doesn't mention them, because they 
-are not used in the particular SoC version. If I read 0x2000480, I see 
-at least 8 pins there (all bits set), and 0x2000488 reads 0xf, so there 
-are 17 pins on PortI.
-And if we don't use PI pins or the PI supply in the DT, we will never 
-try to adjust the PI voltage withstand, so there is no problem.
-
-> Only silicon revision B, as reported through SMCCC, is programmed,
-> since the encoding is documented for that revision only.
-
-Where does this come from? Where is it documented to be applicable for 
-only a single revision?
-
-I will send what I came up with in a minute, feel free to poke holes in 
-there (it's just compile tested).
-
-Cheers,
-Andre
-
-> Computed with both helpers on that register value, the old one changes
-> it and the new one leaves it as it is.
-> 
-> Fixes: 0535bfbfa97b ("pinctrl: sunxi: add support for the Allwinner A733")
-> Signed-off-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-> ---
->   drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c | 15 +++++-
->   drivers/pinctrl/sunxi/pinctrl-sunxi.c       | 57 +++++++++++++++++++++
->   drivers/pinctrl/sunxi/pinctrl-sunxi.h       |  6 +++
->   3 files changed, 77 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-> index ca82f08a3a65..6f5757b8adea 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-> @@ -21,10 +21,23 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
->   /*	  PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
->   	{  0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14};
->   
-> +/* PA is not implemented. PF and PI are left to the firmware, so are not listed. */
-> +static const u32 a733_io_bias_masks[SUNXI_PINCTRL_MAX_BANKS] = {
-> +	[1] = GENMASK(25, 24),	/* PB, VCC-IO */
-> +	[2] = GENMASK(5, 4),	/* PC */
-> +	[3] = GENMASK(7, 6),	/* PD */
-> +	[4] = GENMASK(9, 8),	/* PE */
-> +	[6] = GENMASK(13, 12),	/* PG */
-> +	[7] = GENMASK(15, 14),	/* PH */
-> +	[9] = GENMASK(19, 18),	/* PJ */
-> +	[10] = GENMASK(21, 20),	/* PK */
-> +};
-> +
->   static struct sunxi_pinctrl_desc a733_pinctrl_data = {
->   	.irq_banks = 10,
->   	.irq_read_needs_mux = true,
-> -	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
-> +	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT,
-> +	.io_bias_masks = a733_io_bias_masks,
->   };
->   
->   static int a733_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index 3ee5012463da..8e62111d3409 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -10,6 +10,8 @@
->    * warranty of any kind, whether express or implied.
->    */
->   
-> +#include <linux/arm-smccc.h>
-> +#include <linux/bitfield.h>
->   #include <linux/clk.h>
->   #include <linux/export.h>
->   #include <linux/gpio/driver.h>
-> @@ -722,6 +724,58 @@ static const struct pinconf_ops sunxi_pconf_ops = {
->   	.pin_config_group_set	= sunxi_pconf_group_set,
->   };
->   
-> +/*
-> + * The two-bit encoding is documented for A733 silicon revision B, which
-> + * firmware reports through the SMCCC SOC_ID call. Do not assume it for any
-> + * other revision, or when the firmware does not tell.
-> + */
-> +#define SUNXI_A733_SOC_ID		0x091e1903
-> +#define SUNXI_A733_REV_B		1
-> +
-> +static bool sunxi_pinctrl_a733_rev_b(void)
-> +{
-> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
-> +	s32 id = arm_smccc_get_soc_id_version();
-> +
-> +	/* Bit 23 is the JEP106 parity bit. */
-> +	return id >= 0 && (id & ~BIT(23)) == SUNXI_A733_SOC_ID &&
-> +	       arm_smccc_get_soc_id_revision() == SUNXI_A733_REV_B;
-> +#else
-> +	return false;
-> +#endif
-> +}
-> +
-> +/*
-> + * Fields: 0 and 2 fixed 3.3V, 1 automatic, 3 fixed 1.8V. Leave automatic
-> + * mode and any other supply voltage to the firmware, and touch only the
-> + * field of this bank.
-> + */
-> +static void sunxi_pinctrl_set_io_bias_2bit(struct sunxi_pinctrl *pctl,
-> +					   unsigned int bank, int uV)
-> +{
-> +	u32 mask = pctl->desc->io_bias_masks[bank];
-> +	unsigned long flags;
-> +	u32 val, cur, reg;
-> +
-> +	if (!mask || !sunxi_pinctrl_a733_rev_b())
-> +		return;
-> +
-> +	if (uV >= 1620000 && uV <= 1980000)
-> +		val = 3;
-> +	else if (uV >= 2970000 && uV <= 3630000)
-> +		val = 2;
-> +	else
-> +		return;
-> +
-> +	raw_spin_lock_irqsave(&pctl->lock, flags);
-> +	reg = readl(pctl->membase + pctl->pow_mod_sel_offset);
-> +	cur = field_get(mask, reg);
-> +	if (cur != 1 && cur != val && !(val == 2 && cur == 0))
-> +		writel((reg & ~mask) | field_prep(mask, val),
-> +		       pctl->membase + pctl->pow_mod_sel_offset);
-> +	raw_spin_unlock_irqrestore(&pctl->lock, flags);
-> +}
-> +
->   static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
->   					 unsigned pin,
->   					 struct regulator *supply)
-> @@ -795,6 +849,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
->   		       pctl->membase + pctl->pow_mod_sel_offset);
->   		raw_spin_unlock_irqrestore(&pctl->lock, flags);
->   		return 0;
-> +	case BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT:
-> +		sunxi_pinctrl_set_io_bias_2bit(pctl, bank, uV);
-> +		return 0;
->   	default:
->   		return -EINVAL;
->   	}
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> index 7c2f29e75519..c37170b2e4f4 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -130,6 +130,11 @@ enum sunxi_desc_bias_voltage {
->   	 */
->   	BIAS_VOLTAGE_PIO_POW_MODE_CTL,
->   	BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV,
-> +	/*
-> +	 * Bias voltage is set through two-bit fields in PIO_POW_MOD_SEL_REG,
-> +	 * whose positions are given by io_bias_masks[], as seen on A733.
-> +	 */
-> +	BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT,
->   };
->   
->   struct sunxi_desc_function {
-> @@ -155,6 +160,7 @@ struct sunxi_pinctrl_desc {
->   	bool				irq_read_needs_mux;
->   	bool				disable_strict_mode;
->   	enum sunxi_desc_bias_voltage	io_bias_cfg_variant;
-> +	const u32			*io_bias_masks;
->   };
->   
->   struct sunxi_pinctrl_function {
 
