@@ -1,33 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0002e601.pphosted.com (mx0a-0002e601.pphosted.com [148.163.150.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7DE253340;
-	Tue, 13 Oct 2026 09:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791883390; cv=none; b=dsMdhJYT0MvoeDavz56z+a19TANqVY4IJPTI+5BZXk94YjIOrd2QdpUroH1ayfBrtmzKb13uJsgDKWTn5AMVMPGFkHGQ1c1TLJhaRAPiLLI6VXd5vRlw3eTSCXCVtHLZsjzIkRTo1C9UQwfqpB55eow0X3FwGS+ogDkav94aGbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791883390; c=relaxed/simple;
-	bh=ofil04HhTpC5obolLrlUT+WOtzfPuVxc9y1abvRUQSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qAkYtPt8PgPWM7BzxkAsC5AdxJZ093ZoE2WRAIITuu4cyiRMrrgQBIYqAfmvvacLwMv3SSnROakIIHjyw7vRPolWXUk6PqKm/HTQ6RwJKWA4H0Ckbyrgq0aZFFlAl2T7VqxKDgm2yYQPtzIGa0o3AWAG/6iNf5jFrVMJ+VhRhUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNEhL49s; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078093B71D3;
+	Tue, 13 Oct 2026 09:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.150.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791884280; cv=fail; b=tbcbRAOPY3wOwhbiEWme2H36fJvcc5BBhHEC+3O4/iFyVn4835RDyAyNhCoXVgbGJUNLKbBRe/k8MWSxNLT1Gqh9L78xwdi3xFcRVuKJBFMdBhoBFVk0bVXtolg/KbhidP+vF+7xK/ekvt+1uxrzTRM6CzKZ+mapPw3L1YdeCzw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791884280; c=relaxed/simple;
+	bh=FkK9ov37JD8wGjioGh3ICbw6lcTZAg/21OQhn9RX1UM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q1wY6BgEs8WcWbqp3nroI2VQ2sxLXamViJzv3J4rKQy2u5N3r5HmArrYj3oqzQhjQdLVr09oAIwrd5CTCRBgUrKpvSIog3VeHT7v8wKNajKTUdwdA+0A/0Px+zeqlpg6nNEPZKg+6A4De9o1704HLeSizJi4BpCeSP0PfnN9jt4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=kE1LUBtY; dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b=ShxuF9oA; arc=fail smtp.client-ip=148.163.150.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNEhL49s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 608E61F000FF;
-	Tue, 13 Oct 2026 09:22:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791883389;
-	bh=7dLuRhyxP4nwjlLQAHA1PhTS/cikBl46Qd8VTWlXOfc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=YNEhL49syqeDz9UxO2iRTohsddBwkDSOmONbNUTTwQb8W+2yBiuXEdJHLLgs6TbC+
-	 HgPMOJfoS407xu8tcYfDZS/DpmFkMGv8dir5K6NTkhw6AQySNyfKWmkFxLJs1qm0rZ
-	 TCHpDbojAethdw7LxlRHYJfYOGy1l6+fE/+QQO9qhj1cMFCU+hVK7mg1pLPRpV4xa2
-	 TUyH23m00MjeY7B7z++AVGEDsICxPPCNLpnaFfIe22sckAv4hda7ZnhCBTdsANYsCC
-	 ux0dLAh5wFBy9sH3N4Smf9a8iPGC2pzkT96xorZZr+wuPcjA8TIncDmvk0bDSzcwxR
-	 Z3CP4N5Ug4Yjg==
-Message-ID: <56dc6c05-7fd6-43de-bc62-c353ae1dbcc3@kernel.org>
-Date: Tue, 13 Oct 2026 11:22:56 +0200
+	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="kE1LUBtY";
+	dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b="ShxuF9oA"
+Received: from pps.filterd (m0384305.ppops.net [127.0.0.1])
+	by m0384305.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 69D7ABZk3045872;
+	Tue, 13 Oct 2026 04:37:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	proofpoint-05-2026; bh=SsCDkxC4BRn6Ckf9J11dqC8WRWkqzw77J9PWQKsyv
+	t0=; b=kE1LUBtYYKqzImWgQUHTrK8l0SpnscVhTNXHZFrPDgOZlfvCMeSFZVmIL
+	XAVFFBmyxPmcKgeWu76fpVSeFQ2ZtrjKRuKpVjcvboex9Y8QUrSJtmXNJ9NDvpAd
+	mXiUR1WS9Peu6xdazkiI42Q/J8MP3QYXoXaXtrHcUqWBN8h5hf5G9NGzJJK6UrPW
+	owVT1fR49RFhNuEY09HR0FTc1smmPpoOcsSiGbVj0oZbeQHK6yGQ3ZoufDUrey2I
+	i93MHV6y/VNZhCwUuc+Z/ypd2EKWvDzQADf/9NZ+1+IlzmaAnF4Q0hp6hzpV7m7k
+	Jyn3lX05iaL8SXWoNB9PEiClGov5A==
+Received: from bn8pr05cu002.outbound.protection.outlook.com (mail-eastus2azon11011060.outbound.protection.outlook.com [52.101.57.60])
+	by m0384305.ppops.net (PPS) with ESMTPS id 4h99uhaxyx-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 13 Oct 2026 04:37:48 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FcVx3NtzXHm2AYhjs77Sc5N8eiNnJ1LDLdYW4m/JgEN+r43FwiY37kOV5BcelvKvfTeXxJiFzROK4MhegRK/VWSb50gN4hmEKyUBERiyTfVvhaAuOu8zkL9bXcOMFXogz10p7Jm/49eZO8Gur1BLX/jqYLF1MlPGJp7AW7CPDzjb4SkhinKXB52t1W0rG5wvdlfLls60TOsG2Cld35SKHJFwCzI7adAydQgte/JhvSk6AFkVZKijih9LQiNE1xsb92G1IEaffshbSYTj1TiRVqArB9NOuKI2LwUVUiJkf9P9gLm2TQz9Pl6Ke6EyXPerBVuEeDaf2Aqzq114QILjQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SsCDkxC4BRn6Ckf9J11dqC8WRWkqzw77J9PWQKsyvt0=;
+ b=bk/1dhv22u8joc2TlR/7bQGC3OQ0hXVvFfLpJdC5hEx+C2pMjwjtKzOIvaHdSpJipdzZfbQPY4ZACLKDSGI6PqjlD8txc7mWroZjadWgFa3YQ9GWuSzYH/F/xK4OD8Dlcb/hzWbpka6p+eZtg6EeUZcmG39nLJdm6zgSvWcPguECSbvCuiGtz428yrkpFxrbP8qUD6CB90JDcH83KyD9L9YJa3a1vBqKxU1KTRIKDsZVnO9lGB3oJC63k7c/dFXqIXqMhYP5SQa4Ho4XusiF4KTiD4/9Eu2qpIumUWsC4qyTNVOJDYa4/VCmPZ+Obv1j0FSCi9sFfz5tWoLruNmg2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=ticloud.onmicrosoft.com; s=selector1-ticloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SsCDkxC4BRn6Ckf9J11dqC8WRWkqzw77J9PWQKsyvt0=;
+ b=ShxuF9oA8Vf5/+Ml2W7HWBJb15r7pXsMPo1jBM6CZsyKC5TS6sjrk/JawZLkpzRyAJ3DIza7qS0x6DgaRQEzOSJzVf4o941BWTRHVCJz8yFIBlNMYyBKuDwVlfH0W3BHLRsTc1nqqAXxybobklXO+OQJ0qjTq8iSu1oLs8d0DMk=
+Received: from CH5PR02CA0014.namprd02.prod.outlook.com (2603:10b6:610:1ed::18)
+ by PH7PR10MB5748.namprd10.prod.outlook.com (2603:10b6:510:131::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Tue, 13 Oct
+ 2026 09:37:43 +0000
+Received: from CH2PEPF000166C1.namprd04.prod.outlook.com
+ (2603:10b6:610:1ed:cafe::94) by CH5PR02CA0014.outlook.office365.com
+ (2603:10b6:610:1ed::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.20 via Frontend Transport; Tue,
+ 13 Oct 2026 09:37:42 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 198.47.21.194) smtp.mailfrom=ti.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ CH2PEPF000166C1.mail.protection.outlook.com (10.167.252.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.6 via Frontend Transport; Tue, 13 Oct 2026 09:37:41 +0000
+Received: from DFLE203.ent.ti.com (10.64.6.61) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 13 Oct
+ 2026 04:37:12 -0500
+Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 13 Oct
+ 2026 04:37:12 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45 via Frontend
+ Transport; Tue, 13 Oct 2026 04:37:12 -0500
+Received: from [10.24.51.219] (abhilash-hp.dhcp.ti.com [10.24.51.219])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 69D9b9wn3265578;
+	Tue, 13 Oct 2026 04:37:10 -0500
+Message-ID: <8115decc-b340-4bd2-bf64-7f972d5cb75e@ti.com>
+Date: Tue, 13 Oct 2026 15:07:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,156 +94,217 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
-To: Linus Walleij <linusw@kernel.org>
-Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>,
- mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com>
- <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com>
- <CAD++jLmKF5XxHsJX29sdXC_6JHKn-7HkE=N+TKtk5xODtQj3_w@mail.gmail.com>
- <b2256847-3ec1-47e8-ac79-ceca86eb09e7@kernel.org>
- <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
- <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
- <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/3] pinctrl: ti: Add TDA54 pin controller driver
+To: <sashiko-reviews@lists.linux.dev>
+CC: <conor+dt@kernel.org>, <robh@kernel.org>, <devicetree@vger.kernel.org>,
+        Linus Walleij <linusw@kernel.org>, <alexander.sverdlin@siemens.com>,
+        "Kumar,
+ Udit" <u-kumar1@ti.com>, <linux-gpio@vger.kernel.org>
+References: <20260930092020.1047221-1-y-abhilashchandra@ti.com>
+ <20260930092020.1047221-3-y-abhilashchandra@ti.com>
+ <20260930094715.7B7F31F000FF@smtp.kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <20260930094715.7B7F31F000FF@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF000166C1:EE_|PH7PR10MB5748:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf73a0f5-6653-4b4a-8912-08df290da079
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700016|1800799024|23010399003|6133799003|22082099003|18002099003|10067099003|13003099007|4143699003|261009223027099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	pojI4teoACfAh+oE/cI7OiIi0ifd1z+wEvfBMvV0v0jQ/dm/Fu/Lt67kWc2Zc3zZ7AD8x+rZvrzaf5GeFBR+oi/JUrecOmDvDGEKKrNI5c1p7T4v0LUP+TFLU8DBWkkCLJ0uzL71EzIGUIVtvZA7YKErs5UeOPmi8xcsUhXZsHHVGfdOYjIG6BZFr846nyDGgKrCX3u429MJvf40u9WqUuA/Xfo0BG6mn3wPgdomcwn0/qzKx9d15drBT4JSPYzQy2TeVWL92XRr6KhfQeqsgis+A1soLJQf2WlszBV2hJyMQF3P+c84RAcvzG8jD9K4IltbM0S7B4o1IJctiqRQgD4+D7EKQkQnsDXDUS/b9J4KgJA0v29X/kANK0fe62NHIeUNwzRuN/tm+N/qQ4vsJ1GZ1rMZjogcvZnkWUKDMI9TJVdh7yEa31BdiVbxyJPxA6M8+IxojwWUa1rwIeJybuB7hlzz0bPnF8yNmvgpxb2DRsTbEfSGr+VbWehempMMaHBAtw3pFcqcj3kUHRxZ0qL/lxD0DHs5UsOq8zp6K64ZY1NcXLR9YTqa+q46HXK2U/FC3XqvLVGE13ZLHl7t7xKE4e1sJ71AzJV/dxRDJcJTZ0pTFJRJJjGQOnwy1JOWm6q7gLqa3qVX4Yr12xVgTiRo/HLnLLk75yCukq5WXrw=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700016)(1800799024)(23010399003)(6133799003)(22082099003)(18002099003)(10067099003)(13003099007)(4143699003)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	N+MxivYB6BySE8M6xzaA5/XsRAF2vpnCOzgSrm8Fj3SxKu5SYgvd6jlGaY8P84nNkKY4boEE4cqF1FUrfA4PaIDu30lqrahHrdDc2anTqoUZoC/SMkT97vgKRTlVpmvEBrJWOuKsFMybwOCNusoHxsoyk2kfbHeE33PLlYColQCAiWGu+d89CmkgpNL4HTbSckBkWFZchO4HAGc1XWOgsdo/Uk2jKaZ6nJAximsj0UOh88xSlMBe/+IYYNnh6Kskb/qjKzILORyG9kfOp+PAByzpbptZfUuy+tlqJ6KEXqGeO39oQG6jDnBlH6MO2yhVwkzxdvmYklr0rBgPGs6X8cMJ0MoMkNFq/1m0YwpdkMMJBnWFx4thuGOchyvGULQoMqGUxzAmZPvBMo7pn/7fusxVSPP6wtzU7Sv7yccl2doWSs229R2cgTpLUtFM7oIl
+X-Exchange-RoutingPolicyChecked:
+	ctcqxqzK6d3UEqSRV5Q/5AIEuTdaG3r0oKXJm8JU1ZxyMU9iKRaOINbQIMPXgFAOaqdtzG5MgwJk76cXciFLqLd29hSvZU7LjsEs3U3Y2HgS+XugXSh8lpVJrFE2qgymccstVYBBBHjLovJNeUbM3IMViXGXd41wjasusipOPbcGknhYkFZN9mglkuBNGhaET2bNJA9x9weFqE0kK0xdiOjxmggHX5LTQqpzHvLTgxYwJrBirrVbmvJ1PylSih+8kCSWdIxQTp2YGDDAWIYgZqDsUnB+BhCGSBD56OdQt0MFX+ArxyLktA5IUH+o04PeavWr3BLGOGijrhwIp+XgnQ==
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 09:37:41.2816
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf73a0f5-6653-4b4a-8912-08df290da079
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF000166C1.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5748
+X-Proofpoint-ORIG-GUID: MNgavHIicuCt606UpbnXMPCAnFo8HtJn
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEzMDAzOCBTYWx0ZWRfX/cmOijG/kaAa
+ WgTb9mStOsalZKPSS6w2l8C94++uJZr7648sNufsUR2mNNFG8/Wr2Pb13AYV24PDrXjBjKrppje
+ bGIzVHl7kj08Z56yWAodBxGqTu3G7OM=
+X-Authority-Analysis: v=2.4 cv=NpxE4MdJ c=1 sm=1 tr=0 ts=6acdfbed cx=c_pps
+ a=yyl0I9/pvHNpizRH36fpSA==:117 a=iwqwCZQqcuTv3JOpYdM7/Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10
+ a=AlMIdn_sM9wA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z8NIEmU8O1QQgoT56wFK:22
+ a=taLDd7a_hP9WKsMzeGRc:22 a=VwQbUJbxAAAA:8 a=a_U1oVfrAAAA:8 a=sozttTNsAAAA:8
+ a=lK5e7eeYuTKZ84K6TDsA:9 a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
+X-Proofpoint-GUID: MNgavHIicuCt606UpbnXMPCAnFo8HtJn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEzMDAzOCBTYWx0ZWRfX6EES9oH+K81V
+ 2SJsy5IzfxXycMttZaboR3l+rN0lHxjbJa7DP/lvBrR9K+T11J5QamOA3eH63TBtNNp5oeH2do4
+ ejehsDTdiZI20on28sSC/C1ZXOZFTO7IbzfOEyQbjvMaNT6AZ0AXW7tBLklKfOPIi3zts+vZwXN
+ JXB+Lpp4k13LdHQYJAgGg/9JhmlM6JprZ1+zl43u25bYwpreAAxdm0atNNQCsPvfAIVeJOXsccX
+ 1OU+HWCpzwpset7dw9gzzIxxOvrmjVtftA6t8RpuknjkGJTW7va625LD6YWlGeboTOxwW/yKMjU
+ dkuwkT8PnkfAAVEx2QW+MaDboEeRBOImV2aYX42f0qT0BipgHmrjyL7hcUk4r02KFEmIZv0dpuP
+ 0pdj7aq/8Oj1c9rzPNnJjKTyVbU+h3v1hV8ejc1gz97e/rZt0sX5zdRz21FaOt+1D00IbuvGZRo
+ KPTW9kuUahicDaJasew==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 impostorscore=0 phishscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
+ definitions=main-2610130038
 
-On 13/10/2026 10:44, Linus Walleij wrote:
-> On Mon, Oct 12, 2026 at 9:08 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On 12/10/2026 09:06, Linus Walleij wrote:
->>> On Fri, Oct 9, 2026 at 8:17 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>> On 01/10/2026 09:03, Linus Walleij wrote:
->>>
->>>>> On Mon, Sep 21, 2026 at 6:23 AM Long Zhao via B4 Relay
->>>>> <devnull+longzhao.ambarella.com@kernel.org> wrote:
->>>>>
->>>>>> From: Long Zhao <longzhao@ambarella.com>
->>>>>>
->>>>>> Document the CV75 pin controller binding using generic function and
->>>>>> groups properties for pinmux configuration.
->>>>>>
->>>>>> Reviewed-by: Linus Walleij <linusw@kernel.org>
->>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->>>>>> Signed-off-by: Long Zhao <longzhao@ambarella.com>
->>>>>
->>>>> This patch 4/18 applied to the pinctrl tree.
->>>>
->>>> There is a dependency, you cannot take this patch alone.
->>>
->>> Oops, but is it a DTS dependency so if none of the other patches go in through
->>
->> No, it is a bindings dependency, introducing new DT bindings warning for
->> both your tree and next.
+Adding Linus, Alexander and few others.
+
+On 30/09/26 15:17, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 3 potential issue(s) to consider:
+> - [High] pinctrl: memory leak of devm allocations in dt_node_to_map
+> - [Medium] pinctrl: erroneous removal of preexisting group on error path
+> - [Medium] pinctrl: out-of-bounds MMIO access due to unchecked DT properties
+> --
 > 
-> Is there a problem with the bindings patch itself?
+> commit e697f1ea4503df3b1dd2739d4e9326a68689dde7
+> Author: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
 > 
-> In that case Long can just send an incremental patch to
-> fix it right?
+> pinctrl: ti: Add TDA54 pin controller driver
 > 
->> Your tree is fine in this case as long as next
->> is also fine... but next is not, because that patch did not make it there.
+> The TDA54 pin controller splits the pad configuration across two registers:
+> PADCFGA and PADCFGB. This commit adds support for the pin controller in
+> the TI TDA54 SoC, mapping device tree configurations to pinmux and pinconf
+> settings.
 > 
-> But the patch is in -next?
+>> diff --git a/drivers/pinctrl/ti/pinctrl-tda54.c b/drivers/pinctrl/ti/pinctrl-tda54.c
+>> new file mode 100644
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/ti/pinctrl-tda54.c
+> [ ... ]
+>> +static int tda54_dt_node_to_map(struct pinctrl_dev *pctldev,
+>> +				struct device_node *np,
+>> +				struct pinctrl_map **maps,
+>> +				unsigned int *num_maps)
+>> +{
+> [ ... ]
+>> +	grpname = devm_kasprintf(tp->dev, GFP_KERNEL, "%pOFn", np);
+>> +	pins = devm_kcalloc(tp->dev, npins, sizeof(*pins), GFP_KERNEL);
+>> +	gdata = devm_kzalloc(tp->dev, sizeof(*gdata), GFP_KERNEL);
+>> +	grpnames = devm_kcalloc(tp->dev, 1, sizeof(*grpnames), GFP_KERNEL);
+>> +	if (!grpname || !pins || !gdata || !grpnames) {
+>> +		ret = -ENOMEM;
+>> +		goto out;
+>> +	}
+> [ ... ]
+>> +	mutex_lock(&tp->mutex);
+>> +
+>> +	gsel = pinctrl_generic_add_group(pctldev, grpname, pins, npins, gdata);
+>> +	if (gsel < 0) {
+>> +		ret = gsel;
+>> +		goto unlock;
+>> +	}
 > 
-> ~/linux-next$ ls
-> Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
-> Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
+> [Severity: High]
+> Will this leak devm-managed memory if the group already exists?
 > 
->> We cannot have any new DT bindings warnings in next.
+> If a client device defers probe, or if multiple nodes map the same group,
+> pinctrl_generic_add_group() will return the existing group's selector, which
+> is a positive integer. Because these buffers are allocated using devm_*
+> functions tied to the pinctrl device (tp->dev), they will persist until the
+> pinctrl driver itself is unloaded. This causes a cumulative memory leak on
+> each probe deferral or repeated group mapping.
 > 
-> I guess I just don't get it :D
+
+I switched to pinctrl_generic_pinmux_dt_node_to_map() in v2 as Linus
+suggested, so this code is gone.
+
+The generic helper has the same pattern though: on a repeated mapping
+the core returns the existing group/function and the newly allocated
+copies are never freed. Alexander's series is fixing the same issue
+in pinctrl-single and ti-iodelay [0].
+
+Alexander, since your series is trying to fix these issues in other
+drivers, could you also include pinctrl-generic.c? It will likely be
+used by most new drivers.
+
+Of course, all of this only if Linus and Conor think this is
+a valid usecase and the right direction to fix.
+
+Linus, Conor, any thoughts on this?
+
+>> +
+>> +	grpnames[0] = grpname;
+>> +	ret = pinmux_generic_add_function(pctldev, grpname, grpnames, 1, NULL);
+>> +	if (ret < 0)
+>> +		goto remove_group;
+> [ ... ]
+>> +remove_group:
+>> +	pinctrl_generic_remove_group(pctldev, gsel);
 > 
-> To me it seems like a fairly normal situation: ACKed bindings merged
-> together with the driver, no dependence on anything.
-
-But there is a dependency. Your commit uses undocumented vendor prefix
-which introduces warnings.
-
-New warnings:
-Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.example.dtb:
-pinctrl@e4010000 (ambarella,cv75-pinctrl):
-'ambarella,drive-strength-syscon', 'ambarella,pull-syscon' do not match
-any of the regexes: '^#.*',
-https://gitlab.com/robherring/linux-dt/-/jobs/17038310909
-
-
-
-BTW, this commit of yours:
-9c2932badcd3e3c0fc630eac5ff2bfd5fadf93f1
-
-does not even build, so a make error.
-
+> [Severity: Medium]
+> Could this inadvertently delete a preexisting group in the error path?
 > 
-> But if you tell me "revert the patch" I will simply revert the patch
-> because I trust you, it doesn't really matter why.
+> If pinctrl_generic_add_group() returned an existing selector and then
+> pinmux_generic_add_function() fails, the error path jumps to remove_group.
+> This unconditionally calls pinctrl_generic_remove_group() on the selector,
+> destroying a preexisting group that might be actively used by other client
+> devices.
+> 
 
-I think Ambarella won't be picked up, because of total mess with
-patchsets, thus Rob should just take the vendor prefix... except there
-is no vendor prefix patch to take, since it is squashed with other work.
+I am not sure this can happen in practice. It needs
+pinctrl_generic_add_group() to return an existing selector and
+pinmux_generic_add_function() to fail at the same time. If the
+function already exists it just returns its selector, so it can only
+fail on an allocation failure.
 
-I don't get why this became so messy and have no clue how this should be
-fixed, except revert which is sad churn-type of work.
+Anyway this code is gone in v2, and the generic helper does not remove
+groups in its error path.
 
-Best regards,
-Krzysztof
+> [ ... ]
+>> +static unsigned int tda54_padcfga(unsigned int pin)
+>> +{
+>> +	return TDA54_PADCFGA_BASE + pin * TDA54_PADCFG_STRIDE;
+>> +}
+> [ ... ]
+>> +static int tda54_pinctrl_probe(struct platform_device *pdev)
+>> +{
+> [ ... ]
+>> +	of_property_read_u32(dev->of_node, "ti,proxy-id", &tp->proxy);
+>> +	tp->base = base + tp->proxy * TDA54_PROXY_STRIDE;
+>> +
+>> +	ret = of_property_read_u32(dev->of_node, "ti,npins", &tp->npins);
+> 
+> [Severity: Medium]
+> Can an excessively large ti,proxy-id or ti,npins value from the device tree
+> cause out-of-bounds IO memory accesses?
+> 
+> The proxy offset and npins are read directly from the device tree without
+> being verified against the dynamically mapped IO resource size. Since npins
+> is used to calculate register offsets like in tda54_padcfga(), an unusually
+> large value in a malformed device tree could cause the driver to access
+> memory outside the mapped IO region.
+> 
+
+ti,npins is the number of pins on the pin controller instance, so it
+comes from the hardware description like any other DT property. There
+is no real upper bound for it that would hold across instances, so I
+would rather not add an arbitrary limit in the driver.
+
+ti,proxy-id is already limited to enum: [0, 1] in the binding, so
+dtbs_check will catch a wrong value. I will anyway add a check in the
+driver as well in v2.
+
+[0]: 
+https://lore.kernel.org/all/20261001085217.1778645-1-alexander.sverdlin@siemens.com/
+
+Thanks and regards,
+Yemike Abhilash Chandra
+
