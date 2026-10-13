@@ -1,124 +1,122 @@
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C51523790
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA17E51E422
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791912307; cv=none; b=QqQa8ZvGsAfBdY+6S4JvM8vCl3TTQF4jBDBgPTx+bgjrYSo2AROj3ljJELUvwXVi1XPIASan5e4Fl/sohMvP2uesLr+FB/nLgwCN88T6y/6RZ1ltKHgasxjilmimAydHNbOn1xcVh6D6+BMPMnomVHpjwoQTqp76ztEquPg/t2M=
+	t=1791912997; cv=none; b=iskVwUeNLoUjSyJ1T7J03j1XX9PgSAyUXYoODhfFbkDO0z5mQrqGwF1v1SFxOghdnJa7LMB1YtUMJ/ooFJ2CJgvBqPEws4wu/Yc4hkbR2uDMFPKP+WaZ8hNT2zYA/j2xHkAyUH+A5gfS/FjzdkmIucyhjBn9fS8cjbupzwpjj4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791912307; c=relaxed/simple;
-	bh=0NoOIN3mJ4hVaMYqdXrnVr467zs4yRLZ/cjKUHp4vTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kIStAI40mlpwf4jy808HZIEoxATLQ4fIZwn++27i/B1b6mipHe91jGTQCCUIZhor9EwicbcSREufnG0z+iDYJNuSSPx4AWYTbpa+kc8JExycl4H8N9U3Z3plcbf0+TwcvguTVRrxEYLXcpGWacOaEo/5ZJ1QXi6eJaQ98s7BEsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZquZLUN; arc=none smtp.client-ip=74.125.82.173
+	s=arc-20240116; t=1791912997; c=relaxed/simple;
+	bh=Y3m+IiRPjHXlRcCy5kt0s5eCMwrp2C3UhEBDizZT22I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=F5jY8jt1RjTslhE3P5RsMtwdoTi+nszrKgg7Y5+D5/wwRJF0LHttC/T93utVQnFHrrzfbmWUOjLfB2FMC39fhZ+QmyUdslv85oydPYUjsT3V5pZEpZVqo60t5AhPQoHC9f3rUu6lfwA6qEoaRs7yOIPrdLwf2imvmIThQ4Ld+00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sWSKRDYf; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZquZLUN"
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3535a54bed9so122626eec.1
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:25:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sWSKRDYf"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3a7754c2471so28371341fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791912305; x=1792517105; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0NoOIN3mJ4hVaMYqdXrnVr467zs4yRLZ/cjKUHp4vTM=;
-        b=XZquZLUNvZGS7Dqtyk99CBWZ2mctza4orye/gcmmpRe0Wzu3zEUDimzpN0O9ompO2J
-         Q//o+ll+2/tdGNKN2SjXZT7NE0+S0OW1stcepNH0e3sPXiuNhErbo6ZO5ZHQYSf6Ug9G
-         uJ7DWaSnjd/VfAOTF43Xehp/ZQPFVIE2LrLdQFtLN2Yr7ZFpwbwOVwlTvJRbKU6auI+j
-         iAVXqD2FyNMWU5IeZ7fC3D0TYWAeg7QNmmOQBTWwaJAeQht94hmKAsgfAZlq7mmLQFgQ
-         EJqCW0Q7CaM7QUftTTKzhLC7HIAIi4qQB2Vt+YLweTVd/6kFDg7LmIp+pBcxzzEbAO4I
-         MNng==
+        d=gmail.com; s=20251104; t=1791912994; x=1792517794; darn=vger.kernel.org;
+        h=content-type:mime-version:content-transfer-encoding:message-id:date
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Y3m+IiRPjHXlRcCy5kt0s5eCMwrp2C3UhEBDizZT22I=;
+        b=sWSKRDYfEI2zJ8ek2B8JekPO7bpouaU4ye6ZLMzaLhFtP1AhCCxqdVnUU1AvhKNrDd
+         v2MC0OEebHbDFaMpOxCzNS6pSlTBUtHQmanosOVAV1K4Zu71B+jUWzJz/COc5WxhFuWq
+         Ek78aoVLycp+SnFOteb/roZXxKhe3ULXz1tvDGSIGnbrBYDAzjAuiEdVdwxfPcQZgAXv
+         wCT1j3P5xVlnwX+G31vpUkkaO4ImQpP/FcajorsT+5mbbirQUlS4Y3GW3rHli3jtu1lv
+         s8V/49TqBiKHlLbI7Ltn08J0xb8u+qJiSyxKX4SGXaK4YjlXK3kxzIWa5tvhgxWXE14G
+         XlVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791912305; x=1792517105;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1791912994; x=1792517794;
+        h=content-type:mime-version:content-transfer-encoding:message-id:date
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0NoOIN3mJ4hVaMYqdXrnVr467zs4yRLZ/cjKUHp4vTM=;
-        b=ivQsk/9jtirSKoJWsMG3LrOx/Tw7r5+a9n65QUcb0M9GMUv3lrrAll8/9ijBK6XxQz
-         VADvqV69wsqWxB3Os04orPdJlnV7U5msmK5Ihs8SZ26Y1813J9uAVLckZsFqn+4b2Oz1
-         yemFSjJQ/BMNJ9VLRQNx5ujvcyZoha9uou9ktlorGk00MOti0ECB9JAOm8kQaK+C3xHN
-         WSndv2IWHoFSoUnas2pd08+eWIh3b6H6wPyIJBLddM0eePMNl8727CiA86akf7Sg8RYz
-         7YSrc6kd/sX3fd4R4MiyH2sWzXVpgT8xHM0Ksm/7N0E9yN/fL3ZIYQaW/Y2tIu/ikbEl
-         e32A==
-X-Forwarded-Encrypted: i=1; AKwUvBzM3UWuJbCzx3Z4gYDJ8qAG7pVbrNRZOpAq9K69jCaDClx4sLGZM+Fvx7hf/18ZjZBb4Sxd9SEFwRub@vger.kernel.org
-X-Gm-Message-State: AFq9FYLm+ucneS2ZRA1FCtvTgUvcVOeQFanutJ64C+T/ROSuj/4JfW0W
-	SMGOm5SH8etrK3IVlO0Q8JDWei1vrTNxXlN2X36e1JeiFaHfbKF/x4l23nD6ba5JHZ4elw==
-X-Gm-Gg: AYBFou33erev7xJTzI58FxC13hfkfq/DnQ1qGuZknbPzsC5idOUe9odFKre6EeB6XbN
-	weJndzAdv3UukC5OtsGcr8t+umGcc1fE39l6BMKKahqrUutCXysVxoswbHEH1e8bisZmSY99TCb
-	ZLie0x+tqFbzi5MRUGsGhNmVt2ZpLMzyjtMsKHKfy7m6XgCvuZ2qdWpiM+OfIlEj0A1M+TnYGdE
-	ckexwXEMG5DgELgrnD8XKIpZ+Z3U1DiR8amVTH9Rax1vXAy3jAk7rqwErH9ltULFvd7QdaXX4WW
-	+FVwqD468UUP0GAc6JvnTeFyRa4co9KLBoQpNYry8x6skcPiTtAfyrBAjCSXEGLBjMoAj3QweeR
-	r3BAZ1xhewn/I8QB5rS3pDNfm5/rE8G6lvRuerK6ZSb8w1HjpA4hGafKv8S/bDYz4Kbc1QkASXE
-	Omoi4dtnafI9NEBhiz+OzVE5Y/KyTRuzizSEo8GJJ/ri0gKcZu1ZTU9kNRgo43sreps5XJfVKqC
-	FcepFIckNH3FogPSYRy8drBiX49dRKRIIW1ypxU2+F85EFEzcLPocQhVLcn+cALXxJCdtMhYglS
-	tQpSkWw=
-X-Received: by 2002:a05:7300:ae30:b0:35c:8b96:94d9 with SMTP id 5a478bee46e88-35c8b969a6dmr3374472eec.19.1791912304982;
-        Tue, 13 Oct 2026 10:25:04 -0700 (PDT)
-Received: from MaquinaLab.. ([179.179.244.163])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-353814b556esm50303555eec.18.2026.10.13.10.25.00
+        bh=Y3m+IiRPjHXlRcCy5kt0s5eCMwrp2C3UhEBDizZT22I=;
+        b=EiylNdHo5vk18hvPj7VeE/FuJbr0UTOoD9rqGMvgmlgAXILRcQOpInbIxng5aKyDYo
+         MQFjMorQsSflKkfK3u6JO0nP8YV5487qDMw0Nw1jJsI7ZKDy0pYuxm41q2LWotSzE0eU
+         TbbtBSK+MY8dPSwjj+GxzlT3GhCjQZo8ovpX+EZy+VBav4gHKtAzxXwrcmymJVeXU+zP
+         ncE7KMuc60I384Mm40/+h+8ycqbxB387+LLx+bPPYpidg5c2t4li2vXsCbxjRh8JoqML
+         TyB8BtXMftbxnMgsiezJY88N7AAl6K6LpyFdFSvv/MCFx2yWW908CSqp6RMIvzNL51TZ
+         OBrg==
+X-Forwarded-Encrypted: i=1; AKwUvBycaBH7aRGUrtZeo4IS8GnQAW8aeZK826h37bZkFVq7toVyVIRlKPIr5PeUUnVJ8o4TXdDx1aqWcE3g@vger.kernel.org
+X-Gm-Message-State: AFq9FYLC2iWV8AXQyA/maMYq1gb4UF65Q8y0oE+Ut7JiFEPrd2Gu20DZ
+	EvJCmOu8t4j1c5ODPy2czoe2iH8XeBd77CZ91CyCp01nP9iC3SUj/Nr9
+X-Gm-Gg: AYBFou1/RyWVWkWloVWtXl+/89jT1I9xLHypsouwUBbOhgevGDlJA2shH23QLHiUjvi
+	fQNAsDCuGDS7V40+pEkuiVn4Z7C5qZK9nCMlFnXadzPqtZC3d8HJVzWiKUweHHjFgj984NbOoHd
+	wIdNv/eDycNSB5HqSgmo0bd+ufhejeVtPOeDIpAYoWLM+LtpcgP81XOtny06Eo93uB+gEWu8qd4
+	WA8zMijNk7emxaT7EyF+7ZHbRtRR2gW8dhha7ncsPR0MWM9S6bEUNrgS3Pm7UsXE7YXPzUglzVy
+	5EZgvCdYof3MrSEB4eYuysGd4lc+uBx6zCmiJODVdDO+VCktEizM2gQDDFymk3lLpNorHkrMMWI
+	WCv1g3GJSM/bSbryCUuDmefBnEbkrXWoCd9vOX4QRYCUE1sht6xhuH1POwsuf2Jvp7rpRqOZdWe
+	6B/dktTc+8ZF59La01BRXeNIuW22PDNg3O0eEBVqOnnsL+/p2nPrTRgKhJojqJmJol6E9rb3gal
+	6ffES2Godim+pII1BuK66qKaThWup8FDZcd6rGY6FM4WVjB8Td/m9PdDye9Ek8YmpfQ
+X-Received: by 2002:a2e:a585:0:b0:3a5:f982:9c62 with SMTP id 38308e7fff4ca-3a9c4eb6b77mr31027101fa.1.1791912993414;
+        Tue, 13 Oct 2026 10:36:33 -0700 (PDT)
+Received: from [127.0.1.1] (ip-024-215.users.dtel.ru. [91.210.24.215])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a9c3cf7ffesm36421781fa.41.2026.10.13.10.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 10:25:04 -0700 (PDT)
-From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Enzo Adriano <enzo.adriano.code@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT] pinctrl: sunxi: Fix A733 withstand programming
-Date: Tue, 13 Oct 2026 14:23:38 -0300
-Message-ID: <20261013172427.328177-1-vinicius.eduardo.pedrosa@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261013142351.771229-1-andre.przywara@arm.com>
-References: <20261013142351.771229-1-andre.przywara@arm.com>
+        Tue, 13 Oct 2026 10:36:31 -0700 (PDT)
+From: Fil Dunsky <filipp.dunsky@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>,
+ Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 00/11] Cortina Systems CS75xx: interrupt controller, GPIO,
+ I2C and TWD watchdog
+In-Reply-To: <20261013-plastic-dragging-8232efb058ef@spud>
+References: <20261012-b4-cs75xx-s2-v1-0-8a7641b7b79c@gmail.com>
+ <20261012-dreamlike-hazily-19bb60326f0a@spud>
+ <179187542217.3247897.4323160442877168450@gmail.com>
+ <20261013-plastic-dragging-8232efb058ef@spud>
+Date: Tue, 13 Oct 2026 20:36:28 +0300
+Message-ID: <179191298807.12554.2183121269667635269@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format="fixed"
 
-Hi Andre,
+On Tue, Oct 13, 2026 at 05:52:36PM +0100, Conor Dooley wrote:
+> If things are just tightly packed, that's fine and you don't need to
+> make it a syscon. Just because something looks suspect doesn't mean that
+> it is actually wrong.
+>
+> In your shoes, I think what I would do is leave i2c/interrupt
+> controller/gpios etc all as independent nodes.
+>
+> I would however model the pinctrl as a single node, with
+> reg = <0xf000001c 0x14>
+> I think, rather than 5 instances 0x4 wide.
 
-Thanks for the RFT. I found two things when checking it against the A733
-manual and my Cubie A7Z.
+Thanks, that makes it simple: the interrupt controller, I2C and GPIO
+nodes stay as they are, and the pin controller, when it comes, gets one
+node for the five mux registers.
 
-PB is an exception to bank * 2: its VCC-IO field is at bits 25:24, while
-bits 3:2 are reserved. With the board's SEL value (0x01155550), a 3.3 V
-request produces 0x01155558, leaving VCC-IO untouched.
+I checked the boot loader's pin mux on the board: it leaves the reset
+button line and the touchscreen interrupt line muxed to GPIO, so the
+dts does not change with the mux register gone from the GPIO binding.
 
-I also think we should preserve AUTO (01). On my A7Z with vendor 5.15,
-PF=10 resulted in 22 SDR104 read timeouts and no rootfs, while PF=01 and
-PF=11 reached login. This was one run per setting with one card, not a
-mainline before/after test. In my mainline setup, MMC0 already requests PF
-with a fixed 3.3 V supply, so the RFT would replace AUTO with 10 even
-without voltage switching. Preserving AUTO requires no special case for PF.
+> My take would probably be not sending new versions until at least 48h
+> has passed since the last reply on the current version, rather than 48h
+> or w/e from time of posting.
 
-I boot-tested your RFT with two small fixups for PB and AUTO on my Cubie
-A7Z (rev B). UART0 and MMC0 work, and GPIO_POW_MOD_SEL remains at
-0x01155550. No voltage-field writes were expected with this DT. I haven't
-tested the RFT as posted.
-
-I agree the full table and PI exclusion aren't needed, and found no
-evidence for restricting the encoding to revision B.
-
-A733-R still needs its own descriptor for the two-bit PL/PM fields. I'm
-happy for your RFT to supersede my patch 1 once PB and AUTO are addressed,
-and I'll rebase the A733-R fix on it.
-
-I have the PB/AUTO fixups and the A733-R patch ready, and can send them if
-useful.
+Noted. Arnd also asked to wait for the 7.4 merge window to close, so the
+next version comes on top of v7.4-rc1.
 
 Thanks,
-Vinicius
+Fil
+
