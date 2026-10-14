@@ -1,347 +1,190 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013016.outbound.protection.outlook.com [40.93.201.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0994282F1D
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 10:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791973872; cv=none; b=XP7HyRbw6WS1jmONDyqJDeZ1y7YvVGRTCjGt6NZT67mcoXNcy7JjA5CLtCS5U8PNQT0cvqJUy+m+9DgcDO1jwe/ZY0d+9TH1iQDVKdJSV1XR0FoRGSADU319fy44n6H/xGMJcOZ/iCnGjled3txufbXYnhkKFlr61MoMS+MMH0o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791973872; c=relaxed/simple;
-	bh=5Fh0yL9P68B0p1IvAuazUNQqXGhLg84Hc20gmpP8zUc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Jlm5kXrVIU1Br677fMlRe9sp8hHhK/CjmlksVELlz0CiYQaOEyfyGTpKdSXMBkvU9QYhs8MN3k/CTLUSg3yO340gweGaFY1b+lKfdwla1UPYkCKohhCxO0iOOYWbTjxJHHIsM1y5fwCtY123GZ9pPjxUWMLMa7zOp13kVxiILYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G+T4P8HV; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6301A15665C;
+	Wed, 14 Oct 2026 10:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791974537; cv=fail; b=aurn+JBs9bgmeVBxXWsTElTbnigqLyZ759BumkC1ePuEAdHuNEoDpjcssRCnCeiPqLKNN0FUB09ygGGEmAuj4UJ7nhSq3GS+PGLsJPej+eRvndb22lEoOEeDX+cNwOORooj+pygsef18hDubSTlnggesBO1Bm+ZUtYxkm+Uz/eM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791974537; c=relaxed/simple;
+	bh=VfRSUAiXRs6LHfHH6weACkBOvY56g6cQ3ihXtmSJ2iY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lGac5IVKv62mUAgiGekArAKAkG/4tqreUnXynC75OLXNflgYC48uBfB6X13w9K+2fQozUNvD7cDLzf4KVxgqkBXKA+AxsVgALuUgsv6rk2XuxZhnZPd5dJQ10RAq2OpRSTbQe3xwnJRmzQOiHMioQbXs5PLNe8yXVUPl06CWdJE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VZxeXZvA; arc=fail smtp.client-ip=40.93.201.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G+T4P8HV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1791973871; x=1823509871;
-  h=date:from:to:cc:subject:message-id;
-  bh=5Fh0yL9P68B0p1IvAuazUNQqXGhLg84Hc20gmpP8zUc=;
-  b=G+T4P8HV7iMaXOtih0wIDiw2aonENEzt/zFYbE4CTfYLTmaXYusdI3a5
-   Ywhmf6ttYZTFjZrbQohXZr68xHq3+OD/8SbxNFiyxnHXwdB5iapU1/rIg
-   +Tf+Yb5hgb9nTz4W2htbNcJHcSgKjUdMe1mTZ/SZt6B+Gjwb948gYql4q
-   37W9vHBi8jD6t1uQ20yznd86YyFRDlUGIrA84JuFoVFmb3G0TbdzN5Vh+
-   eF1ESzsFysDEkPI6DSJG2zoGal95oh627+eBEJ3fxOCRw9zp8zqJuGSRJ
-   gfiKxycDLeriUlVDtfe7Vylge5w5vwsaLhC97CFve8aTW+KlOCkNB+jr0
-   A==;
-X-CSE-ConnectionGUID: T0p+sHKqTDOS9rl7PKV/Qw==
-X-CSE-MsgGUID: X0oxLR5nREWe/fNgzOuGnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="723826"
-X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="723826"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2026 03:31:10 -0700
-X-CSE-ConnectionGUID: 1ts5T7cXR5CSy5t/qiKO/A==
-X-CSE-MsgGUID: 8ak4lwtVQd6fDTrctQSxfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="1739434"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 14 Oct 2026 03:31:09 -0700
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xGwGI-00000000EWh-0c8P;
-	Wed, 14 Oct 2026 10:31:06 +0000
-Date: Wed, 14 Oct 2026 18:30:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- bdacd2542f3c1b2b411fa86ee1f39de19cce6562
-Message-ID: <202610141826.xNDzOpzX-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VZxeXZvA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xhJbhu2Nb1mRe16xN+mmVscCAjHO/QY6F4Y1RLoDMx1NM1abF0v2kGF8G6Jqyel74KFURtDknqefwZvNRACyV4TSRCaVXCdykwPaqmxESEwmkh4dBBZVQHWA2ON4oNF1lVLpgEqDiYj4Ymxzdxc69LPU3G96GxKFiFvwfllEj1qRJDpHvi6lrn9/XldUAvtu5wFXar/SNS/Zg4QDA8kvNaH2e5caBZSARKVgvE+xfWNsrI/i4NPmwWJq5Og0YSeRJUGn6PESj3zCLLTjhRkG+B9hKAfuHfdbiEMCd7JWoS+a7+piaklscuxyZLZMExc0tIJvlWWCi+OgiU8Jt9onBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Mklzf6cCG5l82v7ND8AputH9w3boMVSFPEXk2y39YfQ=;
+ b=u7ebqYha6l/lSVzFWjzZHJQ7LTko+ok/iztAth5UOVTygwZpFqppRZRToJeLWO+g8MDnznm8WslrkEtT2OXLfbEMDrays4KQLygG91MguzjBwUf9h6B2ls6hsPJ4qk6QpkFUPxcBZQSZVS5tgoQrJ+ef5RWCitA0z7dsylqvQbNkoaxRoByx8JpB+Q8YyyZHrB7PP5m5ybDXH7QX4ZQwwaQGyvKwKq4kV5OUlRgUMWphL2p4FwlPCvN68cPjCpk4xtRraeXSyDhqjPpR79izV8OgbzPyOxj71It2bgHISb/XeSUQuS51CjgsugK3xY0o6fi3D43xRxZ5a2dZw9AR7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mklzf6cCG5l82v7ND8AputH9w3boMVSFPEXk2y39YfQ=;
+ b=VZxeXZvALWtDJ8Nt5f0eNgwFSjlQxyZTfm1UPa50PqHnRkh1xMHHesObOUZ/Oo0ITX+7ebx8iuz6JZDrRhaf7mGoYjmjuYwk9bEt9tj2hJFp9MhgaJTOOF506ggqIFxFaxk9sHnx6ihRSbSVlIVc5VP+6zC0vaJHGbuaH/NbkQNaoskmxYlBBsdt3Q/fZ5LjCSPnI4lQBrG0x/ROepiI2dm1lZTB52jHd6M809RSo3Cb/QBt4RANrLJXin+oasnj6cg05dapvqVG+upHYcwtquwQ2Si/L7gm3zfspRxJnN6ud2AErufKk7pxf+cwp8k6Q7LwbGqA6EeuIctqA1NTdA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH8PR12MB9815.namprd12.prod.outlook.com (2603:10b6:610:277::13)
+ by DM4PR12MB6040.namprd12.prod.outlook.com (2603:10b6:8:af::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.20; Wed, 14 Oct
+ 2026 10:42:12 +0000
+Received: from CH8PR12MB9815.namprd12.prod.outlook.com
+ ([fe80::1592:590a:e527:ca24]) by CH8PR12MB9815.namprd12.prod.outlook.com
+ ([fe80::1592:590a:e527:ca24%4]) with mapi id 15.21.0522.012; Wed, 14 Oct 2026
+ 10:42:12 +0000
+From: Prateek Agarwal <praagarwal@nvidia.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jon Hunter <jonathanh@nvidia.com>
+Cc: Prathamesh Shete <pshete@nvidia.com>,
+	Prateek Agarwal <praagarwal@nvidia.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Add Tegra268 pinmux support
+Date: Wed, 14 Oct 2026 10:42:07 +0000
+Message-Id: <20261014104210.3978188-1-praagarwal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ2PR07CA0003.namprd07.prod.outlook.com
+ (2603:10b6:a03:505::26) To CH8PR12MB9815.namprd12.prod.outlook.com
+ (2603:10b6:610:277::13)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH8PR12MB9815:EE_|DM4PR12MB6040:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1748e4b-a508-4e1b-5f7c-08df29dfce19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|23010399003|56012099006|11063799006|261009221227099003|261009223027099003|10067099003|18002099003|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	orABZbImrvJNFx7owdJfcP4BmU9yM7Orq+Y6RYoX3EJZfV37lj4J5dZKMre7t97H0x58uMU9ED8+AdV/EeR672NN/fVWnlIevF/0xYEcd1lSza5nZCnLojnHz1/wZ6rGvNPS/tOCVb2G2kSgqXlZN+fXI5PhKFxJSJdglZA7LaBThKhubr3xYdRr2ZW5xd7GeMUQgLosaBIMrcWy//+o5OThSnmQdVAQYW4RruhBO4rbh/0otCXHlaxGBqRZqIRK+9LwlXfnmoY3oZ0nXK+iQgSgGIYlu00VzXIBrpWC7uWpTl/jWD0J6DFJ9f2BDJZ3EXggzL8xGeijj8PHvb8I4monGiyIvbFfsXS92udpruZSHxiU6v5ong3zHdpOLrlEUX5dUaVyZNauiiEVedsjbVyTRjyrhCpms93Jf8x1X34wd3MVYyl78soyvBoujoPMf/1+EhrXHqn0CEbGaIWDNozmPh/4aF2Ko9PwMN8ygvbKJPOgn2R6cKdNLycxRmUZzxSPnwAzc1r2OfFlhEHZZftiPxSFQXCz4/euO7svHH8vb/HhikTzFb8bHSX0k30vjCDgPLDmtolZjLyKfSVn0cAl0lYioIZ2ctpoq8OBYbnbBs38U7WDumjGP1nE/AuuwmPfqdzg3oXd8LX9bb4oxSSiXGEeGc37NscSZcxsYfE=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH8PR12MB9815.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(56012099006)(11063799006)(261009221227099003)(261009223027099003)(10067099003)(18002099003)(6133799003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yJV2KK0s+JWoHzJK8WjeINsSyvPJ68BaPyarMGUYIzbh3/i/11JO82c30kPJ?=
+ =?us-ascii?Q?v8+867ELGAQLf83A3t2mLlUQVE4/VRUsOXaayTsOS4+nAgdHbXJaduzPv1+9?=
+ =?us-ascii?Q?ZO4ETDR+JH3QXvBRv6fEKCVVehnGsw/d/PS//Az8TrxhR5lfpJktaw9E7atT?=
+ =?us-ascii?Q?bqfKLzy4SdF2nHTGtBRn69fepmk9oOr232QvJ+3COFYRtnTEfjhVp/Rkjw3I?=
+ =?us-ascii?Q?YMAhYB6IeP2PADnsvPR7DVZYyVa4kVMbMlG4ytsXuonxMNcbXja+76OtWGEM?=
+ =?us-ascii?Q?1PdN3D4wmXN5lQkuvmlEvf3mv2Adqup9G2BeQxhkPdyd6hNkIYIpwB0Vg5TD?=
+ =?us-ascii?Q?3IerXaj6zjZZFP+2omJtGm2kjLeyOSsRr+DqO9qQpI3qIwz2UG8197vQ2qAB?=
+ =?us-ascii?Q?cqEk5rX4YgXsywu7ODrk1BHB7XGTnLbv8RyLjthxjtBMTTt1GHnEU7zrZGCL?=
+ =?us-ascii?Q?/nu8WU7WyzIcAY5awQ0d8e6clUoNLSh6ZV5yDtccz5TOTEO/VurzqtnLIk3Y?=
+ =?us-ascii?Q?e+99sFIKWzbglNv6oRRmLVJ6lEkdwr8wnIANASF9hEQ0CwwW8ppSGah7vC52?=
+ =?us-ascii?Q?u6ufiODGnJNOvKjZwRhwpgRFvqIJmuxJ1ZhNvIvTTS0cGGYbpOsqMmaJCFEb?=
+ =?us-ascii?Q?AiCfD4tIaWMrjm0aw7s+pNet3bafDJvyByw9z7Ouz/91E8+sJse+y+5rVYLv?=
+ =?us-ascii?Q?zcYZEIDVjYRlVzB9BFpbthxecUPFxfTF9LleXVvWpXW1JenQsQ0/wPb5wvwO?=
+ =?us-ascii?Q?wfA3lg4upPV+aDAAqA1ypwCqhyNRUWyLMX/Kms5oMr/vUdkZle/elGhcLyqH?=
+ =?us-ascii?Q?CXEj2oiAuSpDzJXLbaHXmWxz8ufQ/hDqlrB6f27fSzBswM7KikkpdUeL+zTp?=
+ =?us-ascii?Q?Fg4PpLVTsVgE4wBEkWn3rvzUSkFKPOkiAJKa1M3DmS6WuvhbY11eyr6lb7he?=
+ =?us-ascii?Q?t5O8zUTC2K6TXGn4izIEvi5fgQaqZ5RL4co10Y4w0a+6QQYpLFiSkOKA4+Ii?=
+ =?us-ascii?Q?BjKDy3HMOlNh3B+gqfaVwlKoXbXECaz6ecGAtBdTguvr94dxy08FrabVFWPp?=
+ =?us-ascii?Q?TV6z2IM+HAqWI4MfoGlkGG+SIsEi7nbSDxICVIO3OW282kJ5nxMJnW8qaeeU?=
+ =?us-ascii?Q?3xAE4LK0djhPZ2h9+ze9UIryGbhrhq52JjyfwNtnR/PjVpN0MR9KwlgRHU++?=
+ =?us-ascii?Q?bsvRj8Di4e2FVEv8tvOzMk5YoCr0K5+nwCI513ktE/SHJatL3LHJCAsUjo4D?=
+ =?us-ascii?Q?PH9PFiJX0Uv0ZDfmkQNmVMn10wzb6Rtd3rJDwl9h3R1qcA0ghBHvO0I6NfO9?=
+ =?us-ascii?Q?SVEVIpUGMcVuLX4SlhApSdvCp3+0G+BF6BvHlAxCSRBw5tdtkbBwuoImUogr?=
+ =?us-ascii?Q?NNy6hkeEEJL/eRkXx/yYSNHUVih0djU69UE298M0L63pL4y7gXZHJNrUX0Sr?=
+ =?us-ascii?Q?SSZDTnMK2X9V/WfMJXqM3aLbG3NQLX78Ow47FSi2HDvWDPvKFMfp/8Xt8n7d?=
+ =?us-ascii?Q?rabY0aqWKJfqiCpgFzWC2wbFzJ2VZZ9fz7ED0Au3pSmM5QrX6aaepbmh3L/h?=
+ =?us-ascii?Q?L0VLEz6M9pgtY6mSbR79oAgidZYKrwm5KlWxmJY6NJOqI/GxJq6hPnDLvuRw?=
+ =?us-ascii?Q?4syfs2ZETWg1TtOHtU29Mj5//nT19TIH0XnIpOx22idsYwpN6nEj+LKyGJ5m?=
+ =?us-ascii?Q?LkPDLEW8TUCnQ3hwfTBKbFcFHEVRR8Ij/V1gfyxVEYXtDLeSxUzjLgqYADsW?=
+ =?us-ascii?Q?OWjuDqEnlA=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1748e4b-a508-4e1b-5f7c-08df29dfce19
+X-MS-Exchange-CrossTenant-AuthSource: CH8PR12MB9815.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2026 10:42:12.3443
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8fKgomdoskRzZTOw11goEVDAWEK8C4LGdrQJwPEtsawKkK8aEb3gWdB0/Z+AyTQ/78ezursAsJcupkDW+WEUcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6040
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: bdacd2542f3c1b2b411fa86ee1f39de19cce6562  Merge branch 'devel' into for-next
+This series adds pinctrl support for the three pin controllers (MAIN, UPHY
+and AON) found on Tegra268. The pin, function and pin group data is
+self-contained in the new driver.
 
-elapsed time: 1052m
+Patch 1 adds the ARCH_TEGRA_268_SOC Kconfig symbol. This symbol gates the
+Tegra268 specific support code, and PINCTRL_TEGRA268 in patch 3 uses it as
+its default. It is kept as a separate patch because drivers/soc/tegra is
+merged through the Tegra tree rather than the pinctrl tree.
 
-configs tested: 270
-configs skipped: 7
+Patch 2 documents the three compatible strings and describes the pins and
+functions they provide. Patch 3 adds the driver and the PINCTRL_TEGRA268
+Kconfig symbol.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Patches 2 and 3 build without patch 1. PINCTRL_TEGRA268 only references
+ARCH_TEGRA_268_SOC in a "default m if" expression, and Kconfig treats an
+unknown symbol in that position as false, so the driver simply defaults to
+off if patch 1 is not present. Patches 2 and 3 can therefore be applied to
+the pinctrl tree independently of patch 1, and no temporary build break
+occurs if the trees are merged in either order.
 
-tested configs:
-alpha                     allnoconfig    gcc-16.1.0
-alpha                    allyesconfig    gcc-16.1.0
-alpha                       defconfig    gcc-16.1.0
-alpha       randconfig-r2110-20261012    gcc-10.5.0 cocci
-arc                      allmodconfig    clang-24
-arc                       allnoconfig    gcc-16.1.0
-arc                      allyesconfig    clang-24
-arc                         defconfig    gcc-16.1.0
-arc          randconfig-1000-20261014    clang-17
-arc          randconfig-1001-20261014    clang-17
-arc          randconfig-2000-20261012    gcc-16.1.0
-arc          randconfig-2001-20261012    gcc-16.1.0
-arc         randconfig-r2200-20261012    gcc-16.1.0 smatch
-arm                       allnoconfig    gcc-16.1.0
-arm                      allyesconfig    clang-24
-arm                         defconfig    gcc-16.1.0
-arm          randconfig-1000-20261014    clang-17
-arm          randconfig-1001-20261014    clang-17
-arm          randconfig-1002-20261014    clang-17
-arm          randconfig-1003-20261014    clang-17
-arm          randconfig-2000-20261012    gcc-16.1.0
-arm          randconfig-2001-20261012    gcc-16.1.0
-arm         randconfig-r2107-20261012    gcc-9.5.0  cocci
-arm         randconfig-r2306-20261012    gcc-12.5.0 sparse
-arm64                    allmodconfig    clang-24
-arm64                     allnoconfig    gcc-16.1.0
-arm64                       defconfig    gcc-16.1.0
-arm64        randconfig-2000-20261012    clang-22
-arm64        randconfig-2000-20261012    gcc-16.1.0
-arm64        randconfig-2001-20261012    gcc-11.5.0
-arm64        randconfig-2001-20261012    gcc-16.1.0
-arm64       randconfig-r2101-20261012    gcc-15.2.0 cocci
-arm64       randconfig-r2108-20261012    gcc-15.2.0 cocci
-arm64       randconfig-r2201-20261012    gcc-10.5.0 smatch
-arm64       randconfig-r2303-20261012    clang-24   sparse
-arm64       randconfig-r2305-20261012    clang-24   sparse
-arm64       randconfig-r2311-20261012    gcc-12.5.0 sparse
-csky                     allmodconfig    gcc-16.1.0
-csky                      allnoconfig    gcc-16.1.0
-csky                        defconfig    gcc-16.1.0
-csky         randconfig-2000-20261012    gcc-14.3.0
-csky         randconfig-2000-20261012    gcc-16.1.0
-csky         randconfig-2001-20261012    gcc-16.1.0
-csky        randconfig-r2106-20261012    gcc-14     cocci
-csky        randconfig-r2111-20261012    gcc-10.5.0 cocci
-csky        randconfig-r2200-20261012    gcc-10.5.0 smatch
-csky        randconfig-r2302-20261012    clang-24   sparse
-hexagon                  allmodconfig    gcc-16.1.0
-hexagon                   allnoconfig    gcc-16.1.0
-hexagon                     defconfig    gcc-16.1.0
-hexagon      randconfig-1000-20261014    clang-18
-hexagon      randconfig-1001-20261014    clang-18
-hexagon      randconfig-2000-20261012    clang-17
-hexagon      randconfig-2000-20261012    gcc-16.1.0
-hexagon      randconfig-2001-20261012    clang-24
-hexagon      randconfig-2001-20261012    gcc-16.1.0
-hexagon     randconfig-r2102-20261012    clang-19   cocci
-hexagon     randconfig-r2102-20261012    clang-24   cocci
-hexagon     randconfig-r2109-20261012    clang-24   cocci
-hexagon     randconfig-r2110-20261012    gcc-14     cocci
-i386                     allmodconfig    clang-22
-i386                      allnoconfig    gcc-16.1.0
-i386                        defconfig    gcc-16.1.0
-i386         randconfig-1000-20261014    clang-22
-i386         randconfig-1001-20261014    clang-22
-i386         randconfig-1002-20261014    clang-22
-i386         randconfig-1003-20261014    clang-22
-i386         randconfig-1004-20261014    clang-22
-i386         randconfig-1005-20261014    clang-22
-i386         randconfig-1006-20261014    clang-22
-i386         randconfig-2000-20261012    gcc-16.1.0
-i386         randconfig-2001-20261012    gcc-16.1.0
-i386         randconfig-2100-20261012    clang-22   cocci
-i386         randconfig-2101-20261012    clang-22   cocci
-i386         randconfig-2102-20261012    clang-22   cocci
-i386         randconfig-2103-20261012    clang-22   cocci
-i386         randconfig-2104-20261012    clang-22   cocci
-i386         randconfig-2105-20261012    clang-22   cocci
-i386         randconfig-2200-20261012    clang-22   smatch
-i386         randconfig-2300-20261012    clang-22   sparse
-i386         randconfig-2300-20261012    gcc-14     sparse
-i386         randconfig-2301-20261012    gcc-14     sparse
-i386         randconfig-2302-20261012    clang-22   sparse
-i386         randconfig-2302-20261012    gcc-14     sparse
-i386        randconfig-r2307-20261012    gcc-12.5.0 sparse
-i386        randconfig-r2310-20261012    gcc-12.5.0 sparse
-i386        randconfig-r2311-20261012    clang-22   sparse
-loongarch                allmodconfig    clang-24
-loongarch                 allnoconfig    gcc-16.1.0
-loongarch                   defconfig    clang-24
-loongarch    randconfig-1000-20261014    clang-18
-loongarch    randconfig-1001-20261014    clang-18
-loongarch    randconfig-2000-20261012    gcc-11.5.0
-loongarch    randconfig-2001-20261012    gcc-11.5.0
-loongarch   randconfig-r2101-20261012    clang-24   cocci
-loongarch   randconfig-r2106-20261012    gcc-10.5.0 cocci
-loongarch   randconfig-r2201-20261012    clang-20   smatch
-loongarch   randconfig-r2302-20261012    clang-24   sparse
-m68k                     allmodconfig    gcc-16.1.0
-m68k                      allnoconfig    gcc-16.1.0
-m68k                     allyesconfig    clang-24
-m68k                        defconfig    clang-24
-m68k        randconfig-r2201-20261012    gcc-13.4.0 smatch
-m68k        randconfig-r2305-20261012    clang-24   sparse
-microblaze                allnoconfig    gcc-16.1.0
-microblaze               allyesconfig    gcc-16.1.0
-microblaze                  defconfig    clang-24
-microblaze  randconfig-r2109-20261012    gcc-15.2.0 cocci
-microblaze  randconfig-r2300-20261012    clang-24   sparse
-microblaze  randconfig-r2308-20261012    gcc-12.5.0 sparse
-mips                      allnoconfig    gcc-16.1.0
-mips                     allyesconfig    gcc-16.1.0
-mips                  ath79_defconfig    gcc-16.1.0
-mips        randconfig-r2100-20261012    clang-24   cocci
-mips        randconfig-r2103-20261012    gcc-15.2.0 cocci
-mips        randconfig-r2304-20261012    clang-24   sparse
-nios2                    allmodconfig    clang-20
-nios2                     allnoconfig    clang-24
-nios2                       defconfig    clang-24
-nios2        randconfig-1000-20261014    clang-18
-nios2        randconfig-1001-20261014    clang-18
-nios2        randconfig-2000-20261012    gcc-11.5.0
-nios2        randconfig-2001-20261012    gcc-11.5.0
-nios2       randconfig-r2107-20261012    gcc-10.5.0 cocci
-nios2       randconfig-r2108-20261012    clang-24   cocci
-openrisc                 allmodconfig    clang-20
-openrisc                  allnoconfig    clang-24
-openrisc           de0_nano_defconfig    gcc-16.1.0
-openrisc                    defconfig    gcc-16.1.0
-openrisc    randconfig-r2104-20261012    gcc-14     cocci
-parisc                   allmodconfig    gcc-16.1.0
-parisc                    allnoconfig    clang-24
-parisc                   allyesconfig    clang-17
-parisc                      defconfig    gcc-16.1.0
-parisc       randconfig-1000-20261014    clang-22
-parisc       randconfig-1001-20261014    clang-22
-parisc       randconfig-2000-20261012    gcc-11.5.0
-parisc       randconfig-2001-20261012    gcc-11.5.0
-parisc      randconfig-r2105-20261012    gcc-9.5.0  cocci
-parisc      randconfig-r2110-20261012    gcc-9.5.0  cocci
-parisc      randconfig-r2111-20261012    gcc-9.5.0  cocci
-parisc64                 alldefconfig    gcc-16.1.0
-parisc64                    defconfig    clang-24
-powerpc                   allnoconfig    clang-24
-powerpc              pasemi_defconfig    gcc-16.1.0
-powerpc      randconfig-1000-20261014    clang-22
-powerpc      randconfig-1001-20261014    clang-22
-powerpc      randconfig-2000-20261012    clang-24
-powerpc      randconfig-2000-20261012    gcc-14
-powerpc      randconfig-2001-20261012    gcc-13.4.0
-powerpc      randconfig-2001-20261012    gcc-14
-powerpc     randconfig-r2103-20261012    clang-24   cocci
-powerpc     randconfig-r2106-20261012    gcc-9.5.0  cocci
-powerpc     randconfig-r2108-20261012    clang-22   cocci
-powerpc     randconfig-r2109-20261012    gcc-8.5.0  cocci
-powerpc     randconfig-r2309-20261012    clang-22   sparse
-powerpc64    randconfig-1000-20261014    clang-22
-powerpc64    randconfig-1001-20261014    clang-22
-powerpc64    randconfig-2000-20261012    gcc-10.5.0
-powerpc64    randconfig-2000-20261012    gcc-14
-powerpc64    randconfig-2001-20261012    gcc-11.5.0
-powerpc64    randconfig-2001-20261012    gcc-14
-riscv                    allmodconfig    clang-24
-riscv                     allnoconfig    clang-24
-riscv                    allyesconfig    clang-24
-riscv                       defconfig    gcc-16.1.0
-riscv        randconfig-2000-20261012    gcc-14.3.0
-riscv        randconfig-2001-20261012    gcc-14.3.0
-riscv       randconfig-r2102-20261012    gcc-15.2.0 cocci
-riscv       randconfig-r2103-20261012    gcc-15.2.0 cocci
-riscv       randconfig-r2202-20261012    clang-24   smatch
-s390                     allmodconfig    clang-17
-s390                      allnoconfig    clang-24
-s390                  debug_defconfig    gcc-16.1.0
-s390                        defconfig    gcc-16.1.0
-s390         randconfig-2000-20261012    gcc-14.3.0
-s390         randconfig-2001-20261012    gcc-14.3.0
-s390        randconfig-r2101-20261012    clang-18   cocci
-s390        randconfig-r2105-20261012    gcc-14     cocci
-s390        randconfig-r2111-20261012    gcc-14     cocci
-s390        randconfig-r2202-20261012    gcc-14.3.0 smatch
-s390        randconfig-r2306-20261012    clang-22   sparse
-s390        randconfig-r2309-20261012    gcc-12.5.0 sparse
-s390        randconfig-r2310-20261012    clang-22   sparse
-sh                       allmodconfig    gcc-16.1.0
-sh                        allnoconfig    clang-24
-sh                       allyesconfig    clang-17
-sh                 ap325rxa_defconfig    gcc-16.1.0
-sh                          defconfig    gcc-14
-sh           randconfig-2000-20261012    gcc-14.3.0
-sh           randconfig-2001-20261012    gcc-14.3.0
-sh          randconfig-r2300-20261012    clang-24   sparse
-sh          randconfig-r2301-20261012    clang-24   sparse
-sh                   se7619_defconfig    gcc-16.1.0
-sh                  urquell_defconfig    gcc-16.1.0
-sparc                     allnoconfig    clang-24
-sparc                       defconfig    gcc-16.1.0
-sparc        randconfig-2000-20261012    gcc-14.3.0
-sparc        randconfig-2000-20261012    gcc-8.5.0
-sparc        randconfig-2001-20261012    gcc-8.5.0
-sparc       randconfig-r2100-20261012    gcc-15.2.0 cocci
-sparc64                  allmodconfig    clang-20
-sparc64                     defconfig    gcc-14
-sparc64      randconfig-2000-20261012    gcc-11.5.0
-sparc64      randconfig-2000-20261012    gcc-8.5.0
-sparc64      randconfig-2001-20261012    gcc-8.5.0
-sparc64     randconfig-r2200-20261012    clang-20   smatch
-um                       allmodconfig    clang-17
-um                        allnoconfig    clang-24
-um                       allyesconfig    gcc-16.1.0
-um                          defconfig    gcc-14
-um                     i386_defconfig    gcc-14
-um           randconfig-2000-20261012    clang-24
-um           randconfig-2000-20261012    gcc-8.5.0
-um           randconfig-2001-20261012    gcc-14
-um           randconfig-2001-20261012    gcc-8.5.0
-um          randconfig-r2202-20261012    clang-17   smatch
-um          randconfig-r2307-20261012    clang-22   sparse
-um                   x86_64_defconfig    gcc-14
-x86_64                   allmodconfig    clang-22
-x86_64                    allnoconfig    clang-24
-x86_64                      defconfig    gcc-14
-x86_64                          kexec    clang-22
-x86_64       randconfig-1006-20261014    gcc-14
-x86_64       randconfig-1007-20261014    gcc-14
-x86_64       randconfig-1008-20261014    gcc-14
-x86_64       randconfig-1009-20261014    gcc-14
-x86_64       randconfig-1010-20261014    gcc-14
-x86_64       randconfig-1011-20261014    gcc-14
-x86_64       randconfig-2000-20261012    clang-22
-x86_64       randconfig-2000-20261012    gcc-14
-x86_64       randconfig-2001-20261012    gcc-14
-x86_64       randconfig-2100-20261012    clang-22   cocci
-x86_64       randconfig-2101-20261012    clang-22   cocci
-x86_64       randconfig-2101-20261012    gcc-14     cocci
-x86_64       randconfig-2102-20261012    clang-22   cocci
-x86_64       randconfig-2103-20261012    clang-22   cocci
-x86_64       randconfig-2104-20261012    clang-22   cocci
-x86_64       randconfig-2105-20261012    clang-22   cocci
-x86_64       randconfig-2200-20261012    gcc-14     smatch
-x86_64       randconfig-2300-20261012    clang-22   sparse
-x86_64       randconfig-2300-20261012    gcc-14     sparse
-x86_64       randconfig-2301-20261012    clang-22   sparse
-x86_64       randconfig-2301-20261012    gcc-14     sparse
-x86_64       randconfig-2302-20261012    clang-22   sparse
-x86_64       randconfig-2302-20261012    gcc-14     sparse
-x86_64      randconfig-r2104-20261012    gcc-10.5.0 cocci
-x86_64      randconfig-r2105-20261012    gcc-10.5.0 cocci
-x86_64      randconfig-r2107-20261012    gcc-14     cocci
-x86_64      randconfig-r2304-20261012    clang-24   sparse
-x86_64      randconfig-r2308-20261012    clang-22   sparse
-x86_64                       rhel-9.4    clang-22
-x86_64                   rhel-9.4-bpf    clang-22
-x86_64                   rhel-9.4-bpf    gcc-14
-x86_64                  rhel-9.4-func    clang-22
-x86_64            rhel-9.4-kselftests    clang-22
-x86_64                 rhel-9.4-kunit    clang-22
-x86_64                 rhel-9.4-kunit    gcc-14
-x86_64                   rhel-9.4-ltp    clang-22
-x86_64                   rhel-9.4-ltp    gcc-14
-x86_64                  rhel-9.4-rust    clang-22
-x86_64                  rhel-9.4-rust    clang-22
-xtensa                    allnoconfig    clang-24
-xtensa                   allyesconfig    clang-20
-xtensa       randconfig-2000-20261012    gcc-8.5.0
-xtensa       randconfig-2001-20261012    gcc-8.5.0
-xtensa      randconfig-r2100-20261012    gcc-13.4.0 cocci
-xtensa      randconfig-r2104-20261012    gcc-9.5.0  cocci
-xtensa      randconfig-r2301-20261012    clang-24   sparse
-xtensa      randconfig-r2303-20261012    clang-24   sparse
+There is no Tegra268 device tree in the tree yet. The device tree nodes for
+these controllers will be posted together with the Tegra268 device tree
+once that work is ready. If it is preferred that the bindings land
+alongside their first consumer instead, patch 2 can be held back and
+reposted with the device tree.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Changes in v2:
+- pinctrl: Mark open-drain, io-reset and rcv-sel as unsupported (-1) in
+  every pin group. They previously defaulted to 0, so setting one of these
+  parameters wrote bit 0 of the mux register and changed the selected
+  function instead of being rejected.
+- pinctrl: Remove pin, drive group and function definitions for pads that
+  do not exist on Tegra268.
+- pinctrl: Return -ENODEV from probe if no match data is found.
+- dt-bindings: Drop the functions that no Tegra268 pin group provides, and
+  rename the example node to match the pin it configures.
+
+v1: https://lore.kernel.org/all/20261004192921.2460405-1-praagarwal@nvidia.com/
+
+Prathamesh Shete (3):
+  soc/tegra: Add Tegra268 Kconfig symbol
+  dt-bindings: pinctrl: Document Tegra268 pin controllers
+  pinctrl: tegra: Add support for Tegra268
+
+ .../pinctrl/nvidia,tegra268-pinmux-aon.yaml   |   78 +
+ .../nvidia,tegra268-pinmux-common.yaml        |   72 +
+ .../pinctrl/nvidia,tegra268-pinmux-main.yaml  |  136 ++
+ .../pinctrl/nvidia,tegra268-pinmux-uphy.yaml  |   75 +
+ drivers/pinctrl/tegra/Kconfig                 |   11 +
+ drivers/pinctrl/tegra/Makefile                |    1 +
+ drivers/pinctrl/tegra/pinctrl-tegra268.c      | 1742 +++++++++++++++++
+ drivers/soc/tegra/Kconfig                     |    9 +
+ 8 files changed, 2124 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-aon.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-main.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-uphy.yaml
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra268.c
+
+
+base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
+-- 
+2.17.1
+
