@@ -1,127 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C83932A3FF
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 15:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987D84315F;
+	Wed, 14 Oct 2026 16:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791991993; cv=none; b=PeNmLycbmH6rj7b3i8cqMImjGw8ra/wjs0K/v3LCDtTcq5kv4iCHPgh9+vNpqk/kmd5HdNZJdHGKA2TBJfVYXZa7FBsXxfic7TFl8mCZFQ4u+lobn3wlwG/EbzlMAP32wHE8+b0xB4kd11+VyvyKLg+GcRTjQRZAdb4sfgBPqQ4=
+	t=1791994320; cv=none; b=QF80XQHUBm/Kuki5WvTPSB4Nd+jH/wOc9Q0ynY2GZmFISAz4lu0uAnriaqCw+Qc2c1sqHStaIkyL82vopjdbvlFA2iGxzsk+2KYFECMuftbi6OWyVBdnU++/Comze+zd5m7r3Z8honQVQj6yLyFLuFpEvHb57C1dQPfTGy20/uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791991993; c=relaxed/simple;
-	bh=gSc6UpJfQueqn3xvcrDKi7fymYuOVBBl17mL2gyPIrE=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GG9Y+VJA0nVai2Tr7kFgQETJwFV8u8wSa3G0aYlxy1DUbZAuS3MIwoEV684F0sD/wbVHLVkf6rHaw3yCDX6yUPAgveAsI5ZyTVzYpAqNfIIV9n+Z5e86cWrYyK8AMQlA7MHGJr7K7zdTIkwzcax5jwiWy2Fxw5wTjgMVanqFMXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9r03DVo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791994320; c=relaxed/simple;
+	bh=5zVPofWHhzcIGEaXG23OGwRbuySQ6OnDOtMmjK+5gKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Eo+V9vLGJ5eJbg4dIfPiYxnuwYG4eTFNfShFoYXZhtLz0gvqssPoApQgXTmbRvGuGSgZboBOkK58UDMKaXQ5v5JdWsrfrFXmRJQUsyxxIIpAiMXjqtd5CBmTHSa/fkXJqq32dvXN69HXVvo3EN/ZESQtXOJ7VFS6mMoNwZER/9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HuRHChRJ; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9r03DVo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E04EF1F000C7
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 15:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791991990;
-	bh=gSc6UpJfQueqn3xvcrDKi7fymYuOVBBl17mL2gyPIrE=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=i9r03DVoX4ie5z0pl/0FxRxBptr/3hOzC5U9c0uH9adMRfnk6Jv13JqJFwKGz0i59
-	 ZfNHZsaEnqRjYSeLAPlmG44da36DPeoWunkqWKnlXDtnt9dmERytzk4MSDBQbXtWU+
-	 IhpRSYCA4EXrKJj0DUOyyKZCW3MWC5uX8Fm2uPIbs9GdcVDuHRpS3OrHusxGqUNK3T
-	 4/zVyIFXpQMDDlPwTkI3M0wqHVpErABrJPxyDBYoewfWdsWADUfjrkvBplVy/civzZ
-	 S04hW5vg+LuIirEL/J6dmOvIc4tylUYMp8lhkrV7VyWgjHcakgfH+K2kPaUcvINV+z
-	 tgB5zUJCAngCA==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b8f5e2ce5eso3954774e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 08:33:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwgpp1BPK3Dj+DUTwRRVVNCDAmwJRi+2K+j6QSHKp9h/zFnWvCv4piEJaOAgzYOJTuB1Cm5zpELoBPB@vger.kernel.org
-X-Gm-Message-State: AFq9FYLh3FHykpaYyYG5lEBupcyfp2LdFJHN6jKXGvI8IPcQkszEk6a4
-	thY7kkcnWO64udLBL1VbFN2XocHuC/1ak6WMN+Dm43ZKdgRU3rg/sCQDeC65A2/yOoilr/9+TSM
-	alQRG1Z+j456XbKx2Xb80CCnXweWksdgOq7nLOUaqPg==
-X-Received: by 2002:a05:6512:10cf:b0:5bc:b67d:58d0 with SMTP id
- 2adb3069b0e04-5bcde6c332dmr5547626e87.24.1791991989620; Wed, 14 Oct 2026
- 08:33:09 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 14 Oct 2026 15:33:08 +0000
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 14 Oct 2026 15:33:08 +0000
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <7D6EB1C6-0CCB-44F1-B698-89B0479EEDA2@gmail.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HuRHChRJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=o1
+	xNoGNlDuv8dcA05o9muZ1QtkmEswQhTqN6SrXTfWI=; b=HuRHChRJv/jlQNiIMf
+	16PHgfNcZnlrAjoqtMercf5+sXqdV8TdXJ89LDiYx5Ql2YslJqnDuglgj7gautHv
+	qNDVkCo+7lOsAJeZSrhHEXoFUOAWocWRGOdm490fyPYjLYSKsjjTDN9P29FSGaGj
+	fCmPdss/y1J0XEOk4CD29/m6Q=
+Received: from fedora (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3v15Gqc9qxM0iAA--.40892S3;
+	Thu, 15 Oct 2026 00:09:54 +0800 (CST)
+From: Ju Nan <junan76@163.com>
+To: junan76@163.com,
+	antonio.borneo@foss.st.com,
+	bigeasy@linutronix.de,
+	linusw@kernel.org
+Cc: alexandre.torgue@foss.st.com,
+	arnd@arndb.de,
+	clrkwllms@kernel.org,
+	lee@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mcoquelin.stm32@gmail.com,
+	mfd@lists.linux.dev,
+	rostedt@goodmis.org,
+	u.kleine-koenig@pengutronix.de
+Subject: [PATCH v4 1/2] pinctrl: stm32: Fix the unit of the hwspinlock timeout
+Date: Thu, 15 Oct 2026 00:09:17 +0800
+Message-ID: <20261014160917.139241-3-junan76@163.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261014160917.139241-2-junan76@163.com>
+References: <20261014160917.139241-2-junan76@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261002-loongsongpio-v2-0-6e3eb150a4ef@gmail.com>
- <CAMRc=McnDBO6OZx6p9HGHn=Yyt8ydD=8Z=zYZvYvuy-_DUq6tQ@mail.gmail.com> <7D6EB1C6-0CCB-44F1-B698-89B0479EEDA2@gmail.com>
-Date: Wed, 14 Oct 2026 15:33:08 +0000
-X-Gmail-Original-Message-ID: <CAMRc=MeW2nR8W3_4266N05p3Oa1WPNJhA92+T3miXQ0k5CsyJg@mail.gmail.com>
-X-Gm-Features: AclHuK-Hm_r59Hkph0VsRse3Q7rHSNP68Kjq_5PQ5Rf6iOR_993gdwwD4MIIx_I
-Message-ID: <CAMRc=MeW2nR8W3_4266N05p3Oa1WPNJhA92+T3miXQ0k5CsyJg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/4] gpio: loongson-64bit: add interrupt support
- for more models
-To: Miao Wang <shankerwangmiao@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yinbo Zhu <zhuyinbo@loongson.cn>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v15Gqc9qxM0iAA--.40892S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyDGw4kXr43uF47WFWxZwb_yoW5tw1fpF
+	Zagwn0yrs8XrW5Zw4DtF4q9rnxJa1Iyw4DJFWjqa48Zr1jqr95Ja1Sqa92yF12qas7J3ZI
+	qFW2q345ua1DAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEs2-8UUUUU=
+X-CM-SenderInfo: pmxqt0ixw6il2tof0z/xtbC0xINvmrPqVIcfQAA3N
 
-On Thu, 8 Oct 2026 12:21:43 +0200, Miao Wang <shankerwangmiao@gmail.com> sa=
-id:
-> Hi,
->
->> 2026=E5=B9=B410=E6=9C=888=E6=97=A5 18:04=EF=BC=8CBartosz Golaszewski <br=
-gl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->>
->> On Thu, 1 Oct 2026 20:13:18 +0200, Miao Wang via B4 Relay
->> <devnull+shankerwangmiao.gmail.com@kernel.org> said:
->>> This patch series aims to correctly add interrupt support for GPIO
->>> controllers found on more Loongson CPUs. The GPIO controllers in such
->>> models do not have a complete intgrated interrupt controller, but choos=
-e
->>> to delegate interrupt handling to their parent interrupt controller.
->>> This sounds like a heirarchical interrupt setup, but what makes it
->>> more complex is that multiple GPIO lines in these controllers may share
->>> one interrupt line on the parent interrupt controller. The details is
->>> described in the third patch.
->>>
->>> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
->>> ---
->>
->> The series looks pretty good. Who is the RFC addressed at in this case? =
-I can't
->> really answer the questions from patch 3/4 as I don't know this platform=
- nor am
->> I well versed in ACPI. Maybe Cc the GPIO ACPI maintainers for review?
->
-> Thanks for your review. The RFC contains two questions, the first is abou=
-t
-> the firmware interface, including FDT and ACPI; the second is about the
-> way handling the delegated IRQs.
->
-> Regarding the firmware interface, it is to be decided how to declare
-> platform irq numbers for the GPIO controller. Such a GPIO controller
-> may have N gpio lines with M parent interrupt lines (M < N). The
-> firmware should a) list M irq numbers corresponding to the M parent
-> interrupt lines or b) list N irq numbers (which might be duplicated)
-> orresponding to the N gpio lines. Previously b) was chosen by the
-> kernel driver. However actual ACPI tables found in the published
-> firmware chose a). The discussion about it happened in [1].
->
+HWSPNLCK_TIMEOUT is passed to hwspin_lock_timeout_in_atomic(), whose
+timeout argument is in milliseconds, not microseconds:
 
-Unless it impacts DT systems, I'll let Andy handle the ACPI part. Please Cc=
- him
-next time as I pointed out under the RFC.
+  atomic_delay += HWSPINLOCK_RETRY_DELAY_US;
+  if (atomic_delay > to * 1000)
+          return -ETIMEDOUT;
 
-> Regarding to the interrupt handling delegation, since there is no
-> complete interrupt controller integrated with the GPIO controller,
-> the interrupt handling, including detecting edge triggered interrupts
-> and masking/unmasking, should be delegated to the parent IRQ controller.
-> I want to check if my implementation approach is acceptable and not
-> violating any implicit rules on the interrupt subsystem side.
->
+The hwspinlock core documents this explicitly:
 
-I'd suggest to run your implementation by Thomas Gleixner because directly
-accessing the internals of the parent's irq data looks fishy. For instance:
-you call irq_set_type() directly without going through __setup_irq() ->
-__irq_set_trigger() which does some additional bookkeeping.
+  If the mode is HWLOCK_IN_ATOMIC (called from an atomic context) the
+  timeout is handled with busy-waiting delays, hence shall not exceed
+  few msecs.
 
-Bartosz
+Fixes: 290a9f937e5a ("pinctrl: stm32: use the hwspin_lock_timeout_in_atomic() API")
+Signed-off-by: Ju Nan <junan76@163.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 6a99708a5a23..e71651d4fad4 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -87,7 +87,7 @@
+ #define gpio_range_to_bank(chip) \
+ 		container_of(chip, struct stm32_gpio_bank, range)
+ 
+-#define HWSPNLCK_TIMEOUT	1000 /* usec */
++#define HWSPNLCK_TIMEOUT_MS	1
+ 
+ static const char * const stm32_gpio_functions[] = {
+ 	"gpio", "af0", "af1",
+@@ -609,7 +609,7 @@ static int stm32_gpio_domain_activate(struct irq_domain *d,
+ 
+ 	if (pctl->hwlock) {
+ 		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (ret) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			return ret;
+@@ -946,7 +946,7 @@ static int stm32_pmx_set_mode(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1089,7 +1089,7 @@ static int stm32_pconf_set_driving(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1135,7 +1135,7 @@ static int stm32_pconf_set_speed(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1181,7 +1181,7 @@ static int stm32_pconf_set_bias(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1242,7 +1242,7 @@ static int stm32_pconf_set_advcfgr(struct stm32_gpio_bank *bank, int offset, u32
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 
+ 	if (pctl->hwlock) {
+-		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT);
++		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1320,7 +1320,7 @@ stm32_pconf_set_skew_delay(struct stm32_gpio_bank *bank, int offset, u32 delay,
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 
+ 	if (pctl->hwlock) {
+-		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT);
++		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+-- 
+2.56.0
+
