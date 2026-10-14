@@ -1,68 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694574E1C75
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C4C3E1233;
+	Wed, 14 Oct 2026 03:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791934953; cv=none; b=tPpWNGKqXGRmB8bLHUVhE55McKlz2GYq+fyc7udsFTVfDjerhf/LAC/G/BS6igInUsey79ZN+VmGb/y2P2x+Xpe2u6/XN9Gwv+XZlK2aYB6nWdfVOuvKWnSfP/Q6URk19pdrYxAVK937W3xRo207OgvjrQbRT5qp4IozijP40lY=
+	t=1791949136; cv=none; b=ia1zdMsxggXJWKa6fS1oYKxkptVnHZ4/OOEb6F4o9YhmKApfsTJjSyTMrFst55R/H3inygQRJkYwztJk1XYTPcW1sUAFC26gNuK0J2M55hA/qUCS9TKXak8abPkn/0hf3g69wLrs4jac7uyYMx53yke1N9w4JK6LElY9qxpYw34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791934953; c=relaxed/simple;
-	bh=eDbvwpgVTlaaMeKSv9P2rUafKillMkGTYGzhWBpvbv4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rXuyLg8gxzVqMB7PTj3JSuTuEPGio5rhnQqpRhmj07V4dhZjNcdk7JYr6Dqq6Bvm/1lCrqVKp+wQjFowKQDuxvbPIuYbw2QgAZvqkpK8aBhwSEnPpwS7KPgodldPFMHA31qol09BnGqV3JSgu5HdLLjtvnZTcO4w8/xNeD4TBQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPG0Gp7J; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791949136; c=relaxed/simple;
+	bh=wWv4sUHIfZP1ItvggJvpQO6/iSgwS9YDTUDmw+IVWVY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B0cq4Jn3nZA7W8B+EQO7UkPAv9TRgMHrDbMOV6IBzb6yoXfwjYfOQPWma77Zela3GZL2EX1gy+PcI987jMR4AsQ/gfop0pVedQtmmBxlZyZ53CEmRGHHUFLDdxOIR8Rj5h5i2PDshsUwsFuKvZiY1KTOaLhoBXhjvNs5+L4g1Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=k4KKl8pH; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPG0Gp7J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80741F00898
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 23:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791934951;
-	bh=eDbvwpgVTlaaMeKSv9P2rUafKillMkGTYGzhWBpvbv4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=oPG0Gp7JBk6pYvBR/k12SmL+Qdvnrv4RIiPvodfSmyRB6EdOJC660xXhksXzYATC8
-	 KMYpwDQj4Zb+/Bl4EhlaSJ1v8THLUItYG+EfrZOB8d4RbhAM70Lr0iKYQ1AhXM8xEg
-	 GLg9kvEs4Bv3hfBOo6gtVt0sl4uDgtXcE5kRgUH5gBh+3vTConMPH56kSr9DS/R6Jj
-	 UWwVuFEnvSnepti11cyfxF5wAb6iAb/nwsbEGfZMWU489PJhs5p6QKOfgGZb4zcvex
-	 sAHkUEz++Khmh6Xpl5UxKSGlM6F4g5XeU3cU0gUFSfG40JSyb7GWYLecG1D0WPhnYP
-	 Y1wwy7TPWiAmw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5ba41ea31ccso3989271e87.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 16:42:31 -0700 (PDT)
-X-Gm-Message-State: AFq9FYKaiqQE26E835baekC3uimtJpZ9+dHmbjlK6np64BePgivVYFua
-	uBlVl5HcZrtnpcVuVE/AzTXfHu0KFXK7jYf/lMCvHDNGekwKeC4Wk/Kmywm3cRKSqeZ0H2gyn7J
-	AAMuDR51s5KPMxBYkP5kjbx+6eqedwuc=
-X-Received: by 2002:a05:6512:6d3:b0:5bc:d9d6:6a98 with SMTP id
- 2adb3069b0e04-5bcde39f2eamr4571803e87.10.1791934950715; Tue, 13 Oct 2026
- 16:42:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="k4KKl8pH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1791949128;
+	bh=Xr9nv3pCAuQ1Ufx1N8P/5BzbOX8F4y0Yex+Y2BlP8fQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=k4KKl8pHFsg+eNdE9MoTQ1h16nqPhHKpCXWBVqVXLPW2ix4UmoIThsHCX7B5m0yz1
+	 YD4+Dp2SK2s0tl4YQFuFWE6axcJgIvHT2y2Zg9A2fOd+XN2eACiZoGBvUPrX88CBVy
+	 O1CQHTPFNjSbjQtIF556KtYdPeq6ArLQO2/JzZrY5fQWtrllS2yRvzRwx2HWMGK7WI
+	 K4tK6wLG4c0gPqybPKIbjWmNtY5ozYr63SKhMIzFc9zGB+f0bP0Uz1z/fYNLXvXh++
+	 Ly3MYuRRGsYymcj/L7Gnq07y5bYrM+nhYKw6ReTpvrtLCR3OemkUW5hyh9GBz7kNyu
+	 yksHmIU1++rcA==
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3FD926CEE0;
+	Wed, 14 Oct 2026 11:38:46 +0800 (AWST)
+Message-ID: <c569c912141e9da7530121b8b2fc81527e0518a4.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 00/11] Add NVIDIA LSTP USB adapter drivers
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Adrian Ambrozewicz
+	 <aambrozewicz@nvidia.com>
+Cc: Donald Shannon <donalds@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij	 <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Lee Jones	 <lee@kernel.org>, Pavel Machek
+ <pavel@kernel.org>, Andi Shyti	 <andi.shyti@kernel.org>, Mark Brown
+ <broonie@kernel.org>, Jiri Slaby	 <jirislaby@kernel.org>, Corey Minyard
+ <corey@minyard.net>, "Rafael J. Wysocki"	 <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,  Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?=	 <ilpo.jarvinen@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Hans de Goede <hansg@kernel.org>, Lixu
+ Zhang <lixu.zhang@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Johan
+ Hovold <johan@kernel.org>, Oliver Neukum <oneukum@suse.com>, Quan Nguyen
+ <quan@os.amperecomputing.com>,  Andrew Jeffery
+ <andrew@codeconstruct.com.au>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org,
+ linux-leds@vger.kernel.org, 	linux-i2c@vger.kernel.org,
+ linux-spi@vger.kernel.org, 	linux-serial@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net, 	linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, 	driver-core@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Date: Wed, 14 Oct 2026 11:38:45 +0800
+In-Reply-To: <2026101310-scuttle-unison-d4c3@gregkh>
+References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
+	 <2026101310-scuttle-unison-d4c3@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <as6VF3GFQdlHkuSL@black.igk.intel.com>
-In-Reply-To: <as6VF3GFQdlHkuSL@black.igk.intel.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 14 Oct 2026 01:42:17 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnpg-yazUEsm_dFKLBZGM9hV825gbOJ0_3Xw=4jyEozsg@mail.gmail.com>
-X-Gm-Features: AclHuK_EKILGJpI7IJ_AVCo5GsEn-lVy2BhvIiajhwYb8iIMTzGfBqVkpf5_elY
-Message-ID: <CAD++jLnpg-yazUEsm_dFKLBZGM9hV825gbOJ0_3Xw=4jyEozsg@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-pinctrl for 7.4-1
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux pin control <linux-gpio@vger.kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 13, 2026 at 10:31=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi Adrian & Greg,
 
-> A small bunch of changes to the Intel pin control to enable pure platform
-> device enumeration. The set was sitting in Linux Next for a long time wit=
-h
-> no regressions reported. Please, pull for v7.4.
+> > This series adds drivers for the NVIDIA LSTP USB adapter: a USB core
+> > driver and GPIO, LED, I2C, SPI, UART and BMC-side IPMI function drivers=
+,
+> > with their device tree bindings, an ACPI description document and the
+> > sysfs ABI.
 
-Pulled in, thanks Andy!
+Adrian, what is the plan for this coexisting with the recently-released
+OBMF-ICP spec[1], which implements almost identical functionality (and
+apparently with less DT/ACPI description requirements)
 
-Yours,
-Linus Walleij
+... NVIDIA also being a primary contributor to OBMF-ICP.
+
+[1]: https://www.opencompute.org/wp-content/uploads/2026/10/obmf-icp-1-0-0.=
+pdf
+
+> > What LSTP is
+> > ------------
+> >=20
+> > LSTP (Low-Speed Transport Protocol or Low-Speed Tunnelling Protocol) is
+> > a vendor-specific USB interface (class 0xff, subclass 0x3f) that
+> > multiplexes several low-speed "channels" over one pair of bulk
+> > endpoints. It is implemented by NVIDIA's SMA, an MCU (0955:cf11), and
+> > by other vendors' parts: two hub/bridge chips have it built in
+> > (0424:4940, 174c:2214). Boards use it to
+> > reach SPI flash, I2C sensors, GPIOs and LEDs, a UART and a host-to-BMC
+> > IPMI path, on both BMCs and host systems.
+>=20
+> Also, if you really want to do this in a dynamic way, use greybus, as
+> that is EXPLICITLY what it was designed for, and is patent-free (i.e.
+> unencumbered, and we already support it in the kernel.)=C2=A0 Please don'=
+t
+> reinvent the wheel/spec just because no one did any prior-art
+> research...
+
+With this, we now have three similar facilities:
+
+ - greybus - I assume there are implementations about, but more on the
+   mobile side?
+ - LSTP - with an NVIDIA implementation
+ - OBMF-ICP - with a few vendors' early implementations
+
+There are differences between greybus and OBMF-ICP that may justify
+support for both (primarily: static channel support means OBMF-ICP is
+simpler to implement). I understand that OBMF-ICP also has reasonable IP
+protections for implementations. However, it's going to be difficult to
+justify both LSTP and OBMF-ICP implementations living in the kernel.
+
+Adrian: I could see LSTP being implemented as a set of divergences from
+an OBMF-ICP-standard driver, but I'm not yet across why you need static
+configuration. If we do need support for both in the kernel, I can take
+a look at how that could work.
+
+FWIW, we did raise greybus as an approach to various HW vendors; I
+assume there were reasons behind OBMF-ICP, and assume some prior-art
+assesment was involved, but I don't have specifics for those reasons.
+
+HW peeps: This would be an excellent opportunity for elaboration on the
+motivation there, either for LSTP or OBMF-OCP.
+
+Cheers,
+
+
+Jeremy
