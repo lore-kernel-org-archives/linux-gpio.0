@@ -1,189 +1,200 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010014.outbound.protection.outlook.com [52.101.84.14])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9624A0934;
-	Wed, 14 Oct 2026 08:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791966630; cv=fail; b=cB6I68V94RUi40TyVDCyG4Bw2S+jjghoiHBXOo1QW1LdiTKWLWI7PBL8ypmK3BrjC7MflxhglXOMxnhBkfUMn3BLfsCGUc7nn9AfkL90LAl1YEMlwO7I0cjbAflEkBxe/jXA/m4FjXWqwcFkNezWh58FGF0LMc3nEMaQvNKhP8o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791966630; c=relaxed/simple;
-	bh=hDtm2yo67I+G+9kY0GJukcD3cTYKY52vHVx0Uixc5Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KUo4txkFcREPzgKS8W2o0a/kosnro9MZE/Wn7Vz/MOXy714BFa3i5Bj3ER4U4NQcj8j2Bcd7iB8zr4EaED/TPe7IhiSaVxkuP9Ss0aXaQGNo+irl0+J5AU3dh0JNKN4oWK70FYz5C/3EbJmBZtJeCxVodT79S2v0buIRHhRjt/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=mn++iTri; arc=fail smtp.client-ip=52.101.84.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBEE485CD8
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 08:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791967457; cv=none; b=dJgcflRnszpFyPbCBXKIiuC2g3Qzb16Ht3hoc3s6Qq1RfgvmAsOrYELj0lUIvxyVtfhM5hQIoHqm8c5PKl7xmtjJaFm/YOEjqIb9ES68tZaJo4ag2c4HhtYa4QP5FJNazJdWb47tQNveQw33Ge6VD6oGBsNPRVC+JgI/2XXriRk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791967457; c=relaxed/simple;
+	bh=qmzjgNuXswFfzVsQlGsX535LOsJ4miX4hfwuT3AarCU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LHQ52M+q1PeQRY9blNlENd41kp2VNYphcOUF5b/I4FIqZ0Bp1y8NEHwV1rv5MAng+5abksp8Fwff9L9psKKHDNbYVVasWypqsfNNDWgLswOyaJ3tgWrI7wIWdwS8sSfNtm2ypxxlpVunrYXRT0eFc9NSrDiztYXhDWo5OIMKpJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SdLMbACL; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Geh4qipU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="mn++iTri"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uifN0WLOB+c+0tD0KVPPGvt1xc8Hy7ltlCoV7mguAmfu5FokMzxYzNSpSnYCqb7wjbS0oY50OzRqHGEtl2GNhl6dHOcL6RhjOXv2ml+rlbKOpnxTuhAdj44gVVKmcOjR0zf8azTrXIZLMcOuip+9omwfCnVs4OYOLIupEs2UPJEx3ihWszQwiWeQ1vK7kMVxUtrU2G8bAyc+Rddpy9Aqkj4IQ+XPBf6TMdbViRgIomqO0U8aIKRANTSGZo/QdXVUe830t23wWMB2JZKjctW3JiMmFB5cmn6AlFay5ajeCZj78CbpnGOHFeUVrodY7CyNzyCfSD10qGly50aHPoR2Sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vw4KmkdFwK/CDZvAcWLH27fTwNsZ5t5VqFuZ9WIw3lY=;
- b=R+KTcCvJ+LQd76TxPwS7VJNZxnbKjIVWKKFpAtbdZlFNKH/4SrZ3AR/wW1qZJzZ7FJW8J5BclBkGyzQ4eo0MKuG0UZN3+fQ4WJzOf6seVV5D7BqJaI7UDKSCCA0ReLJ2fc4gC0H+4lalnCyoctHnD2zNijh7cKcozIC7j89HDVDjH3c3HUN7rZfSuiA3xe76HoJJUbhgiEcAVjY+Xng0nrBrkZP9Ij6vOSeUg8sl2Y/suNEN1iz6l94dLEw5Htv8kv/0zjTKXm22Rk6wm50YQpT02m6ZdhWdUYjwsy0GZOguzp0qPNUgftwcEh0OvO0Zr1P0s/rtN5dk2IUgnAIkwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vw4KmkdFwK/CDZvAcWLH27fTwNsZ5t5VqFuZ9WIw3lY=;
- b=mn++iTriD2xhL5RekALuw/S3LRj8AZeVfuSfEnEsR3x+0TaOl4DzUQEBjmorV1F7CIxCaBmRkdHJ9kO5+G6IWBcRWUpzEhMzmzTAltdFPszDtfVyGYVBnHddmNBiRveJKatiBcCvDhnc8T6PT0NNtzFE51f6i3CrFQ4nNxObdW7fnt+Jio/k2jHC6ynZYqvwL7Oxowz91YJ480edZDfHHGjMjUGtld+WOBov2hdj9/RCuje3m8ue2/K9BU2almF6FS6mnCl6gWa60NESVfg4snds7iGV7Z3SXb9wYcYmLynWIKLTJlPnlx0BjRzuDHZdP9IdRQPVRWdGhIt+o2phgA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
- by AS5PR04MB9969.eurprd04.prod.outlook.com (2603:10a6:20b:67c::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Wed, 14 Oct
- 2026 08:30:25 +0000
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0522.012; Wed, 14 Oct 2026
- 08:30:22 +0000
-Date: Wed, 14 Oct 2026 16:34:58 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-gpio@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v6 07/13] gpio: mxc: convert pad wakeup compatible checks
- to hwdata flags
-Message-ID: <as8+sqlBEuhfdtZ8@shlinux89>
-References: <20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com>
- <20261011-gpio-mxc-cleanup-v6-7-cb47ce2ad758@nxp.com>
- <CAD++jLnDxTAz2=ge5RgvO02mp+BJyLBV0zR8xqsm8LSsSEcRYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jLnDxTAz2=ge5RgvO02mp+BJyLBV0zR8xqsm8LSsSEcRYQ@mail.gmail.com>
-X-ClientProxiedBy: SI2PR01CA0041.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::15) To AM8PR04MB7874.eurprd04.prod.outlook.com
- (2603:10a6:20b:24d::9)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SdLMbACL";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Geh4qipU"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69E7fXLh3017725
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 08:44:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=JHoMsFtKNse1MlLVeF/xwl
+	AxrCV9vWHJUxI2jz9dE80=; b=SdLMbACLBUM1vDQCUmcCy6a27xKviSoDtOwNw1
+	Hv/rxFKgX793s2Oa27blYK8rAsrUNde39bkmqHUeqy+wkL0FIVCAIWay6IxH65tv
+	bQfm5s70UeIYU7qXuAEfUyo56Qeu261K8Cmz2Kc004yDfSvAE5nCJeIlB5Ai9ppw
+	uWHJdKeNH9KbOcBKsle7ih7oyU4OQhoAnYk/f3orZYuyBq3Zab8t4K1GJUxIDwD2
+	lx81PJqvRxejTugfUHRXhQwI4/r452QnpernI8WxrXrBdYy/L+hHCaRnTyCHQWDo
+	D2MPzkXly73PhoiWiIuYzIhknKYZN2pcBAWMrtJsUkJddl8A==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h9s2b3byf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 08:44:14 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-917a3c27c9bso75699506d6.0
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 01:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1791967454; x=1792572254; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=JHoMsFtKNse1MlLVeF/xwlAxrCV9vWHJUxI2jz9dE80=;
+        b=Geh4qipUEmz9mNfnEX2SNmd78Ee7L/fC0bP9n9q7ZHfi4osYuhGBAU0UYEOARt0BRv
+         grI6t/HAufyDNMjqBqGwLvDGmZFFZx5UpQ/SglxGCGOB6r6R9k4BPdJa8RgdAQ/VDhnl
+         4ib/U2QY5XicfX3hMrIBZoGgjxLbOff3BdmQXoyKa4VqyMJhM7lSaqyHiUcqKbp6ftzH
+         gWhFWiEH7J/vxDehMAi2Kd58IIzqyqpbjzSUgZuOSniW0tIyui8Rvwa4L8c8VZMvu3I7
+         96y44brrAYCcHopMxfdBykKXuBTjg4s/kI1x65nR+WPZYdBAezmri5aJhPgxORy29U7k
+         eC4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791967454; x=1792572254;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=JHoMsFtKNse1MlLVeF/xwlAxrCV9vWHJUxI2jz9dE80=;
+        b=akFkr5I1WZ2LlLoMWImDEV2qe3lm5EgczKwaSJZWlJ0/EohoyK7+/hPcuoNpnQq99d
+         7wny75ZIn6wI4tn581usWxxbpPbRGaFSRDwBZwJsPdEbO8wApepB6F3IvlSuLjgt9fMt
+         OpwXKRo//i3a/WXWNaVSwaRB/UrMznzbcxvb+BMqiAiCSolFfLbxJdLls26ajhozg0oM
+         voxdKBWQMWk0zL+0rfFCCbH7bz/XkGAWT91bmxkfxbBkMf/Ma4iJ1bR7HB/plaI49DHZ
+         R3rU1KCLzZSRf6dnnYsUSoSDzdWpxtoehAvGl+S3fTbRznS4WLld3A+tO3INKBSeQD9J
+         zzow==
+X-Gm-Message-State: AFq9FYL2DD2pdtXNsGyVKyy+xabB47wESK9Y/xh8OtfNhq6hihpedoIW
+	t4feereuCEgqBQ1j5iHO9JNJGSjmYguqnnaiq8vNR02bcp43rX1+ic6XTvqv/JsYo9jSG+LH5XT
+	A9xxZx6tBVGsy+CZsPqdR97hgc93IDAIB1BZk5SQ4t0msaLo5qbdtBQLpNlcqLXQpyd4DpdJh
+X-Gm-Gg: AYBFou056WpVcBowIECxdBjlzmZiQb2F+w4pP7nb8g6/dJbnnT2fAQsl5MTh//4H4ap
+	UrEur4+/mQ+PpgaszZu1KvcvhXiHBIzC1tYT/j+S2lVJKF5PCgCtT7xU2cRKjXoqueX/I6RNGvY
+	pEqVxtAlvV+vaNrUVZe/t6tjEFA62E2p57lp2o+6M/jez+WNc0wnsOgVqMzIw8H6wfVRoOZz3Cg
+	X7+SxBv2/2wlSoiU3ky4gUcjEYmf1Y0qgnEPxnQQvv7As0yHv8SaNOC5e309e7ds5nXW+75oTLD
+	Mn5pnNdNr9Mnx+jneh7atncDYCkKO3GUtzrf2o6g6KJrzCXaatjN3OH6nCMm3N+gwIYWxkMwf5M
+	qENYcMfSwL7xGgDTqScgfRUJCDE9B
+X-Received: by 2002:a05:620a:468e:b0:93e:c12c:f12c with SMTP id af79cd13be357-93ec12d0fb5mr2383181585a.71.1791967453637;
+        Wed, 14 Oct 2026 01:44:13 -0700 (PDT)
+X-Received: by 2002:a05:620a:468e:b0:93e:c12c:f12c with SMTP id af79cd13be357-93ec12d0fb5mr2383178985a.71.1791967453165;
+        Wed, 14 Oct 2026 01:44:13 -0700 (PDT)
+Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0bd733fsm10534760f8f.58.2026.10.14.01.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Oct 2026 01:44:12 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Date: Wed, 14 Oct 2026 10:44:02 +0200
+Subject: [PATCH] gpio: kunit: fix GPIO device reference leak with __free()
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|AS5PR04MB9969:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05d6a05c-7b27-4e19-426d-08df29cd637e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|19092799006|1800799024|7416014|376014|366016|18002099003|22082099003|10067099003|4143699003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	/6Za28xJAZe4ZAt26s6nTnh3Ousy/hz2+mGa7lnRKQtQj08f7ROJcC9feYjiP0ap6fOS2E1/iQFsFMyGfOr1Gfr0xnOEncaIyiGFh9d8Ehza21Dr/o0q6hwK1KuDRenKoT0zCX8pT61IT0n3CfLUxgKY9fWE+9c+JWFT5+Ao9yFMCYFqlHv77DNxmioA7WjQ5k1X15SyETZxWEDkl3RqRkstepFLQHgbaiQvgdyQgS6sk1SLd0dLSXhvLsXsfpSqfDtC6FsycU5L2x6F3pesjQ1ft+B2SFcK7gCxJWO6eJ23i4Hp1NJ8uHVQtbXXq+cWfkYMoehwd1Nlb+jsqxhz3v5yObnRFtoCnjoUPYTPeDe7rW8dNocXe8ECauP02bClfJtoDhgqPvhCo6PPDMMBYisRRZ7GhwgLU/F+Q9q4qbtU3f3v8CBFOy7pTPCg6/UsYmVoKQCU4+Q75BqHvxpVKLe+t3SjUeebosFONEMaNCRNH/0t+heVGAyoMcZIIRfIACyfN56xQCSvMFnso06w811UOWEctz5VOZ+wiGZBdcq2CoWWADwZj6KsX4OVYpc34Xo0WG/S1S/rQPH1EaJZZzGaPHrlfHqFJKGPJQY9tYp3V+dQDrQh9DK32ZhmUM3UBzz6NfVCI/RaTKejVMukqZ/aAXy/3sq6/Vr7PUdldzU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(19092799006)(1800799024)(7416014)(376014)(366016)(18002099003)(22082099003)(10067099003)(4143699003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L1RoNzBJYW5MYThwWGJweTJNakdBUDVjREV3N2x2aUhyeDc4bk0xeUdaNitk?=
- =?utf-8?B?L0tWTHVaWFJaRjlxVE9yVWZJbklWZU12emVsU25kaFA0MStRS3N6Tjd4MDFX?=
- =?utf-8?B?L2JZc0tKL2lxMGRBYzUrdkNMeDNTd2RrYmMyTUlqYlFFeGltV0pIbXMvS3d3?=
- =?utf-8?B?eUNxbmRlUjZYajhPTFdNWEJHL0drOGU0MzdIQUZsbER4aTdxRktjYjhkbXZt?=
- =?utf-8?B?cVVnQ21CMHc3NldvaFFNR1hNL2ZsV0FSWTlHM3M5WmtrdW5tZDloU01WTnFK?=
- =?utf-8?B?NjBFeEQzbFZRY1p3Q0Q2V1BmVUE2ZXVjOCt5TWdDNDVDMGhrUUd0djIxVFpo?=
- =?utf-8?B?dVQ4Ujc4VDRiYzVZelpRSWNKZUxMZkVpS2RKVnd3ZU9LS2VkV3p6c3RGRmdS?=
- =?utf-8?B?MmxPWlJNUDZjL3VQZ3c3Z1ZWcVA4VU9FcEJQK2Z0M2JtUklPV0d0TmY2SlhO?=
- =?utf-8?B?K1l0aEk4VUNHWkJQa1FkUlFNd3IrQjQrK2FmQis5TEFBaHhmS3V6Q1BoOTVO?=
- =?utf-8?B?OThUdnlSY0FURGx5NWVWaURLVTZmQ1BFYzNBZG9UNWpSbUszTUtqdlVNSStq?=
- =?utf-8?B?QmdwVHk5TllSbUhXdEFDb1I5Z2RYNUtGR0x1ZExNUDVxMXlVRXA5LzQrVHJl?=
- =?utf-8?B?bFczSG5aQWlIcjBrY2hJTjlXUG9jMlplWGY0dllKQkZwbWpld0t4RGRxWHU4?=
- =?utf-8?B?dDlCZk5zaUNOOUkwbVdLd2plN3o1R284UVBFRGViUnBzdTZ3bDh4RHBSZUZR?=
- =?utf-8?B?L2VPK2Z5K2dLUloxQ0lqMy9IK1lGU2hrbWVaUWxianRhRmoyRWtOaStFYTRs?=
- =?utf-8?B?VEJ3K1ZqbUxPT1lydDBxdGVKSW51OGw4Y1YwVFI5SitkOVBhWG4yejdUS1Q0?=
- =?utf-8?B?cWcvWnJmWGY3MVU4Qmd3UmpWNWdLOUhQbFpDSWJneGMwa2Ivcy81UkZ2RWli?=
- =?utf-8?B?L0NYcWc5UGpTTTYyc01jb2dvS3lNaFYzOGJaemhVc2tSNWFESnBGSHduaWZi?=
- =?utf-8?B?VlVETVZCb2w3a1ZMcElNQ0FXNDgwN2xGQlA3V0lHSnVCS2RRamoxTGtKeldF?=
- =?utf-8?B?U01TVlpjdmkzVmJYci8xY0MyNU0wcXJISkJnajYxcHFKZmsvK3g5anlHNGFN?=
- =?utf-8?B?UERoZjlZL1g2enJRMlRVaW1jTmxSOVkzQ3pDbElvbXZ6aFpNRy9GaEFVZTM2?=
- =?utf-8?B?dmd5ajJrd05qT0RSUzRtL0VGZStVOUdDQXpzWGN6YmJmdVMxZS90YXY1M2p3?=
- =?utf-8?B?MUVPTDFobUQrMnhwY3JnY3phbm1YUEFOZzU4cW8wdUcrY0h6TGRkVTF2dUdN?=
- =?utf-8?B?Y3JlVTg0N29sSS9aeGRCL3pZZmdaTHBPRWlmaFNiQVh0VjNldkpSMmw5K2NG?=
- =?utf-8?B?UGNXaXQ4azBKWU5BU1ZDV3VlUCtvbjZwTlNTNUpkaEhBS1hmeFZ6eW1kQ0k5?=
- =?utf-8?B?Z2laNFlUMUZCaHBia21UVGxXaW9lbDU3ZGFjTmdqQW5PVFhuOHVkWmQzeTQw?=
- =?utf-8?B?bnhrdjI1dzZlMVJQTkZjSkdqdUgzZnZjUVpxWW1IY2VxRkJsMktLYkI3WVlo?=
- =?utf-8?B?c25vamJUUTdTdDViQzhrQnpTSkFBQlEybEpwRXo0RnphaWNLd3FuNHdaUmpu?=
- =?utf-8?B?YjZwczRsaEFNWjJLYWxtdmFuWG1RM2xvRGQ0TlkzcENSaWtYUmN3Yzl2SldN?=
- =?utf-8?B?clcyUDA1ek9KcjYwNlFuaTBwRUc3dkhIbkppWUxxNG9mT2pGZ2hGWFI3NHor?=
- =?utf-8?B?Qko5WWNGSmt2WFJtcGVFNSsvSnkwTlI1OWY4YzU5czNHNEw3MWovdGR4bElU?=
- =?utf-8?B?b29UeVFJektDM0lUZVg0VHNJRXdhU3Y0dUx4c3FtUVNXQ3h6T1IwNzNJSFRT?=
- =?utf-8?B?WVB4YTg1aFFhUkdmc2x5c3QzbDJaTml3NkxLM0hseVZ3NlE5ZDdUdWJTVy95?=
- =?utf-8?B?dnVaK2J2RVJYell0emNzRkNCZjlKeElSK2RybG1mQnhYd0M1L0dWTytObmZZ?=
- =?utf-8?B?bmFhdXNseGptMnlsVURyaFFZY0xrRVF0dCtxbnp4ak50aUNDOUVpNVErZTNa?=
- =?utf-8?B?K0EzMmRwWTRYczFZVk5nZjR5UEgwd1hrSDV4SlhVeUIvTG5qbEhwem0rNDRT?=
- =?utf-8?B?NlZOV2RBMkplVzNSem9QaEdJTUVPc21jZFZraVhkcWM4ai84VzcwNHRYaEMr?=
- =?utf-8?B?MUNveVNOaExTUkt6T1hJSzhlV1BZa0JZWk8zZGsvbTV0dHdqMlRQdzZiSW5E?=
- =?utf-8?B?eEpPRFlTTFVRMGlWTnlCckdvd1VwZmpWUXRGTCtzcktoSTRrR3BCQXRUK2Nx?=
- =?utf-8?B?cko0TWovakV1YVNoUjQzY2lGbExNQTNGVVdQblVxb0xZWVpSalFhSjlsUVlw?=
- =?utf-8?Q?0uIf6vceeD71lzAxjsRAdGtBAOcOHtm//XHK0?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05d6a05c-7b27-4e19-426d-08df29cd637e
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2026 08:30:22.9286
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Iwp1MvpEpQLWf/c1xJ0LVDi3yYHAO6Ggu0iUFu0anj2uLzpuzJchrTQCW32ocBKKal9qCGd/ONbQ1zfv6BKyTnkZdWOoFFOHiXFP84L75F/lSjJQu9bG3SstNmDV3fSJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9969
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261014-gpio-kunit-autofree-leak-fix-v1-1-5bfa7be0eb1f@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIANFAz2oC/x3MSwqEMBBF0a1IjbvABPG3FelB1BctlEQSFUHcu
+ 8HhuYN7U0QQRGqzmwJOieJdgvplNMzGTWAZk0nnulS5KnjaxPNyONnZHLu3AeAVZmErF9uxRFM
+ PfWWgKS22gJS/ffd/nhfrqpJNbgAAAA==
+X-Change-ID: 20261014-gpio-kunit-autofree-leak-fix-fd6e98cb7ae2
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sashiko <sashiko-bot@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2306;
+ i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=qmzjgNuXswFfzVsQlGsX535LOsJ4miX4hfwuT3AarCU=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqz0DXV4qbHEbwlrRf4D1o/Fw3XpwRbNbmF1N+2
+ fHDxpfC4XyJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCas9A1wAKCRAFnS7L/zaE
+ w2OxD/49S+bJ7cbCZLnkhEyYHl/iODXRWCRlUT31BOBTSq5W9h+9cqlrzAnKIu4e8+OA9uEBi//
+ uszd0ZbW9IHcPa/mF4+ajLw0ajoOHOmb9CEieyeEmE2faquK863ltB1tE5m06w941yuc4VGPH9T
+ 8koe+QfFVVNF6GoqvWuD2KbkKWkYwtXtQX0c3dQaJVCHf0PDxtCYxgJI1ftn7f27uPsu0tdL0O/
+ 1ixNxpwa/E/7L6YAfLZpauDl1DP0lXkDVwx34wPPyi0YBx/RP0O0z/AbBaoUAGFG1ADV6ZswhOe
+ TwVDFW3oTlrPIVsUhkI+2RWWGsYvZgLNOFlFwO67BwMPZfz7tIUH8P5GBO+aZnqj5/F317PUwIx
+ N0Xs0X+CymABYK2L7O0RIdBwJfA9qemp0uhgrsti5H0EaHaOkM67Aab424MPireMTxxkp60IQ3x
+ 6YwgigKcrUco1+3dxiG6x/2JH1rnUr7uE2ze/N+R30n+DXI0gGQ9/5mhm/rSkHdeuljSFU+ZkHy
+ YsUWNMwRxDUmkx87mODxu4yiOoIKRQraK5AgygJs0tXNgoeutmAOTRdQpBeBLi3neGfauaY7JTc
+ MDWiH9FnltZY1MyJ+n1yorjJTDrZYhtfPfIUbYUBekuRmemvrjezpNCC59SsTsyYU5jaxJrZLWd
+ c9tmxe/qD/W2XZA==
+X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-Authority-Analysis: v=2.4 cv=RPQmjIi+ c=1 sm=1 tr=0 ts=6acf40df cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=c92rfblmAAAA:8
+ a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=O3aD_dgH-A0VS9j9oW8A:9 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=GvGzcOZaWPEFPQC_NcjD:22
+X-Proofpoint-GUID: cC9VlNF0F9qA7Nuy2k4QCa8-HX659HeB
+X-Proofpoint-ORIG-GUID: cC9VlNF0F9qA7Nuy2k4QCa8-HX659HeB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDAzNCBTYWx0ZWRfXyeU16JPYUPel
+ NQ5lxSTG9ciJSZ7RMDnAiJ7SlfVD2kHsnw++nGbimEKsejzor5SVS2yfg0NgrgYqVtv0NnvwnCK
+ Hsq6C9ZJSlDVtOgHv4BHCUTyRfKx0hTmkT+QIUcfYszusvS+nWz975CE4q86syrtt3joVbNz0jl
+ Aw63xdESb8WCgvOdNWAZAYa/7oh9ATGd/ia4UB6CBQnP7ycyjHFJddw8NCx6YWCNTIJ9VD0BemM
+ 2kq43XM+l3dLMWjEnt11mVTeHaIuE1TYx6ZG/yHG/GSKI3GxmJPMasW//65cLbqG/VdQ7xMzS/M
+ g5rkApIfK9w8lU0BuTq9v9rGH3VYo0EH1vQ3gTJmYVL+axmSc8AWf5fXLUWp+VJmjUHanne7l0t
+ EXSyY5Zxy0ELSJKyss4gT8vGQGhRCCIkCAnNi786tnIf8YqgKvSleA45ZdWIOoWasM8BIQsHmJi
+ IoeGbYJRuJltuEY7crw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDAzNCBTYWx0ZWRfX8TMpW7UOVMtM
+ RM8nsJjGj/sZlwf2n4D9Qm9/t5qZazEn6bmM4md0WwCAtLmLEfJUGWBbnU904DW17XTnLdZ8SGE
+ DznrnNQyVz4Ef94ejp9+pdSgqPjsYvM=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
+ phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610140034
 
-Hi Linus,
-On Wed, Oct 14, 2026 at 01:10:48AM +0200, Linus Walleij wrote:
->Hi Peng,
->
->On Sun, Oct 11, 2026 at 1:51 PM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
->>  static bool mxc_gpio_generic_config(struct mxc_gpio_port *port,
->>                 unsigned int offset, unsigned long conf)
->>  {
->> -       struct device_node *np = port->dev->of_node;
->> +       int ret;
->> +
->> +       if (!mxc_gpio_has_pad_wakeup(port))
->> +               return false;
->
->Why is the entire call to mxc_gpio_generic_config()
->bailing out here if the port does not have pad wakeup?
->
->> -       if (of_device_is_compatible(np, "fsl,imx8dxl-gpio") ||
->> -           of_device_is_compatible(np, "fsl,imx8qxp-gpio") ||
->> -           of_device_is_compatible(np, "fsl,imx8qm-gpio"))
->> -               return (gpiochip_generic_config(&port->gen_gc.gc,
->> -                                               offset, conf) == 0);
->> +       ret = gpiochip_generic_config(&port->gen_gc.gc, offset, conf);
->> +       if (ret)
->> +               return false;
->
->Then no generic config can happen.
->
->This looks weird, isn't it just some of the configs that
->don't work?
+KUnit aborts the test thread immediately using kthread_exit() so the
+variable annotated with __free() never really goes out of scope and the
+associated callback is not called. Schedule a kunit action instead.
 
-The early return is correct and matches the original behavior - only
-i.MX8 SoCs with SCU have pad wakeup hardware.
+Fixes: a05cfd98c5ec ("gpio: kunit: add test cases for software node hogs")
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://sashiko.dev/#/patchset/20261013-gpio-kunit-plat-lookup-v3-0-3907f913e964%40oss.qualcomm.com?part=1
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+---
+ drivers/gpio/gpiolib-kunit.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-gpiochip_generic_config() here calls into the pinctrl backend's
-pin_config_set(), which on i.MX8 programs the SCU firmware with the
-PAD wakeup source type.  Non-i.MX8 SoCs don't have an SCU pinctrl backend.
+diff --git a/drivers/gpio/gpiolib-kunit.c b/drivers/gpio/gpiolib-kunit.c
+index 90b7e77ef0b51f5115d8a3afe53060a8f33992d2..f005854e7ff7c37dddb966ad25bcdc777e7d978d 100644
+--- a/drivers/gpio/gpiolib-kunit.c
++++ b/drivers/gpio/gpiolib-kunit.c
+@@ -28,6 +28,8 @@
+ 
+ #define GPIO_TEST_PROVIDER_NGPIO	4
+ 
++KUNIT_DEFINE_ACTION_WRAPPER(gpio_device_put_wrapper, gpio_device_put, struct gpio_device *);
++
+ /*
+  * The test provider tracks per-line direction and value so that lines can be
+  * driven as both inputs and outputs - this is needed to exercise input as well
+@@ -760,6 +762,7 @@ static void gpio_hog_assert(struct kunit *test, unsigned int offset,
+ 	struct property_entry properties[2];
+ 	struct platform_device *pdev;
+ 	struct fwnode_handle *fwnode;
++	struct gpio_device *gdev;
+ 	struct gpio_desc *desc;
+ 	bool bound = true;
+ 	int ret;
+@@ -779,10 +782,12 @@ static void gpio_hog_assert(struct kunit *test, unsigned int offset,
+ 	wait_for_device_probe();
+ 
+ 	/* The hog must have configured the line with the expected direction. */
+-	struct gpio_device *gdev __free(gpio_device_put) =
+-		gpio_device_find_by_label(GPIO_CONSUMER_NAME);
++	gdev = gpio_device_find_by_label(GPIO_CONSUMER_NAME);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, gdev);
+ 
++	ret = kunit_add_action_or_reset(test, gpio_device_put_wrapper, gdev);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
+ 	desc = gpio_device_get_desc(gdev, offset);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, desc);
+ 
 
-The function name is misleading - its only caller is mxc_gpio_set_pad_wakeup().
+---
+base-commit: 1fffefb00cc0b0da1f2ae24e3d33364530ea6515
+change-id: 20261014-gpio-kunit-autofree-leak-fix-fd6e98cb7ae2
 
-Thanks
-Peng
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
->
->Yours,
->Linus Walleij
->
->
