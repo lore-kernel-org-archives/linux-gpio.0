@@ -1,135 +1,201 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C4C3E1233;
-	Wed, 14 Oct 2026 03:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538EF2868B4
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Oct 2026 04:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791949136; cv=none; b=ia1zdMsxggXJWKa6fS1oYKxkptVnHZ4/OOEb6F4o9YhmKApfsTJjSyTMrFst55R/H3inygQRJkYwztJk1XYTPcW1sUAFC26gNuK0J2M55hA/qUCS9TKXak8abPkn/0hf3g69wLrs4jac7uyYMx53yke1N9w4JK6LElY9qxpYw34=
+	t=1791952617; cv=none; b=rgWV45/RD8uxsKBfGokFVb8kfMTgnFnfm57NcU7hq157BxCgvOIYfknNoOySPhQk52rB6/oFMb1Uv7QxJ92JKdXP7VjwfgcnoJblHm3DrOKMEI7gglNweGwAhfkJLq+ByT1etc1uMeuG7cbl5JI7Khm2yLd3DQW+BgUcjBo/AmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791949136; c=relaxed/simple;
-	bh=wWv4sUHIfZP1ItvggJvpQO6/iSgwS9YDTUDmw+IVWVY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B0cq4Jn3nZA7W8B+EQO7UkPAv9TRgMHrDbMOV6IBzb6yoXfwjYfOQPWma77Zela3GZL2EX1gy+PcI987jMR4AsQ/gfop0pVedQtmmBxlZyZ53CEmRGHHUFLDdxOIR8Rj5h5i2PDshsUwsFuKvZiY1KTOaLhoBXhjvNs5+L4g1Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=k4KKl8pH; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1791952617; c=relaxed/simple;
+	bh=913S0N2ONHLmRLuK6hS24u9LvQSIo9+3yrYngKAt6Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TT1lf0LiLa0sQpph1duvArtvrKP8eP0AsYn8QDpGlkM/qQrCalZEuzv7GCZQlqCtC1bGhsbUR/5MFH+xKsMo3M1VnwiGijdPTdyk0nfF+PW4GfpBlgNJrVLiX+ahMVlXIwMbsDWJTP2hyC4oOdihkp0aefzF9RV84sVSPb+dgf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4gRhqFe; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="k4KKl8pH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4gRhqFe"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8874539bccbso24834b3a.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 21:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1791949128;
-	bh=Xr9nv3pCAuQ1Ufx1N8P/5BzbOX8F4y0Yex+Y2BlP8fQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=k4KKl8pHFsg+eNdE9MoTQ1h16nqPhHKpCXWBVqVXLPW2ix4UmoIThsHCX7B5m0yz1
-	 YD4+Dp2SK2s0tl4YQFuFWE6axcJgIvHT2y2Zg9A2fOd+XN2eACiZoGBvUPrX88CBVy
-	 O1CQHTPFNjSbjQtIF556KtYdPeq6ArLQO2/JzZrY5fQWtrllS2yRvzRwx2HWMGK7WI
-	 K4tK6wLG4c0gPqybPKIbjWmNtY5ozYr63SKhMIzFc9zGB+f0bP0Uz1z/fYNLXvXh++
-	 Ly3MYuRRGsYymcj/L7Gnq07y5bYrM+nhYKw6ReTpvrtLCR3OemkUW5hyh9GBz7kNyu
-	 yksHmIU1++rcA==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3FD926CEE0;
-	Wed, 14 Oct 2026 11:38:46 +0800 (AWST)
-Message-ID: <c569c912141e9da7530121b8b2fc81527e0518a4.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 00/11] Add NVIDIA LSTP USB adapter drivers
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Adrian Ambrozewicz
-	 <aambrozewicz@nvidia.com>
-Cc: Donald Shannon <donalds@nvidia.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij	 <linusw@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>, Lee Jones	 <lee@kernel.org>, Pavel Machek
- <pavel@kernel.org>, Andi Shyti	 <andi.shyti@kernel.org>, Mark Brown
- <broonie@kernel.org>, Jiri Slaby	 <jirislaby@kernel.org>, Corey Minyard
- <corey@minyard.net>, "Rafael J. Wysocki"	 <rafael@kernel.org>, Len Brown
- <lenb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,  Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?=	 <ilpo.jarvinen@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>,  Hans de Goede <hansg@kernel.org>, Lixu
- Zhang <lixu.zhang@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Johan
- Hovold <johan@kernel.org>, Oliver Neukum <oneukum@suse.com>, Quan Nguyen
- <quan@os.amperecomputing.com>,  Andrew Jeffery
- <andrew@codeconstruct.com.au>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org,
- linux-leds@vger.kernel.org, 	linux-i2c@vger.kernel.org,
- linux-spi@vger.kernel.org, 	linux-serial@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net, 	linux-acpi@vger.kernel.org,
- linux-doc@vger.kernel.org, 	driver-core@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Date: Wed, 14 Oct 2026 11:38:45 +0800
-In-Reply-To: <2026101310-scuttle-unison-d4c3@gregkh>
-References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
-	 <2026101310-scuttle-unison-d4c3@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+        d=gmail.com; s=20251104; t=1791952615; x=1792557415; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=YJtuJmn6QAxc4IGgoXU0NiUvMniAp6RHAN8rLK0qjsw=;
+        b=k4gRhqFehIGEw7QMkN1T+tnnkc5Nnx9iguXbpKK+LA2dHfg1NxvjrEZ+AGZlJmpDjn
+         LiP4HmHvkHg3FMAXpvFjhuq6tMG2BEtgV+5O+uQ7tbVNxrCFYLKH74bSmSYTydHCK0Qj
+         qtk92jcQ+0Pnrhq/yzIleVsos9f2pV9aZxPI7r1XJFapyyIDX/dKsB5vPIq15iEpjSxj
+         fNVQhkzkwdXOFjln6lVpHH809t8d1cqD4R4/GhTDGBK24fg95oovvl4AKjmqw+ausmaQ
+         hcGVa62V/+XkYzkkzvJCIduRBqX8Hq4YNvCwGmhwXBzEWz4Wq1ChNYuIRqxeLzXSpYlC
+         9GOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791952615; x=1792557415;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=YJtuJmn6QAxc4IGgoXU0NiUvMniAp6RHAN8rLK0qjsw=;
+        b=gCX8Igw1X+I0p0hf//5XI/e0QI3wWghceqS12E4XjuPmZI0r9PHLR2qKFJBlQxEGP5
+         Nf/eGPZ5lrPtnsozNBdFj4Bjzho5kw4AwUsa3FTaHvUSpILXM8L6qvh4s5z9bU6gDTQi
+         ONlHo6EMS7RKAputSYHlMlcnlCvgHTnO+6kpML6qvB89RSmPQBmG8dZ2cg438R+n/ecr
+         m7/pRf49KP1abInHNyJ/zulxDDqpwV+O+u700oXm5AhDYq69tztYi/+3Jr+s98xf6G76
+         9mZ3W0bWa8905AVxE9GXho9mXm21DqWUTIr1eSzE570JDSRmK02fEjQcaDLBM0QSoqmT
+         hfuQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz8whnP2YJhxxhna9NIqbz6m+lXzuBoeHs3ALFRejNjv2q3ta0J6DLh2JqEbumSOob9NIh3T+tLfnK9@vger.kernel.org
+X-Gm-Message-State: AFq9FYKSky0q3akdUCEr1HJ437iix8pplC3eCvX4sd7zw3mFDZgQTzqc
+	kjdsa7hTqZ5psyCiZjoVDHOexGy/xUwL4X9KX9ZRlYMRm/H+Xz8U0PiF
+X-Gm-Gg: AYBFou25bMrn1lVs9CYQCvvkhkcGWmHNMAxxVWuow/IV4SCyRsfIZdoxCc3C7E6clIE
+	LveQBcipVx2EvtvKfIwewe6Em4o5d2tkf/rRvitrly5+JE5Gj+jA/wHBpGeDTfBomzG6uCcVP2e
+	dvfsRfXe4Zzvy6n7pVX9JkjX5zhYs7+Rup2XXJunkYqlrrsMV9YdN8J/TSScWaUl45lOUVNRMdJ
+	eNRU6YmImlvgwVi06iVzbbPyktkDdkkSvF2ioKeEauE1FnHDp/76B1Uetp/7xyTgPnSYe+V8iq8
+	GsAJXEUr4HPnS0fE/TWQta5HDEjM8C0WGOCr3DCCiwbSr/wLfi4bVG+Lrx8rcWQQsWlcbTf2LO6
+	CJkYinD6LBOlflg9CkODR9HyibrhZDYbAA/4+xZ/hHwUDw4afxxcT0hlv13alf0HyVF/4IzVQu9
+	OGRktsRogVzfHg5Tt6kAVdrHIymIkUnlnv791coAXyGvXW+3ZxRqa/7H/q8J2RGzpv83JHvfXdM
+	FrpdFCZ6QXIsng2Q9j+skK3woZM
+X-Received: by 2002:a05:6a00:3d01:b0:880:973d:597a with SMTP id d2e1a72fcca58-897c82ad79cmr13526555b3a.53.1791952615483;
+        Tue, 13 Oct 2026 21:36:55 -0700 (PDT)
+Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89d803d6410sm580543b3a.33.2026.10.13.21.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 21:36:54 -0700 (PDT)
+Date: Wed, 14 Oct 2026 12:36:45 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: cdev: don't record a line direction the driver
+ refused
+Message-ID: <20261014043645.GA13991@rigel>
+References: <20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com>
+ <sashiko-outbox-168233@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <sashiko-outbox-168233@kernel.org>
 
-Hi Adrian & Greg,
+On Mon, Oct 12, 2026 at 02:04:58PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
+> - [High] gpio: memory leak in gpiod_set_array_value_complex() on error paths
+> - [High] gpio: non-atomic desc->flags update clobbers concurrent IRQ flags
+> --
+> 
+> commit 910242af9150f094f4676cb26fb8b58cc8edfa96
+> Author: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+> 
 
-> > This series adds drivers for the NVIDIA LSTP USB adapter: a USB core
-> > driver and GPIO, LED, I2C, SPI, UART and BMC-side IPMI function drivers=
-,
-> > with their device tree bindings, an ACPI description document and the
-> > sysfs ABI.
+Hi Bart,
 
-Adrian, what is the plan for this coexisting with the recently-released
-OBMF-ICP spec[1], which implements almost identical functionality (and
-apparently with less DT/ACPI description requirements)
+following this up with you directly since Sashiko doesn't currently let
+original authors or maintainers know about problems it discovers in existing
+code, just the patch author and the list.
 
-... NVIDIA also being a primary contributor to OBMF-ICP.
+> gpiolib: cdev: don't record a line direction the driver refused
+> 
+> The commit modifies gpio_v2_line_config_flags_to_desc_flags() to avoid setting
+> the GPIOD_FLAG_IS_OUT flag before the hardware direction is confirmed by the
+> driver. This fixes an issue where refused configurations would leave the line
+> erroneously reported as an output or input.
+> 
+> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> > index 5d53bfcdf7268..9bbee3a1f9c9c 100644
+> > --- a/drivers/gpio/gpiolib-cdev.c
+> > +++ b/drivers/gpio/gpiolib-cdev.c
+> > @@ -1226,14 +1226,13 @@ static void gpio_v2_line_config_flags_to_desc_flags(u64 lflags,
+> >  {
+> >  	unsigned long flags = READ_ONCE(*flagsp);
+> 
+> [Severity: High]
+> Does this non-atomic read-modify-write clobber concurrent atomic updates to
+> desc->flags made by the IRQ subsystem?
+> 
+> If a driver or IRQ domain calls gpiochip_lock_as_irq() or
+> gpiochip_enable_irq() concurrently, they atomically update bits like
+> GPIOD_FLAG_USED_AS_IRQ:
+> 
+> 	set_bit(GPIOD_FLAG_USED_AS_IRQ, &desc->flags);
+> 	set_bit(GPIOD_FLAG_IRQ_IS_ENABLED, &desc->flags);
+> 
+> Because the IRQ subsystem does not check GPIOD_FLAG_REQUESTED before using
+> the line and does not share locks with the cdev ioctl, these atomic updates
+> can happen between this READ_ONCE() and the subsequent
+> WRITE_ONCE(*flagsp, flags) at the end of this function.
+> 
+> Wouldn't the atomic updates be silently overwritten when this function writes
+> back the stale flags value?
+> 
+> Losing these flags disables the safety check in
+> gpiod_direction_output_nonotify(), which could allow user-space to force an
+> active interrupt line into output mode.
+> 
 
-[1]: https://www.opencompute.org/wp-content/uploads/2026/10/obmf-icp-1-0-0.=
-pdf
+This isn't a scenario that I'd considered - I was probably assuming
+GPIOD_FLAG_REQUESTED being set would provide protection by making the
+line unavailable.
 
-> > What LSTP is
-> > ------------
-> >=20
-> > LSTP (Low-Speed Transport Protocol or Low-Speed Tunnelling Protocol) is
-> > a vendor-specific USB interface (class 0xff, subclass 0x3f) that
-> > multiplexes several low-speed "channels" over one pair of bulk
-> > endpoints. It is implemented by NVIDIA's SMA, an MCU (0955:cf11), and
-> > by other vendors' parts: two hub/bridge chips have it built in
-> > (0424:4940, 174c:2214). Boards use it to
-> > reach SPI flash, I2C sensors, GPIOs and LEDs, a UART and a host-to-BMC
-> > IPMI path, on both BMCs and host systems.
->=20
-> Also, if you really want to do this in a dynamic way, use greybus, as
-> that is EXPLICITLY what it was designed for, and is patent-free (i.e.
-> unencumbered, and we already support it in the kernel.)=C2=A0 Please don'=
-t
-> reinvent the wheel/spec just because no one did any prior-art
-> research...
+How would you like to handle this?
 
-With this, we now have three similar facilities:
+> >  
+> > +	/*
+> > +	 * GPIOD_FLAG_IS_OUT is left to gpiod_direction_input/output(), which
+> > +	 * only update it once the chip has accepted the direction.
+> > +	 */
+> >  	assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
+> >  		   lflags & GPIO_V2_LINE_FLAG_ACTIVE_LOW);
+> >  
+> > -	if (lflags & GPIO_V2_LINE_FLAG_OUTPUT)
+> > -		set_bit(GPIOD_FLAG_IS_OUT, &flags);
+> > -	else if (lflags & GPIO_V2_LINE_FLAG_INPUT)
+> > -		clear_bit(GPIOD_FLAG_IS_OUT, &flags);
+> > -
+> 
+> [Severity: High]
+> By leaving GPIOD_FLAG_IS_OUT unset when a driver refuses the output direction,
+> does this create a memory leak in gpiod_set_array_value_complex() when
+> user-space subsequently calls GPIO_V2_LINE_SET_VALUES_IOCTL?
+> 
+> Looking at gpiod_set_array_value_complex() in drivers/gpio/gpiolib.c, mask
+> and bits can be dynamically allocated with bitmap_alloc() for large GPIO
+> chips:
+> 
+> 			if (unlikely(!test_bit(GPIOD_FLAG_IS_OUT, &desc->flags)))
+> 				return -EPERM;
+> 
+> If a descriptor is not configured as an output, the function immediately
+> returns -EPERM. 
+> 
+> Doesn't this bypass the bitmap_free() calls at the end of the function and
+> leak mask and bits?
+> 
+> The same direct return leak appears to occur if the driver's set_multiple
+> callback fails:
+> 
+> 		if (count != 0) {
+> 			ret = gpiochip_set_multiple(guard.gc, mask, bits);
+> 			if (ret)
+> 				return ret;
+> 
 
- - greybus - I assume there are implementations about, but more on the
-   mobile side?
- - LSTP - with an NVIDIA implementation
- - OBMF-ICP - with a few vendors' early implementations
+This also looks like a valid concern in existing code.  Unlikely, but valid.
 
-There are differences between greybus and OBMF-ICP that may justify
-support for both (primarily: static channel support means OBMF-ICP is
-simpler to implement). I understand that OBMF-ICP also has reasonable IP
-protections for implementations. However, it's going to be difficult to
-justify both LSTP and OBMF-ICP implementations living in the kernel.
-
-Adrian: I could see LSTP being implemented as a set of divergences from
-an OBMF-ICP-standard driver, but I'm not yet across why you need static
-configuration. If we do need support for both in the kernel, I can take
-a look at how that could work.
-
-FWIW, we did raise greybus as an approach to various HW vendors; I
-assume there were reasons behind OBMF-ICP, and assume some prior-art
-assesment was involved, but I don't have specifics for those reasons.
-
-HW peeps: This would be an excellent opportunity for elaboration on the
-motivation there, either for LSTP or OBMF-OCP.
+It is also not something we can readily test.
+Would you be open to extending gpio-sim so we can simulate constrained drivers
+to better test alternate paths in gpiolib and cdev?
+e.g. input only, output only, not supporting bias, supporting open drain, open
+source, debounce, ...?
+I haven't put any thought into what that might look like on the
+userspace side, much less done any actual work on it, - just wondering if you
+had or would at least be ok with it.
 
 Cheers,
+Kent.
 
-
-Jeremy
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com?part=1
