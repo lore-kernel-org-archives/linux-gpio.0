@@ -1,177 +1,159 @@
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B233E3D8C
-	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 15:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A0732D0F5
+	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 16:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792079550; cv=pass; b=XDbbYgZWuxP6ateq/XIlNENFpj80mOVVUa51R3vYVSJ0va66LkE5Ivg6S1Alu2APt7wk+14Kky9eeyDb1YsSoiEvIgfU+dyWyj2tGUbdcj7tV3GMQ0/3nKCthpt3VtnKleBh5XKCDqIRKtlasJaNn0NNOFHrUU8jn/Z6phrbxhc=
+	t=1792080027; cv=pass; b=IfsZ7C42vSZPAIZ0maoRZa56/TqrGp0OZcQI4IH7jwDLqGfOwcrwGyp8p8Q/ok8CVL3R14bHBcNuSAOHLoWjf1wSYF2raSMlc/NfXFI3hk53/2E4dEhWw6FHHSCbmmOKZfX5Eebn4Fx4KtOBwpCBVaGw2ptghr+STNWthUO7p7g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792079550; c=relaxed/simple;
-	bh=hWiUxB4D4MIW8N8kxcCWfSDn6lxEelWZrFESkG87aes=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Xgm2exIVHnwHvEkAFwxLH4r88N7cNRnwRhWqw5uluIIoSOYVSwuCkeSjplKV+UIiB7kVPEsRZNk4pi/03dycdeIRTcGzpuRWZN+5DKP1aRtCtSBflmk2yn1SAD2kYkw4uJbaCerIkSXFsrqJYZgG62ngMEbSYhSgAtPLMR6Lhok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MgpY0v+f; arc=pass smtp.client-ip=74.125.224.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1792080027; c=relaxed/simple;
+	bh=FliHvTEsbM/zv34ZqRM63NOm/+pxcZsJToQjbeoGS6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ac689+3fKtAvB6sv5Vgwa76lvqg7cjrH6CwQ8+I7E2bCATkpyKBDxMLcLRN/t3YpYLP0cI7w7jnt6gTwgGEaGWTtXHfuH/kPPiskWmafhnpyYmNTDcbk08Gbw2BAOFd1lZM7tmm77dnyCbY93S7NWNGDEal4TjpI+cNdtrlb4bA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMR1gkyx; arc=pass smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MgpY0v+f"
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-677dbe051d4so1827533d50.0
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 08:52:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792079536; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMR1gkyx"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-8b0cf2c0785so14850927b3.3
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 09:00:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792080015; cv=none;
         d=google.com; s=arc-20260327;
-        b=M5G41u/IRcwEhCSd1HIIEy2cZCERJJ6nVwFQWpEfSrFn2e47KBOPXIM6I0zyLy3u9J
-         SJcGp3CkFFKZ3KMsAz5eO1drAljz60WzuLLfqNrUjZcctB7RAG+dg5amWxBeKzCLRduZ
-         MShNPW4ZTSNGcjsV0VoK5UBuJZzf01v4EST+DKmjHqnmSxU+3EeVrdTfXlKjHBNb5LzT
-         zZzRxt9bJxqkQnmtn+/oShqPUGzihfdWqsC4jlFw+8CHkpwDxWH4QyQFv7KbwXin0nYs
-         R233bwlq/fA36yzs6OsZOLQXxVRPSMeybBJ4sIYLTYmSzeV4b/Rtlup4japG7qxp65SB
-         M/aA==
+        b=eJRW+IHOywgmKt3JS+yKblBkmI/isdSDyHL8wbBg1b3Xd0rnV/mHrpIK1AxEXXhMuC
+         B3KnxnBbuhC5+ts8so5Q+PS11tGWxZ/6o5Y7wQUCQ4JdDkjXbJOQxhJm3PeNdT+aSLP/
+         Bh2qdznWtPeVKUFoby4bheYnvSupRgEBvb8+8P20B8KzufAyFSqhTk30QSRg/9AS+2LN
+         PabjW/3gEY1i4CotmeUyoylkZnoTbJhP2GVaP5P092lwPKgYIuZtXmb0T5TPc/oSnuIr
+         qoRDRWNUkQaDXKWkemxca6RtxwTB/0oV+yaH0Vkn6NKiZiqii2JCY6dxQSMHelfSfQr8
+         NcMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=asq+PqvjvzjptU3DIDCu1R4E/CeJS68mF9uWIR6gcXI=;
-        fh=q4Ia3qBn7VmYSiN1FcRXLDWOXgaE9WGebvHwcl3ibgs=;
-        b=dHySyLmLCX+zjbkJRHJVGiWojYVUStNi9w25Xah60EPiLEDUY3vIqbf63HQP5poooI
-         1cPnUoFJX1tnk2uCSePHUm0t4t868cuDg6SWi94frJe5dZTenDhm/f/dGSj6KbQjUVoZ
-         uoVH6Cl5G1u65nWpwnrn2nc+RM9mlTspfwB/uTQHr9xmAx0uYv9YF065NVxWcCBY5/h4
-         x8WVx2W3zXaowRf52oBiUVIpC6ZX6gfs0siBEKScDi55Ob+mATtVQB9r7bTLhVXjUOVo
-         yVcymfLcBGOYNERbm/rc9Ca3j2ysmxG8pPGY2swkR8QQ/v57gb1pVFjHn0IUxeCo+cSK
-         HyRg==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=EpiamPpg7tsWlSrLw5y7LmqhMB0UGS6DfO66CA4pLkg=;
+        fh=CVtZn6GaWkX7uJsBQmfTYOWjkz+6cM/G3cjxhhLDl2I=;
+        b=Vc2jlsAchNg4KsKKfi6PJbYm8hnodlaYr4+9PpkqPhRiwty/y8D/U+Z3Hwc3ZYhDRb
+         Mn5LVY2301ZcSb57kguBVCTf0AFpZOMFQp71Bo++eF/L3vx9bahoeHYGBkPlP9KxzlPL
+         zeNLUWm9HGUWFNr2Ja7knYkdY4/o6f1Bcaeb+qpCpKYWLsEDhVrxe0U23hciPTvK4ijy
+         CFrcgQT1VA34Lx5K1/h6WCplFG7Gypu5emRLiIrK63WHdAR6IGPYWi6BOU1Nd2UVCau2
+         j0NR/K+SPL42hdgZhh47/4W4NOZ1mk/kNPeOb5ELfcioKpG7nZGs6WJo39+BFFuCEd4F
+         mn6Q==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1792079536; x=1792684336; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=asq+PqvjvzjptU3DIDCu1R4E/CeJS68mF9uWIR6gcXI=;
-        b=MgpY0v+fDeMRTzjI9kUQ9RKCSefKzU4mAodZEXaJ6uVv/sxEoz+ZAgI3qiFQo7OwTB
-         NlCmEK2nK9Q/tV2M1kK6gGo8DgaB6VU/hJZxH4OqNTv7sojKkibWk9mYttEBrywpXj3U
-         RuuDhqm9MrGAIAGV9YptD9/yt0dvDVSIc8Nkc=
+        d=gmail.com; s=20251104; t=1792080015; x=1792684815; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=EpiamPpg7tsWlSrLw5y7LmqhMB0UGS6DfO66CA4pLkg=;
+        b=JMR1gkyxU2899dJ3fFA6hC08t0Wmes6MrcynKF5bRXQDnqqFvUd4luU93T5UKe086P
+         e+J0U44NXUntpW38zLXMkgRZspXH7/0NBFfLcF2Y6FsBwf4vfvXvLZFl1a9yft1Jzib2
+         DX0NHj+TvTjTXjTq2po9L911AzzT384Me8E5jSgy5jNk1LFvP31jZPm2X280B6Zk39zT
+         fYaLrZ2oM7WYG2jJqid5YvC4JuDgRiEDXPz828Rd5dvhMNkIOSDzSgdunaCv0BtnOWpX
+         slDVeqSEdXuqmyAmNNBiGWrRoTSfOvQNDr+Z+QcXRQCcJ45bSQw9AwfRYCkhVZeSUuiz
+         W7kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792079536; x=1792684336;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=asq+PqvjvzjptU3DIDCu1R4E/CeJS68mF9uWIR6gcXI=;
-        b=YRwsHYvWRZ0n9ZWEdEwlzJ2Eng4+JbgQ1UhZrUoL7qWecuj+0EjpPgkBFKk8feX6it
-         uXjXdVVvIrB+L7Aac0NBjEj8Hpq+tNX9IiEC3vsLkM1xtKkitRq961sU6VcQFnIOvCy0
-         m7Eekbj+Z4aDX3XMriohJv9sf8PYI+QCtLutWoLkUQBZdi9Oz/lNexqXMvG1mNlzkuqa
-         ivVl89QPd9i0Bg39J5/1/oFim+3gatOvL38Hk2Y60rEtW0pMTTFTYdmLJWKQrrPc80lQ
-         Pz9QSnu5MdKQWd0j4+SOei6I0KFS3VkQLOxMZXUhn1yCfR8ozUgOl1A9EeC7UCNtz/XK
-         hO0w==
-X-Gm-Message-State: AFq9FYLdaS70JdP1otpdmu0wJ70qbcQ8wuyU7O7wopD1yBwbyEydM3o/
-	7AfTpOM1UcMQwyvIfSiV/Et8u+oCxP/r6ZwQFPWYwnFJF4vfb1obS0NF2hdWHTsCSwFpz6OnTwY
-	gvFM2O5I60Ca4WozHFHNU1UWQe2wole7m2V/K+JlLPYBV3nf4TPVT3UxO
-X-Gm-Gg: AYBFou1G+OxuEw8CdykPnc1CwTl5Kp+26kLurFojKRlcU7fVKQutI34DRVMb4BoAwg8
-	Om2KFLfD9HcFZBXF1YPtCM+ffQUUhT7CTCprayJT7ZnZrRI5UQ6aixmKzytOs7uowcRXOTefcl5
-	cPV7DePzC/hib1VrLvELhmgcDUQQWT+Lib46lophIQ23qodfP55Z1JhIkeZvTNwm1b29m4GwZk7
-	kP4UFwLseX6JGTXghEmbQPw9DRaHEZ5CU/JjMgMF/rsTaJvdMNjH1SUJiD1RC5KyZJhYoFsQMKS
-	XZG6FRA4FE9zLvemvJbC1Moc4YBwwYGElZDTfx06n7haMQ8rE7MGw2z8
-X-Received: by 2002:a05:690e:4195:b0:675:40a6:144e with SMTP id
- 956f58d0204a3-67936065a46mr4178517d50.69.1792079535833; Thu, 15 Oct 2026
- 08:52:15 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1792080015; x=1792684815;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=EpiamPpg7tsWlSrLw5y7LmqhMB0UGS6DfO66CA4pLkg=;
+        b=xsyt85DGepGb506XQUgW1Hf0/Wa0D00PxRSUN5wmHpN1wS4XfPyqfBsYtolBW3p2fJ
+         vYIyVXUWo7W1CrxKypwj6lR0uDVrFZnKUgpMaoXmX9VRa9JxBJJuNh85lscrS3hvbRVN
+         hfDuYAzz5pLqwloz5KSdy3IQwGBjptYAcvewbex7Xhgx7TEUoTsp3j7Ardbm+NjpuKpg
+         QscjI/ufrNhW+SXe9XrFrcrKuYuGenpmFA5HwXI6vt/KumrgcerP5X+HczLn5gAoO+Wt
+         ZF2BFMelX2WTAwdY9FpsqNAMNWSjF/UP4wrUyOj8tUmvM4S093HJG4/LeIMSWtHjOr2O
+         7n5g==
+X-Forwarded-Encrypted: i=1; AKwUvBxqzmCZUbVLRA9dCDWATuqDBvCHxlWgXvI4g754BLEGGEKfc3Dr1r7o0a8LLtfn1qEognW401dSmEhq@vger.kernel.org
+X-Gm-Message-State: AFq9FYIokNjPvj89l9OU8QYtR7bReFnRZMjKU2IFRj4/hbq2kSstkvz1
+	cC8mJo832aOVAk10lqGJXKtj3qlHRu4buHiiFYtB0mJlOsKYWoTaHbyuQAYHLqQRlGRqkFRwaLU
+	A4wt5ocFlXbDOsXO79Bx5xRgCN5st/g5C35KZ
+X-Gm-Gg: AYBFou0hvcsA+HFQofSqKXvjm7Sd66GzuRJE0LSZVhpZ+Ob+EqFIYH+5k25ZQiCLrfN
+	XePEhV0LQ0NPhstfEZUFmex6JT19sOz0i8bF6XLyFA+V8+7ct6C6BTVoBHqHWob0kvLw8HjKbPR
+	6j2mtraE4j0bOeqqwiACq8oOzUmv3qI2BSNL0/C5L5bf7FOVYbsarw5AEx08NwN2TsLPwvzJehw
+	lXN6TIT6e2Q6EHzaGNDRlco+7AcBYWJH8W0pcL98HUB7Kmf9D7vgHWDtWhJVIx+8ywZgU/0kaIf
+	3RqjtoeQFs93t5Qa/1UCctYzQ6HHqsamYaKCULZjzy+sZbbvhbqFdiwffw==
+X-Received: by 2002:a05:690c:f91:b0:8b0:db26:88ae with SMTP id
+ 00721157ae682-8b0db268c9bmr5613747b3.43.1792080014084; Thu, 15 Oct 2026
+ 09:00:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 16 Oct 2026 00:52:04 +0900
-X-Gm-Features: AclHuK_ryR54C0PAzAkbNZvfpF8K_oQY8dR3WE9tuX28J6eDhH7nVE2x5HzgOC8
-Message-ID: <CAGXv+5GFRCvWf7ahXyGcQHhth2yyOfGuknV1MM5-L2HjEQ4-Ew@mail.gmail.com>
-Subject: GPIO_SHARED_PROXY default m?
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <CAMFFDGh6XwYD-axu3brX0Tdt3PteJHHGo6oJaghzpvnEyzT58g@mail.gmail.com>
+ <OSQPR06MB7252CC7FC2131D45457A1FA98B962@OSQPR06MB7252.apcprd06.prod.outlook.com>
+ <CAMFFDGi-Zzwk33Rb2LPVOSz+XJa51iBQ3ZWEP6mLg4C362F=VQ@mail.gmail.com> <CAMFFDGgv0+sUL4V4itKw3pezB4MccYr1rGwrS6F0qwD=0HLB0A@mail.gmail.com>
+In-Reply-To: <CAMFFDGgv0+sUL4V4itKw3pezB4MccYr1rGwrS6F0qwD=0HLB0A@mail.gmail.com>
+From: Prasanth <prasanth.padarthi10@gmail.com>
+Date: Thu, 15 Oct 2026 21:30:03 +0530
+X-Gm-Features: AclHuK_aaHC138fG0PxG0zW83HUUPVrTWcZnddhJ4Q2cRZHfJqvDEmtIQg3W568
+Message-ID: <CAMFFDGjXyHVthH33ctkCYLu1LUFB3-b3HG2hQbtOyT3tSvy+bw@mail.gmail.com>
+Subject: Re: [RFC QUESTION] AST2600 GPIOP2/GPIOP3 pass-through with gpiolib ownership
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>, Joel Stanley <joel@jms.id.au>, 
+	Ryan Chen <ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Further testing shows that per-operation THRU1 switching is
+unnecessary. With SCU510=3D0 and SCU4BC=3D0, ordinary GPIO power-on fails
+while SCU51C[9] is set. Clearing only that bit allows remote and
+physical-button power-on/off using x86-power-control software
+forwarding.
 
-I just ran into some issues with GPIO_SHARED_PROXY=m and onboard
-USB hubs with shared reset GPIOs causing infinite USB hub probes.
+Should this strap-to-GPIO handover be handled by AST2600 pinctrl,
+preserving other pairs=E2=80=99 routing, or by board firmware initializatio=
+n?
 
-My device has a USB 2.0/3.0 hub connected to an xHCI:
-
-        &xhci {
-                usb3_hub: usb-hub@1 {
-                        compatible = "usb5e3,620";
-                        reg = <1>;
-                        reset-gpios = <&pio 44 GPIO_ACTIVE_LOW>;
-                        vdd-supply = <&pp5000_a>;
-                        peer-hub = <&usb2_hub>;
-                };
-
-                usb2_hub: usb-hub@2 {
-                        compatible = "usb5e3,610";
-                        reg = <2>;
-                        reset-gpios = <&pio 44 GPIO_ACTIVE_LOW>;
-                        vdd-supply = <&pp5000_a>;
-                        peer-hub = <&usb3_hub>;
-                };
-        };
-
-I have:
-
-    CONFIG_USB=y
-    CONFIG_USB_ONBOARD_DEV=y
-    CONFIG_HAVE_SHARED_GPIOS=y
-    CONFIG_GPIOLIB=y
-    CONFIG_GPIO_SHARED=y
-    CONFIG_GPIO_SHARED_PROXY=m
-
-Logs show an initial enumeration, followed by deferred probes from the
-onboard hub USB device driver, because its matching onboard hub platform
-device driver is waiting on the shared reset GPIO proxy. And it keeps
-repeating endlessly. This goes away if the proxy driver is built in.
-
-So I wonder if having the proxy driver built as a module by default is
-a good idea. The user won't see the deferred probe messages, just a
-barrage of "USB hub found" messages. I didn't wait for rootfs to load
-so I don't know how long that would take with the console going crazy.
-
-I'm sure someone on a Qualcomm laptop will eventually run into this.
-
-
-ChenYu
-
-
-Logs:
-[    4.635712] usb 1-1: New USB device found: idVendor=05e3,
-idProduct=0610, bcdDevice=68.02
-[    4.638954] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[    4.639120] usb 1-1: Product: USB2.1 Hub
-[    4.639213] usb 1-1: Manufacturer: GenesysLogic
-[    4.646597] hub 1-1:1.0: USB hub found
-[    4.647489] hub 1-1:1.0: 4 ports detected
-[    4.749900] usb 2-1: new SuperSpeed USB device number 2 using xhci-mtk
-[    4.762891] usb 2-1: New USB device found: idVendor=05e3,
-idProduct=0620, bcdDevice=68.02
-[    4.765197] usb 2-1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[    4.765251] usb 2-1: Product: USB3.2 Hub
-[    4.765282] usb 2-1: Manufacturer: GenesysLogic
-[    4.767921] hub 2-1:1.0: USB hub found
-[    4.768475] hub 2-1:1.0: 3 ports detected
-[    4.959894] usb 1-1.4: new high-speed USB device number 3 using xhci-mtk
-[    4.992223] onboard-usb-dev 11200000.usb:usb-hub@2: error
--EPROBE_DEFER: failed to get reset GPIO
-[    5.064595] usb 1-1.4: New USB device found: idVendor=0408,
-idProduct=30d1, bcdDevice=0.03
-[    5.087992] usb 1-1.4: New USB device strings: Mfr=3, Product=1,
-SerialNumber=2
-[    5.088091] usb 1-1.4: Product: USB2.0 HD UVC WebCam
-[    5.088151] usb 1-1.4: Manufacturer: Quanta
-[    5.088203] usb 1-1.4: SerialNumber: 0x0001
-[    5.094011] usb 1-1.4: USB disconnect, device number 3
-[    5.103773] hub 1-1:1.0: USB hub found
-[    5.104225] hub 1-1:1.0: 4 ports detected
-[    5.200483] hub 2-1:1.0: USB hub found
-[    5.201022] hub 2-1:1.0: 3 ports detected
-[    5.206617] onboard-usb-dev 11200000.usb:usb-hub@2: error
--EPROBE_DEFER: failed to get reset GPIO
-[    5.212594] hub 1-1:1.0: USB hub found
-[    5.213080] hub 1-1:1.0: 4 ports detected
-[    5.221829] hub 2-1:1.0: USB hub found
-[    5.222331] hub 2-1:1.0: 3 ports detected
-[    5.227388] onboard-usb-dev 11200000.usb:usb-hub@2: error
--EPROBE_DEFER: failed to get reset GPIO
-
-and keeps on repeating.
+On Tue, Oct 6, 2026 at 7:24=E2=80=AFAM Prasanth <prasanth.padarthi10@gmail.=
+com> wrote:
+>
+> Thanks for the guidance. I continued with a private B650D4U experiment.
+> The experiment now reproduces the exact vendor sequence:
+> SCU4BC idle:                        0x0e000000
+> SCU4BC transition:               0x02000000
+> GPIO123 pulse SCU action: cleared
+> SCU4BC restored:                0x0e000000
+> On real hardware, OpenBMC now successfully performs:
+> - Host power-on through DBus.
+> - Power-good assertion.
+> - Graceful host power-off through DBus.
+> - Power-good deassertion.
+> The private implementation is intentionally B650D4U-specific and is
+> not proposed for upstream as-is.
+> Given that THRU1 and GPIO123 are mutually exclusive, what upstream
+> subsystem should own this temporary transition? Should the
+> power-control consumer coordinate GPIO and pinctrl states, or is an
+> Aspeed pinctrl extension preferred?
+> I would appreciate guidance before preparing a generic implementation.
+>
+> On Mon, Oct 5, 2026 at 8:33=E2=80=AFPM Prasanth <prasanth.padarthi10@gmai=
+l.com> wrote:
+> >
+> > Since THRU1 claims both pins and is mutually exclusive with GPIO
+> > control, should the power-control consumer acquire GPIO122/123
+> > normally and select a temporary pinctrl state that disables THRU1
+> > before driving GPIO123, then restore THRU1 afterward?
+> >
+> > On Mon, Oct 5, 2026 at 8:04=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtec=
+h.com> wrote:
+> > >
+> > > Hi Prasanth,
+> > >
+> > > On the AST2600, the THRU1 pass-through and the GPIO123 output share
+> > > the same path and are mutually exclusive, they cannot be active at
+> > > the same time, so having the pass-through pair also controllable
+> > > through gpiolib isn't achievable in hardware. This matches both your
+> > > observations.
+> > >
+> > > Could you help us understand the use case? If the pass-through
+> > > already handles the host power path, why is switching to GPIO control
+> > > needed at all =E2=80=94 rather than simply keeping THRU1 enabled thro=
+ughout?
+> > >
+> > > Thanks
