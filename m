@@ -1,151 +1,266 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012033.outbound.protection.outlook.com [52.101.48.33])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB6646AF00;
-	Thu, 15 Oct 2026 19:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792093186; cv=fail; b=lQ/YPym37mBjxu5MgWbEQkgZccqwMZ1Nmtc27eumI+XjuLDjsuu6PCTz8nRTFmHeCwrcvERwmgTEj/J1G4yWzUMHPn/pynI5CSoPmjxBfP5cBRQQ/ij08BtuhY4Onvv6jCYNhU2DCiyVEqpLATiSoeqTr4/y1zd+nNZJ0l99yO0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792093186; c=relaxed/simple;
-	bh=LKM0zP8QaoW0PGwXZT/+N3lLfM+sxaQqR6lFTefHVX8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FPifDcHNr3sGtvnvQpU3DkZmvdISJUixbYpJqmMIY0rm8d4Nt1loGekz9IOGBYSoeC8UEryYJRm9YkeA2kDgFMQn0ciwiEbO4vY/ztQgC6Jb7pSc+3D9NBJ6KfIxZlFuNwzgQWClivK/HF0YXEwuKEi9vsHuahEibCVfH5pax9o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wmx22Vfq; arc=fail smtp.client-ip=52.101.48.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC581BC08F;
+	Thu, 15 Oct 2026 19:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792093718; cv=none; b=mKiSB0iXGWAQvrts40Dc/ua6WojYCAMUwQsPiQ8npuoNDtFUUAX/R5kiFjP8Dr34PUsHy4PUPGepWEWbDIV3nl0TGvZVhOsFvLjoQmJeLEuM+1dCBjk6jBJiZ+OwBD4P5JIucAAxMcPFEaA+BeRPNP7wynZo0NtxQLX1ZaeOfbw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792093718; c=relaxed/simple;
+	bh=6sHunXAyxmZ2TYd8+8FDfj1K6G2fOa6hilnkB8iHv10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQPxKUVQhbow6DQacAWGyzXVPefuNCojzJud3RlRwW8kdzDuIOQ+YR/n0YS6sOrWehaFLiRgg1AZNUVjKvHkoLj7rvJXtYuGrMTRpjw2NlGrOD+zZ6A0Zi9K5moLYmN9/d5LAeQ1B360WfwIqR2we51tYLquklnk3O+XZgTbqtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hCCQKQgi; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wmx22Vfq"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NkHLp8wgCSUzXPHgvBWPV1FsoSIfttrjPc2CbzAFskxhGRubRwI4++lMunpG4eXYZUfTSBZEgowI+crRfZm2erXyLbZZX+oTTkB9P1M4bNfqwA6hZKzJ/U4SGdfFvAA9kSooZOyZhgekiLQ34/wR3qmpvfT9cYoCpPNCNtNGVzlWlafUUvBZLMZHDlVS7aSVPB+nbzFKWshBPlkd9vRB8tVQQyV53KYh960Jx/cSJIj6d9YrX7Awx11pKZextzeKPWEGRlhgogp8IWBhIeorImvTkfGhFVPOXvhJ0I+ItM9LcgGIBZ9dr64H2oEv5Qp4SJPD77VG2Hkak4sLV5RobQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AQ77f4NcwDdSiz4APi/h+TkpvktalQMSor72Huy+KHs=;
- b=b1zy1qWVSq/x+7HzkEnaL0lZdPnoaff12NLxG6L15XMzCOWihhAWmOnBiUStM5ixKlIhuWv6B1c4FCFZeJNycVqcPyXS7s79SDeo9Q/IMV9iASfU7zvNtmAIdCQIwDZOtmhv/R/BvBNVDlkQFNujJp34jLmfp7CKvSxP7RKekynPDDKxn4KwSPGhkmIzu6cP124eFFjAasqc4q7ZcO+tDbRL+HR9mde8EP6In2sCvsIOVbWQLcCwEyH8M+VqNi4lRlTgGr5rGiRi4Udv9OrCy9s2mTNs3g7XQqEOVqEi9WmM+Q75qfacZnb/53mLgjTGJWB3MFOHnWInNtZRpXTo0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AQ77f4NcwDdSiz4APi/h+TkpvktalQMSor72Huy+KHs=;
- b=wmx22Vfq6jO8NX/ty2eUOQlS+2OIgMvrkS9F6lsZTPk9btui1F/PBWdRaM2yvaB72wAfdoM/bavfEUWOqyFU3hzfZyM8zH1tnupcuuKj3QYVwATMiRQitM5flmqERmJt1Rdou8BisMXyvBgjSH2wPF4kRBrzEWXQmLmNZRvCIdg=
-Received: from DS7PR03CA0133.namprd03.prod.outlook.com (2603:10b6:5:3b4::18)
- by DS2PR12MB9685.namprd12.prod.outlook.com (2603:10b6:8:27a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Thu, 15 Oct
- 2026 19:39:36 +0000
-Received: from DS1PEPF00053453.namprd04.prod.outlook.com
- (2603:10b6:5:3b4:cafe::53) by DS7PR03CA0133.outlook.office365.com
- (2603:10b6:5:3b4::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Thu, 15
- Oct 2026 19:39:35 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS1PEPF00053453.mail.protection.outlook.com (10.167.23.235) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Thu, 15 Oct 2026 19:39:35 +0000
-Received: from aus0006770c4n-lx01.amd.com (10.180.168.240) by
- satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.53; Thu, 15 Oct 2026 14:39:28 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: <westeri@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-	<linusw@kernel.org>, <brgl@kernel.org>
-CC: Mario Limonciello <mario.limonciello@amd.com>, Mark Pearson
-	<mpearson-lenovo@squebb.ca>, Nikodem Sanecki <nikodemsanecki@gmail.com>,
-	<linux-gpio@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-Subject: [PATCH] gpiolib: acpi: Ignore GPIO 11 interrupt on ThinkPad L13 Gen 2a
-Date: Thu, 15 Oct 2026 14:39:21 -0500
-Message-ID: <20261015193924.4081906-1-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hCCQKQgi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792093716; x=1823629716;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6sHunXAyxmZ2TYd8+8FDfj1K6G2fOa6hilnkB8iHv10=;
+  b=hCCQKQgiCdKLIWFA+DEt4bhtiOfvkd3QMq1LcjdIjLvoL8u23dRhVslt
+   ANygzAVO1IwaAExlQV5L7u2D/n3RlCqRcsmpeqz5IbMBzUXNYR0/qT2dQ
+   A/8hIvJVWO4rcK7QvBfW1lDg3yWnBnZSyh7GDoIDSrgpgGdSdu8d3sqUn
+   CEGD3/W7ZyKJ2qRbr7aoVpZKcOSQLlOedTD9Ux2oqEdSGhfsL0lAOvAxx
+   ZODXL7w4FqHylZURus3PdCc0w9g74F5N9BjFV2HSq7LfoOont0ACSBRHG
+   V9Jk6L0Px06R1K1JB0U7bHhEnKcSwdK4jK+PbFaCH/AtwNbaJjMAU3UBz
+   Q==;
+X-CSE-ConnectionGUID: EjvpaxhaSpifRzcnNnXKRQ==
+X-CSE-MsgGUID: OWbk80tKSfiDbizdfEiw+A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="758626"
+X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; 
+   d="scan'208";a="758626"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 12:48:36 -0700
+X-CSE-ConnectionGUID: 5XxghNZuTy6V3lyP1s1whQ==
+X-CSE-MsgGUID: wggUgsfvRZCp7DkrcjENWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; 
+   d="scan'208";a="1741093"
+Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.117])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 12:48:33 -0700
+Date: Thu, 15 Oct 2026 22:48:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 7/8] gpio: pl061: switch data path to gpio-regmap
+Message-ID: <atEuDjC9bXHbWyNZ@ashevche-desk.local>
+References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com>
+ <20261015-cv75-gpio-v10-7-3fe3eb315a55@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00053453:EE_|DS2PR12MB9685:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16fa62a1-aebf-4420-1ab4-08df2af40b22
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|82310400026|23010399003|376014|1800799024|6133799003|18002099003|10067099003|13003099007|3023799007|11063799006|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	8b1L2KNsicdBPoP889e15ImrUu+H2i9s/2pfQvzeJ/Tp8UMolMj6+NjHkHS5WFPlYSAG2oKlipCLWXxFP0kmS1K6kJ7tP8lYcqRY0HjTqH7fcVrAkVSoILSQ0nz8eX2c9VEh0K0I4ttW00aei5zi+9LdU0v9YQV/DkwAUENXICMltfTYrEEEHRL3X+nMyemkeNig23ameE9P77TplLERkQ2I6ibhHldRhtaufQa5rrJpJLVKIDjOC7d5LVvsdCKl5/4wpwUsZpp1DN5iJyQCHsE7D2hFcVic8GSdpc6GnYiJ/0TdvHzU+K0fVfvBNzITxCPh2pG04AS7+EAfsYZgr6BGRv5cd+wsag4ydR1ZWHi6flu7W9RKktmJqDXLJfUCDhBO3ChJXYXW/OHp5Pl6wGdoCqycCHlRnxHRufcJWR6Dw4gVtpTaCJ/0dHYQEHT/fJyuuvoPqpo2X/4SkVuskgiT+Oqq+lf0nHHJyKqX0975NLqkinbC4J6UlfVgmB05Nt3hJsWL/gF/JuqA+SHZdYJ4zXgcGGknzvWydBOpu24EyMCfs165dBeU34QRb00/ztiUHwHKo9Paor7FgQ8cr6l+/OYFMazngspXJqWCHXp3282eTrv/RbOtWPGH63N4EPt7+tUeDu7yjEcaWLFB/w==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(23010399003)(376014)(1800799024)(6133799003)(18002099003)(10067099003)(13003099007)(3023799007)(11063799006)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	RxOMCMV4z5d6ivPG2ORsCudE4HXPcz7eFk5mcUXqPuxN+n2pWw9Mib4+0n72F6UIwg3XVNf/Y+AuhuDC+XQX4JlIZwtbVD4dC3vtLyxv+/X54cBvoIlKkxAamNe6GA+oX/MAC7MDAYjjm+iJe8LHtfQVsZWUWlr8UrRGwPcKwkI71901vitbqU/Oc1FjIZZJelk3chtgU/ULvwmm9y5bYDwCJIaePEiwcePACTy7d4LsPSgoCRlkNyJQfclNqGWk9owQv0N5lEXl53K6bAcmb0qQbvepDFJqOs2M0pjZW+hK5Mv6Gr9o5od3ZzZDhjLpFm+frMKuX8XYb4YlXjYuydVNEmYbiuE3the9GwUkJiRDBydXwb1JkJzxNUwJELc/HAoptjVWQIXIfGm0wGgxJnbv7awDR8sd2ka59/02bxZEHKiyP9bopGzE1XNT7sIw
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 19:39:35.6237
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16fa62a1-aebf-4420-1ab4-08df2af40b22
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00053453.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9685
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261015-cv75-gpio-v10-7-3fe3eb315a55@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The ThinkPad L13 Gen 2a firmware declares GPIO 11 as an edge-triggered
-interrupt in _AEI, but the EC uses the same GPIO as an output to drive the
-Caps Lock LED.
+On Thu, Oct 15, 2026 at 06:53:34PM +0800, Long Zhao via B4 Relay wrote:
 
-When gpiolib registers the ACPI event, the pin is configured as an input and
-firmware writes can no longer control the LED.
+> Move get, set and direction onto gpio-regmap. ARM PL061 sets
+> GPIO_REGMAP_QUIRK_SET_AFTER_DIR so the output value is written
+> after the direction change.
+> 
+> Keep a custom irqchip and irq domain. Create the domain with
+> the PL061 private data and let gpio-regmap attach it.
+> 
+> Check the chained-handler regmap_read() return and always run
+> chained_irq_exit(). irq_type still ignores MMIO write returns.
+> 
+> irq_set_parent() nests the GPIO irq_desc under the AMBA parent
+> for irq_set_wake() and lockdep; checked with PROVE_LOCKING on
+> CV75.
 
-Add a DMI quirk to ignore the erroneous interrupt declaration automatically.
+...
 
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>
-Reported-by: Nikodem Sanecki <nikodemsanecki@gmail.com>
-Closes: https://lore.kernel.org/linux-gpio/CAAUQFRPW-rbcZV-=qV1NMjF_358sdJTiGvQuRxRqAsehY+J9Qg@mail.gmail.com/
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/gpio/gpiolib-acpi-quirks.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> -#define GPIODIR 0x400
+> -#define GPIOIS  0x404
+> -#define GPIOIBE 0x408
+> -#define GPIOIEV 0x40C
+> -#define GPIOIE  0x410
+> -#define GPIORIS 0x414
+> -#define GPIOMIS 0x418
+> -#define GPIOIC  0x41C
 
-diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
-index a0116f004975a..44ac0fb6f6adc 100644
---- a/drivers/gpio/gpiolib-acpi-quirks.c
-+++ b/drivers/gpio/gpiolib-acpi-quirks.c
-@@ -356,6 +356,23 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.ignore_interrupt = "AMDI0030:00@8",
- 		},
- 	},
-+	{
-+		/*
-+		 * ACPI incorrectly declares GPIO 11 as an interrupt in _AEI,
-+		 * although the EC uses the pin to control the Caps Lock LED.
-+		 * Requesting the interrupt configures the pin as an input and
-+		 * prevents the LED from working.
-+		 * Found in BIOS R1QET54W (1.40).
-+		 * https://lore.kernel.org/linux-gpio/CAAUQFRPW-rbcZV-=qV1NMjF_358sdJTiGvQuRxRqAsehY+J9Qg@mail.gmail.com/
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "21AB"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_interrupt = "AMDI0030:00@11",
-+		},
-+	},
- 	{
- 		/*
- 		 * Spurious wakeups from TP_ATTN# pin
+> +#define PL061_DIR		0x400
+> +#define PL061_IS		0x404
+> +#define PL061_IBE		0x408
+> +#define PL061_IEV		0x40c
+> +#define PL061_IE		0x410
+> +#define PL061_MIS		0x418
+> +#define PL061_IC		0x41c
+
+If you want this rename, it should be done separately, otherwise it sounds like
+an unneeded churn (at least for now).
+
+...
+
+> +struct pl061_drvdata {
+> +	const struct regmap_config *regmap_config;
+> +	const struct pl061_regs *regs;
+> +	unsigned int ngpio;
+> +	unsigned long quirks;
+> +	bool clear_irq_on_type;
+> +	bool pm;
+> +	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
+> +			      unsigned int offset, unsigned int *reg,
+> +			      unsigned int *mask);
+
+Split this logically
+
+	int (*reg_mask_xlate)(struct gpio_regmap *gpio,
+			      unsigned int base, unsigned int offset,
+			      unsigned int *reg, unsigned int *mask);
+
+>  };
+
+...
+
+>  struct pl061 {
+>  	raw_spinlock_t		lock;
+
+> +	struct device		*dev;
+
+Why? Can't you derive this from regmap?
+
+>  	struct regmap		*regmap;
+> -	struct gpio_chip	gc;
+> +	const struct pl061_drvdata *data;
+> +	struct irq_domain	*irq_domain;
+>  	int			parent_irq;
+>  
+> -	struct pl061_context_save_regs csave_regs;
+> +	u32			saved_dat;
+>  };
+
+> -static int pl061_get_direction(struct gpio_chip *gc, unsigned offset)
+> -{
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -	int ret;
+> -
+> -	ret = regmap_test_bits(pl061->regmap, GPIODIR, BIT(offset));
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	if (ret)
+> -		return GPIO_LINE_DIRECTION_OUT;
+> -
+> -	return GPIO_LINE_DIRECTION_IN;
+> -}
+> -
+> -static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
+> -{
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -
+> -	guard(raw_spinlock_irqsave)(&pl061->lock);
+> -
+> -	regmap_clear_bits(pl061->regmap, GPIODIR, BIT(offset));
+> -
+> -	return 0;
+> -}
+> -
+> -static int pl061_direction_output(struct gpio_chip *gc, unsigned offset,
+> -		int value)
+> -{
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -	unsigned int mask = BIT(offset);
+> -
+> -	guard(raw_spinlock_irqsave)(&pl061->lock);
+> -
+> -	regmap_assign_bits(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
+> -			   BIT(offset), value);
+> -	regmap_set_bits(pl061->regmap, GPIODIR, mask);
+> -
+> -	/*
+> -	 * gpio value is set again, because pl061 doesn't allow to set value of
+> -	 * a gpio pin before configuring it in OUT mode.
+> -	 */
+> -	regmap_assign_bits(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
+> -			   BIT(offset), value);
+> -
+> -	return 0;
+> -}
+> -
+> -static int pl061_get_value(struct gpio_chip *gc, unsigned offset)
+>  {
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -
+> -	return regmap_test_bits(pl061->regmap,
+> -				BIT(offset + PL061_DATA_OFFSET),
+> -				BIT(offset));
+>  }
+>  
+> -static int pl061_set_value(struct gpio_chip *gc, unsigned int offset, int value)
+>  {
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -
+> -	regmap_assign_bits(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
+> -			   BIT(offset), value);
+>  
+>  	return 0;
+>  }
+
+...
+
+> -		dev_dbg(gc->parent, "line %d: IRQ on both edges\n", offset);
+> +		dev_dbg(pl061->dev, "line %d: IRQ on both edges\n", offset);
+
+To avoid this type of churn, introduce a local variable to keep parent
+
+	struct device *parent = gc->parent;
+
+and convert the lines in a separate patch. So this one will have much less
+unneeded changes.
+
+...
+
+> +	if (irq) {
+> +		pl061->irq_domain = irq_domain_create_linear(dev_fwnode(dev),
+> +							     data->ngpio,
+> +							     &pl061_irq_domain_ops,
+> +							     pl061);
+> +		if (!pl061->irq_domain)
+> +			return -ENOMEM;
+> +	}
+
+We have devm_irq_domain_instantiate(). Can't use it? Why?
+
+...
+
+> +	for_each_set_bit(offset, &dir_mask, pl061->data->ngpio)
+
+> +		regmap_write(pl061->regmap,
+> +			     BIT(offset + PL061_DATA_OFFSET),
+
+You have room. Please, check your editor settings and keep in mind that the
+strict limit is 80 characters (inclusive), so lines may have 80 characters.
+In some cases (when readability may be increased) even slightly more.
+
+> +			     !!(pl061->saved_dat & BIT(offset)) << offset);
+
+This is simply
+
+			     pl061->saved_dat & BIT(offset));
+
+no?
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
