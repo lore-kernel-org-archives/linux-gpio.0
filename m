@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579C94A7CA7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B0B4AE109;
 	Thu, 15 Oct 2026 10:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792061672; cv=none; b=pS6TU4UZbiSr5fB/0RTQXlCTytICto5cDx+CrzRkKhHhIJ+qXPcJo+cpEcq16/nAfp0M1/LvrAjXPmZFsM+D7dYC+/pz57NAaKZkA7lfZIGY6t0YkgZJ+Css2sn9pk16KNouGR/rmWp8+bkylugbwnVUf9QWpdyZ0YF23czE/HM=
+	t=1792061672; cv=none; b=EUqtjZbZKyWUhpgpQrKbocjGZ7JETrA0CeeimVIzeFE/RtRI/ecwgaDfpgtdild6iJwYLp6nmFE6XNVOK1msmojzp23lUxrbzaXYcSD/iq35XSL3O0ab7dmGNXfZafS4vX1SKhQKN5W8LuE/hxeVr2a84LiydKqYYZB+szcbsio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792061672; c=relaxed/simple;
-	bh=6qmV5fP/ovYkMChG07yhC6ChgksYfCJp8P8sxHcAz/c=;
+	bh=el2KX4C2e6tFQj6kApe+lPZc4+REqxj7w6IMd/fKCGA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KFnF/2JylgwAIEmDm3LX/wxmnVze51zIJdZqQxV09csD4gVWmKr73GnSJXHsNQuOAk6zufpzKC+IpCS1OThdDM/1r43T0/D3GljK2xc/GFdUGjYz5xWF/HV00RReWhMALC1p/7iIKXnrU1oO7QzCXe+4a96jDqpbr3TAF9z8VRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7Ze7pQN; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=kuYlQUiwkPGMkjCsFZQabu1cfHxYBghzc21OpuTEAi69Kx+T1iuOCTcca3HwaT1N0IE56hzfyN9b6LJCjX4YNnyHUBifx2V4FblZPW2c/UZt2zIrjtHIG0fuhusC5cjCpfm5uDKiLLGEoj+6fXYjh9pGUEtp6tkqywvQLRx85Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZN3ot+3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7Ze7pQN"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 02BD2C2BCFB;
-	Thu, 15 Oct 2026 10:54:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZN3ot+3"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 11D17C2BCF5;
+	Thu, 15 Oct 2026 10:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1792061672;
-	bh=6qmV5fP/ovYkMChG07yhC6ChgksYfCJp8P8sxHcAz/c=;
+	bh=el2KX4C2e6tFQj6kApe+lPZc4+REqxj7w6IMd/fKCGA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=j7Ze7pQNlea9bkUyFWzMJpZbjGh0BCw2S/t2xpGjeKoGuFYHlBp1WiXX7Zr04E2qV
-	 VLY/e9kQX/soMj09RIRRintCIvp8XWjSdcc3hsLh9HhSJxJMn/1drHWT43a2JPMoj/
-	 YvqCpHuSt1rJMu6ARiWLBSV4WHVdLw1HHfPFdXhUmOI3IOFVb1YYdD+KG9+8W+hBAd
-	 9LY2UGurfaevyhFjPKlgiANAwf971R7eFtgr0cz4uEJIcSQh7hEoRPCdT2rBYYPiVb
-	 bv5uZ3PR1RYyTsdfJHzMIURnoBCYIWVtMucTH5AqEEq6KGBR8vLwm83wZYb6PSFt3F
-	 Zt5kFYI8LLkoA==
+	b=gZN3ot+3QshX+e30+W64jTGAosC2TmttGTzkE1Y65DMIG0JtUZ0i6y35I7AgtkmHD
+	 FjW18Rw/jJB9B+Sd+tdRb9wjDUPMO6Wkl4BHQtggL6SXlPmMSqIGq3QMwhUIbzj7rk
+	 pauwUa3FqyHnvjtf9ovf2pQxTKcp2bbeQzH33gf4Kr9t61ywmlk6vddd6nnlqVJu3v
+	 KJHmhCqzjt/XokHwzlk6+gKbZOmobW/lanAp0jk0preXcK5BK677ffm39AQOCjbNPY
+	 TIi3SybW4ZBYWfHNAyun1/X/oQM121SHe8NQ5+mLzOXkmOkGRkr+Oyr8VNYvHzJfPU
+	 0i3hQaiFOp6yg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D685ACC6B33;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6025CC6B3A;
 	Thu, 15 Oct 2026 10:54:31 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Thu, 15 Oct 2026 18:53:28 +0800
-Subject: [PATCH v10 1/8] dt-bindings: gpio: pl061: add Ambarella CV75
- variant
+Date: Thu, 15 Oct 2026 18:53:29 +0800
+Subject: [PATCH v10 2/8] gpiolib: regmap: add
+ GPIO_REGMAP_QUIRK_SET_AFTER_DIR
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-cv75-gpio-v10-1-3fe3eb315a55@ambarella.com>
+Message-Id: <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
 References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com>
 In-Reply-To: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com>
 To: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
@@ -52,13 +52,13 @@ Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
  Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
  Long Zhao <longzhao@ambarella.com>, Long Zhao <zl020895@163.com>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+ linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792061669; l=2127;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792061669; l=3542;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=BkO6pO1YpBBieaeL0yXFXs09zVgjmaMwMQO7kuG29w4=;
- b=G4zLzsTlBcqQj1SoDIghxuZesERSzrNjhMPFY+NWXR4aiBhV5T+iGNhKyjUIZ2RtmI4euI1sO
- mE4LByiHHH8C5wM+wP5OaIVhMuKGsvkZNQaUiS8wIRiPHqn9rBgTpRF
+ bh=VFsej1RMHsF3Vzr8BgpbrLcUXMG91JkySFB8CuRN2IE=;
+ b=TWRaQjnurtGrbeRGXb36IlpQ7MElKmRrFLVb332S2tiJlxzfTPyQ+sQM+Dw7uICvGIw0f9GPi
+ rULh4Svz8qbBoPgRjvotVtl+3cwD/WwMeER2Ck870Dlpb2yxh/diLam
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -68,74 +68,105 @@ Reply-To: longzhao@ambarella.com
 
 From: Long Zhao <longzhao@ambarella.com>
 
-The CV75 GPIO is a modified PL061. The basic registers have the same
-names and roles (DAT/DIR/IS/IBE/IEV/IE/MIS/IC). Each bank is 32-bit
-and 32 lines and adds MASK and ENABLE, so it is not
-register-compatible with the ARM PL061 and arm,pl061 must not be
-used as a fallback.
+Some controllers ignore output writes while a line is still an input.
+Add a behaviour flag so the output value is written after the direction
+change. This is a legacy quirk. New hardware must not use it.
 
-The AMBA core matches the PL061 driver by PrimeCell ID, not by the DT
-compatible string. These blocks do not implement the standard PL061 ID
-(0x00041061) in the ID registers, so arm,primecell-periphid is required
-and is fixed to 0x000e8061; the driver uses that ID to select the
-Ambarella layout. gpio-ranges is required because each bank is a slice
-of the SoC pinctrl pin space.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Michael Walle <mwalle@kernel.org>
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-regmap.c  | 15 +++++++++++++--
+ include/linux/gpio/regmap.h | 14 ++++++++++++++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-index 4d970e55104b..c22dd8a1d2c1 100644
---- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-@@ -15,7 +15,9 @@ select:
-   properties:
-     compatible:
-       contains:
--        const: arm,pl061
-+        enum:
-+          - arm,pl061
-+          - ambarella,cv75-gpio
-   required:
-     - compatible
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 51b4d69b8740..0a44deae3d01 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -33,6 +33,7 @@ struct gpio_regmap {
+ 	unsigned int reg_dir_out_base;
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
++	unsigned long quirks;
  
-@@ -25,7 +27,9 @@ properties:
+ #ifdef CONFIG_REGMAP_IRQ
+ 	int regmap_irq_line;
+@@ -271,9 +272,17 @@ static int gpio_regmap_direction_output(struct gpio_chip *chip,
+ 			return ret;
+ 	}
  
-   compatible:
-     items:
--      - const: arm,pl061
-+      - enum:
-+          - ambarella,cv75-gpio
-+          - arm,pl061
-       - const: arm,primecell
+-	gpio_regmap_set(chip, offset, value);
++	if (!(gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR))
++		gpio_regmap_set(chip, offset, value);
  
-   reg:
-@@ -64,6 +68,21 @@ required:
-   - "#gpio-cells"
-   - gpio-controller
- 
--additionalProperties: false
-+allOf:
-+  - $ref: /schemas/arm/primecell.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: ambarella,cv75-gpio
-+    then:
-+      properties:
-+        arm,primecell-periphid:
-+          const: 0x000e8061
-+      required:
-+        - arm,primecell-periphid
-+        - gpio-ranges
+-	return gpio_regmap_set_direction(chip, offset, true);
++	ret = gpio_regmap_set_direction(chip, offset, true);
++	if (ret)
++		return ret;
 +
-+unevaluatedProperties: false
++	if (gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR)
++		gpio_regmap_set(chip, offset, value);
++
++	return 0;
+ }
  
- ...
+ void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
+@@ -376,6 +385,8 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 			    config->fixed_direction_output, chip->ngpio);
+ 	}
+ 
++	gpio->quirks = config->quirks;
++
+ 	/* if not set, assume there is only one register */
+ 	gpio->ngpio_per_reg = config->ngpio_per_reg;
+ 	if (!gpio->ngpio_per_reg)
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 06255756710d..f9090073c852 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -3,6 +3,8 @@
+ #ifndef _LINUX_GPIO_REGMAP_H
+ #define _LINUX_GPIO_REGMAP_H
+ 
++#include <linux/bits.h>
++
+ struct device;
+ struct fwnode_handle;
+ struct gpio_regmap;
+@@ -13,6 +15,14 @@ struct regmap;
+ #define GPIO_REGMAP_ADDR_ZERO ((unsigned int)(-1))
+ #define GPIO_REGMAP_ADDR(addr) ((addr) ? : GPIO_REGMAP_ADDR_ZERO)
+ 
++/*
++ * Write the output value after the line is switched to output.
++ * Needed when hardware ignores output writes while the line is an input.
++ * This is a legacy quirk; new hardware must not use it. Direction changes
++ * will glitch.
++ */
++#define GPIO_REGMAP_QUIRK_SET_AFTER_DIR BIT(0)
++
+ /**
+  * struct gpio_regmap_config - Description of a generic regmap gpio_chip.
+  * @parent:		The parent device
+@@ -48,6 +58,7 @@ struct regmap;
+  *			(Optional) Bitmap representing the fixed direction of
+  *			the GPIO lines. Useful when there are GPIO lines with a
+  *			fixed direction mixed together in the same register.
++ * @quirks:		(Optional) Behaviour flags, OR of GPIO_REGMAP_QUIRK_*.
+  * @drvdata:		(Optional) Pointer to driver specific data which is
+  *			not used by gpio-remap but is provided "as is" to the
+  *			driver callback(s).
+@@ -98,6 +109,9 @@ struct gpio_regmap_config {
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
+ 
++	/* Regmap GPIO behaviour flags */
++	unsigned long quirks;
++
+ #ifdef CONFIG_REGMAP_IRQ
+ 	struct regmap_irq_chip *regmap_irq_chip;
+ 	int regmap_irq_line;
 
 -- 
 2.34.1
