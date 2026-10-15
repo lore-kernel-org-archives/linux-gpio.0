@@ -1,210 +1,161 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D950F52BE54
-	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 13:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5447652941D
+	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 14:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792072707; cv=none; b=LEME72Ai5q7IaBQig4M93NawmwwgCRiqvAoahjFYn4+YMjEWjEtgwUQ06xn2GeOy7I5AOl16/ZKE0Aq0dfl10AqQxc6unmGwONfPTdcYLV01eDDinHjeSEXnv/C7aJSfY9QMPnn3vzBRfmMVSK+QlHMfspAgCwX7N4uOZeOg3NM=
+	t=1792073104; cv=none; b=ocHb1/o/2QsN0ygFjl9fj/FBMOAwNRdY/sTl7nq1RblFRb47d63tBIckelkHmvZBI7+MMztxKFBQtsYD91M1Q3Crzyfp4ixcfcLqh3auNV7QhZNzCOQ5sOwmJyGx8ApZYLla33fF5rXfDoi+cqWydu/wd4IriqzJoQhibsAzpZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792072707; c=relaxed/simple;
-	bh=CICcyDkLBlgP0XbsqlouCRaSY2ZySTTQkbqDa3AC5pM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Ki1KYp+BB/lp71vJh0cFww14L/O0wtUqEpHBe9yR8mR5jKdmToiVKrvBl7JfT6avQkz2ht4cpw0XC8iX7M94h7+n8/qdd/wyiFwI9Q5pYsCHbjAHEy2OBhGHpXhw9b6ukO1Gw5BHuVQBDn5MLVO6fj4VweJkFbluK6G0IMnWGdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V0QarqSx; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792073104; c=relaxed/simple;
+	bh=rsXRTMWRgOAUoFFW65/OyKrBql26Jz4Z0gD0mEPvusA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F+9fGcslpXLS4GJHSpDyl2f6DSibTm01f6PuAt2r3T3uSH3qIqPRWnjWFPTRexJAebtrL/6H/X0j4xH+zXispXm4Q75xSmxD5QDwkI1QV1mICI03L3uVVibvGtRon+cqseu9L1RNqAnRBtIJtQLHlpcZkzR3qr1psZBgWlGpkJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=WuiF6m3R; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0QarqSx"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-89b381f2503so411892b3a.0
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 06:58:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="WuiF6m3R"
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-67990a45e02so1820402d50.3
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 07:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792072705; x=1792677505; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=CICcyDkLBlgP0XbsqlouCRaSY2ZySTTQkbqDa3AC5pM=;
-        b=V0QarqSxS/LBSThWWzo7eT3JB5WdMp/ZzlJ8xsOOFVG3seaQLAodhDpqA7ptiiRbm8
-         xlwzeK+xxOxIAxJMXynuRLhZjSIBHvhueW//sKaXcZu0Yrc9LHO0vhvWZMJRBgho3pJ8
-         DgirW9su++8Q/kCk/yeFvu1OmGqxAKbXBYWxLhWASaFmp1PQtE9sdmla9QxI+pnNcYw2
-         N9K5TB2MiLD8oj7QA4a4mSFjUkGJaXSs+nmmERkdzKKhmcUR56UtkY+HuFxFhgzcAdcx
-         NtBkxU3Eg9frAVHAI05CzntDfedzQQGZ9Xjznw7uUrSIvNGIcKsdH6iaM8duxsBmu7FM
-         dmmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792072705; x=1792677505;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1792073101; x=1792677901; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=CICcyDkLBlgP0XbsqlouCRaSY2ZySTTQkbqDa3AC5pM=;
-        b=2b1VSB2umowDyiL1WFSd+TiStdv8vLUjnds4KxgEEgDYagUeDbnFZFKWA5GpZE6+3D
-         omGHj7FY3zd2VzMcShB5tQFBE4UkulfjGsAnbBWi+yJ2dHjIi68BIjA/Qyb98fcVagxe
-         fDtCgWpj9aICc0HsYuJU99jFHcmBxtmGanAwmR0B1Rk7w7p5ui7bIJTuD9kuuCezdtwe
-         qPuuonMQoPJLdYR8Ccecp7RXXVsG2GDCPeA5eydwI0jXxx3eJvYc2FA/GtcPflqyQtfd
-         4Awsh0cMU5M0hwPKhEjXPMlzWELsmrnOPanDhfMtpbDHV+T52BwITjaKCNwzABW5feIS
-         JGoQ==
-X-Forwarded-Encrypted: i=1; AKwUvBy2o6/wT45ONThtwx2hE2WGrG84Vo5WkHnkXBAubEFdOLjseB2O93YLAHWu8UJvXW3CymIuuKDhymCl@vger.kernel.org
-X-Gm-Message-State: AFq9FYKS3Pa6ox5dVSItamnhTI8UJsJt9M4fpxKYsdyqWJ0KpXh3R7Py
-	9jwxJJvHP3Ptp0NExOnpzI2Fo56+atQxGHvreBgEB/rvgiICRm0847a/t4LBwPg6
-X-Gm-Gg: AYBFou3fV0C74yC0bX5p4K6N1dp/yvT7EhlOAHW9yxQ8C4Q5er7HTs8N++ARQYbU6st
-	QCD3QyIlY/sEWMw4EfaPI5mb2KpHZiAjqSv11h3F913PyQOkrtkc+wgOrUGxJh49He5G90x9KO6
-	LGoaLDPSRcxFycrH/qwkvqo09LL8giXki9fyC0KIAqSUHdAvwFt7ks2ImtRApob0CaM59vwHoKf
-	YCM7NaQOc17mYcmjZM97pKIGORfWSbxyJD+alyLpl+Ncvz3URF7AndTvdZGL7mXMH2EZn4N7PzA
-	kWVOJzacl1Z/823xDczccYKFJr85OfHVkMrenhNrf6clK+kIZNTao/t+L7esqk8k/qwgsopWDEl
-	89iGzAK+BQVnLO4Ay/efm7iEdybbzbYngKJmUdML1AuAUq7uzUce3rAYOOSn3lAJ9ytfRngun71
-	7Aok8TXmf30siE6b4EgliGsdFLuU1ZRyEInWowgLTxqnzmzoZ0gm7hs60KtdB/AEwiQxUm+ynTF
-	wsW6nEZc1xed6j1OVwq
-X-Received: by 2002:a05:6a00:4a86:b0:89e:f07f:d848 with SMTP id d2e1a72fcca58-89ef07fe383mr756538b3a.3.1792072704961;
-        Thu, 15 Oct 2026 06:58:24 -0700 (PDT)
-Received: from smtpclient.apple ([23.247.139.92])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89d802a437csm2447219b3a.19.2026.10.15.06.58.21
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Oct 2026 06:58:24 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        bh=nwwCXgdH1/n2kjSGAX/1uosUanbLq6bg/jam8MfBwUo=;
+        b=WuiF6m3R5iIq7ZlNajTv3Fywc9buQaZRIwDKdHz2xdmKBDtv7dmYcOazN/88k4tuPT
+         bk5vygnm+1BLIpleBbxtO9qZMtWv213eG220JpIYDrSWKN9e8h5ZozhBJsxb630+T+m4
+         FwdXzr2wF90hSfTQvjwQ7SrgQfgqkXLuusfwYTo2oXWGwDZd6kJXeTiUwwxnqfejXBLU
+         uw3jbQLBqQWraUHMEW0QE8dEsd54jxw6mII17zs93T4N+bqIHem6oRgt28ZCVE9egKOs
+         YSGYpWIgJNUT+mq3A1PwHFk4qFiIxO+nc8tq/tWmEgsa/iGQnYxel6QjSF22xxY9R+eG
+         6t3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792073101; x=1792677901;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=nwwCXgdH1/n2kjSGAX/1uosUanbLq6bg/jam8MfBwUo=;
+        b=aQTvIHr2cC4fKYdEa+NA34eIuPrF9eFawSGmTLX+4DiLlIPM3R3svYcxybVBae5hOW
+         QBJCdM/PklXmM1YRv48LZYQo0k3or8mb+8AnSUB7Wgl6uJdDt7RJpNz/6yKTLQSsZgfU
+         tr6uujRB4sIxRzOeFd2MXoBReTQ05VztT3l08z2IYVrzTXmh6qVOYLrvG0sqWRt5cNj9
+         42n1HZJ5CEBA2ZV9/bQafPjdXzNt335T9a83tLJLi8v53/FTDyOEwapEEa2AQpiE8eMJ
+         xco5ACYCWRUq5JpB0lyKdTgvoBVja3roiAN3G84HQ9ynQNZ1d3DrgLKUHq7QiyYSkH6R
+         As5Q==
+X-Forwarded-Encrypted: i=1; AKwUvByO1e3GfILgCvldaGQIR8UGv4XsF68HVkXo6PMpzPbKOGAcgbCUy6NgqPHwsBnk3VPS5npkaxTvR1q7@vger.kernel.org
+X-Gm-Message-State: AFq9FYKAejZ3kThKci70IJYF35ieS/xUih48PSR76BsRuF5FWoFv2CJ/
+	MX/Z2skvG4+eDdtWw8XUABWJFauag9pcTEo568/XiNvRXNbbh6SmXUyW7Vohmua9OYI=
+X-Gm-Gg: AYBFou3W80kFhIrf3owawgfQYiYlXcMqcPdhrbAJL4BuQtmOlz7h/E3g7cbMJ022TfG
+	XJeZ9xG2Sbtq4cnHHxKIFhcpCGMNlBvIapcP9D9cpPnvXZ5se8QV5+eP//m6nFF8Z3EfWxueeSC
+	fMyqExxBaBBuprDzCGVJlj2N5oZ4Qb80J3DFYAMpXn9J5bvme+O5+duHOgfj6rpyA3YM5WSOrkD
+	vbwnnNKfwRTfg60v2Tg7hqnSAECY6GVfkFGnBoJUxxCC68+5Crt1N9PQNUzPKkA8WJ7u/upP+dP
+	cnh/6pzrZc7UJI5e3Pg5BJFBqLGncWF2hJ0hBxphFOzLsjmXzfLccWgIxi22+rhw01Bu/S1WwQy
+	YCpcxak4FO1WeS7dJI2gJ6DAiYLpFaeP0ZFPVXKo2t3o862KpY8YGi1w3HNf+hVGXFEXj3v4dDI
+	qIoA1+vwu5FMQkNGwhMy97T3nLerKutM81SnCK2V8//+TaI1ZcLDPSXwWz+b5vytrjjDvylp714
+	fymVTMN2lzMZmjTx36yoOCr5sKt8Yaas1Pz6Z4lyRKtI5U1
+X-Received: by 2002:a05:690e:138f:b0:675:3507:46e7 with SMTP id 956f58d0204a3-67936984262mr7357304d50.24.1792073101087;
+        Thu, 15 Oct 2026 07:05:01 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:7a64:39ea:e5ac:f974? ([2600:8803:e7e4:500:7a64:39ea:e5ac:f974])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6799548f8ecsm1390554d50.18.2026.10.15.07.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2026 07:04:59 -0700 (PDT)
+Message-ID: <11c08f9a-091d-43fb-8c1e-f3f2fe6ec3c2@baylibre.com>
+Date: Thu, 15 Oct 2026 09:04:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
-Subject: Re: [PATCH RFC v2 0/4] gpio: loongson-64bit: add interrupt support
- for more models
-From: Miao Wang <shankerwangmiao@gmail.com>
-In-Reply-To: <CAMRc=Mf0c8mqU46xqNVZRF+GSy=uZnHq_o90UsQXi+tUwgzEDw@mail.gmail.com>
-Date: Thu, 15 Oct 2026 21:58:08 +0800
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Yinbo Zhu <zhuyinbo@loongson.cn>,
- Linus Walleij <linusw@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F0F05A76-F67E-438F-BACF-F5B118A491AA@gmail.com>
-References: <20261002-loongsongpio-v2-0-6e3eb150a4ef@gmail.com>
- <CAMRc=McnDBO6OZx6p9HGHn=Yyt8ydD=8Z=zYZvYvuy-_DUq6tQ@mail.gmail.com>
- <7D6EB1C6-0CCB-44F1-B698-89B0479EEDA2@gmail.com>
- <CAMRc=MeW2nR8W3_4266N05p3Oa1WPNJhA92+T3miXQ0k5CsyJg@mail.gmail.com>
- <317E251E-9135-4376-B813-74B8A748FD72@gmail.com>
- <CAMRc=Mf0c8mqU46xqNVZRF+GSy=uZnHq_o90UsQXi+tUwgzEDw@mail.gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81.1.8)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: adc: ti-ads112c14: add gpio support
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Chris Hall <c-hall@ti.com>, Patrick Edwards <pedwards@ti.com>,
+ Kurt Borja <kuurtb@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>
+References: <20261009-iio-adc-ti-ads112c14-gpio-v2-0-3231a795fa63@baylibre.com>
+ <20261009-iio-adc-ti-ads112c14-gpio-v2-2-3231a795fa63@baylibre.com>
+ <CAMRc=Mfn7+uQYvLjGLxU9wMOnRwx5pyPgaLp6oNx+ZcFXyXL=A@mail.gmail.com>
+ <cde9d00a-bfe4-4093-b03d-f76a122e4ded@baylibre.com>
+ <as46xFp-3fXvWPlm@ashevche-desk.local>
+ <ca27a15c-5b21-4381-a82f-e80bb0ae488a@baylibre.com>
+ <atDXNlsDIAzOpgFg@ashevche-desk.local>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <atDXNlsDIAzOpgFg@ashevche-desk.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 10/15/26 8:37 AM, Andy Shevchenko wrote:
+> On Thu, Oct 15, 2026 at 08:01:14AM -0500, David Lechner wrote:
+>> On 10/13/26 9:05 AM, Andy Shevchenko wrote:
+>>> On Sat, Oct 10, 2026 at 08:46:30AM -0500, David Lechner wrote:
+>>>> On 10/10/26 4:00 AM, Bartosz Golaszewski wrote:
+>>>>> On Sat, 10 Oct 2026 01:25:52 +0200, "David Lechner (TI)"
+>>>>> <dlechner@baylibre.com> said:
+> 
+> ...
+> 
+>>>>>> +	if (device_property_read_bool(dev, "gpio-controller")) {
+>>>>>
+>>>>> I think the right one to use is device_property_present().
+>>>>
+>>>> I thought this was the one case where device_property_read_bool() is
+>>>> actually correct because gpio-controller property is a
+>>>> /schemas/types.yaml#/definitions/flag.
+>>>>
+>>>> Otherwise, we should just remove device_property_read_bool() from the tree
+>>>> because there would never be a reason to use it.
+>>>>
+>>>> My understanding is we should use device_property_present() for non-boolean
+>>>> properties when we want to know if it is present or not before reading the
+>>>> value of it.
+>>>
+>>> That's not true. The _property_present() checks any type of property, while
+>>> _property_read_bool() returns an actual value of the flag, while they might
+>>> overlap in the behaviour, they are semantically completely different.
+>>
+>> That is exactly what I said.
+> 
+> But you made a code different. As I read it it checks for "is the
+> gpio-controller property present?" For the question that you may
+> think off "is the gpio-controller flag is true?" I consider rather
+> if-else branch as we *either* option.
+> 
+> So, when we do
+> 
+> 	if (...check_flag...)
+> 		do_smth();
+> 
+> I assume we check the presence of the property (flag). If we do
+> 
+> 	x = ...read_flag...;
+> 
+> OR
+> 
+> 	if (...read_flag... == true)
+> 		do_smth();
+> 	else
+> 		do_smth_else();
+> 
+> I consider the appropriate is reading the property.
+> 
 
-> 2026=E5=B9=B410=E6=9C=8815=E6=97=A5 21:24=EF=BC=8CBartosz Golaszewski =
-<brgl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Wed, 14 Oct 2026 18:20:49 +0200, Miao Wang =
-<shankerwangmiao@gmail.com> said:
->> Hi,
->>=20
->>> 2026=E5=B9=B410=E6=9C=8814=E6=97=A5 23:33=EF=BC=8CBartosz =
-Golaszewski <brgl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> On Thu, 8 Oct 2026 12:21:43 +0200, Miao Wang =
-<shankerwangmiao@gmail.com> said:
->>>> Hi,
->>>>=20
->>>>> 2026=E5=B9=B410=E6=9C=888=E6=97=A5 18:04=EF=BC=8CBartosz =
-Golaszewski <brgl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->>>>>=20
->>>>> On Thu, 1 Oct 2026 20:13:18 +0200, Miao Wang via B4 Relay
->>>>> <devnull+shankerwangmiao.gmail.com@kernel.org> said:
->>>>>> This patch series aims to correctly add interrupt support for =
-GPIO
->>>>>> controllers found on more Loongson CPUs. The GPIO controllers in =
-such
->>>>>> models do not have a complete intgrated interrupt controller, but =
-choose
->>>>>> to delegate interrupt handling to their parent interrupt =
-controller.
->>>>>> This sounds like a heirarchical interrupt setup, but what makes =
-it
->>>>>> more complex is that multiple GPIO lines in these controllers may =
-share
->>>>>> one interrupt line on the parent interrupt controller. The =
-details is
->>>>>> described in the third patch.
->>>>>>=20
->>>>>> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
->>>>>> ---
->>>>>=20
->>>>> The series looks pretty good. Who is the RFC addressed at in this =
-case? I can't
->>>>> really answer the questions from patch 3/4 as I don't know this =
-platform nor am
->>>>> I well versed in ACPI. Maybe Cc the GPIO ACPI maintainers for =
-review?
->>>>=20
->>>> Thanks for your review. The RFC contains two questions, the first =
-is about
->>>> the firmware interface, including FDT and ACPI; the second is about =
-the
->>>> way handling the delegated IRQs.
->>>>=20
->>>> Regarding the firmware interface, it is to be decided how to =
-declare
->>>> platform irq numbers for the GPIO controller. Such a GPIO =
-controller
->>>> may have N gpio lines with M parent interrupt lines (M < N). The
->>>> firmware should a) list M irq numbers corresponding to the M parent
->>>> interrupt lines or b) list N irq numbers (which might be =
-duplicated)
->>>> orresponding to the N gpio lines. Previously b) was chosen by the
->>>> kernel driver. However actual ACPI tables found in the published
->>>> firmware chose a). The discussion about it happened in [1].
->>>>=20
->>>=20
->>> Unless it impacts DT systems, I'll let Andy handle the ACPI part. =
-Please Cc him
->>> next time as I pointed out under the RFC.
->>=20
->> Will add him on the Cc list in further revisions.
->>=20
->>>> Regarding to the interrupt handling delegation, since there is no
->>>> complete interrupt controller integrated with the GPIO controller,
->>>> the interrupt handling, including detecting edge triggered =
-interrupts
->>>> and masking/unmasking, should be delegated to the parent IRQ =
-controller.
->>>> I want to check if my implementation approach is acceptable and not
->>>> violating any implicit rules on the interrupt subsystem side.
->>>>=20
->>>=20
->>> I'd suggest to run your implementation by Thomas Gleixner because =
-directly
->>> accessing the internals of the parent's irq data looks fishy. For =
-instance:
->>> you call irq_set_type() directly without going through __setup_irq() =
-->
->>> __irq_set_trigger() which does some additional bookkeeping.
->>=20
->> I would originally tend to avoid directly calling into =
-->irq_set_type() and
->> other handlers like this. However, the IRQ subsystem does not seem to =
-provide
->> APIs to mask, unmask or set type of a given IRQ. Furthermore, =
-__setup_irq()
->> is for registering irq_handler for an irq, while in chained irq chip, =
-however,
->> irq_flow_handler is needed and should be registered via =
-__irq_do_set_handler().
->>=20
->=20
-> As I said: I'd involve Thomas in this discussion as it's his =
-territory. I'm
-> afraid I lack the deep knowledge of the interrupt subsystem internals =
-to be
-> able to help here and I'd also prefer to avoid adding any new abusers =
-of the
-> IRQ API to the kernel.
+Are you saying flag != boolean DT property type?
 
-+Cc-ed Thomas
+type: boolean
 
-Cheers,
+vs.
 
-Miao Wang
+$ref: /schemas/types.yaml#/definitions/flag
+
+
+I know we have both names in dt-bindings but I don't know the history on it
+and if we consider them semantically different.
+
 
