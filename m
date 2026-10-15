@@ -1,135 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E750509F19
-	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 12:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241354E73B8
+	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 12:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792067847; cv=none; b=ZfJwBRu3vpFo3eysRkePU1Uxsfq26IiUKagIF0ZGJmF7Q/qGwpevsY8dPyF8uxAQRPcNJ9awiOqHXXAqlqMpaUFE+iLzRZZC/fMCYs1E/+EELqcpHdJDJaSpGL6ZwBiiWe534wIbD2U9sLeg4yJ0skDAv+fu5kwBzrSHN/Gcz8g=
+	t=1792068782; cv=none; b=FeIEUmZi3BsA66j4lVUY40K79PgPItSJRmhhI1RlDY2rx5UG8YK7hREZZHKt/aX0V9CvXyqKqXvzs0wQw8jovfiBgtqcTFMzCjg7QRGT+Xd64QReUBjZxewtHTstGaseOwBIMGQ4piYgXQP/y31uzHcqx8rY/xvJcRAZhUNKVcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792067847; c=relaxed/simple;
-	bh=G2E3pSBkHrO6DMJk0uyH9EbgbDotpAz9tSZPpNDnVcc=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=HDP7o2BS8eE0eR3Mh7ZHhxz0rDSsn+XhYOW6KIoe5vsTMy3DmCXflzc9w1I/Sz7kv1VwYKSC/66SLHeTB1y+vcQ6KoLl0qhUQUZDN5UIMtGhNBnVswHATR+KRIMJ724g1YsqO5Tv/gFiLe5PVB2kkCOwQ5223LM6/hGgZfBO+mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJktlDl9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792068782; c=relaxed/simple;
+	bh=V2pDeiafTzSv8mCHkw7Xon5sL4Btx3C/FFYZobwOp4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cFFuwb8WOjxf6LdlIvEmOK1p+10IGjItZfCSqbI2UI1bOEMA5OCJNKU5SIDs3XJlc3zAnQnKyU95h95Kz8VsH0Mb83giWAjKPi+HsKujLoYyKb/JUPu6r/Z1ptg0hK8AHbcWCgR09NSkPuxpZHso9fa13UQ1hHCE249bubL3FhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KbH3sFyO; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJktlDl9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF031F000C4;
-	Thu, 15 Oct 2026 12:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792067846;
-	bh=pU2lD2CTQFKFiRfTSxDSpraKPjvAAF0AtCG/rZSi4iM=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=BJktlDl9fdtRqJd95H5wnMlj8GJn8xuIhePyeBv35hfmRYLAwajt4k5R3hPUBVDsl
-	 EVybtWV3baxqIySAThcdsxQKNU1cpevHalFyA8Zmpzhet9p3MYAmlmyFf4umIxDtRr
-	 sM3/wJ0Ep+o7R2ZmaFyDJw+9W14bM/oC8dIbcXql2FpeD6GsVfAqXlNGDbZ9AjEKMe
-	 DM3n8Ukzoz+4HeSIi/Ht/CJMGjBlEUkqwUQxHiqK1DgcwC9eD1q+BtrVPYFEvhx0H2
-	 2GfQsIJP3QpdzIRLc8m0XAPchZf38ecaBh+5A3O4QFCEplJ5XglK+W4p75hA01eaS3
-	 kyOl61becyQFg==
-Message-ID: <sashiko-outbox-172816@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] gpio: shared-proxy: Fix race between concurrent first
- users
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Shawn Guo" <shengchao.guo@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261015122740.971792-1-shengchao.guo@oss.qualcomm.com>
-References: <20261015122740.971792-1-shengchao.guo@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 12:37:25 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KbH3sFyO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792068781; x=1823604781;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=V2pDeiafTzSv8mCHkw7Xon5sL4Btx3C/FFYZobwOp4o=;
+  b=KbH3sFyO3UEd0R6bsbPy03lCYZWM8GwTHFmEyG8xPBMwH1RDYGZrjXg3
+   dS3kvj7RzTPAqXePuP/KkOllk9w2KmLCWv1wKPvq/pjtV81mKnfB4gERQ
+   rOv8E/OK3qvwmTc5S8bI3BK5e00fJ4taY4rL5GW6woTiWt9CpyZz0jwgq
+   jTzjw9DpBbA1nBcpbwdYk4iP3vosPJnbmWrYDQvfKIa2UkAb9ahzFBYtG
+   VdE88LqjwpUdtMBy7gxPKh0yamMtvXR7Wh7d9FiAkNU6Dw4PFCUBOY4PP
+   HCgfXRS+dDtneHBgIrRf2e1I2bHyaqYB0w2FilRtvUn4VMJ28w5MOJ0vr
+   Q==;
+X-CSE-ConnectionGUID: bgeWKKOzT6Kx3Y94aQ3Hjw==
+X-CSE-MsgGUID: wfsee4MFT4Szj8GORk2COg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="837616"
+X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
+   d="scan'208";a="837616"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 05:53:00 -0700
+X-CSE-ConnectionGUID: CQ0nngceREGcwxFOo1qfrg==
+X-CSE-MsgGUID: 4N33zaIWRP+y03PGNmiO8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
+   d="scan'208";a="3439385"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa012.fm.intel.com with ESMTP; 15 Oct 2026 05:53:00 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 1B7ED99; Thu, 15 Oct 2026 14:52:58 +0200 (CEST)
+Date: Thu, 15 Oct 2026 14:52:58 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linux GPIO <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: [GIT PULL] intel-gpio for 7.3-1
+Message-ID: <atDMqjm-J1qoYPeX@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] gpio: shared-proxy: integer underflow of votecnt on proxy free err=
-or path
-- [Low] gpio: shared-proxy: spurious warning and logic bypass in set_config
---
+Hi Linux GPIO  maintainers,
 
-commit 2a16d83da9ca16fcf3fc8f06a64d08bb431d1954
-Author: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+A small set of fixes for GPIO on ACPI-based platforms. It was in Linux Next
+for a while without regressions reported. Please, pull and send as a fix set
+for current, v7.3, release.
 
-gpio: shared-proxy: Fix race between concurrent first users
+Thanks,
 
-This commit addresses a race condition where concurrent consumers
-requesting a shared proxy line could both observe the use count as 2
-before any configuration occurs, resulting in a failure. It resolves
-this by introducing a configuration counter and a per-proxy flag to
-track actual configuration changes rather than just requests.
+With Best Regards,
+Andy Shevchenko
 
-> diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-=
-proxy.c
-> index bc69b8729d196..0d9ef98a4229e 100644
-> --- a/drivers/gpio/gpio-shared-proxy.c
-> +++ b/drivers/gpio/gpio-shared-proxy.c
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
-[ ... ]
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 
-> @@ -117,6 +141,11 @@ static void gpio_shared_proxy_free(struct gpio_chip =
-*gc, unsigned int offset)
-> =20
->  	proxy->shared_desc->usecnt--;
-> =20
-> +	if (proxy->configured) {
-> +		proxy->configured =3D false;
-> +		shared_desc->cfgcnt--;
-> +	}
-> +
+are available in the Git repository at:
 
-[Severity: High]
-If the hardware write fails in the earlier gpio_shared_proxy_set_unlocked()
-call inside this function, proxy->voted_change remains true:
+  git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v7.3-1
 
-	if (proxy->voted_change) {
-		ret =3D gpio_shared_proxy_set_unlocked(proxy, shared_desc->def_val);
-		if (ret)
-			dev_err(proxy->dev, ...);
-	}
+for you to fetch changes up to 3fd4bf93d586cb07304cdcb5e8b3c51ac1d8284f:
 
-When we unconditionally clear proxy->configured and decrement cfgcnt
-here despite the failure, can this allow a new proxy to bypass checks and
-reset the global votecnt to 0?
+  gpiolib: acpi: Fix GPIO lookup using relative path (2026-10-13 22:34:07 +0200)
 
-If cfgcnt drops to 0 and votecnt is reset, a later reuse of this proxy
-could see voted_change still set. If votecnt is 0 at that point,
-calling gpio_shared_proxy_set_unlocked() again could skip the hardware
-write but decrement votecnt, causing it to underflow to UINT_MAX.
-Could we ensure voted_change is cleared, or configured is not cleared
-if the write fails?
+----------------------------------------------------------------
+intel-gpio for v7.3-1
 
-[ ... ]
+* Support relative path to the GPIO controller in the resources
+* Add missing MODULE_ALIAS() to make crystalcove driver autoload
+* Ignore interrupts on IdeaPad Slim 3 15ABR8 and Acer Nitro V 16S AI
 
-> diff --git a/drivers/gpio/gpiolib-shared.h b/drivers/gpio/gpiolib-shared.h
-> index 618756f6c6aaf..ae10506b7029f 100644
-> --- a/drivers/gpio/gpiolib-shared.h
-> +++ b/drivers/gpio/gpiolib-shared.h
-> @@ -41,6 +41,7 @@ struct gpio_shared_desc {
->  	struct gpio_desc *desc;
->  	unsigned long cfg;
->  	unsigned int usecnt;
-> +	unsigned int cfgcnt;
->  	unsigned int votecnt;
->  	int def_val;
->  	struct mutex mutex; /* serializes all proxy operations on this descript=
-or */
+----------------------------------------------------------------
+Abduvaliy Abdulazizov (1):
+      gpiolib: acpi: Ignore GPIO 11 interrupt on Acer Nitro V 16S AI
 
-[Severity: Low]
-Since concurrent probes are now tracked using cfgcnt rather than usecnt
-to determine if the line has been initialized, does
-gpio_shared_proxy_set_config() also need to be updated?
+Alban Bedel (1):
+      gpiolib: acpi: Fix GPIO lookup using relative path
 
-If two consumers concurrently request the line but haven't configured it,
-usecnt is 2. If one of them then calls gpio_shared_proxy_set_config(),
-it still checks usecnt > 1. This could cause a spurious conflict warning
-if the requested configuration differs from the uninitialized state, or it
-might bypass the hardware configuration entirely if they match, erroneously
-assuming another consumer already applied it.
+Dmitry Torokhov (1):
+      gpio: crystalcove: add missing MODULE_ALIAS()
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015122740.9717=
-92-1-shengchao.guo@oss.qualcomm.com?part=3D1
+Mateo Borda (1):
+      gpiolib: acpi: Add quirk for Lenovo IdeaPad Slim 3 15ABR8
+
+ drivers/gpio/gpio-crystalcove.c    |  1 +
+ drivers/gpio/gpiolib-acpi-core.c   | 10 ++++++----
+ drivers/gpio/gpiolib-acpi-quirks.c | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 36 insertions(+), 4 deletions(-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
