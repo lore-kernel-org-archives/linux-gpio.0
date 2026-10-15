@@ -1,57 +1,66 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EE74A013F
-	for <linux-gpio@vger.kernel.org>; Thu, 15 Oct 2026 13:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE40B3EFFA6;
+	Thu, 15 Oct 2026 13:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792070371; cv=none; b=cZysdXJcGjsqwBw6DDt1kZpESzKFg7YQf30QCcO+lMzV7/hOCkBcrXfeo7zfYN2g4jnBMX2fVTYK8vugt4YsKCwcL1oSmBKETLDOnxMCjZBa/JcZ6OxaVTUXvMnyi1GOx8ifNeDofk5j8PBQyInu8ZYg1p+jhgCHYIIUkRx6A0w=
+	t=1792070562; cv=none; b=TU2Ax4Ygze9aPpr0Ku9lL1KCRlZbZEyYPOkQaBJsgB+d0ZAg016CsJ5+1JC8ePXuCXKY04zL9HUvR8wKCJxAB3ZSw8dyk0tk+h4okv+PePnU2vY9AZwxA9ja/brHwU5OUvpcDhXJ2YeWDrLGmrEwCUbX19G9Py9XuhEXjabUoFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792070371; c=relaxed/simple;
-	bh=SM+iwSmRdLvCzf+j2YOAQoeAW7XhKDAwu/gmMJzCkSM=;
+	s=arc-20240116; t=1792070562; c=relaxed/simple;
+	bh=IXlVNMDkpK0+fZ4y8gNuDI1b+nRai2Bib1MjbJiOSTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRGd5z3+kNOoIvCQlwLDFdIFMSP7D+txs1xZZL84ZYkrecnydVr7I7VyqDcDfj6ED4mFQGTky5Ur8RY0h9v8xofjdPSMrW7VPw+JjTsV5cb8aoNzhYGd9ChZI54UHUPJy0BZi/qq/ybU2/Pa0oBsZxlINV0d5rGQMgTu1TY4q+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWydISOq; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnVv/e02Ho7fSceaBNkqIvgvDR9WEinH8+CZtsE8RS2C044N5dio9UYpkCJ0LMQvjFemOZ1CR7f2y/y9VZU9YzSgJp1o8iSEgcrmr2vqdmcn6ltZyFCxJRLLSm3QILuLMheUX4jDC1dMgfrkbYjWU5XrTYdwOCJFZF3oKGRgCn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IOfDvkpe; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AWydISOq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IOfDvkpe"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792070371; x=1823606371;
+  t=1792070561; x=1823606561;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=SM+iwSmRdLvCzf+j2YOAQoeAW7XhKDAwu/gmMJzCkSM=;
-  b=AWydISOq6haW3vCrB5Qauwi7gC02cuyZWnVBxl02cvYObY3pPEo9vNsQ
-   2Jk7thyNZoT9GF6ewckr6RxbV1WNk1u89aIfyvoDBRPJJFh0RHqoCDjWi
-   Ze5HONLo1lXWw9B+cLJP/sKI99f4JUb097jeMRjXL53f5335s1ac0Cd40
-   YPxVyJO03yEi+9iQd/6UPIxaTVGh1xl30WWOrGCNVwqA064ebmx9sfzro
-   aaIR0XqYFzICUmvHQ1ZzEA6MH9ObcMKINL/XN8SNmwT8ScR7vmGhTWIoo
-   UE7q+PtIsMqq4zYXs0mHGOrvWhQZgaxcMXy6uls6AYPqJQzzWEaFkiktm
+  bh=IXlVNMDkpK0+fZ4y8gNuDI1b+nRai2Bib1MjbJiOSTk=;
+  b=IOfDvkpeJBoFLWC0eSprE0VlbP4tf71qVDAAL0us0mObKwFokhPuLCYV
+   xlY7touIsLei4AUV12O2paBOIvVuMkPkj2tTihf+Ifotsf9TW8syYSF09
+   Fw2hlWicBiuIp6tZbIZq4y0JM01D5NrFAjfQrMNj0eql5FWxgBd6tnt+n
+   KSBrmd/gjYVQNCZs2ODbo3Ip97cKW8T1v4XGXlhYR7SrIdaKDqbodjFkz
+   KvippXyx0jW3BxWvCcmXEMAGOHTT0eJ0Ib4BqVLpnuIDaTz4gC5TItSfj
+   xwPm7x7o0QmWndVaKZxW5fxcfr38bgEBas3oW8LKezinAEk5Gw2gyWGLM
    A==;
-X-CSE-ConnectionGUID: TGoPYDpuR86uElShRr2DQA==
-X-CSE-MsgGUID: cJD1nrBQRhOJRGGvrAUyKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="724431"
+X-CSE-ConnectionGUID: ICbIEr04TbCizcJatjn6yA==
+X-CSE-MsgGUID: 5SEWSCGzSVKbB3fv25IKUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="870429"
 X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="724431"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 06:19:15 -0700
-X-CSE-ConnectionGUID: I1z29EKqSceeLzUu1M21EQ==
-X-CSE-MsgGUID: 7hjGVrilT/SanuZJFvsG1w==
+   d="scan'208";a="870429"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 06:22:41 -0700
+X-CSE-ConnectionGUID: 2wjwuFS8S5GhOWuEL3J+tQ==
+X-CSE-MsgGUID: YrQLcR/uTtSgUIOFoTCGoA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="1786483"
+   d="scan'208";a="2018679"
 Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.117])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 06:19:14 -0700
-Date: Thu, 15 Oct 2026 16:19:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Linux GPIO <linux-gpio@vger.kernel.org>
-Subject: Re: [GIT PULL] intel-gpio for 7.3-1
-Message-ID: <atDSz_8Xw8bGuWfd@ashevche-desk.local>
-References: <atDMqjm-J1qoYPeX@black.igk.intel.com>
- <CAMRc=Mf9s7XkM=8cv0WZ_wB=nv92cKyD1q3Kr70HaJ7kHjmYxw@mail.gmail.com>
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2026 06:22:38 -0700
+Date: Thu, 15 Oct 2026 16:22:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Chris Hall <c-hall@ti.com>, Patrick Edwards <pedwards@ti.com>,
+	Kurt Borja <kuurtb@gmail.com>
+Subject: Re: [PATCH] iio: adc: ti-ads112c14: add gpio support
+Message-ID: <atDTmxEp2KmTRUYf@ashevche-desk.local>
+References: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
+ <arom9T0azKX9jV5m@ashevche-desk.local>
+ <f4ddbc02-1fdd-4205-b511-fb39329fa5f3@baylibre.com>
+ <as46JtMAij8yqcVQ@ashevche-desk.local>
+ <f8b97c1c-7dae-4eea-9d64-c2c81ab4ef49@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -60,41 +69,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMRc=Mf9s7XkM=8cv0WZ_wB=nv92cKyD1q3Kr70HaJ7kHjmYxw@mail.gmail.com>
+In-Reply-To: <f8b97c1c-7dae-4eea-9d64-c2c81ab4ef49@baylibre.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 15, 2026 at 01:06:13PM +0000, Bartosz Golaszewski wrote:
-> On Thu, 15 Oct 2026 14:52:58 +0200, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> said:
-> > Hi Linux GPIO  maintainers,
-> >
-> > A small set of fixes for GPIO on ACPI-based platforms. It was in Linux Next
-> > for a while without regressions reported. Please, pull and send as a fix set
-> > for current, v7.3, release.
-> >
-> > Thanks,
-> >
-> > With Best Regards,
-> > Andy Shevchenko
-> >
-> > The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
-> >
-> >   Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v7.3-1
-> >
-> > for you to fetch changes up to 3fd4bf93d586cb07304cdcb5e8b3c51ac1d8284f:
-> >
-> >   gpiolib: acpi: Fix GPIO lookup using relative path (2026-10-13 22:34:07 +0200)
-> >
-> 
-> Thanks, pulled. There was a trivial conflict fixed like so:
+On Thu, Oct 15, 2026 at 08:00:04AM -0500, David Lechner wrote:
+> On 10/13/26 9:03 AM, Andy Shevchenko wrote:
+> > On Fri, Oct 09, 2026 at 06:04:21PM -0500, David Lechner wrote:
+> >> On 9/28/26 3:36 AM, Andy Shevchenko wrote:
+> >>> On Fri, Sep 25, 2026 at 04:50:47PM -0500, David Lechner (TI) wrote:
 
-Oh, yes, forgot to mentioned that. Resolution is straight forward and you got
-it right, thanks!
+...
+
+> >>>> +static int ads112c14_gpio_init(struct iio_dev *indio_dev)
+> >>>> +{
+> >>>> +	struct ads112c14_data *data = iio_priv(indio_dev);
+> >>>> +	struct device *dev = indio_dev->dev.parent;
+> >>>> +
+> >>>> +	for (unsigned int i = 0; i < ADS112C14_NUM_GPIO; i++) {
+> >>>> +		data->gpio_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s:GPIO%u",
+> >>>> +						     dev_name(&indio_dev->dev), i);
+> >>>> +		if (!data->gpio_names[i])
+> >>>> +			return -ENOMEM;
+> >>>
+> >>> Wondering if you can utilise devm_kasprintf_strarray().
+> >>>
+> >> That uses "%s-%zu" internally, so would add a "-" where I don't want it.
+> > 
+> > What's the problem with a dash?
+> 
+> I want to match the datasheet pin name.
+
+I see. Sounds like we might need something more universal for
+devm_kasprintf_strarray(). (Yeah, I understand that that is out
+of the scope of your series.)
 
 -- 
 With Best Regards,
