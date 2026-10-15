@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D54B4D6C55;
-	Thu, 15 Oct 2026 11:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3726649EC40;
+	Thu, 15 Oct 2026 11:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792062081; cv=none; b=mR8JzN4t2bh6zUrOlpebX6ImVlGRNdvdIdJ1zlfSu+wJASZPVJyxwZLfVCTdRj3rMlIEB7WKofTEC4BvRUvWXJdIpsTilf/ngR8mKDX0VMPYBdqcZgdw5cU6reoD9504RLsJCIMavNv/0OU6ZSpWTvJYZSpg3Vapii8Teie1nDM=
+	t=1792062275; cv=none; b=oprB8ynUXXbRFP6UeQwNd+jrqo5KYWSHaSDI//H+e+mpPVhgrQXdM5OhfGW0g6orhyarMHG356l5lj4EerCSQPnuaWRZNpK1MyLGaRKR4MUXxTK/oLVPht1iyDM+Ddf7y5exeNgWvKi6OVMwWaWGr7XUiaqPbvAHEcF6ThLyu+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792062081; c=relaxed/simple;
-	bh=0VB0tGY8ojZLvTnGA8iio/NOt+RWrDtUk0DAQ2pvhd0=;
+	s=arc-20240116; t=1792062275; c=relaxed/simple;
+	bh=RF/KMPMgUjMHPH2UOBhuPSyWZgNANaGAK7YsTeHxkOs=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=F2K0ZaH9dvDJb4rGRCBdE8EiIsXiwIWEszdKcLGWBtTzCelCrpm3ZHIOYo934m2513cEJWIKwY3FJjxBwHRqsRMjHFIZGTkEni0qG33gq/LO1TGMgAguLlQqFX10qchys9OxWTvgJKc6PwsD/ZRhy0MEA+H3b9TtY6OaMWNmTTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZZms+fx; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=DeygdZiCrLgSPxvfKo//s269JYnM2iHDi/gZxUWTqD+BRoOCicDP7+hP8b2rbn9o6BO4Vo9YY3y2bFfmHQ6Ol7607zCahT6Q/lelxMODH+c0KjO70FksIHlobjMSONmtGR6fL3y3veEDb1YxmTERa4Ji2H80aBZ5Gwb8kLwf/rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRSXoWWB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZZms+fx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 595911F000C4;
-	Thu, 15 Oct 2026 11:01:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRSXoWWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C29B91F000C4;
+	Thu, 15 Oct 2026 11:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792062078;
-	bh=yrnG9frQdNwEtwybNjUWmKnJwv1Meshlf1Fuvu7jIuo=;
+	s=k20260515; t=1792062274;
+	bh=1je7H4Q7odwuqsGqgN6EcXOFN/kRbC6SsC3IRsKvsDk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=PZZms+fxanZjPoWf/7W6Rklbw6f7HU36cGFW9Smg5DVj6iUFPAbN7KjNqTx3eRHlh
-	 db0M+lsBqClKmaHFuiAUi8EnOpt9xPSZQS4UASdk41LoFZLNeAU2ztlc9ijJGtDxuY
-	 IFfBlLUDIO/oWUCo5Ll31sFMTNBrnWs7/lVrpfvSpePIf/SYbYwBDB8sT8h24N8P3r
-	 u984X96vnp0IJfSFvKsDzDLxalEJUGSCf0/AMJ805x/CB9EZe0Fftz+H5EwjmPP3iW
-	 hxf1tkA9e7j34xEbL9nrqodsbn1lgqEExv6vs8by+L0Iu/bIEAjLnU38xy8n1wSY9s
-	 DBnONCDx9Zxlw==
-Message-ID: <sashiko-outbox-172706@kernel.org>
+	b=DRSXoWWBMeHxdQ2ZPzo0JjHxkolbwvvmFQdwjQAV+b2wKpnBu+5II2s5zZHMsmDUX
+	 TdJmvfqWISk1pHwbTutG0WCSzRlyepnO9T/BKZYfMhOQLLPHIJUGVb0WiXSHIeubIz
+	 38DisaLOrg8MwFg9vPU85pAGRiWYtEv3iVCmarvd9QsILQd+Xk6mCL/ZN42O2Ti8Jl
+	 T/yUogUJ8j+cHSl9Ep7jlgV0y9dlHUEL+9mHf61f2HK06lRTU84rp93+vS0g29LtTQ
+	 UzstPUS/zQG6IQR3n9PHYPEu+QmY/KCHNSNHP1yfRG5k4225LcoAJeMA+qH4AN22YD
+	 f2D8cS1PlhmEQ==
+Message-ID: <sashiko-outbox-172713@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v10 2/8] gpiolib: regmap: add
- GPIO_REGMAP_QUIRK_SET_AFTER_DIR
+Subject: Re: [PATCH v10 7/8] gpio: pl061: switch data path to gpio-regmap
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
 Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
+In-Reply-To: <20261015-cv75-gpio-v10-7-3fe3eb315a55@ambarella.com>
 References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com>
- <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
+ <20261015-cv75-gpio-v10-7-3fe3eb315a55@ambarella.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 11:01:17 +0000
+Date: Thu, 15 Oct 2026 11:04:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -47,75 +46,83 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] gpio: regmap: direction_output bypasses set_with_clear callback
-- [Medium] gpio: regmap: silent masking of regmap I/O errors in direction_o=
-utput
+- [High] gpio: pl061: irq_domain use-after-free on teardown due to devres L=
+IFO order
+- [Medium] gpio: pl061: Missing IRQ resource helpers allows concurrent GPIO=
+ direction changes
 --
 
-commit 3bcfc79235e7b203090c7124352804ddb1bcdde7
+commit 754bf2316c41a0da3dbb26f8d31b1ba0d0a17c9d
 Author: Long Zhao <longzhao@ambarella.com>
+Subject: gpio: pl061: switch data path to gpio-regmap
 
-gpiolib: regmap: add GPIO_REGMAP_QUIRK_SET_AFTER_DIR
+This patch moves the PL061 get, set, and direction operations to use
+gpio-regmap. It keeps a custom irqchip and irq domain, creating the domain
+with private data and attaching it via gpio-regmap.
 
-This commit introduces a new quirk flag, GPIO_REGMAP_QUIRK_SET_AFTER_DIR,
-which allows the output value to be written after the direction change.
-This supports legacy controllers that ignore output writes while a line
-is still configured as an input.
-
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-
+> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+> index 5c6d4209dc8e7..3822faa3e2768 100644
+> --- a/drivers/gpio/gpio-pl061.c
+> +++ b/drivers/gpio/gpio-pl061.c
 [ ... ]
-
-> @@ -271,9 +272,17 @@ static int gpio_regmap_direction_output(struct gpio_=
-chip *chip,
->  			return ret;
->  	}
-> =20
-> -	gpio_regmap_set(chip, offset, value);
-> +	if (!(gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR))
-> +		gpio_regmap_set(chip, offset, value);
-> =20
-> -	return gpio_regmap_set_direction(chip, offset, true);
-> +	ret =3D gpio_regmap_set_direction(chip, offset, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR)
-> +		gpio_regmap_set(chip, offset, value);
-
-[Severity: High]
-Does this bypass the chip->set callback for hardware that uses separate set
-and clear registers?
-
-When setting the initial value during a direction change to output,
-hardcoding a call to gpio_regmap_set() instead of using the properly assign=
-ed
-callback (such as gpio_regmap_set_with_clear) means that if value =3D=3D 0,=
- it
-writes 0 to the reg_set_base register.
-
-On set/clear hardware, this is typically a no-op instead of properly writing
-the mask to reg_clr_base. This could leave the pin incorrectly driven high.
+> @@ -325,67 +284,159 @@ static const struct irq_chip pl061_irq_chip =3D {
+>  	.irq_set_wake		=3D pl061_irq_set_wake,
+>  	.irq_print_chip		=3D pl061_irq_print_chip,
+>  	.flags			=3D IRQCHIP_IMMUTABLE,
+> -	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+> +};
 
 [Severity: Medium]
-Is it safe to ignore the return value of gpio_regmap_set() here?
+Does removing GPIOCHIP_IRQ_RESOURCE_HELPERS leave the interrupt pins
+unprotected against concurrent GPIO direction changes?
 
-If the underlying bus (like I2C or SPI) encounters a failure or timeout
-during the register write, the negative error code is silently dropped.
+Without the .irq_request_resources and .irq_release_resources callbacks,
+the gpiolib gpiochip_lock_as_irq() helper is never invoked when an interrupt
+is requested. This means userspace or other subsystems could inadvertently
+reconfigure an actively interrupting pin as an output.
 
-The gpiolib core would be falsely informed that the direction and value were
-successfully configured, leading to state inconsistencies where software
-believes a line is driven high or low but the hardware register write faile=
-d.
+While omitting the default helpers avoids crashing since
+irq_data_get_irq_chip_data() now returns struct pl061 * rather than
+struct gpio_chip *, are custom callbacks needed here to properly fetch
+the gpio_chip and lock the line?
 
+[ ... ]
+> +	gpio_regmap =3D devm_gpio_regmap_register(dev, &config);
+> +	if (IS_ERR(gpio_regmap)) {
+> +		if (pl061->irq_domain)
+> +			irq_domain_remove(pl061->irq_domain);
+> +		return PTR_ERR(gpio_regmap);
+> +	}
 > +
-> +	return 0;
->  }
-> =20
->  void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
+> +	if (irq) {
+> +		ret =3D devm_add_action_or_reset(dev, pl061_remove_irq, pl061);
+
+[Severity: High]
+Will this devres registration order cause a use-after-free during device
+teardown?
+
+The driver registers the GPIO chip via devm_gpio_regmap_register(), which
+queues a devres action to unregister the chip via gpiochip_remove().
+
+Later, devm_add_action_or_reset() is called to register pl061_remove_irq().
+
+Since devres actions are unwound in LIFO order upon device unbind or probe
+failure, pl061_remove_irq() will execute first and free the irq_domain:
+
+pl061_remove_irq()
+    ...
+    irq_domain_remove(pl061->irq_domain);
+
+Afterward, the gpio_regmap teardown action runs and calls gpiochip_remove().
+This function iterates over active IRQs and dereferences the domain to
+dispose of mappings:
+
+gpiochip_remove()
+    ... accesses gc->irq.domain ...
+
+Since the domain was already freed by pl061_remove_irq(), does this result
+in a use-after-free?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015-cv75-gpio-=
-v10-0-3fe3eb315a55@ambarella.com?part=3D2
+v10-0-3fe3eb315a55@ambarella.com?part=3D7
