@@ -1,84 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FD84C8C7B
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017C34A1396
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792156804; cv=none; b=uRLZTckeOMwMcXWj1wuUurqkZkmhvErvCJhjQLGC3KJfGCOcCEGLl6ldo8bZ8IK4+Ra0NRPl5Ffj3tIR29febCDqF3i0a2RH4uABi4MkzzPq2RX/BJMWy4R1GfkXFCxTyZsDc7tXDdn0grDOJQRFmnoZXuQLv2E2dofrQ+5N4U4=
+	t=1792157059; cv=none; b=ogHb9V3qU4Wy/wZ3x9Vmvy5fOxO1CyURcXtQtcvdIk9cT1Uxr8EYf675SzqkdAYMjI97xbyIsf+tFmH9xbsyr9PewBUXf49e86Mgt6MU4piZFp0NBp1zI9Bnef6sp00ecKOvzwJ4Uba5oIOAizF0qZw8BRgLOUMITl877blqZTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792156804; c=relaxed/simple;
-	bh=htcXVBoJ+Oi571ojYkob1zz2/Li5ONJ1UWcvCyCVl6A=;
+	s=arc-20240116; t=1792157059; c=relaxed/simple;
+	bh=tptGbnUMiBCsaJa3McpSM7cvw+fPwwT/+mAijjESQgw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IEjMh7mr0wemPAfpBsOy9Yw8hPFxDcB6eJFYwGBtU3y18tOh/HkvkU9e2gyuUSgU5gsx0LtU0vFPj0eLQOfi7qVXqMKfqoCoXyIKSWB5pjvHXCX3hzc5PICOTiOJTsOdKoBqs3lY4ScmyrHBr/rX1iMVtTUOY6eW/rO+nTvfAK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8X54eF7; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=DhfIEwUkx+bBi8k2/rGhm5JQnx5++kIuPNu0oluTmPqAwAFkVs8hru+zlLPVx4qIVABCHqOuaNpJHYX5IY0zRG/sA6E4/Ulw9DGGoBTU2Tu/PHaZjBo6ja2eEQLpoCyhulShkipp3EeT34qW2Mm/xIu9pPj9x31RQedWPaTe2ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhVS1sBb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8X54eF7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD181F000C9
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:19:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhVS1sBb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C321F00ADF
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792156799;
-	bh=htcXVBoJ+Oi571ojYkob1zz2/Li5ONJ1UWcvCyCVl6A=;
+	s=k20260515; t=1792157057;
+	bh=tptGbnUMiBCsaJa3McpSM7cvw+fPwwT/+mAijjESQgw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=f8X54eF7RLyztOsQqmnAyN0IQARFaLQzxhmph37vBS3WwyzriRZ2CEx52VxcAvj03
-	 LW6FfeSRUceVdXIObmpsfHsqNWAZV4KZc0L+lhkP675/kW3yXd3S2ahDCy/nCyPAkP
-	 tRFBlnSHW1JzVhMZtgNHdAiXoTkrU0Gv1xlfxO2rX0A0XswOFN8Ucp4R4c/98xSa3o
-	 iQg0S2PtniLobKz7f4Qc40FH37DYGpu+mcUpW2Mxpvdry/a6+/g+KBy2cVlTAs+Rug
-	 0ma+7Nfg61VT3Q3p1ieKBGcJszYV+eMwPaAm6KVRdpjBPIsZTJpS0sXyWsogw+Xx6Z
-	 QBkhkomp7ayiQ==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5bb7c6980f1so5243034e87.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 06:19:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxXzFfFxfqDlinKU7LUIjpZMO58cfUbYtH6OuxKI+BQtU/eka0MlKp0cd8H5jQOpUbYoLdY+l7QNK28@vger.kernel.org
-X-Gm-Message-State: AFq9FYLyDUueNiGC7fe79HWmLyM/iJnxUd7P8bDAHC5Eo6WPlown7pZl
-	z3l0o/Xuffk5OkoATWOIJCAMMeCmJEKL+tP6RYmJb1DgPjeX7yk9fRY3uhK23Jri1XY9Ri+4FqU
-	Iw63pYnRM8XHNwqN9RIUttUAITK0nuSM=
-X-Received: by 2002:a05:6512:32d5:b0:5be:4792:82b4 with SMTP id
- 2adb3069b0e04-5be47928585mr1064494e87.19.1792156798198; Fri, 16 Oct 2026
- 06:19:58 -0700 (PDT)
+	b=VhVS1sBbaKLkdcvLt5i6gurhbGPS6GnTaL9afj14kDG2UyKbacO4DdRHG3unPm1z/
+	 EesiWEHhYiN7gJQo+wJxPOQw7wvbbd35FHkMYzoFAjmul/CgdZa7oHBmt9hBs3bEZl
+	 KOzAFdXS4JaGkCLnNIkil7kTOffV47s1XYtBl3kAOiuEux+AUF1hlIKG5sH6lyuCGP
+	 zhobrqKDM9G/CWliZVlCRhzq7E2eHE1IzfX+CpzBY9qtHcQdyY8KKeEd+w5njxPj32
+	 Gzbmf2VfVG8F3r+9eXSeruqbFG/aaFOo8ax+CERORR6yaMLOtsEn1Fy9uuPfHI/Vfj
+	 i8ld0EEUl51GQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3a5a26c8412so59680541fa.3
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 06:24:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxzeItStMXIN7Ds0ItPVCt7Fy6s1xxAm8Khgp9sVVKQt5WCcjn04gQcGa6SDVkBKBbEGBUZ0N4BAOz1@vger.kernel.org
+X-Gm-Message-State: AFq9FYIOywRJYKp0yH0AnkKN961wYqhl67CQmcFBGEJFSH5fuJqTfwhg
+	ge2i1uzqkbNqFzxiOb0taIykqZsom+psO/KDoeSQ+pB22kR3z737QMAOCOuCxVBG2zHbda1SzrP
+	RSn/BljNeRhR0y2l/vRsesap0hAkICjM=
+X-Received: by 2002:a05:651c:2212:b0:3a9:d70c:f75e with SMTP id
+ 38308e7fff4ca-3a9d70cf9femr44778141fa.7.1792157056449; Fri, 16 Oct 2026
+ 06:24:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261014160917.139241-2-junan76@163.com>
-In-Reply-To: <20261014160917.139241-2-junan76@163.com>
+References: <20261014-apple-m4-pro-max-initial-devicetrees-v2-0-961edd8d661b@cyberchaos.dev>
+ <20261014-apple-m4-pro-max-initial-devicetrees-v2-7-961edd8d661b@cyberchaos.dev>
+In-Reply-To: <20261014-apple-m4-pro-max-initial-devicetrees-v2-7-961edd8d661b@cyberchaos.dev>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 16 Oct 2026 15:19:44 +0200
-X-Gmail-Original-Message-ID: <CAD++jLk9Rga0OuaKyojE2ViT9cBcmD_Ow-pMth-qJbTfHgcybA@mail.gmail.com>
-X-Gm-Features: AclHuK_KFf_KBCaZwGWjeEf8eIfhE2fCyZ7XO76MOBzC6uLnM6o0vpqUkSR2sgw
-Message-ID: <CAD++jLk9Rga0OuaKyojE2ViT9cBcmD_Ow-pMth-qJbTfHgcybA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] pinctrl: stm32: fix hwspinlock timeout and EXTI
- mux locking
-To: Ju Nan <junan76@163.com>
-Cc: antonio.borneo@foss.st.com, bigeasy@linutronix.de, 
-	alexandre.torgue@foss.st.com, arnd@arndb.de, clrkwllms@kernel.org, 
-	lee@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rt-devel@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
-	mcoquelin.stm32@gmail.com, mfd@lists.linux.dev, rostedt@goodmis.org, 
-	u.kleine-koenig@pengutronix.de
+Date: Fri, 16 Oct 2026 15:24:04 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn6dKK+1WSash3t0ha8Av9zJENjY0voXD5kRqOqm+3fHA@mail.gmail.com>
+X-Gm-Features: AclHuK9pL3EIJMMfpSpFM0KiMYOGh8ROn5xZqcFmx2VF7M6wTBgCRfX7l979pQc
+Message-ID: <CAD++jLn6dKK+1WSash3t0ha8Av9zJENjY0voXD5kRqOqm+3fHA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] dt-bindings: pinctrl: apple,pinctrl: Add t6041 compatible
+To: Yureka Lilian <yureka@cyberchaos.dev>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Hector Martin <marcan@marcan.st>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Sasha Finkelstein <k@chaosmail.tech>, Mark Kettenis <kettenis@openbsd.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ju,
+On Wed, Oct 14, 2026 at 8:56=E2=80=AFAM Yureka Lilian <yureka@cyberchaos.de=
+v> wrote:
 
-On Wed, Oct 14, 2026 at 6:10=E2=80=AFPM Ju Nan <junan76@163.com> wrote:
+> The pin controller on the Apple Silicon T604x (M4 Pro/Max) SoCs is
+> compatible with t8103. Add "apple,t6041-pinctrl" as SoC specific
+> compatible under "apple,t8103-pinctrl".
+>
+> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
 
-> This series fixes two problems around the hwspinlock-protected EXTI mux
-> and pin configuration accesses in the STM32 pinctrl driver.
-
-Patches applied for v7.4.
-
-There are still complaints from Sashiko, but Sashiko always
-complains so I'd say at this point we are close to the merge
-window so it is better to follow up with separate fixes
-if there are more issues.
-
-As maintainer I kind of have to decide whether to wait for
-the perfect patch or if perfect is the enemy of good and
-just merge the patch so the baseline looks better, so I
-decided for the latter here.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
