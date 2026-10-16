@@ -1,93 +1,94 @@
-Received: from mx0b-0002e601.pphosted.com (mx0b-0002e601.pphosted.com [148.163.154.28])
+Received: from mx0a-0002e601.pphosted.com (mx0a-0002e601.pphosted.com [148.163.150.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30C029BD9A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104A12F3C1F;
 	Fri, 16 Oct 2026 04:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.154.28
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.150.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792125162; cv=fail; b=dxLpHaBrvg5k/Vw3H9oXRKVXOyF1mOeQVE5jc/S+pDf1y5YHZKzWJsNI9PLGvXLj79ovxRGWJV5DCYB8WG7tJ+rsGKtggHpbpnOokAFE7trqs4GDpf/MbcGc/liQs7XdgA1FhNKpTPQ0euV/clwRF0znzPje+daJgYpYdylJ4WI=
+	t=1792125162; cv=fail; b=chByzdQ8r2xcLwz9EVrfcRsJ8AmpMSfzGQq6DYBfN3fTFfcDsPaAKzxqN72tOWUJr1FSEFh4Vru/m2Zz7dbRx4JqR1RkKcpBjrUxG08LgDLkvg7Lnv2cpz/sbOGnodk2VjMSxZVuEfGZSrV04kIV4mHilHyUkNqr7BadVsIi4KY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792125162; c=relaxed/simple;
-	bh=QRolHkI3NAZL0h3+uAIC5lCWGsRXcb0X1/2obPMB8W0=;
+	bh=Tgx7URc7oMfyG7vag8JxD9Rl2R/YGmoGZuGjyArHL2o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=i9ov3u70ofAGmbTJtEuOjEwx/2RX9qSEcyc6/ZLiHeHpKvTIJboZLpv1fGArz8K9/aeyi6oBudrwuCZ/qLZqR/BIBlcYD66hYuECmMvYItQp96ijy3MNcDEtbtqgrgyU5mUCu9oz6jwLTi63iCcZqkquGS3aOd52rqXGrLgdIUQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=EK5lt31b; dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b=ZpuTAdD2; arc=fail smtp.client-ip=148.163.154.28
+	 In-Reply-To:To:CC; b=Zeek9NJ9otIzTkPkbO0Kr22U1LmX+9nP9fgMFaAEoZigRqGBVIv4XX8eRUfT27HTaQVsJMztbLo5dKH/5aGmvWS68h9RJQxaTlrj2MwqAa853xAljx65LDlYMM3xRi3jcATjHwJ7MvEGiQpLz4IDjkTY13+UCXls6OctI8ySNWM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=qunhcPec; dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b=V09Pald1; arc=fail smtp.client-ip=148.163.150.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="EK5lt31b";
-	dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b="ZpuTAdD2"
-Received: from pps.filterd (m0374956.ppops.net [127.0.0.1])
-	by mx0b-0002e601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69G2sl1C2484849;
+	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="qunhcPec";
+	dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b="V09Pald1"
+Received: from pps.filterd (m0384305.ppops.net [127.0.0.1])
+	by m0384305.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 69G2YjnR2062727;
 	Thu, 15 Oct 2026 23:32:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	proofpoint-05-2026; bh=KBxZ1niohUt7mFnY5zbiWUTEN9EpHDfXR06cR4QBQ
-	UE=; b=EK5lt31bM6HWYPhh+jFqOWoV4Lwa1mQ7Z03L5fOrsyVOJEDRv079rAtfU
-	ui4gfFmHL477LIOk6Xf3iqWwr91S2qZgz3sssofO0bYjVxfINRbqjkpH67oRiKW3
-	oeZSwuAhfAILH5Lst2ZHSTcCpOo07VFOHIBLWk6RJOHqEsVH38y6IcAoBz5aNUlg
-	6fmZRdYT4lKvyVR3IzsIHcrGPlpOW1TcgYCq2R6CWpbARNPCoFNJd+/WhFlpJoyK
-	DUtRLjbu1XrkxIdJ1fwngFUZNvOwIju/1cI7wgUCKErpQWOlsHfkEMXJSHCEYUr8
-	QnWS8KcNAp9MlFwsky/QzPyd4haAQ==
-Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013024.outbound.protection.outlook.com [40.93.196.24])
-	by mx0b-0002e601.pphosted.com (PPS) with ESMTPS id 4hb4nyth5u-1
+	proofpoint-05-2026; bh=xDgOCyMhd12KbbKjvoha1Hx3r+14+aACvXJUs3zJ1
+	Jk=; b=qunhcPecKJ2B4UeO07a2BZsRo3ybIYYh97nq8XEwutoTko31f708zq/ED
+	jplFcI6xlyAk+paZ9TPqr2gU+STw4Z5e64i67b7ZZU39GHnQo+ko7OUmhnIIIGJe
+	cHESncGi7KDvFJGG7meS1UjIGVTk56MDBDhu+9hjt1t7jw8xsS/8izOF7fxsYZjH
+	CyDjc7fTujihklv/YQzIztW0I5p7ZPDbx/L7naEmHlVcxSw/mkF52zgfNf2bTJQr
+	vcZbKXVhYQndppVbuQop7UW9GV4Md4BVQLAbhhUq6jW44GAoS5alcIbEZG0wLyQ1
+	z/i+Ll8tSg9ephmV5F9YUZdaro0hg==
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011045.outbound.protection.outlook.com [40.93.194.45])
+	by m0384305.ppops.net (PPS) with ESMTPS id 4hauwke05f-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 15 Oct 2026 23:32:37 -0500 (CDT)
+	Thu, 15 Oct 2026 23:32:38 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BDHeQCr2D3Pu+Gd3QeR+LgCjWz5Zm0YbPqZEGu65ySbttbktOsbEF6ibIuEqK1gR4XT+fuKKy4ARkvXHn1SYfSCkYnP31Np0yUAg/QeWY3MPjH4g+P6UsmUww1eH6Aurh2sh9e2B9VwwHIXJ20oV+rmgzoHMdgBXRnlV4ZjpmGedxaQ1v9NXg+hzZTW6yiKyfs6t4wkEwcAt91TVMmRjzuGjxYWcnLaqVdXD5biZCNmN4Hqqv50rw0h47jvBO+icLPcodpNEXFzRUbxAK5Qpn4HXEJg7IHQFoexssAlnQhYCJk4EOYSH1FKwmDInGsVo2i/SD6YNRZipiYqIQXEXHA==
+ b=f5l+vE3f0N2vTvP+Cxp6LKjZba1tCcP0Ey49WQwRXg2wTm2hriooOiWM5whXnj/YcM81DSbTy2QFoVTuB+TjvUdCfopE4siDJF9lBWnBvHgdGfhP0ZPzbdzw0D8CHEn4jdEtO+hWPx8urzdGBZFZyqBbExrSskoggLMmBeuA4YfftTrU+CUde9GKtfpPHRmUE0zlYASBhZWhXdQsvC8rBzSkyoN2O5/EQt/xonhdsq+ZYDl/mEZjUHGYpahyty3tgbm8awh34Wc5+qcNgfKJNvv+Lr/evWGJIBEMyJGcwKMD2N98e6d2zT+XxUeTMNHxq5R9kY9AiyTy9C4860kgbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KBxZ1niohUt7mFnY5zbiWUTEN9EpHDfXR06cR4QBQUE=;
- b=L6ty9Fchy5myUIc24JLA9F0bBjzdXKWnsEOIYXZOukq6aAa34HbnTLz0K+PCTH0JIkaEnydT4bidhZB9tOui0/YAYwXdG/Exd2gPUpkj0RO7qLGs0eNr9MBX7g4cS4jXrbTyIrVG7OOP0Ur7uIcMKbQpFwdhyH8PR2IPEk3eQe6QczkdCGIRCIKqG1axjQlMLXmRz8apFD2JYSLjwbXL4h5yVYXhAYNUZeDgbEelK9W3TbPV4V+XXUCqOJsh5q/YiAHlRbTb8BQknlEo5ePx78QIKhZNROh2AQYjHR4zziLbUSm4cvBz1A/W7z0w/khEg+g5JlNEmloew13Jhj6kNg==
+ bh=xDgOCyMhd12KbbKjvoha1Hx3r+14+aACvXJUs3zJ1Jk=;
+ b=NL4xTiqdNCMTJlOTcx+kDSXNV/i8AOQKHEdcdz5hmaqJDk4l26YVgfpNAE5jmInXajVf51K+Jt83uK2hcRsua8CRpXsy2tF5XV2EEGDSgY9eIOYs7Yah49Olypc7uVZhzX3VSz4Yhk7wjPBG1nC0wRHu7JA2B+Lm/pknCRsqxtOu9TO93qa7lHMMNSv6FJwwrMCdV72c16YESoWzLOMRk7AaWlO7chIXVWA4vMWeKeARjJiqoDI+2vLPFBb1kKOAsNU2FP5yzUKUkg9gx2Ax4f4utbACHmaqO0mBEli+J2oJUROk0OjY8YL1n2zpgdBzKkg6CxznjR+uPtdAQ4Tngw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=kernel.org smtp.mailfrom=ti.com; dmarc=pass
+ 198.47.21.194) smtp.rcpttodomain=kernel.org smtp.mailfrom=ti.com; dmarc=pass
  (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
  (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=ticloud.onmicrosoft.com; s=selector1-ticloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KBxZ1niohUt7mFnY5zbiWUTEN9EpHDfXR06cR4QBQUE=;
- b=ZpuTAdD28PEMGkIWYdongFg64JYYzijHlFu/AJ2yBZgxHnODfzjN7zcDOoS+YuHwtzj9jCYDi81MNmFHdY25S+Yl9P4CHUE5+9xkPvOCKP0WcXCpxheX0ArgPgbfEsQ+Se6qf+CnybdzwMKVlhL0kqHv1pCewdYvkLWkGxNFNKc=
-Received: from SJ0PR13CA0033.namprd13.prod.outlook.com (2603:10b6:a03:2c2::8)
- by SJ0PR10MB4542.namprd10.prod.outlook.com (2603:10b6:a03:2da::19) with
+ bh=xDgOCyMhd12KbbKjvoha1Hx3r+14+aACvXJUs3zJ1Jk=;
+ b=V09Pald1fWZ5svFrsbnEPyr8cZlnYCg5qo+fTsoIE3KagmesduF46m1J3Yn5B2kFWb/ZXvY3TAdijfH644qL2QNxmHPeIfoXnPw0g9YDFWdmGbnZYQDPUmLvxlpRaBnLeraemhmJ8Zn1lU8pFxEYYTApJdE8lGUGzy9TO1kzEv0=
+Received: from MN2PR01CA0053.prod.exchangelabs.com (2603:10b6:208:23f::22) by
+ IA0PR10MB7232.namprd10.prod.outlook.com (2603:10b6:208:406::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.8; Fri, 16 Oct
- 2026 04:32:36 +0000
-Received: from MW2PEPF0001467A.namprd04.prod.outlook.com
- (2603:10b6:a03:2c2:cafe::85) by SJ0PR13CA0033.outlook.office365.com
- (2603:10b6:a03:2c2::8) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 04:32:34 +0000
+Received: from BN1PEPF00005FFC.namprd05.prod.outlook.com
+ (2603:10b6:208:23f:cafe::41) by MN2PR01CA0053.outlook.office365.com
+ (2603:10b6:208:23f::22) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Fri, 16
- Oct 2026 04:32:35 +0000
+ Oct 2026 04:32:34 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 198.47.21.195) smtp.mailfrom=ti.com; dkim=none (message not signed)
+ is 198.47.21.194) smtp.mailfrom=ti.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- MW2PEPF0001467A.mail.protection.outlook.com (10.167.249.187) with Microsoft
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ BN1PEPF00005FFC.mail.protection.outlook.com (10.167.243.228) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 04:32:34 +0000
-Received: from DFLE203.ent.ti.com (10.64.6.61) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 04:32:33 +0000
+Received: from DFLE207.ent.ti.com (10.64.6.65) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Thu, 15 Oct
- 2026 23:31:49 -0500
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE203.ent.ti.com
- (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 23:31:46 -0500
+Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Thu, 15 Oct
- 2026 23:31:49 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 23:31:46 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45 via Frontend
- Transport; Thu, 15 Oct 2026 23:31:49 -0500
+ Transport; Thu, 15 Oct 2026 23:31:46 -0500
 Received: from psdkl-workstation0.dhcp.ti.com (psdkl-workstation0.dhcp.ti.com [10.24.51.24])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 69G4VUkb593387;
-	Thu, 15 Oct 2026 23:31:46 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 69G4VUka593387;
+	Thu, 15 Oct 2026 23:31:42 -0500
 From: Aniket Limaye <a-limaye@ti.com>
-Date: Fri, 16 Oct 2026 10:00:39 +0530
-Subject: [PATCH v2 4/4] gpio: davinci: Add ti,tda54-gpio compatible
+Date: Fri, 16 Oct 2026 10:00:38 +0530
+Subject: [PATCH v2 3/4] gpio: davinci: Add support for level-triggered
+ interrupts
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -96,7 +97,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20261016-upstream-tda54-gpio-v2-4-5c4f8b10cdbc@ti.com>
+Message-ID: <20261016-upstream-tda54-gpio-v2-3-5c4f8b10cdbc@ti.com>
 References: <20261016-upstream-tda54-gpio-v2-0-5c4f8b10cdbc@ti.com>
 In-Reply-To: <20261016-upstream-tda54-gpio-v2-0-5c4f8b10cdbc@ti.com>
 To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linusw@kernel.org>,
@@ -112,92 +113,370 @@ CC: <vigneshr@ti.com>, <u-kumar1@ti.com>, <nm@ti.com>,
 X-Mailer: b4 0.14.3
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2PEPF0001467A:EE_|SJ0PR10MB4542:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b14fc51-46dd-42ad-4de7-08df2b3e7ff3
+X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFC:EE_|IA0PR10MB7232:EE_
+X-MS-Office365-Filtering-Correlation-Id: e67230e2-24cf-423f-aeee-08df2b3e7f4c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|376014|82310400026|36860700016|56012099006|261009223027099003|22082099003|18002099003|10067099003|6133799003;
+	BCL:0;ARA:13230040|1800799024|23010399003|36860700016|376014|82310400026|56012099006|261009223027099003|18002099003|22082099003|10067099003|6133799003|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	t4dYbN9TGKjJ7A0jUy+VCshnBBcfLy+Gx5o0tDEeYQArPePPwFgkHhD/pYMgGKhIh0vNWbUfWbXo2JHUtgqS/GIe23tjUKXNGhybeGjHSn6KWBK6OUNWz4ZwbY8ZdZoM6QBuiBuHouSpWIGK+j0lnQu5SAj5MnVyVXUSC3DC3ey/VeRz9R5L3lntlhCT0UxKEyuHVcSDTiKxuYihaRWW16pZzjH3nqu/45L3CTIT6t/Vj3BIW503LbZ/LMN+wPWIsZxRf8A6RklYT7jvvS+3FbTbKmUt1kXEZamQBxq1QamGeRIxsQrsRyxChevyk7JdrpsrJZxXYXJCO5vRjwaxEY/TB5O+TT1kXUBQfnM8sB4wie/yFenvvl1qFg0oZzmTO+VrPpGAEqBKxAc0PYkize6sbZgGDmov9ZT9r1q52BvCfGwpr+NavTRRduZNwgSKT9vIezgjhcxb5Bwkod2RGINo4xpe0fwJUWkYISb9z8t2dUy3/ofH6SwAgMhWwASWXyS41EqleHqZlbFNYLvIyNu4J3+RSnYpgJt/wg13mINt4XJINHrQ9bbJ4/CJHons0LWNyXF6V+kXdlBx8UWHIAYUy36uYOI01a5du624RcQVM77DmjpjoOJTME3AzqJxg6MzNNvfQ6Izco4qksBTW7xtS/10XgVNaugDgWLBPxLq1pOZgQQUb1Nb3v89oZc5jXi+smgy+Ai4oVVH+L9m2Q==
+	TdBbhyFXCDm3X9T0+/pq+w7q2JjNauSfcguylbCfwmSjdTqT26wc9cimHHYn2fAZntXGOe6E58jmsKNTgQOt/MZKIoPNSz09kGnOhreVWRfatxh9/EX+UjqUN7QWQAE0ep+N6OGo4iTJ6g1Zx7yhj8otpd/mCzC3sv/6FeIxVMWoyt/0jwj2DFaioSHVB8WQDE9BpeAXI5Mog83gROlPdJJdM3c0GpTR1WcrX+mwzBXuDX3AqGZWN9ldnQbfBf/48SbmHe0CNMH0FVHDvmPasU1bLGS01liDxqvde5fkzTvhqzcP4lbLo/PLgDSvSf6YM8ETb+NhU5LH4PC9vry6XiiWMGG9cxWEvXzVqWqq0Rpi7YCCco5ajw8uj0/3B1ID2to3E7X/mnW9mUaWtRUFBpliRWeIOcRMztvi8A9V5aUTuwWNExyAd9qVoV/8TF+dR9YDkyMyInJ9JmID1qWmDwbtsVzgYvOvSWgvf1GYRYImOblUC/4fNvoXywLoUiqMy+v5wzxRTZ9Q7Y3Iak9UlwaMsd3LHJG68H4D7tdPhqBN/Ep+wlDP9dxJzz05INZ6T9uLToBtbOJmLs+4ZY3Wck9nMhT2r4Vq9Xbs2AiDB0NSlHy5MayCIkAXCzJPyWHZP9ociWsOuLE7b0B8Z6Q/6g==
 X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(82310400026)(36860700016)(56012099006)(261009223027099003)(22082099003)(18002099003)(10067099003)(6133799003);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(36860700016)(376014)(82310400026)(56012099006)(261009223027099003)(18002099003)(22082099003)(10067099003)(6133799003)(13003099007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	y6/T1ayoz/KgOhUfr9hCwZOsNw2iDbjRLN+UDyVMy/Se7cUfqEHkcaG3u8+Tf0sHxgERrEUBeiutq+E4DlMeym+sjIbRboA74Bx1NR3+oI0B9Hsz1GuE4Ldr67Uid3n2zRhT+mg/td2GUx43l/VNm3oB+V/XQM+0FthYDrFWiLS2uMECImi6zY11ChTybr/ed/7smCybCLoCtg8vaTHj8TNLL4q1BG2nK8kgGIRN1RlRK+LeOhEKDbzwBmennyvDVIXmByJK2QD3ytshuZRK///NRCN4MVYJek4QGjlMJhKqokQlZ1GcbktKWvjOF381I2XnMLwZoDvVBYI365qDKDAh6pJ5Uz3uduKvKHCuq6FsFi/+Pb8FJRJ+44uSzYA+uopA93YfYVMS1pWyKK+5izMHYna4vtH2nAD2dmo2QF3W2PSoUGyBJ0tQNZls5g05
+	LKexed8R2K+DqrRilm9AfmlASYvUwDfIukXYpsyX4L54UnH+VSTnaPXMhJX7yPexELHtWaGgCf5el3Qd5mJeOeNsL8NMVY/ysgS6aXqhl6ZD/sC8OCI6QnJyt9BzZ4PACY1W/b9U3IH4ig0pVhtElnnbs+dWq1D8NsVtqfTUBcSmQYFuPTq2V3Zs5XtO1SVDyrbg4lmMt0y6ZWp9UNehl3YoW0gVuGlWhk5ocgj1Cse8ILOdb5zol9L3/pYMUT6ANB8uiEblAVRYYQg93WR6F4qjFG2BpL4PbAsyx67LUUY4VaOWzoJR33qCcgKpX40PRe243cLe27S0fLYOv7azfLXH95U7e5Z2a88F+SlPi163GdVsPNdtatDMXK54OByq6H0oV/vPT8MzcboRD1b5xlfGGcjBi6qkewhW9YMCA4IBhDccedo1Ttpjj4NI6qJu
 X-Exchange-RoutingPolicyChecked:
-	OWnnO2wpY1weNrY997LNS+DignrPLjiQbEJwoNPzghBKagyVt/BR4Are/D+vJJ7zR4Dz1UO7PEXEJTXiXb4cg0X9+IQOUOnD66EvAhLuGYEcATcxi+ldHaN0CB1pbNq1nk/r7inB3tyg94ytk517WUfhUvc7sbVbvuyisvbu5Vg9HeGSiemOHff9dgo9MUYx0BS913+W/FdNro+UMqvfGMyZJFYffgI6j0AVejapG01Vlo+EeaShQ6hTendOGQAczm8Z/NfKKLKGaMsKLRBR1OZIRejqHqKVBabkiWYhfu7PpVLSeeKnjuJgU4lCMoLedi0277hOPM/UOpz5o2x2Fw==
+	v/LCQ+jFHJ2ujadmM5o7BjHC7u2CqS2pf3soE7+c3kglo3UkHlTFj6mnRhfIhy0bIknPX2cb52btqqi7wLIdXS0/RpWh1glPXhQr3BadwYbsvKMkhwfHVK+ixSq41ZIL82xpoWHrXLCORdpZMKIzpZ2vp34FLbpvSH9Y3HOIsmU5r059eWPPoaGh3jmQsEcJlQHhpb0AkZ6Hh5JZG50pOr7qq+cTQIdwyZw7zCsG1QJfp9iOVb9+ulTNCarq+CPue907EyPXX26MQtDLcVkbrQcqRIg+6f01i7Wg/SVbR2LVllnHUshqKwqhH59cQRT76YxeIsBjhU5FSn2X55a/6g==
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 04:32:34.3266
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 04:32:33.2422
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b14fc51-46dd-42ad-4de7-08df2b3e7ff3
+X-MS-Exchange-CrossTenant-Network-Message-Id: e67230e2-24cf-423f-aeee-08df2b3e7f4c
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MW2PEPF0001467A.namprd04.prod.outlook.com
+	BN1PEPF00005FFC.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4542
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE2MDAxNyBTYWx0ZWRfX7fZrwcrALMPg
- CafY6EC0F70I+gofNUMgWq5h0cIa4SVpA+OucNBJehRnh/OpnMUfCwSWVd7v3zB3HESEom7UpOV
- Q5JuS4A2svQGSz4sJydi85eDgDETsow=
-X-Proofpoint-ORIG-GUID: wmJc4AQ861jZlw8XxuHKDu_J48ZsTcA_
-X-Proofpoint-GUID: wmJc4AQ861jZlw8XxuHKDu_J48ZsTcA_
-X-Authority-Analysis: v=2.4 cv=FMWOVOos c=1 sm=1 tr=0 ts=6ad1a8e5 cx=c_pps
- a=SvXgiSASQu/JPdBzctYFLA==:117 a=tJyPKKxUohctrY4NYmUjkA==:17
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7232
+X-Proofpoint-GUID: jAI1qba3wYalPCZdbyeP1XnpuiMp2Swh
+X-Proofpoint-ORIG-GUID: jAI1qba3wYalPCZdbyeP1XnpuiMp2Swh
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE2MDAxNyBTYWx0ZWRfXy7gYQsfYb79v
+ jn2we0lgDXWZQg9hOJ544iCtHCiIvehDFSwsBoTWT7oq8M3AAQ7cDTLtNKLKjZVDWuCowR3jMvM
+ HROqw/WpBHo0mPfLITNyGkoaEZa8QSo=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE2MDAxNyBTYWx0ZWRfXzfANOr5+BwfC
+ J1mkCualOLZRPTGgg8GYGNH0VP09bnNGFub25jtDaJ7J2vByw3Vnk2H8/uLeCnnRN9aZDK41jwo
+ 2DEhgmcdHsm+dPMQ5906/rAIx8YOu8P8kGImLkE2O3klXJy0YpjuXjxc/dLAajdFmLgXuaq05ls
+ U9laveNZGSGCiiQDSjqgUh7gX8QKewKASkVWSDhQVS2Ly+4XENVQz+nf1SgQ5FTwZqIdjBUfJT0
+ 2FVdejTC8aDmnDwkH4zUSgBce1y6QnCXnxRmGsdxpaznkqrmzVwOmdQcOX6qLcbkpggS0Sb7hpe
+ ZvVQ2dNYX281Q8PWtw7YfettWQr6NkFFL19CMS636rFtIrtOEc0nOIY0FK1xLFnxRc4go66qI1q
+ RKpC9vZxhqyCPGu8iOmI18Tem1DCvFR1o3tIhJ5bcY32nJiacV0h4SwFQtEYFbzy0g6DokSul3U
+ biIVxDj2bAoX/eWd0DA==
+X-Authority-Analysis: v=2.4 cv=DOsacCNb c=1 sm=1 tr=0 ts=6ad1a8e6 cx=c_pps
+ a=z/rjtr9/JqYX5j7IdmSYkQ==:117 a=iwqwCZQqcuTv3JOpYdM7/Q==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10
  a=AlMIdn_sM9wA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z8NIEmU8O1QQgoT56wFK:22
- a=jwouBfj2j3NM8CExmVVE:22 a=sozttTNsAAAA:8 a=dobktXTTa06qOYsQkFEA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE2MDAxNyBTYWx0ZWRfX8IAZrXuiaMMq
- K3Wq2MIjUuV8MN1jA2WDwG875WE6iithW/XeY7oRnP0memr90mBUXFJeiyzBLwT+8KOyCkVcLMS
- ZI9eGjL/Wc6A+09oukNkUHiN9X+Ct2HL7xIrRiOi5A/1WWS94y/ERQipof+WI9PKTPekprAjcAV
- xpzHzofcjkzVGO4TaFQhYhYMjIQZ4ag1x6stSfpBXEs26HLbRCrks6HsNGOtUYfRR+c6UcS4IKg
- SPOrRwKhHHK7gq+aDlwuikdMbocVxSxJh7mDoeotNF4Jwbi6VdB2HIkTxPR59IdCx8vljnGwiLR
- xHTCLghmq7na4lL4nAMxE04/Ua/OVSqF/HroDTLxFo1pXllArROK2HRJrxsjbccG/ayKYKDrsio
- Y70wB4ty4kHUJr4wzsl9gJZo7rR6llEA5ZkPqOsVVoTFP3lXMEFzRnl7RByxCyXoscNlK1GvU3Z
- vSf1uR9gUDWZp2P8lhQ==
+ a=taLDd7a_hP9WKsMzeGRc:22 a=VwQbUJbxAAAA:8 a=sozttTNsAAAA:8
+ a=RjqJ477x7VvO0F8QJdkA:9 a=QEXdDO2ut3YA:10
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015 phishscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0 phishscore=0
+ impostorscore=0 clxscore=1015 suspectscore=0 malwarescore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610160017
 
-Add the ti,tda54-gpio compatible with extended registers for
-level-triggered interrupt support.
+Add support for IRQ_TYPE_LEVEL_HIGH and IRQ_TYPE_LEVEL_LOW through the
+extended registers: set_high/clr_high/set_low/clr_low. Extend struct
+davinci_gpio_match_data with an ext_reg flag to describe such
+controllers.
+
+The level enables are cleared on setup and are only set when a level
+trigger is requested, so the default trigger of both edges is
+preserved.
+
+No existing compatible sets ext_reg, so there is no functional change
+for current users.
 
 Signed-off-by: Aniket Limaye <a-limaye@ti.com>
+
 ---
- drivers/gpio/gpio-davinci.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+
+Changes in v2:
+- davinci_gpio_irq_setup() now only sets IRQ_TYPE_EDGE_BOTH by default
+- For level-triggered interrupts use handle_level_irq()
+- Link to v1: https://lore.kernel.org/r/20260923-upstream-tda54-gpio-v1-2-d1a0a199c836@ti.com
+---
+ drivers/gpio/gpio-davinci.c | 113 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 108 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 8d0ebf4afd169..db1f722693e0e 100644
+index ab1b465dfcd15..8d0ebf4afd169 100644
 --- a/drivers/gpio/gpio-davinci.c
 +++ b/drivers/gpio/gpio-davinci.c
-@@ -535,6 +535,11 @@ static const struct davinci_gpio_match_data keystone_gpio_data = {
- 	.get_irq_chip = keystone_gpio_get_irq_chip,
+@@ -39,16 +39,25 @@ struct davinci_gpio_regs {
+ 	u32	intstat;
  };
  
-+static const struct davinci_gpio_match_data tda54_gpio_data = {
-+	.get_irq_chip = keystone_gpio_get_irq_chip,
-+	.ext_reg = true,
++struct davinci_gpio_regs_ext {
++	u32	set_high;
++	u32	clr_high;
++	u32	set_low;
++	u32	clr_low;
 +};
 +
- static const struct of_device_id davinci_gpio_ids[];
+ typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
  
- /*
-@@ -791,6 +796,7 @@ static const struct of_device_id davinci_gpio_ids[] = {
- 	{ .compatible = "ti,keystone-gpio", .data = &keystone_gpio_data },
- 	{ .compatible = "ti,am654-gpio", .data = &keystone_gpio_data },
- 	{ .compatible = "ti,dm6441-gpio", .data = &davinci_gpio_data },
-+	{ .compatible = "ti,tda54-gpio", .data = &tda54_gpio_data },
- 	{ /* sentinel */ },
+ struct davinci_gpio_match_data {
+ 	gpio_get_irq_chip_cb_t get_irq_chip;
++	bool ext_reg;
  };
- MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
+ 
+ #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
+ 
+ static void __iomem *gpio_base;
+ static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
++static unsigned int offset_array_ext[5] = {0xd8, 0xe8, 0xf8, 0x108, 0x118};
+ 
+ struct davinci_gpio_irq_data {
+ 	void __iomem			*regs;
+@@ -62,9 +71,11 @@ struct davinci_gpio_controller {
+ 	/* Serialize access to GPIO registers */
+ 	spinlock_t		lock;
+ 	void __iomem		*regs[MAX_REGS_BANKS];
++	void __iomem		*regs_ext[MAX_REGS_BANKS];
+ 	int			gpio_unbanked;
+ 	int			irqs[MAX_INT_PER_BANK];
+ 	struct davinci_gpio_regs context[MAX_REGS_BANKS];
++	struct davinci_gpio_regs_ext	context_ext[MAX_REGS_BANKS];
+ 	u32			binten_context;
+ };
+ 
+@@ -172,6 +183,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	unsigned int ngpio, nbank, nirq, gpio_unbanked;
+ 	struct davinci_gpio_controller *chips;
+ 	struct device *dev = &pdev->dev;
++	const struct davinci_gpio_match_data *match_data;
++	bool ext_reg = false;
+ 
+ 	/*
+ 	 * The gpio banks conceptually expose a segmented bitmap,
+@@ -194,6 +207,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to get the unbanked GPIOs property\n");
+ 
++	match_data = device_get_match_data(dev);
++	if (match_data)
++		ext_reg = match_data->ext_reg;
++
+ 	if (gpio_unbanked)
+ 		nirq = gpio_unbanked;
+ 	else
+@@ -239,8 +256,11 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	chips->gpio_unbanked = gpio_unbanked;
+ 
+ 	nbank = DIV_ROUND_UP(ngpio, 32);
+-	for (bank = 0; bank < nbank; bank++)
++	for (bank = 0; bank < nbank; bank++) {
+ 		chips->regs[bank] = gpio_base + offset_array[bank];
++		if (ext_reg)
++			chips->regs_ext[bank] = gpio_base + offset_array_ext[bank];
++	}
+ 
+ 	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
+ 	if (ret)
+@@ -271,10 +291,15 @@ static void gpio_irq_mask(struct irq_data *d)
+ 	struct davinci_gpio_controller *chips = irq_data_get_irq_chip_data(d);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	struct davinci_gpio_regs __iomem *g = chips->regs[hwirq / 32];
++	struct davinci_gpio_regs_ext __iomem *g_ext = chips->regs_ext[hwirq / 32];
+ 	uintptr_t mask = (uintptr_t)irq_data_get_irq_handler_data(d);
+ 
+ 	writel_relaxed(mask, &g->clr_falling);
+ 	writel_relaxed(mask, &g->clr_rising);
++	if (g_ext) {
++		writel_relaxed(mask, &g_ext->clr_high);
++		writel_relaxed(mask, &g_ext->clr_low);
++	}
+ 
+ 	gpiochip_disable_irq(&chips->chip, hwirq);
+ }
+@@ -284,12 +309,16 @@ static void gpio_irq_unmask(struct irq_data *d)
+ 	struct davinci_gpio_controller *chips = irq_data_get_irq_chip_data(d);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	struct davinci_gpio_regs __iomem *g = chips->regs[hwirq / 32];
++	struct davinci_gpio_regs_ext __iomem *g_ext = chips->regs_ext[hwirq / 32];
+ 	uintptr_t mask = (uintptr_t)irq_data_get_irq_handler_data(d);
+ 	unsigned status = irqd_get_trigger_type(d);
+ 
+ 	gpiochip_enable_irq(&chips->chip, hwirq);
+ 
+-	status &= IRQ_TYPE_EDGE_BOTH;
++	if (g_ext)
++		status &= IRQ_TYPE_SENSE_MASK;
++	else
++		status &= IRQ_TYPE_EDGE_BOTH;
+ 	if (!status)
+ 		status = IRQ_TYPE_EDGE_BOTH;
+ 
+@@ -297,6 +326,31 @@ static void gpio_irq_unmask(struct irq_data *d)
+ 		writel_relaxed(mask, &g->set_falling);
+ 	if (status & IRQ_TYPE_EDGE_RISING)
+ 		writel_relaxed(mask, &g->set_rising);
++	if (status & IRQ_TYPE_LEVEL_HIGH)
++		writel_relaxed(mask, &g_ext->set_high);
++	if (status & IRQ_TYPE_LEVEL_LOW)
++		writel_relaxed(mask, &g_ext->set_low);
++}
++
++static bool gpio_irq_trigger_valid_ext(unsigned int trigger)
++{
++	if (trigger & ~IRQ_TYPE_SENSE_MASK)
++		return false;
++
++	return (trigger & IRQ_TYPE_LEVEL_MASK) != IRQ_TYPE_LEVEL_MASK;
++}
++
++static int gpio_irq_type_ext(struct irq_data *d, unsigned int trigger)
++{
++	if (!gpio_irq_trigger_valid_ext(trigger))
++		return -EINVAL;
++
++	if (trigger & IRQ_TYPE_LEVEL_MASK)
++		irq_set_handler_locked(d, handle_level_irq);
++	else
++		irq_set_handler_locked(d, handle_simple_irq);
++
++	return 0;
+ }
+ 
+ static int gpio_irq_type(struct irq_data *d, unsigned trigger)
+@@ -307,6 +361,15 @@ static int gpio_irq_type(struct irq_data *d, unsigned trigger)
+ 	return 0;
+ }
+ 
++static const struct irq_chip gpio_irqchip_ext = {
++	.name		= "GPIO",
++	.irq_unmask	= gpio_irq_unmask,
++	.irq_mask	= gpio_irq_mask,
++	.irq_set_type	= gpio_irq_type_ext,
++	.flags		= IRQCHIP_IMMUTABLE | IRQCHIP_SET_TYPE_MASKED | IRQCHIP_SKIP_SET_WAKE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
+ static const struct irq_chip gpio_irqchip = {
+ 	.name		= "GPIO",
+ 	.irq_unmask	= gpio_irq_unmask,
+@@ -391,10 +454,12 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+ {
+ 	struct davinci_gpio_controller *d;
+ 	struct davinci_gpio_regs __iomem *g;
++	struct davinci_gpio_regs_ext __iomem *g_ext;
+ 	u32 mask, i;
+ 
+ 	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
+ 	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
++	g_ext = (struct davinci_gpio_regs_ext __iomem *)d->regs_ext[0];
+ 	for (i = 0; i < MAX_INT_PER_BANK; i++)
+ 		if (data->irq == d->irqs[i])
+ 			break;
+@@ -404,13 +469,20 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+ 
+ 	mask = __gpio_mask(i);
+ 
+-	if (trigger & ~IRQ_TYPE_EDGE_BOTH)
++	if (g_ext ? !gpio_irq_trigger_valid_ext(trigger) :
++		    (trigger & ~IRQ_TYPE_EDGE_BOTH))
+ 		return -EINVAL;
+ 
+ 	writel_relaxed(mask, (trigger & IRQ_TYPE_EDGE_FALLING)
+ 		     ? &g->set_falling : &g->clr_falling);
+ 	writel_relaxed(mask, (trigger & IRQ_TYPE_EDGE_RISING)
+ 		     ? &g->set_rising : &g->clr_rising);
++	if (g_ext) {
++		writel_relaxed(mask, (trigger & IRQ_TYPE_LEVEL_HIGH)
++			       ? &g_ext->set_high : &g_ext->clr_high);
++		writel_relaxed(mask, (trigger & IRQ_TYPE_LEVEL_LOW)
++			       ? &g_ext->set_low : &g_ext->clr_low);
++	}
+ 
+ 	return 0;
+ }
+@@ -421,9 +493,11 @@ davinci_gpio_irq_map(struct irq_domain *d, unsigned int irq,
+ {
+ 	struct davinci_gpio_controller *chips =
+ 				(struct davinci_gpio_controller *)d->host_data;
++	const struct irq_chip *chip = chips->regs_ext[0] ? &gpio_irqchip_ext :
++							    &gpio_irqchip;
+ 
+-	irq_set_chip_and_handler_name(irq, &gpio_irqchip, handle_simple_irq,
+-				"davinci_gpio");
++	irq_set_chip_and_handler_name(irq, chip, handle_simple_irq,
++				      "davinci_gpio");
+ 	irq_set_irq_type(irq, IRQ_TYPE_NONE);
+ 	irq_set_chip_data(irq, (__force void *)chips);
+ 	irq_set_handler_data(irq, (void *)(uintptr_t)__gpio_mask(hw));
+@@ -481,6 +555,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
+ 	struct davinci_gpio_regs __iomem *g;
++	struct davinci_gpio_regs_ext __iomem *g_ext;
+ 	struct irq_domain	*irq_domain = NULL;
+ 	struct irq_chip *irq_chip;
+ 	struct davinci_gpio_irq_data *irqdata;
+@@ -551,6 +626,11 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		g = chips->regs[0];
+ 		writel_relaxed(~0, &g->set_falling);
+ 		writel_relaxed(~0, &g->set_rising);
++		g_ext = chips->regs_ext[0];
++		if (g_ext) {
++			writel_relaxed(~0, &g_ext->clr_high);
++			writel_relaxed(~0, &g_ext->clr_low);
++		}
+ 
+ 		/* set the direct IRQs up to use that irqchip */
+ 		for (gpio = 0; gpio < chips->gpio_unbanked; gpio++) {
+@@ -575,6 +655,11 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		g = chips->regs[bank / 2];
+ 		writel_relaxed(~0, &g->clr_falling);
+ 		writel_relaxed(~0, &g->clr_rising);
++		g_ext = chips->regs_ext[bank / 2];
++		if (g_ext) {
++			writel_relaxed(~0, &g_ext->clr_high);
++			writel_relaxed(~0, &g_ext->clr_low);
++		}
+ 
+ 		/*
+ 		 * Each chip handles 32 gpios, and each irq bank consists of 16
+@@ -614,7 +699,9 @@ static void davinci_gpio_save_context(struct davinci_gpio_controller *chips,
+ 				      u32 nbank)
+ {
+ 	struct davinci_gpio_regs __iomem *g;
++	struct davinci_gpio_regs_ext __iomem *g_ext;
+ 	struct davinci_gpio_regs *context;
++	struct davinci_gpio_regs_ext *context_ext;
+ 	u32 bank;
+ 	void __iomem *base;
+ 
+@@ -628,6 +715,12 @@ static void davinci_gpio_save_context(struct davinci_gpio_controller *chips,
+ 		context->set_data = readl_relaxed(&g->set_data);
+ 		context->set_rising = readl_relaxed(&g->set_rising);
+ 		context->set_falling = readl_relaxed(&g->set_falling);
++		g_ext = chips->regs_ext[bank];
++		if (g_ext) {
++			context_ext = &chips->context_ext[bank];
++			context_ext->set_high = readl_relaxed(&g_ext->set_high);
++			context_ext->set_low = readl_relaxed(&g_ext->set_low);
++		}
+ 	}
+ 
+ 	/* Clear all interrupt status registers */
+@@ -638,7 +731,9 @@ static void davinci_gpio_restore_context(struct davinci_gpio_controller *chips,
+ 					 u32 nbank)
+ {
+ 	struct davinci_gpio_regs __iomem *g;
++	struct davinci_gpio_regs_ext __iomem *g_ext;
+ 	struct davinci_gpio_regs *context;
++	struct davinci_gpio_regs_ext *context_ext;
+ 	u32 bank;
+ 	void __iomem *base;
+ 
+@@ -658,6 +753,14 @@ static void davinci_gpio_restore_context(struct davinci_gpio_controller *chips,
+ 			writel_relaxed(context->set_rising, &g->set_rising);
+ 		if (readl_relaxed(&g->set_falling) != context->set_falling)
+ 			writel_relaxed(context->set_falling, &g->set_falling);
++		g_ext = chips->regs_ext[bank];
++		if (g_ext) {
++			context_ext = &chips->context_ext[bank];
++			if (readl_relaxed(&g_ext->set_high) != context_ext->set_high)
++				writel_relaxed(context_ext->set_high, &g_ext->set_high);
++			if (readl_relaxed(&g_ext->set_low) != context_ext->set_low)
++				writel_relaxed(context_ext->set_low, &g_ext->set_low);
++		}
+ 	}
+ }
+ 
 
 -- 
 2.53.0
