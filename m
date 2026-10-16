@@ -1,99 +1,146 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEA42D5932;
-	Fri, 16 Oct 2026 10:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0DD3B8BDA
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 10:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792146737; cv=none; b=Kzrrrv5fkI14Ozqp6LFHq/c/Zt0ituXVHNhp3/d6CDqqRtTnC/oGgx3HM94hwF4ajyXMUuzkgaK0g//rU6C+VnQ+oaruAYqoESvYBTyBfou4u1fD9oz49cTIv0l70qHmiyIApKFa/+VcyUMZj+5U2RgFMuxcwqqxboV0oBkDJS4=
+	t=1792148155; cv=none; b=K+r2F94nY97hrAZ81d2datihHUI5MGuTj1Pe6QEAk7roxCK+Y+K30kP6h5C4Xl2buP4Jw+LJMba5nPw98+AawoRszVv6ZpE3QXqrXh8fs8k225UZ/DDXbyrP2IBrrqZuomFNKh54RnceQked7ci4/ts6c9Bb4JGZ3aqNs6T7rJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792146737; c=relaxed/simple;
-	bh=QA6H725sNaaCumj0ZOWAynE1zh2dAh5usErDk4nYc9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=af43c+oxdXGxlW7u+xwHv/7WJ+EcqV/PSu/sAAQGGbQyO3FGtRI0mi+i1BV8AR1oAWYNNsDDzP/BHImM94WaSqMpkOZrIjw416wHzbMa8ZtV/yRBaGpI9jiBfm3LFkWFODANENWd/hPRQGchYs5otBbHULCcQfxQco/V09HkbPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQ1uOra4; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1792148155; c=relaxed/simple;
+	bh=FWSRLNO9cLDgEi6X8otQID0ZFjodlP6sP+D8agqsO9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rO31Xdhum/XdesxzW6FfxI2EDWUPPoB7CW2ULRQCyKaGiRjlpoRKVQMbL0/NJj8psl5lji3gKq8IDf0ETJ/lFwf+s1Ki1Ln6Gi3zkuccyk+hQ3eCm2H5djmyCzbK7W8X29cZi6pXmxvcDHkyM0dbVjOlZdkth4B2j1Gq6syVp7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnJHEKUf; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQ1uOra4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792146736; x=1823682736;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QA6H725sNaaCumj0ZOWAynE1zh2dAh5usErDk4nYc9Y=;
-  b=MQ1uOra4WbEHwKoY9WXf6brSrOUajA0eY3gKWTbWq/L42wnQem4H0Xsy
-   3cMpt9eTe67sG8gTOqZACsPgtFD2+6U1EZ1qMvz7+mQSBPYjqvmUOWfiO
-   +Yur4O7q2q+Z+L4kio0Sua//yYv+oMoxiNFd9g8oWb1pRU6oRZd1PhTKm
-   eX80a22NHocvi4pYkI6P6fqtDE/qP+HcPrAAz1l16EDuMp/eubSs0lq8S
-   Tz01qxIikqlXLM264KQ8h8w7Vb/Kf6g5YyYH8g04AZn8dR1MFfXMlI3Bm
-   bLyFR1NFGPVr90/vn79sUMN824X0Dj3HBYlNemGx4K8MNr87HWAo0T3ZK
-   g==;
-X-CSE-ConnectionGUID: 1J0cVEBQQOistqaDSc410g==
-X-CSE-MsgGUID: yD5wAQD5RRu57Up2eK1i2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="923749"
-X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
-   d="scan'208";a="923749"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2026 03:32:16 -0700
-X-CSE-ConnectionGUID: K9+WOhvtRHCc2DZHFsgaRA==
-X-CSE-MsgGUID: uxxvin9sR/yveu3AxuWW2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
-   d="scan'208";a="3666038"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa012.fm.intel.com with ESMTP; 16 Oct 2026 03:32:13 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 4BEC799; Fri, 16 Oct 2026 12:32:12 +0200 (CEST)
-Date: Fri, 16 Oct 2026 12:32:12 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Mika Westerberg <westeri@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>, linux-kernel@vger.kernel.org,
-	Trijan Koju <trijankoju11@gmail.com>,
-	Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
-Subject: Re: [PATCH] gpiolib: acpi: Ignore GPIO 11 interrupt on Acer Nitro
- 16S AI
-Message-ID: <20261016103212.GW176164@black.igk.intel.com>
-References: <20261007120944.1705014-1-abduvaliy.hbai@gmail.com>
- <20261016052602.GU176164@black.igk.intel.com>
- <CAMRc=MdgwgA_h0mHzQ_Jd4hQYe0Z_zFWYE+T441Cc_kCRLFAbw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnJHEKUf"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2e5fb79ce82so36310425ad.0
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 03:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792148149; x=1792752949; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=XYdvtinzHSsPD6Yut28fcPN5KBQq/zxQDLq78k29Xn4=;
+        b=cnJHEKUf3NLASYNSPAhSw3R6oskK1/k+Mn9fvrFPqOHmGn1lRIb9si7JQtNXvbXQdQ
+         ngA2G/KZg2w/5f3Gf1SiP/7bXIiAow9mUgoPiK21jLTdpuaBK3kiBXjHRd6QgTQgk7KC
+         lXVSzo5TV6bj5dx4btyBAt4rkyLAt5TBhbTbBHR+r5Y28to8Tmo/cnUr8JzvsgfwoDMc
+         DAMxN6PNf0AfmY+N8Epe6bI6kjUA9I1rRppIjOwwIWqq4zNQ2gTAhvta+RmfQOOk8tzm
+         2HW0sTmnKTuBG8C9W6siTY8cvxUmtNmF+yAHvMlGQPBKYsZjT6hAFSEG5Vr7+rSN3xI3
+         j0lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792148149; x=1792752949;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=XYdvtinzHSsPD6Yut28fcPN5KBQq/zxQDLq78k29Xn4=;
+        b=Jz8nYj5wt3XMOmF4iwkk59HIllEeyztCLjfHUDB9dbjNYhaB0VqmI6vpOR0JslQ00Y
+         OKUByyMIYWvTsaEj7BvacQ2KJ5SS9x/11UrQVcaZmyXorcacE7/bfRuKHUvOWi+Ib1z1
+         PMLijte48zzu7dXoKVSS+zl6DN8uMoWPJHZH6boCH3ZyUtI66jaN9UnXs+t/dlbB8Pql
+         7kNXFn3ldhQerqotKqvO8mW+uTf27bAo6kSeY1ztLJo1dC3SkwYMjNe1bMnJgsLIs3ax
+         79BXlvRXVdGlpu5z4UTGSaXxDFYJr1wbTz+lzBtForAMQUPMsTPEGRKsHvQBIZiVymX1
+         5IMQ==
+X-Gm-Message-State: AFq9FYLjQy+YxTDm4+2JO4kTIZxu1dYyH9kDdrSbmow1HCzs6U/yLMZd
+	gU4x1+qmdmZ/aznFl65afl5lZg0fc0ULpW4N/S5qDkYTBTpHxv+vjDz8
+X-Gm-Gg: AYBFou01CKtXO33HCP4acKOmG/3H8Q15MjlRIe+QNJc+6avQFzI+dPueeBAlQfWyisR
+	wpvpwHahhmXubT315YA+N5IXeQOMpX69OnOaXUwsRpsVmitvbmCLMFoRRPN/na5H+mbrkZ8dHt1
+	mGk6hz24zz8f2STldwSAKFvAlgYTTguTBYxeKqoBSZPa/YA3BtYEW8sPYX9A/nOdamT6wuD5pJM
+	981KqZs3Ozw+AGrkHQRDlGlKKcYmWXj0QNZy2YKi462RHl9yYNY1iu32GcfgHebfNJOltU/e/wJ
+	DaoJifQr33WrbMWeqVAnzYjtjxQphXa7V8fAvMBp0pdmxuxBCBFVqiNHa4ugczyUdrZTqnRj9YT
+	K70piPAOjKZqnrT/YJPxdHoCh/z1cAz4O7ckMs5pL/Cmn/PkiITOXeVOBY1arhHEAEvkM8AtlSm
+	LXf9uvE/rvpu3ZvjcearKZyNLNE+a8naXvRrXTslK7A12Wj8UxhYYH8YCQSLNr+KkJBYflF566X
+	OQowlCjixC/ofpnqC16VUir6g94kus=
+X-Received: by 2002:a17:90b:390c:b0:3ac:9669:846e with SMTP id 98e67ed59e1d1-3ac9669876dmr5201494a91.27.1792148149185;
+        Fri, 16 Oct 2026 03:55:49 -0700 (PDT)
+Received: from rigel.home.arpa (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acc980a548sm1554333a91.0.2026.10.16.03.55.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Oct 2026 03:55:48 -0700 (PDT)
+From: Kent Gibson <warthog618@gmail.com>
+To: brgl@kernel.org,
+	linusw@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aambrozewicz@nvidia.com,
+	Kent Gibson <warthog618@gmail.com>,
+	Sashiko <sashiko-bot@kernel.org>
+Subject: [PATCH] gpiolib: fix memory leak in gpiod_set_array_value_complex() EPERM error path
+Date: Fri, 16 Oct 2026 18:54:42 +0800
+Message-ID: <20261016105442.109836-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.56.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdgwgA_h0mHzQ_Jd4hQYe0Z_zFWYE+T441Cc_kCRLFAbw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+A drive-by review by Sashiko reports that, where the line has not been
+configured as an output, gpiod_set_array_value_complex() can return
+without freeing potentially alloced bitmaps, thus leaking memory.
 
-On Fri, Oct 16, 2026 at 05:02:11AM -0400, Bartosz Golaszewski wrote:
-> On Fri, 16 Oct 2026 07:26:02 +0200, Mika Westerberg
-> <mika.westerberg@linux.intel.com> said:
-> > On Wed, Oct 07, 2026 at 05:09:44PM +0500, Abduvaliy Abdulazizov wrote:
-> >> The Acer Nitro 16S AI (AN16S-61) has the same problem as the Acer Nitro
-> >> V 16S AI: the firmware powers the internal USB camera (0408:4059)
-> >> through GPIO 11 of AMDI0030, but also lists that pin in _AEI. Requesting
-> >> it as an input cuts the power, so the camera never enumerates. On this
-> >> model the same rail also powers the internal microphones, so they do
-> >> not work either.
-> >>
-> >> Booting with gpiolib_acpi.ignore_interrupt=AMDI0030:00@11 fixes both
-> >> the camera and the microphones. Add a DMI quirk for this family too.
-> >>
-> >> Tested-by: Trijan Koju <trijankoju11@gmail.com>
-> >> Assisted-by: LLM
-> >> Signed-off-by: Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
-> >
-> > Acked-by: Mika Westerberg <westeri@kernel.org>
-> >
-> 
-> Andy, Mika: do you want me to queue this as well for next week's fixes PR to
-> Linus?
+Cleanup the bitmaps before returning.
 
-That would be great, thanks!
+Fixes: 92ac7de3175e ("gpiolib: don't allow setting values on input lines")
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Link: https://lore.kernel.org/linux-gpio/sashiko-outbox-168233@kernel.org/
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+---
+
+Based on for-current as it requires the previous patch.
+
+Moved the ret init to the top just to make sure it is always initialised.
+
+Not completely comfortable with the goto jumping out of the loop, so
+would be quite happy to rework that if it doesn't work for you.
+
+Cheers,
+Kent.
+
+ drivers/gpio/gpiolib.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c0394c7d6279..334a917e3202 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3842,7 +3842,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned long *value_bitmap)
+ {
+ 	struct gpio_chip *gc;
+-	int i = 0, ret;
++	int i = 0, ret = 0;
+ 
+ 	/*
+ 	 * Validate array_info against desc_array and its size.
+@@ -3920,8 +3920,10 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 			int hwgpio = gpiod_hwgpio(desc);
+ 			int value = test_bit(i, value_bitmap);
+ 
+-			if (unlikely(!test_bit(GPIOD_FLAG_IS_OUT, &desc->flags)))
+-				return -EPERM;
++			if (unlikely(!test_bit(GPIOD_FLAG_IS_OUT, &desc->flags))) {
++				ret = -EPERM;
++				goto cleanup_bitmap;
++			}
+ 
+ 			/*
+ 			 * Pins applicable for fast input but not for
+@@ -3954,10 +3956,10 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 		} while ((i < array_size) &&
+ 			 gpio_device_chip_cmp(desc_array[i]->gdev, guard.gc));
+ 		/* push collected bits to outputs */
+-		ret = 0;
+ 		if (count != 0)
+ 			ret = gpiochip_set_multiple(guard.gc, mask, bits);
+ 
++cleanup_bitmap:
+ 		if (mask != fastpath_mask)
+ 			bitmap_free(mask);
+ 		if (bits != fastpath_bits)
+
+base-commit: 205cccd06e545694754e1bf8d626ea96e742cd8a
+-- 
+2.56.0
+
