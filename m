@@ -1,132 +1,132 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91F0568527
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 17:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9222245EF33
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 18:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792171400; cv=none; b=fl8C6E0Qylde0+zsVI7jz1sKtqBHqrLfFc0i4wpHryYkupPpBNEl4GWhqqO9+ANdKECDT+wb/Nrs+CNNNLVjG3v3enGOavJWcc3YYAJ23nLMVJ4beYG2JzJzjzb+soTwDlCDIPA/idJWrwL1GkfwXVbsOc6bIiYC8xsrWzLy7JU=
+	t=1792173654; cv=none; b=PyKjDebxnXeFCNQdVUyZkaJM/SF1MDBTNZYFGHLf/zBFkb+3pXqkG3y/IbnwkB8OwhDrq0J2rdFzh0hxEQSMHGcPDuqr+TDRe82h+nVbGuS48/1dOXYuVRc/67duugk1REZTPhKu5R6T/rpBCyHyoMtZB4M9QTS06Nuew2drfDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792171400; c=relaxed/simple;
-	bh=498NI1DOWcZycEt0oquk2toLbvGwIabCpQjGESWOwBQ=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=I58NVStoWncw3CIibuVU8Unkv58IxpJKUi1VUBUi1XgJxSIa6UlWKt5ofGYM5J66O7qO6NDcElxjAa4AmzVNEAH/yuMRNQSAZCvLMUvRDSGk0J+TiMOMpYlYbRk0/g+FER9ZJKThU1rBKS6XpzZbYIwzIXW3JmHlKEcJSPpJq9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYroJbsn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792173654; c=relaxed/simple;
+	bh=vVZFr5F7cOOZct7lEDWKSVVaY32Ty0Af45luhb02r1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XhFNaIrptm59UEuDf7BBDyDPpP0t8uMhJ0NCtG3jn0q8AIwe7bjtS0/1Ha3or8TZV5l7cOefcRkm2101lQE9+hoS3dgqFawoi1ao6cWBZsR3QeYOUfabIi+84jlOhqpgXPb5n5bHuKRivFm0Y+vcMWnw7EFj2Dgb/i8rq6sDA/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJssLEnW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYroJbsn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9498F1F000C4;
-	Fri, 16 Oct 2026 17:23:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJssLEnW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FE51F000CD
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 18:00:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792171399;
-	bh=jPzYKFXpYzVc3kM9YYxqTsK2MUWJJsJqxR5Eg4Nen5U=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=UYroJbsnzJONj22S8zR+eRnBRGTVPz0MXdRJ3zPmkLaLcfmByVWQ7tmYH4Aa11yly
-	 c45eBAsedjt+LmkncR7PgGcPjBQh5ewPMGpWvnbrYiFv+I0x98ByX6HLgn41rmVbQj
-	 9/XZOcbYmr79Dvgb7QKph7udJafq2NyYBMVvRxY6G1TaTTUm3Bsj+DqaVl2BBM04X0
-	 m3iiI4nFlFforYPrZEmtyYG0/EdXKCsatmgvSTCdkFw1mPPmnYAEyhI6cn8o32Wcis
-	 01j3PQQdXmF/zK51Sm9Ye2X0f/v+Ma4emh4kU0KuY1f3YjE4JM3GpckrFoL4NHKG+L
-	 UVxoxavf0mEfg==
-Message-ID: <sashiko-outbox-174720@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] gpio: cgbc: Add init_valid_mask() operation
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?VGhvbWFzIFJpY2hhcmQgKGNvbmdhdGVjIEdtYkgp?= <thomas.richard@bootlin.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261016-cgbc-gpio-valid-mask-v1-1-938202276e26@bootlin.com>
-References: <20261016-cgbc-gpio-valid-mask-v1-1-938202276e26@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 17:23:19 +0000
+	s=k20260515; t=1792173652;
+	bh=/2S/xFdCH8ryPaYIhxOMdhFu1z0dJyvG3ZE20+H8y5Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=QJssLEnWKLKNr6Sn5bJB7x/qVbceuxtYveYhOJHsAb1YrLE3lxKjdHHwuSiQihBfM
+	 f2roKDHezjb5GRtkYqDkCNXqUcv/wNGiG1R8/IFt1Oxr4zfCClGFThmPkQil5Js6zR
+	 hWRpgqbbvojgQM/NOlGp2Y4fL5sdTFxgzh/n+OzsZoCiAI14UrGsK+wzjVnE9bP+dg
+	 lQBFvHAYS2c9sEiZSAxbNUcTwBlS7em/f+o7yWIkF05VbkLOZ/Ba1hfG7U0xvjmR5m
+	 k5SlpAnhNrTiqxoJaBsd54s/XLcHvQ/KBQL24l+5hifAPYhIZGtdNJlQAW1MZ3YtRs
+	 BMR/CcbUtIhAQ==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3a87e23860cso3011131fa.0
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 11:00:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxGbXnZOWodyxKlYBSZI+CNBQJIezmJjQH7SxGZRZDh5uXQuikeaKdbRr4j/xt2WWfGnNMaUuTpuaoZ@vger.kernel.org
+X-Gm-Message-State: AFq9FYKSIUtAc05AL3VI8i5XRbklkYjPbGMVNWo6XpNSdZuLMr1qqmbZ
+	DK0X8CTOwmrxw4aKF0IXNIIDsHfhBXfqlczGObE0w86jXGTHO0qEsYArGtV+DIS26aG7yMF2WKN
+	pTLWg5plsbVZdZiR74JmwEzMaSUbssYY=
+X-Received: by 2002:a2e:bc29:0:b0:3a5:d31c:71a8 with SMTP id
+ 38308e7fff4ca-3ab1466ee7cmr8941811fa.3.1792173650943; Fri, 16 Oct 2026
+ 11:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20261016-gpioctl-v1-0-8770622679b8@oss.qualcomm.com> <20261016-gpioctl-v1-3-8770622679b8@oss.qualcomm.com>
+In-Reply-To: <20261016-gpioctl-v1-3-8770622679b8@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 16 Oct 2026 20:00:38 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn86Xuv++nMO7BT0spXaw5NFbU4jZfS7++NWkgy0OG5kQ@mail.gmail.com>
+X-Gm-Features: AclHuK9TF9Po2M8_weOK0wk4TjqWjjDzjzoV8EgKl8xP3Mi3ZjQczn7NqB1e448
+Message-ID: <CAD++jLn86Xuv++nMO7BT0spXaw5NFbU4jZfS7++NWkgy0OG5kQ@mail.gmail.com>
+Subject: Re: [PATCH RFC libgpiod 3/3] tools: implement gpioctl
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	Vincent Fazio <vfazio@xes-inc.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-gpio@vger.kernel.org, brgl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] gpio: cgbc: init_valid_mask clobbers firmware reserved ranges
-- [Medium] gpio: cgbc: uninitialized stack variable due to missing short re=
-sponse check
---
+On Fri, Oct 16, 2026 at 4:21=E2=80=AFPM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
 
-commit b1d359743f45922b03a802e12705b29714b272cd
-Author: Thomas Richard (congatec GmbH) <thomas.richard@bootlin.com>
+> Provide gpioctl, a new command-line tool for persistent GPIO line control=
+.
+> Unlike gpioget and gpioset which release lines on exit, gpioctl holds
+> requested lines in a background daemon so their state survives across
+> multiple client invocations.
+>
+> The client auto-spawns the daemon on first use. Communication uses a
+> per-user abstract Unix-domain socket, providing automatic cleanup and
+> per-user isolation without filesystem artifacts.
+>
+> Each set of lines requested through the tool is assigned a unique ID and
+> referred to as a "request". The following sub-commands are provided:
+>
+>   request      - Request a set of GPIO lines by offset or name. The daemo=
+n
+>                  holds them after the client exits.
+>   release      - Release a previously made request by ID.
+>   requests     - List all requests currently held by the daemon.
+>   get          - Read values of requested lines.
+>   set          - Set the output values of requested lines.
+>   monitor      - Subscribe to edge events on a held request.
+>   reconfigure  - Change the settings of a held request in-place without
+>                  releasing it (e.g. switch direction, add edge detection)=
+.
+>
+> There are also "hidden" sub-commands that are not documented in the help
+> text but can be used for debugging purposes:
+>
+>   ping         - Verify the daemon is running (spawns it if not).
+>   stop         - Ask the daemon to exit, releasing all held lines.
+>   debug        - Run the daemon in the foreground with logging enabled.
+>
+> The wire protocol is intentionally private and unstable: only gpioctl
+> itself speaks it, so no ABI commitment is made.
+>
+> Also add test-cases covering all sub-commands and configuration options.
+> Update documentation, man page generation (main page plus one page per
+> sub-command), and mark the persistent-daemon TODO item as complete.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-gpio: cgbc: Add init_valid_mask() operation
+A big Acked-by: Linus Walleij <linusw@kernel.org> for the entire
+idea and approach.
 
-This commit adds the init_valid_mask() operation to the cgbc gpio driver
-to mark as valid only the GPIOs which are usable, excluding those
-reconfigured by the BIOS as alternate functions.
+I can't claim to have read the code in any detail, because it
+is quite a lot. I can run it through Sashiko if you want, hehe :D
 
-> diff --git a/drivers/gpio/gpio-cgbc.c b/drivers/gpio/gpio-cgbc.c
-> index 84b5ed3c6e22b..1b603d8eccdaa 100644
-> --- a/drivers/gpio/gpio-cgbc.c
-> +++ b/drivers/gpio/gpio-cgbc.c
+I think this will be very helpful when doing automation using
+different AI tools, but also for pretty elaborate scripting.
 
-[ ... ]
+I think it will soon by itself develop support for scripting,
+have you considered just integrating LUA? I was thinking
+that it is very soon natural to ask for something like what
+you can do at a U-Boot prompt.
 
-> @@ -146,6 +147,30 @@ static int cgbc_gpio_get_direction(struct gpio_chip =
-*chip, unsigned int offset)
->  		return GPIO_LINE_DIRECTION_IN;
->  }
-> =20
-> +static int cgbc_gpio_init_valid_mask(struct gpio_chip *chip,
-> +				     unsigned long *valid_mask,
-> +				     unsigned int ngpios)
-> +{
-> +	struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +	struct cgbc_device_data *cgbc =3D gpio->cgbc;
-> +	int ret;
-> +	u8 val;
-> +
-> +	ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_ENA_RD, 0, 0, &val);
+request; sleep 0.1; ping; exit if no ping; get; if set get until low; ...
+etc.
 
-[Severity: Medium]
-If the hardware returns a short response, could val remain uninitialized he=
-re?
+This kind of scritping engines are easy to build up in LUA...
 
-Looking at cgbc_command() in drivers/mfd/cgbc-core.c, if the hardware retur=
-ns
-an empty payload (istatus =3D=3D 0) but a valid checksum, it returns 0 (suc=
-cess)
-without writing to the output buffer:
+My main thinking is to forestall any such scriptable feature
+requests that will otherwise invariably appear.
 
-	case CGBC_STATUS_DATA_READY:
-		if (istatus > data_size)
-			istatus =3D data_size;
-		for (i =3D 0; i < istatus; i++) {
-			_data[i] =3D ioread8(cgbc->io_cmd + CGBC_CMD_DATA + ((i + 1) % 4));
-			...
+Of course it is easy to call up the tool in separate
+invocations, but that will have the overhead of executing
+a binary, creating a process etc etc. With a scripting
+language built into gpioctl you have no limits to what
+you can do.
 
-If istatus is 0, this loop is skipped, val is untouched, and the uninitiali=
-zed
-stack variable is used to populate the valid mask.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	*valid_mask =3D val;
-
-[Severity: Medium]
-Does this direct assignment clobber firmware-reserved ranges?
-
-The gpiolib core clears reserved bits via gpiochip_apply_reserved_ranges()
-before calling the driver's init_valid_mask() callback. By using a direct
-assignment instead of a bitwise operation (e.g., *valid_mask &=3D val), any
-hardware lines explicitly reserved by the board firmware will be incorrectly
-marked as valid again.
-
-> +
-> +	ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_ENA_RD, 1, 0, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*valid_mask |=3D (val << 8);
-> +
-> +	return 0;
-> +}
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016-cgbc-gpio-=
-valid-mask-v1-1-938202276e26@bootlin.com?part=3D1
+Yours,
+Linus Walleij
