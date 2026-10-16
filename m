@@ -1,146 +1,178 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0DD3B8BDA
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 10:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEEA3E558F
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 11:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792148155; cv=none; b=K+r2F94nY97hrAZ81d2datihHUI5MGuTj1Pe6QEAk7roxCK+Y+K30kP6h5C4Xl2buP4Jw+LJMba5nPw98+AawoRszVv6ZpE3QXqrXh8fs8k225UZ/DDXbyrP2IBrrqZuomFNKh54RnceQked7ci4/ts6c9Bb4JGZ3aqNs6T7rJ4=
+	t=1792151425; cv=none; b=YVPd2a2zwDwrVwoMWuGZYNHBQ25gt4ITVGkAfYQVdP1bUeaWKtMcK/OqveNu51uFVq+XgPid+nmkMIBk5SmGcyq2hT2iNldXCdmn/xqEJC5KdIyOMaPXzU/TMihuDWzqlDnUpef8ce7TRrJSdNnIk6Q5Xb1xk/IgZ5TF0RFfxtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792148155; c=relaxed/simple;
-	bh=FWSRLNO9cLDgEi6X8otQID0ZFjodlP6sP+D8agqsO9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rO31Xdhum/XdesxzW6FfxI2EDWUPPoB7CW2ULRQCyKaGiRjlpoRKVQMbL0/NJj8psl5lji3gKq8IDf0ETJ/lFwf+s1Ki1Ln6Gi3zkuccyk+hQ3eCm2H5djmyCzbK7W8X29cZi6pXmxvcDHkyM0dbVjOlZdkth4B2j1Gq6syVp7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnJHEKUf; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1792151425; c=relaxed/simple;
+	bh=1a9MCT8Cm/A1hVksA6LjcTFs8zA/cgY41rAIEPY2FME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUrvRdNun0sDMUORZ3Po6e0FYa6aYEXtMbNKvkg3aOSlsRGAZQxn+Q8it16AB0Q2Na3SNZhOnXjH8SipmnExFXmQb9Wost2JD9BOmyBA5dW7/ozJTjWsSNLVTH7e5j18Z4H/ZBQqBnG4PKhhQ69yM8YS5MoTrRYgbbIjeindk0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QzMDMbGZ; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnJHEKUf"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2e5fb79ce82so36310425ad.0
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 03:55:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QzMDMbGZ"
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-ccce6d9abfeso3623784a12.1
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 04:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792148149; x=1792752949; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=XYdvtinzHSsPD6Yut28fcPN5KBQq/zxQDLq78k29Xn4=;
-        b=cnJHEKUf3NLASYNSPAhSw3R6oskK1/k+Mn9fvrFPqOHmGn1lRIb9si7JQtNXvbXQdQ
-         ngA2G/KZg2w/5f3Gf1SiP/7bXIiAow9mUgoPiK21jLTdpuaBK3kiBXjHRd6QgTQgk7KC
-         lXVSzo5TV6bj5dx4btyBAt4rkyLAt5TBhbTbBHR+r5Y28to8Tmo/cnUr8JzvsgfwoDMc
-         DAMxN6PNf0AfmY+N8Epe6bI6kjUA9I1rRppIjOwwIWqq4zNQ2gTAhvta+RmfQOOk8tzm
-         2HW0sTmnKTuBG8C9W6siTY8cvxUmtNmF+yAHvMlGQPBKYsZjT6hAFSEG5Vr7+rSN3xI3
-         j0lw==
+        d=gmail.com; s=20251104; t=1792151422; x=1792756222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wVeL1rPVZJdsXQDna6VLNmnPhET76Llh1vUPBWe1Z9s=;
+        b=QzMDMbGZzNQBwIroZ9kYSi/8q4oxSO/jpglNnkat/gE1clOSQ6xhjuUHo3J8tDOmYZ
+         WpbM2h3mwEtthXh4ugaiexAtyPUenj7q9QW6CbM09jIzJyUvfxcJvAgmPelYN1q6Sl98
+         OH6463EuFy9p1u7ZRYfngP/TjvyjUsbKaLzas70KRmY1XMQKd2VgUxascld/Ylu94OsM
+         wUQlyg9KlYSE0bIHqr7P1ztV3rFEMUBfQ31VSowFkiXz4kcjNAyQEpL27Z4jdp3nkv8y
+         YyHOJqsUIONEaQcGyCf7JpZSYB0knfdR6PN1X6T+DXmvcVv+8jecvVN//Q6PEycylefX
+         V1og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792148149; x=1792752949;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=XYdvtinzHSsPD6Yut28fcPN5KBQq/zxQDLq78k29Xn4=;
-        b=Jz8nYj5wt3XMOmF4iwkk59HIllEeyztCLjfHUDB9dbjNYhaB0VqmI6vpOR0JslQ00Y
-         OKUByyMIYWvTsaEj7BvacQ2KJ5SS9x/11UrQVcaZmyXorcacE7/bfRuKHUvOWi+Ib1z1
-         PMLijte48zzu7dXoKVSS+zl6DN8uMoWPJHZH6boCH3ZyUtI66jaN9UnXs+t/dlbB8Pql
-         7kNXFn3ldhQerqotKqvO8mW+uTf27bAo6kSeY1ztLJo1dC3SkwYMjNe1bMnJgsLIs3ax
-         79BXlvRXVdGlpu5z4UTGSaXxDFYJr1wbTz+lzBtForAMQUPMsTPEGRKsHvQBIZiVymX1
-         5IMQ==
-X-Gm-Message-State: AFq9FYLjQy+YxTDm4+2JO4kTIZxu1dYyH9kDdrSbmow1HCzs6U/yLMZd
-	gU4x1+qmdmZ/aznFl65afl5lZg0fc0ULpW4N/S5qDkYTBTpHxv+vjDz8
-X-Gm-Gg: AYBFou01CKtXO33HCP4acKOmG/3H8Q15MjlRIe+QNJc+6avQFzI+dPueeBAlQfWyisR
-	wpvpwHahhmXubT315YA+N5IXeQOMpX69OnOaXUwsRpsVmitvbmCLMFoRRPN/na5H+mbrkZ8dHt1
-	mGk6hz24zz8f2STldwSAKFvAlgYTTguTBYxeKqoBSZPa/YA3BtYEW8sPYX9A/nOdamT6wuD5pJM
-	981KqZs3Ozw+AGrkHQRDlGlKKcYmWXj0QNZy2YKi462RHl9yYNY1iu32GcfgHebfNJOltU/e/wJ
-	DaoJifQr33WrbMWeqVAnzYjtjxQphXa7V8fAvMBp0pdmxuxBCBFVqiNHa4ugczyUdrZTqnRj9YT
-	K70piPAOjKZqnrT/YJPxdHoCh/z1cAz4O7ckMs5pL/Cmn/PkiITOXeVOBY1arhHEAEvkM8AtlSm
-	LXf9uvE/rvpu3ZvjcearKZyNLNE+a8naXvRrXTslK7A12Wj8UxhYYH8YCQSLNr+KkJBYflF566X
-	OQowlCjixC/ofpnqC16VUir6g94kus=
-X-Received: by 2002:a17:90b:390c:b0:3ac:9669:846e with SMTP id 98e67ed59e1d1-3ac9669876dmr5201494a91.27.1792148149185;
-        Fri, 16 Oct 2026 03:55:49 -0700 (PDT)
-Received: from rigel.home.arpa (194-223-74-160.tpgi.com.au. [194.223.74.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acc980a548sm1554333a91.0.2026.10.16.03.55.45
+        d=1e100.net; s=20260707; t=1792151422; x=1792756222;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wVeL1rPVZJdsXQDna6VLNmnPhET76Llh1vUPBWe1Z9s=;
+        b=kuQgz4KZylSS2PjCVfpaV/5buPgBjaoXDYzrGx57u1X/S6F+atDx5razBg/W29bO1O
+         7gj71GhBBSeb0etMdwxOP3eV3DevZ1Mf8FJxsk+SkvPF+R2w1GnIPY++4xnAt1JxJ+LJ
+         AtXWuXtxugHwlWRzHMBtVQvUTOrW63aXzbUAv0wqEUgzzDxePhUELgAt7BYRoKTu/b2l
+         GipbitFGSqod+7DHActWUrKF4GskT1AL6uio674QJT2FZR5zgTYmtdDDHkiF3NlZoyV5
+         FhbiYb1dRjLVsF7QRU4lListkSVFQxmtNrst7Oa6xmhoJg6oBNqWFvUd5tMZc5unEyL8
+         53cQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzEU8D1xBj7Cf7c7kyn55B7J4KwF9cSFIc26R5Yf1UtcBJOQ53nVEojjTf2/UDgWvR9psN1y8quJbpQ@vger.kernel.org
+X-Gm-Message-State: AFq9FYJyNLV7Cn3KO2L0ywpOwe87Bgw/nU7I/958IM5T2hBudh1e8enu
+	a66rALEdHCGmp+voJevI7BrpNhVu8D2KXaDU1PmXk0TphWDtiiX5Z13o
+X-Gm-Gg: AYBFou3tJlmV6ClmmA9Kipe+RXe6c210eywtlfMdwkIlROTI01D8EoXpP/XPSdSCatT
+	kwptpsPk+0tYbnZj5T+l51runO9M72ZquqGjo/1FfGS1c0TqZPO64PviJmRTVj5bcw1Y6pB+GT+
+	m+6SZ/RhTRA/yobOX5J2a2OQ3hx1dHBTtNSEekIxsYYsiKlm7QzG23m2rcoKaWcwmPLvCxf7UZy
+	e8KPP15ACIIHxJnHciHKAUsz0pKtw6DvG3ZXEKhRGzW/ekeENNhgfE5ZQgTJMiptYQpmHWwdBQe
+	PQHpywCURRlAoDZ94HVIjYOXQ/dz5GzQ8oh4wSN9upU4BX/tX5Og7BMAdxX5gQxKU7pMXqvnaD0
+	J3myo0vojwuLd5Zz3b6wYiubTrZpYO/GE+kBSmx2vveua68FatRxYp4yrKS1SsAlbUXeC2WQ0gH
+	ahp+nsEz7060ieahjZkrdB0C0k+N6SRIiUouc99iIqpfMVqLc8yM1qqevvOxhMAHMrs7I3N8VP4
+	bEP3W2+aVeZCR3geg==
+X-Received: by 2002:a05:6a21:9192:b0:3e0:e60f:2e5b with SMTP id adf61e73a8af0-3e16bde9731mr22875105637.30.1792151422443;
+        Fri, 16 Oct 2026 04:50:22 -0700 (PDT)
+Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89f579479f8sm980090b3a.38.2026.10.16.04.50.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 03:55:48 -0700 (PDT)
+        Fri, 16 Oct 2026 04:50:21 -0700 (PDT)
+Date: Fri, 16 Oct 2026 19:50:09 +0800
 From: Kent Gibson <warthog618@gmail.com>
-To: brgl@kernel.org,
-	linusw@kernel.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aambrozewicz@nvidia.com,
-	Kent Gibson <warthog618@gmail.com>,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: [PATCH] gpiolib: fix memory leak in gpiod_set_array_value_complex() EPERM error path
-Date: Fri, 16 Oct 2026 18:54:42 +0800
-Message-ID: <20261016105442.109836-1-warthog618@gmail.com>
-X-Mailer: git-send-email 2.56.0
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] gpiolib: cdev: don't set GPIOD_FLAG_IS_OUT
+Message-ID: <20261016115009.GA111978@rigel>
+References: <20261016-gpiolib-cdev-direction-v2-1-aambrozewicz@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261016-gpiolib-cdev-direction-v2-1-aambrozewicz@nvidia.com>
 
-A drive-by review by Sashiko reports that, where the line has not been
-configured as an output, gpiod_set_array_value_complex() can return
-without freeing potentially alloced bitmaps, thus leaking memory.
+On Fri, Oct 16, 2026 at 12:22:58PM +0300, Adrian Ambrozewicz wrote:
+> When a line is requested or reconfigured through the v2 uAPI,
+> gpio_v2_line_config_flags_to_desc_flags() copies the requested
+> configuration into the descriptor flags, GPIOD_FLAG_IS_OUT included,
+> before gpiod_direction_input_nonotify() or
+> gpiod_direction_output_nonotify() asks the driver for the direction.
+> If the driver refuses, for instance with -EOPNOTSUPP from
+> .direction_input() for a line that can only be an output, the ioctl
+> fails but the flag keeps the refused direction. gpiod_free_commit()
+> does not touch GPIOD_FLAG_IS_OUT, so this outlives the failed request,
+> and GPIO_V2_GET_LINEINFO_IOCTL reports the line as an input while the
+> hardware still drives it, until a request without direction flags
+> makes gpiod_request_commit() read the direction back from the driver:
+> 
+>   GPIO_V2_GET_LINE_IOCTL, line 0, input:         -EOPNOTSUPP
+>   GPIO_V2_GET_LINEINFO_IOCTL, line 0:            input
+>   GPIO_V2_GET_LINE_IOCTL, line 0, no direction:  ok
+>   GPIO_V2_GET_LINEINFO_IOCTL, line 0:            output
+> 
+> GPIO_V2_LINE_SET_CONFIG_IOCTL updates the flags in the same order.
+> There the line stays requested, and since commit 92ac7de3175e
+> ("gpiolib: don't allow setting values on input lines")
+> GPIO_V2_LINE_SET_VALUES_IOCTL on it then fails with -EPERM, though the
+> line is still an output. A line whose driver refuses to make it an
+> output is likewise reported as one.
+> 
+> gpiod_direction_input_nonotify() and gpiod_direction_output_nonotify()
+> set or clear GPIOD_FLAG_IS_OUT themselves once the driver has accepted
+> the direction, emulated open drain and open source included, and
+> nothing between the copy and those calls reads the flag. Leave it to
+> them, as the v1 uAPI already does.
+> 
+> The other flags that the helper copies stay as they are. Active low,
+> drive and bias are what gpiod_direction_*() applies, drive and bias
+> possibly before the driver refuses the direction; edges and event
+> clock are the character device's own. None of them is read back from
+> the driver, so there is no earlier state that is more accurate to go
+> back to. A failed request releases the line, which clears them, and a
+> failed reconfiguration leaves the line, like the lines before it, with
+> what was applied up to the failure.
+> 
+> Reproduced under QEMU with a test GPIO chip whose line 0 refuses input
+> and line 1 refuses output: both refused requests and both refused
+> reconfigurations leave the line info with the refused direction, and
+> setting the value of the reconfigured output fails with -EPERM. With
+> this change the line info shows the direction of the hardware in all
+> four cases and setting the value works. First seen on real hardware
+> with v6.12.
+> 
+> Fixes: 3c0d9c635ae2 ("gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL and GPIO_V2_LINE_GET_VALUES_IOCTL")
+> Cc: stable@vger.kernel.org
+> Assisted-by: LLM
+> Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 
-Cleanup the bitmaps before returning.
+That is an incredibly verbose commit comment, particularly the
+discussion of error rollback behaviour, or lack thereof.
+This probably isn't the place for it, but I'll leave that for others to judge.
 
-Fixes: 92ac7de3175e ("gpiolib: don't allow setting values on input lines")
-Reported-by: Sashiko <sashiko-bot@kernel.org>
-Link: https://lore.kernel.org/linux-gpio/sashiko-outbox-168233@kernel.org/
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
+I'm definitely ok with the code change.
 
-Based on for-current as it requires the previous patch.
+Reviewed-by: Kent Gibson <warthog618@gmail.com>
 
-Moved the ret init to the top just to make sure it is always initialised.
 
-Not completely comfortable with the goto jumping out of the loop, so
-would be quite happy to rework that if it doesn't work for you.
-
-Cheers,
-Kent.
-
- drivers/gpio/gpiolib.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index c0394c7d6279..334a917e3202 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3842,7 +3842,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				  unsigned long *value_bitmap)
- {
- 	struct gpio_chip *gc;
--	int i = 0, ret;
-+	int i = 0, ret = 0;
- 
- 	/*
- 	 * Validate array_info against desc_array and its size.
-@@ -3920,8 +3920,10 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 			int hwgpio = gpiod_hwgpio(desc);
- 			int value = test_bit(i, value_bitmap);
- 
--			if (unlikely(!test_bit(GPIOD_FLAG_IS_OUT, &desc->flags)))
--				return -EPERM;
-+			if (unlikely(!test_bit(GPIOD_FLAG_IS_OUT, &desc->flags))) {
-+				ret = -EPERM;
-+				goto cleanup_bitmap;
-+			}
- 
- 			/*
- 			 * Pins applicable for fast input but not for
-@@ -3954,10 +3956,10 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 		} while ((i < array_size) &&
- 			 gpio_device_chip_cmp(desc_array[i]->gdev, guard.gc));
- 		/* push collected bits to outputs */
--		ret = 0;
- 		if (count != 0)
- 			ret = gpiochip_set_multiple(guard.gc, mask, bits);
- 
-+cleanup_bitmap:
- 		if (mask != fastpath_mask)
- 			bitmap_free(mask);
- 		if (bits != fastpath_bits)
-
-base-commit: 205cccd06e545694754e1bf8d626ea96e742cd8a
--- 
-2.56.0
-
+> ---
+> Changes in v2:
+> - Subject says what the patch does: cdev no longer sets
+>   GPIOD_FLAG_IS_OUT (Kent).
+> - Comment dropped (Kent).
+> - Assisted-by tag.
+> - Link to v1: https://lore.kernel.org/r/20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com
+> 
+>  drivers/gpio/gpiolib-cdev.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index 5d53bfcdf726..f4d78113ade2 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -1229,11 +1229,6 @@ static void gpio_v2_line_config_flags_to_desc_flags(u64 lflags,
+>  	assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
+>  		   lflags & GPIO_V2_LINE_FLAG_ACTIVE_LOW);
+>  
+> -	if (lflags & GPIO_V2_LINE_FLAG_OUTPUT)
+> -		set_bit(GPIOD_FLAG_IS_OUT, &flags);
+> -	else if (lflags & GPIO_V2_LINE_FLAG_INPUT)
+> -		clear_bit(GPIOD_FLAG_IS_OUT, &flags);
+> -
+>  	assign_bit(GPIOD_FLAG_EDGE_RISING, &flags,
+>  		   lflags & GPIO_V2_LINE_FLAG_EDGE_RISING);
+>  	assign_bit(GPIOD_FLAG_EDGE_FALLING, &flags,
+> 
+> base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
+> -- 
+> 2.43.0
+> 
