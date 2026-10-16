@@ -1,62 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A5E2F7F01
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4F34C4F42
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792157113; cv=none; b=WVTu8F/NlcRrRJG8zbixOcH9BTDD1LnWUDctfRcv3pDxs5FlEAFAPbqhn0dgMeosld7OFZOEphM62NB0b1u6Fd/pJ0a+RIJy/XlvZE7Up/iqcpOMULRm5yKVsC5mBtlmAkql+UERsJbNk/zT1KEB5bUUVH1BPUghD/PKfb/1xnI=
+	t=1792157138; cv=none; b=BjJpJxSHR2rDq1hrPht1pBX3nWA9rrqcJpxpd86/5tOdEbN2RTrkMe00H1y17zjYBuNAIS4YztnsfIcyA6/Zf7yZYUI/9dvBjfPCYgtRAmxPKn0KO3flXpv5LOhClGYUk82BadUh7HILF7PCsvQA96RwqvR9Rr0cK3kUH+7wwDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792157113; c=relaxed/simple;
-	bh=Tlea2Q0EBAFRXRjsYugk9moCyLboTuSNrsPj5Wr+sks=;
+	s=arc-20240116; t=1792157138; c=relaxed/simple;
+	bh=OOfsqjjwGT2XW0d3NzFMALYw3bv/RKB74gN25shi37c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K8VGgnLnrCwc9Wgp086a/9stjJquEhkCZKUG+7kCqT/wEHwvkrN9uxtSvNu8JvOsDExbkxO+sGv5izBGPkIkyr4AGrs7I/iHDzOW3ugxYtFhwYDKgvQqcqBPHXgPB0uChUXTTVF8Ba+gKGwZgf7ilaDKslQqn7LylbMJwGve4Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcSTbCFg; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=i5XKRz6Op3AUsVHxQFdEh6iagnWbl+S1AsXvFjwVRkhhYzlL/c3CBk0q8GqwAWHu3Oj2nQST7BXzizbJ4YEMc3XepE5qB6PI10ypHFWKmBwRbpSJrsxG1F0wQzjMCqSf+8E3Zpxv0FubjWC9/qJKs9vgvTnUxtMURiWomVFN1Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETVryMf1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcSTbCFg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F8041F000CC
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:25:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETVryMf1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442BE1F000C6
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792157112;
-	bh=Tlea2Q0EBAFRXRjsYugk9moCyLboTuSNrsPj5Wr+sks=;
+	s=k20260515; t=1792157137;
+	bh=OOfsqjjwGT2XW0d3NzFMALYw3bv/RKB74gN25shi37c=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=YcSTbCFgpmB3xrRWnOgIIhOE+92oRwATWlKOqVXB/zN+qk49KA2jUXS7TXZkWo/RS
-	 //I0YBf5qvuwRkEshrHv+LgL81kcJc2XFk5REexXzN98MsHuJ4phvic2DvKWBjl8cl
-	 Hhs3eO//fdgJ3MBGBR73dqHptfpHrYPTLS7aI3PvfRsn0rS9GT1wIysHX761M27HVm
-	 oq9h56a//xG4tvzvGJepNWoU+A0tleguX7Jl+Q6LOlEHUvU5hZP3AEyNUMyI+NPJlD
-	 227XrfNMi+YXxQ75y8hNwiG7Ju/Y4kuZtFh8Huq+rlPFWUhqkq+zMjAfNIcj+K4R7K
-	 ImtZV32oq5/ZQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3aafa3e23e8so9982951fa.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 06:25:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzwNDJhRpN+kGo5XTsIe9URsTA6kXggu4XCIjR8H8kKBkGo5ZUQreVVZkKCiMp9EkkghuLkNHN4OMwY@vger.kernel.org
-X-Gm-Message-State: AFq9FYIgqIwYaMG66JMZDZR40ZcA4Q3P5/nnSVIrPnATr3r1zTaj2p8V
-	PxpRpcdBIVlqXs4IQiA4+qjI/i+aFoZ/7cA3Ew56TiVHfQX4mVmGFstPvBoMk/8lCJZ0m34puOx
-	E3ELVRWofzqpvmc3Vlr3RO/RVfBbhoFw=
-X-Received: by 2002:a05:651c:b27:b0:3a9:9b67:25f7 with SMTP id
- 38308e7fff4ca-3a9c53b0b19mr55217301fa.4.1792157111400; Fri, 16 Oct 2026
- 06:25:11 -0700 (PDT)
+	b=ETVryMf1B1rptGIiypQnb1K1s8dv4pBWjZrmcJ3XVLvy2TtLDyQUcgUOk0GzO+d7x
+	 3EdVentREYxaZZJp1p6ThdKr5SnDLk0fNJ3Nq3XrVcunsNj377zn1+AsieagH16SQj
+	 kN33zt1a+i0ocaRf01vCo3DlCcf8lfS084uBugofX84AXIiW6yP0OoqcLm7TIZOs/d
+	 K7lUwAtK3pK6CuxaKHpvQuaoWTXkRfooIoUA3WXmyk2WdG9apAFxcLcQxVZ8oot+xp
+	 /NUKm7EcbWaZdKTMoi3YRhJPD8uMNbxGH6qmGbn2vR6nrS3X1S3bxWKqpRwbf9tIUO
+	 Mht5QiZpZDnVw==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b8b3c8c4bbso1075811e87.0
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 06:25:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxM7STpJIP//7m+XGpC1FfFxrtKQQB74Z1y0HLnxk2gRhszdRm4eZu4ZZi8QhPInoLvLsTchNyRyCg6@vger.kernel.org
+X-Gm-Message-State: AFq9FYJjNO/+U0QKhw4kn9hQrlgdPUoluYAoHtC7HcbOxHWoD2ZSAq5G
+	KQOKljs4I5O1SrOT9BU1Rvc330BoAKwTuGNT8WuViyGeLZJbtt8Wu5S1h3qSVyMf+jHnlL/WUPR
+	KMoZ4Md0l/czWW7iU10lBW8yjpGIZ+VM=
+X-Received: by 2002:a05:6512:3093:b0:5bc:f296:a12b with SMTP id
+ 2adb3069b0e04-5be476e75b6mr1121631e87.26.1792157136001; Fri, 16 Oct 2026
+ 06:25:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com> <20261015-cv75-gpio-v10-1-3fe3eb315a55@ambarella.com>
-In-Reply-To: <20261015-cv75-gpio-v10-1-3fe3eb315a55@ambarella.com>
+References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com> <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
+In-Reply-To: <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 16 Oct 2026 15:24:59 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=aNubwbmLSj0EMg01BcUcd5MyWpYwmWi283US6oPJ9+A@mail.gmail.com>
-X-Gm-Features: AclHuK-MGWqO6jqIhu5ZLp0uRJgIH1bUuwjVAvxYHrfT6dMzuZatQfpnFO72h3Y
-Message-ID: <CAD++jL=aNubwbmLSj0EMg01BcUcd5MyWpYwmWi283US6oPJ9+A@mail.gmail.com>
-Subject: Re: [PATCH v10 1/8] dt-bindings: gpio: pl061: add Ambarella CV75 variant
+Date: Fri, 16 Oct 2026 15:25:23 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=6trsV8SxotPEHihmjLjP8M6GFjRYaLfdvBTSQBs2ASQ@mail.gmail.com>
+X-Gm-Features: AclHuK9w8mCxwQzii05uCSde21DPZaJUUbhYZYIq1rBPFEiwYVVS1D3meBR1CkA
+Message-ID: <CAD++jL=6trsV8SxotPEHihmjLjP8M6GFjRYaLfdvBTSQBs2ASQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/8] gpiolib: regmap: add GPIO_REGMAP_QUIRK_SET_AFTER_DIR
 To: longzhao@ambarella.com
 Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
 	Michael Walle <mwalle@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
+	devicetree@vger.kernel.org, Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -65,20 +64,12 @@ On Thu, Oct 15, 2026 at 12:54=E2=80=AFPM Long Zhao via B4 Relay
 
 > From: Long Zhao <longzhao@ambarella.com>
 >
-> The CV75 GPIO is a modified PL061. The basic registers have the same
-> names and roles (DAT/DIR/IS/IBE/IEV/IE/MIS/IC). Each bank is 32-bit
-> and 32 lines and adds MASK and ENABLE, so it is not
-> register-compatible with the ARM PL061 and arm,pl061 must not be
-> used as a fallback.
+> Some controllers ignore output writes while a line is still an input.
+> Add a behaviour flag so the output value is written after the direction
+> change. This is a legacy quirk. New hardware must not use it.
 >
-> The AMBA core matches the PL061 driver by PrimeCell ID, not by the DT
-> compatible string. These blocks do not implement the standard PL061 ID
-> (0x00041061) in the ID registers, so arm,primecell-periphid is required
-> and is fixed to 0x000e8061; the driver uses that ID to select the
-> Ambarella layout. gpio-ranges is required because each bank is a slice
-> of the SoC pinctrl pin space.
->
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Michael Walle <mwalle@kernel.org>
 > Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
