@@ -1,180 +1,210 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012000.outbound.protection.outlook.com [40.93.195.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293343B42CD
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792140122; cv=none; b=t+su0pwVAirLWJCk0OYDBuAy2AFebnlDQBqWF6vxG3VDHaxBhU3T9uTwrxzAwB9Robi7015bUcCCxU9es/kMXjzSWiTZJ9t/ZZoDIWcu0hbVKFCPLDKgOJzTbkErVO+xk9UxGdHlept+vmnmOyfcYCY7WkxFoBy+PRK5kUuaWHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792140122; c=relaxed/simple;
-	bh=f35hvVF7i0AhAl5XBNbt5JyELF/E6DPKGTAChcrUV18=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gnl6WsQNdTtHPe5yyXPFl//RXidCEgjhkiWC4vF5s+7By7U+XfhnrxqosY+vxJan9Tm2RevQm/HPzG1r/yMgfWeZ0+INeafPirwqK10JR4Q+WErjOINtM4UmsqJYGVmI+B9qL0QrxqK7WR2lKcP0mpR9jvFWut7CdQy0LeaPpbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k4mwTtye; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LQZqxBmi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD781DF98F;
+	Fri, 16 Oct 2026 08:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792140294; cv=fail; b=pRZq3C7OXx1NLrNxunNV0zsU3VPWaAc1qPSnCg7r8hTol30IInnMzQUQV6tqFa1/oYw0/nrR1RHe8d64IuUM7xPNOJj98gk0ZH/A/XVTQ8wDNEqrxG+v7edcd8P152KNRJCAvomeiLKP2WDDRNitokS0+K3XbOOtGeJ0VZIyqd0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792140294; c=relaxed/simple;
+	bh=ysJUznFCTCT8+Ee1SaSLloSVLG0bbxJ4NdjwRlUxMu0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kO0aCY10d+qg4Xx9kLi6qEgaFyM+sS/XeapRCs/iGYFdMQvY72l78OVFAZPvf5Olq6gauYhMi35lD9iuqiJq0drXg1E69Ux8O7Hy2EycVhMxR39qikXiqgGYzx/j4AzZ/TGwgssyYXDvJgmgW/Y/R6dvNU7OjDIB8bahvLI5Mn8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YyHCk+BK; arc=fail smtp.client-ip=40.93.195.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k4mwTtye";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LQZqxBmi"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69G7ii0O1890683
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:42:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=pjF6bo+9BdkiXpKV2UrWU2z2lv2vcOexCov
-	G0fmugZg=; b=k4mwTtyeOEW4FfY0cRnHR/5kPFZVMWU6oKB337mlyON9d0ODXNL
-	evTuA00jV+qtjcbbgzraLoBsq/xBhQlVY1qZT+vcG86BXiwoDBK4N6Elo7R6vu8A
-	bWPXYW72vnxh61j/6pccV15dDhrrUnNyTAWuxvYD/yc1Reqt1+B3jzX2Qw9asEmU
-	jY45EAQUIOK0jUeGMpApi2yij/1BrhsCbcHdA5rzKnREowTb4YojYOYl6sO9E4zH
-	vc8sSMhNVpbTrQTu6RBcTL+qe5Ku0oXGh8RCafqzakK6ILKxNAOpnbHyPOIfN4PS
-	h3Ejqlfhh5TPecQ8TBgpYwEXKXZbWFlq6kA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hba261f40-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:42:00 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-917baea8e5dso111622456d6.3
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 01:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792140119; x=1792744919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pjF6bo+9BdkiXpKV2UrWU2z2lv2vcOexCovG0fmugZg=;
-        b=LQZqxBmiNVYzasy/FNDXRbtuNjOBe6cfDzoBAadiiCj5SYazl2dXCt+6fII2LEcqKP
-         ylIqAGv2qbv0vzjACewvyfNgDmPXiB4bj6Pe8L1ui1zJYyrIF7YdmmVzDOIL3xV+v0cb
-         HuYWep5C5OgAo+WwudJ0gUm24R7ktgmKSqRfiKamO5pN2XxVKD+uF+bbUlVrDtMhrnOr
-         7DGawYrjbp0saacqqO6jkrny6/xx8B3pCpO/aFlMJeYx8paLxb3G+Eej87B1QGFPjZAC
-         3UUNC/FXAcEi6sROjNH7beLJDGgIViqFOR95bruXi8vhLPqCQ2Vr0pJgtdnIZ+xLPKUj
-         tHAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792140119; x=1792744919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=pjF6bo+9BdkiXpKV2UrWU2z2lv2vcOexCovG0fmugZg=;
-        b=Bo4s7prfVYgszpNxxsXMGHR1YSwHPkb3wfDV1O8gh+6nxenmQs2vvFsT8Ov5eRBel5
-         NvcT8G1e5GQrTgCMirqKjPvhZ+cG3QnRgjP2sYnPeaRpGkYzfX3TE2tB5U+48KzCuDeC
-         TvGeCR3LlVuwlBBekZBdM7CAcaSjbCaYMxAK52o5agZz7hg2ZNn3H90mjElw7eVskGM1
-         zUw9RQlmZ4rUqMJPfS3Rj/oYFCsvuBC13xk9SX5j4J//0X+RfMkogL0XU5mf3hWkSLsY
-         7RvYgsulvH0Eeel2f3ouIpp81mNP30JC3OmNUj9620bOGNJSPebqyT4N4NUnt3bIs1gz
-         2KGg==
-X-Forwarded-Encrypted: i=1; AKwUvBzhKg80PhVy15mlW/69BPD3csPc2JgiLy+a4PTbddEEi0uyUvU1PzutpfmFgcMYtKmGrnsN2Y6g8ijh@vger.kernel.org
-X-Gm-Message-State: AFq9FYKew15TLY09wccRvvZLBpKdEWPp8rvo+xzl1Hkn+jLZ80pxEw1I
-	iAW+4q6dF03tYXaLxbE+KpqbZbu+m+oOrLKDFgmbbnd5GzJZQAQZxPgYNfRNS/6jpdpv/YijBoD
-	9E9neGTpz/DqoI+dD+cfMF381odZy5awIkeRJnAh0wdt3IhfR1YTGfrdhrCQukjCB0LS1FeIi
-X-Gm-Gg: AYBFou0WTyxpFDBKkWeVTsko5zG9ljwGC/aMQFdQUi8mMwT7W6+syvCoA4R1CbJX58Q
-	ca6+lI/cZDNs5G6o/pI/uE2jqtEclCDR8NW3fgpCJyfbCqQlb5snpz+pIu8YWU6JzhhHknGX4Ri
-	k5cn5i68PghNMkG9ZItdMwiOJGeS4BeQh2ar42vOi9kbpFquG+R/IZPnTCH19d3KPJNWlez7HG6
-	TjKY6yq5/9k4UnI5xxVhEGci/Sv8KRNTDUYc3JHJuocVE1jyd5uVqi0uS5+Sdz0SGEwNZFUJ7fq
-	jRn9wIhzaz2J5vvYtaXToul2eHCIVmMN13HVyX0NIkdnRDorsdKZ/Gd/g6nFeEjpFoDjjKhcLSL
-	UQ4DmHoAdtOZAbYvrZs8kc9fFULg=
-X-Received: by 2002:a05:620a:2841:b0:93e:646c:9138 with SMTP id af79cd13be357-93ebd1bb36emr3369542085a.26.1792140118889;
-        Fri, 16 Oct 2026 01:41:58 -0700 (PDT)
-X-Received: by 2002:a05:620a:2841:b0:93e:646c:9138 with SMTP id af79cd13be357-93ebd1bb36emr3369537885a.26.1792140118192;
-        Fri, 16 Oct 2026 01:41:58 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1c8ac4c70sm32435235e9.2.2026.10.16.01.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 01:41:57 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brgl@kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [GIT PULL] gpio fixes for v7.3
-Date: Fri, 16 Oct 2026 10:41:54 +0200
-Message-ID: <20261016084154.39009-1-bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YyHCk+BK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LuBGJQ/ISbzuwoMgGYQ1vDpZNzygSS8lcupzS0oMuXRBtvPhi8T912+WuRQdcPsUo7odgbheOTU7UK3mvsdxSXYvr78FvK9lhIvxxbFmPoPrX8J53ful26+SaaK6CXV7m3wMpG0A2+r6yYUrccc/YNcUS809ICJ7xhkA7yhUQWJE8YMgUM9cyVZjMaPhQwiMv5MXvhYnRuticYs03UQL66CqGPjMdxc5pclUVf3WOlQ2N21nrqyDptQtpghJyn4sRIX4DXKX0VnPYSqDmt9YvDYRlYUKvMf3kxY96yxiKORcevbgrPnZwRJUhBJA13leOwRNJ/o9Sli0RqsdHhuaDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EueZt/DJnfcBw2ZFNVz533fnPN4CBFraG3GzBl1L1Dw=;
+ b=iD8FxbmakN81xnOyfS41QQNyvP4c2oFWjzI0KyIqM+0wEqhNisMAuRL7Dr6cZ5tSu7rmQr9p3yvDbl7+HwUiY1gB4NGL3RecVaM0rn33Ml9ekWywQrzGz266aZ2k3elesM+BHHj26PVlWCo4EQSv35oRlmXvJEHotJpOJGTDR2GSGPuzh5f1gmJNXJad3hFLwHMdFoqv2apzu3HYG81UHFDH0uDEvMc9KSJDSJoaFH5r72TgjtBg/rdRn+mPOBJ6mzXVObBz/tTvjYKIM1YzP+5F8twtwtFRTwFaMbzk7m9a+7E1xr1qMCH5pyRd/GbTadqkws2j2BcWnRG3lNlIhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EueZt/DJnfcBw2ZFNVz533fnPN4CBFraG3GzBl1L1Dw=;
+ b=YyHCk+BK8BdyVqTrVq710Th/QElpPkx58MOKGTx9Thn+ABxT8VQE17mMgkGypcWmCLCH/zmS4lmgvwj633qCl+QyQkDZEL7TroKjKUFeUEUwU76x+FlSr6E0hgWLnU5hlsBWKjMSx7XcdBw+DclEyAayT36e9IE6dMLbgFHLJIiS0Djatd3VnGGAA+nYsfv+mRRdkVcsWCDdZXuLkJOkZhJq13YO+MQ4OpyAwNAo5BaBRUQhRMeeIl/UgTooFrg3ZLaI9tTrGmKLj5Cl6tTyyeoz9CU5qwWAAJEREwvlmymoHAtdV36V5hwLJbCxPWgtwJudv3g7VCLMeccuuN2rCA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by PH7PR12MB6491.namprd12.prod.outlook.com (2603:10b6:510:1f4::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Fri, 16 Oct
+ 2026 08:44:47 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0522.012; Fri, 16 Oct 2026
+ 08:44:47 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
+	Donald Shannon <donalds@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Corey Minyard <corey@minyard.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Lixu Zhang <lixu.zhang@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-acpi@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Add NVIDIA LSTP USB adapter drivers
+Date: Fri, 16 Oct 2026 11:44:42 +0300
+Message-ID: <20261016084443.1972351-1-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2026101355-species-glance-9ff8@gregkh>
+References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com> <2026101355-species-glance-9ff8@gregkh>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TLZP290CA0003.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:9::17) To PH7PR12MB5974.namprd12.prod.outlook.com
+ (2603:10b6:510:1d9::19)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=bsHZl0ai c=1 sm=1 tr=0 ts=6ad1e358 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=660iZSQnnn4A:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=eoimf2acIAo5FJnRuUoq:22 a=VwQbUJbxAAAA:8 a=wQmr6_J7Rd46EVQ_6L8A:9
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE2MDAzNCBTYWx0ZWRfX4q5y0fx0GfiU
- IXw9eGeLhee1rp5uY6BVhweLQiNIACTbY7UOwXgkxceuou1+BKKcM3IqT7ZYokEguZfIpVPzrju
- ednwVBFIYDaO/PAhuhMhU248rQtL52ba4Pwr+d8E1C+UqElrDSChdur0tlamaAk/P89nRvn63Ky
- FVvNereO27IWjisbezGxHWdvqdd8YyJbgvFPVfiTp6h9LknNZxcwJlPO5Diw1lgD+LmSu1A33D7
- ET+S+Q4oqrSkjnxnZZ9DDXnHHhRtF15ta72QRfzUG9xdtnFoFmphaRdkVI0Jdyu6tZFXYRtKTjW
- PrMnQKTmCfGmNXOzthOBuatl/VlTw+bLR5Sbj+IrxXpFIj/XXPLWsOgvb1m4t/OohS6kXKT+IHJ
- 7bksOKbh30sS/xlT/+iCjqMcFfxvLulcMwbe4nJjvYDwnps8Svf1c/4ciFtuUEe7KGp8k6QpyqU
- yVdvOGegxMUb7MliqvA==
-X-Proofpoint-ORIG-GUID: itXzBowrH1n1tiEaLNtoYFLxykGx1Bob
-X-Proofpoint-GUID: itXzBowrH1n1tiEaLNtoYFLxykGx1Bob
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE2MDAzNCBTYWx0ZWRfX45Jy4xFCoIVf
- x/dKhc6Drpr+kJnldN/ZdZfqD++6HZX43Rbe4NBbkWyB8dgqXTDyywqk8Jam8l8N1EIjqHy+zU5
- iQsVZWrYI38tOOESrAdRAnvr/sRGhS0=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 phishscore=0 spamscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610160034
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|PH7PR12MB6491:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6fc6f89c-1e77-41ad-6200-08df2b61bba1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|6133799003|22082099003|10067099003|3023799007|18002099003|11063799006|4143699003|5023799004|261009223027099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	1Wjg1cMo1Ikfy/UkJN8iE6JliVgTmXfqXM1XzUO3aL+6thOt7HJN1e/+LPfh3YP5SW2l4/aZ55l9Ae4in4YkDrFn2ypHZd25PL0NJudYxgFMnIJ09O1r8SoVb+WvBZDli0HsyycpOVU7m/pb1txkMpY4bVz4mrHQYHO0xm7OZpGPkiJbLI+ZQ5BkmqMKsEqgmxCd3hUGmnZujpxKTHDDZLhfA9htyHETcUaSbQ7154MGDZzToVu1v8yOcoHFYiXngAFnujQort6Ld68WkgAF4DgHGoa87OVZMGdmoNk83OUErr1/6Gq9wse2E3kknIBSKpIheDf0HKhX66m0/1YF/cGufkYfEV4BE3SlxSCUnzFEMGwTispqXNFs0YjXI7RuyVtadLU/NlNNLdjmpYKm8uGNDZ2tvYOh8yQqvumE0zuetInFYxpERDR9oTZcHHTlB9zuPAEkta9/YWaOChu4VnUH5XSgRtKPKA/hqLNY2RoTsOORA29V7C3pwXyamvmy8SELN4hAV1/XWRKRV2xzFc/RKugi95meWaqlHaNjthC8CoIMQTmlqeNg+cbQPdI5uiuMDGEccLBcd+4jw3nVpPPrttzyTB81wGIen/tQKFpZUzrfHg4I5bidhayAY0/e8dKL29/WQouemBjqPxvoA1NuUcXRp3GkvQIeTcK8rZQ=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(6133799003)(22082099003)(10067099003)(3023799007)(18002099003)(11063799006)(4143699003)(5023799004)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3zXTc0GsMQEF2TSmDxZh5gX0rIshgh8lqRlC0hrQXUcFjUE6bS33mBrrBHLa?=
+ =?us-ascii?Q?hwznllBNoV0KjLONxNaJBj6vPhCBZwMoHMRmxITBzclF0U1YXX15wEnJzkkm?=
+ =?us-ascii?Q?aPsI7T1gvpvG2NrWHX3BSP7V+tT1v6rX1s/aIhhOKTQXzIUTRxSo8so+9HNs?=
+ =?us-ascii?Q?clqluMR4Zfi8AhpugIbf/ryNO4jkQD3VGm3z5tdtWIv1R6hE6KX3XxSdT2IP?=
+ =?us-ascii?Q?d0iLB0CXhCPwZy0KbCwodcje3w4AVZuOdHvJWPp4SyBeKQ/cXU4DeziQpTbH?=
+ =?us-ascii?Q?Gqx74iMHhYR7WnX88H11DCExfqwxzFXZ0smY01+Aq2J5mSWFMHDYm+E35tlz?=
+ =?us-ascii?Q?KWbHrUnpjFMJKPoIvOyieZHYpw9K9DIrGpglfxPDlfGpZHBPOk6SXZN/ZNYy?=
+ =?us-ascii?Q?7i7Umy8xnkkmRz2tttsoiM9fOrhTNqmbMPzZDoh9vJprR8WWtO43DZ32bkQd?=
+ =?us-ascii?Q?PMpy444t/xVNCeYG7z7xtzrZ8E7ur+WkoIklQQvsVMJ5mbV0yPj/sd3B4uHw?=
+ =?us-ascii?Q?+/IHkhUSzYhshg/Q+3vHMDHnfClKqJ06kJwbHR0PgZVWiUgurTOzU8hKToS1?=
+ =?us-ascii?Q?fjjGpt98QCNs3v0cQZDqCE0Ep/qEohsZx/dzZcGAtgu9c2z3aOkr3F6dom6O?=
+ =?us-ascii?Q?h5MpioZQbsXrIul4D1xMm27hsY0SLpnhEehTaF/TSaUwOYCe98scZy9yLuC4?=
+ =?us-ascii?Q?/A7203loenhXZvaWfKOJ81Cf3fz4pA4FcmtgF2HdzngxcIJxGSUp9PlGh3LY?=
+ =?us-ascii?Q?VQCTPjDm0XOU/9LzWHAV/uBItVhM5BKDxwTh09UJnUCVxx9JDyluXb4sYTRB?=
+ =?us-ascii?Q?JOKD/WHSnF53SEhtqvzAyM9EDrR9N7X+nib3n+oSKSO3SKStVSKvs/KzR+gl?=
+ =?us-ascii?Q?b/bEaQF66l73WXuGUwvwb78U799mQIolzbOotEaykyfuewHjSEkstTnHNg7C?=
+ =?us-ascii?Q?/lBr8hEOqmDcrNVPl913HasyiQTtiSyqOTvJB1ZzoqHFZb30ImxBdlU54w8T?=
+ =?us-ascii?Q?/IPVU0fgt2AQG79hvNf07fOvxYlgb2+aecERUwg8eDWc7u/DWCBOZ2VFbKIC?=
+ =?us-ascii?Q?m7DCwpYUUsuQHbODgpGYFIYHEjHU7efjCCfxQ4NGxZJngbIpDsRILLu93tk+?=
+ =?us-ascii?Q?Xqd8MONIbYvA4UZ8Erh+XC5aCSdeZYi1OQul5CZ79Hs9g6mMiNEa7s1RVWN6?=
+ =?us-ascii?Q?ofohGSZ9C3tiHIp25D79zPItDStUU0KDqRVE/06UbK6lzZO00R2RfBvQy8fU?=
+ =?us-ascii?Q?Jf4ohu6HwHLHqDIYcjq+stxKeR5T/5pQRfkb2dlzqGVzB2Pp1aWZ3lDr0uES?=
+ =?us-ascii?Q?mmQoflcMnMHQBiwpj9TEqCkFWLdil30mmaMEal4F0t0MV4kxnprJqKrfC1J8?=
+ =?us-ascii?Q?pgCouzzM23b4ald49WHtD3ycsVIyIRJEtvE8O94ZWTBg6J86zkcbES0gKsYc?=
+ =?us-ascii?Q?LtT9hU07H2Yg8sf9JJ04jkiK7eR0z4Pj+9LPV4m1ktzsOzGFjA+TY9qgBYEf?=
+ =?us-ascii?Q?3yU/hpvzWmwPNbsODSXzPxt+p9bjq/SEshhXz9ICv+MC9qyOs8afnxsbBmuu?=
+ =?us-ascii?Q?Yue9GDtaOj7X9pGEJ2TkcSt2HdGW55QMQjP2YXp4lyoLsEFT+IcSOzv00zEn?=
+ =?us-ascii?Q?VwMYEWXyH6zIKRhXZX3CBGQHoLucrf93kbeSs2YmGL0AmjdigR6NRL2I+lWd?=
+ =?us-ascii?Q?L/OZGH+xVQCxzAQHK4Nll0pcgF73SHVb0BG5ChX6hj/5WoVm+QZaGqkGM8dc?=
+ =?us-ascii?Q?kTu1SGmROw=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fc6f89c-1e77-41ad-6200-08df2b61bba1
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 08:44:47.0855
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XcasrPEVX5r/lPDTX9eVkuQM2OPG4jAWmoUfWgQ6znUyIrq6uqihHYwa6hflfndqI2NAhLN+tior9kvEliI3rA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6491
 
-Linus,
+Hi Greg,
 
-Please pull the final set of GPIO fixes for this release.
+Sorry for answering in pieces. The DT question came up again in
+Krzysztof's review of the bindings, so I'd like to answer that part on
+its own. Jeremy asked much the same from the other side, why LSTP
+needs static configuration. The rest of your review (one function per
+interface, greybus) will follow once we have aligned internally, as I
+wrote earlier.
+
+On Tue, Oct 13, 2026 at 01:37:11PM +0200, Greg Kroah-Hartman wrote:
+> Why would a USB device have anything to do with device tree?
+
+[...]
+
+> USB devices do not have DT bindings.  It's a dynamic bus, with
+> self-describing devices, don't make the mistake of thinking this is
+> giong to work.
+
+The device itself is self-describing: the driver reads the channel
+table from it, and the channels work without any firmware description.
+What DT (or ACPI on host systems) adds is the board wiring behind the
+channels, which the device cannot describe, the same as for any other
+I2C or GPIO controller:
+
+- I2C channels carry devices the kernel has to instantiate: PMBus
+  voltage regulator controllers, EEPROMs, GPIO expanders. Userspace can
+  add a client with new_device, but only with a name and an address, no
+  interrupt, GPIO or other properties, and only on a bus number that
+  changes with USB enumeration. It would also have to repeat that every
+  time the adapter re-enumerates; the kernel does it on its own when the
+  channel appears.
+
+- GPIO lines get board-specific names from gpio-line-names. The adapter
+  firmware reports generic pin names, the same firmware is used on
+  different boards, and BMC userspace (power control, GPIO monitoring)
+  looks lines up by name.
+
+- A GPIO channel can be the interrupt controller, or the GPIO provider,
+  for another device on the board. Such references between devices have
+  no userspace interface at all.
+
+On those boards the adapter is part of the board, not something a user
+plugs in, which is the case the generic USB device binding
+(Documentation/devicetree/bindings/usb/usb-device.yaml) covers; the
+LSTP nodes sit below that node.
+
+The DT part probably deserves its own thread with the DT maintainers
+rather than being buried in this one. The RFC posted with the series
+[1] has the open DT questions; I suggest we continue there, or in a new
+thread if you prefer.
+
+[1] https://lore.kernel.org/r/20261012-lstp-dt-rfc-v1-aambrozewicz@nvidia.com
 
 Thanks,
-Bartosz
-
-The following changes since commit 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907:
-
-  Linux 7.3-rc7 (2026-10-11 20:04:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v7.3
-
-for you to fetch changes up to 205cccd06e545694754e1bf8d626ea96e742cd8a:
-
-  gpio: mxc: fix race between gpiochip registration and IRQ domain setup (2026-10-15 14:21:15 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v7.3
-
-- gracefully handle unsupported fwnode-only, no-device GPIO lookup for
-  shared pins
-- mark the GPIO controller as sleeping in gpio-nct6694
-- fix a GPIO device reference leak in kunit tests
-- fix memory leak in error path in gpiod_set_array_value_complex()
-- fix races in GPIO controller and its associated irqchip setup in
-  gpio-mxc
-- use atomic bitops where races can occur in gpio-mxc
-- fix build failure in gpio tools
-
-----------------------------------------------------------------
-Bartosz Golaszewski (3):
-      gpio: shared: fix use-after-free bug when adding shared proxies
-      gpio: shared: gracefully handle no-device lookup of shared GPIOs
-      gpio: kunit: fix GPIO device reference leak with __free()
-
-Kent Gibson (1):
-      gpiolib: fix memory leak in gpiod_set_array_value_complex() on error paths
-
-Ming Yu (1):
-      gpio: nct6694: Mark the GPIO controller as sleeping
-
-Peng Fan (4):
-      gpio: mxc: fix race between chained IRQ handler install and probe completion
-      gpio: mxc: fix both_edges bit operations
-      gpio: mxc: fix wakeup_pads bit operations
-      gpio: mxc: fix race between gpiochip registration and IRQ domain setup
-
-Sasha Levin (1):
-      tools: gpio: fix building from the top level with O=
-
- drivers/gpio/gpio-mxc.c       | 36 ++++++++++++++++++++++--------------
- drivers/gpio/gpio-nct6694.c   |  2 +-
- drivers/gpio/gpiolib-kunit.c  |  9 +++++++--
- drivers/gpio/gpiolib-shared.c | 19 ++++++++++++++-----
- drivers/gpio/gpiolib.c        |  9 +++++----
- tools/gpio/Makefile           |  6 ++++++
- 6 files changed, 55 insertions(+), 26 deletions(-)
+Adrian
