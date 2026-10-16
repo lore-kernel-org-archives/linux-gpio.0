@@ -1,124 +1,145 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A0E3E6DCF
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C941F459AD6
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792140860; cv=none; b=GQq5yCcHWCaDK5U+OaxSghjP00yasO1Ov3HRdy5t71yJzC01zKS1/DkLfqe9JFYK2fQ+BhLhlkWco3O18KjfNqyA0DLHD8E/DISyr6SYwxrBND0XYDKfzhFcJqSgtCj5zrZWl1Hb8Bv2ZELS85fS2LTfnKgE40jLwk+fjoBH7WQ=
+	t=1792141048; cv=none; b=MkoYw7HZlOeai5WorUG9TH7kzdz5uPVkGdzFQxXazeqUNjeGZdYeEkxtC6pOUkDQV495viY7e1i4r2wT0CB9NhZykB8d4rOJXyTkd9HEEh6jnQBuLtFK3q9g9iVwk0YDXr4KiOJjqLGHfwAABS5XSXlVqj42xXYc6yUjnPMTha8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792140860; c=relaxed/simple;
-	bh=Q6kJg9YnEj9SJP+ZKrekeHRKk3Z0bOEtF15KexR6AkM=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jSJX1b146fdIV5re0ZhtQxzNk0OpBGKipH2Gb8keGNNkT3pUb2ufzv7qEgbsOlueqUERBLIxzX3W5AEfqYPOJrQrmou4bnGEa2b/FFZO/8fuQDgdHhgDrOppPKmhE15aByrOnN//+CKWq6pJg6CpuXgQWoDJ7J5d73dZhLRqw2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxjB5lYY; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792141048; c=relaxed/simple;
+	bh=voVWteIAMcvsWoD6mSPSofIc9qX+e1A01al1D32H/J0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JoD7OOUoXj2FrnQgxk1A1V+GJKn7BrPCQND806NdE3C7jEn5vksVL+Q41DLqtcYGFjEDKfe9/zuyP6a2dkIKhVrSanwfaLss0ULV7ZX0Htc95posoQ4aV2IhMFS4tiMyk8bFJLOTrSwIKLEEW5lfmV4QoMR646KQXSszFQV8noo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzUbN9Wa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxjB5lYY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEAB1F000C5
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:54:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzUbN9Wa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B481F000C6
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792140858;
-	bh=BxSPoAf5Id6w0Ha25Hqpvqjx9PtDS2md8/0rLJ8pBO0=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=ZxjB5lYYFlsYaAlCabcsQI7KbpzFzWqJHR/rXtpZfDaVQuezD7gIkTrcO674W3yJ6
-	 oT+/BBXz0cyY0K4PVS92lpkgIq2MSFXmrEdhuUFjOZDaWLTVavpX2HxcBiir72kfGF
-	 5UTa9AKuNdhDTRmm0v63vxurkpNsQ6tbX9NyHrOyslULAmA7A4xcjsFba27ZYKUTGo
-	 ItBiIXn8011WAaoL1WDcTCpHsflwQMXGGCjuFBbZ3nWyMdl66Y6s8F0uedJl8UlIbd
-	 Pj1NijeM7b0YzmIZ8Fg0aEuEDeF1Xr+vmxLN1+U3S6DRfAUzKkfr6LWXzjcFckKfpD
-	 M4HQPNZCllguw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3aafa3e23e8so8520931fa.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 01:54:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw1DU3gSH94GS65aqNg//ANMhXSl4tEjAIg72mQKstFG9W0jRPOd/vFghcd16EqQ40Qex0Ixcl+TiRM@vger.kernel.org
-X-Gm-Message-State: AFq9FYKRJW/6vTz3mYgy++M9jrLzhQk3VsUZ1K3gW8WuRK80NcXDck0L
-	+kykLP+4VthuPLTM3+14oqj8Zq37VkgLuKzK+fWMGLNQjkA7SYH20zmadegilGHShOHWzdUxnm4
-	MFh9ogP35FOFtKMyY2lKboW+TjHfCYI27V6jwIZNt7w==
-X-Received: by 2002:a2e:be91:0:b0:3a9:787a:139c with SMTP id
- 38308e7fff4ca-3a9c5714367mr52956681fa.25.1792140856737; Fri, 16 Oct 2026
- 01:54:16 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 16 Oct 2026 04:54:15 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 16 Oct 2026 04:54:15 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <sashiko-outbox-174010@kernel.org>
+	s=k20260515; t=1792141047;
+	bh=3Rbs8zVcRHXRrELHto1MGOKdswB/81BGLddudHF8cN4=;
+	h=From:Date:Subject:To:Cc;
+	b=bzUbN9WaULpsj5q2WiIFX0YbeSEtxF76GBymNckoMfC38CODR3KOg5Aag8a6UYL7j
+	 5Oo+TopBEQFe86wuqp3/vSSWv7p/URmxkh/5aebAF+dlZBAs80ADKx9LG9oAXRLgNo
+	 8qRqrN7S15oqovOSZEB4QmU4pIYa/wVAQ/GprfYZPUFWRyV//vB4TFfpcJLQ1bgmfb
+	 R9UOpJtmTn2bUoUx9E+K6ZaO2VWEpeQG8OfYChLmL8NQkMJZsb32b0hbzEBRvHhzLQ
+	 745RymeD52E0hPBbLEZRUYduzb7rvnJfRoSxIP0q7cGhPSVbsBDYhkO8P2A7rYbE8z
+	 jlaqLUgK7zQVg==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3ab01c46697so11628651fa.1
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 01:57:27 -0700 (PDT)
+X-Gm-Message-State: AFq9FYJjs7zo8psw3YKGUlme1uivMEx9Kb8vXl39YmBttCelrt8X8t0m
+	kG5zZ+uKy/LtykhXWJQNc/3AwJD1VncKASV676BJCzZaamnysoQCUh6oIYsKvbCSOUi0iC4P2GS
+	tP9WE4wVFjzTsZOsf6M0252YUo1yg7eU=
+X-Received: by 2002:a05:6512:3b83:b0:5be:428e:2be7 with SMTP id
+ 2adb3069b0e04-5be428e2c87mr1589216e87.11.1792141046106; Fri, 16 Oct 2026
+ 01:57:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261016-gpio-sim-const-sysfs-attr-v1-1-5d2f832890d6@oss.qualcomm.com>
- <sashiko-outbox-174010@kernel.org>
-Date: Fri, 16 Oct 2026 04:54:15 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MdEmjiF35o6tedObEiuA=OhvOq=0oNeRid3KemHAviL-Q@mail.gmail.com>
-X-Gm-Features: AclHuK-eV0zNLgZ88T5o5RnHwxcMcnGUvuJxCGetFR_cP8YKHQeenGxGzJN_Ylc
-Message-ID: <CAMRc=MdEmjiF35o6tedObEiuA=OhvOq=0oNeRid3KemHAviL-Q@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: sim: access sysfs attributes as const
-To: sashiko-reviews@lists.linux.dev, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: sashiko-bot@kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 16 Oct 2026 10:57:13 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=ZDuXfj8GCCapkF3vxo55pzuEcU_98GkbALDpCcRdGSQ@mail.gmail.com>
+X-Gm-Features: AclHuK-Lp0xhea3l8g1Ub5v6bM83ymjT8wfav2HZ4-MRr0Df3GxU50r4xPVAH6U
+Message-ID: <CAD++jL=ZDuXfj8GCCapkF3vxo55pzuEcU_98GkbALDpCcRdGSQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v7.3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux pin control <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 16 Oct 2026 10:19:13 +0200, sashiko-bot@kernel.org said:
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Low] gpio-sim: incomplete sysfs attribute constification
-> --
->
-> commit 055dde35eca9fff8d54ca501f4fca6d98889dfd8
-> Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
->
-> gpio: sim: access sysfs attributes as const
->
-> Use the const variant of constainer_of() to access struct
-> gpio_sim_attribute which wraps the dynamically allocated sysfs
-> attributes for value and pull of simulated GPIO lines in line with the
-> currently preferred approach.
->
->> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
->> index 0c73bec042670..e0ae586cd08d8 100644
->> --- a/drivers/gpio/gpio-sim.c
->> +++ b/drivers/gpio/gpio-sim.c
->> @@ -59,10 +59,10 @@ struct gpio_sim_attribute {
->>  	unsigned int offset;
->>  };
->>
->> -static struct gpio_sim_attribute *
->> +static const struct gpio_sim_attribute *
->>  to_gpio_sim_attr(struct device_attribute *dev_attr)
->
-> [Severity: Low]
-> Does this function signature need to be updated to take a const
-> struct device_attribute *dev_attr?
->
-> Since dev_attr is still non-const here, the container_of_const macro will
-> evaluate its non-const branch, resulting in a non-const pointer that gets
-> implicitly cast to const by the return statement. This makes the generic type
-> selection of container_of_const largely redundant.
->
->>  {
->> -	return container_of(dev_attr, struct gpio_sim_attribute, dev_attr);
->> +	return container_of_const(dev_attr, struct gpio_sim_attribute, dev_attr);
->>  }
->
-> [ ... ]
->
->> @@ -272,7 +272,7 @@ static void gpio_sim_dbg_show(struct seq_file *seq, struct gpio_chip *gc)
->>  static ssize_t gpio_sim_sysfs_val_show(struct device *dev,
->>  				       struct device_attribute *attr, char *buf)
->
-> [Severity: Low]
-> Should these sysfs callback signatures be updated to accept a const struct
-> device_attribute *attr?
->
-> The callbacks still accept a non-const attr parameter, meaning the refactoring
-> to const attributes is incomplete.
->
-> For a full migration, the callback signatures should accept const struct
-> device_attribute *attr and be assigned to the appropriate show_const /
-> store_const function pointers in the attribute definition.
->
+Hi Linus,
 
-Well, I guess that answers the question of whether there's more to do. :)
+some late fixes for the v7.3 kernel.
 
-Bartosz
+This should have been sent earlier but I have too much to do.
+
+The AMD fix is really important for users of AMD equipment I think,
+the Qualcomm fixes are many because they have a large team and
+support many differentiated SoCs.
+
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+
+The following changes since commit 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e:
+
+  Linux 7.3-rc5 (2026-09-27 13:55:01 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v7.3-3
+
+for you to fetch changes up to c5895eadf287116434b7b01d67b92e8146f7ff61:
+
+  pinctrl: sunxi: dt: do not accumulate npins across probe attempts
+(2026-10-12 11:30:12 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for v7.3:
+
+- AMD: Clear S4 wake bits when firmware has _AEI, this is
+  important for some AMD systems.
+
+- Do not accumulate sunxi npins across probe() attempts with
+  deferred probe. (desc->npins just went ++ and ++...)
+
+- Qualcomm patch galore: split QUP functions on the Nord pin
+  controller, fix an OF module alias on IPQ5210 so the module
+  modprobes, fix two groups on the IPQ5018, make direction
+  changes exclusive on the SPMI-GPIO, and fix the interrupt
+  target width on four different SoCs.
+
+----------------------------------------------------------------
+Adriel Santos (1):
+      pinctrl: qcom: ipq5018: replace gcc_plltest with pwm2 on gpio12
+
+Bartosz Golaszewski (1):
+      Merge tag 'v7.3-rc5' of
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into
+pinctrl-qcom/for-current
+
+George Moussalem (1):
+      pinctrl: qcom: ipq5018: update PWM groups and corresponding pin functions
+
+Gilberto Conde (1):
+      pinctrl: qcom: ipq5018: add missing pwm3 function on gpio13
+
+Konrad Dybcio (3):
+      pinctrl: qcom: hawi: Fix intr_target_width
+      pinctrl: qcom: maili: Fix intr_target_width
+      pinctrl: qcom: qcs8300: Fix intr_target_width
+
+Linus Walleij (1):
+      Merge tag 'pinctrl-qcom-fixes-for-v7.3-rc7' of
+git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into fixes
+
+Mario Limonciello (1):
+      pinctrl: amd: Clear S4 wake bits when firmware has _AEI
+
+Pablo Mazzini (1):
+      pinctrl: sunxi: dt: do not accumulate npins across probe attempts
+
+Shawn Guo (2):
+      pinctrl: qcom: nord: Split QUP1 SE2/SE3 into lane-pair functions
+      pinctrl: qcom: spmi-gpio: make direction changes exclusive
+
+Zhangfei Gao (1):
+      pinctrl: qcom: nord: fix GPIO interrupt target width
+
+hpp.iscas (1):
+      pinctrl: qcom: ipq5210: Publish the OF module alias
+
+ drivers/pinctrl/pinctrl-amd.c            |  9 ++++++++
+ drivers/pinctrl/qcom/pinctrl-hawi.c      |  1 +
+ drivers/pinctrl/qcom/pinctrl-ipq5018.c   | 20 ++++++++---------
+ drivers/pinctrl/qcom/pinctrl-maili.c     |  1 +
+ drivers/pinctrl/qcom/pinctrl-nord.c      |  1 +
+ drivers/pinctrl/qcom/pinctrl-qcs8300.c   |  1 +
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 37 +++++++++++++++++++++++++-------
+ drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c |  1 +
+ 8 files changed, 53 insertions(+), 18 deletions(-)
