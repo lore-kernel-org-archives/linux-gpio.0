@@ -1,151 +1,110 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578434EF05;
-	Fri, 16 Oct 2026 14:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A2D3168EB;
+	Fri, 16 Oct 2026 14:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792162302; cv=none; b=H0/Qx1ibHUvHUAWhYsza+/n6ZGOXt6OUi35rjrxLcyOMw0TZptQYr580r9TO8KXnJHG7mu1oR7pY8/a/GSxUo3tvyFlcEK3YgxRrA3JJ8WpBb6QmVZ1mWeTbcmZhohlsMXYUSGokv4MSsfjRqc+Fiwi0nCXk62dsvtiU8YaODmc=
+	t=1792162395; cv=none; b=egyMPVRKIgxB3/2FpoVrCYwrmkOcIn52BG9h63wH0PMnTPzvXnEkKVezAAGFQp32w8spnQ4HJQpJ39nOrhPtDmh+BVsKk4wJTsrPKJXxf+jwaDSTRoRghVwJHEXWFGNqyDdwjlHqLRb/1wKhpU58NbDBc+iu0zntkD1qWtxWIq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792162302; c=relaxed/simple;
-	bh=XAqiXLlhgf+/F9hDAmXS+sPEb4Sjw+LYKzpQOJi9kAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nkw9ztUXU5GvPiJmJndFpJyydxiDQoIFo6C5WwVs2+WWERPOXJIuIwO8rNrz57An0koepGBKaW0Kau2591RXNcLhQZRJj+lqdKFnVKrIlZF7dyRZfEAeAKSvA5yZ81hxl/b40k1zbdPit5+8rvJ4JLIb/QidHm0R2GwlEOYkD8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gl2/odbW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792162395; c=relaxed/simple;
+	bh=cWPVIhQg28XdqmUe5vg1m1XWf58sh8dJscl69YI4lzQ=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=aoDqKrPxztsEs6miM6HJlUUUpe4DV/IBkFQrPYvNZX3AM8u+W0YWDYuEB56w+/rttkFlIqa/5RGRfr4KNTrERZvQzFwkm1IYdTA/TiZlacIxWv9zflFCeCTdxMma5ZxQ+PIXSmtsojR4uRbPMMhMst5qZyAuzrEMJQ2UrFB4ayY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5f/3vcO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gl2/odbW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C8B1F000C5;
-	Fri, 16 Oct 2026 14:51:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5f/3vcO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9A71F000C4;
+	Fri, 16 Oct 2026 14:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792162301;
-	bh=FS4akPMmTKn/XxnyNATR0rYZuSEvn1Rz3NANKinyLK8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=gl2/odbWolkTtsI8DbH/fRUIGtRdbBf5mzbeQrIdAcoJ8kMHhYbh8fgY/b7d0baTm
-	 JNiochyMaCS/hBbtJdjoopVjJ6PP3wKR6fKAtWEU0bDniHx030vR/wjHPygwUAb+oH
-	 F8W8vXWxOvzfNXMDhMAPUhmMf953Bm9aReNRsA9Nq/XD9GrhrPdZogClQUL24phpsn
-	 N0Ib/K7TtcySCh0i8wLImPmLzr+wNCCoCP/ZborLM+k5l25Z5R/rte+skwiGAZ5Tgt
-	 c7VvJSEBxPBwgeWfeIsmj9FJVFdGR4AGqTzc4mugU6hIVj8GQFsPTf/vY4AbJqJ30x
-	 ISwvJ9JSGfpTA==
-Message-ID: <ec27fd26-1862-43cf-803a-428846d66663@kernel.org>
-Date: Fri, 16 Oct 2026 16:51:34 +0200
+	s=k20260515; t=1792162393;
+	bh=nEDBcb2dYXaTlFUJBluxnJjKiR2AjJE598lhZCFoYqE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=B5f/3vcOtcIFFLMx43cFVC+wlx/y87vhmUeQpEeMRoQt8RsOO4DygpJKQY2HDKqJG
+	 kYO6aNdVOrp+nOziA8OKqG3/Rx5aDS14KVRJVYXbMu53GaPstcoLpIXaVjEabOVBV3
+	 rRhMilcs/AbanOnVZp5rF/6xZK9cmLKHY/2NKpSdI0oCbpWB8mW6XhOzssvb/Kav7I
+	 DMcFsPdsXpgBwY8/6DSVsflw8IxvbTP5WLEPru448a1szjMWaIQrx0gHPtbhzIdHnx
+	 L7ng4Fp9FvocVqj43hqDbm634mwTSLJkLtUhc1rvOktE717MAbfk+TtdYFiBsGzLk8
+	 gFqtzKpkmKZNA==
+Message-ID: <sashiko-outbox-174499@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 08/10] ARM: dts: omap: dm816x: Correct speed for sysclk5
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ettore Chimenti" <ettore.chimenti@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261016-patch-ektor5-dm8168-dts-v1-8-b4ce30217028@linaro.org>
+References: <20261016-patch-ektor5-dm8168-dts-v1-0-b4ce30217028@linaro.org>
+ <20261016-patch-ektor5-dm8168-dts-v1-8-b4ce30217028@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 16 Oct 2026 14:53:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] dt-bindings: pinctrl: Add devicetree bindings for
- DM816x SoC Pinctrl
-To: Ettore Chimenti <ettore.chimenti@linaro.org>,
- Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Christopher Obbard <chris.obbard@oss.qualcomm.com>,
- Andrew Goodbody <andrew.goodbody@linaro.org>,
- Linus Walleij <linusw@kernel.org>,
- Rouven Czerwinski <rouven.czerwinski@linaro.org>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20261016-patch-ektor5-dm8168-dts-v1-0-b4ce30217028@linaro.org>
- <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 16/10/2026 16:41, Ettore Chimenti wrote:
-> Add devicetree bindings for TI DM816x SoC pinctrl configuration.
-> Using same definition as OMAP2/3 except pullup/down enable macros, which
-> are inverted in this SoC.
-> 
-> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
-> ---
->  include/dt-bindings/pinctrl/dm816x.h | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/include/dt-bindings/pinctrl/dm816x.h b/include/dt-bindings/pinctrl/dm816x.h
-> new file mode 100644
-> index 000000000000..15aa15bca9bd
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/dm816x.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * This header provides constants specific to DM816X pinctrl bindings.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_PINCTRL_DM816X_H
-> +#define _DT_BINDINGS_PINCTRL_DM816X_H
-> +
-> +#include <dt-bindings/pinctrl/omap.h>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: ti: divider mask resolves to 0 preventing hardware update
+--
 
-I do not see this being used here, IWYU.
+commit 010a738d1ba1df99c68c1c1fed6854e92365aa42
+Author: Andrew Goodbody <andrew.goodbody@linaro.org>
 
-> +
-> +#undef PULL_UP
-> +#undef PULL_ENA
+ARM: dts: omap: dm816x: Correct speed for sysclk5
 
-Why are you undefining other macros? That's not a easy to follow code.
+The commit forces sysclk5 to run at 813MHz by changing its divider
+configuration from a maximum divider of 1 to a divider of 2.
 
+> diff --git a/arch/arm/boot/dts/ti/omap/dm816x-clocks.dtsi b/arch/arm/boot=
+/dts/ti/omap/dm816x-clocks.dtsi
+> index 76ebc6c3c3e5e..cb990773b0985 100644
+> --- a/arch/arm/boot/dts/ti/omap/dm816x-clocks.dtsi
+> +++ b/arch/arm/boot/dts/ti/omap/dm816x-clocks.dtsi
+> @@ -144,7 +144,7 @@ sysclk5_ck: sysclk5_ck@310 {
+>  		#clock-cells =3D <0>;
+>  		compatible =3D "ti,divider-clock";
+>  		clocks =3D <&sysclk4_ck>;
+> -		ti,max-div =3D <1>;
+> +		ti,dividers =3D <2>;
 
-> +
-> +/* DM81xx mux bit defines */
-> +#define PULL_ENA		(0 << 3)  /* Pullup enabled  => 0 */
-> +#define PULL_DIS		(1 << 3)  /* Pullup disabled => 1 */
-> +#define PULL_DN			(0 << 4)
-> +#define PULL_UP			(1 << 4)
+[Severity: High]
+Does this actually change the clock rate in the hardware register?
 
-I do not see this used by drivers, so why do we need one more header?
-What part of SW are you binding here?
+By providing a single-element array ti,dividers =3D <2>;, the divider value=
+ 2
+maps to the array index 0.
 
+In drivers/clk/ti/divider.c:ti_clk_get_div_table():
 
-Best regards,
-Krzysztof
+	table[valid_div].div =3D val;
+	table[valid_div].val =3D i;
+
+Since there is only one element, the maximum valid index (and maximum regis=
+ter
+value) is capped at 0.
+
+When the mask is calculated in drivers/clk/ti/divider.c:_setup_mask():
+
+	divider->mask =3D (1 << fls(mask)) - 1;
+
+A maximum register value of 0 results in the mask evaluating to 0.
+
+Consequently, any attempt to update the rate in ti_clk_divider_set_rate()
+becomes a no-op:
+
+	val &=3D ~(divider->mask << divider->shift);
+	val |=3D value << divider->shift;
+
+With a mask of 0, the physical hardware register is not modified, leaving t=
+he
+clock running at 1.6GHz while the software incorrectly believes it has been
+set to 813MHz.
+
+>  		reg =3D <0x0310>;
+>  	};
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016-patch-ekto=
+r5-dm8168-dts-v1-0-b4ce30217028@linaro.org?part=3D8
