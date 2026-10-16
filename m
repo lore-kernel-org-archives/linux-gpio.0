@@ -1,62 +1,65 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012038.outbound.protection.outlook.com [52.101.48.38])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012040.outbound.protection.outlook.com [40.93.195.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193AB45A29F;
-	Fri, 16 Oct 2026 09:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B1E224AF2;
+	Fri, 16 Oct 2026 09:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792142586; cv=fail; b=BqO3h3367LKo/xBoO9ob3IxmyJxEwrkFCCR+Rt1nOTjtNLBL/MxDCGvbf5CKEQcCTXlbMVx9Q6yPPqUW/UobIip138lzFx8/QLqC5qIb/nNU7RuvlQa2H4UXuraGlJgooXP6t9DDGGEBHHW07Axd3J6g+x5XYe7esv/9F5WSxkY=
+	t=1792142626; cv=fail; b=rMTnWh/YAHMr25WOLAMLenwSS0Dg1BNnt4aAX3vjmKZqqBohsKkIsi6W5Thvro9noo2nI01VuUfiYutqkfUolcOGkilivYwD0wvX/RL5YIpESnBCV8NRKlMjhqLPuUTsVChGDL0wOhbVrKD+TSJF4RuJpFVmu97caeW0FexTLeQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792142586; c=relaxed/simple;
-	bh=KQZPf89/pc1l6SSnBSooYeqpAjwVMTJOoah9tQBj8ao=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Bp7Es7zq4itRfCcXdoDAYKILS/k7kypTeV978dYvZjEp83Ks7h9TLEKRIroe0g4iAJMhhdkUr5EYTeF7Wa0TeCMW11VlsSrUuHbg1Fy2W7AqCz4xq55ltAk6J7IEY3sQhCgZi0vY1PbkdVXYbeslKGHUXjunmck4wk63Q5m5Sqo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DvY2Jm3c; arc=fail smtp.client-ip=52.101.48.38
+	s=arc-20240116; t=1792142626; c=relaxed/simple;
+	bh=nhGJ7jPwicYALWtbpXOr9xqj1C/0rSAIV0SBI/P5xvQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jkoGA0QV1f6mBAfhZgvbY8f3Op1aggVNPui4JWU2AWmC31DMtvVLzsb8ntQTpnXN2LJauPsbWRBkiX+Tqw00ETFyPGRHGf5urtDYExDTHjNM9SBT4W+2SMFwnNMyJpPU8pQTL66YM44JHOvLgSzprB+WxsSHoPcbX7v04Ews7I0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ipcNt2PG; arc=fail smtp.client-ip=40.93.195.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DvY2Jm3c"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ipcNt2PG"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=py6OF1EuahnX5jEUGd4LNxpZOvIgr9l69V3ZsY17XWYQCtfhQAMnjompIaUUiW++fyfdyR5sajehvcWfm1ed7S5ZOuW0+f9tgHee5VbhPBDXVuOyNK+dQgRFWGBd+/mqqvXpqL7IPOCfGnFVWuatdABjdkbp0dPWQpd88nPaaa4M7RKNwhrYY8jvxYmKi3h6VSbSkW93pzwea1ZVM4HDRjjHKM2nu8qfXHMyMTZ/YQAVHbZ0lKqPjmYZSGn5ytfL2bN5vky74owNOgYSqf8BPHgXBF1Udrh7lfEosneAdP0aJRS6F+WqyMLfo1LHJ76tLaXy7NzurWuHujHlcrZfbw==
+ b=M5iLFP+8SGVjuAdJZ2cHBMd1XiGLb5HlVxXQc2Bvd40xr4LHHxOXW/z0wJhtwUHkTi2Q1oRXSnjnalwK5TCy6JkCp6kmC5NX5ymWxUWBv69eFsNg1YV4vwfLjYr+aR+Jr/lCcHHDYEZYDEdiMii7EWVJskaPcrgKoPZ1wbuvUUzU01oFgSmMuu3kGViaNbd3Zdj1IAam/E8svtjPy8QbPD4kvLlRQtcZh7hu669d1knGkcjLgLV0h+g6ENquf7CWXEcTaF8iGlQX2w11Mlto1kauLF+bqAAGUEkjVrpkUeRhqwqLxUWdx9TAuLzrcLcD98oTmeE4TTqK82EVmPHQEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8wgg8XeBubbqR/fvw2umN5528mdjzZ9HKT6Q1oO0oQs=;
- b=rmYiGOst5Uee8w6qWsCCCL5ZLnZw5lPYcvUYrBwJBqlsExO94z8NLGMiqbRs6joZfJZ+VAkE8+PTmji4l7YyOtJqWgwCTRrGSDnfDwsp4AYKoInGUDFLE3j1Cqqodqx4eHOm31NLNw3iP07M5DkyCaVqWdBNZt74XzpyibTEG2hXKqUTVDpmhC+ixvFXFwbX1QCAmbkB2zD7u2Fs3OId1qUBU1sdGGEa1isWoYsBmv/I9iUXkvJ44kv85rsLf6SE5aHRGEzKaR0Qd9zpayL+QDjDTIrL15e7pkpMLVQx/F+E8VuDLsT+cbLom2pUsaU0AOP6L/m/X4OdiUWE/aYkzQ==
+ bh=or6ROaFqk94TdWtwsRiUs4Tcy6MWUWmftsCeKVcJ6uE=;
+ b=DA8qSRfstduQQdLRJYO1TyHMskQZza+QP4kIeKT+yqxnmoVwazTGtqnh755niI5g/ON/kE5DV5FdnhQL8k7T1kueof7lPBdZdSIu4cmmjzsANGjGseioZ3jBzQmVwFT7v83syiUVLPYLXKgIYio+Uamu9S4/V0Nv45K8e7c3MY9FoteK0MfHjjMFVcGN29htjavTK7+xLhQ//te12apHa1cpzlIeryrcvIACIDl+lodKASAh6XzINkQRLbG2IXPtD5O7r7P0GB4KfsC24vad/52Lmbfbv0OsFWpRaepk/1+eywfD6mTJI0ScgUE0/PkdgXJbWRk7wTxOnvagC8biKA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8wgg8XeBubbqR/fvw2umN5528mdjzZ9HKT6Q1oO0oQs=;
- b=DvY2Jm3cyRaALxDSrw/xKjN2i/g+Tt8aJybdPZlEn9LflW2oGjaU003JwOkPxvI3vttlTVTsgMtvEqwQHCHBjQG38BdASsJGMatXcFgKCL6O450GkVvZadBLgnu2oC9lYAq3F6RKU3jZyBp75W9VIIxowm1IOou24FebuT0SPGBUpJkfwCDqxycoSi1sH18YfDla1Zqaw9v1Lk3Pt+P7nauhbG+dd5L5LMU16N+f4DyeV2sG0SvxkhgY87zIjgC15LfBXiuWoKoSf4MWKRpKMKzqw+xhU8KxJGg8ZT6PTuBI6PgbiA+Pl31nVf9usmrAxQnURxVSt4CX79muSCz7qQ==
+ bh=or6ROaFqk94TdWtwsRiUs4Tcy6MWUWmftsCeKVcJ6uE=;
+ b=ipcNt2PGlV21GEUDDg/ADKlntJezuWGShhBLfuknSd6CcpoEoVkqBFUnzeFHUNM4paR2PAy5WY9EgyZqBaXXgUnLq6dmV+A4VM43huSK6P1YU44CubnJ0OtMv5raAzL8yG81fn0FIYIDhAIPGo/oillx6vAUO8GGeS1YbOJOMTv5l8YIemVqZy3dLGNZNb8EBoqPhpwrnLyqsn4cnX2+fv2PfsAkEjMzyUAIcoc7pv3APeykeNCfW+SKBvYjmUN0Z/ICFW2I9VPqgcVGrQfHlEK3CzYx7azEleryPgTNR5WcZs4HwbOT0r4Y/jPBejsL0/WbD2SFVzk5BAKuvubDpA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
  by DSVPR12MB195923.namprd12.prod.outlook.com (2603:10b6:8:3eb::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
- 2026 09:23:02 +0000
+ 2026 09:23:41 +0000
 Received: from PH7PR12MB5974.namprd12.prod.outlook.com
  ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
  ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0522.012; Fri, 16 Oct 2026
- 09:23:02 +0000
+ 09:23:41 +0000
 From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
 Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] gpiolib: cdev: don't set GPIOD_FLAG_IS_OUT
-Date: Fri, 16 Oct 2026 12:22:58 +0300
-Message-ID: <20261016-gpiolib-cdev-direction-v2-1-aambrozewicz@nvidia.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] gpiolib: fix chip removal with lines still requested from user space
+Date: Fri, 16 Oct 2026 12:23:32 +0300
+Message-ID: <20261016-gpiolib-chip-removal-v2-0-aambrozewicz@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TL2P290CA0023.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::12) To PH7PR12MB5974.namprd12.prod.outlook.com
+X-ClientProxiedBy: MR1P264CA0202.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:57::19) To PH7PR12MB5974.namprd12.prod.outlook.com
  (2603:10b6:510:1d9::19)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -66,138 +69,239 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|DSVPR12MB195923:EE_
-X-MS-Office365-Filtering-Correlation-Id: b11034e1-cf02-461e-5460-08df2b6713b7
+X-MS-Office365-Filtering-Correlation-Id: 85750125-5495-4d5d-3f73-08df2b672b48
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|6133799003|18002099003|10067099003|3023799007|261009223027099003|5023799004|11063799006|56012099006;
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|23010399003|6133799003|18002099003|10067099003|261009223027099003|5023799004|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	Uc/Wl7y+B/wOEOHGSQ0Q30R4EK3GwKiwmqMxS+ze265/bmmrm/wvbQTb7fdqXvUF339bpoqsSoUoNP23yB79qTn1E2B/zFHIAc1XFAemnm9a9ZlkYgdRCysz9OysRB1TujYhIaWoXYE1KyDoL1bsVDItKRNe5vgOzYUys0nlMlyxS2dpu++K+rtgl1w9i98UHn82S1ZbjU1CGzqjluqZgLgElNa3Hi2AbLO7LVhztMFC7HPe6BvX9Rm02/eVKi1FCyd+Ld9QBekQBgKAOScgc6QmloNWOHV7PVFR1XA9JPqLNWCwN30VwVOmDIlUWZgDL2/kUYbakLFtFUpJWwbcQR6q9z9dYwdDSkSlMO/Odzsx2lRbBY0xXUzIrt0dMef1Mp1Rsoq+gHYzNanXysq01zb6K5bQ+i0OkdAJsF9Q/yG8uYb4IpH23UCxBzYxfRs0KnMU3mBXbAJAgdp1AkvrUMx7vLSc7ZxCNZPyiR4xwA3C/Z1eGdy6KpF6t9u5pG4v5mJHjQlb2qSEI+0YuMTVGm6eMa0qwu7ShOfamNeUVe4LqAlsNfIWMz/q8YvnKZKkKWkHX28YIFimXW7WM7kLLaa68Rlec5RyxOh8itlC4VfppX9r+IDatqgUkuJxiTpUpuBwoG/Ors7GwHXRO9T5qnH2KyuRJsIy6y1yhiZqrI8=
+	HRxv4t3FK0Uzp5cM5ex5bcbv2UxNynq8WUgN6p3oRm4w2Ijhm/S21CGJBv1vhpe+p88iULgPDUh0O7QNtajakOiUywMvWz3IaYonnU+g2wzBdOnubs2veQkloyk/rkHZw+/760167uOusg6uzggxOFAfihQX2kt7vRg/IvvtA3IbHKhwkX3Cp2yiysmFGBoqU/DggmkDYMaoh0oBg1uDTXFJq428kxfWNn/6Ix+loD1xldSPTFm2m0SlPcCGndV/8GM2l8OA3QM0Jm2Q0r2rKFGli0tKAacJDCS63ESfgOACDjuvzshHM+hTC3tsRvbUnWUdmTjcu+Gcr2FpqymNyxIIH3hadxShIz2fEloSW12uq9BbW94JsmGikr/1ecDTTSERfDxlyTZK76vwYwqqoFG3IaSaNvrywZ4taqPcwDF1IXruGRGHwCX7OrWhqooz9roOXPTgoZ5Cos6SHet7e0KTA41XhTI+WOcUjY4t6BCZTiFOcuxJI1KKliOlFgI2Fcg+Gapt/nt84CCB5lU7sfSdQbRYpN1V271B5ZKo50SuHy79vZA277lknMRLFQMYoQ/sMg7cGbiY6tE0zvG9yAfbVt2YxCm27/SYn7+Tc4ccRYsZzamvJTr9ex2xtuA2FnwWAr5biKOcyAJuSTywFUVUJSHlaRVmk32HMK3avi8=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(6133799003)(18002099003)(10067099003)(3023799007)(261009223027099003)(5023799004)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(23010399003)(6133799003)(18002099003)(10067099003)(261009223027099003)(5023799004)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?t6CrDpckGhYdeaaQBu3gpfuGDWWJM39eFuJ6aaf/sXtrDlSz1HcSsJHPB47t?=
- =?us-ascii?Q?i5qNaLeN9Cv4CFqHRNuW8UDT9jWZS3u+TVtJB7ukrG2jX/wDvAkQ5o3wB4O3?=
- =?us-ascii?Q?8E10jahVsyXNOh5jMe46yzsOmW3TyIc13etEASmlRZU4C6ckopC9nJzr8mx3?=
- =?us-ascii?Q?19b377wINeqb3bO+Vvbksxya5WizEaMFwacaGciTXCOO/BlbKZUoUdFmj5Ms?=
- =?us-ascii?Q?4s1yIoiGXmHIyL2kum97xuwlGWe5VMdyj6Jskkih0Zr7Xna4CUgsMXQhKx5a?=
- =?us-ascii?Q?St9Ch5v3Cu036U9AU2OtHG/v5hfw+VE4NFGD/v7Gh/dtQ7L9g+1RTcDpV9Hs?=
- =?us-ascii?Q?gSbEG0fwvPhGbsLME0NgPIxcdnld6upyaiu0SGguiMiCdCgvFUzbXfGqtslB?=
- =?us-ascii?Q?3iTjqnXYS6qkv63NfCnTLrEyO+aKtoOzU1qa0NdHdVcZPPgVNKD+rrIJ0yO6?=
- =?us-ascii?Q?lkONMyHIErrf3B9r7qiU+/phmSzt1RtEuM0XbaRywenO5GRBr6HZuWL469qO?=
- =?us-ascii?Q?fg9kYsT/5Wi9CDzwRk1GDt6y51CPsyYfFBU6WEVAZ5OdNgvAS4JWSOsKVKRb?=
- =?us-ascii?Q?+KCr/A2kbmzCTI2aVUdIMXfiG/ZNF2YurUfunMPXAJn/jHEoIZ5OdId8aote?=
- =?us-ascii?Q?SmI66HhKEgi31IOMYYE08pV7wdpp+rRDTIsK6yVDYFWvZGlVK3PNCMgt8cGL?=
- =?us-ascii?Q?1V8YuFJSG5dHdByZsdQ6928N7tH6k6i4gC8EeYHKKsDLkDD4ripsbMTl/8uz?=
- =?us-ascii?Q?Q1bcA/NqplJtoAkqalbMk7rB5QTixXVuZk0CjaiNrzg0WgQb9sUQoaaHBNSL?=
- =?us-ascii?Q?MsTwGFcPnr5U9a5KKzeMoqmPtDOLVplhPD8cI9Zko3WwclMIHxaJqGZTnftg?=
- =?us-ascii?Q?P5b16RK/y3Jm8o+S7XLCaaKiEOyM+7fcTIObMlWHvvu9JUH5WrMPEwTpUOi5?=
- =?us-ascii?Q?ANkH52LxB5uczon5UTFffgr5kORdQ7UA5OMM3aMpIoxNcStIQRVh8ZH7zZVn?=
- =?us-ascii?Q?TdKs7LDl+9/WksAo70gg+Z9tIhNEChujuwR1zormsaZzyVwUzhUsIJ0esdMa?=
- =?us-ascii?Q?ITTcFA8SCSPONOmz/GUrU5dM/CZ3gM/gyZ4/OH2D/NFOIP9iDXRrKYGuAGVk?=
- =?us-ascii?Q?8Up3sPDbIGSXZSVG7gAdgBvE75hqTaE7Rl4jwv1cD1VO0GMkmn/gYJv1c5TD?=
- =?us-ascii?Q?vCFj1PZ2hodvoD+v/iQJp8xl0qIjQvNX3bnjpaRm/P6C29kssTzGzFTHQjcK?=
- =?us-ascii?Q?foP2V+ZiMk6y0uyh+n0A0QFniIwDM66eUHzw12EH3ecxI/r4cQxkNZ1lHfp9?=
- =?us-ascii?Q?ZfBOk2Kkrim13daamWdE6m0ipKKi+MlhndRVYTYFpu6ogHDB7nOsG065bJZL?=
- =?us-ascii?Q?UCBR0GXMvFebBlWEK3hkNaYZZHEz+fnaUlmJ0qDb8GkwY+w19pOQsviu8PhB?=
- =?us-ascii?Q?g8GJsQD7xuuwJeI2bRIAHd/9rxBIzJVAsFRzqD1pDaH0CatKHu6iBJyoqOlQ?=
- =?us-ascii?Q?/bFr7G/Xbmzakf9hKZT908M5gQmk0wBN1pH5jOHKfa3cKopOGOBhXw/k/yLy?=
- =?us-ascii?Q?XMx0rn5pkfDQsYo9saEdod2DGphjAAZwajKq6OV7ez+0nIgHIFrzmAA6/J1s?=
- =?us-ascii?Q?guv0E37FTBhpZpMvtYgIpeQ2aaZgqtax45O3ubcjyLAL0ngUtxaZagANaH/3?=
- =?us-ascii?Q?zobbt/t+5Pyu7jYxSXSsMaDH5+aOAot2EZxktyeMGCCnm+ijuq1ST6trdw/V?=
- =?us-ascii?Q?Eo5KD5OZ2A=3D=3D?=
+	=?us-ascii?Q?nDPnNhZgZTwKjEP6JblXUY5yIK3/H4tB7hdhpZUxEAQgbq9K/4InHIExmLe/?=
+ =?us-ascii?Q?RYexji+h9RnUNeGVj0KXJJ8Nm7ry/rPR8e4nPojpJj4dI01pa06lFCLdJwN/?=
+ =?us-ascii?Q?Og9Gh+wGmAOkDHl629f8OLzqMUyl30aWKtgdpv7kx4NYlgn+UBczeI2720N5?=
+ =?us-ascii?Q?r1xXOi1iHOkDwcQfQ4w6BvaHAiTaergjKjq9H7Zzq0vD63YSnOz0qZhSkNt2?=
+ =?us-ascii?Q?jF/4VWmjxDkCHn6REaGNK/pFlTPf7o2l5GkOVgjVwij25amhlTi5It0diVeX?=
+ =?us-ascii?Q?xeE2j0bhFLEwh9IYbejA7yaEe/IhCL0CqoTZ1zV1QYY2L3jygz99pKntIKIW?=
+ =?us-ascii?Q?SV+2PGLXHjitKk+hd2iLSzgKnekGhch4vCkqP5uVQmzC7STHSPVbcwbY1V4I?=
+ =?us-ascii?Q?8CJintxkxiPMFFzxqTMPzjHKdL3UCRdAehcF5o8DlBvEIN+LRhhXM7zp+aNe?=
+ =?us-ascii?Q?73Fa3bAzZuV1ghv0nL9Ml/LK0sg4em5ouGzzf1NE5jRnY9L+cg9cbHKWd2J5?=
+ =?us-ascii?Q?PEuUP+J/vFY4yH3QT6IjVF3yr25qBkWsgOfXwjhEPjTNVxliPOGSejRahbAj?=
+ =?us-ascii?Q?HAbMe+N/ldJWTTHmbnvObXjNECSDKC6Pgesv+Li763nqIxVVyMWqUMtbO/1k?=
+ =?us-ascii?Q?7PYG6r78PslOYMdngg7e/er0LQ3b7jruodRQUfU5Jhnw1USxS14gnYsZ+5sy?=
+ =?us-ascii?Q?pLRY7ayRE4xU8pzIMA3U0hvNmgAhVc+VrCmK3LWqj7O0Kmp1JOvUGF9vVzIH?=
+ =?us-ascii?Q?Tbbh6XCBeiwiXocV9VTVR/q6j/9VJk/a8tHBh58B2H5oBshLztWeWUjQgw6C?=
+ =?us-ascii?Q?B5EaifwW6ubdEtuT1EnXG+US0pnOvZUc+B1aNw5Vd8WMiWO03w3LyNySExIe?=
+ =?us-ascii?Q?ineqeLGoEbiIqJmsUsqaMMIFjN6PHku/B10ZoXX9ZL/MsV9aMfKz2L3S9PeF?=
+ =?us-ascii?Q?CvoScjNWE8s+piGMUqNh/viGwWU6vr5Revm7v1RmqEY9O7Cit+1EHLd2FL3/?=
+ =?us-ascii?Q?O87rYylk6WsdeOIJGfl+DLnzJKvoGufpdNhLx+ksVXzz531hmHJQG3lZjZ7+?=
+ =?us-ascii?Q?4GBB/HwyMe9qh30guqJWZziO+P0GvqLK2/inqDlNJfoGPJQX8jzRz/7lzCnp?=
+ =?us-ascii?Q?rOF/f9LOBLMJ3vWVQ1gb+Mr6UtNFRjMjA+S7FwvJLAPoSjU2p6JQXusfiLPn?=
+ =?us-ascii?Q?w19YunRIEcqmK7X+b1w9gT/1zKvaQZQTGErNuYPtbj1sAIpZRBP7JRJzVFy4?=
+ =?us-ascii?Q?3SUKv6qocL2Vrf3wz70lCaySDvjciG2GWD2OMk/U8+g/NOsCFigKfLp8bEuG?=
+ =?us-ascii?Q?eiib8/BtVn2IeW4Qd5+5JshBIIAS8wYA7nxchDrSm6VX5bXXpIBUEUrhpadG?=
+ =?us-ascii?Q?R9BWUhEiqxyZXtvqzprOzSJFaJP+msBPT6td9Jx81M6fiA0BBUrL31I/3BvB?=
+ =?us-ascii?Q?5s/AS49Zuy4dexYAiXUssNvV0FOApk+6Q6ilm9z0/tBXAvVCyLmmLKyBJpc3?=
+ =?us-ascii?Q?7cagY+MI4Wzu6frtZc8qP8Y+wcjRiRqzXLIE8ChpQkI2PLRnPjJz4jNsUflW?=
+ =?us-ascii?Q?nDpXAzo1iAtfH0JT3Xcn7yYE9/b9SHepHYxb64E60Xp6ul2LGZktNm5yxtOT?=
+ =?us-ascii?Q?FE+FcEf5hHxnOJSyrP4fvUC7uI/3CuUL680rLfRX27pX4ze/Rt5eNxSqXYPO?=
+ =?us-ascii?Q?KrE72mEqDlBn/nUWspcf7X02CzkhVEaUb6E4DZa33mGPdGwE9nUlwv4/JoRQ?=
+ =?us-ascii?Q?I45HZEjp5Q=3D=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b11034e1-cf02-461e-5460-08df2b6713b7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85750125-5495-4d5d-3f73-08df2b672b48
 X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 09:23:02.4790
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 09:23:41.8766
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3q74Ncr0bmTFnGEKJph+zU7xvcG1UlK0qqN5BqZkoBLqmgoXbrX3apxG2fj1/AoGJCvbLK+bdYG3BF+Q2pS9qA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: CbuOiBbSYSqr49FO1JdxDU4eW6eGD+SOO/ug/p0K6JJMlw4y156HORfx1+10cqwDsrzaxwTUM0h82DL0bBnqmQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DSVPR12MB195923
 
-When a line is requested or reconfigured through the v2 uAPI,
-gpio_v2_line_config_flags_to_desc_flags() copies the requested
-configuration into the descriptor flags, GPIOD_FLAG_IS_OUT included,
-before gpiod_direction_input_nonotify() or
-gpiod_direction_output_nonotify() asks the driver for the direction.
-If the driver refuses, for instance with -EOPNOTSUPP from
-.direction_input() for a line that can only be an output, the ioctl
-fails but the flag keeps the refused direction. gpiod_free_commit()
-does not touch GPIOD_FLAG_IS_OUT, so this outlives the failed request,
-and GPIO_V2_GET_LINEINFO_IOCTL reports the line as an input while the
-hardware still drives it, until a request without direction flags
-makes gpiod_request_commit() read the direction back from the driver:
+Removing a GPIO chip while user space keeps a line request open, which
+is what happens when a USB or otherwise hot-pluggable GPIO controller
+goes away, leaves a few things behind on current kernels:
 
-  GPIO_V2_GET_LINE_IOCTL, line 0, input:         -EOPNOTSUPP
-  GPIO_V2_GET_LINEINFO_IOCTL, line 0:            input
-  GPIO_V2_GET_LINE_IOCTL, line 0, no direction:  ok
-  GPIO_V2_GET_LINEINFO_IOCTL, line 0:            output
+ - the consumer label of each such line leaks (patch 2), and freeing it
+   just before the GPIO device is released needs gpiodev_release() to
+   wait for pending label frees (patch 1, which can also be hit on its
+   own with line hogs);
+ - the character device frees the line's IRQ a second time on close,
+   after gpiochip_remove() already did, which warns when the IRQ number
+   was reused and was reported as a use-after-free with virtio-gpio
+   (patch 3), and its IRQs are freed in an order that still lets a
+   reused IRQ number or a concurrent close() get in the way (patch 6);
+ - a process blocked in read() on the request keeps gpiochip_remove()
+   waiting in synchronize_srcu() until it is signalled, and with it
+   device_shutdown() on power-off (patch 4);
+ - the IRQ name the character device allocated leaks (patch 5).
 
-GPIO_V2_LINE_SET_CONFIG_IOCTL updates the flags in the same order.
-There the line stays requested, and since commit 92ac7de3175e
-("gpiolib: don't allow setting values on input lines")
-GPIO_V2_LINE_SET_VALUES_IOCTL on it then fails with -EPERM, though the
-line is still an output. A line whose driver refuses to make it an
-output is likewise reported as one.
+All five were reproduced with gpio-sim on v7.3-rc5 under QEMU (x86_64,
+4 vCPUs) and are still present in gpio/for-next. The loop: create a
+gpio-sim chip, request a line through the character device and hold
+it, set "live" to 0 while it is held, then optionally set the chip up
+again and request the same line, and close the first request.
 
-gpiod_direction_input_nonotify() and gpiod_direction_output_nonotify()
-set or clear GPIOD_FLAG_IS_OUT themselves once the driver has accepted
-the direction, emulated open drain and open source included, and
-nothing between the copy and those calls reads the flag. Leave it to
-them, as the v1 uAPI already does.
+                      v7.3-rc5 (30 cycles)        with the series (100)
+ v2 edges, reuse      30 WARN, 17-30 labels       0 WARN, 0 leaks
+ v2 edges             0 WARN, 19-29 labels        0
+ v2 sw debounce       30 WARN, 13-30 labels       0
+ v1 line event        30 WARN, 14-29 labels       0
+ v2 no edges          15-30 labels                0
+ v2 edges, consumer   30 WARN, 15-30 labels,      0
+                      17-24 IRQ names
+ blocked read()       removal waits for the       removal completes,
+ (v2, v1, info watch) reader to be killed         read() gets -ENODEV
 
-The other flags that the helper copies stay as they are. Active low,
-drive and bias are what gpiod_direction_*() applies, drive and bias
-possibly before the driver refuses the direction; edges and event
-clock are the character device's own. None of them is read back from
-the driver, so there is no earlier state that is more accurate to go
-back to. A failed request releases the line, which clears them, and a
-failed reconfiguration leaves the line, like the lines before it, with
-what was applied up to the failure.
+The counts above are from both a KASAN and a non-KASAN build of v1;
+KASAN did not report anything in these runs, the slab use-after-free
+from the report needs the descriptor free to race with the close.
+kmemleak does not see every leaked object, hence the ranges. The
+desc_srcu warning fixed by patch 1 takes srcutree.convert_to_big=1 to
+show up within a few dozen cycles of a hogged line (cycle 57 here);
+with the series, 1000 cycles pass. That warning was also seen on real
+hardware, on arm64 KCSAN kernels with v7.3-rc5 unbinding a USB GPIO
+expander whose driver is not yet upstream, built both as an out-of-tree
+module and into the kernel.
 
-Reproduced under QEMU with a test GPIO chip whose line 0 refuses input
-and line 1 refuses output: both refused requests and both refused
-reconfigurations leave the line info with the refused direction, and
-setting the value of the reconfigured output fails with -EPERM. With
-this change the line info shows the direction of the hardware in all
-four cases and setting the value works. First seen on real hardware
-with v6.12.
+Patch 3 on its own leaves two windows, which gpio-sim does not hit: if
+the chip disposes of its IRQ mappings in gpiochip_irqchip_remove() and
+another device gets one of the numbers before the character device's
+notifier runs, the notifier's free_irq() warns; and a close() racing
+with gpiochip_remove() is not serialized against gpiod_free_irqs().
+Patch 6 calls the notifier right after the chip pointer is cleared and
+before gpiod_free_irqs(), and makes the release paths free their IRQs
+before unregistering from it. With a test-only chip on the gpiolib
+hierarchical irqchip that hands an IRQ number out again during the
+removal, or sleeps in irq_bus_lock() to widen the race, 30 out of 30
+cycles warn in each case with patches 1-5 and none with patch 6.
 
-Fixes: 3c0d9c635ae2 ("gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL and GPIO_V2_LINE_GET_VALUES_IOCTL")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
----
+Patch 6 is kept apart from patch 3 because it changes the order of
+gpiochip_remove() for in-kernel users too: interrupts they leave
+requested are now freed after the chip pointer is cleared rather than
+before, so the irqchip callbacks that free_irq() calls into run with
+the gpiod_*() consumer calls on that chip already failing; the driver
+data is still set at that point. Patch 3 is enough for the reported
+use-after-free and is the smaller backport. Herve's series [1] moved the
+character device's cleanup earlier in gpiochip_remove() in 2024 and was
+set aside for a fix covering in-kernel users as well, which became
+gpiochip_free_remaining_irqs(); patch 6 keeps that and only lets the
+character device go first.
+
+The revocable conversion posted for gpiolib [3] keeps all of these as
+they are; patches 2, 4 and 6 would need rebasing over it, patch 6
+because its notifier call goes right after the revocable_revoke() that
+the conversion puts in gpiochip_remove().
+
+On arm64 (QEMU virt, 4 vCPUs, KASAN), 5 cycles per case, the removal
+loop gives the same picture: on v7.3-rc5 the v2 edge, debounce, v1 and
+consumer cases warn in every cycle, all cases but the blocked readers
+leak labels, and the blocked readers hold up the removal; with the
+series none of that happens. With the test chip, the close race warns
+in 10 out of 10 cycles on v7.3-rc5 for v2 and v1 alike, and in one v2
+cycle KASAN reports the use-after-free of [2], free_irq() from
+edge_detector_stop() on a freed irq_desc; with the series there is
+neither. (The reused IRQ number only leads to a warning once patch 3
+frees IRQs from the notifier, so not on v7.3-rc5.) An x86_64 KCSAN
+build, default KCSAN options, shows the same warnings and stalls on
+v7.3-rc5 and none with the series; KCSAN itself reported no data race
+in gpiolib, also with kcsan.skip_watch=100 for the test chip and the
+edge, consumer and blocked-reader cases (one report in 32 boots, in
+osq_unlock() while a disk was probed during boot). The test kernels
+with patch 6 also had the direction fix mentioned below applied, which
+touches none of these paths.
+
+For v2, the x86_64 removal loop (10 cycles per case, 2 for the blocked
+readers) and the test chip (30 cycles) were run again on a debug and kmemleak build of this series
+with the two fixes below, and on KASAN and KCSAN builds that also had
+two fixes for existing code in gpiolib.c on top: no warnings, leaks or
+stalls. The arm64 runs were not repeated.
+
+User-visible change: with patch 4, a read() that is blocked on a line
+request, on a v1 line event or on a chip file with watched lines when
+the chip is removed returns the events still queued, if any, and then
+fails with -ENODEV. On v7.3-rc5 it stays blocked until it is signalled
+or an event arrives, holding up the removal. A read() started after the
+removal already failed with -ENODEV, and poll() already reported
+EPOLLHUP | EPOLLERR; neither changes.
+
+For stable: patches 3, 5 and 6 fix commit ec8b6f55b981, which is in
+6.12 and later. Patch 4 applies to 6.12.y as is; the SRCU read section
+it changes replaced the gdev->sem rwsem in 6.9, and 5.15.y, 6.1.y and
+6.6.y have that rwsem from the commit it fixes and need a different
+change. There the read handlers hold gdev->sem for reading across the
+whole read through call_read_locked(), wait included, and
+gpiochip_remove() takes it for writing, so the backport has to drop the
+rwsem around wait_event_interruptible_locked(), retake it and check
+gdev->chip again, with !gdev->chip added to the wait condition. On
+6.6.y the device notifier, called with the rwsem held for writing, then
+wakes the reader, which gets -ENODEV once the removal drops the rwsem.
+5.15.y and 6.1.y have no device notifier: the removal no longer waits,
+but a blocked reader is only woken by an event or a signal, as before.
+
+Two fixes found along the way have nothing to do with chip removal and
+are sent on their own: one for the line info keeping a direction that
+the driver refused (gpiolib-cdev, now at v2), one for the event clock
+flags of a released line (gpiolib, v1 unchanged). This series does not
+depend on them, nor they on it; all three apply to v7.3-rc5,
+gpio/for-next and gpio/for-current in any order. A fix for a debounce
+period race in gpiod_free_commit() that Sashiko found on the event
+clock fix builds on patch 2, so it will follow once this series is in.
+
+Direction fix: https://lore.kernel.org/r/20261016-gpiolib-cdev-direction-v2-1-aambrozewicz@nvidia.com
+Event clock fix: https://lore.kernel.org/r/20261012-gpiolib-event-clock-v1-1-aambrozewicz@nvidia.com
+
+For transparency: an LLM coding assistant helped with the analysis, the
+reproducers and test setup, and drafting the patches and messages,
+hence the Assisted-by tags.
+
+Cc'd beyond the GPIO maintainers and list: Paul for the SRCU side,
+since patch 1 replaces synchronize_srcu() with srcu_barrier() before
+cleanup_srcu_struct(), patch 4 moves sleeping waits out of the
+gdev->srcu read section, and patch 6 relies on synchronize_srcu() on
+gdev->srcu to rule out new IRQ requests through the character device;
+Herve for [1], which patch 6 revisits; Jia Jia for the virtio-gpio
+use-after-free report [2] that patch 3 addresses; Kent as the author of
+the v2 character device; Andy, who acked the commit that patch 2 fixes.
+
 Changes in v2:
-- Subject says what the patch does: cdev no longer sets
-  GPIOD_FLAG_IS_OUT (Kent).
-- Comment dropped (Kent).
-- Assisted-by tag.
-- Link to v1: https://lore.kernel.org/r/20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com
+- Patches 1, 2, 3 and 5: backtraces cut down to the warning and the
+  frames that matter (Andy).
+- Patch 1: Paul's Reviewed-by.
+- Patch 2: gpiod_free_commit() returns early for a line that is not
+  requested on a live chip and clears the label once, before the chip
+  check, so now before ->free() (Andy).
+- Patch 3: the IRQ check moved into free_line_irq(), with a local for
+  the IRQ name; container_of() on one line; loop variable declared in
+  the for (Andy).
+- Patch 4: the three chip checks of the read() paths factored into
+  gpiodev_check_chip() (Andy).
+- Patch 5: follows the free_line_irq() shape from patch 3 (Andy).
+- Patch 6: mutex_destroy() for config_mutex and irq_lock; the missing
+  ->to_irq() case folded into the irq <= 0 check (Andy).
+- Assisted-by tags; see the note on tools above.
+- Link to v1: https://lore.kernel.org/r/20261012-gpiolib-chip-removal-v1-0-aambrozewicz@nvidia.com
 
- drivers/gpio/gpiolib-cdev.c | 5 -----
- 1 file changed, 5 deletions(-)
+[1] https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/
+[2] https://lore.kernel.org/all/20260817070429.157993-1-physicalmtea@gmail.com/
+[3] https://lore.kernel.org/all/20261011121246.162759-1-tzungbi@kernel.org/
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 5d53bfcdf726..f4d78113ade2 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -1229,11 +1229,6 @@ static void gpio_v2_line_config_flags_to_desc_flags(u64 lflags,
- 	assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
- 		   lflags & GPIO_V2_LINE_FLAG_ACTIVE_LOW);
- 
--	if (lflags & GPIO_V2_LINE_FLAG_OUTPUT)
--		set_bit(GPIOD_FLAG_IS_OUT, &flags);
--	else if (lflags & GPIO_V2_LINE_FLAG_INPUT)
--		clear_bit(GPIOD_FLAG_IS_OUT, &flags);
--
- 	assign_bit(GPIOD_FLAG_EDGE_RISING, &flags,
- 		   lflags & GPIO_V2_LINE_FLAG_EDGE_RISING);
- 	assign_bit(GPIOD_FLAG_EDGE_FALLING, &flags,
+Adrian Ambrozewicz (6):
+  gpiolib: wait for pending label frees before cleaning up desc_srcu
+  gpiolib: free the label of lines released after their chip was removed
+  gpiolib: cdev: do not free line IRQs again after the chip is removed
+  gpiolib: cdev: don't sleep in the SRCU read section in read()
+  gpiolib: cdev: don't leak the IRQ name when the chip is removed
+  gpiolib: let the character device free its IRQs first on chip removal
+
+ drivers/gpio/gpiolib-cdev.c | 146 +++++++++++++++++++++++++++---------
+ drivers/gpio/gpiolib.c      |  39 ++++++++--
+ 2 files changed, 140 insertions(+), 45 deletions(-)
+
 
 base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
 -- 
