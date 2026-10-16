@@ -1,75 +1,51 @@
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3331451DDE8
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 15:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A520C38DD3;
+	Fri, 16 Oct 2026 16:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792165360; cv=none; b=Sx6PG0fx7eoufFKcVj1x82OxJy/cFIR8epb/IKZZbEnaVS7kOr1e125oNxRtn6N4Wgrq1endHtyZ5/g7wcZus3Te2mG9AAeYYkUYHb1Q/Jcmb6ftBvXaab4+ZpIvrDkuG0JCMj6w8STFyNGfhDzXOoGhT0RzuWWeH04bOCEbldU=
+	t=1792169204; cv=none; b=PBGUCV3fa+mUcc6HhrcND0Vc4O97ZpafkE5R6Lfaaux3gKvq3BNCkCnALu0RT0zJkLhAZQ4usMV+gytNEyCV6U0CoI+dP4xlRFeoc+rbF3X1jXu2gRy3A1LDCI4f8v4uB/PVmJ0nx/DL3PiHrW9SFBa+bT/mQ49a+8DeKzThw1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792165360; c=relaxed/simple;
-	bh=zk3J/AL6+Z3Ly59Klf2ISnugpy+IF3qjEzcB3g2kr28=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jB9ob+e1zZlZXyH8iUFp7WmsAhonzW0/vVyKDhaacG3fBAEMxAA2Y73el/m+qT8m49h4nL8Iw0HEGawlRq2FNDfMZgNkktE01Hsc5+xvYeXkc/9qSCKCPKAqWj9TNW/+Mrmr+9PEot2URNN9/UAwHd4K0oYBe/5AS28wboce7i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClrYcPFk; arc=none smtp.client-ip=74.125.82.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClrYcPFk"
-Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-3514b90bb89so6385848eec.1
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792165351; x=1792770151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=o2folU0O4bOJirQCG1bT84vwZiHZNPZr+tDe4ocPaDM=;
-        b=ClrYcPFkgXXAK4R2h4FZHHDO4rmBKH9B+KM9AqDymgVbbZwd4UERMaU7tXfpQzvwZW
-         JZf4KOgant3D9oQhkEAys8FDQYbeTEWqbEbVWM/5B/kLo8Qt/QnJUae9xe2C5zLlyvfO
-         VaDmI0S8Z5EpREk4SNHuPqoIHvvEZeKPGBcfqt92oN6yADwntStgOh+g3RD2Hgcv4s60
-         G8OLNLwrTLUpxmBNxKu5v4WtgpuRIn6ZkeY4X8BYO/rz2zCjS4adwWUdYgMzYOqaPbqh
-         uMINDUYO1OoVS3id8iG0XlzbrkCWR761e2tLJ+tTM8GWzCxYXkUgccgZ94iKHaxr+HmM
-         45kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792165351; x=1792770151;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=o2folU0O4bOJirQCG1bT84vwZiHZNPZr+tDe4ocPaDM=;
-        b=Exu4BrclyaNVNx4rmC7KaUuJ3ro6VEMl+KRWf1bCxO8qd/Omb1mZzMELT0THcUQCYl
-         NIYLSFvw2W8ki/VjebY5HSipe2g15dNitHAHIdk+TRL3+lmrcM/7WscCxhtYO2olnnnz
-         VKQ05oo5d8QN8WbgeJXmMF5zevj9uRqQ1W+WMXnOpdfC2EXqujtm4UX0FNW0n+1JXKAU
-         FndMHLkFXLSmna3+CoTQDoNhbv/fc+4EAxb69W+UmYUOVddQ3KOGXElpnU2wbbolWT4Y
-         6FGA2ZY0O4BYH5Hf9/6gF4DwD2wyVY7p6Rs18ST7jxDJfcQB3K/8NbyNoqDtZiMXpOh/
-         V45g==
-X-Forwarded-Encrypted: i=1; AKwUvBxK8Ytv80zStQN4FVhYWsvsqedP0XFK+zcX6TqUCOpeE7zkZdxy6Edxu4Nx2/lXB1DiaEzynwbDTR3p@vger.kernel.org
-X-Gm-Message-State: AFq9FYIIGb7sLb3dsIkaSweh8P9qafnC4giF6AGHwdgSGKbKREhlDH08
-	YYXfnCJN5PSURErikVr447Hur+iqFpfKZg40KHiqkDcLHnt5o4zmsWXg
-X-Gm-Gg: AYBFou1KfPCuLCDrGGOknSnx8MsJiWZtB6uSsCQhT5eVnP2LanuguZPj8xnrubl664G
-	QFMZlTATwZvT4zTM3cp8NSHQT2kWkYtq1CdmxTFuJbWRhLhmdvlmepQDylgnClAObxEj0kYCTh4
-	t7TFNlpbHjNB7ykgADDy0kmKCnglb8sWQKkM1zpNbWo8Uy8y/8x5CS+JlKM0alDAeD8QQ9WU7M6
-	oly3KASkgmkRgpjKL4xmDWbEjexX6hI83jT6zI+Bc0sqYnBIq+MAbpoVgjhnbD5oQSdhUNcwTl5
-	xyAhfjaiGHMnlE5LE6VekkvD5Lcii4AfpVVVy/Jc1GtNyqQo+GSUuRplCPa6XvK1atnz7I7hGJm
-	3jTdTFWwhzNnRIaxnO99ls3Z1k2PFPNlBWYKrB3mYBaiwA2ME6LfjuAJR6IHUPu13kMJC95yt5C
-	gwJMBixWbj3A6ipJvXafP5UAIN1uU/LSgXM9HH2+69Ky9CiNtUWhT77IiGdPOvExwVOkQ4+hlWo
-	Im8osGCDxoPHIC11wYI5Lf0MioDcDU=
-X-Received: by 2002:a05:693c:20cc:10b0:328:3944:ee53 with SMTP id 5a478bee46e88-3619ed11502mr264970eec.2.1792165350843;
-        Fri, 16 Oct 2026 08:42:30 -0700 (PDT)
-Received: from hp-OMEN-Laptop-15-en0xxx.. ([122.172.84.237])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36082e81a06sm7273806eec.26.2026.10.16.08.42.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 08:42:30 -0700 (PDT)
-From: Jayaraj Devaraj <jayarajdmit@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	s=arc-20240116; t=1792169204; c=relaxed/simple;
+	bh=7CtEwCWuLqatWeC7brkYAnd80a/CT+mW0AXcPyODOCo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dsJqiLADsTytNMayaE+uTuRS+9sTINgDfewhMo5Pf0vpBOdRL3m8GDnpArd4KXLZbkWapqFMKMMVb79zsqzXlW7y0ra1YEaOlFpPjNKftRDiRSCmEbBTogbDSdsZ0ZcVzErIfG3js5w8dE104GyXjde3fxIsxavemX91V/JSp0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 94E031A0223;
+	Fri, 16 Oct 2026 18:46:34 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C8AE1A006F;
+	Fri, 16 Oct 2026 18:46:34 +0200 (CEST)
+Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 57FD118000B1;
+	Sat, 17 Oct 2026 00:46:30 +0800 (+08)
+From: Lakshay Piplani <lakshay.piplani@nxp.com>
+To: linux-kernel@vger.kernel.org,
+	linux-i3c@lists.infradead.org,
+	alexandre.belloni@bootlin.com,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	broonie@kernel.org,
+	mfd@lists.linux.dev,
+	lee@kernel.org,
+	Frank.Li@nxp.com,
+	lgirdwood@gmail.com,
 	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jayaraj Devaraj <jayarajdmit@gmail.com>
-Subject: [PATCH v2] gpio: lpc32xx: check devm_gpiochip_add_data() return value
-Date: Fri, 16 Oct 2026 21:12:09 +0530
-Message-Id: <20261016154209.23193-1-jayarajdmit@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	linusw@kernel.org,
+	brgl@kernel.org
+Cc: vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	aman.kumarpandey@nxp.com,
+	Lakshay Piplani <lakshay.piplani@nxp.com>
+Subject: [RFC PATCH 0/7] i3c: hub: p3h2x4x: add debugfs, i2c-tools, bus rate and GPIO mode support
+Date: Fri, 16 Oct 2026 22:16:18 +0530
+Message-Id: <20261016164625.3166779-1-lakshay.piplani@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -77,51 +53,75 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-lpc32xx_gpio_probe() registers each gpio chip with
-devm_gpiochip_add_data() but ignores the return value. If registering
-a chip fails, probe still returns 0, so the driver binds with a chip
-missing and no error is reported.
+This patchset adds a debugfs interface for hub inspection and register
+access, SMBus transfer support enabling standard i2c-tools on SMBus target
+ports, per-port bus rate configuration through the standard
+'clock-frequency' property for ports operating in SMBus mode, and GPIO mode
+support for target ports whose pins are used as general-purpose I/O.
 
-Check the return value, print an error naming the failing chip and
-return the error code. Chips registered earlier in the loop are devm
-managed and are removed automatically on failure.
+This RFC is being posted for early feedback, particularly on the DT
+representation and GPIO interface. It is not standalone and is not
+intended to be applied before its base-series dependencies are available.
 
-Signed-off-by: Jayaraj Devaraj <jayarajdmit@gmail.com>
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
----
-v2: use dev_err_probe() as suggested by Bartosz
+This series was developed on top of the complete v20 P3H2x4x I3C hub
+series:
 
- drivers/gpio/gpio-lpc32xx.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+https://lore.kernel.org/linux-i3c/20260922103551.2754613-1-lakshay.piplani@nxp.com/T/#u
 
-diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
-index 37fc54fc7385..7fb46262e18c 100644
---- a/drivers/gpio/gpio-lpc32xx.c
-+++ b/drivers/gpio/gpio-lpc32xx.c
-@@ -510,7 +510,7 @@ static int lpc32xx_of_xlate(struct gpio_chip *gc,
- 
- static int lpc32xx_gpio_probe(struct platform_device *pdev)
- {
--	int i;
-+	int i, ret;
- 	void __iomem *reg_base;
- 
- 	reg_base = devm_platform_ioremap_resource(pdev, 0);
-@@ -524,8 +524,11 @@ static int lpc32xx_gpio_probe(struct platform_device *pdev)
- 			lpc32xx_gpiochip[i].chip.of_gpio_n_cells = 3;
- 			lpc32xx_gpiochip[i].reg_base = reg_base;
- 		}
--		devm_gpiochip_add_data(&pdev->dev, &lpc32xx_gpiochip[i].chip,
--				  &lpc32xx_gpiochip[i]);
-+		ret = devm_gpiochip_add_data(&pdev->dev, &lpc32xx_gpiochip[i].chip,
-+					     &lpc32xx_gpiochip[i]);
-+		if (ret)
-+			return dev_err_probe(&pdev->dev, ret,
-+					"failed to register gpio chip %d\n", i);
- 	}
- 
- 	return 0;
+At the time of posting, v20 patches 1/8, 2/8, 3/8 and 6/8 have been applied
+to the I3C maintainer tree. The remaining device-specific patches 4/8, 5/8,
+7/8 and 8/8 are still pending.
+
+The implementation in this series builds on the MFD core from v20 patch
+4/8 and the target-port and SMBus support from v20 patches 7/8 and 8/8.
+The binding extensions build on v20 patch 3/8.
+
+The series should therefore be reviewed against the complete v20 series.
+A subsequent non-RFC version will be rebased onto the upstream base once
+the remaining dependencies have landed.
+
+The dependency order within this patchset is:
+
+- Patch 1 adds a debugfs interface exposing the hub, control port and
+  target port configuration, and raw register read/write access
+- Patch 2 implements .smbus_xfer for the I2C adapters created for the SMBus
+  target ports, so i2cdetect, i2cget and i2cset can be used
+- Patch 3 describes the standard 'clock-frequency' property for the smbus@
+  target port nodes, restricted to the four rates the hardware implements
+- Patch 4 programs the port rate from that property and derives the status
+  poll interval from it, and depends on patch 3
+- Patch 5 describes the new "gpio@N" target port node and marks the hub as
+  a gpio-controller
+- Patch 6 programs the target port GPIO mode register from that node and
+  depends on patch 5
+- Patch 7 exposes the pins of those ports as a gpio_chip and depends on
+  patch 6
+
+Lakshay Piplani (7):
+  i3c: hub: p3h2x4x: Add support for debugfs
+  i3c: hub: add i2c-tools support for SMBus-configured target ports
+  dt-bindings: i3c: nxp,p3h2840: add clock-frequency for SMBus target
+    ports
+  i3c: hub: p3h2x4x: add clock-frequency DTS support
+  dt-bindings: i3c: nxp,p3h2840: add GPIO mode target ports
+  i3c: hub: p3h2x4x: configure target ports placed in GPIO mode
+  gpio: p3h2x4x: add GPIO expander for the NXP P3H2x4x I3C hub
+
+ .../devicetree/bindings/i3c/nxp,p3h2840.yaml  |  72 +++++
+ MAINTAINERS                                   |   1 +
+ drivers/gpio/Kconfig                          |  11 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-p3h2x4x.c                   | 294 ++++++++++++++++++
+ drivers/i3c/hub/p3h2840_i3c_hub.h             |  48 ++-
+ drivers/i3c/hub/p3h2840_i3c_hub_common.c      | 218 ++++++++++++-
+ drivers/i3c/hub/p3h2840_i3c_hub_smbus.c       | 272 +++++++++++++++-
+ drivers/mfd/p3h2840.c                         |   5 +
+ include/linux/mfd/p3h2840.h                   |   8 +
+ 10 files changed, 905 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/gpio/gpio-p3h2x4x.c
+
 -- 
-2.34.1
+2.25.1
 
