@@ -1,54 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4F34C4F42
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8CF4756DF
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792157138; cv=none; b=BjJpJxSHR2rDq1hrPht1pBX3nWA9rrqcJpxpd86/5tOdEbN2RTrkMe00H1y17zjYBuNAIS4YztnsfIcyA6/Zf7yZYUI/9dvBjfPCYgtRAmxPKn0KO3flXpv5LOhClGYUk82BadUh7HILF7PCsvQA96RwqvR9Rr0cK3kUH+7wwDM=
+	t=1792157386; cv=none; b=s07PDtU2WXK6DYfNE2sL7rs/COSkjrqkJGjvDP9bN7sZ6XTcxEEH/5zTc7ISCI/ovFV9/9CUraWogR1qypD/jBbEaRpLF3zqlL5kA+bCGkGd9d9g7M+vEZQGFtOty1DV7Sf2YAkvxWa9lSYI3/xeweUICxs2Rao5phIRafgj0QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792157138; c=relaxed/simple;
-	bh=OOfsqjjwGT2XW0d3NzFMALYw3bv/RKB74gN25shi37c=;
+	s=arc-20240116; t=1792157386; c=relaxed/simple;
+	bh=rkZikTgogFEQQZjBsVHDYAkM+UZl7z7VjTHhTROfeGo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i5XKRz6Op3AUsVHxQFdEh6iagnWbl+S1AsXvFjwVRkhhYzlL/c3CBk0q8GqwAWHu3Oj2nQST7BXzizbJ4YEMc3XepE5qB6PI10ypHFWKmBwRbpSJrsxG1F0wQzjMCqSf+8E3Zpxv0FubjWC9/qJKs9vgvTnUxtMURiWomVFN1Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETVryMf1; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=rAmzJZgM2wpxf/yavKLaFVGoc0Eo1yXRXhsYagoupxJpJ2cANbx36osczYwlFf6zgpN4AmkNSh9g3NgF8yZ8n+2x4MQhkjKRklVfFuXjtNEYc+euibSxGrCSsyuFiQFzl7Mg3EH+MwTy0sMaVjet8+02SNOUkBxVILXGNaXNHoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJkOOAYQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETVryMf1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442BE1F000C6
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:25:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJkOOAYQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5931F000C5
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 13:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792157137;
-	bh=OOfsqjjwGT2XW0d3NzFMALYw3bv/RKB74gN25shi37c=;
+	s=k20260515; t=1792157384;
+	bh=rkZikTgogFEQQZjBsVHDYAkM+UZl7z7VjTHhTROfeGo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ETVryMf1B1rptGIiypQnb1K1s8dv4pBWjZrmcJ3XVLvy2TtLDyQUcgUOk0GzO+d7x
-	 3EdVentREYxaZZJp1p6ThdKr5SnDLk0fNJ3Nq3XrVcunsNj377zn1+AsieagH16SQj
-	 kN33zt1a+i0ocaRf01vCo3DlCcf8lfS084uBugofX84AXIiW6yP0OoqcLm7TIZOs/d
-	 K7lUwAtK3pK6CuxaKHpvQuaoWTXkRfooIoUA3WXmyk2WdG9apAFxcLcQxVZ8oot+xp
-	 /NUKm7EcbWaZdKTMoi3YRhJPD8uMNbxGH6qmGbn2vR6nrS3X1S3bxWKqpRwbf9tIUO
-	 Mht5QiZpZDnVw==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b8b3c8c4bbso1075811e87.0
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 06:25:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxM7STpJIP//7m+XGpC1FfFxrtKQQB74Z1y0HLnxk2gRhszdRm4eZu4ZZi8QhPInoLvLsTchNyRyCg6@vger.kernel.org
-X-Gm-Message-State: AFq9FYJjNO/+U0QKhw4kn9hQrlgdPUoluYAoHtC7HcbOxHWoD2ZSAq5G
-	KQOKljs4I5O1SrOT9BU1Rvc330BoAKwTuGNT8WuViyGeLZJbtt8Wu5S1h3qSVyMf+jHnlL/WUPR
-	KMoZ4Md0l/czWW7iU10lBW8yjpGIZ+VM=
-X-Received: by 2002:a05:6512:3093:b0:5bc:f296:a12b with SMTP id
- 2adb3069b0e04-5be476e75b6mr1121631e87.26.1792157136001; Fri, 16 Oct 2026
- 06:25:36 -0700 (PDT)
+	b=gJkOOAYQlVa+hiqrBL+gfPlLuNLnkZDYSGRTJHCarVTNimO3Cb4LVSOSEUAwlNFlR
+	 qgo2J0Nk6wpo52taxbVUh2AwuxAk9fa/JQdbsFcR/DiDqDlXBSrTaWS1LXjTuVWN8f
+	 3E7goHMi3mkrO/ZddVCQx2kep+HWum4Nq1ePwb/IfyapN4F/SpVvU/cvwjxdE3KWlZ
+	 ZHSnHQLIqjq4TjlAa9QrnSBDyIEIp7hbN6JTJIJ/ohkMecvJIPRXI0Xv46oRyDg4vL
+	 nLy6eqfBfbMHGVUbogPmPVGagC/RDwzsSoJZ1AZvOkVknpw8+LbTZa72qrDOk5+pTV
+	 RQjbGGwnfZMTA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3a87e23860cso10957701fa.0
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 06:29:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw5GG7NSCK59dcvHyNiE9kwMFSfKw4H/3J/IhRnzDbDEdiIUs/XAO8yn54cbfcB5ktsif/9u13PRhRW@vger.kernel.org
+X-Gm-Message-State: AFq9FYLh+h8mPK8sDeeZcjgoR9UECP++mVVVRXrrkMAhKq9dJAc8vrlr
+	qsOAJWB+c0UTlTuTnuloRojFDbuFR0bovoRKmeOXKxCYtqy3C8jvWjmGIoAZJT+GS4uErb1AnAc
+	xjd2zqDR3U65h4B3FnZzvCIExcP+Cyz4=
+X-Received: by 2002:a2e:a881:0:b0:3a9:7c85:a16d with SMTP id
+ 38308e7fff4ca-3ab147882fbmr6164411fa.5.1792157383421; Fri, 16 Oct 2026
+ 06:29:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com> <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
-In-Reply-To: <20261015-cv75-gpio-v10-2-3fe3eb315a55@ambarella.com>
+References: <20261015-cv75-gpio-v10-0-3fe3eb315a55@ambarella.com> <20261015-cv75-gpio-v10-3-3fe3eb315a55@ambarella.com>
+In-Reply-To: <20261015-cv75-gpio-v10-3-3fe3eb315a55@ambarella.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 16 Oct 2026 15:25:23 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=6trsV8SxotPEHihmjLjP8M6GFjRYaLfdvBTSQBs2ASQ@mail.gmail.com>
-X-Gm-Features: AclHuK9w8mCxwQzii05uCSde21DPZaJUUbhYZYIq1rBPFEiwYVVS1D3meBR1CkA
-Message-ID: <CAD++jL=6trsV8SxotPEHihmjLjP8M6GFjRYaLfdvBTSQBs2ASQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/8] gpiolib: regmap: add GPIO_REGMAP_QUIRK_SET_AFTER_DIR
+Date: Fri, 16 Oct 2026 15:29:31 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkMwyL422Bq3SaDAGjsm+FPPmUgup-W_OxT7tf-3TPyWw@mail.gmail.com>
+X-Gm-Features: AclHuK99j9nVgnAmXg1QJdGruNNYKiDlB-doAPvBpPVnoTzMk9d9k2qsM5xJ7TE
+Message-ID: <CAD++jLkMwyL422Bq3SaDAGjsm+FPPmUgup-W_OxT7tf-3TPyWw@mail.gmail.com>
+Subject: Re: [PATCH v10 3/8] gpio: pl061: drop redundant pending check in the
+ IRQ handler
 To: longzhao@ambarella.com
 Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
 	Michael Walle <mwalle@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
@@ -64,12 +65,9 @@ On Thu, Oct 15, 2026 at 12:54=E2=80=AFPM Long Zhao via B4 Relay
 
 > From: Long Zhao <longzhao@ambarella.com>
 >
-> Some controllers ignore output writes while a line is still an input.
-> Add a behaviour flag so the output value is written after the direction
-> change. This is a legacy quirk. New hardware must not use it.
+> for_each_set_bit() does nothing when the mask is zero, so the
+> if (pending) wrapper around it is redundant.
 >
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Michael Walle <mwalle@kernel.org>
 > Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
