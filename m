@@ -1,115 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DFB457E4C
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96BE3B8930
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792141060; cv=none; b=YzIA3Wkh/Nf9d+wwvmN2RE1QeIlu5zUd0oLQZ5Zh0yy8yTlW7g9WAs/DLZknCCp+0m8Bb2h40AL45oYcqqJm05IrbFsClJ2eLSWY7mSPUVaDskcSF/JkaqUBtQaP6OPw6YZdEAdAWa32cT3Y8fsHOiFjWqdueAWfpQgfviZgvEw=
+	t=1792141193; cv=none; b=lZ+rx5AMeOjeHl1K9jRaRo0UxAMHyjcRCu9Si0jM23oT9KqrNOW7oyPyaiIx7M2C96ZNJQ3R/RCumYm7XDLXIHMeae5BqUfdtysWuXRzQGHm12is2xP7/S0MXsDXI/PqT7ZTpJShAMXQ74ISEsUYbFaX57I+Vaw6ohZqhbswiUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792141060; c=relaxed/simple;
-	bh=ao6tzx9DS7W2FUUwvv3kmF6xuI2T1FSkTBjMrI/XNFk=;
+	s=arc-20240116; t=1792141193; c=relaxed/simple;
+	bh=kOXYAK3P34oXRs56UKPcrMmNb5YVhQRzHiwMXJEYU1M=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=twegOHY3Bf2heA3m1p3SvI5znjMihNt9LnZ6MpBm1L28JonYwNeFEIHR49VViXByDDSG7QsICHlNHpcRq6l4uJqILWnJxHpgYedqlgGQ+EZGlKQzp6oMntd4ZWPpxtRnaj+4kKYIlBwFmGw87a5MNuJlSj7zP7ovcd5a7ajrpSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6p6ymIG; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=QUxCPzVcj1rFS3vwknBgySEEBbeSytFUVNjwaeWn9ZpHaj4JfeHVczLFRguBPljJlLKy6ulKqCmboQqfcDyklBB1ZIZNdBynO4xCXMou21KtC922OOA7FFYVOc9gRDMKqQ6joBUOPiZjsmMiukg2gHIMJZ9mk36/JIqWSXj5jnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iO2sM+jb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6p6ymIG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88881F000C4
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:57:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iO2sM+jb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A650A1F000CA
+	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 08:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792141058;
-	bh=IGpmvWwr55KO+66VOZ0WW05nSM9be+4wcu7q75d/0oA=;
+	s=k20260515; t=1792141192;
+	bh=kOXYAK3P34oXRs56UKPcrMmNb5YVhQRzHiwMXJEYU1M=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=m6p6ymIGFWn5SPrII5rJMKHVEo+E/DeReZSVzlf2ZTYah2Z8Um6kc97hDEBsRm0ED
-	 38uJlTMYxfvBCVmCyCfxG2qeoYqL0cRoMtFs7APjJu35A/iNOc6quyxNRVcbZqVRkF
-	 qfF+xIjwxMF2OiXQAggJ+AWFcyAQxUXavJLBZbORCPpdRlfMLpXCQmZkTC6Pbw3/vj
-	 82RwaIhgGUwi1aCgBdSQrGj9HHCWSeZ376djP2dsEW4AXa8qUZxakGPfifeyZ7nzNW
-	 fsv9+jvQdf4Rq750TZyQ3RgFJO2bGE4HGm1qvVmf4shgAsmm3xr+mj5unttAuYxM5H
-	 M6uRoq2pgsypw==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5bcb0f245e0so4955514e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 01:57:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxTe+Yp4923ed0w7wFcpdntT+x5JU/MQ6ABNt6jDjUL9LICEm83eNvGGv/bgYkX0D/nhW+KAQDAofdC@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ2T6Wy+ByUemw1YhP5baGfuTLhCuNwFl+rYwNpVU4UD85PbOLM
-	3uL4FzrVlA4hWIfWQRe/JLxSeFeoIzHUS9difObcLp+nJNZBJbwJG7kt7OD+TAk/GXujMJ3PlZn
-	XWqQ5iBCl7FpUFSMgBKsF8SifBj+sgOppBwfC3xQE9g==
-X-Received: by 2002:a05:6512:3088:b0:5be:42c0:6cdb with SMTP id
- 2adb3069b0e04-5be42c06ea6mr1322490e87.1.1792141057612; Fri, 16 Oct 2026
- 01:57:37 -0700 (PDT)
+	b=iO2sM+jbvui+551BfDOVupfnxeFlGkU3/BVv0ukDDrWHPOoEN0d/1aLdOJfG9wb2g
+	 joFwTrRUplfWAXkuTUxhNN3+vjaUnyTySRrbsznWFdoqIHgocEPxn3pVT3Xz+fsjje
+	 lge9ZUe+2fEHQ2o7W2l9GRr7C+bmWwgh/MJ9xy5/TAFK1vKzDsg39dRZxzbYAkAhqd
+	 +0YlhFNZsIv9pSjbcfkMq7vUVJXCRMKaEodx33ci7q0KK0iXgv6q2nU1e3x15mNkAc
+	 IWpvmba/JvT1kZtTyGbZsE8rNkmiUJ3fzCzBYTRLiEUMJHOGmc359Z/+K/6J7+idXZ
+	 Z9PaBLzlZZ4pA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3a75f960be3so33605191fa.2
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 01:59:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByZrl+acLsPWVDC1CUnnvxUnR1Ry+Zwziy1JQk7IjpHkvd8E5oLaw08VhcmDWRA58e9cLxv8iiGtxIE@vger.kernel.org
+X-Gm-Message-State: AFq9FYJM5a9ZKB0IK44NYhflYJ8w/Iy/h8zJJ6myN5yflM41I04xkOWB
+	Sbr2C64j4NqSMeDmVlmAqq0Bdi6yWUMIxhG3dj+wulccN/B9h5/3BoMsdQLYemdyQvyqTSTbpS2
+	Cl/6e8LySOBp7ZA2+64Nqav4iq3a0PFEoBIgrQ2s1VQ==
+X-Received: by 2002:a05:651c:19a4:b0:3a9:c1de:852a with SMTP id
+ 38308e7fff4ca-3a9c4ebaaa7mr54566611fa.3.1792141191356; Fri, 16 Oct 2026
+ 01:59:51 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 16 Oct 2026 04:57:35 -0400
+ HTTPREST; Fri, 16 Oct 2026 03:59:49 -0500
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 16 Oct 2026 04:57:35 -0400
+ HTTPREST; Fri, 16 Oct 2026 03:59:49 -0500
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261016083709.GA56522@rigel>
+In-Reply-To: <20261015171557.21243-1-jayarajdmit@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com>
- <sashiko-outbox-168233@kernel.org> <20261014043645.GA13991@rigel>
- <CAMRc=MeKQMiF8T+fb1TxUmk-GwF3fCwkB2GoVvEe_kcpbG6saQ@mail.gmail.com>
- <20261015153714.GA105746@rigel> <20261016074704.1860749-9-aambrozewicz@nvidia.com>
- <20261016083709.GA56522@rigel>
-Date: Fri, 16 Oct 2026 04:57:35 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MeLTvq+-ZuduanfcP2p=qFUVyN1pnjzp3XDkx0avgRk+g@mail.gmail.com>
-X-Gm-Features: AclHuK9PlGrc0WYtRnUDBI-g5w1foHEv31WfYzW4NRzH6G_8OGXWc3203hemnfc
-Message-ID: <CAMRc=MeLTvq+-ZuduanfcP2p=qFUVyN1pnjzp3XDkx0avgRk+g@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: cdev: don't record a line direction the driver refused
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
+References: <20261014204331.15383-1-jayarajdmit@gmail.com> <20261015171557.21243-1-jayarajdmit@gmail.com>
+Date: Fri, 16 Oct 2026 03:59:49 -0500
+X-Gmail-Original-Message-ID: <CAMRc=MdzQCzqtY3OOnMjYsKh2LXJw9aQ_EsvkFwvkeZODa7Q3w@mail.gmail.com>
+X-Gm-Features: AclHuK-Epf01-bEUjh-NNjcbEZntePVtFa9eua4Tkj9glPl3OYTYWhiQnbnZdm4
+Message-ID: <CAMRc=MdzQCzqtY3OOnMjYsKh2LXJw9aQ_EsvkFwvkeZODa7Q3w@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: lpc32xx: check devm_gpiochip_add_data() return value
+To: Jayaraj Devaraj <jayarajdmit@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 16 Oct 2026 10:37:09 +0200, Kent Gibson <warthog618@gmail.com> said:
+On Thu, 15 Oct 2026 19:15:57 +0200, Jayaraj Devaraj
+<jayarajdmit@gmail.com> said:
+> lpc32xx_gpio_probe() registers each gpio chip with
+> devm_gpiochip_add_data() but ignores the return value. If registering
+> a chip fails, probe still returns 0, so the driver binds with a chip
+> missing and no error is reported.
 >
->> gpiod_free_commit() does the same read-modify-write: it reads the
->> flags, calls ->free(), which may sleep, and writes the word back.
->> Patch 8 of chip-removal v2 (for the debounce race Sashiko found on the
->> event clock fix) relies on that write: it resets debounce_period_us
->> first and makes the write a release store, pairing with the
->> test_and_set_bit() in gpiod_request_commit(), so that a new owner sees
->> the reset. With atomic bitops there, clearing GPIOD_FLAG_REQUESTED last
->> with clear_bit_unlock() would give the same ordering. v2 keeps the
->> release store, as that matches the code today.
->>
->> v2 of this patch only drops the GPIOD_FLAG_IS_OUT lines from
->> gpio_v2_line_config_flags_to_desc_flags(), which b7adfb6076ff also
->> touches, so a revert and this patch only need rebasing over each other.
->>
->> > > >> Doesn't this bypass the bitmap_free() calls at the end of the function and
->> > > >> leak mask and bits?
->> > > >
->> > > > This also looks like a valid concern in existing code.  Unlikely, but valid.
->> > > >
->> > > > It is also not something we can readily test.
->>
->> It is: both the -EPERM return and the one after a failed
->> gpiochip_set_multiple() skip the bitmap_free() calls when the bitmaps
->> were allocated. The -EPERM path shows up with gpio-sim as it is: on a
->> chip with more lines than CONFIG_GPIOLIB_FASTPATH_LIMIT (512 by
->> default; I used 600), GPIO_V2_LINE_SET_VALUES_IOCTL on a line requested
->> as input leaves the two bitmaps to kmemleak.
+> Check the return value, print an error naming the failing chip and
+> return the error code. Chips registered earlier in the loop are devm
+> managed and are removed automatically on failure.
 >
-> I was thinking specifically of the gpiochip_set_multiple() error path.
-> How do you elicit a gpiochip_set_multiple() failure from gpio-sim -
-> it always returns 0?
->
->> Unless Bart would rather take it
->> himself, I'll send the fix as patch 7 of chip-removal v2:
->>
->
-> Oh nuts, I overlooked the EPERM case.
-> Bart has already merged a patch for the gpiod_set_multiple() failure leak[1]
-> - you were Cced.
-> I would keep patches in your removal series focused on that and keep
-> patches for existing problems separate so we can get that series merged as
-> soon as possible.
->
-> I'll send out a patch for the EPERM path shortly.
->
+> Signed-off-by: Jayaraj Devaraj <jayarajdmit@gmail.com>
+> Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+> ---
 
-I already sent out my final fixes PR for v7.3 but no worries, I'll keep
-applying fixes next week and send another fixes PR during the merge window.
+Please don't send new versions of patches in response to existing threads. They
+must be new threads. Please consider using b4 for managing patches[1].
 
-Bart
+Please resend it as a new thread.
+
+Bartosz
+
+[1] https://b4.docs.kernel.org/en/latest/
