@@ -1,28 +1,28 @@
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171815038EB;
-	Fri, 16 Oct 2026 16:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C12B4FDA49;
+	Fri, 16 Oct 2026 16:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792169207; cv=none; b=AW+K04kMKXT+b5LBeUmr/2gjzi8+b2cB/L97t8UbFJLmYAv8FCk67ceQSZ6jzYEXv41MmnAYrSwvPKCjT3AErNJD11uYnh51L2MwrJQyGsBNsbDs9tXj1IL3635GJyxRG/i+RWWX0zjH2cq/ExusuhRsFbtJSB2G/0l6MARNh6I=
+	t=1792169209; cv=none; b=dmimRzt4GNyJ2P2PIsopr0lsRTIQbcTcVkAxxrbJLSupg/kqRtOaBi/sUQZ9FMSIF3cx005lH89brc8mU/Kc7NLTBiyEnsWgcgCT0yGQeHFobUBf+EbFN/ADavlK/NK4/fCm/E358yKQRTrwnAcAYD8vkRn07S08ibaMs+N0d9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792169207; c=relaxed/simple;
-	bh=KQXnZDYy1EZu9/raKtcS01XMzLW6VKbdjuwPdWeuXgs=;
+	s=arc-20240116; t=1792169209; c=relaxed/simple;
+	bh=MMnF+SgmJ9EP7HIuyPHcMTtzLn0rwqo2aS4NVvJZRjc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p+Oqi5/Q3IkQGBzmJPak+IYKXUEo3nhbk4VtE4r9KjBVD3kzxZtaYtEF4UQI0RTboHIRH4nIOGl37lBMzlmvw4MRDgRW2hPzpcgz4hI7hJxnfat1omwEluRi6rZpjDIxv2Ix4kD7JWdpqw63ARrH2xBahb5GRfLbfzcXbe13Lhw=
+	 MIME-Version; b=IAVh6OtKWiHjhvlvrcXL03hrJlRQfuQbh8nWUgLzuMg9PIKX9tgoFd4YSfmRKdUGZv3ZK+6YP5MUG4/6hfomvvOoEnMo4dr7pLEqlXjos0x98hUB3irsvAhzz3AY3r+y9/dFNTZFCV1Fh5JJdRLGMKeRLu3ShBkS/ybF7umIEyI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C4341A0225;
-	Fri, 16 Oct 2026 18:46:43 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ECDFC1A0224;
+	Fri, 16 Oct 2026 18:46:38 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 02CFA1A006F;
-	Fri, 16 Oct 2026 18:46:43 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 83EA31A006F;
+	Fri, 16 Oct 2026 18:46:38 +0200 (CEST)
 Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 021FF1800068;
-	Sat, 17 Oct 2026 00:46:38 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B487A1800068;
+	Sat, 17 Oct 2026 00:46:34 +0800 (+08)
 From: Lakshay Piplani <lakshay.piplani@nxp.com>
 To: linux-kernel@vger.kernel.org,
 	linux-i3c@lists.infradead.org,
@@ -43,9 +43,9 @@ Cc: vikash.bansal@nxp.com,
 	priyanka.jain@nxp.com,
 	aman.kumarpandey@nxp.com,
 	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: [RFC PATCH 2/7] i3c: hub: add i2c-tools support for SMBus-configured target ports
-Date: Fri, 16 Oct 2026 22:16:20 +0530
-Message-Id: <20261016164625.3166779-3-lakshay.piplani@nxp.com>
+Subject: [RFC PATCH 1/7] i3c: hub: p3h2x4x: Add support for debugfs
+Date: Fri, 16 Oct 2026 22:16:19 +0530
+Message-Id: <20261016164625.3166779-2-lakshay.piplani@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261016164625.3166779-1-lakshay.piplani@nxp.com>
 References: <20261016164625.3166779-1-lakshay.piplani@nxp.com>
@@ -58,277 +58,252 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 
-Add support for standard i2c-tools on hub target ports configured
-to operate in SMBus mode.
+Add debugfs support to expose configurations and registers information
+for the P3H2x4x I3C hub.
 
-This change implements the .smbus_xfer callback in the i2c_algorithm
-structure of the I2C adapters created by the hub driver for each
-SMBus-enabled port.
-
-With this support in place, user-space utilities such as i2cdetect,
-i2cget, and i2cset can access and operate on I2C/SMBus devices
-connected behind the hub target ports.
+This change adds a debugfs interface that allows inspection of current HUB,
+control port and target port configurations. It also provides a simple
+mechanism to read and write HUB registers.
 
 Signed-off-by: Aman Kumar Pandey <aman.kumarpandey@nxp.com>
 Signed-off-by: Vikash Bansal <vikash.bansal@nxp.com>
 Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
 ---
- drivers/i3c/hub/p3h2840_i3c_hub.h       |   3 +
- drivers/i3c/hub/p3h2840_i3c_hub_smbus.c | 211 +++++++++++++++++++++++-
- 2 files changed, 213 insertions(+), 1 deletion(-)
+ drivers/i3c/hub/p3h2840_i3c_hub.h        |   7 +
+ drivers/i3c/hub/p3h2840_i3c_hub_common.c | 188 ++++++++++++++++++++++-
+ 2 files changed, 194 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/i3c/hub/p3h2840_i3c_hub.h b/drivers/i3c/hub/p3h2840_i3c_hub.h
-index 5b3fb1752c7b..38f02500b6a9 100644
+index 0e59351e7b6d..5b3fb1752c7b 100644
 --- a/drivers/i3c/hub/p3h2840_i3c_hub.h
 +++ b/drivers/i3c/hub/p3h2840_i3c_hub.h
-@@ -188,6 +188,9 @@
- 
- #define ONE_BYTE_SIZE						0x01
- 
-+/* Payload size of an SMBus word transaction. */
-+#define P3H2X4X_SMBUS_WORD_SIZE					0x02
-+
- /* holding SDA low when both SMBus Target Agent received data buffers are full.
-  * This feature can be used as a flow-control mechanism for MCTP applications to
-  * avoid MCTP transmitters on Target Ports time out when the SMBus agent buffers
-diff --git a/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c b/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c
-index 7fdfa79dfeb6..2f301134b978 100644
---- a/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c
-+++ b/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c
-@@ -7,6 +7,7 @@
- #include <linux/i3c/device.h>
- #include <linux/mfd/p3h2840.h>
+@@ -14,6 +14,9 @@
+ #include <linux/i3c/master.h>
+ #include <linux/regulator/consumer.h>
  #include <linux/regmap.h>
-+#include <linux/unaligned.h>
++#ifdef CONFIG_DEBUG_FS
++#include <linux/debugfs.h>
++#endif
  
- #include "p3h2840_i3c_hub.h"
+ /* I3C HUB REGISTERS */
  
-@@ -387,9 +388,216 @@ static s32 p3h2x4x_tp_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, i
- 	return ret_sum;
+@@ -313,6 +316,10 @@ struct tp_bus {
+ };
+ 
+ struct p3h2x4x_i3c_hub_dev {
++#ifdef CONFIG_DEBUG_FS
++	u8 reg_addr;			/* Offset of the HUB register to read or write. */
++	struct dentry *debugfs_dir;
++#endif
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct mutex etx_mutex;      /* all port mutex */
+diff --git a/drivers/i3c/hub/p3h2840_i3c_hub_common.c b/drivers/i3c/hub/p3h2840_i3c_hub_common.c
+index 0c18459d7ec6..906034632a94 100644
+--- a/drivers/i3c/hub/p3h2840_i3c_hub_common.c
++++ b/drivers/i3c/hub/p3h2840_i3c_hub_common.c
+@@ -298,6 +298,192 @@ static void p3h2x4x_clear_i3c_hub_priv(void *data)
+ 	p3h2x4x->i3c_hub_priv = NULL;
  }
  
-+/*
-+ * p3h2x4x_tp_smbus_xfer_msg() - Run a single SMBus transaction through the
-+ * SMBus Controller Agent of @target_port. The descriptor and the payload are
-+ * written into the port's controller buffer page, which is located by
-+ * multiplying the target port index by the number of pages per port and adding
-+ * the base page number.
-+ *
-+ * @read is true for an SMBus read transaction. Note that for I2C_SMBUS_QUICK
-+ * the I2C core passes @data as NULL and the transfer direction itself is the
-+ * information sent to the device, so @data must not be dereferenced for it.
-+ */
-+static int p3h2x4x_tp_smbus_xfer_msg(struct p3h2x4x_i3c_hub_dev *hub,
-+				     u8 target_port,
-+				     u16 addr,
-+				     bool read,
-+				     u8 cmd,
-+				     int sz,
-+				     union i2c_smbus_data *data)
++#ifdef CONFIG_DEBUG_FS
++
++static int p3h2x4x_i3c_hub_access_reg_get(void *dvrdata, u64 *val)
 +{
-+	u8 controller_buffer_page = P3H2X4X_CONTROLLER_BUFFER_PAGE +
-+				    P3H2X4X_NO_PAGE_PER_TP * target_port;
-+	u8 target_port_status = P3H2X4X_TP0_SMBUS_AGNT_STS + target_port;
-+	u8 transaction_type = P3H2X4X_SMBUS_400kHz;
-+	u8 desc[P3H2X4X_SMBUS_DESCRIPTOR_SIZE] = { 0 };
-+	u8 buf[I2C_SMBUS_BLOCK_MAX + 2] = { 0 };
-+	u8 read_length = 0, write_length = 0;
-+	u8 rw_address = addr << 1;
++	struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub = dvrdata;
++	u32 reg_val;
++	int ret;
++
++	ret = regmap_read(p3h2x4x_i3c_hub->regmap, p3h2x4x_i3c_hub->reg_addr, &reg_val);
++	if (ret)
++		return ret;
++
++	*val = reg_val & 0xFF;
++	return 0;
++}
++
++static int p3h2x4x_i3c_hub_access_reg_set(void *dvrdata, u64 val)
++{
++	struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub = dvrdata;
++	struct p3h2x4x *p3h2x4x = dev_get_drvdata(p3h2x4x_i3c_hub->dev->parent);
 +	int ret, ret2;
 +
-+	switch (sz) {
-+	case I2C_SMBUS_QUICK:
-+		/*
-+		 * A QUICK transaction carries no data at all: only the address
-+		 * byte including the R/W bit is sent.
-+		 */
-+		if (read)
-+			rw_address |= P3H2X4X_SET_BIT(0);
-+		break;
-+	case I2C_SMBUS_BYTE:
-+		if (read) {
-+			rw_address |= P3H2X4X_SET_BIT(0);
-+			read_length = ONE_BYTE_SIZE;
-+		} else {
-+			buf[0] = cmd;
-+			write_length = ONE_BYTE_SIZE;
-+		}
-+		break;
-+	case I2C_SMBUS_BYTE_DATA:
-+		buf[0] = cmd;
-+		write_length = ONE_BYTE_SIZE;
-+		if (read) {
-+			read_length = ONE_BYTE_SIZE;
-+			transaction_type |= P3H2X4X_SET_BIT(0);
-+		} else {
-+			buf[1] = data->byte;
-+			write_length += ONE_BYTE_SIZE;
-+		}
-+		break;
-+	case I2C_SMBUS_WORD_DATA:
-+		buf[0] = cmd;
-+		write_length = ONE_BYTE_SIZE;
-+		if (read) {
-+			read_length = P3H2X4X_SMBUS_WORD_SIZE;
-+			transaction_type |= P3H2X4X_SET_BIT(0);
-+		} else {
-+			put_unaligned_le16(data->word, &buf[1]);
-+			write_length += P3H2X4X_SMBUS_WORD_SIZE;
-+		}
-+		break;
-+	case I2C_SMBUS_BLOCK_DATA:
-+		buf[0] = cmd;
-+		write_length = ONE_BYTE_SIZE;
-+		if (read) {
-+			/*
-+			 * The agent returns the length byte followed by the
-+			 * payload, so reserve room for the maximum block size.
-+			 */
-+			read_length = I2C_SMBUS_BLOCK_MAX + 1;
-+			transaction_type |= P3H2X4X_SET_BIT(0);
-+		} else {
-+			if (data->block[0] > I2C_SMBUS_BLOCK_MAX)
-+				return -EINVAL;
-+
-+			memcpy(&buf[1], data->block, data->block[0] + 1);
-+			write_length += data->block[0] + 1;
-+		}
-+		break;
-+	case I2C_SMBUS_I2C_BLOCK_DATA:
-+		if (data->block[0] > I2C_SMBUS_BLOCK_MAX)
-+			return -EINVAL;
-+
-+		buf[0] = cmd;
-+		write_length = ONE_BYTE_SIZE;
-+		if (read) {
-+			read_length = data->block[0];
-+			transaction_type |= P3H2X4X_SET_BIT(0);
-+		} else {
-+			memcpy(&buf[1], &data->block[1], data->block[0]);
-+			write_length += data->block[0];
-+		}
-+		break;
-+	default:
-+		dev_dbg(hub->dev, "Unsupported SMBus transaction %d\n", sz);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (write_length + read_length > P3H2X4X_SMBUS_PAYLOAD_SIZE)
++	/* HUB registers are one byte wide, reject anything that does not fit. */
++	if (val > U8_MAX)
 +		return -EINVAL;
 +
-+	desc[P3H2X4X_DESC_ADDR] = rw_address;
-+	desc[P3H2X4X_DESC_TYPE] = transaction_type;
-+	desc[P3H2X4X_DESC_WRITE_LEN] = write_length;
-+	desc[P3H2X4X_DESC_READ_LEN] = read_length;
-+
-+	ret = regmap_write(hub->regmap, target_port_status, P3H2X4X_TP_BUFFER_STATUS_MASK);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(hub->regmap, P3H2X4X_PAGE_PTR, controller_buffer_page);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_bulk_write(hub->regmap, P3H2X4X_CONTROLLER_AGENT_BUFF,
-+				desc, P3H2X4X_SMBUS_DESCRIPTOR_SIZE);
-+	if (ret)
-+		goto out_page;
-+
-+	if (write_length) {
-+		ret = regmap_bulk_write(hub->regmap, P3H2X4X_CONTROLLER_AGENT_BUFF_DATA,
-+					buf, write_length);
++	scoped_guard(mutex, &p3h2x4x->protected_reg_lock) {
++		ret = regmap_write(p3h2x4x_i3c_hub->regmap,
++				   P3H2X4X_DEV_REG_PROTECTION_CODE,
++				   P3H2X4X_REGISTERS_UNLOCK_CODE);
 +		if (ret)
-+			goto out_page;
++			break;
++
++		ret = regmap_write(p3h2x4x_i3c_hub->regmap,
++				   p3h2x4x_i3c_hub->reg_addr, val);
++
++		ret2 = regmap_write(p3h2x4x_i3c_hub->regmap,
++				    P3H2X4X_DEV_REG_PROTECTION_CODE,
++				    P3H2X4X_REGISTERS_LOCK_CODE);
++		if (!ret && ret2)
++			ret = ret2;
 +	}
-+
-+	ret = regmap_write(hub->regmap, P3H2X4X_TP_SMBUS_AGNT_TRANS_START,
-+			   hub->tp_bus[target_port].tp_mask);
-+	if (ret)
-+		goto out_page;
-+
-+	ret = p3h2x4x_read_smbus_transaction_status(hub, target_port_status,
-+						    write_length + read_length);
-+	if (ret)
-+		goto out_page;
-+
-+	if (read && read_length) {
-+		ret = regmap_bulk_read(hub->regmap,
-+				       P3H2X4X_CONTROLLER_AGENT_BUFF_DATA + write_length,
-+				       buf, read_length);
-+		if (ret)
-+			goto out_page;
-+
-+		switch (sz) {
-+		case I2C_SMBUS_BYTE:
-+		case I2C_SMBUS_BYTE_DATA:
-+			data->byte = buf[0];
-+			break;
-+		case I2C_SMBUS_WORD_DATA:
-+			data->word = get_unaligned_le16(buf);
-+			break;
-+		case I2C_SMBUS_BLOCK_DATA:
-+			/*
-+			 * The device reports the payload length in the first
-+			 * byte. Clamp it so a misbehaving device cannot make
-+			 * the I2C core copy out more than the block buffer.
-+			 */
-+			data->block[0] = min_t(u8, buf[0], I2C_SMBUS_BLOCK_MAX);
-+			memcpy(&data->block[1], &buf[1], data->block[0]);
-+			break;
-+		case I2C_SMBUS_I2C_BLOCK_DATA:
-+			memcpy(&data->block[1], buf, read_length);
-+			break;
-+		}
-+	}
-+
-+out_page:
-+	ret2 = regmap_write(hub->regmap, P3H2X4X_PAGE_PTR, 0x00);
-+	if (!ret && ret2)
-+		ret = ret2;
 +
 +	return ret;
 +}
 +
-+static s32 p3h2x4x_tp_smbus_xfer(struct i2c_adapter *adap, u16 addr,
-+				 unsigned short flags,
-+				 char read_write, u8 command,
-+				 int size, union i2c_smbus_data *data)
++DEFINE_DEBUGFS_ATTRIBUTE(p3h2x4x_i3c_hub_access_reg, p3h2x4x_i3c_hub_access_reg_get,
++			 p3h2x4x_i3c_hub_access_reg_set, "%llx\n");
++
++static int p3h2x4x_i3c_hub_offset_reg_get(void *dvrdata, u64 *val)
 +{
-+	struct tp_bus *bus = i2c_get_adapdata(adap);
-+	struct p3h2x4x_i3c_hub_dev *hub = bus->p3h2x4x_i3c_hub;
++	struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub = dvrdata;
 +
-+	if (flags & I2C_CLIENT_PEC)
-+		return -EOPNOTSUPP;
++	*val = p3h2x4x_i3c_hub->reg_addr;
 +
-+	guard(mutex)(&hub->etx_mutex);
-+	guard(mutex)(&bus->port_mutex);
-+
-+	return p3h2x4x_tp_smbus_xfer_msg(hub, bus->tp_port, addr,
-+					 read_write == I2C_SMBUS_READ,
-+					 command, size, data);
++	return 0;
 +}
 +
- static u32 p3h2x4x_tp_smbus_funcs(struct i2c_adapter *adapter)
++static int p3h2x4x_i3c_hub_offset_reg_set(void *dvrdata, u64 val)
++{
++	struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub = dvrdata;
++
++	if (val > U8_MAX)
++		return -EINVAL;
++
++	p3h2x4x_i3c_hub->reg_addr = val;
++
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(p3h2x4x_i3c_hub_offset_reg, p3h2x4x_i3c_hub_offset_reg_get,
++			 p3h2x4x_i3c_hub_offset_reg_set, "%llx\n");
++
++static int p3h2x4x_i3c_hub_tp_mode_show(struct seq_file *s, void *data)
++{
++	const struct tp_configuration *tp_config = s->private;
++
++	seq_printf(s, "%s\n",
++		   tp_config->mode == P3H2X4X_TP_MODE_SMBUS ? "smbus" : "i3c");
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(p3h2x4x_i3c_hub_tp_mode);
++
++static void p3h2x4x_i3c_hub_debugfs_remove(void *data)
++{
++	struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub = data;
++
++	debugfs_remove_recursive(p3h2x4x_i3c_hub->debugfs_dir);
++}
++
++static int p3h2x4x_i3c_hub_debugfs_init(struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub)
++{
++	struct device *dev = p3h2x4x_i3c_hub->dev;
++	struct dentry *conf_dir;
++	struct dentry *tp_dir;
++	struct dentry *cp_dir;
++	struct dentry *reg_dir;
++	char hub_id[64];
++	char dir_name[32];
++	int i;
++
++	if (p3h2x4x_i3c_hub->i3cdev) {
++		snprintf(hub_id, sizeof(hub_id), "i3c-hub-device-%d-%llx",
++			 i3c_dev_get_master(p3h2x4x_i3c_hub->i3cdev->desc)->bus.id,
++			 p3h2x4x_i3c_hub->i3cdev->desc->info.pid);
++	} else {
++		struct i2c_client *client = to_i2c_client(dev->parent);
++
++		/*
++		 * Include the client address, the adapter number alone is not
++		 * unique when more than one HUB sits on the same I2C adapter
++		 * and the resulting debugfs directory name would collide.
++		 */
++		snprintf(hub_id, sizeof(hub_id), "i3c-hub-device-%d-%02x",
++			 client->adapter->nr, client->addr);
++	}
++
++	p3h2x4x_i3c_hub->debugfs_dir = debugfs_create_dir(hub_id, NULL);
++
++	conf_dir = debugfs_create_dir("dt-p3h2x4x-conf", p3h2x4x_i3c_hub->debugfs_dir);
++
++	cp_dir = debugfs_create_dir("p3h2x4x-control-ports", conf_dir);
++
++	debugfs_create_u32("cp0-io-strength-ohms", 0400, cp_dir,
++			   &p3h2x4x_i3c_hub->hub_config.cp0_io_strength);
++
++	debugfs_create_u32("cp1-io-strength-ohms", 0400, cp_dir,
++			   &p3h2x4x_i3c_hub->hub_config.cp1_io_strength);
++
++	for (i = 0; i < P3H2X4X_TP_MAX_COUNT; ++i) {
++		struct tp_configuration *tp_config = &p3h2x4x_i3c_hub->hub_config.tp_config[i];
++
++		snprintf(dir_name, sizeof(dir_name), "target-port-%d", i);
++
++		tp_dir = debugfs_create_dir(dir_name, conf_dir);
++
++		debugfs_create_file("mode", 0400, tp_dir, tp_config,
++				    &p3h2x4x_i3c_hub_tp_mode_fops);
++
++		debugfs_create_bool("pullup-enable", 0400, tp_dir, &tp_config->pullup_en);
++
++		debugfs_create_bool("ibi-enable", 0400, tp_dir, &tp_config->ibi_en);
++
++		debugfs_create_bool("always-enable", 0400, tp_dir, &tp_config->always_enable);
++
++		/*
++		 * Target ports are grouped in fours (0145 and 2367) and each
++		 * group shares a single I/O strength and pull-up setting.
++		 */
++		if ((i / 2) % 2 == 0) {
++			debugfs_create_u32("io-strength-ohms", 0400, tp_dir,
++					   &p3h2x4x_i3c_hub->hub_config.tp0145_io_strength);
++
++			debugfs_create_u32("internal-pullups-ohms", 0400, tp_dir,
++					   &p3h2x4x_i3c_hub->hub_config.tp0145_pullup);
++		} else {
++			debugfs_create_u32("io-strength-ohms", 0400, tp_dir,
++					   &p3h2x4x_i3c_hub->hub_config.tp2367_io_strength);
++
++			debugfs_create_u32("internal-pullups-ohms", 0400, tp_dir,
++					   &p3h2x4x_i3c_hub->hub_config.tp2367_pullup);
++		}
++	}
++
++	reg_dir = debugfs_create_dir("reg", p3h2x4x_i3c_hub->debugfs_dir);
++
++	debugfs_create_file_unsafe("access", 0600, reg_dir, p3h2x4x_i3c_hub,
++				   &p3h2x4x_i3c_hub_access_reg);
++
++	debugfs_create_file_unsafe("offset", 0600, reg_dir, p3h2x4x_i3c_hub,
++				   &p3h2x4x_i3c_hub_offset_reg);
++
++	return devm_add_action_or_reset(dev, p3h2x4x_i3c_hub_debugfs_remove,
++					p3h2x4x_i3c_hub);
++}
++
++#else
++
++static inline int p3h2x4x_i3c_hub_debugfs_init(struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub)
++{
++	return 0;
++}
++
++#endif /* CONFIG_DEBUG_FS */
++
+ static int p3h2x4x_i3c_hub_probe(struct platform_device *pdev)
  {
--	u32 funcs = I2C_FUNC_I2C | I2C_FUNC_SMBUS_BLOCK_DATA;
-+	u32 funcs = I2C_FUNC_SMBUS_QUICK |
-+		    I2C_FUNC_SMBUS_BYTE |
-+		    I2C_FUNC_SMBUS_BYTE_DATA |
-+		    I2C_FUNC_SMBUS_WORD_DATA |
-+		    I2C_FUNC_SMBUS_BLOCK_DATA |
-+		    I2C_FUNC_SMBUS_I2C_BLOCK |
-+		    I2C_FUNC_I2C;
+ 	struct p3h2x4x *p3h2x4x = dev_get_drvdata(pdev->dev.parent);
+@@ -387,7 +573,7 @@ static int p3h2x4x_i3c_hub_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	struct tp_bus *bus = i2c_get_adapdata(adapter);
-@@ -528,6 +736,7 @@ static const struct i2c_adapter_quirks p3h2x4x_tp_i2c_quirks = {
-  */
- static struct i2c_algorithm p3h2x4x_tp_i2c_algorithm = {
- 	.master_xfer    = p3h2x4x_tp_i2c_xfer,
-+	.smbus_xfer     = p3h2x4x_tp_smbus_xfer,
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	.reg_slave = p3h2x4x_tp_i2c_reg_slave,
- 	.unreg_slave = p3h2x4x_tp_i2c_unreg_slave,
+-	return 0;
++	return p3h2x4x_i3c_hub_debugfs_init(p3h2x4x_i3c_hub);
+ }
+ 
+ static const struct platform_device_id p3h2x4x_i3c_hub_id[] = {
 -- 
 2.25.1
 
