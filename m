@@ -1,28 +1,28 @@
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B4E522695;
-	Fri, 16 Oct 2026 16:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78D25226B6;
+	Fri, 16 Oct 2026 16:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792169223; cv=none; b=i22MMKSsFAxhAeXrUJID9w6lRRo1qvHp2Uq5U576K/LJ68qUOn++ayRjJUfGyTb0tmXFPkEUoWh6vYo0wvOlcZirUPoQ/Lw6G4JIG+0UkzKFkgVH4FDzwv/r8cJRjCgfDzoaeD9y9fTkhkQj5Wz1QANd6Me0TrDVHQULIigqPsg=
+	t=1792169227; cv=none; b=KqupP5DUeZs2d7eSK6lpxSDkHmsSNY2u+ao3IZrq/ViLr7gaR8LySHBU3OZ0jqS4Cd6Pk/EE0wf+aJgs4ptBYi5TbpZLTjqbMzTy8D8YX9jPfqurPMhUt781c90QzSuZByJzBhQrIYCFYidWSK/jE2PZ87pnFCi+7hQ9vDPnjZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792169223; c=relaxed/simple;
-	bh=oNVyoKs/S09Dcj9GGaMHc6IQPS1w0Q4jGrDFBS52rEI=;
+	s=arc-20240116; t=1792169227; c=relaxed/simple;
+	bh=j/kyoR7f4sTR58OjhyZ1byTkzP+TQkFKR+a8ZRivuto=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XAAp5btoY/T82sHZfa4TbrrrFnAaXaEIrdydh4zWgSfM4a4mUKqcsszUbtxWWU/Jco7u9jDRghDFj4zk3sGOTpJNVDpCJeMC/i02q+JRcRTo0MbsGoukffpQh3B3xe5p/FE7yW/d/nlp7uleV/xERwRGdfxvNUYfyPVV59camjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+	 MIME-Version; b=FMeoUa0ibkzi0KwehpH6OPQkVTOktuUP2z9TXnMKmOrfEzle/JY6bempTTu1b0LD9DDZA33S2Q9TuSNdo/CDod/7mN3G4LFX0Rw11JB8XRB8FBOYoueTxD2uPIkgP4syfEJVZXcJpFEAUvYk62ztp8qwXz2Cc6wzp6/fWmnWVLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E00620021B;
-	Fri, 16 Oct 2026 18:46:51 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DF5551A006F;
+	Fri, 16 Oct 2026 18:46:59 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 07A7520000B;
-	Fri, 16 Oct 2026 18:46:51 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 757FE1A0223;
+	Fri, 16 Oct 2026 18:46:59 +0200 (CEST)
 Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3C9CB180006C;
-	Sat, 17 Oct 2026 00:46:47 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A642E18000B1;
+	Sat, 17 Oct 2026 00:46:55 +0800 (+08)
 From: Lakshay Piplani <lakshay.piplani@nxp.com>
 To: linux-kernel@vger.kernel.org,
 	linux-i3c@lists.infradead.org,
@@ -43,9 +43,9 @@ Cc: vikash.bansal@nxp.com,
 	priyanka.jain@nxp.com,
 	aman.kumarpandey@nxp.com,
 	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: [RFC PATCH 4/7] i3c: hub: p3h2x4x: add clock-frequency DTS support
-Date: Fri, 16 Oct 2026 22:16:22 +0530
-Message-Id: <20261016164625.3166779-5-lakshay.piplani@nxp.com>
+Subject: [RFC PATCH 6/7] i3c: hub: p3h2x4x: configure target ports placed in GPIO mode
+Date: Fri, 16 Oct 2026 22:16:24 +0530
+Message-Id: <20261016164625.3166779-7-lakshay.piplani@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261016164625.3166779-1-lakshay.piplani@nxp.com>
 References: <20261016164625.3166779-1-lakshay.piplani@nxp.com>
@@ -58,213 +58,166 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 
-Read the standard 'clock-frequency' DT property for each SMBus target
-port and store it in bus_clk_rate. Map it to one of four hardware speeds
-using nearest-neighbour rounding (datasheet Table 20, descriptor byte 1
-bits[2:1]):
+Add a GPIO target port mode, selected by a "gpio@N" device tree node, and
+program the target port GPIO mode register that was defined but never
+written.
 
-  <= 150 kHz  -> 100 kHz (bits = 00)
-  <= 300 kHz  -> 200 kHz (bits = 01)
-  <= 700 kHz  -> 400 kHz (bits = 10, also the default when absent)
-  > 700 kHz   -> 1 MHz   (bits = 11)
+GPIO mode has higher priority than the SMBus agent and the Hub Network
+connection and leaves the port disconnected from the network, so commit it
+with the other port mode bits while the protected registers are unlocked,
+and exclude the port from the Controller Port multiplexer request along
+with the SMBus ports.
 
-The port rate also scales the expected transaction time, which is used
-to derive the status poll interval. Replace the fixed 400 kHz estimate
-with one computed from the port rate, and keep flooring the overall poll
-deadline at the SDA-stuck recovery window so a slow bus does not report
-a spurious timeout. An out-of-range or missing rate falls back to
-400 kHz, so the transaction time never divides by zero.
+The mode enable is a protected register owned by this driver, while the
+direction and level registers are driven by the GPIO child, so move the
+mode enable to the shared MFD header.
 
 Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
 Signed-off-by: Aman Kumar Pandey <aman.kumarpandey@nxp.com>
 Signed-off-by: Vikash Bansal <vikash.bansal@nxp.com>
 ---
- drivers/i3c/hub/p3h2840_i3c_hub.h       | 30 +++++++++---
- drivers/i3c/hub/p3h2840_i3c_hub_smbus.c | 65 ++++++++++++++++++++++---
- 2 files changed, 82 insertions(+), 13 deletions(-)
+ drivers/i3c/hub/p3h2840_i3c_hub.h        |  8 +-----
+ drivers/i3c/hub/p3h2840_i3c_hub_common.c | 34 +++++++++++++++++++-----
+ include/linux/mfd/p3h2840.h              |  8 ++++++
+ 3 files changed, 36 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/i3c/hub/p3h2840_i3c_hub.h b/drivers/i3c/hub/p3h2840_i3c_hub.h
-index 38f02500b6a9..ad2e7cb7f5ea 100644
+index ad2e7cb7f5ea..595e3ec60fd2 100644
 --- a/drivers/i3c/hub/p3h2840_i3c_hub.h
 +++ b/drivers/i3c/hub/p3h2840_i3c_hub.h
-@@ -219,8 +219,20 @@
- #define P3H2X4X_TP_BUFFER_STATUS_MASK				0x0f
- #define P3H2X4X_TP_TRANSACTION_CODE_MASK			0xf0
+@@ -73,7 +73,6 @@
  
--/* SMBus transaction types fields */
-+/* SMBus transaction types fields - descriptor byte 1, bits [2:1] */
-+#define P3H2X4X_SMBUS_100kHz					0
-+#define P3H2X4X_SMBUS_200kHz					BIT(1)
- #define P3H2X4X_SMBUS_400kHz					BIT(2)
-+#define P3H2X4X_SMBUS_1MHz					(BIT(2) | BIT(1))
-+
-+/* SMBus clock rates, in Hz, supported by the SMBus Controller Agent */
-+#define P3H2X4X_SMBUS_CLK_RATE_100kHz				100000
-+#define P3H2X4X_SMBUS_CLK_RATE_200kHz				200000
-+#define P3H2X4X_SMBUS_CLK_RATE_400kHz				400000
-+#define P3H2X4X_SMBUS_CLK_RATE_1MHz				1000000
-+
-+/* Target ports run at 400 kHz unless the DT requests another rate. */
-+#define P3H2X4X_SMBUS_CLK_RATE_DFT				P3H2X4X_SMBUS_CLK_RATE_400kHz
+ #define P3H2X4X_IBI_MDB_CUSTOM					0x1c
+ #define P3H2X4X_JEDEC_CONTEXT_ID				0x1d
+-#define P3H2X4X_TP_GPIO_MODE_EN					0x1e
  
- /* SMBus polling */
- #define P3H2X4X_SMBUS_POLL_COUNT			10
-@@ -236,13 +248,16 @@
- #define P3H2X4X_SMBUS_TARGET_PAYLOAD_SIZE	(P3H2X4X_TARGET_BUFFER_SIZE - 2)
+ /* Device Status and IBI Registers */
+ #define P3H2X4X_DEV_AND_IBI_STS					0x20
+@@ -92,17 +91,11 @@
  
- /*
-- * At 400 kHz, one 9-bit I2C byte takes 22.5 us. Round this
-- * up to 23 us per payload byte and add 100 us for the address
-- * byte, bus overhead and controller processing time. This models
-- * the time a healthy transaction takes and is used to derive the
-- * poll interval, not the overall give-up deadline.
-+ * One I2C byte on the wire is 9 bits (8 data + ACK). Model a healthy
-+ * transaction as the payload plus four bytes of address and descriptor
-+ * overhead, and scale it by the port clock rate. The result is used to
-+ * derive the status poll interval, not the overall give-up deadline.
-  */
--#define P3H2X4X_SMBUS_400kHz_TRANSFER_TIMEOUT(x)		((23 * (x)) + 100)
-+#define P3H2X4X_SMBUS_BITS_PER_BYTE				9
-+#define P3H2X4X_SMBUS_XFER_OVERHEAD_BYTES			4
-+#define P3H2X4X_SMBUS_TRANSFER_US(rate, len)	\
-+		(DIV_ROUND_UP(P3H2X4X_SMBUS_BITS_PER_BYTE * USEC_PER_SEC * \
-+			      ((len) + P3H2X4X_SMBUS_XFER_OVERHEAD_BYTES), (rate)))
+ #define P3H2X4X_TP_PULLUP_EN					0x53
  
- /*
-  * On an SDA-stuck condition the SMBus Controller Agent can legitimately
-@@ -310,6 +325,7 @@ struct tp_bus {
- 	bool is_registered;	    /* bus was registered in the framework. */
- 	u8 tp_mask;
- 	u8 tp_port;
-+	u32 bus_clk_rate;	    /* SMBus clock rate for this port, in Hz. */
- 	struct mutex port_mutex;      /* per port mutex */
- 	struct device_node *of_node;
- 	struct i2c_client *tp_smbus_client;
-diff --git a/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c b/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c
-index 2f301134b978..406bf9f15446 100644
---- a/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c
-+++ b/drivers/i3c/hub/p3h2840_i3c_hub_smbus.c
-@@ -18,6 +18,47 @@ enum p3h2x4x_smbus_desc_idx {
- 	P3H2X4X_DESC_READ_LEN,
+-#define P3H2X4X_TP_SCL_OUT_EN					0x54
+-#define P3H2X4X_TP_SDA_OUT_EN					0x55
+-#define P3H2X4X_TP_SCL_OUT_LEVEL				0x56
+-#define P3H2X4X_TP_SDA_OUT_LEVEL				0x57
+ #define P3H2X4X_TP_IN_DETECT_MODE_CONF				0x58
+ #define P3H2X4X_TP_SCL_IN_DETECT_IBI_EN				0x59
+ #define P3H2X4X_TP_SDA_IN_DETECT_IBI_EN				0x5a
+ 
+ /* Target Ports Status Registers */
+-#define P3H2X4X_TP_SCL_IN_LEVEL_STS				0x60
+-#define P3H2X4X_TP_SDA_IN_LEVEL_STS				0x61
+ #define P3H2X4X_TP_SCL_IN_DETECT_FLG				0x62
+ #define P3H2X4X_TP_SDA_IN_DETECT_FLG				0x63
+ 
+@@ -302,6 +295,7 @@ enum p3h2x4x_rcv_buf {
+ enum p3h2x4x_tp_mode {
+ 	P3H2X4X_TP_MODE_I3C,
+ 	P3H2X4X_TP_MODE_SMBUS,
++	P3H2X4X_TP_MODE_GPIO,
  };
  
-+/*
-+ * p3h2x4x_tp_speed_type() - Map a bus clock rate to the transaction descriptor
-+ * speed field. The SMBus Controller Agent supports four discrete rates, so pick
-+ * the nearest one for rates the device tree may have rounded.
-+ */
-+static u8 p3h2x4x_tp_speed_type(u32 clk_rate)
-+{
-+	if (clk_rate > 700000)
-+		return P3H2X4X_SMBUS_1MHz;
-+	if (clk_rate > 300000)
-+		return P3H2X4X_SMBUS_400kHz;
-+	if (clk_rate > 150000)
-+		return P3H2X4X_SMBUS_200kHz;
-+
-+	return P3H2X4X_SMBUS_100kHz;
-+}
-+
-+/*
-+ * p3h2x4x_tp_get_clk_rate() - Read the requested SMBus clock rate of a target
-+ * port from the device tree. The rate also scales the transaction time estimate,
-+ * so reject a zero or out-of-range value rather than dividing by it later.
-+ */
-+static u32 p3h2x4x_tp_get_clk_rate(struct p3h2x4x_i3c_hub_dev *hub, u8 target_port)
-+{
-+	u32 clk_rate;
-+
-+	if (of_property_read_u32(hub->tp_bus[target_port].of_node, "clock-frequency",
-+				 &clk_rate))
-+		return P3H2X4X_SMBUS_CLK_RATE_DFT;
-+
-+	if (clk_rate < P3H2X4X_SMBUS_CLK_RATE_100kHz ||
-+	    clk_rate > P3H2X4X_SMBUS_CLK_RATE_1MHz) {
-+		dev_warn(hub->dev,
-+			 "port %u: unsupported clock-frequency %u Hz, using %u Hz\n",
-+			 target_port, clk_rate, P3H2X4X_SMBUS_CLK_RATE_DFT);
-+		return P3H2X4X_SMBUS_CLK_RATE_DFT;
-+	}
-+
-+	return clk_rate;
-+}
-+
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- static void p3h2x4x_read_smbus_agent_rx_buf(struct i3c_device *i3cdev, enum p3h2x4x_rcv_buf rfbuf,
- 					    enum p3h2x4x_tp tp)
-@@ -192,14 +233,15 @@ void p3h2x4x_ibi_handler(struct i3c_device *i3cdev,
- 
- static int p3h2x4x_read_smbus_transaction_status(struct p3h2x4x_i3c_hub_dev *hub,
- 						 u8 target_port_status,
--						 u8 data_length)
-+						 u8 data_length,
-+						 u32 clk_rate)
+ struct tp_configuration {
+diff --git a/drivers/i3c/hub/p3h2840_i3c_hub_common.c b/drivers/i3c/hub/p3h2840_i3c_hub_common.c
+index 906034632a94..0caf69b3cc1d 100644
+--- a/drivers/i3c/hub/p3h2840_i3c_hub_common.c
++++ b/drivers/i3c/hub/p3h2840_i3c_hub_common.c
+@@ -98,7 +98,7 @@ static int p3h2x4x_configure_tp(struct device *dev)
  {
- 	unsigned int xfer_us, timeout_us, sleep_us;
- 	u32 status_read;
- 	u8 status;
- 	int ret;
+ 	struct p3h2x4x_i3c_hub_dev *hub = dev_get_drvdata(dev);
+ 	struct p3h2x4x *p3h2x4x = dev_get_drvdata(dev->parent);
+-	u8 mode = 0, smbus = 0, pullup = 0, target_port = 0;
++	u8 mode = 0, smbus = 0, pullup = 0, target_port = 0, gpio = 0;
+ 	u8 tp_mask;
+ 	int tp, ret;
  
--	xfer_us = P3H2X4X_SMBUS_400kHz_TRANSFER_TIMEOUT(data_length);
-+	xfer_us = P3H2X4X_SMBUS_TRANSFER_US(clk_rate, data_length);
- 	sleep_us = clamp(xfer_us / P3H2X4X_SMBUS_POLL_COUNT,
- 			 P3H2X4X_SMBUS_POLL_INTERVAL_MIN_US,
- 			 P3H2X4X_SMBUS_POLL_INTERVAL_MAX_US);
-@@ -252,8 +294,9 @@ static int p3h2x4x_tp_i2c_xfer_msg(struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub,
- {
- 	u8 controller_buffer_page = P3H2X4X_CONTROLLER_BUFFER_PAGE + 4 * target_port;
- 	u8 target_port_status = P3H2X4X_TP0_SMBUS_AGNT_STS + target_port;
-+	u32 clk_rate = p3h2x4x_i3c_hub->tp_bus[target_port].bus_clk_rate;
-+	u8 transaction_type = p3h2x4x_tp_speed_type(clk_rate);
- 	u8 desc[P3H2X4X_SMBUS_DESCRIPTOR_SIZE] = { 0 };
--	u8 transaction_type = P3H2X4X_SMBUS_400kHz;
- 	int write_length, read_length;
- 	u8 addr = xfers[nxfers_i].addr;
- 	u8 rw_address = 2 * addr;
-@@ -308,7 +351,8 @@ static int p3h2x4x_tp_i2c_xfer_msg(struct p3h2x4x_i3c_hub_dev *p3h2x4x_i3c_hub,
+@@ -110,6 +110,8 @@ static int p3h2x4x_configure_tp(struct device *dev)
+ 			 P3H2X4X_SET_BIT(tp) : 0;
+ 		target_port |= (hub->tp_bus[tp].tp_mask == P3H2X4X_SET_BIT(tp)) ?
+ 			       hub->tp_bus[tp].tp_mask : 0;
++		gpio |= (hub->hub_config.tp_config[tp].mode == P3H2X4X_TP_MODE_GPIO) ?
++			P3H2X4X_SET_BIT(tp) : 0;
+ 	}
  
- 	ret = p3h2x4x_read_smbus_transaction_status(p3h2x4x_i3c_hub,
- 						    target_port_status,
--						    (write_length + read_length));
-+						    (write_length + read_length),
-+						    clk_rate);
+ 	/* Only touch the bits for the target ports this variant provides. */
+@@ -127,7 +129,19 @@ static int p3h2x4x_configure_tp(struct device *dev)
  	if (ret)
- 		goto out;
+ 		return ret;
  
-@@ -410,7 +454,8 @@ static int p3h2x4x_tp_smbus_xfer_msg(struct p3h2x4x_i3c_hub_dev *hub,
- 	u8 controller_buffer_page = P3H2X4X_CONTROLLER_BUFFER_PAGE +
- 				    P3H2X4X_NO_PAGE_PER_TP * target_port;
- 	u8 target_port_status = P3H2X4X_TP0_SMBUS_AGNT_STS + target_port;
--	u8 transaction_type = P3H2X4X_SMBUS_400kHz;
-+	u32 clk_rate = hub->tp_bus[target_port].bus_clk_rate;
-+	u8 transaction_type = p3h2x4x_tp_speed_type(clk_rate);
- 	u8 desc[P3H2X4X_SMBUS_DESCRIPTOR_SIZE] = { 0 };
- 	u8 buf[I2C_SMBUS_BLOCK_MAX + 2] = { 0 };
- 	u8 read_length = 0, write_length = 0;
-@@ -528,7 +573,8 @@ static int p3h2x4x_tp_smbus_xfer_msg(struct p3h2x4x_i3c_hub_dev *hub,
- 		goto out_page;
- 
- 	ret = p3h2x4x_read_smbus_transaction_status(hub, target_port_status,
--						    write_length + read_length);
-+						    write_length + read_length,
-+						    clk_rate);
- 	if (ret)
- 		goto out_page;
- 
-@@ -814,6 +860,13 @@ int p3h2x4x_tp_smbus_algo(struct p3h2x4x_i3c_hub_dev *hub)
- 
- 		i2c_set_adapdata(smbus_adapter, &hub->tp_bus[tp]);
- 
-+		/*
-+		 * Determine the port clock rate before the adapter goes live, so
-+		 * a DT child probed from i2c_add_adapter() already transfers at
-+		 * the requested speed.
-+		 */
-+		hub->tp_bus[tp].bus_clk_rate = p3h2x4x_tp_get_clk_rate(hub, tp);
+-	if (target_port & ~smbus) {
++	/*
++	 * GPIO mode takes priority over the SMBus agent and the Hub Network
++	 * connection, and leaves the port disconnected from the network
++	 * (datasheet Table 10). Program it here, together with the other port
++	 * mode bits, so the port function is committed in one place. The GPIO
++	 * child driver then only touches the unprotected direction and level
++	 * registers.
++	 */
++	ret = regmap_update_bits(hub->regmap, P3H2X4X_TP_GPIO_MODE_EN, tp_mask, gpio);
++	if (ret)
++		return ret;
 +
++	if (target_port & ~(smbus | gpio)) {
+ 		ret = regmap_write(hub->regmap, P3H2X4X_CP_MUX_SET,
+ 				   P3H2X4X_CONTROLLER_PORT_MUX_REQ);
+ 		if (ret)
+@@ -206,14 +220,16 @@ static int p3h2x4x_parse_tp_dt_settings(struct device *dev,
+ 		enum p3h2x4x_tp_mode mode;
+ 
  		/*
- 		 * Publish the callback-visible state before i2c_add_adapter(),
- 		 * which can synchronously probe a DT slave and invoke
+-		 * Only "i3c" and "smbus" children describe target ports. Skip any
+-		 * other child (for example the MFD "regulators" container), which
+-		 * has no "reg" property.
++		 * Only "i3c", "smbus" and "gpio" children describe target ports.
++		 * Skip any other child (for example the MFD "regulators"
++		 * container), which has no "reg" property.
+ 		 */
+ 		if (of_node_name_eq(tp_node, "i3c"))
+ 			mode = P3H2X4X_TP_MODE_I3C;
+ 		else if (of_node_name_eq(tp_node, "smbus"))
+ 			mode = P3H2X4X_TP_MODE_SMBUS;
++		else if (of_node_name_eq(tp_node, "gpio"))
++			mode = P3H2X4X_TP_MODE_GPIO;
+ 		else
+ 			continue;
+ 
+@@ -373,10 +389,14 @@ DEFINE_DEBUGFS_ATTRIBUTE(p3h2x4x_i3c_hub_offset_reg, p3h2x4x_i3c_hub_offset_reg_
+ 
+ static int p3h2x4x_i3c_hub_tp_mode_show(struct seq_file *s, void *data)
+ {
++	static const char * const mode_names[] = {
++		[P3H2X4X_TP_MODE_I3C] = "i3c",
++		[P3H2X4X_TP_MODE_SMBUS] = "smbus",
++		[P3H2X4X_TP_MODE_GPIO] = "gpio",
++	};
+ 	const struct tp_configuration *tp_config = s->private;
+ 
+-	seq_printf(s, "%s\n",
+-		   tp_config->mode == P3H2X4X_TP_MODE_SMBUS ? "smbus" : "i3c");
++	seq_printf(s, "%s\n", mode_names[tp_config->mode]);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/mfd/p3h2840.h b/include/linux/mfd/p3h2840.h
+index eb4792de5440..537ff7d28690 100644
+--- a/include/linux/mfd/p3h2840.h
++++ b/include/linux/mfd/p3h2840.h
+@@ -24,6 +24,14 @@
+ #define P3H2X4X_REGISTERS_UNLOCK_CODE				0x69
+ #define P3H2X4X_CP1_REGISTERS_UNLOCK_CODE			0x6a
+ 
++/*
++ * Target port GPIO mode enable, one bit per target port. Shared because the
++ * hub driver owns this protected register while the GPIO driver depends on it
++ * to know which ports it may drive. The direction and level registers are not
++ * protected and are private to the GPIO driver.
++ */
++#define P3H2X4X_TP_GPIO_MODE_EN					0x1e
++
+ #define I3C_MANUF_ID_NXP					0x011b
+ 
+ struct p3h2x4x_i3c_hub_dev;
 -- 
 2.25.1
 
