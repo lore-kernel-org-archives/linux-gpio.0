@@ -1,168 +1,151 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDC480DC5
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 14:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578434EF05;
+	Fri, 16 Oct 2026 14:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792162182; cv=none; b=hkSx/noJIwY77xolBp4XMb+a2PIz+uGjsePV/IXjGIGkEBTNCCX6gqiP6HMcvbaDQNijGhSU3RdAotLKrfqXVnOfMdUq5YqKXJniwfrLUKWQ51sfb/qWoBOJrWTgtM67Wo9PYyu3b+qguxD3SjiIf0j1OXKu82oAS3cUdnvV440=
+	t=1792162302; cv=none; b=H0/Qx1ibHUvHUAWhYsza+/n6ZGOXt6OUi35rjrxLcyOMw0TZptQYr580r9TO8KXnJHG7mu1oR7pY8/a/GSxUo3tvyFlcEK3YgxRrA3JJ8WpBb6QmVZ1mWeTbcmZhohlsMXYUSGokv4MSsfjRqc+Fiwi0nCXk62dsvtiU8YaODmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792162182; c=relaxed/simple;
-	bh=/6F/aLJSv5Q7HhM5eYJG9nxGTi2Lx3k7CUsBksszwKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rwzR3UqsOKd77deOcbosaqsG4Xu3ZfAwDQ5ZDnqUGQ3xQwddPWGru78lKCY/ByJCXklFwk153xWn4oLEOwuyWr9jl0LSEoOU692h09PoINJ3uSKpu5fE2jbbZcnHxU7XcLCgKZQgV7YJ3DHwTUBgYcWhvhFSC6t9RStdsr6cfLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M4lI+KUw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YbjYr/yY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1792162302; c=relaxed/simple;
+	bh=XAqiXLlhgf+/F9hDAmXS+sPEb4Sjw+LYKzpQOJi9kAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nkw9ztUXU5GvPiJmJndFpJyydxiDQoIFo6C5WwVs2+WWERPOXJIuIwO8rNrz57An0koepGBKaW0Kau2591RXNcLhQZRJj+lqdKFnVKrIlZF7dyRZfEAeAKSvA5yZ81hxl/b40k1zbdPit5+8rvJ4JLIb/QidHm0R2GwlEOYkD8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gl2/odbW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M4lI+KUw";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YbjYr/yY"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69GE5r0c3577687
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 14:49:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=GEJSdsCp3bn
-	OA3Rmz28fYbHxbHs4bqwNwIhoTb11yWk=; b=M4lI+KUwpgQfLo/H+78fdSrgUOu
-	7T6xsJKkZ9ZRb91LQ0U+IyeVGDRK4y/YmkqYH3bJaGsYlX34qY+tET7fG9iDpY8z
-	Yh4pb6qoqgUDxxQYckg9QLWFNzyCIzhYbuPWQqewSzkHppXujEq+q39vPmfY/Goa
-	T3jaSGsidZYVNKNUxHASkK4J9LpZNhOXyoEB/sBYdPXK5eQddlzMHl2zJSVsGg5q
-	KK3OYeQYL1niJx6Nd4AelX+7ZleA6Ki2OkX3+hKG20TwtKM9VVTVZkGVLryr9Bn/
-	Hn+IfoDr8B74C5jecByxHzZCZJp3rLBEXoJEMLPinv8cZWVxKc9sc5WvZCw==
-Received: from mail-dl1-f72.google.com (mail-dl1-f72.google.com [74.125.82.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hba262t5a-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 14:49:40 +0000 (GMT)
-Received: by mail-dl1-f72.google.com with SMTP id a92af1059eb24-1665200f4c2so8789290c88.0
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2026 07:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792162179; x=1792766979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GEJSdsCp3bnOA3Rmz28fYbHxbHs4bqwNwIhoTb11yWk=;
-        b=YbjYr/yYZ1ZQnLU395QLT8LWLo9U/Q9QIl8KQIQou+QKn7mrnzHG0WhstnPO3neDKO
-         WtN2uBhRSjF6X3yvS/dp04xcqQkq9lPKir8QM2Qxbpc93BgxFvlawBYYviD64gk2mxSa
-         Wa74aLNTBcb9AZbq2PCalxvdaop0wldhCUZwAqrpCpYWUezVIog9O3dpDjak+A9CSfJk
-         AC/c+5aCnFH9FJe1Y422Z8kpEpFdkb2uUvIuNStGpAQ0OkIHWbAiHgiLRFi4tSxaaUhr
-         YBUZ/4TAN5jiZphqrETBLY4eJ8vto2TwXU7sARjf+vZX0R7dnZ+e3DN1UiICIokqhNUZ
-         S06Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792162179; x=1792766979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GEJSdsCp3bnOA3Rmz28fYbHxbHs4bqwNwIhoTb11yWk=;
-        b=nHkw2zkilPMoHxh3pLXk0wTkupxxBkM3GVkZX8hFkY+EwcDCo0uK6A66OHxpSCYYhh
-         IaE3CsFtB9xIVR8GhAugz/fg+OGr8d2F/UsUWKyAZCwUB3bIEIFKkyDzN/qhzmBacCj7
-         sFeHyB1n5Imq9ANvcoRCbowBQKzoMTCS0//x1+6H4WXF4WEpM7X1MntXXoQjalgddybL
-         3+ohgDvcntinW/lzrUUsn+wLF5DLefVUjuQ4FEzUFxmkG+WRmHCk/SPPiZbhyEt/QbBa
-         vrvN+YR9T39xphNMOZX9D4G4bfEIJTWZuZy4QqqeaGj91k+Tw6DhlguVZbpuDvWm+x5u
-         /1gw==
-X-Gm-Message-State: AFq9FYKT1wLMlGmOtpoB4sXE2UUKhEkBU33zOrFrclM6+P766KV6fw0U
-	AQF3OVZqup3aNrs58E8rxuQTDIOdt2OEtqiFYIXVbIpsHs4laE6KAlT0IfzU6nvWVOS5jHFevRE
-	e1t1b9EUduZg2T7vFuz4BlCbGXyBeEiATFuGo86DBBIMV945WqABXZTKO5ckiDN4+
-X-Gm-Gg: AYBFou2sAXN9WwHyXUO3EUJnSch+A5eoORGUEqXYrhG1vGIkgMM8pqfhyYBn8SUHDMf
-	ZaY73WVAEd9rBpxrNe2c+m8i374oCaKLmapVWzGR0JUKOK2PZa60rqPFLLQKUuP8Xn/Le9rdSQT
-	c/agOBL9UcjRwDB6qLMAIxNGTZrhASJaIUmlaYzEjnwtXGIqZ1Ni2LSu2x1h4Z1ammKdI9giopB
-	yGPtV3GoKzWZGqyUDgfALAntEFAWxwNgNvTIzW6ErspgiXVXmSczoAr0AWb1Ua1CP1KZL2FeRWO
-	J97TGPlf8NN6MlpN/nJ0N4nZN1MwmMbHs0jL2G5SAVF/Z4ovvCLDVVU202E3opG+IY4634HeZDp
-	13Wi7nLhqU1F6pImOzJpHORhP//xSPg0Jr3MM7H/7nJcaiz7sdeREaSBjs/E=
-X-Received: by 2002:a05:701b:2304:b0:182:9553:287d with SMTP id a92af1059eb24-1851238aecbmr147570c88.21.1792162179365;
-        Fri, 16 Oct 2026 07:49:39 -0700 (PDT)
-X-Received: by 2002:a05:701b:2304:b0:182:9553:287d with SMTP id a92af1059eb24-1851238aecbmr147526c88.21.1792162178573;
-        Fri, 16 Oct 2026 07:49:38 -0700 (PDT)
-Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1830f213ba7sm7765337c88.0.2026.10.16.07.49.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 07:49:38 -0700 (PDT)
-From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Subject: [PATCH v2 2/2] gpio: shared-proxy: Drop the vote of a released proxy on write failure
-Date: Fri, 16 Oct 2026 22:49:19 +0800
-Message-ID: <20261016144919.1362846-3-shengchao.guo@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261016144919.1362846-1-shengchao.guo@oss.qualcomm.com>
-References: <20261016144919.1362846-1-shengchao.guo@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gl2/odbW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C8B1F000C5;
+	Fri, 16 Oct 2026 14:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792162301;
+	bh=FS4akPMmTKn/XxnyNATR0rYZuSEvn1Rz3NANKinyLK8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=gl2/odbWolkTtsI8DbH/fRUIGtRdbBf5mzbeQrIdAcoJ8kMHhYbh8fgY/b7d0baTm
+	 JNiochyMaCS/hBbtJdjoopVjJ6PP3wKR6fKAtWEU0bDniHx030vR/wjHPygwUAb+oH
+	 F8W8vXWxOvzfNXMDhMAPUhmMf953Bm9aReNRsA9Nq/XD9GrhrPdZogClQUL24phpsn
+	 N0Ib/K7TtcySCh0i8wLImPmLzr+wNCCoCP/ZborLM+k5l25Z5R/rte+skwiGAZ5Tgt
+	 c7VvJSEBxPBwgeWfeIsmj9FJVFdGR4AGqTzc4mugU6hIVj8GQFsPTf/vY4AbJqJ30x
+	 ISwvJ9JSGfpTA==
+Message-ID: <ec27fd26-1862-43cf-803a-428846d66663@kernel.org>
+Date: Fri, 16 Oct 2026 16:51:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=bsHZl0ai c=1 sm=1 tr=0 ts=6ad23984 cx=c_pps
- a=bS7HVuBVfinNPG3f6cIo3Q==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8
- a=Vq87VKjZgZ7Zzh4gvRcA:9 a=vBUdepa8ALXHeOFLBtFW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE2MDA1OCBTYWx0ZWRfXwMQ/fWoBwy/h
- fgPLpiLXmfgkN7+5YxaPDDjRwyQNQjXryMQrx1SypgC7Uou9J7oA0vCr6tyr/J6emEGMDlOEs+e
- ndl4NdJxWBFVk4xOfIVbShJSYGZ2H+fL+MkY1UWWPZ8Z+PaduzNspbw91UG0lXPfQ2F3IAfAXug
- 44OD5wGhKLpuyaapiq7YQD3ZXeBfLmBNQRdoUyycH7wHJMi4YQu/sK0/XiEE6LRCqgm7U1ik16g
- izlq3bNSkz5zuLzg4pptYyjNbxRosmt+ERIGiOoxah4f1degT6OYNS/InZOEQgDVqdKLnYYsLHk
- 4iJRNsEFqDlTjiK6mcRlqRHI4Wl3Z1DbW4euJHKbJHpXOzEE50cBXjE+3BuCXcWQPkxlQrnyZzW
- c9B4bjK3GEiTuo3Szfmkf6qtd6kAJqIb7Bah4f7+PFwG92XtafziHzZ1EtnMbUWarOQ+Ikkh9l8
- 4dyEu4CruBU4sg7kuYg==
-X-Proofpoint-ORIG-GUID: rfY7lr2ZS9-sDhFVmvP1FoRQNJiwzTN_
-X-Proofpoint-GUID: rfY7lr2ZS9-sDhFVmvP1FoRQNJiwzTN_
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE2MDA1OCBTYWx0ZWRfXyIee6qX0qAZN
- gjzUx52uyDZjb6Kuxv4aacRB0qsz+VWyJhjw8lO28KiyRy9kQpasxA0Ap8JaCcleFASO9N+FLrU
- feA07JIYxvAKO0wdnn9ki3wkiM54cl8=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-16_02,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 phishscore=0 spamscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610160058
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] dt-bindings: pinctrl: Add devicetree bindings for
+ DM816x SoC Pinctrl
+To: Ettore Chimenti <ettore.chimenti@linaro.org>,
+ Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Christopher Obbard <chris.obbard@oss.qualcomm.com>,
+ Andrew Goodbody <andrew.goodbody@linaro.org>,
+ Linus Walleij <linusw@kernel.org>,
+ Rouven Czerwinski <rouven.czerwinski@linaro.org>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20261016-patch-ektor5-dm8168-dts-v1-0-b4ce30217028@linaro.org>
+ <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When a proxy that voted for a value change frees the line, it calls
-gpio_shared_proxy_set_unlocked() to withdraw its vote. If it is the
-last voter and restoring the default value fails, that function
-returns early, leaving votecnt incremented and voted_change set.
+On 16/10/2026 16:41, Ettore Chimenti wrote:
+> Add devicetree bindings for TI DM816x SoC pinctrl configuration.
+> Using same definition as OMAP2/3 except pullup/down enable macros, which
+> are inverted in this SoC.
+> 
+> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+> ---
+>  include/dt-bindings/pinctrl/dm816x.h | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/include/dt-bindings/pinctrl/dm816x.h b/include/dt-bindings/pinctrl/dm816x.h
+> new file mode 100644
+> index 000000000000..15aa15bca9bd
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/dm816x.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * This header provides constants specific to DM816X pinctrl bindings.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_PINCTRL_DM816X_H
+> +#define _DT_BINDINGS_PINCTRL_DM816X_H
+> +
+> +#include <dt-bindings/pinctrl/omap.h>
 
-The consumer is gone, but its vote is not. The line is held at the
-non-default value for all remaining users, since votecnt can never
-drop to zero again. And the proxy data outlives the request, so
-voted_change is still set when the line is requested again. If
-another user has reinitialized the line in between, resetting
-votecnt to 0, the stale proxy's next vote for the default value
-decrements votecnt from 0 and underflows it.
+I do not see this being used here, IWYU.
 
-Drop the vote unconditionally on release, after reporting the
-failure, since the consumer is going away regardless.
+> +
+> +#undef PULL_UP
+> +#undef PULL_ENA
 
-Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
-Assisted-by: LLM
-Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
----
- drivers/gpio/gpio-shared-proxy.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Why are you undefining other macros? That's not a easy to follow code.
 
-diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-proxy.c
-index 0d1d724a6a37..24241c981df1 100644
---- a/drivers/gpio/gpio-shared-proxy.c
-+++ b/drivers/gpio/gpio-shared-proxy.c
-@@ -134,9 +134,13 @@ static void gpio_shared_proxy_free(struct gpio_chip *gc, unsigned int offset)
- 
- 	if (proxy->voted_change) {
- 		ret = gpio_shared_proxy_set_unlocked(proxy, shared_desc->def_val);
--		if (ret)
-+		if (ret) {
- 			dev_err(proxy->dev,
- 				"Failed to unset the shared GPIO value on release: %d\n", ret);
-+			/* The consumer is going away regardless, drop its vote */
-+			shared_desc->votecnt--;
-+			proxy->voted_change = false;
-+		}
- 	}
- 
- 	proxy->shared_desc->usecnt--;
--- 
-2.43.0
 
+> +
+> +/* DM81xx mux bit defines */
+> +#define PULL_ENA		(0 << 3)  /* Pullup enabled  => 0 */
+> +#define PULL_DIS		(1 << 3)  /* Pullup disabled => 1 */
+> +#define PULL_DN			(0 << 4)
+> +#define PULL_UP			(1 << 4)
+
+I do not see this used by drivers, so why do we need one more header?
+What part of SW are you binding here?
+
+
+Best regards,
+Krzysztof
