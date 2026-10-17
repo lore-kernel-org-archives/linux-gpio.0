@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29936391E51
-	for <linux-gpio@vger.kernel.org>; Sat, 17 Oct 2026 19:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350B1391E51
+	for <linux-gpio@vger.kernel.org>; Sat, 17 Oct 2026 19:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792267149; cv=none; b=syftaGtpz0wIDKSVDyTHVTfi5Grgy0TAY6FoQnsHXWde780bE/UGw6jgJmPlxNAqTbbOiLaRX99+/DBRZ5p8EWOMfbAAuE5QtskLvji1x+KKYkOqJ2boE+72GUROeJ0STDl2ElvjAb3UunDITtfgXiH2f1IMei5AsuGsgR/O9n8=
+	t=1792267151; cv=none; b=Q1/4N1LvE8ILfDvRTUl0VfO0TXxt7ZPxCWAf9zH0hEFiEu93lqNoqulo3hKfFpH/9+pRPDnhRPx2O5SRD9vePPdXGclfDfaKCZFap7WK3OLfaAW7HCc7aLTO0rn5ZG3AosXQ62dCKXUYsAdp86EiUyqplPXIamxp421XFDi3W2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792267149; c=relaxed/simple;
-	bh=nrBx8HCFVL+P41XTVF25t19RLh5tIm14h/Ut6WzXJ3o=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=tStwZg9stPoLzOSXsOyHPzGAyBXL7aNQ1hPpuhzm1WgKNofeKMQVwuM7pFS4+m+hudQpZ1QCHjs0PSPF0w29N5uJmCrMs2oqsNksaxGS6uJsFyDBjqiugEtwGUEXSfPsT7TwK2kKFSgu8BMytMxd3Me0Q4znU51oKtk9L56/2ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FUGNnbEu; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1792267151; c=relaxed/simple;
+	bh=kyT2yl5bRCNQDQryImEjjKH0Phh3XLJorcUXkMFUjQE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YLzQdjcaF2Cga3jUcTLayh+doszU/FwYqM4GBhqCUgmg7DyfsedYY/p+C9vVmxFjVlhGEba90WSdVOTmW12CdZC0dtZZTVDKvtfb9HBN/rUxV/y7YcSTSWXOdWJ3EPDX7WicciY0mfE0+PC7j7OC3Ithd5b5io+mKKk5DPyokd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARhZh09x; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FUGNnbEu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARhZh09x"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792267148; x=1823803148;
+  t=1792267151; x=1823803151;
   h=date:from:to:cc:subject:message-id;
-  bh=nrBx8HCFVL+P41XTVF25t19RLh5tIm14h/Ut6WzXJ3o=;
-  b=FUGNnbEu4AI7bWzrjDW0D71gQnszY2hJFKOrgMiV1xIfhAvaK4bJtEZr
-   /TM5ZxX1gHoQSJ3wmyRGJB4ywjW/D/0o3TEF/xAm4QhD7Z1i7C4Mf31mZ
-   2IeDgeS3k/Sdr3MAQ4Cx99RwBAJ6k5ZGn6p/8Svjwi/hGHC2ijQSbQ2Su
-   TipWuVa03F6lPqWEKM8M+8RY0K8m6Ygrc0In8DnaFJx6wkUX5i6OoNJuL
-   pHkWuAh1SBUKpW21ZXOqh4rh2LHdr49RGi06S1Hy7cVQqtAWfmICb7HyM
-   4k1NKkycVHJ0SiMUlzPst3cbbGr5R8d4UpysUgWVbmvnOic2d4EHM0t+W
-   g==;
-X-CSE-ConnectionGUID: NwjGkB9wSdWx0bGa6fW0nQ==
-X-CSE-MsgGUID: MjIUSxJLTRiV3i48eDlagg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11938"; a="1012724"
+  bh=kyT2yl5bRCNQDQryImEjjKH0Phh3XLJorcUXkMFUjQE=;
+  b=ARhZh09xgn8tlpM9orzE+0z8MGjxolbGTQpQAJDvBX6YMoi9J2Xn+o12
+   nsE5jWlw0bGNABdKut/xHgAKBq76bdetYgncXxoJQsyhAVmC0m8KKsQRE
+   OkOTHUBBA+nDUNBL1XSZABhC3Xrq0v6J05kG+DHH0K5wh3vSm7zNcqc3h
+   yBwgmiMiOm4wj7GZCCLoZ1YMdeQhxpSwvYZl+aVxtcyqTIZfQZ1pZTk/u
+   twHFJswInPTDt0APOdEQrgSvrteaCqjmwnFNWg3pS6sGQk71yBtR5XFWm
+   XsOokzJVu6GCLlW6wmaIVF1mJmHWjVclPST41xGBV8z345adqXuv++zHd
+   w==;
+X-CSE-ConnectionGUID: Ltgha5xeRvqiLBObv9Jncg==
+X-CSE-MsgGUID: muIls9acQvSYWcBSRt75mw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11938"; a="1026147"
 X-IronPort-AV: E=Sophos;i="6.27,163,1787036400"; 
-   d="scan'208";a="1012724"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2026 12:59:08 -0700
-X-CSE-ConnectionGUID: oomaSYPQR1+Hx6v1LcfPwA==
-X-CSE-MsgGUID: e1RLR2stR4i1ewW4ARdjzg==
+   d="scan'208";a="1026147"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2026 12:59:10 -0700
+X-CSE-ConnectionGUID: 8ScfsLxkTaaXGjj3P1x5XA==
+X-CSE-MsgGUID: uQqlTykLSVSHCcVe5YbbXA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,163,1787036400"; 
-   d="scan'208";a="2257417"
+   d="scan'208";a="2582397"
 Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Oct 2026 12:59:06 -0700
+  by fmviesa006.fm.intel.com with ESMTP; 17 Oct 2026 12:59:08 -0700
 Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1xIAYa-00000000JiE-0V1R;
-	Sat, 17 Oct 2026 19:59:04 +0000
-Date: Sun, 18 Oct 2026 03:58:10 +0800
+	id 1xIAYc-00000000JiH-0N53;
+	Sat, 17 Oct 2026 19:59:06 +0000
+Date: Sun, 18 Oct 2026 03:58:24 +0800
 From: kernel test robot <lkp@intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio:for-current] BUILD SUCCESS
- ac46dac1613a7c971e28e16d3a7a6ad4b1ae6c5a
-Message-ID: <202610180307.dOe7Trl5-lkp@intel.com>
+Subject: [brgl:pwrseq:for-next] BUILD SUCCESS
+ eadea156f11b2c9a780b60c1699c2da145c9d1f2
+Message-ID: <202610180321.dFdQpz4S-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,8 +59,8 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: ac46dac1613a7c971e28e16d3a7a6ad4b1ae6c5a  gpiolib: acpi: Ignore GPIO 11 interrupt on ThinkPad L13 Gen 2a
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pwrseq/for-next
+branch HEAD: eadea156f11b2c9a780b60c1699c2da145c9d1f2  power: sequencing: pcie-m2: Add Foxconn WCN7850 subsystem PCI ID
 
 elapsed time: 1813m
 
