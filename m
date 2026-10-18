@@ -1,122 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695833EC826
-	for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 16:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE80D3E2ADD
+	for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 17:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792342535; cv=none; b=VNr71X6w/ygpF+ou37Hi+zPQBS5tlJ69TBpdV8blZTybLJDLIHO2hU1YiXOKGTlxd56KHOEqgnMwhK3I9baQq66A4XdrMV0Zemq53tEGyP9YVBht1md0v8ozzu6ppwzmS+aSMiGwjJ3/fms1mE8rNJLmVC3baSz/QWYGUTJvxlc=
+	t=1792343146; cv=none; b=o05+EzyENcowjEqOQjLxFT6iRz+Knv2wTaXO/UlB7CTZi7GmoVN5KeV1wlfHPIrViIrF0ExZS6sEj0dE4J3DSMwwglVe5MaWYEBIuS5R6khgKNrh2+SQ/ypSGCrAclomsXLrEhw6DJNDTFG1WSVpg0DPfFd/w5DXHY3mvdRHPbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792342535; c=relaxed/simple;
-	bh=qMyv1xAaSFji5ceZiOBbDLHtoFNh+nnw41Vh1pd0B5Y=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=d525rNY8A1RSdX9yfX+TDCL1nHsVP6EjIDrm1ybMHpI6DvouczOPloJxBUvPHXVPrIj0NS1VH8FUuJXGC9Zq/XYUH/y3IDqi6+QKVfNPOibhoRe52cp2TxpTZd3/Kf2proln11/U80PZSsJrx7kgIxDqYjWSszITlgxDuLFyXOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qb6nsnLG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792343146; c=relaxed/simple;
+	bh=so/mFx2Ao2GsJpBhafP1pe9fktRMxxMEgCjCSX2y/b0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rL0XahUZoL5JJuvp2nM+xylRFk58uzVTyzDeho8G4w5DDIJdR5Ce/t9FL4qFEfE8SSIHtFrDmlE3fK09+Yq4HcjqjZzF4Vzc0B4pYnhzAFGHfW5+4LLrt1e450f2YxlEJYtLxcgJhev3ssLozp/B/+9dvahtBIlYdX8MIDDEhx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ney9zHCt; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qb6nsnLG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E876E1F000C4;
-	Sun, 18 Oct 2026 16:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792342534;
-	bh=pWjmRBEx95ektcNMkpqDqJ5RsijLPDakgkt5WZcVY6Y=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Qb6nsnLGox8grOwqopCYzoyQc2SKN2zU/W1UkgMBIE8S+zM8mTmfIfI7deCJQ9hbN
-	 kFUF98MCQw8d5zD5MJe7ys/rREiXdotttTWPNI1p6PZCJZmr2QIPkdpDZsYoogKAb+
-	 7xX3oeMwi3bAhnnYf0s4QMJtrm/ajQkdfauJW4MOUONzl9BkRM0y6gOl75VxzPVg92
-	 /+F+ip+zplkDeu9hVENOYPwhO5eiT41DHcYgj/nEfv5M0IVkIoolQ+FGsnV+4NzT5z
-	 tQnT8JBX3cksQsjSOhl69H6CavTIruUE7P/9YbZ34rg2Hzk+zrOxduTVT4x+FswXDy
-	 U0WSWaaIqrWKw==
-Message-ID: <sashiko-outbox-176299@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] gpio: pca953x: Handle direction register read errors in
- IRQ paths
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Sahaj Chaudhari" <sahaj123.sc@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261018165003.3372368-1-sahaj123.sc@gmail.com>
-References: <20261018165003.3372368-1-sahaj123.sc@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 18 Oct 2026 16:55:33 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ney9zHCt"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2e60f9af6e6so10228145ad.3
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 10:05:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792343144; x=1792947944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3W+MZb2eOKpPBttwcKlbbD/WfEQPKdgJ9KWbT5a3vI4=;
+        b=Ney9zHCt6Np26Oj79AbYEf6EmM7tOjGQZspkshvYeRUnpymI7l1W/8j/J7T7tzEO4F
+         DeSxc7Vdx0jaoYq9Kgv0Zn+Pwq/4iWJhRk8FhBLI2H55SL7zC0SdZZCiJ7HF8XCCrc4U
+         TLu2eU3EEhaEu3McMEi3fgNVTHzaZWlk/pGuhFsaD12XlnObXtvIGTwVt5MafAnYnKJC
+         ZqEMuPl10bqJe+YRsSJfFfBdBq6DufdMwJYnJI2phew7/P823EE+Krk0TzyiMEbRWJQl
+         eU4RH5VQxdOmyAi4AdZkwfhnLpUpktsDGJGsloN0Me0VkPgRQh8bs/8ALBht34gRY8+X
+         R4jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792343144; x=1792947944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3W+MZb2eOKpPBttwcKlbbD/WfEQPKdgJ9KWbT5a3vI4=;
+        b=RHe8sju1G3u2ztcW2IWIHkpfsuupfJ+FkXPdexuBtuJMSbzLn+7TNa/tvdONyZPb9V
+         br37SHvhkdktiHQk/CPYzMtnxN+M4vpguDYyUiwqs5VsnfOzrn+nzCxQqUhJ1Ok51O6m
+         nA3nziNYuvBGt0ikmG8Hx9JMoGorVDSe1yxwxZcQhWUoIR5jkcY/Zkp7Y1BbmHhDkXH8
+         3FovJbAZi9B+XUYQJW6Ey8bE+vekNivDhW+9b/nID1yGG7qjhP87sCKV0N31RWKMa7m2
+         WV3guhzRF8pfJGuPDhWpTgmQmEGRqW/iTBYoC6VUtIv3PDEwlPan8M6EDF+SzZgnUB56
+         JQwg==
+X-Gm-Message-State: AFq9FYK4P/Qjk7/EPgEMaDmghp9IOnCLHNAIVsXnBt1lVDveP/hlg/xc
+	sXBtmT9dQZyN5WfeDelvmj9dXnICEnzOLCjwswfV//6f4nMNvAyrxVWa
+X-Gm-Gg: AYBFou3oj52SJ/3FeqTHQfr8G57ovfxsUIo2RGuZ4k0wzlnZfdmHWUjv0+TTw6IblJq
+	96AFV50MQRnEbCYxb+ZErBYaWak3c5UNtwJ5QWTW5hQs5nlLPt5OxSu4KcyayQtPaWfPuOrmG5G
+	sAjkenpCok96BtzaQRk99JkljWsLK0hmOfa1/Vr0LenWzyZJNN/HktTb0by5CkpCWnzHUl7oTOi
+	GFXAkcvMs8AUU1srXM+LkNM4PdbfHZJKg057bUDlxYR80w7fhqz1QlLqIazqyF4YqeVNbB0mE0D
+	L5zblO1UEznjJuEXOhdZJH51n9k6sW02MU4IMCiYznqZFZE2ntd5kpyGq0HSJrluQnY3f4vLR/+
+	URd+HOUNpVV+3GWeHSmAeAsVkoUYbjylXkoX0crVulS3XA85bwqJDbaXyCbXPiMsxvzJkSWKdhG
+	Rq4hLhHvxpHMxvRbmOQnkPVFb5GGHebKK8Dx51eKVlUPnNJiKd/gncb/FdZoXj42LLqgPEt2Y79
+	dlpkHwMHz+qMvpdOTfp3sMv1Zr+XNap9fPXZCodVLjY
+X-Received: by 2002:a17:902:db03:b0:2e9:502a:ddbb with SMTP id d9443c01a7336-2e9a6c201f3mr47934555ad.45.1792343144127;
+        Sun, 18 Oct 2026 10:05:44 -0700 (PDT)
+Received: from obadmin-Precision-3680.atlascopco.group ([167.103.3.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e97e8758efsm28757625ad.55.2026.10.18.10.05.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Oct 2026 10:05:43 -0700 (PDT)
+From: Sahaj Chaudhari <sahaj123.sc@gmail.com>
+To: Keerthy <j-keerthy@ti.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Devarsh Thakkar <devarsht@ti.com>,
+	Aswath Govindraju <a-govindraju@ti.com>,
+	Aniket Limaye <a-limaye@ti.com>
+Subject: [PATCH] gpio: davinci: Clear interrupt status in every bank on suspend
+Date: Sun, 18 Oct 2026 22:36:22 +0530
+Message-ID: <20261018170622.3406158-1-sahaj123.sc@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] gpio: pca953x: mixing guard() and goto in pca953x_irq_bus_sync_unlo=
-ck()
---
+davinci_gpio_save_context() saves the registers of each 32-GPIO
+register bank, but clears interrupt status only after the loop. At that
+point g refers to the last bank, so pending status in all preceding
+banks is left uncleared.
 
-commit f8c41495cf791bc6655e128fd9192a150f30aa3c
-Author: Sahaj Chaudhari <sahaj123.sc@gmail.com>
+Move the interrupt-status write into the per-bank loop so that the
+existing suspend-time clearing covers every register bank. Single-bank
+controllers retain the same behavior.
 
-gpio: pca953x: Handle direction register read errors in IRQ paths
+Fixes: 0651a730924b ("gpio: davinci: Add support for system suspend/resume PM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sahaj Chaudhari <sahaj123.sc@gmail.com>
+---
+Testing:
+- Built an ARM64 kernel with CONFIG_GPIO_DAVINCI=y,
+  CONFIG_PM_SLEEP=y and CONFIG_SUSPEND=y, containing this fix alone.
+- Booted it on AM642 and confirmed all three DaVinci GPIO controllers
+  bound, with an untainted kernel.
+- Validated the extracted save-context function in a standalone
+  userspace harness with simulated write-one-to-clear MMIO, using one
+  through five register banks. Verified that every bank is cleared
+  exactly once and GPIO register and bank-enable context is preserved.
+  The unpatched function fails clearing checks for two through five
+  banks; the patched function passes. Ran the harness natively on
+  AM642 and under host ASan/UBSan.
 
-This commit adds error checking for direction register reads in
-pca953x_irq_bus_sync_unlock(), pca953x_irq_pending(), and
-pca953x_irq_setup() to avoid using uninitialized stack bitmaps when
-pca953x_read_regs() fails.
+The suspend callback has not been exercised on the live GPIO hardware.
+The regression results above use simulated MMIO, not real pending IRQs.
 
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index aac9ea7520b60..b6f0849d3bdf9 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -862,6 +862,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_da=
-ta *d)
->  	DECLARE_BITMAP(irq_mask, MAX_LINE);
->  	DECLARE_BITMAP(reg_direction, MAX_LINE);
->  	int level;
-> +	int ret;
-> =20
->  	guard(mutex)(&chip->i2c_lock);
-> =20
-> @@ -880,7 +881,9 @@ static void pca953x_irq_bus_sync_unlock(struct irq_da=
-ta *d)
->  	}
-> =20
->  	/* Switch direction to input if needed */
-> -	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
-> +	ret =3D pca953x_read_regs(chip, chip->regs->direction, reg_direction);
-> +	if (ret)
-> +		goto out;
-> =20
->  	bitmap_or(irq_mask, chip->irq_trig_fall, chip->irq_trig_raise, gc->ngpi=
-o);
->  	bitmap_or(irq_mask, irq_mask, chip->irq_trig_level_high, gc->ngpio);
-> @@ -890,6 +893,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_da=
-ta *d)
->  	for_each_andnot_bit(level, irq_mask, reg_direction, gc->ngpio)
->  		pca953x_gpio_direction_input_unlocked(&chip->gpio_chip, level);
-> =20
-> +out:
->  	mutex_unlock(&chip->irq_lock);
->  }
+ drivers/gpio/gpio-davinci.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-[Severity: Low]
-In drivers/gpio/gpio-pca953x.c, pca953x_irq_bus_sync_unlock() uses
-guard(mutex)(&chip->i2c_lock) at function scope. When pca953x_read_regs()
-returns an error, this change jumps to the new out label to unlock
-chip->irq_lock.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index cccbaea1dec2..fc2b9bef7efc 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -611,10 +611,10 @@ static void davinci_gpio_save_context(struct davinci_gpio_controller *chips,
+ 		context->set_data = readl_relaxed(&g->set_data);
+ 		context->set_rising = readl_relaxed(&g->set_rising);
+ 		context->set_falling = readl_relaxed(&g->set_falling);
+-	}
+ 
+-	/* Clear all interrupt status registers */
+-	writel_relaxed(GENMASK(31, 0), &g->intstat);
++		/* Clear stale interrupt status for this bank. */
++		writel_relaxed(GENMASK(31, 0), &g->intstat);
++	}
+ }
+ 
+ static void davinci_gpio_restore_context(struct davinci_gpio_controller *chips,
 
-Per include/linux/cleanup.h:
-
-    * Lastly, given that the benefit of cleanup helpers is removal of
-    * "goto", and that the "goto" statement can jump between scopes, the
-    * expectation is that usage of "goto" and cleanup helpers is never
-    * mixed in the same function. I.e. for a given routine, convert all
-    * resources that need a "goto" cleanup to scope-based cleanup, or
-    * convert none of them.
-
-Could pca953x_irq_bus_sync_unlock() avoid mixing guard() and goto by wrappi=
-ng
-the direction update in an if (!ret) block (or using scoped_guard(mutex,
-&chip->i2c_lock) around the I2C accesses before unlocking chip->irq_lock)?
-
-[ ... ]
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261018165003.3372=
-368-1-sahaj123.sc@gmail.com?part=3D1
+base-commit: ac46dac1613a7c971e28e16d3a7a6ad4b1ae6c5a
+-- 
+2.43.0
