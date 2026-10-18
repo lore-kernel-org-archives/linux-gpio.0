@@ -1,75 +1,73 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE80D3E2ADD
-	for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 17:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C8C3DD873
+	for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 23:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792343146; cv=none; b=o05+EzyENcowjEqOQjLxFT6iRz+Knv2wTaXO/UlB7CTZi7GmoVN5KeV1wlfHPIrViIrF0ExZS6sEj0dE4J3DSMwwglVe5MaWYEBIuS5R6khgKNrh2+SQ/ypSGCrAclomsXLrEhw6DJNDTFG1WSVpg0DPfFd/w5DXHY3mvdRHPbA=
+	t=1792364483; cv=none; b=BV2O7lQDSvcbHXNMt3KJ0Jgdjnn+/P8iGt82KtbqZ+ItatSMx6SoaWFFqJF9Le8wRlIsdh5hbA9kc6QEX4ZdLTryLGU2MUikuhmRaO0SIk1aERrdsCS8Z6DKSUBtRkT8Ffa7PZxHzeaPh3Jh8QRX7SWUUv4/KypiqbFsDJy1HMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792343146; c=relaxed/simple;
-	bh=so/mFx2Ao2GsJpBhafP1pe9fktRMxxMEgCjCSX2y/b0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rL0XahUZoL5JJuvp2nM+xylRFk58uzVTyzDeho8G4w5DDIJdR5Ce/t9FL4qFEfE8SSIHtFrDmlE3fK09+Yq4HcjqjZzF4Vzc0B4pYnhzAFGHfW5+4LLrt1e450f2YxlEJYtLxcgJhev3ssLozp/B/+9dvahtBIlYdX8MIDDEhx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ney9zHCt; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1792364483; c=relaxed/simple;
+	bh=VAAVgnyv25zFG+/2rW7vJvNefKZzWh2RCM8Fygu986c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YEbWUVsgVNi2EKLyOlJehHRMor6D/IvI6mBwhkDI/k1iMm7T9gbBXqbt4S6nIl0AJ6vAA1C6PZUXOmwiwaxs/C+SE96CI5JQvTIEUjp8ZgNC7z0zM8L9b7dp2o+CfMRoYJDCO46N60I4e7VXlMFgCTiuuwGJsCLu2K0frc6+vwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHa/ttRs; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ney9zHCt"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2e60f9af6e6so10228145ad.3
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 10:05:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHa/ttRs"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3ace1f3897cso880285a91.0
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 16:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792343144; x=1792947944; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792364480; x=1792969280; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3W+MZb2eOKpPBttwcKlbbD/WfEQPKdgJ9KWbT5a3vI4=;
-        b=Ney9zHCt6Np26Oj79AbYEf6EmM7tOjGQZspkshvYeRUnpymI7l1W/8j/J7T7tzEO4F
-         DeSxc7Vdx0jaoYq9Kgv0Zn+Pwq/4iWJhRk8FhBLI2H55SL7zC0SdZZCiJ7HF8XCCrc4U
-         TLu2eU3EEhaEu3McMEi3fgNVTHzaZWlk/pGuhFsaD12XlnObXtvIGTwVt5MafAnYnKJC
-         ZqEMuPl10bqJe+YRsSJfFfBdBq6DufdMwJYnJI2phew7/P823EE+Krk0TzyiMEbRWJQl
-         eU4RH5VQxdOmyAi4AdZkwfhnLpUpktsDGJGsloN0Me0VkPgRQh8bs/8ALBht34gRY8+X
-         R4jw==
+        bh=wcQqMGsW7EjVun/qknWTz0LgUBV6D0ub+c+QzohLAeI=;
+        b=IHa/ttRsvnLGvoh+eYDMfRE2GcpDB/qzcnbZkOL/KVgklSrwaXij1A7c44MrhxhGlc
+         vo1qawANapIP+fC4qX9QnLKQC92B65v03khpMHpbZvSD1aeLX9gsT0e+Tb73BUMrb289
+         ynACSgp6j4MQ1ydfSbu2NTDbqNm6k9mRu7gjy0KqbWbaBD/6yNldfzvFGx3wOw/WKkan
+         Nn8AWJp/b/Lyic2G7jzeELqwW12q2II1ZrMaqtvvt8RjxfJ3iO9zTpv1T8tfLeeKp85W
+         P0PZZrMrp6DMPlNU/Wa2F42ErKe+eNk/yI9u7PgWzRRFCeYIZv4RPGAzEKtadn/wHcvt
+         pRsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792343144; x=1792947944;
+        d=1e100.net; s=20260707; t=1792364480; x=1792969280;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=3W+MZb2eOKpPBttwcKlbbD/WfEQPKdgJ9KWbT5a3vI4=;
-        b=RHe8sju1G3u2ztcW2IWIHkpfsuupfJ+FkXPdexuBtuJMSbzLn+7TNa/tvdONyZPb9V
-         br37SHvhkdktiHQk/CPYzMtnxN+M4vpguDYyUiwqs5VsnfOzrn+nzCxQqUhJ1Ok51O6m
-         nA3nziNYuvBGt0ikmG8Hx9JMoGorVDSe1yxwxZcQhWUoIR5jkcY/Zkp7Y1BbmHhDkXH8
-         3FovJbAZi9B+XUYQJW6Ey8bE+vekNivDhW+9b/nID1yGG7qjhP87sCKV0N31RWKMa7m2
-         WV3guhzRF8pfJGuPDhWpTgmQmEGRqW/iTBYoC6VUtIv3PDEwlPan8M6EDF+SzZgnUB56
-         JQwg==
-X-Gm-Message-State: AFq9FYK4P/Qjk7/EPgEMaDmghp9IOnCLHNAIVsXnBt1lVDveP/hlg/xc
-	sXBtmT9dQZyN5WfeDelvmj9dXnICEnzOLCjwswfV//6f4nMNvAyrxVWa
-X-Gm-Gg: AYBFou3oj52SJ/3FeqTHQfr8G57ovfxsUIo2RGuZ4k0wzlnZfdmHWUjv0+TTw6IblJq
-	96AFV50MQRnEbCYxb+ZErBYaWak3c5UNtwJ5QWTW5hQs5nlLPt5OxSu4KcyayQtPaWfPuOrmG5G
-	sAjkenpCok96BtzaQRk99JkljWsLK0hmOfa1/Vr0LenWzyZJNN/HktTb0by5CkpCWnzHUl7oTOi
-	GFXAkcvMs8AUU1srXM+LkNM4PdbfHZJKg057bUDlxYR80w7fhqz1QlLqIazqyF4YqeVNbB0mE0D
-	L5zblO1UEznjJuEXOhdZJH51n9k6sW02MU4IMCiYznqZFZE2ntd5kpyGq0HSJrluQnY3f4vLR/+
-	URd+HOUNpVV+3GWeHSmAeAsVkoUYbjylXkoX0crVulS3XA85bwqJDbaXyCbXPiMsxvzJkSWKdhG
-	Rq4hLhHvxpHMxvRbmOQnkPVFb5GGHebKK8Dx51eKVlUPnNJiKd/gncb/FdZoXj42LLqgPEt2Y79
-	dlpkHwMHz+qMvpdOTfp3sMv1Zr+XNap9fPXZCodVLjY
-X-Received: by 2002:a17:902:db03:b0:2e9:502a:ddbb with SMTP id d9443c01a7336-2e9a6c201f3mr47934555ad.45.1792343144127;
-        Sun, 18 Oct 2026 10:05:44 -0700 (PDT)
-Received: from obadmin-Precision-3680.atlascopco.group ([167.103.3.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e97e8758efsm28757625ad.55.2026.10.18.10.05.40
+        bh=wcQqMGsW7EjVun/qknWTz0LgUBV6D0ub+c+QzohLAeI=;
+        b=jzmxt8TMpg9P2Eaj4v6YaZe3JJtL7nYpjMM+t5llBQHM4e0pHBJwi3u+siczibTiTA
+         jRnCRxr9hQlLq+VoQBDyoc+H6V1jOuQ5BoScAD7CXILwYfddfi4H2GM1KWsi4oQqplzm
+         +C+RF/imipV/n5g2K0Nl4uFmNcYSDMa4tkkU5J6CFzduLPDCC5fmltzKZBHIuZF18ZpK
+         JQl70DwYISsUW/e9N1iuPE3gLtjO9ZZBugBxpHoipZF9Jfs+HJyybFwPpwGc+Vwr2Ziv
+         3XGTIwvUqu8PDaU4qmtoaRe5TFNluI0S4KCE/Uq4mnhBUFvcadyW1L++ricl07+TiXJx
+         eNjw==
+X-Gm-Message-State: AFq9FYIQw5D7ClbvTx7kpaGO5dFkxP51MDIUWV4aPAJ7u5ZPrb/zjhk+
+	uA49Cpxbr6Hc/LiBT8rm38FAaX9QvD+tUk8q6ciebQD12LrOly6z0hG9LiFYOdhS
+X-Gm-Gg: AYBFou17JAyX88i80NClmAzpHZgQyFPUa2GOLFpfZGNoRn5EcLmxXfJO7UmKfwv0g3V
+	AERKweQW8fCh/NOXOtjUGeV2PQ4KXaRFh/JDjiMkoujXT9ea1VN+dE0iCyO3YAUF7VwwwhXrDY7
+	LBbLnhNbJbFhmJXo3Wz5KmkQ/NkbpVKHfrdikumkv6l4R3z0HZfZbYDlY/Ld3JlZrVAm5ApyMn6
+	WlGdFZKv36vPf4b0BGCv0KFlabLiO5z8pfvQoNWwbwT/MnvvfbvdpPHs13kDg9HCWJ1IR7KPL2C
+	GPp5OdiM8eU9oiIhAMmsG1yyTbbCe1C8w9Y9qV4rlJX0twlB/NaTgZ+N0wAxf7hG2g+DdhQnJJq
+	lZz3BEV2m2PmufY7Osoi98i9uutYkAiQj7mckcRHyoELzXEv6kJSv2XxD3rgqTI7S6fqaqoaXP1
+	NjW/PWLxSvL270ZNz8ZZ4gNULf+Oct+GWK4V5B3VAFyS23RQn7pWITJ76h7kaHihkSAa6fXS/yR
+	NVq9Hqs2nTuMi5VnEOkG+JoQAg3X9C/9/juX4lE1HRnxlAX3A5pEWKXZ4iN9shU5lFeUo4+L6JY
+	yzLlJ/tbPAMe56p0ebayrWWDunxFrEO3/GaXyu8Fotmei8jX
+X-Received: by 2002:a17:90b:5743:b0:3ab:f38:2b3b with SMTP id 98e67ed59e1d1-3acef134c18mr5103166a91.21.1792364480253;
+        Sun, 18 Oct 2026 16:01:20 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8000:7a86::e34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acd3cc73c7sm6831641a91.4.2026.10.18.16.01.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Oct 2026 10:05:43 -0700 (PDT)
-From: Sahaj Chaudhari <sahaj123.sc@gmail.com>
-To: Keerthy <j-keerthy@ti.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Aswath Govindraju <a-govindraju@ti.com>,
-	Aniket Limaye <a-limaye@ti.com>
-Subject: [PATCH] gpio: davinci: Clear interrupt status in every bank on suspend
-Date: Sun, 18 Oct 2026 22:36:22 +0530
-Message-ID: <20261018170622.3406158-1-sahaj123.sc@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Sun, 18 Oct 2026 16:01:19 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4] gpio: mvebu: fix Armada XP per-CPU mask register save/restore
+Date: Sun, 18 Oct 2026 16:01:17 -0700
+Message-ID: <20261018230117.23497-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.56.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -78,57 +76,59 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-davinci_gpio_save_context() saves the registers of each 32-GPIO
-register bank, but clears interrupt status only after the loop. At that
-point g refers to the last bank, so pending status in all preceding
-banks is left uncleared.
+The Armada XP variant keeps the per-CPU edge/level mask registers in a
+second I/O window (percpu_regs) rather than in the main GPIO window.
+The suspend and resume paths however read and wrote them through
+mvchip->regs with the per-CPU offsets, which hits the global
+GPIO_EDGE_MASK / GPIO_LEVEL_MASK registers instead. Per-CPU mask state
+was therefore lost across suspend/resume, so a level line could end up
+unmasked behind genirq's back and trigger an interrupt storm once
+interrupts are re-enabled.
 
-Move the interrupt-status write into the per-bank loop so that the
-existing suspend-time clearing covers every register bank. Single-bank
-controllers retain the same behavior.
+Use mvchip->percpu_regs for the Armada XP per-CPU mask registers in
+both the suspend save and the resume restore paths, matching the
+mask/unmask handlers and the probe-time masking.
 
-Fixes: 0651a730924b ("gpio: davinci: Add support for system suspend/resume PM")
+Fixes: b5b7b487431b ("gpio: mvebu: add suspend/resume support")
 Cc: stable@vger.kernel.org
-Signed-off-by: Sahaj Chaudhari <sahaj123.sc@gmail.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-Testing:
-- Built an ARM64 kernel with CONFIG_GPIO_DAVINCI=y,
-  CONFIG_PM_SLEEP=y and CONFIG_SUSPEND=y, containing this fix alone.
-- Booted it on AM642 and confirmed all three DaVinci GPIO controllers
-  bound, with an untainted kernel.
-- Validated the extracted save-context function in a standalone
-  userspace harness with simulated write-one-to-clear MMIO, using one
-  through five register banks. Verified that every bank is cleared
-  exactly once and GPIO register and bank-enable context is preserved.
-  The unpatched function fails clearing checks for two through five
-  banks; the patched function passes. Ran the harness natively on
-  AM642 and under host ASan/UBSan.
+ v4: rebase again
+ v3: rebase again
+ v2: rebase
+ drivers/gpio/gpio-mvebu.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The suspend callback has not been exercised on the live GPIO hardware.
-The regression results above use simulated MMIO, not real pending IRQs.
-
- drivers/gpio/gpio-davinci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index cccbaea1dec2..fc2b9bef7efc 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -611,10 +611,10 @@ static void davinci_gpio_save_context(struct davinci_gpio_controller *chips,
- 		context->set_data = readl_relaxed(&g->set_data);
- 		context->set_rising = readl_relaxed(&g->set_rising);
- 		context->set_falling = readl_relaxed(&g->set_falling);
--	}
- 
--	/* Clear all interrupt status registers */
--	writel_relaxed(GENMASK(31, 0), &g->intstat);
-+		/* Clear stale interrupt status for this bank. */
-+		writel_relaxed(GENMASK(31, 0), &g->intstat);
-+	}
- }
- 
- static void davinci_gpio_restore_context(struct davinci_gpio_controller *chips,
-
-base-commit: ac46dac1613a7c971e28e16d3a7a6ad4b1ae6c5a
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index c57758019e92..03e977c2a629 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -1028,10 +1028,10 @@ static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
+ 		break;
+ 	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+ 		for (i = 0; i < 4; i++) {
+-			regmap_read(mvchip->regs,
++			regmap_read(mvchip->percpu_regs,
+ 				    GPIO_EDGE_MASK_ARMADAXP_OFF(i),
+ 				    &mvchip->edge_mask_regs[i]);
+-			regmap_read(mvchip->regs,
++			regmap_read(mvchip->percpu_regs,
+ 				    GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
+ 				    &mvchip->level_mask_regs[i]);
+ 		}
+@@ -1080,10 +1080,10 @@ static int mvebu_gpio_resume(struct platform_device *pdev)
+ 		break;
+ 	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+ 		for (i = 0; i < 4; i++) {
+-			regmap_write(mvchip->regs,
++			regmap_write(mvchip->percpu_regs,
+ 				     GPIO_EDGE_MASK_ARMADAXP_OFF(i),
+ 				     mvchip->edge_mask_regs[i]);
+-			regmap_write(mvchip->regs,
++			regmap_write(mvchip->percpu_regs,
+ 				     GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
+ 				     mvchip->level_mask_regs[i]);
+ 		}
 -- 
-2.43.0
+2.56.0
+
