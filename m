@@ -1,195 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABB2511883
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 14:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DAB511886
+	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 14:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792419072; cv=none; b=CrQRU58/XfSU8WRMOj4OMbvUqUD5pf3C69QG95Oq1W2QrbIrfn2iHH5t/rV3NseOG7dKqBK0jgnRH2fUtUUZcX0UF2dc3oNH42okYZUa88QTPn9J+D0F8QzUoxzwY+j1/oGs850gm9k72UJRSsKtel3TIdoYYbYIlwjMPU+fhos=
+	t=1792419111; cv=none; b=bvut3uLDZ6sQ825oEI7QvCyOIUZLPyj5gD/cFD8XyYSp0YifA+WF6OUMBEYPPXuaGjxjMym/VvgG2emcSBDC+nZI3l8CvRrl5ZoWcyNiXpWQ024cE00yalk/WbO67erWFSzRxJWBbX8fiksZvFN298tvEB5hjVsJ654AN+3ne50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792419072; c=relaxed/simple;
-	bh=+ENVG7C/tGrHrCzJWa0HrsbALRBbxlBI00ndbk817xM=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQMHsQfXfZ0M+DmbAJw6h5V/g92311Lyg+Eq3L3R9Zpw4nZNX58vQYz0GNANSISLZ/IU0RjRhl3GPTYIUa/VOJBgu3KRSXRkge2IVThDKKreENSkn2gx0dpsqhnVpIcvbczh7H3CLpQLp3aNm/uS0dxaynu/zFnjh9/M5z3zPWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LU7gV8ZA; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU7gV8ZA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DB71F000C4
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 14:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792419071;
-	bh=WpV8jxC0tYjZlSY9ad4KVetpMBPVub8C0mZlkJ5aYfI=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=LU7gV8ZABwCilUXrwmGIK4E6vkCcBAxYvhBrlAmkQH81Xi1+GV2CSUkJ4N1XayAik
-	 EeK23vSkP13YXrlDk3Hb87cXMSIBSq3g0Xq0jk7QqulB3miidHigP7BspNu6UxfVB2
-	 NEgaP9sjsd2M9vaumuteFN7buMqZ1dCbffCugT3VetIPWNIaQPQ0D7OFpPx6t1A8zd
-	 YjHoVPou41uBmp6WERxnkXt6eqUdapDd00OlFVwI/3pv56WbdsSZlOK/u+ba8R+Uxf
-	 fsfufO3GTS4FuFbPTWfyYSYqwmcNY9zl5iJD1zJ/sjURFlQXt1vmcm/4Id8AoL3lfK
-	 +rxwFRyvENAIw==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3a20f06cce6so28384931fa.1
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 07:11:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxMNvpgDOlQcQEwaqQrh5FVT+rWXdwAIkTO716uYrVBNe4GhervknsNK2pc+GOfcf8/FPTvScY7bAGV@vger.kernel.org
-X-Gm-Message-State: AFq9FYJQC9juSYWyD2Kgm/X38f8axxTfBTCLfKRKWiTl+HABqmRM0GUN
-	5icbuVx5jCw0WohNUjstOkNqsBUrPwdd+H4kQptbw2eIR2hCYlfzFUhaj2TMqtlE2Pd7Z4QmgiY
-	KC03B515remU5ANc3r5JQ0GpH6/V8anb4fAga1SO+tA==
-X-Received: by 2002:a2e:be12:0:b0:3ab:13e6:c351 with SMTP id
- 38308e7fff4ca-3ab28f46b3bmr15652331fa.2.1792419068733; Mon, 19 Oct 2026
- 07:11:08 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 19 Oct 2026 10:11:06 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 19 Oct 2026 10:11:06 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261018042546.GA48005@rigel>
+	s=arc-20240116; t=1792419111; c=relaxed/simple;
+	bh=OkpEifD2KWm3GsbxAZ0xxE8P5d3Del3yRNhkAe0sUgA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BIgYfYeKKuqpu6zW8tKWYJXWfhlTXItsMgHBSFXXt2Kyn4CvSNlMG0ump4xIUtjHNKJDnLTlf5qxidodS1RRqnnziTUAewdjkVqaa0k57AmEA6+XJv0HNoix/HP2eSNfGSZP1eNK9jeZCk5RMNrgnEtnuIQ/SCynfbwWgktyhwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-98c7798ce74so411962241.1
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 07:11:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792419108; x=1793023908;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=nUNNwLjM6Li4QaQna+9UtyB3Cj/CRAMDg2QIIEt5PZg=;
+        b=RcatlSMm9kmJadHUE5SPpUm+uSvWmTNEd0pH+eG4BjiNuIYwLMrTbMe5Cu9OuI5xke
+         SSMp/wg+JuC1mT55MmMDbFt4IBMDTne5HLSjBtN8/PdeQ5U7969dc+a5VViMg4bksYxf
+         /oeYj1GDZt/FBRzjJlZDBT4zYYdxekyWxyk+2Y2DwhK1tE+8gUdlL8lZwVktaRWr4B5Y
+         4+xt3r5zq6FW2LNPtuuwXPGBi11b9Nn0P668WcOd1O/1RicmXdFm32GVlcnMdbltwMYi
+         Dl+p/Hv2RkYZ8ww5Z0XD2k59nhgLeoV5BRQQjrA4KdwfGgP4+4fi+VYBsDxMtCjgJC0r
+         eaBA==
+X-Forwarded-Encrypted: i=1; AKwUvBwjcKh0X43lYRmCxs79Pgl2QBm5dKd1uZIHUlLV6lBxH/4DZXzAwqjsS6VcQXwC6lJ6tjPSvpfqaQ0n@vger.kernel.org
+X-Gm-Message-State: AFq9FYI+3AVVbwr9ypKEIZf7KLXc0iN5b/37jxNGkQJPFFyju1xfmr2Q
+	9R65Jeo3iGF62DKjQspWaLITdEumJzzdg/bxIPdKPg5M/HH6VOQacYBhBDkrwsAixqU=
+X-Gm-Gg: AYBFou1EaFY/gRnEDSiT5rwuFoWpqCNS5dNdXsFn+vDdndxzXUgVA1v6Jdd7Qw1FHAw
+	ZHFRGcyYQIV6/+0mKwiEJpsivlYfFzi5juZ6dCFGgwdq9EW/wt/3h56gS8+QfHsPKfLvGpcJPcG
+	JeC6mxXVrPCJ4bNd8AXNrmZTWo+qmOSKECc/CDes6pzjyIdI2vdLRSG18wEm2rcuEXbPK4M/fgC
+	4KpGO6s1qqeBnXBhwXuK9lRr9V5K8/E5i/ZaPwfXqvl0caCI2/dJlutQGCUKj6KuMa7cx7NHmdZ
+	Pr73kY14ZCf6hD5RhGv1KP6AaQgfLnXzsQuSxBY2K3b7x5zDefoLA9AmUFqGDqX0h1Vq8nhUo1C
+	pECSY1qr9aTe1+/lI40wyyeFuHwH39TL7aU4YipFL8PxqhWZfdP+f0PHucUIMjjHolPjroVlZa6
+	KMuS6SiySWymX+5y+K60beAlCvV41PYwfWqAwwWXsqvN/FzPatVG6IHazECHenhOs9xGicf6FeU
+	lJUSZcZ2SddEYakhZFHqwmgfZAHnrsqKm6j
+X-Received: by 2002:a05:6122:8f0d:b0:5c9:c60e:f4b5 with SMTP id 71dfb90a1353d-5eaaa8a3532mr2483608e0c.19.1792419108190;
+        Mon, 19 Oct 2026 07:11:48 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5eabf0f70ffsm4853085e0c.16.2026.10.19.07.11.46
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2026 07:11:46 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-99059bdcdeaso405140241.2
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 07:11:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzVqDYlieTau0t5j3deG9mqVv8jJHN81ESdpQzxteanm+z3wzuySHLx7xAcqIW7mAVWTgH1tSCijMxu@vger.kernel.org
+X-Received: by 2002:a05:6102:3749:b0:7c9:624:86e1 with SMTP id
+ ada2fe7eead31-7cc36b021c9mr1767854137.35.1792419105797; Mon, 19 Oct 2026
+ 07:11:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com>
- <sashiko-outbox-168233@kernel.org> <20261014043645.GA13991@rigel>
- <CAMRc=MeKQMiF8T+fb1TxUmk-GwF3fCwkB2GoVvEe_kcpbG6saQ@mail.gmail.com>
- <20261015153714.GA105746@rigel> <CAMRc=McOWzuqr9qcrbaL4U2_Y==-XfWYo44XVgTkB20JW_5EFw@mail.gmail.com>
- <20261016091420.GA63617@rigel> <20261018042546.GA48005@rigel>
-Date: Mon, 19 Oct 2026 10:11:06 -0400
-X-Gmail-Original-Message-ID: <CAMRc=Mc41umcA5ujMD_YOZUZpfJEvtuE4eBwX0g9nPOAJd7GmA@mail.gmail.com>
-X-Gm-Features: AclHuK9znvs0HlvQK_Kl-exKEPdnZxRcrREQM7dDVZM1zjZLuM9bcvyqpYjRd70
-Message-ID: <CAMRc=Mc41umcA5ujMD_YOZUZpfJEvtuE4eBwX0g9nPOAJd7GmA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: cdev: don't record a line direction the driver refused
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@kernel.org>
+References: <20261003083200.459705-1-yaojiale02@163.com> <20261003083200.459705-3-yaojiale02@163.com>
+In-Reply-To: <20261003083200.459705-3-yaojiale02@163.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Oct 2026 16:11:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXpVv2=GHJK49ykUiOcgKuOrW9_0UbQ_nfx2R-MGuhV7w@mail.gmail.com>
+X-Gm-Features: AclHuK-whmRf2m21YwZdvIAowJDZUbKGaSptoysY-titwCbr4PasDFMX4zXs_ms
+Message-ID: <CAMuHMdXpVv2=GHJK49ykUiOcgKuOrW9_0UbQ_nfx2R-MGuhV7w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: renesas: rzn1: free maps on DT map failure
+To: Jiale Yao <yaojiale02@163.com>
+Cc: Linus Walleij <linusw@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 18 Oct 2026 06:25:46 +0200, Kent Gibson <warthog618@gmail.com> said:
-> On Fri, Oct 16, 2026 at 05:14:20PM +0800, Kent Gibson wrote:
->> On Fri, Oct 16, 2026 at 03:23:24AM -0500, Bartosz Golaszewski wrote:
->> > On Thu, 15 Oct 2026 17:37:14 +0200, Kent Gibson <warthog618@gmail.com> said:
->> > >
->> > >> We can't protect the flags with mutex or spinlock due to the multitude of
->> > >> issues that forced us to use SRCU. We could maybe consider atomic_t for the
->> > >> flags field and that would allow us to use various atomic ops and possibly it
->> > >> would be enough to cover all the read-modify-write cases we have. I need to
->> > >> think about it and will also ask the clanker for help.
->> > >>
->> > >
->> > > I was thinking along the lines of reverting to atomic bitops directly
->> > > on the flags, e.g. reverting b7adfb6076ff, without changing the
->> > > underlying type to atomic_t.
->> > > Given that most of the time we are operating on individual flags.
->> > >
->> >
->> > That's still two threads fighting over the flags effectively, right? Ideally
->> > we should modify the entire set of flags at once. If that proves to be
->> > impossible, going back to atomic bitops is probably the next best thing.
->> >
->>
->> Yeah, that change wouldn't resolve that conflict - it is just about
->> deciding which framework you plan to use for the flags.
->> The IRQ flag problem, and any other flag contention lurking, needs to be
->> addressed separately either way.
->>
->> > > With atomic_t you could also use xchg variants for bulk ops?
->> > >
->> >
->> > I'm not following, could you rephrase or give an example?
->> >
->>
->> I mean atomic_xchg(), atomic_cmpxchg() etc.
->> I thought atomic_t was intended for counters, not bitmaps of flags, and
->> I don't have any example, but I expect the code to be pretty hideous -
->> You would need to READ_ONCE(), check the flags are in a suitable state,
->> update them, then atomic_try_cmpxchg() with your updated value.
->> Rinse and repeat if the try_cmpxchg fails.
->>
+On Sat, 3 Oct 2026 at 10:32, Jiale Yao <yaojiale02@163.com> wrote:
+> rzn1_dt_node_to_map_one() appends mappings for each DT node.  If a
+> node fails after map storage has been reserved, the top-level callback
+> returns without releasing mappings built for the current and previous
+> nodes.
 >
-> Here is an example of an MT-safe gpiochip_lock_as_irq() and
-> gpiochip_unlock_as_irq() that demonstrate what I had in mind:
+> Free the accumulated map on every error path.  The caller ignores the
+> output parameters when the mapping callback returns an error, so they do
+> not need to be reset after freeing the map.
 >
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 0586fc1f9564..9446cfad17d3 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -4223,6 +4223,7 @@ EXPORT_SYMBOL_GPL(gpiod_to_irq);
->  int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset)
->  {
->         struct gpio_desc *desc;
-> +       unsigned long flags, new_flags;
->
->         desc = gpiochip_get_desc(gc, offset);
->         if (IS_ERR(desc))
-> @@ -4242,17 +4243,25 @@ int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset)
->                 }
->         }
->
-> -       /* To be valid for IRQ the line needs to be input or open drain */
-> -       if (test_bit(GPIOD_FLAG_IS_OUT, &desc->flags) &&
-> -           !test_bit(GPIOD_FLAG_OPEN_DRAIN, &desc->flags)) {
-> -               gpiochip_err(gc,
-> -                            "%s: tried to flag a GPIO set as output for IRQ\n",
-> -                            __func__);
-> -               return -EIO;
-> -       }
-> +       do {
-> +               flags = READ_ONCE(desc->flags);
-> +               /* no WARN_ON here as this is resolving a known potential race */
-> +               if (test_bit(GPIOD_FLAG_USED_AS_IRQ, &flags))
-> +                       return -EIO;  /* not sure about that error code */
-> +
-> +               /* To be valid for IRQ the line needs to be input or open drain */
-> +               if (test_bit(GPIOD_FLAG_IS_OUT, &flags) &&
-> +                   !test_bit(GPIOD_FLAG_OPEN_DRAIN, &flags)) {
-> +                       gpiochip_err(gc,
-> +                                    "%s: tried to flag a GPIO set as output for IRQ\n",
-> +                                    __func__);
-> +                       return -EIO;
-> +               }
->
-> -       set_bit(GPIOD_FLAG_USED_AS_IRQ, &desc->flags);
-> -       set_bit(GPIOD_FLAG_IRQ_IS_ENABLED, &desc->flags);
-> +               new_flags = flags;
-> +               __set_bit(GPIOD_FLAG_USED_AS_IRQ, &new_flags);
-> +               __set_bit(GPIOD_FLAG_IRQ_IS_ENABLED, &new_flags);
-> +       } while (!atomic_long_try_cmpxchg((atomic_long_t *)&desc->flags, &flags, new_flags));
->
->         return 0;
->  }
-> @@ -4274,8 +4283,12 @@ void gpiochip_unlock_as_irq(struct gpio_chip *gc, unsigned int offset)
->         if (IS_ERR(desc))
->                 return;
->
-> -       clear_bit(GPIOD_FLAG_USED_AS_IRQ, &desc->flags);
-> +       /* here you should hold the lock if you are unlocking, so if not WARN_ON and bail */
-> +       if (WARN_ON(!test_bit(GPIOD_FLAG_USED_AS_IRQ, &desc->flags)))
-> +                       return;
-> +       /* USED_AS_IRQ effectively protects IRQ_IS_ENABLED and so must be cleared last */
->         clear_bit(GPIOD_FLAG_IRQ_IS_ENABLED, &desc->flags);
-> +       clear_bit(GPIOD_FLAG_USED_AS_IRQ, &desc->flags);
->  }
->  EXPORT_SYMBOL_GPL(gpiochip_unlock_as_irq);
->
-> The xchg approach is used where you need to test multiple flags simultaneously,
-> as per gpiochip_lock_as_irq(), and possibly also where you want to set a bunch
-> at once - e.g. gpiod_free_commit().
-> But you can still use atomic bitops for individual flag cases, as per
-> gpiochip_unlock_as_irq(), though you need to be mindful of ordering -
-> particularly when releasing flags that act as locks, such as
-> GPIOD_FLAG_USED_AS_IRQ and GPIOD_FLAG_REQUESTED.
->
-> These cases are simple as they are only modifying flags.  It becomes
-> more complex where you also have to apply config to the driver and rollback
-> the flags if that fails, such as in gpiod_direction_XXX.
->
-> Not sure how kosher this is from a kernel perspective, but that is what I was
-> thinking.
->
+> Signed-off-by: Jiale Yao <yaojiale02@163.com>
 
-There are some instances of casting an int to atomic_t but given the "aligned"
-attribute in its type definition, I'm not sure if this is fine either. There
-are roughly 100 places where desc->flags is dereferenced under drivers/gpio/.
-All of them would require inspection and rework.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v7.5.
 
-I need to get that clanker to look into it.
+Gr{oetje,eeting}s,
 
-Bart
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
