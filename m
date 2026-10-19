@@ -1,114 +1,207 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E94B53A8A7
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 14:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3A94DCB1A
+	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 14:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792419996; cv=none; b=O5gXRnw+WxBwaqls3FnAfavYEHTzwe1k7ekgMoVyxaMZBeLHgM/VKhP0Yv/EtxJL3qji9QffO/mL8bYXmDMDD1KUJnO4tWPV6M0Y8QgCU9PLtlp0J+8r5FRk0OgFD8oy//H393OTOlf4h1t9mVxdzXmfpSDIAPQiCYOodhZoWe8=
+	t=1792420063; cv=none; b=Ad1I6y0j8QsoRmtTVWqmr8rS0RyIHxtTLt4hbfqqUnHFwvmJyJUpJF0jgJs0vtMPOKMak9nfwg0iNYnL3bNq2kx9l/0EK1TucwJWy4BAzQ6pmO3RTkGTawQw0qqZJQDBOwA4RF8yGfv6vXCeAQofZnp2hKniNdcOfuWYyT+2vQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792419996; c=relaxed/simple;
-	bh=E7Q6dTwUECG1tsW8iXIY2kM2oZ9V/zvATwwrSPxnnz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqitgNQT5U2cCqPiNEonw5zgq2hkAaxpfpq9e3Z5WoPv29/LACZXeCTXEStGqXMIWZ7L/hGkKeNva44rzSj6rs3E6M5qZ9aH4/xo/PNz5wVnMFDaXX0SIAKIdMbZu4I/3BkKRpu9hzCRSYzYixSmHlz+1vtpTxn6mV++2k08F0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmQ2LiZi; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792420063; c=relaxed/simple;
+	bh=FJ9Ki3JWkCZaP5RXJSsXU3ekd/a1tL4ObTRPfjxUyaM=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=UwQdL2QWZA1ZgKnnPC6tGe5sRiUKGKHZA2Mlexvodcfmwfb3KgOkQBgUWtGFtiOoYJYaflD0Q/ZazuCHQdWA7huInFNTSrCCEY9Ft0dF2eDLlVvDXf14UXZndp2rEqQC5epmHz9pFO3Slq81B5NeXKBv3kxTX2BKWVx70cgCZQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZkMb8+U; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmQ2LiZi"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cc758830601so1493026a12.2
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 07:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792419995; x=1793024795; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=6G0pIF6Oz4BqkSWLPLSXURO54XftTkHM0K35xUE50eE=;
-        b=BmQ2LiZicQKT2P+VglY1IR/TYb1V8ZuioGfW8/IWICyDZFHi7bLG8qWdCtPu2pgaAq
-         n9e/JNS2nGFvNRT0MEQ2+VGq4qz8kJKT8teia55nErivYt8dZ+XB8j3QeH32YBt5SPXI
-         LicHxBoAd/RgxoM9KvXlZn/l+2KU3NvAMJQ4ZyXTPAZdz5/NKds+kzlI2yyaWK/wJVwo
-         4mkLG9Lo0OLC60KjcB+Ceo62t2LpqNpdrOpvV3k03HLvHTRVN9soDQzU8uLIo/JvYwZw
-         H6prvBkiTSSGG5jr84s9340ifyFsCJr1tKcFsLFim8vo3yDFBH8I1njiHjsbXMu8qCYm
-         Io3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792419995; x=1793024795;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6G0pIF6Oz4BqkSWLPLSXURO54XftTkHM0K35xUE50eE=;
-        b=xTv3luNnGDrFI3mmNE8Qyh2VNiEHgGpGB78OcJqYopBkX49zorA0E/dRJxOKHCHKs9
-         EMMtAR43xo2SuBfzzON2AjiXMPsukARiF4GRx+quOMsAfO+anJHHslhR3wShxGBL7941
-         pD/osb4IIqfgUmj+/obxztCyrfNstju6lbnWylrttUZdQST4vE5dqTna4qECcn2PTc5c
-         DSuQW5N/+H3wIlJ91WEqGTfaCPKHnbgUECiJxJMUZT/jl0H4aqnGC8XwziRIqv/+y+AN
-         wfn74RtCffBw46HNdv3e2SHZp8vILJ62OMA5ldKkK0T7s7ORd/cUt1hGjYrKeQWFUayw
-         dXHQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwGnosjtNf4z1CcHiJaoYYSfYncejYelAZMH5uZ2Eqy0ZxzAlmL4Ql7SvNl50+XcYzoFJaxoTbxzjVK@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ6dd3omNCfAshPhUZW3TM5XBwD9+0EuRtU+VCvqkzeX2+g5KO/
-	G3hN+w3zGIYQorB7CncoyADaiTCuHCf9UYy3tiuqzoLtRv+HPrxSi1hn
-X-Gm-Gg: AYBFou1b21pQgake5WlTY7Cl7Py22iStiX+3pTOCNrcvon3lNxSxJe+8Pe3Jq0Ia4gs
-	bAgoNp9Y0Gzf/6zn9P0IHKDsI41b8oqhJataZsH8ECcESvIBrLrerM+ohF8/pgOI6hb9Ij1U3BY
-	RC5PcLZQgFWDQbMCkmyk0gTrmdrhJh7iIJqifXzzJ+u9QptgQ/b3e6vRPnMbZb7prJQhTv9a8UV
-	TehOiN7V3Dz2pLsWYO3UzvUpoGFHUNvwtbHR1qVv2u95x5cYcj6cvGOrLqvC45NJxFRuyxf23+4
-	4gSitx37zgY0TVqs8A7lIc9hN4WTOUZPC1NxwwPI4wI4vLYZgY8+7KFvl409Ts778RS5fEqbiJZ
-	YcfZ9Eq5ujQJ4i2AeelasQy87FAZk4DRYu9lNELWa2kByaH89eLmL4gYZunjuDU8ILh3Wzh0+la
-	PDOqrLKlKSWHg5TPloV69IQcCZEcqk6YxzFOhohUu/YsUiZqrgGu3A/RFsiyZKfKBsP42UUavjb
-	/jQpNjEXEvqWgfQwT7+O7Ph/DhyJg==
-X-Received: by 2002:a17:90b:3892:b0:3ac:9d83:885e with SMTP id 98e67ed59e1d1-3acef3aa12bmr7965197a91.52.1792419994293;
-        Mon, 19 Oct 2026 07:26:34 -0700 (PDT)
-Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac94794dd9sm20449181a91.12.2026.10.19.07.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 07:26:31 -0700 (PDT)
-Date: Mon, 19 Oct 2026 22:26:26 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: cdev: don't record a line direction the driver
- refused
-Message-ID: <20261019142626.GA61014@rigel>
-References: <20261012-gpiolib-cdev-direction-v1-1-aambrozewicz@nvidia.com>
- <sashiko-outbox-168233@kernel.org>
- <20261014043645.GA13991@rigel>
- <CAMRc=MeKQMiF8T+fb1TxUmk-GwF3fCwkB2GoVvEe_kcpbG6saQ@mail.gmail.com>
- <20261015153714.GA105746@rigel>
- <CAMRc=McOWzuqr9qcrbaL4U2_Y==-XfWYo44XVgTkB20JW_5EFw@mail.gmail.com>
- <20261016091420.GA63617@rigel>
- <20261018042546.GA48005@rigel>
- <CAMRc=Mc41umcA5ujMD_YOZUZpfJEvtuE4eBwX0g9nPOAJd7GmA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZkMb8+U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 647D41F000C4;
+	Mon, 19 Oct 2026 14:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792420061;
+	bh=lP9S6/VSw6gOjpJYVF6KDr82tfF20YYb1oEAVl5iyCg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=WZkMb8+UPWnV77ekmVwMw3HPF0GblVI/OMnp/Mo7QIGpA7aBbbQJRdselgBjb4hn9
+	 hu9cQnLWtb3ap/Cm46IQu+OEW2FOzOsvJqdSqzlQjSgxrsKwOcuBK9MWWGd8NZq7XI
+	 HeWvBJHpSK0q4LG+kfNN+xCWcOeNVxPnQ9MEkB8YKXQAtAH0Up71QRa2eatjUIG4tz
+	 DqwIIssKhgbQHYHlY6o/YKsxLO1pbU86uIBkn4eJPlWZsNVWW1ZXH/SRLeKEtanck0
+	 xadKPNsaNr6wt/U/U+nKfa6txehnS+LMkVYWEE1ErVf1KeSOuHOuh9jBWQWaJbj1HQ
+	 3pDJolghh7ALA==
+Message-ID: <sashiko-outbox-177386@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH AUTOSEL 6.18-6.1] pinctrl: qcom: Add
+ irq_get/set_irqchip_state() for msm gpio irqchip
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Sasha Levin" <sashal@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261019135441.1420968-105-sashal@kernel.org>
+References: <20261019135441.1420968-1-sashal@kernel.org>
+ <20261019135441.1420968-105-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Oct 2026 14:27:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Mc41umcA5ujMD_YOZUZpfJEvtuE4eBwX0g9nPOAJd7GmA@mail.gmail.com>
 
-On Mon, Oct 19, 2026 at 10:11:06AM -0400, Bartosz Golaszewski wrote:
-> On Sun, 18 Oct 2026 06:25:46 +0200, Kent Gibson <warthog618@gmail.com> said:
-> > On Fri, Oct 16, 2026 at 05:14:20PM +0800, Kent Gibson wrote:
-> >> On Fri, Oct 16, 2026 at 03:23:24AM -0500, Bartosz Golaszewski wrote:
-> >> > On Thu, 15 Oct 2026 17:37:14 +0200, Kent Gibson <warthog618@gmail.com> said:
-> >
-> > Not sure how kosher this is from a kernel perspective, but that is what I was
-> > thinking.
-> >
-> 
-> There are some instances of casting an int to atomic_t but given the "aligned"
-> attribute in its type definition, I'm not sure if this is fine either. There
-> are roughly 100 places where desc->flags is dereferenced under drivers/gpio/.
-> All of them would require inspection and rework.
-> 
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [High] pinctrl: qcom: missing parent delegation in msm_gpio_irq_set_irqch=
+ip_state()
+- [Medium] pinctrl: qcom: intr_ack_high ignored in msm_gpio_irq_set_irqchip=
+_state()
+--
 
-I did try changing the flags to atomic_long_t, but that made all the existing
-atomic bitops complain about the type. :(.
-Could we add an alignment attribute to the desc flags to match the atcomic_t
-so the cast will be robust?
+commit 301c33b42ee8c08eddc97fb199477c476ddbf18c
+Author: Maulik Shah <maulik.shah@oss.qualcomm.com>
 
-Alternatively if bitops could be made to work seemlessly with atomic_t...
+pinctrl: qcom: Add irq_get/set_irqchip_state() for msm gpio irqchip
 
-Cheers,
-Kent.
+This commit implements the .irq_get_irqchip_state and .irq_set_irqchip_state
+callbacks for msm_gpio_irq_chip to support replaying edge interrupts for
+IRQCHIP_STATE_PENDING after wakeup on MPM-based Qualcomm SoCs.
+
+Link: https://patch.msgid.link/20260424-pinctrl_irqchip_states-v1-1-85286f0=
+78916@oss.qualcomm.com
+
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pi=
+nctrl-msm.c
+> index e99871b90ab9c..4804d5cba011c 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -1289,6 +1289,43 @@ static int msm_gpio_irq_set_affinity(struct irq_da=
+ta *d,
+>  	return -EINVAL;
+>  }
+> =20
+> +static int msm_gpio_irq_set_irqchip_state(struct irq_data *d,
+> +					  enum irqchip_irq_state which, bool val)
+> +{
+> +	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+> +	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+> +	const struct msm_pingroup *g =3D &pctrl->soc->groups[d->hwirq];
+> +
+> +	if (which !=3D IRQCHIP_STATE_PENDING)
+> +		return -EINVAL;
+> +
+> +	if (test_bit(d->hwirq, pctrl->skip_wake_irqs))
+> +		return -EINVAL;
+
+[Severity: High]
+Does returning -EINVAL here and in msm_gpio_irq_get_irqchip_state() break
+parent interrupt state queries and updates on PDC-based Qualcomm SoCs?
+
+In kernel/irq/manage.c, __irq_get_irqchip_state() and irq_set_irqchip_state=
+()
+walk up data->parent_data and stop at the first irq_chip that defines the
+callback, without falling back to parent_data when -EINVAL is returned:
+
+kernel/irq/manage.c:__irq_get_irqchip_state() {
+    ...
+    do {
+        chip =3D irq_data_get_irq_chip(data);
+        if (WARN_ON_ONCE(!chip))
+            return -ENODEV;
+        if (chip->irq_get_irqchip_state)
+            break;
+#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+        data =3D data->parent_data;
+#else
+        data =3D NULL;
+#endif
+    } while (data);
+    ...
+}
+
+On PDC-based SoCs (IRQ_DOMAIN_FLAG_QCOM_PDC_WAKEUP), msm_gpio_init() sets
+pctrl->skip_wake_irqs for wakeup-capable GPIOs because interrupt detection =
+is
+handled by the parent hierarchy (msmgpio -> PDC -> GICv3), and
+qcom_pdc_gic_chip in drivers/irqchip/qcom-pdc.c explicitly wires:
+
+    .irq_get_irqchip_state =3D irq_chip_get_parent_state,
+    .irq_set_irqchip_state =3D irq_chip_set_parent_state,
+
+Previously, msm_gpio_irq_chip left both callbacks NULL, so calls walked past
+msmgpio to PDC and GICv3. With this change, when synchronize_irq(),
+disable_irq(), or __free_irq() calls __synchronize_hardirq() ->
+__irq_get_irqchip_state(irqd, IRQCHIP_STATE_ACTIVE, &inprogress), or when
+KVM vgic, machine_kexec_mask_interrupts(), or irq_inject_interrupt() queries
+or updates state on a PDC-routed GPIO, the walk stops at msmgpio and fails
+with -EINVAL.
+
+Should msm_gpio_irq_set_irqchip_state() and msm_gpio_irq_get_irqchip_state()
+delegate to irq_chip_set_parent_state(d, which, val) and
+irq_chip_get_parent_state(d, which, val) when d->parent_data &&
+test_bit(d->hwirq, pctrl->skip_wake_irqs), similar to
+msm_gpio_irq_set_affinity() and msm_gpio_irq_set_vcpu_affinity()?
+
+> +
+> +	msm_writel_intr_status(val, pctrl, g);
+> +
+> +	return 0;
+> +}
+> +
+> +static int msm_gpio_irq_get_irqchip_state(struct irq_data *d,
+> +					  enum irqchip_irq_state which, bool *val)
+> +{
+> +	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+> +	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+> +	const struct msm_pingroup *g =3D &pctrl->soc->groups[d->hwirq];
+> +
+> +	if (which !=3D IRQCHIP_STATE_PENDING)
+> +		return -EINVAL;
+> +
+> +	if (test_bit(d->hwirq, pctrl->skip_wake_irqs))
+> +		return -EINVAL;
+> +
+> +	g =3D &pctrl->soc->groups[d->hwirq];
+> +	*val =3D msm_readl_intr_status(pctrl, g);
+> +
+> +	return 0;
+> +}
+
+[Severity: Medium]
+How does msm_gpio_irq_set_irqchip_state() behave on TLMM v2 SoCs where
+g->intr_ack_high is set (such as apq8064, ipq8064, mdm9615, msm8660, and
+msm8960), or if g->intr_status_bit is non-zero?
+
+In drivers/pinctrl/qcom/pinctrl-msm.c, msm_ack_intr_status() clears a pendi=
+ng
+interrupt by accounting for both g->intr_ack_high and g->intr_status_bit:
+
+static void msm_ack_intr_status(struct msm_pinctrl *pctrl,
+				const struct msm_pingroup *g)
+{
+	u32 val =3D g->intr_ack_high ? BIT(g->intr_status_bit) : 0;
+
+	msm_writel_intr_status(val, pctrl, g);
+}
+
+By passing the raw boolean val directly to msm_writel_intr_status(val, pctr=
+l, g),
+won't calling irq_set_irqchip_state(irq, IRQCHIP_STATE_PENDING, true) on an
+intr_ack_high platform acknowledge and clear the pending interrupt instead =
+of
+setting it pending, while passing false writes 0 and fails to clear it?
+
+Also, in msm_gpio_irq_get_irqchip_state(), g =3D &pctrl->soc->groups[d->hwi=
+rq]
+is initialized twice, and *val =3D msm_readl_intr_status(pctrl, g) converts=
+ the
+full 32-bit register read to bool without masking with BIT(g->intr_status_b=
+it)
+(unlike msm_gpio_irq_handler()). Should both functions mask/shift with
+BIT(g->intr_status_bit) and account for g->intr_ack_high?
+
+[ ... ]
+
+>
+> --=20
+> 2.34.1
+>
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019135441.1420=
+968-105-sashal@kernel.org?part=3D1
