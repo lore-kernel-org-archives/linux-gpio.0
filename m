@@ -1,51 +1,68 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1CE3E7BB2;
-	Mon, 19 Oct 2026 08:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9A24A49A0
+	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 09:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792399249; cv=none; b=JvqpyoA1m0GSk9YE7fQDDvCZ2v1S4saVU/NF37c83cd5sv4WWi3UevAJ3gRrAoPEQAxe3OkYG3Kw/kDwpjhGc5rbSgpJX3J0ITm8rruvD5H1kB0g+93LFGYtPO9tPVCI99mh48EOdK7rBenBT35rMVagbPZTjd6KO3Z61fGLJPQ=
+	t=1792400483; cv=none; b=A9J15QRvA1ILIKHQphWTi1g6ABZ5gOGea3TAG0mI2M9lkM2SG95YD09Q4f2pgt3RnBKSmXnwgrZjdNGxNinbNwRItgmiQDWv9PnCkFLA5dPzDOuEo6m5uWN4Pr0M5KA/Wa0lit9Gj0ixT2J49vrYybjw+8duWtxNnxmb1SOnmeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792399249; c=relaxed/simple;
-	bh=fX34RxUdLPhnUUa1czFBK/3YfZMFivcIJGFk3/35Pu4=;
+	s=arc-20240116; t=1792400483; c=relaxed/simple;
+	bh=WLWwWzeZBOSKp0C0wY8LsKsrti3WYaCx6yssolyVc20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5z1FSzl+rwhZpTRRMaoZyed6K2aImNjid30uaXHLBsT3wqo/aLcWeDqV2BI9z7iVkjrjZkdI+hh04ZCb4dOVkVkDGhG2QBIfU5QiW/RLpcwlKqH3RBbhY29N+epu637ljaigUPcQanV5JWbExyyKp5DXDD4d2/aQp2T0ddUzxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HHr+UKjY; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGHOJY+QErJuyePjm+c1F+OAYnaRLmuuQ7jPRzbPnXbuLKbKtg8xFKwQNMh4wJuY4sTwiUWxX39aTFXnQmT1BM8mM7w1E2Hp3tvlF5xF7qluOinm86qIEkW1oTqppUrddaISKfAfurW0/q90nQxUFFE0uD795bmRwx5SHkz6F34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UL+ENG4D; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HHr+UKjY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792399248; x=1823935248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fX34RxUdLPhnUUa1czFBK/3YfZMFivcIJGFk3/35Pu4=;
-  b=HHr+UKjYz+4xGz/G2l6Wisqi+FQ9+jSizSUW25p1Iztbi7mCqrkHqY82
-   hl06zA8OGwVni/LkYShH1rVHZ/lAaHkTbhwrDhc0gULUffOV6MwzqoM/x
-   hdM/GlwABZTJqFfOpLM7SewYS2s1G9poHIx7c5ea20fHMPlPxr4mDau9X
-   D6fcsUWKtlrAQePetXtSf/w3VimeW0n0+j/J5sBWq71G+3+beAwJ0XBPL
-   ihNFvn3UeU1s4KYKxzW4Mf/w5muLoKIIu1Bg5TnTWNp4ssSMXMCEqlv32
-   jqIbyux71h/jlVdFd5N3ZoT3yK30X+B9HKYtnRcuCedRdXyKYPZSRQARe
-   Q==;
-X-CSE-ConnectionGUID: svalk9L0RAOPY7HYLVGl2A==
-X-CSE-MsgGUID: F7ME3vXbRMSNA47J7gA1Yw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11939"; a="979119"
-X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
-   d="scan'208";a="979119"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 01:40:48 -0700
-X-CSE-ConnectionGUID: gq8fyXY2Qxih9MnZQ50UAQ==
-X-CSE-MsgGUID: Ai7bu1tDRZudeONvXMK8hA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
-   d="scan'208";a="2477948"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.209])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 01:40:45 -0700
-Date: Mon, 19 Oct 2026 11:40:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kent Gibson <warthog618@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UL+ENG4D"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cd5cd8d89a7so602456a12.1
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 02:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792400481; x=1793005281; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=vybmS5BYak1w5heTo7DTlFP7z60krqMLtPatgKuV1rE=;
+        b=UL+ENG4DQGJypialzcokFBbH2hNcqkiklUgduMttVl/6uw8zMl7mHACrAXIXHTR5OO
+         vcirIIG84nBTUYsTaXAR8AjlRRSWg7LPm9TGemx6R0+KtBrW/JW2pCAUMi1+QzsGcXrR
+         VeTxqHMoeSKx6L5/POgD5MevOXAei04SgH+xa0FsbAIi2NOlJ7UDpyeSt72InRIzXPIQ
+         6WKZ29nlT9f3xae/YNrfefeFary1xpB2WKr6KCgKJD0sbi0pVzkw3hx9SZ1Y8PVLuLP1
+         a6cuPxIxkca399ANA9Oi2gOguTwPbOMA9nSTGtmS2gnrgV2YJE/m1qREufbd5RxdWggX
+         Gxvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792400481; x=1793005281;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vybmS5BYak1w5heTo7DTlFP7z60krqMLtPatgKuV1rE=;
+        b=tsFjg0FIesmB/QH2SP64Cfkvi7IB2cMW3UQPOaiG8BbOz6GkLNlJ8s8TeM7J9AqCpo
+         zZQ8vfOi20uaaJ9LD/gtcLkygP8iPuE7p/85/Wc6+C5PzZtv100O/6/0bf50WzW4+1ow
+         GPeUV8hbPVi6AbkEDy2puhAMgOfFcsun/VN+KGJPfE3VPdZ8lfU3Ym+GcYgdGlPmUpzO
+         nIerZpwcEpjYl9//cQqEMrqb/XT5vfrKI9R+PP55TGvD8sgkTD7hnHw+7X28a8zrU2Ri
+         3/N8EOTdA5NCe7LK/GQHlYxl1zWKiLwFZo6jGWcXnwoZBu7BZCBwAhofEzwKU0v2SxcV
+         kRuQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxzHrIJpty1R9pusjrZQ9w4UuqN1tKNjfejqylMjgVb4dmt7Canm2nPW521Ja5KbYfY30w2UqCggvxR@vger.kernel.org
+X-Gm-Message-State: AFq9FYJCrwjsSLmDl4g6EHnmR0gNDkuACmF91HzX+j8Rw83+6N3UhAnI
+	b2/QbU3EXqo7M9IgIXj0u4uxmmvgt1vudRtI3A9+/F6G5BQCMeOjsjsm
+X-Gm-Gg: AYBFou1wPpGZpbDB/1mD8sHFDQYJysTTHCksd7UWxwzK3hPtDL4JHqVy5ao/EyDY2+w
+	LpBqn1dnVicfnM3z909R8cWGSXW43Ae66vsBEArPHqoXg6zVMJPeKHJ7nQPaHDHdllBShxpQpYh
+	rniBjwjTNM1PbRJfyrFuB2ava9HDPeYz520EWwNomYp9bxWL0xn1jE4kUDdC+wQ+IIkKeeLEfNP
+	nbU8ExOGl9VTyhwNmL2pKye5KEc5NEvH7qIy9o6/RcO5U0FsqBzGsDOX13R/K6nXn7JIqUBPrZ3
+	0DgxhW2ufRhJoRcrRxX2ZtPja3buDeGZPnaH0PQVRgOzfV2fM8rnvR39hSd2+7LD7dKpTakTuLZ
+	PdGSN83kBO36mhLcrsiShxt/yvF8zbuZNDJd3FHXQkya2KZdUM0oFlN6bqeETGzKVkLzOglM7rg
+	+nA1X0eLDK6/JMp/Xxf7K4dmdByCjG6R0qLXlzbkAj2i9SQlSEz0UnYIwpNO8uevaqobIyim4P5
+	vxYCUltny4Snv9erMw=
+X-Received: by 2002:a17:90b:1a87:b0:3a2:bb45:d37b with SMTP id 98e67ed59e1d1-3aceec26e88mr5914108a91.25.1792400481075;
+        Mon, 19 Oct 2026 02:01:21 -0700 (PDT)
+Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acc9d266d6sm7618163a91.1.2026.10.19.02.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 02:00:55 -0700 (PDT)
+Date: Mon, 19 Oct 2026 17:00:13 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
@@ -56,10 +73,11 @@ Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
 	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Subject: Re: [PATCH v2 6/6] gpiolib: let the character device free its IRQs
  first on chip removal
-Message-ID: <atXXi_EA6iROhK0C@ashevche-desk.local>
+Message-ID: <20261019090013.GA29798@rigel>
 References: <20261016-gpiolib-chip-removal-v2-0-aambrozewicz@nvidia.com>
  <20261016-gpiolib-chip-removal-v2-6-aambrozewicz@nvidia.com>
  <20261016134003.GA155960@rigel>
+ <atXXi_EA6iROhK0C@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,36 +86,47 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261016134003.GA155960@rigel>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <atXXi_EA6iROhK0C@ashevche-desk.local>
 
-On Fri, Oct 16, 2026 at 09:40:03PM +0800, Kent Gibson wrote:
-> On Fri, Oct 16, 2026 at 12:23:38PM +0300, Adrian Ambrozewicz wrote:
-
-...
-
-> > +	/* Called with gdev->chip already NULL, so gpiod_to_irq() can't be used. */
-> > +	if (gc->to_irq)
-> > +		irq = gc->to_irq(gc, gpiod_hwgpio(desc));
-> > +	else
-> > +		irq = 0;
-> > +	if (irq <= 0)
-> > +		return;
+On Mon, Oct 19, 2026 at 11:40:43AM +0300, Andy Shevchenko wrote:
+> On Fri, Oct 16, 2026 at 09:40:03PM +0800, Kent Gibson wrote:
+> > On Fri, Oct 16, 2026 at 12:23:38PM +0300, Adrian Ambrozewicz wrote:
 > 
-> Perhaps I'm channelling Andy here, but how about:
+> ...
+> 
+> > > +	/* Called with gdev->chip already NULL, so gpiod_to_irq() can't be used. */
+> > > +	if (gc->to_irq)
+> > > +		irq = gc->to_irq(gc, gpiod_hwgpio(desc));
+> > > +	else
+> > > +		irq = 0;
+> > > +	if (irq <= 0)
+> > > +		return;
+> > 
+> > Perhaps I'm channelling Andy here, but how about:
+> 
+> It was in the previous version and I suggested to move it to the above. Seems
+> like we have an opposite comments. Can you provide a rationale behind your choice?
+> 
 
-It was in the previous version and I suggested to move it to the above. Seems
-like we have an opposite comments. Can you provide a rationale behind your choice?
+Ha, so it was, though your suggestion was not quite the above - it
+didn't allow for gc->to_irq() returning 0 and it set the irq to a
+negative error code.
 
-> 	if (!gc->to_irq)
->         return;
-> 	irq = gc->to_irq(gc, gpiod_hwgpio(desc));
-> 	if (irq <= 0)
-> 		return;
+> > 	if (!gc->to_irq)
+> >         return;
+> > 	irq = gc->to_irq(gc, gpiod_hwgpio(desc));
+> > 	if (irq <= 0)
+> > 		return;
+> 
 
--- 
-With Best Regards,
-Andy Shevchenko
+This way is clearer given gc->to_irq() can return 0 - the <= condition
+there is purely because of its possible return values.
+Setting irq to either 0 or an negative error code, rather than just returning
+on the spot, are both more confusing and pointless.
 
+This is my preferred form, and I obviously expected that you would prefer the
+shorter form as well, but apparently not.
+
+Cheers,
+Kent.
 
