@@ -1,151 +1,131 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9473D9DD4
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 08:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764DD3E7BA8
+	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 08:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792396948; cv=none; b=V53fcxP4Wnr8gvT6NJnq+aXABuNZAvBWGd6jjgGm8dai+JSfReoem50L+ChZ3eBUEBp4s6mdfkhgB0iE3CltDoB7mjs1C3MBoCRF4vGr8+2Pqu+GSMMuHOXA8xXg6Kr+MdwUQyXDFGoVvehLHmCTGn4rOqBSQ6Jl17MUm7phVhU=
+	t=1792397035; cv=none; b=F8tN5SACUEwzbO8EX5tt1cJ6g8ffa0NFT8frUi7eN6xOuGEfg+THjTnHAkoAW52/O8nsR0Hw1QZJZaiXVjcBZprU9kdaV1oxxVLpcqYRzAqHdL/2YF6Vm5jUjALQ3flInSJy+mCubnSkDA2QLTyKRUYZ8JZ7HKQ9wzmiX3aPuf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792396948; c=relaxed/simple;
-	bh=kYlPJuAuIKr5qyWDVfbS3K51caxRUyA4HeA7cellua8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k4RAKKeq0W6BzdCz3IQV4G3/3mWoLF+Yms2HKtrwLBV7CyBctLRSzd1uEcHpX0+q+oy85dEVK/QjsJYlS72Yw9guCdyD0vB4Bu59j6y9hXw0lpd6R3SXHUc0pmtJqMpoDnGssG8G9MN1vbiv/zUVpeCiQjib+anC8+scycEFiCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m51zfZxG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KYOZX9Xz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1792397035; c=relaxed/simple;
+	bh=8h6Gwx5AwUCsw0Rbel0Q1oDUGoOYHJ3M7pzMbq8BSk0=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lzim7qEtza8/n35e6NtsnewTsixqLHFQWFFufhpiwoNklkk5nYuFPPxfxCPiKoVRxBLzhHQk19DWVeOwAViXjri+1UoQcI1f0uAVjreEg89QY25Agwfl4Eb9g06gDXdEF25QQ3pKzhHw2brE+6rUkQOzscTEMyHoTS0CbCkehN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aA9pbYry; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m51zfZxG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KYOZX9Xz"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69J4iu1P1405347
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 08:02:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TRUwB6B7dL/KKexklkwCA5XaycFB7zAaLIgeh4JyMR0=; b=m51zfZxG6tsszrz7
-	5+GVSh7lRNYenON9mj/Cu50y0dYSUhsQLPY9IBZ4HC6hKHC6dySawbLFVZQqbRps
-	THoMxUczMSeM3Gnt8836HH0l2gi+7L6+zaw56XFJFswrnFY0A7tinCwiasQq+DYm
-	2f7AI0OnNaF2Mx90/XiDteQBJd/LleaQQZthHTslrYrAcG2ky2CfdAB7PiMucl9f
-	4Ev3FGjj97He8hzcrl9Zm1yo126ysY5qi2PxoKLGoyIcKW11extuBPdnXUNkAYWb
-	FsuV36I+OiQXTg4pMzFehWDYz2K1ZdldY9frtMKxlUdneRlkhIK5b7MSO9C1U44n
-	lWXBqg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hdbvr8ut7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 08:02:25 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-91becce058aso34112516d6.0
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 01:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792396944; x=1793001744; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=TRUwB6B7dL/KKexklkwCA5XaycFB7zAaLIgeh4JyMR0=;
-        b=KYOZX9Xz52bNVG1I5wOypRyEyhx247XuvvDFuazByz1NzGdUKEScMFSIkgeiE17skp
-         jgAZQwmTESN2b8D0gTwl5/0YNbEJkNfwDRRWLO6uYol5PaSV2OZc/N+qGd3Ug/K6Ze1c
-         AFeULePvcv0hVJwNlk3khB8d1sFnyRlc/EDZp4+ZmMtD3AYokN5jdRG/ZqnJDD64a5nJ
-         ibjJ4mSg1AG3sVXGClXzHia13AOUjqQnVV0vC7f8oQMGafDQZUtNpngbJAOaXKjH4TlW
-         Yy2hnB0CwWZRKmB1A3TMYFXYYN4SWNhO7RUq8WzJmUic/BWRJw9s0fFoFO2CMf9ngba9
-         0QgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792396944; x=1793001744;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TRUwB6B7dL/KKexklkwCA5XaycFB7zAaLIgeh4JyMR0=;
-        b=cIFSa/oCCBxpuRo2fpj+6OglbkhVz3MLuyQUbSnU5JkMeIbkvY63D3/KsYV1Sm+WSw
-         Ge099qib3Sti1+aUx15s36shnu9jsibXxluUTkfra5R9XEDfWna2wrh4ylq0nSIvLTsU
-         jFpAIYoPpwKcXhIcimeMpfGS9hgsXR1Mkbq4ZCwjJ/YXoatA6eTfoao1ABxNqc1lCEk9
-         QzxdlMlotatnvFnkotQt7N4uFN5WzqvjUBMBdvvwg9ZKGvJGO72gYxUuomatGZZ+FqNP
-         m4MjI4iZQXWEv1xVSj6gtDigpK6/szlX33S5tXSXW3uk6lJrwYgA0mOUwwEW4hjR1UYh
-         el8w==
-X-Forwarded-Encrypted: i=1; AKwUvBzy+gey3r3dnQ4JPqCf44tLy/M9SYmLeAfKi3A29dTCTCbZ7ssxsJGYeD+ys33hwfCN1nYQ61Cb26vu@vger.kernel.org
-X-Gm-Message-State: AFq9FYLim+wMeHdLIZQiGBvbsDi1r/UuZydbsgnVYSvj33Um5SCXsKA6
-	+CDDt8d6D5vH5XyAHylOC5c93MtY9I4OOam//yLM6KJND9E04t8rdSawOd1wHdZT+4DxdT7qUKi
-	N3zgx+2ZJJmDqxDPnpvVq8DUUtqSZ/1EJeUNO93sul10xp6YwvYDfFlGmLnICPB48
-X-Gm-Gg: AYBFou39w6nbBEdDrPPmXP3ykQgZXG80XVlijrvdaKmvhq86jo0yhP6C6fDra74xq94
-	pX4Aq9Px1cyoC/BGs0idMCSbc5EeinqyBfVv9oImpOtV4nA/ehDfkWIe3qEeBLP9L6JLmL/ihK3
-	vqXAVshqt4hqAbOVRxVHBCg8FQy+ZHlMhekCMaWB2reAcyw+mB6DmLLdWki+R552TZBMuXU/9zo
-	ZoI1t0FZwgtO9jUwGuD6soZ2Tmdz6FM0v0bgvpLBYJKwdLz5i7rMgCZgTw8PvgF9rIHrHw7rGXM
-	AQwK41SL0eC/iW2IdJC+2U3/itdU+crGoqeaZnXHvuQ/f8NU9q3PKVFjg/K87lX0UAg5NAEvW1z
-	KqPSXAAzXzQ5tK4W4TGcFSmC15ns=
-X-Received: by 2002:a05:620a:3903:b0:93e:fa30:f1dc with SMTP id af79cd13be357-93f29db40ccmr994241785a.72.1792396944191;
-        Mon, 19 Oct 2026 01:02:24 -0700 (PDT)
-X-Received: by 2002:a05:620a:3903:b0:93e:fa30:f1dc with SMTP id af79cd13be357-93f29db40ccmr994239885a.72.1792396943788;
-        Mon, 19 Oct 2026 01:02:23 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1ccc15aa1sm251269315e9.14.2026.10.19.01.02.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 01:02:22 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Kent Gibson <warthog618@gmail.com>, Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: clear the event clock flags when a line is released
-Date: Mon, 19 Oct 2026 10:02:19 +0200
-Message-ID: <179239693683.5934.5426638278693207577.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261012-gpiolib-event-clock-v1-1-aambrozewicz@nvidia.com>
-References: <20261012-gpiolib-event-clock-v1-1-aambrozewicz@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aA9pbYry"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555911F000CA
+	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 08:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792397034;
+	bh=432hnMFFtUhI4FrERk0Xh3wkIg0S682QS2zkowiC/lg=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=aA9pbYryehjYw0DEq/q0bW0Jp8WU/IlMnecndGyLZPqL+UiOKYjqh04ER78PypWD0
+	 uwyq8WYwo6jv7YBIBNbhSisjUlF5YUsk5NgNii/fT9ED713B4ps/IzU+pkNw/u6qhe
+	 YCnb9L1FDE4FrpA7jy2TZ3khMVc5xZdUHEmy3cdAtH3rocLgoodKYXK4Ht/lkadAVE
+	 Nbykw8BD+tU4tWWe+nla/Ghy/sy+fP+1Hc74iTorFGLGeNv2o3VXvtomk/lQ3ZVtUS
+	 kaXL2nSO6Si3dBFxR+Xb3Eo8gN8C3/ERf/trNVx7sx/YDSV/fwn2pvXser8NOoS84o
+	 mC+z1keryfwmg==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3a75f960be4so10222631fa.2
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 01:03:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz8VPMpOT5EPeB1JZnhuKPsbrGNpqnMwDXHJFx//220oGoust0iZvF7IZ+uMHW3U/2ixCCU2kEhUiix@vger.kernel.org
+X-Gm-Message-State: AFq9FYIOm2W+6jm5u8lMG1dVpr1YnF+f5vzG/u9mCpUmEh1TSrbo+e3A
+	Dq287gwHvewYOlYHfDfiuQLS4f2eexIVZhImV6jox9myKofjYztTxRuiqqRfDJytd/BlpwuICZX
+	i10FQ192YyEDPjZXBtwIAkdB1bksxGQfLXson8Oo9TQ==
+X-Received: by 2002:a05:651c:4208:b0:3aa:f72e:8ee8 with SMTP id
+ 38308e7fff4ca-3ab2927d2admr13570991fa.6.1792397032907; Mon, 19 Oct 2026
+ 01:03:52 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 19 Oct 2026 04:03:51 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 19 Oct 2026 04:03:51 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20261016115009.GA111978@rigel>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE5MDAzMSBTYWx0ZWRfX4OPqWrOuaTse
- DW/Lrc3H0D/BRZo15TZW9M1I+jq8E9NPjsE1/hVZhgq33bKhUfbvB6OQMb0doWvU/CGipcsAzTU
- zIFGsF13sh7vyf40wFirvP4TV/F3bOjwvcUddSEJ8MpLYHBUnFXCExnCXXlbBFYzAx+OBOkIcoO
- GTHtPVkSGK30NJS5e3Mm2P7wkOnm+Io28QztPpzXRwJ6zYQtHLNXsE/foJXGlJBGt9RDX5DnXTW
- /RrJrXj+wESCj0ty9kcwYvo9N+0raqvL0zCt9JjqMsmTMVOqk3irqK1hAcFUX073WsAD3lemMUL
- P2YJFr2iW+Dc6jpIpdDG/eUYCbVJ784agRrukUmZYK1RRf59C4429gEfsK70m/Nn+SOW7MT3cKz
- bkO2pxwCs9648Tond6qy2DCl22uDT6QxnvBB+6vh2Lf17C3Gh9zaGH25XXkWnueZPuGzQM42k73
- DD9hzZFEWjCDCjSHZTQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE5MDAzMSBTYWx0ZWRfX1MRxx1T/3TkF
- y2ufJs9Mqj2kJTMQZN803sUWl2DA/CHEqAgqcH7inhq22w2yUHuy0CDc3CCYymYl1FYvhceB+oA
- b89Fi9W+9C2vCMQDQbTMVxoiKpy3tRU=
-X-Proofpoint-GUID: kugyV476IZsAFsYsqToS8P2iFkcVcwHT
-X-Authority-Analysis: v=2.4 cv=K/+3jCWI c=1 sm=1 tr=0 ts=6ad5ce91 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=oiBmWXjJytMpFWU2:21 a=xqWC_Br6kY4A:10
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=NdVV1Al409Mjye1PRQwA:9 a=QEXdDO2ut3YA:10
- a=ZXulRonScM0A:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-ORIG-GUID: kugyV476IZsAFsYsqToS8P2iFkcVcwHT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-19_02,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 spamscore=0 suspectscore=0 adultscore=0
- impostorscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610190031
+References: <20261016-gpiolib-cdev-direction-v2-1-aambrozewicz@nvidia.com> <20261016115009.GA111978@rigel>
+Date: Mon, 19 Oct 2026 04:03:51 -0400
+X-Gmail-Original-Message-ID: <CAMRc=MeDpODJCEst-T1wgOu=MA5v5zVL1WXJUjOYW=sLdc2usA@mail.gmail.com>
+X-Gm-Features: AclHuK8VxD4Z_6Z6OuAzqsywQwW9p8T1pUJDAZ4jAPP0jrXs_tSb35EG2zXRV9g
+Message-ID: <CAMRc=MeDpODJCEst-T1wgOu=MA5v5zVL1WXJUjOYW=sLdc2usA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpiolib: cdev: don't set GPIOD_FLAG_IS_OUT
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 16 Oct 2026 13:50:09 +0200, Kent Gibson <warthog618@gmail.com> said:
+> On Fri, Oct 16, 2026 at 12:22:58PM +0300, Adrian Ambrozewicz wrote:
+>> When a line is requested or reconfigured through the v2 uAPI,
+>> gpio_v2_line_config_flags_to_desc_flags() copies the requested
+>> configuration into the descriptor flags, GPIOD_FLAG_IS_OUT included,
+>> before gpiod_direction_input_nonotify() or
+>> gpiod_direction_output_nonotify() asks the driver for the direction.
+>> If the driver refuses, for instance with -EOPNOTSUPP from
+>> .direction_input() for a line that can only be an output, the ioctl
+>> fails but the flag keeps the refused direction. gpiod_free_commit()
+>> does not touch GPIOD_FLAG_IS_OUT, so this outlives the failed request,
+>> and GPIO_V2_GET_LINEINFO_IOCTL reports the line as an input while the
+>> hardware still drives it, until a request without direction flags
+>> makes gpiod_request_commit() read the direction back from the driver:
+>>
+>>   GPIO_V2_GET_LINE_IOCTL, line 0, input:         -EOPNOTSUPP
+>>   GPIO_V2_GET_LINEINFO_IOCTL, line 0:            input
+>>   GPIO_V2_GET_LINE_IOCTL, line 0, no direction:  ok
+>>   GPIO_V2_GET_LINEINFO_IOCTL, line 0:            output
+>>
+>> GPIO_V2_LINE_SET_CONFIG_IOCTL updates the flags in the same order.
+>> There the line stays requested, and since commit 92ac7de3175e
+>> ("gpiolib: don't allow setting values on input lines")
+>> GPIO_V2_LINE_SET_VALUES_IOCTL on it then fails with -EPERM, though the
+>> line is still an output. A line whose driver refuses to make it an
+>> output is likewise reported as one.
+>>
+>> gpiod_direction_input_nonotify() and gpiod_direction_output_nonotify()
+>> set or clear GPIOD_FLAG_IS_OUT themselves once the driver has accepted
+>> the direction, emulated open drain and open source included, and
+>> nothing between the copy and those calls reads the flag. Leave it to
+>> them, as the v1 uAPI already does.
+>>
+>> The other flags that the helper copies stay as they are. Active low,
+>> drive and bias are what gpiod_direction_*() applies, drive and bias
+>> possibly before the driver refuses the direction; edges and event
+>> clock are the character device's own. None of them is read back from
+>> the driver, so there is no earlier state that is more accurate to go
+>> back to. A failed request releases the line, which clears them, and a
+>> failed reconfiguration leaves the line, like the lines before it, with
+>> what was applied up to the failure.
+>>
+>> Reproduced under QEMU with a test GPIO chip whose line 0 refuses input
+>> and line 1 refuses output: both refused requests and both refused
+>> reconfigurations leave the line info with the refused direction, and
+>> setting the value of the reconfigured output fails with -EPERM. With
+>> this change the line info shows the direction of the hardware in all
+>> four cases and setting the value works. First seen on real hardware
+>> with v6.12.
+>>
+>> Fixes: 3c0d9c635ae2 ("gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL and GPIO_V2_LINE_GET_VALUES_IOCTL")
+>> Cc: stable@vger.kernel.org
+>> Assisted-by: LLM
+>> Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+>
+> That is an incredibly verbose commit comment, particularly the
+> discussion of error rollback behaviour, or lack thereof.
+> This probably isn't the place for it, but I'll leave that for others to judge.
+>
+> I'm definitely ok with the code change.
+>
+> Reviewed-by: Kent Gibson <warthog618@gmail.com>
+>
 
-On Mon, 12 Oct 2026 16:49:45 +0300, Adrian Ambrozewicz wrote:
-> gpiod_free_commit() clears the flags that a request sets on a line, but
-> not GPIOD_FLAG_EVENT_CLOCK_REALTIME and GPIOD_FLAG_EVENT_CLOCK_HTE,
-> which gpio_v2_line_config_flags_to_desc_flags() sets from the uAPI v2
-> line config. Once a line requested with
-> GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME or
-> GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE is released, GPIO_V2_GET_LINEINFO_IOCTL
-> and the line info changed events, the "released" one included, keep
-> reporting that event clock for the free line:
-> 
-> [...]
+Yeah, I would have loved it to be a bit shorter too. Is this an LLM that
+generated it? Anyway, I'll queue this for now but please try to make it more
+brief and to the point next time.
 
-Applied, thanks!
-
-[1/1] gpiolib: clear the event clock flags when a line is released
-      https://git.kernel.org/brgl/c/d35f61581ee67f8d4d58c325bac813cea528b6b9
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Bart
