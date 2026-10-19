@@ -1,118 +1,103 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620664071DE
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 08:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1CE3E7BB2;
+	Mon, 19 Oct 2026 08:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792397350; cv=none; b=bsPjVWxAzdVbf7fyoTd6SXiA//+EOsQVfFvYPHCAPRdGim0nKp7Zy08PeKEePIJgXePIfOPvMLhCxLRtNliLZmIhHH240tOaXnqZF59LtyPH0xbFde3VfC0LE7j8vhGzMejPF3nH5yhAx2/Vc/uUb0reUExvDRzAmMpkznfdFmk=
+	t=1792399249; cv=none; b=JvqpyoA1m0GSk9YE7fQDDvCZ2v1S4saVU/NF37c83cd5sv4WWi3UevAJ3gRrAoPEQAxe3OkYG3Kw/kDwpjhGc5rbSgpJX3J0ITm8rruvD5H1kB0g+93LFGYtPO9tPVCI99mh48EOdK7rBenBT35rMVagbPZTjd6KO3Z61fGLJPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792397350; c=relaxed/simple;
-	bh=dtESdVNm5Uyq+WsB5q7A+flDEcFfp0XndOYr6KOo+Nw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=h/VvAxE02uagV0JEr9e29zO2+5RxhCb0RxD+CDKcFS012W+ZZHdvutCXN9E9FY1OU4nOIEb7o/eQHpHdvxZki3Mh3OaNltCsQkwfTqVJ8DX0ZUiDxFTV0Qg8g8hBKNpS3c5TunSb8Dugy17flOPAcSUoBsUbiW9R9U04FHGhGjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOgMhH3E; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792399249; c=relaxed/simple;
+	bh=fX34RxUdLPhnUUa1czFBK/3YfZMFivcIJGFk3/35Pu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y5z1FSzl+rwhZpTRRMaoZyed6K2aImNjid30uaXHLBsT3wqo/aLcWeDqV2BI9z7iVkjrjZkdI+hh04ZCb4dOVkVkDGhG2QBIfU5QiW/RLpcwlKqH3RBbhY29N+epu637ljaigUPcQanV5JWbExyyKp5DXDD4d2/aQp2T0ddUzxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HHr+UKjY; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOgMhH3E"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2e5d0ee1951so11851545ad.0
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 01:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792397348; x=1793002148; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=VGbRH8whTW1xe91pmC1KbquILe+PEXcyh5kpYwROQW0=;
-        b=IOgMhH3EfLXdWxcQQJIFZ8NM90N3VshgbCyEgrwaEhGWyRD9TQjljb0tDqVdq+YccC
-         p63fvhb9ypUkmot45JO0QjatKdEoUfEa7ddZPIL3q+klSRG39Hz082zIcmxPmOypSzyd
-         gHisylMloMXHa7XAT4a1y93Pqw+lbghZ6C3jflzurHFaSA5Jt7Alv2JYPc/xEt0DFW/b
-         IJTxf71FsQ4kh228sJ4JB/ivh/fbZrayzSOBpyauNiZWvOEaVfXBTDJA2eDYF0wYeuVU
-         FDNXeuPqMQVQHrecREF2GJckOi5Zvl0VlEjGnSPRXA0xX0JLNdqT9pA9K74WUc8PjvfR
-         tdUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792397348; x=1793002148;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VGbRH8whTW1xe91pmC1KbquILe+PEXcyh5kpYwROQW0=;
-        b=wkRT1II5n2UuXOT2t162zMZJ1XvaoFkguH4louGUbDUnDqDLxjcxXkN/J8LMGn3XNx
-         iJW6BUgyjUD0tiER7fbs3isLs5H74pqnJEkUIdWzWMUZdXLaVeOLfKtJ8fT22vRJZ/Zj
-         jxR8o3kRIcVUyZtdjvvdMZdPOdZ6dE+vYfQC9PMRZkYJrJeXNpTlu8LptUv+afHyyS9h
-         pF7Po+tn96tOP9HMf7Fe3A8wHng6B+QsEaDiBl6Yuhj9+6UstLZ6aFj6iAW0PY30DdDT
-         8E/wA7whsKIhgmicFH5nMWF4k876OHBKfgX2JNIhrotEJYNSMqudcYVJkMTKpRdlr0Zr
-         qlrw==
-X-Forwarded-Encrypted: i=1; AKwUvBzNel8YECIyfbHliJliWYH1QDru/AVrXnA7+YE20gV0zwhY063F86aDduOz8OuEC6KLhT7khA62ANeA@vger.kernel.org
-X-Gm-Message-State: AFq9FYLEXCuMjZuh8W2/5HF8Ut0nNQ47ZLVk1eDFTfj3iz/J6PpsM9yZ
-	krN+TFHdSZggODitonjhcQzUlFq5qAcoshkoD09ieZu8XaroVNlmp7Qy
-X-Gm-Gg: AYBFou3gKLbyFssjSbPiUHPcPUCfJ+gupqqe+gDHfEG5Vb8tAfYYtL2ispNdLs4pXpG
-	20t/Hjmt7d7uIZ2Rau/AIk1kKJCY2IjwUyHJ/EPkCuTOFhOBM6U4w72WGH8ChEI1JJgitJZdQi+
-	fZKpFMrGQrMUU5Hwd+r+//2JdVEXRR25MIMw97Odk4hwk7+iXkvZ78LZz6uFs+k5W0y+oCruTZM
-	aReXO2HKEo2rH+hd28ZZBi+TAWGJEYQ6Gw9bkgkt0K1ZAYEUfrSuyl5e5ySFtgje5vnn3wHBsib
-	F/1wCrhVXLK7ogGNl6964W/h/CE14hnmErY9Yc158+C9NK4ZXMY7ioqX4rl6Kfg5vampjTYCH8Z
-	R9V0cQ8naa9KjoWwh71sq7rnRvJAeIqJQeI0O3JBbQi/dgfJF5D/HjgoXw7AS5joWS/5hMu/h6K
-	fvOaaMj8wJg4DRDmted427NQN6xgm/ehhgjDTsTz7AaAFzMpX3w6MKo4QzsB0HyNLlbZiF50HBR
-	MxxEGX0IczAo5zihi+kAobpx9yIJYBNw26KKgAa0wZS64xaH7Z+xcFQlG3VdE3u9Aod05g34oJZ
-	bJI3Y7l8lqKu6WgQJfkPtsZs2zXrScrum0VQPn1S9kgox75B
-X-Received: by 2002:a17:902:d4c9:b0:2e9:66c4:1717 with SMTP id d9443c01a7336-2e9a735f740mr54440775ad.61.1792397347649;
-        Mon, 19 Oct 2026 01:09:07 -0700 (PDT)
-Received: from localhost ([2601:644:8000:7a86::d63])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e97e833f1asm35236695ad.43.2026.10.19.01.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Oct 2026 01:09:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HHr+UKjY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792399248; x=1823935248;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fX34RxUdLPhnUUa1czFBK/3YfZMFivcIJGFk3/35Pu4=;
+  b=HHr+UKjYz+4xGz/G2l6Wisqi+FQ9+jSizSUW25p1Iztbi7mCqrkHqY82
+   hl06zA8OGwVni/LkYShH1rVHZ/lAaHkTbhwrDhc0gULUffOV6MwzqoM/x
+   hdM/GlwABZTJqFfOpLM7SewYS2s1G9poHIx7c5ea20fHMPlPxr4mDau9X
+   D6fcsUWKtlrAQePetXtSf/w3VimeW0n0+j/J5sBWq71G+3+beAwJ0XBPL
+   ihNFvn3UeU1s4KYKxzW4Mf/w5muLoKIIu1Bg5TnTWNp4ssSMXMCEqlv32
+   jqIbyux71h/jlVdFd5N3ZoT3yK30X+B9HKYtnRcuCedRdXyKYPZSRQARe
+   Q==;
+X-CSE-ConnectionGUID: svalk9L0RAOPY7HYLVGl2A==
+X-CSE-MsgGUID: F7ME3vXbRMSNA47J7gA1Yw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11939"; a="979119"
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="979119"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 01:40:48 -0700
+X-CSE-ConnectionGUID: gq8fyXY2Qxih9MnZQ50UAQ==
+X-CSE-MsgGUID: Ai7bu1tDRZudeONvXMK8hA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="2477948"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.209])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 01:40:45 -0700
+Date: Mon, 19 Oct 2026 11:40:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] gpiolib: let the character device free its IRQs
+ first on chip removal
+Message-ID: <atXXi_EA6iROhK0C@ashevche-desk.local>
+References: <20261016-gpiolib-chip-removal-v2-0-aambrozewicz@nvidia.com>
+ <20261016-gpiolib-chip-removal-v2-6-aambrozewicz@nvidia.com>
+ <20261016134003.GA155960@rigel>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 19 Oct 2026 01:09:05 -0700
-Message-Id: <DM8NTXCWM1GK.AA1YGD7D8E60@gmail.com>
-To: "Bartosz Golaszewski" <brgl@kernel.org>, "Rosen Penev"
- <rosenp@gmail.com>
-Cc: "Linus Walleij" <linusw@kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@free-electrons.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "open list" <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v4] gpio: mvebu: fix Armada XP per-CPU mask register
- save/restore
-From: "Rosen Penev" <rosenp@gmail.com>
-X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
-References: <20261018230117.23497-1-rosenp@gmail.com>
- <CAMRc=MeUt=dwZUybCx=JUvDs9ZWa8Zyg6DzJy_bxwzn_k=RgFA@mail.gmail.com>
-In-Reply-To: <CAMRc=MeUt=dwZUybCx=JUvDs9ZWa8Zyg6DzJy_bxwzn_k=RgFA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261016134003.GA155960@rigel>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon Oct 19, 2026 at 12:59 AM PDT, Bartosz Golaszewski wrote:
-> On Mon, 19 Oct 2026 01:01:17 +0200, Rosen Penev <rosenp@gmail.com> said:
->> The Armada XP variant keeps the per-CPU edge/level mask registers in a
->> second I/O window (percpu_regs) rather than in the main GPIO window.
->> The suspend and resume paths however read and wrote them through
->> mvchip->regs with the per-CPU offsets, which hits the global
->> GPIO_EDGE_MASK / GPIO_LEVEL_MASK registers instead. Per-CPU mask state
->> was therefore lost across suspend/resume, so a level line could end up
->> unmasked behind genirq's back and trigger an interrupt storm once
->> interrupts are re-enabled.
->>
->> Use mvchip->percpu_regs for the Armada XP per-CPU mask registers in
->> both the suspend save and the resume restore paths, matching the
->> mask/unmask handlers and the probe-time masking.
->>
->> Fixes: b5b7b487431b ("gpio: mvebu: add suspend/resume support")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->> ---
->>  v4: rebase again
->>  v3: rebase again
->>  v2: rebase
->
-> Are you rebasing it on top of the gpio/for-next branch of the GPIO git tr=
-ee
-> as indicated in MAINTAINERS? Because this still fails to apply. :(
-I cloned it, yes.
->
-> Bart
+On Fri, Oct 16, 2026 at 09:40:03PM +0800, Kent Gibson wrote:
+> On Fri, Oct 16, 2026 at 12:23:38PM +0300, Adrian Ambrozewicz wrote:
+
+...
+
+> > +	/* Called with gdev->chip already NULL, so gpiod_to_irq() can't be used. */
+> > +	if (gc->to_irq)
+> > +		irq = gc->to_irq(gc, gpiod_hwgpio(desc));
+> > +	else
+> > +		irq = 0;
+> > +	if (irq <= 0)
+> > +		return;
+> 
+> Perhaps I'm channelling Andy here, but how about:
+
+It was in the previous version and I suggested to move it to the above. Seems
+like we have an opposite comments. Can you provide a rationale behind your choice?
+
+> 	if (!gc->to_irq)
+>         return;
+> 	irq = gc->to_irq(gc, gpiod_hwgpio(desc));
+> 	if (irq <= 0)
+> 		return;
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
