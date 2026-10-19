@@ -1,134 +1,171 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C8C3DD873
-	for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 23:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F4A44C4EB;
+	Mon, 19 Oct 2026 06:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792364483; cv=none; b=BV2O7lQDSvcbHXNMt3KJ0Jgdjnn+/P8iGt82KtbqZ+ItatSMx6SoaWFFqJF9Le8wRlIsdh5hbA9kc6QEX4ZdLTryLGU2MUikuhmRaO0SIk1aERrdsCS8Z6DKSUBtRkT8Ffa7PZxHzeaPh3Jh8QRX7SWUUv4/KypiqbFsDJy1HMw=
+	t=1792392395; cv=none; b=fkq0CC8BV3vgIdSoiFlItfhtvgFrVnjbQ7bdi3//Y1KTPfVxyQb1RgDbymGBWpoXHD2j63Lbj37RegMz5wWfwdG66WebTRfr463sorPa3KXi1WQ6InZ/FMNqTj8m+//oAMa1xaUtPUUkB4ozHTQoHrl8dFs1QJW5MiCQvAHsKoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792364483; c=relaxed/simple;
-	bh=VAAVgnyv25zFG+/2rW7vJvNefKZzWh2RCM8Fygu986c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YEbWUVsgVNi2EKLyOlJehHRMor6D/IvI6mBwhkDI/k1iMm7T9gbBXqbt4S6nIl0AJ6vAA1C6PZUXOmwiwaxs/C+SE96CI5JQvTIEUjp8ZgNC7z0zM8L9b7dp2o+CfMRoYJDCO46N60I4e7VXlMFgCTiuuwGJsCLu2K0frc6+vwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHa/ttRs; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792392395; c=relaxed/simple;
+	bh=37I9CARlFCU1xG5fKvhYTBKhZLC0V9LSdCg9kfryZoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hzcmxtt9Dd1AEHonP232KyQcJyONQNh27I2xfp6B3Ft5pnjP9N59MPpQ8bHoMMvF9KIwEAc+7r5c3PH5tSavK4eUGPmT5RRoXJdhVcUu3fnv7Wc9NEFytf9Z2ir4lOcPaACDaH57nYLh5Uoox/+m2hK8DegcIvZO6/q1GnKhOlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANIO6COD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHa/ttRs"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3ace1f3897cso880285a91.0
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 16:01:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792364480; x=1792969280; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wcQqMGsW7EjVun/qknWTz0LgUBV6D0ub+c+QzohLAeI=;
-        b=IHa/ttRsvnLGvoh+eYDMfRE2GcpDB/qzcnbZkOL/KVgklSrwaXij1A7c44MrhxhGlc
-         vo1qawANapIP+fC4qX9QnLKQC92B65v03khpMHpbZvSD1aeLX9gsT0e+Tb73BUMrb289
-         ynACSgp6j4MQ1ydfSbu2NTDbqNm6k9mRu7gjy0KqbWbaBD/6yNldfzvFGx3wOw/WKkan
-         Nn8AWJp/b/Lyic2G7jzeELqwW12q2II1ZrMaqtvvt8RjxfJ3iO9zTpv1T8tfLeeKp85W
-         P0PZZrMrp6DMPlNU/Wa2F42ErKe+eNk/yI9u7PgWzRRFCeYIZv4RPGAzEKtadn/wHcvt
-         pRsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792364480; x=1792969280;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=wcQqMGsW7EjVun/qknWTz0LgUBV6D0ub+c+QzohLAeI=;
-        b=jzmxt8TMpg9P2Eaj4v6YaZe3JJtL7nYpjMM+t5llBQHM4e0pHBJwi3u+siczibTiTA
-         jRnCRxr9hQlLq+VoQBDyoc+H6V1jOuQ5BoScAD7CXILwYfddfi4H2GM1KWsi4oQqplzm
-         +C+RF/imipV/n5g2K0Nl4uFmNcYSDMa4tkkU5J6CFzduLPDCC5fmltzKZBHIuZF18ZpK
-         JQl70DwYISsUW/e9N1iuPE3gLtjO9ZZBugBxpHoipZF9Jfs+HJyybFwPpwGc+Vwr2Ziv
-         3XGTIwvUqu8PDaU4qmtoaRe5TFNluI0S4KCE/Uq4mnhBUFvcadyW1L++ricl07+TiXJx
-         eNjw==
-X-Gm-Message-State: AFq9FYIQw5D7ClbvTx7kpaGO5dFkxP51MDIUWV4aPAJ7u5ZPrb/zjhk+
-	uA49Cpxbr6Hc/LiBT8rm38FAaX9QvD+tUk8q6ciebQD12LrOly6z0hG9LiFYOdhS
-X-Gm-Gg: AYBFou17JAyX88i80NClmAzpHZgQyFPUa2GOLFpfZGNoRn5EcLmxXfJO7UmKfwv0g3V
-	AERKweQW8fCh/NOXOtjUGeV2PQ4KXaRFh/JDjiMkoujXT9ea1VN+dE0iCyO3YAUF7VwwwhXrDY7
-	LBbLnhNbJbFhmJXo3Wz5KmkQ/NkbpVKHfrdikumkv6l4R3z0HZfZbYDlY/Ld3JlZrVAm5ApyMn6
-	WlGdFZKv36vPf4b0BGCv0KFlabLiO5z8pfvQoNWwbwT/MnvvfbvdpPHs13kDg9HCWJ1IR7KPL2C
-	GPp5OdiM8eU9oiIhAMmsG1yyTbbCe1C8w9Y9qV4rlJX0twlB/NaTgZ+N0wAxf7hG2g+DdhQnJJq
-	lZz3BEV2m2PmufY7Osoi98i9uutYkAiQj7mckcRHyoELzXEv6kJSv2XxD3rgqTI7S6fqaqoaXP1
-	NjW/PWLxSvL270ZNz8ZZ4gNULf+Oct+GWK4V5B3VAFyS23RQn7pWITJ76h7kaHihkSAa6fXS/yR
-	NVq9Hqs2nTuMi5VnEOkG+JoQAg3X9C/9/juX4lE1HRnxlAX3A5pEWKXZ4iN9shU5lFeUo4+L6JY
-	yzLlJ/tbPAMe56p0ebayrWWDunxFrEO3/GaXyu8Fotmei8jX
-X-Received: by 2002:a17:90b:5743:b0:3ab:f38:2b3b with SMTP id 98e67ed59e1d1-3acef134c18mr5103166a91.21.1792364480253;
-        Sun, 18 Oct 2026 16:01:20 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acd3cc73c7sm6831641a91.4.2026.10.18.16.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Oct 2026 16:01:19 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4] gpio: mvebu: fix Armada XP per-CPU mask register save/restore
-Date: Sun, 18 Oct 2026 16:01:17 -0700
-Message-ID: <20261018230117.23497-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANIO6COD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 127BB1F000C4;
+	Mon, 19 Oct 2026 06:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792392393;
+	bh=DGoXhPoI5376byb4Q1/FqBBP93iRO5Sm+PEzaj4opog=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ANIO6CODbaC7na1giOrLiQRtvtz6+SLcf9UMTdeaHhEumMaZnm/YeWpusrCgBxbDT
+	 KWTKXDifxZLiwQPlzXXZMHwE7BS1aQi+rIvPO+l421j5MEGHXt1ODYgC5xVjdzUB6X
+	 nLTzHG6K5cLu70OD+ssyFqqqnFNdiV0hXfU+UwXeUCBANmN1oxu2vp8ZhMFSz2C2XA
+	 QUTC721QnUhVBZUSyHzHwbLNt9w7u5HwczAysL6CUsy2UThPZDGSwlD3jOsb8TOhF7
+	 VPAoAI5/Ze6LmTlKpIUZNmkaE49cy/pz7TkW21ox6qggkd50Jx7Hg/Ld9WswClvcfi
+	 QGqhZwyMcK7fQ==
+Message-ID: <46414ff2-1273-4690-9001-4d1f825d8cf6@kernel.org>
+Date: Mon, 19 Oct 2026 08:46:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] dt-bindings: pinctrl: Add devicetree bindings for
+ DM816x SoC Pinctrl
+To: Ettore Chimenti <ettore.chimenti@linaro.org>,
+ Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Christopher Obbard <chris.obbard@oss.qualcomm.com>,
+ Andrew Goodbody <andrew.goodbody@linaro.org>,
+ Linus Walleij <linusw@kernel.org>,
+ Rouven Czerwinski <rouven.czerwinski@linaro.org>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20261016-patch-ektor5-dm8168-dts-v1-0-b4ce30217028@linaro.org>
+ <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
+ <ec27fd26-1862-43cf-803a-428846d66663@kernel.org>
+ <DM6CUP7TSOMH.31T789KQ3Q6OB@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <DM6CUP7TSOMH.31T789KQ3Q6OB@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The Armada XP variant keeps the per-CPU edge/level mask registers in a
-second I/O window (percpu_regs) rather than in the main GPIO window.
-The suspend and resume paths however read and wrote them through
-mvchip->regs with the per-CPU offsets, which hits the global
-GPIO_EDGE_MASK / GPIO_LEVEL_MASK registers instead. Per-CPU mask state
-was therefore lost across suspend/resume, so a level line could end up
-unmasked behind genirq's back and trigger an interrupt storm once
-interrupts are re-enabled.
+On 16/10/2026 17:07, Ettore Chimenti wrote:
+> Hi Krzyszrof,
+> 
+> On Fri Oct 16, 2026 at 4:51 PM CEST, Krzysztof Kozlowski wrote:
+>> On 16/10/2026 16:41, Ettore Chimenti wrote:
+>>> Add devicetree bindings for TI DM816x SoC pinctrl configuration.
+>>> Using same definition as OMAP2/3 except pullup/down enable macros, which
+>>> are inverted in this SoC.
+>>>
+>>> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+>>> ---
+>>>  include/dt-bindings/pinctrl/dm816x.h | 20 ++++++++++++++++++++
+>>>  1 file changed, 20 insertions(+)
+>>>
+>>> diff --git a/include/dt-bindings/pinctrl/dm816x.h b/include/dt-bindings/pinctrl/dm816x.h
+>>> new file mode 100644
+>>> index 000000000000..15aa15bca9bd
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/pinctrl/dm816x.h
+>>> @@ -0,0 +1,20 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>> +/*
+>>> + * This header provides constants specific to DM816X pinctrl bindings.
+>>> + */
+>>> +
+>>> +#ifndef _DT_BINDINGS_PINCTRL_DM816X_H
+>>> +#define _DT_BINDINGS_PINCTRL_DM816X_H
+>>> +
+>>> +#include <dt-bindings/pinctrl/omap.h>
+>>
+>> I do not see this being used here, IWYU.
+>>
+>>> +
+>>> +#undef PULL_UP
+>>> +#undef PULL_ENA
+>>
+>> Why are you undefining other macros? That's not a easy to follow code.
+> 
+> Do you prefer to duplicate `omap.h` defines? Only the defines above do not
+> apply to DM816x.
 
-Use mvchip->percpu_regs for the Armada XP per-CPU mask registers in
-both the suspend save and the resume restore paths, matching the
-mask/unmask handlers and the probe-time masking.
+Not sure what you need to duplicate, but if you add header with bindings
+for this device, then you should not include headers for other devices.
 
-Fixes: b5b7b487431b ("gpio: mvebu: add suspend/resume support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v4: rebase again
- v3: rebase again
- v2: rebase
- drivers/gpio/gpio-mvebu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+>>
+>>
+>>> +
+>>> +/* DM81xx mux bit defines */
+>>> +#define PULL_ENA		(0 << 3)  /* Pullup enabled  => 0 */
+>>> +#define PULL_DIS		(1 << 3)  /* Pullup disabled => 1 */
+>>> +#define PULL_DN			(0 << 4)
+>>> +#define PULL_UP			(1 << 4)
+>>
+>> I do not see this used by drivers, so why do we need one more header?
+>> What part of SW are you binding here?
+>>
+> 
+> I added those (DN/UP) because they are not defined in `omap.h`. It may be
+> convenient for future board upstreaming. I can drop those if undesired.
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index c57758019e92..03e977c2a629 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -1028,10 +1028,10 @@ static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
- 		break;
- 	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
- 		for (i = 0; i < 4; i++) {
--			regmap_read(mvchip->regs,
-+			regmap_read(mvchip->percpu_regs,
- 				    GPIO_EDGE_MASK_ARMADAXP_OFF(i),
- 				    &mvchip->edge_mask_regs[i]);
--			regmap_read(mvchip->regs,
-+			regmap_read(mvchip->percpu_regs,
- 				    GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
- 				    &mvchip->level_mask_regs[i]);
- 		}
-@@ -1080,10 +1080,10 @@ static int mvebu_gpio_resume(struct platform_device *pdev)
- 		break;
- 	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
- 		for (i = 0; i < 4; i++) {
--			regmap_write(mvchip->regs,
-+			regmap_write(mvchip->percpu_regs,
- 				     GPIO_EDGE_MASK_ARMADAXP_OFF(i),
- 				     mvchip->edge_mask_regs[i]);
--			regmap_write(mvchip->regs,
-+			regmap_write(mvchip->percpu_regs,
- 				     GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
- 				     mvchip->level_mask_regs[i]);
- 		}
--- 
-2.56.0
+Just add the header to proper place - DTS. These are just not looking as
+bindings.
 
+Best regards,
+Krzysztof
