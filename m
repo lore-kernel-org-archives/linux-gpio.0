@@ -1,83 +1,89 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9A24A49A0
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 09:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FD6277026;
+	Mon, 19 Oct 2026 09:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792400483; cv=none; b=A9J15QRvA1ILIKHQphWTi1g6ABZ5gOGea3TAG0mI2M9lkM2SG95YD09Q4f2pgt3RnBKSmXnwgrZjdNGxNinbNwRItgmiQDWv9PnCkFLA5dPzDOuEo6m5uWN4Pr0M5KA/Wa0lit9Gj0ixT2J49vrYybjw+8duWtxNnxmb1SOnmeM=
+	t=1792401367; cv=none; b=d7DD6tCK0UCwXgHMQ0/dyJ0XsgzVWNHLqNzNKIlsJH0zN/B/OLGnfdWkoM/AbaK16ATuC3f0FH16sgwfMMkrllxiO9i1jDsIq7EysYg3Ijsoj70822Q5L2vhct4/rrhNjyqHh7mDXgfxk4RD72LZ83FQG06IA6QXswS2R/j2hwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792400483; c=relaxed/simple;
-	bh=WLWwWzeZBOSKp0C0wY8LsKsrti3WYaCx6yssolyVc20=;
+	s=arc-20240116; t=1792401367; c=relaxed/simple;
+	bh=88L7hie2tDkWe7PZYJG3j2OUPcoz6V6ev/d6mTgZGwU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGHOJY+QErJuyePjm+c1F+OAYnaRLmuuQ7jPRzbPnXbuLKbKtg8xFKwQNMh4wJuY4sTwiUWxX39aTFXnQmT1BM8mM7w1E2Hp3tvlF5xF7qluOinm86qIEkW1oTqppUrddaISKfAfurW0/q90nQxUFFE0uD795bmRwx5SHkz6F34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UL+ENG4D; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=PU6d/1Ik4vofrXalVL1SAZkOb5rh/D8JONcEjgEUMY8j7Qbs2u2hwndoNH1kaZoLgBIAG7KqYy5GNzzd8maKDsIUanCaTqEk4htfImRSqwbYQnIHCpJ/ck4Od6MrkZvpUo1bUEKfeVdPzVRTHanaYDoRC0ZjET/APPXGvw82pBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ghGHOwZ6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NiyW3Nok; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yC77sQaB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OXbTTu5b; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UL+ENG4D"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cd5cd8d89a7so602456a12.1
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 02:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792400481; x=1793005281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=vybmS5BYak1w5heTo7DTlFP7z60krqMLtPatgKuV1rE=;
-        b=UL+ENG4DQGJypialzcokFBbH2hNcqkiklUgduMttVl/6uw8zMl7mHACrAXIXHTR5OO
-         vcirIIG84nBTUYsTaXAR8AjlRRSWg7LPm9TGemx6R0+KtBrW/JW2pCAUMi1+QzsGcXrR
-         VeTxqHMoeSKx6L5/POgD5MevOXAei04SgH+xa0FsbAIi2NOlJ7UDpyeSt72InRIzXPIQ
-         6WKZ29nlT9f3xae/YNrfefeFary1xpB2WKr6KCgKJD0sbi0pVzkw3hx9SZ1Y8PVLuLP1
-         a6cuPxIxkca399ANA9Oi2gOguTwPbOMA9nSTGtmS2gnrgV2YJE/m1qREufbd5RxdWggX
-         Gxvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792400481; x=1793005281;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vybmS5BYak1w5heTo7DTlFP7z60krqMLtPatgKuV1rE=;
-        b=tsFjg0FIesmB/QH2SP64Cfkvi7IB2cMW3UQPOaiG8BbOz6GkLNlJ8s8TeM7J9AqCpo
-         zZQ8vfOi20uaaJ9LD/gtcLkygP8iPuE7p/85/Wc6+C5PzZtv100O/6/0bf50WzW4+1ow
-         GPeUV8hbPVi6AbkEDy2puhAMgOfFcsun/VN+KGJPfE3VPdZ8lfU3Ym+GcYgdGlPmUpzO
-         nIerZpwcEpjYl9//cQqEMrqb/XT5vfrKI9R+PP55TGvD8sgkTD7hnHw+7X28a8zrU2Ri
-         3/N8EOTdA5NCe7LK/GQHlYxl1zWKiLwFZo6jGWcXnwoZBu7BZCBwAhofEzwKU0v2SxcV
-         kRuQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxzHrIJpty1R9pusjrZQ9w4UuqN1tKNjfejqylMjgVb4dmt7Canm2nPW521Ja5KbYfY30w2UqCggvxR@vger.kernel.org
-X-Gm-Message-State: AFq9FYJCrwjsSLmDl4g6EHnmR0gNDkuACmF91HzX+j8Rw83+6N3UhAnI
-	b2/QbU3EXqo7M9IgIXj0u4uxmmvgt1vudRtI3A9+/F6G5BQCMeOjsjsm
-X-Gm-Gg: AYBFou1wPpGZpbDB/1mD8sHFDQYJysTTHCksd7UWxwzK3hPtDL4JHqVy5ao/EyDY2+w
-	LpBqn1dnVicfnM3z909R8cWGSXW43Ae66vsBEArPHqoXg6zVMJPeKHJ7nQPaHDHdllBShxpQpYh
-	rniBjwjTNM1PbRJfyrFuB2ava9HDPeYz520EWwNomYp9bxWL0xn1jE4kUDdC+wQ+IIkKeeLEfNP
-	nbU8ExOGl9VTyhwNmL2pKye5KEc5NEvH7qIy9o6/RcO5U0FsqBzGsDOX13R/K6nXn7JIqUBPrZ3
-	0DgxhW2ufRhJoRcrRxX2ZtPja3buDeGZPnaH0PQVRgOzfV2fM8rnvR39hSd2+7LD7dKpTakTuLZ
-	PdGSN83kBO36mhLcrsiShxt/yvF8zbuZNDJd3FHXQkya2KZdUM0oFlN6bqeETGzKVkLzOglM7rg
-	+nA1X0eLDK6/JMp/Xxf7K4dmdByCjG6R0qLXlzbkAj2i9SQlSEz0UnYIwpNO8uevaqobIyim4P5
-	vxYCUltny4Snv9erMw=
-X-Received: by 2002:a17:90b:1a87:b0:3a2:bb45:d37b with SMTP id 98e67ed59e1d1-3aceec26e88mr5914108a91.25.1792400481075;
-        Mon, 19 Oct 2026 02:01:21 -0700 (PDT)
-Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acc9d266d6sm7618163a91.1.2026.10.19.02.00.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 02:00:55 -0700 (PDT)
-Date: Mon, 19 Oct 2026 17:00:13 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] gpiolib: let the character device free its IRQs
- first on chip removal
-Message-ID: <20261019090013.GA29798@rigel>
-References: <20261016-gpiolib-chip-removal-v2-0-aambrozewicz@nvidia.com>
- <20261016-gpiolib-chip-removal-v2-6-aambrozewicz@nvidia.com>
- <20261016134003.GA155960@rigel>
- <atXXi_EA6iROhK0C@ashevche-desk.local>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ghGHOwZ6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NiyW3Nok";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yC77sQaB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OXbTTu5b"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 36E7721C13;
+	Mon, 19 Oct 2026 09:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1792401364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7yu3tr/XKjY08A8K99OkNRH8Z7mvGFgqqz1CA7bGCoQ=;
+	b=ghGHOwZ6JxMIYAZ26rWhTpweaoCboTRlTL999bMVvyF0E2aZvlajC6BK/JwQUb+GP8T6vZ
+	QpYJUF6W+y1mzomrimeyLNCvmnyrxjwp7Seri96i1piyel8vRzZVgO5dZWa2mhLkRaC+hO
+	33rSbF30BBO4HAdoMOLbGOQBAaetndA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1792401364;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7yu3tr/XKjY08A8K99OkNRH8Z7mvGFgqqz1CA7bGCoQ=;
+	b=NiyW3NokfsPA3E7a9inhFGaT20Sl0YlKV0Mjp7kg8WBDh3ren76IclmzfKPO6t+0UBeewT
+	Aln5ixT4mweAfjAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yC77sQaB;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OXbTTu5b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1792401363; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7yu3tr/XKjY08A8K99OkNRH8Z7mvGFgqqz1CA7bGCoQ=;
+	b=yC77sQaBlmmo4b7SixoP8v0ykVb8nEozZqjSpHaFK0Q0fFqDF87llv3DaPBzNzh5CWKXxE
+	8gosP/5itJsjOS62NqMDVHZ6RE8KHwU6Z6TD/DQLBDRiRDdTI6GbVTal3EcB41/okvGfzs
+	XYhpDE6XhOp3uEX3iDXLm00HlOVNL9U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1792401363;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7yu3tr/XKjY08A8K99OkNRH8Z7mvGFgqqz1CA7bGCoQ=;
+	b=OXbTTu5bfXVm5PferY6twjbDiPg/4EpFJsGB4+Iw+QGZxYgpoXGqIFOBisjJhNvUhGnAuO
+	Hh+gTeNTZwQ1Z6AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECE25134B3;
+	Mon, 19 Oct 2026 09:16:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1ML/MNLf1WrwFAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 19 Oct 2026 09:16:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 772FAA1413; Mon, 19 Oct 2026 11:16:02 +0200 (CEST)
+Date: Mon, 19 Oct 2026 11:16:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linuxppc-dev@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-media@vger.kernel.org, wine-devel@list.winehq.org, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] file: simplify and harden cleanup handling
+Message-ID: <p4eitjefwpwhfouwhmvxmelxl3yncv3vjdi7wsgu7rna2zorqd@rlvbcpzcpbid>
+References: <20260917-work-file-fd_prepare-v1-0-b87534ca49f3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -86,47 +92,90 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <atXXi_EA6iROhK0C@ashevche-desk.local>
+In-Reply-To: <20260917-work-file-fd_prepare-v1-0-b87534ca49f3@kernel.org>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 36E7721C13
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.com:email];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On Mon, Oct 19, 2026 at 11:40:43AM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 16, 2026 at 09:40:03PM +0800, Kent Gibson wrote:
-> > On Fri, Oct 16, 2026 at 12:23:38PM +0300, Adrian Ambrozewicz wrote:
+On Thu 17-09-26 11:09:41, Christian Brauner wrote:
+> The cleanup guards rely on unnecessary infrastructure and make the code
+> more complicated to follow than it needs to be. Clean it up. Also shrink
+> the struct a bit and get rid of the unnecessary error variable. We can
+> just make this more ergonomic by using fdf->fd directly. Also expose the
+> struct itself as const and hide the actual underlying local variable
+> behind a UNIQUE_ID() named variable so we avoid risking shadow variables
+> and polluting callsites. Code generation wise the outcome is exactly the
+> same but simpler.
 > 
-> ...
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+
+I know I'm really late but FWIW this looks really great! I know this is in
+PR to Linus so feel free to ignore:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+;)
+								Honza
+
+> ---
+> Christian Brauner (4):
+>       file: simplify FD_PREPARE()
+>       file: declare the FD_PREPARE() variable with __cleanup() directly
+>       cleanup: remove CLASS_INIT()
+>       file: make struct fd_prepare const and kill its err field
 > 
-> > > +	/* Called with gdev->chip already NULL, so gpiod_to_irq() can't be used. */
-> > > +	if (gc->to_irq)
-> > > +		irq = gc->to_irq(gc, gpiod_hwgpio(desc));
-> > > +	else
-> > > +		irq = 0;
-> > > +	if (irq <= 0)
-> > > +		return;
-> > 
-> > Perhaps I'm channelling Andy here, but how about:
+>  arch/powerpc/platforms/cell/spufs/inode.c |  12 +--
+>  drivers/gpio/gpiolib-cdev.c               |  18 ++---
+>  drivers/gpu/drm/msm/msm_perfcntr.c        |   4 +-
+>  drivers/media/mc/mc-request.c             |   8 +-
+>  drivers/misc/ntsync.c                     |   6 +-
+>  fs/eventfd.c                              |   4 +-
+>  fs/eventpoll.c                            |   6 +-
+>  fs/file.c                                 |   8 +-
+>  fs/namespace.c                            |  12 +--
+>  fs/nsfs.c                                 |   4 +-
+>  fs/xfs/xfs_handle.c                       |   6 +-
+>  include/linux/cleanup.h                   |   7 --
+>  include/linux/file.h                      | 130 +++++++++++-------------------
+>  io_uring/mock_file.c                      |   8 +-
+>  kernel/bpf/bpf_iter.c                     |   6 +-
+>  kernel/bpf/token.c                        |   6 +-
+>  mm/userfaultfd.c                          |   6 +-
+>  net/core/scm.c                            |   8 +-
+>  net/handshake/netlink.c                   |   8 +-
+>  net/kcm/kcmsock.c                         |   6 +-
+>  20 files changed, 117 insertions(+), 156 deletions(-)
+> ---
+> base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+> change-id: 20260917-work-file-fd_prepare-ea5966d68a95
 > 
-> It was in the previous version and I suggested to move it to the above. Seems
-> like we have an opposite comments. Can you provide a rationale behind your choice?
-> 
-
-Ha, so it was, though your suggestion was not quite the above - it
-didn't allow for gc->to_irq() returning 0 and it set the irq to a
-negative error code.
-
-> > 	if (!gc->to_irq)
-> >         return;
-> > 	irq = gc->to_irq(gc, gpiod_hwgpio(desc));
-> > 	if (irq <= 0)
-> > 		return;
-> 
-
-This way is clearer given gc->to_irq() can return 0 - the <= condition
-there is purely because of its possible return values.
-Setting irq to either 0 or an negative error code, rather than just returning
-on the spot, are both more confusing and pointless.
-
-This is my preferred form, and I obviously expected that you would prefer the
-shorter form as well, but apparently not.
-
-Cheers,
-Kent.
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
