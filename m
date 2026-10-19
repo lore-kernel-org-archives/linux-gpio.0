@@ -1,42 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE43D5083FE;
-	Mon, 19 Oct 2026 14:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA7053AEBD;
+	Mon, 19 Oct 2026 14:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418611; cv=none; b=VVpm++Qva9zFVsr9H7YzlT0LSen6AisNX5WmWD09MWMKGxf5FwOrGQUGKDCNn73ZxkUos5vQVuYPAhhv6DkntzD7eh/fyxDE1c539hPwwfPBPrggG3g6kBcbAEbr2DSYkrmr3W9x5sfP3RlfkSP1RZ7jEfiZBWm4mm5XhYcfUdY=
+	t=1792418721; cv=none; b=FuSF9geWptv4QAqZPAePunZiWg1BaAL72M0nAV4V+/zqJbLucsF/qi7HGCY9+Kke/nN8Gq4JO7VDk9c40RhdG07BsK54KcCAgaSGJUyWLq4LGuyxSLgHhyv0u3SU7mnvy7DmcnpNPmhncVfqHtbVoOBFSl8MzO6i2wncSPB4bC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418611; c=relaxed/simple;
-	bh=fd/bxe7wJdzTg1O/9SJP3qKvIIqctdYH8nMkYq3bv4M=;
+	s=arc-20240116; t=1792418721; c=relaxed/simple;
+	bh=1GHERZvj7WRGStB8C1B5WYnW05EF+5bN4u4hksV/hak=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sYHCEArFWiKLUNEs1VDcwkpSK5cfr3YYhCE1G4cr3K4g5kVqJ5xndTZWQNdwCCsoMy/RbeAJ6GaqvbzbM+SqpRPqYzLgM6kzgPpc1P30wb8R+2f9z99GNs8t40+tNa5XGWXdW6A9nC12elFWwb5kQOVYVnLVCCnNaasZ4xx8U4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhyzRa7O; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=CajaZ7si6v16nok3uFTjpuljGpTEGg54n7RxMkwWpifqnG8qZcTr44J1ssITUmjL78qTUMwhpzCsv3wqvWXB5/0HfgCR8uwQ9QS9GozCYOW8hUPOjHQB2p9yYfNIOCK/Xszmp9yTkvDtEDM8IinplRrZXUslrDu5WZjTdq6XczI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ac3mMtoG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhyzRa7O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E34511F000C6;
-	Mon, 19 Oct 2026 14:03:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ac3mMtoG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D948D1F000C9;
+	Mon, 19 Oct 2026 14:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418607;
-	bh=Do2LNX96jLUZh2wnCuc2oBWreyYBE+BtVT124PVt374=;
+	s=k20260515; t=1792418718;
+	bh=3HkTGF9xh3harCN/8UsuYuja0pY//1FUxUgh35dHIcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YhyzRa7OsUmjYdbxClRnPcF/bRtDziOxJ0CNuhTLgw7awzrpFRjP9GmNNHgTMDYdg
-	 ywa1m7KJfls53sP7VOSrpywSBBCq1YFo/pSKundjcx/GGTHX3j/GTZZ0FsKd9rXtPU
-	 SpL6sKdCpDUhkUm8B+7AraR1l4Nd/fqoRqxhAf8Xxq5nklud1lOPrw1ZFZo2NowCnx
-	 zVvdN4exS+PwLlvd5/9RtGBW3TcjZbttRPvHgWViPR6LCrdS0Bup+ayJ/ItoTJseJq
-	 c8JC9nSkBEyxymd0ZRRF0Id9Unu7/VWknsVLPMpgiPsDrkk/C2JaNtHHJKx2MVOuGS
-	 EP0rtF0bSEn+Q==
+	b=Ac3mMtoGk9aVZCAD6QvBDoj2v5FAIfGicvGOQCKgvgHfX5Gt7B5b5mEPyg3TS+FH8
+	 /LFmqbkav4mddqxqFcCeIVHT+hJct4ebPFaRHyNRgUqN5/gm3025TxgikGOl3n6bob
+	 DW/UBIlSFXNNkADMcGt0u+u1QyOZfjnqX2qU983/d8mog1RqmKEOsQs+1j62biVME5
+	 fOzTokXlW98pt3iHplc94RbFNAdNuzI5pCvD567a9LcyCaQg44fYkc68hzklp/Ezqv
+	 KfqrFmIvr3XPGFaZ7RMWU21Zo8FQMSktmT5UJupDMr3usXop8pXfmR+BccAUHCzZ4J
+	 HJQ5g2HvviIHA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+Cc: Tomer Maimon <tmaimon77@gmail.com>,
 	Linus Walleij <linusw@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
+	andrew@codeconstruct.com.au,
+	avifishman70@gmail.com,
+	tali.perry1@gmail.com,
+	openbmc@lists.ozlabs.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] pinctrl: sx150x: add missing MODULE_DEVICE_TABLE()
-Date: Mon, 19 Oct 2026 09:51:00 -0400
-Message-ID: <20261019135441.1420968-369-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.12] pinctrl: npcm8xx: enable RMII outputs from RMII groups
+Date: Mon, 19 Oct 2026 09:52:17 -0400
+Message-ID: <20261019135441.1420968-446-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -52,473 +56,430 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+From: Tomer Maimon <tmaimon77@gmail.com>
 
-[ Upstream commit 5fe4b12c087db3e565f53b87f1dafdf2f0d1ee0f ]
+[ Upstream commit c6ccdc305589dd7c7976116e0870a23f291c5fa9 ]
 
-The driver has a match table for the i2c bus wired into its driver
-structure, but the table is not exported with MODULE_DEVICE_TABLE().
+NPCM8xx uses GCR_INTCR4 bits to release the R1, R2 and RMII3
+transmit outputs from Hi-Z.
 
-Add the missing MODULE_DEVICE_TABLE() entry so module alias information
-is generated for automatic module loading.
+Those bits need to follow the mandatory r1, r2 and rmii3 pin
+groups. The R1_OEn, R2_OEn and R3_OEn side groups are optional and
+should not be required just to enable RMII transmit outputs.
 
-This is a source-level fix.  It does not claim dynamic hardware
-reproduction; the evidence is the driver-owned match table, its use by
-the driver registration structure, and the missing module alias
-publication.
+Program the INTCR4 bits when the corresponding RMII groups are
+selected and clear them again when those pins switch back to GPIO or
+another shared function.
 
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 Signed-off-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-I have enough to judge this: a one-line I2C alias export on a driver
-that is modular in this tree, with OF autoload already working.
-
----
+This is a real NPCM8xx hardware-programming bug (RMII TX left in Hi-Z),
+and the local 7.3 tree already has the driver and the affected mux path.
 
 ## PHASE 1: COMMIT MESSAGE FORENSICS
 
 **Step 1.1: PARSE THE SUBJECT LINE**
-
-Record: **[pinctrl/sx150x] [add] [export the existing I2C match table
-via MODULE_DEVICE_TABLE() so module aliases are generated]**
-
-- Subsystem prefix: `pinctrl: sx150x:`
-- Action verb: **add**
-- Claimed intent: publish missing I2C module aliases for automatic
-  loading
+Record: `[pinctrl/npcm8xx] [enable] [program INTCR4 so RMII TX leaves
+Hi-Z when r1/r2/rmii3 groups are selected]`
 
 **Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
-
-Commit: `5fe4b12c087db3e565f53b87f1dafdf2f0d1ee0f`
-
 Record:
-- **Fixes:** none (expected)
-- **Reported-by:** none
-- **Tested-by:** none
-- **Reviewed-by:** none
-- **Acked-by:** none
-- **Link:** none in the git commit (lore exists; see Phase 4)
-- **Cc: stable:** none (expected)
-- **Signed-off-by:** Pengpeng Hou `<pengpeng@iscas.ac.cn>` (author);
-  Linus Walleij `<linusw@kernel.org>` (pinctrl maintainer)
-- Ignored pipeline markers: none present on this commit
-
-Notable pattern: no user/syzbot report; maintainer SOB only.
+- Signed-off-by: Tomer Maimon `<tmaimon77@gmail.com>` (author; Nuvoton)
+- Signed-off-by: Linus Walleij `<linusw@kernel.org>` (pinctrl
+  maintainer)
+- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, Link:,
+  or Cc: stable
+- Absence of Fixes/Cc-stable is expected for this review and is not a
+  negative signal
 
 **Step 1.3: ANALYZE THE COMMIT BODY TEXT**
-
 Record:
-- **Bug:** `sx150x_id[]` is wired as `sx150x_driver.id_table` but not
-  exported with `MODULE_DEVICE_TABLE(i2c, ...)`.
-- **Symptom:** depmod/udev never get `i2c:sx1501q` … `i2c:sx1509q`
-  aliases, so the module does not autoload for I2C-name instantiation.
-- **Version info:** none in the message.
-- **Root cause (author):** match table is used at registration but not
-  published for `file2alias` / modules.alias.
-- Author states this is a **source-level** finding with **no hardware
-  reproduction**.
+- Bug: NPCM8xx GCR_INTCR4 bits 12–14 release R1/R2/RMII3 transmit pads
+  from Hi-Z. The driver muxed the mandatory `r1`/`r2`/`rmii3` groups but
+  never programmed those bits.
+- Symptom: RMII TX stays tri-stated, so those Ethernet ports cannot
+  transmit.
+- Root cause: INTCR4 was (incorrectly) treated as belonging to optional
+  `R1_OEn`/`R2_OEn`/`R3_OEn` side groups; those groups are separate pins
+  and do not program INTCR4.
+- Version info: none in the message. Driver itself arrived in v6.7-rc1.
 
 **Step 1.4: DETECT HIDDEN BUG FIXES**
-
-Record: **Not a disguised cleanup.** It is an explicit autoload/metadata
-fix. The “source-level” wording means the author inferred the bug from
-the missing macro, not from a crash.
-
----
+Record: Not a disguised cleanup. The cover letter of the series calls
+the set a “cleanup,” but this patch is explicit hardware-correctness: TX
+is stuck in Hi-Z until INTCR4 is programmed. That is a functional bug,
+not a style change.
 
 ## PHASE 2: DIFF ANALYSIS
 
 **Step 2.1: INVENTORY THE CHANGES**
-
 Record:
-- File: `drivers/pinctrl/pinctrl-sx150x.c` — **+1 / −0**
-- Function/data: none; one statement after `sx150x_id[]`
-- Scope: **single-file surgical fix**
-
-```850:856:drivers/pinctrl/pinctrl-sx150x.c
-        { .name = "sx1509q", .driver_data =
-(kernel_ulong_t)&sx1509q_device_data },
-        { }
-};
-MODULE_DEVICE_TABLE(i2c, sx150x_id);
-```
+- File: `drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c` (+61 / −0)
+- New helpers: `npcm8xx_rmii_output_enable_mask()`,
+  `npcm8xx_set_rmii_output_enable()`
+- Modified: `npcm8xx_setfunc()` (one call at the end)
+- New defines: `NPCM8XX_GCR_INTCR4`,
+  `NPCM8XX_INTCR4_R1_RMII_EN/R2_RMII_EN/RMII3_EN`
+- Scope: single-file surgical change
 
 **Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
-
 Record:
-- **Before:** OF table already had `MODULE_DEVICE_TABLE(of,
-  sx150x_of_match)`. I2C table was registered via `.id_table` but not
-  aliased.
-- **After:** `scripts/mod/file2alias.c` `do_i2c_entry()` emits
-  `i2c:<name>` aliases (`I2C_MODULE_PREFIX` is `"i2c:"`).
-- Path affected: **module build / depmod / udev autoload**, not
-  probe/runtime logic.
+- Before: `npcm8xx_setfunc()` only updated MFSEL/I2CSEGSEL bits from
+  `pincfg[]`. INTCR4 was never written.
+- After: after that mux, INTCR4 bits 12–14 are set iff the selected mode
+  is `fn_r1`/`fn_r2`/`fn_rmii3` for pins in those groups; they are
+  cleared when those pins go back to GPIO or another function.
+- Paths: pinmux set (`npcm8xx_pinmux_set_mux`) and GPIO request
+  (`npcm8xx_gpio_request_enable`). Normal mux/GPIO path, not an error
+  path.
 
 **Step 2.3: IDENTIFY THE BUG MECHANISM**
-
-Record:
-- **Category:** hardware enablement / module autoload (same family as
-  device-ID publication)
-- **Mechanism:** without `MODULE_DEVICE_TABLE(i2c, sx150x_id)`,
-  `file2alias` never sees the I2C table. DT devices still autoload via
-  OF aliases (`i2c_device_uevent()` prefers
-  `of_device_uevent_modalias()`). Non-DT instantiation (`new_device`,
-  i2c-USB, board info) emits `MODALIAS=i2c:<name>` and would fail to
-  autoload.
+Record: `[Hardware programming / logic correctness]` Incomplete mux:
+existing RMII groups did not drive the SoC output-enable bits, so TX
+pads stayed Hi-Z. Fix programs those bits from the same `setfunc()` path
+that already muxes the groups. Pin lists match `r1_pins[]`, `r2_pins[]`,
+and `rmii3_pins[]` exactly.
 
 **Step 2.4: ASSESS THE FIX QUALITY**
-
 Record:
-- Obviously correct: matches `Documentation/i2c/writing-clients.rst`.
-- Minimal: one line, no API/locking/data-structure change.
-- Regression risk: **very low** (modinfo aliases only; no runtime path
-  change).
-- Red flags: none.
-
----
+- Quality: obviously correct against the driver’s own group tables; no
+  API/data-structure change.
+- Regression risk: low–medium. Linux now writes INTCR4 bits that used to
+  be left at firmware values. Clearing the whole R1/R2/RMII3 enable when
+  a single pin in that group is requested as GPIO is the stated intent,
+  but it can drop TX for the rest of that RMII if one pad is taken as
+  GPIO. No deadlock/locking change.
 
 ## PHASE 3: GIT HISTORY INVESTIGATION
 
 **Step 3.1: BLAME THE CHANGED LINES**
-
-Record:
-- `sx150x_id[]` introduced in `9e80f9064e73f` (**2016**, v4.10-era):
-  “pinctrl: Add SX150X GPIO Extender Pinctrl Driver”. That commit
-  **removed** `MODULE_DEVICE_TABLE` because the driver was `bool`
-  (citing gpio-sx150x `module.h` cleanup).
-- I2C `MODULE_DEVICE_TABLE` added only by this commit (`5fe4b12c087db`,
-  2026-07-10).
-- Modularization: `fe2e8f17a56fe` (2025-08-19) made `PINCTRL_SX150X`
-  **tristate** and added **only** `MODULE_DEVICE_TABLE(of, ...)`.
+Record: `npcm8xx_setfunc()` comes from `acf4884a57170` (“pinctrl:
+nuvoton: add NPCM8XX pinctrl and GPIO driver”, 2023-08-28; first in
+**v6.7-rc1**). INTCR4 handling is new in this commit. The bug is
+“missing programming since the driver was added,” not a recent
+regression.
 
 **Step 3.2: FOLLOW THE FIXES: TAG**
+Record: No Fixes: tag. Not applicable. The incomplete mux has been there
+since the original driver.
 
-Record: **No Fixes: tag.** Buggy omission is from `fe2e8f17a56fe`
-(incomplete modularization), not from a tagged regression.
-`fe2e8f17a56fe` is an ancestor of this HEAD.
-
-**Step 3.3: CHECK FILE HISTORY**
-
-Record:
-- Related: `fe2e8f17a56fe` (tristate + OF aliases); `dbbb19b8e412f`
-  (allow `depends on I2C` so it can be `=m` when I2C is a module, landed
-  later in 7.3).
-- Standalone one-liner; not patch X/Y.
-- Prerequisite for *meaning*: driver must be buildable as a module
-  (`fe2e8f17a56fe`). That is in this tree.
+**Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
+Record: Same-day 8-patch series from Tomer, merged via `pinctrl-v7.3-1`:
+1. drop RTS/CTS from bmcuart1
+2. **this commit**
+3. RG2 drive strength
+4. clear pending GPIO events
+5. rename GPIO7 IOX2
+6. move GPIO IRQ setup
+7. JM1/SMB7 flags
+8. debounce register selection
+This patch does not depend on the others. No later follow-up on INTCR4.
 
 **Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
-
-Record: Pengpeng Hou is **not** the pinctrl maintainer. Large sweep of
-“add missing MODULE_DEVICE_TABLE()” across
-rtc/vdpa/watchdog/clk/soc/etc. This is a systematic metadata sweep,
-applied here by Linus Walleij.
+Record: Tomer Maimon is the original npcm8xx/npcm7xx pinctrl author
+(Nuvoton). That is a strong subsystem-author signal, not a drive-by
+change.
 
 **Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
-
-Record: No new helpers. Applies anywhere `sx150x_id[]` exists (since
-2016). Standalone. User-visible only when `PINCTRL_SX150X=m`.
-
----
+Record: Standalone. Uses existing `npcm8xx_setfunc()`,
+`fn_r1`/`fn_r2`/`fn_rmii3`, and `regmap_update_bits()` on the GCR
+syscon. No new helpers from other patches.
 
 ## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
 **Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
-
 Record:
-- **Lore:**
-  https://patch.msgid.link/20260704152230.51188-1-pengpeng@iscas.ac.cn
-- **Revisions:** v1 only (`b4 dig -a`)
-- Thread (mbox via `b4 dig -m`): submission + Linus Walleij **“Patch
-  applied!”**
-- No NAK, no review changes, **no Cc: stable** from author or maintainer
-- WebFetch of lore.kernel.org returned **403**; discussion read from the
-  saved mbox instead
+- `b4 dig -c c6ccdc305589d` →
+  https://patch.msgid.link/20260715122923.1938327-3-tmaimon77@gmail.com
+- Series: `[PATCH v1 0/8] pinctrl: npcm8xx: fix pinmuxing and
+  configuration handling` (2026-07-15)
+- Only v1; no v2/v3
+- Cover letter: issues found by comparing upstream with the newer
+  Nuvoton tree
+- Linus Walleij: “No comments so patches applied.”
+- No Cc: stable, no NAKs
 
 **Step 4.2: CHECK WHO REVIEWED THE PATCH**
-
-Record (`b4 dig -w`): To Linus Walleij; Cc linux-gpio, linux-kernel.
-Maintainer applied it. No other reviewers.
+Record (`b4 dig -w`): To/Cc included Linus Walleij, Bartosz Golaszewski,
+Andrew Jeffery, linux-gpio, openbmc, and Google/Nuvoton BMC people. Only
+the maintainer reply is in the thread; no Reviewed-by/Tested-by.
 
 **Step 4.3: SEARCH FOR THE BUG REPORT**
-
-Record: **No bugzilla/syzbot/user report.** Author: source-level only.
+Record: No Reported-by, bugzilla, or syzbot. Evidence is the author’s
+hardware description (Hi-Z TX), not a user crash report.
 
 **Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
-
-Record: Standalone v1. Same author has many sibling MODULE_DEVICE_TABLE
-patches; none are prerequisites for this hunk.
+Record: Patch 2/8. Independent of 1/8 (UART pins) and 3/8 (RG2 drive
+strength). Safe to take alone.
 
 **Step 4.5: CHECK STABLE MAILING LIST HISTORY**
-
-Record: **UNVERIFIED** on lore.kernel.org/stable (HTTP 403). No `Cc:
-stable` in commit or mbox.
-
----
+Record: lore.kernel.org/stable returned 403. UNVERIFIED whether stable@
+discussed this commit. The mbox has no stable nomination.
 
 ## PHASE 5: CODE SEMANTIC ANALYSIS
 
 **Step 5.1: KEY FUNCTIONS**
-
-Record: No functions changed. Touches `sx150x_id[]` publication.
-Related: `sx150x_driver`, `sx150x_init()` → `i2c_add_driver()`.
+Record: `npcm8xx_rmii_output_enable_mask`,
+`npcm8xx_set_rmii_output_enable`, `npcm8xx_setfunc`
 
 **Step 5.2: TRACE CALLERS**
-
 Record:
-- `sx150x_init()` is `subsys_initcall` / module init; only caller of
-  `i2c_add_driver(&sx150x_driver)`.
-- `sx150x_probe()` is the I2C probe (line 1123). Bound via OF match or
-  `id_table`.
-- Not IRQ/hot-path; device enumeration / module autoload.
+- `npcm8xx_setfunc` ← `npcm8xx_pinmux_set_mux` (DT/pinctrl mux) and
+  `npcm8xx_gpio_request_enable` (GPIO request)
+- Reachable when a consumer selects `r1`/`r2`/`rmii3` or when those pads
+  are claimed as GPIO
+- Not IRQ/hot-path
 
 **Step 5.3: TRACE CALLEES**
-
-Record: `MODULE_DEVICE_TABLE` is a build-time alias for `file2alias`. No
-allocations, locks, or I/O.
+Record: `regmap_update_bits()` on GCR INTCR4. Side effect is only those
+three bits.
 
 **Step 5.4: FOLLOW THE CALL CHAIN**
-
-Record:
-- DT boards (qcs615-ride, imx8mp-aristainetos3, kirkwood-l-50,
-  vf610-zii, at91-natte, …): uevent uses **OF** modalias; already
-  covered.
-- Non-DT: `i2c_device_uevent()` falls through to
-  `MODALIAS=i2c:<client->name>`. Original 2016 commit tested **x86_64
-  I2C-USB** as well as BeagleBone DT — that path needs I2C aliases.
-- Userspace `new_device` can also trigger it.
-- Reachable: yes, from device enumeration / sysfs, not a syscall crash
-  path.
+Record: Device-tree pinctrl for NPCM8xx RMII groups → pinmux → `setfunc`
+→ INTCR4. Userspace cannot trigger it without those pins being muxed.
+In-tree `nuvoton-npcm845-evb.dts` only enables UART/watchdog, but
+`nuvoton-common-npcm8xx.dtsi` already defines `r1`/`r2`/`rmii3` mux
+nodes for board DTs (typical OpenBMC).
 
 **Step 5.5: SEARCH FOR SIMILAR PATTERNS**
-
-Record: Same missing-macro pattern across many drivers in this cycle. OF
-table in this file already had the macro; I2C table was the gap.
-
-semcode MCP: **not available**; used git/grep/read.
-
----
+Record: npcm7xx pinctrl has no INTCR4 RMII enable. This is npcm8xx-
+specific. No sibling copy-paste bug.
 
 ## PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
 
 **Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
-
-Record:
-- Local tree: **`v7.3-rc4-27-gf0100363d8c37`**, `make kernelversion` =
-  **7.3.0-rc4**, detached HEAD on mainline.
-- Driver file present; Kconfig is `tristate`; both MODULE_DEVICE_TABLE
-  lines present **because this commit is already in HEAD**.
-- Bug existed in this lineage from `fe2e8f17a56fe` (in v6.18) until
-  `5fe4b12c087db` (first in **v7.3-rc1**).
-- `git merge-base --is-ancestor 5fe4b12c087db HEAD` → **yes**.
+Record: Yes. Local tree is **v7.3-rc4** (`7.3.0-rc4`). `PINCTRL_NPCM8XX`
+and `npcm8xx_setfunc()` are present. `git merge-base --is-ancestor
+c6ccdc305589d HEAD` is true (the fix is already in this checkout). The
+pre-fix mux without INTCR4 existed from v6.7 through this series.
 
 **Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
-
-Record: **Clean apply.** Single line after `sx150x_id[]`. Pre-fix parent
-still has the table and OF `MODULE_DEVICE_TABLE`. Context around named
-initializers (`84c0fe4a2085f`) does not affect the added line.
+Record: Clean apply on this file’s `setfunc()`/GCR-define region. Those
+sites were stable from the original driver until this commit. Later 7.3
+include churn (`mod_devicetable.h`) is unrelated.
 
 **Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
-
-Record: OF aliases already added by `fe2e8f17a56fe`. No other I2C alias
-fix. This is the remaining hole, not a duplicate.
-
----
+Record: This is the only INTCR4/RMII-output change. No alternate fix.
 
 ## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 
 **Step 7.1: SUBSYSTEM AND CRITICALITY**
-
-Record: **pinctrl / I2C GPIO expander driver**
-(`drivers/pinctrl/pinctrl-sx150x.c`). Criticality: **PERIPHERAL**
-(specific Semtech SX150x chips on a handful of boards). Not mm/fs/net
-core.
+Record: `[drivers/pinctrl/nuvoton] [PERIPHERAL]` — Nuvoton NPCM8xx BMC
+pinmux. Important for that BMC’s RMII, not a core mm/fs/net path.
 
 **Step 7.2: SUBSYSTEM ACTIVITY**
-
-Record: pinctrl is actively developed (frequent 7.3 merges). This driver
-is mature (2016); the modularization is recent (6.18).
-
----
+Record: Mature driver (v6.7) with a 2026 vendor-sync series. Not a
+brand-new subsystem.
 
 ## PHASE 8: IMPACT AND RISK ASSESSMENT
 
 **Step 8.1: WHO IS AFFECTED**
-
-Record: **Driver-specific / config-specific:**
-`CONFIG_PINCTRL_SX150X=m`, and instantiation **without** a working OF
-(or ACPI) modalias — I2C name match. DT users already autoload via OF.
+Record: NPCM8xx (Arbel) BMC boards that mux `r1`/`r2`/`rmii3`. Config:
+`PINCTRL_NPCM8XX` / `ARCH_NPCM`. Not universal.
 
 **Step 8.2: TRIGGER CONDITIONS**
-
-Record:
-- Trigger: module not loaded; I2C client named `sx1501q`…`sx1509q`
-  appears (sysfs `new_device`, non-DT board, I2C-USB).
-- Commonness: **low** on in-tree DT boards; **real** for the non-OF path
-  the driver was written to support.
-- Unprivileged trigger: no (needs device creation / root sysfs).
+Record: Selecting those RMII pin groups (boot pinctrl). Common on boards
+that use RMII Ethernet; unused if those groups are never muxed. Not a
+userspace-triggered security path.
 
 **Step 8.3: FAILURE MODE SEVERITY**
-
-Record:
-- Failure: GPIO/pinctrl expander **does not bind** until manual
-  `modprobe`. No oops, deadlock, or corruption.
-- Severity: **MEDIUM** for affected modular non-DT users; **LOW** for
-  typical DT boards.
-- Not CRITICAL.
+Record: `[RMII TX held in Hi-Z → no Ethernet transmit] [MEDIUM, HIGH for
+BMC management if that port is the OOB NIC]`. Not a panic, UAF, or
+filesystem corruption.
 
 **Step 8.4: RISK-BENEFIT RATIO**
-
 Record:
-- **Benefit:** modest — restores I2C autoload for a modular driver that
-  documents non-OF use.
-- **Risk:** very low — one compile-time alias line.
-- **Ratio:** favorable. Same class as publishing device IDs.
-
----
+- Benefit: BMC RMII actually transmits when the existing groups are
+  selected; firmware no longer has to paper over Linux.
+- Risk: ~61 lines, three GCR bits, no locking. Behavior change vs “leave
+  INTCR4 to firmware.”
+- Ratio: favorable for trees that already ship this driver.
 
 ## PHASE 9: FINAL SYNTHESIS
 
 **Step 9.1: COMPILE THE EVIDENCE**
 
-**FOR backporting:**
-- Real autoload bug once the driver is a module (this tree: tristate).
-- One line, obviously correct, maintainer-applied.
-- Zero runtime regression risk.
-- Same user-visible class as device-ID additions (module aliases).
-- I2C `id_table` is actually used (`.id_table = sx150x_id`); OF aliases
-  do not cover the i2c: modalias path.
-- Original driver was tested on non-OF x86 I2C-USB.
+FOR:
+- Concrete hardware bug: TX pads stay Hi-Z without INTCR4
+- Existing pin groups; this completes mux, it does not add a new
+  function/API
+- 61 lines, one file, pin lists match group arrays
+- No series dependencies
+- Driver author + pinctrl maintainer
+- Driver and bug exist in this tree (since v6.7)
+- Hardware-workaround exception (broken/incomplete SoC programming)
 
-**AGAINST:**
-- Not a crash/UAF/security/corruption/deadlock issue.
-- No user report; author says source-level only.
-- DT autoload already works via OF `MODULE_DEVICE_TABLE`.
-- Peripheral expander, small user set.
-- Automated MODULE_DEVICE_TABLE sweep, not a targeted production
-  incident.
+AGAINST:
+- Not crash/security/corruption/deadlock
+- Cover letter is a Nuvoton-tree sync, no user report or Tested-by
+- In-tree EVB DTS does not enable Ethernet
+- Writes INTCR4 that firmware may already own
+- Part of an 8-patch “cleanup” series (this patch is still self-
+  contained)
 
-**UNRESOLVED:**
-- Whether stable@ already discussed this (lore 403).
-- How many distros set `PINCTRL_SX150X=m` vs `=y`.
+UNRESOLVED:
+- Could not query lore.kernel.org/stable (HTTP 403)
+- Could not confirm how many shipping boards rely on firmware vs Linux
+  for INTCR4
 
 **Step 9.2: STABLE RULES CHECKLIST**
-
-1. Obviously correct and tested? **PASS** — correct by construction;
-   maintainer applied. Hardware test not claimed.
-2. Fixes a real bug that affects users? **PASS** — missing I2C aliases
-   prevent autoload for non-DT / `i2c:` modalias.
-3. Important issue? **PASS** (as device-ID / enablement, not as crash).
-   User-visible: device never probes until manual modprobe. Stable text
-   allows “add a device ID”; this publishes existing IDs.
-4. Small and contained? **PASS** — +1 line, one file.
-5. No new features or APIs? **PASS**
-6. Can apply to the local tree? **PASS** — applies cleanly; this
-   checkout already contains the equivalent change.
+1. Obviously correct and tested? **PASS** — matches group tables;
+   maintainer applied v1. Tested-by is missing, but the change is
+   inspectable.
+2. Fixes a real bug that affects users? **PASS** — RMII TX does not
+   leave Hi-Z.
+3. Important issue? **PASS** (MEDIUM, hardware-workaround exception) —
+   dead BMC Ethernet TX, not a kernel oops.
+4. Small and contained? **PASS** — 61 lines, one driver.
+5. No new features or APIs? **PASS** — no new userspace API; programs a
+   register the existing groups already required.
+6. Can apply to the local tree? **PASS** — `pinctrl-npcm8xx.c` and
+   `npcm8xx_setfunc()` are here; the patch is already an ancestor of
+   HEAD.
 
 **Step 9.3: EXCEPTION CATEGORIES**
-
-Record: **Device ID / module alias publication** (not a new driver).
-Closest exception: adding/exporting IDs on an existing driver so
-hardware binds automatically.
+Record: Hardware workaround / incomplete mux for existing NPCM8xx RMII
+groups. Not a new driver.
 
 **Step 9.4: DECISION**
+This tree is 7.3 and already contains NPCM8xx pinctrl. The bug is real:
+selecting the documented RMII groups never released TX from Hi-Z. The
+fix is small, local, and does not need the rest of the series. That is
+the same class of change as a hardware quirk: the existing function does
+not work until the SoC bit is programmed. Benefit outweighs the INTCR4
+behavior change.
 
-This tree is **7.3-rc4 mainline**, where `PINCTRL_SX150X` is tristate
-and the I2C table is live. The patch does not change runtime logic; it
-only emits the aliases `file2alias` needs for `i2c:sx150*q`. That is a
-real, contained autoload fix with essentially no regression risk. DT
-boards already worked; the I2C table still matters for the non-OF path
-this driver has supported since 2016.
-
-It meets stable rules as a small, obviously correct hardware-binding
-fix, not as a crash fix.
-
----
-
-### What the commit solves (for this tree)
-
-When built as a module, udev/modprobe cannot match
-`MODALIAS=i2c:sx1509q` (and siblings) because those aliases were never
-generated. Probe itself was fine if the module was loaded by hand or via
-OF. The one-line `MODULE_DEVICE_TABLE(i2c, sx150x_id)` closes that gap.
-
-### Risk vs benefit
-
-Benefit is autoload for modular, non-DT (or sysfs-instantiated) SX150x
-users. Risk is negligible. That trade-off is acceptable for stable.
-
-### Concerns
-
-No `Fixes:`/`Cc: stable` (not a negative by itself). Impact is not a
-panic. Prerequisite modularization is already in this lineage. No
-backport rework needed.
-
----
-
-### Verification
-
-- **[Phase 1]** Parsed `5fe4b12c087db`: subject/body/SOBs; no
-  Fixes/Reported-by/stable Cc
-- **[Phase 2]** Diff: +1 `MODULE_DEVICE_TABLE(i2c, sx150x_id)` in
-  `pinctrl-sx150x.c`
-- **[Phase 2]** Confirmed OF table already has `MODULE_DEVICE_TABLE(of,
-  sx150x_of_match)` (line 870)
-- **[Phase 2]** Confirmed `.id_table = sx150x_id` (line 1281)
-- **[Phase 3]** `git blame`: table from `9e80f9064e73f` (2016); OF macro
-  from `fe2e8f17a56fe`; I2C macro from this commit
-- **[Phase 3]** `git show fe2e8f17a56fe`: tristate + OF
-  MODULE_DEVICE_TABLE + MODULE_LICENSE; I2C table omitted
-- **[Phase 3]** `git log --author=Pengpeng Hou`: many sibling
-  MODULE_DEVICE_TABLE commits
-- **[Phase 4]** `b4 dig -c 5fe4b12c087db`: lore msgid
-  `20260704152230.51188-1-pengpeng@iscas.ac.cn`
-- **[Phase 4]** `b4 dig -a`: v1 only
-- **[Phase 4]** `b4 dig -w`: Linus Walleij + linux-gpio
-- **[Phase 4]** mbox: “Patch applied!”; no NAK; no stable nomination
-- **[Phase 4]** WebFetch lore/stable: **403 UNVERIFIED**
-- **[Phase 5]** `i2c_device_uevent`: OF, then ACPI, then `i2c:` name
-  (`drivers/i2c/i2c-core-base.c:163-176`)
-- **[Phase 5]** `do_i2c_entry` emits `i2c:%s`
-  (`scripts/mod/file2alias.c:855-860`)
-- **[Phase 5]** In-tree DTS uses `semtech,sx150xq` compatibles
-- **[Phase 5]** No ACPI table in this driver
-- **[Phase 6]** `git describe HEAD` = `v7.3-rc4-27-gf0100363d8c37`;
-  `kernelversion` 7.3.0-rc4
-- **[Phase 6]** `git merge-base --is-ancestor 5fe4b12c087db HEAD` → yes
-- **[Phase 6]** Tags: fix first in v7.3-rc1; tristate in v6.18; missing
-  in v7.2
-- **[Phase 6]** Kconfig in this tree: `tristate` `depends on I2C`
-- **[Phase 8]** Failure mode: module not autoloaded; severity
-  MEDIUM/LOW, not crash
-- **UNVERIFIED:** stable@ archive discussion; distro `=m` vs `=y`
-  prevalence
-- **UNVERIFIED:** semcode MCP not present
-
-The fix is small, surgical, and meets stable criteria as module-alias /
-device-ID enablement.
+Verification:
+- [Phase 1] Parsed tags: only author + Linus Walleij SOBs; no
+  Fixes/Reported-by/stable
+- [Phase 2] Diff: +61 lines in pinctrl-npcm8xx.c; INTCR4 helpers + call
+  from setfunc
+- [Phase 2] Pin lists verified equal to r1_pins/r2_pins/rmii3_pins
+- [Phase 3] git describe HEAD: v7.3-rc4-27-gf0100363d8c37; make
+  kernelversion 7.3.0-rc4
+- [Phase 3] git merge-base --is-ancestor c6ccdc305589d HEAD: yes
+- [Phase 3] Driver added acf4884a57170, first contained in v6.7-rc1
+- [Phase 3] git blame setfunc: original driver except the new INTCR4
+  call
+- [Phase 3] No Fixes: tag; no INTCR4 history before this commit
+- [Phase 4] b4 dig -c: lore/msgid 20260715122923.1938327-3; series v1
+  2/8
+- [Phase 4] b4 dig -a: only v1
+- [Phase 4] b4 dig -w: linusw, brgl, andrew, openbmc, linux-gpio, Google
+  BMC CCs
+- [Phase 4] mbox: Linus “No comments so patches applied”; no NAK; no Cc:
+  stable
+- [Phase 4] lore.kernel.org HTTP 403 for WebFetch; stable-list search
+  UNVERIFIED
+- [Phase 5] Callers: pinmux_set_mux and gpio_request_enable only
+- [Phase 6] Buggy mux without INTCR4 present from v6.7 until this commit
+- [Phase 6] In-tree EVB DTS has no ethernet node; common dtsi still
+  defines r1/r2/rmii3 muxes
+- [Phase 8] Failure mode: RMII TX Hi-Z, severity MEDIUM (BMC NIC)
 
 **YES**
 
- drivers/pinctrl/pinctrl-sx150x.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 61 +++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 1d6760ffe809a..f1647d9114e3b 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -850,6 +850,7 @@ static const struct i2c_device_id sx150x_id[] = {
- 	{"sx1509q", (kernel_ulong_t) &sx1509q_device_data },
- 	{}
- };
-+MODULE_DEVICE_TABLE(i2c, sx150x_id);
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
+index 0aae1a2534594..c94441b2acdae 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
+@@ -26,6 +26,7 @@
+ #define NPCM8XX_GCR_SRCNT	0x068
+ #define NPCM8XX_GCR_FLOCKR1	0x074
+ #define NPCM8XX_GCR_DSCNT	0x078
++#define NPCM8XX_GCR_INTCR4	0x0c0
+ #define NPCM8XX_GCR_I2CSEGSEL	0x0e0
+ #define NPCM8XX_GCR_MFSEL1	0x260
+ #define NPCM8XX_GCR_MFSEL2	0x264
+@@ -78,6 +79,9 @@
+ #define NPCM8XX_GPIO_PER_BANK	32
+ #define NPCM8XX_GPIO_BANK_NUM	8
+ #define NPCM8XX_GCR_NONE	0
++#define NPCM8XX_INTCR4_R1_RMII_EN	BIT(12)
++#define NPCM8XX_INTCR4_R2_RMII_EN	BIT(13)
++#define NPCM8XX_INTCR4_RMII3_EN	BIT(14)
  
- static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1501q", .data = &sx1501q_device_data },
+ #define NPCM8XX_DEBOUNCE_MAX		4
+ #define NPCM8XX_DEBOUNCE_NSEC		40
+@@ -1796,6 +1800,61 @@ static const struct pinctrl_pin_desc npcm8xx_pins[] = {
+ 	PINCTRL_PIN(251, "JM2/CP1_GPIO"),
+ 	};
+ 
++static u32 npcm8xx_rmii_output_enable_mask(unsigned int pin)
++{
++	switch (pin) {
++	case 178:
++	case 179:
++	case 180:
++	case 181:
++	case 182:
++	case 193:
++	case 201:
++		return NPCM8XX_INTCR4_R1_RMII_EN;
++	case 84:
++	case 85:
++	case 86:
++	case 87:
++	case 88:
++	case 89:
++	case 200:
++		return NPCM8XX_INTCR4_R2_RMII_EN;
++	case 110:
++	case 111:
++	case 209:
++	case 210:
++	case 211:
++	case 214:
++	case 215:
++		return NPCM8XX_INTCR4_RMII3_EN;
++	default:
++		return 0;
++	}
++}
++
++static void npcm8xx_set_rmii_output_enable(struct regmap *gcr_regmap,
++					   const unsigned int *pin,
++					   int pin_number, int mode)
++{
++	u32 mask = 0;
++	u32 val = 0;
++	u32 bit;
++	int i;
++
++	for (i = 0; i < pin_number; i++) {
++		bit = npcm8xx_rmii_output_enable_mask(pin[i]);
++		mask |= bit;
++
++		if ((mode == fn_r1 && bit == NPCM8XX_INTCR4_R1_RMII_EN) ||
++		    (mode == fn_r2 && bit == NPCM8XX_INTCR4_R2_RMII_EN) ||
++		    (mode == fn_rmii3 && bit == NPCM8XX_INTCR4_RMII3_EN))
++			val |= bit;
++	}
++
++	if (mask)
++		regmap_update_bits(gcr_regmap, NPCM8XX_GCR_INTCR4, mask, val);
++}
++
+ /* Enable mode in pin group */
+ static void npcm8xx_setfunc(struct regmap *gcr_regmap, const unsigned int *pin,
+ 			    int pin_number, int mode)
+@@ -1834,6 +1893,8 @@ static void npcm8xx_setfunc(struct regmap *gcr_regmap, const unsigned int *pin,
+ 						   BIT(cfg->bit4) : 0);
+ 		}
+ 	}
++
++	npcm8xx_set_rmii_output_enable(gcr_regmap, pin, pin_number, mode);
+ }
+ 
+ static int npcm8xx_get_slew_rate(struct npcm8xx_gpio *bank,
 -- 
 2.53.0
 
