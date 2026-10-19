@@ -1,46 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82470634F39;
-	Mon, 19 Oct 2026 14:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298DC6441D5;
+	Mon, 19 Oct 2026 14:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418743; cv=none; b=BKlxX41qwajZJXE3OWIUx4KOrifFtJH/1Krn+RYsVndQWPNvlFWyHREPxAbRe4wz3PT0KlytzZ9WTy3k3j+uAZn2q0vGPa3WUla/MXQHKHV75FlO+UHGg0lLPhwN6a0N4vdPAO3GDmjF5EtKI9EKsarEWkqhZ+hHDfTz2Sy/zS0=
+	t=1792418784; cv=none; b=WYV1KozQ5ce6FuRT+lvvyEOb1gcwotDML5S3eBDdPwXg6CkbRMk39ZUTM6P3hLc3C8Kjy4KgF0jAezFQGpU6WLXRgy46dcJ3MKOYQMLpJGMNnr9gzyF8YT2FI9c4xqwfQTsg+Rfp0t4pGVG5aR0EfSeRF79jxS+ibiWFbEIp18w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418743; c=relaxed/simple;
-	bh=HVjNpkKLxT7qbdAdX4Zdcfqctuwo66CEVxbqw0grWh4=;
+	s=arc-20240116; t=1792418784; c=relaxed/simple;
+	bh=BRYx6sfi+qaICiszrnJe7Au12YDnz4CgawoZ2q31LV0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tCYQqT7xMf+eoFLZbkwbVQRPfh+XnauvM5w0mTisepp1+nLXU8oVNWw4wS4988kiV15ILgzonFRHigTGfCphqJORwYTZuV5PgW4cXSeTMeAspu8XLehVQBT+soxMruGGtsreyuZOwoRLNo0aPVe7HmWPVZrxWr0Fj4Y6LvLh7Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCiU/Fab; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=E2G94hRgys3gCNwxTgRWhRG2eaJlt7eaelLdqaPt/i+ovmJ8HX+v+9logcqu/y4EZ63nIGCOCGwuQIUkGiGIFcSAyo1olfxe+svyTK5rhzXsUawsfXPKMwUrWYcjsM6K/jyWipuBaoq6zPLQ3h7EZCrKqMziRhtnpoo5RBiqABg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/q02KXl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCiU/Fab"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57A431F000C6;
-	Mon, 19 Oct 2026 14:05:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/q02KXl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164011F000C4;
+	Mon, 19 Oct 2026 14:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418740;
-	bh=7cDxpU4h7PLon0nH984O6cOV2WKPkPMLrPLXQMxU55g=;
+	s=k20260515; t=1792418781;
+	bh=DVtJR1vmE5OFuJ9R/f1sgyN9djO4OQA8APg4XWGVC2Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iCiU/FabYqYihhFEr91ABX8s79SlkjGeTjLiekhJEQP5NGPGBQa8+l5D5AWorrbDL
-	 vOtF4ZidpquaQQ9gd7odJvT7472vQZMrYlr/lLnP8WtjDi+IZz/GuHxd5RpDTwYc9o
-	 Np7p5OGJP9U6Iu+eOD8YkYLHE4pZjhbxkvOEwncDCRIKM6haFp21GxX5EazA8+jnH2
-	 Na451Yg0wwxZQlC4gwnH16vQWxReJXz6e3kUIxAHRKgsjnV4aRZLaEPgas6iHM9XZb
-	 6pIUmu3AzV33mDU4ziFCOZrpOPFO+KsaJZ+A3eJMofkcZDufLD95aYYk4555T/FzlX
-	 8YebOD8PQN//Q==
+	b=H/q02KXl/2JLuuMAa5af43kcxUmUv6+Swj3sWhMW1oHtTMj/TlLuNlcANoBjv6/Zq
+	 YN/U+3IWvGUNG1Opt0qmku6ZFiFs/Rz/IEN373rpm7PI+c9UPU/aohrWlltbrqJATG
+	 XHvbmr3jRShmBkSENK34BNnSdN7sScQhXiSLY0zoBPiHGKC6lteIUYsrC6qeAnthTd
+	 MEWdV9B9BnZ7bSQKs5o0w6dcPC6Qh0iqNiHBrWGQOUs2U3Dk6IUAJUfbPFZzyB7kXT
+	 k2UiVehnnX20nauVH8kneerMk9O7rFBHJqks8L7uePaIyh2s6ckhuqtEMATSAuMBr0
+	 uPUqsb09H/GRA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Tomer Maimon <tmaimon77@gmail.com>,
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
 	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	andrew@codeconstruct.com.au,
-	avifishman70@gmail.com,
-	tali.perry1@gmail.com,
-	openbmc@lists.ozlabs.org,
+	brgl@kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.12] pinctrl: npcm8xx: clear pending GPIO events during init
-Date: Mon, 19 Oct 2026 09:52:33 -0400
-Message-ID: <20261019135441.1420968-462-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] gpio: vf610: add missing MODULE_DEVICE_TABLE()
+Date: Mon, 19 Oct 2026 09:53:02 -0400
+Message-ID: <20261019135441.1420968-491-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -56,397 +54,523 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Tomer Maimon <tmaimon77@gmail.com>
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
 
-[ Upstream commit cd39cce4cfd499f555eb8b8252636609c3468f57 ]
+[ Upstream commit 975a1d61260cf74d467f34898fade63165c80735 ]
 
-A bank may retain pending event status across resets of the GPIO block.
-If probe leaves the old state in place, the chained IRQ handler can see
-spurious events as soon as the irqchip is registered.
+The driver has an OF match table wired to .of_match_table, but does
+not export the table with MODULE_DEVICE_TABLE().
 
-Disable event generation and clear EVST before wiring each GPIO bank
-into gpiolib so the driver starts from a known state.
+Add the missing MODULE_DEVICE_TABLE(of, ...) entry so module alias
+information is generated for OF based module autoloading.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Signed-off-by: Linus Walleij <linusw@kernel.org>
+This is a source-level fix.  It does not claim dynamic hardware
+reproduction; the evidence is the driver-owned match table, its use by
+the platform driver, and the missing module alias publication.
+
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Link: https://patch.msgid.link/20260704122123.73004-1-pengpeng@iscas.ac.cn
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-The local tree is **7.3.0-rc4** (`v7.3-rc4-27-gf0100363d8c37`). The
-NPCM8XX pinctrl/GPIO driver is present, the leftover EVEN/EVST init gap
-is real on this path, and the change is a 3-line hardware init fix that
-belongs here.
+I have the mailing-list thread, version mapping, and driver context.
+Compiling the nine-phase analysis and verdict next.
 
-===============================================================
-PHASE 1: COMMIT MESSAGE FORENSICS
-===============================================================
+---
+
+## Phase 1: Commit message forensics
 
 **Step 1.1: PARSE THE SUBJECT LINE**
-Record: **[pinctrl/npcm8xx] [clear] [clear leftover GPIO event
-enable/status before irqchip registration]**
+
+Record: `[gpio: vf610:] [add] [missing MODULE_DEVICE_TABLE() so OF
+module aliases are generated]`
+
+- Subsystem: `gpio: vf610` (Freescale/NXP VF610 / i.MX GPIO driver)
+- Action verb: **add** (missing export — a functional gap, not a new
+  feature)
+- Claimed intent: export the existing OF match table for module
+  autoloading
 
 **Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
+
 Record:
-- Signed-off-by: Tomer Maimon \<tmaimon77@gmail.com\> (author; original
-  NPCM8XX driver author)
-- Signed-off-by: Linus Walleij \<linusw@kernel.org\> (pinctrl
-  maintainer)
-- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, Link:,
-  or Cc: stable (absence is expected)
+- **Fixes:** none (expected; not a negative signal)
+- **Reported-by:** none
+- **Tested-by:** none
+- **Reviewed-by:** Linus Walleij `<linusw@kernel.org>` (GPIO subsystem
+  veteran / former GPIO maintainer)
+- **Acked-by:** none
+- **Link:**
+  `https://patch.msgid.link/20260704122123.73004-1-pengpeng@iscas.ac.cn`
+- **Cc: stable:** none (expected)
+- **Signed-off-by:** Pengpeng Hou `<pengpeng@iscas.ac.cn>` (author)
+- **Signed-off-by:** Bartosz Golaszewski
+  `<bartosz.golaszewski@oss.qualcomm.com>` (current GPIO maintainer who
+  applied it)
+
+Ignored per instructions: any pipeline “Upstream commit” / Sasha Levin
+SOB (none present on the real commit).
+
+Notable: maintainer-applied, reviewed by a GPIO expert. No user/syzbot
+report.
 
 **Step 1.3: ANALYZE THE COMMIT BODY TEXT**
+
 Record:
-- **Bug:** GPIO bank EVEN/EVST can survive GPIO-block reset
-  (bootloader/firmware leftover).
-- **Symptom:** chained IRQ handler sees spurious events as soon as the
-  irqchip is registered at probe.
-- **Root cause:** probe never disables event generation or W1C-clears
-  EVST before `gpiochip_add_data()`.
-- **Fix:** write EVEN=0, then EVST=0xffffffff, per bank, before gpiolib
-  wiring.
-- **Versions:** none stated. Bug is an omission since the driver was
-  added.
+- **Bug:** `vf610_gpio_dt_ids` is wired to `.of_match_table` but is not
+  published with `MODULE_DEVICE_TABLE(of, ...)`.
+- **Symptom:** when `CONFIG_GPIO_VF610=m`, modpost does not emit
+  `of:N*T*C...` aliases, so udev/modprobe will not autoload `gpio-vf610`
+  from DT compatible strings (`fsl,vf610-gpio`, `fsl,imx7ulp-gpio`,
+  `fsl,imx8ulp-gpio`).
+- **Version info in message:** none
+- **Root cause (author):** match table exists and is used by the
+  platform driver; only the module-alias publication is missing. Author
+  explicitly calls it a **source-level** fix with no dynamic hardware
+  repro.
 
 **Step 1.4: DETECT HIDDEN BUG FIXES**
-Record: Not disguised. Subject/body describe a real init-time IRQ bug.
-Cover letter of the v1 8-patch series called the series a vendor-tree
-cleanup, but this patch is a concrete spurious-IRQ fix, not style-only.
 
-===============================================================
-PHASE 2: DIFF ANALYSIS - LINE BY LINE
-===============================================================
+Record: **Not a disguised cleanup.** It is an explicit missing-export
+fix. The “add missing” wording is the standard pattern for module-
+autoload bugs. It is not a refactor, API, or feature.
+
+---
+
+## Phase 2: Diff analysis
 
 **Step 2.1: INVENTORY THE CHANGES**
+
 Record:
-- File: `drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c` (+3 / −0)
-- Function: `npcm8xx_gpio_fw()`
-- Scope: single-file surgical init fix
+- File: `drivers/gpio/gpio-vf610.c` — **+1 / −0**
+- Function/object: file-scope `vf610_gpio_dt_ids[]` (not a function
+  body)
+- Scope: **single-file surgical fix** (one macro)
 
 **Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
+
 Record:
-- **Before:** after `fwnode_irq_get()`, the bank’s EVEN/EVST were left
-  as hardware left them; later `npcm8xx_gpio_register()` set
-  `girq->parent_handler = npcmgpio_irq_handler` and called
-  `devm_gpiochip_add_data()`.
-- **After:** EVEN is forced to 0 (no event generation), then EVST is
-  W1C-cleared with `0xffffffff`, still before irqchip registration.
-- Path: probe/init only (`npcm8xx_pinctrl_probe` → `npcm8xx_gpio_fw`).
+- **Before:** `vf610_gpio_dt_ids` is a `const struct of_device_id[]`
+  used only as `vf610_gpio_driver.driver.of_match_table`. Runtime OF
+  matching still works **if the module is already loaded or the driver
+  is built-in**.
+- **After:** `MODULE_DEVICE_TABLE(of, vf610_gpio_dt_ids)` creates a
+  `__mod_of__vf610_gpio_dt_ids_device_table` alias (see
+  `include/linux/module.h`) so `scripts/mod/file2alias.c` / modpost
+  emits OF modaliases into `.modinfo`.
+- Path affected: **build-time module metadata only**, not probe, IRQ, or
+  GPIO runtime.
 
 **Step 2.3: IDENTIFY THE BUG MECHANISM**
+
 Record:
-- **Category:** hardware leftover interrupt state / spurious IRQ (init
-  hygiene, same class as a quirk).
-- **Mechanism:** `npcmgpio_irq_handler()` does `sts = EVST; en = EVEN;
-  sts &= en;` then `generic_handle_domain_irq()` for set bits. If
-  firmware left EVEN and EVST non-zero, the first chained invocation
-  dispatches IRQs for lines that were never requested. Parent bank IRQs
-  in DT are **GIC_SPI, IRQ_TYPE_LEVEL_HIGH**; leftover asserted status
-  can keep the parent line high (storm / “nobody cared”).
-  `npcmgpio_irq_ack()` writes `BIT(gpio)` to EVST, confirming EVST is
-  write-1-to-clear; writing `0xffffffff` is the correct all-clear.
-  Disabling EVEN first avoids a new event sneaking in between the two
-  writes.
+- **Category:** hardware enablement / module autoload (OF analogue of
+  missing device IDs)
+- **Mechanism:** without the alias, a modular driver is never bound to
+  DT nodes unless something else loads it (`modprobe gpio-vf610`,
+  initramfs list, etc.). GPIO chip never registers → pins/IRQs missing
+  on affected boards.
 
 **Step 2.4: ASSESS THE FIX QUALITY**
-Record:
-- Obviously correct: disable, then W1C-clear, before the handler is
-  installed.
-- Minimal: two MMIO writes, no API/struct/locking changes.
-- Regression risk: very low. Linux GPIO IRQs must be requested through
-  gpiolib; inheriting bootloader unmasks is not a supported ABI.
-  Starting masked+cleared is the normal irqchip model.
 
-===============================================================
-PHASE 3: GIT HISTORY INVESTIGATION
-===============================================================
+Record:
+- **Quality:** obviously correct; this is the canonical one-line fix
+  used across GPIO and many other subsystems.
+- **Regression risk:** **very low**. The macro is `__attribute__((used,
+  alias(...)))`; it does not change probe, locking, or exported APIs.
+  Built-in builds ignore module aliases.
+
+---
+
+## Phase 3: Git history investigation
 
 **Step 3.1: BLAME THE CHANGED LINES**
-Record: The surrounding `npcm8xx_gpio_fw()` bank setup comes from
-**acf4884a57170** (“pinctrl: nuvoton: add NPCM8XX pinctrl and GPIO
-driver”, 2023-08-28), first in **v6.7-rc1**. The bug is missing init,
-present for the lifetime of the driver.
+
+Record:
+- Match table introduced with the driver in `7f2691a19627a8` (Stefan
+  Agner, 2014) — originally **built-in only** (`bool` +
+  `builtin_platform_driver`).
+- Compatible entries updated later: `fsl,imx7ulp-gpio` (2017),
+  `fsl,imx8ulp-gpio` (2023).
+- **Bug became real** when the driver was made modular:
+
+`73dc041f8a602` — `gpio: vf610: Allow building as a module` (Jindong
+Yue, 2025-04-16; merged for **v6.16**)
+
+That commit switched Kconfig to `tristate` and `builtin_platform_driver`
+→ `module_platform_driver` **without** adding `MODULE_DEVICE_TABLE`.
+Reason given: Android GKI cannot carry board-specific drivers built-in.
 
 **Step 3.2: FOLLOW THE FIXES: TAG**
-Record: No Fixes: tag. N/A. Introduced-by is the original driver commit
-above. `git merge-base --is-ancestor acf4884a57170 HEAD` is implicit:
-the file exists on this 7.3 tree.
+
+Record: **No Fixes: tag.** Investigated by history instead. Introducing
+commit `73dc041f8a602` **is** an ancestor of this tree (`git merge-base
+--is-ancestor` succeeded). It is **in v6.16+** including this 7.3-rc4
+checkout. It is **not** in v6.15.
 
 **Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
-Record: Same-day series (2026-07-15) in this file:
-1. drop RTS/CTS from bmcuart1
-2. enable RMII outputs
-3. RG2 drive strength
-4. **this commit**
-5. rename GPIO7 IOX2
-6. move IRQ setup into `request_resources`
-7. JM1/SMB7 pin flags
-8. debounce register selection
 
-This patch does not use symbols or structure from 1–3 or 5–8.
-Standalone.
+Record (recent `drivers/gpio/gpio-vf610.c`):
+- `975a1d61260cf` — this fix
+- `656dc0c6f725a` — generic GPIO chip API (unrelated)
+- `73dc041f8a602` — allow module build (**prerequisite**)
+- No later commits on this file after the fix (empty
+  `975a1d61260cf..HEAD`)
+
+Standalone; not “patch X/Y”. Same-day sibling: `8fe6fa0f223f4` `gpio:
+sifive: add missing MODULE_DEVICE_TABLE()` (same author, same template).
 
 **Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
-Record: Tomer Maimon is the Nuvoton driver author
-(`MODULE_AUTHOR("tomer.maimon@nuvoton.com")`) and added both NPCM7XX and
-NPCM8XX pinctrl drivers. Weight: high.
+
+Record: Pengpeng Hou is **not** the GPIO maintainer. This is part of a
+mechanical sweep of missing `MODULE_DEVICE_TABLE()` across drivers
+(gpio, rtc, vdpa, watchdog, hwmon, fbdev, soc, …). GPIO maintainer still
+applied it after Walleij’s review, which keeps the change trustworthy.
 
 **Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
-Record: None. Uses existing `NPCM8XX_GP_N_EVEN` / `NPCM8XX_GP_N_EVST`
-and `iowrite32()`. Applies standalone.
 
-===============================================================
-PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
-===============================================================
+Record: Runtime prerequisite is only “driver can be a module,” which
+this tree has (`tristate`, `module_platform_driver`). The one-line macro
+needs no extra APIs. **Can apply standalone** on any tree that already
+has `vf610_gpio_dt_ids`.
+
+---
+
+## Phase 4: Mailing list and external research
 
 **Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
+
 Record:
-- `b4 dig -c cd39cce4cfd499f555eb8b8252636609c3468f57` →
-  https://patch.msgid.link/20260715122923.1938327-5-tmaimon77@gmail.com
-- v1 only (`b4 dig -a`): **[PATCH v1 4/8]** in “pinctrl: npcm8xx: fix
-  pinmuxing and configuration handling”
-- Cover letter: issues found by comparing upstream with the Nuvoton
-  tree; this patch is called out as clearing stale GPIO events at probe.
-- Linus Walleij (2026-07-24): “No comments so patches applied.” No NAK,
-  no requested respin.
-- Applied version is v1 (only revision).
+- `b4 dig -c 975a1d61260cf`: matched
+  `https://patch.msgid.link/20260704122123.73004-1-pengpeng@iscas.ac.cn`
+- `b4 dig -a`: **v1 only** (no v2/v3)
+- Thread (mbox): (1) patch from Hou, (2) **Reviewed-by: Linus Walleij**,
+  (3) Bartosz: **“Applied, thanks!”** →
+  `brgl/c/7a6426e72ab53c7cae34952528092efd2e26edc3`
+- No NAK, no stable nomination, no reviewer risk flags
 
 **Step 4.2: CHECK WHO REVIEWED THE PATCH**
-Record (`b4 dig -w`): To/Cc included linusw@kernel.org (pinctrl
-maintainer), brgl@kernel.org (GPIO), andrew@codeconstruct.com.au,
-openbmc@lists.ozlabs.org, linux-gpio, Nuvoton/Google OpenBMC people.
-Maintainer applied the series. No Reviewed-by tags on the commit.
+
+Record (`b4 dig -w`): To/Cc were **Linus Walleij**, **Bartosz
+Golaszewski**, `linux-gpio@vger.kernel.org`, `linux-
+kernel@vger.kernel.org`. Right maintainers and list.
 
 **Step 4.3: SEARCH FOR THE BUG REPORT**
-Record: No Reported-by, bugzilla, or syzbot. Trigger is SoC/firmware
-leftover state, not a fuzzer path. Author is the vendor driver owner;
-that is how this class of BMC GPIO bugs usually surfaces.
+
+Record: no Reported-by / bugzilla / syzbot. Evidence is the missing
+export, not a field crash. Same class as other “fix module autoloading”
+GPIO commits (e.g. `11baa36d31732` gpio-lpc32xx, `e6382fcf98907` gpio-
+spacemit).
 
 **Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
-Record: 8-patch v1 series. Other patches are pinmux/drive-
-strength/rename/lockdep-IRQ-startup/debounce — not prerequisites. This
-3-line hunk is self-contained.
+
+Record: standalone `[PATCH]`, not a numbered series. Parallel same-day
+sifive fix is independent.
 
 **Step 4.5: CHECK STABLE MAILING LIST HISTORY**
-Record: lore.kernel.org/stable search returned HTTP 403. **UNVERIFIED:**
-no confirmation of prior stable-list discussion. gpio list mbox had no
-“Cc: stable” and no objection.
 
-===============================================================
-PHASE 5: CODE SEMANTIC ANALYSIS
-===============================================================
+Record: **UNVERIFIED** — `lore.kernel.org` and `patch.msgid.link`
+returned **HTTP 403** via WebFetch and curl. GPIO thread was obtained
+via `b4 dig -m` (does not discuss stable).
 
-**Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF**
-Record: `npcm8xx_gpio_fw()` (modified). Related, not edited:
-`npcmgpio_irq_handler()`, `npcm8xx_gpio_register()`,
-`npcm8xx_pinctrl_probe()`.
+---
+
+## Phase 5: Code semantic analysis
+
+**Step 5.1: KEY FUNCTIONS**
+
+Record: no function body changed. Touches file-scope
+`vf610_gpio_dt_ids[]`. Related symbols: `vf610_gpio_driver`,
+`vf610_gpio_probe`, `module_platform_driver`.
 
 **Step 5.2: TRACE CALLERS**
+
 Record:
-- `npcm8xx_gpio_fw()` ← `npcm8xx_pinctrl_probe()` only (platform probe,
-  `arch_initcall`).
-- `npcmgpio_irq_handler()` ← chained parent handler for each of 8 GPIO
-  banks.
-- Context: boot/probe, then hardirq for bank SPI 116–123.
+- `of_match_table = vf610_gpio_dt_ids` in `vf610_gpio_driver` (verified
+  in-file at line 351)
+- Bound via `module_platform_driver` → `platform_driver_register` at
+  module init
+- `MODULE_DEVICE_TABLE` is **not** a runtime caller graph; modpost
+  consumes the alias at **build** time
+
+semcode MCP: **not available** (namespace search returned no semcode
+tools).
 
 **Step 5.3: TRACE CALLEES**
-Record: `iowrite32()` to EVEN and EVST. No alloc, no locks. Later
-`npcm8xx_gpio_register()` → `devm_gpiochip_add_data()`.
+
+Record: probe uses `device_get_match_data()` / GPIO chip registration.
+Unchanged. New code allocates nothing, takes no locks, does no I/O.
 
 **Step 5.4: FOLLOW THE CALL CHAIN**
-Record: DT `compatible = "nuvoton,npcm845-pinctrl"` with 8
-`gpio@f001x000` nodes, each `interrupts = <GIC_SPI 11x
-IRQ_TYPE_LEVEL_HIGH>`. Reachable on every NPCM845/NPCM8XX boot
-(OpenBMC). Not a syscall fuzzer path; userspace GPIO IRQ consumers can
-be hit by the spurious events if leftover enables match those lines.
+
+Record: path is **reachable from userspace/boot** on NXP DT platforms
+when the driver is a module: DT node with those compatibles → udev
+`modalias` → `modprobe gpio-vf610`. The bug is that this chain is
+**broken** without aliases. Unprivileged users do not need a special
+exploit; missing GPIO is a boot/bring-up failure.
+
+DT users verified under `arch/`:
+- `arch/arm/boot/dts/nxp/vf/vfxxx.dtsi` — `fsl,vf610-gpio`
+- `arch/arm/boot/dts/nxp/imx/imx7ulp.dtsi` — `fsl,imx7ulp-gpio`
+- `arch/arm64/boot/dts/freescale/imx8ulp.dtsi`, `imx91_93_common.dtsi`,
+  `imx94.dtsi`, `imx95.dtsi`, `imx952.dtsi` — `fsl,imx8ulp-gpio`
+  (including i.MX93/94/95)
 
 **Step 5.5: SEARCH FOR SIMILAR PATTERNS**
-Record: NPCM7XX has the same EVEN/EVST handler and **does not** clear
-them at init (same latent class, out of scope). `pinctrl-owl.c` also
-clears pending GPIO IRQs in its handler path. Pattern is established.
 
-===============================================================
-PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
-===============================================================
+Record: same missing-table pattern recently fixed in `gpio-sifive.c`,
+and earlier in spacemit/lpc32xx/cadence/ath79/ts4800. Systematic, well-
+understood class.
+
+---
+
+## Phase 6: Cross-referencing against the local tree
 
 **Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
-Record: Yes. `drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c` is in this
-7.3-rc4 tree. Driver since v6.7. Without the two writes,
-`npcm8xx_gpio_fw()` still maps banks and `npcm8xx_gpio_register()` still
-installs `npcmgpio_irq_handler`. Bug introduced with the driver, long
-before 7.3.
+
+Record:
+- Local tree: **`v7.3-rc4-27-gf0100363d8c37`**, `make kernelversion` =
+  **7.3.0-rc4** (mainline, not an LTS branch)
+- `CONFIG_GPIO_VF610` is **tristate**; `module_platform_driver` is
+  present — the modular bug **does exist** in this lineage
+- The **fix commit `975a1d61260cf` is already an ancestor of HEAD**
+  (landed in **v7.3-rc1**; **not** in v7.2)
+- Introducing modularization `73dc041f8a602` **is** in this tree (since
+  v6.16)
+- Current file already has `MODULE_DEVICE_TABLE(of, vf610_gpio_dt_ids)`
+  at line 86
+
+Approximate introduction of the **bug:** **v6.16** (April/July 2025).
+Driver itself: **v3.x/v4.x era** (2014).
 
 **Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
-Record: Clean apply. Hunk sits immediately after `fwnode_irq_get()` in
-`npcm8xx_gpio_fw()`, which exists here. No structural mismatch.
+
+Record: **clean apply** on this tree’s driver — one line after the
+existing `of_device_id` table. Match-table layout here matches the
+commit hunk. No conflicting local changes.
 
 **Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
-Record: No earlier equivalent EVEN/EVST init. This is the first such
-clear on this file (`git log --grep='pending GPIO'` / `'spurious'` on
-that path only hits this commit).
 
-===============================================================
-PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
-===============================================================
+Record: this exact fix **is already in HEAD**. No alternate/earlier
+equivalent found (`git log --oneline --grep=MODULE_DEVICE_TABLE --
+drivers/gpio/gpio-vf610.c` is this commit). No follow-up on the file
+after it.
 
-**Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY**
-Record: **pinctrl/GPIO, Nuvoton NPCM8XX (BMC SoC).** Criticality:
-**PERIPHERAL** for the kernel as a whole, **IMPORTANT** for NPCM845
-OpenBMC/server BMC users. `CONFIG_PINCTRL_NPCM8XX` depends on `ARCH_NPCM
-|| COMPILE_TEST`.
+For **this checkout as a 7.3 baseline**, 7.3.y would inherit the fix
+from rc1; the evaluation still asks whether the change is **stable-
+worthy given that this tree’s driver is modular**.
 
-**Step 7.2: ASSESS SUBSYSTEM ACTIVITY**
-Record: Mature driver (v6.7), with a burst of vendor fixes in the 7.3
-window. Not staging.
+---
 
-===============================================================
-PHASE 8: IMPACT AND RISK ASSESSMENT
-===============================================================
+## Phase 7: Subsystem and maintainer context
 
-**Step 8.1: DETERMINE WHO IS AFFECTED**
-Record: Driver-specific / platform-specific: Nuvoton NPCM8XX (e.g.
-NPCM845) systems using this pinctrl driver. Typical population: OpenBMC
-on that SoC.
+**Step 7.1: SUBSYSTEM AND CRITICALITY**
 
-**Step 8.2: DETERMINE THE TRIGGER CONDITIONS**
-Record: Boot/probe, when firmware or a partial GPIO-block reset left
-EVEN/EVST non-zero. Common on BMCs (bootloader uses GPIOs). Not
-unprivileged-syscall; it is default hardware bring-up.
+Record: `drivers/gpio/` — GPIO. **IMPORTANT** (not core mm/sched, but
+platform GPIO is boot-critical on NXP i.MX/Vybrid: resets, IRQs,
+regulators). Not staging.
 
-**Step 8.3: DETERMINE THE FAILURE MODE SEVERITY**
+**Step 7.2: SUBSYSTEM ACTIVITY**
+
+Record: GPIO is actively maintained (Bartosz); this file still gets API
+updates. The autoload hole is from the v6.16 modularization, not ancient
+dead code.
+
+---
+
+## Phase 8: Impact and risk assessment
+
+**Step 8.1: WHO IS AFFECTED**
+
+Record: **driver-specific / config-specific**: `CONFIG_GPIO_VF610=m` on
+`ARCH_MXC` (Vybrid VF610, i.MX7ULP, i.MX8ULP, and later i.MX9x that
+compatible-string to `fsl,imx8ulp-gpio`). Built-in (`=y`) is unaffected.
+Kconfig has `default y if SOC_VF610` only; i.MX7/8/9 do **not**
+default-y on that symbol, so modular builds are realistic (explicitly
+for **Android GKI**).
+
+**Step 8.2: TRIGGER CONDITIONS**
+
 Record:
-- Spurious chained IRQs at probe.
-- Parent IRQs are **level-high**; leftover enable+status can hold the
-  line → IRQ storm, “nobody cared”, hung boot.
-- `generic_handle_domain_irq()` on never-requested lines (this driver
-  defaults `girq->handler = handle_level_irq`, not `handle_bad_irq`).
-- **Severity: HIGH** (boot IRQ storm / spurious IRQs on BMC GPIO). Not a
-  universal panic, but a real stability failure on affected boards.
+- Trigger: boot/udev on DT platforms with `GPIO_VF610=m` and no explicit
+  `modprobe`
+- Commonness: every such boot, not a race
+- Unprivileged exploit: **no**; availability/bring-up bug, not a
+  sanitizer crash
 
-**Step 8.4: CALCULATE RISK-BENEFIT RATIO**
+**Step 8.3: FAILURE MODE SEVERITY**
+
 Record:
-- **Benefit:** high for NPCM8XX (known-state IRQ init; prevents probe-
-  time storms).
-- **Risk:** very low (2 MMIO writes, probe only).
-- **Ratio:** strongly in favor of applying.
+- Failure: GPIO controller never probes → missing gpiochip, pin IRQs,
+  board GPIOs
+- Not oops/UAF/corruption
+- Severity: **MEDIUM** functionally (hardware silent-fail), **HIGH** on
+  boards that need those GPIOs at boot
+- Fits “oh, that’s not good” plus the **device-ID / autoload** exception
 
-===============================================================
-PHASE 9: FINAL SYNTHESIS
-===============================================================
+**Step 8.4: RISK-BENEFIT RATIO**
+
+Record:
+- **Benefit:** restores autoload for an existing, in-tree driver on
+  current NXP SoCs and GKI modular images
+- **Risk:** **very low** (1 line, metadata only)
+- **Ratio:** favorable for stable
+
+---
+
+## Phase 9: Final synthesis
 
 **Step 9.1: COMPILE THE EVIDENCE**
 
-FOR:
-- Real leftover-hardware IRQ bug, not a refactor.
-- Level-triggered parent IRQs make leftover EVST/EVEN a boot storm risk.
-- 3 lines, obviously correct (mask then W1C-clear before handler
-  install).
-- Author is the vendor driver owner; pinctrl maintainer applied it.
-- Driver and insertion point exist in this 7.3 tree; no prerequisites.
-- Same class as accepted GPIO “clear pending at init” fixes.
+**FOR backporting:**
+- Real bug: OF module aliases never generated after v6.16 made the
+  driver `tristate`
+- One line, obviously correct, no runtime behavior change for built-in
+- Same class as device-ID additions (explicitly allowed) and many
+  historical “fix module autoloading” GPIO patches
+- Used on VF610, i.MX7ULP, i.MX8ULP, i.MX93/94/95 DT
+- Modularization was for Android GKI — the config where autoload matters
+- Reviewed by Linus Walleij; applied by Bartosz Golaszewski
+- Applies cleanly; no series dependencies
+- This tree **has** the modular driver, so the bug class is applicable
+  here
 
-AGAINST:
-- No user/syzbot report; found via vendor-tree comparison.
-- Affects one BMC SoC family, not core kernel.
-- No Cc: stable (not a negative by itself).
-- Series mixed in feature/rename patches (this hunk does not depend on
-  them).
+**AGAINST:**
+- Not a crash, deadlock, corruption, or security hole
+- No user/syzbot report; author labels it source-level
+- Mechanical sweep by a non-maintainer
+- `SOC_VF610` defaults the driver to `y` (Vybrid built-in path is fine)
+- Workaround: load the module by name
+- **Already in this 7.3-rc4 history** (since 7.3-rc1) — but that is
+  expected for a mainline commit under review, not a reason to treat the
+  fix as non-bugs
 
-UNRESOLVED:
-- Could not search lore.kernel.org/stable (HTTP 403).
-- No independent Tested-by.
+**UNRESOLVED:**
+- lore.kernel.org/stable search (HTTP 403)
+- Whether Android GKI already lists this module in a manual load list
+  (unverified; aliases still help udev/modprobe)
 
-**Step 9.2: APPLY THE STABLE RULES CHECKLIST**
-1. Obviously correct and tested? **PASS** — two register writes,
-   maintainer applied; no test robot/NAK. Formal Tested-by absent, but
-   the change is reviewable from the handler and DT IRQ type.
-2. Fixes a real bug that affects users? **PASS** — leftover EVEN/EVST →
-   spurious chained IRQs on NPCM8XX probe.
-3. Important issue? **PASS** — boot-time spurious/level IRQ storm on BMC
-   GPIO, not cosmetic.
-4. Small and contained? **PASS** — +3 lines, one function.
-5. No new features or APIs? **PASS**
-6. Can apply to the local tree? **PASS** — file, registers, and
-   `npcm8xx_gpio_fw()` insertion point are here.
+**Step 9.2: STABLE RULES CHECKLIST**
 
-**Step 9.3: CHECK FOR EXCEPTION CATEGORIES**
-Record: Hardware init/workaround (clear stale IRQ state). Not a new ID,
-but the same “make existing hardware boot cleanly” exception.
+1. Obviously correct and tested? **PASS** — canonical macro; reviewed
+   and applied by GPIO maintainers
+2. Fixes a real bug that affects users? **PASS** — modular OF autoload
+   is broken; GKI/i.MX modular users hit it
+3. Important issue? **PASS** (as device-ID/hardware-enablement / “oh,
+   that’s not good”) — GPIO never appears; not a panic
+4. Small and contained? **PASS** — +1 line, one file
+5. No new features or APIs? **PASS** — publishes existing match table
+6. Can apply to the local tree? **PASS** — code present; hunk matches;
+   tree already contains the commit because it is mainline 7.3
 
-**Step 9.4: MAKE YOUR DECISION**
-This is a small, correct, self-contained fix for leftover GPIO event
-state that can fire the chained handler as soon as the irqchip is
-registered. The buggy path exists in this 7.3 tree. It should be applied
-here.
+**Step 9.3: EXCEPTION CATEGORIES**
 
-What the commit solves: NPCM8XX GPIO banks can keep EVEN/EVST across
-GPIO-block reset. Probe used to register the chained handler on that
-dirty state, so leftover enables × pending status become spurious (and,
-with level-high parents, potentially stuck) interrupts at boot.
+Record: **Device ID / module alias publication for an existing driver**
+(OF `MODULE_DEVICE_TABLE`). Not a new driver, not a new uAPI.
 
-Stable rules: obviously correct, real bug, important for that platform,
-tiny, no new API, applies cleanly.
+**Step 9.4: DECISION**
 
-Risk vs benefit: two MMIO writes at probe vs boot IRQ storms on OpenBMC
-NPCM845. Benefit dominates.
+This tree is **mainline 7.3-rc4**, where `gpio-vf610` is modular.
+Missing `MODULE_DEVICE_TABLE(of, ...)` is a real, user-visible autoload
+bug on DT NXP platforms and GKI-style `=m` builds. The fix is one
+obviously correct line with essentially no regression risk, which is the
+same bar used for new device IDs in stable.
 
-Concerns: no public reproducer; NPCM7XX still has the same gap (does not
-block this fix). No extra backports required.
+---
 
-Verification:
-- [Phase 1] Parsed tags: only Tomer Maimon + Linus Walleij SOBs; no
-  Fixes/Reported-by/stable
-- [Phase 2] Diff: +3 lines in `npcm8xx_gpio_fw()`; EVEN=0 then
-  EVST=0xffffffff
-- [Phase 2] Handler at lines 210–227 ANDs EVST with EVEN then
-  `generic_handle_domain_irq()`
-- [Phase 2] `npcmgpio_irq_ack()` writes `BIT(gpio)` to EVST → W1C
-  confirmed
-- [Phase 3] Driver added in acf4884a57170 (v6.7-rc1); blame of
-  surrounding init is that commit
-- [Phase 3] `git merge-base --is-ancestor` of the fix vs HEAD: commit is
-  in this 7.3 history; code path exists either way
-- [Phase 3] Standalone vs 8-patch series: no shared symbols with
-  neighboring patches
-- [Phase 4] `b4 dig -c cd39cce4cfd49`: lore msgid
-  20260715122923.1938327-5; v1 4/8
-- [Phase 4] `b4 dig -a`: v1 only
-- [Phase 4] `b4 dig -w`: linusw, brgl, openbmc, linux-gpio
-- [Phase 4] mbox: Linus Walleij “No comments so patches applied.”; no
-  NAK; no Cc: stable
-- [Phase 4] Cover letter (LKML archive): vendor-tree comparison; this
-  patch listed as stale-event clear
-- [Phase 4] lore.kernel.org/stable: 403, UNVERIFIED
-- [Phase 5] Callers: `npcm8xx_pinctrl_probe` only; 8 DT GPIO banks,
-  GIC_SPI 116–123 level-high
-- [Phase 6] `git describe HEAD`: v7.3-rc4-27-gf0100363d8c37; `make
-  kernelversion`: 7.3.0-rc4
-- [Phase 6] File and `fwnode_irq_get` insertion point present; apply
-  would be clean
-- [Phase 8] Failure mode: spurious chained GPIO IRQs / possible level-
-  triggered storm at probe; HIGH on NPCM8XX, not core-wide
-- UNVERIFIED: stable@ list discussion; independent user reports
+### What the commit solves (for stable users)
+
+When `CONFIG_GPIO_VF610=m`, the kernel never announces OF aliases for
+`fsl,vf610-gpio` / `fsl,imx7ulp-gpio` / `fsl,imx8ulp-gpio`. udev
+therefore does not load the module, so the GPIO controller never probes.
+That became a live bug in **v6.16** when the driver was switched from
+`bool` to `tristate` for Android GKI. Adding `MODULE_DEVICE_TABLE(of,
+vf610_gpio_dt_ids)` only restores the aliases the match table already
+describes.
+
+### Risk vs benefit
+
+Benefit is working GPIO autoload on NXP boards that build this driver as
+a module. Risk is negligible: module metadata only.
+
+### Concerns
+
+No field crash report; severity is bring-up rather than oops. That does
+not outweigh the device-ID exception and the tiny, maintainer-acked
+diff. No extra backports are required on this tree.
+
+---
+
+### Verification
+
+- **[Phase 1]** Parsed tags: Reviewed-by Linus Walleij; Link msgid; SOB
+  Hou + Bartosz; no Fixes/Reported-by/Cc:stable
+- **[Phase 1]** Body: missing OF `MODULE_DEVICE_TABLE`; source-level, no
+  hardware repro claimed
+- **[Phase 2]** Diff: `drivers/gpio/gpio-vf610.c` +1 line after
+  `vf610_gpio_dt_ids[]`
+- **[Phase 2]** `include/linux/module.h:255-257`: macro is used+alias
+  for file2alias; no runtime side effects
+- **[Phase 3]** `git blame` lines 80–86: table from `7f2691a19627a8`
+  (2014); MODULE_DEVICE_TABLE from `975a1d61260cf`
+- **[Phase 3]** `git show 73dc041f8a602`: tristate +
+  `module_platform_driver` without MODULE_DEVICE_TABLE; Android GKI
+  rationale
+- **[Phase 3]** `git merge-base --is-ancestor 73dc041f8a602 HEAD` → yes;
+  `975a1d61260cf HEAD` → yes
+- **[Phase 3]** Version tags: modular **in v6.16+**; fix **in
+  v7.3-rc1+**, **not** in v7.2
+- **[Phase 3]** `git log --oneline -20 -- drivers/gpio/gpio-vf610.c`: no
+  series; sibling sifive commit same author
+- **[Phase 3]** `git log 975a1d61260cf..HEAD -- drivers/gpio/gpio-
+  vf610.c`: empty (no follow-up)
+- **[Phase 4]** `b4 dig -c`: lore/msgid
+  `20260704122123.73004-1-pengpeng@iscas.ac.cn`
+- **[Phase 4]** `b4 dig -a`: v1 only
+- **[Phase 4]** `b4 dig -w`: Walleij, Bartosz, linux-gpio, linux-kernel
+- **[Phase 4]** `b4 dig -m`: Walleij Reviewed-by; Bartosz “Applied,
+  thanks!”; no NAK; no Cc:stable in thread
+- **[Phase 4]** WebFetch lore/msgid: **403** UNVERIFIED via HTTP; mbox
+  used instead
+- **[Phase 4]** lore.kernel.org/stable curl: **403** UNVERIFIED
+- **[Phase 5]** semcode: **unavailable**
+- **[Phase 5]** Read `gpio-vf610.c`: `of_match_table =
+  vf610_gpio_dt_ids`; `module_platform_driver`
+- **[Phase 5]** Grep DT: vfxxx, imx7ulp, imx8ulp, imx91/93, imx94,
+  imx95, imx952
+- **[Phase 6]** `git describe HEAD` = `v7.3-rc4-27-gf0100363d8c37`;
+  `make kernelversion` = 7.3.0-rc4
+- **[Phase 6]** Kconfig: `tristate`, `default y if SOC_VF610` only
+- **[Phase 8]** Failure mode: module not autoloaded → GPIO missing; not
+  a panic
+- **UNVERIFIED:** whether GKI already force-loads this `.ko` by name;
+  stable@ thread beyond 403
+
+The change is a one-line, maintainer-reviewed autoload fix for an
+existing modular GPIO driver. That is appropriate stable material for
+this tree’s code.
 
 **YES**
 
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-vf610.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-index c94441b2acdae..22cc87d43ea69 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-@@ -2412,6 +2412,9 @@ static int npcm8xx_gpio_fw(struct npcm8xx_pinctrl *pctrl)
- 		if (ret < 0)
- 			return dev_err_probe(dev, ret, "Failed to retrieve IRQ for bank %u\n", id);
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index aa8586d8a787f..adfa2c2d5873d 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -83,6 +83,7 @@ static const struct of_device_id vf610_gpio_dt_ids[] = {
+ 	{ .compatible = "fsl,imx8ulp-gpio",	.data = &imx8ulp_data, },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, vf610_gpio_dt_ids);
  
-+		iowrite32(0, pctrl->gpio_bank[id].base + NPCM8XX_GP_N_EVEN);
-+		iowrite32(0xffffffff, pctrl->gpio_bank[id].base + NPCM8XX_GP_N_EVST);
-+
- 		pctrl->gpio_bank[id].irq = ret;
- 		pctrl->gpio_bank[id].irq_chip = npcmgpio_irqchip;
- 		pctrl->gpio_bank[id].irqbase = id * NPCM8XX_GPIO_PER_BANK;
+ static inline void vf610_gpio_writel(u32 val, void __iomem *reg)
+ {
 -- 
 2.53.0
 
