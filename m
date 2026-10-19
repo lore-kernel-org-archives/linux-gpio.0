@@ -1,108 +1,114 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.asus.com (ms.asus.com [103.10.4.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8F54119FD
-	for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 06:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F36483BF3;
+	Mon, 19 Oct 2026 06:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.10.4.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792392975; cv=none; b=KdFYiuH3UXNBVmAMi1092xO+g43NmhLw2g48JW3zcGOM5crHvWiPkIT/0/b6x8AO1PK6BIdNhgbqd55BbfZCpDIgPOpN4JqX2i/SFPAFKL38V36QIvl2e0FlBXbvA34ttmw70TPLQluU/qobfZLOtHNYZh/CLYAG+GU1j5EY190=
+	t=1792393068; cv=none; b=WWYCAJblyQ9WIgWDo0AYJTudxN3lPAvKSqXNofM8zRMU3uBIOx+eNpeDmtSaKtOSF5W001Z4spHX8ghpVD3nUqp0r8lgvPNOn8fgpirFSK+W0b2uE2HVXR2ztvy4xOrcttN1ytzsPe+soMj34hYKORnRM4PZ4VimyfZnpUHOkB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792392975; c=relaxed/simple;
-	bh=M1tBQqzBGiCpQaTKxk2z3UZV5Za8hjx2LmCMzlbWuaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Us4J9CzlwOIgOR2FLreKrNkw27a86RUBd09N4BUsoE9tmQbAN5ChAgyl+euojntVfWAGG6T3MCYbdVsupqYWpQUDD0W2LrIslzZDyXj9IUrm9oUCllNP9Tetg8IoXG/Oq8dx4eKbZu2bF9RwfPJ135WXjyEP0dxeVPWgV7SaDek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5e6b5794d26so1951318e0c.1
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 23:56:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792392972; x=1792997772;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=e1sVMAfuH6WXhZbotLQobiSRzr1r+7aDu2aCsNTstok=;
-        b=I+7a66VYLM2kWhfKyYGrpvSOelyNMGa/fPC4NINeCg44wL/NfTCFfbZgwiSoeUmqQ2
-         KnkGojPSlis3jQeZqqoZ/oGDBAiTn5SISsycdrIyVfVlvcvK/NUjZJnRD9kpyc5ic4Yb
-         xdnFgldVG4N0msXUWMaj7sERLOJpc8Mryu2DKYQBzRLjRDV7nQNx83YQG3zwV6WuaUZU
-         AMrjoa7i8kiOli0Z8241ryJ/Zl3o3gYnfPLNYFzmXkFtn06bmd5XWzxKkB9ISt4ST6S8
-         KGo+y6Rvuxr2SM9UaiHbRcSMYut3rBv+xRAOw+RBpDUhSxv5CiPWE+RFUTNqVxBiyZ+l
-         h5Ww==
-X-Forwarded-Encrypted: i=1; AKwUvBzd39nUcEqBgRAgbmvJ0yHqjyVYD/S8oPSwsfMQkibSxGDXC5WEATHH8NV3gPdd8qxkGm6N0MCoBOZb@vger.kernel.org
-X-Gm-Message-State: AFq9FYLJrdYOhKynq8gek2ZvHs4PZSQpVEVCj36hW7ITmtTi1/zWuLBB
-	QxrWNM6Gko6HLiUmKwqVPWqxYg2Kq8S2v6L0ahkd9+weasICE2mgYuPuNKeCdUtr
-X-Gm-Gg: AYBFou0Hz34g4jwH4soGg/CnYTUokvQNtTu+x98ro7Urg9uhFw9Zf8EAuqF9DuLZmro
-	0V14oqWenPzSRWj07KhWTz7DPYNqGo25yTJtr+h8aRSGFhRdumM1h73TBwM0g7cgX4UyXfMyceI
-	b0HhUkNbQaM0bhuz9N2Y25Px30Yf27q90Q2oYDwK9BovVmVNysluR5QuZyr2x3wpPhzjhwSIuqV
-	vXAGEZEZGd7d6Ry6hsfWnkVb5w7Mfgx48MXLOiedpocnqSK75Eisp3lB/0Fi6CoJGLhPcKQxdKd
-	RyitTSsdQTbNXjkRm6atcQ1Kn174XYLuL6f9eZgZq4J+44ZUpMHOMUYmM62awVr1bTvTbUF0riI
-	FVt3UKr/i1VfcRw7G/M4g/ECYRxfqD/8B1J4ZskmtJ9B3rUWnBtcmuaN02lqIYoDEUMU98utsbW
-	0r0HfiVOJtTtrHY+5rIrY3vsK4oQj0sRvW7nXKlJV6q0xZ8aL8N9Z3m4Chhy5BdTvvX9mEptXEL
-	ipQD91Y4RYZPnlTMRjmLFGdKmvR0o1M+l/q
-X-Received: by 2002:a05:6122:c144:b0:5cd:a80c:102c with SMTP id 71dfb90a1353d-5ea97facc34mr2152463e0c.7.1792392972600;
-        Sun, 18 Oct 2026 23:56:12 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ea9b536ccdsm8994744e0c.13.2026.10.18.23.56.12
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Oct 2026 23:56:12 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-9909e82513fso1126046241.0
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Oct 2026 23:56:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw+p80G1TBXAcn3tuzfqg8K4xmqywRKs7A11/Zl+v0IievERX0025j/y+GSLOamIoTSyBiU4mO9cZMq@vger.kernel.org
-X-Received: by 2002:a05:6102:312e:b0:7aa:d0a9:c5aa with SMTP id
- ada2fe7eead31-7cc18121fa2mr2108461137.18.1792392972220; Sun, 18 Oct 2026
- 23:56:12 -0700 (PDT)
+	s=arc-20240116; t=1792393068; c=relaxed/simple;
+	bh=l/leG6AzefIuh//lQeTSr/3Ax386tHNwFfHYlSivCss=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZhuqVgVyepIlCtKSy9xMXABBnygkVDadm03FKDYS00TaehpMpBW7+tQ9xB6uWpPArwR9S/qFBRqakqCC4yZ0M/GcQ/A7KFcHwvhCi5O+2CH7RrwwodIScPNiJUTQ7vMewykjplsU8VjyvjKE9xyml2aMK0uK1leXG9eneo7cWb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=asmedia.com.tw; spf=pass smtp.mailfrom=asmedia.com.tw; dkim=pass (1024-bit key) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.b=doOQIN94; arc=none smtp.client-ip=103.10.4.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=asmedia.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmedia.com.tw
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.b="doOQIN94"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=asmedia.com.tw; i=@asmedia.com.tw; q=dns/txt;
+  s=asmediacomtw; t=1792393066; x=1823929066;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=l/leG6AzefIuh//lQeTSr/3Ax386tHNwFfHYlSivCss=;
+  b=doOQIN94ZYJhUGTEs3ezBHrJN9BZApNwZ9rQKAckhr+jhGkyW3FmuYUu
+   olmWYCv1LQRFEsMgl6lkyAIkHW/xHgEmn+E7Pu92rp7EFdwEBQXbjeGXL
+   S0+hh4KljINNaEdDMPAGtGx+iRV4qZAodl30juIBJFPUzrbjHlARX7iAd
+   8=;
+X-CSE-ConnectionGUID: mCrMdnQeRB23bEuJK4Fy+Q==
+X-CSE-MsgGUID: 3YsrtiejRpSIkgckci4U8g==
+Received: from unknown (HELO APZA005TMD.corpnet.asus) ([172.22.47.65])
+  by ms.asus.com with ESMTP; 19 Oct 2026 14:57:22 +0800
+Received: from mymail.asus.com (42.70.0.11) by APZA005TMD.corpnet.asus
+ (172.22.47.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 19 Oct
+ 2026 14:57:21 +0800
+From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+To: <Markus.Elfring@web.de>
+CC: <linusw@kernel.org>, <brgl@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <Yd_Tseng@asmedia.com.tw>,
+	<Jesse1_Chang@asmedia.com.tw>, <Richard_Hsu@asmedia.com.tw>,
+	<Chloe_Chen@asmedia.com.tw>
+Subject: RE: [PATCH v2] gpio: amdptpci: add support for AMD PT PCI controller
+Date: Mon, 19 Oct 2026 14:57:01 +0800
+Message-ID: <20261019065702.31436-1-Chloe_Chen@asmedia.com.tw>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261018161042.3298045-1-sahaj123.sc@gmail.com>
-In-Reply-To: <20261018161042.3298045-1-sahaj123.sc@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Oct 2026 08:56:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXdB+1zib0AtA5zoJ0UeZR4TYeUSiP2w1DEHZ=1yKGYBA@mail.gmail.com>
-X-Gm-Features: AclHuK9VSv0QigMKGBrmgQqHURXBQJfLZxnvzcmSGSBGel5gQdO-OSfdEC31cxs
-Message-ID: <CAMuHMdXdB+1zib0AtA5zoJ0UeZR4TYeUSiP2w1DEHZ=1yKGYBA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: Preserve wakeup accounting on parent IRQ failure
-To: Sahaj Chaudhari <sahaj123.sc@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Ulf Hansson <ulfh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-ClientProxiedBy: APZA002EXB.corpnet.asus (172.22.6.14) To
+ APZA005TMD.corpnet.asus (172.22.47.65)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3239-9.1.2019-30266.002
+X-TM-AS-Result: No-10--16.773800-8.000000
+X-TMASE-MatchedRID: VPleTT1nwdT5ETspAEX/nhhvdi92BBAuUd1JKREWJmRdTMQtEIkUXSc8
+	djr4wzMZ1mh3V2G9QO9bLB1l5ZCZImychE78+cDjFm7cDHk2CrxIZTXFTJArQUfA+mhLvGJNjTU
+	I8ELfeWUC1IWtBSdZI+57KXgfyjOGgb7nR2R/5qUarEv/I2gPytXNOAQ2MSi22anGH/Lzelys0m
+	4CN4NCDVo7GmCOJYd1VXS3CAt+DxiLN8EktMLbcCHhZY8ek8XKtWRczjgeok/+nHQyxv8W5Kbhq
+	D2zQeiCsRB7GgmTujN+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--16.773800-8.000000
+X-TMASE-Version: SMEX-14.0.0.3239-9.1.2019-30266.002
+X-TM-SNTS-SMTP: 	7951E8F052E207A0715459B6017E177EBCAECD5BC9089724F72999A80CC40F002000:8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On Sun, 18 Oct 2026 at 18:10, Sahaj Chaudhari <sahaj123.sc@gmail.com> wrote:
-> pca953x_irq_set_wake() updates wakeup_path before asking the parent
-> IRQ controller to change its wake state. If irq_set_irq_wake() fails,
-> the IRQ core rolls back its wake state but the driver's counter remains
-> changed.
->
-> A failed enable can therefore leave the expander marked as part of the
-> wakeup path when no child IRQ has successfully enabled wakeup. A failed
-> disable can make the driver stop retaining power even though wakeup is
-> still enabled. The suspend and resume paths use this counter to decide
-> whether to disable or enable the regulator.
->
-> Update wakeup_path only after the parent operation succeeds, leaving it
-> unchanged on error.
->
-> Fixes: f70fbc15bae2 ("gpio: pca953x: Configure wake-up path when wake-up is enabled")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sahaj Chaudhari <sahaj123.sc@gmail.com>
+SGkgTWFya3VzLAoKPj4gVGhpcyBjb21taXQgaW1wbGVtZW50cyB0aGUgbmV3IGdwaW8tYW1kcHRw
+Y2kgZHJpdmVyIHRvIHN1cHBvcnQgdGhlCj7igKYKCj5TZWUgYWxzbzoKPmh0dHBzOi8vZ2l0Lmtl
+cm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVl
+L0RvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0P2g9djcuMy1yYzcj
+bjk0Cgo+PiBTaWduZWQtb2ZmLWJ5OiBTenV5aW5nIENoZW4gPENobG9lX0NoZW5AYXNtZWRpYS5j
+b20udHc+Pgo+PiBDby1hdXRob3JlZC1ieTogWUQgVHNlbmcgPFlkX1RzZW5nQGFzbWVkaWEuY29t
+LnR3Pj4KCj5TZWUgYWxzbzoKPmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
+ZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9z
+dWJtaXR0aW5nLXBhdGNoZXMucnN0P2g9djcuMy1yYzcjbjUwMgoKPj4gdjEtPnYyOgo+4oCmCj4+
+IC0tLQo+4oCmCj4+ICBkcml2ZXJzL2dwaW8vZ3Bpby1hbWRwdHBjaS5jIHwgODkxIAo+PiArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwoKPlBsZWFzZSBtb3ZlIHBhdGNoIHZlcnNp
+b24gZGVzY3JpcHRpb25zIGJlaGluZCB0aGUgbWFya2VyIGxpbmUuCj5odHRwczovL2dpdC5rZXJu
+ZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9E
+b2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdD9oPXY3LjMtcmM3I243
+OTMKCkkgd2lsbCBjb3JyZWN0IHRoZSBwYXRjaCBmb3JtYXQgaW4gdjMuCj7igKYKPj4gKysrIGIv
+ZHJpdmVycy9ncGlvL2dwaW8tYW1kcHRwY2kuYwo+PiBAQCAtMCwwICsxLDg5MSBAQAo+4oCmCj4+
+ICtzdGF0aWMgaW50IHB0MjdfZ3Bpb19nZXRfZGlyZWN0aW9uKHN0cnVjdCBncGlvX2NoaXAgKmdj
+LCB1bnNpZ25lZCBpbnQgCj4+ICtvZmZzZXQpIHsKPuKApgo+PiArCXJhd19zcGluX2xvY2tfaXJx
+c2F2ZSgmY2hpcC0+bG9jaywgZmxhZ3MpOwo+PiArCXZhbCA9IHB0MjdfcmQzMihjaGlwLCBQVDI3
+X1JFR19ESVIpOwo+PiArCXJhd19zcGluX3VubG9ja19pcnFyZXN0b3JlKCZjaGlwLT5sb2NrLCBm
+bGFncyk7Cj7igKYKCj5VbmRlciB3aGljaCBjaXJjdW1zdGFuY2VzIHdvdWxkIHlvdSBiZWNvbWUg
+aW50ZXJlc3RlZCB0byBhcHBseSBhIHN0YXRlbWVudCBsaWtlIOKAnGd1YXJkKHJhd19zcGlubG9j
+a19pcnFzYXZlKSgmY2hpcC0+PmxvY2spO+KAnT8KPmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29t
+L2xpbnV4L3Y3LjMtcmM2L3NvdXJjZS9pbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmgjTDU5NC1MNTk3
+CgpUaGFua3MgZm9yIHRoZSBwb2ludGVyLiBTaW1wbGUgbG9jay91bmxvY2sgc2VjdGlvbnMgbGlr
+ZSB0aGUgb25lIGluIApwdDI3X2dwaW9fZ2V0X2RpcmVjdGlvbigpIGFyZSBnb29kIGNhbmRpZGF0
+ZXMgZm9yIGd1YXJkKHJhd19zcGlubG9ja19pcnFzYXZlKSwgCmFuZCB3ZSB3aWxsIHVzZSBpdCB3
+aGVyZSBpdCBmaXRzIGluIHYzLgoKPlJlZ2FyZHMsCj5NYXJrdXMKCnRoYW5rcywKCkJlc3QgcmVn
+YXJkcywKQ2hsb2UgQ2hlbgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT0NClRoaXMgZW1haWwgYW5kIGFueSBhdHRhY2htZW50cyB0byBpdCBj
+b250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBhbmQgYXJlIGludGVuZGVkIHNvbGVseSBm
+b3IgdGhlIHVzZSBvZiB0aGUgaW5kaXZpZHVhbCB0byB3aG9tIGl0IA0KaXMgYWRkcmVzc2VkLklm
+IHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQgb3IgcmVjZWl2ZSBpdCBhY2NpZGVu
+dGFsbHksIHBsZWFzZSBpbW1lZGlhdGVseSBub3RpZnkgdGhlIHNlbmRlciBieSBlLW1haWwgYW5k
+IGRlbGV0ZSANCnRoZSBtZXNzYWdlIGFuZCBhbnkgYXR0YWNobWVudHMgZnJvbSB5b3VyIGNvbXB1
+dGVyIHN5c3RlbSwgYW5kIGRlc3Ryb3kgYWxsIGhhcmQgY29waWVzLiBJZiBhbnksIHBsZWFzZSBi
+ZSBhZHZpc2VkIHRoYXQgYW55IHVuYXV0aG9yaXplZCANCmRpc2Nsb3N1cmUsIGNvcHlpbmcsIGRp
+c3RyaWJ1dGlvbiBvciBhbnkgYWN0aW9uIHRha2VuIG9yIG9taXR0ZWQgaW4gcmVsaWFuY2Ugb24g
+dGhpcywgaXMgaWxsZWdhbCBhbmQgcHJvaGliaXRlZC4gRnVydGhlcm1vcmUsIGFueSB2aWV3cyAN
+Cm9yIG9waW5pb25zIGV4cHJlc3NlZCBhcmUgc29sZWx5IHRob3NlIG9mIHRoZSBhdXRob3IgYW5k
+IGRvIG5vdCByZXByZXNlbnQgdGhvc2Ugb2YgQVNNZWRpYSBUZWNobm9sb2d5IEluYy4gVGhhbmsg
+eW91IGZvciB5b3VyIGNvb3BlcmF0aW9uLg0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09Cg==
 
-My bad...
-Fixes: f70fbc15bae2c89f ("gpio: pca953x: Configure wake-up path when
-wake-up is enabled")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
