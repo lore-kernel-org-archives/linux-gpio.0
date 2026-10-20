@@ -1,87 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792501228;
-	b=PuIovUi4jpCnLxNCdjA7dndXMH9XsTNX+zs+8fPkiIUuf9fQEl8Uy9w4sTfMlK9xLQmv
-	 NrnzhsIeGoWRKSpvW+qXwjoQRXX/7RQ5JyCGo3I94TZ5t8eyvQGlWwyEOQzGWLtRWPuNA
-	 posb6LiLzkMEuPr8FJTXI38LHV3JkrtsHi1o/GwJERPRdKxxCJCtYdS1lnTlNhEcnUUEc
-	 IBSY6ZJ64H8hgMHXr8wf+fiYxGwQG91gKE35Uz4G6zqst6tnqY7s4Y1XVQTjGLzIR5RO+
-	 7g8xk9j+VLuGaDCRVt9JjX1gFS9u7npz2W33JBj8QolX0Te8ITH2zPp+2lUNvo3UCiw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792501228;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=ThcckzMwPNlQzjyX8+RLOp31Su+73AzB9RfMA4Z1d2Q=;
-	b=4jEh+Fem+kYzas5LQO2ZM9Dt7gCecCtenUMr/qQI3Gkrmh+opPWhcWICNi5tmdCxjgUX
-	 QP3LPW16KVTkkQ/lSAWiTNZPplDIR8VS7SmRy/he3PGpyYK1ZD/NEKus6+jG7EZzK/6qa
-	 +qitleoVvwMGdEV5T+X2A0w11ZaZ4RU60v3i36fybFrdpQAb3g9CMxB15g0PZdIi/p0MW
-	 t6DPSMG/tcCk8BiyWt8uCe+lD7Ww8gUNmoD/omS9yrmQmWMSSxoQRmpw266aMRjUv18wf
-	 tcxA3JnbFjkgiiOl12X+fwQKZoStnKuO+lmq8gkZa/GIvY7APqfD8qppJFFHCCs3Q1Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=bkPIlHVk;
-	arc=none smtp.remote-ip=209.85.128.54
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.19
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792501245;
+	b=gJyOfxkRUJf8tAB5s9MEyHI+eOtJNKo/1JJ/fZCcIdx5U/WkQV7lTvUqondXywcB5z3j
+	 yZ3uGGIlrxuQBzzgFJVLP/GSkaAnswbE1Jy2EI8pMHuU9JOAbg7477d2M4CQe03mkoFu7
+	 QlQGc6G8lW7NZSRhAaZ5eCpYJNs0BvK7IfPaBDtRqNAY7f5q+y3XuwxDKWzWvAzFGLdFo
+	 INCEOXqT0GBS8M7Fa4HzW/hTUeJ/nP0nPTkK9GQpRVlyMWluiKy4hj9tD3Mbos3lE7Wfk
+	 QxADcVX5+SMKbDB8QtFXC2nhxbHdPfNeOC4Ij1kcejsIadyZ9VPAeD5kIINHXohOLhA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792501245;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=V3ruPjjooQKCRazVlkbw+RYz48mcKnp+V7ydeCZitI8=;
+	b=XYT2BoCqB/jtSDUzWe0wcoDYlvHchCfBtNbd8M33HhQbbN/IqY3qzzNNyvIehW+OkzuH
+	 Th67NI72UN/unaHZKr4b44TXeo/qp3jGL0JR9URNsejSF4INcy6yivok8eqL3tMtXPpBM
+	 3k7jHc7NnVSZFTlKimkVyBxcVubzdy9j0zAl2u/qCPmuOLB3RIs+koTqFYedJXUvGzjDn
+	 Y52OEhlk4MAEtPvPTQhnVOpWiLJzNMmd/jlL+N5pOas//zyIxu8HjWhmzK6IW+bu2IJMU
+	 Nb+oVPqr1oVHwcmSLXuPIwjUtJfGh2H/cZz+CBjtkb3XJk0Sn8IBWOuD2DJn2HBMY7w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=T3fB1kPo;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.19
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010019.outbound.protection.outlook.com [52.101.46.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3A660A4ACE
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 13:00:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2E3A660A4ACE
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B95960A262E;
+	Tue, 20 Oct 2026 13:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B95960A262E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=bkPIlHVk
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a1e2957d7eso22662135e9.2
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 06:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792501226; x=1793106026; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ThcckzMwPNlQzjyX8+RLOp31Su+73AzB9RfMA4Z1d2Q=;
-        b=bkPIlHVkl2+6DyV+bms3fSk0DUfaEBzatJ2hLyXeVQ6lKCBHOkuXcyYp2ucasQV7Y6
-         Bzktlgjsblk+BT4Ms8druX1pFOKQE3DjybW8t7BeTCoZMIRHkrCGr4t/AdyRfIb6VFic
-         +4CyCGDl5Ta9QPiLfoJHk0EALsoeuo1kuuua0HCYtIJMqR92YGEsJsjKnlqTAPIheXo+
-         2I5c596M8g2SjCgjuH9KoREHp6KRO7jhmZnYPC90YCz2cr3KAsnMqyCge2ecpPMZszVO
-         hVFKSV0IefGdfXTM9Bt3w1kMdXB7p0rS5qSP655OOQwtXGTDhfdp9EKuG9g2hPbBYlCP
-         at5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792501226; x=1793106026;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ThcckzMwPNlQzjyX8+RLOp31Su+73AzB9RfMA4Z1d2Q=;
-        b=NaPhqib+p1ed4gp1qXGt4XB6odMjxhbr0C3tuPInhT+MNafunyZMGmufxzaobEwc+j
-         W4h+l7jDfhFuUA5K3vLdTVPz31fNclQ8+AaKLVQFOsbl6Kr1X73ECepuB3txUvRmsYio
-         NZklniEDuu6LRwLMqj8//IlIh3i8byv4eDoj/xHAIwnCWjLxI6mrb1R0aIVpx+/Xl3WI
-         70zTOMOjZLYaN20ybSdNPea0j4nWGNzWb3peQxTtZhhXCMZMyFjPNGBwoCBvg7eHPtsp
-         IVkz523+l6iDM75eujoiOaTmRYz1bwMCtkRlab4KecZBCzkliG0OPHdvJAs91rrP3Kpo
-         ALfQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwfEr/CE+jnKmsA04LfCXAkuafmOv/PdwysT+iu07rlVfir8Y2ugKn7fQLMDLhOV5JQPnJYt3Nzgbef@vger.kernel.org
-X-Gm-Message-State: AFq9FYKnBOM+j21H5lY0zN9nFQtBQ21O9uTas0R0Wa8snU9etbT28PEw
-	7rpKkQQue/v0X6FxrGwrfqfOGPWlDf9rdxSrUGexmp/y/yoeunAFplJW
-X-Gm-Gg: AYBFou3td4VAIlwdD1dAXeCdx+KtmMsOg5PZHbB0SP3m/SSjyHNw5h+OtgnnLq+q1yK
-	krh3uZAAe60SNuUSeT+utS8iNgQn/zSTSVug3EtMubA/XfoZ3aU8cMOMELn0o2tHzlNRiDXSia2
-	ChCp+Yl1kRfPDqjZKndMtoZcn8L4vRNSPlEX8camhm86jJSQZ3Y9T3XmQLDGCe79TXCXMpPj3hM
-	/uyeoSdJKx8CPL8x82isB6EXJ+rW/Td+/wbEdcaIa7ylRVdY8N7+xpohcuQ1Zoj3DpqBPkiMxly
-	a1GxZACBVljcmUTcIE1bM/VQkMcre8Bh/t1o8GeQT2dYWJfDDjU6GHMK+Smd8oXfhqFI0I5KrrM
-	NibOF7QKpie8ur50WGb7owqwnOAAhlrA9dK7sZ6IQVx5K42LJfINLnHBzFosWjsKiOsWrqW8RQL
-	9ddCp1JiiC5AtKg1Sb/ujx2v8jc3P+e3CcZ+xnzk0WwrBwVyWx5QsXWc5IwsqBgwNa16T30K7iT
-	ssJPdh3so5jqct+pHgYEwMA/BYnpk07R/9R2mK4R33akCz7R1Msqr0mUH6YJjBxk2bjMvDnPBbz
-	WUQEGQCJTQ==
-X-Received: by 2002:a05:600c:6298:b0:4a1:96cd:2f60 with SMTP id 5b1f17b1804b1-4a1d75ce285mr218735335e9.3.1792501226292;
-        Tue, 20 Oct 2026 06:00:26 -0700 (PDT)
-Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e1d830e91sm6114754f8f.54.2026.10.20.06.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 06:00:25 -0700 (PDT)
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Date: Tue, 20 Oct 2026 15:00:17 +0200
-Subject: [PATCH v3 6/8] of: unittest: Test fw_devlink with PWM nexus maps
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=T3fB1kPo
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jent13gWzTuCuesn0BpQW+kv72KEhh6VGICzAQWrTPS6WnFcBpxBbSuHqEjRYmYXMKmarh+nGEKmLB4LlBl2Zl3Pc+7s0vovINCBW9ANLDZmUzZl6HDAQ7WF/h4jxo714RSxa0XvD5UtIkmSFP1Xq4wbUK2MQ/tIGUUknmCI34oJT3wJArsQoU1742YM8BD36lMHUNel1Lv4yWS9VHZj5NuhkzR3gGdSrA842bJaElOJHb6KMO8j7RHr66bs57Ky4R9AL26qbMPU1lyd6NNDWYHRKpsybS6KnvEkue+DGIGoBiD7M/f/x2hN7TE81nRCngeLav+va2xNi9Tn9XGZRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V3ruPjjooQKCRazVlkbw+RYz48mcKnp+V7ydeCZitI8=;
+ b=oKJMnspF5TqK6qVoGngF3y4GIRHSVwBplomca3XheEBt6zY+LM8rGrHSWYNlDMcWka2j6WXspEjko4PrUgBJuS6RqHVwIw0tV5T8OSu199wjLcmgpVvZUaALi3z7sJFb6xRts4S7j0XDkn7NuDLXIcwjnL2TkphRPLiEBLABEL6L4Wn+QXM4s03KaDNIb30bwjkyhwSL29PSbcz82VJfHvgms7qtHRIJfOXJVt66fjWDvIE8dYxP6K89yyLAHuDdTrXG2gV6a18YWu4vobL1VZf0WWzUURFWlo+EUO8oRukCHpg5a6KTvPqJpGVrzDiPXBYMG8Np49ieDxVB31RtmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V3ruPjjooQKCRazVlkbw+RYz48mcKnp+V7ydeCZitI8=;
+ b=T3fB1kPoWeUKuS7ROXHnLRubdzrhFNr1RpNOI/YbJNVeHuQPi7fxkf/vrfsfze7qxSZyyRD4l8LfNjl5zj34Kxl/LPMB1mFWH9tRle50YGdoDYzg2ATbtBShsMGA3crJqWD6aPJ35xlk835iK63Z4nmvMCDYa/e7letT9d2K4R9mo2qvc8eVBOXJAn/q3X1/qUH4QBP223CQ8ip6yZNGA6fbx/0vp7UZWsteeordzchgHuCJfeZK7TuKFgw4vVIcspkBElejYxd/cyZIRSsYXSYdwsRLEr2zA/z3skJSRNIU++kjzcz4/x/sJ0ns7j2hEB5SJsIwLmPepCmqGtpnHw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by CY8PR12MB7414.namprd12.prod.outlook.com (2603:10b6:930:5e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Tue, 20 Oct
+ 2026 13:00:38 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0522.017; Tue, 20 Oct 2026
+ 13:00:37 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v3 1/6] gpiolib: wait for pending label frees before cleaning up desc_srcu
+Date: Tue, 20 Oct 2026 16:00:23 +0300
+Message-ID: <20261020-gpiolib-chip-removal-v3-1-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261020-gpiolib-chip-removal-v3-0-aambrozewicz@nvidia.com>
+References: <20261020-gpiolib-chip-removal-v3-0-aambrozewicz@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PNYP287CA0097.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:2b9::11) To PH7PR12MB5974.namprd12.prod.outlook.com
+ (2603:10b6:510:1d9::19)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,108 +104,106 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261020-fw-devlink-nexus-ready-v3-6-fd6f1c17e16d@toradex.com>
-References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>
-Cc: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
- Frank Li <Frank.li@oss.nxp.com>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Herve Codina <herve.codina@bootlin.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, 
- Leonardo Costa <leonardo.costa@toradex.com>, 
- Frieder Schrempf <frieder.schrempf@kontron.de>, devicetree@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-X-Mailer: b4 0.13.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|CY8PR12MB7414:EE_
+X-MS-Office365-Filtering-Correlation-Id: f361f2a5-516b-4ab9-b021-08df2eaa2317
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|23010399003|366016|56012099006|11063799006|261009223027099003|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	dB4pjsEc2SzJ5puXjatJ27cZ6NkwssNd3mWuxyshCC0NkTTLz3i2xgfi9x5tGUdBZ36Zd2fN3WNdmQpXw4SypNgmeO4T8UnXWkZI5gYMgAJSRo0VAzjZ7ABr2lTPf8du1h3q1ldlETBSGwNdd3dnX7rvThA/qmbXWSwdCD+FXk41FA3EBvEG3wdWnWqeYap1og73o4S/aa4Q8G0EWfYjzqWaXjrz5DaCiNR8MIVxUTC7M4nZys2Z6IggWIrWVFbEJcSjE3nQxaUMkWxglzXzNtW81HorGqcTPmMMrJZIkI4My84ifVGQ3+BppUuEkBqqMRnrvcuErRFbOHXry33e8hYdz3Pxfuh8pPjphTRy/eIjOeZ9dNlgurBe9wnuzP6oH8JuVZDy2TrBEakXHFjr0cQZKQbvlnhA4WoVZwLanVTU7gicJ6ZwEVI2dHOy6qrNgaj3PlKPyT7EEkzmKySC8kIwBZh9mOGKj+7VEtFtbm03n6W66W47s+xMYE40lYrHLpwJ/XN58ujSggMwTlhStF2Ig0tfPUAqA1PSYf60OQYVsTt/fQ3fidlPjyk0ebgsKtdMdw0CHtWUIDWkz6JoDAgelCbp+EOPZGZInoMOPbU3TXccUUHeCx8htNQp0kXR2NI60ls4QjLEsoWyxQPpFXHHduO6CnydToZfXVZhqVI=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(23010399003)(366016)(56012099006)(11063799006)(261009223027099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CpnYlkO6ZTgIDrdD81YlzSuqq4OLA2zpfp+uxex13tHXaS4IKCUOqt4S2d9/?=
+ =?us-ascii?Q?rijPn0GbTT+kdV56TDtIOheZy008yzz28cvBv31cjCeu7Ry4LWj0sSYR2e4e?=
+ =?us-ascii?Q?7yyoobOIHe5G3a6xrR7/vjOoyH9o6+d1NBiJOThDNo83ls1VM2oyikRSmh7O?=
+ =?us-ascii?Q?B89Mm8s40e8rLJUFpeOIULN9I3c1W6mx8xzVZoQ+You/ZaTeFetWULXutLnJ?=
+ =?us-ascii?Q?ILX9xNHOXIcysVKsb21Vr3G7NlulkB0Wk9NF64KlLmxNOb6K59EGxWM6+kTq?=
+ =?us-ascii?Q?52o0qVUMf4kFHFWYZtfOCYnV5LUnvouwVD608haORepq2sdFrSDj0i0wZCk8?=
+ =?us-ascii?Q?S3sZU/dor6TL4Y6BCJCG8W+xIWoFyWa4x8zhnwqMgpGO8OUF051XFLz9XGE7?=
+ =?us-ascii?Q?ayInXztzu8LJ6QodHYunZfEXWiq9xSAP99Y2CqUdSd8ZQ1xis2/hTiDpTjiU?=
+ =?us-ascii?Q?tyBBJ97sV5J2myL+e34NtVZg2f8XZHXMZW5T/ArTV9GR8Ci53xxwcVWT3rxC?=
+ =?us-ascii?Q?SGOsKUy60IW8kyR2hPuaUtTseyiPDuGPEjYimNSgyXNn5icWLe5gT66RX+ix?=
+ =?us-ascii?Q?C3tdF7FTkvAKLqn00XoTlaDYgEk07tTw+t4m4gRF8MNFAJE5GrrUdWY0DB27?=
+ =?us-ascii?Q?+n4JXMu9TjpFdE6qjBp7zKdO1Mp5XG9HPApM7ouMIlhBv0c6NTwOV087mo7l?=
+ =?us-ascii?Q?A4gKk/a5InaTdSkjpbewNfc30RhdTEdKAr346UsMRyd5J+cjjSdtFIa8JvE2?=
+ =?us-ascii?Q?5IBv0OH/wRZSDUh3iUDxtfFYBf4/P28FerbpEb9UJP9mCqivha++i7CalbTP?=
+ =?us-ascii?Q?QK6TUUtO2SV0iFG9wDI8hnwqS45eUp2+KgUJBGxl5zg73/be9M/zFszc9Uom?=
+ =?us-ascii?Q?XYRBgtPerTXS4hhmRedGBXOsBM5XAEi6z8olIg2+6jE3eBRzqF8Tperpz5Pu?=
+ =?us-ascii?Q?ICntqNgIvxxvnrc7iwf1MMbddltIR70Z/pMXj1rDVGadA5IafUUKgGDHocoy?=
+ =?us-ascii?Q?ns8UCg+kM8CYhKZS0lbPoWlVXgdhEYgXQPyIGi+10D17O6AlqvHS+y/376pt?=
+ =?us-ascii?Q?M+56kIZ+CxqgjOQw8A+PoX9CHTdQy+KoSTddC/jEvRJqxfWWe7NQ+R4P9cAr?=
+ =?us-ascii?Q?iX46zGFmMtajE9G/Nw5bPkoNfpGj7T9/7ScWuhe3gAbmAlDxTlhnx3GAgWXb?=
+ =?us-ascii?Q?B/NMKBR04wZiQvvM56TpM2OAlRSoGH+SkesQ61HRoy4gM3raIf/gtThD+HP6?=
+ =?us-ascii?Q?M155Am7ndXf9+uSPNsXrd6LnM+cFuT1GW8kz4nqlzNod6xJjiAkcv0bD287V?=
+ =?us-ascii?Q?5L50jQGn+CuxYFAVtE3/2jIN1f8k255xnqbDQhqpVAEkZU3+yITdm34YcaOi?=
+ =?us-ascii?Q?1p4Sth0CmNo1eGt5y7BTQdlPYgewLqbRINKDdY9Nw43U4Zq/D02HxbXagtB7?=
+ =?us-ascii?Q?9uEtO+GlB6ZQxnhnNZRJKwFPb1JY+LeZce/T41Ak+1MNUHKktp2/wSYcuIUo?=
+ =?us-ascii?Q?tjDl3ce9HBQk+7gboRKnUvtgyRixuWYF1C3qXPBJs9h3TYGtlpCTSscG8v+l?=
+ =?us-ascii?Q?cW0HvwbLSFwOgD/H5Sc8QrAyRF1LCrK0GW20iysgyc204SBGKV8AqJS6wP1k?=
+ =?us-ascii?Q?0p/eVSa4AvTbZuYO16tz5fs/Cft6eSCPaqNiGo9KoWA/3tX6HGIvIXCqQvJy?=
+ =?us-ascii?Q?BPXdT98ZYx7YJ+iKJp5mrTZOGbv8zRx7P1yZL+2r5gIw5Q9OHL4oqRsEcR1T?=
+ =?us-ascii?Q?O/vuj54MKQ=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f361f2a5-516b-4ab9-b021-08df2eaa2317
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 13:00:37.8850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cy0H/OOzeU1uEokr8EXimB4oXmTc1E7jMX3Qp1rB2tz5YTKXiMcp/57eJuN/0qZBp7f+DApr1foJeVVLc9IyNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7414
 
-From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+desc_set_label() frees the old label with call_srcu() on
+gdev->desc_srcu, and gpiodev_release() calls synchronize_srcu() before
+cleanup_srcu_struct(). synchronize_srcu() waits for a grace period, not
+for queued callbacks. Once the srcu_struct uses per-CPU callback lists,
+a label freed by gpiochip_free_hogs() can still be pending, and
+cleanup_srcu_struct() warns:
 
-Extend the fw_devlink OF unit tests with PWM references routed through a
-nexus map. Verify that the mapped consumer has exactly one link to the
-final PWM provider rather than to the nexus.
+  WARNING: kernel/rcu/srcutree.c:706 at cleanup_srcu_struct+0x239/0x330, CPU#0: init/1
+  Call Trace:
+   gpiodev_release
+   device_release
+   kobject_put
+   devres_release_all
+   device_release_driver_internal
+   platform_device_unregister
+   gpio_sim_device_deactivate
 
-Also cover a direct PWM reference to ensure that it continues to resolve
-to the original provider when no map is present.
+Use srcu_barrier(), which waits for them.
 
-Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+Reproduced with a hogged gpio-sim line, setting the chip live and back
+on a 4-CPU guest with srcutree.convert_to_big=1: it warns within 60
+cycles; with this change, 1000 cycles pass.
+
+Fixes: a86d27693066 ("gpiolib: fix the speed of descriptor label setting with SRCU")
+Cc: stable@vger.kernel.org
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Assisted-by: LLM
+Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 ---
-v3: Route pwm-map entries to two providers, use a middle entry (Herve)
-v2: https://lore.kernel.org/r/20260910-fw-devlink-nexus-ready-v2-5-17ac82dbe226@toradex.com
----
- drivers/of/unittest-data/tests-phandle.dtsi | 22 ++++++++++++++++++++++
- drivers/of/unittest.c                       |  2 ++
- 2 files changed, 24 insertions(+)
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/unittest-data/tests-phandle.dtsi b/drivers/of/unittest-data/tests-phandle.dtsi
-index f5d7ee072c90..1fd465bb8f79 100644
---- a/drivers/of/unittest-data/tests-phandle.dtsi
-+++ b/drivers/of/unittest-data/tests-phandle.dtsi
-@@ -89,13 +89,27 @@ gpio_provider_b: gpio-controller-b {
- 					#gpio-cells = <2>;
- 				};
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6932278cdb9f..e5326c472a54 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -895,7 +895,7 @@ static void gpiodev_release(struct device *dev)
+ 	struct gpio_device *gdev = to_gpio_device(dev);
  
-+				pwm_provider_a: pwm-controller-a {
-+					#pwm-cells = <2>;
-+				};
-+
-+				pwm_provider_b: pwm-controller-b {
-+					#pwm-cells = <2>;
-+				};
-+
- 				fwdevlink_nexus: nexus {
- 					#gpio-cells = <2>;
-+					#pwm-cells = <2>;
- 					gpio-map = <1 0 &gpio_provider_a 3 0>,
- 						   <2 0 &gpio_provider_b 5 0>,
- 						   <3 0 &gpio_provider_a 7 0>;
- 					gpio-map-mask = <0xffffffff 0>;
- 					gpio-map-pass-thru = <0 0xffffffff>;
-+					pwm-map = <1 0 &pwm_provider_a 3 0>,
-+						  <2 0 &pwm_provider_b 5 0>,
-+						  <3 0 &pwm_provider_a 7 0>;
-+					pwm-map-mask = <0xffffffff 0>;
-+					pwm-map-pass-thru = <0 0xffffffff>;
- 				};
+ 	/* Call pending kfree()s for descriptor labels. */
+-	synchronize_srcu(&gdev->desc_srcu);
++	srcu_barrier(&gdev->desc_srcu);
+ 	cleanup_srcu_struct(&gdev->desc_srcu);
  
- 				gpio-compat-consumer {
-@@ -117,6 +131,14 @@ gpio-direct-consumer {
- 				gpio-singular-consumer {
- 					test-gpio = <&fwdevlink_nexus 2 1>;
- 				};
-+
-+				pwm-consumer {
-+					pwms = <&fwdevlink_nexus 2 1000>;
-+				};
-+
-+				pwm-direct-consumer {
-+					pwms = <&pwm_provider_a 1 0>;
-+				};
- 			};
- 		};
- 	};
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index f15c110dbf4d..320a992c4310 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -770,6 +770,8 @@ static void __init of_unittest_fw_devlink(void)
- 		{ "gpio-consumer", "gpio-controller-b" },
- 		{ "gpio-direct-consumer", "gpio-controller-a" },
- 		{ "gpio-singular-consumer", "gpio-controller-b" },
-+		{ "pwm-consumer", "pwm-controller-b" },
-+		{ "pwm-direct-consumer", "pwm-controller-a" },
- 	};
- 	struct device_node *tests;
- 	int i;
-
+ 	ida_free(&gpio_ida, gdev->id);
 -- 
 2.43.0
 
