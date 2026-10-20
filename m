@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792456691;
-	b=arQ9bFHHYW41h5omMltBc2WkZ2R35L82Uk9sR4m/GbMO48RJYjn3zUhcj8c0XPPioVC/
-	 BGIrqke0R8ra74H1EmdnzJxO3HO1Ql/mwMdv6KT6iuXlj3eIp4sSO+RDRDy3uvEPra5Cv
-	 /KE07aD3DKXL984jM4C3UMNwznjsPuw6qA9Z1jE9CspF9K24eGAokMIipeSrR6dWjqbC2
-	 rtyebdlaEp7yCbRN4F2fUTPM5tq+NvRgpIF7rJGca0iqhDyBANw476DXdtxtXnkmkueWk
-	 nQ8ylv+8nef23FapxIkpJjx3V9eCJJ48+vmD97VPmq4mGqjLOZ1TS0vpuxBFOOw1ljA==
+	t=1792456693;
+	b=dKu0W5IkRjviAKsbSHUz7RzxXVfgDdLrALTBNXLu306XtvViAZ3IeR1qRPV1p3iThZZj
+	 7/6lDG9UVUHLKJlNCtx+R3wTXLF6EcJqts0LJAo41wqiwow4zV91qoewbBdAuOfYM/X9U
+	 mdtO8eRUaO4FXv96NIMWU4UUJx0nU7PCMjIOiOF3Ujrrk5n788QVXAo9NJ0bz5P0OuamV
+	 Qd1/neHk1N2kpcyyN3YjCXWPLfWWnfx569//6UlGIDDbUGmsWubRfdBc/UXVGdZ8ei7v5
+	 6WjYAds47BQ/av8X7OU4X3bf0sRbYAWClTsoPK9kD2I485WoFaoFr120RNtafbERCtg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792456691;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792456693;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=mojc9oUGKoL5xRIH+sn0yNL2fIvEPVJXRu+9L0mIv3A=;
-	b=SwUvK9JZ80D+rNYJK+ZaiIVf7USK+WQR4tVwJfgMNK+k1jHKS+0q9IFBUknadz7uvM9O
-	 eOeUfjhXcQsWAnId6/TAoWh8RO0KtKPQYEtyOj29OFtfd2C5bAVprMUVNAo/GnPyJVY9l
-	 AobRHNCqtJcGCYciMo5BMN3XLLqnyII9xwfS2f0o+2JCKaE2/tFVkEwsY6PU373uA/Yxn
-	 PMsrKa3+CHqDhDFjxGcc0CR6iqRXX/zeVGvs2I6mnNLjEZpqRj8okP6roW39gRhZtlW98
-	 DYGxq1RI4nC3u8hBp6YV+e4tY9m77JVinNFd5G4OS6YPv9MrjaksGPof4XCSsiVrQEQ==
+	bh=eTNgECk0aJjIcx7mStKdSjGex/85xJLMVF19JFpf26Y=;
+	b=dOmhpmKeLXNnB6qsrmif1FsgiROK3VcsPozouuGHE1m7clVoRWPOVJilxudqAU31FIs+
+	 dKFx6j/I+FWELO9+4JE1/6JEz5yqwNXHDhuwrQV/zdw6WYjTHWvHDxvsaR5pppAM7jJZ3
+	 BpVUB7Q/aFrYhhW0RgLzJN4jk8geyRlpcjTtkphGB9Hjcu7ME8lSMsDt0yEv5KRTQ1sse
+	 rmm2yhxB+mrID2BB+u92+rCPooPt2gFP4ls7aqreEGQSWbyanezFDp3fL/IxuncmV8Rx4
+	 bHB7gwYAGYtLfHy4etVMfzUVbPBIYXc+kARFZ9s7mKkNPpoTWr52P56+a2gxSKhu+xg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=J14OKaKj;
-	arc=none smtp.remote-ip=209.85.161.43
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ZabfXPH3;
+	arc=none smtp.remote-ip=209.85.210.48
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0AE606A31D
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 00:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD0AE606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE48C606A31C
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 00:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BE48C606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=J14OKaKj
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6dd4f3f696aso1630192eaf.1
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 17:38:10 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ZabfXPH3
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-81ae6aefdceso2423062a34.0
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 17:38:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792456689; x=1793061489; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792456692; x=1793061492; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=mojc9oUGKoL5xRIH+sn0yNL2fIvEPVJXRu+9L0mIv3A=;
-        b=J14OKaKjegI+hf34qYKT3g/uETm3ZdA9WlFqkdGlks0B2XfNBbaOecA3UaqYuLQ/s6
-         RQcRe52pPBxyu1MJtTeghcNk/HeZDDFTmgXDb08eA6/r13ITimE7RIwuqJyTvjg98be0
-         zS0VQDmA6dc8tFXqxNEvef4TsIiaGngQUotaOrPW4Lqhori4TIMjXERZ2J3oDHdD+71c
-         6fYpJmv0CUeCodzgeAyEccqnxDmYm3+BnBV+nT02nz2mM7P/rQQfpkJOQWLMqK0e7xtG
-         WG1HxfZkUMQqQyzdmoMX2WixQnmVipfkSgTFkEy5kc6iIB+9O0KiimvyVKyZ6bRCiBYq
-         cqXA==
+        bh=eTNgECk0aJjIcx7mStKdSjGex/85xJLMVF19JFpf26Y=;
+        b=ZabfXPH3s59tkZw9SJRDHQPG/F87Q+4JNsIsUOlP5CqkdFSMKbLho8J9Qnpdh3AJ2O
+         3oJpZo2ruoIUZxlF/4ZFEy3IlGiHd5tLmDVTOTH1VL78q2vrfD8pGWV2enZiQFtqeyl3
+         ipiMlJ4QoF+gVUbnBBg8O0/mLj+QZnwQvOlba/YUISy37F8gOk4BU42N4mMm4O69Faan
+         u1IEO/ewimPKEIW0wGKC53LwTrME4QSclBoASpoaZ0d4aRM0n9h9o78+lbU+zQ1bH+dQ
+         EMWnOfWDxMBp8iTPRv/82UwV1BCTy1T0YhurrNMCkRuNuo3ALUMoSIp3si2tFhYMvpwY
+         TwrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792456689; x=1793061489;
+        d=1e100.net; s=20260707; t=1792456692; x=1793061492;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=mojc9oUGKoL5xRIH+sn0yNL2fIvEPVJXRu+9L0mIv3A=;
-        b=ksiKW3cCgRl7+tx70uABymo6yEPkC9t4Vpcefug/n6NTyMvPyS5XKtaSaUkdfWExF6
-         YcaNKzrIZgtPpbNz/w8yfL6rpRbqKLcKUBMFIpykpyP0Zk09jjDoBTr0cxNUqBIXKYec
-         x3EmjEMv0CzXXNNc4UFWG/4SITH/XogGfkknQKNwAY6BejcufbP4ZBMEEdmUIQIfONjD
-         nSeMxgg+lssz7AAwTF6c+5vGlrFCJ18kf5gHr/qp+SS7xwN8zwPFFDGjLBvXxRN66qg/
-         CJJHc6HfnUx4BDsk18IxVQewzqYotIiGhugoucNOTy1QSGRZmrE8cUPjoHt1NqAaqcCX
-         Cblw==
-X-Gm-Message-State: AFq9FYJNrYP1qxHscdGzf1KKNKYurlfWYfJwOW/d8DJDuqsaGosNoJhM
-	D6oDZ59pc7y5/g+BpZFq81Pq0RpA1J8iMk8wBigBAwrrwY31orIIK11VaLDa0A==
-X-Gm-Gg: AYBFou3Oyr8JsgnMPIIS5TpAg/vs8+tpiL64ABSDfHa4BH/pG18H2wvZwUIgkj1vVkF
-	mEaMeXkrTs3iXNCi2C2+gSFmBXIOtEEjH1+8wLt9QqkdcxjAz4KK5TziMGWXnUjC7Jsee7EkTEE
-	cwUA99JkqEuMzInppgeKMoJlsD5Q6f+6XRFnYSnmnt/lXlXPEShzkXXayV6HGm00Tby2FsCOO+S
-	G+pAZ1YWEw58CPNonLxvl/s11lRhtKYnhqL2zJvRh6tqbx/teXvX8fl5YRL0Qq0UmiYZV7yas3u
-	ThWf40wHfIUTWqURfRghHgZ6osEGOn+nGGR4+XlG3Nx4LoqhM9svwy141mKb/SEhVtAsoU7pzSS
-	rzTrf+rm2nBw8E0HPYvGJ/cvy/7NJBx2/epryP6duLro/ma644ldTuUK7RuUAp8PqslGFXdhP7w
-	D58t8Uz7k19LuD8tWIZ+b7oD2LsTdy0IXY0KHzvLhp4K+qsriLTwstkfNKPxJVIMCDnBj1ywx44
-	8LgBHiCB6CWqq2eaEaNi4/eiDO5niAY73m9cQ==
-X-Received: by 2002:a05:6820:200d:b0:6f9:6bb7:180e with SMTP id 006d021491bc7-70352879bafmr5888724eaf.4.1792456689470;
-        Mon, 19 Oct 2026 17:38:09 -0700 (PDT)
+        bh=eTNgECk0aJjIcx7mStKdSjGex/85xJLMVF19JFpf26Y=;
+        b=22sWbFYKoDiwimsgsFt1kEXLomI3G3AaTp/ZTYMc/2/nM6xKTAQRyrHOqUGmbpuVQj
+         8eWVEUGIPcisUvH4YxqsoVsKCCLHrPQDV24gA7yn+9hwJpypM+yx3RXoLgWHLqlkj9DY
+         cGLZX/aAJOrAqVQi2+yh8olSjpX4gbJChm4uf2AGeO54NsMJ4BAgPMf5+Ib/OO+ZaF+Y
+         sfag+DkR+aHkiTBxmkiC7bahhQJoX7G+c9Xmg+iaDl5kbSDmWChqGWIXM6RE+j+qD8fP
+         QyLIZrVVXZbBZe2UomK9kWEyN7D7hVK52MoPC8FLN0X0KVQKSCxR0L/qafr3idHlM51N
+         TZuA==
+X-Gm-Message-State: AFq9FYIrYdSxXGta2E1xL8zcYjgNOa7Lefpg55Xs4N8/z2fpRvHY+IDb
+	osXQIwCcReOqIlPV4HFl1e5WO7WAWP5x0R4pKQK2sLOYykWlSsBFgjb4O3nlxQ==
+X-Gm-Gg: AYBFou2/mGsJMdFmVrqeOzG7XwvLhgHxLcT5ifiMyFyAewsaWKhuUTSFtvyDk7vV1d3
+	PucD6X1USh/YH0p09C5h2du1oOZtdVz+fExm1xQ2jMExLiplwjNFVrEczB/dLF0gsNXPqm6EYyl
+	CClLmzfjJmqHe2+VEco3mE5+xhAxtQXASw0I8tGvOaPB0jTd7ZtwDFYHGOfQVWAKV4Kw9YQR5l0
+	eD6f2ebvn1lv7PWL4wxz9XZePYp4Di98a/syXWb3q3mTQ/yNcpMcR3DwoXTNux/42FEnV/aSWK4
+	9qkVViFY5rf8Ht9PbWedQVvaooE79SOmvDy25PbQ0hdPrh5VI/mVssxCb6XVQd5+3/K6PkgKcdH
+	dkX+xfQbgS/zKB80y+FNjgZuQ1i+LIy9SC6AY9MQcRIFJEh/HlmiCll9JuijF5SzZ5zL4+QfiB4
+	WN5PwZBUshDL8TI6rlbZom63ahsmgNRMUVMiQj0SJMfSQOgePisd+7guByjwZh/JnBRI6JQT30L
+	8YWrDhhCJjjqtErNnOE/4YYauVUgvy1ZIKP
+X-Received: by 2002:a05:6830:3805:b0:81b:a5aa:e82b with SMTP id 46e09a7af769-844fffc4c6cmr9074174a34.24.1792456691840;
+        Mon, 19 Oct 2026 17:38:11 -0700 (PDT)
 Received: from Zephyrus.localdomain ([66.188.87.142])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8429b57870fsm10373383a34.0.2026.10.19.17.38.07
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8429b57870fsm10373383a34.0.2026.10.19.17.38.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 17:38:07 -0700 (PDT)
+        Mon, 19 Oct 2026 17:38:10 -0700 (PDT)
 From: Vincent Fazio <vfazio@gmail.com>
 To: linux-gpio@vger.kernel.org
 Cc: brgl@kernel.org,
 	Vincent Fazio <vfazio@gmail.com>
-Subject: [libgpiod][PATCH 10/14] bindings: python: bump ruff linter dependency
-Date: Mon, 19 Oct 2026 19:37:24 -0500
-Message-ID: <20261020003728.13669-11-vfazio@gmail.com>
+Subject: [libgpiod][PATCH 11/14] bindings: python: include Python.h before other headers
+Date: Mon, 19 Oct 2026 19:37:25 -0500
+Message-ID: <20261020003728.13669-12-vfazio@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261020003728.13669-1-vfazio@gmail.com>
 References: <20261020003728.13669-1-vfazio@gmail.com>
@@ -97,123 +97,72 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Bump ruff to the recently released 0.17. Most of the important changes
-are from 0.16, but there were no incompatibilities found during testing.
+Per the Python C API reference manual [0], Python.h should be included
+before other headers since it specifies some pre-processor definitions
+that may differ from system defaults.
 
-Of note is the expansion of the default ruleset [0] which is now
-leveraged over the previously selected rules and simplifies the tool
-configuration section significantly.
+This was noticed when testing on CPython 3.15 [1] which emitted warnings
+due to redefinitions of _XOPEN_SOURCE and _POSIX_C_SOURCE during builds
+of the Python bindings.
 
-Two things are explicitly disabled as part of this migration:
+Note: despite the manual stating that `PY_SSIZE_T_CLEAN` should also be
+defined, it is intentionally not included. The Python bindings do not
+use the `#` format specifier when parsing any arguments so defining it
+provides no value [2] and it is deprecated in future versions.
 
-  * Formating of Python blocks in markdown files is disabled [1]
-  * The typing-extensions flag is set to false since the bindings do not
-    depend on this package [2] so appropriate lint rules get disabled
-
-As part of this change:
-
-  * Unused error suppression flags were removed from
-    examples/toggle_multiple_line_values.py
-  * tests/tests_line_requests.py was reformatted to bring it in line
-    with the rest of the bindings
-  * The `readlines` call in setup.py has FURB129 [3] suppressed since it
-    only affects builds (edge case) on 3.10 (now EOL). When the minimal
-    version is bumped to 3.11, the entire block will go away.
-
-[0]: https://astral.sh/blog/ruff-v0.16.0#better-default-rule-set
-[1]: https://docs.astral.sh/ruff/formatter/#markdown-code-formatting
-[2]: https://docs.astral.sh/ruff/settings/#lint_typing-extensions
-[3]: https://docs.astral.sh/ruff/rules/readlines-in-for/#readlines-in-for-furb129
+[0]: https://docs.python.org/3/c-api/intro.html#include-files
+[1]: https://github.com/python/cpython/commit/927eb448aad6436d794ec9f55780013e25609600
+[2]: https://docs.python.org/3/c-api/arg.html#strings-and-buffers
 
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
- .../examples/toggle_multiple_line_values.py     |  4 ++--
- bindings/python/pyproject.toml                  | 17 ++++++-----------
- bindings/python/setup.py                        |  2 +-
- bindings/python/tests/tests_line_request.py     |  3 ++-
- 4 files changed, 11 insertions(+), 15 deletions(-)
+ bindings/python/gpiod/ext/internal.h | 2 +-
+ bindings/python/gpiod/ext/module.c   | 2 +-
+ bindings/python/tests/gpiosim/ext.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/bindings/python/examples/toggle_multiple_line_values.py b/bindings/python/examples/toggle_multiple_line_values.py
-index 8c973f8..e5fbcd9 100755
---- a/bindings/python/examples/toggle_multiple_line_values.py
-+++ b/bindings/python/examples/toggle_multiple_line_values.py
-@@ -29,9 +29,9 @@ def toggle_multiple_line_values(
-     )
+diff --git a/bindings/python/gpiod/ext/internal.h b/bindings/python/gpiod/ext/internal.h
+index 2996884..12c2ac6 100644
+--- a/bindings/python/gpiod/ext/internal.h
++++ b/bindings/python/gpiod/ext/internal.h
+@@ -4,8 +4,8 @@
+ #ifndef __LIBGPIOD_PYTHON_MODULE_H__
+ #define __LIBGPIOD_PYTHON_MODULE_H__
  
-     while True:
--        print(" ".join(f"{l}={value_str[v]}" for (l, v) in line_values.items()))  # noqa: E741
-+        print(" ".join(f"{l}={value_str[v]}" for (l, v) in line_values.items()))
-         time.sleep(1)
--        for l, v in line_values.items():  # noqa: E741
-+        for l, v in line_values.items():
-             line_values[l] = toggle_value(v)
-         request.set_values(line_values)
+-#include <gpiod.h>
+ #include <Python.h>
++#include <gpiod.h>
  
-diff --git a/bindings/python/pyproject.toml b/bindings/python/pyproject.toml
-index 3337306..7d1c777 100644
---- a/bindings/python/pyproject.toml
-+++ b/bindings/python/pyproject.toml
-@@ -36,7 +36,7 @@ Issues = "https://github.com/brgl/libgpiod/issues/"
- Changelog = "https://github.com/brgl/libgpiod/blob/master/bindings/python/CHANGELOG.md"
+ PyObject *Py_gpiod_SetErrFromErrno(void);
+ unsigned int Py_gpiod_PyLongAsUnsignedInt(PyObject *pylong);
+diff --git a/bindings/python/gpiod/ext/module.c b/bindings/python/gpiod/ext/module.c
+index 21ea519..6b5ead7 100644
+--- a/bindings/python/gpiod/ext/module.c
++++ b/bindings/python/gpiod/ext/module.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: LGPL-2.1-or-later
+ // SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
  
- [dependency-groups]
--lint = ["mypy>=1.18.1", "ruff~=0.15.0", "types-setuptools", "packaging"]
-+lint = ["mypy>=1.18.1", "ruff~=0.17.0", "types-setuptools", "packaging"]
+-#include <gpiod.h>
+ #include <Python.h>
++#include <gpiod.h>
  
- [tool.setuptools]
- platforms = ["linux"]
-@@ -56,19 +56,14 @@ files = [
-   ".",
- ]
+ struct module_const {
+ 	const char *name;
+diff --git a/bindings/python/tests/gpiosim/ext.c b/bindings/python/tests/gpiosim/ext.c
+index cc7bd37..dcdde7b 100644
+--- a/bindings/python/tests/gpiosim/ext.c
++++ b/bindings/python/tests/gpiosim/ext.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: LGPL-2.1-or-later
+ // SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
  
-+[tool.ruff]
-+extend-exclude = ["*.md"]
-+
- [tool.ruff.lint]
--select = ["B", "E", "F", "I", "TC", "UP"]
--ignore=[
--  # Ignore chained exception warnings for now: https://docs.astral.sh/ruff/rules/raise-without-from-inside-except/
--  "B904",
--  # Never enforce line length violations. Let the formatter handle it: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
--  "E501",
--]
-+typing-extensions = false
+-#include <gpiosim.h>
+ #include <Python.h>
++#include <gpiosim.h>
  
- [tool.ruff.lint.per-file-ignores]
--"gpiod/__init__.py" = ["F403", "F405"]  # ignore warnings about star imports
--"tests/__main__.py" = ["F403"]
--"tests/**.py" = ["F841"]  # ignore warnings about unused variables
-+"tests/**.py" = ["F841", "SIM117"]  # ignore warnings about unused variables and chaining context managers
- 
- [tool.cibuildwheel]
- build = "cp*"
-diff --git a/bindings/python/setup.py b/bindings/python/setup.py
-index 4297615..af922c8 100644
---- a/bindings/python/setup.py
-+++ b/bindings/python/setup.py
-@@ -167,7 +167,7 @@ def fetch_tarball(func: Callable[[T], None]) -> Callable[[T], None]:
-                     project = cast("dict[str,str]", tomllib.load(f).get("project"))
-                     license_file = project.get("license")
-                 else:  # tomllib isn't standard, fall back to parsing by line
--                    for line in f.readlines():
-+                    for line in f.readlines():  # noqa: FURB129
-                         _line = line.decode()
-                         if _line.startswith("license = "):
-                             license_file = _line.split("=")[1].strip(' \r\n"')
-diff --git a/bindings/python/tests/tests_line_request.py b/bindings/python/tests/tests_line_request.py
-index bc85eba..8e74490 100644
---- a/bindings/python/tests/tests_line_request.py
-+++ b/bindings/python/tests/tests_line_request.py
-@@ -692,7 +692,8 @@ class UsingMoreLinesThanRequestedNotAllowed(TestCase):
- 
-     def test_line_set_more_values_than_requested_lines(self) -> None:
-         with gpiod.request_lines(
--            self.sim.dev_path, config={0: gpiod.LineSettings(direction=Direction.OUTPUT)}
-+            self.sim.dev_path,
-+            config={0: gpiod.LineSettings(direction=Direction.OUTPUT)},
-         ) as req:
-             with self.assertRaises(ValueError):
-                 req.set_values({i: Value.ACTIVE for i in range(64)})
+ struct module_const {
+ 	const char *name;
 -- 
 2.43.0
 
