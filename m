@@ -1,98 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.179
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792500740;
-	b=0G5Ry8g0m9Ng7AhOYqfYUuveavHFLd24dcZAa19cYH+DDaf7amReuEqh5fRalbIITxVl
-	 pj9a7ai6MjoZqA+kcORgsEPZ4THJ+To5AI2FzQQeKi5iifq2505OKz9g3mgTR8HRGr3Hc
-	 Zbk2Fpur67q7myCBd29Z9U/64STRHlgYVnoFfxTt4yKAk3SnLnYO6h13nDslSesI98a8Q
-	 P6Xejjzaxo8S9nc/s/UrY71BfGIHddUCc42bavczCFz8ThttwhAQeDHMDhURgbxucfYjV
-	 A41sc9bhkkncQP1g19Zu1xYBuv3DkCi5LOE3EHWqbG75wNPw9UxMyiqMqJU9e3MM2sA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792500740;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:References:
-	 In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=lXiyP0wNZ1kIP9wjFOW8bw/0sqZpYt/VLLdVFIN+DMM=;
-	b=2ajaZz8SDvB17ilT68mZi3g6jra9gqpWss4A3XrCzSBgJvE8kpj55VIYmkoRt9iXd3PG
-	 rRpaH8yR2380+3pxEis401lFrIRz8PLN98rHUoqtZ06yROPn+DioX1nmZtRXGl52t61iX
-	 GMuOCXlhC4MnraJi7By00w6fFLQNUQUdgxo23rb/x9WKro0diQ26XoYwiKSIvGvPGWBHY
-	 uBjBdLf/1uihPZxg3ZPQblq1vQLLLWkggXCHFiyNajVnwhycoMuo/ve02toyQUsvifkKG
-	 IVTlLWX11UYK1uK6Hq51oik7XCm6l+mhKJHOtMIFmfJNFnCRebtYXaRnoeHQsZ2ARkQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=amIC2ftY;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.179
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792500771;
+	b=D8HUvvZyxVGR/Zh3SlV7nn32lI9JzrIJW0R/X6SPm0CEkrcI4BjTjqjJydi+4e+6zLz1
+	 ohTOlsCQ0dCcx4cBB3duiqtm2buJAyQI1ATjDrNGqdh7n8BLcZZGXBwwQXAtY4B+9paK4
+	 T7EHUQepGTF/2NvV+sp8pXy/tJDC4cZMXbc2hSCF62TmoqDv3CUnP1a+V5O4JZKx+NTqg
+	 L7Lo55Sx+A4ECI0att6wgHrhH+tR2jja0G+3Y28PVoEh3mWNnloc9IjijamIRxalQJeTI
+	 8RGJTPqcrqP8YqZ1FX7CeqvlZ3+8QpMNjY6y6iY59qJ/a4HwZN2FV0QdqLYZJc5SbjQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792500771;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
+	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=Iog5cj9gQ1VLcQX/ZJ4/JUmApqIRY63Pzim15xBJZA4=;
+	b=1K42LJ0IlhJVd1NNJn+J7LzlAKdDz7TGkaPuXhbZioyoNkPLlVRSmTf1guGz6/XQBlad
+	 GkS6rYFKR1JRGpO6pHISH8tIZoB/+8mrfXDIy/krlAAqNIg8qsLLrhAUnJKuiRpUi2nUa
+	 CxARsg8jdcbt3WhNHN4keC+Dn03nCWGUgo42rEDJMOGz8ea0fMDnQAKYx0Dd6L07mXFxs
+	 CmCfLs1UPkPEvGPQM3hkGF/Z2eOc1PkZbAvvR0Hk+9bjOb3sgcjv/+EmfBa9riDWz/DbS
+	 NM0jELxGnnRebnZYIBn4rm98gL/d96HTz8PeGKcMY/4nIvd8fpU4Mt/tTZ9C1sNBTQg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tcl8IopX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D6C606A319
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 12:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 39D6C606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5391F606A31F
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 12:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=amIC2ftY
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-8b056d58f2aso25141757b3.2
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 05:52:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792500739; cv=none;
-        d=google.com; s=arc-20260327;
-        b=S447HHX1rOCx2rKzP7qIhFggeXFNcu1TtMBRzI7N/lWWXhdIlM/Kj8zIw5++heVi3w
-         issCSN65LyDcYIEBkU7QLjwgIpNEWk0pmEiJkgDcj6e+STLz9wreaKurXM+MnO8NuyY0
-         b8xosBPbYdun+wVKbICsbuqWrphY4Il6Pgs4Qy29HYvsDLefjfwUHuPqkZM47mbOgQSG
-         Fcv20X+NmEAxarOibZ3G9VjSWzOl5+jvFDg5ZAGSI0p+cYvjjWbe765CYUguzOjzilf9
-         ZnQNb1HKtQn/CA6NEmHLvBrp+siwhznzS4g03Q/Y9MYQrR6/eWWGdyDbp+PHID+yPCNf
-         b5YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=lXiyP0wNZ1kIP9wjFOW8bw/0sqZpYt/VLLdVFIN+DMM=;
-        fh=8s/m3WFbgYWSrFq8O6qnuwJh8MouRhxqinKYkPkfiw0=;
-        b=lVN8uDW/a/C5VbF65KXtqqW6zGHbYoxBRn9aNTKjRLrPsWtC8EsvFpeE577k+N8ASb
-         N8GL8nWWmd2FP9uRSaO6ppH8tIyMGsbkd52Ld0DER0wLxb1CrxsE6s7zr0rEt2fWIIpe
-         ooVybOviUOGDRnJZaiWpJNKIoWu0g/ac6auQIz/wrx/IFQUkTLmnup2p+DxMYFcAWcm+
-         TezWWFyqJjPaa6blP7bKVFqtcMYFOwLyk8fAG0WggnEDPwc5ogoRzaakoeYT0A2EnRrJ
-         jiWeEx4i6rJcOHGGKmDjY3Lcbyu5gd9wfAM4qxTzDf7Cj5sLTmw8Dfz1zvnu3NkFWC+D
-         QnLg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792500739; x=1793105539; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=lXiyP0wNZ1kIP9wjFOW8bw/0sqZpYt/VLLdVFIN+DMM=;
-        b=amIC2ftYf+72PIq4kNbT91QjFETzY5bjLe7woloZKRMW8Y1f63OSLjMe0e3tsdXyAN
-         ifkVc8h3uErjGSN3qXYgK4N5gIu4ggmpunToYIbb8EzE9/rvCJO1o/FFq5+SGI2CI/Q1
-         s3LXU/3m6hHk8f+oC/u+5C887cefSx6MJPvmWNl+ElDMk8aU1Jc9fn91xwbvNMR4bjPn
-         TTXnlbLctYBCE7J5kt7fe+bF1G0OvEcNdJpjKVu18Wf5+6avwZM7AQierVu+qp+ES5N2
-         j2yNI/PLLajwFCfgh/HGpnaTAL3JMbtFkZsywiDYr0l6lRKQeDyizjxPNOLx8rsFfElJ
-         pgzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792500739; x=1793105539;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lXiyP0wNZ1kIP9wjFOW8bw/0sqZpYt/VLLdVFIN+DMM=;
-        b=oIyeqEepIBoWkTOnUKXr9m24LvQXFY0Jdg+y0NfEVlC0pYXkRY0u8Er4FDpoImUL38
-         b0zgkXjzyJAyxcWfJtVRljbBUaOs2YbtaOdIiicj3HUh4IRnCJ777pDZrKR61c0Zcag6
-         uCHRuf703+7slCMfXKjyXpfZ9aGygILQQPOKzmeiempR1VWNFY5zLPxSD9s9kphbMCiM
-         VtoTwtBs6mXxBXSOBxCMPzCEdxCJhI0LJZznM07EYW+Q2XaDomJtk+YFfz8ZQFBnR06E
-         XCTlTIrbwX57dpU4LbZxeJIsU1esOPH0rOIsf58JUUh6FzhW8QB+ouKn3lQ2YYmswxQ7
-         LLKg==
-X-Gm-Message-State: AFq9FYIK8ngTzmwRkxmA0ErVS2IrXCse4gOhMLXVyV7F+9D5Pvery/+H
-	MWSKQazZ9jePQf8sEfZ6agOjNbWvY3SnORHqT3fftH7iesVHyEP43FXDkAJJQQdoYCN0613F0hC
-	P5h/D/mA22zEbaFDaYglFKdHldpZogm3C+dSl
-X-Gm-Gg: AYBFou0f3J8wQoC7sQF11BzJ9Xkeq8aeuuyHtwBTQ4C0l1YpyNG2VTylvEqXRyauMx0
-	ybsaed3LYlnkh8Vc/ltvHg5NzT5Av+cqj/MmauIQR+/ZCAdeZJZe0JuFY0lKT1UyN93cY1G1rz0
-	1XHAKziFoAykbXwd6H0Kc30TgHouJyG3lHtIjzFhtj1bGKPV+rfG+OcjpWrTpu7WqA7UAyE8gx8
-	ZkGWb9hBA+6/AtkHMB8A1nzxG59k2WZ2RKy46gkTBu9hLgz/ijoyCB7GhA08wsy3S/Kej3MlAyf
-	wJBLSg9XQgXbRpTGyTO3P2j/FascrpJx6CGCtDAuGs4CpACYjhqKgwzs+AzabcAkuy4=
-X-Received: by 2002:a05:690c:1c:b0:8b0:57b8:744 with SMTP id
- 00721157ae682-8b0f218930cmr29898317b3.45.1792500738255; Tue, 20 Oct 2026
- 05:52:18 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tcl8IopX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2512E1F000D4
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 12:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792500771;
+	bh=Iog5cj9gQ1VLcQX/ZJ4/JUmApqIRY63Pzim15xBJZA4=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=Tcl8IopX5XfgaCedFUCGnnX0qpLjXEfggFrl4g6uF0J9pj2ZByCxfjOKZhvjf29OT
+	 jyRZuEMaP+YsyaKXuH7/hX/aY07mqXNVV4LO8+f4vrcvMJBaBHK/vgvD6bqnZQoggG
+	 QmsW3kbSDYN4OLZz6SprO/PkstsWSmGXjHfa96tybNAqxlgR6r68ILHZyG8U3skR5p
+	 iZfHum1fWwYY7PCqVKD0/TqkffuGi8ZQN9TWachUoSMbvG1ruVtWESZ29ZpqRwRhP/
+	 s94Ge/xbVFsRNjGzYNFfkQVJ+9mlgllQjFQLQMDnF++TXXYNRy8qMtFagnQRiqbRW5
+	 d1Gt1sKrWNd1Q==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3aae7df0971so21615231fa.1
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 05:52:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw7B8RDAtb1ydSGyCEg5UeurtEzc4m+TkvYvu+sGwOwtzyIi5HC8Re4Ule+zzru7w2AjZxrZUPJPGhX@vger.kernel.org
+X-Gm-Message-State: AFq9FYLqlyXnnhC8RSzIXYgnZmDgvovM+ctGmB7M9MA0J8NW9w+Qo7JZ
+	AL7CKPR2lUod8it8jrzfDJg7Gx/pqudpv6Xmci7QhDrpFfpMKSJKVLFZ/5Ta+y43q3EF7GB6Fpf
+	Ew+5EbPbyakic0kXbWkdzn3db7Lgpa0MLBVJBxWKegg==
+X-Received: by 2002:a05:651c:a214:20b0:3a8:d9d5:f9d3 with SMTP id
+ 38308e7fff4ca-3ab29175de5mr15085321fa.16.1792500769655; Tue, 20 Oct 2026
+ 05:52:49 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 20 Oct 2026 13:52:48 +0100
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 20 Oct 2026 13:52:48 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <179206391202.36987.1416057976823693032@pm.me>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -102,208 +65,314 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261015035118.9495-1-prasanth.padarthi10@gmail.com>
- <sashiko-outbox-172228@kernel.org> <CAMFFDGgxiTMd01iU5JJebvTLBF9ku1F9Zq16LV+gYyqn+tBVmQ@mail.gmail.com>
-In-Reply-To: <CAMFFDGgxiTMd01iU5JJebvTLBF9ku1F9Zq16LV+gYyqn+tBVmQ@mail.gmail.com>
-From: Prasanth <prasanth.padarthi10@gmail.com>
-Date: Tue, 20 Oct 2026 18:22:05 +0530
-X-Gm-Features: AclHuK8XpbJAsfnLQaGbpyrlz8Y4TfMIQrF5MX7-1IbapaZu4M2nvVTS-zVaLtw
-Message-ID: <CAMFFDGgpCM9+pAdL-HW2LFEkZVkdP+bz5xTq8uHAPhkzx3TPeg@mail.gmail.com>
-Subject: Re: [RFC PATCH] pinctrl: aspeed: Handle GPIOZ6 pass-through strap on
- GPIO requests
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-gpio@vger.kernel.org
+References: <179206391202.36987.1416057976823693032@pm.me>
+Date: Tue, 20 Oct 2026 13:52:48 +0100
+X-Gmail-Original-Message-ID: <CAMRc=Mf_93HM8RFq3i3Cuy1_L=VFskt6NcgkcwsyZVH7ymO1Yw@mail.gmail.com>
+X-Gm-Features: AclHuK_FLO2OQBomfcZDzAChpS6bYz-U0182uXSwbxihEnP3jdGgRRa6mwaU0dc
+Message-ID: <CAMRc=Mf_93HM8RFq3i3Cuy1_L=VFskt6NcgkcwsyZVH7ymO1Yw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: qcom: Restore the pin configuration after hibernation
+To: Birk Skyum <birk.skyum@pm.me>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-Further B650D4U testing shows that ordinary GPIO power control fails
-with SCU4BC=3D0, SCU510=3D0 and SCU51C=3D0x1e80. With the candidate, SCU51C
-is 0x1c80 and power-on succeeds. The captured power-control executable
-and configuration hashes match between runs.
-
-A separate candidate test also succeeded after complete AC removal and
-CMOS-battery removal/reinsertion.
-
-I understand that unconditionally clearing SCU51C[9] can disrupt the
-other GPIOP passthrough pairs, so the current callback is not a
-complete generic solution.
-
-I am investigating whether shared-enable routing can first be
-represented through the corresponding per-pin SCU4BC controls, then
-the shared enable cleared, allowing the normal GPIO request path to
-select GPIO on the requested pins while preserving the other pairs.
-
-Does the hardware support this transfer without interrupting existing
-passthrough signals, including when PWM has higher priority? If so,
-would normalization during pinctrl initialization or coordinated
-handling in the request path be the appropriate model?
-
-This is a proposed direction, not a validated transition sequence.
-Feedback on its hardware and ownership assumptions would help before
-preparing a revision.
-
-Regards,
-Prasanth
-
-On Thu, Oct 15, 2026 at 9:39=E2=80=AFAM Prasanth <prasanth.padarthi10@gmail=
-.com> wrote:
+On Thu, 15 Oct 2026 13:31:54 +0200, Birk Skyum <birk.skyum@pm.me> said:
+> A hibernation image is restored after a power cycle. The TLMM registers
+> then hold what the boot firmware and the kernel that loaded the image
+> made of them. The restored kernel has the configuration it applied in
+> memory only, and nothing writes it to the hardware again, so every pin
+> that the loading kernel did not set up the same way stays wrong.
 >
-> Thanks for the review. The shared SCU51C[9] control and SCU510[28]
-> rejection are known limitations called out in this RFC. I agree that
-> the post-mux error paths also require attention.
+> On a Lenovo Yoga Slim 7x (X1E80100) the Bluetooth and Wi-Fi enable lines
+> are two of them. Their drivers are loaded from the root file system, so
+> the kernel that loads the image never touches the pins. This is
+> /sys/kernel/debug/gpio before the hibernation and after the resume:
 >
-> The hardware result establishes that clearing SCU51C[9] permits
-> ordinary GPIO power control on B650D4U; it does not establish that
-> this callback implementation is suitable across AST2600 platforms. I
-> will investigate coordinated handling of the shared strap and per-pair
-> mux state before proposing a revision.
+>   gpio116 : out low  func0 2mA no pull
+>   gpio117 : out high func0 2mA no pull
 >
-> On Thu, Oct 15, 2026 at 9:31=E2=80=AFAM <sashiko-bot@kernel.org> wrote:
-> >
-> > Thank you for your contribution! Sashiko AI review found 3 potential is=
-sue(s) to consider:
-> > - [High] pinctrl: aspeed: clobbering shared SCU51C[9] strap bit breaks =
-pass-through
-> > - [High] pinctrl: aspeed: unconditionally rejecting GPIO requests based=
- on SCU510[28]
-> > - [Medium] pinctrl: aspeed: missing hardware mux rollback on error path
-> > --
-> >
-> > commit fc751bac2dfdee809f65ba4da118ede6fdbe6aaf
-> > Author: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
-> >
-> > pinctrl: aspeed: Handle GPIOZ6 pass-through strap on GPIO requests
-> >
-> > This commit introduces an AST2600-specific GPIO request callback to han=
-dle
-> > the GPIOZ6 pass-through strap in SCU51C[9] for GPIOP0-P5. It clears thi=
-s
-> > shared strap bit to allow host power control on boards like the B650D4U=
-,
-> > while also explicitly rejecting requests when SCU510[28] is set.
-> >
-> > > diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pin=
-ctrl/aspeed/pinctrl-aspeed-g6.c
-> > > index 85d6640ff4c4e..6e58feb48bf59 100644
-> > > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-> > > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-> >
-> > [ ... ]
-> >
-> > > @@ -2743,12 +2744,56 @@ static struct aspeed_pinctrl_data aspeed_g6_p=
-inctrl_data =3D {
-> > > +static int aspeed_g6_gpio_request_enable(struct pinctrl_dev *pctldev=
-,
-> > > +                                      struct pinctrl_gpio_range *ran=
-ge,
-> > > +                                      unsigned int offset)
-> > > +{
-> > > +     struct aspeed_pinctrl_data *pdata =3D pinctrl_dev_get_drvdata(p=
-ctldev);
-> > > +     struct regmap *scu =3D pdata->pinmux.maps[ASPEED_IP_SCU];
-> > > +     unsigned int strap2, strap3;
-> > > +     int ret;
-> > > +
-> > > +     if (offset < AB22 || offset > AB23)
-> > > +             return aspeed_gpio_request_enable(pctldev, range, offse=
-t);
-> > > +
-> > > +     ret =3D regmap_read(scu, SCU510, &strap2);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +     if (strap2 & BIT(28))
-> > > +             return -EOPNOTSUPP;
-> >
-> > [Severity: High]
-> > Does this unconditionally reject standard GPIO requests based on an unh=
-andled
-> > strap condition?
-> >
-> > Systems where the SCU510[28] strap is set will no longer be able to req=
-uest
-> > GPIOP0-P5 as standard GPIOs. Any standard GPIO consumer on such hardwar=
-e will
-> > fail, breaking backwards compatibility.
-> >
-> > > +
-> > > +     ret =3D aspeed_gpio_request_enable(pctldev, range, offset);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     /* In dedicated-strap mode, SCU51C[9] does not enable pass-thro=
-ugh. */
-> > > +     if (strap2 & BIT(30))
-> > > +             return 0;
-> > > +
-> > > +     ret =3D regmap_update_bits(scu, SCU51C, BIT(9), 0);
-> >
-> > [Severity: High]
-> > Does this clear a shared hardware enable bit for all three pairs withou=
-t
-> > refcounting?
-> >
-> > The SCU51C[9] bit globally controls the pass-through feature for three
-> > distinct pin pairs (GPIOP0/P1, GPIOP2/P3, and GPIOP4/P5). Modifying it
-> > unconditionally for a single pin request might destructively clobber
-> > concurrent pass-through usage for the other unconnected pins.
-> >
-> > > +     if (ret)
-> > > +             return ret;
-> >
-> > [Severity: Medium]
-> > If regmap_update_bits() fails here, does this return an error without
-> > unwinding the active pinmux modification made earlier by
-> > aspeed_gpio_request_enable()?
-> >
-> > This could leave the pin's hardware multiplexer configured for GPIO, wh=
-ile
-> > the pinctrl subsystem considers the request failed and the pin unreserv=
-ed,
-> > creating a state mismatch between hardware and software.
-> >
-> > > +     ret =3D regmap_read(scu, SCU51C, &strap3);
-> > > +     if (ret)
-> > > +             return ret;
-> >
-> > [Severity: Medium]
-> > Similarly, if this regmap_read() fails, does this also leak the hardwar=
-e mux
-> > state?
-> >
-> > > +     if (strap3 & BIT(9))
-> > > +             return -EPERM;
-> >
-> > [Severity: Medium]
-> > Could this error path also miss unwinding the hardware mux state from
-> > aspeed_gpio_request_enable()?
-> >
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > >  static const struct pinmux_ops aspeed_g6_pinmux_ops =3D {
-> > >       .get_functions_count =3D aspeed_pinmux_get_fn_count,
-> > >       .get_function_name =3D aspeed_pinmux_get_fn_name,
-> > >       .get_function_groups =3D aspeed_pinmux_get_fn_groups,
-> > >       .set_mux =3D aspeed_pinmux_set_mux,
-> > > -     .gpio_request_enable =3D aspeed_gpio_request_enable,
-> > > +     .gpio_request_enable =3D aspeed_g6_gpio_request_enable,
-> >
-> > [Severity: High]
-> > Since this structure lacks a .gpio_disable_free callback, is there any
-> > mechanism to ensure the shared strap modification is reversed upon rele=
-ase?
-> >
-> > Without it, the SCU51C[9] bit is never restored when the GPIO is freed,
-> > which could cause a permanent system-wide functional loss for pass-thro=
-ugh
-> > features until a reboot.
-> >
-> > >       .strict =3D true,
-> > >  };
-> >
-> > --
-> > Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015035118.=
-9495-1-prasanth.padarthi10@gmail.com?part=3D1
+>   gpio116 : in  low  func0 2mA pull down
+>   gpio117 : out high func0 16mA no pull
+>
+> The driver that owns gpio116 still believes it drives the line.
+>
+> Save the control, output and interrupt configuration registers in
+> freeze_noirq and write them back in restore_noirq, the output level
+> first, so that a pin drives the right level from the moment it becomes
+> an output. Changing the interrupt configuration can latch an interrupt,
+> so the status is cleared where the register changed, as
+> msm_gpio_irq_set_type() does.
+>
+> Only the GPIOs the kernel uses are put back: those requested as a GPIO,
+> muxed to a function or used as an interrupt, as pinctrl-intel does. A
+> valid GPIO without an owner may be in use by firmware. The SDC pads
+> after the GPIOs are configured without a mux function, so they never
+> have an owner, and their control register is always put back.
+>
+> msm_pinctrl_dev_pm_ops gets the two callbacks and x1e80100 starts using
+> these ops. With that x1e80100 also gets their suspend and resume
+> callbacks, which apply the sleep and default state of the controller's
+> own pins where a board defines them.
+>
+> Signed-off-by: Birk Skyum <birk.skyum@pm.me>
+> ---
+> Changes since the RFC:
+> - Put a GPIO back only when the kernel uses it, as a GPIO, through a
+>   mux function or as an interrupt, as pinctrl-intel does (Bartosz).
+> - Save and restore the SDC pads after the GPIOs as well (Bartosz).
+> - Allocate the save area under the same option as the callbacks,
+>   CONFIG_HIBERNATE_CALLBACKS (Sashiko).
+> - Clear the interrupt status only where the restore changed the
+>   interrupt configuration (Sashiko).
+> - Say in a comment that a both-edge interrupt emulated by flipping the
+>   polarity is not primed again. No SoC with such pins uses these ops.
+> - Rebased on pinctrl-qcom/for-next.
+> - Link to the RFC: https://lore.kernel.org/r/179163141354.18006.80461347454353634@pm.me
+>
+> Tested on a Lenovo Yoga Slim 7x with v7.2 plus this patch. The kernel
+> also carried the PCI change in [1], without which this machine does
+> not resume at all, the smp2p change in [2] and a GENI serial change
+> that is not posted. The Bluetooth driver had [3] applied. On
+> pinctrl-qcom/for-next the patch builds without warnings with W=1 and
+> sparse, with hibernation on, off and without sleep support.
+>
+> - Before the hibernation 45 TLMM pins have an owner, gpio116 and
+>   gpio117 among them (wcn7850-pmu), and four are interrupts.
+> - pm_test=core and test_resume pass.
+> - After a hibernation with a real power-off the TLMM part of
+>   /sys/kernel/debug/gpio differs only in the level read on two inputs
+>   (gpio93 and gpio153), as it did with the RFC.
+> - A suspend (deep) and wake still works.
+>
+> The Yoga has no SD card slot and its SDC2 pads have no owner, so this
+> only shows that putting them back does no harm. I did not read them
+> back.
+>
+> Not covered here: the LPASS LPI pin controller, whose pins also come
+> back at their reset values after a hibernation.
+>
+> [1] https://lore.kernel.org/r/179181074907.22199.10556821368232442334@pm.me
+> [2] https://lore.kernel.org/r/179158127177.70185.5691100900886332545@pm.me
+> [3] https://lore.kernel.org/r/179163212446.46972.2306254853726299632@pm.me
+>
+>  drivers/pinctrl/qcom/pinctrl-msm.c      | 147 +++++++++++++++++++++++-
+>  drivers/pinctrl/qcom/pinctrl-x1e80100.c |   1 +
+>  2 files changed, 146 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 27f06bbc113c..0dd478e80e30 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -39,6 +39,15 @@
+>  #define MAX_NR_TILES 4
+>  #define PS_HOLD_OFFSET 0x820
+>
+> +/* Register values of one pin group, kept across a hibernation. */
+> +struct msm_pin_state {
+> +	u32 ctl;
+> +	u32 io;
+> +	u32 intr_cfg;
+> +	u32 intr_target;
+> +	bool saved;
+> +};
+> +
+>  /**
+>   * struct msm_pinctrl - state for a pinctrl-msm device
+>   * @dev:            device handle.
+> @@ -58,6 +67,7 @@
+>   * @soc:            Reference to soc_data of platform specific data.
+>   * @regs:           Base addresses for the TLMM tiles.
+>   * @phys_base:      Physical base address
+> + * @saved:          Pin registers kept while a hibernation image is taken.
+>   */
+>  struct msm_pinctrl {
+>  	struct device *dev;
+> @@ -80,6 +90,8 @@ struct msm_pinctrl {
+>  	const struct msm_pinctrl_soc_data *soc;
+>  	void __iomem *regs[MAX_NR_TILES];
+>  	u32 phys_base[MAX_NR_TILES];
+> +
+> +	struct msm_pin_state *saved;
+>  };
+>
+>  #define MSM_ACCESSOR(name) \
+> @@ -1583,9 +1595,133 @@ static __maybe_unused int msm_pinctrl_resume(struct device *dev)
+>  	return pinctrl_force_default(pctrl->pctrl);
+>  }
+>
+> -SIMPLE_DEV_PM_OPS(msm_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
+> -		  msm_pinctrl_resume);
+> +static bool msm_pin_has_own_intr_target(struct msm_pinctrl *pctrl,
+> +					const struct msm_pingroup *g)
+> +{
+> +	return !pctrl->intr_target_use_scm && g->intr_target_reg &&
+> +	       g->intr_target_reg != g->intr_cfg_reg;
+> +}
+> +
+> +/*
+> + * A GPIO is only put back when the kernel uses it, as a GPIO, through a mux
+> + * function or as an interrupt. Other valid pins may be in use by firmware.
+> + * The pads after the GPIOs (SDC) have no GPIO and are configured without a
+> + * mux function, so they never have an owner and are always put back.
+> + */
+> +static bool msm_pin_in_use(struct msm_pinctrl *pctrl, unsigned int i)
+> +{
+> +	const struct pin_desc *desc;
+> +
+> +	if (i >= pctrl->chip.ngpio)
+> +		return true;
+> +
+> +	if (!gpiochip_line_is_valid(&pctrl->chip, i))
+> +		return false;
+> +
+> +	desc = pin_desc_get(pctrl->pctrl, i);
+> +
+> +	return desc && (desc->mux_owner || desc->gpio_owner ||
+> +			gpiochip_line_is_irq(&pctrl->chip, i));
+> +}
+> +
+> +/* Remember how the pins are set up when a hibernation image is taken. */
+> +static int msm_pinctrl_freeze_noirq(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+> +	const struct msm_pingroup *g;
+> +	struct msm_pin_state *s;
+> +	unsigned long flags;
+> +	unsigned int i;
+>
+> +	raw_spin_lock_irqsave(&pctrl->lock, flags);
+
+Sorry I didn't point it out earlier but can you use a lock guard here?
+
+> +	for (i = 0; i < pctrl->soc->ngroups; i++) {
+> +		g = &pctrl->soc->groups[i];
+> +		s = &pctrl->saved[i];
+> +		s->saved = msm_pin_in_use(pctrl, i);
+> +		if (!s->saved)
+> +			continue;
+> +
+> +		s->ctl = msm_readl_ctl(pctrl, g);
+> +		if (i >= pctrl->chip.ngpio)
+> +			continue;
+> +
+> +		s->io = msm_readl_io(pctrl, g);
+> +		if (!g->intr_cfg_reg)
+> +			continue;
+> +
+> +		s->intr_cfg = msm_readl_intr_cfg(pctrl, g);
+> +		if (msm_pin_has_own_intr_target(pctrl, g))
+> +			s->intr_target = msm_readl_intr_target(pctrl, g);
+> +	}
+> +	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * The image is restored after a power cycle, when the pins are back at what
+> + * the firmware and the kernel that loaded the image made of them. Nothing else
+> + * writes the configuration again, so put back what was there.
+> + *
+> + * A both-edge interrupt that is emulated by flipping the polarity gets the
+> + * polarity it had, which is not primed for a line that changed meanwhile. No
+> + * SoC with such pins (one-bit detection) uses these callbacks.
+> + */
+> +static int msm_pinctrl_restore_noirq(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+> +	const struct msm_pingroup *g;
+> +	struct msm_pin_state *s;
+> +	unsigned long flags;
+> +	unsigned int i;
+> +	u32 val;
+> +
+> +	raw_spin_lock_irqsave(&pctrl->lock, flags);
+
+And here?
+
+> +	for (i = 0; i < pctrl->soc->ngroups; i++) {
+> +		g = &pctrl->soc->groups[i];
+> +		s = &pctrl->saved[i];
+> +		if (!s->saved)
+> +			continue;
+> +
+> +		if (i >= pctrl->chip.ngpio) {
+> +			msm_writel_ctl(s->ctl, pctrl, g);
+> +			continue;
+> +		}
+> +
+> +		/* Set the level before the pin starts driving it. */
+> +		val = msm_readl_io(pctrl, g);
+> +		val &= ~BIT(g->out_bit);
+> +		val |= s->io & BIT(g->out_bit);
+> +		msm_writel_io(val, pctrl, g);
+> +
+> +		msm_writel_ctl(s->ctl, pctrl, g);
+> +		if (!g->intr_cfg_reg)
+> +			continue;
+> +
+> +		if (msm_pin_has_own_intr_target(pctrl, g))
+> +			msm_writel_intr_target(s->intr_target, pctrl, g);
+> +		val = msm_readl_intr_cfg(pctrl, g);
+> +		msm_writel_intr_cfg(s->intr_cfg, pctrl, g);
+> +
+> +		/*
+> +		 * Changing the configuration can latch an interrupt. One that
+> +		 * is latched with the configuration unchanged is a real one.
+> +		 */
+> +		if (val != s->intr_cfg)
+> +			msm_ack_intr_status(pctrl, g);
+> +	}
+> +	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +const struct dev_pm_ops msm_pinctrl_dev_pm_ops = {
+> +	SYSTEM_SLEEP_PM_OPS(msm_pinctrl_suspend, msm_pinctrl_resume)
+> +	.freeze_noirq = PTR_IF(IS_ENABLED(CONFIG_HIBERNATE_CALLBACKS),
+> +			       msm_pinctrl_freeze_noirq),
+> +	.restore_noirq = PTR_IF(IS_ENABLED(CONFIG_HIBERNATE_CALLBACKS),
+> +				msm_pinctrl_restore_noirq),
+> +};
+>  EXPORT_SYMBOL(msm_pinctrl_dev_pm_ops);
+>
+>  int msm_pinctrl_probe(struct platform_device *pdev,
+> @@ -1663,6 +1799,13 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+>  	if (ret)
+>  		return ret;
+>
+> +	if (IS_ENABLED(CONFIG_HIBERNATE_CALLBACKS)) {
+> +		pctrl->saved = devm_kcalloc(&pdev->dev, pctrl->soc->ngroups,
+> +					    sizeof(*pctrl->saved), GFP_KERNEL);
+> +		if (!pctrl->saved)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	platform_set_drvdata(pdev, pctrl);
+>
+>  	dev_dbg(&pdev->dev, "Probed Qualcomm pinctrl driver\n");
+> diff --git a/drivers/pinctrl/qcom/pinctrl-x1e80100.c b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+> index e4c0abcd95b9..bfe122fc7e79 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+> @@ -1855,6 +1855,7 @@ static struct platform_driver x1e80100_pinctrl_driver = {
+>  	.driver = {
+>  		.name = "x1e80100-tlmm",
+>  		.of_match_table = x1e80100_pinctrl_of_match,
+> +		.pm = &msm_pinctrl_dev_pm_ops,
+>  	},
+>  	.probe = x1e80100_pinctrl_probe,
+>  };
+> --
+> 2.55.0
+>
+>
+>
+
+Otherwise looks good to me so if there are no objections, I intend to queue
+it for v7.5 with guards added.
+
+Bart
