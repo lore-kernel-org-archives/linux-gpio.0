@@ -1,86 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792501231;
-	b=IHTmUggMhgZQ3O/0vASKy4ZPENcLfslq6io0/9FcoBK8V2ZjzyO+i2dEblrh+HuxwSuN
-	 lDx0psHWgGJeVMJSaDSd00fswMLbwKgb8Va8T4l7vCN+Ji5cgzfTNuwrxz5VXrI1wNjs+
-	 VJNp1PQ3mzJOlo0Uuo0zwJ1lVS8lURWhyyqstTOyFwm1dkoxisRBoqccoktXgV130dLfs
-	 EpxSSVgkbbRaeZPqkkS9LgpnUFlFtkMNcUYdo0nnI/YDyRwTJ3gs3YAgmS45GKXPsTjjX
-	 O9rc6VQvI9y2t4rDzR4vrnH3KRYWVfXycxUv+ysTPZOaPMP70gFe+KIa/YHCY/Kgv9Q==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792501231;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=gDnFObZ0K2X9/qO2ilzZd80c6UZ6TUK8OX6LvufmLAA=;
-	b=NVR0lF00laMpjuFsBrlNX0XVS6W8NDQQQLTEccShVWEkA7GBTCEES0U/h7qfc+zYehOY
-	 65B9sEd0fEPhrrFxO0LZQM3Emo2AUZh+w0m33o86OHGyo8XX8JNumLIXd5TtbK7mE0UbH
-	 bB2ydabb43qJ8/jsKVuVvIXNlUWwm50zO3H4CyAlyfzUO9BkDjDgg3KjLmB6HO4WP8+ns
-	 xc2wyApa9J6Qo9+jyOvc46V2qPFIhrqnnk1ycUnMpwyV13EOOjrCT27W+OUOrrqFOL5iG
-	 T+2qSirx0h6UYTUxMgRLyMbjdVVLxcdchJe2O0M8TMjLJ1h+zEavnESLqcu+v6gS4Eg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b="p4l/8DF9";
-	arc=none smtp.remote-ip=209.85.221.51
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.8
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792501238;
+	b=fWi3Sd+08INMo8JkluhHLG4qIReuBvF2PWjLLG7WmZTlnkpms/J6TQWbkAV/FM1/c7kn
+	 a/TXuEkExAAJCJYn6BqrzcjCHW8H/qioBaUdCynEDeUsHQOfvUVrsZxuuAy5v78Bj2kn+
+	 qRFnEXGeUAIzBAhxm5CeVos3yy/4ur20m6FTkMk7Po+E47rDHGq8PDtaoOjL6pnOmbOVS
+	 kpWdzS6IRyre8l10Dl13sYzIogJQjLWTp9tj/Vdykwx6MX4dgUUyLeOM6YvdPNzSX5JSV
+	 mOfnymRbcoDx12kfUEKri1/b38/oZr29+MWFVl1ZmzX2mHxyyByxsdg3k80cF5bbIvw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792501238;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:Content-Transfer-Encoding:Content-Type:
+	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=HWRQbeo8utPwpwh+fIlrOacxRBTDzEtjy+DkoYIxz7o=;
+	b=1GvEK0ChhKIZJqbAHV9TaJr8pmV/BJciFnzM7GdW1mLwOGJwlIR0A/nwCKSjY4xmfwtd
+	 2+xTD+sv7Hvt6kRgyc0s1UeNK/E4zIMzBT2O+VooE7rmdFlhYRu/LPE6+Vr0mgh1x43BY
+	 DLSTAi6V1MZOuHOnUKqUXty4LDB5rTL/Iuyjo3juf3WWAujbGPnow5ngVP2JCFXMziHmR
+	 kaTan5DzKHHR6xiC+Hr2dbE7BPRNjAsEQiqWvwUHmjifDrKlRDsamuXiZQE9n0sNfPyRz
+	 WO6GpkerkTdr77O7Tbr+rZf2PTkizD7er4FSdcuCFeOXjL+wQRkzyLOlaz9/Vrs0m7Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b="sGdrY/T5";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.8
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011008.outbound.protection.outlook.com [52.101.57.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3D860A4AE2
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 13:00:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE3D860A4AE2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E490B60A4AD2;
+	Tue, 20 Oct 2026 13:00:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E490B60A4AD2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=p4l/8DF9
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48e09aa5264so1935195f8f.2
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 06:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792501228; x=1793106028; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=gDnFObZ0K2X9/qO2ilzZd80c6UZ6TUK8OX6LvufmLAA=;
-        b=p4l/8DF9+/kYzcvHQwOneewQdIXFBAmaAIofNK4rYogA0p6b2j/4k28KAy04iAOQ+v
-         Q8+DfkO/hKDcSxybfRIB/8oGAkscX0EMrg0N1JIRBHIhmHjDxc7gpzxJvNaM7uamfipj
-         FQbgA11uYbN+ERU4IiiyOgZhWX6v7sRYJZBzWkuMK2EVtHtek6ObeuyA0FbWaUBVRg2i
-         iOaFZ3M+c9VQuy1OxKyUIP/kjUGSLEheSnAiCfnKqofRPPslBWn1sMhSPAK3c+dq4AQf
-         5Aer6fU9gvSOdpYJw408drds4U9ySb6zuO/55i8bNFqdGjukPkM0kDIdyU0IuHXi5plR
-         W0Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792501228; x=1793106028;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gDnFObZ0K2X9/qO2ilzZd80c6UZ6TUK8OX6LvufmLAA=;
-        b=zu/z9QUC6g1/N5E+Os9OzAaP+xEa9K3ROI28smflCGk2kaiIKCQKTZljFigXooPc58
-         Pi/Uk0W5WwdlpR2FrGwPzXFQI7lt6Tpe8XOgcO27ZwbA6KhPsS+UPTJe9HgcBeoDFgDY
-         SvVof7+xO8n9TwwNfP4kUOmTN1qT1dGpHCGGEmXSeGTtVcy6rJFMuw9/wI5RHdV+xuqB
-         HxD0nasfMTU12Xcze6bLawlxjq1YrS5c8I0w5B+OC0gltr/RxhlYRk3Shsf/p0GzSkr1
-         jOsclrYVLlI2lGyhZFwNAYgdxyK1tbXcPNnTZzAgF5hJqQIVsezQw5XJUhAh5atdQXD2
-         EizA==
-X-Forwarded-Encrypted: i=1; AKwUvBxxUnONw/FkthGXtFdtQiou6SrCDNZdZm67Y2fnX7wkZ7V9jNzVYqolHnbG572/wsjd3WeQO1JojAMV@vger.kernel.org
-X-Gm-Message-State: AFq9FYJPceD13/Ps/L7nRd1L9kFxUnG+fqRwfd+KN5TUA20020gFP0Ow
-	ewn5xDi+SOF0Mg28hHrkkNf9SN7LEWEmo2gaqgOQ5JNg8DGsjXANDlqQ
-X-Gm-Gg: AYBFou3AjskBlKHW8Hgr8NqHmdZb/NqtaS8K/C8igv3oYLpYzBw5A+u+ib952Qa82Qi
-	orLCXpYA1/ngmYCfkXGJQuL4r6XUBw0Wte1mCKXuf5ggqyeYLtEV1AYTK1POq3HXQn0vnF94XgA
-	RfhHVvWQy5gfgGUMufm9RXi82qZ7a+R6TT3oJjiShkytVZfRuqS9+Gbt4ZkAgOrJ3Pme2YXzxK6
-	GnmRaYYUEh/NJAiuz8UCcZLWsVpTHdmz3zppqAcR/TRso0vq4KkVnEumKYto8fvRYs8D0rKUjwt
-	lh/0SArer8ilm2i82zPMyB3py0ieyDPrzTt+2n3/jV8T2aeqD7AZXEoSCMfx7ONbOP5sHCkGODo
-	5vNZm/fUkCuKTlKQw4I9PAcDcp+6iBRmCO/rsKweAUtPYrcsF9b1wRYlT1nTwBu5pH4XhKD9eyg
-	uk8IgSYFwSbNfovWC9RO5wpzpLsBkheXxa52AkdsR4Ote8kIbACyj6tNDuIbjv4abm4y0L/LSn2
-	DUsUI100DjcLBHlfgOCCWw5zqHgW7Id7H5f29PGccmILCZkRa8SnL2UIq0SuKUZBrCJTEWeOA==
-X-Received: by 2002:a05:6000:4205:b0:48e:dee:52bc with SMTP id ffacd0b85a97d-48e0dee52f0mr18975446f8f.0.1792501227440;
-        Tue, 20 Oct 2026 06:00:27 -0700 (PDT)
-Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e1d830e91sm6114754f8f.54.2026.10.20.06.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 06:00:27 -0700 (PDT)
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Date: Tue, 20 Oct 2026 15:00:18 +0200
-Subject: [PATCH v3 7/8] of: property: fw_devlink: Follow clock nexus maps
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=sGdrY/T5
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f54PM319xRlC/DwAme1vI4LoouFmoeULwU7KmoHyb38vW1qfx66HCotTl/slW4SjramkYRpEthx8ZhZKPqiF0DtxCAd3fPu+uWAcwJpwJnd4aoNRSj0niJSJpv5wXaBifTOi6IqoxKtHd1BXrQyLEGVkB3nsQeKgwpxioJEryQBp/XI9a9jm0onjI6Iw27XHTpEw9s9BUsgwbuNc3NNKzypJ2M7aXNmm8iTPy49YM4VgA3VChSaOTozC4Sz1VZk3ztuuqgmxjMhvfCe26RFiXuKZjdrp6kKCxrRqszJdthS80xgWV8smmOmZkX5htFccRZjY79kWaKU43/9X6aMjlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HWRQbeo8utPwpwh+fIlrOacxRBTDzEtjy+DkoYIxz7o=;
+ b=UTu5VUxrQE+F6HwyfOcemWC/tYVJWOi1oknGmggSq41sxmTib6K4QSicDi02d0xI4ZluzsYwVOr2zEM+mgpKQzn7hclDflTPCs/1sOFXJM9NjxtJ8bURYH/6mPyPtg6bkFzHC69WUSGtlQYz8gWwbdHzYrgfYCrlN2ggLSLz903v5gzOyI3xO4YJPYcIgSxl9IWhQF5yl7NkwcK5ahUuaMxIWJRJbzLO5Bd7O98kdkeSnWkdr4RY44wUiW0BQ6hTSanCK1MrBOjsN7joc+fczg/rSjl0JaKpmkj849DNU9/suikz08C7Sh/PAgxQNR6lNxDd5zi9esOsCpJi94z7BA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWRQbeo8utPwpwh+fIlrOacxRBTDzEtjy+DkoYIxz7o=;
+ b=sGdrY/T5Gni90eSCYz1P8HMQPmxaGSUaTa8BBri+C53H6gVr+lbMrwrU0Vcj3U9rEhvh2tPYf8Es74q3r8pkG3aQhOIU4mJr6UEsznLQ4VWXGnaD08QlT48AmSXPjCAbaE0Dg8WSdq131A4AI0nayjFKAy9qdseqM6l5/Gl+niobjZ2ZkMiCgqfygACRGdqJ7qADnsgz5QeHWyxKFEV1y+lEdoeCa9EsFl4ReBUoLZSeegOS2odTW5D/J+PbOGtASyMpRaOqRHVJ3/IJ21dGO/ThlmNIJy+UXAooEwG4KMRHPw3DheDKHn/5dUEGEgWmnuazUn6/T2w37nO1sA9VWw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by CY8PR12MB7414.namprd12.prod.outlook.com (2603:10b6:930:5e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Tue, 20 Oct
+ 2026 13:00:30 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0522.017; Tue, 20 Oct 2026
+ 13:00:30 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] gpiolib: fix chip removal with lines still requested from user space
+Date: Tue, 20 Oct 2026 16:00:22 +0300
+Message-ID: <20261020-gpiolib-chip-removal-v3-0-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PNYPR01CA0052.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:25b::11) To PH7PR12MB5974.namprd12.prod.outlook.com
+ (2603:10b6:510:1d9::19)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -90,72 +101,113 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261020-fw-devlink-nexus-ready-v3-7-fd6f1c17e16d@toradex.com>
-References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>
-Cc: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
- Frank Li <Frank.li@oss.nxp.com>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Herve Codina <herve.codina@bootlin.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, 
- Leonardo Costa <leonardo.costa@toradex.com>, 
- Frieder Schrempf <frieder.schrempf@kontron.de>, devicetree@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-X-Mailer: b4 0.13.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|CY8PR12MB7414:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d430335-ecac-4af4-5409-08df2eaa1e95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|23010399003|366016|56012099006|11063799006|261009223027099003|10067099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	mUNxcBh7ByAmiKFOlsAnjGuChzUNlzlhQRoq/63Vo4VfFIhJH/Fcea0jPwdsU6zVlZCqN7ch9WI2x/p4fRHp6D5r+I3VHWGHLaQNT9ZI+TfcwDUb/6tyIRcOSRoVSDidymF7nxl56Zu+xjDGKWvCAoOSLRR/28K3yALbcZGFqvNNNQ5Dc892A7uIJ+bi/Dk4LvfkQA64nkOCF4i682YK/LOWmJoTZ1em0n6+K1VHb/uZH4Dx1kHSyXjVqFSaILjKBpj3bN8iU8Q/1ochKRZVYfCeArNyweNGJxychxCKtlrVnaDvyQtbV6QBnDzRMqR1n7h6HcchhIKbEiqGNzkbDffcWU6LxiSiUcSo98EypHnRAVUgQc2TTVxm7QH/7Usp7g3da0S3xE/iL/z1BfOXBKs16bfqI7oXrWXLxb848HV4qaBEYJUTBMwEDZehRSWg63is4aQiSfPsqFWnDMZOMv5ab0qww9sAMhoktP6OoJVAHtuQLSjM/EPBl59nTzxIZFevIulPTpjCp5HFIZpaIVf5cJ6JePIG9gdQ3JQDtq1JuqbkSBJE97dicOxVe2Ao4plYxHEx799eSeC78+2ui6LZr9vBZ4hZ4GZQQv23L26fjYAZrjZkJEopmJCDEtC80rFCXG7wq4s0mq/9sDzHHEkFX5mvAW5552zZHkqdaIk=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(23010399003)(366016)(56012099006)(11063799006)(261009223027099003)(10067099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KGz7I+gi5ZMbtjxLupY6cxtlZc4cEhF7DkxUJKtZ15Ox7tEeBXGkw6FezTJb?=
+ =?us-ascii?Q?uh7gEwnV1+cN1gzb2NJQdA7B9lwj8jiVYPmsM+QjM77+qWnTJXUg8mXNT6AI?=
+ =?us-ascii?Q?5/0vn1Lshhq1JX39DIgA2L5rPFNTj5EbboZOLjyn+weCGJzSBIS2PL7cpOEA?=
+ =?us-ascii?Q?I6N3oXsN6rbzuzfrGphDfef0DEiHggtGmkeCO7d+fkdjnVBCtMT0gsETWYZt?=
+ =?us-ascii?Q?SD4akU87rmEB3v6a1rwCCUKT9jniE4YUyhOREVkQop+Szc5OKRfCak8tTJfa?=
+ =?us-ascii?Q?LFzVYEuZ6gFGmw2LTZyDaNjQxCHL/Vff8E2FpYYidn3g7/u4jO/y4l3UfwH6?=
+ =?us-ascii?Q?0Ao2ROB1Ix/LM86AKwhvrwNlOoz1zmnNhVUgqEDQGFCWnVzanlwursn2ibLB?=
+ =?us-ascii?Q?ffliD/r1k+qZGkHBLiOOGpnqdNBwAdhs0ueLlFdsK9jd09s0kf70xJ5n2tNH?=
+ =?us-ascii?Q?gnG3aAU6O4uQsowaSAhacBltI1btSlnZSQDTKHb1rOC+DuTT9OR49kyid9fE?=
+ =?us-ascii?Q?FOXI7TE6mGtiBmE6Kd1S8tbxILxgaesE6IfCHqEZ/5xVtW1l5SAuyDu4AVR8?=
+ =?us-ascii?Q?uUNELflYwqWcLVp61gMarki1cXv2J4KQoeel++PoKYTLJE/debI6DoKohwow?=
+ =?us-ascii?Q?3f7mfjMOU7plZTEOfSo3di5zs/MmkgAblPbs/aLLK7QqIZdCokW7wnzoabG7?=
+ =?us-ascii?Q?vqwFwzqQAMIBANVPA2NntVgehtENLNWrlcpRanhWlzeDLFcLstLOcP4Xcpv0?=
+ =?us-ascii?Q?WFJv4IPMv3wHzgURCRA+eCKZPvVmPIqQve5YkZv46iJPBUdd5Wy+pezYOXXJ?=
+ =?us-ascii?Q?q8L/OAsKMuazcgrMoPcGhWiIe+Vm5qIrD6Yg6OKKohulq8GMmVWojE5SoBYe?=
+ =?us-ascii?Q?K2YWE21P+m1UsuUcDOjnPXu61PAFTVSjsTGoEd5ChN8TyoJcHOj8oy+aaY/e?=
+ =?us-ascii?Q?DTqnBUPN8pSkC3QtE0vmnNVLtYbKND3MYhtW05BnETqAaA/BRrSJzJJsgEKB?=
+ =?us-ascii?Q?3OhxSLp2FoU1ul5eXTYB7h20u6EwjAXCmNt2aj8DmaeZdbYcnRKsH6KNLnqF?=
+ =?us-ascii?Q?d4xTiy2xDnkeeO+ILhNPkJnpu25jzrdE2gpW3FuCDaz5jAIn1XxyiA5rqQrD?=
+ =?us-ascii?Q?Gb2ziqjwQuqzSNDGyLISfHksALUjj2LaOoDAK0TANjRzkVvsBMMTPWw0bttO?=
+ =?us-ascii?Q?bSFZHM6V5jI7TEboaUt24heZdggXxNaMwGnGlBbJkcSFnsw4NmolD27Egvmk?=
+ =?us-ascii?Q?G8ET5EGlHqRUbbn03FenQuXEjaGbhbqR9zr2Rxlw/dYGSFW7NMd5AWgSxHzy?=
+ =?us-ascii?Q?XJhF4HqrANVELSrHsFVv02j1SYVxmYf9g97p1fAyjG04EM0+abMNu0vHhRNE?=
+ =?us-ascii?Q?iBcyi5WpL518jGsB9BSkCk7rSoakEzv5WVxdh2RJeNVSiTPJjBbAzwqW8kKv?=
+ =?us-ascii?Q?6MpeH5g4T47fZGMgRSZRdBSw88JstWraIBqOpMulMdCdc4AWedNTKuxwMhsg?=
+ =?us-ascii?Q?a6XWFdmYrZlq2Vyvm3b1ctmrXln62ee32zUrygu5wG2sB+HbBjlAz361mV3G?=
+ =?us-ascii?Q?IsWJmAK15Kmw3kEvIlCt6SazdQLreST2gJc7jEEXSA+XDJjDg7QebOBKwC/L?=
+ =?us-ascii?Q?pAaqjLMBNOlDhRqW7/qMslQoFJbUT927Tpgb69BWcwFzaAcbwrd2YVg5Abm3?=
+ =?us-ascii?Q?r7U5szBuzcT/L3tpLCikLnrUlUnwmeTjwASDSpaerIi3MmPL1sNrqhx0relL?=
+ =?us-ascii?Q?DR0iPnv6yg=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d430335-ecac-4af4-5409-08df2eaa1e95
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 13:00:30.3074
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vLRSybtRSLa3VYxFQGhpg7eO11sXtCd7ssSwi3Iwlv3/dTpK9iikDn0PYmjQ+3Tp9QHm/8x4e5H4iM04YpSkxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7414
 
-From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+Removing a GPIO chip while user space holds a line request, as when a
+hot-pluggable GPIO controller goes away, leaks the line labels (patch 2)
+and IRQ names (patch 5), frees IRQs a second time (patches 3, 6) and
+lets a blocked read() stall the removal (patch 4). Patch 1 makes
+gpiodev_release() wait for pending label frees; without it,
+cleanup_srcu_struct() can warn, more often with patch 2.
 
-Clock consumers use of_parse_phandle_with_args_map() to resolve
-specifiers through clock-map properties. fw_devlink instead parses the
-clocks property as a direct phandle reference, so it records the nexus
-node as the supplier rather than the mapped clock provider.
+Patch 6 changes the order in gpiochip_remove() for in-kernel users too:
+the IRQs they leave requested are now freed after the chip pointer is
+cleared, when gpiod_*() calls on the chip fail.
 
-A nexus is a translation node, not the clock provider, and need not be
-populated as a device. The resulting fwnode link can therefore remain
-unresolved and indefinitely defer the consumer while
-device_links_check_suppliers() waits for the nexus.
+User-visible change: a read() blocked when the chip is removed returns
+the queued events, if any, and then fails with -ENODEV, instead of
+staying blocked until a signal or an event.
 
-Use the map-aware parser for clocks so fw_devlink resolves the same
-provider as the clock consumer API. Direct clock references continue to
-work because the map-aware parser returns the original provider when no
-clock-map property is present.
+For stable: patch 2 needs patch 1; patches 3, 5 and 6 fix a commit from
+6.13 that 6.12.y also has; patch 4 applies to 6.12.y, older trees need a
+different change.
 
-Fixes: aacc54c67869 ("clk: Add support for clock nexus dt bindings")
-Link: https://lore.kernel.org/all/20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com/
-Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
----
-aacc54c67869 ("clk: Add support for clock nexus dt bindings") has been
-in clk-next and linux-next with the same hash since next-20260907. There
-is no build-time dependency on it, but this patch should not reach
-mainline before it.
----
- drivers/of/property.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested under QEMU (x86_64, 4 vCPUs) with gpio-sim and a test-only chip
+on the hierarchical irqchip, on lockdep, kmemleak and KASAN builds:
+each reproducer warns, leaks or hangs without its patch and passes with
+it. v2 has the details.
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 53301cdac6a9..2388d607136f 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1422,7 +1422,7 @@ struct supplier_bindings {
- 	u8 fwlink_flags;
- };
- 
--DEFINE_SIMPLE_PROP(clocks, "clocks", "#clock-cells")
-+DEFINE_SIMPLE_NEXUS_PROP(clocks, "clocks", "clock")
- DEFINE_SIMPLE_PROP(interconnects, "interconnects", "#interconnect-cells")
- DEFINE_SIMPLE_PROP(iommus, "iommus", "#iommu-cells")
- DEFINE_SIMPLE_PROP(mboxes, "mboxes", "#mbox-cells")
+An LLM assistant helped with the analysis, the reproducers and the
+drafts, hence the Assisted-by tags; I reviewed and tested every change.
 
+Changes in v3:
+- Rebased on gpio/for-current.
+- Patch 6: return early when there is no ->to_irq(); drop the comment
+  in lineevent_free() (Kent).
+- Shorter commit messages (Kent, Bartosz).
+- Sashiko's finding on v2 6/6, the gpiochip_add_data_with_key() error
+  path after the character device is registered, is on mainline too; I
+  plan to send a fix for it on top of this series.
+- Link to v2: https://lore.kernel.org/r/20261016-gpiolib-chip-removal-v2-0-aambrozewicz@nvidia.com
+- Link to v1: https://lore.kernel.org/r/20261012-gpiolib-chip-removal-v1-0-aambrozewicz@nvidia.com
+
+Adrian Ambrozewicz (6):
+  gpiolib: wait for pending label frees before cleaning up desc_srcu
+  gpiolib: free the label of lines released after their chip was removed
+  gpiolib: cdev: do not free line IRQs again after the chip is removed
+  gpiolib: cdev: don't sleep in the SRCU read section in read()
+  gpiolib: cdev: don't leak the IRQ name when the chip is removed
+  gpiolib: let the character device free its IRQs first on chip removal
+
+ drivers/gpio/gpiolib-cdev.c | 145 +++++++++++++++++++++++++++---------
+ drivers/gpio/gpiolib.c      |  38 ++++++++--
+ 2 files changed, 138 insertions(+), 45 deletions(-)
+
+
+base-commit: 974d2712cb15014019595799b3ed68fef5fe9695
 -- 
 2.43.0
 
