@@ -1,57 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.204.34.129
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792486659;
-	b=ghDxbaDVpYQFkpxEoa2zrleb4cFNHYOjT3rYN+XycYT5MzjR3eEQtT6wZhG7MxmS4Itd
-	 q4Mvr/ESJGd2RSWhPdwQrqY0WgVKOStuigRegn9hAs6q6Rj/8TvF2yashDuo91VpNA6Rq
-	 pTNpnZK5JMw0CzQ70sL+o88hkzciho769JAdLQfZJSWcU5lgQ07RwRMh0iKWgUOYsZpX4
-	 gAlIcl3WMA+f8KMH/CuMSFmH4L+rqOGCW6dWdyDgQ0TcR/3tYllfTHUMLBbGGGo6hXlAg
-	 2npUJT7R3471Ner2WI1vuqaIczjXMJYs1y0g2tH19Maj2eu2uAMoDcwQhhizg7Uezjw==
+	t=1792487572;
+	b=y0ImsnAidx0WWwUjWEpQhr8kJ8bwysRCGfgSk5CUEXlh6jc+PZc3FpEanKR9NCdyyuEd
+	 5hj/p5Tlq128mNxw+YTPq7nK+YVj3oRL+rSE1iBD+3RSsDm/X1CGa2oUlfQOHhHwD8Ije
+	 5yyXkhyLWaYu75rM69H+UTMsFCl4zqtXjQa4o0zv6aeaqPt18K5M7VPYnDM55sBbCZALG
+	 Rz/dtxia3xxF2/YJMAeXhuN/nMt32CTfD3shZ2hYeAQvR9fCUNCkPi4DcDpodYICd0Sl/
+	 tzswN5ntsjAhkY4klFUUdpznGic5PNpiPQ1VVnYE23D8d4BXEm7frnrbkd+nGzrC8eQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792486659;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=9ukQJga8/SRanG/eXTVEXGt/zdJuLJaYbUF8HMgiuaw=;
-	b=fEzby6D+L27XqvJtTIjhS7fQI2r5DMbnyGSVGmCGobn1E4D3uZM6Dzpg0S2Hgr0Jjypd
-	 /fe0Aiyy9754dd4L6fdmb8ipWu6IsoJM6nBZ0Q5Paz7270fyvUkwgUde/YLVkOJpHXyn+
-	 CadVkjKpbMJv70gKjoCewGV45Zj0LayN3eCUcFIgiFX0p9kgSIaByi8gyIb2YyJb6uzGi
-	 epMOThw0loUfwRGhR4EjuqBHZODF/qLMtmwk5tbTwHgQW/uOhiIvdPiVEniYfEbqhEcaZ
-	 AYjXjCJumk/P/V/O/GXFKVfTF6sezVPKbrp8xpg7y4pofP0WTU40SObvH37bvCcDGhg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792487572;
+	h=DMARC-Filter:X-QQ-mid:X-QQ-Originating-IP:Received:X-QQ-SSF:
+	 X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:Message-ID:Date:
+	 MIME-Version:User-Agent:Reply-To:Subject:To:Cc:References:From:
+	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:X-QQ-XMRINFO:X-QQ-RECHKSPAM;
+	bh=vU+z02vLYKXPdaAV10b8G93MI5kusn0c4HjxHq8ujnM=;
+	b=baYD2oIOWGJp6C4sr6sNI82QiWp4iu3LP9PL9GbX1yw6vWOSfRo4/XY+iK4IRKoNLU9u
+	 7rxOpBAim7x3WO0+GuHFc+izWhwyqdGMEOuh2oTHlywMrdfW+a2RUPeTYbWNhaC0LtSyU
+	 k/MNACZLXADJ4dar8RBY+XimqLapEGrWw0vdrW4m0Y7c8tsxuqWI5gYHEsH7Ch/aJpNQT
+	 g/SZuv0aNkiQt8HyslOewpk5ExXgObcd6tI7ilgglBczRbqjBFYo0/7vPEBQBwzNTX5Zd
+	 4jhax+cBP6SENY1cDPtpDydGnCOBKsm9Ft3sNMMvNZONr8L5mgIEA37JOedLi1itGew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AmY5vkDW;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=radxa.com;
+	spf=pass smtp.mailfrom=radxa.com;
+	arc=none smtp.remote-ip=54.204.34.129
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0E4606A31F;
-	Tue, 20 Oct 2026 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AmY5vkDW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E991F000C5;
-	Tue, 20 Oct 2026 08:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792486659;
-	bh=9ukQJga8/SRanG/eXTVEXGt/zdJuLJaYbUF8HMgiuaw=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=AmY5vkDWHUC1rzc0ZfxGW5IGujLMiHJUnk1UnZLHFN0ZOeK7S0pmMvQ36JkvRV5ip
-	 I7i7lDgZk7JXTykmljT2gCZchacxFeWqs6d43P1VQUdxEEi/1Bqjbr2b4KMAxfyBDz
-	 3y8JlWWL7shhqU4Y2YZ9SeOFkW7967pt/6kyz7DQZMD+A4jk+Ld/7zdzkBHIFnJeh1
-	 eSX3Lv1cpLlF2eZLjbwlLngGS3C6OV29Xgw3s/GHb+InadSlBE6eLjcJKSKoWEEhGh
-	 Yw2qUuFPhbAogdIBO1UJ5DgQKXjTZ8q7pnjSOORqFuU3gL4cWIm2n+R4QrtsJP9T8e
-	 yEv4BNCzVnNkw==
-Message-ID: <sashiko-outbox-178660@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v11 2/9] gpiolib: regmap: add
- GPIO_REGMAP_QUIRK_SET_AFTER_DIR
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261020-cv75-gpio-v11-2-e058bae19571@ambarella.com>
-References: <20261020-cv75-gpio-v11-0-e058bae19571@ambarella.com>
- <20261020-cv75-gpio-v11-2-e058bae19571@ambarella.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 20 Oct 2026 08:57:38 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C00C606A331;
+	Tue, 20 Oct 2026 09:12:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C00C606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpgz6t1792487489t04aa9426
+X-QQ-Originating-IP: xblyLXtYUkaN+mcRUZlY6MFFt1npan14bWp9+SQNemM=
+Received: from [127.0.0.1] ( [180.159.160.209])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 20 Oct 2026 17:11:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10771054805953698164
+EX-QQ-RecipientCnt: 32
+Message-ID: <C782C697D7D26A70+05200ff5-c7c6-4425-ad15-67222a2ebacc@radxa.com>
+Date: Tue, 20 Oct 2026 17:11:23 +0800
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,87 +50,227 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: sophon@radxa.com
+Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sc8280xp: add Radxa Dragon Q8B
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski
+ <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>,
+ dragon@radxa.com, Daniele Briguglio <hello@superkali.me>
+References: <20261009-q8b-dts-v2-0-eda11e5dea8b@radxa.com>
+ <20261009-q8b-dts-v2-4-eda11e5dea8b@radxa.com>
+ <3bb9a390-3b5e-4321-a25f-77e4f5c88f9a@oss.qualcomm.com>
+From: Xilin Wu <sophon@radxa.com>
+Organization: Radxa Computer (Shenzhen) Co., Ltd
+In-Reply-To: <3bb9a390-3b5e-4321-a25f-77e4f5c88f9a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: M44gPKlhuS3s9ib/HF+x2es0LH39PYX+RI5y1uBElRr3DpD4G/LYBV9+
+	jCwpMftPGiziUbPpTd+j9gQgRiapMghIYmKDzE6rZ+emvpDK4sryt5l1Vr1x7GnDaRf4Giy
+	6kRo7t+rbhCppjloVej8SJdVh7dZhBPZLnNDReUd3xH38qvJDvP3Zu8vBOF4+Xqh1z2MpQr
+	TEr+yXAoLfRD2D0/TX2CEhWVcCfsjRwVFPbIAXFqAZ8soenRlLVIl+kDkHklxvuLdEwdp52
+	xmZSGIDpYNz6iNfc2sj2BVAnzfXO3RduVWhtYsjMx8xdBHIryzWZ9xashH7riJoCFaOWU7Y
+	uH/MuT7iy7GZ6y0V+9VhMxFRvDy7Q86k6ktS8kXdwm4m1WhBdS76Tm7HLOFk9wsx5nY/jNv
+	XG1TcOeom9Ig9qGjywkpBgeFY//LZB+7+6du9UM7U1CZdtapjGFj7ozPR9kq90otC61yNky
+	cSi7mJQbBxCzGvxYA9psf6pXP9VWjoIHC55fRbUQOvugvBWlqgchMzsTKFWJDDl4CoJ8Kmz
+	RnS/R2QJ44O9KD2zCLiQDFxCWamVW4JPqTKUR31ryViJJW42o5ltGJCk7VUaxCJw3syEdeE
+	iSTgkvruCd098ui4vI/OSOCVd+DnZ5zPRturB5+oOYfi466aTwJfNmGAVULCpdBweOuA9gH
+	1QZnL74yd3SSak72Ldr1d1oF7kl36vbSb6a69TKsHfllgIC05ZwEJ7O7Nzt6bKYbo18Fkd5
+	OLcRT6VHUW7QHw0kK+c4DN9X0xrPWm+7/7Rc5n4KEh6r0mtMYPsmgbymvw7jwjG+7uByIle
+	53en9gbGG3vF/yKB4iSMuY+Cou/vPigx5rrnAe43MXjQ7sUg8scmJtAOgkJvXpvo3y/bbXn
+	kcoj+ht0rHlOJMDb8K68yrR3+IHkQ3YLu5HP+N2NRvIdVvB/yyV7hMvq9H1BquUyRHnH0jk
+	XV1IPRP3I947nL3Pwh1rMFJosTgts4mckeTVv1zjKuVJIcD4baGRvZcBVdyzFmXyuhVdsij
+	kV9lo/jIuZlgh10IQe7Srrp20BDgSQJhCGaciICyLmJzWLL1tTWO53T/GgGKLykd/MscYbX
+	CTPxSS4Y9QRhMifeGj2iwc/2GsfleKL1iwzv1/Ky4xr
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-RECHKSPAM: 0
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] gpio: regmap: unchecked gpio_regmap_set() in gpio_regmap_directi=
-on_output()
---
+On 10/20/2026 4:27 PM, Konrad Dybcio wrote:
+> On 10/9/26 9:55 AM, Xilin Wu wrote:
+>> Add initial device tree support for the Radxa Dragon Q8B,
+>> a single-board computer based on the Qualcomm Snapdragon 8cx Gen 3
+>> SC8280XP platform.
+> 
+> [...]
+> 
+>> +	pmic-glink {
+>> +		compatible = "qcom,sc8280xp-pmic-glink", "qcom,pmic-glink";
+>> +
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		orientation-gpios = <&tlmm 166 GPIO_ACTIVE_HIGH>,
+>> +					<&tlmm 49 GPIO_ACTIVE_HIGH>;
+> 
+> Please align the '<'s
+> 
 
-commit 08236aadae56fa844fef879953d0665dc5a56ed0
-Author: Long Zhao <longzhao@ambarella.com>
+Ack.
 
-gpiolib: regmap: add GPIO_REGMAP_QUIRK_SET_AFTER_DIR
+> 
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +				port@0 {
+> 
+> Please add a \n before the subnode
+> 
 
-This commit adds the GPIO_REGMAP_QUIRK_SET_AFTER_DIR flag to gpio-regmap so
-controllers that ignore output writes while a line is configured as an input
-can write the output value after changing the line direction.
+Ack.
 
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index 51b4d69b87403..0a44deae3d01e 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
+> [...]
+> 
+>> +	vcc_5v_s: regulator-vcc-5v-s {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "vcc_5v_s";
+>> +		regulator-min-microvolt = <5000000>;
+>> +		regulator-max-microvolt = <5000000>;
+>> +
+>> +		gpio = <&tlmm 159 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +		startup-delay-us = <250000>;
+>> +		off-on-delay-us = <150000>;
+>> +
+>> +		pinctrl-0 = <&vcc_5v_s_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		/* CH7218A needs to be powered on for HPD logic to work */
+>> +		regulator-always-on;
+> 
+> Does the power supply reference at the connector node not handle this?
+> 
 
-[ ... ]
+No, the regulator will be turned off if there's no active display.
 
-> @@ -271,9 +272,17 @@ static int gpio_regmap_direction_output(struct gpio_=
-chip *chip,
->  			return ret;
->  	}
-> =20
-> -	gpio_regmap_set(chip, offset, value);
-> +	if (!(gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR))
-> +		gpio_regmap_set(chip, offset, value);
-> =20
-> -	return gpio_regmap_set_direction(chip, offset, true);
-> +	ret =3D gpio_regmap_set_direction(chip, offset, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR)
-> +		gpio_regmap_set(chip, offset, value);
-> +
-> +	return 0;
->  }
+> [...]
+> 
+>> +&gpu_zap_shader {
+>> +	/* Reuse firmware from x13s as the SoC is unfused */
+>> +	firmware-name = "qcom/sc8280xp/LENOVO/21BX/qcdxkmsuc8280.mbn";
+>> +};
+> 
+> Other than the signature, the zap firmware is wholly generic.. I wonder
+> if we can just add a symlink in l-f to get a generic path..
+> 
+> WDYT +Dmitry?
+> 
 
-[Severity: Medium]
-Should gpio_regmap_direction_output() check and propagate the return value =
-of
-gpio_regmap_set()?
+I would prefer that indeed.
 
-In drivers/gpio/gpio-regmap.c, gpio_regmap_set() returns a negative error c=
-ode
-when gpio->reg_mask_xlate(), regmap_write_bits(), or regmap_update_bits()
-fails:
+> [...]
+> 
+>> +/* M-key Gen3 x4 */
+>> +&pcie2a {
+>> +	/* Place ECAM and BAR space above 4 GiB to accommodate large BARs. */
+>> +	reg = <0x0 0x01c20000 0x0 0x3000>,
+>> +	      <0x0 0x3c000000 0x0 0xf1d>,
+>> +	      <0x0 0x3c000f20 0x0 0xa8>,
+>> +	      <0x0 0x3c001000 0x0 0x1000>,
+>> +	      <0x5 0x00000000 0x0 0x10000000>, /* ECAM config */
+>> +	      <0x0 0x01c23000 0x0 0x1000>;
+>> +
+>> +	ranges = /* IO (1 MiB) */
+>> +		 <0x01000000 0x0 0x00000000 0x0 0x3c200000 0x0 0x100000>,
+>> +		 /* 32-bit non-prefetchable memory (256 MiB) */
+>> +		 <0x02000000 0x0 0x40000000 0x5 0x10000000 0x0 0x10000000>,
+>> +		 /* 64-bit non-prefetchable memory (3.5 GiB) */
+>> +		 <0x03000000 0x5 0x20000000 0x5 0x20000000 0x0 0xe0000000>;
+> 
+> Please drop this change on the board side, this is SoC-specific.
+> Likewise for the other ports.
+> 
 
-drivers/gpio/gpio-regmap.c:gpio_regmap_set() {
-	...
-	ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
-	if (ret)
-		return ret;
-	...
-	if (gpio->reg_dat_base =3D=3D gpio->reg_set_base)
-		ret =3D regmap_write_bits(gpio->regmap, reg, mask, mask_val);
-	else
-		ret =3D regmap_update_bits(gpio->regmap, reg, mask, mask_val);
+Ack. Do you think this change can be applied to SoC DTSI?
 
-	return ret;
-}
+> [...]
+> 
+>> +&pmk8280_pon_pwrkey {
+>> +	status = "okay";
+>> +};
+> 
+> I am confused why this isn't enabled by deafult but that's of course
+> not your fault
+> 
+> [...]
+> 
+> 
+>> +&sdc2 {
+>> +	pinctrl-0 = <&sdc2_default_state>;
+>> +	pinctrl-1 = <&sdc2_sleep_state>;
+>> +	pinctrl-names = "default", "sleep";
+>> +
+>> +	full-pwr-cycle;
+> 
+> Hm, is that something that comes from the controller itself? Should
+> we advertise it on other SoCs too?
+> 
 
-When GPIO_REGMAP_QUIRK_SET_AFTER_DIR is not set, ignoring a failure from
-gpio_regmap_set() causes gpio_regmap_direction_output() to still call
-gpio_regmap_set_direction(chip, offset, true), enabling the output buffer w=
-ith
-a stale output value.
+It is observed that the boot firmware can leave an inserted SD card in a 
+state that makes the first Linux enumeration fall back to 50 MHz 
+high-speed mode. This property allows the MMC core to fully cycle the 
+controllable card supply after voltage selection so UHS-I voltage 
+switching succeeds reliably.
 
-When GPIO_REGMAP_QUIRK_SET_AFTER_DIR is set, a failure in gpio_regmap_set()
-after gpio_regmap_set_direction() is discarded and 0 is returned to
-gpiod_direction_output_raw_commit(), leaving the line configured as an outp=
-ut
-with an unwritten value while reporting success to the caller.
+> [...]
+> 
+>> +
+>> +	vmmc-supply = <&vreg_l9c>;
+>> +	vqmmc-supply = <&vreg_l6c>;
+>> +
+>> +	cd-gpios = <&tlmm 131 GPIO_ACTIVE_LOW>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&sound {
+>> +	compatible = "qcom,sc8280xp-sndcard";
+>> +	model = "SC8280XP-Radxa-Dragon-Q8B";
+>> +
+>> +	audio-routing =
+>> +		"IN1_HPHL", "HPHL_OUT",
+> 
+> Please don't break the line here, start right after the '='
+> 
 
-[ ... ]
+Ack.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261020-cv75-gpio-=
-v11-0-e058bae19571@ambarella.com?part=3D2
+> [...]
+> 
+>> +	usb0_sbu_default: usb0-sbu-state {
+>> +		oe-n-pins {
+>> +			pins = "gpio101";
+>> +			function = "gpio";
+>> +			bias-disable;
+>> +			drive-strength = <16>;
+>> +			output-high;
+> 
+> Drop the forced output state from both SBU pin states
+> 
+
+Ack. Thank you for the review.
+
+> Konrad
+
+
+-- 
+Best regards,
+Xilin Wu <sophon@radxa.com>
