@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792456687;
-	b=qN77FDAfcKxIn3jVMpbYhsRLB+eaN4BnaXcp0StulN47joJR9zo5ZWtbug1HH4mGySzw
-	 i9PExmRjpwCdi5UwO4l/EF/zo7g8C5R9dRr31WhdO7Cw6WhlaWrLHT+GHkjXtZTUavCgx
-	 VZf3T7OAmBMrm0gLxYerafvaMQFIoVF1wIztEp7FFdPiGkgJ3hUxxuc+rGUXVAiaDLPim
-	 0gBNEQn/NTSIFONj8YqTgikxfwDbkw2qUN0wmyH2q/zpNb9+VcqLrqyQnnYEzkj2m1/9u
-	 whPbBtQFZkaSJxWAmBwDcGg1bIhzl6UFJcJejHEfauOBsxo75j9yHMnoGz/jCXVEP+A==
+	t=1792456685;
+	b=EziklRYJdk4LhyZaKs6/KOpkJRK+6eUx/214dPn1jW6qTgwdXut4X0FoIqcVi+MvBUMk
+	 AbSiBvZmADYzXdwaCgWt+drcQzym1aGXbcHdGFpJR8oq0F9Ljzj3ClpPIkkiwLIRvZL6u
+	 dGo+CJmUbdVRiAh2niEI9ovOAMFtwfx3uS8QPeDymZK/Keh0e9W2Rr0VlBemNWUchMnk/
+	 XOmPj0UIwl5R28Zk/Wq4f5ZaGqbKvIfX7LXLLRFaKEILZ8bbexZm6R1PrLmSHXgvc76EW
+	 mdxbtoXGsjN+sZrbMwez6UHvfxewwpvb8e3LyyaYW8lEzhJa3X0qBWdQ8/gdk6KaoPQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792456687;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792456685;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=c3m3TKoMLCKqodrlgvSnDQJaWolnMkqkBszaITzVwP8=;
-	b=tn426yAAMzuVhEPBmEamoueyDLxRauDZnnet4cDpTRLSZt0qPVG93qu2COOXF5sfxaiq
-	 B/l7tcWQ4xag6kSb5ZKtIkEd25MKr+S2+z8VOOu9Isk82aegWHIHpFeon9vcvD49pzejD
-	 nJNmpPojj3CpVQtHZjs/iIB7P7OkR7rjLVZvWP6m6te+cEcoBlJPEGJ8Wt9WuYi9sPOi9
-	 bJF79RHqswc+fRtNpONMYj3R/mmfi5o2sAsfzsiQNhklnn4QlLq06CZB6Wz6Vm5KsLPpx
-	 7RL7BP8ZXMY5ZuxZ8IS5vv8rPQnBlXNrZKwH5vXovqAJMoGQh7ofEXTcbV3SqBafeuQ==
+	bh=dRHoyo0nFFq4VRpxejhdLO8c01cfqDGnfJcw3QA6rAA=;
+	b=ATucszVudnPU0pZxZx3n3uNljKcN53iloCMJOxGwWvj4O4MylT736B/8NfdVpPEq4pch
+	 BSzgJwm0XJ2jllgk3W3/QLMsoj3voOY0DOu9S1y+4BTp3BAfllqOYnlSF+ZaOvaBvq4d2
+	 d7ZcHkrABjZRTGUw0NS/5hUur9ljBLP8c0UF/cKclmcgl4+wmhlToyBz3oHibakooeujH
+	 ZbfCTf+dzd/73WlrGYpCPyPm4BYKNw1cNB4z9++I78zoxL/wDRmYYbm4ViksUq40M/TZL
+	 lCkAWPgxxrOamGxpzO9G2a4Wr/AiKahxOnWmhL/EauOIy2vR/IuFkG2XSSAp+H7trzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=IaXIaQ6X;
-	arc=none smtp.remote-ip=209.85.210.54
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jsOGDxXM;
+	arc=none smtp.remote-ip=209.85.210.46
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16661606A31A
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 00:38:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16661606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC29606A31E
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 00:38:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CDC29606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=IaXIaQ6X
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-8256106635eso1163648a34.0
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 17:38:06 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jsOGDxXM
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-83bbcfba0ffso1277639a34.0
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 17:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792456686; x=1793061486; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792456683; x=1793061483; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=c3m3TKoMLCKqodrlgvSnDQJaWolnMkqkBszaITzVwP8=;
-        b=IaXIaQ6Xu6TuFu/3cwe4XcvbE7fpLGeCpsNyyt7KUwv24giKK/NHlbhZCrJIzi6145
-         7t6w8MoNbljEmtJloglMiugVBdSYU65GPsMJBrVFQI47IWneGFoGbnAMv4lYASg/IMuz
-         MGWOMMmQS1gYaMkfewEV2cJieFxfhiMAvC7u5bGHx0jElpcqFj4yonNC2rXPh4MvhLE6
-         vudWwLb9gj5iAS5H8wQXz1Hs0wC4dT86aNPsUFtssytp4DLVhcm8RslXwvo8EUS5HSIE
-         KL7+D7zeMOkwk4YFb/xynMZNop0aC+5lofo3y4P1OKW0RuytqqpX6taBAGU4eI48XXn1
-         icbA==
+        bh=dRHoyo0nFFq4VRpxejhdLO8c01cfqDGnfJcw3QA6rAA=;
+        b=jsOGDxXMs314x476d0vL/mzsDxMFKrdHcMWRkroi5yOSpT251E1Nqfwh7FtXza+IZ4
+         uSGI3mbeEHWMmfGYaVa+btij4H/uBMTOVxR8M3NGjVwVhYxMnWtVwr7sjLD4iwCTnR1Z
+         DLdDMR8lUeu8MW2/1ocoG+8GQk/Tfb+Zyk9EEGqMlPAj+kGVpW8dOPVJ6BmeNAxmFB5b
+         pKShCHlYZmHygGfKdhRAqOolH/pyQskyn/creFU7nkK1wDAMFF0WvnZ6NOGpJSRUMWXo
+         pzXvTl0/8xEKd8Mx52wQj6GXO4V5qnerq+/5DT9clW4Ay9HJhVKUto25LUHoPssZL0WU
+         DhGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792456686; x=1793061486;
+        d=1e100.net; s=20260707; t=1792456683; x=1793061483;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=c3m3TKoMLCKqodrlgvSnDQJaWolnMkqkBszaITzVwP8=;
-        b=Knv2YB3LPvup3DrwVQU4gdOrW6JrZwqF6CJYQHhADJxGvIdb2nysTxln16zCWRrUPD
-         8m96X3Bv6VvR/S+rr4HX3jD00x+UWwJqVOptQHBZvku93yWRZjEOSFh/NN0Ric/CmSyK
-         JMEqdu7QusaI+k86Fu5ATH82jFtTst4dpmafQlEGcvJqPpJRWbqJ7PH1JJpQ33nNzN0P
-         2k7yq/5xsoBSyDyv5u7MmhyUOlb3jMmrGdD8ikgZFXwzMqJkiUK8oI0EmXRh5c95WKwB
-         DCcfPoDHDbPt//J9Bqk3uczV0BxWxKJ8X5o4wfDDho8WgSK2LVTUMIj7rxPJ3vLyANWU
-         vgoA==
-X-Gm-Message-State: AFq9FYIfQZJVxDuwDDuXxNwrbWYecU+56T8dZLgfChsqn8TDDF9oaYJO
-	0vsxgTqhCCJH8AaI4RwGnnwJr1PBO8rLuEMIjYYiZOQB4XLcKBWVDU4tXzXORA==
-X-Gm-Gg: AYBFou2lw2yyjP2Bu8/3tm5uUTCZDGIYanaA59n//2fj5eJJoLlqHVRhsX3CHRmUKhn
-	WJInZzY9O6MFaUZgmJANbS4FSS10AadpDNlY2HNakaWdo2EjhwpG0YECRrbyQ5zeM2dFac1ZAn2
-	aJG/QxajZ9Bp0QSJnNIJtolobhB+ye/swxAMjHnNHVCxELT1/9ZhZAoQ8wdBJtmMWJ5zJcmHrL1
-	x8XN3UY+rTB7rx7rRTPYBZ22SqH6zv+lmCRIINVmbW6y7rivaPCcdGRpuBT6TYCbCrFeNL5OPAe
-	KwQwgvmxs5E9OtgPuppbBGUC5GhlYoCG/B7GmLuupihbv17vdlenGCc6QMRLSzWjOx8TO5YuUdY
-	4N7WqjSXALEPUqOTt3yZTTlgIrwRqzZq6arJZ7V/tDIzyBT8LAHCVBDcTzFm2/yf8Dd1ElAzlnM
-	SosSrNdt1gKgWnIL0FBMgABR3jEfmLaxUFAgOLufzgsrwovgiiMZUfAcLL83F+X7ICWL2xxMV7m
-	ZIBo6/qVwqq/e0pqpGQu3awnuzI6R7cPKBFM0Fdy5/MCNo=
-X-Received: by 2002:a05:6830:82f4:b0:7eb:9464:ac2e with SMTP id 46e09a7af769-844fe598564mr10128254a34.11.1792456686023;
-        Mon, 19 Oct 2026 17:38:06 -0700 (PDT)
+        bh=dRHoyo0nFFq4VRpxejhdLO8c01cfqDGnfJcw3QA6rAA=;
+        b=ph62PRuVa2l8X+jfv4lPX+GEnyz+dTnyHNzhFrJn8LrrP9dK+iY8yWA+PppOGnSS1d
+         hU6BWyHQKUKLxkdGzp10B2WhACFn76o9l1DY61HllMCZi51qjTAPYOvrEJYlWU7Kscxa
+         kO6y7GBMWaZCcM7KKQpboT4TTlZsD3O3hDtcCHoHEMhl2jD0AfH3RZQhQ7+0wpLAzo8N
+         RlmsfREaX6QuVZ1THgGjolOWLOJkv4uUKZKCI1XNwFpYSMBpPMC1MRGo63rwC29wN2uN
+         vpt5qLeMMPGPFlgMqsX6lDJV9lCe5aqmsu/gc4tU22HPUIXrnejOD4KK5TqyfQRh0zw6
+         joWw==
+X-Gm-Message-State: AFq9FYLLcdRcqbA79XA9LKOtnaZ/I+hTaC/i75x15/n4DlzQ5CsfQZWh
+	KiX73iTwWG3OWCOwl2IlbjKkU6GYih4moc/u57FHbCj2TcuET5OWyT4UdDa9JQ==
+X-Gm-Gg: AYBFou3WTOmdlRWWYuYv8FjDheeGerml8MQZyk+h+JArvNnff6ZEHjJjXV3gk72jBFj
+	fSZySHa8qR+6z8lREUxhGHCjmt1PzuWJmeF/+7G8178mdWuLXmbW5Y3KS65AHNbN8pNd0dw80M5
+	nTibXp57HJkUmesDwajZY6LlXpY+K7tQHhlTGHPQ1L0JP2RuZTbZEImuiKDL+SFRSq9P80Vv+XW
+	Y4+4s9dEu1t6bcgE3bz2FsGPk+FYQPav9JJi4fozKoCG2vSYbbbddN9Po2hjNzM5PBdc7wHSF0/
+	1V+aClvcP3m2XVZgFJAnY6C9vvew6Z51f33o0VcnNpG27DUoZkW+FraNW94mcgUucQusmt2ELdo
+	1etre1H34ZvXZ/oYI+cs/BgKGR3ir7A8d7Qqwg4zQeUZhcF8DKSzN1i3DqMywPgMAQuhhxmPySA
+	kBbOMi0lI8yCqfpJoVvXl6+q+bc5rKMNCx9sN4k2/PUY+nWmkc6/FCQ7JVNebPBya2Whuvab3a+
+	xJpDA83w5zRzSn/vyh+dXbg1r8e2vQRBMAG
+X-Received: by 2002:a05:6830:3889:b0:822:a76e:95a3 with SMTP id 46e09a7af769-844f3d48a48mr8998749a34.0.1792456683605;
+        Mon, 19 Oct 2026 17:38:03 -0700 (PDT)
 Received: from Zephyrus.localdomain ([66.188.87.142])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8429b57870fsm10373383a34.0.2026.10.19.17.38.03
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8429b57870fsm10373383a34.0.2026.10.19.17.38.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 17:38:05 -0700 (PDT)
+        Mon, 19 Oct 2026 17:38:01 -0700 (PDT)
 From: Vincent Fazio <vfazio@gmail.com>
 To: linux-gpio@vger.kernel.org
 Cc: brgl@kernel.org,
 	Vincent Fazio <vfazio@gmail.com>
-Subject: [libgpiod][PATCH 09/14] bindings: python: chip: use literals for dict/list and declare types
-Date: Mon, 19 Oct 2026 19:37:23 -0500
-Message-ID: <20261020003728.13669-10-vfazio@gmail.com>
+Subject: [libgpiod][PATCH 08/14] bindings: python: chip: drop redundant exception in reraise
+Date: Mon, 19 Oct 2026 19:37:22 -0500
+Message-ID: <20261020003728.13669-9-vfazio@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261020003728.13669-1-vfazio@gmail.com>
 References: <20261020003728.13669-1-vfazio@gmail.com>
@@ -97,40 +97,30 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use literal constructors for dict ({}) and list ([]) and explicitly type
-the variables accordingly.
+When re-raising an exception, it is not necessary to respecify the
+exception object.
 
 There is no functional change here; just minor cleanup to squelch new
 linter warnings.
 
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
- bindings/python/gpiod/chip.py | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ bindings/python/gpiod/chip.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/bindings/python/gpiod/chip.py b/bindings/python/gpiod/chip.py
-index 8712b2b..94c432a 100644
+index 229891f..8712b2b 100644
 --- a/bindings/python/gpiod/chip.py
 +++ b/bindings/python/gpiod/chip.py
-@@ -275,13 +275,13 @@ class Chip:
-                 for line, value in output_values.items()
-             }
+@@ -149,7 +149,7 @@ class Chip:
+                     except ValueError:
+                         raise ex
+                 else:
+-                    raise ex
++                    raise
+         else:
+             offset = id
  
--        name_map = dict()
--        requested_lines = list()
--        global_output_values = list()
--        seen_offsets = set()
-+        name_map: dict[str, int] = {}
-+        requested_lines: list[int | str] = []
-+        global_output_values: list[Value] = []
-+        seen_offsets: set[int] = set()
- 
-         for line, settings in config_iter(config):
--            offsets = list()
-+            offsets: list[int] = []
- 
-             offset = self.line_offset_from_id(line)
-             # don't allow offset repetitions or offset-name conflicts.
 -- 
 2.43.0
 
