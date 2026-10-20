@@ -1,91 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792456699;
-	b=1Sw5k5AtWRro3+E+DPDWtvM+bdvqYSvwzd4PFW0Ho037sfNQrxnNmnLILmyCSegnbcI0
-	 +aTfvsxIDkKuU8HjyXKDdSQWhNobdfQ3DeLeHkmN5N5SEMo3tuipWOm4FGt7Kt5/sdCvE
-	 TOmGxdZZ+lGoKnteOwfvi91qqN35nFTdCQJEBg4SGsH2cN0yXGKSXztQ41sBPd1rNxvph
-	 vI/bdKDZ6vFn9yEzCOLjPWcdOvQt7OQOi+1Kf+jrhBs1SEDFs0nWmtQLNkyaJRCLdI5K2
-	 TvNiBRv4kAzupO+EoqhynItwDD39KJBsv19zl90B4MIHhyIoLGFpxtm6S5e+OtFGwoQ==
+	t=1792459324;
+	b=hS2nGNmqm2bwwUwfuwqvjVeKsxlW0e7Nm0cytpHNb0+la1eugEQ9oRwNZXhJhghfqB7G
+	 NvGfoR/DVNr68jSTdRBZipzQF0jkSiIqaBCR/xd91aoh6EHxiJzWJy+JGFH57W20SoU4w
+	 8WOroa1Tf7gfgmeXFGllYBAk29WquHcIBtnmQwS50uWO/6h06YolG8707lOWNLQbAolF9
+	 svB7w3tHQcrMlITiUDhP+qXzqyjV+MknQAYeC1koS7w3yu5yHaLp2GovXMdBn/RAcKxGc
+	 d9VPZWtksAC7Lmlin/ilc/X3D2j1pBhDKIJo8bmIii6k7Xu4rDCG7pwf1wVeG75dfoQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792456699;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=WjSXzm+UCz2RFg+QAC4JFHGkAMb2CyRLKFZOF0HvmLc=;
-	b=mIp+myU552Ip13VrlME/xFpSmcGJfuhJSmF9pM/5XL+ZtbenlvsdC6r5Eid7DOiToufI
-	 QnaL6JFYywezIEp8IaJWHKhvcUMNwVnkI7ma+RkQNyevwGLgZ5oJYFyD++x87j/RuSU9z
-	 oP72Q8kMmLaLye0OVuHFRjbkcdyQOJbQ5VeZ7Vu90/amofDWL62LHCzgToEcqP8PkEI/H
-	 x8BfOVMiiHwECoZWP/zk3pQnmLr7quZPaHy1aH+Edi6B3S7qihAA3WKT+X4Y4nkkp94Iz
-	 NIgnZSiheS0Ui/KFkk/IzuJ8MXO7s+mho0MFp9kDRfw59X6jNJorISfYTQgpxz/sPTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792459324;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Y5PuInUz/jG/sVc55vzwpQmtUc4DneWfMKEBS2B1HkA=;
+	b=h6Y+7FKdNjawAO5qvyB2A3c7KgTThQ8g3xx0t1rip0eiluFKzdf9mQ2/lh/SwP4vkHiw
+	 e7JWDmZbEUGJ/mKeFKtMg9pgHjLrqfHIN2I+feKE/ZLvtCWByqzo4OJC2coejqLG2uM7B
+	 XLRBA2jlOutMRi16yMo9OK916nL7zLZTnz1JaOjdZP8zO80ZaaYapysa4xDnzWujh+bFB
+	 0xtk852+JG3U2dlck5uOy3LAuyDdL0KsOnAdmRFp1BXwsXPTTq3Kkb969Q61TlKb3qVvp
+	 vxp6onemapaoG2ZNn50mW0gPLRd50+jH6I8zZ8jm4v6Ss6S0pLRMQsP/ktBUPvJXaQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=P7AEpIIB;
-	arc=none smtp.remote-ip=209.85.210.46
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Ij/ZTfSV";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA6606A322
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 00:38:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E3FA6606A322
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552BA606A319;
+	Tue, 20 Oct 2026 01:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=P7AEpIIB
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-846566246e8so83196a34.1
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2026 17:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792456698; x=1793061498; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=WjSXzm+UCz2RFg+QAC4JFHGkAMb2CyRLKFZOF0HvmLc=;
-        b=P7AEpIIBQ83Xi3gESy11MukAc+DL3d63Ap3JZxWBDQeGtXvzYvZC08V80OasL24yMj
-         4pCZk7VmDL7b3NF6Ht9TCPzJ0nMtwt/3AqpQ1s45bRIW9FejHm9ANGjQw8AK4+lFrRr3
-         QLMyCtdAFmDkEV7Vhe9VvuH6MMkLkIckIVvhWM7ClVvMCUwvgpWboGFFYqNjdisIA7H9
-         hrp5WoCQlDxzLmmHD2JUGv+cVjMjpgXJQbwY0f234w1nZZwMWKij7p84ImMHSAcnMJDX
-         Aqt/o7TifgyXru1P1Hq8b+pfLjh8776rwxnSOgm0TNQIKHzIEKqJMfgmI/p/iGod+qEl
-         voBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792456698; x=1793061498;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=WjSXzm+UCz2RFg+QAC4JFHGkAMb2CyRLKFZOF0HvmLc=;
-        b=0uxwJZs1ogKtVpq4EIk1mpyM//tv5Dn62ABv+HCk9iEA0p87y90FN9nEkT0AoHarKQ
-         EOlMdl4OFOwiTA+v9KYG/Mfe9ydNGWhrXz+fp/hI0LLJ2REru7Tal3B7u2gN626eN0Rv
-         foWYfdjPI7Pn+lRRgA/GlXtrmQS6SERuDUMgJXL/b+J9PVOKjX+R9PM2joOFYM8OpucI
-         lj889jCXn3t9Iy9aU3H+jfSup3s/06a1SRa09ZHzpMlTjwiGsAxzSjPlOjNwqjrZRikF
-         DxF9b6QKVBLHk2cuVy99cju8x6RcZ3oYpNyhGj/iChBSLi1leDm+qGCjZsL0osyvLYnR
-         BcYw==
-X-Gm-Message-State: AFq9FYI7lqP2zNglnNUCFKgzFi/19nThsm1lFMwInjQcKLXDi6E4UP9A
-	G8212o5buBut3nU4lOwO0mIa1M6/EYOcfhSoJXba6ZklyXOJCM2KUJaWPMeO4g==
-X-Gm-Gg: AYBFou2ZUoTTm0yXz0GKoyKJBARXQWwnmu4BRx4/OGAQjmTokR0mrFWQEu26DUrAc18
-	qxENF1+yrEA4KAA8d/5ooncpQKHGg52wNxfVIPno0VAw1SFLdtyyQFT6M3niGfcJLRuX8495yMQ
-	oEkSCghU6sKSOnnYys/GT/UeFRhBaShw74RK4Hfiza6YmaprRfATNDxS8PxDr3T8TS5Y2Mdw1+9
-	SBe/c8d4SZvIVKorca82rQoXdlMd4U1XP4oMGQopF7+FC7XIg0P9e66YGvR08MizLj3NHCg+B9Q
-	8bu+/yVWYLpX9mtdCTsIRNMg1kH1lpR0vJXqZ1kWkj8A9544SGI5n+rnWXQUSGr656IpovKyS5M
-	3skdu5Mya+istUDLIfbCToJP9bha4pi2EDafziQbZB/gmpfZ1lzQHl79By3hL4CpsztPQFxWZb9
-	2ENptBu9+ifriFa5YGsEKTt9YnGiXNCbU4GD4zzmbNHO5iTQO6eysEguem+qcNmmoHx3S64seIE
-	PMwuhvBA+LTBPbJTmG4ZBVB+Fa45CLEzhQd
-X-Received: by 2002:a05:6830:10c5:b0:816:f1c2:d6b8 with SMTP id 46e09a7af769-84b76f34428mr432331a34.9.1792456698036;
-        Mon, 19 Oct 2026 17:38:18 -0700 (PDT)
-Received: from Zephyrus.localdomain ([66.188.87.142])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8429b57870fsm10373383a34.0.2026.10.19.17.38.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 17:38:16 -0700 (PDT)
-From: Vincent Fazio <vfazio@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: brgl@kernel.org,
-	Vincent Fazio <vfazio@gmail.com>
-Subject: [libgpiod][PATCH 14/14] bindings: python: bump dependencies in artifact script
-Date: Mon, 19 Oct 2026 19:37:28 -0500
-Message-ID: <20261020003728.13669-15-vfazio@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261020003728.13669-1-vfazio@gmail.com>
-References: <20261020003728.13669-1-vfazio@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ij/ZTfSV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EE11F000C4;
+	Tue, 20 Oct 2026 01:21:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792459323;
+	bh=Y5PuInUz/jG/sVc55vzwpQmtUc4DneWfMKEBS2B1HkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ij/ZTfSVf2swDQKjpQY+M1H2I5MkLeX5CF4dH4/9XKE165jBsDdvEwhW81eUmMMjb
+	 Qa7Npvl6yBb17a13UvFrx+F558g8qtjW3Jx8HQ2wmPfgDecd4FVrr176Pvye0m7huB
+	 b8gB3PVWN+ieA2OWvMaqKqc1pFccggf6hGdppcfcNIIzPb4SLFLMiOICvTaBe8MAMo
+	 ccYqYzmJWOF0vh9T+5mTGwhv1K8ArNjqo22DC2bm6gpAiLDfN6Zb7V8wILCD7w7hbg
+	 OGRinhBbeU5+ZdzL+gEGhTHiNXTwxiIjthvTzVDhkDx0SgvL4YvUPNJZZ9WRLDx3D2
+	 G3K1Ev46o1B/g==
+Date: Tue, 20 Oct 2026 09:01:50 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-i3c@lists.infradead.org, mfd@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/20] i3c: dw: switch to array-based exclusive reset
+ control
+Message-ID: <ata9fqjAm09xnBQM@xhacker>
+References: <20260929061417.20733-1-jszhang@kernel.org>
+ <20260929061417.20733-6-jszhang@kernel.org>
+ <62860351b9ae360c174d36dd54d4110417f395ad.camel@pengutronix.de>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -95,31 +75,75 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <62860351b9ae360c174d36dd54d4110417f395ad.camel@pengutronix.de>
 
-Bump the build and cibuildwheel dependencies to take recent fixes.
+On Mon, Oct 19, 2026 at 02:55:21PM +0200, Philipp Zabel wrote:
+> On Di, 2026-09-29 at 14:14 +0800, Jisheng Zhang wrote:
+> > The Synopsys DesignWare I3C master controller can have multiple reset
+> > lines, such as a core reset and APB reset.
+> > 
+> > Refactor the driver to use devm_reset_control_array_get_exclusive()
+> > instead of a single named reset handle. This automatically manages all
+> > resets allocated to the device node sequentially.
+> 
+> Note that this does not guarantee any particular order. Are you sure
+> that this is good enough for all implementations of the DW I3C core?
 
-The new version of cibuildwheel enables building wheels for the recently
-release Python 3.15.
-
-Signed-off-by: Vincent Fazio <vfazio@gmail.com>
----
- bindings/python/generate_pypi_artifacts.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/bindings/python/generate_pypi_artifacts.sh b/bindings/python/generate_pypi_artifacts.sh
-index bc8aa05..592dede 100755
---- a/bindings/python/generate_pypi_artifacts.sh
-+++ b/bindings/python/generate_pypi_artifacts.sh
-@@ -108,7 +108,7 @@ python3 -m "${venv_module}" .venv
- venv_python="${temp_dir}/.venv/bin/python"
- 
- # Install build dependencies
--${venv_python} -m pip install build==1.3.0 cibuildwheel==3.2.1
-+${venv_python} -m pip install build==1.6.1 cibuildwheel==4.3.1
- 
- LIBGPIOD_VERSION=${src_version} ${venv_python} -m build --sdist --outdir ./dist "${source_dir}"
- sdist=$(find ./dist -name '*.tar.gz')
--- 
-2.43.0
-
+Per my understanding of the doc, it only requires the resets are
+asserted and de-asserted, didn't mention the order. And per my tests
+on syna SL2610 platforms, the DW I3C works perfectly no matter I
+reset apb reset or core reset firstly.
+> 
+> Otherwise it may be wise to at least specify the names in binding, to
+> be able to switch to the bulk API or individual control later, if
+> needed.
+> 
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > ---
+> >  drivers/i3c/master/dw-i3c-master.c | 24 ++++++++++++++++++------
+> >  drivers/i3c/master/dw-i3c-master.h |  2 +-
+> >  2 files changed, 19 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+> > index 4563d8761ba0..1c6c870f5bb3 100644
+> > --- a/drivers/i3c/master/dw-i3c-master.c
+> > +++ b/drivers/i3c/master/dw-i3c-master.c
+> > @@ -1657,6 +1657,11 @@ static const struct dw_i3c_platform_ops dw_i3c_platform_ops_default = {
+> >  	.set_dat_ibi = dw_i3c_platform_set_dat_ibi_nop,
+> >  };
+> >  
+> > +static void dw_i3c_resets_assert(void *data)
+> > +{
+> > +	reset_control_assert(data);
+> > +}
+> > +
+> >  int dw_i3c_common_probe(struct dw_i3c_master *master,
+> >  			struct platform_device *pdev)
+> >  {
+> > @@ -1696,10 +1701,17 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
+> >  	if (IS_ERR(master->pclk))
+> >  		return PTR_ERR(master->pclk);
+> >  
+> > -	master->core_rst = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev,
+> > -										NULL);
+> > -	if (IS_ERR(master->core_rst))
+> > -		return PTR_ERR(master->core_rst);
+> > +	master->resets = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
+> > +	if (IS_ERR(master->resets))
+> > +		return PTR_ERR(master->resets);
+> > +
+> > +	ret = reset_control_deassert(master->resets);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = devm_add_action_or_reset(&pdev->dev, dw_i3c_resets_assert, master->resets);
+> > +	if (ret)
+> > +		return ret;
+> 
+> This looks like we are missing
+> devm_reset_control_array_get_optional_exclusive_deasserted().
+> 
+> regards
+> Philipp
