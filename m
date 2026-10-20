@@ -1,85 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=193.142.43.55
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792481560;
-	b=rdjJt8Ci14R3talByDuvWoMt0s6J3L2S2bRU71ix31SXIbJSZIqJXPbhTKWIGWzlVvDY
-	 nuxyGh5Kcf0knBE0TpGxvIOSjudYQxdjs32DQadXhm4isGtUD6u3S1G4SqOS2Mi0wYVMS
-	 De5QJQzdtSo6Ad0Ujj0CUTvROUsEn88fLL17B3Tw2dQQocSv7B4dKeF92msketysfor2h
-	 18YKgnrkaEMl9cAITa0iEZkocfoZk2NCaJV83az4zLuKAm3e9Vyu2KbyxAXaW6/qdPqSQ
-	 ixZAlHcWmiSDKQvkBexu2a/wKgQOfIooNmqFnnqQ5WvJ75+k7LVeC/swbx0khvzQ/Bw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792481560;
-	h=DMARC-Filter:Date:DKIM-Signature:DKIM-Signature:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=AbbG2Q6j4Hecrtu/PulD9TnwIM8oYREi3XENRG9e+T0=;
-	b=ZosLiAXXyDYkzo9wiJdcfTE0//cvQNbAG7bzY8DXDto4sgBaei8r4KX41V2lZiyrGIww
-	 1U2U1Xi0VZDfXbEehK63pEGp95Qd4PLXDFrSWhuZkq9KNeOKgNR3r0lXXSISLkr+G45ST
-	 gnudPoGAan6P7RN7Jc6+IdPYW473EqQPJuTGZTlUO1B9WQuBRKPD0sYsF7IEwBmcz8nrv
-	 5G1AYG/7qlvmtc7ttUUqpTe5RQdFmJhXFisy6mZpkMjPyrl76gFqY/iMcbGSCxADMtOe3
-	 WGoNJzHA7eI/sFZ/k58Ha7MyNdU/6pdLDh53J+jki1KXiyGZ5yBtrAvRyVpD+Bw8iJg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linutronix.de;
-	spf=pass smtp.mailfrom=linutronix.de;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=K477aKgm;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=CY4xOlG9;
-	arc=none smtp.remote-ip=193.142.43.55
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792482882;
+	b=vAEpkQefwPxMVzbUH2k1JqD9S0znrVByHFtAADUK9O0K1bENj78gFX6hYfddXtR09g2s
+	 tsviNeqKHxGV5+40PBG7sndc1DgKhSnVUJROi6JXnVajEsX8Qm66tcZp3WWgMREUC3oF3
+	 MbjhQrFy7JlYMYjCh7Q/loND2MK7xKA1kBBT9X3AfabpcU/vcDPmgFydgbIozYIiRvXYJ
+	 gOYokvcpNMXGNLM2wnacPJ79nXz2cwv4ec69aS1Hzg5OJzXKic+z+vJwfSFhoMCfQ+64x
+	 RZJPL3s424XhgpvMqovrO4CQ9qZrb+oIiJ119qWD1+YcHCPASgfeRKd0+C17QWKstPw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792482882;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=3GqzT7SXZUXUviYJRJR+eWJ2kJqwUKNfSUL8dK6KjqY=;
+	b=ns64j1ysSt7QCM79SGQlzsmRxNRlYVGhSK3Ygs3Z/9umf2AJlv1ylkmjG64wOUcFwuam
+	 o0mUQJEQWsQoSTfQ/cP30/kJnxks15QWeEx9ya3uk0UM4iC5+4Hrit50GAquP54RoLZ0k
+	 TKBRrri8MrKgijf6vNhFoJSsYx24wcnTXigWDa5Kcx4OXisVB3UqgKK4gaOpFlefQjKVo
+	 l/WREpTpeyUrieojVjm/+dEIFW8rq/yA6CQSn7DEKdSg3bTc39ExdMoHZH20ybD9O8/Ss
+	 SgdidCzmI4Rs/i497FtApONLgkrjYdKC91+siJsNWRgusWC0EA9t5V3AknMRuDus/NQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TRvi82Li;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BE2606A31C;
+	Tue, 20 Oct 2026 07:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TRvi82Li
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1792482881;
+	b=Gjcb63MI1z1pOri7DDOrfK+GaK8PrMMLJ7u90ZhUwiJDeVJKrOaaRZXU4H4r8H6VvvRA
+	 R+3IPYhGio3sPvjZwgtD0a4QQEVqjmpfFfi/4eQbKCixnc2poGM3o7lx/LTL7MZV8Fm37
+	 CJgn2djAaU/Ank0sUwVcv1KkKuYCjINN+fAryVv6tzU0qXT6GYCSbANZOmb2V3R7xaizH
+	 /VORGzQ5lBxEZYZ3Tk1OLtzeaz/heUd5fcAvV3CTW2nOVtxaBNl/MMeHY5umUKn3sgZvt
+	 DLgyWWnR7PgHJKS9KfiS2NUimZnpckp6xqjwwDjl0xTJJHzHB/ueTv7Ow43fBg+1TyA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1792482881;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=3GqzT7SXZUXUviYJRJR+eWJ2kJqwUKNfSUL8dK6KjqY=;
+	b=lr1VQoFF8kKakyWAMJ0RPcgmrX7yhxu9yGDxS5NWY+w+TLlJPbtuLK9t2HSpkC9rvLCu
+	 TVY2dlqiPYYwbysHfpc6D9af5pjCOMZ1pWLFsBHRQrVrXhprNRq7xOE5Ckit/Nf7zJPwA
+	 4FTFIqGx3OSD236nxD8TRN8GvsVXggr78PkXf9yjj3ASM2ZxfXRxmgF4dPF7RYuIADFlV
+	 k4IxpfpW6gFuTgX8h4T3kXyDJxZbFxm2qdrlQXIk6QIOA+btuZvnakY1rZG/aE9PQtLe5
+	 qZ/QwvKEy+V0+yLNO+jmjoo5z6hBEsTi7az1HZSIpCd492LJ3C8oZXsspQPIvCu01Uw==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB092606A31D;
-	Tue, 20 Oct 2026 07:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB092606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=K477aKgm;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=CY4xOlG9
-Date: Tue, 20 Oct 2026 09:32:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1792481557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbbG2Q6j4Hecrtu/PulD9TnwIM8oYREi3XENRG9e+T0=;
-	b=K477aKgmkz+L+RRd+uucEpbLJ0f0xKJRbJMfRt+6Ovxjrea0w0kLPKBE5pAcVCIEDbo1l5
-	mT0KYpEsopt8ZkoUShMmn45KL4YIHT3PvAwNfUPHN73uzIG1rdp4RQlRpVNduOaSunwJ1I
-	fFI6AZFYjFCqqDkshKZ1oSh6lyYxhQjWWrNKyyZv5s6IxcBDyREqjG6ss/H7Ouja4XWYig
-	3nGe9jgw5DNxc0PaBrFMUPvEEG8JbQXAUsnIQXEW40UkFvqcvoS7nhV+9dO4VdiACU7tLX
-	9FrRFppKhgnJvIikvN2imkbISyzdfwGDbZvSYQUBa0dC2Ff13nHAYlrzkWZ4hA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1792481557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AbbG2Q6j4Hecrtu/PulD9TnwIM8oYREi3XENRG9e+T0=;
-	b=CY4xOlG9QFW8DCbV7CCf/a69uJonoMF1BH+tVAs9yDlMABxmZbFtFiTlS0+2B5nu9/U1+T
-	INrARMRaDy1GEgBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ryan Brue <ryanbrue.dev@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Chaotian Jing <chaotian.jing@mediatek.com>,
-	Hongzhou Yang <hongzhou.yang@mediatek.com>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rt-devel@lists.linux.dev, mfd@lists.linux.dev
-Subject: Re: [PATCH] pinctrl: mediatek: common-v1: Use a raw spinlock for the
- pinctrl regmap
-Message-ID: <20261020073236.dDVmd3BW@linutronix.de>
-References: <20260929-rbrue-suez-upstreaming-mtk-pinctrl-raw-regmap-v1-1-db92943f42cb@gmail.com>
- <20260930080609.dnK1-Uta@linutronix.de>
- <CAGXv+5FssQL3Go3VDFbLAT6HP12RS3U3OgxhYOeapzs64QTdUw@mail.gmail.com>
- <d3d3e7b3-eb8b-456d-9a2c-116334e86c14@gmail.com>
+	by smtp.kernel.org (Postfix) with ESMTPS id 1C6E01F000C7;
+	Tue, 20 Oct 2026 07:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792482881;
+	bh=3GqzT7SXZUXUviYJRJR+eWJ2kJqwUKNfSUL8dK6KjqY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=TRvi82LizuZMWTakwcrNYrnbsYG2NEBKalyLRcdcAi8HbpbefAbzdGtI3uRfigqlz
+	 vfe0/tZJeypxMX5oXbLW76DMqU9u047doKdzEiMxinQTb4clbyBeI8X8F5+QAPSkx5
+	 PzXBeE1aJ4IaoV9HhceehvuUx81BlTBdG7zcHjTsDSBI6YvWIl/LaTyaE5Sib0tnVp
+	 +KckY5jBI1/THkIm/TznNxt4FL+6617pZ7ZcYKj864+zh5+5Ht/g9fLcIJN+ozuXCc
+	 lsMAufq8XCXdHqpJZyLmrpQtAzzC2gqeb32nM48+aP5QE7F3GK26Ue3ELgLqms+809
+	 zMSj2scCa6gGg==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 76FCF4307D;
+	Tue, 20 Oct 2026 07:54:40 +0000 (UTC)
+From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
+Date: Tue, 20 Oct 2026 15:54:05 +0800
+Subject: [PATCH v11 1/9] dt-bindings: gpio: pl061: add Ambarella CV75
+ variant
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -89,52 +83,106 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d3d3e7b3-eb8b-456d-9a2c-116334e86c14@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261020-cv75-gpio-v11-1-e058bae19571@ambarella.com>
+References: <20261020-cv75-gpio-v11-0-e058bae19571@ambarella.com>
+In-Reply-To: <20261020-cv75-gpio-v11-0-e058bae19571@ambarella.com>
+To: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Long Zhao <longzhao@ambarella.com>, Long Zhao <zl020895@163.com>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792482877; l=2175;
+ i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
+ bh=ecrzSAMMaNZiFiJHNHyvnNwBNYVIUrMbREC+e46Wpqs=;
+ b=YOYD8ndIEW5jjxPRKsjVacPtkyWhlYjHe4G0+bpfwyS7N7QGIaLdKr7PjB8EUbPIjQGA5Vdk2
+ mEoPMlH4LPABS53ye4h/nsnXPNhcz8mv+DLap6gisDzmLUk6l4PVzdf
+X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
+ pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
+X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
+ auth_id=903
+X-Original-From: Long Zhao <longzhao@ambarella.com>
+Reply-To: longzhao@ambarella.com
+Content-Transfer-Encoding: 7bit
 
-On 2026-10-06 19:57:01 [-0500], Ryan Brue wrote:
-> Hi Chen-Yu and Sebastian,
->=20
-> Thanks for looking at this.
->=20
-> On 9/30/26 3:17 AM, Chen-Yu Tsai wrote:
-> > The syscon node is the provider of the regmap. You need to fix it there,
-> > not duplicate it in the consumer.
->=20
-> Unless I'm misunderstanding, no driver binds to that node, so its regmap
-> comes from the generic syscon code, and changing it there would affect ev=
-ery
-> syscon. Lee, Arnd, Mark, would that be acceptable?
->=20
-> These are the options I see. Please let me know if there's a better one:
->=20
-> - Do what Sebastian suggested and make syscon use a raw spinlock, except
-> when the node has a clock, since regmap-mmio calls clk_enable() under the
-> lock. Off PREEMPT_RT, nothing changes. On RT the lock would no longer be
-> preemptible for most syscons, including across bulk writes. Most syscon
-> users that do bulk writes only write a few registers, but enabling the
-> Amlogic G12A PCIe PLL writes a sequence with 40 us of udelay() under the
-> lock.
+From: Long Zhao <longzhao@ambarella.com>
 
-bulk writes could be a concern. The 40us delay is within the lock
-acquired? If so, could this be done without the lock? I assume this is
-part of the init sequence so nothing should use the HW so the writes
-should not be interrupted by other writes to the device.
+The CV75 GPIO is a modified PL061. The basic registers have the same
+names and roles (DAT/DIR/IS/IBE/IEV/IE/MIS/IC). Each bank is 32-bit
+and 32 lines and adds MASK and ENABLE, so it is not
+register-compatible with the ARM PL061 and arm,pl061 must not be
+used as a fallback.
 
-> - Have the pinctrl ioremap() the node a second time alongside syscon's
-> mapping and read the input register (DIN) with readl(). That read is the
-> only access the EINT code makes in raw context. This would go around the
-> syscon, and it requires that DIN never be written in a multi-step sequenc=
-e,
-> which is currently the case.
+The AMBA core matches the PL061 driver by PrimeCell ID, not by the DT
+compatible string. These blocks do not implement the standard PL061 ID
+(0x00041061) in the ID registers, so arm,primecell-periphid is required
+and is fixed to 0x000e8061; the driver uses that ID to select the
+Ambarella layout. gpio-ranges is required because each bank is a slice
+of the SoC pinctrl pin space.
 
-So it would be safe for now=E2=80=A6
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Long Zhao <longzhao@ambarella.com>
+---
+ .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-> I'd like to know the best approach before sending out a v2.
->=20
-> Best regards,
-> Ryan Brue
+diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+index 4d970e55104b..c22dd8a1d2c1 100644
+--- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+@@ -15,7 +15,9 @@ select:
+   properties:
+     compatible:
+       contains:
+-        const: arm,pl061
++        enum:
++          - arm,pl061
++          - ambarella,cv75-gpio
+   required:
+     - compatible
+ 
+@@ -25,7 +27,9 @@ properties:
+ 
+   compatible:
+     items:
+-      - const: arm,pl061
++      - enum:
++          - ambarella,cv75-gpio
++          - arm,pl061
+       - const: arm,primecell
+ 
+   reg:
+@@ -64,6 +68,21 @@ required:
+   - "#gpio-cells"
+   - gpio-controller
+ 
+-additionalProperties: false
++allOf:
++  - $ref: /schemas/arm/primecell.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: ambarella,cv75-gpio
++    then:
++      properties:
++        arm,primecell-periphid:
++          const: 0x000e8061
++      required:
++        - arm,primecell-periphid
++        - gpio-ranges
++
++unevaluatedProperties: false
+ 
+ ...
 
-Sebastian
+-- 
+2.34.1
+
+
