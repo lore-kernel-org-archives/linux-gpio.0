@@ -1,56 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792509103;
-	b=nsoOwNoPQYm+6hqQHboUF0Xd4FW+vss2BzWU7iQ5/mdqBMYYPzjHRW6Y0fP+F0l+ykE+
-	 DsZfQ0Gz/wWfxvoBJLNoLFKJqdCcThwJMBQRDMCh4pvOrbbeiHceTH/x7O8I/3dg29rPe
-	 sdpmZOAjhgDRA6JB5lnym44f1rBoLLyTRKreHkWVOnH6TuTfzDHCrQdyrlGZuix5bc8F4
-	 3XasYBHPkSxJ45b8V5tjsCkryAQfz32g8hEE3JdrcdRwxvZKyc6FuwyR6b7GkoShHoNEm
-	 ZG5/nAdrYYztrG3VO3uxE4WelpExDSQaBn3Mh7OshnmO2cRYoVbtOLLbY6QejL3akrg==
+	t=1792509741;
+	b=gE3YOOuIGUQwiuD/8UA0Ard65EWTh2NYKTNdZ1zIwIzlvQgnKAmQA9GAK9bezxx54y3c
+	 W4K661ki1C2ix+jPdqvdu4b5eCiZa7w9kRbAb4AF7EERA+otIrExdPK281LSkRZMNEqBI
+	 PRMh4htjmWk10aW7/epRYLpudeNmLfe91KItRZF4JSxfwQQh/cqYGtkIFxpDEqVxE2WZQ
+	 21YVT28Az03JUUHY/WBzFYCL2mGGu8WlnI/DC05JbfLHFESaHpszFeisnhTxN417FUce3
+	 PoMYw5/8GrwYnmbYo5hzyXLCn9vzmvF/NvLwcPWSFan5ppIPnlPr8itoBLcH0EtSYSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792509103;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=e/tWqHOwWauLe+qRE16SaHkUbdFtahoM2EZO2ZWPtv8=;
-	b=VacLbEMJ5PzdVNG3xRDNTT6+kWdQ/DCxgCUSTKWiNJ4bdNewfS2B+CgyKTh3qL/7CfLq
-	 sMp0ESM4UOCrelH0dAdmr5oIEr8//IGMLfqIZuyp6LgjqbAVaUdWrECOxAhUwEYNcg0y2
-	 CseeE1RGJn/O8IcgzuzszcHeqTSOIfvpcARDncwHIBi4v6c3G3zSPSX6QS8iXSKWNNlUO
-	 0n5AETGkeM3bD+NT83QC7aveyOG3seqOfKGnaRLe8rIP/Cf6wCVHFO1UGNMTpXQErdyVC
-	 Tv/Q0RBR9qn1VU6u5n9GcjqA4jOGl9xh42w5uZLGOcw96hqm5iMTwyF/fjK21Mko4SA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792509741;
+	h=Received:Message-ID:From:Subject:Reply-To:To:Cc:In-Reply-To:
+	 References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=dw1G0EF7KyJJHz9gqGSuU323BgP7jOZIpKL6pGo+0g4=;
+	b=u+RUB3mb44d5eaizSVZodefa9oZbO6v6XISMg5OSDXJPYwL45NPBVurv9FHaeeRGiXYQ
+	 jdK5EBYnu0GyaJJbHTAp6UUv5UuOZBp7oQEeAyOf18RG2nEzGfO+LowviBmixUMuiXmGw
+	 BnFp7yWntJdKWH/o9wrXrP3YtbbfLQ9135ShnI074rt2Oj7jl6F8KmHH/LvFFX0gIbPot
+	 UTRBdCfF5fVdVXMFoxlJRQPIBzMLw/2ZK7vdtwbJYa76FWuEHZ6gJY9hCOKlbdG0hBmjL
+	 Ht3Z6jMGH99bY0lHVXWmL0VIJToHJ5diYULQ8eaSRDyA/YSTkU8dgnXmf50ENNaaw0Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ME99d5vw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36175606A31B;
-	Tue, 20 Oct 2026 15:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ME99d5vw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF511F000C4;
-	Tue, 20 Oct 2026 15:11:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792509102;
-	bh=e/tWqHOwWauLe+qRE16SaHkUbdFtahoM2EZO2ZWPtv8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ME99d5vweDlObpuealYDcUEqeWIHv9JJqTfk2Jwnr+S4nAkoHvYkrgmkE5RavLQAJ
-	 5nQDGEAt7T4K6sY/8XUTxkwaWP/rdRPuuN8YeOA10ghKGHOceGPZceQh3MY1xLKqOY
-	 PjWldEVH1v47M7TahT84LueRASmRhg9uNM/1xsWMjA7dIxtbBzXo2m2MpxtQsY/cNt
-	 SNXS1u4NKQFByIhlF0BMygPvkX8qx1XDX9WiNOLkPTmKLQKNAI0XhvtjJMOcvie5hE
-	 lPkvSky1yYO33LhSRCDXZIzzj5zRDwUv9VpiZUxzLcPJj+a0Ki8Qf7HXMcfFjmF8tV
-	 OSU89oS2w152Q==
-Message-ID: <sashiko-outbox-179228@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913EF606A319
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 15:22:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A91F1F000C4;
+	Tue, 20 Oct 2026 15:22:21 +0000 (UTC)
+Message-ID: <sashiko-outbox-179237@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] PCI/pwrctrl/gpio: Correct GPIO_TC9563 /
- PCI_PWRCTRL_TC9563 dependency
+Subject: Re: [PATCH v5 2/2] gpio: shared: convert to using software nodes
+ for GPIO shared proxy lookup
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <889ae6695b19ce57ca4b17526c69b48c9414f5ae.1792508601.git.geert+renesas@glider.be>
-References: <889ae6695b19ce57ca4b17526c69b48c9414f5ae.1792508601.git.geert+renesas@glider.be>
+To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261020-gpio-shared-fwnode-lookup-v5-2-f4a2dfc059d7@oss.qualcomm.com>
+References: <20261020-gpio-shared-fwnode-lookup-v5-0-f4a2dfc059d7@oss.qualcomm.com>
+ <20261020-gpio-shared-fwnode-lookup-v5-2-f4a2dfc059d7@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 20 Oct 2026 15:11:13 +0000
+Date: Tue, 20 Oct 2026 15:21:50 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,67 +48,294 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
-- [Low] PCI/pwrctrl: missing select AUXILIARY_BUS in PCI_PWRCTRL_TC9563
+- [High] gpio: shared: NULL proxy_fwnode match in gpio_shared_get_proxy()
+- [High] gpio: shared: proxy device and swnode leak in gpiochip_setup_share=
+d()
+- [High] gpio: shared: missing lock and NULL check in gpio_device_teardown_=
+shared()
+- [Low] gpio: shared: goto mixed with scoped_guard() in gpio_shared_make_pr=
+oxy_dev()
 --
 
-commit a7730129e4c039c8e8c890c4f31a553b4c62308d
-Author: Geert Uytterhoeven <geert+renesas@glider.be>
+commit b4de64cbf7a306f0ab8621752d2d0374b848b826
+Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-PCI/pwrctrl/gpio: Correct GPIO_TC9563 / PCI_PWRCTRL_TC9563 dependency
+gpio: shared: convert to using software nodes for GPIO shared proxy lookup
 
-This commit reverses the Kconfig dependency between GPIO_TC9563 and
-PCI_PWRCTRL_TC9563 so that GPIO_TC9563 depends on PCI_PWRCTRL_TC9563 ||
-COMPILE_TEST instead of PCI_PWRCTRL_TC9563 depending on GPIO_TC9563.
+This commit replaces platform lookup tables for shared GPIO proxies with
+dummy software nodes assigned to the proxy auxiliary devices, allowing
+shared proxy GPIO devices to be looked up by their firmware node.
 
-> diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
-> index 38aab596aa04b..1952ab4f29b69 100644
-> --- a/drivers/pci/pwrctrl/Kconfig
-> +++ b/drivers/pci/pwrctrl/Kconfig
-> @@ -29,7 +29,6 @@ config PCI_PWRCTRL_TC9563
->  	select PCI_PWRCTRL
->  	default m if ARCH_QCOM
->  	depends on I2C
-> -	depends on GPIO_TC9563
->  	select REGMAP_I2C
->  	help
->  	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
+> diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
+> index c7893a5ac80a6..2a6889a291bb9 100644
+> --- a/drivers/gpio/gpiolib-shared.c
+> +++ b/drivers/gpio/gpiolib-shared.c
 
-[Severity: Low]
-Does PCI_PWRCTRL_TC9563 also need to select AUXILIARY_BUS when dropping the
-dependency on GPIO_TC9563?
+[ ... ]
 
-Previously, depending on GPIO_TC9563 transitively selected AUXILIARY_BUS.
-Without that dependency, if PCI_PWRCTRL_TC9563 is enabled with GPIO_TC9563=
-=3Dn
-and nothing else selects AUXILIARY_BUS, drivers/base/auxiliary.o is not
-built:
+> @@ -313,35 +314,50 @@ static int gpio_shared_make_proxy_dev(struct gpio_d=
+evice *gdev,
+>  				      struct gpio_shared_entry *entry,
+>  				      struct gpio_shared_ref *ref)
+>  {
+> +	struct software_node *swnode =3D &ref->proxy_swnode;
+>  	struct auxiliary_device *adev;
+> +	struct fwnode_handle *fwnode;
+> +	struct device *dev;
+>  	int ret, id;
+> =20
+>  	adev =3D kzalloc_obj(*adev);
+>  	if (!adev)
+>  		return -ENOMEM;
+> =20
+> +
+>  	id =3D ida_alloc(&gpio_shared_ida, GFP_KERNEL);
+>  	if (id < 0) {
+> -		kfree(adev);
+> -		return id;
+> +		ret =3D id;
+> +		goto err_free_adev;
+>  	}
+> =20
+> +	ret =3D software_node_register(swnode);
+> +	if (ret)
+> +		goto err_free_ida;
 
-drivers/base/Makefile:
-    obj-$(CONFIG_AUXILIARY_BUS) +=3D auxiliary.o
+[Severity: High]
+What happens if gpio_shared_make_proxy_dev() succeeds for the first
+ref in gpiochip_setup_shared(), but fails on a subsequent ref or entry?
 
-Meanwhile, tc9563_pwrctrl_adev_add() in
-drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c unconditionally calls
-auxiliary_device_init() and auxiliary_device_add():
+In drivers/gpio/gpiolib-shared.c:gpiochip_setup_shared():
 
-drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:tc9563_pwrctrl_adev_add() {
-    ...
-	ret =3D auxiliary_device_init(adev);
-	if (ret) {
-		ida_free(&tc9563_pwrctrl_ida, id);
-		of_node_put(adev->dev.of_node);
-		kfree(adev);
-		return ret;
+	list_for_each_entry(ref, &entry->refs, list) {
+		...
+		ret =3D gpio_shared_make_proxy_dev(gdev, entry, ref);
+		if (ret) {
+			gpiod_free_commit(desc);
+			return ret;
+		}
 	}
 
-	ret =3D auxiliary_device_add(adev);
-    ...
+And in drivers/gpio/gpiolib.c:gpiochip_add_data_with_key():
+
+	ret =3D gpiochip_setup_shared(gc);
+	if (ret)
+		goto err_remove_irqchip;
+
+When gpiochip_setup_shared() fails partway through, it only calls
+gpiod_free_commit(desc) for the current entry and jumps past
+err_teardown_shared in gpiochip_add_data_with_key(). Does this leak the
+auxiliary_device, gpio_shared_ida ID, and registered ref->proxy_swnode
+from earlier iterations (as well as requested descriptors from earlier
+entries)?
+
+Because ref->proxy_swnode is embedded in the persistent struct
+gpio_shared_ref and remains registered in swnode_kset, wouldn't any
+subsequent attempt to re-probe the GPIO controller permanently fail in
+software_node_register(&ref->proxy_swnode) with -EEXIST?
+
+> +
+> +	fwnode =3D software_node_fwnode(swnode);
+> +	if (!fwnode) {
+> +		ret =3D -ENODEV;
+> +		goto err_swnode_unreg;
+> +	}
+> +
+> +	dev =3D &adev->dev;
+>  	adev->id =3D id;
+>  	adev->name =3D "proxy";
+> -	adev->dev.parent =3D gdev->dev.parent;
+> -	adev->dev.platform_data =3D entry;
+> -	adev->dev.release =3D gpio_shared_proxy_dev_release;
+> +	dev->parent =3D gdev->dev.parent;
+> +	dev->platform_data =3D entry;
+> +	dev->release =3D gpio_shared_proxy_dev_release;
+> +
+> +	device_set_node(dev, software_node_fwnode(swnode));
+> =20
+>  	ret =3D auxiliary_device_init(adev);
+> -	if (ret) {
+> -		ida_free(&gpio_shared_ida, id);
+> -		kfree(adev);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto err_swnode_unreg;
+> =20
+>  	ret =3D auxiliary_device_add(adev);
+>  	if (ret) {
+>  		auxiliary_device_uninit(adev);
+> +		software_node_unregister(swnode);
+>  		return ret;
+>  	}
+> =20
+> @@ -350,9 +366,19 @@ static int gpio_shared_make_proxy_dev(struct gpio_de=
+vice *gdev,
+> =20
+>  	scoped_guard(mutex, &ref->lock) {
+>  		ref->proxy_dev =3D adev;
+> +		ref->proxy_fwnode =3D fwnode;
+>  	}
+> =20
+>  	return 0;
+> +
+> +err_swnode_unreg:
+> +	software_node_unregister(swnode);
+> +err_free_ida:
+> +	ida_free(&gpio_shared_ida, id);
+> +err_free_adev:
+> +	kfree(adev);
+> +
+> +	return ret;
+>  }
+
+[Severity: Low]
+This isn't a bug, but include/linux/cleanup.h recommends not mixing
+goto-based error handling labels with scope-based cleanup helpers such
+as scoped_guard() in the same function. Could gpio_shared_make_proxy_dev()
+avoid mixing goto labels with scoped_guard(mutex, &ref->lock)?
+
+>  #if IS_ENABLED(CONFIG_RESET_GPIO)
+> @@ -457,23 +483,19 @@ static bool gpio_shared_dev_is_reset_gpio(struct de=
+vice *consumer,
+>  }
+>  #endif /* CONFIG_RESET_GPIO */
+> =20
+> -int gpio_shared_add_proxy_lookup(struct device *consumer, struct fwnode_=
+handle *fwnode,
+> -				 const char *con_id, unsigned long lflags)
+> +struct gpio_desc *
+> +gpio_shared_get_proxy(struct device *consumer, struct fwnode_handle *fwn=
+ode,
+> +		      const char *con_id)
+>  {
+>  	struct gpio_shared_entry *entry;
+>  	struct gpio_shared_ref *ref;
+> -	const char *dev_id;
+> -
+> -	if (!consumer)
+> -		return -EOPNOTSUPP;
+> -
+> -	dev_id =3D dev_name(consumer);
+> =20
+>  	list_for_each_entry(entry, &gpio_shared_list, list) {
+>  		list_for_each_entry(ref, &entry->refs, list) {
+>  			guard(mutex)(&ref->lock);
+> =20
+> -			if (!ref->fwnode && device_is_compatible(consumer, "reset-gpio")) {
+> +			if (!ref->fwnode && consumer &&
+> +			    device_is_compatible(consumer, "reset-gpio")) {
+>  				if (!gpio_shared_dev_is_reset_gpio(consumer, entry, ref))
+>  					continue;
+>  			} else if (fwnode !=3D ref->fwnode) {
+> @@ -484,49 +506,22 @@ int gpio_shared_add_proxy_lookup(struct device *con=
+sumer, struct fwnode_handle *
+>  			    (con_id && ref->con_id && strcmp(con_id, ref->con_id) !=3D 0))
+>  				continue;
+> =20
+
+[ ... ]
+
+> +			struct gpio_device *gdev __free(gpio_device_put) =3D
+> +					gpio_device_find_by_fwnode(ref->proxy_fwnode);
+> +			if (!gdev)
+> +				/*
+> +				 * A matching entry is there but the associated
+> +				 * controller has not been registered yet.
+> +				 */
+> +				return ERR_PTR(-EPROBE_DEFER);
+> =20
+> -			return 0;
+> +			return gpio_device_get_desc(gdev, 0);
+>  		}
+>  	}
+
+[Severity: High]
+Can gpio_device_find_by_fwnode(ref->proxy_fwnode) match an unrelated
+GPIO controller when ref->proxy_fwnode is NULL?
+
+ref->proxy_fwnode is NULL before gpio_shared_make_proxy_dev() finishes
+initializing that ref (for example, while gpiochip_setup_shared() is
+iterating through refs after setting GPIOD_FLAG_SHARED, or if a consumer
+has multiple shared GPIOs with the same con_id on different controllers
+and an earlier entry in gpio_shared_list belongs to a controller that
+has not registered yet) and after gpio_device_teardown_shared() clears
+it.
+
+In drivers/gpio/gpiolib.c:gpio_chip_match_by_fwnode():
+
+static int gpio_chip_match_by_fwnode(struct gpio_chip *gc, const void *fwno=
+de)
+{
+	struct device *dev =3D &gc->gpiodev->dev;
+	struct fwnode_handle *node =3D dev_fwnode(dev);
+
+	if (IS_ERR(fwnode))
+		return 0;
+
+	if (device_match_fwnode(dev, fwnode))
+		return 1;
+
+	return node && node->secondary =3D=3D fwnode;
 }
 
-Can this cause undefined reference link errors for auxiliary_device_init and
-__auxiliary_device_add when CONFIG_AUXILIARY_BUS is not enabled?
+When fwnode is NULL, node && node->secondary =3D=3D NULL evaluates to true
+for any registered GPIO device that has a primary fwnode and no
+secondary fwnode (or device_match_fwnode() matches if dev has no
+fwnode). Instead of returning NULL and deferring probe with
+-EPROBE_DEFER, wouldn't gpio_shared_get_proxy() return descriptor 0 of
+the first such unrelated GPIO chip?
+
+> @@ -628,15 +623,11 @@ void gpio_device_teardown_shared(struct gpio_device=
+ *gdev)
+>  			gpiod_free_commit(&gdev->descs[entry->offset]);
+> =20
+>  		list_for_each_entry(ref, &entry->refs, list) {
+> -			if (ref->lookup) {
+> -				gpiod_remove_lookup_table(ref->lookup);
+> -				kfree(ref->lookup->table[0].key);
+> -				kfree(ref->lookup->dev_id);
+> -				kfree(ref->lookup);
+> -				ref->lookup =3D NULL;
+> -			}
+> -
+> -			gpio_shared_remove_proxy_dev(ref);
+> +			auxiliary_device_delete(ref->proxy_dev);
+> +			auxiliary_device_uninit(ref->proxy_dev);
+> +			software_node_unregister(&ref->proxy_swnode);
+> +			ref->proxy_dev =3D NULL;
+> +			ref->proxy_fwnode =3D NULL;
+>  		}
+>  	}
+>  }
+
+[Severity: High]
+Should this loop in gpio_device_teardown_shared() acquire ref->lock and
+check whether ref->proxy_dev is NULL?
+
+In struct gpio_shared_ref, ref->lock protects proxy_dev and proxy_fwnode,
+and both gpio_shared_make_proxy_dev() and gpio_shared_get_proxy() take
+ref->lock when accessing them. Here, software_node_unregister() frees the
+struct swnode backing ref->proxy_fwnode and auxiliary_device_uninit()
+drops the last reference to ref->proxy_dev before the pointers are set to
+NULL, without holding ref->lock.
+
+Since gpio_shared_list is global and gpio_device_teardown_shared() is
+also called at err_teardown_shared in gpiochip_add_data_with_key() before
+gdev is removed from gpio_devices, could a concurrent
+gpio_shared_get_proxy() or gpiochip_setup_shared() observe a freed
+ref->proxy_fwnode or ref->proxy_dev?
+
+Also, if ref->proxy_dev is NULL when gpio_device_teardown_shared() runs
+(for instance, if a controller registered before gpio_shared_init() is
+later removed, or if multiple gpio_chips share the same controller
+fwnode), wouldn't auxiliary_device_delete(ref->proxy_dev) pass NULL to
+device_del() and dereference a NULL pointer?
+
+=DB=8C=D9=86=DB=8C
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/889ae6695b19ce57ca4=
-b17526c69b48c9414f5ae.1792508601.git.geert+renesas@glider.be?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261020-gpio-share=
+d-fwnode-lookup-v5-0-f4a2dfc059d7@oss.qualcomm.com?part=3D2
