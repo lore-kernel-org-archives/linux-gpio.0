@@ -1,60 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792490787;
-	b=hqsC69nDhScCCGmdWw4HljGXv7z+mMzHBEngnwM8u65PTrrFqBzEMwFvF+eGGMwRNzyg
-	 8OI+deEY6f/xXhgBVN9kONrNuivw+BOqrZ5pOw9+JkNz4oHAeLvvq+Sloeqln1Dl0fgT0
-	 BQ7swK/sDhY+88vJyuCZ7Q/jd5qzZgKTooL7PPJspR3LFFNXyw5QnKTmZuGdFn5Il2Tgn
-	 Z11N12meIgvTz/OLC+Yi0ifK5ziGWgtDWWkE70zF29C270SKYChRbOjFGtqgsW1KWPPho
-	 yMwTkM1I0Hch7VpKyN6hBOlGoW1gAiv8+V7nlhOSq5S1ot1raSznyExQZLpEc4p/7vg==
+	t=1792491529;
+	b=Hrw47NfSl1FkR7gU5hj+BAPf5YyoMV9wFo4NmjcHMNUA6oQn2NBWjgTwzNmkAtQIF3rS
+	 SnupkHVR3DHs4jHhg1o7eA05xkNxMeZSpGLpgGnQBbgyWQesEe/1cixijI5wjmK3i9AnF
+	 AAQ7Qki/qrZZIIEXP2fZIQoCJnddQ5T5J1W21xrJb+Y614DpoLZXoV88YRM0S21+68zMo
+	 dllDRi3JlINK7+oEh6tyTLdyXjsSbbAhZO0lhITqmRqgyzNtbM/9XQMNmC5HyG/uccIDw
+	 v09zY9PwSFOPWZjHx8JeDkMloOkJPlSDU7jHCnkSGj8fWINwxynje7w8rkMOp8dVCWw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792490787;
-	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
-	 Received:Received:From:In-Reply-To:MIME-Version:References:Date:
-	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type;
-	bh=r9QLTI7y2KKW96b0Zz1Kc2Odp0wZxzx//zKMAKbRUr4=;
-	b=V5r93CtTnEm25+KBuBoEC6oRlf3LTDrr4BiV61T4L68l5ny6OTS7r2bjnj/xdFMgnHWw
-	 iqhRDPq5bbMIbkETrrATkrtW407jbXAcuxE+UrbNwCBMinVhLMwbj7AYZWEmv0Fx//Qms
-	 OcyAi46oEaGFPeHBQNel9zfgabb2xy4CS5hka9omseQhl+kbjmWGLGan3WvzAL3iJMtgH
-	 f5WD2kdscszwI63Lj0wUprVJOLeJuIxKofq/vUN7czV1jBJuwgDPqOvWuYUZEy2zhIdH8
-	 EiHEVl3o/VQ9TTC42/0N2amC+4ppDwRW3KwYSjG/8M78+yNj5xut3NsVL33t/zJRTPw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792491529;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
+	 Subject:From:To:Cc:X-Mailer:References:In-Reply-To;
+	bh=E3POQm3q9rQRS55TaGFyyCf123uDYsTNmr7KQ/BPaAE=;
+	b=LbpuxC8p6dKeG1uLBxq5sBsFPGFdMp4KmeyGqxrJgDIUZ7Anm2tTLBZwuEQnlMWuteNc
+	 5bO1ayDzJdSCXWbDMk5cyAAd7fSoZO4xfjTR1H255Qiz1N54Lw475tzPcn7D81AdRtNHz
+	 FPoDs8NTC6Ereh38/sNjxknknwOr7s3w/bUBDEgq1RSYteFjPzDes+x4CuNCG0rbZuwjU
+	 yxLqxRKdRB/i9ESmpSWcVMWkqSVFsKZcTeR9H/sgOj4HHIJrrkRGt96rqwTWXdZGoCsLI
+	 d4U3DNGkoQKJermKPVhELlHEwD1WGcpAVVHgZyFvwMzCYp+70ag4tuBjsLWTb7Jhz4Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S6C9b4NF;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=I55feIN4;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728D4606A31A
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 10:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AB2606A31D
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 10:18:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94AB2606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S6C9b4NF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00D4F1F000C9
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 10:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792490786;
-	bh=r9QLTI7y2KKW96b0Zz1Kc2Odp0wZxzx//zKMAKbRUr4=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=S6C9b4NFID2J4bHjqwI2Dm/QxObsQCvuRcfPzP1YbdFCKlgGYUMKtIKd8GZ5NSF83
-	 U1SZ/G3T2SgoQHuTWBWW2hND4ru8CZyeEVL+viOBtnF9LPFV/A33mbSAbD9VlT6SFa
-	 nea3494QrJclKNJNiRjeJXT5i3Hp/TiED/Kl2Wt/pvUJDAgDcwmKLyCy8rZ7yaH3WH
-	 Wt7O6HEFfhTq345E0ajj6AqLfsYyS3L09OELHlw3DQe7p9MY/fx3xqS4Q3EmyEPOcZ
-	 RqyhrwuXXNOpSR6YF7UAtj253wHrCgllC1Euq9er9HxpwogJtMHjmVdvlMHPkbo3Fi
-	 qAMmv/IbBAVBA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3a9841363b5so22809151fa.2
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 03:06:25 -0700 (PDT)
-X-Gm-Message-State: AFq9FYJ4KeU0Jj3XuPrtwAYKlXHNxtnuV5TlaUcGruaDEHFipYJ/5KmB
-	xE9RPThM3m2s3rExmyYBtxhn0jwqcei3zSBh4I4bPz55TibPqEGpGkl346hvIGMAnUhpH6LhESz
-	pHXNN/iKv2FigTCYXDNY1BHscx1U0qHHv+xAQIHmXAA==
-X-Received: by 2002:a2e:a9a1:0:b0:3a9:a2fd:5932 with SMTP id
- 38308e7fff4ca-3ab29274a45mr27643151fa.5.1792490784657; Tue, 20 Oct 2026
- 03:06:24 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Oct 2026 11:06:23 +0100
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Oct 2026 11:06:23 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261017043605.1503563-2-shengchao.guo@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=I55feIN4
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a180fbeef5so23463365e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2026 03:18:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1792491527; x=1793096327; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=E3POQm3q9rQRS55TaGFyyCf123uDYsTNmr7KQ/BPaAE=;
+        b=I55feIN4tyXGD9Ilk8kOCGKJvDvDZYrSBgvyREUAv+WEFGc9pL0orf7sqE3yL9MNfO
+         R2VrpP5SEEvXpTFA9eYMpHEPDHdTlFswXPTsVj45R2gEamEu7POVA/leoyoyB/c5XukI
+         2FfuL1w8av4tzC07CKSCGbNI+bExwzy+2zRaeGoonanLy/erO6S/KJnMnrZCWi6O08en
+         5tHqGgy/FbguN6/0K5uWtCnmv816AnEER7UCpXMw780MT2isfUN+u2qNQZ3/T2ySqpst
+         hp5dBxskeYDNMGJggdOS3fe1GzDte/bRvu1cbJeWi5iyAi30b+S4cO64QX1PQFVwobpB
+         q+qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792491527; x=1793096327;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=E3POQm3q9rQRS55TaGFyyCf123uDYsTNmr7KQ/BPaAE=;
+        b=AEG7jTf5GB6ADPrpKFm+MhbWevCa0dHwUsFqWoGXpSNmRiO3/NOFSn0Wfa/EyhruuW
+         ln4xDcDwjy8c5hcIZTQTUHf40liQ+8H1nj/O5Asicn5QCY6OsVohhQ4hxr3eaS3BQWGH
+         zBi6jrKJZ/g964cjCqkGPycKTfkg45hJzxRskqKhja88bfqLjJU+OyrOIVD0jwjpoVX0
+         EgFzXJjTeJ1BDWHprZDncxUw+rGhvL9OX4QqKUBp3S/rRqg2x90EcmmuewGcFqWdFbG4
+         C0G+7wavBVHl31vJdeH8MvwqXdoLi2qyKx6kpGkkG0WzxOmGTjY83aOGg2MoM+d9QrFs
+         27CA==
+X-Forwarded-Encrypted: i=1; AKwUvBwyKhYE+U6H6Jb8CHs8qfP5rHozPJ0D53SyZRcmp3VVFkVkptrSCF0HY0e/6VhryRkE+E2MbqtXV3+l@vger.kernel.org
+X-Gm-Message-State: AFq9FYIBslD8u4V6todjF0h12TdMwlSOc8QWYuFYgmr7iOXMr9sQFE7B
+	hnHsIG2ujU7CW1C2J1Q0/oyur4upcD9+fJbwo/mkm09zO6O2GOGVHkDaD5KEQG2QmKE=
+X-Gm-Gg: AYBFou0EeFlGiCU4pSP8YJc6D9zNZYDyOWQjgX3uIZLQ96B3z+ZIPzTvZ9JyqgkTF0r
+	mbznMUaeiaxjbelMioACb03lTb1c2+Qi0jJ9AZoIomFwW4gTvrOpr9MU5Dedan2BRyGhvOCkXSi
+	TGRSvCQRM9ls291XxxD6xRgTNHYJ3ypnEsLwg7o6LVCEjZz4Va6XFpkpOtv06P/2lXA1G7hHbx7
+	h6j0yZfRawdZhBi2y0LkDDZPK0HN3gvDDSpeHmroL9AxluQoqBGtv/6sNfL3JYzhBkgQb8Iomr/
+	AEgQFcyGBvkptStLBQ7ix0gzxLdWC8/qpurgPXeshFOVJKvZ6nbaDx8qjRFQ1i7J2IVok7BkE7I
+	sWL8pdoOAiEqz2W6k6nzikevGhX85CszORVgsH3XdROM9MpI4CxIqKfRvxq4fwl5xp3P7Predrg
+	mn+KqVpDIqAIyi3/pApe/cBoGs9ZP4m6RiHXOvXIMGPTZby9vsE7YgagNCZq/xZ1dFex1ehM7ZN
+	mHcedpQ68Eogt2XiYUEI7tWUegQwWh2ALy/GFlscltdcjTrG0eBufv/1MP7hyNV
+X-Received: by 2002:a05:600d:82c5:b0:4a1:e575:33dd with SMTP id 5b1f17b1804b1-4a1e57533efmr141959155e9.18.1792491526824;
+        Tue, 20 Oct 2026 03:18:46 -0700 (PDT)
+Received: from localhost ([151.41.28.233])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1f2cc809csm63088925e9.8.2026.10.20.03.18.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Oct 2026 03:18:46 -0700 (PDT)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,89 +86,134 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261017043605.1503563-1-shengchao.guo@oss.qualcomm.com> <20261017043605.1503563-2-shengchao.guo@oss.qualcomm.com>
-Date: Tue, 20 Oct 2026 11:06:23 +0100
-X-Gmail-Original-Message-ID: <CAMRc=MeiENro-ivDkve5Y8C8aVKsPyR8x+Nd6gC5h_fn4ZKoPg@mail.gmail.com>
-X-Gm-Features: AclHuK9tcMLOQ-DANRxT1WRMHcMO7kXm-3fextj9Ju-NI33QJSEyvkMQNyI4_Fw
-Message-ID: <CAMRc=MeiENro-ivDkve5Y8C8aVKsPyR8x+Nd6gC5h_fn4ZKoPg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] gpio: shared-proxy: Fix race between concurrent
- first users
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 20 Oct 2026 12:18:45 +0200
+Message-Id: <DM9L7QLLNMOR.1NHOUWGMQK181@linaro.org>
+Subject: Re: [PATCH 02/10] dt-bindings: pinctrl: Add devicetree bindings for
+ DM816x SoC Pinctrl
+From: "Ettore Chimenti" <ettore.chimenti@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Ettore Chimenti"
+ <ettore.chimenti@linaro.org>, "Paul Walmsley" <paul@pwsan.com>, "Aaro
+ Koskinen" <aaro.koskinen@iki.fi>, "Andreas Kemnade" <andreas@kemnade.info>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Roger Quadros" <rogerq@kernel.org>,
+ "Tony Lindgren" <tony@atomide.com>, "Russell King" <linux@armlinux.org.uk>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Christopher
+ Obbard" <chris.obbard@oss.qualcomm.com>, "Andrew Goodbody"
+ <andrew.goodbody@linaro.org>, "Linus Walleij" <linusw@kernel.org>, "Rouven
+ Czerwinski" <rouven.czerwinski@linaro.org>
+Cc: <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>
+X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
+References: <20261016-patch-ektor5-dm8168-dts-v1-0-b4ce30217028@linaro.org>
+ <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
+ <ec27fd26-1862-43cf-803a-428846d66663@kernel.org>
+ <DM6CUP7TSOMH.31T789KQ3Q6OB@linaro.org>
+ <46414ff2-1273-4690-9001-4d1f825d8cf6@kernel.org>
+In-Reply-To: <46414ff2-1273-4690-9001-4d1f825d8cf6@kernel.org>
 
-On Sat, 17 Oct 2026 06:36:02 +0200, Shawn Guo
-<shengchao.guo@oss.qualcomm.com> said:
-> The proxy lets a consumer set the line direction and reset the
-> default value and vote tally only when usecnt == 1, i.e. when it is
-> the sole requester. But request() and direction_output() take the
-> descriptor mutex separately. When two consumers probe concurrently,
-> both request the line before either configures it, both see
-> usecnt == 2, both fall into the shared path, read back the still
-> unconfigured direction (input) and fail with -EPERM.
->
-> On Nord RRD the two DAC supplies are reg-fixed-voltage regulators
-> sharing tlmm GPIO 41. They probe asynchronously and intermittently
-> both fail, leaving the codecs without supplies:
->
->   reg-fixed-voltage regulator-3p3-dac: setup of GPIO (default) failed: -1
->   reg-fixed-voltage regulator-5p0-dac: setup of GPIO (default) failed: -1
->
-> Requesting the line is not evidence that a consumer has claimed it.
-> Instead, count proxies that have actually configured the line (set its
-> direction or voted for a value) in a new cfgcnt, with a per-proxy
-> configured flag, and allow (re)initialization only while no other
-> proxy has done so. A consumer obtained with GPIOD_ASIS that votes via
-> gpiod_set_value() without ever setting the direction counts as
-> configured, so a later user can never reset def_val/votecnt behind its
-> vote. The count is dropped when the proxy frees the line.
->
-> Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
-> Assisted-by: LLM
-> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-> ---
->  drivers/gpio/gpio-shared-proxy.c | 74 ++++++++++++++++++++++++++++----
->  drivers/gpio/gpiolib-shared.h    |  1 +
->  2 files changed, 66 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-proxy.c
-> index bc69b8729d19..0d1d724a6a37 100644
-> --- a/drivers/gpio/gpio-shared-proxy.c
-> +++ b/drivers/gpio/gpio-shared-proxy.c
-> @@ -21,9 +21,33 @@ struct gpio_shared_proxy_data {
->  	struct gpio_chip gc;
->  	struct gpio_shared_desc *shared_desc;
->  	struct device *dev;
-> +	bool configured;
->  	bool voted_change;
->  };
->
-> +/*
-> + * A proxy may (re)initialize the line - set its direction and reset the
-> + * default value and the vote tally - only while no other proxy has set the
-> + * direction or voted for a value. Requesting the line is not enough: consumers
-> + * may request concurrently, so counting requests lets every one of them
-> + * conclude that it is not first.
-> + */
-> +static bool gpio_shared_proxy_may_init(struct gpio_shared_proxy_data *proxy)
-> +{
-> +	unsigned int cfgcnt = proxy->shared_desc->cfgcnt;
-> +
+Hi Krzyszrof,
 
-We expect the shared lock to be taken, so can you add lockdep assert here ...
+On Mon Oct 19, 2026 at 8:46 AM CEST, Krzysztof Kozlowski wrote:
+> On 16/10/2026 17:07, Ettore Chimenti wrote:
+>> Hi Krzyszrof,
+>>=20
+>> On Fri Oct 16, 2026 at 4:51 PM CEST, Krzysztof Kozlowski wrote:
+>>> On 16/10/2026 16:41, Ettore Chimenti wrote:
+>>>> Add devicetree bindings for TI DM816x SoC pinctrl configuration.
+>>>> Using same definition as OMAP2/3 except pullup/down enable macros, whi=
+ch
+>>>> are inverted in this SoC.
+>>>>
+>>>> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+>>>> ---
+>>>>  include/dt-bindings/pinctrl/dm816x.h | 20 ++++++++++++++++++++
+>>>>  1 file changed, 20 insertions(+)
+>>>>
+>>>> diff --git a/include/dt-bindings/pinctrl/dm816x.h b/include/dt-binding=
+s/pinctrl/dm816x.h
+>>>> new file mode 100644
+>>>> index 000000000000..15aa15bca9bd
+>>>> --- /dev/null
+>>>> +++ b/include/dt-bindings/pinctrl/dm816x.h
+>>>> @@ -0,0 +1,20 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>>> +/*
+>>>> + * This header provides constants specific to DM816X pinctrl bindings=
+.
+>>>> + */
+>>>> +
+>>>> +#ifndef _DT_BINDINGS_PINCTRL_DM816X_H
+>>>> +#define _DT_BINDINGS_PINCTRL_DM816X_H
+>>>> +
+>>>> +#include <dt-bindings/pinctrl/omap.h>
+>>>
+>>> I do not see this being used here, IWYU.
+>>>
+>>>> +
+>>>> +#undef PULL_UP
+>>>> +#undef PULL_ENA
+>>>
+>>> Why are you undefining other macros? That's not a easy to follow code.
+>>=20
+>> Do you prefer to duplicate `omap.h` defines? Only the defines above do n=
+ot
+>> apply to DM816x.
+>
+> Not sure what you need to duplicate, but if you add header with bindings
+> for this device, then you should not include headers for other devices.
 
-> +	return !cfgcnt || (cfgcnt == 1 && proxy->configured);
-> +}
-> +
-> +static void gpio_shared_proxy_mark_configured(struct gpio_shared_proxy_data *proxy)
-> +{
-> +	if (proxy->configured)
-> +		return;
+I basically used dm814x.h as a template which does that, is that not
+correct?
 
-... and here?
+>
+>>=20
+>>>
+>>>
+>>>> +
+>>>> +/* DM81xx mux bit defines */
+>>>> +#define PULL_ENA		(0 << 3)  /* Pullup enabled  =3D> 0 */
+>>>> +#define PULL_DIS		(1 << 3)  /* Pullup disabled =3D> 1 */
+>>>> +#define PULL_DN			(0 << 4)
+>>>> +#define PULL_UP			(1 << 4)
+>>>
+>>> I do not see this used by drivers, so why do we need one more header?
+>>> What part of SW are you binding here?
+>>>
+>>=20
+>> I added those (DN/UP) because they are not defined in `omap.h`. It may b=
+e
+>> convenient for future board upstreaming. I can drop those if undesired.
+>
+> Just add the header to proper place - DTS. These are just not looking as
+> bindings.
 
-Thanks,
-Bartosz
+Sorry, does dm814x.h not look as bindings? I'm a bit confused.
+FWIW, dm8148-evm.dts is not including the header, dm814x.dtsi is.
+Following=20
+
+Basically PULL_ENA define in omap.h is wrong for DM8168 SoCs.=20
+
+For a better solution, you would prefer:
+- Keep omap.h in dm816x.dtsi
+- Add a variant like DM816X_PULL_{ENA,DIS} in dm816x.h
+- Replace defines in dm8168-evm.dts
+- Add the header in dm8168-evm.dts
+
+or:
+
+- Keep omap.h in dm816x.dtsi
+- Add a variant like DM816X_PULL_{ENA,DIS} in omap.h
+- Replace defines in dm8168-evm.dts
+
+Thanks for your review,=20
+Ettore
+
+>
+> Best regards,
+> Krzysztof
+
+
