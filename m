@@ -1,57 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792505156;
-	b=yplX/xrdZ2C+S4eOapb3Cvw4K7BpXAFCN4TPbQhdHPSTH7PQ+GXG9oFJo5t7daZ8en4A
-	 K1lETkdW+9GUI47hIi8G7GJ3MgJpDWkp4hxlobSbLT3PBqS8rU4Meqf6y4sQJO8XrLRxd
-	 5YT/QUu08HfxargLRGFjulJGdVCXCUoC8DCbxUcKbi7OSYBSCTDecXGPIdliC3P3WZR8n
-	 DL9H1MIkky/1kaUkaHG3I2ifmiKVnvLmzhEraDUooAc/5KZkC3FvgTfO6gtZyzt7+3uHC
-	 rtmBtZmRm/VzpfeFZ4cnvDw58h61RLtM/2V65TCghT8J5pThwM+KiUNuTzWMeqCmYqw==
+	t=1792505533;
+	b=PmjzpejDjaaGVnCXgCKfmmkZX/ntF+82ZYEocAOw3XyapebGgcRIzU7idVyppvE+MCoy
+	 XS+3VwmLzq5AUXnJIJaX5Ppz3XwHHd34Wq5XcYHptq1xQ7PiZPBCoGsr2CU61UZ2XaF3h
+	 zC8qqPf38L7w+/+YmmMLjcNrTezymxXIrv1BSfirJxURD5yK49JB2VuiQjeBklc23JO6M
+	 cDVPukdjGAx5pZXXPzE2d1PmWJKla2OcD9elfrnYgflE7nGpeZQ9Lk+PMDAK3ScbXCeNA
+	 /0Tdl9T5JDWpMH81orRm3e6qGSseg72g1LhJmhkG/uE0eWW9KrWQjlrLSxk5yNozwCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792505156;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792505533;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Date:From:To:
 	 Cc:Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Last-TLS-Session-Version;
-	bh=rpjlQZMNdbdSf6T1XIM98azVI2gPgzqRqo39bRX6+j4=;
-	b=09ow3cjMBx/OvBjvq6s+7Fcsx0SHDXcbYMFm2H0TxqBJ9HsgR7Kf/Ta6KLL0Gm9fNKUP
-	 0PyKsU50lolOTMTe1ZxAEFtbPO/mptLpQSlnLp49SUKk4c8ME2v2horE9ON6rxcCzMLf1
-	 Pxte1tFc8AAJiuIi/lksSOHT2oVBikz/6CN80TvLHbmwl7RZNzE5CZOPNaGHKUk9mTqj/
-	 mc0lOkWryrZyXu8DMxtXTSO+8oStzUaIaJ6GQZRhFH2pXzr4ZGIgSl5NT9zskQe/6ro37
-	 cvVz++LBSXwNNkV6RWbiu8sfy4n9LLwwdPfUj1eev6GFRPsLbXebPZdsj5dlC3hkKAQ==
+	bh=3QPH7tP3KiG6F8PI84uSlU7fqi0gvmo9YCmK+PcQ/Ko=;
+	b=4kUWZrdLoHl8gKsyrTZw9JxoAOkiI2iOPAkkOoCWGkfAyhbBb6A4qa/o6LbZmfAn1COn
+	 tuPlylgO7bQYJcpriiso9XtxzDUGss+3P3w58UIVesGJ01WB2PeRPpzxQAMtIBVsJldyO
+	 ARx7l5FkA1fVaGs96/8rabnmRJpYrGeXK5o/9CAGBMz1LK2CmwiNL6WMvU3vokk6HnHg6
+	 l6Sglo9FD1sTBJjFswKUXg2NY+m06Vc5iEn4DHVMufiqOErFWUClLBO+gF6ddtYFocWyL
+	 Tjnu2wJzhcHZZ29ST5y6h5KLd8lgKHRqLGgPFpeWVgYzaX1TQ+SpANT+CNTEBZLNMvQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="BB/Cgox/";
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=LWxLT9o4;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638C0606A334;
-	Tue, 20 Oct 2026 14:05:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 638C0606A334
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9394606D482;
+	Tue, 20 Oct 2026 14:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D9394606D482
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=BB/Cgox/
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=LWxLT9o4
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id CD31A1A1291;
-	Tue, 20 Oct 2026 14:05:52 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 42A254E41289;
+	Tue, 20 Oct 2026 14:12:10 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 83B3660393;
-	Tue, 20 Oct 2026 14:05:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C6A6210328934;
-	Tue, 20 Oct 2026 16:05:39 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0AA7B60393;
+	Tue, 20 Oct 2026 14:12:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C764E10328DD0;
+	Tue, 20 Oct 2026 16:11:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792505151; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1792505524; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=rpjlQZMNdbdSf6T1XIM98azVI2gPgzqRqo39bRX6+j4=;
-	b=BB/Cgox/eirjT8+0vmw+jFEYhRemG8+xv5/pINyLVTJpXLFlO9eLOx6q9vwsaLgmKo0bxg
-	Rg6nqyqcLFWYM7ecfE9SBAxAzUynfCcnd8b4k8ysxmxAlMp4vBdspyYIziaAYfh+XCdMbn
-	IZdCrEFfdIV23FSUYgW4FdHNJic87B0j22lfztOUic3+dIGRCZdMP5zT/FEsZMuxSGFZgR
-	N/zSMQGGCUgMX647AZqDwnou7rfO53AmhcNt0xJiq/8DKxkLUzkeryMhNzHZ6NdvF9aU0x
-	UlxSLELQqcSca8VMF51emi9XZKunsPeR/gX1iSgei8WhBTKgNwqSm7tJwEPz5g==
-Date: Tue, 20 Oct 2026 16:05:38 +0200
+	bh=3QPH7tP3KiG6F8PI84uSlU7fqi0gvmo9YCmK+PcQ/Ko=;
+	b=LWxLT9o4UdOTVO0xFJ01Dexr4y2VWGevobBa2gpy++e5YMTZ/ms5G8K6BSa8t+WFwXX06r
+	V0DWOJCXT3aDKPTK3b0NsQdDLZu75AqjTIcgAdEFaTesl/38jP75gQRzdJFV7wxLXw4T+6
+	hP8mSBhBz3CSLlCrm4HZRoH2yimpZk8aFvi6cIXpUEhFZpHH9W9QrmsvhETmsFKVcNhebG
+	TQRZ0LjqFQuOHwUiD9gOYeLT8Soldxm7ybFqlz2uJPOYG8PwrIKbWsjfeTacB8wCpqUbeJ
+	8zjFc8Q75hreNbPu1lR3snGOsoeirQ0Sf90nqfciPVwvtI9+qcpZL7b0t7KWWQ==
+Date: Tue, 20 Oct 2026 16:11:53 +0200
 From: Herve Codina <herve.codina@bootlin.com>
 To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
@@ -66,14 +66,13 @@ Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
  <frieder.schrempf@kontron.de>, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Ernest Van Hoecke
- <ernest.vanhoecke@toradex.com>, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v3 4/8] of: unittest: Test fw_devlink with GPIO nexus
+ <ernest.vanhoecke@toradex.com>
+Subject: Re: [PATCH v3 6/8] of: unittest: Test fw_devlink with PWM nexus
  maps
-Message-ID: <20261020160538.15ee07bc@bootlin.com>
-In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-4-fd6f1c17e16d@toradex.com>
+Message-ID: <20261020161153.19eb32a7@bootlin.com>
+In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-6-fd6f1c17e16d@toradex.com>
 References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-	<20261020-fw-devlink-nexus-ready-v3-4-fd6f1c17e16d@toradex.com>
+	<20261020-fw-devlink-nexus-ready-v3-6-fd6f1c17e16d@toradex.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -91,31 +90,26 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 Hi Ernest,
 
-On Tue, 20 Oct 2026 15:00:15 +0200
+On Tue, 20 Oct 2026 15:00:17 +0200
 Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
 
 > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 > 
-> Add OF unit tests that call the fw_devlink add_links operation for GPIOs
-> routed through nexus maps. Verify that each mapped consumer has exactly
-> one link to the final GPIO provider rather than to the nexus.
+> Extend the fw_devlink OF unit tests with PWM references routed through a
+> nexus map. Verify that the mapped consumer has exactly one link to the
+> final PWM provider rather than to the nexus.
 > 
-> Also cover direct references and all GPIO property spellings recognized
-> by fw_devlink, including the deprecated singular and unprefixed forms.
+> Also cover a direct PWM reference to ensure that it continues to resolve
+> to the original provider when no map is present.
 > 
-> The gpio-map routes its entries to different providers so that selecting
-> the wrong entry is caught as well.
-> 
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
 > Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 > ---
-> v3: Route gpio-map entries to two providers, use a middle entry (Herve)
-> v2: https://lore.kernel.org/r/20260910-fw-devlink-nexus-ready-v2-3-17ac82dbe226@toradex.com
+> v3: Route pwm-map entries to two providers, use a middle entry (Herve)
+> v2: https://lore.kernel.org/r/20260910-fw-devlink-nexus-ready-v2-5-17ac82dbe226@toradex.com
 > ---
->  drivers/of/unittest-data/tests-phandle.dtsi | 39 +++++++++++++++
->  drivers/of/unittest.c                       | 75 +++++++++++++++++++++++++++++
->  2 files changed, 114 insertions(+)
+>  drivers/of/unittest-data/tests-phandle.dtsi | 22 ++++++++++++++++++++++
+>  drivers/of/unittest.c                       |  2 ++
+>  2 files changed, 24 insertions(+)
 > 
 
 Reviewed-by: Herve Codina <herve.codina@bootlin.com>
