@@ -1,44 +1,72 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792518464;
-	b=5Y1NmuIeMhsEfWtVaN11nKQeM6+Azp7YnR73yJk4A4bguyjUMmEdYmXLtqlriwpsCy9V
-	 v97Z4FacBm0HtXZlJXwf627Ro+4FTvOmK5oYbLkhMbI91DkWVnexk6WmFezJoPaKZ+osN
-	 71qetCT1KWPTCrpbM4eMlmOgfDhtrBovS/4xE2ZNItWllKswEfxMJvhlxSv5rR+ULw/Oa
-	 YPg9l7a6fIrW0wbaLD9qzQjR4BODjXFMx9qr+mSyim3Wf6LtTie4wgEVryKXjSwvoSIuS
-	 Ml+0S6Q2/kD6cM07SYin/sy5JNYVV+Y6b0D6mUQ/ZTvrFdaPX6zoHgU7zkYUKuXdtrQ==
+	t=1792518457;
+	b=zjWm7fuQeyRzhzxwvPXwyPyK7sZYGDnWa+i3XbhMJOuvHgYv6/Y17D2fYEdyH+FqxAMe
+	 kRytRTh+3eLJKIwQsgKiadn2sGurjd7FEGBlyfC1DNZGqkdWl5+/vz5DjnIt0f/ELk8GP
+	 6TIKAq1tAxRi3UqU9sKN5P7UrjmMY7EmVkE4GRF9SRx0KnDqt2EM+MVM8PuKOb5B2c2xM
+	 luwnoIL3dJ3BBaoDX1Dl9FMqrZMKhHU2vY1FzciY+w1P2SQZFKir2hbKtWnCGyahXn3Ux
+	 PtUEnRAkI+rKCvJ6YtBBaYCLXVTN9QYv+1S9iGh/0b/j/qsVngF8cR3zZ7RkCtPCn8Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792518464;
-	h=Received:Message-ID:From:Subject:Reply-To:To:Cc:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=+5ys7ARzjmOCxX0rrtJ2Ld2VIM5+EHLx/QluMRFXSUY=;
-	b=fO/Sn7VgoTdbrHQZBP66tbivIplQ/FIz52+Cr+JL0bH4UIfg/xzn35OrRQW50kvdKVzp
-	 B+Eq3Eqee9xXfdkrpL41a34cH4isLObcxkjymVeD+SWCeRN58EGkaMyAeZPZgmcRvG/A5
-	 iAppRraF0npN2VHFTps6IAUkkH3Roh3HWFDsL+PxOsKLRRNuEp+qnAFwWU5UEOVZYODF/
-	 EQgWD6m/jtSGbhmvXZuC8RBDJ05fW3X1y3m1G+Y80UIplBQkNPllAzq7C88MAXSStYGTv
-	 eNQhNe/ZGEVorq3hFqqFqzoKp65duMI7XNpGDTJ6gJvRQzfVp13GpD2s1oo4OKKP4oA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792518457;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=HAHTPseBysoQyjFWdWhxEUoIlAFSx4P0uFPxuTZC58E=;
+	b=smb4Jc+a5a1XM2LYKVQf6zWxcFgrMlenHB9wkPpYAESb50liPqL6LRws3ZYYSQOTWKlU
+	 c2zFYqTQx2zJZsoGmy1eLU2Wvayix28rKuDpwQkfaybD3Tvdr4ZycAHLeJVdSw1NibCkF
+	 cZbnEt9Kcu813TMJtHhvuLE3+I/7SYvDPIZpHvj3a6zmkrcSM1rMuyXNSG8pCn/4RXT/R
+	 jgwHuA1/5BJ7NT+4xsQxLn4wL+5Sqjrv/DkkkugT8HceCaN4/WDq4lu1ngy1gd9CPLt/Q
+	 IqM3iYEKjutzoNBnnVE3G24intJoc9rQQKJlCJPisOqgHuVwO7y//obe6sL/e/MbbWg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T5klA8w8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A13606A330;
-	Tue, 20 Oct 2026 17:47:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F15D1F000C9;
-	Tue, 20 Oct 2026 17:47:43 +0000 (UTC)
-Message-ID: <sashiko-outbox-179444@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RESEND v10 9/9] arm64: dts: mediatek: Add MediaTek
- MT6392 PMIC dtsi
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Luca Leonardo Scorcia" <l.scorcia@gmail.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, dmitry.torokhov@gmail.com, lee@kernel.org
-In-Reply-To: <20261020173556.632798-10-l.scorcia@gmail.com>
-References: <20261020173556.632798-1-l.scorcia@gmail.com>
- <20261020173556.632798-10-l.scorcia@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 20 Oct 2026 17:47:40 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14390606A319;
+	Tue, 20 Oct 2026 17:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T5klA8w8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C7C1F000C9;
+	Tue, 20 Oct 2026 17:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792518456;
+	bh=HAHTPseBysoQyjFWdWhxEUoIlAFSx4P0uFPxuTZC58E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=T5klA8w8ldhaGXex5p2C1vk2XmCWEI5ePLrDsiyhXLVFchdZEn+v5/j//jHND7keT
+	 Meqe1HYRaPtXccMkRp824RMlBY/ggOISFpPO91xfQXQlxRa2BEF/hHxRG/jK8L1CgQ
+	 9muVPdNXFcV74oJ2Dgz4HaRViQo1tQbIdaPr+01vyY4wLmybDhkP+Vl1I+bioV+Ygq
+	 uCkDYDCq983KX1BvcP2HAwIVds8N7k+Rqtsxjca0Ovu269GytYQIsu/QGvdh3m3Bcg
+	 UwXzztQF8VoJ3nyz6bU2aIRxqOIpInSrUm2TtfG3URLEtNoUiddkCE0GL6sKdGKVFJ
+	 c6nOo9rgiy+pg==
+Date: Tue, 20 Oct 2026 18:47:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-i3c@lists.infradead.org, mfd@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/20] dt-bindings: i3c: dw: support up to two reset lines
+Message-ID: <20261020-endocrine-crown-c6d3c83cf436@spud>
+References: <20260929061417.20733-1-jszhang@kernel.org>
+ <20260929061417.20733-5-jszhang@kernel.org>
+ <80b084d130b7dc7406ae23e54a77706a4f42b606.camel@pengutronix.de>
+ <ata--JFFUzSoMock@xhacker>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -47,114 +75,49 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PF0S8SXN4APeQtUF"
+Content-Disposition: inline
+In-Reply-To: <ata--JFFUzSoMock@xhacker>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] arm64: dts: mediatek: mt6392 pmic fails pwrap_probe() due to missi=
-ng ID
---
+--PF0S8SXN4APeQtUF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit 36e8cdb3fad1df2fc1833ecbab6f1f641807e610
-Author: Val Packett <val@packett.cool>
+On Tue, Oct 20, 2026 at 09:08:08AM +0800, Jisheng Zhang wrote:
+> On Mon, Oct 19, 2026 at 02:55:14PM +0200, Philipp Zabel wrote:
+> > On Di, 2026-09-29 at 14:14 +0800, Jisheng Zhang wrote:
+> > > The Synopsys DesignWare I3C master controller can have multiple reset
+> > > lines, such as core reset, apb reset, and dma reset.
+> > >=20
+> > > Update the DT binding documentation to increase maxItems for the rese=
+ts
+> > > property to 2.
+> >=20
+> > The last sentence just listed three reset lines. Why increase to 2?
+>=20
+> Per the doc, the last one is dma reset, currently dw I3C driver doesn't s=
+upport dma.
+> And increasing it to 3 is still dt compatible. Maybe I misunderstood
+> something. what's more, I don't have platforms with all 3 resets to test =
+and verify.
+>=20
+> If dt maintainers prefer 3 in one step, I will sent out a follow-up patch.
 
-arm64: dts: mediatek: Add MediaTek MT6392 PMIC dtsi
+I think you can increase it to 3 globally, then restrict to 1 for the
+altera device and 2 for your new one.
 
-This commit adds the mt6392.dtsi device tree include file for the MediaTek
-MT6392 PMIC (providing regulator, keys, pinctrl, and RTC nodes) and includes
-it in pumpkin-common.dtsi.
+--PF0S8SXN4APeQtUF
+Content-Type: application/pgp-signature; name=signature.asc
 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6392.dtsi b/arch/arm64/boot/d=
-ts/mediatek/mt6392.dtsi
-> new file mode 100644
-> index 0000000000000..cc4770d70246c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt6392.dtsi
-> @@ -0,0 +1,145 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + * Copyright (c) 2024 Val Packett <val@packett.cool>
-> + * Copyright (c) 2026 Luca Leonardo Scorcia <l.scorcia@gmail.com>
-> + */
-> +
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/regulator/mediatek,mt6392-regulator.h>
-> +
-> +&pwrap {
-> +	pmic: pmic {
-> +		compatible =3D "mediatek,mt6392";
-> +		interrupt-controller;
-> +		#interrupt-cells =3D <2>;
+-----BEGIN PGP SIGNATURE-----
 
-[Severity: High]
-Will pwrap_probe() fail with -EINVAL on boards that include mt6392.dtsi?
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCatepLgAKCRB4tDGHoIJi
+0nTbAP41tIofP+UpvSN0IwKJvT76VMbRwSrA7SIYBjKeyCaPgwEA7iCZGXK59MXH
+F8eKb5c+ngwawXhmX7aqW4NflYqjyAY=
+=Yxu4
+-----END PGP SIGNATURE-----
 
-In drivers/soc/mediatek/mtk-pmic-wrap.c, pwrap_probe() matches the child PM=
-IC
-node of pwrap against of_slave_match_tbl:
-
-drivers/soc/mediatek/mtk-pmic-wrap.c:pwrap_probe() {
-	...
-	if (np->child)
-		of_slave_id =3D of_match_node(of_slave_match_tbl, np->child);
-
-	if (!of_slave_id) {
-		dev_dbg(&pdev->dev, "slave pmic should be defined in dts\n");
-		return -EINVAL;
-	}
-	...
-}
-
-However, of_slave_match_tbl in drivers/soc/mediatek/mtk-pmic-wrap.c only
-lists:
-
-	static const struct of_device_id of_slave_match_tbl[] =3D {
-		{ .compatible =3D "mediatek,mt6323", .data =3D &pmic_mt6323 },
-		{ .compatible =3D "mediatek,mt6331", .data =3D &pmic_mt6331 },
-		{ .compatible =3D "mediatek,mt6351", .data =3D &pmic_mt6351 },
-		{ .compatible =3D "mediatek,mt6357", .data =3D &pmic_mt6357 },
-		{ .compatible =3D "mediatek,mt6358", .data =3D &pmic_mt6358 },
-		{ .compatible =3D "mediatek,mt6359", .data =3D &pmic_mt6359 },
-		{ .compatible =3D "mediatek,mt6380-regulator", .data =3D &pmic_mt6380 },
-		{ .compatible =3D "mediatek,mt6397", .data =3D &pmic_mt6397 },
-		{ /* sentinel */ }
-	};
-
-Because there is no "mediatek,mt6392" entry in of_slave_match_tbl (and the
-pmic node has no fallback compatible string), of_slave_id is NULL and
-pwrap_probe() aborts before initializing the regmap or calling
-of_platform_populate() for the PMIC and its subdevices.
-
-[ ... ]
-
-> diff --git a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi b/arch/arm6=
-4/boot/dts/mediatek/pumpkin-common.dtsi
-> index 805fb82138a80..b19d5792bd896 100644
-> --- a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> @@ -6,6 +6,8 @@
-> =20
->  #include <dt-bindings/gpio/gpio.h>
-> =20
-> +#include "mt6392.dtsi"
-> +
->  / {
-
-[ ... ]
-
-> @@ -160,6 +162,11 @@ &i2c2 {
->  	status =3D "okay";
->  };
-> =20
-> +&pmic {
-> +	interrupt-parent =3D <&pio>;
-> +	interrupts =3D <28 IRQ_TYPE_LEVEL_HIGH>;
-> +};
-> +
->  &uart0 {
->  	status =3D "okay";
->  };
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261020173556.6327=
-98-1-l.scorcia@gmail.com?part=3D9
+--PF0S8SXN4APeQtUF--
