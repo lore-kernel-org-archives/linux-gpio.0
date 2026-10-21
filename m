@@ -1,23 +1,23 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1792612126;
-	b=opsuloW1ewiRRTtQw3WXCG4GuqV+jt5cmmH/6wCyANt6p9dTuPiKYoCwebTC/InLv4rw
-	 Jlg1XJr2RhZ/HPJrw9JSWor9VFoJF4n+cM4S17m1NmpMGzGWddUhH0QcUIT2r1fHNVDEC
-	 oTO4SJEguzPiuQJbFQdf7AUCzsH/nSEBW1KunQBnxr0lt4mOvLoS3WR+MSGPCrqI3lVux
-	 GxH6vhaLjW0NsCGhHnbzg8xpNNFdWC6hGMByIdetQaG92kQB4G80HM0oNc7wqen08WWkB
-	 ik0dpICXHDiwlN0NyJiQUdO/DFRUdiQpWRmpTmkBptDbzlWjYDLIeBN6NY7x+3GgqTw==
+	b=hsjxsTKxd7DS3a1QLEbd3PHYAt9rGh11hvF9Xl45RpD2qqSQ9E4yo2ljfHjtflXCc3ya
+	 yWvu5mPYClDzWo3TMy3RVMAC+7LsxGy0hFTfJ5bUQsOxXvKf2AAYsq/djc/ErMTECGS8P
+	 8ErpRRVcQPIg4zHRn/B8Xaa1x92yrXNcvC62ibleCsl8UhxPy5FPhBOT90aJwKhU/gxV9
+	 XfBJSd4cFwF4cViL/z1DmKCRQpcDWFxaQrZMtRG0cktA3qbWPzwvbWp9Yv/LGg2hs+Y8U
+	 O6iJy7WxEkYf+UF2NnK9DvJaFWOlkU0TDW7aJc6dE4O+Yv+nxyIoaPpMDf0hlzklVuA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1792612126;
 	h=DMARC-Filter:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-CM-TRANSID:X-Coremail-Antispam:X-Originating-IP:
 	 X-CM-SenderInfo;
-	bh=RsU/Miju2jeqymvYcNJXTnmmqKzjTj43vuEKKcaUunA=;
-	b=a/9Ldi//IerA8xNEYdlraqqbiWduI34oDDFYtZ9X43yjuFUDPSub2u9R4X/YebfI3BqQ
-	 7QfU1CN5nVlr91UTNNqQZzbyav+x1cShOvu2A/y9n51tcpKqMLfNrXDAlYQvJrh0vlIM5
-	 +n/kxc0HeZQSb5Rm3ZI+vB5zVKtMBh8tl7fOxPUDT4hO99r/Dr/RycWdVwGmFwHa5dBzD
-	 hgGbHFib9t7iNeEL6P66QsM8cWUSO+6FPH4kobwdr4I8e5zClZY4A4chFSewcoBUYzgA/
-	 bS+QhZfg4G5dH1ch2fhkcooUWII8d1xKCmQyZKol47G6iTT3FnUR4+kwWnkTs/T/gOA==
+	bh=q/P/8wd7aMdm6RMiCXt6tRksofYG+2opW1qNdw3VqHg=;
+	b=11uYwKJM/EDzZjCS7ztiosF1fl0JpaPwgaa0lMXE9ho/xO5g+YRq+gVeWMJDp+HD6GgU
+	 p1bfYY66qTE6IgXe/kci0KQekSvYrgsQrFIp+g7ojexbUuS+erN5EUQ1aUzoZCZXIaocw
+	 4kiHKbdLO/P52gFbImiIOu2PwDtgixjKukduS+BLp1yRh/kCeis4en+O+0Yf+zl25rQb/
+	 NIGGE7koAOdEXuQgYgJdRGJkAXoEk2i6jUxNQHjext4+gDPS5zcs//HRh308xIk50Sxvz
+	 +YA0VSn72ZC4WK9g/Bl4nSBbh93BrSVDW2zrSWkMFRutTtm9PH66ZL1EOpVaivc646g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=iscas.ac.cn;
 	spf=pass smtp.mailfrom=iscas.ac.cn;
@@ -26,17 +26,18 @@ Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EACD606A323;
-	Wed, 21 Oct 2026 19:48:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9EACD606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A93D606A325;
+	Wed, 21 Oct 2026 19:48:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6A93D606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from [127.0.1.1] (unknown [223.166.93.48])
-	by APP-03 (Coremail) with SMTP id rQCowAB3gT_6Ftlqxu5hCw--.4480S3;
-	Thu, 22 Oct 2026 03:48:13 +0800 (CST)
+	by APP-03 (Coremail) with SMTP id rQCowAB3gT_6Ftlqxu5hCw--.4480S6;
+	Thu, 22 Oct 2026 03:48:16 +0800 (CST)
 From: Han Gao <gaohan@iscas.ac.cn>
-Date: Thu, 22 Oct 2026 03:48:09 +0800
-Subject: [PATCH 01/18] dt-bindings: vendor-prefixes: add Zhihe
+Date: Thu, 22 Oct 2026 03:48:12 +0800
+Subject: [PATCH 04/18] dt-bindings: clock: add Zhihe A210 AON clock
+ controller
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -48,7 +49,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261022-a210-init-v1-1-09fb4d99da65@iscas.ac.cn>
+Message-Id: <20261022-a210-init-v1-4-09fb4d99da65@iscas.ac.cn>
 References: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
 In-Reply-To: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -68,49 +69,114 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
  Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-CM-TRANSID:rQCowAB3gT_6Ftlqxu5hCw--.4480S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JF1UJw4rWF4xJFyfuFyxuFg_yoWfZrg_XF
-	4xAFn09rW5tr1F9w4qyr4xG345Aw17Cr18u3Wrta4vk3W2v39xta97t345Aw17ZF47uFy3
-	Z393XrZrXrnrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbvxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l84
-	ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
-	IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
-	xhVjvjDU0xZFpf9x0pRWa09UUUUU=
-X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiCRUHDGrYx7yXfwAAs2
+X-CM-TRANSID:rQCowAB3gT_6Ftlqxu5hCw--.4480S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF1DAFWrCr13ZFWrAr1UWrg_yoW5Jr4kpF
+	n3CF13tr4IvF4Iqa1FkF4xJFn3Za18CF1ag39ruryjvF98X3W0yF42kry5Za47Grs2ka9r
+	uaykWa1ktw1xu3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUml14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+	z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
+	4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4U
+	JVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
+	0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
+	JVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxV
+	A2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC
+	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r
+	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4U
+	JbIYCTnIWIevJa73UjIFyTuYvjTR_nYFDUUUU
+X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiDAQHDGrYyXeSswAAsu
 
-From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+Add bindings for the A210 AON clock controller, including input clocks,
+the system clock and I2C1 gates.
 
-Add the vendor prefix for Zhihe Computing.
-
-Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/clock/zhihe,a210-aon-clk.yaml         | 58 ++++++++++++++++++++++
+ include/dt-bindings/clock/zhihe,a210-aon-clk.h     |  9 ++++
+ 2 files changed, 67 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index ba2002969373..21142578837b 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1973,6 +1973,8 @@ patternProperties:
-     description: Zealz
-   "^zeitec,.*":
-     description: ZEITEC Semiconductor Co., LTD.
-+  "^zhihe,.*":
-+    description: Zhihe Computing Limited
-   "^zidoo,.*":
-     description: Shenzhen Zidoo Technology Co., Ltd.
-   "^zii,.*":
+diff --git a/Documentation/devicetree/bindings/clock/zhihe,a210-aon-clk.yaml b/Documentation/devicetree/bindings/clock/zhihe,a210-aon-clk.yaml
+new file mode 100644
+index 000000000000..bc1587e3fa81
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/zhihe,a210-aon-clk.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/zhihe,a210-aon-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zhihe A210 always-on peripheral clock controller
++
++maintainers:
++  - Han Gao <gaohan@iscas.ac.cn>
++
++description: |
++  The AON clock controller provides a system clock multiplexer and
++  divider, along with peripheral clock gates.
++
++properties:
++  compatible:
++    const: zhihe,a210-aon-clk
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: High-speed AON reference
++      - description: External oscillator
++      - description: Internal RC oscillator
++      - description: RTC oscillator
++
++  clock-names:
++    items:
++      - const: high
++      - const: osc
++      - const: rc
++      - const: rtc
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@30844000 {
++        compatible = "zhihe,a210-aon-clk";
++        reg = <0x30844000 0x1c>;
++        #clock-cells = <1>;
++        clocks = <&aon_high>, <&osc24m>, <&rc26m>, <&rtc32k>;
++        clock-names = "high", "osc", "rc", "rtc";
++    };
++...
+diff --git a/include/dt-bindings/clock/zhihe,a210-aon-clk.h b/include/dt-bindings/clock/zhihe,a210-aon-clk.h
+new file mode 100644
+index 000000000000..29d7e9183adf
+--- /dev/null
++++ b/include/dt-bindings/clock/zhihe,a210-aon-clk.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++#ifndef _DT_BINDINGS_CLOCK_ZHIHE_A210_AON_H
++#define _DT_BINDINGS_CLOCK_ZHIHE_A210_AON_H
++
++#define A210_AON_SYS_CLK		0
++#define A210_AON_I2C1_IC_CLK	1
++#define A210_AON_I2C1_PCLK	2
++
++#endif
 
 -- 
 2.55.0
