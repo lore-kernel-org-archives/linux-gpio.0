@@ -1,62 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=193.142.43.55
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792586103;
-	b=gZ6k8TZkYFcEZpRTX/1R/z+T8Cc545z2hdSFcOJSZttxOXWaCt/vDcvoV7qvxs/fP5xf
-	 MxatYAdAXFpnwP4hcDshiNI4nsyM46pL/+RU0EhYXisxYOCJXef5w5KnUy09pbGpn0DRF
-	 d/BghH8hpvp9TmY6XEnwdUnzwFw4bYAXkQIphEnWf2WUIfsW9Pe4o4DEysgR1aQsj9CPa
-	 iWcwgJf2cfYVuNNT6DuNypxkfD84/Gz+dWaSZamDuC7PFMB0eTP7FaSc5Jy+3CaMMqonB
-	 85bwxPqWQKrX2v/GqPAqmMHyX4179gCqWA1PMgdcU0tDAVrOmBQipZkmVXgyWfIlN+Q==
+	t=1792586358;
+	b=UfmFAJV/IsQQvjPL6LjQsxYKmvj72kzOKCWwwHTA+sJmId9O1RZcYeUnpSndhwOl3c8n
+	 wgNQRT3HGJ4A0cj0xpu4Z0uELzr7hD2CTKziK9HcrZl/gi4vkLoyzxcz6AhftZV8fhBDP
+	 0WK9iWafNrxth/tNlcNeeDsr+64hHScs4QQHAc7tq55h0f+meEQk0tp8uHpjfLXtGjKZs
+	 wUMwfsWyRuWc4VkbhGreyzm7JPOK8gPiW1scgIn4oUvcl5PFaXCNAPVARr121UyHADWKL
+	 Vub3D2f/qn5q8ZzyjOoTSE4PYU5mH4d+Gqk7X90K9NZjDHXMv3dnWCfUMVKjwBBq1cw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792586103;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
-	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=kgJ19pJet70DJE+zcs5f5NEgocG1iiZpBiYPZfVDxxs=;
-	b=ibZ4dELDzPeDT8F0+sNpvB7mfd6w8eJ0xic7vxCKif3OxGEKACJvaYA75UmBilb65yPI
-	 TFl4JUmPD1FQh/gJ1W/+vUYLQlr0MhLLwb5LFVtnGIMChvObBiEBZ8+pHaRRZlaA0vmiv
-	 JlEXbjlAVJtbxJnDkN8HUDZdzw6UL81Onpj6vOeDGvK07WRKnhLLyXdj4je0l4V53Jz9f
-	 RadkrQcOMJaBuB/g9W+eGbHHFXgtYFqakhIyEjphS5NV/p68wpUSA35qc6GhwKCxt0Qks
-	 IqHfQVw9SuqnVN9GLwcunn5pecI5Ecw+TfahpUeYyySLeIngUzUipkCw9lgdgqEBtxg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792586358;
+	h=DMARC-Filter:Date:DKIM-Signature:DKIM-Signature:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=7LywcFqB+/5xRyU6GGTMYkhvgXlEandMOB0iFjHFry4=;
+	b=ab6XA1sSBggysxVzsmTIhWlNSGJeBhPrqUPADvo/AKzlFIPRIbsiHTG0+n18xRItjbuI
+	 imybJHlRRjvX11ZJdBTmYFVlnGADtDMJCjwFqUdHEJtnwtNdT7xRapWi2wOtaC+FJGppY
+	 XGuPXtfuNsrSrikRZM9MFfsG8B91gLJzEBMxfDDbeacxwNopHPDLcQhjZ38ITZQZXlbhZ
+	 x3KHaoDJPUkIaRWvoV12wglWG5AVb2wVGgq17hdYz/1x/vBk8TnynTNj6oa0zVDwNgBN2
+	 NzSUmz1h+EB1nxxJw5FNZdcd9kpwR4XYbD8vkGiGPXOZWe8gjcwPdM1lD6TKV/9swhg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GbOkmBUR;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linutronix.de;
+	spf=pass smtp.mailfrom=linutronix.de;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=WP8Wip5v;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=3jNj9R0h;
+	arc=none smtp.remote-ip=193.142.43.55
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C0E60A2611
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 12:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B22606A320;
+	Wed, 21 Oct 2026 12:39:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8B22606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GbOkmBUR
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26EC71F000CA
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 12:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792586103;
-	bh=kgJ19pJet70DJE+zcs5f5NEgocG1iiZpBiYPZfVDxxs=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=GbOkmBURJ1mkUMB9moKsu9fjNBx+JN54ciEKZVy8kcbnP7EnEg3g9RDQDcWC16/XC
-	 HF9KyPZbthBszX2jM0ZeOYw3ehUEOvLsFJfDjqsPoh5vKCXvKkpd/6k5XDNTiNHDDG
-	 t85N5fZYDJSUGAli1+drR2/cnbLsJTCgLrnInREFm2OgK81DNmQ0KUBnjWjFVC2P+q
-	 YK1PQl4JMWiL921AsDdsGmso5DxM6InW9pDtq0i32t9bmbXsi5PSxD9D05tpRNWgVp
-	 hDkadRe6v5X0Q+DbgHco1mREFDf4+KAg+3/piRZZmFgr9eb1MSW9SL9SAzXsQBzNSm
-	 JRauP7BfgdHTQ==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3ab3b29a298so5690641fa.3
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 05:35:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwv7tTAxOfjHBPwLUGfWY2rxkGg7TwIjxQWnpBK+QCYJlNOLrU9FFnZ3XvBUp6e6sE6eTIIUFXdrRsd@vger.kernel.org
-X-Gm-Message-State: AFq9FYJK//7gvF5UXzdbPwOevlZebvg9jaPGVUPFKLmuyIiFWYfILGxY
-	81pRX2ANn0FMBStM42ugrUaNSCpa1TVDuFL371ves+o3AOxgCpMGnvutQd6LOGx41SrHERwCv/0
-	Q+dKtKtlYi3qW9ShZgBFViS1W/1ALJEZlscjjBzcioQ==
-X-Received: by 2002:a05:651c:a20c:10b0:3ab:f9b:974 with SMTP id
- 38308e7fff4ca-3ac441cf4d7mr4584441fa.29.1792586101850; Wed, 21 Oct 2026
- 05:35:01 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 08:35:00 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 08:35:00 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261021142431-83ac35ae-17cb-461d-9661-945c1edd7bbd@linutronix.de>
+	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=WP8Wip5v;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=3jNj9R0h
+Date: Wed, 21 Oct 2026 14:39:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1792586356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7LywcFqB+/5xRyU6GGTMYkhvgXlEandMOB0iFjHFry4=;
+	b=WP8Wip5vPrsuh2OlJgttUQ71UzDDfzW+s8xgUeOB/M6KRGwx2+O0Cr/g7AVk7tu3dUGR8u
+	LWxPVc18jPWBfwr6db0bj9P2e3dl410kKNwTixbWEfUW6dGPtK8W6kE2OVvGuQFS07LwrV
+	pdcFglJgStoSu1S7oC8j40kxBn2v8rSY4I7/DU+plfAExWiD/PHQzk0lnLx8sj+HhEaWNQ
+	9xE6FXOgPoGqof60spk33MTkBcnwkkTubyaLO7f4/92R9Lrxlwg5+2LhfEXHZy1+3Tnrz7
+	Xrjk31xaKGcL8AJ2GyvS3VRjHdzccQpDPe/2cS8XSXvOgE2ruITOAH2Qg0l6yQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1792586356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7LywcFqB+/5xRyU6GGTMYkhvgXlEandMOB0iFjHFry4=;
+	b=3jNj9R0hQi60PadC0Q8npV3E5R+nfxTN0J1Wcj1xXvRpma9ZNat9HWx4CrpPbohWskI1hJ
+	AktAQtUYXxGljrAA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: aggregator: constify struct configfs_attribute
+Message-ID: <20261021143836-afd6d95e-03a5-420f-b680-6ac3e90e21cb@linutronix.de>
+References: <20261021-gpio-aggr-const-configfs-attrs-v1-1-a98e8d1157a6@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,58 +74,22 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261021-gpio-sysfs-const-v1-1-3d89ac247086@oss.qualcomm.com>
- <20261021125252-51f1f0a0-46e9-4a10-92ab-46cd099c108e@linutronix.de> <20261021142431-83ac35ae-17cb-461d-9661-945c1edd7bbd@linutronix.de>
-Date: Wed, 21 Oct 2026 08:35:00 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MfvWo2th5t5CRDUATwuH4pr=mVxRwJx_STgvs+5VRx7Tg@mail.gmail.com>
-X-Gm-Features: AclHuK_mJzlXQmhF8t36qa5t0_O3ejdTLOVBk7TPQqy4YQK9ttxEBhf59zdbsDU
-Message-ID: <CAMRc=MfvWo2th5t5CRDUATwuH4pr=mVxRwJx_STgvs+5VRx7Tg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sysfs: use const APIs for legacy sysfs attributes
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261021-gpio-aggr-const-configfs-attrs-v1-1-a98e8d1157a6@oss.qualcomm.com>
 
-On Wed, 21 Oct 2026 14:28:56 +0200, "Thomas Wei=C3=9Fschuh"
-<thomas.weissschuh@linutronix.de> said:
-> On Wed, Oct 21, 2026 at 01:17:54PM +0200, Thomas Wei=C3=9Fschuh wrote:
->> On Wed, Oct 21, 2026 at 12:47:25PM +0200, Bartosz Golaszewski wrote:
->> > Replace the deprecated non-const sysfs attribute APIs with modern cons=
-t
->> > variants where applicable. This leaves out the attributes embedded in
->> > struct gpiod_data as this structure contains fields that are modified =
-at
->> > run-time.
->>
->> Leaving the dynamically allocated attributes with non-const signatures w=
-ill
->> make it harder to remove the non-const APIs later on.
->> Would it be possible to switch those to const signatures, too and cast a=
-way
->> the constness in the store handlers?
->> I see that this is a legacy interface anyways, which might be gone by th=
-e
->> time we want to remove the non-const APIs. But that applies to the
->> currently proposed changes, too.
->
-> If I understand correctly, the dynamically allocated attributes are only
-> necessary to retreive 'struct gpiod_data' in the attribute registered on =
-the
-> *parent*. Those registered on the gpio device itself can just use dev_get=
-_drvdata().
-> Instead of registering the 'direction' and 'value' attributes on the pare=
-nt,
-> you could use symlinks pointing to the child attributes instead.
-> This would make the code a whole lot simpler.
->
-> Currently it is not possible to create symlinks to sysfs attributes, but =
-I have
-> simple patch for that locally. Let me know if you are interested.
->
+On Wed, Oct 21, 2026 at 02:31:41PM +0200, Bartosz Golaszewski wrote:
+> In preparation for the constification of configfs attributes, make the
+> existing instances of struct configfs_attribute in gpio-aggregator const
+> and use the new st_attrs_const field of struct config_item_type.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Sure, definitely. Is this something that will eventually make it upstream
-though?
+Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-Bart
+> ---
+>  drivers/gpio/gpio-aggregator.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+
+(...)
