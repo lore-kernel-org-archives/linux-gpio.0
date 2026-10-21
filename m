@@ -1,94 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792617487;
-	b=m4mEA+d0H1ozqCfiTGvh6gxOuP4+aImlFO/rOjl0xToarZVrPYbvwqX4SSiDO9dp3ukN
-	 w2Hxu4aZYSpOOiE09QHaTnMjpZfSgTGGyG5ea96ptabMr2orl9FqPp0q3jpCjUf6N40Rg
-	 ALY+taEA4xijZcX+V12oIHKfcS81AbwqwI+1YP5vHRdaMN612e45rb8kZJVyWWJKM6uji
-	 30bdNJwURS9FCc/xl9oEUbNGFxk2b805VHPjuTh59dsY/IhpskRgCJYy0SagG/Xc00y1J
-	 P0znDSogRsmTYk0pYFOtLPa4D4GdJ1wHPJastbHNdGl6GoRwYeHD9EAbzEu3c6o059Q==
+	t=1792621634;
+	b=EB+183yw609ETxXYTuwhI6loKz6Q83RwXmK5j8hM1+mnkONhUNo8pSXRj3fzygyzxw+Q
+	 qhQvEWvRpBp6jRnge78tidJUMu7vO0EFsn1SYDgU2bg0N4GLv0bVYeLkrvuWY2ObdAEUN
+	 psY6sSUwKlIkQzdmnGs3cuyGIpELhURTiicSH3bFsz7vbgqwtH6h57pHI2NYdKxq0vcwJ
+	 gWaJ/jL10Ivv4DsyuJFtGFaUFPGZj3nG1ICkr/D7fpdIcbVQFA0Eq24i6TKY5T0xJQ63E
+	 e8Kcg9ilt6aCgazf24Rp3E9Pw1nSyWAO+usLThzvSKACBgk9vVT5A5MFTiAFzZS6v6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792617487;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=bLQEgj1URtmt26IcBLztvjUBYNIpMdnMK15TO8b3hVU=;
-	b=pNBSqOzQ3tM6hV7Mp6mKDBLEBlDylxlowo2A9Xu5DXOcylmKp+YT0UuIGqSwkezomjTL
-	 RJYexc8CaC7l9eSO4z/a0PMN5e0DwT2VEnWYjLQ7NKZrCUrXceR0B2/10WkLh2hQmppeV
-	 WRY/4a6KCHeaBh0Tq1yjreLLNPXM6bUTqU/6hoXC8JqbaoYiM3Lie0xcLe4Y9C3LfryVl
-	 kCEgBi8SHwb3YkZ+UdD8EvAeriuPoRO+i2GSMxST/pfgJaiw1hS+DqMmVG7OxJQ3ZQUJz
-	 3fBcWuLBHc4oqY8l/F2nwQ2Ysvg1hjaCLT2lepPhEqRZWDJtemeTsXxMyRDoC3i23Hw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792621634;
+	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 Content-Type;
+	bh=/Fy3vYhdZ1fZJw/ef1BHjs8s8zcYhlFJOKnLAYjNcDY=;
+	b=m5DovQUu+w7RQA51yf5x1KbzOqvZ+LWVZNDnzWwnpNygsxW0rk2HQOJJZ6M3N5kLjZLm
+	 SZbF+rKVFEhoaFMSqRGEa+rdfdC53bNlDP9ksIpmglQjZaAtT8ROcKAO/RVmQ5OBhjqrO
+	 u9F1nF6ISziGF7X5i+GEC+tfY2RNNRes22XD3zbkFUoL0j8h+57nkzfFm2mXTlbL+fOLB
+	 4btVB3schFmbqJdLC86q95KqLA1QWVLweWEBFs/dEadi71r0cmhjbEbfofoacBr0MR1lD
+	 9COktDhuGjiOTV3ySalt+3CIteZpNMCF1V6dWsL71sVO9JCBtOWJCCB/6Rnfv2Gkd/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=74.125.82.178
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=sntech.de;
+	spf=pass smtp.mailfrom=sntech.de;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=ahip0nLo;
+	arc=none smtp.remote-ip=185.11.138.130
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803BA606A31A
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 21:18:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 803BA606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-35c76e9614aso2128310eec.0
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 14:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792617480; x=1793222280; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bLQEgj1URtmt26IcBLztvjUBYNIpMdnMK15TO8b3hVU=;
-        b=gua5QRVG+eG+KDaxF5mJg79GvcW5peFYWQ3JS9LKPHKVhUkoXODX0S4Jcbd2QfEeWs
-         RPtmHW982AHXI6eYJ7Rv37pb8rUeq8ng22L1gr/p4vaGu5ldEPnOFxWSOZEs2JUSLMYr
-         cqoWYLzVYS1vwJ5BRNm2fRosal6Ez2XKoecvGFZvHCxeef/Itsg56ht/K3I1AIJbxGHS
-         VBtCw7Lrq2Ze1k6UrMoX76ByfBDHLTYERBi0RXXjdq2MJbboOlZ1u8I6KK0gGlqGE5Rk
-         JoDdWJjY6Zhi89X297LDAvfBdt2RXNakhquT4LAMjGjC1jqcjlK8rGMueHcUXvwYWDL9
-         z9MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792617480; x=1793222280;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bLQEgj1URtmt26IcBLztvjUBYNIpMdnMK15TO8b3hVU=;
-        b=efD+Uh2zIdiIrGYJ7OBlvoI2rahee/QSV6gHMDc/s8OdPiUzAtI7SnzvPAikhaCUyG
-         y+H7UHZ5Btq4iw3Isb2FIBwJQrSWt6fGSoXrkSU+0+68ra7Lux/hJmf6ZXZ/pe1xQFWV
-         ya68FHfxSy5tHH+cDDxQerlwEF2T+cmI4tv0djjAuqHgAPCC9P2x8cNEouNmTGewWDU1
-         Ra33MW11sTvxTb5JHJ/Qs3hnqHvuCwRQi79e+QpeVP/sd4lRgQlAC0jz7cYrP0SjZ0CC
-         1po1zWswO19dh2z+W11tnh0qknOqnFpzleUUAW9/A0zWL6VIiAyd8vUP18TxTkIKdLAF
-         e3rw==
-X-Forwarded-Encrypted: i=1; AKwUvBxt2Xr9bUEmrMwyqbLwVK9cr9NZFv8wKHp4K9LBFV4Cd3pvPSkClfVbDoSCPeNsDXEv+bzU672MZ6TF@vger.kernel.org
-X-Gm-Message-State: AFq9FYIlSgwUM1xoMw5duOTKWEbztWDYpG1YpZw9GidHEXzJWrSw0ybI
-	OmzaVjXbBO5uk/q8Wd5xrZukXjzjZnHdgHNn+g0YPuCvkPA0hbUpxUZF
-X-Gm-Gg: AYBFou0VGJ5y1devGp04jR+uxDWIVJtb1aNCwQQrtuMW5jOU6FDOz7kpm4QPFDpMeIl
-	DXL34pyjyo4vlS5PfukuE45Aw0uo3TlZWLJYhOY9FJqzwtlkrYG7/ElmJCZaml39XhGGHpFxWBI
-	FlBs+6hhuEECjzNdSw+GFoZiHP7IJRNPNKv6Pm5fflN07AxGosO7BvTsNaBxei/ULQEy1xB+ZJZ
-	cxpx4Da1vCkRe7xOQAAaLpdeag0EBi1fugBesQn1JzVB+0luWXJwwwFF4wEcZ9GRzNO7hgRJQNX
-	MyLrHvw2nipJWvBlKuNqSnZM5Y+nA9TVHvGX1PhixZh3SKqsiUZRHTIJYr8o8BVvGnQC27wpIwn
-	xEkN+HnF/Ec6fkVZbIMKV3WfHhvOZbzRFTDLAUcovdBlGJyaJbp1htq41e4Ktfh4yEf9WlfhxcT
-	wdZGKuw10jFlmVl3/X7QwriPi6bnMUbmG20Lv8Ujn5mkHiWdM5YMpAKKfBmGP4yn5aPljOU8w7T
-	u+oRgC00J85isRnyUiSyjXGjjGx2d/Nx5Yr4gBPHAUNwIb548C7exsZjkxaGLzq9uX5l3Pl04ji
-	D1QCQQP+E/3Uyn8rNTyEdTnxvlfxX+zkI2mp8JPhIeE=
-X-Received: by 2002:a05:7022:407:b0:16a:b995:dc7c with SMTP id a92af1059eb24-19140a1e191mr4304340c88.21.1792617479431;
-        Wed, 21 Oct 2026 14:17:59 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:1761:399a:3c8c:31ba])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-190e29381d9sm7244282c88.18.2026.10.21.14.17.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 14:17:58 -0700 (PDT)
-Date: Wed, 21 Oct 2026 14:17:56 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] gpiolib: avoid krealloc() in gpiod_get_array()
-Message-ID: <atkp9edGVHRWrJCa@google.com>
-References: <20261021190212.2237804-1-dmitry.torokhov@gmail.com>
- <20261021190212.2237804-5-dmitry.torokhov@gmail.com>
- <atkTqWUn-2tzRw69@ashevche-desk.local>
- <ebd179ed9fd8af509ef3ecbea1c348c6@gmail.com>
- <atkmj6rxedA-XPf-@ashevche-desk.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076AE606A319;
+	Wed, 21 Oct 2026 22:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 076AE606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=ahip0nLo
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=/Fy3vYhdZ1fZJw/ef1BHjs8s8zcYhlFJOKnLAYjNcDY=; b=ahip0nLoapq7XNH6QNpOVtb4m1
+	v9qkpz3ynmvBUaq1pY2hva8QWaxHgiHoOeSnNhhju1iR+aDBpS/dLNMOwzBYJvRU8rBPIPtekaBih
+	UFFW3nOQB74FBnrB9qM1ynbrPFfu2WgCeIeDxxh5fTnvTP1vua3IhW9hjFaW7tpx+IUehaWhXHRtw
+	7/hAQlyEEAMuIHnEvSMdaZpb8O+NYdHRn0bTvbMeVN7wUbB1Um8gTTRDs1MkuumU5I+IKAMeHv3gJ
+	4iSFShsmBWdNiqU6W/oEkAqlpYEgjRHYL1hTuijyP7XwhRv89sbfIX1K7DnO5doVnMZhhbY111jaH
+	pVKUI+cg==;
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, David Wu <david.wu@rock-chips.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+ 1579567540@qq.com
+Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org
+Subject: Re: [PATCH 07/27] clk: rockchip: Add RK3572 clock and reset support
+Date: Thu, 22 Oct 2026 00:26:36 +0200
+Message-ID: <2339330.72vocr9iq0@diego>
+In-Reply-To: <20261022-add-board-ok3572-c-v1-7-0b0fd85a31ee@qq.com>
+References:
+ <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-7-0b0fd85a31ee@qq.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -98,117 +91,53 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atkmj6rxedA-XPf-@ashevche-desk.local>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 21, 2026 at 11:54:39PM +0300, Andy Shevchenko wrote:
-> On Wed, Oct 21, 2026 at 01:39:49PM -0700, Dmitry Torokhov wrote:
-> > On Wed, Oct 21, 2026 at 10:34:01PM +0300, Andy Shevchenko wrote:
-> > > On Wed, Oct 21, 2026 at 12:02:10PM -0700, Dmitry Torokhov wrote:
-> 
-> ...
-> 
-> > > > +	bitmap_set(array_info->get_mask, 0, count);
-> > > > +	bitmap_set(array_info->set_mask, 0, count);
-> > >
-> > > With the above being done, I would rather see bitmap_zalloc() for bitmaps.
-> > 
-> > struct gpio_array is defined with a flexible array member (invert_mask[])
-> > specifically so that descs, array_info, and all three bitmaps live in a
-> > single allocation. Switching to bitmap_zalloc() would turn one allocation
-> > into four or five separate allocations and require freeing the bitmaps
-> > both in gpiod_put_array() and when cancelling the fast path in
-> > gpio_descs_check_fastpath(), so I would prefer to keep the single
-> > contiguous allocation here.
-> 
-> Why? You can also allocate 3x bitmaps with bitmap_zalloc(). So I see only
-> a single additional allocation.
+Hi,
 
-So the proposal is to continue combining gpio_descs and gpio_array
-allocation but split out bitmap allocations (still combining them into
-one, so needing to round up nbits).
+Am Mittwoch, 21. Oktober 2026, 18:11:04 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Cunhao Lu via B4 Relay:
+> From: Cunhao Lu <1579567540@qq.com>
+>=20
+> CPU clocks are managed by SCMI. Keep BPLL and LPLL enabled for firmware
+> consumers.
+>=20
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
 
-This looks like worst combination of all. Why do you prefer
-bitmap_zalloc()?
+[...]
 
-> 
-> ...
-> 
-> > > >  	count = gpiod_count(dev, con_id);
-> > > > -	if (count < 0)
-> > > > -		return ERR_PTR(count);
-> > >
-> > > Leave this and simply add
-> > >
-> > > > -	struct gpio_descs *descs __free(gpiod_put_array) =
-> > > > -		kzalloc_flex(*descs, desc, count);
-> > > > -	if (!descs)
-> > > > -		return ERR_PTR(-ENOMEM);
-> > > > +	if (count <= 0)
-> > > > +		return ERR_PTR(count ?: -ENOENT);
-> > >
-> > > 	if (count == 0)
-> > > 		return -ENOENT;
-> > >
-> > > The currently proposed code is less readable.
-> > 
-> > Looking closer at gpiod_count(), all of its real backends
-> > (of_gpio_count(), acpi_gpio_count(), swnode_gpio_count(), and
-> > platform_gpio_count()) return either a positive count or -ENOENT, and
-> > the !CONFIG_GPIO_ACPI stub for acpi_gpio_count() returns -ENODEV. The
-> > only outlier is the !CONFIG_OF_GPIO stub for of_gpio_count() in
-> > drivers/gpio/gpiolib-of.h, which returns 0 (and also causes
-> > gpiod_count() to skip the if (count < 0) fallback to
-> > platform_gpio_count()).
-> > 
-> > Do we actually need to check for count == 0 in gpiod_get_array(), or can
-> > we fix the !CONFIG_OF_GPIO stub of of_gpio_count() to return -ENOENT and
-> > leave the count < 0 check in gpiod_get_array() untouched?
-> 
-> I would fix of_gpio_count() stub. But I haven't check its users for correctness
-> of such a change. I think it would be weird for them to expect 0 when OF_GPIO=n.
+> diff --git a/drivers/clk/rockchip/clk-rk3572.c b/drivers/clk/rockchip/clk=
+=2Drk3572.c
+> new file mode 100644
+> index 000000000000..78fd35f5f27d
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-rk3572.c
+> @@ -0,0 +1,1972 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
+> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+> + */
 
-OK, I can fix up the stub. The only user of of_gpio_count() is
-gpiod_count().
+As you didn't write this driver on your own and even kept the original
+author, please also credit the original author in the commit itself.
 
-> 
-> ...
-> 
-> > > >  	for (i = 0; i < count; i++) {
-> > > > -		desc = gpiod_get_index(dev, con_id, i, flags);
-> > > > +		struct gpio_desc *desc __free(gpiod_put) =
-> > > > +			gpiod_get_index(dev, con_id, i, flags);
-> > > >  		if (IS_ERR(desc))
-> > > >  			return ERR_CAST(desc);
-> > > >  
-> > > > +		if (i == 0) {
-> > >
-> > > This is almost invariant to the loop. Can we move it out?
-> > >
-> > > > +			descs = gpio_descs_alloc(count, desc);
-> > > > +			if (!descs)
-> > > >  				return ERR_PTR(-ENOMEM);
-> > > >  		}
-> > > >  
-> > > > +		gpio_descs_check_fastpath(descs, desc);
-> > > >  
-> > > > +		descs->desc[descs->ndescs++] = no_free_ptr(desc);
-> > > >  	}
-> > 
-> > gpio_descs_alloc() needs the first descriptor (desc at index 0, acquired
-> > by gpiod_get_index() inside the loop) to check gpiod_hwgpio(desc) and
-> > gdev->ngpio so it knows whether to allocate space for array_info and the
-> > bitmaps up front instead of reallocating with krealloc(). Before the
-> > loop we have not looked up the first descriptor yet.
-> 
-> That's why I put 'almost' which means we might need to duplicate a few calls
-> outside as well.
+This can be done for example with something like
+	git commit --amend --author=3D"Elaine Zhang <zhangqing@rock-chips.com>"
+and in the commit also have both signed-offs-by, aka Elaine first
+then yours below as the submitter, i.e. like
 
-Yeah, I think doing it inside the loop rather than duplication
-gpiod_get_index() outside makes it cleaner.
++++++++++++
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+[document what changes you did inside the brackets]
+Signed-off-by: Cunhao Lu <1579567540@qq.com>
++++++++++++
 
-Thanks.
+The same applies to all commits coming from the Rockchip vendor kernel.
 
--- 
-Dmitry
+
+Thanks
+Heiko
+
+
