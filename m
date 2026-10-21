@@ -1,78 +1,42 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792612417;
-	b=DprjLAFPbVxNWW+mbZMD3uIOFNNc3AWvctpx4mrcS19l5EwbA+I3i3TcnGpoZG0i6WVV
-	 9SYx1JTDqGhuPw/p1KTWtUBV+AV8L3qEFNKJU5eUe7+BOf0SQS5B+bjmYavPlW1eIvUMs
-	 TQI0JKxSlkE4vKPnqk0wFAS0zWAGWzurBvnCC1BOtEUTN5bcvCVnMITMLF4a69bR9sYx8
-	 NMwziIiy1m3I/fNWWws9kvMr77TkZU0kDXQ9RiGLVjIFcHJQabHm0finEuo2rFsekOCcs
-	 SRnzQ8pOxsTYOdNhlinkGX6BkJ3EondOjLLl/vxPfzU/b0XrJphz2GrxHfeBKVOjz3g==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792612417;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=8UOnSeDpYM67ICiqR7FSIQw1QnjeFGP1JGC13SUouGk=;
-	b=lzaWHHLbKgc+WpUqRi+aHLfo1cNDrFsJNMpRPyxQLPmxLwLAIO7OetwR/sLBgjFqD0eK
-	 H6dCWtOr3FoUMdBmKmXcjpRnp7C4Z2EBOEaTVYHaOflEwGlg0GaPWOEGoU5IflBOab2i4
-	 wREis1lZzraTQgAEX9fckifWhOQ2gPiq5fqulZMzyz7OFIl5x3mh2c4sEop5DhRTCmqVT
-	 46l+3xv9m8MtB2aDeaqX0jw6IvOVqINoMzoJfWycjpc1S03FVjnVH5buW5y5jvUwT4gNl
-	 gYIMnm7yaJxWCNEL65CxnyhBcZPoqzVj1AaxPrp92UfDhY87/g1OK0NkbG71Odd8OdA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lIP6UT4b;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113AD60A4AFC;
-	Wed, 21 Oct 2026 19:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lIP6UT4b
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792612415;
-	b=f7J7/hdXFQE7/ls5eEeX1MYkOdlYxPxxQPJQEG9qETzBtvH0g8Kwh8q+iOtoI1hVnYsm
-	 7k6Pi5xI4loxcQQfzuzyirknB98qFJc98yshb58LS+bMKjqNj0QBj88QRolgCHUnxBag6
-	 RUvVxOknAHt0bfhK/s8OC1hHy4o6kPwl0OKBgQ9O4ybLcwoWP9J1KLPgpRwqw5aCevfer
-	 XS/T0ytOT+q+ePXehmrDg9geNgENjhk1xmkikdE6feWs63CvVgTP+W849EcptH/tORW0j
-	 3EnMjW1uY0bc4L6Q5spt9CwY0/wjgGxu1rFEK1s5ej4nyyvy+44fVlXpNbtc8vX7U9Q==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792612415;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792612537;
+	b=HNsErmo77rhy75q2lRMWsbcH5taFvKR0oqXvCE0WtnC9if1B+aBWJezRpHICJoRa7AAM
+	 uaC3NZe6hDso7jrncGWsm1rf1GCMjRdwrvndYN5cWqEKh6K0Hv7vDhfvdkrIzmlVfwDR1
+	 CXvfB7Mz8rYzUqYg12w/ZxWPgUGoEd9MDHHltayYtBwnYP5CMR9M5CMnsE6xEl3BP8fqp
+	 S3Yhw8JKnp3oASrbuppgVdjL4wwNUjLsrnrp+vLTHqSOjW2BhGtO+DZiU1bR5T5UJr0s+
+	 pPZ45eVJoFu2jXKY7zs5RLzsenaZUvzni7hlHJkKjG2vD+oPlyTGY77URfdScOm7Sgg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792612537;
+	h=DMARC-Filter:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=8UOnSeDpYM67ICiqR7FSIQw1QnjeFGP1JGC13SUouGk=;
-	b=UUZwBZz0Xohi49bAT0Bq4AR3RysTIY2DBXE59RParV2Jxzi06TAjfK8jeYbBABf/2w9C
-	 8WLIG7uLUrMPvg7uhhoSbY4VzJ8EVRvK0Mwclswp3b5zfmMjdKjaukAcW2Td3ZVTHfjS5
-	 n/VosHBBI6wPlkj3J85DJ6tD8Knen1HWkqVCptTaRgSjQWkfQoiK7+T1J73BjyiKxD8vZ
-	 stHFteLifI638qU5uXTh6MatdTeTPHweLENQp8KE1ANR8eJeoxVvxA9+mqnDtcUMRaAU0
-	 hArE4thXZo7FSgfGhbOljRD8W2TbVznX1PDZw7nUcYL8SjGLLRnoNP7fLgSUMCaZIdA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	 X-Mailer:X-CM-TRANSID:X-Coremail-Antispam:X-Originating-IP:
+	 X-CM-SenderInfo;
+	bh=0eVpjhdCNea5ASatZPPwAEkV3nbhcxmbfG8NNTr8rCg=;
+	b=C465UWcNeExMZ6Y0iMazZR2B2gIpUXdRPZiIIavU6wEv1BEAqJX2xv94zR/IQyHXu392
+	 3aa5guCEzdgW9MpkG35lwmMBa1uLefFbnpTSKliygHWl4S9y/OxcLN9YtHc1kUIUmvccT
+	 ru0Z44X5w/nJ1NMnpj60Pt6iPtGR01tvS4L7TI9av1nnYNHVbA+TgDWXitVpgNkxPFus0
+	 hU+iXEGcq9iQpCVhrEtfApuFDSHdboGJiHBVQmfw1A19r5yi/O8XUkoqUjeq4bzL1GuHf
+	 qvqNBWtiQt4oKXXN9EiKnjlc7IDVCSMYYYrCM4pnvi9UFUZx86Ui0NDm7UDhIsln0Wg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=iscas.ac.cn;
+	spf=pass smtp.mailfrom=iscas.ac.cn;
+	arc=none smtp.remote-ip=159.226.251.81
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 270A11F000CC;
-	Wed, 21 Oct 2026 19:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792612415;
-	bh=8UOnSeDpYM67ICiqR7FSIQw1QnjeFGP1JGC13SUouGk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=lIP6UT4bK9kiENxW8AK8Ba3BKBTWFFHf9mzkgxzti0buF9rjshGfebsVtzTzQsi3v
-	 FSTxQi779+YVRWa9WKD2iwc9ej6u7UZfC34v35mjTrK762OloFQpUrWc8s25tYQ9aE
-	 HQvrlF/RBK2tELxYv3QykbJ57m1U1rTrsQtup2t27kRf24s7/Mt4GLAAYHxDv5xt09
-	 aHGxHSxUDXo3sNGECbpUAxjuqBMckf5AZlRTipRT4PyzUwyLNlmTiCZAh1bUpOpPWd
-	 pOggcaOKPTFglII+Da8bLMHrVIzcI7BqWhzc4vYryO5B6IhvSfMgNK+Rn3U0a1irtA
-	 xzC9hV9tltVJA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 2EEE04344C;
-	Wed, 21 Oct 2026 19:53:26 +0000 (UTC)
-From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Thu, 22 Oct 2026 03:53:29 +0800
-Subject: [PATCH 09/18] pinctrl: zhihe: add A210 support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E3B606A31D;
+	Wed, 21 Oct 2026 19:55:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E0E3B606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.1.1] (unknown [223.166.93.48])
+	by APP-03 (Coremail) with SMTP id rQCowAB3gT_6Ftlqxu5hCw--.4480S8;
+	Thu, 22 Oct 2026 03:48:18 +0800 (CST)
+From: Han Gao <gaohan@iscas.ac.cn>
+Date: Thu, 22 Oct 2026 03:48:14 +0800
+Subject: [PATCH 06/18] dt-bindings: reset: add Zhihe A210 reset controllers
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,9 +48,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261022-a210-init-v1-9-5e438f972d24@iscas.ac.cn>
-References: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
-In-Reply-To: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
+Message-Id: <20261022-a210-init-v1-6-09fb4d99da65@iscas.ac.cn>
+References: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
+In-Reply-To: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
@@ -104,1283 +68,457 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
  Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792612403; l=43596;
- i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=t4eecurWya3t8CmkKJLG8N8YHje61Onky9uHdPBbOmw=;
- b=pL/URMkUysANleb5jYyJgdgBuZ2WTNXR0xckBSyh7adr/13sV4H4WpsvW+XmJqn5HUaAv0ESe
- hUs57u2daJiDkhK9EgrvEuEmh7DKoqG5Hj0m6jX86Moqc1gEXrzP4yG
-X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
- pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
-X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
- auth_id=1262
-X-Original-From: Han Gao <gaohan@iscas.ac.cn>
-Reply-To: gaohan@iscas.ac.cn
+X-CM-TRANSID:rQCowAB3gT_6Ftlqxu5hCw--.4480S8
+X-Coremail-Antispam: 1UD129KBjvAXoW3ZF1kJFWkGFWxJF1kWr1UAwb_yoW8JFW5Ko
+	W7XFy3Aw45Jr4xAa98Ww47WFs8Ar18Xw45X34UArykGr4fXF1DGF1kJ3y8XFyrG34Fgrn5
+	Wr1DKr1DArZ0kws8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUOT7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
+	Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+	84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJV
+	WxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+	Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+	Ij6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I
+	0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCa
+	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+	Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I
+	6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rV
+	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWx
+	JrUvcSsGvfC2KfnxnUUI43ZEXa7sRRjg43UUUUU==
+X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiBgkHDGrYxtWXzwAAs9
 
 From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 
-Add mux and pin configuration support for the four A210 pad controllers,
-including the shared PERI3 SDIO mux and suspend-state restoration.
+Add bindings for the A210 reset controllers and their reset IDs.
 
 Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
-Co-developed-by: Han Gao <gaohan@iscas.ac.cn>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- drivers/pinctrl/Kconfig        |   14 +
- drivers/pinctrl/Makefile       |    1 +
- drivers/pinctrl/pinctrl-a210.c | 1206 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1221 insertions(+)
+ .../bindings/reset/zhihe,a210-reset.yaml           |  56 ++++
+ include/dt-bindings/reset/zhihe,a210-resets.h      | 351 +++++++++++++++++++++
+ 2 files changed, 407 insertions(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index e1ab3a916086..50fd2732b9b8 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -37,6 +37,20 @@ config DEBUG_PINCTRL
- 	help
- 	  Say Y here to add some extra checks and diagnostics to PINCTRL calls.
- 
-+config PINCTRL_A210
-+	tristate "Pinctrl driver for the ZhiHe A210 SoC"
-+	depends on 64BIT
-+	depends on OF && (ARCH_ZHIHE || COMPILE_TEST)
-+	select GENERIC_PINMUX_FUNCTIONS
-+	select GENERIC_PINCONF
-+	select PINMUX
-+	help
-+	  This selects the pinctrl driver for the ZhiHe A210 RISC-V SoC.
-+
-+	  It provides pin multiplexing and configuration support for
-+	  the A210 pad controllers (AON, PADCTRL0-2). Say Y if you
-+	  are building a kernel for the ZhiHe A210 platform.
-+
- config PINCTRL_AMD
- 	bool "AMD GPIO pin control"
- 	depends on HAS_IOMEM
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index a35d71135abf..c79ec78229ae 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_GENERIC_PINCONF)	+= pinconf-generic.o
- obj-$(CONFIG_GENERIC_PINCTRL)	+= pinctrl-generic.o
- obj-$(CONFIG_OF)		+= devicetree.o
- 
-+obj-$(CONFIG_PINCTRL_A210)	+= pinctrl-a210.o
- obj-$(CONFIG_PINCTRL_AMD)	+= pinctrl-amd.o
- obj-$(CONFIG_PINCTRL_AMDISP)	+= pinctrl-amdisp.o
- obj-$(CONFIG_PINCTRL_APPLE_GPIO) += pinctrl-apple-gpio.o
-diff --git a/drivers/pinctrl/pinctrl-a210.c b/drivers/pinctrl/pinctrl-a210.c
+diff --git a/Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml b/Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml
 new file mode 100644
-index 000000000000..753253e35c05
+index 000000000000..708cb49444eb
 --- /dev/null
-+++ b/drivers/pinctrl/pinctrl-a210.c
-@@ -0,0 +1,1206 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/zhihe,a210-reset.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zhihe A210 Reset Controller
++
++maintainers:
++  - Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
++
++description:
++  Reset controllers for the Zhihe A210 SoC. Each subsystem exposes a
++  separate reset controller register block and has its own compatible.
++
++properties:
++  compatible:
++    enum:
++      - zhihe,a210-vp-reset
++      - zhihe,a210-vi-reset
++      - zhihe,a210-npu-reset
++      - zhihe,a210-vo-reset
++      - zhihe,a210-peri0-reset
++      - zhihe,a210-peri1-reset
++      - zhihe,a210-peri2-reset
++      - zhihe,a210-peri3-reset
++      - zhihe,a210-pcie-reset
++      - zhihe,a210-usb-reset
++      - zhihe,a210-tee-reset
++      - zhihe,a210-gpu-reset
++
++  reg:
++    maxItems: 1
++
++  "#reset-cells":
++    const: 1
++    description:
++      The single cell is the reset ID defined in
++      include/dt-bindings/reset/zhihe,a210-resets.h.
++
++required:
++  - compatible
++  - reg
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/reset/zhihe,a210-resets.h>
++
++    reset-controller@6b20400 {
++        compatible = "zhihe,a210-vp-reset";
++        reg = <0x06b20400 0x200>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/reset/zhihe,a210-resets.h b/include/dt-bindings/reset/zhihe,a210-resets.h
+new file mode 100644
+index 000000000000..2845c0e9e5ed
+--- /dev/null
++++ b/include/dt-bindings/reset/zhihe,a210-resets.h
+@@ -0,0 +1,351 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
 + * Copyright (C) 2025 Zhihe Computing Limited.
 + */
 +
-+#include <linux/bitops.h>
-+#include <linux/cleanup.h>
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/seq_file.h>
-+#include <linux/spinlock.h>
++#ifndef _DT_BINDINGS_RESET_ZHIHE_A210_RESETS_H
++#define _DT_BINDINGS_RESET_ZHIHE_A210_RESETS_H
 +
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
++#define VP_VDEC_PRST		0
++#define VP_VDEC_CRST		1
++#define VP_VDEC_ARST		2
++#define VP_VENC_PRST		3
++#define VP_VENC_CRST		4
++#define VP_VENC_ARST		5
++#define VP_G2D_PRST		6
++#define VP_G2D_CRST		7
++#define VP_G2D_ARST		8
++#define VP_COMP_PRST		9
++#define VP_COMP_CRST		10
++#define VP_COMP_ARST		11
++#define VP_DECOMP_PRST		12
++#define VP_DECOMP_CRST		13
++#define VP_DECOMP_ARST		14
++#define VP_DFMU_PRST		15
++#define VP_DFMU_ARST		16
++#define VP_ARB_PRST		17
++#define VP_ARB_ARST		18
++#define VP_VDEC_RS_ARST		19
++#define VP_VENC_RS_ARST		20
++#define VP_COMP_EXTPRST		21
++#define VP_DECOMP_EXTPRST	22
 +
-+#include "core.h"
-+#include "pinmux.h"
-+#include "pinconf.h"
++#define VI_MIPI0_CSI0_PRST	0
++#define VI_MIPI0_CSI1_PRST	1
++#define VI_MIPI0_FIFO_RST	2
++#define VI_MIPI1_CSI0_PRST	3
++#define VI_MIPI1_CSI1_PRST	4
++#define VI_MIPI1_FIFO_RST	5
++#define VI_VIPRE_PRST		6
++#define VI_VIPRE_I0_PIX_RST	7
++#define VI_VIPRE_I1_PIX_RST	8
++#define VI_VIPRE_ISPIF_RST	9
++#define VI_VIPRE_ARST		10
++#define VI_ISP_RST		11
++#define VI_COMP_PRST		12
++#define VI_COMP_ARST		13
++#define VI_COMP_ISPOUT_RST	14
++#define VI_COMP_DECOUT_RST	15
++#define VI_COMP_VSEOUT_RST	16
++#define VI_COMP0_RST		17
++#define VI_COMP1_RST		18
++#define VI_DECOMP_RST		19
++#define VI_DW200_RST		20
++#define VI_DFMU_PRST		21
++#define VI_DFMU_ARST		22
++#define VI_ARB_PRST		23
++#define VI_ARB_ARST		24
++#define VI_X2H0_HRST		25
++#define VI_X2H1_HRST		26
++#define VI_X2H2_HRST		27
++#define VI_REC_PRST		28
++#define VI_REC_ARST		29
 +
-+#define A210_PADCFG_IE BIT(9)
-+#define A210_PADCFG_SL BIT(8)
-+#define A210_PADCFG_ST BIT(7)
-+#define A210_PADCFG_SPU BIT(6)
-+#define A210_PADCFG_PS BIT(5)
-+#define A210_PADCFG_PE BIT(4)
-+#define A210_PADCFG_BIAS (A210_PADCFG_SPU | A210_PADCFG_PS | A210_PADCFG_PE)
-+#define A210_PADCFG_DS GENMASK(3, 0)
++#define NPU_AAB_MST_RST		0
++#define NPU_AFENCE_RST		1
++#define NPU_AXI_CCU_PRST	2
++#define NPU_AXI_CCU_RST		3
++#define NPU_AXI_M2S1_RST	4
++#define NPU_AXI_RST		5
++#define NPU_CLK_CALC_RST	6
++#define NPU_DFMU_ARST		7
++#define NPU_DFMU_PRST		8
++#define NPU_LPC_C_RST		9
++#define NPU_LPE_C_PRST		10
++#define NPU_LPE_C_RST		11
++#define NPU_ARST		12
++#define NPU_CRST		13
++#define NPU_HRST		14
++#define NPU_PCTRL_PB_RST	15
++#define NPU_PCTRL_PRST		16
++#define NPU_PCTRL_RST		17
++#define NPU_PTW_CCU_PRST	18
++#define NPU_PTW_CCU_RST		19
++#define NPU_SEMA_ARST		20
++#define NPU_SEMA_PRST		21
++#define NPU_DROOP_CCTRL_PRST	22
++#define NPU_DROOP_CCTRL_RST	23
++#define NPU_X2H_RST		24
++#define NPU_X2P_RST		25
++#define NPU_LDIP_RST		26
++#define NPU_SRAM_RST		27
 +
-+/* PERI3 has one 32-bit configuration register per SDIO pad. */
-+#define A210_SDIO_PULL_UP BIT(1)
-+#define A210_SDIO_PULL_DOWN BIT(0)
-+#define A210_SDIO_BIAS (A210_SDIO_PULL_UP | A210_SDIO_PULL_DOWN)
++#define VO_X2H0_RST		0
++#define VO_X2H1_RST		1
++#define VO_DPU_HRST		2
++#define VO_DPU_CRST		3
++#define VO_DPU_ARST		4
++#define VO_AUXDISP_PRST		5
++#define VO_AUXDISP_PIX_RST	6
++#define VO_AUXDISP_ARST		7
++#define VO_HDMI_PRST		8
++#define VO_HDMI_MAIN_RST	9
++#define VO_MIPI_PRST		10
++#define VO_DECOMP_PRST		11
++#define VO_DECOMP0_CRST		12
++#define VO_DECOMP1_CRST		13
++#define VO_DECOMP_ARST		14
++#define VO_ARB_PRST		15
++#define VO_ARB_ARST		16
++#define VO_DFMU_PRST		17
++#define VO_DFMU_ARST		18
 +
-+#define A210_PULL_DOWN_OHM 44000 /* typ. 44kOhm */
-+#define A210_PULL_UP_OHM 48000 /* typ. 48kOhm */
-+#define A210_PULL_STRONG_OHM 2100 /* typ. 2.1kOhm */
++#define PERI0_TIMER0_CRST	0
++#define PERI0_TIMER0_PRST	1
++#define PERI0_TIMER1_CRST	2
++#define PERI0_TIMER1_PRST	3
++#define PERI0_WDT0_PRST		4
++#define PERI0_MBOX0_PRST	5
++#define PERI0_MBOX1_PRST	6
++#define PERI0_TIMER0_RST	7
++#define PERI0_TIMER1_RST	8
 +
-+#define A210_PAD_NO_PADCFG BIT(63)
-+#define A210_PAD_MUXDATA GENMASK(55, 0)
++#define PERI1_GMAC0_ARST	0
++#define PERI1_GMAC0_HRST	1
++#define PERI1_GMAC1_ARST	2
++#define PERI1_GMAC1_HRST	3
++#define PERI1_GPIO0_DBRST	4
++#define PERI1_GPIO0_PRST	5
++#define PERI1_GPIO1_DBRST	6
++#define PERI1_GPIO1_PRST	7
++#define PERI1_I2C0_IC_RST	8
++#define PERI1_I2C0_PRST		9
++#define PERI1_I2C1_IC_RST	10
++#define PERI1_I2C1_PRST		11
++#define PERI1_I2C2_IC_RST	12
++#define PERI1_I2C2_PRST		13
++#define PERI1_I2S0_PRST		14
++#define PERI1_MST_BUS_ARST	15
++#define PERI1_MST_BUS_PRST	16
++#define PERI1_PWM0_CRST		17
++#define PERI1_PWM0_PRST		18
++#define PERI1_QSPI0_PRST	19
++#define PERI1_QSPI0_SSI_RST	20
++#define PERI1_SPI0_PRST		21
++#define PERI1_SPI0_SSI_RST	22
++#define PERI1_UART0_PRST	23
++#define PERI1_UART0_S_RST	24
++#define PERI1_UART1_PRST	25
++#define PERI1_UART1_S_RST	26
++#define PERI1_UART2_PRST	27
++#define PERI1_UART2_S_RST	28
++#define PERI1_UART3_PRST	29
++#define PERI1_UART3_S_RST	30
++#define PERI1_X2H_GMAC0_ARST	31
++#define PERI1_X2H_GMAC0_HRST	32
++#define PERI1_X2H_GMAC1_ARST	33
++#define PERI1_X2H_GMAC1_HRST	34
++#define PERI1_DFMU_ARESET	35
++#define PERI1_DFMU_PRESET	36
++#define PERI1_PAD_CTRL_PRST	37
++#define PERI1_PDM0_MRST		38
++#define PERI1_PDM0_PRST		39
++#define PERI1_TDM0_RST		40
++#define PERI1_CAN0_IPG_PE_RST	41
++#define PERI1_CAN0_IPG_RST	42
++#define PERI1_CAN0_IPG_SOFT_RST	43
++#define PERI1_CAN0_IPG_TS_RST	44
++#define PERI1_CAN0_PRST		45
++#define PERI1_CAN1_IPG_PE_RST	46
++#define PERI1_CAN1_IPG_RST	47
++#define PERI1_CAN1_IPG_SOFT_RST	48
++#define PERI1_CAN1_IPG_TS_RST	49
++#define PERI1_CAN1_PRST		50
++#define PERI1_CHIP_DBG_ARST	51
++#define PERI1_CHIP_DBG_CRST	52
++#define PERI1_CHIP_DBG_PRST	53
++#define PERI1_GMAC_CRST		54
++#define PERI1_X2H_GMAC2_ARST	55
++#define PERI1_X2H_GMAC2_HRST	56
++#define PERI1_ZGMAC_X2X_ARST	57
++#define PERI1_SPI0_RST		58
++#define PERI1_I2C0_RST		59
++#define PERI1_I2C1_RST		60
++#define PERI1_I2C2_RST		61
++#define PERI1_GMAC0_RST		62
++#define PERI1_GMAC0_X2H_RST	63
++#define PERI1_GMAC1_RST		64
++#define PERI1_GMAC1_X2H_RST	65
 +
-+#ifdef CONFIG_PM_SLEEP
-+#define A210_MAX_CFG_REGS 25
-+#define A210_MAX_MUX_REGS 7
++#define PERI2_CAN2_IPG_PE_RST	0
++#define PERI2_CAN2_IPG_RST	1
++#define PERI2_CAN2_IPG_SOFT_RST	2
++#define PERI2_CAN2_IPG_TS_RST	3
++#define PERI2_CAN2_PRST		4
++#define PERI2_GPIO2_DBRST	5
++#define PERI2_GPIO2_PRST	6
++#define PERI2_I2C4_IC_RST	7
++#define PERI2_I2C4_PRST		8
++#define PERI2_I2S2_PRST		9
++#define PERI2_SPI1_PRST		10
++#define PERI2_SPI1_SSI_RST	11
++#define PERI2_UART4_PRST	12
++#define PERI2_UART4_S_RST	13
++#define PERI2_UART5_PRST	14
++#define PERI2_UART5_S_RST	15
++#define PERI2_UART6_PRST	16
++#define PERI2_UART6_S_RST	17
++#define PERI2_PAD_CTRL_PRST	18
++#define PERI2_GPIO3_DBRST	19
++#define PERI2_GPIO3_PRST	20
++#define PERI2_I2C3_IC_RST	21
++#define PERI2_I2C3_PRST		22
++#define PERI2_I2C5_IC_RST	23
++#define PERI2_I2C5_PRST		24
++#define PERI2_I2C6_IC_RST	25
++#define PERI2_I2C6_PRST		26
++#define PERI2_I2C7_IC_RST	27
++#define PERI2_I2C7_PRST		28
++#define PERI2_I2S1_PRST		29
++#define PERI2_I2S3_PRST		30
++#define PERI2_UART7_PRST	31
++#define PERI2_UART7_S_RST	32
++#define PERI2_UART8_PRST	33
++#define PERI2_UART8_S_RST	34
++#define PERI2_UART9_PRST	35
++#define PERI2_UART9_S_RST	36
++#define PERI2_QSPI1_PRST	37
++#define PERI2_QSPI1_SSI_RST	38
++#define PERI2_PWM1_CRST		39
++#define PERI2_PWM1_PRST		40
++#define PERI2_PWM2_CRST		41
++#define PERI2_PWM2_PRST		42
++#define PERI2_I2C3_RST		43
++#define PERI2_I2C4_RST		44
++#define PERI2_I2C5_RST		45
++#define PERI2_I2C6_RST		46
++#define PERI2_I2C7_RST		47
++#define PERI2_SPI1_RST		48
 +
-+struct a210_register_state {
-+	u32 mask;
-+	u32 value;
-+};
++#define PERI3_DMAC_ARST				0
++#define PERI3_DMAC_HRST				1
++#define PERI3_EMMC_SDIO_CLKGEN_RST		2
++#define PERI3_EMMC_RST				3
++#define PERI3_EMMC_X2X_ARST_M			4
++#define PERI3_EMMC_X2X_ARST_S			5
++#define PERI3_SDIO_RST				6
++#define PERI3_SDIO_X2X_ARST_M			7
++#define PERI3_SDIO_X2X_ARST_S			8
++#define PERI3_AXI_MST_ARST			9
++#define PERI3_AXI_MST_PRST			10
++#define PERI3_ADC_PRST				11
++#define PERI3_TEE_X2X_ARST_M			12
++#define PERI3_TEE_X2X_ARST_S			13
++#define PERI3_TEE_H2H_HRST			14
++#define PERI3_GPIO4_DBRST			15
++#define PERI3_GPIO4_PRST			16
++#define PERI3_PAD_CTRL_PRST			17
++
++/* pcie common */
++#define PCIE_X2X_PERI_SLV_ARST			0
++#define PCIE_X2X_PERI_MST_ARST			1
++#define PCIE_AXI4_PCIE_MST_ARST			2
++#define PCIE_AXI4_PCIE_MST_PRST			3
++#define PCIE_DFMU_PRST				4
++#define PCIE_DFMU_ARST				5
++#define PCIE_E16PHY_PHY_RST			6
++#define PCIE_E16PHY_APBS_PRST			7
++#define PCIE_X2X_SATA_MST_ARST			8
++#define PCIE_X2X_SATA_SLV_ARST			9
++
++/* sata */
++#define PCIE_SATA_ARESET			10
++#define PCIE_SATA_RST_PMALIVE			11
++#define PCIE_SATA_SLV_AFENCE_ARST		12
++#define PCIE_SATA_MST_AFENCE_ARST		13
++#define PCIE_SATA_RST_ASIC0			14
++#define PCIE_SATA_RST_ASIC1			15
++#define PCIE_SATA_RST_RXOOB0			16
++#define PCIE_SATA_RST_RXOOB1			17
++
++/* pcie0 */
++#define PCIE_DM_GEN3X4_APBS_PRST		18
++#define PCIE_DM_GEN3X4_POWER_UP_RST		19
++#define PCIE_DM_SLV_AFENCE_ARST			20
++#define PCIE_DM_MST_AFENCE_ARST			21
++
++/* pcie1 */
++#define PCIE_RP_GEN3X1_APBS_PRST		22
++#define PCIE_RP_GEN3X1_POWER_UP_RST		23
++#define PCIE_RP_SLV_AFENCE_ARST			24
++#define PCIE_RP_MST_AFENCE_ARST			25
++
++#define USB_DFMU_PRST				0
++#define USB_DFMU_ARST				1
++#define USB_AXI4_MST_ARST			2
++#define USB_AXI4_MST_PRST			3
++#define USB_DPTX_APBS_PRST			4
++#define USB_DPTX_VCC_RST			5
++#define USB_USB31_APBS_PRST			6
++#define USB_USB31_VCC_RST			7
++#define USB_USB31_PHY_RST			8
++#define USB_USB31_SLV_AFENCE_ARST		9
++#define USB_C10PHY_PHY_RST			10
++#define USB_C10PHY_APBS_PRST			11
++#define USB_USB20_BLK_X2H_HRST			12
++#define USB_USB20_BLK_X2H_ARST			13
++#define USB_USB20_SLV_AFENCE_ARST		14
++#define USB_USB20_BLK_H2P_HRST			15
++#define USB_USB20_BLK_AHB_SLV_HRST		16
++#define USB_USB20_BLK_AXI_MST_ARST		17
++#define USB_USB20_BLK_USB2_SYSREG_PRST		18
++#define USB_USB20_BLK_USB2_WRAP0_PRST		19
++#define USB_USB20_BLK_USB2_WRAP0_HRST		20
++#define USB_USB20_BLK_USB2_WRAP1_PRST		21
++#define USB_USB20_BLK_USB2_WRAP1_HRST		22
++#define USB_USB20_BLK_A2X0_HRST			23
++#define USB_USB20_BLK_A2X0_ARST			24
++#define USB_USB20_BLK_A2X1_HRST			25
++#define USB_USB20_BLK_A2X1_ARST			26
++#define USB_USB20_BLK_USB0_PHY_PON_RESET	27
++#define USB_USB20_BLK_USB1_PHY_PON_RESET	28
++#define USB_PERI2_SS_RST			29
++#define USB_PERI2_SLV_AFENCE_ARST		30
++
++#define TEE_KEYRAM_PRST				0
++#define TEE_DS_PRST				1
++#define TEE_EFUSE_PRST				2
++#define TEE_OCRAM_HRST				3
++#define TEE_SYSREG_PRST				4
++#define TEE_CCU_PRST				5
++#define TEE_CCU_CRST				6
++#define TEE_EIP150B_HRST			7
++#define TEE_EIP120SIII_HRST			8
++#define TEE_EIP120SIII_ARST			9
++#define TEE_EIP120SII_HRST			10
++#define TEE_EIP120SII_ARST			11
++#define TEE_EIP120SI_HRST			12
++#define TEE_EIP120SI_ARST			13
++#define TEE_DMAC_HRST				14
++#define TEE_DMAC_ARST				15
++#define TEE_X2P_TEESYS_PRST			16
++#define TEE_X2P_TEESYS_ARST			17
++#define TEE_AXI4_TEESYS_ARST			18
++#define TEE_APB3_TEESYS_PRST			19
++#define TEE_APB3_TEESYS_HRST			20
++#define TEE_AHB2_TEESYS_HRST			21
++
++#define GPU_PWR_WRAP_RGX_HOOD_RST		0
++#define GPU_PWR_WRAP_DFMU_RST			1
++
 +#endif
-+
-+struct a210_pinctrl;
-+
-+enum a210_pinctrl_type {
-+	A210_PADCTRL_AON,
-+	A210_PADCTRL_0,
-+	A210_PADCTRL_1,
-+	A210_PADCTRL_2,
-+};
-+
-+struct a210_pad_group {
-+	const char *name;
-+	const struct pinctrl_pin_desc *pins;
-+	unsigned int npins;
-+	unsigned int offset_mux;
-+	unsigned int mask_mux;
-+	unsigned int offset_cfg;
-+	unsigned int mask_cfg;
-+	enum a210_pinctrl_type type;
-+};
-+
-+struct a210_pinctrl {
-+	struct pinctrl_desc desc;
-+	raw_spinlock_t lock; /* serialize register access */
-+	void __iomem *base;
-+	struct clk *clk;
-+	bool clk_enabled;
-+	unsigned int offset_mux;
-+	unsigned int mask_mux;
-+	unsigned int offset_cfg;
-+	unsigned int mask_cfg;
-+	enum a210_pinctrl_type type;
-+	struct pinctrl_dev *pctl;
-+#ifdef CONFIG_PM_SLEEP
-+	struct a210_register_state cfg_state[A210_MAX_CFG_REGS];
-+	struct a210_register_state mux_state[A210_MAX_MUX_REGS];
-+#endif
-+};
-+
-+static void __iomem *a210_padcfg(struct a210_pinctrl *pp, unsigned int pin)
-+{
-+	int width = hweight32(pp->mask_cfg);
-+
-+	return pp->base + pp->offset_cfg + 4 * (pin * width / 32);
-+}
-+
-+static unsigned int a210_padcfg_shift(struct a210_pinctrl *pp, unsigned int pin)
-+{
-+	int width = hweight32(pp->mask_cfg);
-+
-+	return width * (pin & (32 / width - 1));
-+}
-+
-+static void __iomem *a210_muxcfg(struct a210_pinctrl *pp, unsigned int pin)
-+{
-+	int width = hweight32(pp->mask_mux);
-+
-+	return pp->base + pp->offset_mux + 4 * (pin * width / 32);
-+}
-+
-+static unsigned int a210_muxcfg_shift(struct a210_pinctrl *pp, unsigned int pin)
-+{
-+	int width = hweight32(pp->mask_mux);
-+
-+	if (pp->type == A210_PADCTRL_2)
-+		return 0;
-+
-+	return width * (pin & (32 / width - 1));
-+}
-+
-+enum a210_muxtype {
-+	A210_MUX_____,
-+	A210_MUX_AOUART,
-+	A210_MUX_AOUART_IR,
-+	A210_MUX_AOGPIO0,
-+	A210_MUX_AOGPIO1,
-+	A210_MUX_AOI2C0,
-+	A210_MUX_AOI2C1,
-+	A210_MUX_AOSPI,
-+	A210_MUX_JTAG,
-+	A210_MUX_RST,
-+	A210_MUX_POR,
-+	A210_MUX_PMIC,
-+	A210_MUX_DVS,
-+	A210_MUX_UART0,
-+	A210_MUX_UART1,
-+	A210_MUX_UART2,
-+	A210_MUX_UART3,
-+	A210_MUX_UART4,
-+	A210_MUX_UART5,
-+	A210_MUX_UART6,
-+	A210_MUX_UART7,
-+	A210_MUX_UART8,
-+	A210_MUX_UART9,
-+	A210_MUX_UART0_IR,
-+	A210_MUX_UART1_IR,
-+	A210_MUX_UART2_IR,
-+	A210_MUX_UART3_IR,
-+	A210_MUX_UART4_IR,
-+	A210_MUX_UART5_IR,
-+	A210_MUX_UART6_IR,
-+	A210_MUX_UART7_IR,
-+	A210_MUX_UART8_IR,
-+	A210_MUX_UART9_IR,
-+	A210_MUX_GPIO0,
-+	A210_MUX_GPIO1,
-+	A210_MUX_GPIO2,
-+	A210_MUX_GPIO3,
-+	A210_MUX_GPIO4,
-+	A210_MUX_GMAC0,
-+	A210_MUX_GMAC1,
-+	A210_MUX_SPI0,
-+	A210_MUX_SPI1,
-+	A210_MUX_QSPI0,
-+	A210_MUX_QSPI1,
-+	A210_MUX_PWM0,
-+	A210_MUX_PWM1,
-+	A210_MUX_PWM2,
-+	A210_MUX_CAN0,
-+	A210_MUX_CAN1,
-+	A210_MUX_CAN2,
-+	A210_MUX_I2S0,
-+	A210_MUX_I2S1,
-+	A210_MUX_I2S2,
-+	A210_MUX_I2S3,
-+	A210_MUX_I2C0,
-+	A210_MUX_I2C1,
-+	A210_MUX_I2C2,
-+	A210_MUX_I2C3,
-+	A210_MUX_I2C4,
-+	A210_MUX_I2C5,
-+	A210_MUX_I2C6,
-+	A210_MUX_I2C7,
-+	A210_MUX_I2C7_SMB,
-+	A210_MUX_SDIO,
-+	A210_MUX_ISP0,
-+	A210_MUX_DPTX,
-+	A210_MUX_USB31,
-+	A210_MUX_SATA_P0,
-+	A210_MUX_SATA_P1,
-+	A210_MUX_HDMI,
-+	A210_MUX_ZMAC,
-+	A210_MUX_BSEL,
-+	A210_MUX_DBGM,
-+	A210_MUX_CDBG,
-+	A210_MUX_PDM,
-+	A210_MUX_TDM,
-+	A210_MUX_PCIE_X1,
-+	A210_MUX_PCIE_X4,
-+	A210_MUX_SEN_VCLK,
-+	A210_MUX_MAX = 127,
-+};
-+
-+static const char *const a210_muxtype_string[] = {
-+	[A210_MUX_AOUART] = "aouart",
-+	[A210_MUX_AOUART_IR] = "aouart_ir",
-+	[A210_MUX_AOGPIO0] = "aogpio0",
-+	[A210_MUX_AOGPIO1] = "aogpio1",
-+	[A210_MUX_AOI2C0] = "aoi2c0",
-+	[A210_MUX_AOI2C1] = "aoi2c1",
-+	[A210_MUX_AOSPI] = "aospi",
-+	[A210_MUX_JTAG] = "jtag",
-+	[A210_MUX_RST] = "reset",
-+	[A210_MUX_POR] = "por",
-+	[A210_MUX_PMIC] = "pmic",
-+	[A210_MUX_DVS] = "dvs",
-+	[A210_MUX_UART0] = "uart0",
-+	[A210_MUX_UART1] = "uart1",
-+	[A210_MUX_UART2] = "uart2",
-+	[A210_MUX_UART3] = "uart3",
-+	[A210_MUX_UART4] = "uart4",
-+	[A210_MUX_UART5] = "uart5",
-+	[A210_MUX_UART6] = "uart6",
-+	[A210_MUX_UART7] = "uart7",
-+	[A210_MUX_UART8] = "uart8",
-+	[A210_MUX_UART9] = "uart9",
-+	[A210_MUX_UART0_IR] = "uart0_ir",
-+	[A210_MUX_UART1_IR] = "uart1_ir",
-+	[A210_MUX_UART2_IR] = "uart2_ir",
-+	[A210_MUX_UART3_IR] = "uart3_ir",
-+	[A210_MUX_UART4_IR] = "uart4_ir",
-+	[A210_MUX_UART5_IR] = "uart5_ir",
-+	[A210_MUX_UART6_IR] = "uart6_ir",
-+	[A210_MUX_UART7_IR] = "uart7_ir",
-+	[A210_MUX_UART8_IR] = "uart8_ir",
-+	[A210_MUX_UART9_IR] = "uart9_ir",
-+	[A210_MUX_GPIO0] = "gpio0",
-+	[A210_MUX_GPIO1] = "gpio1",
-+	[A210_MUX_GPIO2] = "gpio2",
-+	[A210_MUX_GPIO3] = "gpio3",
-+	[A210_MUX_GPIO4] = "gpio4",
-+	[A210_MUX_GMAC0] = "gmac0",
-+	[A210_MUX_GMAC1] = "gmac1",
-+	[A210_MUX_SPI0] = "spi0",
-+	[A210_MUX_SPI1] = "spi1",
-+	[A210_MUX_QSPI0] = "qspi0",
-+	[A210_MUX_QSPI1] = "qspi1",
-+	[A210_MUX_PWM0] = "pwm0",
-+	[A210_MUX_PWM1] = "pwm1",
-+	[A210_MUX_PWM2] = "pwm2",
-+	[A210_MUX_CAN0] = "can0",
-+	[A210_MUX_CAN1] = "can1",
-+	[A210_MUX_CAN2] = "can2",
-+	[A210_MUX_I2S0] = "i2s0",
-+	[A210_MUX_I2S1] = "i2s1",
-+	[A210_MUX_I2S2] = "i2s2",
-+	[A210_MUX_I2S3] = "i2s3",
-+	[A210_MUX_I2C0] = "i2c0",
-+	[A210_MUX_I2C1] = "i2c1",
-+	[A210_MUX_I2C2] = "i2c2",
-+	[A210_MUX_I2C3] = "i2c3",
-+	[A210_MUX_I2C4] = "i2c4",
-+	[A210_MUX_I2C5] = "i2c5",
-+	[A210_MUX_I2C6] = "i2c6",
-+	[A210_MUX_I2C7] = "i2c7",
-+	[A210_MUX_I2C7_SMB] = "i2c7_smb",
-+	[A210_MUX_SDIO] = "sdio",
-+	[A210_MUX_ISP0] = "isp0",
-+	[A210_MUX_DPTX] = "dptx",
-+	[A210_MUX_USB31] = "usb31",
-+	[A210_MUX_SATA_P0] = "sata_p0",
-+	[A210_MUX_SATA_P1] = "sata_p1",
-+	[A210_MUX_HDMI] = "hdmi",
-+	[A210_MUX_ZMAC] = "zmac",
-+	[A210_MUX_BSEL] = "bsel",
-+	[A210_MUX_DBGM] = "dbgm",
-+	[A210_MUX_CDBG] = "cdbg",
-+	[A210_MUX_PDM] = "pdm",
-+	[A210_MUX_TDM] = "tdm",
-+	[A210_MUX_PCIE_X1] = "pcie_x1",
-+	[A210_MUX_PCIE_X4] = "pcie_x4",
-+	[A210_MUX_SEN_VCLK] = "sen_vclk",
-+};
-+
-+#define A210_PAD(_nr, _name, m0, m1, m2, m3, m4, m5, m6, m7, _flags)                             \
-+	{ .number = _nr,                                                                         \
-+	  .name = #_name,                                                                        \
-+	  .drv_data =                                                                            \
-+		  (void *)((_flags) | (A210_MUX_##m0 << 0) | (A210_MUX_##m1 << 7) |              \
-+			   (A210_MUX_##m2 << 14) | (A210_MUX_##m3 << 21) |                       \
-+			   ((uintptr_t)A210_MUX_##m4 << 28) | ((uintptr_t)A210_MUX_##m5 << 35) | \
-+			   ((uintptr_t)A210_MUX_##m6 << 42) | ((uintptr_t)A210_MUX_##m7 << 49)) }
-+
-+static const struct pinctrl_pin_desc a210_group0_pins[] = {
-+	A210_PAD(0, OSC_CLK_IN, ____, ____, ____, ____, ____, ____, ____, ____, A210_PAD_NO_PADCFG),
-+	A210_PAD(1, OSC_CLK_OUT, ____, ____, ____, ____, ____, ____, ____, ____,
-+		 A210_PAD_NO_PADCFG),
-+	A210_PAD(2, RST_N_IN, ____, ____, ____, ____, ____, ____, ____, ____, A210_PAD_NO_PADCFG),
-+	A210_PAD(3, RTC_CLK_IN, ____, ____, ____, ____, ____, ____, ____, ____, A210_PAD_NO_PADCFG),
-+	A210_PAD(4, RTC_CLK_OUT, ____, ____, ____, ____, ____, ____, ____, ____,
-+		 A210_PAD_NO_PADCFG),
-+	A210_PAD(5, TEST_MODE, ____, ____, ____, ____, ____, ____, ____, ____, A210_PAD_NO_PADCFG),
-+	A210_PAD(6, POR_SEL, ____, ____, ____, ____, ____, ____, ____, ____, A210_PAD_NO_PADCFG),
-+	A210_PAD(7, RST_N_OUT, RST, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(8, BOOT_SEL0, BSEL, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(9, BOOT_SEL1, BSEL, AOUART, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(10, DEBUG_MODE, DBGM, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(11, AOUART_TXD, AOUART, AOUART_IR, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(12, AOUART_RXD, AOUART, AOUART_IR, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(13, AOI2C0_SCL, AOI2C0, AOSPI, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(14, AOI2C0_SDA, AOI2C0, AOSPI, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(15, AOI2C1_SCL, AOI2C1, AOSPI, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(16, AOI2C1_SDA, AOI2C1, AOSPI, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(17, CPU_JTG_TCLK, JTAG, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(18, CPU_JTG_TMS, JTAG, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(19, CPU_JTG_TDI, JTAG, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(20, CPU_JTG_TDO, JTAG, POR, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(21, CPU_JTG_TRST, JTAG, ____, ____, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(22, AOGPIO0_21, AOGPIO0, AOSPI, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(23, AOGPIO0_22, AOGPIO0, AOSPI, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(24, AOGPIO0_23, BSEL, AOSPI, PMIC, AOGPIO0, ____, ____, ____, ____, 0),
-+	A210_PAD(25, AOGPIO0_24, AOGPIO0, AOSPI, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(26, AOGPIO0_25, AOGPIO0, AOSPI, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(27, AOGPIO0_26, AOGPIO0, AOI2C1, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(28, AOGPIO0_27, AOGPIO0, AOI2C1, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(29, AOGPIO0_28, AOGPIO0, AOI2C1, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(30, AOGPIO0_29, AOGPIO0, AOI2C1, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(31, AOGPIO0_30, AOGPIO0, AOI2C1, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(32, AOGPIO0_31, AOGPIO0, AOUART, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(33, AOGPIO1_0, AOGPIO1, AOUART, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(34, AOGPIO1_1, AOGPIO1, ____, PMIC, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(35, AOGPIO1_2, AOGPIO1, ____, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(36, AOGPIO1_3, AOGPIO1, ____, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(37, AOGPIO1_4, AOGPIO1, ____, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(38, AOGPIO1_5, AOGPIO1, ____, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(39, AOGPIO1_6, AOGPIO1, ____, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(40, AOGPIO1_7, AOGPIO1, ____, PMIC, DVS, ____, ____, ____, ____, 0),
-+	A210_PAD(41, AOGPIO1_8, PCIE_X4, ____, PMIC, AOGPIO1, ____, ____, ____, ____, 0),
-+	A210_PAD(42, AOGPIO1_9, AOGPIO1, ____, PMIC, ____, ____, ____, ____, ____, 0),
-+};
-+
-+static const struct pinctrl_pin_desc a210_group1_pins[] = {
-+	A210_PAD(0, GPIO0_0, GPIO0, GMAC0, ____, ____, ____, ____, ZMAC, ____, 0),
-+	A210_PAD(1, GPIO0_1, GPIO0, GMAC0, ____, ____, ____, ____, ZMAC, ____, 0),
-+	A210_PAD(2, GPIO0_2, GPIO0, GMAC0, ____, ____, ____, ____, ZMAC, ____, 0),
-+	A210_PAD(3, GPIO0_3, GPIO0, GMAC0, UART3, UART3_IR, ____, SATA_P0, ZMAC, ____, 0),
-+	A210_PAD(4, GPIO0_4, GPIO0, GMAC0, UART3, UART3_IR, ____, SATA_P1, ZMAC, ____, 0),
-+	A210_PAD(5, GPIO0_5, GPIO0, GMAC0, UART3, ____, ____, SATA_P1, ZMAC, ____, 0),
-+	A210_PAD(6, GPIO0_6, GPIO0, GMAC0, UART3, ____, ____, SATA_P1, ZMAC, ____, 0),
-+	A210_PAD(7, GPIO0_7, GPIO0, GMAC0, ____, ____, ____, SATA_P1, ZMAC, ____, 0),
-+	A210_PAD(8, GPIO0_8, GPIO0, GMAC0, I2C0, ____, ____, SATA_P1, ZMAC, ____, 0),
-+	A210_PAD(9, GPIO0_9, GPIO0, GMAC0, I2C0, ____, ____, PCIE_X4, ZMAC, ____, 0),
-+	A210_PAD(10, GPIO0_10, GPIO0, GMAC0, I2C1, ____, ____, PCIE_X4, ZMAC, ____, 0),
-+	A210_PAD(11, GPIO0_11, GPIO0, GMAC0, I2C1, ____, ____, PCIE_X4, ZMAC, ____, 0),
-+	A210_PAD(12, GPIO0_12, GPIO0, GMAC0, ____, ____, ____, PCIE_X4, ZMAC, ____, 0),
-+	A210_PAD(13, GPIO0_13, GPIO0, GMAC0, ____, ____, ____, PWM0, ZMAC, ____, 0),
-+	A210_PAD(14, GPIO0_14, GPIO0, UART0, UART0_IR, ____, SATA_P1, I2S0, ____, ____, 0),
-+	A210_PAD(15, GPIO0_15, GPIO0, UART0, UART0_IR, QSPI0, SATA_P1, I2S0, ____, ____, 0),
-+	A210_PAD(16, GPIO0_16, GPIO0, UART0, UART1, UART1_IR, SATA_P1, I2S0, ZMAC, ____, 0),
-+	A210_PAD(17, GPIO0_17, GPIO0, UART0, UART1, UART1_IR, SATA_P1, I2S0, ZMAC, ____, 0),
-+	A210_PAD(18, GPIO0_18, GPIO0, QSPI0, GMAC0, SDIO, SATA_P1, I2S0, ____, PCIE_X1, 0),
-+	A210_PAD(19, GPIO0_19, GPIO0, QSPI0, GMAC1, ____, TDM, SATA_P0, ____, PCIE_X1, 0),
-+	A210_PAD(20, GPIO0_20, GPIO0, QSPI0, UART3, UART3_IR, TDM, SATA_P0, ZMAC, PCIE_X1, 0),
-+	A210_PAD(21, GPIO0_21, GPIO0, QSPI0, UART3, UART3_IR, TDM, SATA_P0, ZMAC, PCIE_X1, 0),
-+	A210_PAD(22, GPIO0_22, GPIO0, QSPI0, I2C2, ____, TDM, SATA_P0, ZMAC, PWM0, 0),
-+	A210_PAD(23, GPIO0_23, GPIO0, QSPI0, I2C2, ____, ____, SATA_P0, ZMAC, PWM0, 0),
-+	A210_PAD(24, GPIO0_24, GPIO0, QSPI0, I2C0, CAN0, CDBG, PCIE_X1, UART0, PWM0, 0),
-+	A210_PAD(25, GPIO0_25, GPIO0, QSPI0, I2C0, CAN0, CDBG, PCIE_X1, UART0, PWM0, 0),
-+	A210_PAD(26, GPIO0_26, GPIO0, QSPI0, I2C1, CAN1, CDBG, PCIE_X1, UART0, UART0_IR, 0),
-+	A210_PAD(27, GPIO0_27, GPIO0, QSPI0, I2C1, CAN1, CDBG, PCIE_X1, UART0, UART0_IR, 0),
-+	A210_PAD(28, GPIO0_28, GPIO0, PWM0, SPI0, UART1_IR, I2S0, PCIE_X4, UART1, ____, 0),
-+	A210_PAD(29, GPIO0_29, GPIO0, PWM0, SPI0, UART1_IR, I2S0, PCIE_X4, UART1, ____, 0),
-+	A210_PAD(30, GPIO0_30, GPIO0, PWM0, SPI0, ____, I2S0, PCIE_X4, UART1, ____, 0),
-+	A210_PAD(31, GPIO0_31, GPIO0, PWM0, SPI0, QSPI0, I2S0, PCIE_X4, UART1, ____, 0),
-+	A210_PAD(32, GPIO1_0, GPIO1, PWM0, UART2, UART2_IR, I2S0, SDIO, GMAC1, SATA_P0, 0),
-+	A210_PAD(33, GPIO1_1, GPIO1, PWM0, UART2, UART2_IR, I2C2, SATA_P1, SPI0, SDIO, 0),
-+	A210_PAD(34, GPIO1_2, GPIO1, GMAC1, TDM, PWM0, I2C2, SATA_P1, ____, ____, 0),
-+	A210_PAD(35, GPIO1_3, GPIO1, GMAC1, TDM, PWM0, ____, SATA_P1, ____, ____, 0),
-+	A210_PAD(36, GPIO1_4, GPIO1, GMAC1, TDM, UART2, ____, SATA_P1, ____, ____, 0),
-+	A210_PAD(37, GPIO1_5, GPIO1, GMAC1, ____, UART2, ____, SATA_P1, ____, ____, 0),
-+	A210_PAD(38, GPIO1_6, GPIO1, GMAC1, SPI0, PWM0, CDBG, SATA_P0, ____, ____, 0),
-+	A210_PAD(39, GPIO1_7, GPIO1, GMAC1, SPI0, PWM0, CDBG, SATA_P0, ____, ____, 0),
-+	A210_PAD(40, GPIO1_8, GPIO1, GMAC1, SPI0, PDM, CDBG, SATA_P0, ____, ____, 0),
-+	A210_PAD(41, GPIO1_9, GPIO1, GMAC1, SPI0, PWM0, ____, SATA_P0, GMAC0, ____, 0),
-+	A210_PAD(42, GPIO1_10, GPIO1, GMAC1, SPI0, PWM0, ____, SATA_P0, ____, ____, 0),
-+	A210_PAD(43, GPIO1_11, GPIO1, GMAC1, QSPI0, PDM, I2S0, ISP0, PWM0, ____, 0),
-+	A210_PAD(44, GPIO1_12, GPIO1, GMAC1, QSPI0, PDM, I2S0, ISP0, ____, ____, 0),
-+	A210_PAD(45, GPIO1_13, GPIO1, GMAC1, QSPI0, PDM, I2S0, ISP0, ____, ____, 0),
-+	A210_PAD(46, GPIO1_14, GPIO1, GMAC1, ____, PDM, I2S0, ISP0, ____, ____, 0),
-+	A210_PAD(47, GPIO1_15, GPIO1, GMAC1, SDIO, PDM, I2S0, ISP0, ____, ____, 0),
-+	A210_PAD(48, GPIO1_16, GPIO1, GMAC0, ____, ____, ____, SDIO, ____, ____, 0),
-+};
-+
-+static const struct pinctrl_pin_desc a210_group2_pins[] = {
-+	A210_PAD(0, GPIO2_0, GPIO2, UART4, UART4_IR, PWM2, ____, I2C3, ____, ____, 0),
-+	A210_PAD(1, GPIO2_1, GPIO2, UART4, UART4_IR, PWM2, ____, I2C3, ____, ____, 0),
-+	A210_PAD(2, GPIO2_2, GPIO2, UART5, UART5_IR, PWM2, ____, I2C5, I2S1, ____, 0),
-+	A210_PAD(3, GPIO2_3, GPIO2, UART5, UART5_IR, PWM2, ____, I2C5, I2S1, ____, 0),
-+	A210_PAD(4, GPIO2_4, GPIO2, UART6, UART6_IR, PWM2, ____, I2C6, I2S1, ____, 0),
-+	A210_PAD(5, GPIO2_5, GPIO2, UART6, UART6_IR, PWM2, ____, I2C6, I2S1, ____, 0),
-+	A210_PAD(6, GPIO2_6, GPIO2, UART7, UART7_IR, PWM2, SEN_VCLK, I2C4, I2S1, ____, 0),
-+	A210_PAD(7, GPIO2_7, GPIO2, UART7, UART7_IR, PWM2, SEN_VCLK, I2C4, ____, ____, 0),
-+	A210_PAD(8, GPIO2_8, GPIO2, I2S2, ____, SPI1, UART6, I2C6, PWM2, ____, 0),
-+	A210_PAD(9, GPIO2_9, GPIO2, I2S2, ____, SPI1, UART6, I2C6, PWM2, ____, 0),
-+	A210_PAD(10, GPIO2_10, GPIO2, I2S2, PWM1, SPI1, UART9, I2C7, ____, ____, 0),
-+	A210_PAD(11, GPIO2_11, GPIO2, I2S2, PWM1, SPI1, UART9, I2C7, ____, ____, 0),
-+	A210_PAD(12, GPIO2_12, GPIO2, I2S2, PWM1, SPI1, UART8, I2C7, ____, ____, 0),
-+	A210_PAD(13, GPIO2_13, GPIO2, I2S3, PWM1, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(14, GPIO2_14, GPIO2, I2S3, PWM1, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(15, GPIO2_15, GPIO2, I2S3, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(16, GPIO2_16, GPIO2, I2S3, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(17, GPIO2_17, GPIO2, I2S3, SPI1, I2C4, UART8, I2C7, ____, ____, 0),
-+	A210_PAD(18, GPIO2_18, GPIO2, I2S3, SPI1, I2C4, PWM2, UART5, UART5_IR, ____, 0),
-+	A210_PAD(19, GPIO2_19, GPIO2, I2S3, SPI1, ____, PWM1, UART5, UART5_IR, ____, 0),
-+	A210_PAD(20, GPIO2_20, GPIO2, I2S3, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(21, GPIO2_21, GPIO2, I2S3, SPI1, I2C3, PWM1, UART8, ____, ____, 0),
-+	A210_PAD(22, GPIO2_22, GPIO2, I2S3, SPI1, I2C3, PWM1, UART8, ____, ____, 0),
-+	A210_PAD(23, GPIO2_23, GPIO2, I2S3, PWM1, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(24, GPIO2_24, GPIO2, I2C3, UART5, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(25, GPIO2_25, GPIO2, I2C3, UART5, ____, HDMI, QSPI1, PWM2, ____, 0),
-+	A210_PAD(26, GPIO2_26, GPIO2, I2C4, UART6, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(27, GPIO2_27, GPIO2, I2C4, UART6, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(28, GPIO2_28, GPIO2, I2C5, UART7, PWM1, ____, QSPI1, ____, ____, 0),
-+	A210_PAD(29, GPIO2_29, GPIO2, I2C5, UART7, PWM1, ____, QSPI1, ____, ____, 0),
-+	A210_PAD(30, GPIO2_30, GPIO2, I2C6, UART8, PWM1, HDMI, QSPI1, I2S3, ____, 0),
-+	A210_PAD(31, GPIO2_31, GPIO2, I2C6, UART8, PWM1, HDMI, QSPI1, I2S3, ____, 0),
-+	A210_PAD(32, GPIO3_0, GPIO3, I2C7, UART9, PWM1, CAN2, QSPI1, I2S3, SEN_VCLK, 0),
-+	A210_PAD(33, GPIO3_1, GPIO3, I2C7, UART9, PWM1, CAN2, QSPI1, I2S3, SEN_VCLK, 0),
-+	A210_PAD(34, GPIO3_2, GPIO3, QSPI1, UART8, UART8_IR, ____, ____, I2S3, PWM1, 0),
-+	A210_PAD(35, GPIO3_3, GPIO3, QSPI1, UART8, UART8_IR, ____, ____, I2S3, PWM1, 0),
-+	A210_PAD(36, GPIO3_4, GPIO3, QSPI1, UART9, UART9_IR, ____, ____, I2S3, PWM2, 0),
-+	A210_PAD(37, GPIO3_5, GPIO3, QSPI1, UART9, UART9_IR, ____, ____, I2S3, PWM2, 0),
-+	A210_PAD(38, GPIO3_6, GPIO3, QSPI1, I2S1, I2C7_SMB, ____, DPTX, I2S3, PWM2, 0),
-+	A210_PAD(39, GPIO3_7, GPIO3, QSPI1, I2S1, I2C7_SMB, UART7, I2C5, I2S3, PWM2, 0),
-+	A210_PAD(40, GPIO3_8, GPIO3, QSPI1, I2S1, I2C7_SMB, UART7, I2C5, I2S3, PWM2, 0),
-+	A210_PAD(41, GPIO3_9, GPIO3, UART4, I2S1, I2C7_SMB, UART5, DPTX, ____, PWM2, 0),
-+	A210_PAD(42, GPIO3_10, GPIO3, UART4, I2S1, I2C7_SMB, UART5, USB31, ____, ____, 0),
-+};
-+
-+static const struct pinctrl_pin_desc a210_group3_pins[] = {
-+	A210_PAD(0, SDIO_CLK, SDIO, GPIO4, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(1, SDIO_CMD, SDIO, GPIO4, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(2, SDIO_DAT0, SDIO, GPIO4, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(3, SDIO_DAT1, SDIO, GPIO4, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(4, SDIO_DAT2, SDIO, GPIO4, ____, ____, ____, ____, ____, ____, 0),
-+	A210_PAD(5, SDIO_DAT3, SDIO, GPIO4, ____, ____, ____, ____, ____, ____, 0),
-+};
-+
-+static const struct a210_pad_group a210_group0 = {
-+	/* aon */
-+	.name = "a210-group0",
-+	.pins = a210_group0_pins,
-+	.npins = ARRAY_SIZE(a210_group0_pins),
-+	.offset_mux = 0x400,
-+	.mask_mux = 0xf,
-+	.offset_cfg = 0x0,
-+	.mask_cfg = 0xffff,
-+	.type = A210_PADCTRL_AON,
-+};
-+
-+static const struct a210_pad_group a210_group1 = {
-+	/* peri1 */
-+	.name = "a210-group1",
-+	.pins = a210_group1_pins,
-+	.npins = ARRAY_SIZE(a210_group1_pins),
-+	.offset_mux = 0x400,
-+	.mask_mux = 0xf,
-+	.offset_cfg = 0x0,
-+	.mask_cfg = 0xffff,
-+	.type = A210_PADCTRL_0,
-+};
-+
-+static const struct a210_pad_group a210_group2 = {
-+	/* peri2 */
-+	.name = "a210-group2",
-+	.pins = a210_group2_pins,
-+	.npins = ARRAY_SIZE(a210_group2_pins),
-+	.offset_mux = 0x400,
-+	.mask_mux = 0xf,
-+	.offset_cfg = 0x0,
-+	.mask_cfg = 0xffff,
-+	.type = A210_PADCTRL_1,
-+};
-+
-+static const struct a210_pad_group a210_group3 = {
-+	/* PERI3 has one shared mux bit for all six SDIO pads. */
-+	.name = "a210-group3",
-+	.pins = a210_group3_pins,
-+	.npins = ARRAY_SIZE(a210_group3_pins),
-+	.offset_mux = 0x200,
-+	.mask_mux = 0x1,
-+	.offset_cfg = 0x0,
-+	.mask_cfg = U32_MAX,
-+	.type = A210_PADCTRL_2,
-+};
-+
-+static int a210_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return pp->type == A210_PADCTRL_2 ? 1 : pp->desc.npins;
-+}
-+
-+static const char *a210_pinctrl_get_group_name(struct pinctrl_dev *pctldev, unsigned int gsel)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return pp->type == A210_PADCTRL_2 ? "sdio" : pp->desc.pins[gsel].name;
-+}
-+
-+static const unsigned int a210_sdio_pins[] = { 0, 1, 2, 3, 4, 5 };
-+
-+static int a210_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+				       unsigned int gsel,
-+				       const unsigned int **pins,
-+				       unsigned int *npins)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+
-+	if (pp->type == A210_PADCTRL_2) {
-+		*pins = a210_sdio_pins;
-+		*npins = ARRAY_SIZE(a210_sdio_pins);
-+	} else {
-+		*pins = &pp->desc.pins[gsel].number;
-+		*npins = 1;
-+	}
-+	return 0;
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void a210_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s, unsigned int pin)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+	void __iomem *padcfg = a210_padcfg(pp, pin);
-+	void __iomem *muxcfg = a210_muxcfg(pp, pin);
-+	u32 pad;
-+	u32 mux;
-+
-+	if ((uintptr_t)pin_desc_get(pctldev, pin)->drv_data & A210_PAD_NO_PADCFG)
-+		return;
-+
-+	scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-+		pad = readl_relaxed(padcfg);
-+		mux = readl_relaxed(muxcfg);
-+	}
-+
-+	seq_printf(s, "[padcfg=0x%08x muxcfg=0x%08x]", pad, mux);
-+}
-+#else
-+#define a210_pin_dbg_show NULL
-+#endif
-+
-+static const struct pinctrl_ops a210_pinctrl_ops = {
-+	.get_groups_count = a210_pinctrl_get_groups_count,
-+	.get_group_name = a210_pinctrl_get_group_name,
-+	.get_group_pins = a210_pinctrl_get_group_pins,
-+	.pin_dbg_show = a210_pin_dbg_show,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
-+	.dt_free_map = pinconf_generic_dt_free_map,
-+};
-+
-+static const u8 a210_drive_strength_in_ma[16] = {
-+	1, 2, 3, 5, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 23, 25,
-+};
-+
-+static int a210_drive_strength_from_ma(u32 arg)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(a210_drive_strength_in_ma); i++)
-+		if (arg == a210_drive_strength_in_ma[i])
-+			return i;
-+	return -EINVAL;
-+}
-+
-+static int a210_padcfg_rmw(struct a210_pinctrl *pp, unsigned int pin, u32 mask, u32 value)
-+{
-+	void __iomem *padcfg = a210_padcfg(pp, pin);
-+	unsigned int shift = a210_padcfg_shift(pp, pin);
-+	u32 tmp;
-+
-+	mask <<= shift;
-+	value <<= shift;
-+
-+	scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-+		tmp = readl_relaxed(padcfg);
-+		tmp = (tmp & ~mask) | value;
-+		writel_relaxed(tmp, padcfg);
-+#ifdef CONFIG_PM_SLEEP
-+		pp->cfg_state[pin * hweight32(pp->mask_cfg) / 32].mask |= mask;
-+#endif
-+	}
-+	return 0;
-+}
-+
-+static int a210_sdio_pinconf_get(struct a210_pinctrl *pp, unsigned int pin,
-+				 unsigned long *config)
-+{
-+	enum pin_config_param param = pinconf_to_config_param(*config);
-+	u32 value = readl_relaxed(a210_padcfg(pp, pin)) & A210_SDIO_BIAS;
-+
-+	switch (param) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		if (value)
-+			return -EINVAL;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		if (value != A210_SDIO_PULL_UP)
-+			return -EINVAL;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		if (value != A210_SDIO_PULL_DOWN)
-+			return -EINVAL;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, param != PIN_CONFIG_BIAS_DISABLE);
-+	return 0;
-+}
-+
-+static int a210_sdio_pinconf_set(struct a210_pinctrl *pp, unsigned int pin,
-+				 unsigned long *configs, unsigned int num_configs)
-+{
-+	u32 value = 0;
-+	unsigned int i;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		enum pin_config_param param = pinconf_to_config_param(configs[i]);
-+		u32 arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_BIAS_DISABLE:
-+			value = 0;
-+			break;
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			if (arg != 1)
-+				return -EINVAL;
-+			value = param == PIN_CONFIG_BIAS_PULL_UP ?
-+				A210_SDIO_PULL_UP : A210_SDIO_PULL_DOWN;
-+			break;
-+		default:
-+			return -ENOTSUPP;
-+		}
-+	}
-+
-+	if (!num_configs)
-+		return 0;
-+
-+	return a210_padcfg_rmw(pp, pin, A210_SDIO_BIAS, value);
-+}
-+
-+static int a210_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin, unsigned long *config)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
-+	bool enabled;
-+	int param;
-+	u32 value;
-+	u32 arg;
-+
-+	if ((uintptr_t)desc->drv_data & A210_PAD_NO_PADCFG)
-+		return -ENOTSUPP;
-+	if (pp->type == A210_PADCTRL_2)
-+		return a210_sdio_pinconf_get(pp, pin, config);
-+
-+	value = readl_relaxed(a210_padcfg(pp, pin));
-+	value = (value >> a210_padcfg_shift(pp, pin)) & GENMASK(9, 0);
-+
-+	param = pinconf_to_config_param(*config);
-+	switch (param) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		enabled = !(value & (A210_PADCFG_SPU | A210_PADCFG_PE));
-+		arg = 0;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		enabled = (value & A210_PADCFG_BIAS) == A210_PADCFG_PE;
-+		arg = enabled ? A210_PULL_DOWN_OHM : 0;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		if (value & A210_PADCFG_SPU) {
-+			enabled = true;
-+			arg = A210_PULL_STRONG_OHM;
-+		} else if ((value & (A210_PADCFG_PE | A210_PADCFG_PS)) ==
-+			   (A210_PADCFG_PE | A210_PADCFG_PS)) {
-+			enabled = true;
-+			arg = A210_PULL_UP_OHM;
-+		} else {
-+			enabled = false;
-+			arg = 0;
-+		}
-+		break;
-+	case PIN_CONFIG_DRIVE_STRENGTH:
-+		enabled = true;
-+		arg = a210_drive_strength_in_ma[value & A210_PADCFG_DS];
-+		break;
-+	case PIN_CONFIG_INPUT_ENABLE:
-+		enabled = value & A210_PADCFG_IE;
-+		arg = enabled ? 1 : 0;
-+		break;
-+	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-+		enabled = value & A210_PADCFG_ST;
-+		arg = enabled ? 1 : 0;
-+		break;
-+	case PIN_CONFIG_SLEW_RATE:
-+		enabled = true;
-+		arg = !!(value & A210_PADCFG_SL);
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+	return enabled ? 0 : -EINVAL;
-+}
-+
-+static int a210_pinconf_group_get(struct pinctrl_dev *pctldev, unsigned int gsel,
-+				  unsigned long *config)
-+{
-+	const unsigned int *pins;
-+	unsigned int npins, i;
-+	unsigned long first = *config;
-+	int ret;
-+
-+	a210_pinctrl_get_group_pins(pctldev, gsel, &pins, &npins);
-+	for (i = 0; i < npins; i++) {
-+		unsigned long value = *config;
-+
-+		ret = a210_pinconf_get(pctldev, pins[i], &value);
-+		if (ret)
-+			return ret;
-+		if (i && value != first)
-+			return -ENOTSUPP;
-+		first = value;
-+	}
-+	*config = first;
-+	return 0;
-+}
-+
-+static int a210_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin, unsigned long *configs,
-+			    unsigned int num_configs)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
-+	unsigned int i;
-+	u16 mask, value;
-+
-+	if ((uintptr_t)desc->drv_data & A210_PAD_NO_PADCFG)
-+		return -ENOTSUPP;
-+	if (pp->type == A210_PADCTRL_2)
-+		return a210_sdio_pinconf_set(pp, pin, configs, num_configs);
-+
-+	mask = 0;
-+	value = 0;
-+	for (i = 0; i < num_configs; i++) {
-+		int param = pinconf_to_config_param(configs[i]);
-+		u32 arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_BIAS_DISABLE:
-+			mask |= A210_PADCFG_BIAS;
-+			value &= ~A210_PADCFG_BIAS;
-+			break;
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			if (arg != 1 && arg != A210_PULL_DOWN_OHM)
-+				return -EINVAL;
-+			mask |= A210_PADCFG_BIAS;
-+			value &= ~A210_PADCFG_BIAS;
-+			value |= A210_PADCFG_PE;
-+			break;
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+			if (arg != 1 && arg != A210_PULL_UP_OHM && arg != A210_PULL_STRONG_OHM)
-+				return -EINVAL;
-+			mask |= A210_PADCFG_BIAS;
-+			value &= ~A210_PADCFG_BIAS;
-+			if (arg == A210_PULL_STRONG_OHM)
-+				value |= A210_PADCFG_SPU;
-+			else
-+				value |= A210_PADCFG_PE | A210_PADCFG_PS;
-+			break;
-+		case PIN_CONFIG_DRIVE_STRENGTH: {
-+			int strength = a210_drive_strength_from_ma(arg);
-+
-+			if (strength < 0)
-+				return strength;
-+			mask |= A210_PADCFG_DS;
-+			value &= ~A210_PADCFG_DS;
-+			value |= strength;
-+			break;
-+		}
-+		case PIN_CONFIG_INPUT_ENABLE:
-+			mask |= A210_PADCFG_IE;
-+			if (arg)
-+				value |= A210_PADCFG_IE;
-+			else
-+				value &= ~A210_PADCFG_IE;
-+			break;
-+		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-+			mask |= A210_PADCFG_ST;
-+			if (arg)
-+				value |= A210_PADCFG_ST;
-+			else
-+				value &= ~A210_PADCFG_ST;
-+			break;
-+		case PIN_CONFIG_SLEW_RATE:
-+			if (arg > 1)
-+				return -EINVAL;
-+			mask |= A210_PADCFG_SL;
-+			if (arg)
-+				value |= A210_PADCFG_SL;
-+			else
-+				value &= ~A210_PADCFG_SL;
-+			break;
-+		default:
-+			return -ENOTSUPP;
-+		}
-+	}
-+
-+	return a210_padcfg_rmw(pp, pin, mask, value);
-+}
-+
-+static int a210_pinconf_group_set(struct pinctrl_dev *pctldev, unsigned int gsel,
-+				  unsigned long *configs, unsigned int num_configs)
-+{
-+	const unsigned int *pins;
-+	unsigned int npins, i;
-+	int ret;
-+
-+	a210_pinctrl_get_group_pins(pctldev, gsel, &pins, &npins);
-+	for (i = 0; i < npins; i++) {
-+		ret = a210_pinconf_set(pctldev, pins[i], configs, num_configs);
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void a210_pinconf_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s, unsigned int pin)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+	u32 value;
-+
-+	if ((uintptr_t)pin_desc_get(pctldev, pin)->drv_data & A210_PAD_NO_PADCFG)
-+		return;
-+
-+	value = readl_relaxed(a210_padcfg(pp, pin));
-+
-+	if (pp->type != A210_PADCTRL_2)
-+		value = (value >> a210_padcfg_shift(pp, pin)) & GENMASK(9, 0);
-+
-+	seq_printf(s, " [0x%03x]", value);
-+}
-+#else
-+#define a210_pinconf_dbg_show NULL
-+#endif
-+
-+static const struct pinconf_ops a210_pinconf_ops = {
-+	.pin_config_get = a210_pinconf_get,
-+	.pin_config_group_get = a210_pinconf_group_get,
-+	.pin_config_set = a210_pinconf_set,
-+	.pin_config_group_set = a210_pinconf_group_set,
-+	.pin_config_dbg_show = a210_pinconf_dbg_show,
-+	.is_generic = true,
-+};
-+
-+static int a210_pinmux_set(struct a210_pinctrl *pp, unsigned int pin, unsigned long muxdata,
-+			   enum a210_muxtype muxtype)
-+{
-+	void __iomem *muxcfg = a210_muxcfg(pp, pin);
-+	unsigned int shift = a210_muxcfg_shift(pp, pin);
-+	u32 mask, value, tmp;
-+
-+	for (value = 0; muxdata; muxdata >>= 7, value++) {
-+		if ((muxdata & GENMASK(6, 0)) == muxtype)
-+			break;
-+	}
-+	if (!muxdata) {
-+		dev_err(pp->pctl->dev, "invalid mux %s for pin %s\n", a210_muxtype_string[muxtype],
-+			pin_get_name(pp->pctl, pin));
-+		return -EINVAL;
-+	}
-+
-+	mask = pp->mask_mux << shift;
-+	value = value << shift;
-+
-+	scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-+		tmp = readl_relaxed(muxcfg);
-+		tmp = (tmp & ~mask) | value;
-+		writel_relaxed(tmp, muxcfg);
-+#ifdef CONFIG_PM_SLEEP
-+		pp->mux_state[pin * hweight32(pp->mask_mux) / 32].mask |= mask;
-+#endif
-+	}
-+
-+	return 0;
-+}
-+
-+static int a210_pinmux_set_mux(struct pinctrl_dev *pctldev, unsigned int fsel, unsigned int gsel)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
-+
-+	return a210_pinmux_set(pp, pp->desc.pins[gsel].number,
-+			       (uintptr_t)pp->desc.pins[gsel].drv_data & A210_PAD_MUXDATA,
-+			       *(enum a210_muxtype *)func->data);
-+}
-+
-+static bool a210_mux_is_gpio(enum a210_muxtype muxtype)
-+{
-+	switch (muxtype) {
-+	case A210_MUX_AOGPIO0:
-+	case A210_MUX_AOGPIO1:
-+	case A210_MUX_GPIO0:
-+	case A210_MUX_GPIO1:
-+	case A210_MUX_GPIO2:
-+	case A210_MUX_GPIO3:
-+	case A210_MUX_GPIO4:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static int a210_gpio_request_enable(struct pinctrl_dev *pctldev, struct pinctrl_gpio_range *range,
-+				    unsigned int offset)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+	const struct pin_desc *desc = pin_desc_get(pctldev, offset);
-+	unsigned long muxdata = (uintptr_t)desc->drv_data & A210_PAD_MUXDATA;
-+
-+	if (pp->type == A210_PADCTRL_2)
-+		return -EOPNOTSUPP;
-+
-+	for (; muxdata; muxdata >>= 7) {
-+		enum a210_muxtype muxtype = muxdata & GENMASK(6, 0);
-+
-+		if (a210_mux_is_gpio(muxtype))
-+			return a210_pinmux_set(pp, offset,
-+					       (uintptr_t)desc->drv_data & A210_PAD_MUXDATA,
-+					       muxtype);
-+	}
-+
-+	dev_err(pp->pctl->dev, "no GPIO mux for pin %s\n", desc->name);
-+
-+	return -EINVAL;
-+}
-+
-+static int a210_gpio_set_direction(struct pinctrl_dev *pctldev, struct pinctrl_gpio_range *range,
-+				   unsigned int offset, bool input)
-+{
-+	struct a210_pinctrl *pp = pinctrl_dev_get_drvdata(pctldev);
-+
-+	if (pp->type == A210_PADCTRL_2)
-+		return -EOPNOTSUPP;
-+
-+	return a210_padcfg_rmw(pp, offset, A210_PADCFG_IE, input ? A210_PADCFG_IE : 0);
-+}
-+
-+static const struct pinmux_ops a210_pinmux_ops = {
-+	.get_functions_count = pinmux_generic_get_function_count,
-+	.get_function_name = pinmux_generic_get_function_name,
-+	.get_function_groups = pinmux_generic_get_function_groups,
-+	.function_is_gpio = pinmux_generic_function_is_gpio,
-+	.set_mux = a210_pinmux_set_mux,
-+	.gpio_request_enable = a210_gpio_request_enable,
-+	.gpio_set_direction = a210_gpio_set_direction,
-+	.strict = true,
-+};
-+
-+struct a210_function {
-+	struct pinfunction function;
-+	enum a210_muxtype type;
-+};
-+
-+static bool a210_pin_has_function(const struct pinctrl_pin_desc *pin,
-+				  enum a210_muxtype type)
-+{
-+	unsigned long muxdata = (uintptr_t)pin->drv_data & A210_PAD_MUXDATA;
-+
-+	for (; muxdata; muxdata >>= 7)
-+		if ((muxdata & GENMASK(6, 0)) == type)
-+			return true;
-+	return false;
-+}
-+
-+static int a210_register_functions(struct a210_pinctrl *pp)
-+{
-+	struct device *dev = pp->pctl->dev;
-+	unsigned int ngroups = a210_pinctrl_get_groups_count(pp->pctl);
-+	enum a210_muxtype type;
-+
-+	for (type = A210_MUX_AOUART; type < ARRAY_SIZE(a210_muxtype_string); type++) {
-+		struct a210_function *function;
-+		const char **groups;
-+		unsigned int i, count = 0;
-+		int ret;
-+
-+		for (i = 0; i < ngroups; i++)
-+			count += a210_pin_has_function(&pp->desc.pins[i], type);
-+		if (!count)
-+			continue;
-+
-+		function = devm_kzalloc(dev, sizeof(*function), GFP_KERNEL);
-+		if (!function)
-+			return -ENOMEM;
-+		groups = devm_kcalloc(dev, count, sizeof(*groups), GFP_KERNEL);
-+		if (!groups)
-+			return -ENOMEM;
-+		function->type = type;
-+		function->function.name = a210_muxtype_string[type];
-+		function->function.groups = groups;
-+		function->function.ngroups = count;
-+		if (a210_mux_is_gpio(type))
-+			function->function.flags = PINFUNCTION_FLAG_GPIO;
-+		count = 0;
-+		for (i = 0; i < ngroups; i++)
-+			if (a210_pin_has_function(&pp->desc.pins[i], type))
-+				groups[count++] = a210_pinctrl_get_group_name(pp->pctl, i);
-+		ret = pinmux_generic_add_pinfunction(pp->pctl, &function->function,
-+						     &function->type);
-+		if (ret < 0)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
-+static int a210_pinctrl_enable_clock(struct a210_pinctrl *pp)
-+{
-+	int ret;
-+
-+	if (pp->clk_enabled)
-+		return 0;
-+
-+	ret = clk_prepare_enable(pp->clk);
-+	if (!ret)
-+		pp->clk_enabled = true;
-+	return ret;
-+}
-+
-+static void a210_pinctrl_disable_clock(void *data)
-+{
-+	struct a210_pinctrl *pp = data;
-+
-+	if (pp->clk_enabled) {
-+		clk_disable_unprepare(pp->clk);
-+		pp->clk_enabled = false;
-+	}
-+}
-+
-+static int a210_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct a210_pad_group *group;
-+	struct a210_pinctrl *pp;
-+	int ret;
-+
-+	group = device_get_match_data(dev);
-+	if (!group)
-+		return dev_err_probe(dev, -EINVAL, "missing pad group data\n");
-+
-+	pp = devm_kzalloc(dev, sizeof(*pp), GFP_KERNEL);
-+	if (!pp)
-+		return -ENOMEM;
-+
-+	pp->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(pp->base))
-+		return PTR_ERR(pp->base);
-+
-+	pp->desc.name = group->name;
-+	pp->desc.pins = group->pins;
-+	pp->desc.npins = group->npins;
-+	pp->offset_mux = group->offset_mux;
-+	pp->mask_mux = group->mask_mux;
-+	pp->offset_cfg = group->offset_cfg;
-+	pp->mask_cfg = group->mask_cfg;
-+	pp->type = group->type;
-+	pp->desc.pctlops = &a210_pinctrl_ops;
-+	pp->desc.pmxops = &a210_pinmux_ops;
-+	pp->desc.confops = &a210_pinconf_ops;
-+	pp->desc.owner = THIS_MODULE;
-+	raw_spin_lock_init(&pp->lock);
-+
-+	pp->clk = devm_clk_get(dev, "pclk");
-+	if (IS_ERR(pp->clk))
-+		return dev_err_probe(dev, PTR_ERR(pp->clk), "error getting clock\n");
-+
-+	ret = a210_pinctrl_enable_clock(pp);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "could not enable padctrl clock\n");
-+	ret = devm_add_action_or_reset(dev, a210_pinctrl_disable_clock, pp);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, pp);
-+	ret = devm_pinctrl_register_and_init(dev, &pp->desc, pp, &pp->pctl);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "could not register pinctrl driver\n");
-+
-+	ret = a210_register_functions(pp);
-+	if (ret)
-+		return ret;
-+
-+	return pinctrl_enable(pp->pctl);
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static void a210_pinctrl_save_regs(struct a210_register_state *state,
-+				   unsigned int count, void __iomem *base)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (state[i].mask)
-+			state[i].value = readl(base + i * sizeof(u32)) & state[i].mask;
-+}
-+
-+static void a210_pinctrl_restore_regs(const struct a210_register_state *state,
-+				      unsigned int count, void __iomem *base)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++) {
-+		u32 value;
-+
-+		if (!state[i].mask)
-+			continue;
-+		value = readl(base + i * sizeof(u32));
-+		value = (value & ~state[i].mask) | state[i].value;
-+		writel(value, base + i * sizeof(u32));
-+	}
-+}
-+
-+static int a210_pinctrl_suspend(struct device *dev)
-+{
-+	struct a210_pinctrl *pp = dev_get_drvdata(dev);
-+
-+	if (!pp->clk_enabled)
-+		return 0;
-+
-+	scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-+		a210_pinctrl_save_regs(pp->cfg_state, ARRAY_SIZE(pp->cfg_state),
-+				       pp->base + pp->offset_cfg);
-+		a210_pinctrl_save_regs(pp->mux_state, ARRAY_SIZE(pp->mux_state),
-+				       pp->base + pp->offset_mux);
-+	}
-+	if (pp->type != A210_PADCTRL_AON)
-+		a210_pinctrl_disable_clock(pp);
-+
-+	return 0;
-+}
-+
-+static int a210_pinctrl_resume(struct device *dev)
-+{
-+	struct a210_pinctrl *pp = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = a210_pinctrl_enable_clock(pp);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "could not enable padctrl clock\n");
-+
-+	/* Leave firmware-owned and reserved fields at their current values. */
-+	scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-+		a210_pinctrl_restore_regs(pp->cfg_state, ARRAY_SIZE(pp->cfg_state),
-+					  pp->base + pp->offset_cfg);
-+		a210_pinctrl_restore_regs(pp->mux_state, ARRAY_SIZE(pp->mux_state),
-+					  pp->base + pp->offset_mux);
-+	}
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+
-+static const struct dev_pm_ops a210_pinctrl_dev_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(a210_pinctrl_suspend, a210_pinctrl_resume)
-+};
-+
-+static const struct of_device_id a210_pinctrl_of_match[] = {
-+	{ .compatible = "zhihe,a210-aon-pinctrl", .data = &a210_group0 },
-+	{ .compatible = "zhihe,a210-peri1-pinctrl", .data = &a210_group1 },
-+	{ .compatible = "zhihe,a210-peri2-pinctrl", .data = &a210_group2 },
-+	{ .compatible = "zhihe,a210-peri3-pinctrl", .data = &a210_group3 },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, a210_pinctrl_of_match);
-+
-+static struct platform_driver a210_pinctrl_driver = {
-+	.probe = a210_pinctrl_probe,
-+	.driver = {
-+		.name = "pinctrl-a210",
-+		.of_match_table = a210_pinctrl_of_match,
-+		.pm = &a210_pinctrl_dev_pm_ops,
-+	},
-+};
-+module_platform_driver(a210_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("Pinctrl driver for the ZhiHe A210 SoC");
-+MODULE_AUTHOR("Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>");
-+MODULE_LICENSE("GPL");
 
 -- 
 2.55.0
-
 
