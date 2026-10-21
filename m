@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792612415;
-	b=caMGoIKlH2M8wpGCOp7Ng7guljwqtGDyvV1t1sNI/LnPoQ1VKco7l2byp/w+rz/JLKWQ
-	 CnL6lqC2xc39kuS2XDGHBsmS64+tCRVyWXg17LNaM9ZP4IWeQe9rF8XEOvbwUR0P8fjF7
-	 MraIg/2IAaVQvVFpsyWaRa2q6Mnj4gCVEZyXynlK2KLq0MLsswf0noOP47cT/JqzE5pvE
-	 +S8+Ug6Qvt/MJAjNL2/UgQHYoszf7OaCIeU6MsvTnhng6PkovwW8oWOVpFnW1QmI7j0vN
-	 PReA74n0iPTOCSkocJ6jTA/nIzJ2HvRL3Fg9JPwzka7DvFbYpi8y0i7FdTIHaF2PAHw==
+	t=1792612412;
+	b=AD3kOotGAQ2LbjKJaME3S1M8M8bkeG0JTuHsRiIzi0Aw8zVq4ml10FqY+9DKdddIWG1Q
+	 sVW8s+24OYB20Ttblv9u05STmBxOzeDFRGUculqXcYzJGI6Hh+NQ90s/NaZatFn7ri1k+
+	 Xjig4UiGrQzC5vuSjvgrW0YrqzB3ngK8A/IYdlUNLmA3vUz3+yM2ubomF8C0q1cf2iF8p
+	 LWUMTP+TG3kcOqwOski9AsKNJDrshvJeuMwvTZkl59yg9FiFmbjqkxwxlM4JUPHJXyo7p
+	 dvjNps4IN72FiwxsJVlz+zjewTS68lmCufdIQ4l7PrIS/2Wtfq8xD6R9Q1K2k0uMYpQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792612415;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792612412;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=vkSzT571CkM4UxEFjc4hQdNlId998FiFtupg13HTmvU=;
-	b=bWcMNtvcJMlXGz/T7TkH7pe26LyjBPXHQ5UlvkvEpYrlkw/2zMG30K2tDDsetCqPY/Qf
-	 fbXHyt2yMmahg84B8vsTbo4jDgHE2hZOCHBNcqxIJzAnFP0vLaCbh5nSb/yxPK1pT/enP
-	 frX7b8yKDcu8OMmLMuBVgWo/7/fncj41JZtQO9r634M8n5Ob9NgR/BJFBNKoI6Av2+ka9
-	 ah3xlyNZBO4DUC/3YDyDluS9+SUfa84XaMA84Ema2hO/1OZdV8hgTdmlowWSxTInTdCgy
-	 Mx1sOyu0E3Vl+viD+UgQ+wJaX7/TzT2KLORfl1bywNWqEmtlpYGQeMOPNkq5gXCi8oQ==
+	bh=D/80EfwAtXJCC0tZxo33X7RmKZW37FWB78bJeXvz28M=;
+	b=Xhl9rB/u5BvINRi4/ZDHkNbhuHWfvAMQOwm4y/mn+qrk4zZZxStSaws5RflXwxBkqWEJ
+	 il+IzxE/CmzRySOF5ASEeeXFhhiu1ZEwlLy5l3myhKnBbnbOti4vyjM5yXnEre+tLsTjC
+	 GctEQ8smvJil1gKlM7kJWNZeIcIUOpMW+r5pFeeJFdQH0DGwZNZidSnUbvVe5AHo4EVWq
+	 UDPhJvLHbHKmOtUIIBzqz+GtQE0HoOWOweSkRH11nC+a55JOPo7XXiNErNvv7vWCtQNCM
+	 N84jJlzJl2zXQbrXR/9yRWxYhzs7a7oLMhdkDar33RIZ5yp85dVHWMl1tO6k73IAxBg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fdvghn2N;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lBgUBJ1O;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3285F60A4AD0;
-	Wed, 21 Oct 2026 19:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45371606A332;
+	Wed, 21 Oct 2026 19:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fdvghn2N
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lBgUBJ1O
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792612414;
-	b=GiY52ufscE7qDVyggZzwB9kgSdMTYF+lSBC0G8TXMB4unjxpkydf8AQBKdN5cqe0EK/+
-	 88M4dKGjNow1ilDq4ci7ckY3ahjcEFRcOyyiIbh+PNPmD5BhZGKU+z7BHXIwpf2Tl82ss
-	 I+Er6uHG3xcws6dMEURbeNnXEWzhp+W2/u6tgYRH7oydTVnqNY4fNtC6J1pZKg9zgDHDO
-	 eyncgvVVeXvZ0PFAeU/w2KtWBCMBrH3wX8EtBIafbZAvRch6Ed4wkh61RQujAYOhT3KB6
-	 7qEde4+L89UR9h4mUcxqT3MNbMhByPuSKUd+E/JvhWn+aN5mqOUkyBK460DF0DcrVug==
+	t=1792612412;
+	b=EVabbBV/3jD29F/5fVcY+4C1sN4J9E0j+B9XBnlwIT54ybXUYKMqOBWxNERTulo91unF
+	 dIYj1ycdSk8h3UlkeJ+8F/0VWFfmgnbgwTP18Eszz5DvaMDcHYvkNIwcl+chPa+MWPtT8
+	 QX4TpO6QE10j8K7mOH85w43l6J4HKg7OIVcMlbDB3C4V5lTgeICtlxsW5lwJtHqAm86fP
+	 DvvrjxWFDCzANuLY9MCGSCIaw7uG3w+KhNqvCJC1a9Wicho8TKMj+l+MrixfIkHKCQhPD
+	 8HWX8OrFmOEhuuWnK3MrFJX/9RydncJfBQQAz4LnurLi5PKYrDiIUp20SGMMoNZU2eg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792612414;
+	c=relaxed/relaxed; t=1792612412;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=vkSzT571CkM4UxEFjc4hQdNlId998FiFtupg13HTmvU=;
-	b=VxxWuaAZwIMcN9dKnJzXoISROGDxQnWgsqRpzR8iJaq/ToU861hkOTtUXkrCXbwXe0hh
-	 3XApOV1y1eYkNQbqLwrv99v9+TQtle34k5SLFAF9c4xtzUl6jFTfpSlVGto44dSi2YODy
-	 oZdDe5FI1GOOz+qinmFAWENhRFWxLxmIPv13UrmE10FYvbFMDvufAvuN6DPQVNUQikHQ+
-	 eM2EjhsCnt2y6O16LmUmiyl/anVuzQJOsiQv7Vh4ZhdiHgRj7xbNHZpxqw0ytrmWMjqy+
-	 7wa8cH3irTad7ZiCGwIbyMInL5i7XmJwVWAJH0YP/6/v33X3MHBEzjHUPBZEmPByvdQ==
+	bh=D/80EfwAtXJCC0tZxo33X7RmKZW37FWB78bJeXvz28M=;
+	b=OKWAEdPl+XMmQZV/AhcAoOZAYXnyYztgxGPevmsN8kWmG2y83utsGtNzG+lun2IsJWnS
+	 UgBuHoDvxi1Cb4nF9DTp8fSOVPR2yF34SKvXPAomHnnG42DI911dCmIPaH9gBrYQ3eRQv
+	 DBLd5MWgyHTDm8XdimSWJXzTeY0GLcWM3TgCFvwKvltGU4gNSqU1Jw03tYe+3Ow/Kq9Wh
+	 KuUygZ2QommoBUSDIyo4YYYQecP+y035UGsbBbt7c9e0kOC0ok7+4/GVCVtBf52cQyaGV
+	 73aY0gmB/79jc+hK4cq/TfGys4/83o49GSXH+HAH1yITQpv+ESfNvzxg0NcRgcZUiBA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 65E371F000C8;
-	Wed, 21 Oct 2026 19:53:31 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id E50841F000C9;
+	Wed, 21 Oct 2026 19:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792612414;
-	bh=vkSzT571CkM4UxEFjc4hQdNlId998FiFtupg13HTmvU=;
+	s=k20260515; t=1792612412;
+	bh=D/80EfwAtXJCC0tZxo33X7RmKZW37FWB78bJeXvz28M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=Fdvghn2NqxXXBa72xVHiBnop5foi5H645c15BaMMjdeak0eTlCAYE9OHyIefUJlYD
-	 WLU2ydG4zvA1js48lQMinu/KHhd36XR/Os4wrx6RhRfL3ithsf2izP820MK1paLAVv
-	 UuJl3r+XHJJOz4T8bLabnM/i2Rp86QYKww7nlLjPdcWaHUDdqgVrxAQ8iEm36yxnNC
-	 gT9B2gk2O35CvK+RJZ8F2gnIbtSn9QjrpvV4bbtN9skImVVIivKz4ADD4EBqmK3vl6
-	 TV4h6OhL6ZxM1zOj9xiLpWZ8dnOIyP9PoO7r7YvX4gKscl5UYPS9ajVpGRYAGPenZb
-	 DJcD6nBc7rSig==
+	b=lBgUBJ1Om5BFLXCNy6pHcnOTkfXYYjSOq/Yz4UXahghrDiWtFOTIhRz+u4tS4U/4U
+	 LDp/RPQvsApZSnKNZ0fmfMbHqyFxxBamb/lzQN1EeJMqcIy0Bsq/sqMdRCHcFEYdq5
+	 nE5RuSGVOvm4Pqq1wjrjuhP1LbDoqUkAiOwoQA8mI1x13flrx2c1tFdfq+Y8y2OYmV
+	 tv96erDN+/y0fpOwiDTdkGcQhb0GaGYJfh6bvla8TP2A8Gn/5YVd67udyn+2UlR93T
+	 1OE60l2N6rfkEKt8qGPV0TeSHq83I9IbSfqHVeGWs3pAaHGS4mUK/Lv/1AhrvZHEwV
+	 8lL9TaeifnYhg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 7334C4346C;
+	by lkml.kernel.org (Postfix) with ESMTP id 48E8D43458;
 	Wed, 21 Oct 2026 19:53:26 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Thu, 22 Oct 2026 03:53:37 +0800
-Subject: [PATCH 17/18] riscv: defconfig: enable A210 support
+Date: Thu, 22 Oct 2026 03:53:32 +0800
+Subject: [PATCH 12/18] dt-bindings: timer: add Zhihe A210 CLINT
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,7 +83,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-a210-init-v1-17-5e438f972d24@iscas.ac.cn>
+Message-Id: <20261022-a210-init-v1-12-5e438f972d24@iscas.ac.cn>
 References: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
 In-Reply-To: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -103,11 +103,11 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
  Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792612403; l=1130;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792612403; l=807;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=dnd96ga447dSomCEFGKgHYHO1dgeChmNdmNaEUIrQdc=;
- b=4oI+L0gaFzDPLPpdDhyxx3Mn6LIC9zoATjnBz6K1sg/1+RbNn1u3FS1JPzIuujkKpmHF9PBPd
- QgUh9R+ImaCBrNIwb3pBWor/y7MvG78CUjod+4dHnHByEJTEUiZxHoS
+ bh=mOLkOh4/jpI+bhz73rcyph1kni8iu4RhyVF0Wak3gq4=;
+ b=fRB4QCQ8y96T2eRxcwXJPHQq3F5ruy2w9JTeNEJZoPgG+ScucVtmRIxv8vKLYs7Ip7YdtZ2Yz
+ BMVCuJ0xnJzDBWajZ3gI4APPkyE8EDUD4X5NkG8wNfyfcsFjAoUWJa5
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -118,42 +118,25 @@ Content-Transfer-Encoding: 7bit
 
 From: Han Gao <gaohan@iscas.ac.cn>
 
-Enable A210 platform drivers and reserve ten 8250 UART ports.
+Add the A210 CLINT compatible with the thead,c900-clint fallback.
 
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- arch/riscv/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 04ae305d5511..b9b3bca12089 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -33,6 +33,7 @@ CONFIG_SOC_STARFIVE=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_TENSTORRENT=y
- CONFIG_ARCH_THEAD=y
-+CONFIG_ARCH_ZHIHE=y
- CONFIG_ARCH_ULTRARISC=y
- CONFIG_ARCH_VIRT=y
- CONFIG_ARCH_CANAAN=y
-@@ -149,6 +150,8 @@ CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_SUN4I_LRADC=m
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_NR_UARTS=10
-+CONFIG_SERIAL_8250_RUNTIME_UARTS=10
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
-@@ -167,6 +170,7 @@ CONFIG_SPI_PL022=m
- CONFIG_SPI_SIFIVE=y
- CONFIG_SPI_SUN6I=y
- # CONFIG_PTP_1588_CLOCK is not set
-+CONFIG_PINCTRL_A210=y
- CONFIG_PINCTRL_TH1520=y
- CONFIG_PINCTRL_SOPHGO_CV1800B=y
- CONFIG_PINCTRL_SOPHGO_CV1812H=y
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index 3673836e14de..805262bb6cd3 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -56,6 +56,7 @@ properties:
+               - sophgo,sg2000-clint
+               - sophgo,sg2002-clint
+               - thead,th1520-clint
++              - zhihe,a210-clint
+           - const: thead,c900-clint
+       - items:
+           - const: sifive,clint0
 
 -- 
 2.55.0
