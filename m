@@ -1,95 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792602909;
-	b=UhbwxaRz0nXBmdFss7sVKxgMaHYCR30TvoGXjabcosVEapbSBCIEzpKNnfXpyu+scdpE
-	 AeQMqZvZ+UheK0va51vdafeM1upws+ZdVvUHSIc0cZuXJ5cenfFtTpC45dDLdMRu+6SJ3
-	 T+0KcWuYlxOT3tRMU+1Rhoeb2gMEvcRcq9aRMybkAkINZpspivBvf4hMQj9mjP8vGidHA
-	 f0XIeSGKoFKQJ+53CTCf83lv1gGq6mu9MjI54NEke3W3XFMg3fOwawUIuAyHhRFei0wXq
-	 bKEtJ8I3Dzp+4d8EYZE+54hbIiW1Irh1NGeyxW1cWxWjLoyUUMD+M6TJtVgVxcc+Jcg==
+	t=1792602948;
+	b=E5HbETCXyO3BRl+ryQS94hFHpVRwkQEUUX9PsMsiX50x4Oviql/zVFxS3JKa3GvKKCp9
+	 oNDH97zRIdbYRHZvnz1qJnP9DSscj5klmTxmISg2lTTsFOxH3eZ4njyNGAyns7te3ORrz
+	 o7vHZMd/GEj9bjfOjYcLflVd0DJr8vrzeyxpXWwRvKyHzEIePnqDGF0OYDdom7m4a5TpY
+	 zicFete3s3OzfAkO3rxBTJ1YhCXi7UaUZshPG8DDr/Ay7ryKxXT7Hkr/eUeOQOgObLkgq
+	 jPNdavzaxqRGgI0T/hQgmlj4CKpEkV+AQRPIFz9UAetKBiZwKBZWPXrJLfiqJbvIfuw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792602909;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=Fp5SMzjGwR8UTbVROtVUKvftRt8E5iWuXvuIAwCI39M=;
-	b=zRTnmi1sk8RDSo5vHWEK6/Kr6MRuhmwtxKU/71Qd7gJh4z+UastSljLW8lAft3iPFgcQ
-	 LScscMWwb4xMnduNAImQCFwgajqjpZQw6DLVWDMSPgY9TmpGIPtVjiPXaOjOU96DXdlbx
-	 tGTklakM+yrHod6loFRYquOrkoZSpot/F0rKyQ4HJyA7JD4MRI8WcUmbfYpurBEp6gVQZ
-	 BMZVLHLk/S3P+hND8R3IkxGyIGjov2WbGTWlE58wfi3vX3hgwC6xEZunWDczYzLyzREuS
-	 0BEQClduXsSRYwgUtoiquwbZtAMY+Z86+JDg37el1Wz5ObT1MQOsPUoJj/OhW3w/ARw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792602948;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=p9BvQ0VeluCXAWmqoKdFU0SfBt1q6ntM16zBa5vzFtE=;
+	b=gAC+pqY540txupxjj11YzpsUXGEnM1RRneJ0p6QHpRkJadnJtKUz2Crc0PHDeNXIJcVA
+	 eCGGpwFirQL+vw48tAl81hxDNECb2O7PCIL4VC1huPifIObEM2jyadl5mjbp2Yeoye7tY
+	 5JA3irMLxXHmO8EowLLrw3wxE87d2A087ldjJwo46PWzTY+1uiX+2GaqeoSOUPrdvmLbP
+	 e2oAxn7VOg3Uixo05vDh6HlJk4A0fWeoVoo7Usr6SUjMIkGPAgHBNGh/QTbGFXR2jg05l
+	 mLugBzyZ7O4huJWKQ3wQjOcDU3hI4KX3tZsHc4urWZQbCqAWnAYli3fy6zQ5i1ciqQw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=lunn.ch;
-	spf=pass smtp.mailfrom=lunn.ch;
-	dkim=pass header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=pB0gOMT+;
-	arc=none smtp.remote-ip=156.67.10.101
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Ld2Q6zjM;
+	arc=none smtp.remote-ip=74.125.82.52
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C7606A32F;
-	Wed, 21 Oct 2026 17:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB6C7606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425B1606A31D
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 17:15:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 425B1606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=pB0gOMT+
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Fp5SMzjGwR8UTbVROtVUKvftRt8E5iWuXvuIAwCI39M=; b=pB0gOMT+fyr6rtWEChBRV7r7IT
-	jKdlJAhyeHmefQZV1x+Z3xhu/kaR+8JuTGSXi53eInrvAAJE/6KGlf9cZ6sid/bPGmBeJyuiV2G63
-	+baotz7vL9WSkRAtWN4z2lJE8tnFheyeJnkUbqlG/v0qp67qEW6kXutLT+keqS4mDvkU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1xJZtj-00C8Oq-Fd; Wed, 21 Oct 2026 19:14:43 +0200
-Date: Wed, 21 Oct 2026 19:14:43 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: 1579567540@qq.com
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Ulf Hansson <ulfh@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Wu <david.wu@rock-chips.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mfd@lists.linux.dev, linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 14/27] dt-bindings: net: rockchip-dwmac: Add RK3572
-Message-ID: <09c223e6-6872-4bb6-a915-870c3ee614cb@lunn.ch>
-References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
- <20261022-add-board-ok3572-c-v1-14-0b0fd85a31ee@qq.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Ld2Q6zjM
+Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-170135e43c7so902851c88.0
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792602947; x=1793207747; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=p9BvQ0VeluCXAWmqoKdFU0SfBt1q6ntM16zBa5vzFtE=;
+        b=Ld2Q6zjM355/jbQmnQs79eZACeQtT9eZSUVIhd5Iysgzp/Nu+p/pKOhTu/WWo+Bi3Y
+         YDzHPb2GMQHGcgieRnH8M0yHs3S9ZbhX1D6HK1y241SRPxSYmYl7PNYV1Q/joCXTVlzd
+         LJLLmhyTdlossdq5uzo44GcuqvolB85SLhiRRzYkSl8SOXAIoSbQtfPnkaQgh4+yERQX
+         CZZxz4E+lpVBHfyGibdgqyKV1xePoLNyaZV2NlQMl3P2WugENL4CG5tyZxDwT9WuCliE
+         gcCMOywWQLjW+cwfz4o5eXweG1or6tmqp92Q5Kjf+ZlvBAxvas1gTdNLK6KgCEECqQk0
+         NAHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792602947; x=1793207747;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=p9BvQ0VeluCXAWmqoKdFU0SfBt1q6ntM16zBa5vzFtE=;
+        b=d8qTj1ExtxUezhqTYfzDMp+jpCy4XZ22QvowC1YHdfnWpKgn7bPWqHXAr5eRCjHlvS
+         iBxBioGqgKu6U+6GNfg7Hjf0CkF7pP5pclMGYRHi8+kwOKOBoAEOJI+E1pbwsdfXN3if
+         2+SvNLOESxOhTM6ZbuEIXOZwLo3n0FZ5HxgMOQkmbd4fseMn7FABZgEVjSDIJx4fPj/k
+         T0W6NDUyt26GzuNBvaBgSrpRIMqgAkEKD4yn/xJ2tJHGusNZj3rkSxK+s0Mgzx4NIXp9
+         sQ0aRFoiQKjsQoDJTaLpyJjIwQ6tmmtUUobI4b0sTcExJTAxNWNkiUp8MYveJXZWgX08
+         eAAw==
+X-Forwarded-Encrypted: i=1; AKwUvBwWAg90bsWLfYKwz1avTXwLPgydnZtjYlXn8DB2/8yCeB/MQn2GFGUkvpyLfP2ENOSdgclf/cXuJoVF@vger.kernel.org
+X-Gm-Message-State: AFq9FYIojm+0e5qqvNCmGlGWFW3BPV5blJUabt3zy/UtoC2XdZDcHwKt
+	5Stm9wuhP2DsDCEuSajiwoGDguD4ShgjN+GtvGtXWtAAbMVgXO58v2EX
+X-Gm-Gg: AYBFou0BVBEhfplEtyWo+41CckHW/nFknUxojR6NwdOAAwD95EvCFqIWY85XI+1rR5E
+	gwUh9J6UnKRyMlE7dxZLA6eOEuTTPwcDzoN2zSdmXzUps8dvlEdiJ+lAw/G6U9+ZvfZ5L99XltJ
+	UtcpKADuzBl55YW19aIk2v/GT6oqh28N+zaTF39HTOO2IANtqSBceaJMKvvr02ENZJZOVGmsHCm
+	VeuQS+S6JSwDElXzzhN4pEfxv5sVaxxOfO918ryrnCUQf0qU1DwZgpHUhCwe7ju4ecM4s+kzv/7
+	iyapa2ztseJutnm3JMUDpWPihoUO0jXK8ym+tSumVmshZqCGuLcsS3R7MkNl9inEk9DONuQeCVD
+	y4K9aw595HYK25j9akxZvNCenDSaQC1Sb/qXg+3pwDs9OYJPiGGuPWRComnHnEYhCQ8/3d5Dx0s
+	ICWrqVGvt0MbTQChMdHIHZH6a85fNueeVHnpgMuyIUQo9e3pbIBye3pdPYYFtz+tSXhkyyz8w9v
+	JmrsNoNox7I3AhW8MjiBovajKB0OGzPqxZzhAsQW1HdwfjbESffs4PzDLN9dQ01eovdl70SHQu8
+	zCDWuthqqr+cK/yEHvX8TQ==
+X-Received: by 2002:a05:701b:2914:b0:18d:96e8:b913 with SMTP id a92af1059eb24-190a9eaab7amr2994159c88.47.1792602946836;
+        Wed, 21 Oct 2026 10:15:46 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:92d1:8038:c4e7:1f0c])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19035926fe9sm6166666c88.2.2026.10.21.10.15.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2026 10:15:46 -0700 (PDT)
+Date: Wed, 21 Oct 2026 10:15:43 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Hans de Goede <hansg@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] Input: soc_button_array - use __free() cleanup
+ facilities to free memory
+Message-ID: <atjyyqxnlqEvwNxh@google.com>
+References: <20261021015004.1537738-1-dmitry.torokhov@gmail.com>
+ <20261021015004.1537738-2-dmitry.torokhov@gmail.com>
+ <atjw4b-ICVGH3-2a@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,19 +103,25 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261022-add-board-ok3572-c-v1-14-0b0fd85a31ee@qq.com>
+In-Reply-To: <atjw4b-ICVGH3-2a@ashevche-desk.local>
 
-On Thu, Oct 22, 2026 at 12:11:11AM +0800, Cunhao Lu via B4 Relay wrote:
-> From: Cunhao Lu <1579567540@qq.com>
+On Wed, Oct 21, 2026 at 08:05:37PM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 20, 2026 at 06:50:00PM -0700, Dmitry Torokhov wrote:
+> > Switch to using __free(kfree) cleanup facilities instead of doing manual
+> > cleanup or abusing devm for allocations that are only needed during
+> > probing.
 > 
-> Add the RK3572 GMAC compatible using the snps,dwmac-4.20a fallback.
+> ...
+> 
+> > +	const union acpi_object *desc __free(kfree) = buf.pointer;
+> 
+> Rafael added 'acpi_object_free' for __free() (pun wasn't intended :-).
 
-Since this is a new device, please don't allow tx_delay and rx_delay,
-which should be considered deprecated, replaced by
-rx-internal-delay-ps and tx-internal-delay-ps.
+Not sure why it is better... It goes through ACPI_FREE() ->
+acpi_os_free() wrappers which might be nice for ACPICA code, but has
+limited utility in the rest of the kernel code...
 
-We have to keep tx_delay and rx_delay for older devices because of
-backwards compatibility, but there is no reason new devices should use
-them.
+Thanks.
 
-	Andrew
+-- 
+Dmitry
