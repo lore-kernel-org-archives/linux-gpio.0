@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792612413;
-	b=uS9VSOYqC+ibsMmyvavNe6mzYgJsgn8jL418Cl4ShV0EZbhA9g/lKKNi3CGnJ2KFjkCV
-	 OMJyFB957R/Bg1WioO0xIrIHJiuexGimvmk7N9W/SZpg7KqSfuENNdj8FGBewik2gf8oZ
-	 CVANQnCgzAoOk+w2HYNbRmzNTuNYCE89KtygDwtZyAECNwKu+UiQ77sqkOvWIo6dcK4bz
-	 lRirJm4xQpt7EmCs7maJdcFI/64Jt8qxzeyPg/+SxVlUL7Ko49bZE/Nm2iSHhikduYZnw
-	 VAlTEni3ZeiouLjqDU5ouU/e25ZoFQ/1v+gw2Yf2z07l4wDX/UlUJkwljQV6mgD/9zA==
+	t=1792612408;
+	b=rTANfjsvx8qsD0mFoWXA4aZa5RD7qd18kbMN3CgrHi6FkHBHgWSedQ/Wk8N7DyirkReg
+	 OsR3m7bcbvGGu62/QjJDQI9GUs3ma0P8VmHJgH/ucfsCBPMjUPnLKF7modUM9y71rRZfR
+	 X8fV7QvUSyry4scTiBrNngjBp0+owb2MuHUfkdX0o1/nAnLSLg0HxS9VrtAZUYQGIFdTZ
+	 dfD3oodNzAFkYY6IaNk9g8zAc1xtJZabgoq7xH5Gp1oJfmR+Ca+4I08BDT+OC9OBsVwup
+	 RmYa4M3qoi8BbPA7fxG3XMFwHdwaceCun3sly0bXLrA2O+u57CZuBRZS10WAzk7/1zg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792612413;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792612408;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=0vkUTGj7ykL7XElJOAN2G/XIumpVE8CGAihKJjHC6lc=;
-	b=CmiIuOiH/dqHGf02mXBx7rXCvVAfTga5HI+j2S3HuqASYdjDg3NfY80XQTXLuN9/Gttd
-	 3eXVP+fVWZSRcxz0FcHVJ01vmGNQnZAQ7T9YWIJBmXzL7QzlJYyPNYO0KddHlbIqlmYSQ
-	 TzpPVrK0bTS25k9DI5a/pwqHIKKgVKHIEsvQNI0SVy0/l84JcJgsFxkXs+oI79Fx77PoA
-	 qQT0NdZFVJtjoBt7UwlCI7RVJhWQ+8DKpXece/gT5M7a/zT9e+4R5JIlFv+Z36YIiKFC0
-	 zgFrw792b5TGpGmaKYlQROOzyWLwO21Uxk1+D01zEfKDZlLL6pb9eNnnl/So+c0IK8Q==
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=RsU/Miju2jeqymvYcNJXTnmmqKzjTj43vuEKKcaUunA=;
+	b=AmuqIQF40QmPjv9EK53NFkpdntvmvi9iXqguzqo+LEbPVVYBvTZJ+SKvjifts6Hkp9vC
+	 zRjsXVzwtB/xNnssQE+QH5yF5ZitXuxQB0rq3TDofxO1SIERvfkEZBm59DQQoefdCIrPg
+	 lLcrgaCLsDy+xHGwlyDU6+OkKLeNf3oLdjHTx4eIsYOdsqxd6/Pj2mbwNdJvb52pnZ3p/
+	 SdDdttDdqqYsQ4chohMIg5qFHE/VRv/nY57ZA+0HFasTbxm0bp3xUaxwcp8kyKVrWCKvt
+	 pGQ6+oCSHtnOrm4dgeWktOAvGZ+cvUDiFebe8HSfKzJ2A69ECGkO7RouaStNq0fomJw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KXDP70QL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bnlCBH3b;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D91560A2634;
-	Wed, 21 Oct 2026 19:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC6D606A337;
+	Wed, 21 Oct 2026 19:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KXDP70QL
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bnlCBH3b
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792612413;
-	b=mH0zlaght/GTiw18+aNKzYOvmZvUYi8z6xMim57Fgaw+yHiyvd2BaU1tqLVfkVJHj/5C
-	 rq028ua4wjdlhuEm+a5D/AtDNoZFB8/O4GIwdfTZELfSI/MtIZSzTYURl19Ug/q4XeNVt
-	 vWCFat6lN96cS/QW1Nw/7xGEgeTCRZ50WF1jZoaCDPHzas1IsYu4swXgbeomlGluRPUrf
-	 Tj8aMbMQ3wgThiMKpoKtcIL9EMiGR+3Xyfx9pTTlkhh3ub1XqMIj4UlHPkVcf7wyV14ZU
-	 CxwYlsUBIyo74KrLFTNLHtKFJOoK3rTZcxNQbxFm1x5vgjMrRzUs/g0zY1Qe0b642SQ==
+	t=1792612408;
+	b=wPsfWM1mkuVo/i2ilRpytef5gUISS0jFdNQTuC215gXJOuIhQhR0GSEuKh+0Kh5GqBeE
+	 1cJcmiiRN/IlymIrFceJllc6IexMTPNvAejAxsLrDHzsxf5Ukmta/DmzeLk9ClgVLIH/R
+	 p7pdSS2Vy3AVs43zqRpH/JDRkIisJ3ZX0OfBMYVMMAaesPqPG4RVnx+J0B7JD12FLkM4W
+	 yA63Pk5gAtsNjPMfqt/ir7OiJhc8RqYdvZCJFf5m84VAKN2sJ9dano751mxnrZd8Bn6GK
+	 DHs6h6ZfjCFGTAhsEf0kGGB8Vf5vv2sMQ9hTOVee/RMx9JW0I1X9N9RiYvAaX/EHOcw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792612413;
+	c=relaxed/relaxed; t=1792612408;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=0vkUTGj7ykL7XElJOAN2G/XIumpVE8CGAihKJjHC6lc=;
-	b=bJGrlUgH63XUe2LCRsnrBcPqBPNZjuwBG1JOVKWdkF2CywgIWPeF0XTHCKrLok7X7E+m
-	 7g5GQBoRXqgtjUmv048w2WegVNAS14RmYllq3tqTN0WUnIjP1pav6RjNJv8+qsNXc5l7E
-	 acfv4qilgIE/ixBXfYjRGS5PMCM/ikC5zG11jrS7q7huSvLLEr9l+lnqzVLe4q2pvoVWl
-	 XXorp6DA9D2CMKq7ked+mEMQ5H9PsMnMe4klZe2htaEiYvLKQrF725RcBdlXAOFXDAn/t
-	 1mklmZFis0mZDzgLa5qbMZI/ZAjbGPFhdRRPQ3NE7Ct8sYR3d60e9ZPTZeeNRFuMKzg==
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=RsU/Miju2jeqymvYcNJXTnmmqKzjTj43vuEKKcaUunA=;
+	b=vw9GdsQlPddD3NbjBRGSwmAqGc40N7aVknn8W0FAKNtYC9RxTmo+03nwCXi5mrg6eujk
+	 7+nEmqWAe7Ycg4dxysWpf0kCWOSY3QOsMdFi27TtpSSxLawocWGV8fAezW9MJO1OMfoNR
+	 +4pXPzJW2Q8C9T+NSOUEGwtWlfqy2qGzB9tomqndmSpDSO022uOXrv2De9t5/7IDDz0mN
+	 Clr6imu9TS19msBEHVO5NE0Fmij/VfzOSG/WFk9PB/5YaGB0EK1kEWcLnS5RknK93hUJ2
+	 gmIaFr0M90qwlxNw5wwPbmKupVi+dMZ57bPrj49IxHQru5aX70jkcdhD9eZHl/GKVJA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 6CC471F01577;
-	Wed, 21 Oct 2026 19:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792612413;
-	bh=0vkUTGj7ykL7XElJOAN2G/XIumpVE8CGAihKJjHC6lc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=KXDP70QLm/eT7Uj/zet7JSLsgYZ9WzeYhpqYVkhd/sKiZWoWq23/RdpnqdTk4vr1h
-	 l5e+n5K5U3h5nCaN/Wu4f6X8b5ioHjrEMIWrxbffYCa3xvNXm0Wz5iNq4TKwzMqMof
-	 vd8SAsHkm/xkRVm0MVxH7G+y2WloD7OOQOPSpz5fhbUwGT6Ma7DnEyrnb309YNdFgi
-	 oWV3eCFo9cF5y4VfvS/qJokJ/Gz3H0LoO1riAX1vFL40ZM4pq4VbBE/lK+07HQeeWx
-	 bqn3XMmUtUScdXbLTUzEIMa+yMpyurbLOZddFuGQzZ90qBg6gOb+lw00yZz8aGD77g
-	 87RdBUXvaDnkg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 7BBD943470;
+	by smtp.kernel.org (Postfix) with ESMTPS id 5D78A1F000C2;
 	Wed, 21 Oct 2026 19:53:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792612408;
+	bh=RsU/Miju2jeqymvYcNJXTnmmqKzjTj43vuEKKcaUunA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=bnlCBH3bNTfL2w/5DKcbZS/2oAbxh6Wf8W0IFvfHLN7KsRM23UQbyCZRwuYADigVi
+	 48vlh5TQqwlYDyjy4wTDXBignuk+5QnIcygUh0AnUkS96k1kJHFidLcWzPV3njsYy6
+	 SaZKk05YLFYZTjfECpDJFX9tCzVXK3gKJCCg5dRjceH674ssyRKZpb9Ei7D5TguLWB
+	 0G+2aqhDVdgJw6FdEnbtj6yRL1kkDYrarZSYncrCsgGLJKAKmWLSQMF4WYL2s5GI4F
+	 efccX17QCjV/ee8QhfoCjIO4TuekWF/OuARuTF2VTnTOhhKN+7uPAxrOeO3V94Jlwh
+	 P/HreXwXXDl/g==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id DF21B4342E;
+	Wed, 21 Oct 2026 19:53:25 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Thu, 22 Oct 2026 03:53:38 +0800
-Subject: [PATCH 18/18] MAINTAINERS: add Zhihe A210
+Date: Thu, 22 Oct 2026 03:53:21 +0800
+Subject: [PATCH 01/18] dt-bindings: vendor-prefixes: add Zhihe
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,7 +83,8 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-a210-init-v1-18-5e438f972d24@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261022-a210-init-v1-1-5e438f972d24@iscas.ac.cn>
 References: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
 In-Reply-To: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -103,55 +104,41 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
  Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792612403; l=1169;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792612403; l=842;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=V6Z8Ev0gcQ0r2yYs+mWTjEjLznl2g2dwdtHJ63ANCKs=;
- b=Di15BnB3X6xsFswYVjWNhBkyYaNeNMuez9huqeW+b4XDKwnUSTspd8HoIu5BpCglT0b/YU6U4
- ZSBAXy9IWawBK0XdUTZlacSXjqQQPeKd/61Hz25Zh6gEFreOUZghqV3
+ bh=78H4CNA6muw7rwfV33m2sQ0QfyIqTcYL4B8JahPXMn4=;
+ b=t+8nmRY5jqUnjhsyJuU5bc0XAjgdW0Nc/aLBwFxClNEhBrv3hKm41Bh0UldozVyP7v1NVjg6W
+ TYA3io+Zy/zDPwEFWFtpNEnG2PU5Aar5s1XUownQN7JDOebw2WOo9KY
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
  auth_id=1262
 X-Original-From: Han Gao <gaohan@iscas.ac.cn>
 Reply-To: gaohan@iscas.ac.cn
-Content-Transfer-Encoding: 7bit
 
-From: Han Gao <gaohan@iscas.ac.cn>
+From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 
-Add Zhiguo Zhu and Han Gao as A210 maintainers.
+Add the vendor prefix for Zhihe Computing.
 
+Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- MAINTAINERS | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 782389bd5cd3..97cf956fd632 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -30115,6 +30115,22 @@ L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	arch/x86/kernel/cpu/zhaoxin.c
- 
-+ZHIHE A210 SOC SUPPORT
-+M:	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
-+M:	Han Gao <gaohan@iscas.ac.cn>
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/zhihe,a210-*.yaml
-+F:	Documentation/devicetree/bindings/pinctrl/zhihe,a210-pinctrl.yaml
-+F:	Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml
-+F:	Documentation/devicetree/bindings/riscv/zhihe.yaml
-+F:	arch/riscv/boot/dts/zhihe/
-+F:	drivers/clk/zhihe/
-+F:	drivers/pinctrl/pinctrl-a210.c
-+F:	drivers/reset/reset-a210.c
-+F:	include/dt-bindings/clock/zhihe,a210-*.h
-+F:	include/dt-bindings/reset/zhihe,a210-resets.h
-+
- ZONED BLOCK DEVICE (BLOCK LAYER)
- M:	Damien Le Moal <dlemoal@kernel.org>
- L:	linux-block@vger.kernel.org
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index ba2002969373..21142578837b 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1973,6 +1973,8 @@ patternProperties:
+     description: Zealz
+   "^zeitec,.*":
+     description: ZEITEC Semiconductor Co., LTD.
++  "^zhihe,.*":
++    description: Zhihe Computing Limited
+   "^zidoo,.*":
+     description: Shenzhen Zidoo Technology Co., Ltd.
+   "^zii,.*":
 
 -- 
 2.55.0
