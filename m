@@ -1,70 +1,69 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=193.142.43.55
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792585739;
-	b=PwtAumehOsoH2M0dD1cheL2A3MYQWX4Jtt7Ln29CMOB5LRAxQTdZb8mOlM5KnEO3yMKZ
-	 KOwxKKQKhhQxYxigzikPgBG7JnARRlq/qxK9RrbUjVBGN/DY4oWp+YHBcIvPPhcFbWufU
-	 hm7K+3UqHxMDgXtq0M6w9LB3ZKBDrArd31qwL8B0Jnzbe9VYA3q5n9zv0xQFiNS2dNLYj
-	 Bm86QHkX9QHWwxS/+74yhjEqDiGx+QGUK5PCHZPQEmJ7M6eCoTJRJqz1xrYZtoI32DlXU
-	 hjAs1HeO9D/Ysa+3RQEj6y7qA6WEITB8JfJFYvJixbOZJHSu1fU6TtdzCN1hEDZsVOQ==
+	t=1792585821;
+	b=y601hawhtPsxM9zNuD+A5L/K5cgnZ5abxPwDSZ6kIqiasats5OFHeG4zbsYslP2sXiHW
+	 mx5V1hsYGLK04MG1WCiHEzBZZvKaEoh/ozX361keBApDtnOHDpCNNnww5S19dUpZ/LnkV
+	 3zcfoTOJA4dAJZTD+SVCypctTzxjRoXCOT96Sfc3o+86KcM8ltQWOg4aEiJ50OhHwZ+nc
+	 fby75CWK4j67Et3Ade00fIZ53/LvYS020aBZtjzw/XHKEVsk1x74OnC/OrAyHEKv+vQBG
+	 48itz6dONZD6FsUebTDaPGl/fmn6Ff73Hqr+KU3b+my1P4BDd3AkB7GlTD83jactsKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792585739;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792585821;
 	h=DMARC-Filter:Date:DKIM-Signature:DKIM-Signature:From:To:Cc:Subject:
 	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
 	 Content-Transfer-Encoding:In-Reply-To;
-	bh=s3WxgvdUEFJ6GHTrMzFGV8FdssmgGqL1hZNPX+C7OH4=;
-	b=LpO3ncQFOA910jqTxpDrXXY9YXiGMzjdcPDd6KlKmLSgXkezwQUC21f9exPsUC2ih7Nz
-	 rmRbKC2OVlL4upQ74AUuvwEMoPsyXBG1MStnxf69moO325SqwMhin+z61wpWY8txY4JrM
-	 lM9m0SGev2oMG/Cbdm7ALItI+mBl5q+Cnu9z5l1Uolvh9B+wqCC8LeVD7vd1Ex19XKXn7
-	 4yj7nzzbbX+zMLqVqhhNQY6oFc3hwoi47/nn7JMDQzkR80rtH+n8muJca7csVyMrImuW0
-	 ghikdcjGinWD4Xl1aeFYOl/7PJ5rpu3pLlQbO6vZWrasq3MxLpgssizMUXwqGAElwvA==
+	bh=aOb1JUFJeX8/Ty37TWLdjDq3uADcY0jWX+HnhA6S0I4=;
+	b=Mt1tYIO6F2kTrXHS0UORucq5z+1iQk633RDPKC4pDzYZerSJCa7B71hnU8IB2oo9zNWz
+	 LdGc8DgMJ31EkRUED0JhLJfiYku019h+GBNlWRHOBHhhWDIyQ9X3uxHocwl/nPrRfIL5R
+	 YdrLGScZhxy2DXMbc9VTHXwsrz3TqT15GC1ufw19bOemkROWdCQOHxzMdv4WupqyFcbyz
+	 jaL/LA+ARienKmDhb1NPqpgtzFgV7sxKdlyEJgyNZCUx0xtkHthSPYUPsrmQrO/5xEykW
+	 +cHSABdTPSJ4xbFAUnVgTyqI39T7j9bOB2XHxH7qVgmiMaPsOjYri2fNCYj5gRil9Kg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linutronix.de;
 	spf=pass smtp.mailfrom=linutronix.de;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=KYh4HceC;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=YX4tGLsX;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=mijJOCOH;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=9O5oFVTB;
 	arc=none smtp.remote-ip=193.142.43.55
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC726606A31E;
-	Wed, 21 Oct 2026 12:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EC726606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B866D606A324;
+	Wed, 21 Oct 2026 12:30:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B866D606A324
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=KYh4HceC;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=YX4tGLsX
-Date: Wed, 21 Oct 2026 14:28:56 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=mijJOCOH;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=9O5oFVTB
+Date: Wed, 21 Oct 2026 14:30:18 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1792585737;
+	s=2020; t=1792585818;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s3WxgvdUEFJ6GHTrMzFGV8FdssmgGqL1hZNPX+C7OH4=;
-	b=KYh4HceC4GbfH8wnN/62Zzulk6dSPFGR82sEElB2tnUcW9MFzwBROnQzFmleK2q1oIGnL1
-	gwRRDedbqhFwDkbsy6GHv4NkK8IfOz+0hsEEx3XVj2nXhHrjMa/ymdUbARAELaQxF7XWHI
-	IOz7oC6+IN0UO8TQ133eW7LEcrnUV9KCrKKot2KB6dedDhgil+8/wrsmlV3h5X4PHufL3A
-	bv/nn30b8yGpIXvqK0lZyHH4fgNrT8eMj30IPk2GjjWuNbGfXrWs/v2Ai7mzC/lhVnlNM3
-	2vvyczV66Zf0itqkhXQoMlOvIscClH5/iFPCOzE3w5IvOafibYEF9ad4/D9W0A==
+	bh=aOb1JUFJeX8/Ty37TWLdjDq3uADcY0jWX+HnhA6S0I4=;
+	b=mijJOCOHbtrXaTWwx+tEj5q5uYokpyqlI3Gw+9ZB6lBO9QsO7K4scpJnPKOJaoZTl9yMlG
+	VmJjXRM0VzMJB+2VlAL8IWNwH/4jAax0cawPamDDI84J7Qip1u/EF1f23QV6Em81rOVV76
+	td852EiW1hWjDEFGY26rp41G5QrC5kIbBcrQ0BrztUAw9Dgz8eV7kB3KhT5biKKfLu78XV
+	TbH2OG0sWM+B7bcXoBgpSEtQC0yo5N+wuS2PJOwIQcV83gMpXwQED9jaSz6aaQeK1ncdCv
+	TN3SRKtlNlElebmfuW+DEOz7T17XvE+WF9Oz5pzjl8RnfyMjc6ByxAf/bM0XaQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1792585737;
+	s=2020e; t=1792585818;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s3WxgvdUEFJ6GHTrMzFGV8FdssmgGqL1hZNPX+C7OH4=;
-	b=YX4tGLsXTRnmLhHoBKC8CsrGP7HUXz05NThVof2N4vpt4pM5davW9fORoiaUdaqh1OYg49
-	rD7Palv9ITZJkRDQ==
+	bh=aOb1JUFJeX8/Ty37TWLdjDq3uADcY0jWX+HnhA6S0I4=;
+	b=9O5oFVTBHnT4VQouTS1SQCJ9kNcXCwzboZSDnbeN0G9ZGOs8LZ3l48rsg7biG/0AmzQIig
+	/CXOj7WMnUWJ1zAg==
 From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: Linus Walleij <linusw@kernel.org>, 
 	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: sysfs: use const APIs for legacy sysfs attributes
-Message-ID: <20261021142431-83ac35ae-17cb-461d-9661-945c1edd7bbd@linutronix.de>
-References: <20261021-gpio-sysfs-const-v1-1-3d89ac247086@oss.qualcomm.com>
- <20261021125252-51f1f0a0-46e9-4a10-92ab-46cd099c108e@linutronix.de>
+Subject: Re: [PATCH] gpio: virtuser: constify struct configfs_attribute
+Message-ID: <20261021142956-225001d4-e081-4e06-9c9b-9916d146a104@linutronix.de>
+References: <20261021-gpio-virtuser-const-configfs-attrs-v1-1-bca474c9cd12@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -77,34 +76,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261021125252-51f1f0a0-46e9-4a10-92ab-46cd099c108e@linutronix.de>
+In-Reply-To: <20261021-gpio-virtuser-const-configfs-attrs-v1-1-bca474c9cd12@oss.qualcomm.com>
 
-On Wed, Oct 21, 2026 at 01:17:54PM +0200, Thomas Weiﬂschuh wrote:
-> On Wed, Oct 21, 2026 at 12:47:25PM +0200, Bartosz Golaszewski wrote:
-> > Replace the deprecated non-const sysfs attribute APIs with modern const
-> > variants where applicable. This leaves out the attributes embedded in
-> > struct gpiod_data as this structure contains fields that are modified at
-> > run-time.
+On Wed, Oct 21, 2026 at 02:24:29PM +0200, Bartosz Golaszewski wrote:
+> In preparation for the constification of configfs attributes, make the
+> existing instances of struct configfs_attribute in gpio-virtuser const
+> and use the new st_attrs_const field of struct config_item_type.
 > 
-> Leaving the dynamically allocated attributes with non-const signatures will
-> make it harder to remove the non-const APIs later on.
-> Would it be possible to switch those to const signatures, too and cast away
-> the constness in the store handlers?
-> I see that this is a legacy interface anyways, which might be gone by the
-> time we want to remove the non-const APIs. But that applies to the
-> currently proposed changes, too.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-If I understand correctly, the dynamically allocated attributes are only
-necessary to retreive 'struct gpiod_data' in the attribute registered on the
-*parent*. Those registered on the gpio device itself can just use dev_get_drvdata().
-Instead of registering the 'direction' and 'value' attributes on the parent,
-you could use symlinks pointing to the child attributes instead.
-This would make the code a whole lot simpler.
+Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-Currently it is not possible to create symlinks to sysfs attributes, but I have
-simple patch for that locally. Let me know if you are interested.
-
-
-Thomas
+> ---
+>  drivers/gpio/gpio-virtuser.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
 (...)
