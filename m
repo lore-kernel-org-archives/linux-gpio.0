@@ -1,61 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792577497;
-	b=vMsWORq69MxbizVond/6lGQbtgCI1Ta8iui//pI/R1BpyT3gLbGuMhluhm0510k0NiwO
-	 sYya3JyiMcrEeyVY0mq70BRvIKdvAofYdzT2QJhzUD2mVRarGNABK4DtltwHFhOkXFBWi
-	 02D6ZsO3k/Y97k4FWucxLKnI5zrKp6QTE6zQL1JF3g78JYtqTqdFAvw1OMXky2+aX8nHD
-	 e1ZfLkmKiHQBLD7TmzmQUQ1H6rlS9VQeM7LcM5D5e6puXX+hUHCMxrhwj9HtJ0gXbmJiy
-	 360+WqnSVh7pqVHVqubutLH7sPBQnnsJLFmCl49MGoA2p8xsGs99D0bhfOIEMDR20Yw==
+	t=1792578963;
+	b=beatevudmlpKoC6EQdRnQzslEXP1emZMPPztKqtPPvrKcTuo6XRrD5SSNBOtrlLPkW4S
+	 eWeqimz7bYXIVXy9lffFFHfZT/buwUbWRahDCP6v77FfGMkVPWfR9bfafs2rpgI8fjMy/
+	 gb2OIhf+5lWgPY978RxloCuNXKKroY0ZNOvtBILlf0R5Mj0sIiGDvKCb1DIijIGqH/Gcz
+	 K44rEx1LilnWwwY4LhqXeCAVimaP8jnVo2b8lgEkrNpxCSAlKBnOdXOfCrMgAmoWGlccx
+	 Hl6F7TdUAAw6mAFZqfZVoAIfbNULebXhT7pxmn0Xl2SXG8JTb+R3uffxWzOOdCRC3Kw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792577497;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792578963;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
 	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
 	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
-	bh=6ycIBvnT3f/4FFIcqiKcIqKHebJmGEJQ2XddJgSR1ME=;
-	b=2n1DZYDApTaKILMiCojHa1RUCP1NeGHtE3i9kc9PBcBerwVEcz03Ggb/8nB73EjM+OF+
-	 y8L/PNhXzfRKXh2JK3UzbqUJ5IoCt575umJHsh9mHGUzp5QfoMwIU82PQRBx0vFFUb9lF
-	 AY8LSOoEH4XirMGf+GX6hHJGZZgVuVa7GFqVccZCimBtkg2v9OLisKoq8Yeil3NJTbl42
-	 IieqavOpGh0eUewW9i3Ncw9aOiVzXELE8NT4coxT4/j0LsewIGujUwnRXE8jYlmqz66xE
-	 FddOQxXlkCwKYbJwxvH7SXqzghl/aJTXfzOrup8zCrCXC/j5mtFe9wtGnWmVIFcaj1w==
+	bh=nWFWBNhzQ/o5SPq4P+1ZXI8VyINKN2wnBvU97up1HzY=;
+	b=xRrkbTvAVUklnbJu+e9wX0yNIipblLArscH7q7fWvy1WWzZmKrDGM0WbOtzBH41eS8rB
+	 7VORGtb12uZ8d0YgtHSYLrv6rtJT/eCTLcuf0VtcIklosIJkpNj8ItM4W3CJksRYFR2fI
+	 MJ1yFGk4w2Oo8gzTywfKOmjLiZEPhBAJhk7NUG+WArKT/X6dwR2xWvjBg96C9E+bkd5+x
+	 Kj+fsXJ2nPL7JUG7KVNzUyLeRYTzUqOXgdwd70px/4vZRVq1rp0PFdtjwtQhJRGt+ZbDk
+	 jm3a4PEGevm0QfDsbg7q6HxhK4zWb3FguR/QZyL0sREqvpJ3gphnxzUhsHyx1Q7MFfg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DB2hvRAL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fsW4mV0x;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5B9606A31B
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA92606A31A
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DB2hvRAL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C34B1F000CD
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:11:36 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fsW4mV0x
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4D61F000CF
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792577496;
-	bh=6ycIBvnT3f/4FFIcqiKcIqKHebJmGEJQ2XddJgSR1ME=;
+	s=k20260515; t=1792578962;
+	bh=nWFWBNhzQ/o5SPq4P+1ZXI8VyINKN2wnBvU97up1HzY=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=DB2hvRALuk4T8YpbQWs/aGAfMRjvFbKFfeit/3w9jcV4jj9yfZMGZUKQZ+H0u/v1N
-	 C+JkwZujc81zQl9JDF17A+Ur+eUUF641dL8EBaCnsiTxtB2XPxKxgtzZLlEjNuXmCi
-	 7wT64gGygmmAa/+OJtGvNFEVF7ZHSNLW5XIHlr2HqIyp5xRzH20G2eP87pwejflctv
-	 J51jKPWxaXpICDNWAoe9I8uvW4JRuNNK9QPyZVhdlI4QgXQeXucHkBC15E87OKpVGA
-	 MUjRUCwrMQuLmsQt8GsyV545br0GqhluCjgSciclFTDHFvTpMLcRaPRvCyVX+FEMKY
-	 FDrcKBkYcsDvw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3ab4891fc73so4695301fa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 03:11:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByJpBhKnNO2bb6py+1HyfefbCMiHaBnu41ucXldgSspSwEzUD9XvWfk/OAvXv8yyI0stYDDNmeWQkKT@vger.kernel.org
-X-Gm-Message-State: AFq9FYJUwLbpV48nbQArWfaFn3RFpi6M0x8bju7btMsC48lt3ByOnWp7
-	fnNPCw345N0HQz53a2SPMqJz3TFyfship40zQM0bv+XQ76t1hHq6/IXhkTsbfid/MYV4M2fnRuh
-	xqCS6djuin4Cb1clpN01WjAH1VnmIGwlgposobLA80Q==
-X-Received: by 2002:a2e:9fc2:0:b0:3ab:1d89:4981 with SMTP id
- 38308e7fff4ca-3ac4420fd63mr4950901fa.22.1792577494779; Wed, 21 Oct 2026
- 03:11:34 -0700 (PDT)
+	b=fsW4mV0xCvh7j07oQDA2DaxzqRvPG/7NKHO9fINk7Tj5SvoNuuPmfTiC2qb0PrKTV
+	 IVfiKHGkb0IT13LKthWOt6f5pJaxl5u02EoPFbuw6e0olBZOmxLIvsuY0ZWzEEw+Zg
+	 +an+0Oo30m2iDY2JrZqF+6r7O3TuBAcmTFeYR8G1dA+m2yduoxGh9/+5CYmQQerP1z
+	 L5LN1vx8XzAm/NO20fgZtSX9v8CJBWnf18hbNBWpDw3fU3OXws79P/JzE00kWTQkvi
+	 4aYomHJcyaDNeCyXZ8JQCLsBmQd79RKE2jwzOoDWjYiUMdQWRkkU+C6+8TREdCxINN
+	 xmtBuon8n9/jw==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5ba36cc21cdso638243e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 03:36:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzHNDPaqt8iAuqClihY7jtjwTerlMlA0cVpptJ5TZ/U01F8I8BLg9wRiVwNFnda9XdnHOScCtjbcO35@vger.kernel.org
+X-Gm-Message-State: AFq9FYJmDgzEgqCq24uE9UzEyVvlRXgp9OfjVqL8WelFeBRB+czaaPDe
+	q03lsGDY6seG18XzaAhIlv65tqnP4SPJxI1PCxS6yOebaTOrpQdO2Ne5Rynr52otYwiGHKLcjeg
+	YJxgrpc+kvmbn63mcaci83jg3RaApbCL9vq65ObPn4A==
+X-Received: by 2002:a05:6512:31d0:b0:5be:4ab1:6f41 with SMTP id
+ 2adb3069b0e04-5bfa1c0476dmr651187e87.52.1792578960961; Wed, 21 Oct 2026
+ 03:36:00 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 05:11:32 -0500
+ HTTPREST; Wed, 21 Oct 2026 06:35:59 -0400
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 05:11:32 -0500
+ HTTPREST; Wed, 21 Oct 2026 06:35:59 -0400
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261021015004.1537738-3-dmitry.torokhov@gmail.com>
+In-Reply-To: <atX7Z9qd_plw-Waw@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,113 +65,167 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261021015004.1537738-1-dmitry.torokhov@gmail.com> <20261021015004.1537738-3-dmitry.torokhov@gmail.com>
-Date: Wed, 21 Oct 2026 05:11:32 -0500
-X-Gmail-Original-Message-ID: <CAMRc=MfZg36BULXh3n-ce_x_4B_xOn3Jp4Jgo5BN1LsB2FqaTw@mail.gmail.com>
-X-Gm-Features: AclHuK93RmiVJez1F5ZBGW1MRL9mn0HKYPC0Sp-pzI0ulqkbzauEM-_z5V5eYqA
-Message-ID: <CAMRc=MfZg36BULXh3n-ce_x_4B_xOn3Jp4Jgo5BN1LsB2FqaTw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] Input: soc_button_array - convert to software nodes
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andy@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hans de Goede <hansg@kernel.org>
+References: <20261016-gpioctl-v1-0-8770622679b8@oss.qualcomm.com>
+ <20261016-gpioctl-v1-2-8770622679b8@oss.qualcomm.com> <atX7Z9qd_plw-Waw@ashevche-desk.local>
+Date: Wed, 21 Oct 2026 06:35:59 -0400
+X-Gmail-Original-Message-ID: <CAMRc=Mc_PL7hXTxiw2NPKU4L2-Fd4p2KRBRjiC5EMcuWzRKe1w@mail.gmail.com>
+X-Gm-Features: AclHuK9w2hgolWITiLxATTHEiojs2dNAyie1bEOc_h4q6fg2vkE32I6SGJsvsEQ
+Message-ID: <CAMRc=Mc_PL7hXTxiw2NPKU4L2-Fd4p2KRBRjiC5EMcuWzRKe1w@mail.gmail.com>
+Subject: Re: [PATCH RFC libgpiod 2/3] tools: factor out line event formatting
+ into tools-common
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	Vincent Fazio <vfazio@xes-inc.com>, linux-gpio@vger.kernel.org, brgl@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 21 Oct 2026 03:50:01 +0200, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> said:
-> Convert the driver from using legacy platform data to using software
-> nodes for registering 'gpio-keys' devices. This allows us to
-> transition away from platform data and use generic device properties.
+On Mon, 19 Oct 2026 13:13:43 +0200, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> said:
+> On Fri, Oct 16, 2026 at 04:18:09PM +0200, Bartosz Golaszewski wrote:
+>> Move helpers used by gpiomon for formatting of line events and printing
+>> of the help text for format specifiers to tools-common so that both
+>> gpiomon and the upcoming gpioctl can reuse the same code.
 >
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/Kconfig            |   1 -
->  drivers/input/misc/soc_button_array.c | 134 ++++++++++++++++++--------
->  2 files changed, 92 insertions(+), 43 deletions(-)
+> ...
 >
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 169768e3d5bb..a2984c1048f3 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -906,7 +906,6 @@ config INPUT_SOC_BUTTON_ARRAY
->  	depends on KEYBOARD_GPIO && ACPI
->  	depends on X86
->  	depends on GPIOLIB
-> -	select GPIOLIB_LEGACY
->  	help
->  	  Say Y here if you have a SoC-based tablet that originally runs
->  	  Windows 8 or a Microsoft Surface Book 2, Pro 5, Laptop 1 or later.
-> diff --git a/drivers/input/misc/soc_button_array.c b/drivers/input/misc/soc_button_array.c
-> index 8d782ef4f78b..aa7838b864c2 100644
-> --- a/drivers/input/misc/soc_button_array.c
-> +++ b/drivers/input/misc/soc_button_array.c
-> @@ -14,9 +14,11 @@
->  #include <linux/acpi.h>
->  #include <linux/dmi.h>
->  #include <linux/gpio/consumer.h>
-> -#include <linux/gpio_keys.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/gpio/machine.h>
->  #include <linux/platform_data/x86/soc.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/slab.h>
+>> +void print_event_format_help(bool include_line_chip)
+>> +{
+>> +	printf("\n");
 >
->  static bool use_low_level_irq;
-> @@ -59,10 +61,10 @@ struct soc_button_data {
->   * gets called with the lid open (e.g. on boot and on resume), it sets the
->   * irq-type to IRQ_TYPE_LEVEL_LOW. Where as the gpio-keys driver programs the
->   * type to, and expects it to be, IRQ_TYPE_EDGE_BOTH.
-> - * To work around this we don't set gpio_keys_button.gpio on these 2-in-1s,
-> + * To work around this we don't set "gpios" property on these 2-in-1s,
->   * instead we get the irq for the GPIO ourselves, configure it as
->   * IRQ_TYPE_LEVEL_LOW (to match how the _LID AML code configures it) and pass
-> - * the irq in gpio_keys_button.irq. Below is a list of affected devices.
-> + * the irq as a device resource. Below is a list of affected devices.
->   */
->  static const struct dmi_system_id dmi_use_low_level_irq[] = {
->  	{
-> @@ -131,18 +133,31 @@ static const struct dmi_system_id dmi_invalid_acpi_index[] = {
->  };
+> This is really confusing. If you want to separate, do it in the caller.
 >
->  /*
-> - * Get the Nth GPIO number from the ACPI object.
-> + * Get the Nth GPIO information from the ACPI object.
->   */
->  static int soc_button_lookup_gpio(struct device *dev, int acpi_index,
-> -				  int *gpio_ret, int *irq_ret)
-> +				  bool active_low,
-> +				  struct software_node_ref_args *gpio_ref,
-> +				  int *irq_ret)
->  {
-> +	struct gpio_device *gdev;
-> +	struct fwnode_handle *fwnode;
->  	struct gpio_desc *desc;
->
->  	desc = gpiod_get_index(dev, NULL, acpi_index, GPIOD_ASIS);
->  	if (IS_ERR(desc))
->  		return PTR_ERR(desc);
 
-This GPIO is requested for a short time and then released. Do we run into
-a risk of the actual target user requesting this pin at the same time and
-failing? We don't support shared GPIO pins for ACPI yet (though I want to
-add that eventually).
+We've been already doing it this way, for instance in print_chip_help(). I
+don't care enough to change it but feel free to submit a patch if that bothers
+you. :)
 
-I know this has always been like this but I'm wondering how it works exactly.
-
+>> +	printf("Format specifiers:\n");
+>> +	printf("  %%o   GPIO line offset\n");
 >
-> -	*gpio_ret = desc_to_gpio(desc);
-> +	gdev = gpiod_to_gpio_device(desc);
-> +	fwnode = dev_fwnode(gpio_device_to_device(gdev));
-> +	if (!fwnode) {
-> +		gpiod_put(desc);
-> +		return -ENODEV;
-> +	}
-> +
-> +	*gpio_ref = SOFTWARE_NODE_REFERENCE(fwnode, gpiod_hwgpio(desc),
-> +					    active_low ? GPIO_ACTIVE_LOW :
-> +							 GPIO_ACTIVE_HIGH);
+>> +	if (include_line_chip) {
+>> +		printf("  %%l   GPIO line name\n");
+>> +		printf("  %%c   GPIO chip name\n");
+>> +	}
+>
+> Hmm... Personally I don't like such an approach. The alternatives are:
+> - having 3 (if the order is strictly requested like this) or 2 helpers and
+> split the function to two instead of boolean parameter.
+>
 
-Sigh... I hate it and it looks hacky but I also don't have a better idea. :(
+Or even better: just implement the two above in gpioctl too. I'll do
+this for v2.
+
+>> +	printf("  %%e   numeric edge event type ('1' - rising or '2' - falling)\n");
+>> +	printf("  %%E   edge event type ('rising' or 'falling')\n");
+>> +	printf("  %%S   event timestamp as seconds\n");
+>> +	printf("  %%U   event timestamp as UTC\n");
+>> +	printf("  %%L   event timestamp as local time\n");
+>> +}
+>
+> ...
+>
+>> +void print_event(uint64_t timestamp_ns, unsigned int offset, int event_type,
+>> +		 int timestamp_fmt, const char *fmt,
+>> +		 const char *line_name, const char *chip_name, bool unquoted)
+>> +{
+>> +	const char *prev, *curr;
+>> +	char spec;
+>> +
+>> +	if (!fmt) {
+>> +		print_event_time(timestamp_ns, timestamp_fmt);
+>> +		if (event_type == GPIOD_EDGE_EVENT_RISING_EDGE)
+>> +			fputs("\trising\t", stdout);
+>> +		else
+>> +			fputs("\tfalling\t", stdout);
+>
+>> +		if (!line_name) {
+>> +			if (chip_name)
+>> +				printf("%s %u", chip_name, offset);
+>> +			else
+>> +				printf("%u", offset);
+>> +		} else {
+>> +			if (chip_name)
+>> +				printf("%s %u ", chip_name, offset);
+>> +			printf(unquoted ? "%s" : "\"%s\"", line_name);
+>> +		}
+>
+> Independently on the original code, I would go with positive test
+>
+> 		if (line_name) {
+> 			...
+> 		} else {
+> 			...
+> 		}
+>
+>> +		fputc('\n', stdout);
+>> +		return;
+>> +	}
+>
+>> +	for (prev = curr = fmt;;) {
+>> +		curr = strchr(curr, '%');
+>> +		if (!curr) {
+>> +			fputs(prev, stdout);
+>> +			break;
+>> +		}
+>> +
+>> +		if (prev != curr)
+>> +			fwrite(prev, curr - prev, 1, stdout);
+>> +
+>> +		spec = *(curr + 1);
+>> +
+>> +		switch (spec) {
+>> +		case 'c':
+>> +			fputs(chip_name ? chip_name : "unknown", stdout);
+>> +			break;
+>> +		case 'e':
+>> +			printf("%d", event_type);
+>> +			break;
+>> +		case 'E':
+>> +			fputs(event_type == GPIOD_EDGE_EVENT_RISING_EDGE ?
+>> +			      "rising" : "falling", stdout);
+>> +			break;
+>> +		case 'l':
+>> +			fputs(line_name ? line_name : "unnamed", stdout);
+>> +			break;
+>> +		case 'L':
+>> +			print_event_time(timestamp_ns, 2);
+>> +			break;
+>> +		case 'o':
+>> +			printf("%u", offset);
+>> +			break;
+>> +		case 'S':
+>> +			print_event_time(timestamp_ns, 0);
+>> +			break;
+>> +		case 'U':
+>> +			print_event_time(timestamp_ns, 1);
+>> +			break;
+>> +		case '%':
+>> +			fputc('%', stdout);
+>> +			break;
+>> +		case '\0':
+>> +			fputc('%', stdout);
+>> +			goto end;
+>> +		default:
+>> +			fwrite(curr, 2, 1, stdout);
+>> +			break;
+>> +		}
+>
+>> +		curr += 2;
+>> +		prev = curr;
+>
+> Can be in for-line.
+>
+>> +	}
+>> +
+>> +end:
+>> +	fputc('\n', stdout);
+>> +}
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+>
 
 Bart
