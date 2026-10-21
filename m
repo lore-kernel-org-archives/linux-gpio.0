@@ -1,95 +1,43 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.176
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792611813;
-	b=mH4aXoqW+UUOXeqNiu4TyOeedrVHRr6oGcZLE9j71EyIczVH5Xk/iNyvVPhiJO/HWN2z
-	 EugzXhkYJBBbS0KePmhYcVSCo1cO3UJyW36eRb9vFxuETRMWdssq+ljIFcIVbDV4Vf3mt
-	 aOeg5ldaNQ63PbpO6eqp1Wh7GK4LxJuN7pICBe8yOSqGPO6xUh9sFziCd1tNa4q6yj5EN
-	 olq4gMKMpSs/SiNgONtQiBFR389+9mGYxVVhYwJ26xGSVRM/ScJXjshKBI/f2E/h5JSYn
-	 Z/md6pPO+awFvtjlMKgWj4SgELVxfOOvgn/2fAHEomP+bTlaFs4NWFCusAx2d3l7K+w==
+	t=1792612125;
+	b=A9UQ0FUnkZ7Z64Tk/tz/jdx+ePS4mrPduySASe5BBs9p2k/MjBjwIRDlocsEHrPBIvmg
+	 BZXFYi62Jg2tbnzaosDwWgZucVKDSpCYnkDZZkO8TpoQ9fcrCQm/XtvtgStJZ4Z+irGaT
+	 ZsRsS6S/X0ErFeZ4KXoRTq1ax/+HC1teEp5xsnfhiTur8Jd97q7+rbRpHROscvxs+wjf7
+	 bUQtczLJiDAGSDGWE0eb/ia84xa48WT1j/9wizU19IalU0SCdXNfttLbsRnjM/TIA31ER
+	 WvNhztoP7qPHXiO60zCu7gfsAR1NC4vNvjN7X9eN8qo3GgDSYdQB0Vn7CJXmn9PuQmQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792611813;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=+ywMzQ+to7W6P4+Q6vGmUU1pcAEfM/gAHMO22DZ3gX0=;
-	b=3Bpd2IL/KDOTljqo8Lxt/ZxO7Uf+6P8/EC66ujCW1t9oi4ySBdj0h8g/pl5KGCZnXDyu
-	 wSpraA9uWJRpccObwFU2AE8xPJ41cogSYIuuumn/moS7D2xnuB3uB80HE7NNNNwqxyFL4
-	 UgSAIQ8OCDYriVF3PsqGx5TTPFG7R7nrsG6xwMe8IwGJc9WYBUR1Zuk//+Wp+DuAZNT1b
-	 /yFcixz6kGlUo3HH85vVeScyWGHEviOr9V4wHG+lsR9WDUYf/9aD4VBHWuPAmOUvTMdwe
-	 /frEpASpnvHAC05ZMzOOvnZxeJhyDDqgYUFGz2ZNALa7Z30FFRW73p8rsDPpVlxkL/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792612125;
+	h=DMARC-Filter:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-CM-TRANSID:X-Coremail-Antispam:X-Originating-IP:
+	 X-CM-SenderInfo;
+	bh=Wg/4rCc9Y69RwQr7t1OslmfPJs2UBZmRz8gauVCMqkE=;
+	b=c/7uWWRNARoQOCxJpaEVOKboYr7ZMWGZUvNJxrExnMpq3ro0mqRTDNOeqLvRzZdlgZ0T
+	 ii0u4qIe13ooR4z0eoQgmXLRlaPkygSitEUz9LWWy7WSuYO4XbJM1m/QxkUWPgFn6U9NT
+	 4+8+qklrJh1aBRFL/DkberzKByZlxv/khcco24HLGwIPzyVdXFq+rvyshXl2UgRU5nFBR
+	 hRoM8s0GeTP5zGX2zlADjA+qh047+NhZ3hEyHbFFTo+YGxapkPCSevDDNpTX0ZqM0YdnI
+	 2VX+AOXFkup5SxI9AGNjyJNOKRMnVsXeJOLg5xIjoO9qRtSCVaM2QhDvmSMX7/Xvk+Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jXJLdWXU;
-	arc=none smtp.remote-ip=74.125.82.176
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=iscas.ac.cn;
+	spf=pass smtp.mailfrom=iscas.ac.cn;
+	arc=none smtp.remote-ip=159.226.251.81
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C97606A31B
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 19:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 18C97606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jXJLdWXU
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-368581df789so240109eec.1
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 12:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792611812; x=1793216612; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=+ywMzQ+to7W6P4+Q6vGmUU1pcAEfM/gAHMO22DZ3gX0=;
-        b=jXJLdWXUbIO6BAVwWpahbYB6kuv2stskNJnEjTt/T7LPq4h4xpcSwcbuPX2lyLt/IO
-         kOo1UyQ2lyrkEAqUJZzWecphJKuBAdwyzrTJN4t8wG1U5htXFP0t8cy9P+CUGP0k4kfm
-         3IcrAb8ErsRv5lF+kV3Q17Lox7ICKGz9UogA7MUft91uDXXzTv/WlOOvuuKosgbVsq7A
-         hhMyBGTPtsRtnvqFtS2n9VtahzCh+YEbzLvwhIQwn7C3IhopiegDVMR2RPlR4SHK+avU
-         dEPeQ5khKJehe/UPizMk5ur7ob4ucM9d76X5OWCBTnBHAU/fih4scufI6y0fCpfOVUut
-         TVDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792611812; x=1793216612;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+ywMzQ+to7W6P4+Q6vGmUU1pcAEfM/gAHMO22DZ3gX0=;
-        b=PHu+6oPAYAyeAMLIhOC9RsubaUJWZkaX2UpprOV0Kaj3aRcVJ075uHGJ7RaJ/6cLgM
-         rFPj1kFOtlVqRU+KImOUJrECttZMcVnH58r0YF96Q5GM1FPwN6e7PhA55XYc8sHIemsl
-         MpAsFMtjOBSEc7mwSet4ryjitRMDwBOGVza3SqWdXnaz+8ifH8KgZ0dozGcMnvOVFk6v
-         TrWRqvWh7Ul54/J78iSnDRXjKyIpm8nFRYtPkHV0ngb+68r7217t/1BM/KofZXC8La9W
-         KGXn3Ni6ogi4b4ndvYHfK4ahcBWoDDewLnt5THqSkBN8E9ZL0wsXWZk0SZRSrtFE7iXh
-         o/Jg==
-X-Forwarded-Encrypted: i=1; AKwUvBzVCXAvCKZnGF5TBAWL7LWwWPd3s8hChLg/7BHD1ayIwpRkuoze9zxQ22Pi33ZYp/CdM4EDkSIminvH@vger.kernel.org
-X-Gm-Message-State: AFq9FYKBDDsfBiX1pR/ohiJVMcOIKP+EJhJnhUnBzr4eyULChUgwtkHl
-	a5CoQMqJYdddCB2Kx189MLdxIxffNSpb8obLUAfADHppkNr0Iwu6V+Ss
-X-Gm-Gg: AYBFou1QHXUbCu4qn3YeU8aEdoQWsxjoh2Pa3tmnBYu+Vxi7YxG/Fd8K1Rpho67me3U
-	QKOBMJG8gCXXSeQU5aWJhuehwQ4b2iOfFSHjmHCf52IV0yy+OubDpktwaVC9J5AScGd2qsHVRD9
-	Hvn8jijd6ARYZu0Kf+geHVTfRbTn1CAoHB08u7O1v3Zx63NOQibEtmiWbD7A7J/w0G/mjpN9u6u
-	URhY/atUEJioKfmIxlGZ4jCRZDDQmEvqVZZmSQAA639Wbt7aJWBZ8RDmD4SRrzLSXi2uALMhIVN
-	2UJcwuj+FbOc5YTK7dK9S+akCZCjkdiPb6WSgMq7mJOIsV03tWEFRje4BHLBld6NldheKIE0CB3
-	2Q8ntrzodC7p0bSR/IDQULicp2FtXLlXFMWISc+cA0VmvthDSNv8Q+yyHcMe0Q+BxkAMWFp3jjG
-	uv8k7JH9A1JZEciMDl8+JMrNJ8pwaDWqRf4uJH0wSIADaKOXGT6R3OuH4/hVGS4T5syv0tZVPl8
-	eksxo7AhrEB2+fz7VB5/u/6MiCB1X6DXCS4c3KGXdFCiUiTf9T3dPvHp6f5tNGs7lCqAfUHav1X
-	5RBTMC4aCVPv7Juub06JFw==
-X-Received: by 2002:a05:7300:559a:b0:360:aeee:9b8a with SMTP id 5a478bee46e88-368afd86aabmr373883eec.8.1792611811996;
-        Wed, 21 Oct 2026 12:43:31 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:1761:399a:3c8c:31ba])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-367f52ce166sm6124428eec.29.2026.10.21.12.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 12:43:30 -0700 (PDT)
-Date: Wed, 21 Oct 2026 12:43:28 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] gpiolib: fix GPIO descriptor leak in
- gpiod_get_array()
-Message-ID: <atkVrwhbP45oLiIE@google.com>
-References: <20261021190212.2237804-1-dmitry.torokhov@gmail.com>
- <atkULU8_9xQ1c3eY@ashevche-desk.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC464606A31F;
+	Wed, 21 Oct 2026 19:48:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC464606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.1.1] (unknown [223.166.93.48])
+	by APP-03 (Coremail) with SMTP id rQCowAB3gT_6Ftlqxu5hCw--.4480S12;
+	Thu, 22 Oct 2026 03:48:22 +0800 (CST)
+From: Han Gao <gaohan@iscas.ac.cn>
+Date: Thu, 22 Oct 2026 03:48:18 +0800
+Subject: [PATCH 10/18] dt-bindings: interrupt-controller: add Zhihe A210
+ PLIC
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,34 +47,71 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atkULU8_9xQ1c3eY@ashevche-desk.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261022-a210-init-v1-10-09fb4d99da65@iscas.ac.cn>
+References: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
+In-Reply-To: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+ Radu Rendec <radu@rendec.net>, Samuel Holland <samuel.holland@sifive.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Anup Patel <anup@brainfault.org>, Icenowy Zheng <uwu@icenowy.me>, 
+ Drew Fustini <fustini@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Han Gao <gaohan@iscas.ac.cn>
+X-Mailer: b4 0.16.0
+X-CM-TRANSID:rQCowAB3gT_6Ftlqxu5hCw--.4480S12
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrWDGFWkuF1fKr4xGryrXrb_yoWDXrg_u3
+	WfAa15Crs5JrySgrs0yws7Krn3X347Aw4Duwn8KF1kJasYvr4Y9as5G34UAw4UWw45ur13
+	XFZ3JrW093ZrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb9AFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
+	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
+	F7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
+	1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j
+	6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7V
+	C0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j
+	6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x0262
+	8vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE
+	7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
+	8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5
+	JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr
+	0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
+	YxBIdaVFxhVjvjDU0xZFpf9x0pRJ3kZUUUUU=
+X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiBgIHDGrYxtWX2gAAsj
 
-On Wed, Oct 21, 2026 at 10:36:13PM +0300, Andy Shevchenko wrote:
-> On Wed, Oct 21, 2026 at 12:02:06PM -0700, Dmitry Torokhov wrote:
-> > In gpiod_get_array(), descs->ndescs is used as the loop induction
-> > variable and is only incremented at the end of each iteration. When
-> > krealloc() fails on the first iteration (when index is 0), descs->desc[0]
-> > has already been acquired via gpiod_get_index(), but descs->ndescs is
-> > still 0. Consequently, gpiod_put_array() frees descs without releasing
-> > descs->desc[0], leaking the descriptor.
-> > 
-> > Fix this by using a dedicated loop induction variable and incrementing
-> > descs->ndescs immediately upon storing the retrieved descriptor.
-> > Additionally, since the fast-path array_info setup only executes for
-> > the first element (index 0), simplify the bitmap_set() calls to start at
-> > bit 0 for count bits instead of calculating offsets from the loop index.
-> 
-> Can you start doing cover letters, please? The problem is if I want to give a
-> tag for the entire series I will need to iterate over all patches, while `b4`
-> has facility to do it for me. Also with --base it would be easier to see which
-> base you have used for the series.
+From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 
-Alright. It was supposed to be a small patch so I did it in my patch
-queue, but then it grew to series if 5...
+Add the A210 PLIC compatible with the thead,c900-plic fallback.
 
-Thanks.
+Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+---
+ .../devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml      | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+index cde4bb691897..fd5b61db3f5f 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+@@ -80,6 +80,7 @@ properties:
+               - sophgo,sg2042-plic
+               - sophgo,sg2044-plic
+               - thead,th1520-plic
++              - zhihe,a210-plic
+           - const: thead,c900-plic
+       - items:
+           - const: ultrarisc,dp1000-plic
 
 -- 
-Dmitry
+2.55.0
+
