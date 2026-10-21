@@ -1,119 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792576201;
-	b=NTc14Glj3Hn8sEQEk863n9LiYArrQ2GJN8Z4JAbsC6FYvLnq5IDj22iyk82pqQMVZeA0
-	 XSYgL23PiFDV9qC8K6aYOSkv/nJy3nOpz+0l7ABxI1N3r1XcakhC9yV7LELpHUZynmM7/
-	 BWGkd1A4G89pnYRmZsnk6NIjVp+ZV9C4dCL+6dRMpv9p+Qy15pww8+18qIhSbS67eB0Yw
-	 b+lxo/aSRG8G3ppulG1hlOoNy1KmqdNgVASrfALwZCgnLfqfvZTb5jvoOvhuy6rYQKe4R
-	 A/A+ZBAEW3K61O7jsXzoyaspCf3D2cOxS4s2EM+r55T3glW7gseLrPBgrKcflvewlGw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792576201;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=ihxKxZB1ejaxXBRJKLhqkzrjcSqUhHkFQ90yxjQFTRM=;
-	b=UeP14evsXsGCiKUy94QrHKvf2/52wBQDXS//yZFJknPAVLbXl0VfuLdwDP9nvtgRPFo+
-	 +PRwbwu1Mu2AJWvlbFRZQBzF9slyEsA8xLH5HECQidOKLBx9FQRLk9XGW40oQkzKYvHKv
-	 AzDd34wCP8UiX4n8Q3/nhPecEZJ4ZxclewfwqcXxo5/oSUFXhglMF40Ve3sYXvdN6CBY4
-	 YLDrbdPGQRd0Pq0npXSI2q2rVzOC4s5vsTduwVvLUhGM0DY6qM88PR6ggJ18LVDnsoyKx
-	 P7TOrTpUGNluqgoIGCOWkH3CU4aI18WUAexdxMzjhWX6S5yS1ZNLwsXznuMBve5/bhA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=RXWNXa0O;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=TaGF+pF+;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792576558;
+	b=C24Ilw+Q10VcUj+VMWKDarf+9HWgb+Z4DijKzMn9XXrB+j9L3E/l3mmDymi7jV64faRo
+	 zIoTBEQarX6CuGTPEnFzyjkd0rAOoDgKRMfjyt+c25fKP7QJ1BXrplH9IH8KJrjchz8Tq
+	 juniuqjhxo82bAOQXBIfTlrlj8RyFSfOx2HOmW8abxjOT5Zx8F8rNPKUG2wTgivnNxhHY
+	 qQyQkLR0C+Hu2IC/yyth1IFrSe5RBeofkVpnhd8TphkI+M7NV7AdiWOfn7805gaei6P72
+	 gNFVZpN5OzR0TedEuFHlu3XXXEZKIQMs2eOeG/cv1q7zn4kAAcIaeXpkSUoNCuqGeAg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792576558;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=DbekAbgG/Xv7DUFdO4gAxSBoPIcOq7v8Bs+HNtRoJiA=;
+	b=z0GwFRP5rUM9gxmwiZXyMCVMgFu6o6iLpogauahqe39xQAzXfllAuwVM06w2oCpKLClw
+	 XwPhThphU7cUsqu0TddZBsVabDKcS8Z0edDWyIzqy/uyZA6pX8b3otDnU8AaqYWO2I6I6
+	 LUZVPon81yBrjNjCGZ9NvrYi4tz4SwyxJ8wuEHv+YnJfB/Z4dG88Uw+mFHqu6CxxpkqSw
+	 S8w5SexXXIkPhdH4yiXizgzbCU+merd7dUuRRQC8fYofmNbaAYIn7ScAOnoRkFlzmy59o
+	 SRnN8x/+2FjRevrV1CgryfaYNvrIDLxnkxVWjffa4D0bflL4o4iZQQ3cC7zOsfnUa+Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=mJcSYrls;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.18
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011018.outbound.protection.outlook.com [40.107.208.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013BC606A31B
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 09:50:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 013BC606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05BA606A31F
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 09:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F05BA606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=RXWNXa0O;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=TaGF+pF+
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69L5j0Cc165032
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 09:49:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ihxKxZB1ejaxXBRJKLhqkzrj
-	cSqUhHkFQ90yxjQFTRM=; b=RXWNXa0OlRHW8GfojSSbj0G3meelmRycN2rGORBG
-	6DfnwTUFz5Nf49A5EUcMlRM78kWmj5Zbw6EKrtYoKLv+hhW5wn5lxYMwIYrW/jbc
-	R0pWSfnG8FqyKBSgfdMvPpOwNPi1azCxkceL+w3b6n2VN87KpjexU4g/FB2P9ScR
-	1TKRxlwxfiF+JkrCvZrN6jb+Dc+rmOJevR0G4fmWIKwAwp4e4wIOdurLxedyvbmr
-	IUcQTfpXq7nR+WlclSY00KO9STcuv0N5WqHUrDLaaZG0tRESXjXP3lf9e6Y0m288
-	uS/AlKsp2d6pK9vQ45EXhQ2ELd62zRhO3cyDIhrBL3RT3w==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hegs02j4j-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 09:49:59 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93f26dd2165so175614185a.3
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 02:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792576199; x=1793180999; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ihxKxZB1ejaxXBRJKLhqkzrjcSqUhHkFQ90yxjQFTRM=;
-        b=TaGF+pF+mQvHPTr07KDd5GUm1MNZXWsalORndEL3+tPgg9A+Ap2zOdhSTcpo5PnsDJ
-         noh21Ny+vnHP2SM5EGDDLXRB1NLseAAqSbBnyMnQxe2GkGv0rFfUd273MIyKgucgBF0b
-         cY29mMrG0sC7GB2F5xsE92pyCXOX351l/x1wGtqDuuO/Lt8uSBN2a5dNYY3CCSsvv6Yy
-         WzisdlC9rB/JCuKblwYgxo8boD58U0ucauXBN2jeX3K36s3VpkCF5PEFAFqYxlTlnE+f
-         nj6T/LwcKdevyPZd0qfQVd3tmr/lEZIx0mz0i/ldOpK8F/rY3+BmaRn46zBINPjLtF5G
-         cpvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792576199; x=1793180999;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ihxKxZB1ejaxXBRJKLhqkzrjcSqUhHkFQ90yxjQFTRM=;
-        b=SiORTHx7l1RDAVsfZ56bfikmRTXM2XCRwQ04c+tww6M9UpdMLAjlt/dMlKD7ute0sX
-         x3y2IJUUS4mTWpWzF7SH21W7Dis0oIgLMVC5QSbrnxilnTgD0/6HUlt00BI9LDWuUn37
-         Z+VFRd7R00sTuUec+tGSSlx+BJuHdN/Zb7TSsoPbSGaK2vO+BcanksaHeZgIXxaLPaik
-         VbrU5IUig/SPJRl4bhYIv9gV5ce9+VuviTeO73Mw0DmjZdMpy5uAs2IB05pL17ZrelSi
-         gCDrkD2E9eN+w31bRBY01Pq1R3HvuuKKHA1RrGu8bNltwZm7+scwJyVi5zkrgcrLhytg
-         vr8g==
-X-Forwarded-Encrypted: i=1; AKwUvByXJrORWHFHluGGHeMd2XOUNSQco5VdU8iis9BGaTGZqQu8FCedFCEDk3TDAMmTkQrH3unC9y+afIDK@vger.kernel.org
-X-Gm-Message-State: AFq9FYKsdt97OCXXbY4rKyKRm5uuq04WTRIbC0IcuwUHVTNsEAQtP6Ka
-	JVUHXPsnOxO019zDGS3cJrt4GqRcWR4d4EAV7lGyKEyRMEbYyB+Zb6hVuLu1Mu/WB++kBi+mEvF
-	psxTlS5gc3tK0nweDoeqvEENLD6XKho/HdvFSeJ0Q8kcqSBV/jUyOzwsvIQu023J4
-X-Gm-Gg: AYBFou2jEL85WcVQPWE4Z5Y+QHA93hapVmUg5Ppzn+23wU/8twyKMGy7hbAonond9v9
-	O2id5lutO/l+X4tS2MKsIX9QsBRQeWuYKgEJNY3GxjJKCIr91vuRCJtpriBoUORfxuPEcHVH7kp
-	kltagdS2z4YA9II9istb3Vq2Ki5Zzk7Xwmhf/d+T/lcEWjolJOAfRF91arXtozI2+7cJXjbcQ15
-	51yM5Z/Ec9ET6qGENdiSKQlXZV7rqEr0fcXEYB4MDGS0uIUIVHbaoi+pCLB+RdM0w/1f/cEXWGT
-	Wkfc8wJ7zIpemfUqQWz60OkU8w4XM0vkTW0q9+a9owSRanqS7utXdp8BDtUUjkm0an95hInIk9A
-	HQOeBvtUG/4FtGQ==
-X-Received: by 2002:a05:620a:4505:b0:93e:c12c:fbc4 with SMTP id af79cd13be357-93f57f9f3c7mr297090385a.81.1792576198971;
-        Wed, 21 Oct 2026 02:49:58 -0700 (PDT)
-X-Received: by 2002:a05:620a:4505:b0:93e:c12c:fbc4 with SMTP id af79cd13be357-93f57f9f3c7mr297087385a.81.1792576198327;
-        Wed, 21 Oct 2026 02:49:58 -0700 (PDT)
-Received: from localhost ([188.216.77.92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1fb83ff0dsm81479655e9.7.2026.10.21.02.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 02:49:57 -0700 (PDT)
-Date: Wed, 21 Oct 2026 11:49:56 +0200
-From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Alex Elder <elder@riscstar.com>,
-        Daniel Thompson <daniel@riscstar.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>, linux-pci@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2] PCI/pwrctrl/gpio: Correct GPIO_TC9563 /
- PCI_PWRCTRL_TC9563 dependency
-Message-ID: <atiKxGuCC8961jL8@lore-desk>
-References: <45484c37512a3102495d8b75b6e9f72a141ba42e.1792574560.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=mJcSYrls
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EUggDzmTSkrQj9r5HPJg3P4yH4uAwaU0ryWLqaDSQbaNtyXKjIVLMnvD/A4G2KQYjwerkj+GFqBxG0gA/Ggzdv7BqxyNXu8GdL8zaUph5irBbYJ/H1nnab3FcYatJD0VMRIoIDeF+awLhiTuhBi6gLV2fZjmjCwdlvUMMr0i61cpVM0SD6r/B4FfiEuxQCz8psClFklRuRfvF9M090MEmU6RucrWR2FwgfWy1GLPMp4K7/Mfsp8iV3ZcmcIT+UEJXKDXU4GV6X5tjRd3IVkW9brrxC9We7QMb0xDsGVq/3h6hKN99Jtnob8OeU4Z6fwoM8rE26z2yQtrWWIOCFDGjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DbekAbgG/Xv7DUFdO4gAxSBoPIcOq7v8Bs+HNtRoJiA=;
+ b=VuW0DQB1X2pcLv/Wk1yoKqMG1bK14oJiSfdZzDMWjMSqqOKui1TVHdd3Tl6YcMU3dk3O/Q/9URLNtAKfUzq2ouIPzrHaNUHn3az2imboXmvQCCca6hWkX7qd/Fh+EBTyOB6nYjWbQtAocxpE1Rebs1Smx0qdYIO1yUn3BZOmqgMif+KBpEZl+tYoYz4pU4FmttV3KvqrMbUt9JpEkk/QE/wJ94yI9FXm4/ti8t0d7O5jruQ/4kDzMO1d7ujWzgh9HFTF3/UFGwyPfhYxVHYHQPULJ1P1BHkhoQVwoOCtrUqarYVXD+ESqYdadVV8QSZO/ybDvG5kcFU4iHPRmydOnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DbekAbgG/Xv7DUFdO4gAxSBoPIcOq7v8Bs+HNtRoJiA=;
+ b=mJcSYrlsmh1ek9K3gE0YGWZbLJ2DdfCfNQUVlzEhQ6JaEsIf0Hus/vEobcS8kl7axy2dPNY+X6g1Fm6nHLkDiCj5FhYzZh4LNnAutWZw1W3woauAsWj4xajjtCwE1Fd1WuRJKpoPnQPSPlypghsr+4mW0KRLkxjA9nXQK6gccNwmKXCi50k5NMXSV+uGv3mcL5CjEpGqL5GvYqiqmC4MF58nnb2fLz/qquJqvzab4qXJsjf4I+Ty2Lba+g93uD/RxovLvhmTYMdSAaiJLYr5bi8VK20fEdFDTfWRHtznT1U4eH2cxfRtvT/1pSBvoVss9yEVxmVpLi+D6xfwfBDVVg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by BY5PR12MB4098.namprd12.prod.outlook.com (2603:10b6:a03:205::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Wed, 21 Oct
+ 2026 09:55:55 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0522.017; Wed, 21 Oct 2026
+ 09:55:54 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] gpiolib: free the label of lines released after their chip was removed
+Date: Wed, 21 Oct 2026 12:55:52 +0300
+Message-ID: <20261021095551.3283369-4-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <sashiko-outbox-179011@kernel.org>
+References: <20261020-gpiolib-chip-removal-v3-0-aambrozewicz@nvidia.com> <20261020-gpiolib-chip-removal-v3-2-aambrozewicz@nvidia.com> <sashiko-outbox-179011@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MR1P264CA0122.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:50::32) To PH7PR12MB5974.namprd12.prod.outlook.com
+ (2603:10b6:510:1d9::19)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -123,107 +99,114 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i81LDSJ13peNYO7r"
-Content-Disposition: inline
-In-Reply-To: <45484c37512a3102495d8b75b6e9f72a141ba42e.1792574560.git.geert+renesas@glider.be>
-X-Authority-Analysis: v=2.4 cv=S/NMU4sP c=1 sm=1 tr=0 ts=6ad88ac7 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
- a=DrrgTA9W1NqqBr-8W0gA:9 a=CjuIK1q_8ugA:10 a=HWeOJtvGEj_8LY2qVjsA:9
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIxMDAzOCBTYWx0ZWRfXxIyEiXkYSax+
- tws4iJgWl/lxXOrkou3z2Xl+h5LFzzuR7tGN90m7teu0Lp8IDwuGxRNiGuy0ypIW2UkZp/YlO5D
- 8wmhxkYEZxwTD4BIcj0/z3XO8oicB1RuKB/Ae2NiEODmMy10l6q0QqAFeqxDNrPSvpwhyHM1AuF
- UYyyFRDegk+tZFPsMSp3VICrtPN3EHvyFcYPLCkM78nkSm2yoyyV8lXyTJC+QoijkpaeaRxNXxS
- K7Pv/724sRXlb5ACrzizp3AMuBll4cV7ggRFSgtiRlwSw96vL99Qx/gJyzgRdgKfyVqQr1MaZJ1
- gXSjp1R8CuJ06UmBTCLU78Eq6I5OqZ4hRlLxN4jKJUHNAyPHYSmYDKnk6fQ/U4HnnYQtiYiWE6p
- ChDHdOjun6Z/OvbzH85uVePYnjA6Skyw3jw+0zf2k+rxV5/yYoCKBHA6gOVwrBoQf3Z1trXivAs
- 8Ql8dKHwHNjmOk2SpIw==
-X-Proofpoint-ORIG-GUID: CoPsd1JiaeJL977-3q4jypkXQ-2jnvA9
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIxMDAzOCBTYWx0ZWRfX79QjRIWHi1qS
- KJMeRdRzp/s+JF+0g/uFMfXchpXKpHLo2sFP1zue6HfvFEU+YtSW5G6tL4Rn4aGDsVsINFBm83l
- 4AmoBMF1CqbNqe9qr9ALdYHZGRRWE28=
-X-Proofpoint-GUID: CoPsd1JiaeJL977-3q4jypkXQ-2jnvA9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-21_02,2026-10-19_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610210038
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|BY5PR12MB4098:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d410dc2-f66e-43d5-cd0b-08df2f597f71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|18002099003|22082099003|4143699003|10067099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	b9U1hWm1/426X5xCy1l4xqnDgjoj2r26g4bz7thaWUqIwjUXKA0YAEL4dGBD6Kt7F+SAnZmLFO8x/EuccaOfOBvsbAWCwFOQUxHYWxaGi0OHNgWbL5H4+LPjBRIZjZgSSHurN3CW3bpDddYmzH2lE421def6NUAGKo/0OTXTwTFrvk73uNAEpTJGTOVkIz2eCShpNvvO7zq0vUBPKgpsRlgtULfY5G9B77tKhd5179hngTFVDMgeyc5zNpb1CA+Iv+Swu9QaByJ2acZI8YJfE9usQ+R4vqvYaDGq+qgDxTCQQKOpj483C3BpJeMOPkSSxtxUzvWfJAFMRQOTU9lXn4DQZ7gf94OQnWmXCwRgLJ17T8apb9ENA4NtwXuh2MpSWNmm1HMFsC4HRgilnwtkkG36iAl5p/MB+8j5+bW+/a+HkJYvUgjTm/0QocfTHHMF2B6AoSwp2NwOoB9JylOe1Bmrat3yzXMsm3qDHYiV8LQPQhbwXwv3SlL17VhQBSO+fdJbHnTHwZzbjeyJQhYvPcIJq8t2hAI0ptkA7vTrCQ3QwrkPe7FwLNlmv027n/Rhkmt4uspUrx3f+1OCVTyS/bDTROlPm6AF5IavBV39uY2jQ4ijV2qDU/M9HdaoB0XNaviM1ool19kn3aJcKVnolJu3N0majzeTxfxnvfAsmUg=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(18002099003)(22082099003)(4143699003)(10067099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?R0SMx+W8nWQ0tDKkSsyNxE9effFBiRKpFsS67V5scenPl9JPQOk2XGgEMttK?=
+ =?us-ascii?Q?Y2xTu4QZ9MligrzOkGC2wkRnRK0VFRJX8BAMk91+tlBhTbXrf6Hg6N10tUu8?=
+ =?us-ascii?Q?b4jG7kN8X2uxyB8BIoAXiCji+EUhDVVtfGr3aS5+mLT7bMml65w8v/f2cwPb?=
+ =?us-ascii?Q?7PPK6KkmMNDDCTCHliZBdxd3wWvn+PGC5sQOFRjMWlKMcUwYwOZn/IGTlD2G?=
+ =?us-ascii?Q?Xo0me9cYtXDYV98cOUN8GfFLPvL4eCeq5udzkOyvSX6r5F2gLH6PwtA26qdN?=
+ =?us-ascii?Q?Si/KkMXor7ihbMYbVQ7rfVpn2Qh8uqycSwMbY7KKRkzVY37hQ0Xkvg35jbws?=
+ =?us-ascii?Q?8fv8wa1sBs7yTrPeBWNLshDbYBwN5BA68LyX4XT65n+esyCCo5ZzH85DUOF4?=
+ =?us-ascii?Q?z5/leTG+EoWlbihZ/zNVjrpl6ymuxrkXg0D2AfD4804h/cOH8RTqbUhETBOy?=
+ =?us-ascii?Q?uQJJ9z0zkCAxUdE4YUwz55oMsNWZGNofBI0i4T/mO9+8+xF0X1GLLZTYwThW?=
+ =?us-ascii?Q?ED62bcT7IhClj/ePjKbolCLHQ6fC9pelzWXBjcgZTGtiD4hiyWxl5muKQcKO?=
+ =?us-ascii?Q?HF5wzw/p5B0n9xIaPoy5FNE9wAytysB603Hi+7Tyjc7c0PESUECmcZpMfWYy?=
+ =?us-ascii?Q?3aNUnMwrx0rRDbMC0bt/8P3uwqPV5GPj629KdLa1i9uTTQHqV0YxevbFsgC+?=
+ =?us-ascii?Q?P6B2XvJllDIzU7tLze5eVigkV2GqjfmHgJ2ntjTJta926RsI1bluHrvd0Vq0?=
+ =?us-ascii?Q?OfnNeN76Kz+niMiZFeXhPNAls/PNb8O2F2RFij6CpB2vhc2QntxfV03SFmnw?=
+ =?us-ascii?Q?ct1BgeG+NTndMQWLDaOFLK1J2LqwIypjEmbzDKdNTgWniwHnrNnKeja/KNlR?=
+ =?us-ascii?Q?stRzvWL1w6oqVPsAHc8TGNRHsW+DKGAFbLj3tc58R/ySDYyY21bgdsiFg0qy?=
+ =?us-ascii?Q?58u+5uE4h0i33dxy0dLUYl2Tj0q4tYSuaqIc/ERP9M7cK9YQMByqAUukafdz?=
+ =?us-ascii?Q?P+LHXDB7naWDpigb+7V8hwZHqf+8h7SKRgeoI6d+lJahs43R7m+QT7UPkYvh?=
+ =?us-ascii?Q?RdoShuJ2+grDmmFiD9ApqSddNAbX6z7hE3nRO4UOdu7E704oesQYpnieVVnf?=
+ =?us-ascii?Q?y3J3enylwfZwnMQDnAELG9+wvejkK5nxCb5VhULHUJgR7kzFEYmCPZd0aGqs?=
+ =?us-ascii?Q?f6jWQJ+dTvVkPfC5OfJF20C7pDX49bGpPnI/MsFz2F4WIVqEor5mrz38+uvc?=
+ =?us-ascii?Q?m1uZmxGQjoTzD7e+mj3f+OIRZJVfA4nTdCAbcRMl2Y8zdo1rqATQG4YMgEDE?=
+ =?us-ascii?Q?6mdl7yc4lM4nu4ug//8kPz8LtyKrCx9sdPhf0AHAq1xdLA9d5/eGJ5oFQ389?=
+ =?us-ascii?Q?O5imlhe4+m52/V6G8N+WUSXjpp8kxEBKemVUcEEXi38QOXDCtvWkhReR4WzS?=
+ =?us-ascii?Q?SpQeqGqJyZmAd2mlRH46ykzBkCe7dOkhjFLAU77j7aZ86VtW0d8lyG+hvXXy?=
+ =?us-ascii?Q?XBroZmpGMpoPGx1gMX1hx4L7NJJjnd1/rp1MnaLqeStMnR+5UfAwZrgc5Qo7?=
+ =?us-ascii?Q?VOPSMe1erfN+lX9PPYjEgRP0WvP4+r6+COsAbx+3J/U+uX8o/wX7IFv/mbEk?=
+ =?us-ascii?Q?/18Tl+b+WlFdtLIrpqjTku8k64gBEyXRMMRwxOEQGoCTiwGTyoByhUPVfsDZ?=
+ =?us-ascii?Q?bJ4UyJz0P+rpqRmbLKPNMx2foAPpHh5K8ZFO1Gy4Ks1AWEc2Pjh0SBcj7Qio?=
+ =?us-ascii?Q?lGdKJ8NL1Q=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d410dc2-f66e-43d5-cd0b-08df2f597f71
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 09:55:54.9257
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cVa88DOFCqR4CQ0caunJmNtihojeN6GoruIdfDhbE8WSfQNgr+Bu9qXMZJaEn829pbhLbWsQIC2y/Jx9tEntWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4098
 
---i81LDSJ13peNYO7r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 20, 2026 at 01:19:01PM +0000, sashiko-bot@kernel.org wrote:
+> Can clearing desc->label before invoking guard.gc->free() and before clearing
+> GPIOD_FLAG_REQUESTED cause a concurrent for_each_hwgpio() or
+> for_each_requested_gpio() caller to pass ERR_PTR(-ENOMEM) to kfree()?
 
-> The Toshiba TC9563 GPIO controller is embedded in the Toshiba TC9563
-> PCIe switch, and its auxiliary device is instantiated by the TC9563 PCI
-> Power Control driver.  Hence make GPIO_TC9563 depend on
-> PCI_PWRCTRL_TC9563, to prevent asking the user about the GPIO driver
-> when configuring a kernel without TC9563 PCI Power Control support.
->=20
-> Drop the dependency of PCI_PWRCTRL_TC9563 on GPIO_TC9563, which
-> represents the inverse and wrong relationship.
-> Let PCI_PWRCTRL_TC9563 select AUXILIARY_BUS, as this is no longer
-> guaranteed through GPIO_TC9563.
->=20
-> Fixes: eea9a072221d97ab ("PCI/pwrctrl: tc9563: Add GPIO auxiliary device =
-support")
-> Fixes: 81ec9c22d06aea92 ("gpio: tc9563: Add support for the embedded GPIO=
- controller")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Let PCI_PWRCTRL_TC9563 select AUXILIARY_BUS.
-> ---
->  drivers/gpio/Kconfig        | 1 +
->  drivers/pci/pwrctrl/Kconfig | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 5d3f076c539b3a64..c5556b1638b8c113 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1893,6 +1893,7 @@ endmenu
-> =20
->  config GPIO_TC9563
->  	tristate "Toshiba TC9563 GPIO support"
-> +	depends on PCI_PWRCTRL_TC9563 || COMPILE_TEST
->  	default m if ARCH_QCOM
->  	select AUXILIARY_BUS
->  	select GPIO_REGMAP
-> diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
-> index 38aab596aa04b8b1..a2fc2a359702e861 100644
-> --- a/drivers/pci/pwrctrl/Kconfig
-> +++ b/drivers/pci/pwrctrl/Kconfig
-> @@ -29,7 +29,7 @@ config PCI_PWRCTRL_TC9563
->  	select PCI_PWRCTRL
->  	default m if ARCH_QCOM
->  	depends on I2C
-> -	depends on GPIO_TC9563
-> +	select AUXILIARY_BUS
->  	select REGMAP_I2C
->  	help
->  	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
-> --=20
-> 2.43.0
->=20
+Yes, but mainline gets there without this patch: gpiod_request_commit()
+sets GPIOD_FLAG_REQUESTED, calls ->request() and only then sets the
+label. Reading /sys/kernel/debug/gpio in a loop while gpio-sim lines are
+requested and released oopses gpio/for-current in kfree() within
+seconds:
 
-Acked-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+  BUG: unable to handle page fault for address: ffcc73074355ffc8
+  Call Trace:
+   gpio_sim_dbg_show
+   gpiolib_seq_show
+   seq_read_iter
 
---i81LDSJ13peNYO7r
-Content-Type: application/pgp-signature; name=signature.asc
+Before commit 35b545332b80 ("gpio: remove gpio_lock"), gpio_lock
+covered both the flag and the label.
 
------BEGIN PGP SIGNATURE-----
+Bartosz, Linus: as this is in mainline, I've added you. Below is a quick
+draft of how the fix could look, on gpio/for-current: return NULL from
+gpiochip_dup_line_label() when gpiod_get_label() gives NULL, as for an
+unrequested line. With it, the test above runs 100000 cycles without an
+oops. The order in this patch then doesn't matter, so I'd keep 2/6 as
+it is.
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCatiKxAAKCRA6cBh0uS2t
-rM8lAQDlwQYXTcfSyFQjMNNia/OzD6xyyy5hxoHYmoDszs3ydgD/cwDKu6iN/C+0
-3FNo6XEKgZP3DSGm1nyZYNVjR/Bnfws=
-=B1zP
------END PGP SIGNATURE-----
+Should I submit this as a patch?
 
---i81LDSJ13peNYO7r--
+Adrian
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6932278cdb..48e0f2f2aa 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2718,6 +2718,7 @@ void gpiod_free(struct gpio_desc *desc)
+ char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_desc *desc;
++	const char *name;
+ 	char *label;
+ 
+ 	desc = gpiochip_get_desc(gc, offset);
+@@ -2729,7 +2730,11 @@ char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset)
+ 
+ 	guard(srcu)(&desc->gdev->desc_srcu);
+ 
+-	label = kstrdup(gpiod_get_label(desc), GFP_KERNEL);
++	name = gpiod_get_label(desc);
++	if (!name)
++		return NULL;
++
++	label = kstrdup(name, GFP_KERNEL);
+ 	if (!label)
+ 		return ERR_PTR(-ENOMEM);
+ 
