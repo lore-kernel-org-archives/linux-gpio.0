@@ -1,68 +1,68 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.10
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792615619;
-	b=BZbBnaMgAecwxpmPBQOeawZx8fgwAeWPWfFmVem4rC+RAu7RJLWkCLGmKq/7LHK8sWL2
-	 Z7LTJ3wyaf5YsdDTriKV+Pw7fLfxrAfYDqpFYt59MswJoZw71NMJQ090XI9NqkcDrKl91
-	 f/vzJ6D4LoFZKNXO4YxtRd28EFYInbDz5Vmj7qThX+XPUD6Omc5UbSc3hEPbdUC9cwCGu
-	 KSWtPZpXQGUhh+HHRaG/t1NbSWKmtNJ5ckhbB0uLJNOiFknN7/7ktGyuY0WrM4O0yfLCr
-	 6er66iu4Dp+624MTMdLGGLZrO7lg+EPxPPBLPE/UDWbfz+t1U4h4WoWJa/uY9ThaGzw==
+	t=1792615620;
+	b=VrKhi32/PhB8qvkTyCVGD4NV38vZPQpL9D2t9VSpXaEYixLSsTDBjwl5oOMSUyTGqovV
+	 yox6pNnOYerKDDX7aRjpRxhC8gVYs4t4H+6WxIdiU8BWKKSdgHpIYdlXEXwTRjvV6ob5o
+	 tVLc9NTN72iRlAELzoimcOoaLAcm3jkZ04HIpp5R2jNaBjsNGC+erz6gMHXLJ5NG2TgxF
+	 quCzbuNT1cwevOZg1FJGhVP5uBZqvAl+6OzIJengX3ZJGemcVZxPnqLcJNEDSoyzfO6bV
+	 KiWg3atdRS8ooDFxqF+IzgHYOOkNBTSywSY/jfxRCOSKcTn/+Skn4XpG3vCjPWGNCnw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792615619;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792615620;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=1TNmPjKpEIxPlxH6BJbH9HMyylvDkUu0PxXXodMrDog=;
-	b=UvYd/KAJQAHqzyPxHWh+ZYEFVifj6HfbCDU2KVHHz43Xjt078wAzaM87XSiQiJyuI+h0
-	 zZy7B8wybF+p6Px5k1M09VbsEXsOM1Piu3dqmbpDx0LiErIMSLZPEiZsJ7JX74hYXd4x3
-	 kHFnXlyLGcOGwAT2aJcUQb5ZnUmYt9UqgowOreuMifNxdW4fQ7dYX1xlQyqY7DuQlv7wZ
-	 1hPhCRZsdFNCIE9NN8ykoCt0vNg87CP4AP019zJbcbvi/vuGaZ29oOXWLJfThcjjAWEpP
-	 mjZz+XWPfK3kt0yl/ODP6KLXgsHR0n6m98y49NkBVCXSa3S3jFJSIbjTY5vWbAZ54LQ==
+	bh=KDhcVliABrVqXK+2OfwPl0g0ncmOG1BNGxHAQ6+T2Ws=;
+	b=GpZaKo01xL8wNN4gbfm12WsCwZIY3mhtiyfDuoI3lSMbGU4eeAj1yOPl0bZ6DTYkZfau
+	 wGxaN9AVe11eZJDswSuCMB3tkFIwf/9TC3gjsOIz1wO4lW3gVEx79+Gu0GdCOYCY7VXAA
+	 Ya9MJ9ZvZxZts6nREk2yaVRTqf5CTxodzpMo1Xmobqmdn3GHK7HgcBj7yYET5QEf25BIK
+	 pth3z4cgpftdPAy6xCDCz0WAVXilcJ1p0ZigavOQIQcIePHzsYcd4MYYKZl3yP9l8C+Xs
+	 XlfTCu0iR33S+h7tL7uCsngfZxa4Eqh/jAt8w9XL8e8/et1fyj/w+TfcLe8u2sWEHtg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Dq4V+k+w;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=B6Icq4dr;
 	arc=none smtp.remote-ip=198.175.65.10
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA86606A319;
-	Wed, 21 Oct 2026 20:46:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CFA86606A319
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85E5606A322;
+	Wed, 21 Oct 2026 20:46:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A85E5606A322
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Dq4V+k+w
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=B6Icq4dr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792615619; x=1824151619;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+puReX7cZcNQsPG3E+Z2+EIty2OZapjHvbmVeo5ErXA=;
-  b=Dq4V+k+whrWrSfkAaxOJWSt7YVRj5FH1hdiLbZ9BA0uT5nq3lBNFMa1z
-   46thYUv0W9xxHs43KETRI/qvqFIx/yR84riaegzFwCM3BupKWRdVxiVNk
-   nxyckLINqfhr6Ctp5mbafU+Tm7HVt4T82dpT+AGoFRqUY7t7BlvIu/cy6
-   PVYEgsit9x/1ejAnjhWZzIVXF3lc9oMKkYJ76KI+kQZrbYT3FBu8uXVon
-   8xAoIqaSeqdA0ANszuJHIVTIxw5Th09Hk7Kjj909JXKZ64Gu0JA6PnFfq
-   BB/xoqvnCLivGvdOnijeq1PGRyczD0MmoSpoUP9A98gu0Cvzx42qwyIUe
-   Q==;
-X-CSE-ConnectionGUID: FYT11ZixQA2x+T9I1cXSkA==
-X-CSE-MsgGUID: T1ihdX38R8OQR7loaWGGjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1243658"
+  t=1792615620; x=1824151620;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bKL6fqZboZFOCWIvAEfzUiDYTPPFroQd5G+d9H7Ww90=;
+  b=B6Icq4drQOLL96k14Km8C2B70oD5HY1jWq96ZSNA4rQb+SP4tdP2qk5n
+   DzO9BNTdcNtWGfvgTVFdZ86RWG+CybcLNcbDkNvqLGIyqB38GIAPni8Ig
+   QnKN9RoYpbY1WGW54mq0v4J7V1O8MDuLHq1ynlzHExI72Wrlo0tTrnf9a
+   X5TUk9mUjYxAR1x2Mm+3y9grsnUhcoixEfyyHXO8esVvS8K7rSnkb/0tU
+   CaAIkrsIJxv2KubhdSk9PLi+n5Ri8FOAo7CaY5TEFI3sG8Dr1vGns5g4K
+   dXSrwfVs580d4Q6M9GU2hxwbeBo/lKcdopyNqbOvYfvmcWMIpsK9V7eUm
+   A==;
+X-CSE-ConnectionGUID: VzWALAGTRaCSUSsFVupCDg==
+X-CSE-MsgGUID: +HV+qz2oR3+3pyAwyPtYcg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1243670"
 X-IronPort-AV: E=Sophos;i="6.27,170,1787036400"; 
-   d="scan'208";a="1243658"
+   d="scan'208";a="1243670"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
   by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2026 13:46:58 -0700
-X-CSE-ConnectionGUID: KfyrAZ3DSlqHoJtmAElMnQ==
-X-CSE-MsgGUID: lfW3R5IPTYaPYGsEUwMVnA==
+X-CSE-ConnectionGUID: zcGPaQjUTMa5/y5desuVXA==
+X-CSE-MsgGUID: x3fMAadpQ92f0fgSY2da7A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,170,1787036400"; 
-   d="scan'208";a="3534465"
+   d="scan'208";a="3534466"
 Received: from black.igk.intel.com ([10.91.253.5])
   by fmviesa008.fm.intel.com with ESMTP; 21 Oct 2026 13:46:57 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 553D79D; Wed, 21 Oct 2026 22:46:55 +0200 (CEST)
+	id 4D4A399; Wed, 21 Oct 2026 22:46:55 +0200 (CEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Samuel Moelius <sam.moelius@trailofbits.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -72,12 +72,10 @@ To: Samuel Moelius <sam.moelius@trailofbits.com>,
 Cc: Bamvor Jian Zhang <bamv2005@gmail.com>,
 	Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
-Subject: [PATCH v1 2/3] gpio: mockup: Replace custom devm_gpiochip_dispose_irq_mappings()
-Date: Wed, 21 Oct 2026 22:44:44 +0200
-Message-ID: <20261021204654.1001101-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/3] gpio: Introduce helper to dispose IRQ mappings
+Date: Wed, 21 Oct 2026 22:44:42 +0200
+Message-ID: <20261021204654.1001101-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20261021204654.1001101-1-andriy.shevchenko@linux.intel.com>
-References: <20261021204654.1001101-1-andriy.shevchenko@linux.intel.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -89,46 +87,22 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace custom implementation of devm_gpiochip_dispose_irq_mappings().
+I have noticed that a few drivers use almost the same code to dispose IRQ
+mappings. This series to deduplicate the efforts. I only converted a couple
+of the users (there are potentially more) in order to stay in the same
+subsystem.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-mockup.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+Andy Shevchenko (3):
+  gpiolib: Introduce devm_gpiochip_dispose_irq_mappings()
+  gpio: mockup: Replace custom devm_gpiochip_dispose_irq_mappings()
+  gpio: sim: Replace custom devm_gpiochip_dispose_irq_mappings()
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 1c6a2f3414f1..f782b55240b3 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -400,19 +400,6 @@ static void gpio_mockup_debugfs_cleanup(void *data)
- 	debugfs_remove_recursive(chip->dbg_dir);
- }
- 
--static void gpio_mockup_dispose_mappings(void *data)
--{
--	struct gpio_mockup_chip *chip = data;
--	struct gpio_chip *gc = &chip->gc;
--	int i, irq;
--
--	for (i = 0; i < gc->ngpio; i++) {
--		irq = irq_find_mapping(chip->irq_sim_domain, i);
--		if (irq)
--			irq_dispose_mapping(irq);
--	}
--}
--
- static int gpio_mockup_probe(struct platform_device *pdev)
- {
- 	struct gpio_mockup_chip *chip;
-@@ -473,7 +460,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 	if (IS_ERR(chip->irq_sim_domain))
- 		return PTR_ERR(chip->irq_sim_domain);
- 
--	rv = devm_add_action_or_reset(dev, gpio_mockup_dispose_mappings, chip);
-+	rv = devm_gpiochip_dispose_irq_mappings(dev, gc, chip->irq_sim_domain);
- 	if (rv)
- 		return rv;
- 
+ drivers/gpio/gpio-mockup.c    | 15 +--------------
+ drivers/gpio/gpio-sim.c       | 17 ++++-------------
+ drivers/gpio/gpiolib-devres.c | 33 +++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h   |  4 ++++
+ 4 files changed, 42 insertions(+), 27 deletions(-)
+
 -- 
 2.50.1
 
