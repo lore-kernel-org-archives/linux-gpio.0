@@ -1,97 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792602948;
-	b=E5HbETCXyO3BRl+ryQS94hFHpVRwkQEUUX9PsMsiX50x4Oviql/zVFxS3JKa3GvKKCp9
-	 oNDH97zRIdbYRHZvnz1qJnP9DSscj5klmTxmISg2lTTsFOxH3eZ4njyNGAyns7te3ORrz
-	 o7vHZMd/GEj9bjfOjYcLflVd0DJr8vrzeyxpXWwRvKyHzEIePnqDGF0OYDdom7m4a5TpY
-	 zicFete3s3OzfAkO3rxBTJ1YhCXi7UaUZshPG8DDr/Ay7ryKxXT7Hkr/eUeOQOgObLkgq
-	 jPNdavzaxqRGgI0T/hQgmlj4CKpEkV+AQRPIFz9UAetKBiZwKBZWPXrJLfiqJbvIfuw==
+	t=1792603018;
+	b=cFzr58qz1QmZjvPiW3IWG16NGk+x5oO4IpZUKLVrVu4Z9SSBFRUrpqlpo8dLa/hCRd1a
+	 SMkGAKAHL0OAsBCFo28/rdljKJqetE3n8bfaEdfN0Cwzyyan/cd+VUNHipMZRQIEqvJ+G
+	 zEK67Xiuh/pXDCxlta8awQ1w5JTBMdbo2ULQ8+RDW1xwMDehpWa96u4O5WZx81yd/t5Qq
+	 MlIAfjCMQANl5Hci5poEDh43lOUwNt9f/IP3iXOgQYUGUi93Z9hpfSJpKqRA33H/HbvP5
+	 AAHG3jdkCRd//qqe4/9Kn735ddx9RD00ctXqBzKwgbdFXnkGbhW8usNV0pwUgVfVbfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792602948;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792603018;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=p9BvQ0VeluCXAWmqoKdFU0SfBt1q6ntM16zBa5vzFtE=;
-	b=gAC+pqY540txupxjj11YzpsUXGEnM1RRneJ0p6QHpRkJadnJtKUz2Crc0PHDeNXIJcVA
-	 eCGGpwFirQL+vw48tAl81hxDNECb2O7PCIL4VC1huPifIObEM2jyadl5mjbp2Yeoye7tY
-	 5JA3irMLxXHmO8EowLLrw3wxE87d2A087ldjJwo46PWzTY+1uiX+2GaqeoSOUPrdvmLbP
-	 e2oAxn7VOg3Uixo05vDh6HlJk4A0fWeoVoo7Usr6SUjMIkGPAgHBNGh/QTbGFXR2jg05l
-	 mLugBzyZ7O4huJWKQ3wQjOcDU3hI4KX3tZsHc4urWZQbCqAWnAYli3fy6zQ5i1ciqQw==
+	bh=0uGVdqw1cUG+jYneBUBB2quro9jHiY9dYgBcdfEkjcA=;
+	b=MIVqyMDF20pixhRZ/9zql0aO90Qhmg2VOFpPvPMEmfG9otl8yLIQHbCdSMECa9f8+v9y
+	 2GisBEvgy1b9tAJFL6dA9m7Iwz/12Hf0Hp4K/wk5hE0dSX0AfSJYBge77FJafkGCpaghk
+	 nC2/ZKSJYjTLb9n/ahkNGJA6ISy+HMJpjzAf1fr2yMMSS8jeh4UDxc9wOuOIvsfScoVPq
+	 8LSTProOKo6EknGl7dxsoW/WkyUysGf1XFSY3qvRpUhhOKQLGn1Ssx8BOKwrufSh8oE2m
+	 GjLIQysJXbufiHGwSojJmCsrWv7UDRroJbAoOlzRklaR6iWzIqn9SRJfdV0mSwD/rug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Ld2Q6zjM;
-	arc=none smtp.remote-ip=74.125.82.52
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VqghTt76;
+	arc=none smtp.remote-ip=74.125.82.172
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425B1606A31D
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 17:15:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 425B1606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBB7606A31E
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 17:16:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7BBB7606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Ld2Q6zjM
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-170135e43c7so902851c88.0
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:15:48 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VqghTt76
+Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-3535a54bed9so1306664eec.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792602947; x=1793207747; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792603018; x=1793207818; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=p9BvQ0VeluCXAWmqoKdFU0SfBt1q6ntM16zBa5vzFtE=;
-        b=Ld2Q6zjM355/jbQmnQs79eZACeQtT9eZSUVIhd5Iysgzp/Nu+p/pKOhTu/WWo+Bi3Y
-         YDzHPb2GMQHGcgieRnH8M0yHs3S9ZbhX1D6HK1y241SRPxSYmYl7PNYV1Q/joCXTVlzd
-         LJLLmhyTdlossdq5uzo44GcuqvolB85SLhiRRzYkSl8SOXAIoSbQtfPnkaQgh4+yERQX
-         CZZxz4E+lpVBHfyGibdgqyKV1xePoLNyaZV2NlQMl3P2WugENL4CG5tyZxDwT9WuCliE
-         gcCMOywWQLjW+cwfz4o5eXweG1or6tmqp92Q5Kjf+ZlvBAxvas1gTdNLK6KgCEECqQk0
-         NAHw==
+        bh=0uGVdqw1cUG+jYneBUBB2quro9jHiY9dYgBcdfEkjcA=;
+        b=VqghTt76eLCzZfFRs5YNUaWU0L5lTwxAo46eI6Pcn74RJ4HgqlH69DnhvW4FmZPy0G
+         4wwK5gFOYgQ5uGSkmou4UM5hp4NJ9gLjsRZ08qUXnl6enMzjB53lD6Fh53+IVWG2brPk
+         OS8qF7DybBDwxXj3RSvWYFF/Q3Syk8wimdEaqQsa79j4iswWbDCADR+irlcPTTJj741q
+         TVaOiZL5i+vK5mBAhOdFuEc6QxwXZ5ReTdrPSIgggtt20B/fLXL9cGEI/JkSawRFyW2W
+         SmwA6WdG02pewUKBMtQk/G5qK6i2z0M7gEIlp0inHn0H93KLvXpwur74t98nBkNU5WP9
+         GTjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792602947; x=1793207747;
+        d=1e100.net; s=20260707; t=1792603018; x=1793207818;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=p9BvQ0VeluCXAWmqoKdFU0SfBt1q6ntM16zBa5vzFtE=;
-        b=d8qTj1ExtxUezhqTYfzDMp+jpCy4XZ22QvowC1YHdfnWpKgn7bPWqHXAr5eRCjHlvS
-         iBxBioGqgKu6U+6GNfg7Hjf0CkF7pP5pclMGYRHi8+kwOKOBoAEOJI+E1pbwsdfXN3if
-         2+SvNLOESxOhTM6ZbuEIXOZwLo3n0FZ5HxgMOQkmbd4fseMn7FABZgEVjSDIJx4fPj/k
-         T0W6NDUyt26GzuNBvaBgSrpRIMqgAkEKD4yn/xJ2tJHGusNZj3rkSxK+s0Mgzx4NIXp9
-         sQ0aRFoiQKjsQoDJTaLpyJjIwQ6tmmtUUobI4b0sTcExJTAxNWNkiUp8MYveJXZWgX08
-         eAAw==
-X-Forwarded-Encrypted: i=1; AKwUvBwWAg90bsWLfYKwz1avTXwLPgydnZtjYlXn8DB2/8yCeB/MQn2GFGUkvpyLfP2ENOSdgclf/cXuJoVF@vger.kernel.org
-X-Gm-Message-State: AFq9FYIojm+0e5qqvNCmGlGWFW3BPV5blJUabt3zy/UtoC2XdZDcHwKt
-	5Stm9wuhP2DsDCEuSajiwoGDguD4ShgjN+GtvGtXWtAAbMVgXO58v2EX
-X-Gm-Gg: AYBFou0BVBEhfplEtyWo+41CckHW/nFknUxojR6NwdOAAwD95EvCFqIWY85XI+1rR5E
-	gwUh9J6UnKRyMlE7dxZLA6eOEuTTPwcDzoN2zSdmXzUps8dvlEdiJ+lAw/G6U9+ZvfZ5L99XltJ
-	UtcpKADuzBl55YW19aIk2v/GT6oqh28N+zaTF39HTOO2IANtqSBceaJMKvvr02ENZJZOVGmsHCm
-	VeuQS+S6JSwDElXzzhN4pEfxv5sVaxxOfO918ryrnCUQf0qU1DwZgpHUhCwe7ju4ecM4s+kzv/7
-	iyapa2ztseJutnm3JMUDpWPihoUO0jXK8ym+tSumVmshZqCGuLcsS3R7MkNl9inEk9DONuQeCVD
-	y4K9aw595HYK25j9akxZvNCenDSaQC1Sb/qXg+3pwDs9OYJPiGGuPWRComnHnEYhCQ8/3d5Dx0s
-	ICWrqVGvt0MbTQChMdHIHZH6a85fNueeVHnpgMuyIUQo9e3pbIBye3pdPYYFtz+tSXhkyyz8w9v
-	JmrsNoNox7I3AhW8MjiBovajKB0OGzPqxZzhAsQW1HdwfjbESffs4PzDLN9dQ01eovdl70SHQu8
-	zCDWuthqqr+cK/yEHvX8TQ==
-X-Received: by 2002:a05:701b:2914:b0:18d:96e8:b913 with SMTP id a92af1059eb24-190a9eaab7amr2994159c88.47.1792602946836;
-        Wed, 21 Oct 2026 10:15:46 -0700 (PDT)
+        bh=0uGVdqw1cUG+jYneBUBB2quro9jHiY9dYgBcdfEkjcA=;
+        b=22XDbGrjLaKru/shFL+giks8SGVL3WrJrbjXyOy/GpJZmNLOmNHeyR9JUo7tXJVm30
+         zeMdB41vJW2MFhc52ZBrIkxvL7b40SUpd4+daYyJmzt8Z2WHV2DSBYpPv3H5gKGr8Bly
+         OhWzO0nf0JDzl+r65GaWPQ8/1mp3rK3oOuLwNXrUalOfPWqRFIsJgTYdV4X5sWFTuS1W
+         UldP+eXhSkdlJwoCRQmkqDuFybc5NAQ/omHT8m9q6SMDvYVLZh1pqaurpNO0P7H5m+Gm
+         ygX93woCsTCS5LSRi4OO7OmwHfjzWVBCSQwWYbE9ylRDNGvyfJwR4j1y3oev+qzvcQei
+         2HEg==
+X-Forwarded-Encrypted: i=1; AKwUvBxnFlbpZfX+rEz6PYxKVw6I16/ginVji2SwhVI3NEp/fX0PYaekvGq+cm4J6sWJ0jAbSfoYV61gnqfd@vger.kernel.org
+X-Gm-Message-State: AFq9FYKm064BcLLRqCQwtF9isVjrIGA4yYlrwgZXqTKK4Up+Rt1TMfds
+	KYC1+8UKuiU4c8tEtC3lqQsygIwI3Zteu9GYhEM25VZPWN/j/PouasF8lRcgUw==
+X-Gm-Gg: AYBFou2Qge8kYsq9A60dotkmTAdFcGhgJOy5GtlJRr+4oFQrXJUIRms7AzIV+TDytiJ
+	MejOpbt9XLGHjDNhtzqtu22ieNgqwrusT8lnqZElAPV4FM3ArB66mVaafXBn2+qepDQCxyeJtdb
+	tNY5CegAEBBFODSfdp/2lAHVLK7yEYGxTerbSgFD7OqEW4f6zws59gOu6btcA38PAceAyi//2ZL
+	Nq6uwZpUbhPkjvLCnECMe/zvU67vRArI7/eP4K5v3AB1YqjmDZc8kUBTrq61ubo++JUTw7VAM2p
+	MPZq+wPwlkzHoQyWBBrM2TAnJDtRVQSyxT21y9KJ9//41IHTXmxCJUMRfaD8N6XNn8nWcSJBRUJ
+	FkE3CTQVzsvBXAD311nCvDwgG3CMbzilgK6WBr12Lu6fEd1pyHBY/P9HAab64trP92FYeHg/olZ
+	7tKHfLfM+ujY6yWh1g5yiQZ/jrUp+8HPAz+nkd02hZl3p4Hyl0D0nJTOa9MlF/XmMcbgIVaZmXj
+	HZa4iTiGB94eJ9KDLnJoCXTtRecNpo9g/dlT3t1Ws/UmwrwNghHXK21ACu6UncvRgjrt4Novbpt
+	7mBDzPuQmEWoA5SX7KQ0hEx5poAmAvBPQIaGeQzs5n0=
+X-Received: by 2002:a05:693c:8345:b0:367:68c:860d with SMTP id 5a478bee46e88-3674d65d2e0mr3958768eec.29.1792603017470;
+        Wed, 21 Oct 2026 10:16:57 -0700 (PDT)
 Received: from google.com ([2a00:79e0:2ebe:8:92d1:8038:c4e7:1f0c])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19035926fe9sm6166666c88.2.2026.10.21.10.15.45
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36740cca3d8sm8748248eec.14.2026.10.21.10.16.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 10:15:46 -0700 (PDT)
-Date: Wed, 21 Oct 2026 10:15:43 -0700
+        Wed, 21 Oct 2026 10:16:56 -0700 (PDT)
+Date: Wed, 21 Oct 2026 10:16:53 -0700
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Hans de Goede <hansg@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andy@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] Input: soc_button_array - use __free() cleanup
- facilities to free memory
-Message-ID: <atjyyqxnlqEvwNxh@google.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, linux-input@vger.kernel.org, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org, Hans de Goede <hansg@kernel.org>
+Subject: Re: [PATCH 3/3] Input: soc_button_array - convert to software nodes
+Message-ID: <atjzUS_zdVf_2KzV@google.com>
 References: <20261021015004.1537738-1-dmitry.torokhov@gmail.com>
- <20261021015004.1537738-2-dmitry.torokhov@gmail.com>
- <atjw4b-ICVGH3-2a@ashevche-desk.local>
+ <20261021015004.1537738-3-dmitry.torokhov@gmail.com>
+ <CAMRc=MfZg36BULXh3n-ce_x_4B_xOn3Jp4Jgo5BN1LsB2FqaTw@mail.gmail.com>
+ <atjuDNi0_SXs4y2d@google.com>
+ <9496ea3b-563f-4517-86d6-e20694e2ec9b@app.fastmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,23 +103,36 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <atjw4b-ICVGH3-2a@ashevche-desk.local>
+In-Reply-To: <9496ea3b-563f-4517-86d6-e20694e2ec9b@app.fastmail.com>
 
-On Wed, Oct 21, 2026 at 08:05:37PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 20, 2026 at 06:50:00PM -0700, Dmitry Torokhov wrote:
-> > Switch to using __free(kfree) cleanup facilities instead of doing manual
-> > cleanup or abusing devm for allocations that are only needed during
-> > probing.
+On Wed, Oct 21, 2026 at 07:02:32PM +0200, Arnd Bergmann wrote:
+> On Wed, Oct 21, 2026, at 18:56, Dmitry Torokhov wrote:
+> > On Wed, Oct 21, 2026 at 05:11:32AM -0500, Bartosz Golaszewski wrote:
+> >> >
+> >> > -	*gpio_ret = desc_to_gpio(desc);
+> >> > +	gdev = gpiod_to_gpio_device(desc);
+> >> > +	fwnode = dev_fwnode(gpio_device_to_device(gdev));
+> >> > +	if (!fwnode) {
+> >> > +		gpiod_put(desc);
+> >> > +		return -ENODEV;
+> >> > +	}
+> >> > +
+> >> > +	*gpio_ref = SOFTWARE_NODE_REFERENCE(fwnode, gpiod_hwgpio(desc),
+> >> > +					    active_low ? GPIO_ACTIVE_LOW :
+> >> > +							 GPIO_ACTIVE_HIGH);
+> >> 
+> >> Sigh... I hate it and it looks hacky but I also don't have a better idea. :(
+> >
+> > Thanks, that is quite common reaction to the code I write ;)
 > 
-> ...
-> 
-> > +	const union acpi_object *desc __free(kfree) = buf.pointer;
-> 
-> Rafael added 'acpi_object_free' for __free() (pun wasn't intended :-).
+> When I looked at this one in the past, the only other idea I had was to
+> completely separate it from the regular gpio_keys driver and just make
+> it a separate input driver. I think that would make this driver a bit
+> cleaner, but it would also require a bit of code duplication and I
+> can't tell if that is worth it.
 
-Not sure why it is better... It goes through ACPI_FREE() ->
-acpi_os_free() wrappers which might be nice for ACPICA code, but has
-limited utility in the rest of the kernel code...
+Yes, I had the same idea and tried doing this. And pretty much ended
+duplicating gpio-keys in soc-button-array...
 
 Thanks.
 
