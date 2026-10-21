@@ -1,60 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792569367;
-	b=e5QVwjmCXXcCLQXD4kFLM+iTUckJDIPeS6KWBgCQSCzmMdNpEVBnki7nPixqozMF8Ezq
-	 J4UX0d+GqpppjcKoZnGoDM2yez+tmXlE60yU4+NMxzjnQuwc2buHRYKmC4tPGu0yerMqu
-	 Tt85UhvJCo6VV4zPjoNHQZkRIHYgh22w16OzBlhQhmkL4yziwcSxE87rU/+ohKo7VGfjr
-	 ojPFh6rt51cZxGYL+30CkOOwU+YfwZSuekr74iYdCxxytr1RoeJ1mnQjAmiB+e9+HaVmO
-	 KAsVXIIHAvPvdYPBcU0aMXvsrJhS5wQaecUTy6kao438Np+LZdZAiSSeyomTjpnt2dg==
+	t=1792569408;
+	b=uguAfzrAFbsFkBB/ST4//mNZrXDcLOyOA6NuidKMkDdFzTzCI2m7Sf+BSy5fsuoL4hgk
+	 GDz3AMBsg7B2mR+3Sf9sPW0yPM3amYD7u1bfNZTxk6gGZaNrGWrUxgthkx7eoJh6HaFQ/
+	 NdnH+/vYcii4WAUMDIGzaty8lSK+2svQW4ProrTeQqKuSd2xmRhxNpWhXcL7K6tOtf2Nw
+	 9rzaZalu0Ygh+c2zboHROvgScgBO0hI7oNwlbRJFxHJiZ5NDKv/UM5yjeRP8mMMCz5+ed
+	 s2dFw2sMDtAviLycwRbyZq3cCwLALUKUw82MtbKVJBBTCcOpTCVFDcS6YgNImvCiv3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792569367;
-	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
-	 Received:Received:From:In-Reply-To:MIME-Version:References:Date:
-	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=x7sBPB/yCpRz6ihUjtYZCgIDWXnkL3T0FpDEU3rZGnE=;
-	b=bjOEIpcCScBKDAQgiWNYO7jhdNZPhtDJK8xIIc+dvmf6jufguPs18nfY23ndi2zc2hjS
-	 gAh1VWIddy0OralT1zjH1t27jnDg9Rdfjjw8gT+JWTEw4PuPKzxA6lc78PtbufB6ntaZK
-	 s7lMLjS5xcd8MXWeazFk7C1D3MyW6upS3UJfSg+TcUJEjxKq/6AwXF06bEnQM2y4vkS/E
-	 sb/NUjGhRuCDKaLjGqPdiLqWEVEKG+KUEb8bZONrjGjGQZWuJocv0+MfZlG/NxKWZkm+a
-	 zY02HzCSzRVmpt3lEjywTWvN17a7psbVma1P7hg9gTo5/WOflGZx0++12QGKm1jL5Hg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792569408;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
+	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=pGKUGbE3C/QBtpb+JaVG68q+BgRGkhaTX7U4Tb3C9OU=;
+	b=Gv4zTXpE0lmPPGJbGA8u6NIpoOc7gdRgnHGjQ7C9vJDLJbg5xTtbQnv0HvPHo1I30sNr
+	 GYBED3mSWHeU245KDOfNsMnDxI6qmWC0zgeAnQlQ/v0oMM4qR+BXVj+8i7Hz+n5ImZiv1
+	 g50HHJfL9yVlMru9nU08UwzYYmBx4CQtOrHoS9IH1xt4JzmygaFckb1ZqR87hTeeKdjvo
+	 kmc7p45yYdSq9bJqiTQ1nzNDCar9FWKFDSnem+jBaQOsPh5gup8HGkAvq5I2tVrPBhmHM
+	 CdBjZpsLzwg6UPOEVE32hcLSYpKaIsPFj7G5u6QNULZEduTsNhVrRbzqNJ/nFFIzUZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GD0QuLkz;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WXwk5sAQ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BC4606A31A
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 07:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3E5606A32E
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 07:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GD0QuLkz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 173A31F000CB
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 07:56:07 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WXwk5sAQ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618CE1F000CF
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 07:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792569367;
-	bh=x7sBPB/yCpRz6ihUjtYZCgIDWXnkL3T0FpDEU3rZGnE=;
+	s=k20260515; t=1792569407;
+	bh=pGKUGbE3C/QBtpb+JaVG68q+BgRGkhaTX7U4Tb3C9OU=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=GD0QuLkzbIa1btgdMjnx6Xqwv2O+gp24ehxnmtQxXK2z8cvE+/g/qNXkECU+LEdY6
-	 C4nxGbLodMX5H340Rczba3Qf1uOIthdLZFbij3HkvqCSBw5QpQFyGdUinaMdrK3cBJ
-	 tx5EnMbnhNnzDQNpE3ZvLUVpULvCZSfxumLhNuHXHYkPWOf1Zji4TnKNbEeqwvEr7I
-	 t1VkIDbUyinkuv9ZlRoq89BPzvQiuNfrnVe09uvwdjgo5lp/u9Z9VcwmJl/Nk6zmge
-	 RC/7ad1TmmbJguD2WwVlAjvd9Y3z1151423FyslVD3AtU4OLbmTtrwoVOyrBOrG/kJ
-	 UrHlr4A71S4Jg==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3ab53a99771so3910091fa.3
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 00:56:06 -0700 (PDT)
-X-Gm-Message-State: AFq9FYJFDda+Ps1m8Lk9ewwDeK4r+vnAm+WE/wGEMLym76Y6NvqRP1Nu
-	LMJvSUJwe6J5RugIBlHbNnYvk0nS9zArocASYbUHh5UFlFYvqWs6NdjcWxhyGWOmLBZqZakakLG
-	8p+2Xn07IhaMklaX1rI+sQjtsPXdqc6zTC0LIN6fBQw==
-X-Received: by 2002:a2e:be9a:0:b0:3a6:47b8:ca8e with SMTP id
- 38308e7fff4ca-3ac441b2fafmr4109021fa.22.1792569365761; Wed, 21 Oct 2026
- 00:56:05 -0700 (PDT)
+	b=WXwk5sAQ4JYQy1epsAf98IWvt1v/cH/081AY57bVOfOn6fo4Zo8UHTG9T7exy0JeB
+	 wiHBV43siCt/v1lr8YkEKX9qi6U2Gov0J1zfYD4vU1VY5qPXB5YnbHxDTrnh61o2Ig
+	 Xg8vWz85UBn4LioX4NJ0P+SnfgdxWNcT/byj1auDYYt0LtF0ToCyCca98oHcgvd1rr
+	 Q8W5eNJ9Y5UhMuFXG+IGY4Ecouz+FG3XUkaOA3X3mWwsVo2Yrz45FyA35xsA9jIjOY
+	 rAcSyUsPKWO9hjjw2y0K2q4jQ4QNfyJyxSOeJk8OWoiq0yETXO00oGfAb1pjC4kBnk
+	 pCfGXVAyE7i+A==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5bc18f54abbso342630e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 00:56:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw6O/2q0YGea8GusTwBqVXHGGofR8cqnzoPWbGh6tCqZccFrk6SJvD4ytf5d73tRn7+dKy+Tib5fvg+@vger.kernel.org
+X-Gm-Message-State: AFq9FYII2fWUWHqVgKu1llwUd0qRKJgEXE/WnJzb0kI70wmOcrsQFkKl
+	MkNb2pXIMR1lK2ZN7w7aQ8CSLC3jCYaQapjVyf7zzLkDPpiWTsax3XCzzxF3utNTMzX+cLcCj9S
+	xV4UcNO7veYcZu/puU+UF4ZdLIiJ/LHtLI3XvExpJRg==
+X-Received: by 2002:a05:6512:1053:b0:5be:582e:dac with SMTP id
+ 2adb3069b0e04-5bfa1cf5aeamr465795e87.37.1792569406079; Wed, 21 Oct 2026
+ 00:56:46 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 03:56:04 -0400
+ HTTPREST; Wed, 21 Oct 2026 08:56:44 +0100
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 03:56:04 -0400
+ HTTPREST; Wed, 21 Oct 2026 08:56:44 +0100
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <CAOrEah7+ydbnsOOciOuYhTpa4zEdp-+PFNK5p16HWr7LUxAWWw@mail.gmail.com>
+In-Reply-To: <20261020211237.16514-1-vfazio@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,63 +65,62 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261020003728.13669-1-vfazio@gmail.com> <20261020003728.13669-10-vfazio@gmail.com>
- <CAMRc=MdDNWEYkzGPMRw38CL2EE6p2meNJ636VxEgoqs93mdS1g@mail.gmail.com> <CAOrEah7+ydbnsOOciOuYhTpa4zEdp-+PFNK5p16HWr7LUxAWWw@mail.gmail.com>
-Date: Wed, 21 Oct 2026 03:56:04 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MdDF6dD3seGcmTBvjXotw99-GVShN8wqSfBVQB4JRuqHA@mail.gmail.com>
-X-Gm-Features: AclHuK8am4cyrh61PuJad79oZiYE7FTK1JW1mjnaCgVJDsQC5ZLWbOgKVq0Xl-Q
-Message-ID: <CAMRc=MdDF6dD3seGcmTBvjXotw99-GVShN8wqSfBVQB4JRuqHA@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH 09/14] bindings: python: chip: use literals for
- dict/list and declare types
+References: <20261020211237.16514-1-vfazio@gmail.com>
+Date: Wed, 21 Oct 2026 08:56:44 +0100
+X-Gmail-Original-Message-ID: <CAMRc=MeoDPh0w8i4BgwOMjo=bTAChjU8BuCkoDLorSGGVKN_7A@mail.gmail.com>
+X-Gm-Features: AclHuK8VxCk7koCaMInaKxUS-ysQChlZqfoNt-3VK5PgXdyn39wxjlTHRbdmj2Y
+Message-ID: <CAMRc=MeoDPh0w8i4BgwOMjo=bTAChjU8BuCkoDLorSGGVKN_7A@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH v2 11/14] bindings: python: include Python.h
+ before other headers
 To: Vincent Fazio <vfazio@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>
+Cc: brgl@kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 20 Oct 2026 22:58:25 +0200, Vincent Fazio <vfazio@gmail.com> said:
-> On Tue, Oct 20, 2026 at 8:02=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.=
-org> wrote:
->>
->> On Tue, 20 Oct 2026 02:37:23 +0200, Vincent Fazio <vfazio@gmail.com> sai=
-d:
->> > Use literal constructors for dict ({}) and list ([]) and explicitly ty=
-pe
->> > the variables accordingly.
->> >
->> > There is no functional change here; just minor cleanup to squelch new
->> > linter warnings.
->> >
->> > Signed-off-by: Vincent Fazio <vfazio@gmail.com>
->> > ---
->>
->> I don't doubt this is the right think to do, otherwise you wouldn't have=
- sent
->> it but could you just explain to a python noob why we need it?
+On Tue, 20 Oct 2026 23:12:37 +0200, Vincent Fazio <vfazio@gmail.com> said:
+> Per the Python C API reference manual [0], Python.h should be included
+> before other headers since it specifies some pre-processor definitions
+> that may differ from system defaults.
 >
-> I don't like blindly obeying linter recommendations without some
-> justification, so I understand.
+> This was noticed when testing on CPython 3.15 [1] which emitted warnings
+> due to redefinitions of _XOPEN_SOURCE and _POSIX_C_SOURCE during builds
+> of the Python bindings.
 >
-> "Need" is a strong word, but some of the justification is in the
-> linter check itself [0].
+> Note: despite the manual stating that `PY_SSIZE_T_CLEAN` should also be
+> defined, it is intentionally not included. The Python bindings do not
+> use the `#` format specifier when parsing any arguments so defining it
+> provides no value [2] and it is deprecated in future versions.
 >
-> In general it is uncommon to see the long form of `list()` or
-> `dict()`. It's no less correct, but someone familiar with Python would
-> find this just as easy to interpret.
+> [0]: https://docs.python.org/3/c-api/intro.html#include-files
+> [1]: https://github.com/python/cpython/commit/927eb448aad6436d794ec9f55780013e25609600
+> [2]: https://docs.python.org/3/c-api/arg.html#strings-and-buffers
 >
-> As for the type annotations, this is to be a bit more explicit about
-> the expected types of values within the collections, otherwise the
-> contents are open to being inferred by a type checker like
-> mypy/ty/zuban.
+> Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+> ---
+> Changes in v2
+>  - Added white space to separate the Python.h include from others
+>    (Bartosz)
+>  - Added a comment beside the include to provide rationale (vfazio)
+>  - Expanded to include tests/system/ext.c for consistency (vfazio)
+> ---
+>  bindings/python/gpiod/ext/internal.h | 4 +++-
+>  bindings/python/gpiod/ext/module.c   | 4 +++-
+>  bindings/python/tests/gpiosim/ext.c  | 4 +++-
+>  bindings/python/tests/system/ext.c   | 2 ++
+>  4 files changed, 11 insertions(+), 3 deletions(-)
 >
-> By being explicit, we don't rely on this inference and dictate what
-> the type checkers should be expecting (so we're less likely to run
-> into errant types finding their way in).
+> diff --git a/bindings/python/gpiod/ext/internal.h b/bindings/python/gpiod/ext/internal.h
+> index 2996884..2c7ecd2 100644
+> --- a/bindings/python/gpiod/ext/internal.h
+> +++ b/bindings/python/gpiod/ext/internal.h
+> @@ -4,9 +4,11 @@
+>  #ifndef __LIBGPIOD_PYTHON_MODULE_H__
+>  #define __LIBGPIOD_PYTHON_MODULE_H__
 >
-> -Vincent
->
-> [0]: https://docs.astral.sh/ruff/rules/unnecessary-collection-call/
+> -#include <gpiod.h>
+> +/* Import Python.h before other headers per API documentation */
+>  #include <Python.h>
 >
 
-Thanks, could you put this bit into the commit message for v2?
+No need for this comment, I think the break alone tells the story.
 
 Bart
