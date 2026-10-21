@@ -1,78 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1792599162;
-	b=uT8U0BCs9uf+sINjP4uh1lFHdSJGDeYArBdiEAs8wH3LGNFH3Yxqcf6hOShDwZIrIFzp
-	 R1B7pglDTa6RQb8om/v5iEj9yrpd4Y911RFLOu0u7Ff6VZWmeTbRHfCI4oCF9QD3l9S4C
-	 aHgqEHKFolfAnqHYer0TLyDjI+K3M8vf+qFDFSmNVfGYTqY/NWsLDT/Zb5Q5KIhNP6zCg
-	 EZ9xk5kUgugWOQ8mwLrWp1HWvjiNAIQ9icePiK0ZuJW2O0wkvXXN9Sn7x/S6Wmo3Si3ja
-	 6kY1nHyfq+W5iQnHLwD6ngKgkIEj7fttuDXxccLoAL4xQv8nLU6ZrL4CrpBhUa9ZuJA==
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792599167;
+	b=WS1Y7gyz5ssMvW/IXLAqymEWkSjG5B3ZOcSJ7DWkKm61b+1INXpEEcDRQOCnDZLa1hRN
+	 Oa3mK3dxQs0lDRuigj27yYDjTycFBadnsStAypYx1DUJW6KYg6H6jeMDKo2e5oOOhO2DD
+	 HFy2ZTjPfzI/wakaSCQ/H4BFh7n5Bk2tRCToI6a+ekre88uNgweY+76uGEkCzuXwiRMsx
+	 bViHt30VUeab+rd21AktfC0IuAuUS3m+3lhVO4r40nAO9vO0hSzI89vywRdvVpI8WPPlF
+	 I1/b+Fd33jgiSF4zDt3SBHuYRMglclT9zXw6VRumuyiVTJj3CoJNp6nl/EDVszSw3Hw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792599162;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792599167;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=LOPkZEV6Cm2zaHtJqPrEJTh7x8w9jJnwNm2gyHPm88Q=;
-	b=fSbA6Qe903gUD8WSPLuVirk3wQnsL75eczIX3EKOV0XkkTwqQCOfJiIJrlaY12SAXVsi
-	 el4Y+NaWJPvPlkmwnS7hwsmIP71MRwmUvv55LjFTV7VVgGwq8vbl4DnJpvLsT0kzXaHYT
-	 E9ClA3qnhM66/UX+4tA3BhBggCSg96Nsvd0TRIXFzG8mBnbeNd6T11Wk83OjS4LBiZPKY
-	 hREdwj3TOpESvilqQTiRijJlTjO06zZvXohVsMzusVBqUg23AFI+MFdLFsxoAwewqcomK
-	 TqpnmPOmI62J7lAlaIWQrNslGmzBdhz504hqTISqkn5ElGIGF1iK6EEPKJKsDS24ISQ==
+	bh=jJLVwqngB3khTM7aVsmVcc/kQR+Ovh/E3oE7VLbfW6I=;
+	b=33Ma1XjDnVzkt2JzgXUM4U6UNjBZU7eB4Gf7rX0ozt3UQSuZWtayTWrtK8k0v3Q63XUH
+	 dcNupp213QVDF2YCpL0e0QyYr2En5iptAOIz3e9/ZVSPw4s+8OU2ZgzFWj6rpBhWz+kJR
+	 2kpGlpoCqfQYF1T1q6U/+RdH65LCnQx0kPUAX2aj4bwIt31PJXNRgPPqAkKmar1xC9GMe
+	 X/7zgoM7gbkL8nB3jEvGx3yiIRF9bTic9MmAw7b8DuTJGmSgUGAg7DBNB8dMJ/S2P3QSO
+	 W17EH7bDqsvD8I9KxqvxBVQOSOeeRtAqWofBSEc5VdjkBtKZPwQ8lIWLmInyOcLtzrQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Rpozbc8I;
-	arc=fail smtp.remote-ip=100.103.45.18
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UI+5dcVm;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D90606B6E8;
-	Wed, 21 Oct 2026 16:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3BE60A2618;
+	Wed, 21 Oct 2026 16:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Rpozbc8I
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UI+5dcVm
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792599162;
-	b=iIYiUvHqIWCLRtfGH/pbe6hR0t66fHGe8hU1NQZhIBgPx3Bvn+m3Y65BMmsniCozjP9o
-	 MuCTOSf8dj7mnZTlh657ATeXxiZlZYNgzZUxh0/1jCuvJFg6KUtK0kqVygjtn+rAOA5fS
-	 sYTBZ1EW2QS7DNEsIoYT1P58rbT1c2LrjPfy9zRZt1zdMi6hzaC11/lHSzhOuCigg8uUZ
-	 +MTy3k+MDCZVFeTBVkPHZZj3cQOkkdNK+BeesnshXx7gIXrI8KJjb0CZNBLLCtfMcxA4p
-	 c4g3p2CNJTIANd7cP6V325tmDX0qi5CyHXDBwrMQkA9JMtmF9NxosAUT0DGYvw0Jt6w==
+	t=1792599167;
+	b=Uy/7Bn0i0iI5mObVkuPH5XlcAXt1MSgwKlSFHWyj9G+yeN5KWfx9Wohnp3iLCT5cHczA
+	 bEM/WhCeVLVqeVT0LHxLJzDBcqAZJOpvr0Ic9s/hk9WX1+3RpUKMge4Sb6NG93sC4Q60E
+	 g2vJHL/qcXd0T17qnwmjzdv2GJ+ZY1TU2rDLDFUYmY7/RCA3zM9WT20+pxBaAVmICW9Mc
+	 odBJtBZqzLDbSXSQryvQ9pQztcW4mKXCmtOlRIRYax3Kdaj4MN84TZQ5rUQDycuvhhSEV
+	 NK+RTH0UgEe1qATKEVxuG3zg8jti9dRWLOJYlRiJwJVs/r3MEcVQoqc9z5NvIQBKG0A==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792599162;
+	c=relaxed/relaxed; t=1792599167;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=LOPkZEV6Cm2zaHtJqPrEJTh7x8w9jJnwNm2gyHPm88Q=;
-	b=EAsCfMDcA6XzviBGbt3Zd7v6Q3pjbQOx1ricdadB8w8FXf5KfOEpGiJ5cHvYPSoOUCmm
-	 0mOhJ9WFRB8mDtXjp2Fv6MSD4Ro5QpazB9Bs7Q2eltm5wSLPk/qy/S9GodV96RH3ifI0D
-	 Yq5BIPXVB9onNODoGBWEOJd6xYx+kZqxd4esoPR4YOQq10YfJm74qmLvs/9cXmqUslAoq
-	 awEj+SHouYRzjxUjJvU5m8juAxLvlowQS1STXcL+EPHWUZtjDalIKl1B8dto348AVxXt5
-	 6nzjZY2H2dcwortmNbBcaeC/Zsm6h8nE+3qfUISdAnfBMGQul3YZmauafc1Im9lmYaA==
+	bh=jJLVwqngB3khTM7aVsmVcc/kQR+Ovh/E3oE7VLbfW6I=;
+	b=qWGmap/iJLRYjHKdO2Mw6NrjdHFC3jUObiqVGxqFrKr5T49LtvsWvJgB79hzd09iuNYY
+	 c/NzaG0OEuF1SHrx6J/7+G/76H29EBPpOTti/CVmGRu7nYgr52cpXdDroVWBs9/WmmWnd
+	 yz4oaBu3FHK6xZdeD/qORseUcLyjnbyXDVsqm84CPTPqydeBNIlX+hXfSTHGy1JcBOH00
+	 pU6Yp2V3IY012+c6vScvO9PPGseTJLY/IGz6y5ayesDbXzfk1muU2GCvV40v+pUfqWdTr
+	 R7qLWxP+uqUm56MsKbmJZL1giaQLOPcwLpZHvlPCmQfC3FtD0/ugN9Z0Jy83E20yGYg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E90FA1F000C4;
-	Wed, 21 Oct 2026 16:12:33 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 812171F0180D;
+	Wed, 21 Oct 2026 16:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792599162;
-	bh=LOPkZEV6Cm2zaHtJqPrEJTh7x8w9jJnwNm2gyHPm88Q=;
+	s=k20260515; t=1792599167;
+	bh=jJLVwqngB3khTM7aVsmVcc/kQR+Ovh/E3oE7VLbfW6I=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=Rpozbc8IOvAbks8ZA0EvIQUx1BkFLLVX5UXLwniPNqaWNZcSPXitSxS8P77cQ3JGB
-	 tEc00Xrvuq6SEtbb8HwYfnmmw9xsoh2FnMlgm9SGq8UN4A85RVITPkRvKwRS1WxbYD
-	 BAQ6QyAPESg38vmoE+Bi130pDqGqq1xGaKd8XhnrdV6VlbUdAJa2c2QhL7vehfb8JD
-	 x+pYwM5pP57ckdlsNRsX+n/qqWMC4idp7zuKQ+lgN355b0TL0ZW1/da9ZwaQ0eBbKV
-	 iEeRWKn9Nrcou+qLzv2M6Kj5/sQFQserPjhJ1pPVkRVuOEhJuYHXYD3ySKQ+bJ0Ars
-	 aPp85USWsmE9w==
+	b=UI+5dcVmR+0Lgi62uXF0jE6g0B++DgQX12n3af4/n1DUN0KwzGSTLwmnSMBfBd8pE
+	 CxhDaYvLcDjF9e5nN99c19/XmWR+Qm8u2i+BAgu8Uj78GoqEZDxM5VtPOPg945SO0n
+	 S901TzixMjpzdy143PI5WKq406DZ+WtB8tJzyvJNjD7BuMhqAzyWOX1HbrsuXobC3z
+	 9M+Vhw8kciwps7xc4Q24A+KJqDt/W+qmmiDydDI2aTBwqiRjwlxQCZ/9VCKEiILutg
+	 GkAZ9SoyF1PB7hYl97AavGNPsuCDrNP1R7EooIltKJsfnQNxn/sblJAjSbhs8mzb41
+	 /OkLADdxRQcuQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 75B1F433D5;
+	by lkml.kernel.org (Postfix) with ESMTP id D07E743400;
 	Wed, 21 Oct 2026 16:12:23 +0000 (UTC)
 From: Cunhao Lu via B4 Relay <devnull+1579567540.qq.com@kernel.org>
-Date: Thu, 22 Oct 2026 00:11:11 +0800
-Subject: [PATCH 14/27] dt-bindings: net: rockchip-dwmac: Add RK3572
+Date: Thu, 22 Oct 2026 00:11:21 +0800
+Subject: [PATCH 24/27] mmc: dw_mmc-rockchip: Keep RK3572 NVM domain powered
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,7 +83,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-add-board-ok3572-c-v1-14-0b0fd85a31ee@qq.com>
+Message-Id: <20261022-add-board-ok3572-c-v1-24-0b0fd85a31ee@qq.com>
 References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
 In-Reply-To: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -120,11 +120,11 @@ Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
  linux-usb@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792599138; l=1343;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792599138; l=2194;
  i=1579567540@qq.com; s=20261015; h=from:subject:message-id;
- bh=K0gxmniHOFyS01yuDpywB04Gh4PRTh2NilGC49wF0Uw=;
- b=OW/ekGJbf8lwNEJWQYNfv3I5mTkDqbhiK8fSThBAA6vigH0ZL6//v8ZHW4Ee27ozpu2t/IsRo
- PGs709KxeCcBq41j/NY9kIAySAoZFX0TROVz+O/VTBtFCliJJ/ZCfYn
+ bh=3PU9hSe/SMk7DBdg0xf4xauSWrjq1Nz1yuJVCXM3AuM=;
+ b=F8VlQQXXXNczwtESOy5RD1fLR2o2T1P1xaFISpXna6qy9gK+Nv97fAEV0tPYcJpVPqhMJ72/i
+ Vvc390n0/atAb9P5zCJiO6A21b9yqanXUk0GsKPdEjNs1+rSq2/UdJr
 X-Developer-Key: i=1579567540@qq.com; a=ed25519;
  pk=sUTWrzlIwT4C7ctjNfVZAzzg0G7QUn2XxRGpYsw4RtM=
 X-Endpoint-Received: by B4 Relay for 1579567540@qq.com/20261015 with
@@ -135,41 +135,70 @@ Content-Transfer-Encoding: 7bit
 
 From: Cunhao Lu <1579567540@qq.com>
 
-Add the RK3572 GMAC compatible using the snps,dwmac-4.20a fallback.
+Power cycling the RK3572 NVM domain causes repeated SD recovery. Keep it
+powered during runtime suspend without disabling controller runtime PM.
 
 Signed-off-by: Cunhao Lu <1579567540@qq.com>
 ---
- Documentation/devicetree/bindings/net/rockchip-dwmac.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/dw_mmc-rockchip.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-index 80c252845349c..83b0a81b4f3b7 100644
---- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-@@ -27,6 +27,7 @@ select:
-           - rockchip,rk3506-gmac
-           - rockchip,rk3528-gmac
-           - rockchip,rk3568-gmac
-+          - rockchip,rk3572-gmac
-           - rockchip,rk3576-gmac
-           - rockchip,rk3588-gmac
-           - rockchip,rv1108-gmac
-@@ -54,6 +55,7 @@ properties:
-               - rockchip,rk3506-gmac
-               - rockchip,rk3528-gmac
-               - rockchip,rk3568-gmac
-+              - rockchip,rk3572-gmac
-               - rockchip,rk3576-gmac
-               - rockchip,rk3588-gmac
-               - rockchip,rv1126-gmac
-@@ -137,6 +139,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - rockchip,rk3572-gmac
-               - rockchip,rk3576-gmac
-               - rockchip,rk3588-gmac
-     then:
+diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+index 75c82ff20f177..8bc55d4b996c6 100644
+--- a/drivers/mmc/host/dw_mmc-rockchip.c
++++ b/drivers/mmc/host/dw_mmc-rockchip.c
+@@ -10,6 +10,7 @@
+ #include <linux/mmc/host.h>
+ #include <linux/of_address.h>
+ #include <linux/mmc/slot-gpio.h>
++#include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ 
+@@ -528,6 +529,19 @@ static int dw_mci_rockchip_init(struct dw_mci *host)
+ 	return 0;
+ }
+ 
++static int dw_mci_rk3572_init(struct dw_mci *host)
++{
++	int ret;
++
++	/* Power cycling the NVM domain disrupts SDMMC recovery. */
++	ret = dev_pm_genpd_rpm_always_on(host->dev, true);
++	if (ret && ret != -EOPNOTSUPP)
++		dev_warn(host->dev, "failed to keep power domain on: %pe\n",
++			 ERR_PTR(ret));
++
++	return dw_mci_rockchip_init(host);
++}
++
+ static const struct dw_mci_drv_data rk2928_drv_data = {
+ 	.init			= dw_mci_rockchip_init,
+ 	.parse_dt		= dw_mci_rk2928_parse_dt,
+@@ -541,6 +555,14 @@ static const struct dw_mci_drv_data rk3288_drv_data = {
+ 	.init			= dw_mci_rockchip_init,
+ };
+ 
++static const struct dw_mci_drv_data rk3572_drv_data = {
++	.common_caps		= MMC_CAP_CMD23,
++	.set_ios		= dw_mci_rk3288_set_ios,
++	.execute_tuning		= dw_mci_rk3288_execute_tuning,
++	.parse_dt		= dw_mci_rk3576_parse_dt,
++	.init			= dw_mci_rk3572_init,
++};
++
+ static const struct dw_mci_drv_data rk3576_drv_data = {
+ 	.common_caps		= MMC_CAP_CMD23,
+ 	.set_ios		= dw_mci_rk3288_set_ios,
+@@ -554,6 +576,8 @@ static const struct of_device_id dw_mci_rockchip_match[] = {
+ 		.data = &rk2928_drv_data },
+ 	{ .compatible = "rockchip,rk3288-dw-mshc",
+ 		.data = &rk3288_drv_data },
++	{ .compatible = "rockchip,rk3572-dw-mshc",
++		.data = &rk3572_drv_data },
+ 	{ .compatible = "rockchip,rk3576-dw-mshc",
+ 		.data = &rk3576_drv_data },
+ 	{},
 
 -- 
 2.34.1
