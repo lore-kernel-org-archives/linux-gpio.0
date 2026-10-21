@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792609340;
-	b=eBOpiAnkfNIde3kOUirjIIRCiHvGJzg7LT+lyhHE7rSZDE/AUjsnpPJkvcVZk3+hrF3/
-	 wSMxrBzTQWWuNYiJe8Q4ybpsHxnhr0wDnsnHqaNNaa4KnsHzn86CeG3e5mfVVxMEVKh9n
-	 MuTBx4F1p5OhYY70z7snqwifSEeOzaXHg+8XJq474MbdMIzIByp9LLg2NPEoy/R17gyvQ
-	 mr3G4yt+xLYXmcXOsIN1WqTzZQJju0eOjUqW8QbeZ6gvgI1YULd7aVYafLoso8CeXfwv4
-	 HNA5dKqVuSmJpbpq86vnvXI7FsI5x1aHUjdM3WlJfzoXl3sFK89WQXlh8R0kPdLS6Zg==
+	t=1792609344;
+	b=d4JdVj+XQVtIMotHjnut6t56bXjzlnhr2TFZtni3MUP1e+1RN7uqR8DwaaigXXZwT2qW
+	 NR7YZHF+flPb/tTJn85A5IVQY9nnhSCDuQOTOc5C0GxVAK8Ob1s2BnaXUQ7hq85EHUpl/
+	 LmdR4jnxMsg+wC5ikaK0+DujTyZsnIuS5ZJ7FTRZh2a0xOpWzQJ9HxtqdxAthJeZ7IS/G
+	 MGJImqMgmfAcuQadMVZdY226DbZ6uTkEoVWTmyFJrvs2HrM7ajbk1Ze133U5r2vdJBK2M
+	 PgE0SKbv94rY0pQthrwVjFhE0yUvWuNQ8WhexFYxZ/T3ex9Q+SwymzS96SYp7yfWlyw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792609340;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792609344;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=Vt73uT3Bmf6mr9x/h/RM+J+bhPhlELsIoqUJLcGw4sk=;
-	b=mWZ+saCi9U3MMAdZJXOcGpSMPamCQjvVoJkF8LuZM/UOmFxER520w8vnR+PCZE02wTlt
-	 LVHtUhsL5aPmUOjwDV9vHOohzyfNoP024w8+K/PqAAdBkvjxUFl6aJ/jnLTkzhSEdzeuP
-	 me3JpZB++8kcRYtPRGVPjyfBJpnm4F3IftWsyEByKg0SjsDgkXr7X+IzlZBxqjt4wEn2+
-	 t8jCXuasaSuaZuY5QjWQMshqhC1Z8Hb0mfAvx9bQo1FZXuVVMe+3hmuw0s9ckB5vuHmfR
-	 ya8LYX18hSadP9Iy7pn3RZV6CoQw2ujswMTG6MxNtzB8LiytpvNKAovCodAQ7XzBo6g==
+	bh=hqC+X0njTqocUmZn8EaZ4aReZGBfMVey0Ex3TVDmvMw=;
+	b=es77AVaHimdsTlP3O2wCHoxL37cJcYDAz5z9BShYzHvyQ6r/t9rKqdvIkRBG7eVOGAKr
+	 I2EibOQAhMggnUXS7X+mt6HqmSw94pV2+2T+kDvb1JDuS6Q4MeRbAecJGuZUNiXDkmdEa
+	 SupBfDOAgx4lVBnMNDG01YGXfcyC7RIJBZUpbqL7i7SDWGSdxHRSExcnJJ4HGmk4HpccE
+	 pO/veye9cV2NkduhW12AnjZeKUOQmSfvv8R5tzW6BHuY2R4glgPC5OHqzPk2M0EB/9qBk
+	 jgsUIHFRyfwD+I/3sggvLICubmCGiqCNOrfKQSOx+GadWvNgXPMfKl052TKOFOYspHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=neUQSqME;
-	arc=none smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Zu74huN8;
+	arc=none smtp.remote-ip=74.125.82.176
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B888606A327
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 19:02:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B888606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83A7606A331
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 19:02:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B83A7606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=neUQSqME
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-36661f953e4so2037560eec.1
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 12:02:20 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=Zu74huN8
+Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso982674eec.0
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 12:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792609340; x=1793214140; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792609343; x=1793214143; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Vt73uT3Bmf6mr9x/h/RM+J+bhPhlELsIoqUJLcGw4sk=;
-        b=neUQSqMEncysnP1DEjJKWKDDqp8UaR3Ojoo072jz8wzpDvU1NMJDoEokIWctqnLu68
-         fFuwfaKWg09Z4MrxtqQhxNCgJpqMSoamVnDHXQr9mbdd2is9k7lDH3dlx2M7Ebfl0YsY
-         E7WKIiBCFG1NFlJA7qnekG+YRZ/ylsNY6NcLxXFfSSAN6WI3RimB7CFPBDLDutcuRNME
-         cb044b9pbFkAaEU7qyePmCzSOkCused/dSXY86edLoV+lu7bSkLQdPF6W6K0aYm6w2bY
-         ux19wje0MxZm73ih+rQA/MN+RHxxj4snNNfkrY75zEBFfPl0lC5L+yyQwP+0L0jKeT66
-         CBIA==
+        bh=hqC+X0njTqocUmZn8EaZ4aReZGBfMVey0Ex3TVDmvMw=;
+        b=Zu74huN8bqxKTdK9qjC7qTPI6UWRWOaL/1U6Pj08XnIPoyPuUHp9NWCCGPBWgmp/jp
+         JWLNodk19/YQpQKXsS9NFQ6IhesYH+O5rRXmPPQTFm0fYz+LlV0fF7SsFGe9gZOv0B4G
+         sNSWYySUFCOQwiylgiH59NOOftWsROqBcdlnKPrRxE1b5OR08/LNTplXemHYqNmczu0J
+         ULlqRNlvI/63y7GvIpb3OOpnPQxLWDl/1Sbu+KYnSyJjRAJcJQr3sZ/h/uS4+vThcAgn
+         x6i8CT2+HdXFvHuH5Udgwa+8+eslm0xu7KX4SIXb0gmC30Pn1jaTTUNngYbpp8hdRQXG
+         snog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792609340; x=1793214140;
+        d=1e100.net; s=20260707; t=1792609343; x=1793214143;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Vt73uT3Bmf6mr9x/h/RM+J+bhPhlELsIoqUJLcGw4sk=;
-        b=rJ3Wyv+aALiap0G7nmzOjZgC7aA7e69wNs9JcwURat+KmvqbKR/vHNaAuEAL9i/bBV
-         yUAHySMOfJFPQnYnEiLKOCvTJRBB0v781zFdnYDWMB9Ri7a1TC/3gQ9SyhNMIRjfg+Db
-         b7EWk8nAPbHQtZaP8Fc1cW3VQH8DIx4h/gfK2F6/U3QGIxajrUrlx1xdvPe8NiUAceXO
-         H6zBjlF2WioH6+712mAVjzGM9T0kvITv8MR3auZnKvWH2AqkF+nzhcfboSXEVRackt/H
-         MLfQecYbGZeVmj7OHbBPG70OaeyYpuf9INfvcjMobXZ8TUwSwv/i37dduYuvPwDjVjWo
-         s5+Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzTl5ufUvjA9dQIMOIRPUl2K4JmpwETuEiDdjRWSYM/CiuzbGpXQ0wgwTupDkY1cJHEJ15wF0P/aeF3@vger.kernel.org
-X-Gm-Message-State: AFq9FYKlPN1FxRju4NdJCcxFxiMEdj8o5/7uD0ba8JEafYcuX1Ofg/QP
-	F+n8UHgLg3FQN461o3LyViuWrCXUmU07hfjS7K7KvPO5xH5PaRgBuxjo
-X-Gm-Gg: AYBFou00lnn92rwzQzoHtoRsuLArttnmPtx5YW43WrofrXRuUgCQWKxGhQQArTSISpA
-	hYCVeLju7eM1XZ0yD7dZOZgODzFoTF5ZzUrSRaEqOWD4ABH7LIVahe8zpkVFrfr6NkNJ2xKGVpT
-	AOL+XQMKwcvWqk4o4j58lTYjmyWMUqWaK2KNld0ftl7edYiRrbYdZD4bpQogrRTJOdP5vfnvrmV
-	gtOeMYeRNCkXV0/Le2INT6nwcaHkTetn4RMojzem9OOgKSS3/aQ0AyyHCdtHiVQ7nthcddU/WAh
-	/hft8WkEmRNAr32VFqCZF6xmoCmzDUuxRY7yT0tQsyTBwncsCwnpyQ8awJHiYJo7kWP0nDBWjmY
-	nS/G8QJQeHeP7Rdob3W+dUvxLnkGG2vomgoulgiBjWBA+TmqS5Qv6Hjl0JY5fqs3a094k5B08GX
-	6UNbtezzKKq5Cc7NasGoex1kwh0SvZmDoMivp+njdcTqWnQ6duka3q4sASY2rA4aIlfMNSQ/2ZR
-	th97J8GnegzVI4F4Ac1YfpVCHH4nFMzD6LWDAZ/bC+gN8wiLT+8+SLAEaEN5GDlJbOrjZQj/QoM
-	laXEbBj5kz9X+iYE0TN2oDA84g9t0gip+O6XWxyT0//7RhTxmhGqOCcYBfRuZVmUPw==
-X-Received: by 2002:a05:693c:8641:10b0:351:68e8:4646 with SMTP id 5a478bee46e88-3674f11647cmr4384980eec.37.1792609339106;
-        Wed, 21 Oct 2026 12:02:19 -0700 (PDT)
+        bh=hqC+X0njTqocUmZn8EaZ4aReZGBfMVey0Ex3TVDmvMw=;
+        b=s3XdqN02Wl5yAaslGIK1XhsiYoWE09heJj8EHzFQtlMNmz00e1PWqYnlKhZ3DuSigy
+         oH+2JkEn0VsJhowdpZP8yCBSpymhyBHLdqhRCr7+L8Y+sz3ltDZTxkGE7wXbFybVPoQg
+         AsKEeXW9BzXJcWeWzqWnMFWUuhiyeYiBe0+oukLvTf/CFvGJn2rKYY0BKY2HWBMX6qFL
+         YXbiVk5kZC6iE33fJvzxMWcpKA7OHub7icN2lwad2qO6d0giIepjzpqw2K8hWRXPBqG3
+         C9n/DW8o0+UM0llT7CoixzMwwJYrhTxHmW/uhj0oVlRSgfGo48hJX0QgDJNxEMx+GUri
+         rzSA==
+X-Forwarded-Encrypted: i=1; AKwUvByo8LZpWy1dgiAuE/geUbLv05vY43K4UlwcZX45vIUyz5KBskNwtBHMRHVnwANeW+gzs4RhgTUx9vpC@vger.kernel.org
+X-Gm-Message-State: AFq9FYJSxGZik1xYhbVrCgNgya8dH6AhxD7a03rPCRRkTlPzOKwQl3Tl
+	XJMB4SWNRDodpKWvddUm9SKokeYzBG6dcIC7NMe3/mYdQLn34SgPHQ6P
+X-Gm-Gg: AYBFou2ZE8gXeOctZB0ykWFFKAo0sXYaiqjSo7XDk+5/nITgSMIVd6NZmIpdu2TF3fT
+	TnOaoDNuOQi5RZcTKzdwptk3p8SpzgxNEZXaDPgAuGAXQz+iTslc5PrB4TkT7w55aRdHIoEXd/d
+	ecoXUEY/TzuV5dLa3Gk7ZLsiA5vJ4FMDyoEcbF7WZ3xUhmOX7CYB59k0zuPZ03Mt/8Esjh6PAZS
+	O9tUSQjYrm/B/Q/OqldM7ZjjYz3CBENo9oSw86bWd6AMabiMt/Gxy0ugJfAclOg70GKcr1ZET27
+	2iv5anuCzz8WIFFEVvkiEbVuvkd/mgkW8mBtn1rrhwuQTzPgxTzOCwcQdbD0vv/Ss90cHd6aq71
+	8oH7MZdZ+5uwkCl5tkw2k5j0IzUtEMZlZmJ9Zb01f1RBCRgNjlR/vOaj598xqqYX7vAdRA2grFf
+	xTYmQ/Z5RPNMRz5BudJviDGValOug5d+HxGRNZm+QPz4oVvcx+8x585j0DIffnrJ2qe7phoWrqd
+	KrjDVnWvovIUzn/UgWNOkrDFF+NADxndMBO0w9zxZmMnJHug6oltaL2yEZ02+6naYflmUbCv2Wy
+	rG36DnhYd37QbNtM4ioHQUESpEItLBLtFdiAxYR/wVli
+X-Received: by 2002:a05:693c:88cb:20b0:368:74ca:1c5 with SMTP id 5a478bee46e88-36874ca066dmr935998eec.37.1792609342466;
+        Wed, 21 Oct 2026 12:02:22 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:1761:399a:3c8c:31ba])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3673e153519sm9500604eec.3.2026.10.21.12.02.17
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3673e153519sm9500604eec.3.2026.10.21.12.02.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 12:02:18 -0700 (PDT)
+        Wed, 21 Oct 2026 12:02:21 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -85,9 +85,9 @@ Cc: Andy Shevchenko <andy@kernel.org>,
 	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] gpiolib: fix fast-path cancellation in gpiod_get_array()
-Date: Wed, 21 Oct 2026 12:02:07 -0700
-Message-ID: <20261021190212.2237804-2-dmitry.torokhov@gmail.com>
+Subject: [PATCH 4/5] gpiolib: use __free(gpiod_put_array) in gpiod_get_array()
+Date: Wed, 21 Oct 2026 12:02:09 -0700
+Message-ID: <20261021190212.2237804-4-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
 In-Reply-To: <20261021190212.2237804-1-dmitry.torokhov@gmail.com>
 References: <20261021190212.2237804-1-dmitry.torokhov@gmail.com>
@@ -102,35 +102,80 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In gpiod_get_array(), when a pin on the same chip is not in hardware
-order and the preceding pins form a contiguous block, the fast path is
-cancelled by setting array_info to NULL. However, descs->info was
-already populated with the array_info pointer during the first
-iteration, leaving descs->info pointing to the aborted array_info.
-Consequently, subsequent array operations still use the fast path with
-remaining bits set in the masks and wrong hardware pin numbers.
+Switch to using __free(gpiod_put_array) scope-based cleanup facility
+in gpiod_get_array(), simplifying error unwinding and eliminating manual
+gpiod_put_array() calls.
 
-Clear descs->info alongside array_info when cancelling the fast path so
-callers do not erroneously use the aborted array_info.
-
-Fixes: c4c958aa64f3 ("gpiolib: Fix array members of same chip processed separately")
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 21c9cea71c68..144a63e6692c 100644
+index 144a63e6692c..79f3be30ace1 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -5270,6 +5270,7 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
- 			 * hardware number is different from its array index.
- 			 */
- 			if (bitmap_full(array_info->get_mask, i)) {
-+				descs->info = NULL;
- 				array_info = NULL;
- 			} else {
- 				__clear_bit(i, array_info->get_mask);
+@@ -5190,28 +5190,24 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
+ 						enum gpiod_flags flags)
+ {
+ 	struct gpio_desc *desc;
+-	struct gpio_descs *descs;
+ 	struct gpio_device *gdev;
+ 	struct gpio_array *array_info = NULL;
+ 	int i, count, bitmap_size;
+ 	unsigned long dflags;
+-	size_t descs_size;
+ 
+ 	count = gpiod_count(dev, con_id);
+ 	if (count < 0)
+ 		return ERR_PTR(count);
+ 
+-	descs_size = struct_size(descs, desc, count);
+-	descs = kzalloc(descs_size, GFP_KERNEL);
++	struct gpio_descs *descs __free(gpiod_put_array) =
++		kzalloc_flex(*descs, desc, count);
+ 	if (!descs)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		desc = gpiod_get_index(dev, con_id, i, flags);
+-		if (IS_ERR(desc)) {
+-			gpiod_put_array(descs);
++		if (IS_ERR(desc))
+ 			return ERR_CAST(desc);
+-		}
+ 
+ 		descs->desc[descs->ndescs++] = desc;
+ 
+@@ -5222,6 +5218,7 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
+ 		 */
+ 		if (i == 0 && gpiod_hwgpio(desc) == 0) {
+ 			struct gpio_descs *array;
++			size_t descs_size = struct_size(descs, desc, count);
+ 
+ 			bitmap_size = BITS_TO_LONGS(gdev->ngpio > count ?
+ 						    gdev->ngpio : count);
+@@ -5229,10 +5226,8 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
+ 			array = krealloc(descs, descs_size +
+ 					 struct_size(array_info, invert_mask, 3 * bitmap_size),
+ 					 GFP_KERNEL | __GFP_ZERO);
+-			if (!array) {
+-				gpiod_put_array(descs);
++			if (!array)
+ 				return ERR_PTR(-ENOMEM);
+-			}
+ 
+ 			descs = array;
+ 
+@@ -5293,7 +5288,7 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
+ 			array_info->gdev->label, array_info->size,
+ 			*array_info->get_mask, *array_info->set_mask,
+ 			*array_info->invert_mask);
+-	return descs;
++	return_ptr(descs);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_array);
+ 
 -- 
 2.56.0.307.g5fe7bd680c-goog
 
