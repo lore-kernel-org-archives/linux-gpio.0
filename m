@@ -1,84 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.16
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792565421;
-	b=5Nyf3+t1tJPsstP89RbyonFpXMnJP/eDUGmXji8v8tWVoHQh3MujDkwTVv2gxEIBd6th
-	 W7UgCHKNye6xUBCjS4au7a77xBuBi8Euuai9Vy/qLi/K+wvSyU/o8rUW/CU8OlkkUW2zF
-	 QjBvYiXdiT6eytU/A4R5K8AQZgyccFzjByvPVMnnaIipArRt71ekQzlF9LQW/WZTWG8u+
-	 rZKwZ28aknY5V4+3TZkOM2Qd4LM8YhUEE+RUScQrQPnCq7gh7rOzmPFNB0FCj0iodhDvI
-	 nsMFfb6NUPSwds6PhvGmv44tfsAn6NQXdn5aEVhejfgxK5X9UiPjkEln2sCMCF/JOJQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792565421;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=7kQE4TQnW0veqMKpVRhTHkPQx9WW9lXS7O6FX9MB2p4=;
-	b=fMtmoRJ6oieauyqlvduiKVEw9j0+WB2PyDkXwkT+iuYDGC880A8IKclRhi1caXarpXAt
-	 EvSw5jDMRzOUzamj6lGUg2WAzU9GdhiX6P5IyTtc/p4mrtBZI/r2BgBhrqyBgPAG6lupp
-	 JdvK8M7AzfovcrpddebY/lzLbbSdMecxMLjcSM1agUsBGkM25rHLsEJ1mUSuJDQaQqkDg
-	 et8JcNE7s4vFGfokhr5vQISOJpzHr0LRy6duVH0w7B8KJXJrREfiEE1u4BhYeaMP++3l7
-	 bUHstQn0kJoPwh+csQbiYsJRkJ7RDFrAckyTdOg6SbLa3K8Q7Hteur9UiCNV5aWGj+A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dcD+wETg;
-	arc=none smtp.remote-ip=192.198.163.16
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792566389;
+	b=apTbuwG5YAQ6GG2LZqcg2IFdgvoWQXIgMTEI+veDulPjbDVaodQXwdRDDPedyUskGcDT
+	 a4sWmsQByq+CoLMQ7uhetpz05FWP+xbPcVT3QRmNY6xL8CNDq3MOnDkXOeZsvMndNkRjo
+	 uzmKEIauQZwctFBHm6MUk2h4wPzTeofa8G57AqqqPTssriJ6OlDzle/cs6PpX/Wo9ITBz
+	 JwX3YzmP1fZwImGuNzy/YEBJKNKFTwHbeCFZVX3ttNxD5Us6455LdGUqHDfP8pwUUNdLF
+	 6YAbkMN6ox6te5/2WNSKjnZjYa75yH0FGfQ6+tIZRjYcVOZImsdBUCFUO7mBOd3mEtQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792566389;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=MrXSvMObVmUzW/wExlXkMf3oMLCJJTWEEpBTKn/sJ+Y=;
+	b=BtkckOsU2TyjGn5Rcbuqz+o6h762U5jood0i42AzJyNp2Co1WAo3evHK/kI2x5ZjKSds
+	 7q/hvVTc3eewY7NIWZpl5NgSn4JliQVS/aV8d2hvTHcbtA4xSRY1xF7iJeIO0wAuhDCYS
+	 auFlLmLOCMjfXdgyyTm4MB9OnVBvKco4IIwaZ+Ky+JTYtdUldcv/uSe/xglIMgA/XaIuL
+	 ql7VnQoVUnN95lkfU21mFRbOcm0Bx+bFg4GFya2xuRUqdKtahw7IoDyAj0hC+BLscA6Nd
+	 P2fB2BFRf/Jzz8xn72YJk7pix3IsJtBOs9JblBG8TYP+cHatGVb9iIyiigBqqmqTXfw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=C2aW6AfO;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AABC606A319;
-	Wed, 21 Oct 2026 06:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0AABC606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F8E606A31E
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 07:06:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B8F8E606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dcD+wETg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792565421; x=1824101421;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ACsbaDSti7txFjwPOQeTX5xC13w/ML4tO/kZtijTxCA=;
-  b=dcD+wETgbvWkfBOToyrGFXaEDXCYly272NTsLdeASL9KBoePdCSROpwS
-   lCRMG1UWNvBsP6d8S1QRzDsHvjuF/uFzrJijya0upwzPITJmu2EyH9gDX
-   NwIQ73oEaqmLqLQIwy8qV/yvFVBJqpp8EbQ4OcXFvfUjHmS4H9c52/531
-   Lrl7tqiwLZIO1druWBaBwLotF/+jVdlMnIvC7j/e2ujVMidSSjyFh7hy8
-   osg/9bzKudMOPlCHthpLiISbesxuyvfrug29dFcQFVxTfem3ia9eVtY5A
-   sAzQ1nCfyyCRY2DDI3t9dlwU0QryamanmCk3tFIUXJv6Xnl/q6tL6IcKo
-   w==;
-X-CSE-ConnectionGUID: 5HUg+ZmDT2GTpe+RBLnEnQ==
-X-CSE-MsgGUID: mcolg8Y8TbmKLNcDItb1XA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1295955"
-X-IronPort-AV: E=Sophos;i="6.27,169,1787036400"; 
-   d="scan'208";a="1295955"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 23:50:21 -0700
-X-CSE-ConnectionGUID: x0DZkoITSMWPAoXg31+X4g==
-X-CSE-MsgGUID: I50wtKsxQNG9M+/qAkC2hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,169,1787036400"; 
-   d="scan'208";a="3065130"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.24])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 23:50:17 -0700
-Date: Wed, 21 Oct 2026 09:50:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Kent Gibson <warthog618@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] gpiolib: cdev: don't leak the IRQ name when the
- chip is removed
-Message-ID: <athgpsDd9oIusdx8@ashevche-desk.local>
-References: <20261016-gpiolib-chip-removal-v2-0-aambrozewicz@nvidia.com>
- <20261016-gpiolib-chip-removal-v2-5-aambrozewicz@nvidia.com>
- <atIpg2E8PeJ0oGNS@ashevche-desk.local>
- <20261020125921.2896041-7-aambrozewicz@nvidia.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=C2aW6AfO
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6afbc363efeso538420a12.3
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 00:06:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792566387; cv=none;
+        d=google.com; s=arc-20260327;
+        b=TUtJMx9vY7DaTYsEWe/WiIS2UoNcOmkJvwA7jKqo9IL5AhH0wZz6by58a8h/1tvOMF
+         ETNIaJf0qjd8P37O2FYAlRFrrch5hpW9iTBTbSyob/94bUTCzODxIqM7oECgNKCNZd3+
+         1/X5sjzzqNImXnXXnWDzlWxKluvNOc1CA8aGDQFhLtgmf5D4qzEmkXG7BNpB7Tl0tSba
+         Xg5+YjvG6FNZ14l2cL5yLYt5NTfl2Pm/eLj7nmVtu1Ou/wO43snONe6xiCDJ6yxgdT4V
+         e5SBpWPlKW58nHzJojAUMbVdRz7OyjWcvD2ivg9w2SO3gJCO7IKqujFjwMi7gUfyrWuW
+         woGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=MrXSvMObVmUzW/wExlXkMf3oMLCJJTWEEpBTKn/sJ+Y=;
+        fh=wP6TrY2ZKH9X2lDVPdRzl8q127nmdmIF7mrBw7EHw5g=;
+        b=NzJELPYUAokAxFqiGZLkvXN5QvexDjSa8abFJujqUcEhCs8P4HpLTsvQD0q7RoFXdU
+         H8sCVix2zwivClg7dyqgxZgWSdF/bpZS5WUcfuVzh+B32kmUnaKqMZfcFyEfHnDgWM6D
+         u90UUAZq77AqbKgY99La67y/q3nsaqzxd1Qhg7JaEk8rnuylpl5sgoUiVcfKkx1Qjiph
+         xGIV46zvc3pKMZPZ/oF1GKdB1crEZ61370oY3EkOXzLSShSD7Y8y0bUi5rjtzsBB3Si3
+         gXUzbPXmxmz30JMVEcuUcqsY3iLRSfCUVZmgrSa39sKS4wrk0BhvUFcBLqM+dA8srS9/
+         QeZw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792566387; x=1793171187; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MrXSvMObVmUzW/wExlXkMf3oMLCJJTWEEpBTKn/sJ+Y=;
+        b=C2aW6AfO2tXqS0Oxlx14bTBMVNZFQOYYIP++4Zjy0XAUzXRNiZIyd/we1pVq076aHi
+         iVYIhUPzTRpHWbk8TgjZRClfvVa/ZIrYZGMbZO3DJMSCV5UIvg3fS/yC6mcleMkr5AZl
+         CDc9kVye1E9N/IkJg93m7mi7sqO0whCAZMX9QcPqw07cX41RvUCWYBX2Ni2g9I4qZnBc
+         vQc5Edq7qEPfSyUtvQ+/172O9D4MiKBbq1sWvU7Tk2+K4adLUinXmEHtrQ6sATHMl6NQ
+         saHvu7vFC0jl/+EFXD61TpmMKJksXH1W78BY/OXH4ikoNly2no/97ZmvjpXcLfZRBf40
+         7B3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792566387; x=1793171187;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=MrXSvMObVmUzW/wExlXkMf3oMLCJJTWEEpBTKn/sJ+Y=;
+        b=L3CSBYqmefGl70ojKFPxTN3+jl7DtYdfFFBBVkIal5b3KQROlIycAMCPbbKUQPMi8V
+         8GXbtFYPpV0t77vitMnrYwMjzQKy2hOXEWc294wusgG/CYxAlglwPVaB1SmrAoLgMOVK
+         AX3cG/gOlW8IZmEGPESA6Iocz8/5cFIDBihIVPHfvvk/sMieq/ZikdkT8RjMIK+hJb57
+         FWmvvGOEr5rKeAfRT/GfRMrPECSGZrvToeDFgrxacyore2GnvVDlVRzjeBebwCJrbQ3h
+         xME2SPZZFCUMG/uAkQeobkB0KMgSGppE5wvtZHJ1arJsr8KsJ/DLQOyuOZ9uQOfC7jXK
+         Bd4w==
+X-Forwarded-Encrypted: i=1; AKwUvBz5J9IuivlkOUDohdhZB6UCQe3EkJCzLBdGU5vNCEIiE7ZMuqmKFkEgYt4XnGlkgG+7e6CQ20BdE0Hp@vger.kernel.org
+X-Gm-Message-State: AFq9FYKL04F0w/02y8g1bZRB/xYdk1RkePGzfoPb/s9+Jkfk/MkCyWJY
+	4vVNq+q78TAd12mXrzDjLyNO2W8oGnGgiKAR0k5E547v/oQn+895KTqPkBOP6fZ488kYO6TbA2W
+	DaKPiWxnw3dr3gO6tWWjEiRDFdlH2IaE=
+X-Gm-Gg: AYBFou25mORf2+CsBzOwxceeBVqN8tam5ObPHJYwYHdPZMo2De4M53j953bJNnQ0Pzi
+	AYpt09OaF+XSFvVdJaJAbRnQ3QR5wv+gYp8jlWkzQt4Pk4V0+28lCp6sMqFk8HsrufdMI+Bfd1y
+	ud6VWzMveu/VIO7W5vobGA/sIN4gVJaMIXW8NF+XqcuU3AkRrej8jlB3UB80v0Vh8cykL2nC+Rb
+	5S6+UvNLOs2AAWyatizQa0uM6ssqtiKWRTQS8a5DWdZY+/JUL9NLfKg3URAYo++Wz9nyxxb5FV5
+	X8r/F/wAV6NermCq/ItJx9FLiODUw8cyQ4LqYg+mpLY0F3xV0o8OD3eNFeqdGk+WcC+j4vtJc6+
+	S9uIfXA5xUZrjNz9y/fTvf7e0S2za+w3qhuU=
+X-Received: by 2002:a05:6402:1585:b0:6b1:cea1:a011 with SMTP id
+ 4fb4d7f45d1cf-6b40893d0e9mr633902a12.0.1792566386899; Wed, 21 Oct 2026
+ 00:06:26 -0700 (PDT)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -88,50 +103,37 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261020125921.2896041-7-aambrozewicz@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20261020173556.632798-1-l.scorcia@gmail.com> <20261020173556.632798-2-l.scorcia@gmail.com>
+ <43b58ad7-5934-4895-b48d-5b5a7b92e253@kernel.org> <CAORyz2JaJ40+F1oyrvY_0WdqH=fritbPuuQaZ98sXagVayZPLA@mail.gmail.com>
+ <2426ffdd-9438-4166-a67b-96620650a59b@kernel.org>
+In-Reply-To: <2426ffdd-9438-4166-a67b-96620650a59b@kernel.org>
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Date: Wed, 21 Oct 2026 09:06:15 +0200
+X-Gm-Features: AclHuK9050nRGHSTN9753pi8bjuF0vHRU3cnUbJida-ygLIdS4pPdAAtcMwmgKA
+Message-ID: <CAORyz2KsozjmcDCd+KVfvLokuxs-YAP0E5yJawHECu9pbPQmKA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v10 1/9] dt-bindings: mfd: mt6397: Add MT6392 PMIC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-mediatek@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
+	Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Val Packett <val@packett.cool>, Fabien Parent <parent.f@gmail.com>, 
+	Akari Tsuyukusa <akkun11.open@gmail.com>, Chen Zhong <chen.zhong@mediatek.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mfd@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 20, 2026 at 03:59:24PM +0300, Adrian Ambrozewicz wrote:
-> On Fri, Oct 16, 2026 at 04:41:23PM +0300, Andy Shevchenko wrote:
+> The dependency of this patch. This one uses compatibles defined in other
+> patch.
+>
+> Just apply it yourself and run full testing - you will see notice about
+> undocumented compatibles.
 
-...
-
-> > > struct line {
-> > 
-> > >  	struct linereq *req;
-> > >  	unsigned int irq;
-> > > +	char *irq_label;
-> > 
-> > Have you checked this with `pahole`? Is it good layout?
-> 
-> Yes, on x86_64 (with gdb's ptype /o, which reads the same debug info
-> as pahole). struct line already had a 4-byte hole after irq, at offset
-> 20. irq_label goes after that hole, at offset 24, so the struct grows
-> by the 8 bytes of the pointer and gets no new hole.
-
-But if you move it up, can't you get rid of the 4-byte hole?
-
-...
-
-> > > struct lineevent_state {
-> > 
-> > >  	struct gpio_desc *desc;
-> > >  	u32 eflags;
-> > >  	int irq;
-> > > +	char *irq_label;
-> > 
-> > Ditto.
-> 
-> irq_label lands at offset 32, right after eflags and irq, so no hole
-> here either.
-
-This sounds good, thanks.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thank you, now I get it. I had already removed the example from my
+testing branch and removing the example also removed the dependency.
+I'll run another round of dt tests to be sure and resubmit without the example.
