@@ -1,60 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792577138;
-	b=YiJUOCeMRLXPETQ4jHTaN2lDWkP+fC0CXyP39mPCGg+4P1+nfnygJIqdp0B+ukS4cXIn
-	 0DrbJFtAb4LaIl49YHNjCagqXqIC4dXX42WFgs94OK0rGOgRRIVlDn7vMysLZB71EMq5v
-	 ZOCrQxFlCO8ZYDFE9aWHB8I2sTnqLzzuy1Jqaqrs/fsCGl3XYwVRapML7FEzK5bBGFpPI
-	 sQjEIShCP7Z4OKBAt/JZcOwm6uAhZ6n0T/hBXkQpXSmvV+d/4IM8g5PJLs9ABolFP/1wj
-	 Hyp65IcpDYZrXTtmjVn2oqQaXeBBxU6vgbel68SQr/fvXnI5wIFqCf38DhiyiU+OGTQ==
+	t=1792577212;
+	b=nrvg+/5VrNglZz6RRBb7URC2wioDjdpImWk/bgye3G0dQiZfIfoSV2YOJJJREhyLYF7m
+	 qwyvGF4VU/FNik4Zf3tLkwqnvFbeIWnYNj0wHP9SjcuTJ74H4MnQ1yB4XjP2wkRdaMgih
+	 t2TXn85MpKm0Uliz7CJPlc+gNra8aryItAmLAmBIjhi11/ujNxxpA+TMUYMxhvguKajep
+	 rOUPp5VjyG7uPvw2P9eCBaAWHIyQCASV5PYXcHpeF8MCSXqWM2/xKJ4Pco1ZR4MznL5zm
+	 /vqAQsZKNdUXyIYJDbZ6iQehwD9Y90r/Fl3V36wQzsUhP3GjCyThHkzBXqq3DruCeYg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792577138;
-	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
-	 Received:Received:From:In-Reply-To:MIME-Version:References:Date:
-	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type;
-	bh=RF0qZYLxDSre+DZbeZnQ0IZv7m21cFrpxvATORER0qM=;
-	b=FQ2gozfKYZdvHiPXULpi0K+qZ63own46omAOq55/Rbz6BchwKAG+5JGa3yCY/KNLrGkf
-	 BeZuhlDVCNnWe8fRocXCdktif/xc/02huy379hrTl28xfdOKEikS2wc+VVcMrdBSyObAs
-	 yw0QrjR9AyctLXNJ1lZcvezFCwLr15BhvgQN6LOjLC/Az4VIAonPl+/X04Au6dc07oIbH
-	 GLok3OkRXEhqVGDLGdR/kKPbeLZePBwtDKDWFh/aXHZCS3lvHLF6GjlE9Arnvp2Ytz0FS
-	 auz21pM4jmZ5QNHnDyyev5RL3QBG5cJXC5vgmJKuB38xp4gkorhEbZEx9lsqJgURVwQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792577212;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
+	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=ZIeabLWc8/+X+ra1sWD8SHeL20genn2WdJFRc0Rla+4=;
+	b=x/+8Zf5z1gImwdtelZDj5XkUtQupBq2ekDw1bqu9crsafKiUfqXgwGhTegQPyz/TdkQO
+	 I8LXk3lPdT/3lCiv7/7PMwLrt+3lUhkulihJGxaWDCt8ZONk0Rwab7+Gsxyi4RObtrdcF
+	 NuwJ3x6MuxqTl4WeszHlYEvHVleYZsUW2V72feD+BlutgbIQ8f93CFgpPMpFS57rA20cK
+	 JFyro6QCK/jGhBYSkQt3f0GO8FOH62is7r1pZ7Ii0yNfChQSp+OH0vF0HV5UedEYrfTPV
+	 eaAdItil0xbMFPetyB3g6fgbMi5Jct4zgVXh2V17A+gfV3rV0IyB82LKhT7hJeT9e9Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lTzQsh1k;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=My+NPPXd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59343606A319
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAFB606A32D
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lTzQsh1k
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372B91F000CA
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:05:38 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=My+NPPXd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DB51F000C9
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 10:06:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792577138;
-	bh=RF0qZYLxDSre+DZbeZnQ0IZv7m21cFrpxvATORER0qM=;
+	s=k20260515; t=1792577212;
+	bh=ZIeabLWc8/+X+ra1sWD8SHeL20genn2WdJFRc0Rla+4=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=lTzQsh1kHXCFuX+y5jkfaJb2PYwzkSd4KvmhhI1ekqXmJSoUGKX+Q+zJ5LY3M449v
-	 rj4NKrQ9KF7cfnjd/Z1m8g+7+dsPPxzkSTcHnVvRf0kjd+Xvpg4GrG/U8kBswG1SKS
-	 GAzV/O09EzcUd+Gu6P1ERxMUmmtMIH7zeOy9GedAkPKVzcGBN+BQ7pK/vEbiGSux5W
-	 5N94w/Us/lh8MwzjQy7pgMK1PL/yceYGfGNim/yQg1vNnb8VTQQuL9BOh2e7lz+zNR
-	 hcNbC9Yxq/MyRfoEoEYghsbyg/eGh8AnlZ7kiVRF4hEelQ92XbtUm6B4cPmjgozsdE
-	 YTd/xKctEYNgQ==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3ab3b29a210so5669881fa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 03:05:38 -0700 (PDT)
-X-Gm-Message-State: AFq9FYJpOp8UEQKdYjyP9Ig7JAGKR4r1U/jxkbWisIB20KMGJ2vbyDqh
-	wuz4NqaEtNvCff6Y1+8MRdUUlNZSS9qXVl8fPGqFdMksm8MPNX2nkItkiOCGfAPrRbZKoNEJ0ZN
-	vpZfp0j2gbFXmZcYxTHRJ2xqwLapNxv4iCBDgXfOdrA==
-X-Received: by 2002:a05:651c:31c8:b0:3ac:4b79:573b with SMTP id
- 38308e7fff4ca-3ac4b795a82mr798221fa.13.1792577136866; Wed, 21 Oct 2026
- 03:05:36 -0700 (PDT)
+	b=My+NPPXdZzilgi8OU5XGXQa2QWI7Agq9xVcLjDqT6xp/zKF547A6W94nmbklZWwjg
+	 rzBYhnKsaVPSSAGbOgdsXGrP5foSTo4jaqPw3swymrzkIYZiq25uiokhyDz+bSCBjB
+	 oUTwulDO68uwZXx2+PsfP3JfvtsBH5J7e3Qk/7/x6eGCTzvO5RWW7yjWnNW8u3O7t0
+	 gEdGgVqZf7yj9QrugZUbIkrJpTESFLpgW3wyTawItnYm3knuCb7X9MqZA/Wx5ICUyB
+	 +WUn/IXuq2OHQFDWydtYc8PPlzEFiYP/iNH7+nlEqBM9ueY5CRR8b66TUuHpOGi8c3
+	 tOZxLwWVHvCkQ==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5be42ae8eb1so308372e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 03:06:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwMhkHe9OQuQP+cUW5eoz06YlVAPro7TC3pfiaoItWYyvWeKOI4VsWjiygzDI9CGbDwC9Q74BzB17uz@vger.kernel.org
+X-Gm-Message-State: AFq9FYISzi+FFJ97n3kGVCh8LNHRWbnquPMU9ro+E0TYxaQ6kiLtjJ2a
+	7vQET6433uX6B7X/okl8JXhJilIK95k6WEEwGUKJLaSxZ6jvcqljf7AWtTO+xtDNemnBiHg3/X6
+	Isve9Y78KQL830h+j3jfEf4REUM4M1bitssu7To/vUg==
+X-Received: by 2002:a05:6512:3d25:b0:5be:54c7:75f5 with SMTP id
+ 2adb3069b0e04-5bfa1be93b6mr617058e87.18.1792577210780; Wed, 21 Oct 2026
+ 03:06:50 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 06:05:33 -0400
+ HTTPREST; Wed, 21 Oct 2026 06:06:49 -0400
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Oct 2026 06:05:33 -0400
+ HTTPREST; Wed, 21 Oct 2026 06:06:49 -0400
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261021095551.3283369-6-aambrozewicz@nvidia.com>
+In-Reply-To: <20261021015004.1537738-2-dmitry.torokhov@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,40 +65,26 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261020-gpiolib-chip-removal-v3-0-aambrozewicz@nvidia.com>
- <20261020-gpiolib-chip-removal-v3-6-aambrozewicz@nvidia.com>
- <sashiko-outbox-179021@kernel.org> <20261021095551.3283369-6-aambrozewicz@nvidia.com>
-Date: Wed, 21 Oct 2026 06:05:33 -0400
-X-Gmail-Original-Message-ID: <CAMRc=Mduzetc38ZttGFEQqtOnyvD-PumZ7=m5FOEF75eGpq55Q@mail.gmail.com>
-X-Gm-Features: AclHuK-c62CC1jnmwGO1-TdnPZcp20ujz7YeGKQLtN4R3iNiFa4w_v-HUz41X-c
-Message-ID: <CAMRc=Mduzetc38ZttGFEQqtOnyvD-PumZ7=m5FOEF75eGpq55Q@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] gpiolib: let the character device free its IRQs
- first on chip removal
-To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-Cc: linux-gpio@vger.kernel.org, sashiko-reviews@lists.linux.dev
+References: <20261021015004.1537738-1-dmitry.torokhov@gmail.com> <20261021015004.1537738-2-dmitry.torokhov@gmail.com>
+Date: Wed, 21 Oct 2026 06:06:49 -0400
+X-Gmail-Original-Message-ID: <CAMRc=McawKQvXKPHzrSsbjxm3nSmiy5gEGEjfeitBwDX=jBDyg@mail.gmail.com>
+X-Gm-Features: AclHuK-DUw-TDKgIDp7kls7bG6fjPSgpfM8RhNNzpQbvwml0tw0TvFN9P4v7edE
+Message-ID: <CAMRc=McawKQvXKPHzrSsbjxm3nSmiy5gEGEjfeitBwDX=jBDyg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Input: soc_button_array - use __free() cleanup
+ facilities to free memory
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hans de Goede <hansg@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 21 Oct 2026 11:55:54 +0200, Adrian Ambrozewicz
-<aambrozewicz@nvidia.com> said:
-> On Tue, Oct 20, 2026 at 01:23:24PM +0000, sashiko-bot@kernel.org wrote:
->> With character device IRQs now freed in the notifier callback after
->> rcu_assign_pointer(gdev->chip, NULL), can an in-flight dual-edge interrupt
->> handler queue a spurious rising-edge event to userspace?
+On Wed, 21 Oct 2026 03:50:00 +0200, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> said:
+> Switch to using __free(kfree) cleanup facilities instead of doing manual
+> cleanup or abusing devm for allocations that are only needed during
+> probing.
 >
-> Yes. With the IRQ thread delayed in a test kernel, a reader blocked in
-> read() gets a falling edge as a rising one when the chip is removed
-> meanwhile, with both uAPI v1 and v2. Without this patch any failed read
-> does the same, for example on an expander that is going away, and so
-> does the HTE thread.
->
->> Should edge_irq_thread() and lineevent_irq_thread() also check for a
->> negative return from gpiod_get_value_cansleep() and drop the event?
->
-> For v4 I plan a patch before this one that drops the event when the
-> read fails, in all three threads, as debounce_work_func() does.
->
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
-As annoying as sashiko reports are, I think they will result in better code in
-the end. Thanks for addressing these issues.
-
-Bartosz
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
