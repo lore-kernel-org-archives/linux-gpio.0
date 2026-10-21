@@ -1,92 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792597826;
-	b=DldDlCFNgqYUXOwjhDj5FK7Tnjrjx/V5GGoCVjvhAlMF9x0sX52A50Ste33zAjSR2rHE
-	 PmeO+IcSZU2QqyQpCvvFMVhjuCU5a3CHQVF9SIqI1rIwBV5HyT4n95u/R0sOWVXj9dKBs
-	 89rP0dw4vLbKeXk0ybmsvECQAqkowTH1+MbqLMB8figMpEwauuF/++Y62YuMAU4uyNObo
-	 K+KVVAvYXd2gZ3UXmglJ0pUp36GzAKX29+6KDK7gWXtPeiFF5J9hf1XcLgffNkkDpqpHn
-	 XLE6NJjzn50udIqKkubncudM14G/HMkXR9X4XcYfJSOkZqdu+HefUMvTFJT4YaytrYg==
+	t=1792598610;
+	b=h60wHXKqxl8uB6dEyrq3Ztj12IrEV9oR13jcN9cyFMt8Q2ARHoigpmhKGs5DFv2hrtUC
+	 LQQK6LQpih44nUdKEPLE2EoCgvnET7UzghLV5WxrnWHQ6lBchP7LP3l0TnlnZSn1CM7zq
+	 ul/raLB8/kdy9qCNRHEKq/demjUj/ZDd4wkCXsgtpwzv3b/EtWhu7raYwbJ+tErxKifjj
+	 DMza/ITxplukcebPMjQgGzj2UgLVaU8oFSoGJmQ7oIuApN6l7VGYlxZRG3sFPYWc7qTnO
+	 kX/q7XUyHOeis3boMWGAJO7j5E7W/DtVhFu6lc1nR/3uGrxvuwcEvydY9BfuhODcHHA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792597826;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=pH+tj3qwGYrTAo3UEfrdi4pIkMsrOAs19/q+eI5TIwo=;
-	b=Q3sfGCz602nHAUP2dUFpQ3ytKs3fIFatlZa61B9V7E7rMkhWZ8CZ8SzQMVwPXQaLHnAb
-	 ZbTQUEz7ASjihWhF0seHRp01hcao3lKoTpzzFvyVEvwkWat5nYVfVxaduWIIlNhCqGybh
-	 LCwGXtF4uYv/3aW83jkfUxYBr5mOruM7V6YrYeBogO79ByBJTYWXZM8l7J9OnoZUo3Rfo
-	 VYwkn50ENN/+5oEEYQr/PHRpPJTsNWFkJ4eHxFdILpqbwXG0Q/bqxWIg+3eTz1pzVB1OZ
-	 DMXcPAC2s7STSp7HidK3SFPPRi9sMZrX7QMKgOU+MRt6VhvY+vYwGDLO05vGPIerfBQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792598610;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
+	 Cc:Subject:From:To:X-Mailer:References:In-Reply-To;
+	bh=o+0U5uc8o8aSpg/3Nq2d92vcnnoDIvQVEgNyLz/yOhM=;
+	b=5M34GdxhV1h9jVJBlLgVOesApuleUk4NXLyB4+cPJgI/EFvLCNOj6HQtBbjMWpo9xLst
+	 UUOC6XA25RmwEkoZxCBMsX99QC8t6vX5Sn0mgn98qZiVymsmymMz9UseBtBjeFGqo7PMq
+	 JrNVSUBeZm3CUSeD4jEtew6wSPGhz3cwUj2V9EHxQUx6Fdm/dzsLkxhRC2SpCMnY5Epyn
+	 mXwAocU4QsAE1jifpP8C7J6aeKkhP+81/H5GB/oI6227TBFe8KKaUaomDfUlJ0+Fad9qR
+	 OyitaUIfM3k8vmF+xMpijw8xwANw9n92UHv5ypE7WfTzEnoh/+bLH+bW/1DWDT4+2HA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NC2Fk8+6;
-	arc=none smtp.remote-ip=198.175.65.14
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=DcqAC+4l;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CD8606A319;
-	Wed, 21 Oct 2026 15:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 15CD8606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EF7606A31D
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 16:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B8EF7606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NC2Fk8+6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792597825; x=1824133825;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zq4wmiZbxWqtchaG+x8w3e154PofCX54MIWAg9+VRSc=;
-  b=NC2Fk8+6LVjGD1HuQxAfMArOOByCtZaqXuUnk7aHY/CPiF/uyj9Y+Q04
-   sHQwuQ5NGIuUA5f+XXBM4YXUpjgyPOvcHMNN/aoXyR8xF9C0YCbkQh9C4
-   Yti87M0mi4v35sWXP8iWmZAz4Ll4NW/WCJIgxBQNzIu6lOiqqwH7HSUQy
-   bAF033YExUkUuN60Tf34lg/l/aW4SPmuvlQWzTQirKEICgz+8SRpO6RLQ
-   SswEKT3+KVmmjKmSj++F1VNrJt0kxppUMwen/MfuguGSKvvlB/Wg/gbRo
-   lmkQ/NJcjyWSaOpXf/Wli/SxfPn05M32tVTdzP8GUFkRNYLIGsuDBBFfH
-   Q==;
-X-CSE-ConnectionGUID: CH1mhkaWTYOS/T9839w89g==
-X-CSE-MsgGUID: PVunDm9qRcSvpa/BzkAv+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1200481"
-X-IronPort-AV: E=Sophos;i="6.27,170,1787036400"; 
-   d="scan'208";a="1200481"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2026 08:50:24 -0700
-X-CSE-ConnectionGUID: lBnd6AaxRv2xcIJRJe5Q1w==
-X-CSE-MsgGUID: PKTA8ELZTbec/ZPagKbXuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,170,1787036400"; 
-   d="scan'208";a="3519426"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.24])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2026 08:50:21 -0700
-Date: Wed, 21 Oct 2026 18:50:18 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bradford Love <brad@nextdimension.cc>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v1 0/7] gpiolib: kill gpio_request_one()
-Message-ID: <atjfOrjsxnKe80zh@ashevche-desk.local>
-References: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
- <CAD++jL=prd1KDZQawqsRmW3qp1-cJ=18-yhp861CQirOOjE5Ag@mail.gmail.com>
- <as4tep73cAI57Yk7@ashevche-desk.local>
- <CAMRc=Mcc2b2Z0zrkNQ80NpV-H1MsihgeNtPD5dD5g9xcbiLg4w@mail.gmail.com>
- <as44ROCHy-WeMdIZ@ashevche-desk.local>
- <atjBsoY8mjGw9fQ8@alpha.franken.de>
- <atjbpKxrW7x7Ohpq@ashevche-desk.local>
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=DcqAC+4l
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a180fbeef5so6904325e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 09:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1792598608; x=1793203408; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=o+0U5uc8o8aSpg/3Nq2d92vcnnoDIvQVEgNyLz/yOhM=;
+        b=DcqAC+4lxwBFlm5YG40AObp7maD5+RcbCG/BK551aVKRE/vLWjhW2F1sKYXZWsDRCW
+         DZDcXkTNignIOC3nfP1MeQnUCX2WALCdlfzd50ls6kb8+NkpctoXtUa4e8LTBR32dRLi
+         goimjXS4P5V7AfJGbVQ5pQgADGtzAgTGMQb7jkpQ0lBbnXgCQxJj0S3IhsICxBPHdMN6
+         fPHcyNl3ZexRll68Q/3DXdbRuvAAsuld5tCfWh72WIS+3BinkfCqmlvnG5HtitLlZBf6
+         LszrSk76jit9xAQtfcd8yfuk6ba52DLLOar11V1Jl0qYI1Ai8rbE5mVgMz3xFvu+k/X0
+         Obsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792598608; x=1793203408;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=o+0U5uc8o8aSpg/3Nq2d92vcnnoDIvQVEgNyLz/yOhM=;
+        b=iOlzABlyTaxOwa2GKWfmU64vhmjTouFer4dfQvHOVj5XCx5zT1zksRW2wXcs8pfUFg
+         OxgjzcV3hKeze8cALgqlUBf4JsbU8ThEk8CCsTHuCDJj4rR1pEBdIsMrLnZFJXwmbrmo
+         VxUuDYJmhoupDc4r8EGuw0uh2X9iVQWaD5J+VPxXWK1iOOXiRBWLVFQn5W3fgWMpWByH
+         KY3dSJ/M7pvJEvf4pA43dGFK069yjLmLWceFlWBLjdlhhtoS8wi6nEb/kgxU2qB8VaU2
+         0HCtQ8NmGyU8xFrdTZNJSXxDaSAY2Gp4kBdiwUGLqw3sfbA42qd5iXSjTYF2uHCN08/0
+         RSYw==
+X-Forwarded-Encrypted: i=1; AKwUvBxLO9GYn7FTmv/Jli0KsG/vgQiktjP9oSzG1GoljKn3wC/z8xLfWcM54B3Ieco33m+7T5m/vNNcRbLY@vger.kernel.org
+X-Gm-Message-State: AFq9FYL8rxW5l/IhUCqn2w1oeDyQykNNWHCtSqiSgdaXPeFph4LVP4oQ
+	YgZIO+QTqmykkycnVMEapAYeAAtsElyxkV6M6Q9AuilmuJM/szfaXCajSqYggYh2TTM=
+X-Gm-Gg: AYBFou2k0Mf+csbUo/aiz8B0yjMBx8KFyI81ByWYl3NJTPUO2wzMGDKGgeYn36Wmlwe
+	MluulqQwhAUt8n+IdePCr6Z0Q6Md+PZdsir8T/4WUcwpWY5wyvF3Rgb/mhfNgISyqxRmDEImxS7
+	eaGFHvK6/3lw+86p4FAsfZ2dtRoYouOA0r3uokimP6oksidorhOqfGikjt55EwjO9NASucXfNpe
+	XiqsELKE6ghOE5SDZCBd0YkYAUrrjCG/hP7vRDiCckU4qGDqY4Qn/VfWfgR/kn3CVsPxgRerqrj
+	ByhETbagBwfD5N3zX4GNbHNVNIrAQOtpudBE0DRMiyu9RvGDB3rlF1Mx/RE9lhIJ4xzRgXlSur0
+	Wk7fWPFsM+0ZYswl1aiVSgTDJJlhk0ye1wwkexnkSJHDaLn6E3wPw+DntFNeLGzbBM8JIq52n8v
+	ZV+GFoY+f7ExNqoD6OuomCJrdcP+wd7ikpYVlBpeca/vRWr5SuIzn/w8mwNKrgUZxqMK+tI+DDa
+	cRyage+FOHMhDihvHVuCqDPlJDkuOteXqfScAAq0dDW1DS3FafCs9y3U46ZXeQ5jNjJtGNHJUIr
+	gKpL46AtgE3A20oMynBSqhDMGyf5ulLzzyeQr1+YaYqKQlI=
+X-Received: by 2002:a05:600c:4fc8:b0:4a1:813f:2a60 with SMTP id 5b1f17b1804b1-4a1fdd2472emr58485645e9.11.1792598606167;
+        Wed, 21 Oct 2026 09:03:26 -0700 (PDT)
+Received: from localhost ([151.40.161.170])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1fcd629bbsm53982045e9.5.2026.10.21.09.03.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2026 09:03:25 -0700 (PDT)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -95,43 +87,89 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atjbpKxrW7x7Ohpq@ashevche-desk.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 21 Oct 2026 18:03:23 +0200
+Message-Id: <DMAN65SWMXQ0.125AVDDDSIG7@linaro.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Paul Walmsley"
+ <paul@pwsan.com>, "Aaro Koskinen" <aaro.koskinen@iki.fi>, "Kevin Hilman"
+ <khilman@baylibre.com>, "Roger Quadros" <rogerq@kernel.org>, "Tony
+ Lindgren" <tony@atomide.com>, "Russell King" <linux@armlinux.org.uk>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Christopher Obbard"
+ <chris.obbard@oss.qualcomm.com>, "Andrew Goodbody"
+ <andrew.goodbody@linaro.org>, "Linus Walleij" <linusw@kernel.org>, "Rouven
+ Czerwinski" <rouven.czerwinski@linaro.org>, <linux-omap@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH 02/10] dt-bindings: pinctrl: Add devicetree bindings for
+ DM816x SoC Pinctrl
+From: "Ettore Chimenti" <ettore.chimenti@linaro.org>
+To: "Andreas Kemnade" <andreas@kemnade.info>, "Ettore Chimenti"
+ <ettore.chimenti@linaro.org>
+X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
+References: <20261016-patch-ektor5-dm8168-dts-v1-0-b4ce30217028@linaro.org>
+ <20261016-patch-ektor5-dm8168-dts-v1-2-b4ce30217028@linaro.org>
+ <ec27fd26-1862-43cf-803a-428846d66663@kernel.org>
+ <DM6CUP7TSOMH.31T789KQ3Q6OB@linaro.org>
+ <46414ff2-1273-4690-9001-4d1f825d8cf6@kernel.org>
+ <DM9L7QLLNMOR.1NHOUWGMQK181@linaro.org>
+ <20261020215143.7dd0ad5d@kemnade.info>
+In-Reply-To: <20261020215143.7dd0ad5d@kemnade.info>
 
-On Wed, Oct 21, 2026 at 06:35:06PM +0300, Andy Shevchenko wrote:
-> On Wed, Oct 21, 2026 at 03:44:18PM +0200, Thomas Bogendoerfer wrote:
-> > On Tue, Oct 13, 2026 at 04:55:16PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Oct 13, 2026 at 09:35:43AM -0400, Bartosz Golaszewski wrote:
-> > > > On Tue, 13 Oct 2026 15:09:14 +0200, Andy Shevchenko
-> > > > <andriy.shevchenko@linux.intel.com> said:
-> > > > > On Fri, Jul 24, 2026 at 11:40:59PM +0200, Linus Walleij wrote:
+Hi Andreas,
 
-...
+On Tue Oct 20, 2026 at 9:51 PM CEST, Andreas Kemnade wrote:
+> [...]
+>> Sorry, does dm814x.h not look as bindings? I'm a bit confused.
+>
+> probably also not the ideal placement in bindings.
+>
+>> FWIW, dm8148-evm.dts is not including the header, dm814x.dtsi is.
+>> Following=20
+>>=20
+>> Basically PULL_ENA define in omap.h is wrong for DM8168 SoCs.=20
+>>=20
+>> For a better solution, you would prefer:
+>> - Keep omap.h in dm816x.dtsi
+>> - Add a variant like DM816X_PULL_{ENA,DIS} in dm816x.h
+>> - Replace defines in dm8168-evm.dts
+>> - Add the header in dm8168-evm.dts
+>>=20
+>> or:
+>>=20
+>> - Keep omap.h in dm816x.dtsi
+>> - Add a variant like DM816X_PULL_{ENA,DIS} in omap.h
+>> - Replace defines in dm8168-evm.dts
+>>=20
+> Hmm, there is dm8168-evm.dts which uses PULL_UP / PULL_ENA
+> in nandflash-pins. Do they factor in this inversion? Do you have that boa=
+rd
+> by chance? We probably need to take the brush there anyways.
 
-> > > > > Bart, anything needs to be done for this series to go in?
-> > > > 
-> > > > We don't have Acks from MIPS maintainers. :(
-> > > 
-> > > Hmm... Usually Thomas is quick. Thomas, can you give your Ack if you agree with
-> > > the changes, please?
-> > 
-> > sorry, I was on vacation.
-> 
-> No problem, we now have more time :-)
-> 
-> > I'm fine with the changes, but I'm not, if they still apply cleanly...
-> 
-> Can you provide your formal Acked-by?
+Andrew has one, AFAIK he already tested that, it should be fine.
+We are checking the schematics anyway to be *extra* sure, but the board
+boots and all the peripherals seem to work.
 
-Maybe I misunderstood you, but FWIW I have applied it on top of today's Linux
-Next and there is no conflicts.
+>
+> If I had my head in some OMAP3/4/5 dts files with non-prefixed
+> defines, I would probably not object against any PULL_ENA without
+> DM816X_ in front of it if I am not very awake.
+>
+> So better do the undef and not use DM816X_ prefixes there.
+> Maybe rename that file to dm816x-pinctrl.h. That is a bit
+> inconsistent with the other omap files but at least that inconsistency
+> can be catched by the compiler.
+> Other arm32 platforms have things like e.g. nxp/imx/imx6sll-pinfunc.h
 
--- 
-With Best Regards,
-Andy Shevchenko
+Ok, it is a nice idea, I'll refactor in dts/omap/ti, using the same
+pattern as dm814x.h.
 
+>
+> Regards,
+> Andreas
+
+Thanks,
+Ettore
 
