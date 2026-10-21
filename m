@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1792599165;
-	b=q/b9bl2Urm4KWLkS0DZdvZJF9uNTIoBZ4pLhDtdZOl5vPCj2xgY0meQ6DnxMM19gSQOU
-	 8/DRiwDB63LAH9ht5VzAaXcA+bAVTMn1pZCFM9d6142jVVmOwxjJxNORap7UxMq0aA3mc
-	 SZ7qRPdSDIaz/eLv0UEJJDMjacbZ/RMPV1mVenrxF+g4KaEXJ91TGk4rc1U+4IQIe7Uws
-	 WjZVpaGy1eG+JOogEfAH+mbsYLc024Wzhr2nFjEuXBYilJkNjfm9WsbvhGnoKrQrQfE1d
-	 AgkEwlu3X4oQscpHOEhm2ASTReA/IeZT6Mn2lmxuXQYqd9JSQIniCNXTbJVQKi2EHkw==
+	b=oj+0AH77hZFGQhzXcQ96jVUVe94jbyGKFxhDhkU7GufRNxZZA7flo37di1qbkO35LJwh
+	 k3VOu7WkiWjqWHdoFChqPJ2Fv26MTjd7RhZaV3ocN8VlN3knTssd+5DtpPy7dB09WlSAU
+	 PlWrRDA4w5bpqwI/5Heuq1H9SRcBqd6sr/Z/KADlarOzQoYq0QgpxNnoTvhm8sauf0mFU
+	 FsOosd8/DGjZA8ZSpQzRlKOoCYnJyNCh7d56W3ThUncbEfAptw+Z53negpgRXp/E2hgml
+	 YuYW6mObL9DpBz1UVE+HTtcBbZ/sbdLARGswyMzwDrTUm7/w7K2C2qnZozam8qjDHDg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1792599165;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=NVcTs4+R4D4TM8lWcbqJP0vpXUWnEu+1cmq0y1Lvtx8=;
-	b=WfduW9RLTEj1/wDuhovySlv6fiR3+g22oPjBig/RI0iPzslGS7GJ8Wo99o9+4lTenMNq
-	 hOnK4wNMyA56PGCwFnJjtP58g2nBqQixyDoa+1r+eRaYCnUnNwoeNv+7vSONisHE7IK2J
-	 lxekjsRSaBvwvpac0tW2d3bmUfbCbleB39ipJ0dXg1k+n00CDsDFXFk2F66/qUUXnO1Nt
-	 6lBRPyjiUbBZ//IR3Gmus1wGuEOCePSyrgqjhsw49YW5UoSq4t3QeeEo8UqCwTC8JmRGX
-	 TghOSRTEbfOG1Jb3D9tabxoPzuACMc6yJBiainjtHIodmdF8iec+o8dlMC/v1NwkQfw==
+	bh=T34yhw+q6rir5R3L28MrGG/qV2i0GHvwBSrR7IUn5Mg=;
+	b=ZBRbsk9ogmWMAKnchS6PmZ8WlP15clUBraOUqPQOXFbkZFu1U92kPiGkBUQwr8LXM8KT
+	 lU6sobrH06ufYFWRmEuhHPLqOp7bpOmVayi6Nc7XRFZa4Kw/mLsGCmimkUbxF/U9c4Pa9
+	 Z4gqyLLszRbF6wgwoJ7RphXI4OR2rdRV7PohzpmBrDpksF6zjfEsOJg0dl7w+GoTpRfb0
+	 fT/2aw+9Qm9p98LLy6uisjTEi6bxP1XnB2qh8hrjNnSNKJ2iL6ifWpeIP7tfiIqmCwwgw
+	 HK/87PcM/VJ7Eon/FLamQA8z2qRjt0f8MxBPWe0IW0ahABlkI3XZIy+HwsmQRNtNXQA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IAWzOiIa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cb850ebu;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D15606CD5C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3DA606CD61;
 	Wed, 21 Oct 2026 16:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IAWzOiIa
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cb850ebu
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792599164;
-	b=Rb8753MISmDkCgTw+GH2r56fENSIZ0v5w9TsMkm4jaXtvafubJPyeJRtsYdgqT8Pokji
-	 Cp02NtJIr6vDl6y9teDPqOw6DEb8KY96XasmQVYF0FTaFs3eFH0lE3Logw63n7KjLqkou
-	 2uDqa5RBZme4UivKcmTsquwlfI8sZ7Umk6egotMrJ5bw5Z+lDbwMfZme1KwvOGNjE4C1c
-	 9J0Tf9ajIt8Ef0FJg4Kni77aTapsjsqndgzoM6JTfqyd1YVqqvES8DZW8ciKQb0mN7EDV
-	 lInyG03LIqs6B1U2NuHJiZhZXSbsOE+tub8yGvgJ99CxLUucYgbm9uS8tmWh14ScZzg==
+	t=1792599165;
+	b=1BBcMy4BjLlP1rfVN1cPpkArxi9JOsUs/6mDahWMBdlyq/DGz3Qcb3+dlBgChZ8mdwdo
+	 PNiE1H1pEVU1zfYz4zPV1gWuFZTtbAivMvAZ+Q5bsyPbgNw8qXO3NKXMlk6ovOq+L0qwx
+	 XKM5aVgVfTuqLyI59VLRNgRDQs99JgBSG3kJiRkfDJWuUn1b4spl7VO2bLJ/KkQwHzEAD
+	 l5h4Jtn/F+Hxv86ggY+r6E0WGogCzuyEBuAbRSYHpFFnMqXRBluo9GWVLf0qsviKsaaQt
+	 VwKqJOFqoEbD+f79IzEa4NVQQ9cNhabsE1sGWdK8hvlEaiPYDk3qIUwd0z2nH9af/cw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792599164;
+	c=relaxed/relaxed; t=1792599165;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=NVcTs4+R4D4TM8lWcbqJP0vpXUWnEu+1cmq0y1Lvtx8=;
-	b=HCsqrLLVDKtsZP2B5dqvo3ijeD5sko2/W6zTB88a0+qgGl6cvM1dm2/LTjZ5tRpBWAWQ
-	 FYJaV3DXkW+WT2NIyDklxIDMiGNcFNl4UkwqKvhxMzlLcF0JOzW6FNbyOEI9jXqTvevi8
-	 YGAyJ0kUvCCxsZBWBe3IFFPK4nIqwdushFnfH546jVWKu4UH/yGbqml4JLHL71ka6FHVT
-	 +5lYzXnnf3CST60oWt11j4aQUCltoOGUdlyw9iji2jFa24+lpg18CBQY9+wew+MqVLJ+8
-	 F1sz5qOXHQD3Z605NotnU/4ohYqfm+8YdFLPnF8X1JksapjzMOiJ7X41QQdVnjyU6lA==
+	bh=T34yhw+q6rir5R3L28MrGG/qV2i0GHvwBSrR7IUn5Mg=;
+	b=OKli12zMLTo9V7JBs0VkFFgizO/2Ph+BrbSq4+HMwgA0247XCMl8fFsM7as+e/tN7Jni
+	 j5ymgPcrCcY415bpXn6BPzABxDB2QU2jNpQ5nfXCEtx75TpxXQtDvCmNPVvzuP7320qi2
+	 Rx8SFw8nyQCC10yVltDCopi59vt8D/m66xrcUVz1xpEH8j0sYumTeVGzxpw7fzbx4eMI/
+	 sMVxtBVB4LGSufH1A3Re8FaNO++nbwaX6yTE6qaDaTKrlQdmiDWU8pJlwVPC4px5X7lJ/
+	 xFPAoAm68UmXqm2oHw6v6tOqv8g0nNMWl5Yo01Nql/ByADABuoQybownesX2HYEdPTw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id F2B9B1F01804;
-	Wed, 21 Oct 2026 16:12:39 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 56E391F0180B;
+	Wed, 21 Oct 2026 16:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792599164;
-	bh=NVcTs4+R4D4TM8lWcbqJP0vpXUWnEu+1cmq0y1Lvtx8=;
+	s=k20260515; t=1792599165;
+	bh=T34yhw+q6rir5R3L28MrGG/qV2i0GHvwBSrR7IUn5Mg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=IAWzOiIaXju7EtxNgpjhbvjT7PRlgcxkcdYtAM3VQvVYTpnEvd/Iwzb9DzrLVLO4u
-	 SgPDSbFT0PflzZweDNPvOqFOE/nBd+3MXZLfyF5DR0RMUB6xGOFtPTN3ed+mMVY31P
-	 uIWKSVOL2lmbliEoIz6DNb2VOz5XAiegUgO8dzWExl3PjfgxbhUP2nzCc+VFAxvLIV
-	 uaS1h36QsJVqsUxBEfIJPQcKXQqWRlK+t6oVeMx9dGH9ynS6thv/uKJvJcxTtFKDPb
-	 Y5Kfc07aDtxJVh0EoV2NdpqAPeHbLntbDY97sQOKVDIf5oidjYDtA8+bTXKVf5miAH
-	 UomnMqTPhU42A==
+	b=cb850ebulGWpodc8GR9sz+rAXz8/DVgA/OH6bGub9CIxwEGK6AcM+X4F08FzEGBj2
+	 cKrv+ZkQPYC/sQOqO+fMleN0k+tyt5XnhTfN/2g7WFNVgNcaXm6gaxytLXw6alnnxm
+	 rJbZIQFiJYrCa7usvBtIxWSobX+DRvVWGrOoBhJU6xna8ifK83TokEaW2C9ZxLwon3
+	 ZNtPTaka9RKjpt29DuHeg5n/tG2Xzs2WDX3U5EovT6Zd2In02hnQXVFk2p+oLLaMk8
+	 Iq4F0Gpr6M8CdFXDcmp0VWsXpDropU8mq5PwjPoJdOUlgYH4IYraZIKIoRgfi5tgQS
+	 oD9he9HMGFL2A==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id AB47A433EF;
+	by lkml.kernel.org (Postfix) with ESMTP id 98F48433E6;
 	Wed, 21 Oct 2026 16:12:23 +0000 (UTC)
 From: Cunhao Lu via B4 Relay <devnull+1579567540.qq.com@kernel.org>
-Date: Thu, 22 Oct 2026 00:11:17 +0800
-Subject: [PATCH 20/27] dt-bindings: usb: rockchip: Add RK3572 DWC3
- controller
+Date: Thu, 22 Oct 2026 00:11:15 +0800
+Subject: [PATCH 18/27] dt-bindings: phy: rockchip-inno-usb2: Add RK3572
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-add-board-ok3572-c-v1-20-0b0fd85a31ee@qq.com>
+Message-Id: <20261022-add-board-ok3572-c-v1-18-0b0fd85a31ee@qq.com>
 References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
 In-Reply-To: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -121,11 +120,11 @@ Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
  linux-usb@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792599138; l=2999;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792599138; l=1216;
  i=1579567540@qq.com; s=20261015; h=from:subject:message-id;
- bh=iT5BkLeeMmmjRIQeuSIycaI/UXplV+prYKUmY7Ulxps=;
- b=v53jOqW6R2n7fnmg8g19Yw7h4T0AjT02bVfEk5sahYgQzXvZmOvgxh+pYAmDqwo1QrriCFURL
- PtaQ5zJEYipCdDZabXmFfxXkC5DXvBCRrr4RHaHwP9Kab8NEfd0cZhV
+ bh=tyofWfbav37+Vx71DGiRjN5QHlO0pDuivMsV2h/GBMY=;
+ b=X7DW0svhCUiecPW44r1x/QO9bMQOLqT/ZPKNZt8JawdDT4dWqYtCPC4SG8L7jE/A3RULTp5B0
+ V8GymDNGFVHAiQI3zM4SZ4tDEJ+Vk5JN2nsFMXSDqoZwT5Rqo9Idjng
 X-Developer-Key: i=1579567540@qq.com; a=ed25519;
  pk=sUTWrzlIwT4C7ctjNfVZAzzg0G7QUn2XxRGpYsw4RtM=
 X-Endpoint-Received: by B4 Relay for 1579567540@qq.com/20261015 with
@@ -136,120 +135,45 @@ Content-Transfer-Encoding: 7bit
 
 From: Cunhao Lu <1579567540@qq.com>
 
-Describe the PHP GRF register used to configure the DWC3 PIPE port before
-controller discovery.
+Add the RK3572 USB2 PHY compatible.
 
 Signed-off-by: Cunhao Lu <1579567540@qq.com>
 ---
- .../bindings/usb/rockchip,rk3572-dwc3.yaml         | 100 +++++++++++++++++++++
- 1 file changed, 100 insertions(+)
+ .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml     | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/rockchip,rk3572-dwc3.yaml b/Documentation/devicetree/bindings/usb/rockchip,rk3572-dwc3.yaml
-new file mode 100644
-index 000000000000..47ff5e16dce6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/rockchip,rk3572-dwc3.yaml
-@@ -0,0 +1,100 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/rockchip,rk3572-dwc3.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+index f50fc69fbbe49..9bb9295c332c3 100644
+--- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
++++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+@@ -23,6 +23,7 @@ properties:
+       - rockchip,rk3528-usb2phy
+       - rockchip,rk3562-usb2phy
+       - rockchip,rk3568-usb2phy
++      - rockchip,rk3572-usb2phy
+       - rockchip,rk3576-usb2phy
+       - rockchip,rk3588-usb2phy
+       - rockchip,rv1108-usb2phy
+@@ -253,6 +254,19 @@ allOf:
+         clock-names:
+           minItems: 3
+ 
++  - if:
++      properties:
++        compatible:
++          const: rockchip,rk3572-usb2phy
++    then:
++      properties:
++        clocks:
++          minItems: 2
++          maxItems: 2
++        clock-names:
++          minItems: 2
++          maxItems: 2
 +
-+title: Rockchip RK3572 DWC3 USB controller
-+
-+maintainers:
-+  - Heiko Stuebner <heiko@sntech.de>
-+  - Cunhao Lu <1579567540@qq.com>
-+
-+allOf:
-+  - $ref: snps,dwc3-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: rockchip,rk3572-dwc3
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+  clocks:
-+    minItems: 3
-+    maxItems: 3
-+
-+  clock-names:
-+    items:
-+      - const: ref_clk
-+      - const: suspend_clk
-+      - const: bus_clk
-+
-+  phys:
-+    minItems: 1
-+    items:
-+      - description: USB2 PHY
-+      - description: USB3 PHY
-+
-+  phy-names:
-+    minItems: 1
-+    items:
-+      - const: usb2-phy
-+      - const: usb3-phy
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      PHP GRF and the controller's PIPE configuration register offset.
-+    items:
-+      - items:
-+          - description: PHP GRF phandle
-+          - enum: [0x14, 0x34]
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - phys
-+  - phy-names
-+  - power-domains
-+  - resets
-+  - rockchip,grf
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/rockchip,rk3572-cru.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/phy/phy.h>
-+    #include <dt-bindings/power/rockchip,rk3572-power-controller.h>
-+    #include <dt-bindings/reset/rockchip,rk3572-cru.h>
-+
-+    usb@24400000 {
-+        compatible = "rockchip,rk3572-dwc3";
-+        reg = <0x24400000 0x400000>;
-+        interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&cru CLK_REF_USB3OTG1>, <&cru CLK_SUSPEND_USB3OTG1>,
-+                 <&cru ACLK_USB3OTG1>;
-+        clock-names = "ref_clk", "suspend_clk", "bus_clk";
-+        phys = <&u2phy1_otg>, <&combphy1 PHY_TYPE_USB3>;
-+        phy-names = "usb2-phy", "usb3-phy";
-+        power-domains = <&power RK3572_PD_PHP>;
-+        resets = <&cru SRST_ARESETN_USB3OTG1>;
-+        rockchip,grf = <&php_grf 0x34>;
-+        dr_mode = "host";
-+    };
+ additionalProperties: false
+ 
+ examples:
 
 -- 
 2.34.1
