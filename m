@@ -1,96 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792635827;
-	b=bbRSyHqtnzqdhrVo1U1Ra8WNYxr7tSS23W5DRHRnVxVQBYS7h8bUJB5p4lRvHRaKM/L+
-	 eO76hhfNiYmxGptU3ve4+G9ZbfypoJKLLzIYPPRsdYQ6U5V+EcCz2tR+XYT40OHrU3R6n
-	 SnKXKkiOj9K87eHTIDn4h5LK/faJn2hnnSbYcOhl9OxBRb4riOTSBgsObtQOPZXSWwdJe
-	 NB3g25UmZdABqS4bCI0RJfXq0Sjq5GZWv79ZYIoDYA5dz4XLfLFxUeZx0NXBcC3Q6WNHl
-	 P9YCvMoi4LQb58us3NPjYWERsaZofuy/qFVRCqVfq6ycinDDd4J3na5vuNKARQKbBug==
+	t=1792637004;
+	b=j95+5MsSL6UHoJofFBLp4muEpq0QWE8AquCV2zNRpg9M2Gx46TJUl5eextKvipyDspuG
+	 BO30bfcRbcCKX4DtaiIK4ZPBXANUScgrj4PsRCoWuXt/r7uQvSv1l698Ae2rWs21gy5vU
+	 OW44A0o4hholqJg35KcCzCNsSEqkujK9vqVLOC009IQrzjVMIDPUwx/qZSCrz3e7TqW8/
+	 zPVtULdhPw55pNWKgCL8d/k7Axoz9Cu68xb/C5p9scn3a1tGI7OI5JKMnwDlPMDGRDhRt
+	 b4djmMpZEIiKMzZCzawBxSn5avsv+RTcfGITLhHynbblH1Co+8aYdQu0D1Acl9y/uhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792635827;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792637004;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=BL3IHRvJ9+gWwxp3abRrWJFWvxWrWClVc4DpkC67oPM=;
-	b=l7qsAi7D33mVfrvi+ASZ/KNZ78YVsuwTMVxLTa8q0kMpPKVG+QTggn26NsPvDHxtT74o
-	 gM509QWM4A2H0hE6/Mzh/oJxuuL5Jr+uwktaD93ZStvAetpnXFg8sDt7FFf3PCZkzbVy0
-	 q+DSR/KaJB2MvMrLgDbnpv+e9W4HWJtK/OaGEBoMAgapVlca5iSbMHrF9hBda+FT4fDfi
-	 VsICH7cUzPH/Nj6ZfC0lRBlgCpWgLFZM4vvSd1OBma6E1X27gRqdlRxzF48+ze/px2Uvv
-	 bPDZDXqVKYOgPSzsW5+zOSJ4asef13PlVaVxezp6pbS3rM9Ee1ODqt1jJaOfZzG8vTA==
+	bh=xLBRusOCzgaX2ifJa7rH6HLwuWuCZ8NlzSUvqTQo+pk=;
+	b=dOhgh/lUhGKgofL1t8R9bZci/w++ybH8Wh0AGfITMR6EcRKR/o7QMa1Xtf05tUYYtGKi
+	 ZAfcfpGGgFXaNVRB4todapvobFcVthvopmtfG4hkpio4g8nLupT9Sa6zNp1nAqv3lQlmV
+	 JcN8DhG6za1xyKRmOeFdKnwOtDHvWPsa6CAXcpgkEuNU9PRXXLmZ9h987nIeSYRuB2vK+
+	 lLaPu05TsJCoTuxgCBDUPx2yg+R7w2HXVMxOh2nPaDmR4hgWleIl6f+iL9Lror2Szr7CV
+	 b8/vrwK9NwREnf+pMUomDE7IvsMUCtjUonpBj2BTUrWade3Gk9leFSNaydPtJPRRNYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jDW3F65f;
-	arc=none smtp.remote-ip=209.85.216.54
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b="lEOeH/dn";
+	arc=none smtp.remote-ip=74.125.82.44
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9809606A31B
-	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 02:23:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A9809606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB348606A31B
+	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 02:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB348606A31B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jDW3F65f
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3ace9e6e1a5so249083a91.0
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 19:23:46 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=lEOeH/dn
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-14394530ec6so1817725c88.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Oct 2026 19:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792635826; x=1793240626; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=BL3IHRvJ9+gWwxp3abRrWJFWvxWrWClVc4DpkC67oPM=;
-        b=jDW3F65fISoaz7+amfP89O1a+TNphBoF8sXcXEbXqNHiXy05gjaPxmmP9qspk2t3Fe
-         JuQCtSOIZh6fLy5lcF9Kter3YdL6FRhO/CO4tzPoK/DzJ/956HE5p99gDAJEvuqWjK9I
-         6y27cGBiAxdHopYyhntNX6nkFY8E0t5VOpEYqWJBvTiIp/u//Id8fFNHFT2Ud2wIe6oZ
-         ZV0fDoNkiPdJMqbJSJGGtEoBjSXRNT+3hxGTQXsApCGeJRL3YabEWqheiTZJC2XqwOoQ
-         4hWOsmEdjS7+ffdURfEqu+v5M4I1nSwbx3uygcurNxU4OB9C34H1vX1lmI+DdqpFOsCj
-         vQ4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792635826; x=1793240626;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792637003; x=1793241803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=BL3IHRvJ9+gWwxp3abRrWJFWvxWrWClVc4DpkC67oPM=;
-        b=lW72EEaN33LX+eQjGQNzbN14qjWWdMuSoICwtcFPcmgByAkp/8iKyGk64qbvFzQeyz
-         YATSYfZ61g1J4DGOnmgfEiqQiDnCFIG4rGAMp8c02uskD3YhZqb8r/DbqKCFDV+srLAy
-         fGl/ilDbei5ore8v46oZZvRjQrJzqckYEh84Rhlzqw/RRMKY/wZPsUQHRSE516cW7XGC
-         WTkKnYtS8daur+XLYRvOz4CT7IB7UDqaFXtcTIuj5nu1pBkKkgfP8Ca+vX24KTdIr554
-         rVsX3BJsNr9Sy80Ppo0BYUXh7nrYGAaPVnO9atplw0OwwVJdyG7BjjYTosY+SaIckNdO
-         mExA==
-X-Forwarded-Encrypted: i=1; AKwUvBxx85n/osAhtS+8Wi7flQhtYzArH/HnPaAEVaw1CoSo9A/7vVma6379eogjOGp7Km95DOqqSNBzIKut@vger.kernel.org
-X-Gm-Message-State: AFq9FYIHhrtzHIUpjx3Aa5EYm6l4jlcIUh368hoD40z8Hj7LcLY/bLpy
-	ZgWlywRs8HH/avQ7n0xJd2ub6+WovwuR0i+970JGoqzwDKvYT/Cu/dKowWifTph1
-X-Gm-Gg: AYBFou0tQAxbuG+Dxs9VS5xvg/c0BDr2F0Kc05p0+XWMBZc2NyF73aiB4QxSfC66xgZ
-	6LssFp96rzi/ZPsJiEbOiNVekurbfiPapFEXIRsFhsHfnaHbbsR885mvta06MoaMnefdnyqzBba
-	0ziSCGAcy+H2KQe31TnhxWqoKTBs7S6Cd4otqhATNbL3Obv3ECs6iremsEqyO6GWdbiqkkmcjMr
-	xyFnuIzjBU8RG2RO+l/Wd+3hcFgIQGO6eWm0uwpbR4Az7YbUHb2z/nWL3ZDr5OFS9eoknKNeP6r
-	IuYLc07AQTVkhPlxDBzdIk5hYJG/qEeIoV4UiIe/U0sKrqPUWqELZuCnNmc0q9UM1BPAAod7knN
-	RPAhtxD4ZYFKmL15f4byRyFOJ7AdOXEVA3+mS1oszgaZ9qYLNNjQH8IcOEIYHQZ0COsl4gZtteK
-	C0cUFYzXq8MK/+hH1Dte0DzaA4NgDnLxGQ7Do0a1Pt2fCxfE4pfe1sqUZFfuEzZdAUoZJserCGp
-	Wl1hgaX6qqAHqHGxLJSmMttV/wfAmqI2sVv330LT0BEY8NLMYtAmLyIbQEoaGAxEWuN0WVOw8qH
-	d86gQ4FxcJ1SchxMajq4YpzR6IvrR+5mrsVDOtbFB+ex2ztSCN5PoQKOlMPyPes3jpJmspmAuP7
-	pZ74MjX3JOR3YfXM365p60G5zz1/n
-X-Received: by 2002:a17:90b:4c85:b0:3a2:bb9f:f87d with SMTP id 98e67ed59e1d1-3ada6c8842emr643889a91.21.1792635825946;
-        Wed, 21 Oct 2026 19:23:45 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:37f::e36])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ada4954979sm1783949a91.17.2026.10.21.19.23.44
+        bh=xLBRusOCzgaX2ifJa7rH6HLwuWuCZ8NlzSUvqTQo+pk=;
+        b=lEOeH/dnS2B8e24Xu5MT/xOA4CXNQvVwRiWzn1q6J5IGjpptVfq5b+/5WRy4Jt181V
+         kQ29p1mhMmGtlWmQjecdyuM9lpfn/y4VoKo/3iQ1IgrOZB13VGtGi4Y6L0I+2JApQ3kO
+         dPAV/vSznGHQxXrgTK1IHecyiseu50E0Esu2XY0JE7ibdN6RHcmkq8KW/SsvMkejqIGt
+         1Y/fJ3etsqCdIKvSJHmOhiVlH1g5+NXiS81QoK9vakry8whH/+pbLTS2XS9lwtKKyv6g
+         +arvr34PT3qOsU7/zeIn09hT3IvuLN5fdyhHSr1NF5p3K0vOfE3yU/UcqQXB6/gycC+O
+         htTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792637003; x=1793241803;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xLBRusOCzgaX2ifJa7rH6HLwuWuCZ8NlzSUvqTQo+pk=;
+        b=0A3VpwhoTz8KjBSW1VNra+34S1hHPv+w6+TeDas/zyIbxZ4KUq3LXka+2OHn0AjlB/
+         cXuxkfQ5JTRQa4WvdRGgMQno/Dm6n25w2nF8Y6AjuArdDMpspkof1sfwWGYxvY5b/dId
+         zqEhqwmx1FtFWPdv/8watdQin6DJ4h5bNbhR4o0/QQaTHmwzuYKdbLeHEXSVKcg2SafR
+         778nWhPCZ7O7H4otcbFrvSkw0qel0PmactanrwtnVXsgzlRY3CB85dMDD5MrIUpzdn3/
+         eWiGEv/Jr+lXWYp0PH9xxOqUHgY6lpEWGH+8mXM2DKjn++uZBlywRKeKUaUcjH2H3Ddz
+         LdYQ==
+X-Gm-Message-State: AFq9FYLIDUGic0P2AE2ZXm8Dmka7guWf59kQ4Ovo6aGEev9x5Y3Egrl2
+	2be2ooBQYdfEaAK2o3reeviZzw3abpsUeDEEb8noA7CjG3fyfltmLGJk
+X-Gm-Gg: AYBFou3NTmDLT/z84DC1TC6sCkPF/lLA9iMGJOFhRLQiuekIU18t5A/5kNc714g+rQL
+	PLua7YGv5HKPtmglthLNB1iFJgpVOp8Z+j/VvyqR+xA7CiA3SnF2gVYHFcqIqImWsYyHucZWKtT
+	ABDskOVqVzbPaS7pVNkpGeUXIM8MdUQ3ollj1lECL+d0zKHhU1yDa1zfqvNyxN8RvJYEa5G13Ti
+	7wEBS40+byXr0XEP0Cvfw+ax0auf/VZdJzAmRz8/DMdU56y50ynFF6XuQ8APx4Vv82ddbbomcs9
+	qCx1V5OdOfPRlD0XHdHEFMjf7z4rgo1HixoyUBIyD9I/4fwypHRAl4JU02/OCohpD5bQ3otGSD4
+	CwMp7MEVrYBfZy7YglzlDW0J80JrjEEKlasw2syr+jnU7tuYEvRkqSCEDNymfV+triTycOaTxDd
+	ij0o+UXhx9rr8A7haAXmNT9+o14HNNsgVmtV+XJ2wTkdfIdMNiN9hhyLTTZG5jTuWwPSbR0uuq5
+	+BmIBNNI9564XFFCMCGu9P1eZuvwsC3p4en1KNimTJmCtRIppDrDpbvgBKURKtEhI0dSl2LH/mD
+	S4SW0rd3h3w84VjeIw==
+X-Received: by 2002:a05:701a:ca01:b0:149:1feb:6da4 with SMTP id a92af1059eb24-190a5e65d52mr5119789c88.32.1792637002767;
+        Wed, 21 Oct 2026 19:43:22 -0700 (PDT)
+Received: from debian.prasanth ([103.183.205.34])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1903ca044d4sm11077386c88.17.2026.10.21.19.43.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 19:23:45 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	=?UTF-8?q?Giedrius=20Statkevi=C4=8Dius?= <giedrius.statkevicius@gmail.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM:Keyword:(devm_)?gpio_(request|free|direction|get|set))
-Subject: [PATCH ath-next] wifi: ath9k: release the LED GPIO after ath9k_stop()
-Date: Wed, 21 Oct 2026 19:23:43 -0700
-Message-ID: <20261022022343.1409432-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.56.0
+        Wed, 21 Oct 2026 19:43:22 -0700 (PDT)
+From: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+To: linux-aspeed@lists.ozlabs.org
+Cc: linux-gpio@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	krzk@kernel.org,
+	tan.siewert@9elements.com,
+	billy_tsai@aspeedtech.com,
+	Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+Subject: [RFC PATCH v2 0/1] AST2600 global GPIOP passthrough handover experiment
+Date: Thu, 22 Oct 2026 08:13:13 +0530
+Message-ID: <20261022024314.48623-1-prasanth.padarthi10@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261015035118.9495-1-prasanth.padarthi10@gmail.com>
+References: <20261015035118.9495-1-prasanth.padarthi10@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -102,59 +103,113 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ath9k_deinit_device() frees the LED pin in ath_deinit_leds() before it
-unregisters the hw. ath9k_stop() then switches the LED pin back to an
-input with ath9k_hw_gpio_request_in(). For a SoC GPIO outside of the
-WMAC, ath9k_hw_gpio_request() takes a new descriptor through
-gpiod_get_index() at that point, and nothing releases it again. The
-next probe fails with "request GPIO12 failed:-16" and every LED update
-hits the WARN_ON() in ath9k_hw_set_gpio(). That request also runs
-under sc->sc_pcu_lock, while gpiod_get_index() and
-gpiod_set_consumer_name() may sleep.
+Hi,
 
-Free the LED pin after ieee80211_unregister_hw() instead. This also
-frees the pin when the LED class device could not be registered,
-which leaked it before.
+This RFC v2 explores a different implementation from the October 15
+GPIO-request callback. It is not presented as a completed generic fix.
 
-Seen on a TP-Link Archer C7 v2 (QCA9558, LED on SoC GPIO 12) when
-reloading ath9k.
+The intended software model remains ordinary GPIO power control with
+x86-power-control software button forwarding. No board-specific sysfs ABI,
+Devicetree binding, or per-operation userspace SCU switching is introduced.
 
-Fixes: e34f2ff40e03 ("ath9k: bring back direction setting in ath9k_{start_stop}")
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/wireless/ath/ath9k/gpio.c | 2 --
- drivers/net/wireless/ath/ath9k/init.c | 5 +++++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Changes from v1:
+- Move shared-enable handling before pinctrl registration.
+- Preserve global THRU selections in per-pin SCU4BC controls first.
+- Handle the SCU510[28] source using SCU514 rather than rejecting it outright.
+- If handover fails, block affected GPIO/mux requests while attempting to
+  retain unrelated pinctrl functionality. Check all group pins before muxing.
 
-diff --git a/drivers/net/wireless/ath/ath9k/gpio.c b/drivers/net/wireless/ath/ath9k/gpio.c
-index 2dbc7efdd637..d525d8ef9369 100644
---- a/drivers/net/wireless/ath/ath9k/gpio.c
-+++ b/drivers/net/wireless/ath/ath9k/gpio.c
-@@ -67,8 +67,6 @@ void ath_deinit_leds(struct ath_softc *sc)
- 
- 	ath_led_brightness(&sc->led_cdev, LED_OFF);
- 	led_classdev_unregister(&sc->led_cdev);
--
--	ath9k_hw_gpio_free(sc->sc_ah, sc->sc_ah->led_pin);
- }
- 
- void ath_init_leds(struct ath_softc *sc)
-diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
-index a7a11781d83d..f6aa2ec1683c 100644
---- a/drivers/net/wireless/ath/ath9k/init.c
-+++ b/drivers/net/wireless/ath/ath9k/init.c
-@@ -1128,6 +1128,11 @@ void ath9k_deinit_device(struct ath_softc *sc)
- 	ath9k_deinit_debug(sc);
- 	ath9k_deinit_wow(hw);
- 	ieee80211_unregister_hw(hw);
-+
-+	/* release the LED pin only after ath9k_stop() has configured it */
-+	if (sc->sc_ah->led_pin >= 0)
-+		ath9k_hw_gpio_free(sc->sc_ah, sc->sc_ah->led_pin);
-+
- 	ath_rx_cleanup(sc);
- 	ath9k_deinit_softc(sc);
- }
+Problem and observations
+------------------------
+On B650D4U, a baseline with SCU4BC=0, SCU510=0, SCU51C=0x1e80 logs
+a 200 ms power pulse but times out waiting for power-good after 8 seconds.
+The earlier callback candidate clears SCU51C[9], permitting power-on.
+The current implementation transfers the global selection to local mux bits
+before registering consumers; observed post-daemon state is:
+
+                    Before power request       After power request
+  SCU41C                 0x000000c0                 0x000000c0
+  SCU4BC                 0x30000000                 0x30000000
+  SCU510                 0x00000000                 0x00000000
+  SCU51C                 0x00001c80                 0x00001c80
+
+Current implementation journal excerpts (boot-relative seconds):
+  182.265233 power-on request event received
+  182.267277 control-power-n set to 0
+  182.467530 control-power-n released
+  182.496345 power OK assert event received
+  182.496404 Moving to On
+
+The logged pulse lasts 200.253 ms; power-good arrives 231.112 ms after
+the request. The operator confirms physical power-on, including after
+complete AC removal. The supplied timestamped trace is not separately
+identified as the AC-removal run. P4/P5 local THRU selections remain set;
+actual forwarding and signal continuity have not been measured.
+
+Runtime SHA256 matches the earlier A/B tests:
+  eb98e896b67c2742db5ea127a40eecc6d23659a69a635ba9e2c5495bb32bd8bb
+    /usr/bin/power-control
+  47d323408e754c692f9f8764f2369e8bdbe76f56c59b804f52428a6229a7b4d3
+    /usr/share/x86-power-control/power-config-host0.json
+
+The locally patched x86-power-control permits omitted optional GPIO
+configuration entries. A comparison patch removes the earlier custom sysfs
+passthrough switching and 300 us delay, restoring the original GPIO pulse
+helper, including its masked-output handling. The configured power pulse is
+200 ms; software button forwarding is enabled. This is not a logging-only
+change or an unmodified upstream binary. The same executable/configuration
+hashes were captured in the baseline and candidate tests. These source
+changes are not intended to introduce different GPIO request flags; the
+captured hashes identify the tested executables rather than independently
+proving their build provenance.
+
+The image build completed successfully. The kernel base is the local
+OpenBMC revision 68da063267662da17b990c3384d5beceab1cdc80, whose
+Makefile identifies Linux 6.18.24 (VERSION=6, PATCHLEVEL=18, SUBLEVEL=24).
+It is not claimed to be the current pinctrl maintainer base, and equivalence
+of its Aspeed pinctrl code to an upstream stable release has not been
+verified. Runtime release: 6.18.24-68da063-patch-157ea07.
+
+Open questions and validation limits
+-----------------------------------
+1. Is local/global THRU equivalence valid during the transfer, including
+   PWM priority and signal continuity? Only steady-state selections were
+   checked; no electrical measurements or mixed-pair functional tests exist.
+2. Is mandatory normalization at probe acceptable, including platforms that
+   never request GPIOP? Would an ownership-aware request path be preferable?
+3. What shared serialization should protect the complete handover against
+   other SCU writers, including concurrent driver probes? Would a common
+   SCU-level locking mechanism be appropriate, and which writers must
+   participate? A pinctrl-private mutex would not serialize independent
+   drivers, and regmap_fields alone does not make a multi-register sequence
+   atomic. Regmap locking currently covers individual accesses only.
+4. How should partial handover and subsequent registration/hog failure be
+   handled? Current restricted mode does not guarantee registration if a
+   controller hog itself requests a blocked P0-P5 group.
+
+Protected-write/fault paths, PWM coexistence and SCU510[28] behavior have
+not been hardware tested. All presented register captures are after daemon
+GPIO initialization, not a direct trace of the handover. Exact flashed-image
+hashes and standalone raw evidence archive references are not yet attached.
+BMC NotReady, missing BootProgress and LPC snoop failures remain separate
+port issues; successful power-on is not full platform qualification.
+
+Feedback on this implementation direction and its ownership assumptions
+is requested before extending it or treating it as a generic solution.
+
+Previous RFC Message-ID:
+20261015035118.9495-1-prasanth.padarthi10@gmail.com
+
+Regards,
+Prasanth
+
+Prasanth Kumar Padarthi (1):
+  pinctrl: aspeed: Hand over global GPIOP passthrough to local mux
+    controls
+
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 147 ++++++++++++++++++++++++++++-
+ 1 file changed, 143 insertions(+), 4 deletions(-)
+
 -- 
-2.56.0
+2.47.3
 
