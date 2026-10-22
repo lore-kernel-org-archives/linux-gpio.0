@@ -1,80 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792679958;
-	b=RC6HMZdmrSfaWpcuCN7onQmAK0zcx/XWU5a4KNAQucGp+FQxoiXWCxFlX9IICc4LD6xp
-	 gq0JVTiFBAIu3nHLphvmHrC4etazPKO7lIq2wu4BtICCIuK637LisPIQn9/jy9kb3cBwY
-	 5VKgD3NGB9sussBUJGDvwoTL+Z0fyi+f66YA/e3MlWiDfWoqc/Yr3OjnRyCbnx6mzN5Q3
-	 BNIal0BDgLMVIQQUqxFUW1fCbavQLGiUiTzln1nqFPdby8uW4pbw+29d7sLoEvXbg8HHV
-	 upO5vQY8FzC4wVipck6KoX9mN+z68209J/AcsRh1OVicHNXskv3vQBzNn5XR4wHwIEg==
+	t=1792685585;
+	b=FxN3Tz4l193fltGDB+8hHWlM7VPvV2izWlqGe538GAncmYqMVB2ZeK1DAWQQO6hb4v5s
+	 i4UNIlgB6ESeyYLsQfIQnggqxY1JjBQc+S7MyMv4w0NOEk/xSrjUI4VIPRHZ6hSZDFzUi
+	 REyHqqKHTBet1MFprJEhbzKx6vC7qZbSxIN0+9H8AkQ/QR2pQy4FZEiYeUvN4QOlX1jZ2
+	 xOoE0Wx0OdwxbbFiXvncS8Rxetfz4Mez2fx+VcfZJGov2M8YmqYOEnX5xdtGX5V7JMdYo
+	 QGJ2RFTvzKYwe3NEZte1B/nF9iuwteE92jtoUKs6u/8D5CebdXfxIOoOsb+bY3GFl6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792679958;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=Ay2dAxYWfMnhM9xJPPfFSkhbkrQTRaOckqI85OWR7Xc=;
-	b=vR748Q+g6PPRCa/tTH2JyJF+ahVitL3+q10G6zy2YW8gNG55EgX7hvmB9dj1V1deZH4+
-	 KE+1vIQB/uNMGRTMxe5e3QZc0TEw879qd+KF0Ptv2xx/aNH4sau2e+TFlKH2jNthYF3Lp
-	 ENova9XkKXLjIwTJf+cVBcj8lajwzantX+yyBzKhhgg4gSjW3ctz0PqIpq3v5wXDIWXxj
-	 BmVOkjs/5fhl1wO7Z8cXwJBYjbrv9bEit4bY1YwPwsogAO0DjX2VNkxxtjdMkiw8h7JfE
-	 /KHq/JfsvQLzquEE7k29/yQVSUPCBMQmxH0OcdMf9vXoxGm2RdUOJNpEz+IRyWQx0lw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792685585;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=jF1NmDnjh7c7kkxRx9bcWKHyYF3gUqr7mA5JIQaVVhI=;
+	b=tb1GNcqJNF98e8K0aEOSch1Q8Xsd+W+mL5KhAwQOcN0FPDQuQAfFLhdItGNldNNJudC7
+	 Wx65AOSj3FABEWk/Z2am40C79xAnco++Rl4oXNVZYq8jSi8afsRNmlpP3WBHt/91Pab68
+	 T2oYmGJTubtiL3uUbcr64HwYfR8VHgZY0H1YPxAkJhZwmr5XsRe5qhce0GEKIY3uAmJvD
+	 6RpnxrI7n2MeX+MkqkHRoT+Wkx7fl5uY51P20N0QcWQwnfS0Tu8ySwemodA8qqWIYxJhG
+	 tXElsdNbMWiB6a7P5BSWC9k9Qp5X6dX0SB5Hw39qfMXlysPeDfZMRgqBZSZQpAVr1Zw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IdNfDTm6;
-	arc=none smtp.remote-ip=192.198.163.15
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VbKU9Xij;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B138606A319;
-	Thu, 22 Oct 2026 14:39:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3B138606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068C7606A31B;
+	Thu, 22 Oct 2026 16:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IdNfDTm6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792679957; x=1824215957;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B4+XEdsVBeguDOEIlkOZq29w4jkQR2Fe80SlxDptpgE=;
-  b=IdNfDTm6OsiuytVypHtmSnY3hvU8I7ah9cr7vW/FEX/PXc771MuGgRBM
-   azI5m7Q7fkFBGn3wgCOwQ9HCHbLbW9L4/HVLf4tBHOkm2aulXhcm+EMkZ
-   +tAG/Bge8epRK40oz/hrrusUJE+halPMxeoUBXGvjxbv3we0C3FtPlVhg
-   Sh6NjxVwDNVI4JgiJndSOns3b45vRpuwzUvWdyqFnoYhfxSj8HS8l/C1y
-   yWNZ/jgwfQ9UoIONM3rGOJGlGrCmMDuftQNLuqVuZvPX5/Vofkc3IhB1R
-   gTfCybGwd6F7wqjXNdNteqDdnYiOMbo0kA7MmBEp+4Ddl+SADLyNLD8BY
-   w==;
-X-CSE-ConnectionGUID: v9LWILIoS8OkQHBEkRXSpw==
-X-CSE-MsgGUID: nWZQT+TbRkOukSZpY1bFLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1438626"
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="1438626"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 07:39:17 -0700
-X-CSE-ConnectionGUID: pSImwiEvSl64btL9eh7LHA==
-X-CSE-MsgGUID: zlK7GDk/Qey0Buv0F3czrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="5217544"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 07:39:15 -0700
-Date: Thu, 22 Oct 2026 17:39:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Samuel Moelius <sam.moelius@trailofbits.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] gpio: Introduce helper to dispose IRQ mappings
-Message-ID: <atogECYXhbdRkzT6@ashevche-desk.local>
-References: <20261021204654.1001101-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=MdHEzHBXx=P1-0Ut80P5=sQnPDwZRD-zdpoE75iHcJjBA@mail.gmail.com>
- <atoQfGQZeJDU3eMF@ashevche-desk.local>
- <CAMRc=MfALArmtGmv6h_sPrwxQrqyjOECN9m-GVb9DKQ4kyBE1A@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VbKU9Xij
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D023C1F031E0;
+	Thu, 22 Oct 2026 16:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792685584;
+	bh=jF1NmDnjh7c7kkxRx9bcWKHyYF3gUqr7mA5JIQaVVhI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=VbKU9XijUrEX0e4+6Rn3tL6jndLa0XGqXD16igKfK2SXZJ2P6cdLWIj2iQt2CDgZE
+	 8dHVpsg338sud3dCvLpyaruKJoGrMpLcAvOcxouQO0yRHvsM7YDGG/lb6SMyUlnK7P
+	 EjFJeQA8nDr6caxF8yna5GwsBxTVyY4E4bOIZxrjDYUjWoBrGg/qXxHIoDutLMTapA
+	 EDi8JjNSWQKwA3XABoJZGcGv9inNuF89WCXtegcQ/Fk2lcMx3pWNNt1+ip20SLhNqm
+	 LI2XImZpCUj7xtN4KsFk63598DT+8lBpHDdGsESggY6fGE+OTV+uLnH0yFipfLsWP0
+	 hQ9WqlLEd/RiA==
+Message-ID: <sashiko-outbox-181771@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 07/27] clk: rockchip: Add RK3572 clock and reset support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cunhao Lu" <1579567540@qq.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com, lee@kernel.org
+In-Reply-To: <20261022-add-board-ok3572-c-v1-7-0b0fd85a31ee@qq.com>
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-7-0b0fd85a31ee@qq.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 22 Oct 2026 16:13:03 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,40 +59,187 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfALArmtGmv6h_sPrwxQrqyjOECN9m-GVb9DKQ4kyBE1A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 22, 2026 at 07:05:55AM -0700, Bartosz Golaszewski wrote:
-> On Thu, 22 Oct 2026 15:32:44 +0200, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> said:
-> > On Thu, Oct 22, 2026 at 02:11:38AM -0700, Bartosz Golaszewski wrote:
-> >> On Wed, 21 Oct 2026 22:44:42 +0200, Andy Shevchenko
-> >> <andriy.shevchenko@linux.intel.com> said:
-> >> > I have noticed that a few drivers use almost the same code to dispose IRQ
-> >> > mappings. This series to deduplicate the efforts. I only converted a couple
-> >> > of the users (there are potentially more) in order to stay in the same
-> >> > subsystem.
-> >> The "few" being 2 testing drivers of which one (mockup) should ideally go away.
-> >> Do we really want to add more code to GPIO core that will only be used in
-> >> testing module(s)? I don't think this is useful, sorry.
-> >
-> > I meant a few. As I pointed these were chosen explicitly for the sake of not
-> > crossing the subsystem boundaries. I looked at Broadcom one, it is so big mess
-> > but I think I can get an advantage on it. Also there are other drivers that
-> > just need more work to check (and many of them are outside of drivers/gpio),
-> > but I'm pretty sure the new API has a good potential.
-> 
-> Would it be possible to provide at least one more user other than the testing
-> drivers?
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] clk: rockchip: missing CLK_AUDIO_FRAC_0..2 in rk3572_clk_branches
+- [Medium] clk: rockchip: internal FACTOR(0) branches overwrite PLL_PPLL in=
+ rk3572_clk_init()
+--
 
-Sure.
+commit 9602441daaa896927eb56cc9b1d0e4d99173c907
+Author: Cunhao Lu <1579567540@qq.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+clk: rockchip: Add RK3572 clock and reset support
 
+This commit adds clock and soft-reset controller driver support for the
+Rockchip rk3572 SoC.
 
+> diff --git a/drivers/clk/rockchip/clk-rk3572.c b/drivers/clk/rockchip/clk=
+-rk3572.c
+> new file mode 100644
+> index 0000000000000..78fd35f5f27d1
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-rk3572.c
+
+[ ... ]
+
+> +PNAME(mux_24m_frac_int_mclk4_p) =3D {
+> +	"xin24m", "clk_audio_frac_0", "clk_audio_frac_1", "clk_audio_frac_2",
+> +	"clk_audio_frac_3", "clk_audio_int_0", "clk_audio_int_1", "clk_audio_in=
+t_2",
+> +	"sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in",
+> +};
+
+[ ... ]
+
+> +PNAME(mux_24m_frac_int_mclki_p) =3D {
+> +	"xin24m", "clk_audio_int_0", "clk_audio_int_1", "clk_audio_int_2", "clk=
+_audio_frac_0",
+> +	"clk_audio_frac_1", "clk_audio_frac_2", "clk_audio_frac_3", "sai0_mclk_=
+in",
+> +	"sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in", "sai4_mclk_in",
+> +};
+> +
+> +PNAME(mux_24m_frac_int_mclki_sclki_p) =3D {
+> +	"xin24m", "clk_audio_int_0", "clk_audio_int_1", "clk_audio_int_2", "clk=
+_audio_frac_0",
+> +	"clk_audio_frac_1", "clk_audio_frac_2", "clk_audio_frac_3", "sai0_mclk_=
+in",
+> +	"sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in", "sai4_mclk_in", "sai0_s=
+clk_in",
+> +	"sai1_sclk_in", "sai2_sclk_in", "sai3_sclk_in", "sai4_sclk_in",
+> +};
+
+[ ... ]
+
+> +static struct rockchip_pll_clock rk3572_pll_clks[] __initdata =3D {
+> +	/* Keep BPLL and LPLL enabled for firmware consumers. */
+> +	[bpll] =3D PLL(pll_rk3588_core, PLL_BPLL, "bpll", mux_pll_p,
+> +		     CLK_IGNORE_UNUSED, RK3572_PLL_CON(0),
+> +		     RK3572_MODE_CON1, 0, 15, 0, rk3572_pll_rates),
+> +	[lpll] =3D PLL(pll_rk3588_core, PLL_LPLL, "lpll", mux_pll_p,
+> +		     CLK_IGNORE_UNUSED, RK3572_LPLL_CON(16),
+> +		     RK3572_LPLL_MODE_CON0, 0, 15, 0, rk3572_pll_rates),
+> +	[vpll] =3D PLL(pll_rk3588, PLL_VPLL, "vpll", mux_pll_p,
+> +		     0, RK3572_PLL_CON(88),
+> +		     RK3572_MODE_CON0, 4, 15, 0, rk3572_pll_rates),
+> +	[aupll] =3D PLL(pll_rk3588, PLL_AUPLL, "aupll", mux_aupll_p,
+> +		     0, RK3572_PLL_CON(96),
+> +		     RK3572_MODE_CON0, 6, 15, 0, rk3572_aupll_rates),
+> +	[cpll] =3D PLL(pll_rk3588, PLL_CPLL, "cpll", mux_pll_p,
+> +		     0, RK3572_PLL_CON(104),
+> +		     RK3572_MODE_CON0, 8, 15, 0, rk3572_pll_rates),
+> +	[gpll] =3D PLL(pll_rk3588, PLL_GPLL, "gpll", mux_pll_p,
+> +		     CLK_IGNORE_UNUSED, RK3572_PLL_CON(112),
+> +		     RK3572_MODE_CON0, 2, 15, 0, rk3572_pll_rates),
+> +	[ppll] =3D PLL(pll_rk3588_ddr, PLL_PPLL, "ppll", mux_pll_p,
+> +		     0, RK3572_PPLL_CON(128),
+> +		     RK3572_PPLL_CON(134), 15, 15, 0, rk3572_ppll_rates),
+> +};
+> +
+> +static struct rockchip_clk_branch rk3572_clk_branches[] __initdata =3D {
+> +	/* fixed */
+> +	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+> +
+> +	COMPOSITE_FRACMUX(CLK_32K, "clk_32k", "xin24m", CLK_IS_CRITICAL,
+> +			  RK3572_PMU_CLKSEL_CON(21), 0,
+> +			RK3572_PMU_CLKGATE_CON(7), 14, GFLAGS, NULL),
+> +
+> +	FACTOR(0, "clk_spll_div12", "spll", 0, 1, 12),
+> +	FACTOR(0, "clk_spll_div6", "spll", 0, 1, 6),
+> +	FACTOR(0, "clk_spll_div4", "spll", 0, 1, 4),
+> +	FACTOR(0, "clk_spll_div2", "spll", 0, 1, 2),
+
+[Severity: Medium]
+Will registering these fixed-factor branches with an id of 0 overwrite the
+ppll entry in ctx->clk_data.clks[0]?
+
+In include/dt-bindings/clock/rockchip,rk3572-cru.h, the binding id for ppll
+is 0:
+
+    #define PLL_PPLL				0
+
+During rk3572_clk_init() in drivers/clk/rockchip/clk-rk3572.c,
+rockchip_clk_register_plls() runs before rockchip_clk_register_branches():
+
+    rockchip_clk_register_plls(ctx, rk3572_pll_clks,
+                               ARRAY_SIZE(rk3572_pll_clks),
+                               RK3572_GRF_SOC_STATUS0);
+    ...
+    rockchip_clk_register_branches(ctx, rk3572_clk_branches,
+                                   ARRAY_SIZE(rk3572_clk_branches));
+
+When rockchip_clk_register_branches() iterates over rk3572_clk_branches[],
+it unconditionally calls rockchip_clk_set_lookup(ctx, clk, list->id) in
+drivers/clk/rockchip/clk.h:
+
+    static inline void rockchip_clk_set_lookup(struct rockchip_clk_provider=
+ *ctx,
+                                               struct clk *clk, unsigned in=
+t id)
+    {
+            ctx->clk_data.clks[id] =3D clk;
+    }
+
+Because xin12m (which also has no consumers in this file) and
+clk_spll_div12, clk_spll_div6, clk_spll_div4, and clk_spll_div2 all pass 0
+as their id, rockchip_clk_register_branches() overwrites
+ctx->clk_data.clks[0] with clk_spll_div2. Any device tree consumer
+requesting ppll will receive clk_spll_div2 instead.
+
+[ ... ]
+
+> +	MUX(CLK_AUDIO_FRAC_0_SRC, "clk_audio_frac_0_src", gpll_cpll_aupll_24m_p=
+, 0,
+> +	    RK3572_CLKSEL_CON(13), 0, 2, MFLAGS),
+> +	MUX(CLK_AUDIO_FRAC_1_SRC, "clk_audio_frac_1_src", gpll_cpll_aupll_24m_p=
+, 0,
+> +	    RK3572_CLKSEL_CON(15), 0, 2, MFLAGS),
+> +	MUX(CLK_AUDIO_FRAC_2_SRC, "clk_audio_frac_2_src", gpll_cpll_aupll_24m_p=
+, 0,
+> +	    RK3572_CLKSEL_CON(17), 0, 2, MFLAGS),
+> +	MUX(CLK_AUDIO_FRAC_3_SRC, "clk_audio_frac_3_src", gpll_cpll_aupll_24m_p=
+, 0,
+> +	    RK3572_CLKSEL_CON(19), 0, 2, MFLAGS),
+> +	COMPOSITE_FRAC(CLK_AUDIO_FRAC_3, "clk_audio_frac_3", "clk_audio_frac_3_=
+src", 0,
+> +		       RK3572_CLKSEL_CON(18), 0,
+> +			RK3572_CLKGATE_CON(1), 14, GFLAGS),
+
+[Severity: Medium]
+Are the fractional divider definitions for clk_audio_frac_0,
+clk_audio_frac_1, and clk_audio_frac_2 missing from rk3572_clk_branches[]
+here?
+
+In include/dt-bindings/clock/rockchip,rk3572-cru.h, all four fractional
+audio clocks and their parent muxes are defined:
+
+    #define CLK_AUDIO_FRAC_0			25
+    #define CLK_AUDIO_FRAC_1			26
+    #define CLK_AUDIO_FRAC_2			27
+    #define CLK_AUDIO_FRAC_3			28
+    #define CLK_AUDIO_FRAC_0_SRC		29
+    #define CLK_AUDIO_FRAC_1_SRC		30
+    #define CLK_AUDIO_FRAC_2_SRC		31
+    #define CLK_AUDIO_FRAC_3_SRC		32
+
+However, rk3572_clk_branches[] in drivers/clk/rockchip/clk-rk3572.c only
+registers the four source muxes (clk_audio_frac_0_src through
+clk_audio_frac_3_src) and clk_audio_frac_3, omitting clk_audio_frac_0,
+clk_audio_frac_1, and clk_audio_frac_2.
+
+Because mux_24m_frac_int_mclk4_p, mux_24m_frac_int_mclki_p, and
+mux_24m_frac_int_mclki_sclki_p list clk_audio_frac_0, clk_audio_frac_1, and
+clk_audio_frac_2 as parents, 13 downstream audio clocks (clk_pdm0_src_top,
+mclk_asrc0_src_0, mclk_asrc1_src_1, mclk_pdm0_src_top, mclk_sai0 through
+mclk_sai5, and mclk_spdif_tx0 through mclk_spdif_tx2) will fail to resolve
+those parents when rk3572_clk_init() -> rockchip_clk_register_branches()
+runs, and device tree lookups for those three clock ids will fail to find a
+registered clock.
+
+[ ... ]
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022-add-board-=
+ok3572-c-v1-0-0b0fd85a31ee@qq.com?part=3D7
