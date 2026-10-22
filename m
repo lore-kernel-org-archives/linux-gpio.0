@@ -1,82 +1,133 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792688202;
-	b=vxPu3OKB34PEiZWtH8i6FFex4Yxq7otJd2a/RHDBAstglTZzcxFxosfuCrfwviQmZmIN
-	 C3T9NIAbXIrOmR3vCO/GMOqk5KQ/8aFye8BCB8AHzZCobV19mZJKvCOAf23xYwOFb6w/5
-	 JtBMYsTUmD4pCegQZWghJ8VURHR1QIAXC9Ay9Fb341m/SRRnK61/AJJuXZmZYmdiiEtFf
-	 BSfabjjM/ns0NRcBOYCye7qElgVjcXIlh81W4nb4oxwO23j5XQGe5oLzQUmIJnX9Otr34
-	 HvSaKICLaUHUnbZjtLWCVN1AnB+Dd6Fkzko0PZ1LAK7aJLNh9I9aH9FB4scdqjulIzQ==
+	t=1792689944;
+	b=SjycjISbKDFKwIYFOCBV+oLmZwWQ4jdyiOTKS4ESELo4w73p1+rvlYWkmyjyRlFyj5iV
+	 bKqX5vOqfFF4Rl1yJiOA/ex2w5F2IjDa5kyLI8dP6kM00zdWdY6nwyg90rpXxr6y/PVKy
+	 yWqEJ5P2GLzHWNXWf9MjzQ9H78M9ckWMJpFljGdsFyuG/k4Qe/u7ExkPdK8eK6FoIFx7M
+	 ESRNZpu92VBrJr2mqx69yUoiJq0Zy4mRQDhJbuVelFCb13og7nupIJgBAZNiAhWQiYaA9
+	 LfpF1VQVj6d+NbaSW0/cPzDfdRneXHBmW/5qRGPfgsGyvc/tiPvdn793NYIANrf15cA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792688202;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=il28kZEu1J1N+magMxahRVyuOLNhpdSTnTMxXMXXMko=;
-	b=o99n/1QIoZKmlaxcpW8JJ1JoifL/cMkKpt1vrNMQw+JC2UHyei4SDgndeJ3wXsHuR1XM
-	 IdubnvLCGrFnLYgBivv1lPjXKeJEmDVMyWJ0DkFd2obLwOdAnt2AFxQP1SezTuiquZYGE
-	 oLsa2HLBI5xpNvvV85STkJfZFiGYJl8pcCP9ZGzBKa3qUqtFNtcv075oXzxnaSgriI1S6
-	 jHyYlnyNBBA+W7a+Z5n+A+E2cwsOs3qWrWM5p8b01cyOgptKRbAdHr+J5I7po5vo3aXGQ
-	 dm6q14br6N4LDi36N8ANOssKXeFMpW7jP/Viht33fQm332mG1dL8tnEBOlqM8mm3hww==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792689944;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=z6AktrNRc2FXQ2aAgAi4RpcR1aHmqBhSrhbs1Sqm0ko=;
+	b=oDjisVI9yEuA8O5lPlwsDoA44WnCCq9qKtPmbaAWsjHZuXbTjUzjnbSl5n9WAX16Zb4a
+	 BdrrpsQpovGKJpJfOACWdsioOIhAS4Gm4ccdSAkaldBva8A2/JqpaLy+wzJ3bR7xYEoHq
+	 9rPch6ZrKzVkkep46OrdGqQYIEAUC9XFqPAwdD8qZ9cchkJQJna8mnphoFmkQujGbVG9s
+	 4DQqV7yqkYd5Q0PwQqpLV4pbZTwoKY9tKWDmKZ9vmKORSMF+QT9Bmssnq7PrMOv8h/KTR
+	 d0yGUTgLthEZhSeTK5lBJB3r3IwS+7p6GVu06Bixy9arZGfnKJ8sB2817yu5+1/1Nng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hD8uTPmE;
-	arc=none smtp.remote-ip=198.175.65.15
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=CWVb6AWS;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=FfzXVGVJ;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CA4606A31F;
-	Thu, 22 Oct 2026 16:56:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B5CA4606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A91606A31F
+	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 17:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23A91606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hD8uTPmE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792688202; x=1824224202;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hC0Qyh2g7Icwd/EcjcvpTpq/WQc4ueuC05RnQixe8sw=;
-  b=hD8uTPmEpWT6UXStV8Y1L2ZgrK4n57cx9MtiAW0nZLHU3RcV4rUCoKeo
-   kyGO5Ne+F0BsUYWF8XMsVPjHR6Fjj01lNhRA4uHl5bMcGyYQI5VhhgD/F
-   BCVURqFGJQn4wg0MRod1S2XigZdrMzwc0oLScrEt69kj5Z6StLWBDQTzD
-   clA5SqCOJX0/eIONZUmVJXa0EXcfd41S03RC4CJg1SYVRIIk6FgLqQhch
-   jnNJGyiFVzbmkCcYXtaz/dpqejPuxiYdeBywq2gYbQrF/CwvYDPZzaQSU
-   oTrM1JJ0TNe0aY7FIV9iVUNPj+RkayRlVMF26aVV/Vc7jAqxytz32zHlV
-   A==;
-X-CSE-ConnectionGUID: mhmjK1n1Td6ZucnDqQa+kA==
-X-CSE-MsgGUID: pSZyk3wWRdum71Tjzd/owg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1445950"
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="1445950"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 09:56:41 -0700
-X-CSE-ConnectionGUID: wHkTaDjRTnSigA5qAQwUFg==
-X-CSE-MsgGUID: nD0U/ixbRAijSlpqq5kx/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="3501791"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 09:56:39 -0700
-Date: Thu, 22 Oct 2026 19:56:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] gpiolib: avoid krealloc() in gpiod_get_array()
-Message-ID: <atpARSOuQaWkY1Sr@ashevche-desk.local>
-References: <20261021190212.2237804-1-dmitry.torokhov@gmail.com>
- <20261021190212.2237804-5-dmitry.torokhov@gmail.com>
- <atkTqWUn-2tzRw69@ashevche-desk.local>
- <ebd179ed9fd8af509ef3ecbea1c348c6@gmail.com>
- <atkmj6rxedA-XPf-@ashevche-desk.local>
- <atkp9edGVHRWrJCa@google.com>
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=CWVb6AWS;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=FfzXVGVJ
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69MEF8QQ960649
+	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 17:25:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=z6AktrNRc2FXQ2aAgAi4RpcR
+	1aHmqBhSrhbs1Sqm0ko=; b=CWVb6AWSVmzhe1s1IEiTSHJAt5TbC5Fd9U2+RPS+
+	JnmomB6jHHsWXmJce9U0I3dO8SR9Z726fBDPaUo0K6/inE0LsBOvrbEvFJ0IzbFa
+	/EASM4VnVPXEoz8jb4SAQcU+Wm0nASBcW8AGtILybFMcHNEUj7Qd1upYAm1+XXc5
+	2WUi76Ln4SCO5SgLlaZrK4T/LeaUwihuKYhbaJaCEn8G9UAoZenNIaxdKc7MIdQh
+	0+JMTe9QnNbWHYLST+1TfBsZfpbuORYt/uLp00/0JY5A0nIK0fDNaMF2zVKDdHRN
+	AZUPMG4x59TUf4Ldrf/nukMKEzn9NePnIalbRpk2YVbPmQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hf93amv1t-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 17:25:42 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93f2c0e6653so768985a.1
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 10:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1792689941; x=1793294741; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=z6AktrNRc2FXQ2aAgAi4RpcR1aHmqBhSrhbs1Sqm0ko=;
+        b=FfzXVGVJHBoXo7g611hnctNhOLrSjfw3dV6SOTnuepYkI8fYIpLC9jfFRLPDsUyu4W
+         MPxIGTkxMOR/EhYFrwtRyp/fqsSgLYf3Z3wkkdeAkP12ujqflOdgbOjx7DI6z+6S0+H9
+         ZDrN+ajJaxZ/o7J2Z2XlNQQfFP2wikUexoEbOykqlWOA+3ZyczsMbkisEwTkIDB8AbwV
+         /pJlUWjCjxX5zVMbFv/FMSB4MrZmqHntoLMXgfpGUrnhDn5/8raBgfNpCj+hurqtgF2d
+         i+qHMwMahuXpnBORydOUoXMOhUUzMMaQKgvmnmiLHHnw7NkrHaufIOq1B0d/IJphs+3Z
+         taAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792689941; x=1793294741;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=z6AktrNRc2FXQ2aAgAi4RpcR1aHmqBhSrhbs1Sqm0ko=;
+        b=QFTNMeL5MalpQmCWs8aHjZqMmYoFyWtaHqBIk5SQYPi7mnncsm8XW1dM7xlK+I7FoJ
+         2UGsNctyYpDolw2ZdQ2zaD4U9O42Lg1mUavP65vY05OYC7g5ZXDRPSj4BMedwLm9UaG9
+         ItsuaKLzjvrGHhLfrTE7jEloEZRf9KKeh9A50DpRzZNdsGKaBFRnQU2iEI29/cUIX/3L
+         JKnQ/yMHSDblVfSJwh1Zjr8x/w0Vpi9RzhZA25+PkMCfFdwWpE8a/ppOFm7ZABBsdDx/
+         TTjI5YXwWNyTtD1XIGDNa/8Is4GGM+YDprziYx38OSZ1mRz8vpXgN9ASwxRvXZI2gAYZ
+         KDNA==
+X-Forwarded-Encrypted: i=1; AKwUvBzNm/f68Hd7jcqad0km9h7QyM+JMx8NczKnlv8ijzy3GHzZN6JPRMaxqd6vKcfyZHykFTIpnK9MtKXF@vger.kernel.org
+X-Gm-Message-State: AFq9FYK//EPicW443rvRsRfw32gtuSnujTYxqPd1DKMUat7NjyP3Cvnp
+	iJhSUNY734GW/QgmDENtzgZUCALo78kEEjXTwR1UYvVHfm1YFCv950ljIeMLeShzjQY0Lg4qRhM
+	eNkJJ49Ea2zKNp8/8yFgNk/sP6flrOfwG8Z5CORTC0BGiEcwWIHRr1a6VO8UpyHpV
+X-Gm-Gg: AYBFou1K1WtrW2tjgNZvQLWMVMS+rWn1fclF+ytzTKkWkHi7aWZPbGQJxRAmz330swv
+	e/hbFJO+gExlH/URPyz+pMHvPbQswJ3XwUTv8LtZYSymYAXR7TOVjFU60TQJKD0j22AiLvudv7h
+	0t7nHBXsZ+LpqFRWKczwtrDDW0T1Ys3fRjWFxQPtWDWtnTU3WgFZuW8nOgvNobfj/PgVK+mf1gl
+	xTvHNYZRH2l0nv0BG9VDeo0JPF8j+d52DKuqXmEV+YO54qBddbUX7KeOutIhZDL0odmDYAT4GO6
+	YVSaV6jPVIybytEroLbzCG/6FiqcVMVasLcLQbC29Gxu+klodQBUkxnsYREyJ26Vx5wITIOpakO
+	Ob8xZtCNuLtPI6g==
+X-Received: by 2002:a05:620a:17a1:b0:93c:80d8:57ec with SMTP id af79cd13be357-93f6f851357mr22883085a.64.1792689941007;
+        Thu, 22 Oct 2026 10:25:41 -0700 (PDT)
+X-Received: by 2002:a05:620a:17a1:b0:93c:80d8:57ec with SMTP id af79cd13be357-93f6f851357mr22875785a.64.1792689940357;
+        Thu, 22 Oct 2026 10:25:40 -0700 (PDT)
+Received: from localhost ([188.216.77.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e254eeef6sm13786270f8f.8.2026.10.22.10.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2026 10:25:39 -0700 (PDT)
+Date: Thu, 22 Oct 2026 19:25:38 +0200
+From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Michael Walle <mwalle@kernel.org>, Alex Elder <elder@riscstar.com>,
+        Daniel Thompson <daniel@riscstar.com>,
+        Sushrut Shree Trivedi <sushrut.trivedi@oss.qualcomm.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
+Subject: Re: [PATCH v5 5/5] arm64: dts: qcom: qcs6490-rb3gen2: Enable TC9563
+ embedded GPIO controller
+Message-ID: <atpHEpzw27_8wu7t@lore-desk>
+References: <20261015172620.GA1780580@bhelgaas>
+ <20261019220111.GA2271378@bhelgaas>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -86,88 +137,138 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="THddspKwcrT7mb3a"
 Content-Disposition: inline
-In-Reply-To: <atkp9edGVHRWrJCa@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20261019220111.GA2271378@bhelgaas>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIyMDA2OSBTYWx0ZWRfX8m0CqqUeCEtQ
+ p0zPbZ8YZ6jtpT1D1jv38RUsCnZ/WNeoqwZ5oio2PtnGKY0CCqaaZoTO6F7MXT/m48+pVEDR/p6
+ kB1uLnWZ0oCKoComakzn5++hvRPE39z4d8lDlA1mf7Jy2p9WGwtImCJd04MhVQXMs4NiWFOlIad
+ 2JtwthIijf5E4IY1UJcXNWkFVFwnoPfL5qJrEEq5RyjxhnHmRpZs1dxPS2+h/GgckiZ59xBpxxG
+ 86MmbUJUk+PMwr1AdtKoT4p5SD5e4A1xnF6OghdSCODbvsLZsZBu3xjUU9lRTE5BN0LG3Gr2/St
+ UxF2cwKg0R+FKVc8lgB756VRwzQ/3s/6n7GF13cDj+25pLx7igYNYLiDzaC4eovc0Umdna4+JOn
+ 3o+kzpdAwNlQFuEHrRjC9hUbiyd3qh5mg2uoX/GN6TNbzHaxS7z9dp4dgVY8V1P585002SH7sJK
+ zTsyGkya9iGmVg/AnPQ==
+X-Authority-Analysis: v=2.4 cv=H7FOUOYi c=1 sm=1 tr=0 ts=6ada4716 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
+ a=ee_2aqc6AAAA:8 a=tAtCrcrtAcaxr7tUyVkA:9 a=QEXdDO2ut3YA:10
+ a=plpxFqqDF8Z-DRInVI0A:9 a=bTQJ7kPSJx9SKPbeHEYW:22 a=VOpmJXOdbJOWo2YY3GeN:22
+X-Proofpoint-ORIG-GUID: c0Bzj7mvk0hRE6XGpeLESalSyokb_-J_
+X-Proofpoint-GUID: c0Bzj7mvk0hRE6XGpeLESalSyokb_-J_
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIyMDA2OSBTYWx0ZWRfX0Gjl4DVKvqnc
+ IFOSAWxmii+pNZWhdP9+nY05LY36B22rgJg9he9lmhHRiNVofnnpu8WMm0QPFrttj3Vw5MVE+VK
+ YQixg+H0yZNm3QeETI3KjBl4kCXRkJE=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-22_05,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 adultscore=0 spamscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610220069
 
-On Wed, Oct 21, 2026 at 02:17:56PM -0700, Dmitry Torokhov wrote:
-> On Wed, Oct 21, 2026 at 11:54:39PM +0300, Andy Shevchenko wrote:
-> > On Wed, Oct 21, 2026 at 01:39:49PM -0700, Dmitry Torokhov wrote:
-> > > On Wed, Oct 21, 2026 at 10:34:01PM +0300, Andy Shevchenko wrote:
-> > > > On Wed, Oct 21, 2026 at 12:02:10PM -0700, Dmitry Torokhov wrote:
+--THddspKwcrT7mb3a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-...
+> On Thu, Oct 15, 2026 at 12:26:21PM -0500, Bjorn Helgaas wrote:
+> > On Wed, Sep 09, 2026 at 04:55:57PM +0200, Lorenzo Bianconi wrote:
+> > > The Toshiba TC9563 PCIe switch embeds a GPIO controller providing 37 =
+GPIO
+> > > lines. The controller is registered as an auxiliary device by the TC9=
+563
+> > > power controller driver and accessed through the same i2c device.
+> > >=20
+> > > Describe the switch node itself as the embedded GPIO controller and us
+> > > it to drive the PERST# reset lines of the two external downstream port
+> > > (pcie@1,0 and pcie@2,0), as expected by the TC9563 power controller a=
+fter
+> > > switching to the GPIO descriptor API for per-port resets.
+> > >=20
+> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.co=
+m>
+> > > Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> > > Reviewed-by: Alex Elder <elder@riscstar.com>
+> > > Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> >=20
+> > Bjorn A, I first applied this arch/arm64 DTS patch to the PCI tree
+> > along with the rest of this series, but that was a mistake because=20
+> > those changes should go through your tree instead.
+> >=20
+> > I dropped it from pci/pwrctrl.  Do you want to pick it up?
+>=20
+> Just following up to make sure this DTS patch gets merged somewhere...
 
-> > > > > +	bitmap_set(array_info->get_mask, 0, count);
-> > > > > +	bitmap_set(array_info->set_mask, 0, count);
-> > > >
-> > > > With the above being done, I would rather see bitmap_zalloc() for bitmaps.
-> > > 
-> > > struct gpio_array is defined with a flexible array member (invert_mask[])
-> > > specifically so that descs, array_info, and all three bitmaps live in a
-> > > single allocation. Switching to bitmap_zalloc() would turn one allocation
-> > > into four or five separate allocations and require freeing the bitmaps
-> > > both in gpiod_put_array() and when cancelling the fast path in
-> > > gpio_descs_check_fastpath(), so I would prefer to keep the single
-> > > contiguous allocation here.
-> > 
-> > Why? You can also allocate 3x bitmaps with bitmap_zalloc(). So I see only
-> > a single additional allocation.
-> 
-> So the proposal is to continue combining gpio_descs and gpio_array
-> allocation but split out bitmap allocations (still combining them into
-> one, so needing to round up nbits).
-> 
-> This looks like worst combination of all. Why do you prefer
-> bitmap_zalloc()?
+Hi Bjorn A,
 
-It's proper allocation mechanism for bitmap. With k*alloc*() this sounds like
-a (non-critical) layering violation. This also might add an additional churn
-in case the bitmap APIs will get their own type (currently we use the knowledge
-on how unsigned long:s is used for bitmap, but imagine the allocation that adds
-some header or tail to it).
+is this patch supposed to be applied to your tree?
 
-...
+Regards,
+Lorenzo
 
-> > > > >  	for (i = 0; i < count; i++) {
-> > > > > -		desc = gpiod_get_index(dev, con_id, i, flags);
-> > > > > +		struct gpio_desc *desc __free(gpiod_put) =
-> > > > > +			gpiod_get_index(dev, con_id, i, flags);
-> > > > >  		if (IS_ERR(desc))
-> > > > >  			return ERR_CAST(desc);
-> > > > >  
-> > > > > +		if (i == 0) {
-> > > >
-> > > > This is almost invariant to the loop. Can we move it out?
-> > > >
-> > > > > +			descs = gpio_descs_alloc(count, desc);
-> > > > > +			if (!descs)
-> > > > >  				return ERR_PTR(-ENOMEM);
-> > > > >  		}
-> > > > >  
-> > > > > +		gpio_descs_check_fastpath(descs, desc);
-> > > > >  
-> > > > > +		descs->desc[descs->ndescs++] = no_free_ptr(desc);
-> > > > >  	}
-> > > 
-> > > gpio_descs_alloc() needs the first descriptor (desc at index 0, acquired
-> > > by gpiod_get_index() inside the loop) to check gpiod_hwgpio(desc) and
-> > > gdev->ngpio so it knows whether to allocate space for array_info and the
-> > > bitmaps up front instead of reallocating with krealloc(). Before the
-> > > loop we have not looked up the first descriptor yet.
-> > 
-> > That's why I put 'almost' which means we might need to duplicate a few calls
-> > outside as well.
-> 
-> Yeah, I think doing it inside the loop rather than duplication
-> gpiod_get_index() outside makes it cleaner.
+>=20
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm6=
+4/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > index a13315bf0fb0..4da7342ca90d 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > @@ -867,7 +867,7 @@ &pcie1_phy {
+> > >  &pcie1_port0 {
+> > >  	reset-gpios =3D <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > > =20
+> > > -	pcie@0,0 {
+> > > +	tc9563: pcie@0,0 {
+> > >  		compatible =3D "pci1179,0623";
+> > >  		reg =3D <0x10000 0x0 0x0 0x0 0x0>;
+> > >  		#address-cells =3D <3>;
+> > > @@ -891,6 +891,9 @@ pcie@0,0 {
+> > >  		pinctrl-0 =3D <&tc9563_resx_n>;
+> > >  		pinctrl-names =3D "default";
+> > > =20
+> > > +		gpio-controller;
+> > > +		#gpio-cells =3D <2>;
+> > > +
+> > >  		pcie1_switch0_dsp1: pcie@1,0 {
+> > >  			reg =3D <0x20800 0x0 0x0 0x0 0x0>;
+> > >  			#address-cells =3D <3>;
+> > > @@ -899,6 +902,7 @@ pcie1_switch0_dsp1: pcie@1,0 {
+> > >  			device_type =3D "pci";
+> > >  			ranges;
+> > >  			bus-range =3D <0x3 0xff>;
+> > > +			reset-gpios =3D <&tc9563 2 GPIO_ACTIVE_LOW>;
+> > >  		};
+> > > =20
+> > >  		pcie@2,0 {
+> > > @@ -909,6 +913,7 @@ pcie@2,0 {
+> > >  			device_type =3D "pci";
+> > >  			ranges;
+> > >  			bus-range =3D <0x4 0xff>;
+> > > +			reset-gpios =3D <&tc9563 3 GPIO_ACTIVE_LOW>;
+> > > =20
+> > >  			/* Renesas =CE=BCPD720201 PCIe USB3.0 Host Controller */
+> > >  			usb-controller@0,0 {
+> > >=20
+> > > --=20
+> > > 2.55.0
+> > >=20
 
-OK.
+--THddspKwcrT7mb3a
+Content-Type: application/pgp-signature; name=signature.asc
 
--- 
-With Best Regards,
-Andy Shevchenko
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCatpHEgAKCRA6cBh0uS2t
+rIAcAQD9XMFk9P0Wcr2AnQ1Vo7zfOmzMMBX19nW9jYUu4UxD3wD/b0ihb2VzRcme
+Iwdwa1q9ZZQu+2CgZgGygpLAkLGRqQc=
+=CJkx
+-----END PGP SIGNATURE-----
 
+--THddspKwcrT7mb3a--
