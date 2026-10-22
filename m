@@ -1,87 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792705997;
-	b=Az709IFWDA2WVi38wPSDRIDIUkGTDNZ6ytv+uegl0aXKvZ9FnhmT7U+24xrpxl+7DZxK
-	 V+huXizScpKURy0rbZJG7S3Q9uast3rzwvwr715p0hLTBznC0o1AiSdZ4esdjl/7wlGbz
-	 qjzBHeNH8K8ftaSRpTJ72N7pZ8XiNUTU7BpET5DRlqNhyEk9AAq3tnsFr6U7YRUYHUP/a
-	 xEDXgWULe3Wd2am8cWEIvHUfGVAXQAS+3WLCl2+5XlalyW1XZD4HDRiDdqgh50ZuyXWSB
-	 KjbwjBXhVsHjtOg14IKNFjNY7P3+hr90YM0WWcCxwUxsFx7bahxXwvt2Tg3RESiZpRA==
+	t=1792705994;
+	b=kfozx8LDWX7MHxWr265sXvI4JSgVggy9yOsFo3E5TSCUqMu7n9+4AVlWGZLlkuR6BIsN
+	 vKeXDaoa8Kgyk5J5D/qqrED8p3EMvYOcU1F8IYtu/Zm86XEWne2ZtWxPRt+j3Ko66bFPi
+	 85Wq9fPObgGSLX/BWv65vbi2FAJz8z4dJaKZqIzH/jIYdRFKgnMpZtTounzKmY2DEJSU2
+	 FyXkX9BPxjHPUFPUMBQ47KQLslJrNxiBWUHptQDsKf+b6zF9k1yWBUZC5ZsIt6JCHUvJH
+	 vK0q35qEnv1cPTHVE2jkdqpqw2+j0C159GkFAYoe2geFBOR/IHrEDjyaSzfRh4Elb7Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792705997;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792705994;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=+7xYBNBMdS31buKtvrCVWN4DltJtCF5Df1RCKstunLI=;
-	b=ptcAz1j4PoWjFP2u8YN5nMxmO7Zi6OBaHEa37LogMqLhrZ4dn+GzNr4whGK9uMMezL/b
-	 JtGfd4tN8aw3IikNWcRoZdgswabrd4FgowFIBUtkXFK/6kRO1TSLPd2RY7btMRnAKjnhx
-	 2FW0R+Sggfbpz57MZDVewRqh0mXwfljmxN87TzCxs7hhFtvF6ufdXossziCCl9gRx1piD
-	 D0GKtMD1XLe2mVl3BSoFtNjp0NCfvHCoVjY17o5d1WJ8yMjvg2uOlIxIY5eT/B1SnAQiC
-	 1IntR9Q1iIMJUBXvM3Anmv4fm6QbguJZkwROPomeBh+lQCqU2TazRG/6s0vnw+3RmYw==
+	bh=gxelPk6ZytprQYsPLhQ7wCDi9Bqcy2qLUW6bdd5fyas=;
+	b=leBO4u4QeLLifltfV94iX+IYKGMw694q1QaTzdolh9t7pYOnhN44jpcBBigLYSXNC9B4
+	 md3cH7xewBsorYVKTQxr6lfaK/Y5g9UGLkxxgYf92kVknag6c6cJrp0dwfHOlD232/xu5
+	 jf/b+UIfI6Fzq8NOIz4Qf7KSUnS6LsXjMD/UWgDIcHgwIT4bwB+hxmPEM7p8bDTBY+jr3
+	 ud25iuIR36OEIqtJipG1D3VMCH85hLrAJNd1/E6EGutrPc3ufNaD+6EGnaA5yqbIXMWZr
+	 aOMoV9mOlsQ6fWQExbQpo6YGEu5Z9usZ9VhLd/n09SWJk+3zKQ0pQi0SPCSejWSFt4Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=g0wNJP9+;
-	arc=none smtp.remote-ip=74.125.82.42
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=lMvs7mKt;
+	arc=none smtp.remote-ip=74.125.82.41
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FE460A3809
-	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 21:53:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01FE460A3809
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB64606A31B
+	for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 21:53:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3DB64606A31B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=g0wNJP9+
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-14394530ec6so310143c88.1
-        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 14:53:16 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=lMvs7mKt
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-188406bb948so123927c88.1
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2026 14:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792705991; x=1793310791; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792705993; x=1793310793; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=+7xYBNBMdS31buKtvrCVWN4DltJtCF5Df1RCKstunLI=;
-        b=g0wNJP9+qMUoq4l7CC7ElHp6paJAwU3peNqvFYsSyx9iyJ0feSsN/a6/yoYX4rTFyt
-         1p1RFtm79H9YGeZekYcpSnDgrioq87inFeQrcEng280PMg40zNuwfKO9Oi/CZzYOy3kc
-         w+Wx7vKEIkCUwjdlWVWV9lySrd6tdmfIa0qGtnFyDM6e2/QH7Gkotni+SBK4gau/tQFN
-         iZobf3y2WyAgUPyEoZA2nWcbiRPgLOGYGJXs4pa7IbBL9plXo9FunqukcMQJdCrX74Ko
-         lKjMZTUQpV+C76zEM8b++2WtPSOO6O7y3/Q1Y6+CZE677S2UzOkzbsWsEaJMxhjKsixp
-         Oy2w==
+        bh=gxelPk6ZytprQYsPLhQ7wCDi9Bqcy2qLUW6bdd5fyas=;
+        b=lMvs7mKt2goRR3E7XKFcNsskAqipH2+jWWLWLLP5AG2y8Y/ibZrYGhpy2USVDZbFxC
+         tdqizyjf07B3ZXjbgGWvWHSP3ctGxZPSmIqlDAUmi8gRscL94fsHphh2+Vp0t/BcRNBb
+         H/wBJ4lgdCVPRzaWq2v5KWLHuHl57pND+K8DSIYYAGkmccFaEFOyv0X/GW/WMHpwSWRS
+         Ed8PJlAf/2laLwlezpIeir28PoC8hT/xW0NnqB3xSCklg/hWl/2TdZLNSGhUfj2TxHij
+         clDzyzHi8fqhMU3whXVgrH0cXSdAL4K71UaXFMqaSaBTkut9EzkWZxpGeVGZFEapLvY/
+         R5Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792705991; x=1793310791;
+        d=1e100.net; s=20260707; t=1792705993; x=1793310793;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=+7xYBNBMdS31buKtvrCVWN4DltJtCF5Df1RCKstunLI=;
-        b=uwU5dLtCCyqe+ANghhlga+w8nl1hnVmPa+isplaoNoIyomg9K2tGZEbrKRo0Aph1Bu
-         jvSOT8yuj/T7uaqWIhXzlBqfcfwKn8Eg8Usr6KzQ2P2FcgtBy780X9V5KjbWIXTwIqzF
-         0OdjcrWygKjr20EQHKksUIP3TgHW9/24tBzBPU04pYd+v8eUJ6BJl+nb2M/kcyh2rBMH
-         Sbe/riCZNL2cEmiIGTAu9vTZ/2dB/E4kZv1lW1gtawO+OaVfWr/zxCFJb8r49g0yQJ5Y
-         n4h458fHxKtg3b0Mcnclgic+G247HS7OzyozfWV7mUeHFkHqDg+avqjvDA8Rnv7lyb+I
-         qm3Q==
-X-Gm-Message-State: AFq9FYLgutaNlbHRX5/oZ84Xlcy87PAvQ0NBYgYouT5pgPJwWZ48TPY7
-	QiYp6eo3lySeE87gd3aM+PKxPh2bfBFqJ9oxcOUNxDuAy0cDZrsDSmmKMDaT7Q==
-X-Gm-Gg: AYBFou20vE3m7g6wbc/u2FI8N0delHZGs7Wy1+2SX4URTk/iBy263xg8cn71hDdVbHv
-	krvi0w3YaOPJ4Evh9K6fjhsHkUH2CeSFpzLrA9EBcDgW4w4TQOCu9sXVC8/3PZynd0+kk74T8GN
-	/W4Pr8MgQSzJO9HDKoJfY+oeXEz3ojRo0JhPTVOVLMx4d1hjJlDwTiLQ3KlOYzJ97bmqeUifLn2
-	miYvu8UQTgKVs0FmJbejbJ0IY5P36TIzLXkuFIo7h1bd+Zlp3GcYwxN7QkSAGLyVObT/ShSKkG+
-	/jzRdWj6gtKv7n/lFeDmfO/AjEctgWuG6L0a3JdoyEzApdF8vgiGIKG4vpt9YQG2iQXLr1OiktF
-	OSDe8+nFL69vfYfpArzEZDlwoSFs4/iOjc4DUEhbj236hoBAdHo5JWpJo4Fy3dXHsrEY+WVkPc4
-	LhwV8WDmykh5/5ZNl9XTQXUOrKnjLJX/atnc5WDKoqOJ+xi/AE1z5jB72t/rttTUi8SFqBjJ4WF
-	r6OLbBlFmu9v0uTnhi7jvCp3k94hgfmDl4loN+/WX5QQ/UtHhwBmQqpWOfRrrYZRg6lbgDUD39k
-	8F/YTTjpahh3cgcReO/KGGrn3l9ck1rzXieXAkDN+u/pQA+3GYUVZMc1zVxOItLHGQ==
-X-Received: by 2002:a05:701b:4244:10b0:144:fa58:95d8 with SMTP id a92af1059eb24-19599611181mr785699c88.27.1792705990921;
-        Thu, 22 Oct 2026 14:53:10 -0700 (PDT)
+        bh=gxelPk6ZytprQYsPLhQ7wCDi9Bqcy2qLUW6bdd5fyas=;
+        b=1GjBNNGTZ+Squ6y1E/0DYRZ1Kkz+dw5BiYB6KgNwd5p9/Ug6YCezI8x2GPxAhKykbi
+         zxPZKHAUqTmhB6TTgT/20sS1thrKqS5gKd5CfS1pY1dT0oE5M3aJvvzOH5gIiZsz0bJr
+         u0Fw0QFCFUBYCga+BtP3TuxD2wBw1TfqbJZkz9h+8FjGF5DwDK/Y+lwGSmevz/XuCuNu
+         briQQPc1nOXvxOFYO+usD4tzvLe2MvqHNv1qDjjv6IraDc8TWLdHhjV8ZFHvhaMWofy6
+         BE8uVtvUYp+m7rpQcYW6Nv9KRGIFVkM0dNoQ3K6AEEw5FFZgWKKBbnGVoI1mxNxDgHDh
+         960g==
+X-Gm-Message-State: AFq9FYJXce7SlHDHuVJ0QnVjDLk0Tovskqb42Ve7wLjG+d+0A7WJyHJa
+	syuNIdVl/mwEJPDzqc2ziIAzLpgwm56TtgEFT63pnhYCalsJzmoV4YhQH3Yqrg==
+X-Gm-Gg: AYBFou0ARNpmSBlWsz9/w7ZDRvzhONw8taradFdXsG3cbAptWuaQgW3JZmwFnmmYJqc
+	OERSXDWd3ps+rHTWOeQ1QYQVZ8v7qpm9CYNhcMoiw5BOUXfAvoDS3aWWbeqh+qeMYAW+Td9unub
+	L+pbeUYLye1PK/dCAaBHw827fcOHy2FXAo1tVnwpBaa/zX1879gDzLCcJ8YyXBGc6bRmc/SaVUz
+	tgIIrV6bKw34K49a/ndjkQsgYFnr4nBQ/3DTx5yPHfGd4FFd1DOd6tzrAAcAJfqYpgFsEdaDFAr
+	0ajwoRmblTWID86zIfE/ItPcaMSqeM1E1zB8CvAxTYdCzghC/fuLmSHIKtOkVEo7GlmunRKMBkJ
+	gdx7+c/O1rQI8scQLdVjdrZluhTU/2XJtXH7WtGc+Nf1OwWPOw2TiEdAG0DaR+hj3H9avsUk6IB
+	2pwwRV2BPIgsyEoL6QwuAQk8Ci/o0pMDVGMiXlOKks702TXZisml8ia+yqG2xwHHoCYqaIYXbgK
+	QpzTDTvnglPDpNICXFbZAm1CUS0xHLd0ALy45VZ9WCgPc/yC7YHd2vORw21MFP5mwtW48IDTeGo
+	suQQgpc7HMDTCc93BKYjYqgz4fKSXkBdhlSI3o9QIdXN
+X-Received: by 2002:a05:7022:4588:b0:14d:3c0c:79e9 with SMTP id a92af1059eb24-195c4f4ef8amr912186c88.11.1792705993359;
+        Thu, 22 Oct 2026 14:53:13 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:f2d1:b7cb:a745:829f])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-195ec82eabfsm1110403c88.19.2026.10.22.14.53.09
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-195ec82eabfsm1110403c88.19.2026.10.22.14.53.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 14:53:10 -0700 (PDT)
+        Thu, 22 Oct 2026 14:53:12 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 22 Oct 2026 14:52:47 -0700
-Subject: [PATCH v3 3/5] gpiolib: of: add a quirk for legacy name for
- TWL4030 external mute GPIO
+Date: Thu, 22 Oct 2026 14:52:49 -0700
+Subject: [PATCH v3 5/5] gpiolib: of: use __free(device_node) in
+ of_get_named_gpiod_flags()
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -93,7 +93,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261022-gpiolib-of-v3-3-42c3b6439fba@gmail.com>
+Message-Id: <20261022-gpiolib-of-v3-5-42c3b6439fba@gmail.com>
 References: <20261022-gpiolib-of-v3-0-42c3b6439fba@gmail.com>
 In-Reply-To: <20261022-gpiolib-of-v3-0-42c3b6439fba@gmail.com>
 To: Bartosz Golaszewski <brgl@kernel.org>, 
@@ -101,72 +101,52 @@ To: Bartosz Golaszewski <brgl@kernel.org>,
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.17-dev-e56a4
 
-The legacy property name specifying the external mute GPIO of the
-TWL4030 audio codec is "ti,hs_extmute_gpio". Commit 178c169a30b0 ("ASoC:
-codec: twl4030: Convert to GPIO descriptors") converted the driver to
-the gpiod API, which expects property names ending with a "-gpios" or
-"-gpio" suffix. Add a quirk to gpiolib so existing device trees using
-"ti,hs_extmute_gpio" continue to work.
-
-Note that a custom lookup helper is used because the compatible string
-check is needed on the parent node ("ti,twl4030-audio") while the node
-name itself ("codec") is also validated.
+Manage the gpiospec.np device node reference in
+of_get_named_gpiod_flags() using __free(device_node) so that error paths
+can return directly and the out label can be dropped.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/gpio/gpiolib-of.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 44799a4e9d97..424c02f81c20 100644
+index e741a4f218f4..25b97109f97e 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -676,6 +676,35 @@ static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
+@@ -430,17 +430,17 @@ static struct gpio_desc *of_get_named_gpiod_flags(const struct device_node *np,
+ 		return ERR_PTR(ret);
+ 	}
+ 
++	struct device_node *chip_np __free(device_node) = gpiospec.np;
++
+ 	struct gpio_device *gdev __free(gpio_device_put) =
+ 				of_find_gpio_device_by_xlate(&gpiospec);
+-	if (!gdev) {
+-		desc = ERR_PTR(-EPROBE_DEFER);
+-		goto out;
+-	}
++	if (!gdev)
++		return ERR_PTR(-EPROBE_DEFER);
+ 
+ 	desc = of_xlate_and_get_gpiod_flags(gpio_device_get_chip(gdev),
+ 					    &gpiospec, flags);
+ 	if (IS_ERR(desc))
+-		goto out;
++		return desc;
+ 
+ 	if (flags)
+ 		of_gpio_flags_quirks(np, propname, flags, index);
+@@ -449,9 +449,6 @@ static struct gpio_desc *of_get_named_gpiod_flags(const struct device_node *np,
+ 		 __func__, propname, np, index,
+ 		 PTR_ERR_OR_ZERO(desc));
+ 
+-out:
+-	of_node_put(gpiospec.np);
+-
+ 	return desc;
  }
- #endif
  
-+#if IS_ENABLED(CONFIG_SND_SOC_TWL4030)
-+static struct gpio_desc *of_find_twl4030_gpio(struct device_node *np,
-+					      const char *con_id,
-+					      unsigned int idx,
-+					      enum of_gpio_flags *of_flags)
-+{
-+	const char *legacy_id = "ti,hs_extmute_gpio";
-+	struct gpio_desc *desc;
-+
-+	if (!con_id || strcmp(con_id, "ti,hs_extmute"))
-+		return ERR_PTR(-ENOENT);
-+
-+	if (!of_node_name_eq(np, "codec"))
-+		return ERR_PTR(-ENOENT);
-+
-+	struct device_node *parent __free(device_node) = of_get_parent(np);
-+	if (!parent)
-+		return ERR_PTR(-ENOENT);
-+
-+	if (!of_device_is_compatible(parent, "ti,twl4030-audio"))
-+		return ERR_PTR(-ENOENT);
-+
-+	desc = of_get_named_gpiod_flags(np, legacy_id, idx, of_flags);
-+	if (!gpiod_not_found(desc))
-+		pr_info("%s is using legacy gpio name '%s' instead of '%s-gpios'\n",
-+			of_node_full_name(np), legacy_id, con_id);
-+	return desc;
-+}
-+#endif
- 
- typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
- 						const char *con_id,
-@@ -688,6 +717,9 @@ static const of_find_gpio_quirk of_find_gpio_quirks[] = {
- #endif
- #if IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO)
- 	of_find_trigger_gpio,
-+#endif
-+#if IS_ENABLED(CONFIG_SND_SOC_TWL4030)
-+	of_find_twl4030_gpio,
- #endif
- 	NULL
- };
 
 -- 
 2.56.0.257.gf7497c7d27-goog
