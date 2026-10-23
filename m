@@ -1,104 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=42.62.85.75
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792747170;
-	b=u6j76/NzRHqCdXIJXwOeZrqtKsmDVUVBxA8g07wK9lJwbX0Eq4IkqLNYPCsDBXk/EdyI
-	 QlM2yYoG9igV0/7WN88aJfG2Swt2qJ6AEQB3Z8+mUZfgjhScuJUfbIqkojDjzMzQ6cFbm
-	 u97HDeoAPDaCs6UGP50MXnJimry4mxr0E95U12go18w3PDNtnG3LFd4aGHGImJc72fnPk
-	 9wB8/pGNiMTrh3qehnZhukcDpjhhcv76GdufVtih4/gVMaA2P2sncaBYsxWaxdB995evm
-	 Ia9snFIOfzCm54ardb2Hu29JOUMdLKeFN9X1wx7V5rzPsjou2Kza+lbh9FbCYL/rsdQ==
+	t=1792748587;
+	b=N3PgXKe06RyzTwjqVxXluSHSVPspgGzabG28CzN6n2eb4JtF+NOUPjnseT6qSvzVOkpS
+	 jCw+9KZkTQYC9VCFFgOsd3jtR8aKryfHFRvq40nDP6wp74SPa3s8tNLVLjMyQbEGHUSoO
+	 1Buf5A1wR81MHkRH6BgbNhz7dZMvF9Ov8hnGKyu5r0v6sYbj2mQFgw14vCAfiLMUzkTpZ
+	 KfuDgHzZBPnyf9WAN57t+vu/6K/kN457gCBAjKT2c2KIlivcYDrva+CDZwHi1s8EENM27
+	 F6OcmcxPOV2zR1rfAXDu7CGlc9QH88ODYHnJMANhpfJq6EVqDiuGKoBEFFBKEBEyx0g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792747170;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=ZLtmbh8p3beyVqvPbT7uOUt8AUzrdi16nA/h6CiToDw=;
-	b=WQ/2cCjx6dezTHF2lDVJbNaZgda4Z7xQbAxkiAamF4NsVpXcu5CyNUDbd1hLuakDQtha
-	 alI48vDkl9jxBg64vGoOYl/85HT4b/eRxLtBp8IXLq16tmEP7YbBveUK1IpIDCDTjavCt
-	 omDBBlI5awU3KmwntGYzRY92oYlARQTYOzHfGI9ZGza5a+k9Urcoxjq4M5duxalLy9liX
-	 4E9/ACZc0Khju6g1vvjU5IKbG6FYfjhTp7Un1wHhbnbwqo+atiQ/dLP9kaMOrKDbXBCci
-	 2FXCLLQp4Pzzi1ANLGzVnyPqcSrQZG98fkKTZ5cjUUZfDIUScjHm1N2GQN7owz23SmA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792748587;
+	h=DMARC-Filter:Received:Received:From:To:CC:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy:X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL:
+	 DKIM-Signature;
+	bh=3IjSd+a9H4jFcjM2a0lEqok2InQT0jkJORR5/Vp2fuc=;
+	b=xJa2vHnj37avvOg/sw0FhPd4ufsUr4nmFziyZSy7gC9W8kALX2Oso0EBo+sZslyOEtnS
+	 YQVP49CuvD3Ziy93VLRTbcp73h+ObwpeVZYlC4BkmMT0wphUMBEXdjj7UasbbrC8NI2ZR
+	 V59Z4mZJyj1Y2g0ZznX6+jDx79+eZ2wOOqm7YDVum+twwlIJ8YQf7w3cOi0kC7w+4fbZa
+	 7w4O1+wwrfyVhujBlKmZNZJdBXBsEvgA0lEndEbmhGfmTNpi0PrIRzyKXopHSfacD3qVi
+	 evl/TOawKXz9htOHnnTddmwxjYQKNImi+LWUrkmG9KAxdl+KFx9qaRl2WSj6cRJS/Ug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=V1nv8nw7;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=horizon.auto;
+	spf=pass smtp.mailfrom=horizon.auto;
+	dkim=pass header.d=horizon.auto header.i=@horizon.auto header.a=rsa-sha256 header.s=auto header.b=Kw7xj8AI;
+	arc=none smtp.remote-ip=42.62.85.75
+Received: from spam01.horizon.auto (spam01.horizon.auto [42.62.85.75])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833A9606A31D
-	for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 09:19:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 833A9606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F0C606A32A;
+	Fri, 23 Oct 2026 09:43:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F3F0C606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=horizon.auto
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=horizon.auto
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=V1nv8nw7
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a215e64962so2307515e9.1
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 02:19:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792747163; x=1793351963; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ZLtmbh8p3beyVqvPbT7uOUt8AUzrdi16nA/h6CiToDw=;
-        b=V1nv8nw7Es+VgKoDXVxc2xoowsXtxzg4VOgfLThVNmD+M2TSPogeK49BjUSvA0Jv5L
-         Pv5BHJpFeO6BLUSu7GXLvDraEV8/PDb2l8Z4ioMuWUrwJZw8TVg/h1PIOwJPQALK4Z6Q
-         wQrror1EM3CQSHD1uXgcCPYJVlXMhWwOVV+FrwEnZ1Hn4TR901b1o34mlK8lGL4AwGy3
-         8O7/XatVkZEvCQl+BZMQUso7fnujZsgo8hBG+CTHd4zunGhpg8sWGbRY0cOYIgGNraon
-         zJyWaDdIaMKhmREnscAlUZ77uISpNRcd9G5GLS8LRmwPpAFazvOUpMmuWLXZk5Bq+6mk
-         mtlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792747163; x=1793351963;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ZLtmbh8p3beyVqvPbT7uOUt8AUzrdi16nA/h6CiToDw=;
-        b=f100UeaYRluQFFZPksk2fpekBqf77tHjc8EKdNxxv6QtiyDI3JMl3j7O007JRhS14w
-         OUH8GsWwPrb50uyutrAtPWhgPkNZ9J6ePzr2ScWhQi41QvZC9lwJxG6Tp4SVe8SXIxUC
-         mUPSe8gPC7uiMsG/TTiCwYZ26cX+UqJVHCM6qCR2+XQY9nI9sHmY+QuNptk9cHReAshj
-         ToX1ut9gMnTGX3Yqf4m+ZdbCrTwMnZgEpz9WKLeYYHPIRHI2CXJkZZMQzrkQkbl3Zr/Q
-         uJrBW313anihPuQP6CKwm2ti1zvdQ1P7XFNxT13sI3AAJnpHmF5Vmr/y5My/m5UoVGZC
-         QNMQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwNqktMrdo4NPk4vh+f1fBIS58VcL2c6mOVucWvxA57Qim2fWMxND8ZmionCfJhaNIh6WUOR0rUDxfK@vger.kernel.org
-X-Gm-Message-State: AFq9FYJYU3YHrFHjkOvofuQbWMmydyTNJkWRwmYWWsEzt+NX1GWy8ud2
-	IbHtLbDoVToDfryqBp5MCxcwwDA6IbtqN0mS60Ou5kKRCsdH2k/iccIYGIAl8DKnee0=
-X-Gm-Gg: AYBFou2GTdOaNyP3V7mVBLVuCL2W76wTOin1PVrStaGyOeY7ZeIwdFsd71RZPQmvoF0
-	3KqEYqj/DZP/937RE6+rmBbqJOJYqhh+o1jTcwGgEw7i7QbMvjP1Ri+qh3lM5RCPv1eg6jitrhh
-	MZtcJsrj+NePS/8iGQzBIbKRHMHtzZyhmNWRozq5e/R7LSqwj4LkfDcLgBmA3NT8YKgzrjMiQFJ
-	VC8qb6CewiFpS+gg6qwPUq5qYHo9qkFmrWnGwX9GF3aXEdowzC3G7RV9l2dCBNFKCij7OgzpI1g
-	T9Q6EOvqxmdTTeccS3iaVpW4e8ZWOLOAMmHh09FNVWak21SdxWVItqGVZsLPdLpRE+0xBE+zFLq
-	CZLpnCvZfn6nkLT5g8e0uZ4I5YmpudLKbY+oMvozbWzgKONHu9iTLER6Uq0vIndul0Q6h1y3W5l
-	wtG3NZDElaqbxd3efse5tLfvxrd4GRUfvyHB/AqYJCmAVVyHUA0DYhQJXQJYUlKbJuyyICtK9nI
-	cTDg7pkgagVbKXpky7RY6MBGcE+f60oEPe/xgm8iADeynLuDxkOBlouICC0r/NlmPEmKxCXuaHc
-	pkTTzY1DFBqwHPyXTcTOFF3i3l3JgDn9aBU2qaWVDJg=
-X-Received: by 2002:a05:600c:8712:b0:4a1:e00b:a10b with SMTP id 5b1f17b1804b1-4a211cd5eb3mr28983755e9.7.1792747162862;
-        Fri, 23 Oct 2026 02:19:22 -0700 (PDT)
-Received: from localhost (p200300f65f19a9045816c66224fa2d94.dip0.t-ipconnect.de. [2003:f6:5f19:a904:5816:c662:24fa:2d94])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a211ba3e22sm53005535e9.8.2026.10.23.02.19.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2026 02:19:21 -0700 (PDT)
-Date: Fri, 23 Oct 2026 11:19:20 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Han Gao <gaohan@iscas.ac.cn>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Samuel Holland <samuel.holland@sifive.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Icenowy Zheng <uwu@icenowy.me>, 
-	Drew Fustini <fustini@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH 09/18] pinctrl: zhihe: add A210 support
-Message-ID: <atsmP_5sX5RFunft@monoceros>
-References: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
- <20261022-a210-init-v1-9-09fb4d99da65@iscas.ac.cn>
+	dkim=pass (2048-bit key, unprotected) header.d=horizon.auto header.i=@horizon.auto header.a=rsa-sha256 header.s=auto header.b=Kw7xj8AI
+Received: from spam01.horizon.auto (exchange003.hobot.cc [10.69.1.10])
+	by spam01.horizon.auto with ESMTPS id 69N9gUtJ024070
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO);
+	Fri, 23 Oct 2026 17:42:32 +0800 (+08)
+	(envelope-from guohao01.zhang@horizon.auto)
+Received: from horizon.auto (10.9.0.252) by exchange003.hobot.cc (10.69.1.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.27; Fri, 23 Oct 2026
+ 17:42:31 +0800
+From: Guohao Zhang <guohao01.zhang@horizon.auto>
+To: Hoan Tran <hoan@os.amperecomputing.com>,
+        Serge Semin
+	<fancer.lancer@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz
+ Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH 2/2] gpio: dwapb: support native hardware both-edge detection
+Date: Fri, 23 Oct 2026 17:42:20 +0800
+Message-ID: <20261023094220.2989225-3-guohao01.zhang@horizon.auto>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261023094220.2989225-1-guohao01.zhang@horizon.auto>
+References: <20261023094220.2989225-1-guohao01.zhang@horizon.auto>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -108,46 +69,189 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="covttcbalrymohfa"
-Content-Disposition: inline
-In-Reply-To: <20261022-a210-init-v1-9-09fb4d99da65@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: exchange001.hobot.cc (10.9.15.110) To exchange003.hobot.cc
+ (10.69.1.10)
+X-DKIM-Results: exchange003.hobot.cc; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:spam01.horizon.auto 69N9gUtJ024070
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=horizon.auto;
+	s=auto; t=1792748565;
+	bh=3IjSd+a9H4jFcjM2a0lEqok2InQT0jkJORR5/Vp2fuc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Kw7xj8AIBGsU5EMxFfpPpUMFI0D5HRMIzxnipxIDBfx3bKYqHOue2XAPJpRWQFAaB
+	 o52xFuKg5U7vdWcsDG+agN1hu5TUJSeYY6Y2SWF/ZLAvFO5PCrCbhy9NMgonDa6xDk
+	 x5Y3bKUdstRkiUW0W9+OT/pLTP5l62Ya1arUqGXvUm7T2fA2Bgm8OBvV9hAQY1b6XG
+	 0qd8ri5ZzUtsvtB068Q//PpkEPA87U286vZTI9EKPzPiBWCQQ7UMt9CJwJiCHWpQqZ
+	 BAOIHy7gKu4m6qzXEY155Y5rp9N/J95mkUxs9JZRsFp9fy6LBCU55ALy/pzDB2gibX
+	 ZSg6H2FdqZaww==
 
+The DW APB GPIO IP can be synthesized with the GPIO_INT_BOTH_EDGE
+feature, which provides the GPIO_INT_BOTHEDGE register (offset 0x68).
+When present, the controller latches both the rising and the falling
+edge of a line in hardware, so a single register bit selects
+IRQ_TYPE_EDGE_BOTH.
 
---covttcbalrymohfa
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 09/18] pinctrl: zhihe: add A210 support
-MIME-Version: 1.0
+The driver currently implements IRQ_TYPE_EDGE_BOTH purely in software:
+dwapb_irq_set_type() selects one edge through GPIO_INT_POLARITY and
+dwapb_toggle_trigger() flips the polarity from the interrupt handler
+after each event. Besides the extra register access per interrupt, this
+leaves a window in which an edge arriving while the handler is running
+is not detected, because the polarity still reflects the previous edge.
 
-Hello,
+Use the hardware register when the IP instance provides it, and keep the
+existing software toggle for instances without the feature.
 
-On Thu, Oct 22, 2026 at 03:48:17AM +0800, Han Gao wrote:
-> +#include <linux/mod_devicetable.h>
-> [...]
-> +#include <linux/platform_device.h>
+The feature is per-IP-instance, not per-SoC, so it is described in the
+device tree: "snps,native-both-edge" marks a controller that integrates
+GPIO_INT_BOTH_EDGE. The flag gates every access to the register, so it is
+never touched on controllers without the feature; the DT property is
+added by a preceding dt-bindings patch.
 
-<linux/mod_devicetable.h> pulls in many unneeded dependencies,
-everything it provides that is relevant to your driver should already be
-available via <linux/platform_device.h>. So please drop
-<linux/mod_devicetable.h>.
+In a high-rate edge test on a Horizon Robotics J6P board, the software
+polarity-toggle implementation lost about 2% of the interrupts, while
+the native both-edge mode lost none. With the flag off, the generated
+code is unchanged and does not access offset 0x68.
 
-Best regards
-Uwe
+Signed-off-by: Guohao Zhang <guohao01.zhang@horizon.auto>
+---
+ drivers/gpio/gpio-dwapb.c | 49 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 46 insertions(+), 3 deletions(-)
 
---covttcbalrymohfa
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index aa7c08e..2b38cc0 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -42,6 +42,12 @@
+ #define GPIO_EXT_PORTB		0x54
+ #define GPIO_EXT_PORTC		0x58
+ #define GPIO_EXT_PORTD		0x5c
++/*
++ * Native hardware both-edge control register. Only present when the DW APB
++ * GPIO IP instance was synthesized with the GPIO_INT_BOTH_EDGE feature; the
++ * offset does not change between the V1 and V2 register layouts.
++ */
++#define GPIO_INT_BOTHEDGE	0x68
+ 
+ #define DWAPB_DRIVER_NAME	"gpio-dwapb"
+ #define DWAPB_MAX_PORTS		4
+@@ -63,6 +69,8 @@
+ 
+ #define DWAPB_NR_CLOCKS		2
+ 
++#define DWAPB_FLAG_NATIVE_BOTHEDGE	BIT(1)
++
+ struct dwapb_gpio;
+ 
+ struct dwapb_port_property {
+@@ -87,6 +95,7 @@ struct dwapb_context {
+ 	u32 int_mask;
+ 	u32 int_type;
+ 	u32 int_pol;
++	u32 int_bothedge;
+ 	u32 int_deb;
+ 	u32 wake_en;
+ };
+@@ -178,6 +187,11 @@ static struct dwapb_gpio_port *dwapb_offs_to_port(struct dwapb_gpio *gpio, unsig
+ 	return NULL;
+ }
+ 
++static inline bool dwapb_native_both_edge(struct dwapb_gpio *gpio)
++{
++	return !!(gpio->flags & DWAPB_FLAG_NATIVE_BOTHEDGE);
++}
++
+ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+ {
+ 	struct dwapb_gpio_port *port = dwapb_offs_to_port(gpio, offs);
+@@ -229,7 +243,12 @@ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
+ 
+ 		generic_handle_irq(gpio_irq);
+ 
+-		if ((irq_type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH)
++		/*
++		 * In native both-edge mode the hardware latches both edges on
++		 * its own; toggling the polarity here would defeat that.
++		 */
++		if (!dwapb_native_both_edge(gpio) &&
++		    (irq_type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH)
+ 			dwapb_toggle_trigger(gpio, hwirq);
+ 	}
+ 
+@@ -333,17 +352,31 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+ 	struct gpio_generic_chip *gen_gc = to_gpio_generic_chip(gc);
+ 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
+ 	irq_hw_number_t bit = irqd_to_hwirq(d);
+-	unsigned long level, polarity;
++	unsigned long level, polarity, bothedge;
+ 
+ 	guard(gpio_generic_lock_irqsave)(gen_gc);
+ 
+ 	level = dwapb_read(gpio, GPIO_INTTYPE_LEVEL);
+ 	polarity = dwapb_read(gpio, GPIO_INT_POLARITY);
+ 
++	/*
++	 * GPIO_INT_BOTHEDGE only exists on IP instances that were synthesized
++	 * with the feature, so it must not be touched otherwise. Clear it
++	 * unconditionally first: it must not remain set when the line is
++	 * reconfigured to a non-both-edge type.
++	 */
++	bothedge = 0;
++	if (dwapb_native_both_edge(gpio))
++		bothedge = dwapb_read(gpio, GPIO_INT_BOTHEDGE);
++	bothedge &= ~BIT(bit);
++
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		level |= BIT(bit);
+-		dwapb_toggle_trigger(gpio, bit);
++		if (dwapb_native_both_edge(gpio))
++			bothedge |= BIT(bit);
++		else
++			dwapb_toggle_trigger(gpio, bit);
+ 		break;
+ 	case IRQ_TYPE_EDGE_RISING:
+ 		level |= BIT(bit);
+@@ -371,6 +404,8 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+ 	dwapb_write(gpio, GPIO_INTTYPE_LEVEL, level);
+ 	if (type != IRQ_TYPE_EDGE_BOTH)
+ 		dwapb_write(gpio, GPIO_INT_POLARITY, polarity);
++	if (dwapb_native_both_edge(gpio))
++		dwapb_write(gpio, GPIO_INT_BOTHEDGE, bothedge);
+ 
+ 	return 0;
+ }
+@@ -761,6 +796,8 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 		return err;
+ 
+ 	gpio->flags = (uintptr_t)device_get_match_data(dev);
++	if (device_property_read_bool(dev, "snps,native-both-edge"))
++		gpio->flags |= DWAPB_FLAG_NATIVE_BOTHEDGE;
+ 
+ 	for (i = 0; i < gpio->nr_ports; i++) {
+ 		err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
+@@ -802,6 +839,9 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 				ctx->int_en = dwapb_read(gpio, GPIO_INTEN);
+ 				ctx->int_pol = dwapb_read(gpio, GPIO_INT_POLARITY);
+ 				ctx->int_type = dwapb_read(gpio, GPIO_INTTYPE_LEVEL);
++				if (dwapb_native_both_edge(gpio))
++					ctx->int_bothedge =
++						dwapb_read(gpio, GPIO_INT_BOTHEDGE);
+ 				ctx->int_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+ 			}
+ 		}
+@@ -884,6 +924,9 @@ static int dwapb_gpio_resume(struct device *dev)
+ 		if (idx == 0) {
+ 			dwapb_write(gpio, GPIO_INTTYPE_LEVEL, ctx->int_type);
+ 			dwapb_write(gpio, GPIO_INT_POLARITY, ctx->int_pol);
++			if (dwapb_native_both_edge(gpio))
++				dwapb_write(gpio, GPIO_INT_BOTHEDGE,
++					    ctx->int_bothedge);
+ 			dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ctx->int_deb);
+ 			dwapb_write(gpio, GPIO_INTEN, ctx->int_en);
+ 			dwapb_write(gpio, GPIO_INTMASK, ctx->int_mask);
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrbJpUACgkQj4D7WH0S
-/k7J6Af/akzqmN8ibSwrfi12ffHOWdI7Our+3A4vhm7xG5fLhDxm5RVyO9IOnbZF
-hEEqQasZCXUckEd3P8maCUNMZrumlljeFYUKxiiGeUptwiJNhDfD5gwgvKN+QznX
-WUBMP16Z+bJ04qU+9Jvxwu2AZERVCQgTDx7HM49rEY2meQdARZ+74mmtm7x3AKyE
-LAf4maK05HpWCQtSPGWBSz9ZRiv/TrfMYyA43n2Say17TUHYMVEZfRooCn3JlUBB
-TybkgcHqyHLbqU2SVAqhlZIuIVWIEQWz1aD92G51OANqUqboJ0wTWbGxYyrQMMd/
-VqEBROgHbira21nt4uuVoVmMDk84zQ==
-=XQ/k
------END PGP SIGNATURE-----
-
---covttcbalrymohfa--
