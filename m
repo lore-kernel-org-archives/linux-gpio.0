@@ -1,82 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792756622;
-	b=oyO5dr+GgVIfIZf71j9/UDtb4Sg6Nr/LkEYgQHfcsBIx8MvLyCdNKa9JylM7AXlWHB/D
-	 92cz9S8Aj34gEdizoSx8InnrRjf/dx6Ap7AtGAa1bCQBx6PcTFOWMRv7PzjJG5AWI3OSP
-	 F8JuUjcifZYwgiBFl19Q9vFxcnnLmiranI8WcavV451tga0qG5QPVNK21i1BZplIGRodu
-	 wEA2iUjZH79ZbrIEDmVjtE+9PtcTufNCeRc4P6phK1lu2QfthGwwsZVbXTa915Fj2PqwC
-	 Z+1LqQkVwfVrdIrXaqXDYNgwafxo/PIxW9aqzebKARzVQ2xmU4IxLVxPfTw0qa74mQA==
+	t=1792756623;
+	b=WCWyCGEMPpKXB1PogY1f4ql7v7g2CY+vEh7sJ3ybR5k/zWmKgSuc3f+XHfrE3uukGAOU
+	 0m0XMeAoABGv7muiZPV2mP3ILdhp5wG+6aIw67mykgJOzagmbnGl4mf62u7Fme28I6cLv
+	 VB8karIfSZpDJ/oMUpWjMfHRqBliZdKx4BMk2Ty0K1d2Rfjz3WU+JMdA5GiE/qN57AVoM
+	 U9/8nA5Ujakc6BZo7I9XDiwIMmOBdfWOCAoPlw6OjUW6oYB5GaEqzbMDITP45HjBTEVQV
+	 CbW07Iwowm/cjSrLcB6RJ9fFs1qrq1Sauw8CszNPRZYru6s6hie5F+RPkyVFpNuha6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792756622;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792756623;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=QYSnAwHR1vrNUFiRcbl+fsM6n+M9SQnCfusXazqIDBw=;
-	b=SJDn7e4pgzblA4TJocmTJ+ncRnSxRZXxFIlowTj6LYKpAcD+4SsZMudLq8k6SnY3o7DD
-	 E6FX39+rHt2swaNSzroQsGyurumTYAkbSfESMedvGItcURM8YJSQhMLJmmYNAxFP+6o2Z
-	 nCOe8HM/papLKbn+O1n7/fd47ZzObYcg7+vO+u4IzHyPN08KLYxDCI4LrOBmZgbUIFX3W
-	 m7Fb/5Qi5+gQsycNGctMJGX0d0YW7ujt9HxWuM0OmfzTY21YNL3GyVwcn5SmED3MKPX1Q
-	 99bSRkqzcEGt6QN8xppip8rM9KpFMamP2kQctubGKJpSJqso64sajvSlv91o0GJOlxA==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=beziaboxHddHsV7QGLlhu7YZ0ZbytuRbl01hFg+RyZA=;
+	b=ravignvtcmeP9BxT3N26VLFEUeOzcyFfdEh0JTbry15FvqCfxPTadSOP04uh731yU2Lo
+	 gAzKPJKWb0BFKA4jEE005RRHfYxLT48WXDHuMLuam4KGqyr1PRVw5afidNnHHdhMDWWkS
+	 mdG3Ivbm9I1iePwpp1wpJ5O6tjhVQ47Lb5Nw824t6/hw9gQIq+j315SLqvz+JGQ8fsHOc
+	 LIWFKySZpG/EBRef9aNT4dokPdDW0ll2963knLmCWo1zeCkJ5gKqUABrbCK0GC2lakRYA
+	 FQg2XV9aCoZD1uqgej8Jt6DWkcIhkO7AHYpomHBlX2VXOwzYEt5skolKsao6otRhy/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RHLt852c;
-	arc=none smtp.remote-ip=209.85.221.45
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=R08cRgVu;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1705606A31E
-	for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 11:57:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1705606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4434606A323
+	for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 11:57:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4434606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RHLt852c
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48df54150dfso425713f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 04:57:01 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=R08cRgVu
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48df8fe8513so709245f8f.0
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 04:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792756620; x=1793361420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=QYSnAwHR1vrNUFiRcbl+fsM6n+M9SQnCfusXazqIDBw=;
-        b=RHLt852c7cE2Fin96m5wr4aGMaiMXg9OKRJFP1JXPyByb8y/cnhAazYnpy73aWE6wl
-         60QX8giD+dAmg/j0mdI8IzmhaIfoUH2DLP4qcijW4GMLlvvMDIR+R8aKd7rG4j9Yae7Y
-         t9kJ2lh7ZwG4ln43zbo074uum0MNPnMHro0q9rPPXYcSauTpBhZh1bP3EcVgxtTe6l3p
-         45+ZgytZyVoYqzcoq+O5/VU15CTlYNwkE+FG1fPcVdNP0GmRMfNl1XhkcM6FsWHBfj/b
-         fuJyCL2Wk1ag7zZ+lrweQlkFxbdE/vxgE7rLvxYYEMIbU8743sOk15k+4SOAQwq/HfRZ
-         t3TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792756620; x=1793361420;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792756621; x=1793361421; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=QYSnAwHR1vrNUFiRcbl+fsM6n+M9SQnCfusXazqIDBw=;
-        b=MPcEY9GBl+EWTVr2uvsZo+Fn6v8LGidoktJeXZigI+Xd/covun+oKvVX2nP5m3iPLa
-         w+p+qdb0rEzOBGpTbobxmy472zl5pxe3o9XnxzWwp8mncPa/t+94H34lutdLTb3wvZQ2
-         sQaDNzWSDWcAcE7t5JligpIUJud2NxKeZn9LzN/JV6ulrhRoSFWGymsd8vzOfB6QxUMY
-         qsqJeAmy6S478Ggb7cvhG93Rf32+0t5dunAA6aSaGNOz5vHHxO++zim9m8U6twurwzcN
-         qznKy1fb9XS6mMLQbkpqNKMLBHWwmOszuDgYOHAaseat39qY3sIrWVIZw5df7qHDAnlc
-         +KJg==
-X-Forwarded-Encrypted: i=1; AKwUvBx3lqQB986/RuAO9+CoaVqTAu0UFBEgdu1atnZ9i+g63v3tneIVTQJM//HBOWqeN99VXKwZFF5VwNjU@vger.kernel.org
-X-Gm-Message-State: AFq9FYKAZz0wVVLvdbPUOuTVO2JhqVM28V762c2oW+jBLm+H9mMuOPdU
-	P6SXv/um1IWZ5oGoiRlz40ceSAeLOAKaLntu6Dmu6i8I8hLo1SZZcyQU
-X-Gm-Gg: AYBFou0zw+kgqVvsQqKgHJi6hkEwU+1mNxt1SRSs8MtItR2RB2mWr2DIYD+ARvnRUX8
-	PS98vMCfRlRq6bojdwmY1t+PRfufliTugapW0JXPYh3KMc3kx0fFX1fmf7zsuunEJkCsnmIXZbP
-	GTAbHtGzyU/prGMdRD87q3f/7aPherOHVBUXUlgvlaGC91ZA+rskTLKTc2QI0UxUPRrDGyFkWhW
-	9aBH4LWtORq2FZv0uozuPN2rQ5YPpTK/LCE4LuIUN46D5BxLpV0SVlSm+XXoPmC2Kk5/IUuglq4
-	bz8Z5HHuMIc9LEPthwD1gO+A+u7XtLl/gLRlxIZHhCMHyn66cmiuJsxZE8gu0D8uzu8fdS8KhFo
-	vXY9ArilpjkaA3bVv6f8wz4iqvWXvENEh8uUXdqSYe0KlWtf3iTdnLCe/JHXUkpo8b7o7RysQzE
-	WS+w4mUx9w9epA0fdQB/RDNawY0/JZONN87/v2H5HF+9Z9s7SY7JOopT1LXkq0VOfrZRiWRagvR
-	4UTDtEsPSE6QFXBSH1D5TEtgGl3JfCWauVi2uFwd1LmUW/F54XMqe0xximT4mjCFdKTcbn+Yxdb
-	dQtTPLGNLP3NZZ26ExrDTjYy/U6l0BrRuxSg0xdizGU+J6xbnjEEWquYgB+B
-X-Received: by 2002:a5d:5d86:0:b0:48d:f851:ee5f with SMTP id ffacd0b85a97d-48e385ab429mr3050979f8f.24.1792756619921;
-        Fri, 23 Oct 2026 04:56:59 -0700 (PDT)
+        bh=beziaboxHddHsV7QGLlhu7YZ0ZbytuRbl01hFg+RyZA=;
+        b=R08cRgVujMYCNwwaSpezrXyElYrFbSSh50mjerNTeIqtEsPGDXCDoiaVW81rm/V5XQ
+         Ypp/BF3NA/Ojg2QyCKijfD5JyVoXUKoWv3QzL4sENFXAx/8eYCiMNheesolwV90I71Na
+         cXDj0Sv3uTq1LuNdI1iaSvWXkhsHgagppPTDfPnCVwIsiO9Ie54b3NBVvN1B21WNJw2s
+         y3Y0YghLi69kp7XahCtWjLGBEZjRALyWT/AJCpHOPfNPYsdM78VF2mt+7rcNH0OLGfAb
+         AKKIMgVYBrGNlrCMe6RjJ5EUIPxctV4eA06ITYqa+ueCX/qwhnpCS5iVgeDmucvM1Fnu
+         YX9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792756621; x=1793361421;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=beziaboxHddHsV7QGLlhu7YZ0ZbytuRbl01hFg+RyZA=;
+        b=Rwg/02GX/bljY6XwdAtk1Cv+imcEmww8xhfu0eRllDzxDHYTSqlwyoIxxQhu0C3ari
+         WimOgNl8ZIi4QqSQrOTaWlqPyQvpJVcovyDsJ+Qnvhdi92fRGLxeCVo0FHYoDA9mkAhW
+         z2OvOwe1gzSQfnbrRu9amTGUyJU2zhi6wL8aOz+5/G7Uwg/AIfgkyVQYxkeQ3RoBgWqf
+         lZh7Kus7MQFp0UJTnT2NaWp6Z8pHlCfWaa5R7B+7IyJLCR4qLH8ECIuPTS9K6xApOktV
+         S04CB95NgqyNom/PNM84Id6S8dSU52GcHEpnGMf3gSTOmP3KPP1bUrjEalzkKbv0T0UG
+         mi5w==
+X-Forwarded-Encrypted: i=1; AKwUvBzX41HsZXtpPFMuB3QvWdpif3ELo/Ne05wdrhKEeTOSmys4RqxhecLY7HylNZdvFSZFAAlmDdhMn2Ct@vger.kernel.org
+X-Gm-Message-State: AFq9FYJMrzn++dzE81Zktnq6DMk7R14Vu6hbroGvE7GHJAjqywj5PNmP
+	+6o5QDaUWDaXY4a6aQtzp9RMd4zIjc/683n0nKpjjsEiLCaxyA4q7wYL
+X-Gm-Gg: AYBFou1BfzV863viKpAfPt/nWUWOhJ9HrCshUsS3/2OtqSzNC6awJ4hesytOKbI3dkN
+	PJKpj/g6Cxbmt/ogdbNVoPf1TLDnOxXnfsunkUaOhAmoWge5RVNgio9cEru/DHt6L4+jmQdXCsD
+	NJXCQTgHDvyBYtxpZ04TXhLw/xQPa9dLqTJU3FkK5/QtSCKKtgDQ62V+WlxizVXWrbUfyzEg6PH
+	+lkce3AgcPr+ifwwbig/0XmGBF3wsgHBAHEvIS2GyoKK+OAjSdBSvwoh9nT2dQuz/wsQUMzxz1C
+	ob+Fj8Owc3l9JIVaVK5eV4eTgtqjSBZWocZEmJsplBK1pMqEZcnumqHHWkLEFA2GbxxN7opCzSp
+	fiW/Ut1qYmqXFuHa6Qhw63SVudD0ozgu1g6k9+0BOnqC4KmbwUOE71MZYbcs9dyRuiXMzpUuOSl
+	f4KFGY9rDWgyFQBSwVa3J6kjP4ARem7lQnO7SosOe5xiE5Q6GEjcGlvGKRyUDNHaqc2yUBMkPjH
+	74FSlblLc29ycxePYouSGChecr86G5lRYlUQq1R7WqQHYStuT92grQ52Tt33Kl3cnfjjWLAneK5
+	YLibfVNrbWYGE2P4WtEF3nCfQNZlZVbS843njZ3j7kqsmpb1M2UyqQCWuHwr
+X-Received: by 2002:a5d:5f4c:0:b0:48d:fbdd:4132 with SMTP id ffacd0b85a97d-48e3859f31dmr3069710f8f.18.1792756621040;
+        Fri, 23 Oct 2026 04:57:01 -0700 (PDT)
 Received: from Ansuel-XPS24.localdomain (93-34-92-187.ip49.fastwebnet.it. [93.34.92.187])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e380310b3sm5076321f8f.22.2026.10.23.04.56.58
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e380310b3sm5076321f8f.22.2026.10.23.04.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2026 04:56:59 -0700 (PDT)
+        Fri, 23 Oct 2026 04:57:00 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -88,10 +89,12 @@ To: Linus Walleij <linusw@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 1/2] dt-bindings: gpio: fairchild,74hc595: add support for nxp,74lv164
-Date: Fri, 23 Oct 2026 13:56:48 +0200
-Message-ID: <20261023115652.700765-1-ansuelsmth@gmail.com>
+Subject: [PATCH 2/2] gpio: 74x164: add support for 74lv164 shift register variant
+Date: Fri, 23 Oct 2026 13:56:49 +0200
+Message-ID: <20261023115652.700765-2-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261023115652.700765-1-ansuelsmth@gmail.com>
+References: <20261023115652.700765-1-ansuelsmth@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,69 +106,36 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document support for nxp,74lv164 as a variant of the currently supported
-8-bit shift register with the only difference of not having an Output
-Enable pin and a simulated Chip Select pin.
-
-These basic 8-bit shift register chips directly change the outputs as bits
-are shifted in. Particularly used to handle multiple LED for basic state
-feedback.
+Add compatible and spi define to support 74lv164 shift register variant.
+These work the same way as the 59x chip family with the only difference of
+not having a "storage" feature by directly changing the outputs as bits are
+shifted in without having to toggle extra pins.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- .../bindings/gpio/fairchild,74hc595.yaml       | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-74x164.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml b/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
-index 451538df63f7..0d5596af0ced 100644
---- a/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
-+++ b/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
-@@ -7,9 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Generic 8-bit shift register
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index 5ca61cf5206a..46562c348c9c 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -181,6 +181,7 @@ static int gen_74x164_probe(struct spi_device *spi)
  
- description: |
--  NOTE: These chips nominally don't have a chip select pin. They do however
--  have a rising-edge triggered latch clock (or storage register clock) pin,
--  which behaves like an active-low chip select.
-+  NOTE: These chips nominally don't have a chip select pin. 59x chip family
-+  do however have a rising-edge triggered latch clock (or storage register
-+  clock) pin, which behaves like an active-low chip select.
+ static const struct spi_device_id gen_74x164_spi_ids[] = {
+ 	{ .name = "74hc595" },
++	{ .name = "74lv164" },
+ 	{ .name = "74lvc594" },
+ 	{},
+ };
+@@ -188,6 +189,7 @@ MODULE_DEVICE_TABLE(spi, gen_74x164_spi_ids);
  
-   After the bits are shifted into the shift register, CS# is driven high, which
-   the 74HC595 sees as a rising edge on the latch clock that results in a
-@@ -22,6 +22,9 @@ description: |
-                  ___                     ________
-   chip select#      |___________________|
- 
-+  Other chip family (namely 164) directly change the outputs as bits are shifted
-+  in.
-+
- maintainers:
-   - Maxime Ripard <mripard@kernel.org>
- 
-@@ -29,6 +32,7 @@ properties:
-   compatible:
-     enum:
-       - fairchild,74hc595
-+      - nxp,74lv164
-       - nxp,74lvc594
- 
-   reg:
-@@ -76,6 +80,14 @@ required:
- 
- allOf:
-   - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nxp,74lv164
-+    then:
-+      properties:
-+        enable-gpios: false
- 
- unevaluatedProperties: false
- 
+ static const struct of_device_id gen_74x164_dt_ids[] = {
+ 	{ .compatible = "fairchild,74hc595" },
++	{ .compatible = "nxp,74lv164" },
+ 	{ .compatible = "nxp,74lvc594" },
+ 	{},
+ };
 -- 
 2.55.0
 
