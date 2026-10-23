@@ -1,108 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792743148;
-	b=nLQ87zRlpeCL87+9kp/NN5WKru8Yq2akNaydP7S1egsW00gNbqjDNl4Hq/47x+oQwId+
-	 NycBnXZu7w8SCUoCag7YgztV4KoTZ2ApKJYO2oK9KvXTjyKXjmQBMmpKzfoBSCm+i1dNh
-	 AbnhXxvCQFm1ZyzrccaXM9P4KuvJEnOz2DQqOOknyArTqBBK+e+tzIb/rZuGD9b+EYzYp
-	 CrRsJd/2ZRjJjuaqrpZ8Q1OpV46WLLUl/3422CrwgRnr2WwE4I2GQgQajjxbtj3iuj0TA
-	 9sdzc64dv+s47smSH+eRtLan6Kq1m9NwGJMdVsuZnGZP93/5nESfYI2JCg731i0w+yg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792743148;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
-	 X-Received:X-Received:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=CPyIasDL6N4C/azsvbD6uPPZQy92j0Qp5qdKw7LIm80=;
-	b=sEmqH/IL3xm2vHLVWh0c72ZwQeIQ+3/dGzo9teOWjeMqVg7DbyQvfC/p9ZBXCdlstDHO
-	 pvfXlgMnvlhXV+j/dbbXP2T7rNRYH+OioyS7LNE+bDBQraizaGEGEr857W/FYBnMeVEGM
-	 /l++nMwGZWLeA/NWNbR92+/9TlY8BUe68Rnk4RwwqMFcY8yh6NcnReY3CA19/XFFRE4jF
-	 GhzJuaEeuiUr6fIYfljVZneu+BfkaaV5SkaVQATmQTfgwoC9gWiB7K+4b/L8+hJi9LVTH
-	 HqrNdC6DPFP9T9ToZhaYeZVac3FPTO+1MdU6sR4tLwJpI0H+LW5JbTtVBHydN3EZ5sw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jPbWU0Og;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=bUdmODBM;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792743681;
+	b=dJ3u1WQYlFbGDwG2lM/8iShiKWxtDH8PbjER8/w7AMz/QGzKN4fxJIR61eF3V221GNsv
+	 nU4INK2DD7GQD0eIBOVzhc7LrRwXQI6Wg0IxnO07/c5dxPGiM1KkKk+9Vm5z4xfuO8XKy
+	 Yfbo2rb1a/HzE/lGa7nIglNaEwQQuiVfLM7SLLoWwivmZC3Q6B4+vU5SBOtmQPZnyQ+ix
+	 akC8JtJtva1s2GErUN7v2ZjA+JEtnws88QoDbnhH7nq9iZ0JoW/fLaH9cl/xoeEkZczyf
+	 5WNZdKRVdXWMKCx8owB/BB+g7rLsYilR092iLuMK9IO1gvVQloUPoWxVSeXqvYjg4pA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792743681;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=RZFjcUKLDQB2Qqzwh+QT+vaE3N63TGAe0FwqXRZaMiE=;
+	b=OLErek5JvchH7D3u6f9gg+E/gJAMMXySzpsLe68WFGn9msu7BwdR+FTrmMsY5/LMXJGb
+	 FbY4A8qYhUSzzwWRWTwRI4UQNCMJb7q81QrfUmqw7MTqdc4FotX69d9oLT/4KKeSXcF/Z
+	 I5Lkj938ozjv3fOm035BOiYdJeU+4hGtM/msFevKtiCpgqXy/IK+NgeYrvc5Kw6JdTrRU
+	 5v869c+HrcUYPbBveC4Cf3Qfref6NdVaXd6IzOStPmFHz69N27BMIdf2vBnM6pN02FMX7
+	 zlI4N3VFvXdGTJJIB3NrNMz/AehWpXycGXUmMFrzS7Nmz6aH1v70nwK6V8Ia25ASAZg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j73r+lT4;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1843606A31F;
+	Fri, 23 Oct 2026 08:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j73r+lT4
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1792743680;
+	b=yqumJyKUIwjsAXvSZEixJacibLfnkBa+d7NYfvhkGAiTuYDT733LNH9T6l3xB8c4CcY0
+	 iHHWyJVNlZ47vacEoFq1kwe5N62hmQQXRh+fETrKkDWjdATTdluCcBxpJhdDxVp26TazD
+	 7it8JyrCYbwFUDZjpJZKRe2nDabKtooALNW6qiU2lCX6AEzAvfPMLB42js8vi+lpxYPLv
+	 xWNTlIyUdddq8p4l7IuxJ52gotOsmPrL4uDhzG9ecc7tANFBIqtD1+Kin50Ht9W+JitRa
+	 AosPELMRKKmvx9oVHBoDgYnYe+8cRNAuSGwLX4z59QLGIam/ei9LuPHAK+tDgKLu3kQ==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1792743680;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=RZFjcUKLDQB2Qqzwh+QT+vaE3N63TGAe0FwqXRZaMiE=;
+	b=AAhY0Y0n13RTqoCqQaPZn/Tof9MngJXjnKG0jkRQ1zQdTfNmPqbdrVZSFION+jdRHX+E
+	 fC9+V4a3cE1FPp0U+0qCa8UFUe9O5rvawcgc3kGhkEcbHouD/sh+LOlotcQS6frmrhtdF
+	 MGoPT5skZwThiWarwYs7WHbkoWNigUVnrBB+JpUHI4G9n19evwgqm4wcwtuQ6aPVhbHh2
+	 LWsD59Lv/6rpeWOKhhF8M3txIAAsJgZrfJJjLZPV42OqWj+iErepZITkLRr5pfPCPOvHl
+	 XbA3ohtZZ3h2FOKz5bugczxC3a/g+Mc7AqICy/gU7R4jrfwXSdlCzCOftFTkDBXli5Q==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E466D606A31A
-	for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 08:12:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E466D606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jPbWU0Og;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=bUdmODBM
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69N7FMw21552424
-	for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 08:12:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=CPyIasDL6N4C/azsvbD6uP
-	PZQy92j0Qp5qdKw7LIm80=; b=jPbWU0OgwZp8pLoXez+nCVH/64467llFxJtd8o
-	BAgBscR2ThqftjvLCW8oJtQQBODbooF5sIQXDlcn8TI0RV0ocVroqYECY6NAaI4A
-	xlGZKGx9FxPIA+SQeqsEktvI2+c4Hfb4MjTFGk+oVpuj6LlBCNCvpBgLTXfPmwUT
-	xHWv9kB+VzUB0UB56G+NMWne+N4nM5t2vt3LHN96TlCv3wUnRDl3ffphAUg63h3h
-	rqeTRLttkzDErdGt8mmJPtQQSqa/KxVXHHxIeHeqjneJmQ+HqllHUxsuZFYTjNb+
-	GFZIZcP7Nc7cXOVvfqUGzJbGjxXy7uwPsyWs+lEJninTiNMQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hfqmttn75-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 08:12:26 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93cb6391e89so133701785a.1
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Oct 2026 01:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792743146; x=1793347946; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=CPyIasDL6N4C/azsvbD6uPPZQy92j0Qp5qdKw7LIm80=;
-        b=bUdmODBMsdWmqvTtl47bgME7j+wi3xFI7TZo71p5dDWkG1e4VC5h769ppCjgkz4DnH
-         /omYiqFLf+tjQQtzMm5iaf5SxyFRikasH0OT8ytny60zBVcjV07i1XjhqWKuIbd9Z8C0
-         tz7gy0a47+o+YH8PCFBto1hE8iOKQuoYKYRWMK9oqpmxQ4M3fYvdVcyA0533s8dI4xCB
-         fgo4Foakgi0vgdQ51hqHexZCc057XrnYoDwHU7rtAk6o8NDhGt2nnfBrr1uFNFizLZxa
-         cpyoRr1NviPF6GNCqYi7QfhZm4pU5qz9Gsx3pvUtCq8gxUanB8ccxP35PSxWdDKmQq7m
-         2sEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792743146; x=1793347946;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=CPyIasDL6N4C/azsvbD6uPPZQy92j0Qp5qdKw7LIm80=;
-        b=v/7+LgXDCdojykDLwLPCWSpMlNl9O/5tZZbQFJ4g8bjFulQrp//ZJ9/F9YfqOCTTV4
-         /ug2XoMZHw24taDLYG1hEvt46QeXUoZFWuk32mXzB5Q/TwGNc9Yah/dh7EKeHPg6ta7z
-         6hCKf+/qKptc5XAyu8nVvEkpx4Ts4/8LQr/1Ab+1N6XLdvv57yyoXBoQcE8Du9ZtvBph
-         FE1GNdV/oUOJWW+H/RffquPcRGot/6SRdzqhFhvzv3xmhgsbAtEJB2ZqpJCIaIJIRW8d
-         lOOzvN8ogAmisiirJ4C6Im9DP6NyxC3iBkb+3a2CqW3Z6Dh65DlG3VmIyUUEaIp7iAVh
-         9IrA==
-X-Gm-Message-State: AFq9FYJEZwStYEFmxaC5U2i2vIln2kEGLP72mP5Q/NgA4a98OSvZ+Zcp
-	+QMdDPfTflOpDyx8wUboD6KSKeWnM44ETltmnESC1rJhpgYAQXjXHl1tyi8af+wvASrBe2+Ooh6
-	tAFvYT/hQkE6zocyv3wAkW2TSJxVZ0FeXQsTUaXjfE2tNozQ888Xhmmkimrutv1c3
-X-Gm-Gg: AYBFou3noH0NnLlAqtnZtx9UUxlVql7vGjaDR4M0IFEGmYvVJ19wdPt2gTX/LIL/rP1
-	h5kk6Oh7kWkn36FFnSFy/P0wbCe44VDkMeN2+PphGFpC8TNRofzvCCa2fUDzuE/guP1BrchhTj7
-	ThzeU7GHCFdWUVx456EsXgc6Rfe1PPPqAlunkHXTOJcvdy1R58FeJm42y1F4kXN7soZPNIFeUWc
-	JR9xsRiyU4Z/sSSWbtP6sS1ctZYK533FQ9p1HCRIDHAQn1NFmt5ftxq5zazgolcYdL9jT/WBjZ/
-	tQs4GrYyoRAkHomsYVfhMe1cluIJwpoGY8VsBrUjyq/ZY2Ry2Y1hauIiwcKiXND0m9gCNjNWqFB
-	7TMGfLBiHkrM1qWs4CXNe7K99X83N
-X-Received: by 2002:a05:620a:439e:b0:939:7683:33d5 with SMTP id af79cd13be357-93f6f79bc6emr278261685a.19.1792743145910;
-        Fri, 23 Oct 2026 01:12:25 -0700 (PDT)
-X-Received: by 2002:a05:620a:439e:b0:939:7683:33d5 with SMTP id af79cd13be357-93f6f79bc6emr278259185a.19.1792743145379;
-        Fri, 23 Oct 2026 01:12:25 -0700 (PDT)
-Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a21045df9dsm68158805e9.8.2026.10.23.01.12.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2026 01:12:24 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Fri, 23 Oct 2026 10:12:12 +0200
-Subject: [PATCH libgpiod] build: restore function and header checks in
- meson build
+	by smtp.kernel.org (Postfix) with ESMTPS id EFF6C1F01825;
+	Fri, 23 Oct 2026 08:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792743680;
+	bh=RZFjcUKLDQB2Qqzwh+QT+vaE3N63TGAe0FwqXRZaMiE=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=j73r+lT4gTh664Jz/EMl3qFFghk9nujJvX6BWafr8b5iYg/u4c1MJ9aM2fbtH+YZ6
+	 7Bq9oqt3kJfiNN/xAMOWDkZr/2S/qEQIMIOZbxHTz6MTAWzwLy2F6J5NhMob+chanW
+	 cpn1glCQuXdkCJi5aK9O8w+4yIfX/0V+d1ZlNUaeHFfhMYeVbJBLm7U3Utmk7qDG8V
+	 w/CjiG2PBroao/yM4ChQSxTd1DmDnzngKfh4q4vKnknk5Yx2Lsg4M2eAEQv/eOZdvg
+	 ycgFGaGoYpu5rXNQDqaMnNIKLE167dXwegBThFou6fNjIzKjAJPeGsCp1Rx+tRjhX0
+	 lNEuMPQIXoCOQ==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 6FC1F4441C;
+	Fri, 23 Oct 2026 08:21:19 +0000 (UTC)
+From: Cunhao Lu via B4 Relay <devnull+1579567540.qq.com@kernel.org>
+Date: Fri, 23 Oct 2026 16:21:05 +0800
+Subject: [PATCH] gpio: rockchip: Fix debounce arithmetic for GPIO v2
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -113,187 +83,129 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261023-fix-rockchip-gpio-v2-debounce-v1-1-f1141bd5b58f@qq.com>
+X-B4-Tracking: v=1; b=H4sIAPAY22oC/yXMQQrCMBBG4auUWTuQTqFFryIu7OS3HYUkJLYUS
+ u9u1OW3eG+ngmwodGl2ylitWAwV7akhne9hApuvJnHSt046ftjGOepLZ0s8JYu8CnuMcQkKPru
+ hH9RD4Duqj5RRg9//evu7LOMT+v5O6Tg+e9INuoEAAAA=
+X-Change-ID: 20261023-fix-rockchip-gpio-v2-debounce-90767cde2ed3
+To: Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Jianqun Xu <jay.xu@rock-chips.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Cunhao Lu <1579567540@qq.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792743678; l=3798;
+ i=1579567540@qq.com; s=20261015; h=from:subject:message-id;
+ bh=990tz6V6xSqlnsWsntOcrs9gs3SDwAyWpRr2l3eS5jA=;
+ b=MT2tjLEkyabOrZ4KFYK1MjnqubLChv5mTzLHiyvAzJ27voIKRUdgCfGc/HuEDJpf4r0Ur6HxK
+ vjeJI+cZ4ILCoeBSjnIhtn2ioR6lVFz7/f31Em4yLqEq8ZqZtgJwf7S
+X-Developer-Key: i=1579567540@qq.com; a=ed25519;
+ pk=sUTWrzlIwT4C7ctjNfVZAzzg0G7QUn2XxRGpYsw4RtM=
+X-Endpoint-Received: by B4 Relay for 1579567540@qq.com/20261015 with
+ auth_id=1177
+X-Original-From: Cunhao Lu <1579567540@qq.com>
+Reply-To: 1579567540@qq.com
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261023-meson-func-hdr-checks-v1-1-f7480334e012@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIANsW22oC/x3MwQqDMAyA4VeRnA1omOJ8FfFQ02jDtlYaNgbiu
- 1s8fof/P8AkqxiM1QFZfmqaYkFbV8DBxU1QfTFQQ33bEOFHLEVcv5Ex+IwchF+G3dIP7B7uSd0
- Apd2zrPq/vxO8ddl2TR7m87wAPZ78+nEAAAA=
-X-Change-ID: 20261022-meson-func-hdr-checks-5b68ca4a9258
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>, Vincent Fazio <vfazio@xes-inc.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, brgl@kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3320;
- i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=g73DPqE/kEfPpcYqlAsUo4m4CymhJMeGBTH2sfN5EiE=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq2xbiL73RuGblRFg/QmMN7Y1u9fLOwQHErxaNs
- tccpbnDIPmJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCatsW4gAKCRAFnS7L/zaE
- w0LYEACIL+AJ88oXKmj2ahyK+FhaVome1QU31922E+L2/z0tQ7FxowCxGJMTEDAJMQjhjD2DlUh
- cRUHG5SGjBRrVEYZ49M/BpIpsCYrS7X+yOQltSmHSiJ+R4SYsuvg9ady32HFF34sGtbcdjATnyo
- hGyXUdKRijFgmKXwaRQ/6odOoUV1P5wT9TEsMSrA5mZ/3ai8wX3oRPtBGrDKYIX+OM361/DK9Dl
- 1rFhnt/C6Yfu0bVm2FTe9qTaGIITCcgnABfhFbY3jV3MgPyRm10xiPLZe8lWKNXDjzP/7mP2U++
- g3l9d6a6B5kqeg+nFKXDNS0TbTveePjqXRB8a5U9M/6nu+PvHtpOJsffQE06KJdsDQbLaICPE5X
- VyO2v9hFRmHnbH+3UmzrsLYCCka1g6whKkpIlc0sAa0jD14nXyubvcZyuVVAQXnyuAI+nMZHWRT
- jiEMklCAIhVafdEoO88+oNgE7jn44gJDEPSJXFvegxC9Hj9TrXUdaKVEWAqYnD4M1WY0o5c+59e
- RLRq/krkBACKEJcxvkBy9q5t9sn30idAcHT6BpNb/oSp7uEMkj8xh+BaxLrzKh/SzWs+pqGfNVW
- 7Q4GQugHYuFlsprG5GMPqBmQ6e69e+DLZsf7C81H75TWT/CmzXadpkrrwIWKBIvXBTIM1vqkWa9
- ia3JLeZXNXeypwA==
-X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Authority-Analysis: v=2.4 cv=Gt3XaU1C c=1 sm=1 tr=0 ts=6adb16ea cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=EUspDBNiAAAA:8
- a=MnWH6L30y1vDSSXWxzIA:9 a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: EbJm8VDlBNUkNBQUfGwsOzwaKwoYZFxp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIzMDAzMiBTYWx0ZWRfXxTKvONAQCmvf
- mc1sSJzvRxYOxRkN8M4/ZidB1iCgHZ/KDiyYPoUFmrPU+HbxKrCZn3Jd1nBPJ57ZN+srMH3dnPW
- bXSShXPz66yjB5ryPf5T2VNaC3US2Cz0ZJX0PoxNw+ahAikTEX8owUayp9DguUogGjgZz3aUwZH
- fU24kmTEma7m4aPvLLK8CMnFqzWLzdLnlP6B7v+VAbCGR8PE9nifcvPAq2cqcH6tk6vq/QxJqzW
- trJyQRqYNBgZylNEqf1GUc6dhvO+bQBJa544hX/7GWSFCXDTTWe8vwINuOcYaJcx8QzBVn/WDKC
- sKml8IJf6RKNX52ONzbILA9QsgSaP4tp0eKbLuvsfEns2dk88UApMoUlKa0/GLyQD1d08svPfrB
- ADw2dPz1PGW3Y2tFjht6ml6e1sI1L0zwYJDtqXWxiQKgtupex1geJApejbuEF2mSJy/2wyTOQNc
- kFguMoFBn3X9PKGLUjA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIzMDAzMiBTYWx0ZWRfX7ddVRs6+WNFX
- 0dSG0jGPaB4kP+VFzifOUvzfrWnvq22CrWPFiduNh3r2n3XQwakz1PPmaTenBk9VSLN3KEgavJV
- QhlQWBYUzrmXFpKqCGt6K4UfS+CAPU4=
-X-Proofpoint-ORIG-GUID: EbJm8VDlBNUkNBQUfGwsOzwaKwoYZFxp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-23_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 phishscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
- definitions=main-2610230032
 
-The conversion from autotools to meson dropped the AC_CHECK_FUNC() and
-AC_CHECK_HEADERS() checks from configure.ac. As a result, a missing libc
-function or header is no longer caught at configuration time and instead
-shows up as an obscure compilation or linking error later on.
+From: Cunhao Lu <1579567540@qq.com>
 
-Bring the checks back using compiler.has_function() and
-compiler.check_header(). Keep the same grouping as before: library
-checks are always done, tools, tests and D-Bus daemon checks only when
-the respective component is enabled. The pthread library check is not
-restored as it's already covered by the threads dependency.
+The debounce interval calculations use unsigned long operands. On 32-bit
+systems, the numerator used to calculate the maximum interval overflows
+before division, while multiplying the requested interval by the clock
+rate overflows before it is assigned to a u64. A zero debounce clock rate
+also causes division by zero.
 
-_GNU_SOURCE needs to be passed explicitly as project arguments are not
-used by the compiler checks.
+Use 64-bit arithmetic for both calculations and reject a zero clock rate
+before division.
 
-Fixes: 97bab4cc87dd ("build: replace autotools with meson & ninja")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+At 32768 Hz, a 1 us request rounds to zero divider periods. Subtracting
+one then wraps the divider value to ULONG_MAX. Decrement only a nonzero
+rounded period count so that such requests use the smallest divider
+value.
+
+Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+Cc: stable@vger.kernel.org
+Signed-off-by: Cunhao Lu <1579567540@qq.com>
 ---
- meson.build | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+This pre-existing issue was found by Sashiko AI during the RK3572
+mainlining work:
+https://sashiko.dev/#/patchset/20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com?part=9
 
-diff --git a/meson.build b/meson.build
-index 7045d29f5fac049d67ef50627712e338643ecff0..3e95f9f5eba261dd4d54d3b39aae80d831133aad 100644
---- a/meson.build
-+++ b/meson.build
-@@ -182,6 +182,92 @@ endif
+On 32-bit systems, the unsigned long products used to calculate the
+maximum and requested debounce intervals can overflow before being
+assigned to u64. A zero debounce clock rate also causes division by
+zero. In addition, at 32768 Hz, a 1 us request rounds to zero divider
+periods, so subtracting one underflows to ULONG_MAX.
+
+This patch performs both interval calculations in 64-bit arithmetic,
+rejects a zero clock rate, and avoids decrementing a zero rounded period
+count. The existing set_config fallback and divider register accesses
+are unchanged.
+
+Validation:
+
+- A host reproducer confirmed the 32768 Hz, 1 us underflow and the
+  incorrect maximum interval produced by 32-bit arithmetic.
+- The combined GPIO arithmetic suite passed 126 cases for each modeled
+  arithmetic width, covering both legacy GPIO v2 and RK3572 V2.7. The
+  suite includes zero-clock-rate and request-boundary cases. The 32-bit
+  run models unsigned long arithmetic; the 64-bit run uses the native
+  host width. Both are arithmetic-level host tests, not ARM32 hardware
+  or electrical tests.
+
+AI assistance:
+
+- Codex / DeepSeek V4.1 Flash were used for:
+  - Collecting data
+  - Automating tests
+  - Reviewing and adjusting code style to follow community conventions
+---
+ drivers/gpio/gpio-rockchip.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 77b239a9a601..714604c11d78 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -201,20 +201,25 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ {
+ 	struct rockchip_pin_bank *bank = gpiochip_get_data(gc);
+ 	const struct rockchip_gpio_regs	*reg = bank->gpio_regs;
+-	unsigned long flags, div_reg, freq, max_debounce;
++	unsigned long flags, div_reg, freq;
+ 	bool div_debounce_support;
+ 	unsigned int cur_div_reg;
+-	u64 div;
++	u64 div, max_debounce;
  
- help2man = find_program('help2man', required: false)
+ 	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+ 		div_debounce_support = true;
+ 		freq = clk_get_rate(bank->db_clk);
+-		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
++		if (!freq)
++			return -EINVAL;
++
++		div = (u64)(GENMASK(23, 0) + 1) * 2 * USEC_PER_SEC;
++		max_debounce = div64_u64(div, freq);
+ 		if (debounce > max_debounce)
+ 			return -EINVAL;
  
-+cc = meson.get_compiler('c')
-+
-+lib_headers = [
-+  'fcntl.h',
-+  'getopt.h',
-+  'dirent.h',
-+  'poll.h',
-+  'sys/sysmacros.h',
-+  'sys/ioctl.h',
-+  'sys/param.h',
-+  'sys/stat.h',
-+  'sys/types.h',
-+  'linux/const.h',
-+  'linux/ioctl.h',
-+  'linux/types.h',
-+]
-+lib_funcs = {
-+  'ioctl': 'sys/ioctl.h',
-+  'open': 'fcntl.h',
-+  'close': 'unistd.h',
-+  'read': 'unistd.h',
-+  'ppoll': 'poll.h',
-+  'realpath': 'stdlib.h',
-+  'readlink': 'unistd.h',
-+}
-+
-+tools_funcs = {
-+  'daemon': 'unistd.h',
-+  'asprintf': 'stdio.h',
-+  'scandir': 'dirent.h',
-+  'versionsort': 'dirent.h',
-+  'strtoull': 'stdlib.h',
-+  'nanosleep': 'time.h',
-+}
-+
-+tests_headers = [
-+  'sys/utsname.h',
-+  'sys/mount.h',
-+  'sys/prctl.h',
-+  'sys/random.h',
-+  'linux/version.h',
-+  'pthread.h',
-+]
-+tests_funcs = {
-+  'atexit': 'stdlib.h',
-+  'asprintf': 'stdio.h',
-+  'prctl': 'sys/prctl.h',
-+  'unlink': 'unistd.h',
-+  'unlinkat': 'unistd.h',
-+  'openat': 'fcntl.h',
-+  'mkdirat': 'sys/stat.h',
-+  'write': 'unistd.h',
-+  'twalk': 'search.h',
-+  'tsearch': 'search.h',
-+  'tdestroy': 'search.h',
-+  'tdelete': 'search.h',
-+  'setrlimit': 'sys/resource.h',
-+}
-+
-+dbus_funcs = {
-+  'daemon': 'unistd.h',
-+  'strverscmp': 'string.h',
-+}
-+
-+check_headers = lib_headers
-+check_funcs = lib_funcs
-+if opt_tools.allowed()
-+  check_funcs += tools_funcs
-+endif
-+if tests_enabled
-+  check_headers += tests_headers
-+  check_funcs += tests_funcs
-+endif
-+if dbus_enabled
-+  check_funcs += dbus_funcs
-+endif
-+
-+foreach hdr : check_headers
-+  cc.check_header(hdr, args: '-D_GNU_SOURCE', required: true)
-+endforeach
-+
-+foreach func, hdr : check_funcs
-+  cc.has_function(func, prefix: '#include <@0@>'.format(hdr),
-+                  args: '-D_GNU_SOURCE', required: true)
-+endforeach
-+
- subdir('include')
- subdir('lib')
- 
+-		div = debounce * freq;
+-		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
++		div = (u64)debounce * freq;
++		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC);
++		div_reg = div_reg ? div_reg - 1 : 0;
+ 	} else {
+ 		div_debounce_support = false;
+ 	}
 
 ---
-base-commit: c2e9287333d7be588b3acaed7bbb1c58d7b551be
-change-id: 20261022-meson-func-hdr-checks-5b68ca4a9258
+base-commit: 734bef548a96e8774d6eef5dfa2026c6edc4e80b
+change-id: 20261023-fix-rockchip-gpio-v2-debounce-90767cde2ed3
 
 Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+--  
+Cunhao Lu <1579567540@qq.com>
+
 
