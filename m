@@ -1,88 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.46
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792845087;
-	b=zJAb7Os/L/MHaMeh2rFF35MFUJrohts4qUoyLOzBf/C/Sij759SGOctS/fZkhK3M57V3
-	 cyuWnkRcRn4Xdw2kj7ED5WONlkv+okhJF1z9Qda/92vMyGxJe9mdWJqsIflyEgAoaEt+e
-	 yUepoQSfmoaueK6kyIhcWqO8JJxJI8/rkRF/R2hEZC21FcxTL2HaaFuSNNlhbZSMoWSTb
-	 uVk2l64Vc8ZyDvQLdYNl7x9XkpCOZwUgALA8lmcADZB5s3lleAWx9EsSgkYRCA0qt9cCf
-	 BC1P3yYCbBTAyfpwizg7gTGAqVSRP5YPq6Y/1nY0JW2kEpm7diV8oiJYj8lAvtYC4DQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792845087;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=2agfzSVxmvKyDDGsk/lrN8ke6f+kq8XMYiroN22OZac=;
-	b=1O37bHvIp4Kt9GgyTC89uI4P24yJk6JMJm0Wg8seIGLlOCwbM69DxQSZjykQgDvnHd9J
-	 BWLNqFyO4I9W3EjyhXWV2dBPXqPckMhWqiHFqYv7hvwMmvWtYxIf04g8qSi1QBUPhLUYb
-	 BFfTCny2s3Kdn5LriTgIfun5EhVC0abdNucTMuV0l/W9t7NO02Ny3d6XSTGNb0mmM3Blh
-	 QkAONLkFQOHgW7W6Mp2rr6RUH/TMXw5jWtpDRldJwHe1vQKFFwn5RnY4pU5E+JY+S+haB
-	 bLXBWiU0UBd0qG+NoMV84lSPrS9w1ILv02YGrnYA89uUjsqtmipyqcr02vwtw5+JDlg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=googlemail.com;
-	spf=pass smtp.mailfrom=googlemail.com;
-	dkim=pass header.d=googlemail.com header.i=@googlemail.com header.a=rsa-sha256 header.s=20251104 header.b=UtAhHj+L;
-	arc=none smtp.remote-ip=209.85.208.46
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.54
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792862346;
+	b=mc+UYlwe1SgINsN2nfeUV2Cm4sKhqf/w5FIxm78ujlidK7XNCy1xt3O0TWxt0ftlGuMh
+	 74GeVNqb6K7VJDTqILSH0o7YkFB9MAYdY0wcGlv55Cb+ov0tLmZseVkgKLN42InThnLsK
+	 jYkWoduVGD+v7cTmq05zTVpnZwccgXVTDxNhSuXEDzZxD9jHXIT5jEcUI6h8Ljfgq1xrw
+	 oDHd8BskSOkFteFmNapWUiMCaA16ngRsbAOClu1aDPtSd6XXKqjYxMoEk7RnToAWKHadn
+	 5DlBdhy4W23OrriuGdyoZjzJOffYq97qdLzAFC1lMEzgTxcAHTKAw+gyevOa13aOrHQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792862346;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
+	bh=GKo9T9OwQ84leb4q/bd9aODGcaIrdjoihosbnMEgJgg=;
+	b=zrr0GfLj+5bq/rmdqfO0p/I82o7UMaAkXUMgnMEa3N33rD3ERaZ0/uYJ22AFgefpgBN+
+	 6m+5ZNWNrbfdjGxDWt0GAYFucfi6D+drMzhrq8ZSW/+H7UQbMsjICqR23KU2ScAtH4bq2
+	 dvcVNts4cbdNMA5csWdhdkeraoLhHMCYWUbCB+65mJxO9ExbpXYmTIyjge9gauPCLx32r
+	 V2VV1gRvgfNM+PBQk7tjNXH/iwxoZBXGkfxtpqD72hkdgducFpAGfsK+TJMfaOJ5A/zBr
+	 JlqA3UG2Q4QcswvfLBMwyi1XM1LSuY2oHgOHpj2q9cG9fIRzNnuOkjPJhWWdcdQ2IXg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="b/yw20jh";
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=cUqmgugE;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.54
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F9A606A31A
-	for <linux-gpio@vger.kernel.org>; Sat, 24 Oct 2026 12:31:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 40F9A606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3B7606A31B;
+	Sat, 24 Oct 2026 17:19:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB3B7606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=googlemail.com header.i=@googlemail.com header.a=rsa-sha256 header.s=20251104 header.b=UtAhHj+L
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6b1d8944cb0so2529385a12.3
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Oct 2026 05:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20251104; t=1792845085; x=1793449885; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2agfzSVxmvKyDDGsk/lrN8ke6f+kq8XMYiroN22OZac=;
-        b=UtAhHj+LrSP4gAhPemjShZLri6bRqWBtoApOzVXfKiEWSF8vHHEbTXysRbXE1Bmxmj
-         UBSLWpYR3aLNCAFoplLz4kQ8CXTEFVwXeKDn7NMd65rreN9a4iZPK5eolAlaccdxBZ7/
-         Iy3pi0Ld3Wf7gxrRAe2BdVKVacLAWnHjSysBcAzF/GyS/hMCpPyr+XZwcF913LrFFxBh
-         zH2FGze0kJVasfASWs0/MYsUgH976bc5fJi+hMWsRR0GlQ4PpdVoUJ/PoIUMLS6TQykT
-         7+z2LEzLHrejUY0EGXUzbFR7r/ig4n/vwCNQV21ywjJJbuMdmUt9BbDkanAEHBSHLt7z
-         04/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792845085; x=1793449885;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=2agfzSVxmvKyDDGsk/lrN8ke6f+kq8XMYiroN22OZac=;
-        b=HNVi6n5iWtWA6XHwHCc1UxZl3nEA0gQJ6WWlT6eviFQ7LmjtIQ0ZbzzhaP1tr+97gY
-         nGUeaUPpmNDnaFkQldc5wty12hMceTrlmgqu6zsX250J2FaSbWKs1Z//vOEG1aOgN7gt
-         aawdl+Lka3LHq9lNGzeBcxr9IMTDhp3gJMDirJ9cuOi3EgwbFl/7ECtaGxb1fHAHInOb
-         T/kdKsrapft5g7jd1siBbbkhVmMas9e1FhMcDyd3IMQvvRpcNLW82PaCNDhAFFya7kpY
-         EHPGDzswXddc2rtqdYH8it9jm7cfh3EVI/IjN18jRG6KQADwrs3qPAfi4ZUjZo6aAGWW
-         Mz6Q==
-X-Gm-Message-State: AFq9FYJ50v25jkFx9zxWl15g/GWg3jewk+Oo75JL+kEtq09Bkhr8xyx3
-	4nnd3I+W+XHS7V/rSZk89Jx6/Ano1CNG1ae8/vjasG3AH9VEJ8uk7YVQzBjJRA==
-X-Gm-Gg: AYBFou2GU1+lqdQQUbcsRO9TMSIC5WtzTGVeKhbhVUF+5pVLetWyzP6G8R72BfIQI5o
-	d8TQOyHin4bAq7l4uOYFnSWlK1JTXHA4BwZeAyZH5U5DOO5/rV5Q2S4ii8UJFVaWEz6NM6GfEBH
-	ccOGPgJmURZwr9+bZLIMZql8jAAj04gN7biybCMid0OxIjJvPIl60W4RFoLPJOBw+ePyHakpIFd
-	pL17MQ7UOJrqj8yy5dZfVo8hrpdHesZ7kammGn8UqgW1MvwdMCp9Gx7JyL9ljF6B6ju/Qzj6kq0
-	Tviq7qrm79aPWZWQ2V8BUtEj1lPMf+IsrcRrn1Avc202bZ4NJo+q3Dvd+wy+IMdIYb+HFvPBJVB
-	m8DTZsKFVe9PeYazRNzxU/9oyv7lD3bT5HtGLDjuben1nMaJO5e54QlsXS1Q1Z7C55eJ2HR751Z
-	2/vXFR3aiFNNkD1MlW21Kcat+HHcluLFZPesLdWWNPHAfP4CVc+J6DpbE7eET4OUPtDKfcknlXY
-	UJ7SplwzVu4pTtNI/U2dDXi93LKcP4BuCZ9ORofkg9B6zkdgsAYv99i6+MpoS4Qxv0dNzEcmNXd
-	jgHcPSDVv2sOVFlkv4aVef/7xs7jxzZWHjs=
-X-Received: by 2002:a17:907:2d21:b0:c3f:dce3:20d5 with SMTP id a640c23a62f3a-c46bdc10b94mr201597066b.22.1792845085324;
-        Sat, 24 Oct 2026 05:31:25 -0700 (PDT)
-Received: from development2.visionsystems.local (mail.visionsystems.de. [213.209.99.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c46bd4ea0ccsm86658066b.16.2026.10.24.05.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Oct 2026 05:31:24 -0700 (PDT)
-From: Yegor Yefremov <yegorslists@googlemail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Yegor Yefremov <yegorslists@googlemail.com>
-Subject: [PATCH libgpiod] build: honor default_library for the installed libraries
-Date: Sat, 24 Oct 2026 14:31:24 +0200
-Message-Id: <20261024123124.3700266-1-yegorslists@googlemail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=b/yw20jh;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=cUqmgugE
+ARC-Seal: i=1; a=rsa-sha256; t=1792862336; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=VwVEghs5CpOIYwMyuhR+iT2wuSamVVIZY3gOCp+5mbpAkp4XBE0/mO/qk0v552TRYe
+    0Ay98BgUHZSj2cqLmsnJCmoCJ5lPaCyLZr+6P5GcNYE1p2al8vgVc6LkE1gnOpckf41L
+    2WsxqUXd45hFxSq4GTEz2RHd9u9ISAnJxbM+iAm2Zg+QgxFasQj8B/6OFN1+mpC1zMHl
+    xrSd7JR30vVcDeSfc8/tfIX6wHAYZPtiEfQHxeJc0YEJs7LDJKJK2ELvNMhzEki3QLr2
+    1t1IOk4oR0tyLXv74m0oplfqCCzEb79qvuevmpXov+kUk13c8chnsG3NrEZzGxRu7ELs
+    LRJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1792862336;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=GKo9T9OwQ84leb4q/bd9aODGcaIrdjoihosbnMEgJgg=;
+    b=Hig4j0kfpCQmu5POQEjQ3ISxOBe//2BATQ5UzxSMufPctkWqC75rdeRAj8nqdJ3gGi
+    0VgLRknLHXJssq6zch+bEjqIo/J0Uiba9PHWccwDRWUdbFPhSOcEOfEn7sYJqH3gUaHa
+    oj7nFj/F0zc2CQFF6LoBpI6iV3fzHKfjX5Lf+VlfZrMq9O5O8Hb76NtMqLros3MYEVXT
+    sk+UOqfJOizmMElK5jUiFxBCPuEfT6GleEWLsHo9BGJYCFv/QdaXR1mole1SAtiwF9I5
+    suIS7IVXqCo0f1v5UN6HLKikz2dGteVBq/99mVHm/kfw6DVZJ6jq9jGsDOnS6Ep6uwo+
+    AoAg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1792862336;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=GKo9T9OwQ84leb4q/bd9aODGcaIrdjoihosbnMEgJgg=;
+    b=b/yw20jhe7smdwIxJyanrG4NulJQYCmVhRdcaT8D+kNOKqH0mM9/1awhycxt4+6aPh
+    uPlnXHSmaEifIjPyPWIP5HAdyZSNugZWADzy99/FfMXzBSzf9ODYcd3MkKWuZ8eclMwS
+    4b12meVUtZX8V6V6KFUG7dpocW+FLOIhSiNl44Y3g43p7th6zXrQdFYrN2orsPk1S8ue
+    CAzbCrHqYvs4c5HuCY0aDj57ylnQ+uqJsrglu3wC4ltD3qqqRhvrWTHSJDazUkJTC35c
+    s4kQ2rtvPD4dqEsElgIAq4tcXskQHr7w8/veZEE1fBnUfKbKc8SIGXhh3PAKP4D8pYfs
+    ns6g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1792862336;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=GKo9T9OwQ84leb4q/bd9aODGcaIrdjoihosbnMEgJgg=;
+    b=cUqmgugElN3TIAyT1U1gl6OCQrU6j/rjpDJoX0bW6fQAMyrdftDDijcMGfn+ePf1TK
+    TaHOiLnXZyggXAotXjBg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV2poKzsiNzptYNlV1C1yk7253raiyx+O3Hxli"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a229OHIuwq1
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Sat, 24 Oct 2026 19:18:56 +0200 (CEST)
+Content-Type: text/plain;
+	charset=us-ascii
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,137 +93,101 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.10\))
+Subject: Re: [PATCH 2/2] pinctrl: ingenic: Add an X1600 group for 18-bit RGB
+ on the top lines
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20261023204207.48277-2-olivier@mgcrea.io>
+Date: Sat, 24 Oct 2026 19:18:26 +0200
+Cc: Linus Walleij <linusw@kernel.org>,
+ Paul Cercueil <paul@crapouillou.net>,
+ linux-gpio@vger.kernel.org,
+ linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+ Paul Boddie <paul@boddie.org.uk>,
+ Andreas Kemnade <akemnade@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <311BC431-1F73-4C07-B3FE-A908E3BD9263@goldelico.com>
+References: <20261023204207.48277-1-olivier@mgcrea.io>
+ <20261023204207.48277-2-olivier@mgcrea.io>
+To: Olivier Louvignes <olivier@mgcrea.io>
+X-Mailer: Apple Mail (2.3826.700.81.1.10)
 
-The installed libraries (libgpiod, libgpiodcxx, libgpiod-glib and
-libgpiodbus) are built with both_libraries(), so the shared variant is
-always built, even with -Ddefault_library=static. When the toolchain
-or the environment requests a fully static link (e.g. LDFLAGS=-static,
-as done by Buildroot for static-only builds), linking the shared
-library then fails:
+Hi,
 
-  FAILED: lib/libgpiod.so.3.1.2
-  [...] crtbeginT.o: relocation R_ARC_32_ME against `__TMC_END__' can not be used when making a shared object; recompile with -fPIC
+> Am 23.10.2026 um 22:42 schrieb Olivier Louvignes <olivier@mgcrea.io>:
+>=20
+> Boards that wire an 18-bit panel to the six most significant lines of
+> each colour leave PA0, PA1, PA8, PA9, PA16 and PA17 free for other =
+uses,
+> which the cumulative lcd-16bit and lcd-18bit groups would take. Add
+> "lcd-18bit-msb" for that wiring.
+>=20
+> Used on a HiBy R1, which drives its panel this way and uses PA0, PA1,
+> PA16 and PA17 as GPIOs.
+>=20
+> Signed-off-by: Olivier Louvignes <olivier@mgcrea.io>
+> ---
+> drivers/pinctrl/pinctrl-ingenic.c | 14 +++++++++++++-
+> 1 file changed, 13 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c =
+b/drivers/pinctrl/pinctrl-ingenic.c
+> index 28e7f1852054..8c424db27fd5 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -2442,6 +2442,17 @@ static int x1600_lcd_24bit_pins[] =3D {
+> 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+> };
+>=20
+> +/*
+> + * 18-bit RGB on the six most significant lines of each colour of the =
+24-bit
+> + * bus, with the clock, data enable and syncs.
+> + */
+> +static int x1600_lcd_18bit_msb_pins[] =3D {
+> + 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> + 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+> + 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+> + 0x18, 0x19, 0x1a, 0x1b,
+> +};
 
-Use library() instead, which follows default_library, and set
-default_library=both in the project's default options, so that a
-default build still installs both the shared and static libraries. As
-library() returns an object behaving like the shared library when both
-are built, the users of these objects (link_with, pkgconfig.generate,
-generate_gir, full_path) keep working as before.
+I just wonder if you can't get this by combining some existing partial =
+pinctrl,
+e.g something with lcd-16bit and lcd-18bit?
 
-With a default build, the only change in the installed files is that
-libgpiotools, already declared with library(), is now also installed as
-a static library, like the other libraries.
+But there is no good overlap with existing settings to achieve this.
 
-Fixes: 97bab4cc87dd ("build: replace autotools with meson & ninja")
-Assisted-by: Claude:claude-opus-5-5
-Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
----
- bindings/cxx/meson.build  | 3 +--
- bindings/glib/meson.build | 3 +--
- dbus/lib/meson.build      | 3 +--
- lib/meson.build           | 3 +--
- meson.build               | 1 +
- 5 files changed, 5 insertions(+), 8 deletions(-)
+> +
+> static int x1600_pwm_pwm0_pins[] =3D { 0x40, };
+> static int x1600_pwm_pwm1_pins[] =3D { 0x41, };
+> static int x1600_pwm_pwm2_pins[] =3D { 0x42, };
+> @@ -2503,6 +2514,7 @@ static const struct group_desc x1600_groups[] =3D =
+{
+> INGENIC_PIN_GROUP("lcd-16bit", x1600_lcd_16bit, 0),
+> INGENIC_PIN_GROUP("lcd-18bit", x1600_lcd_18bit, 0),
+> INGENIC_PIN_GROUP("lcd-24bit", x1600_lcd_24bit, 0),
+> + INGENIC_PIN_GROUP("lcd-18bit-msb", x1600_lcd_18bit_msb, 0),
+> INGENIC_PIN_GROUP("pwm0", x1600_pwm_pwm0, 0),
+> INGENIC_PIN_GROUP("pwm1", x1600_pwm_pwm1, 0),
+> INGENIC_PIN_GROUP("pwm2", x1600_pwm_pwm2, 0),
+> @@ -2549,7 +2561,7 @@ static const char * const x1600_i2s_groups[] =3D =
+{
+> static const char * const x1600_cim_groups[] =3D { "cim-data", };
+>=20
+> static const char * const x1600_lcd_groups[] =3D { "slcd-8bit", =
+"slcd-16bit",
+> - "lcd-16bit", "lcd-18bit", "lcd-24bit", "lcd-no-pins",
+> + "lcd-16bit", "lcd-18bit", "lcd-24bit", "lcd-18bit-msb", =
+"lcd-no-pins",
+> };
+>=20
+> static const char * const x1600_pwm0_groups[] =3D { "pwm0", };
+> --=20
+> 2.39.5
+>=20
+>=20
 
-diff --git a/bindings/cxx/meson.build b/bindings/cxx/meson.build
-index 92625b5..a23c70a 100644
---- a/bindings/cxx/meson.build
-+++ b/bindings/cxx/meson.build
-@@ -3,7 +3,7 @@
- 
- cxx_inc = include_directories('.', '../../include')
- 
--libgpiodcxx_both = both_libraries('gpiodcxx',
-+libgpiodcxx_lib = library('gpiodcxx',
-   sources: [
-     'chip.cpp',
-     'chip-info.cpp',
-@@ -29,7 +29,6 @@ libgpiodcxx_both = both_libraries('gpiodcxx',
-   soversion: libgpiodcxx_soversion,
-   install: true,
- )
--libgpiodcxx_lib = libgpiodcxx_both.get_shared_lib()
- 
- install_headers('gpiod.hpp')
- 
-diff --git a/bindings/glib/meson.build b/bindings/glib/meson.build
-index 0ccd8e8..17e071c 100644
---- a/bindings/glib/meson.build
-+++ b/bindings/glib/meson.build
-@@ -61,7 +61,7 @@ glib_public_headers = files(
- 
- glib_inc = include_directories('.', '../../include')
- 
--libgpiod_glib_both = both_libraries('gpiod-glib',
-+libgpiod_glib_lib = library('gpiod-glib',
-   sources: glib_sources + [gen_enum_c, gen_enum_h],
-   include_directories: glib_inc,
-   c_args: ['-DG_LOG_DOMAIN="gpiod-glib"', '-DGPIODGLIB_COMPILATION'] + profiling_c_args,
-@@ -71,7 +71,6 @@ libgpiod_glib_both = both_libraries('gpiod-glib',
-   soversion: libgpiod_glib_soversion,
-   install: true,
- )
--libgpiod_glib_lib = libgpiod_glib_both.get_shared_lib()
- 
- install_headers('gpiod-glib.h')
- 
-diff --git a/dbus/lib/meson.build b/dbus/lib/meson.build
-index 9acf5e1..12cff4a 100644
---- a/dbus/lib/meson.build
-+++ b/dbus/lib/meson.build
-@@ -14,7 +14,7 @@ generated_dbus = gnome.gdbus_codegen('generated-gpiodbus',
- 
- dbus_lib_inc = include_directories('.', '../../include')
- 
--libgpiodbus_both = both_libraries('gpiodbus',
-+libgpiodbus_lib = library('gpiodbus',
-   sources: ['gpiodbus.h', generated_dbus],
-   include_directories: dbus_lib_inc,
-   c_args: ['-DG_LOG_DOMAIN="gpiodbus"'],
-@@ -22,7 +22,6 @@ libgpiodbus_both = both_libraries('gpiodbus',
-   soversion: 1,
-   install: true,
- )
--libgpiodbus_lib = libgpiodbus_both.get_shared_lib()
- 
- install_data('io.gpiod1.xml',
-   install_dir: get_option('datadir') / 'dbus-1' / 'interfaces',
-diff --git a/lib/meson.build b/lib/meson.build
-index ea1d92c..fb09b71 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2026 Qualcomm Technologies, Inc. and/or its subsidiaries
- 
--libgpiod_both = both_libraries('gpiod',
-+libgpiod_lib = library('gpiod',
-   sources: [
-     'chip.c',
-     'chip-info.c',
-@@ -22,7 +22,6 @@ libgpiod_both = both_libraries('gpiod',
-   soversion: libgpiod_soversion,
-   install: true,
- )
--libgpiod_lib = libgpiod_both.get_shared_lib()
- 
- pkgconfig = import('pkgconfig')
- pkgconfig.generate(libgpiod_lib,
-diff --git a/meson.build b/meson.build
-index 7045d29..7633702 100644
---- a/meson.build
-+++ b/meson.build
-@@ -6,6 +6,7 @@ project('libgpiod', 'c',
-   license: 'LGPL-2.1-or-later',
-   default_options: [
-     'c_std=gnu89',
-+    'default_library=both',
-     'cpp_std=gnu++17',
-     'warning_level=2',
-   ],
--- 
-2.34.1
+Reviewed-By: H. Nikolaus Schaller <hns@goldelico.com>
 
