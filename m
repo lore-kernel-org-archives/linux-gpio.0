@@ -1,79 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.20
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792806765;
-	b=xZBI6NqMGTlNf7xeWWzVYUCa+GhQlmEcmmvgac70UfneZZrjTr+EJBTzkL4FjNr1q0Oz
-	 DOSzwzn/NjRJwfeN5r9xZROUU0Vu7h18qu5f00+pU+W+LWkg1cDBxf8D6Cno810tqZX/J
-	 cfl2YWkmuJL7MgGNlzztqWrRFf8Rr7kKeFVA5ouzl9BAIxyUFW9MOFyndWns4878OBhvf
-	 69MHTkxRD/tgyEpgsTCP3PEnksl6FTje2djKBateDeGVC7FIiDYG1tnPLqMq8bUXv74Jn
-	 DhIjkpQ5hISbp9kaYOtv4natDxG7lc+43V4Ku1gDiw1vXDiVsHnC7nsvnLmYGsuVpaw==
+	t=1792810788;
+	b=NL0iXdWubIvGaYZTw7/k86iYzIXCS7o2sk3F4mPUnQX7fGUKcAKcwgqvqDf4Yr3Uqpt0
+	 gtK+Xw0HZxpGlOGDkEWvVa49RfndmAJVHlpfWkeEfSjFJzyvjK+fpIfDYr8U8A2raj84h
+	 Rz/cPUCOs1cTW7T3XJLu0FUzqIYixwdTPdzG0tXHaEGPixxQr9ozoylxlUEy/X+odKl3D
+	 O39wLYKAl+R3ZggT/47yVJqBx9RRxP57RW6wK0lsg9cuLFz8fB/wisBBN30cwbfGijZzg
+	 CCFpgBj8+HTGiO67bMz3W9VR5UTKN1sVlXzT1SZf2SNr092s6RLESfCobqn2QZxsg2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792806765;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792810788;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
 	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=wjuto3d/KuK0tBjAezBeTt5tVciNNcThbLMT4S20fd0=;
-	b=Fgo1lfoa53MI5nsZzs93hZjIIa0LnvILgojddhGDb8H1BJwXviW5BX3RJpjt3TGAegNh
-	 PUz+9XAIl2b4tYhNogocPSvXqCAE5icgXx9f89keAuvjiIzhOBluS6o1++cyBSJtLGWuz
-	 jGHfCXllQvAgSoe4fyda8vl09KHwtCUGJgKRxYC/1HFW+Xi5aoqI5Tl32p3KKx1mL/Hwv
-	 Bz1M/GVjKerG99sPz9OAW3inMgXK+B85KJd3gTC71NxVjzWL/gE0dziaiUQBK49ZWGOpT
-	 gVibuVOanhOGJbq9avn9tLkpOE7ZHMpJZBuw75amL88r7+9pHGt12pwS3Tpgi/T6uMA==
+	bh=5dvfWf9RXx0yO1VYyhyNJZafDFoC0+dDXPTBwAUaQwo=;
+	b=pvIqI5snutsBtrmCkWO2HMQjJhMRPqirwasi90loL8kNFdgQAjH2s0NtiMzdUACMKdLj
+	 Wiu5vjDL5GuPFtVIfELukDrCQq6Y38D+qwSVdUDMOdRDWh8gR5s2cWomI6tWWucPXsUXR
+	 spRtDRfu4yZwd1L8cTwWeBWvtl2YaV0COXKcGTtnwq102lL9gEYS0TI9l5yuNDXhfk+kH
+	 pIVbrFVlgD7y0jRM+Mu16qPW0PqOwQhaxuOicYIYQb5mkDfRN4LclujpUOBrsIjGlMrD8
+	 mLuwXJSotiaWCyYzLqYGowvL2DUBOy33Gpk2LfzqgqgpwU8AUOqnKbbamIo/0xIMhUw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GBgNuVrq;
-	arc=none smtp.remote-ip=192.198.163.10
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=DFe2okgL;
+	arc=none smtp.remote-ip=198.175.65.20
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59964606A31B;
-	Sat, 24 Oct 2026 01:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 59964606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5DA606A31B;
+	Sat, 24 Oct 2026 02:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0C5DA606A31B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GBgNuVrq
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=DFe2okgL
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792806765; x=1824342765;
+  t=1792810787; x=1824346787;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=UFya1hKym3VDaS8cNunTQezFRotwyKjbplRcLEVURx4=;
-  b=GBgNuVrqVAWhMd97SYjvNHWES98PfyJ12V/zPpXCbm9vVD69UwnxzG+O
-   OW7/Lc+IV22hZ5/kZ6P7poLEP4N819k7wGXZZ46TPQdRfOQJrqSHr4DOw
-   5UIRxBzb+HQpTSh1mosmiqCJSRCfIb4GRdFsQK+ihdqbmnNc9vw5N2Thu
-   5t04mQ9rv+FNkDexwm1+SMGkznVWzErpyj8NsRRw1xnRxwGkYA7KNUKRZ
-   j7+GYBIbhzAm3UL4qM1pR0mpAz8ZIvYVaNFBBZuLxTcJqYXxksd+ncljV
-   eyTHJ4C2z7LFKm6E5RFzgLMIyfLHJi1VG7oc1PYEX4LcyEXfF1UfmefaX
-   A==;
-X-CSE-ConnectionGUID: qPvXYqmARg6kSTuIAdgbpQ==
-X-CSE-MsgGUID: FowA/CELTRWdziYy3vyWIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1463008"
+  bh=XjtHZy24l7lU9ZVx6Z0N/W5smjnDjkMBTb96jJtM0Ds=;
+  b=DFe2okgL0N5FG8+VTFnAU/xzGPpsNU1NH098Xhv9EhiR5+QB5S05I1NB
+   EA/ZHh4rSF1Fx37DEaob34PfzaGHH85xndCIYTCAvYum4neEtbZBnJxDN
+   Cd2lDP6yNOVCQ6ev1Xe4aALJhkAfaQS5jTHsi8bvNx8w89e7LBFzW8MpG
+   7rjq4Lzc/3yYVjMIesVmdDrnEUbrkP4W/ULPxwaSVQZRfWVyQhCFzdOTi
+   pwihqQ+smULteax8Cn/38KBtBysQcVxmZvkBpU1HMhbrIgOMbqLjblWAF
+   d/ALUpfacdFg8d5OgSvaPNEKUXIIiR0Zkulruee/27DquGQOKQUfHOW3U
+   g==;
+X-CSE-ConnectionGUID: VyadVyDdQf+s+t7xyLVF3w==
+X-CSE-MsgGUID: 9HbESt1gRuydFWSKYG/xMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1587419"
 X-IronPort-AV: E=Sophos;i="6.27,175,1787036400"; 
-   d="scan'208";a="1463008"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2026 18:52:44 -0700
-X-CSE-ConnectionGUID: /QmVDlBGS0apAzWg7GkJCg==
-X-CSE-MsgGUID: MPhhLiUuRzaMRhbSLdoLvA==
+   d="scan'208";a="1587419"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2026 19:59:47 -0700
+X-CSE-ConnectionGUID: rgDMD7UgQYyrZcRUKtUq/g==
+X-CSE-MsgGUID: m5SPcwAHR4Kp+MC+cEoNdQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,175,1787036400"; 
-   d="scan'208";a="3846771"
+   d="scan'208";a="5639305"
 Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 23 Oct 2026 18:52:42 -0700
+  by fmviesa011.fm.intel.com with ESMTP; 23 Oct 2026 19:59:45 -0700
 Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1xKQw3-00000000TUs-2xmk;
-	Sat, 24 Oct 2026 01:52:39 +0000
-Date: Sat, 24 Oct 2026 09:52:19 +0800
+	id 1xKRyw-00000000TWU-2aFr;
+	Sat, 24 Oct 2026 02:59:42 +0000
+Date: Sat, 24 Oct 2026 10:58:42 +0800
 From: kernel test robot <lkp@intel.com>
 To: Liang Hao <haohlliang@gmail.com>, linux-gpio@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Liang Hao <haohlliang@gmail.com>, Linus Walleij <linusw@kernel.org>,
+Cc: oe-kbuild-all@lists.linux.dev, Liang Hao <haohlliang@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 1/2] gpiolib: Add irq_set_affinity helper for GPIO line
  IRQs
-Message-ID: <202610240908.4J3PwdPn-lkp@intel.com>
+Message-ID: <202610241003.gRosyohv-lkp@intel.com>
 References: <20261023151209.58772-2-haohlliang@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -102,28 +102,25 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Liang-Hao/gpiolib-Add-irq
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
 patch link:    https://lore.kernel.org/r/20261023151209.58772-2-haohlliang%40gmail.com
 patch subject: [PATCH 1/2] gpiolib: Add irq_set_affinity helper for GPIO line IRQs
-config: mips-ci20_defconfig (https://download.01.org/0day-ci/archive/20261024/202610240908.4J3PwdPn-lkp@intel.com/config)
-compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 186e70f4e6a1521991d2340d3d49b23b1beff11f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261024/202610240908.4J3PwdPn-lkp@intel.com/reproduce)
+config: microblaze-defconfig (https://download.01.org/0day-ci/archive/20261024/202610241003.gRosyohv-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 16.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261024/202610241003.gRosyohv-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202610240908.4J3PwdPn-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202610241003.gRosyohv-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> drivers/gpio/gpiolib.c:2154:9: error: no member named 'parent_data' in 'struct irq_data'
+   drivers/gpio/gpiolib.c: In function 'gpiochip_irq_set_affinity':
+>> drivers/gpio/gpiolib.c:2154:14: error: 'struct irq_data' has no member named 'parent_data'
     2154 |         if (d->parent_data)
-         |             ~  ^
->> drivers/gpio/gpiolib.c:2155:10: error: call to undeclared function 'irq_chip_set_affinity_parent'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         |              ^~
+>> drivers/gpio/gpiolib.c:2155:24: error: implicit declaration of function 'irq_chip_set_affinity_parent'; did you mean 'irq_set_affinity_hint'? [-Wimplicit-function-declaration]
     2155 |                 return irq_chip_set_affinity_parent(d, dest, force);
-         |                        ^
-   drivers/gpio/gpiolib.c:2155:10: note: did you mean 'irq_set_affinity_hint'?
-   include/linux/interrupt.h:407:19: note: 'irq_set_affinity_hint' declared here
-     407 | static inline int irq_set_affinity_hint(unsigned int irq,
-         |                   ^
-   2 errors generated.
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                        irq_set_affinity_hint
 
 
 vim +2154 drivers/gpio/gpiolib.c
