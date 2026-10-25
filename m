@@ -1,76 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792926175;
-	b=3gEpCoTl1Aj9Jkx9/QLBdgM7TkxCqRKxqjsq39ho4OcFlEgzGCnc0d+vXuUv17Vu4qrK
-	 2EPINgJIkEI2ipaP2rWN9WcPR0ki98pGuoCSbQtwreM9OEbkF9lCCw3EQr5BbFxL1eCZP
-	 TREXAyHNXumHBkUumqhrNeMmEZRvOoSxsE0CrNP9CA5WKLu8ifs5/ga2X3zsuzAMtRmoX
-	 HxPmilBQCGDzvgmFY1WkhYOj10l7nRIdjmEaFaL0CwwuBsw+f2n2OkYvqlZLtBud7qdXa
-	 Bn82qLmOTltJ80yKeC9IWeZrZ/McX9s12IFKdZ2j2KBQP2W1FP7CjU1AjW5xD43WCNA==
+	t=1792936687;
+	b=LBAmyKXMZVFBZjz/gBQabYBpwM+45iMldup/pEwCdTM+4zxalk+fDmNdPoe6VrXvy/ZH
+	 10eqAK9NXihHoSTeOK1q3W46HCrRnp7r+LE3CkM3+U/iGd817VGn96dhZruhXNGd8IUJF
+	 D9VlS9b/kSCcDuPPY1peq6arqoPkK4wM+blrcjtLBLFkIls+kXTfUC22vYle3Yd62E5T5
+	 WxtPWhowtvKcozmcVAZruURNMaKqn8DLJ04bMR4loSkhB8ONExl3lkDix+C06sE06d7oB
+	 ZrnDA8Z9WLYd3hGSlt4xh5qdAy3mpmu8ufGIzQEX6zjAhP1zlRl5ZAu+zGbOOHSjgCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792926175;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=GjtDmUDJ7P9a7dCWsPAQRfLzfmaw50jjj96MMkbrG+o=;
-	b=ZXnM/MWaibd9Bd5ilnp2y1pyrUBXLr69WCK44+nlJPQyVqTFyCaGaHmUwuGOdx77kS5+
-	 Y3/wJgCfDzL4+a2eQhLSF9p/XMsRsDB4oFwx+cmSklJ7LQq8SrClW2z9EZuGnD+RDhClT
-	 pDflpkcgY9yOecbQTU0qejzWh7qg9QrQRnUpCf+pUKPh4Jf422n+sGa3F4gUyWjlKlxV4
-	 cTFM3xXU3Iv8JtRyZcVcG3o1quXCHZcpvUq0CtjXxZA0XGcKVqSl8zFC+oco6tJnL98GF
-	 Nhi5DZNa26MViSq3cYYHZtFTGpgsKa/Rvnkx8e4wFex5HYMEjXmHQZdaFPHhXsnV6rA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792936687;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=qkMrb47+RHanbLgsTwNr0QXPtl5wufkJw6Ld4BtzfH4=;
+	b=C4q/JNVdnHsrnzYdn7E7prrv75J9ZI1ODwm0ppCDrcSXSi6hSGUDLKp/ikKmHFEWE+dg
+	 DsM/9jXm3WFVECc9dDCayMM80YOI1ONxLtm4LpAUSTOPnUnKa2pobmrkOeBDyEqGs2SgH
+	 Gs/c24k7klUBhPtdwE68GRswE6v5v0b6eXA3/gcSc/JGcTTq6JM8YZNc2ur9ez4pI8jNW
+	 BJPUQ8M+fG4xilLYcB8tc8ECNelW9JoNWh9vFQJmq5HPZa6PPsVvxt9YrmJTIxgDyvEbJ
+	 IX2ShCFkLK1r8XZMwi6PLbxvl4gUH/fO3+27oLio0hhMBBQ57j95lhMjGLz2FHrjUVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
+	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.221.172
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=celnVUjz;
+	arc=none smtp.remote-ip=209.85.221.45
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0458606A31A
-	for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 11:02:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C0458606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF79606A31A
+	for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 13:58:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEF79606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5eadadf23e5so2050411e0c.2
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 04:02:54 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=celnVUjz
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48df0fa43c5so1333237f8f.0
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 06:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792936685; x=1793541485; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=qkMrb47+RHanbLgsTwNr0QXPtl5wufkJw6Ld4BtzfH4=;
+        b=celnVUjzyZ8riqqT/ARqFvt9z4k/NHLK86xuATMVdPDr6kaLZTTT2r+GCU14BDWnHb
+         3fJSaXpBZbkXX0G28U6S/4p/5X9QvkKAcOzdUBcAr9Xxjljg1cLKJlmysIUOrLDb+OsI
+         UnMt8FmHp9GKNffFb08sp5UTcTtqZ6Dq8dvaEoLKM7duXoPq8/tzKwbpEfWyIctDGZYJ
+         UX0niJD7GNp51iwmyJPaEL5wo5vlEFmIcgnabGuy6uJdKrGX3d0Ji06M1k4f4C6dG3zq
+         UfsrphygzVrxpFvHut3PhBzATLc5HaiEV00ON/wK9KDTXJSxU2VDMpFzU7q3UAJqefvD
+         RW+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792926174; x=1793530974;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=GjtDmUDJ7P9a7dCWsPAQRfLzfmaw50jjj96MMkbrG+o=;
-        b=Fi1ohzVPQDx5lUeLS/+rkFuBxYPWzFnxuEAJgwN289/SxQ1XRC/o4CpeIFs3zENsDP
-         xhbbPqU5HUOoR9EyZSvgb1dKnwBJ5flEMvVNu+Pcn//NzTHvZYhMh30wO5f2mB9BBny9
-         lqIYvj5ms2tDc63x6AJ8oHfnB/VFMEmVcnh9s86wkX5Pco9Cm8peB6/QyOq/FUUZE+rG
-         qeOeR/naAl8bjRQiK9ry28XKP/k/XsTqJ3Q5Y5Juog/026Tbg/NXqqqfC/U0Dop/xsO/
-         rAgtbsNQbbCoga0JnkxyTjKLP28cpECvuirCN+Te92tpi8qBKILwct2s12FewjnZ9Oaq
-         liBw==
-X-Forwarded-Encrypted: i=1; AKwUvByOQgWktL6Utv/eGiBpUKb08BjQOxNM5ghcTqCMV/s6FIhTpcMhZj4RZ5uy1d+lFkS8mxdjnULIY5df@vger.kernel.org
-X-Gm-Message-State: AFq9FYKE8A2Dm3zO+QjA6+NFFIPyatbRBuUw1kEG6Cub5sGjnOSUySz2
-	5Cwt9FSQfDH4ftojhWRaTTFoopXYUI5v9XMh7pT5aue8TkoxdEjd8QZl8APywHgQ
-X-Gm-Gg: AYBFou18y6qLjaIQROL5L3oUjhzMgpQ6dqUtHDcUo6oB383bd77Bq28raMRfH8xsgf0
-	BeWORNUTvCvUZR/meOBeTVGRHHiaWQL1Tfnq+vv3P0CT8e1QZ5F679wv+8LluyQYtynJd0/nmJA
-	DiTxUyI9C7KpoUUPsj9pZdX8QujibTc9A/PI9IIboRVs1ZioZcyyMSv1/tJR7v2YEaHchfVaIbT
-	iIhc+i5vaHyBFRGeJI0c3Brzo82uUzU4F2WlASLX2Cm75Y/34FRz4yqboKGQpZuXK08/jpGsims
-	zeNXbCrPmLhOLzTgGT0Ywcof5b2bS1B5tKClj7hJigkHdzgGd9et33Ms5ECx+b605ipZ20mtY5l
-	gteI3me96wVnDKCnwUxK5iquPZgsx6yT6rKRlAHjAiLpLJ1OhxCXh2qa75uNPcddywQ+Qj2GXDQ
-	oSOIdnzrdpfHp8w+snw1QJtgBsVjOvdXDTGx/AU/dY4bB+T+L5C/z7TsIZ2Yr7J9fwaesrtcFnd
-	8w/3/hCgJfsJ3ZRNfKkjQgYgDB4Ni9hzlUl7jmm8CwjRZ/1kaBW/UYhhqPpk/ltJNwDP7WWmj5a
-	b5trG3IKWVaHgbQv8A==
-X-Received: by 2002:a05:6122:1783:b0:5ea:e197:93d9 with SMTP id 71dfb90a1353d-5ec23318f19mr1412711e0c.19.1792926173732;
-        Sun, 25 Oct 2026 04:02:53 -0700 (PDT)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ec23067632sm5054193e0c.0.2026.10.25.04.02.21
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Oct 2026 04:02:47 -0700 (PDT)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-98febe968deso1684591241.0
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 04:02:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzPASJ953OnfdlngwNo25xKi/3ka+6j6g7UQxg7dRByQdOoDU0a9iOjXh63rIaIHtZCwGY6zfaOZCxd@vger.kernel.org
-X-Received: by 2002:a05:6102:4423:b0:7cc:776:6c54 with SMTP id
- ada2fe7eead31-7ce5cd246a2mr1349167137.21.1792926141152; Sun, 25 Oct 2026
- 04:02:21 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1792936685; x=1793541485;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=qkMrb47+RHanbLgsTwNr0QXPtl5wufkJw6Ld4BtzfH4=;
+        b=BUh/zSGSjcKphPXTHq+SJSef3fZ3JamdnJQEc1HUZtoMrY2evyPTnKA+9pvkTw8nJQ
+         U9KICsiv8+65soeLYDvhd2zQJEBlgcQelw8TBD4FxqKRPzzhw81NJmCTlZVCViluqHTu
+         snucNXMwtYgCGxVtZeoNEEVDrwbY5cqUaVm/YurRfTRguRLwn8AKTxV8MpvCfqCwLOOY
+         MUPzzBwMOQj5gtscMnk1PC/9ixAtzRjHBUCJooS5zcwTDf3i2KtADXwiNfSi4Nkm9PqN
+         QdcImr1uXhlrt43KA6w38JHWlkSMD8bOlJ+MSrXrssfPz4CAWk4Z2Uft/dsnbbJy8NC9
+         +BYA==
+X-Forwarded-Encrypted: i=1; AKwUvByNgTaEyzMC0ye+/2yopRrpERDk0XFKwezr/8jDIT8MBWIsB4BSHlWNfTWJWZyu7f7YceCh6xDAGHcZ@vger.kernel.org
+X-Gm-Message-State: AFq9FYJawuc2jntjzLrF1s02sr5F1Zl1TdjlKMDoNwoSASY7IfmqpnxA
+	SkGSjiWEiWhadAZ0jgXjd5JU1xnFSl1U2F/xZOYLlotP6oBLTZZ6M/71
+X-Gm-Gg: AYBFou2bs2EhgrkLS0xdoMVwe0sFRX1bfBqdcg/MAqE41NMCS7MNxCDftDaHm2OUkp3
+	L8WNs9rcPWJHtrQD7lP8omjDtWw2NGLb9tSQ/1W1wcdeuTu5rlo95GQ7LLxWazu786VF2291zJl
+	UwW9cK/vjl3taye6q5XbvYSpZmU/qVuARdxASATcdCr2FlhWFMzU+XNTjXD/ss+OCc+rN8acG3/
+	e2ncxtnzVHPfT871Undybayaei+4Wj7wb/Raz+zR2kcTKa07uI7rJXyR9WCGGWj2GMYwIK1uLYO
+	dNTS5nWH8Sw23JF6fG5CLmnF7ly/Uam0TTrMVMf7oBVy260dVBuFWPuWth51qeDhCTZBKlJ0GTZ
+	5lj2Cx4vxXqqtXLDEC1cXPjIOhDVxewRJooCG4xjBMGopxC+pbVfNOzYzdEqNjesimnM2aSLGuo
+	XUeG4OnwMR0RmqATbnyeVJTFXtiuQh8qUjnfochDwiX8O1PRTvrmSjnKd9CWg4F6hy7S6kpuBAo
+	UDpfE+9ag3L0sVXVucRCD5jn3o5vN6i3aGFbA9C9M1F/9NCLhucDuCV1VRAjvh0Wvct6vrmnCzJ
+	FNh7q3Jw0Z+hdg==
+X-Received: by 2002:a5d:6308:0:b0:48e:20ed:ce67 with SMTP id ffacd0b85a97d-48e3eb8bf9cmr5477047f8f.23.1792936684892;
+        Sun, 25 Oct 2026 06:58:04 -0700 (PDT)
+Received: from debian (ip-78-137-176-146.broadband.digiweb.ie. [78.137.176.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e4806e208sm5663415f8f.40.2026.10.25.06.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Oct 2026 06:58:03 -0700 (PDT)
+From: Pablo Mazzini <pmazzini@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Pablo Mazzini <pmazzini@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH v2 0/3] pinctrl: sunxi: number the IRQ banks from the first one that has IRQs
+Date: Sun, 25 Oct 2026 13:57:42 +0000
+Message-ID: <20261025135745.102970-1-pmazzini@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -80,66 +105,37 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1792776697.git.geert+renesas@glider.be> <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
- <d870c163-8d90-48c0-bae0-5f6e0e38c5bc@mailbox.org>
-In-Reply-To: <d870c163-8d90-48c0-bae0-5f6e0e38c5bc@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 25 Oct 2026 12:02:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVcxDY2q7MK6Zj5MFi-4UVJe=i8L=gWSTCmLE4NMjdh4Q@mail.gmail.com>
-X-Gm-Features: AclHuK8CaW_17mlyRa4Y7XpLgXIYuKk4YmAF6_as85fetPG-fOFZ1fPRmRtKgD8
-Message-ID: <CAMuHMdVcxDY2q7MK6Zj5MFi-4UVJe=i8L=gWSTCmLE4NMjdh4Q@mail.gmail.com>
-Subject: Re: [PATCH 3/7] arm64: dts: renesas: r8a78000: Add GPIO controller nodes
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Ulf Hansson <ulfh@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Marek,
+The DT pinctrl helper numbers the IRQ banks from PA, even when PA has
+none. The A523 got a DT interrupt for its unimplemented PA bank to work
+around that, the A733 would need the same, and on both PK is written
+past the end of irq_array.
 
-On Sat, 24 Oct 2026 at 07:35, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 10/23/26 7:50 PM, Geert Uytterhoeven wrote:
-> > From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> >
-> > Add device nodes for the General-Purpose Input/Output Ports (GPIO) on
-> > the Renesas R-Car X5H (R8A78000) SoC.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> > Co-developed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Changes compared to Marek's original:
-> >    - Use hardware clocks/power-domains/resets instead of direct SCMI
-> >      references,
-> >    - Drop gpio-ranges properties for now, as upstream lacks Pin Function
-> >      Controller (PFC) support.
->
-> Is that ^ OK ? If so, good, TIL.
+Number the IRQ banks like the static drivers do, with irq_bank_map for
+the A523 and A733, and drop the PA interrupt from the binding and the
+A523 DT. The B288 (IRQ banks on PB, PD, PF and PG) then needs no
+made-up interrupt.
 
-Yes, it works without PFC, as long as the pins are kept at their reset
-state or configured for GPIO before Linux boots, which is the case
-for the pins on the PWM connector.
+v2:
+- give the A523 and A733 an irq_bank_map, and drop the PA interrupt
+  from the binding and the A523 DT
 
-> Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Pablo Mazzini (3):
+  pinctrl: sunxi: dt: number the IRQ banks from the first one that has
+    IRQs
+  dt-bindings: pinctrl: sun55i-a523: one interrupt per implemented bank
+  arm64: dts: allwinner: a523: drop the PA GPIO interrupt
 
-Thanks!
-
-BTW, looks like I used a wrong base for submitting, as the context does
-include the pfc node, which is not present in upstream ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml   | 8 ++++----
+ arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi            | 3 +--
+ drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c               | 2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c               | 5 ++++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c                  | 8 +++-----
+ 5 files changed, 13 insertions(+), 13 deletions(-)
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+base-commit: 4f0dbdbdb3ad122e8bbfb1d722fd584bac7124db
+-- 
+2.52.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
