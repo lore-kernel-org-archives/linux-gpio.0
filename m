@@ -1,22 +1,22 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.119.170.32
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792967498;
-	b=r28xxW2mO4kx86d50jJtBsLMjcNa+AvRgb5y4tFp9ojQc1rIeVx+DA3+viFM24eknZq/
-	 ojn7Cf0qDHHt0lKHoFbkl0IGqOQGtyvp8Bume/CIz8GBT5ZqS+xOqRD7wXLqa9saFwBjV
-	 IXHTw+xZuxoqdnAaXEZueqQQf2HcIhbLdQ5YL7Cb2AuI9FLmpaLbpfqqPcLS4wVffYnlI
-	 iYXruybVbqTCNhZxImfYM5GI9GYTyMkLSjex+nuRQaBa86YBWyHizm6NSt9CCs3XZ/oUS
-	 BbeWmBLQub2WmlahWhLYHU8wrlJQoLLmfjcN4ClJdA7FfZCy3hg9EU8XnUSL3i/atpg==
+	t=1792968006;
+	b=eg9JhcPuVv21phBUQQPzKid3sXmgjyM3+TGm4ULeUNQbBzFh5z8nxykrZmYk0cVqqNqc
+	 awjTzDWseubhUnrKotEDAxL/XE2fn4KtfqeprdMG5l0HwdFb2sagjJYO6Pk1EOSeiRCQ5
+	 nwOqmdB6AnmMFOVMR7beIdw8Lr3ufDxgeSs60iJ1VI0HNsVzH/1aPbrIPJ91bzEsSiVNr
+	 Y3YtqqhqezGHNT1CrxVvXbymd+iLF14lbRmdOQpiaXse5q5ghvFzrzrjM484RDcIOlbnM
+	 sYQ6OjaiGnTx6QOmafHwX0rUrKjKam8FKFzNE0BrL1gMD0A3v0isG1wUBMS7tRo7A0g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792967498;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792968006;
 	h=DMARC-Filter:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
 	 References:Autocrypt:Content-Type:Content-Transfer-Encoding:
 	 MIME-Version;
-	bh=kvsFufnN8TCy3hzIcRjlITrtPYeicM3sDfMk6fgP6A8=;
-	b=oiDROsF9nmo/JFW2CxRjYTHTx0Isyv2sgfp45kvjdDTTAaHtdxtvZAKivuj3EMoCllkt
-	 oK/d34eoq320yW48Cx+I3tAQd1G5bnBINVPtvPAd0AWpnLGBSjqHO2i5EqQIpOstMee9H
-	 qEZD7flZCnLRqXjhRMLNQS6CfIpsIP9P3EVEmhL6GXQJwtzSg7tkhQMXbdw44lwdP5srt
-	 u69r4m1IHPhRr5m7QgQPvmjP/2OVPzvyLPBS6KPBHkgZKZ4sA6HsIE5GGE50kd4A7efLI
-	 Ix6T4RYp4VlcCeYxgUtbMn24adfcrYWMZW4z9BELOxMvCLezXyG5AxyBsw6PH/xcWRg==
+	bh=BJFlHkjzZQkuZb2sYnE2Rmc5JG9Cgv9xdtkzLLy01dM=;
+	b=Bb7sSQDgXflGC4tBBxADBSJWNEvSz0Xm+YdNGA4DuVPdnkriezjPtZR+Xm3E/Cr27o7F
+	 r/yTOQXP//Qtc6fYWk+Am/7/eb9qNYkpc09jAjbBHwx8Dw8veKw7zF1KB0CZzIrgPMESB
+	 tz4TpA+1TxB5tMP8P1x6cBsPf0a35UiynICqLX1XgDF9EVTeJLwJzKIXmWOryCOrQHJ6i
+	 M4JPA1d7SEw0Bt5XCh56/khUKvyCi0Qjl81NNhoBuYgLnJOPuuSXSmp7OYbEBy0y9Bq3i
+	 LKEUqUt2WUti9sTLTxzm8ZnfsofU49fx634KoXwXqIHcivAh58UfFiT/zQ5C5iTvpkw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=crapouillou.net;
 	spf=pass smtp.mailfrom=crapouillou.net;
@@ -25,22 +25,20 @@ Received: from aposti.net (aposti.net [185.119.170.32])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BD0606A31A;
-	Sun, 25 Oct 2026 22:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5BD0606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F09F606A31A;
+	Sun, 25 Oct 2026 22:40:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1F09F606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-Message-ID: <6bb2bc39075c38e352be9b71b0683796c893f000.camel@crapouillou.net>
-Subject: Re: [PATCH 2/2] pinctrl: ingenic: Add an X1600 group for 18-bit RGB
- on the top lines
+Message-ID: <d14f055275701e9ff4cb024a9d2389de4a0014ef.camel@crapouillou.net>
+Subject: Re: [PATCH] pinctrl: ingenic: Add the X1600's 32 kHz clock output
 From: Paul Cercueil <paul@crapouillou.net>
 To: Olivier Louvignes <olivier@mgcrea.io>, Linus Walleij <linusw@kernel.org>
 Cc: linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Date: Sun, 25 Oct 2026 23:31:32 +0100
-In-Reply-To: <20261023204207.48277-2-olivier@mgcrea.io>
-References: <20261023204207.48277-1-olivier@mgcrea.io>
-	 <20261023204207.48277-2-olivier@mgcrea.io>
+Date: Sun, 25 Oct 2026 23:39:59 +0100
+In-Reply-To: <20261024051639.67806-1-olivier@mgcrea.io>
+References: <20261024051639.67806-1-olivier@mgcrea.io>
 Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
  keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
  LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
@@ -68,20 +66,25 @@ MIME-Version: 1.0
 
 Hi Olivier,
 
-Le vendredi 23 octobre 2026 =C3=A0 22:42 +0200, Olivier Louvignes a =C3=A9c=
-rit=C2=A0:
-> Boards that wire an 18-bit panel to the six most significant lines of
-> each colour leave PA0, PA1, PA8, PA9, PA16 and PA17 free for other
-> uses,
-> which the cumulative lcd-16bit and lcd-18bit groups would take. Add
-> "lcd-18bit-msb" for that wiring.
+Le samedi 24 octobre 2026 =C3=A0 07:16 +0200, Olivier Louvignes a =C3=A9cri=
+t=C2=A0:
+> PC26's function 0 puts out the RTC's 32 kHz clock. The vendor device
+> tree calls that pin setting "rtc32k-enable" (function 5 is its
+> "rtc32k-disable"). Add an "rtc32k" group and function for it.
 >=20
-> Used on a HiBy R1, which drives its panel this way and uses PA0, PA1,
-> PA16 and PA17 as GPIOs.
+> Used on a HiBy R1, whose Bluetooth chip takes it as its sleep clock:
+> on
+> a cold boot without it the chip does not answer its reset, with it
+> the
+> chip comes up. The clock on the pin was not measured.
 >=20
 > Signed-off-by: Olivier Louvignes <olivier@mgcrea.io>
 
-Ugh, what a weird setup...
+You're making two patch series in parallel to the same driver, that
+both add pin groups for the JZ4760? Next time consider grouping them
+into the same series.
+
+Anyway, this patch looks OK.
 
 Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 
@@ -89,52 +92,52 @@ Cheers,
 -Paul
 
 > ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 14 +++++++++++++-
-> =C2=A01 file changed, 13 insertions(+), 1 deletion(-)
+> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 4 ++++
+> =C2=A01 file changed, 4 insertions(+)
 >=20
 > diff --git a/drivers/pinctrl/pinctrl-ingenic.c
 > b/drivers/pinctrl/pinctrl-ingenic.c
-> index 28e7f1852054..8c424db27fd5 100644
+> index 1aa6a6dc1209..ac6e2a152bdd 100644
 > --- a/drivers/pinctrl/pinctrl-ingenic.c
 > +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -2442,6 +2442,17 @@ static int x1600_lcd_24bit_pins[] =3D {
-> =C2=A0	0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+> @@ -2452,6 +2452,7 @@ static int x1600_pwm_pwm6_b20_pins[] =3D { 0x34,
+> };
+> =C2=A0static int x1600_pwm_pwm7_b10_pins[] =3D { 0x2a, };
+> =C2=A0static int x1600_pwm_pwm7_b21_pins[] =3D { 0x35, };
+> =C2=A0
+> +static int x1600_rtc32k_pins[] =3D { 0x5a, };
+> =C2=A0static int x1600_mac_pins[] =3D {
+> =C2=A0	0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
+> =C2=A0};
+> @@ -2511,6 +2512,7 @@ static const struct group_desc x1600_groups[] =3D
+> {
+> =C2=A0	INGENIC_PIN_GROUP("pwm7-b10", x1600_pwm_pwm7_b10, 1),
+> =C2=A0	INGENIC_PIN_GROUP("pwm7-b21", x1600_pwm_pwm7_b21, 2),
+> =C2=A0	INGENIC_PIN_GROUP("mac", x1600_mac, 1),
+> +	INGENIC_PIN_GROUP("rtc32k", x1600_rtc32k, 0),
 > =C2=A0};
 > =C2=A0
-> +/*
-> + * 18-bit RGB on the six most significant lines of each colour of
-> the 24-bit
-> + * bus, with the clock, data enable and syncs.
-> + */
-> +static int x1600_lcd_18bit_msb_pins[] =3D {
-> +	0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-> +	0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-> +	0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-> +	0x18, 0x19, 0x1a, 0x1b,
-> +};
-> +
-> =C2=A0static int x1600_pwm_pwm0_pins[] =3D { 0x40, };
-> =C2=A0static int x1600_pwm_pwm1_pins[] =3D { 0x41, };
-> =C2=A0static int x1600_pwm_pwm2_pins[] =3D { 0x42, };
-> @@ -2503,6 +2514,7 @@ static const struct group_desc x1600_groups[] =3D
-> {
-> =C2=A0	INGENIC_PIN_GROUP("lcd-16bit", x1600_lcd_16bit, 0),
-> =C2=A0	INGENIC_PIN_GROUP("lcd-18bit", x1600_lcd_18bit, 0),
-> =C2=A0	INGENIC_PIN_GROUP("lcd-24bit", x1600_lcd_24bit, 0),
-> +	INGENIC_PIN_GROUP("lcd-18bit-msb", x1600_lcd_18bit_msb, 0),
-> =C2=A0	INGENIC_PIN_GROUP("pwm0", x1600_pwm_pwm0, 0),
-> =C2=A0	INGENIC_PIN_GROUP("pwm1", x1600_pwm_pwm1, 0),
-> =C2=A0	INGENIC_PIN_GROUP("pwm2", x1600_pwm_pwm2, 0),
-> @@ -2549,7 +2561,7 @@ static const char * const x1600_i2s_groups[] =3D
-> {
-> =C2=A0static const char * const x1600_cim_groups[] =3D { "cim-data", };
+> =C2=A0static const char * const x1600_uart0_groups[] =3D { "uart0-data",
+> "uart0-hwflow", };
+> @@ -2557,6 +2559,7 @@ static const char * const x1600_pwm6_groups[] =3D
+> { "pwm6-b9", "pwm6-b20", };
+> =C2=A0static const char * const x1600_pwm7_groups[] =3D { "pwm7-b10", "pw=
+m7-
+> b21", };
 > =C2=A0
-> =C2=A0static const char * const x1600_lcd_groups[] =3D { "slcd-8bit", "sl=
-cd-
-> 16bit",
-> -	"lcd-16bit", "lcd-18bit", "lcd-24bit", "lcd-no-pins",
-> +	"lcd-16bit", "lcd-18bit", "lcd-24bit", "lcd-18bit-msb",
-> "lcd-no-pins",
+> =C2=A0static const char * const x1600_mac_groups[] =3D { "mac", };
+> +static const char * const x1600_rtc32k_groups[] =3D { "rtc32k", };
+> =C2=A0
+> =C2=A0static const struct pinfunction x1600_functions[] =3D {
+> =C2=A0	INGENIC_PIN_FUNCTION("uart0", x1600_uart0),
+> @@ -2581,6 +2584,7 @@ static const struct pinfunction
+> x1600_functions[] =3D {
+> =C2=A0	INGENIC_PIN_FUNCTION("pwm6", x1600_pwm6),
+> =C2=A0	INGENIC_PIN_FUNCTION("pwm7", x1600_pwm7),
+> =C2=A0	INGENIC_PIN_FUNCTION("mac", x1600_mac),
+> +	INGENIC_PIN_FUNCTION("rtc32k", x1600_rtc32k),
 > =C2=A0};
 > =C2=A0
-> =C2=A0static const char * const x1600_pwm0_groups[] =3D { "pwm0", };
+> =C2=A0static const struct ingenic_chip_info x1600_chip_info =3D {
+>=20
+> base-commit: f33a24cc012d34f25bb9942681bd478a1757b806
