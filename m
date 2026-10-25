@@ -1,97 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792936704;
-	b=PtiNP835rPIczJwhru+wCq+q9aqnIF7Ex8s5/eAX843F6k7l0V+o4WTbMQKvsKq3uoUM
-	 +KvoaTEhrMTKHO/wsycsei3zgs6xfPK5CHSrpJwA5YgkPs8HpvdhWv64ttrIN1i8iZrbz
-	 5O9dr+UXLSXmd3cYANeu8JzdNVdqhQy1qPq3gYYPj2D6j9j/93RqBEXRV5L5QG+WEr4ln
-	 +GXNl5jH7H1oaPozt1sTwYl5O2QgViZRp13td/YCqQyu3lDq7hWGtyeM/c/0PW2/myg/7
-	 0Q6SDXKynhzyJ8JYCVK5dGUK48obf6SPCQvtBKs7pU4Ihc9euAxUim2z5fVZwd8F9UA==
+	t=1792936706;
+	b=SRtzN8fUWxR3DYVwfMk13SzQG/c5pMoJ19U/tB9J8L0sqOPkxwHDbOmKglZ1B6abT7h0
+	 WY/JV6NJMiPAwE4+yPS4h22ZAlbRjTR0XNywXzfpChWQYRIUbLzX0dOMoxh6Cl9646eia
+	 2qO3RmPeIR9oENonCj1xkF+ZqJPCh50WfkkHcqQuP1c8iG+Osq+msV3+FWqHz402YT9RX
+	 I+yODohfJxUFKkIwKu/4ltHku6l7yL3PrDaesfGq1GF2k/rxeUyTDjgppzJqE9+eGjhtr
+	 KKh0krW7QRjs+a0BCqm/P66IMEp/U4Ti1wWgMbwh9/tNYLiumn5uRhASFDW8IfEsasA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792936704;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792936706;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=OmYTsZXrMj8ReAJU3eWsqneDCYu2+oiuB4uylitXZlM=;
-	b=Gx6tJSfvclcm5NOCMZi4ckU1OrbvX0blcltAW5EBviVJWBjKJvp/jioACzyvqvjJjJXt
-	 upLMqGkJMTfiUu4Na63ZjE06eQ5kbckRHvF5SopVJlsciQAsFKONfoUyyxhJ7Ng/qa1Y5
-	 asWfQUEojiP+M5e0MPzFX0oxouotPjRaFEaTnSdrotL2dJs+bJJX5MYJXFqWXJKRrEHIg
-	 ItOJYUlyfH3hgWfTxVtx0Air/7wToi2VixeJ8F3eeQ0cY1GW0VrJcc5zckMg+0A1WiAx5
-	 FlD2BEuv1WrWGRv2jSslH18n8qQvGH7XCvQSWHcEcxZF0eL40+vIZQEY4iZv85kLFOg==
+	bh=75/x5gew/kL/KutTpGg3fvui7cvgM1uvPLVY0+jqTgg=;
+	b=02WBwT2il+2QRUuClyJeuw798DA1etKtLxIcs3IOQmZ6Rz93eWDvPHzeoDuqXm3mYcUH
+	 zdRUCbyDEEDOvWhtfGqqgETGRNVePKDUVLEiR8TKeHZ9Tw4Sp0SwmW0Z3jQa8c5Vl+A+B
+	 C/aYDmAnHPVuSd3tUD2yJJqS185h7gva6dDnnunFqTeYdqvsT/NsbqDEvSj+UNeQpOx60
+	 k04LzFaK5ZcnUFxep91YZencO5KwtNaLD07DumjwWiMki+bYcWEK9xXpbkbczB1Emj2IG
+	 Ej2NF4BzkPnOR4wou3YzcEzlA2qnNdGANmSB9xggr/dXr5VpcTf3NMUgcqLCcvzdj6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=IYD++605;
-	arc=none smtp.remote-ip=209.85.221.43
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=oqLF6mqt;
+	arc=none smtp.remote-ip=209.85.221.53
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181AE606A31D
-	for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 13:58:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 181AE606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDDD606A31E
+	for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 13:58:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4CDDD606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=IYD++605
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48e4831c028so575130f8f.0
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 06:58:23 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=oqLF6mqt
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-48dfdd0678dso1629412f8f.0
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 06:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792936702; x=1793541502; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792936705; x=1793541505; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=OmYTsZXrMj8ReAJU3eWsqneDCYu2+oiuB4uylitXZlM=;
-        b=IYD++605dYoR3p9j52HLdR2zq6SGcjNmCJRZ4AJzlFz/vRe+BzFwQSwd+F6PJPsDwu
-         RSx8lTsYfggPu30+CbdRFzzv/uU62VklN9yGoUFUYjFHs7Hl4MqqJ+8hb4nZEQ4iKbHO
-         9Xt+afvevdi3btEPpMiDD3PHU8N0FQ8SjMWG02l4MUuCwzyQSz/mdN67RKKK3pNqzFkh
-         s1aENc5qpIB7mk+t86HWY6A0vDVTD1PYDJiKtK6PMseI8gFbR8pIz1qfilZnQGSHMdFS
-         Cl2HOWGM2ZWb8K7z2+65qorwxe1JWcbk88NvOymMLVOlqCsSbKpklY7wO1gKEA85ZPtU
-         2rkQ==
+        bh=75/x5gew/kL/KutTpGg3fvui7cvgM1uvPLVY0+jqTgg=;
+        b=oqLF6mqtZX/wLfOVtnb3bMuXtECCsqjc7qiCPIAXSOwGIBXO4XzwzWsJvbfPiC0PIb
+         Zg4wofMNHNcoS8FvRsG2haIgdsD/b+GaYZR6PcfyCRNRdkvDj0nIDOWwCD1PctuuNs0T
+         tmXq4HL+sIjEa8a+KdlW3jVhiYfbQtOlhT3NTFlKEiB0DIR/zpaEFYGigG0mSOpkHIyY
+         2Qo9nNSnPO0O+J3GdNi3bJw/R1m5wMLJmZroUkard/bEhK0RumpNKew8/kVXaa2WIMSh
+         T3nFkn2BqCElYS4d+N+cTRLjnt9kSqfaFlUQU0TkFNE597VOYf3DZSC4TPZFQF49TgNc
+         Arog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792936702; x=1793541502;
+        d=1e100.net; s=20260707; t=1792936705; x=1793541505;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=OmYTsZXrMj8ReAJU3eWsqneDCYu2+oiuB4uylitXZlM=;
-        b=Yx7DWw+xS8QqUt2/nizenQpH61Hs4RwLC2M6iQTJY4hUQ7xaJtrrvTyiJCjxxqwvq0
-         WVcanXcinXsOhbDtWBa1lBbqrITMlypGSTY4ANib1WJpKPIltJthHcvCgiLYpIuH3mCe
-         18ITzewVbIeCqtAa24mxkhW2j59kpZ2daP70t2c51K4gKjV9otADhTz4CiIoMO9IePpm
-         p9iV/QaV7420p/AIQzOYvkN5ixv2nRgbv48ZoiSWaxqwR4K1yrM4YL5chgm1WJE4WFXS
-         ycddhD46o4X1aMZlIliMDTsn1UEYynYPoqmbjwKZnX6oArclQgX3mRbc/Y7gy8Y5iRQj
-         0kZQ==
-X-Forwarded-Encrypted: i=1; AKwUvBw5q80/p3rDJslbhcRXckO26qrz4tIEP0RgkqHYpwc4foJ3jQW5VYZIUHRk3QDolFR5GpU+L+hZa7N9@vger.kernel.org
-X-Gm-Message-State: AFq9FYJzwbLv7fP+zqTTERV9gPvB+Zv0yipUrB8bQzbgKBYmyerxKBAK
-	tWhWiaSAH+AyIkcHyYPvX2M4TiVnxLKIv4VX5ho4kgqpOUBJRkW8H9CU
-X-Gm-Gg: AYBFou0VS+2IxTKwe2ZtFgpkTd48750T22Tw8vzGpAuOyQMOawpkVD6eabYjMu1ThLd
-	Zl0sM43QwD/3vApYuMUTCYWFTMLaKzzZ7pjbnQZVvckQqb7Ga9AM+ZtKw3cdhQvpmTJyKl3KObT
-	p7SCC9HX5sFwr3Viy0T/RHTnXBe3LAUjuZbV9Bgs56cif/01NC56JrRZ5pjTIuGKQcvjrkxSlXb
-	tTLJROMoZCrMluxDtpGMt9Y8MHaFw4aWu/kZ1J7GdHUKeCcQrSnbOxL0UF2hvK0j6z+dnblKbTg
-	1y6VNX/ZX6h0FCLhcDpqH3pNEA/NXh1GDg2VGFSc1eB23koLcIVkSbaI2NpBZRKFGrlZC/XCXde
-	LbFuJqBttKib7q3qlqwX8AwEO3aCurVqFZtTFFSUank8Bf569cOhGPXJv4qhQpzMosq8b9uEYR6
-	ZYP9dXhMihV5ya2LRhnTJJp4n67RXqlO5w8pELhVf8ZQYGlsL5q++fSrPVNSO0UALGzg0fGkX3e
-	7IEpEaFR2YyqN9MJvI1xe++8YuqUujse0rWy3zE4mB5dfjHVBKsKB2eG5BHXm0Rtz9+NcyVrUqW
-	Qy9nae/jRilB7A==
-X-Received: by 2002:a05:6000:46d9:b0:48d:f498:91e9 with SMTP id ffacd0b85a97d-48e3eb615a0mr4599278f8f.9.1792936702426;
-        Sun, 25 Oct 2026 06:58:22 -0700 (PDT)
+        bh=75/x5gew/kL/KutTpGg3fvui7cvgM1uvPLVY0+jqTgg=;
+        b=R7roVSW1iju2aTOdiVXIFUdP/72+zw3PLjZLfBhRC7tek82aWMlaHLICAqOAIR21WU
+         N7VAgMKqCfaWmsGO26hCX2q8MuD3sjtTvp96fngx7npyGfcg4WLVKh7KedkMMFllsmMV
+         UmqAWKUjqYDluld9VtK0558YChLQI5cp9JLoat/s1Blr/8cAvE8Wg3jX5hm/p/+iSaXa
+         0nEgfc6CXfcsHiRy3qvwyBWop450Ky7SIGzr2TWhwG4+dkAXjHLCN5UG/SttKtYKiF02
+         p25LKKW7JaeiVQXeT1kqsLqbRVFkzRSrhLW3Foa4h9eRw+cTHxG+izgsrPELy6t+Vcwh
+         25+Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwXQXtl6J3mvnGM9K/tCmYfmwiZfHzPACtVZVUXpbogwoTlyGshRHZtz83TDFRlqXaFAEnS/OdCo4Xb@vger.kernel.org
+X-Gm-Message-State: AFq9FYLEieTzNTpvPg1ZUQwYpWKrDatafnHVmwApO/4pDd/VJKpcRhFS
+	TpFZ2CRVRZZ8Th0SR8ZmH6eBasjzVtyYNVYB57XBz1MrVEI/SOYTMQuP
+X-Gm-Gg: AYBFou2FQ6Tips98V/mtvudlCthsx5pw1l2pYSCliDWPuZNDebTSAk2abekWDQvdD/r
+	pBX1oXl7IULWCQMfSxoK5xKLoraZXgbxXGwaXhtZCv3oQjyNox2woWwQTpUKcTqocpeqb3Gh1pw
+	NmNdI5fovOTlRBm8QGyLS7AT8DDKx05IcAWpFCRYEgDJLCXkyqfyugT5DxjtqmuaMF+2kPE+tM7
+	2+aCHdyxovI+Mzadk3FXkxwfxz1+1j8SwXkJD6Yfi+Kw0sP02GisI6UrbfRfABNT6hsgGOHPj8o
+	ZH9poblhV/4Tm+5E45tG3Ul2mWLNFrW6QyGymey/KIMGaTL2do1CJ5gkDBQx2fpfYZPG4SLZVF4
+	r2N0vB+ryZB3Rd1gJ3q1qEr49194ijAyuOoNVcW+rbrf77I/eiVVr+JluD7+usUFRe1vZgOhjAF
+	YScYMF1d8FL5OylTN76hwVSc5GBOjB0XNxNbPCeRVpxlgnC6uEaSzU7eBCJDGog7tir5FszS5C5
+	FpguUP4Hrsk8qJvF78G4S/mF7uIakWQu3jWi6wuWeJwljRu1oGCRMPNdYh5VwkqgsgRdoxxmtXa
+	e7z20hRQAJk69A==
+X-Received: by 2002:adf:e004:0:10b0:487:27f9:834 with SMTP id ffacd0b85a97d-48e3ebb1168mr4784693f8f.41.1792936704729;
+        Sun, 25 Oct 2026 06:58:24 -0700 (PDT)
 Received: from debian (ip-78-137-176-146.broadband.digiweb.ie. [78.137.176.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e4806e208sm5663415f8f.40.2026.10.25.06.58.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e4806e208sm5663415f8f.40.2026.10.25.06.58.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2026 06:58:21 -0700 (PDT)
+        Sun, 25 Oct 2026 06:58:24 -0700 (PDT)
 From: Pablo Mazzini <pmazzini@gmail.com>
 To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
 	Samuel Holland <samuel@sholland.org>
 Cc: Pablo Mazzini <pmazzini@gmail.com>,
 	Andre Przywara <andre.przywara@arm.com>,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH v2 1/3] pinctrl: sunxi: dt: number the IRQ banks from the first one that has IRQs
-Date: Sun, 25 Oct 2026 13:57:43 +0000
-Message-ID: <20261025135745.102970-2-pmazzini@gmail.com>
+Subject: [PATCH v2 2/3] dt-bindings: pinctrl: sun55i-a523: one interrupt per implemented bank
+Date: Sun, 25 Oct 2026 13:57:44 +0000
+Message-ID: <20261025135745.102970-3-pmazzini@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261025135745.102970-1-pmazzini@gmail.com>
 References: <20261025135745.102970-1-pmazzini@gmail.com>
@@ -106,83 +110,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-prepare_function_table() numbers the IRQ banks from PA, even when PA
-has none. The static drivers number only the banks that have IRQs, and
-use irq_bank_map when the IRQ registers do not start at bank 0.
+The A523 and A733 have no PA pins, the A523's PA IRQ bank is not
+implemented, and the driver no longer counts it. Go back to one
+interrupt, and one debounce period, per implemented bank: 10 for both.
 
-Do the same here, and give the A523 and A733, whose IRQ registers
-start at PB, the map they need. This also fixes PK on both, which was
-numbered 10 and written past the end of irq_array.
+This reverts commit 11f25ac56372 ("dt-bindings: pinctrl: sun55i-a523:
+increase IRQ banks number").
 
 Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
 ---
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c | 2 +-
- drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c | 5 ++++-
- drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c    | 8 +++-----
- 3 files changed, 8 insertions(+), 7 deletions(-)
+ .../bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml   | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
-index 801f62abc93d..940942bf6f95 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
-@@ -17,7 +17,7 @@ static const u8 a523_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =
- /*	  PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
- 	{  0, 15, 17, 24, 16,  7, 15, 20, 17, 28, 24 };
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
+index d7d0ba32ced4..c04b04acf6e4 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
+@@ -36,7 +36,7 @@ properties:
  
--static const unsigned int a523_irq_bank_map[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-+static const unsigned int a523_irq_bank_map[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+   interrupts:
+     minItems: 2
+-    maxItems: 11
++    maxItems: 10
+     description:
+       One interrupt per external interrupt bank supported on the
+       controller, sorted by bank number ascending order.
+@@ -63,7 +63,7 @@ properties:
+       bank found in the controller
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+     minItems: 2
+-    maxItems: 11
++    maxItems: 10
  
- static const u8 a523_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
- /*	  PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-index ca82f08a3a65..3ebe926a1bc6 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-@@ -21,8 +21,11 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
- /*	  PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
- 	{  0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14};
+ patternProperties:
+   # It's pretty scary, but the basic idea is that:
+@@ -133,8 +133,8 @@ allOf:
+     then:
+       properties:
+         interrupts:
+-          minItems: 11
+-          maxItems: 11
++          minItems: 10
++          maxItems: 10
  
-+static const unsigned int a733_irq_bank_map[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-+
- static struct sunxi_pinctrl_desc a733_pinctrl_data = {
--	.irq_banks = 10,
-+	.irq_banks = ARRAY_SIZE(a733_irq_bank_map),
-+	.irq_bank_map = a733_irq_bank_map,
- 	.irq_read_needs_mux = true,
- 	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
- };
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-index 50a16f3bd131..9c5eb21a86a5 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-@@ -208,7 +208,7 @@ static int prepare_function_table(struct device *dev, struct device_node *pnode,
- 	 * The extra functions will be filled in later.
- 	 */
- 	irq_bank = 0;
--	last_bank = 0;
-+	last_bank = -1;
- 	for (i = 0; i < npins; i++) {
- 		struct sunxi_desc_pin *pin = &pins[i];
- 		int bank = (pin->pin.number - pin_base) / PINS_PER_BANK;
-@@ -221,16 +221,14 @@ static int prepare_function_table(struct device *dev, struct device_node *pnode,
- 		func[1].muxval = 1;
- 
- 		if (irq_mux) {
--			if (bank > last_bank)
-+			if (last_bank >= 0 && bank > last_bank)
- 				irq_bank++;
- 			func[lastfunc].muxval = irq_mux;
- 			func[lastfunc].irqbank = irq_bank;
- 			func[lastfunc].irqnum = pin->pin.number % PINS_PER_BANK;
- 			func[lastfunc].name = "irq";
--		}
--
--		if (bank > last_bank)
- 			last_bank = bank;
-+		}
- 
- 		pin->functions = func;
- 
+   - if:
+       properties:
 -- 
 2.52.0
 
