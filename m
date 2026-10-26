@@ -1,63 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793028092;
-	b=tFanCdWOXWvq5Q/f136KHuNNooL/ZEonGA3LoJMNa7H/70h85MvR8kC4kJNCkcAnywSs
-	 FKY/CCqTVZPnoW+35DnqwJP9XgKHp6jfT4jKyzExxM3KA67yRwaYE4C6Nz1GPJWitLpSF
-	 UIhdSs/NI4oRRxJEoVAH7gMQntXroVYgOwJazik2MbE+A/kimeMJkjD4ftoCQII4Cb1TO
-	 ReNMemQeNNWebsoG/LYoZGgg+26C2u+Ei5a/0B7wRWr9brCrTsxMu76DvMrVzFKLvvmEZ
-	 3eIQQ8QXEz8mWBOEkq3mrw1f0+XGwBjxqKyB2pRGGowsuXnHrSeewsPu3L3Dzt2+vDg==
+	t=1793029150;
+	b=dnUtFABi9Gcn4W1TIRl8hkJSMimd+CliBl3p8vWDZrzdU/l9IebkcHen6jhLWd3vXI2H
+	 c+baLZJSKISlPwTQ401UnTbaNM38efQLAd1aokXIUDEWA6uVPRj2nEF1cQP9QQWq8GyGG
+	 s6riP9/f20e3ZTzGdNSDU7rbShA6LPaDAw/i9JA+yB+TyL+RPUlzVFFCpnqW5H/tY1CUr
+	 dX/7JN0AgsZQtt0oCmS8635Mj15O5I3+311l7JVBe058MiKN5GPsIxE5Zilmgy/cY62Pm
+	 I1ibxYq1+XwTnADMFfwJXqhp1nUzt8UHc9JEZRScUVB/MPTkavRDzBZ7gmTo9oo0xxQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793028092;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
-	 X-Originating-IP:X-CM-SenderInfo;
-	bh=NgUZou+QAUenodbqqsNTHG+MAZHRcJXPTQZv1JbHVys=;
-	b=KjMVvh+zlRiztdj8G6JL7IgdvxlaS4NMxKF+IC5DzP2ioA+lTAfvQnfkcJ49tNIlNFIz
-	 7+Dc9JjmEkAtG7cRC3wo6qKjbxo3JObh52txomrmx+Sg6pujVXtD9pnBUsShpkt8aXzER
-	 NdaBEJnOLmPDQDmZIs2Ef7lskjQo5AI8P1ORbloVecjE03tk8IpmidNIN3fRbBZOhRQUw
-	 Id19h2uAtlcwcUHizRRfDer2ILvxe0+UFsjvZ8wxu7dorPhCP3F2GgP6XW7ecPYtZa6HF
-	 Yx1Lh+qSi9qLm7cNVtZs0HzxtoN7TlO//ZC0kyklRI5/YWQ18gxEk7ummkEpl1OwTFw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793029150;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=1pPQVcZTHWueWe6UVkUmz1Urg+zAZiJ3wpca+tOiLAo=;
+	b=GoP65ZuJdhBY3awenDjdlsu8elekOnA0LxPGe42n8KaZk+eHdn1OgOdGXCPacK7zjxTJ
+	 pMDma8Q09nPTF+ZNbJyB8PB38aa97/yIcONgtCDwke+VUw4c6TjA8sQiAem+49i1WAMvY
+	 bllnl5ICbKy0R/EfWvvbLxPNiY6g6wOsilMNN5WltP6qtvxVcUE8GPb3dZvHofQw3rde0
+	 fyg4/2WaC8poaPmFd5EHXNKytP4kjYV3pMdN0K+yRvL9MisH7D4+/DRDb4cwR6Rv0Y8Yv
+	 xtAADJAzpFb68gE/dgw1vCmZfir6YxVjJtf+0A8Tjepg80i6qCsaUxkSnjFrs75zt1A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Zdp1usVO;
-	arc=none smtp.remote-ip=220.197.31.4
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bfYrpB1M;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A55606A31A;
-	Mon, 26 Oct 2026 15:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B4A55606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73160606A31A;
+	Mon, 26 Oct 2026 15:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Zdp1usVO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ng
-	UZou+QAUenodbqqsNTHG+MAZHRcJXPTQZv1JbHVys=; b=Zdp1usVO+wA1HyRZky
-	ELohWUrb/FJ+Wz0rd8BNcMAJLR2AJTCopWLgYZjKLUQrhK2qtFJIp8OBGc82TKSJ
-	XJDf45LKpo/wjE6WreuMLkMg14/R/8xSMf45Cc6Vrixj9BJddKRvmlWXk86cUPr7
-	iHtijdSLB3Vlf6BkvdfoVPlxU=
-Received: from SYPC (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDXXx3Ub99q1qL2Cw--.8607S2;
-	Mon, 26 Oct 2026 23:20:52 +0800 (CST)
-From: Yang Siyuan <hsyysy@163.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: sunxi: request the per-bank supply optionally
-Date: Mon, 26 Oct 2026 23:20:27 +0800
-Message-ID: <20261026152027.1417178-1-hsyysy@163.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261026144751.1392715-1-hsyysy@163.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bfYrpB1M
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335211F01825;
+	Mon, 26 Oct 2026 15:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793029150;
+	bh=1pPQVcZTHWueWe6UVkUmz1Urg+zAZiJ3wpca+tOiLAo=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=bfYrpB1M+DRks3Y8TuAQ/TZBeFQwMmDkQr3MCOwjtAoBHHtj9de3xddgttDvwpv99
+	 3bItCsfDgpL8IBEbEYLTBI71OfbXDmqIVKniwZwEZYtyJD9Vhlzy6xJDptSQsVbWJc
+	 E8Q1hL3N5z2lEUwGfBu9RH+1I4wEP32KgWQImw41phRpyuKKysPPqNOQO3G1L6v7cL
+	 yN9Jti9mYwT/a17d/TSzmpJWWU3AMmmljZmrCTASSAlxYdAc5ixp3+kAYx+qnV4N6i
+	 IXxqdL8g/qLbE3H8XGwEbxfLoSzVoGccLjRJZGhmNH+9ruZQiKyt0QA64iKsMighDM
+	 w+mNb+9tbGY4Q==
+Message-ID: <sashiko-outbox-185451@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] pinctrl: sunxi: request the per-bank supply
+ optionally
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Yang Siyuan" <hsyysy@163.com>
+Cc: linux-gpio@vger.kernel.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <20261026152027.1417178-1-hsyysy@163.com>
 References: <20261026144751.1392715-1-hsyysy@163.com>
+ <20261026152027.1417178-1-hsyysy@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 26 Oct 2026 15:39:09 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,85 +60,134 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXXx3Ub99q1qL2Cw--.8607S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCFW7AF43XF4fAr4UAFyftFb_yoW5Xr4kpr
-	sxXr1akr4kAFyfKw47uw1xtr1fuan7Ja43CFy0g34rXFs8AFs3Xw1akF4YkFWkGr4kXr4Y
-	yryDZFyxGF45Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UH7K3UUUUU=
-X-CM-SenderInfo: 5kv152r16rljoofrz/xtbC7RWj12rfb9XufgAA3T
 
-The per-bank "vcc-pX" supplies are optional in the device tree: the
-binding documents them, but notes that many boards do not describe them.
-sunxi_pmx_request() uses regulator_get() anyway, so the regulator core
-falls back to a dummy regulator and warns for every bank that has no
-supply:
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] pinctrl: sunxi: unbalanced bank regulator refcount in sunxi_pmx_re=
+quest()
+--
 
-  sun50i-h616-r-pinctrl 7022000.pinctrl: supply vcc-pl not found, using
-  dummy regulator
+commit 387a0217944495d51d6191636af797bf5c7e5da5
+Author: Yang Siyuan <hsyysy@163.com>
 
-The H616 R_PIO is such a controller, and its PL0/PL1 pins drive the
-R_I2C bus, so every H616 board hits the warning during boot.
+pinctrl: sunxi: request the per-bank supply optionally
 
-Use regulator_get_optional() instead.  A bank supply that is described
-in the device tree is still acquired and enabled, as it powers the
-physical VCC-Px rail, but one that is absent is skipped without a
-warning.
+This commit switches sunxi_pmx_request() from regulator_get() to
+regulator_get_optional() so that banks without a per-bank supply in the
+device tree do not trigger a dummy regulator warning. When
+regulator_get_optional() returns -ENODEV, sunxi_pmx_request() returns 0
+with s_reg->regulator left as NULL, and sunxi_pmx_free() skips cleanup when
+s_reg->regulator is NULL.
 
-Signed-off-by: Yang Siyuan <hsyysy@163.com>
----
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
+i/pinctrl-sunxi.c
+> index 31cd142ce0f79..f6c48a287a0e4 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -925,11 +925,19 @@ static int sunxi_pmx_request(struct pinctrl_dev *pc=
+tldev, unsigned offset)
+>  	}
+> =20
+>  	snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
+> -	reg =3D regulator_get(pctl->dev, supply);
+> -	if (IS_ERR(reg))
+> +	reg =3D regulator_get_optional(pctl->dev, supply);
+> +	if (IS_ERR(reg)) {
+> +		/*
+> +		 * The per-bank supply is optional: boards that do not
+> +		 * describe it simply have no regulator to manage.
+> +		 */
+> +		if (PTR_ERR(reg) =3D=3D -ENODEV)
+> +			return 0;
+> +
+>  		return dev_err_probe(pctl->dev, PTR_ERR(reg),
+>  				     "Couldn't get bank P%c regulator\n",
+>  				     'A' + bank);
+> +	}
+> =20
+>  	ret =3D regulator_enable(reg);
+>  	if (ret) {
+> @@ -959,6 +967,10 @@ static int sunxi_pmx_free(struct pinctrl_dev *pctlde=
+v, unsigned offset)
+>  					    PINS_PER_BANK;
+>  	struct sunxi_pinctrl_regulator *s_reg =3D &pctl->regulators[bank_offset=
+];
+> =20
+> +	/* The per-bank supply is optional, so this bank may not have one. */
+> +	if (!s_reg->regulator)
+> +		return 0;
 
-Changes in v2:
-- Do not skip the supply on controllers without IO bias configuration:
-  the per-bank regulator also powers the physical VCC-Px rail, so a
-  supply described in the device tree must still be requested and
-  enabled.  Use regulator_get_optional() so only banks that have no
-  supply are skipped, which silences the warning without changing the
-  power management behaviour.
-- Link to v1: https://lore.kernel.org/linux-gpio/20261026144751.1392715-1-hsyysy@163.com/
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+[Severity: High]
+Can leaving s_reg->regulator as NULL on -ENODEV cause s_reg->refcount to
+become unbalanced and disable the bank regulator while other pins in the
+same bank are still active?
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 70099052d..23c1fbd46 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -925,11 +925,19 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
- 	}
- 
- 	snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
--	reg = regulator_get(pctl->dev, supply);
--	if (IS_ERR(reg))
-+	reg = regulator_get_optional(pctl->dev, supply);
-+	if (IS_ERR(reg)) {
-+		/*
-+		 * The per-bank supply is optional: boards that do not
-+		 * describe it simply have no regulator to manage.
-+		 */
-+		if (PTR_ERR(reg) == -ENODEV)
-+			return 0;
-+
- 		return dev_err_probe(pctl->dev, PTR_ERR(reg),
- 				     "Couldn't get bank P%c regulator\n",
- 				     'A' + bank);
-+	}
- 
- 	ret = regulator_enable(reg);
- 	if (ret) {
-@@ -959,6 +967,10 @@ static int sunxi_pmx_free(struct pinctrl_dev *pctldev, unsigned offset)
- 					    PINS_PER_BANK;
- 	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank_offset];
- 
-+	/* The per-bank supply is optional, so this bank may not have one. */
-+	if (!s_reg->regulator)
-+		return 0;
-+
- 	if (!refcount_dec_and_test(&s_reg->refcount))
- 		return 0;
- 
-base-commit: 091b06388b117fefdcb63336ac09956a4914b961
--- 
-2.56.0
+In sunxi_pmx_request(), returning 0 on -ENODEV without recording that the
+bank has no supply or incrementing s_reg->refcount means every subsequent
+pin request in the same bank will call regulator_get_optional() again.
 
+Inside regulator_get_optional() -> _regulator_get() ->
+regulator_dev_lookup(), when the pinctrl device tree node does not have a
+vcc-pX-supply property, regulator_dt_lookup() returns NULL and
+regulator_dev_lookup() falls back to a global name lookup:
+
+drivers/regulator/core.c:regulator_dev_lookup() {
+	/* first do a dt based lookup */
+	r =3D regulator_dt_lookup(dev, supply);
+	if (r)
+		return r;
+...
+	r =3D regulator_lookup_by_name(supply);
+	if (r)
+		return r;
+
+	return ERR_PTR(-ENODEV);
+}
+
+On several Allwinner boards (for example,
+arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi and
+sun50i-a64-pine64.dts), vcc-pl-supply is omitted from r_pio to avoid a
+circular dependency with the PMIC bus on PL0/PL1, while the PMIC regulator
+node defines regulator-name =3D "vcc-pl":
+
+	&r_pio {
+		/*
+		 * FIXME: We can't add that supply for now since it would
+		 * create a circular dependency between pinctrl, the regulator
+		 * and the RSB Bus.
+		 *
+		 * vcc-pl-supply =3D <&reg_aldo2>;
+		 */
+	};
+	...
+	&reg_aldo2 {
+		regulator-always-on;
+		regulator-min-microvolt =3D <1800000>;
+		regulator-max-microvolt =3D <1800000>;
+		regulator-name =3D "vcc-pl";
+	};
+
+When the PMIC bus driver probes before the PMIC and requests PL0/PL1,
+regulator_get_optional(pctl->dev, "vcc-pl") returns -ENODEV, leaving
+s_reg->regulator as NULL and s_reg->refcount at 0 for those active pins.
+
+Once the PMIC registers the regulator named "vcc-pl", a later request for
+another pin in bank PL sees s_reg->regulator =3D=3D NULL, calls
+regulator_get_optional(pctl->dev, "vcc-pl") again, matches the regulator via
+regulator_lookup_by_name("vcc-pl"), and initializes s_reg->refcount to 1:
+
+drivers/pinctrl/sunxi/pinctrl-sunxi.c:sunxi_pmx_request() {
+	...
+	s_reg->regulator =3D reg;
+	refcount_set(&s_reg->refcount, 1);
+}
+
+If that later pin (or one of the earlier pins requested before the PMIC
+probed) is subsequently freed in sunxi_pmx_free(), s_reg->regulator is now
+non-NULL, so refcount_dec_and_test(&s_reg->refcount) drops the refcount to 0
+and calls regulator_disable() and regulator_put() while other pins in the
+bank remain requested.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026152027.1417=
+178-1-hsyysy@163.com?part=3D1
