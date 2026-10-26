@@ -1,95 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=82.195.75.110
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792994544;
-	b=B465FsbBh3IIteQGLbi6/Zu2b06BKBeb4wuEncRYR7uu591L8wo1IZmpyJveRKnqhyyR
-	 CR6xf6qCABuLQkqwJ6NVjQukx4diPutiM/ccgE3+x4yz25XKZhSvUh5rilh0AQnKjK5nV
-	 O2owd2ndygbl84lmudGVtrrkEIyN/Sdfj4H9KMTQYzVYOcQXan7eUkmlqFcAbq3T85Ejj
-	 UveHQbKgx9gk+OleKvDDiq7uD7rjCeFtyrX+B6CXG/V7uTmYXDqssUFEbme+l3FZ6BV2k
-	 /BckgLwmkcciF5tjZlnEfsHG0JtJjqiN4mL9OzSNhjmwpyklWD9tpHoIe6OwUQc49jQ==
+	t=1793002854;
+	b=V7MgN0V+iT5HhXZAfOusmiivagHvgGNcrXHU1r9WXzpyHH4AHA28iUzOnsZpzolX190s
+	 R2MzChtBHeKdWNFw8nJL0CcoaYWMwwFVZEkL/RGZbcBLQmCPHFHgoFK/OAd2XUcIux7Bn
+	 UeEV+ASyGylJSda2Hg2vOq3K70XMyQfxoZ5i6nZJebArmJx7MiIzOt97Oe3hMwKMR3yir
+	 1aWmWwfXk1gsDHCRQtOFT5ucoPTCBMfgg2s/8CLurBKbR61be3izL90XEPOeZ4bZBkleo
+	 FyHRBdkqLAE58TpyQHdAuhiw3dcshPVFiybnFuKOQHgcPtIIkOhW7ESM29G0vVHNlBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792994544;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=K5t5lwdyPHqIe+zGWPszmhrUHYwt42j52CshxS8SC8s=;
-	b=aHYu1Kr1nIvEQ8b/OADE95gbC2s4QwQE/HkvGwD7HyGXHfkb87oeGGkxWRXk06eQzrp7
-	 K7y1PEoOCA13TIQWxnMxCyuaXLUqYXvhxqnUCSGOxaZqovcW77ythJS1SotpuGikq+clS
-	 BygcaYe7NeOwqj7nSvARuV2rLtkdNh89NUKdnvGE7PdqEcgW+yVJ+SYjFgUeOSfqlK/Q7
-	 whJpBxtyA4ZblDEW8liTCndehTSGs31qp+zrs4WftZoUWSvo5QrgW22QB1ozpp5j1ZbLM
-	 +ct5SAygPKUBHpdNGG2hGcTjnPr5XEIabbUHBmw1fFpFZPsPqstWVtRdSIMbNTy9LYA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793002854;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Type:X-Developer-Signature:
+	 X-Developer-Key:Content-Transfer-Encoding;
+	bh=T/Wed2wkIxaLiq4pFLT/70s7XIckzWPpLQaCHz3q10k=;
+	b=gB0fd0aoNsjBtgb4VNkwP5VOMeN//e7aCpjO/yNbUiiRgXsVmSnToCTnfrG8hgfciGT9
+	 hSchrlejvSBnPlBgGHdeCaNjMUvAnbyUendhGiFfgs27Q0iYKBPg18zaI6DcJe37kYBgy
+	 kKC+FLniuDDVhUaTK0P1c4woupoKCm9xloQsWP8OzPBR+cKBqH3ziT+Uhy1HPsMkQhdr4
+	 08NG9hZy1Ebzr6SlRnYL0RvSCYL6Xe7rNUjcfssfPWuVPN2S3Be4wwlC98jDlKyJvlTjf
+	 dzEU/rPOGjPYiqAme7VFfc96lFMxizTacMjfgELMQw5czNn925I3c82iuHMZN6030QQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RZfpTO28;
-	arc=none smtp.remote-ip=209.85.214.177
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=debian.org;
+	spf=none smtp.mailfrom=master.debian.org;
+	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.master header.b=0uVUiacC;
+	arc=none smtp.remote-ip=82.195.75.110
+Received: from master.debian.org (master.debian.org [82.195.75.110])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A04606A31D
-	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 06:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D5A04606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16768606A31A
+	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 08:20:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16768606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=master.debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RZfpTO28
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2ea0efd636dso20237805ad.0
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 23:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792994543; x=1793599343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=K5t5lwdyPHqIe+zGWPszmhrUHYwt42j52CshxS8SC8s=;
-        b=RZfpTO28d8xWb/KIi5uR3p24SsrWLmGAhYKTvilY1NXeGjWbNSbGJByXxg3NAKtZbV
-         L4MH7EqJVua1SWRpd5Q5RLa+T/PaOUifJs6ZfTz/7KizOLKXMtZPTdkNZaM6CdNraTqe
-         ikhCSwcr+8LNkautPAWVWtFkloi7FX3a1+NOZDEJOk1MmAhNIuOADcsI6pz6wDLdwlOR
-         Pqvho1KzmFRNdt5AG/6/VE2SstT82FMOf+PFyVCKW3zvZn7abufORuT5zXPDi9D1pGQ8
-         Z5ftV1T+OzMZ/jvm6+3sJGv4guvIZYc5U9EqG6DId7gtjCHcOf8VuWcesKukvmZ4YhQv
-         iTqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792994543; x=1793599343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=K5t5lwdyPHqIe+zGWPszmhrUHYwt42j52CshxS8SC8s=;
-        b=Z1/VtZUfAnb6fUQr2Wbb9pBhKqEnqM3QKSyJqsbWvu9YyyPBRnceRBae+8V0tZ0OIT
-         X35TDxY8Uz4hqfa65JmKs/YHgBlnt2xpDN3/5dVHp4qSS1DR0q2l8yUIYzps6DF/ABfp
-         CSuuLpJsogDsEz4AMW8kvjA/AWW6zhqNsAXDEWq3ruOf1tixlLLSlWkIhftK4wh/Ba53
-         DzsJsKXxPtq0gMyyqHQ+V+D9gTVVW6OQ5X2uD8CGG5XcVANCGzxgnyj/uXYGBahFpWoj
-         IkG9JneH3tAanxklaUaI9put0yVBgekUJIm1k7HZE1cQCaalFyooETwa1B0nel0DPPyB
-         L0KQ==
-X-Forwarded-Encrypted: i=1; AKwUvByyU6rJCKyf+EcZ4fWhPkiJYAPLfUILi5rP1pzjuM/2Yd9M/dZiXMFfEx/WnMi7WSjfIW/sE3hXBUIU@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ7kv/U0AaZmnAL7o890DQZ+RJJ0qmqajZZ4lSCoR1wOJOGWkl1
-	TgKnbK6yCBUPskHFoKfdYF3gXPPCHQhjkJuf+6jXg5uP6/MdMxhbSLzn
-X-Gm-Gg: AYBFou0stqUmMdHhJKQmCP2mRjS2/GLt8R/1+nAtkU9ygVkDLOjAne/yP4diCAtZuci
-	O/IP1dtc0E679gvzHryCwPuzuzXp+1S8gbdVqNKeUUUrjNyp+GkX0Hcd7MGu6PhDDSOV+oXspi8
-	TewvaP4YxjAYlgqBGQnFB875qkuaOsPo6y4s+TOwdtVUJ1YbomV/D1ipCBdDVr4Gt8elM4112bj
-	ey/qr8L6RoyQP8UbvzCylMCVCcheRuJaZBk1X1qxwspGthkdOwl2lmhyQtMUhhExNEvmMsjMJfO
-	ZkINjb2giMGM2toM+4BBATyt34riTRg1O+xxpyRcfeuohZ/Kt8/ul5tm9VtTABwsDNw4JQbRPow
-	hS4FWM0m6gyzUHMrILML67lYZeadopZON4cLmJgJ1vyNgYfmSh28Uy8h6nOasbzRg3VVmIbBNha
-	u/RNbu+vottOf+7pwBkNpwKvANp9rKi6MXKe/xms71c+AoXsj01ATnn/tEqbfRJsNF0702qJ2Qb
-	tOES/nidHRqKuqmbil8mrRajCA5rNqJIJjk4yYdAY9BUGIWIRelJK7o1GaU/VqjbgbqAobKPwy3
-	AJgdS0BlxEiubDpIjNS5+whsQmc2qrIAfwsDH/cGmE0ln6fbguEPQzRT2cdR7Oq92OP0rfiyvNw
-	qEpHfloyOr446bA7YoninueoxB6G7
-X-Received: by 2002:a17:902:da8e:b0:2ea:19a1:cd3e with SMTP id d9443c01a7336-2ea9c83381dmr51356895ad.33.1792994542732;
-        Sun, 25 Oct 2026 23:02:22 -0700 (PDT)
-Received: from EAIT-H54D9Q2FJQ.eait.uq.edu.au ([130.102.10.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ea9af31421sm12212435ad.7.2026.10.25.23.02.15
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 25 Oct 2026 23:02:22 -0700 (PDT)
-From: Yu Zhang <yuz08559@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Koichiro Den <koichiro.den@canonical.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Yu Zhang <yuz08559@gmail.com>
-Subject: [PATCH] gpio: sim: snapshot configfs leaf items before depending on them
-Date: Mon, 26 Oct 2026 16:00:49 +1000
-Message-ID: <20261026060049.60599-1-yuz08559@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key, unprotected) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.master header.b=0uVUiacC
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.master; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-ID:Content-Description:
+	In-Reply-To:References; bh=T/Wed2wkIxaLiq4pFLT/70s7XIckzWPpLQaCHz3q10k=; b=0u
+	VUiacCXvdjzk84XXRx9f7XSiOyD/AQb6a+z8OXj1xOu1szMP3mOY+kXzbTTZrHsjVxseR72hdfFs0
+	PaCB3z5TGgfa5z473oUKCzXov7suf162/rF3lxOiqLFRxqnvGnPFxoNsBLSmFNi4zxjPmeoTm5q0W
+	lh7cojHSl4Cx7g+tr4pmqNMxOpXnzuW50N+unIEeuDnVLIwWDqyyAQkb6w71PQKTgBeJhUbkdhfty
+	62+MWOoKT2tSp71Axq3Q/wldg87vvR5B6R5NVnQ3yYhYPIofJ2IoHrlNhJo124e4jnu2NcK02v3k8
+	SOPOMtHzOsr9UemQEYQXfPf4asgB7Fdw==;
+Received: from ukleinek by master.debian.org with local (Exim 4.96)
+	(envelope-from <ukleinek@master.debian.org>)
+	id 1xLFwq-001FQ8-0e;
+	Mon, 26 Oct 2026 08:20:52 +0000
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@debian.org>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+Subject: [PATCH v2] gpio: pca953x: Add support for Exar/MaxLinear's XRA1200 / XRA1200P
+Date: Mon, 26 Oct 2026 09:20:40 +0100
+Message-ID: <20261026082041.696626-2-ukleinek@debian.org>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,127 +63,58 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2096; i=ukleinek@debian.org; h=from:subject; bh=uORm1+sr941h8AyJnpv1NDOX9awvNvc02Y3RsEJIjbI=; b=owGbwMvMwMXY3/A7olbonx/jabUkhqz7vJE9d5/wdaZ+29FjVSV7LP/w0l/xIlfeRc04EHi1v /HUJM6ETkZjFgZGLgZZMUUW+8Y1mVZVcpGda/9dhhnEygQyhYGLUwAm4v2D/X/Iy8knpmg1natw iTAI4ZK/ov5lfZdcy/WSpFny934+vf7d8A2Hd0bDWd0j5XvrJ8TZ3TkvI/hHR69g7padkUtcfC6 ZajSLbdNN/G+11LzU5Zz2S9WirMS3Jqo15r+3Z/vqseSGJP5XiGvfYXa+2cTwaqay6togFm2fBV ZPuf87tQrvZljrkBa8mGf3ZIunSo3CDAwPl+Q5uF1aUKsqpyygsmfixXD57XLrYm59PyLOVuywO LqZIyBmWt6qGYXab6c1yrk6KnUlu13Jc990wV/s1/xHJrzxag++97B/kz25bf95va1KPyS2uYda n9hw36RJ6OHWRdZ5O783SDCu8Cjfp1/snTsrQ/dDWpoLAA==
+X-Developer-Key: i=ukleinek@debian.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-gpio_sim_device_lockup_configfs() walks dev->bank_list and each
-bank->line_list to depend (or undepend) the leaf configfs items when a
-simulated device is activated or deactivated.  The walk runs without
-holding dev->lock:
+These are documented to be compatible with PCA9534 and PCA9554
+respectively. The difference between XRA1200 and XRA1200P is, that the
+latter has the configurable pull-ups enabled upon power-up.
 
-	list_for_each_entry(bank, &dev->bank_list, siblings) {
-		list_for_each_entry(line, &bank->line_list, siblings) {
-			...
-			configfs_depend_item_unlocked(subsys, item);
+The chip was initially built by Exar which was bought by MaxLinear in
+2017 and the parts were rebranded.
 
-Every other traversal of these lists holds dev->lock, and the lists are
-mutated under it: gpio_sim_line_config_group_release() and
-gpio_sim_bank_config_group_release() both do list_del() under dev->lock
-and then free the line/bank.  A line or bank can be removed by rmdir(2)
-while it is not yet (or no longer) depended on, i.e. in the window around
-activation before configfs_depend_item_unlocked() has pinned it, and in
-the window around deactivation after configfs_undepend_item_unlocked()
-has released it.  The lockless walk can then dereference a line or bank
-that a concurrent release is freeing, or follow a ->siblings pointer into
-a freed node, resulting in a use-after-free / list corruption.
+Datasheet available at https://www.maxlinear.com/ds/xra1200.pdf.
 
-The walk cannot simply be moved under dev->lock, because
-configfs_[un]depend_item_unlocked() take configfs-internal locks and
-holding dev->lock across them would invert the lock order against the
-configfs rmdir path, which calls the release callbacks (taking dev->lock)
-with those configfs locks held.
-
-Take a pinned snapshot of the leaf items under dev->lock instead.  The
-list pointers are now only followed with the lock held; each item is
-pinned with config_item_get_unless_zero() so it cannot be freed once the
-lock is dropped, and items already being torn down (get returns NULL) are
-skipped, since they must not be depended on anyway.  The snapshot is then
-depended/undepended with the lock dropped - preserving the required lock
-order - and each item is put afterwards.
-
-Fixes: 8bd76b3d3f3a ("gpio: sim: lock up configfs that an instantiated device depends on")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yu Zhang <yuz08559@gmail.com>
+Signed-off-by: Uwe Kleine-König <ukleinek@debian.org>
 ---
- drivers/gpio/gpio-sim.c | 56 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 45 insertions(+), 11 deletions(-)
+Changes since (implicit) v1, available at
+https://lore.kernel.org/linux-gpio/20261025154840.657888-2-ukleinek@debian.org:
 
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index 0c73bec..562f305 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -978,27 +978,61 @@ static void
- gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev, bool lock)
- {
- 	struct configfs_subsystem *subsys = dev->group.cg_subsys;
-+	struct config_item **items = NULL, *item;
- 	struct gpio_sim_bank *bank;
- 	struct gpio_sim_line *line;
--	struct config_item *item;
-+	size_t i, n;
+ - add PCA_INT to i2c_device_id array
+ - use 'exar' as vendor in the of_device_id array as they created the
+   part initially.
+
+ drivers/gpio/gpio-pca953x.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index afec5ec23696..721f17cee89d 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -124,6 +124,8 @@ static const struct i2c_device_id pca953x_id[] = {
+ 	{ .name = "tca9538", .driver_data = 8  | PCA953X_TYPE | PCA_INT },
+ 	{ .name = "tca9539", .driver_data = 16 | PCA953X_TYPE | PCA_INT },
+ 	{ .name = "tca9554", .driver_data = 8  | PCA953X_TYPE | PCA_INT },
++	{ .name = "xra1200", .driver_data = 8  | PCA953X_TYPE | PCA_INT },
++	{ .name = "xra1200p", .driver_data = 8 | PCA953X_TYPE | PCA_INT },
+ 	{ .name = "xra1202", .driver_data = 8  | PCA953X_TYPE },
  
- 	/*
- 	 * The device only needs to depend on leaf entries. This is
- 	 * sufficient to lock up all the configfs entries that the
- 	 * instantiated, alive device depends on.
-+	 *
-+	 * The bank and line lists are only stable under dev->lock, but
-+	 * configfs_[un]depend_item_unlocked() must not be called under it:
-+	 * they take configfs-internal locks and that would invert the lock
-+	 * order against the configfs rmdir path, which removes lines and
-+	 * banks from these lists and frees them under dev->lock. So take a
-+	 * pinned snapshot of the leaf items under the lock - skipping any
-+	 * that are already being torn down - and then depend/undepend the
-+	 * snapshot with the lock dropped.
- 	 */
--	list_for_each_entry(bank, &dev->bank_list, siblings) {
--		list_for_each_entry(line, &bank->line_list, siblings) {
--			item = line->hog ? &line->hog->item
--					 : &line->group.cg_item;
--
--			if (lock)
--				WARN_ON(configfs_depend_item_unlocked(subsys,
--								      item));
--			else
--				configfs_undepend_item_unlocked(item);
-+	scoped_guard(mutex, &dev->lock) {
-+		n = 0;
-+		list_for_each_entry(bank, &dev->bank_list, siblings)
-+			list_for_each_entry(line, &bank->line_list, siblings)
-+				n++;
-+
-+		if (!n)
-+			return;
-+
-+		items = kcalloc(n, sizeof(*items), GFP_KERNEL);
-+		if (!items)
-+			return;
-+
-+		i = 0;
-+		list_for_each_entry(bank, &dev->bank_list, siblings) {
-+			list_for_each_entry(line, &bank->line_list, siblings) {
-+				item = line->hog ? &line->hog->item
-+						 : &line->group.cg_item;
-+				item = config_item_get_unless_zero(item);
-+				if (item)
-+					items[i++] = item;
-+			}
- 		}
-+		n = i;
- 	}
-+
-+	for (i = 0; i < n; i++) {
-+		if (lock)
-+			WARN_ON(configfs_depend_item_unlocked(subsys,
-+							      items[i]));
-+		else
-+			configfs_undepend_item_unlocked(items[i]);
-+		config_item_put(items[i]);
-+	}
-+
-+	kfree(items);
- }
+ 	{ .name = "tcal6408", .driver_data = 8  | PCA953X_TYPE | PCA_LATCH_INT },
+@@ -1508,7 +1510,9 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "onnn,pca9654", .data = OF_953X( 8, PCA_INT), },
+ 	{ .compatible = "onnn,pca9655", .data = OF_953X(16, PCA_INT), },
  
- static ssize_t
+-	{ .compatible = "exar,xra1202", .data = OF_953X( 8, 0), },
++	{ .compatible = "exar,xra1200",  .data = OF_953X( 8, PCA_INT), },
++	{ .compatible = "exar,xra1200p", .data = OF_953X( 8, PCA_INT), },
++	{ .compatible = "exar,xra1202",  .data = OF_953X( 8, 0), },
+ 	{ }
+ };
+ 
+
+base-commit: bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
 -- 
-2.43.0
+2.47.3
 
