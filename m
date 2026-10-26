@@ -1,57 +1,130 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793029150;
-	b=dnUtFABi9Gcn4W1TIRl8hkJSMimd+CliBl3p8vWDZrzdU/l9IebkcHen6jhLWd3vXI2H
-	 c+baLZJSKISlPwTQ401UnTbaNM38efQLAd1aokXIUDEWA6uVPRj2nEF1cQP9QQWq8GyGG
-	 s6riP9/f20e3ZTzGdNSDU7rbShA6LPaDAw/i9JA+yB+TyL+RPUlzVFFCpnqW5H/tY1CUr
-	 dX/7JN0AgsZQtt0oCmS8635Mj15O5I3+311l7JVBe058MiKN5GPsIxE5Zilmgy/cY62Pm
-	 I1ibxYq1+XwTnADMFfwJXqhp1nUzt8UHc9JEZRScUVB/MPTkavRDzBZ7gmTo9oo0xxQ==
+	t=1793032028;
+	b=BbScsKFZsZx2NFJU6gY+BatGtPnYQ7jur1qKYOB4TwhX8V/tM3p3kbqcXK1HEtJ8cAFa
+	 YzGIzS4+cG9bfXC9mjybXDypWAdF0k8/QnzdtFQ+N/o0R7WHTt3ywsbbx1Mz5hCiaJsAp
+	 WnNg4Pgp9lCTp+7A10U9n7xXBmwjfG46Q/3HDe51SmIduQrm+nyHMoyVozZbCP51DHRAa
+	 PoxpBuZOlkeQv12XUN1tia3VuivN1msui/TOD1HSToaU+ibtim7skcf/QyHEWroAxl5/i
+	 Jgs0lirGMbNWYZJCAdjCxi/LwWPQ9mF8tCvFrTSkNkWU0RVvnLbZkPr6TFF9FAo3M1A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793029150;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=1pPQVcZTHWueWe6UVkUmz1Urg+zAZiJ3wpca+tOiLAo=;
-	b=GoP65ZuJdhBY3awenDjdlsu8elekOnA0LxPGe42n8KaZk+eHdn1OgOdGXCPacK7zjxTJ
-	 pMDma8Q09nPTF+ZNbJyB8PB38aa97/yIcONgtCDwke+VUw4c6TjA8sQiAem+49i1WAMvY
-	 bllnl5ICbKy0R/EfWvvbLxPNiY6g6wOsilMNN5WltP6qtvxVcUE8GPb3dZvHofQw3rde0
-	 fyg4/2WaC8poaPmFd5EHXNKytP4kjYV3pMdN0K+yRvL9MisH7D4+/DRDb4cwR6Rv0Y8Yv
-	 xtAADJAzpFb68gE/dgw1vCmZfir6YxVjJtf+0A8Tjepg80i6qCsaUxkSnjFrs75zt1A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793032028;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=7E7JheVB5mT4ZewanQJ+BiHMZ6J0mXX3JGLrjFPrttY=;
+	b=CpQaa0oO/SmGp+lZQ57CaNCk0Dfi6YX9uoQPdYVxpqsSCAk5gJ7vpE6GJKixdDEeBwC3
+	 s8ggH0FySWa7OqBSVzbyLwasuWXkNnWxfJHw0XFx2jziRjvkz4RHw8c+OZBMbPiVt9aZw
+	 vkITd40sKSDPtb+dvheTBEvu8TH+yKDIeNt46KK4VgU+22oEPXZWPAEwFLi+7hkmo/HU3
+	 7rvn7pMwYUrpp3h2wOV8qjeEMurk+CYVXvtS77OrqloMGRQ8mpI09RPBa7aeUAuQEuJKP
+	 2LPIbGKSYz4KazxzhCE8VgUmFAsvbdhMBizO8UfLOXOkc6+ahNjL51TdQuyuX8jS9LA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bfYrpB1M;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=pcZ+5k16;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GtrO9k4j;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73160606A31A;
-	Mon, 26 Oct 2026 15:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6E4606A325
+	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 16:27:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8B6E4606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bfYrpB1M
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335211F01825;
-	Mon, 26 Oct 2026 15:39:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793029150;
-	bh=1pPQVcZTHWueWe6UVkUmz1Urg+zAZiJ3wpca+tOiLAo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=bfYrpB1M+DRks3Y8TuAQ/TZBeFQwMmDkQr3MCOwjtAoBHHtj9de3xddgttDvwpv99
-	 3bItCsfDgpL8IBEbEYLTBI71OfbXDmqIVKniwZwEZYtyJD9Vhlzy6xJDptSQsVbWJc
-	 E8Q1hL3N5z2lEUwGfBu9RH+1I4wEP32KgWQImw41phRpyuKKysPPqNOQO3G1L6v7cL
-	 yN9Jti9mYwT/a17d/TSzmpJWWU3AMmmljZmrCTASSAlxYdAc5ixp3+kAYx+qnV4N6i
-	 IXxqdL8g/qLbE3H8XGwEbxfLoSzVoGccLjRJZGhmNH+9ruZQiKyt0QA64iKsMighDM
-	 w+mNb+9tbGY4Q==
-Message-ID: <sashiko-outbox-185451@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] pinctrl: sunxi: request the per-bank supply
- optionally
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Yang Siyuan" <hsyysy@163.com>
-Cc: linux-gpio@vger.kernel.org, linux-sunxi@lists.linux.dev
-In-Reply-To: <20261026152027.1417178-1-hsyysy@163.com>
-References: <20261026144751.1392715-1-hsyysy@163.com>
- <20261026152027.1417178-1-hsyysy@163.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 26 Oct 2026 15:39:09 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=pcZ+5k16;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GtrO9k4j
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QEvY5f470706
+	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 16:27:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7E7JheVB5mT4ZewanQJ+BiHM
+	Z6J0mXX3JGLrjFPrttY=; b=pcZ+5k16Iq9hysPAjv3DOUSq7txNAigQ+lOp49To
+	9u3s4JTZCPFbYvSgOeuLHFKdPyNFpq2dLPA08PqFuhhO0+s5iElMG+j3QpyU/Q/0
+	+YS2Bd7MJ3oz8fOoZY7dBpKotXiBe844JSTSxCtU51hnwx+6y6b095tX/I3TaG0l
+	Vr+giR2L+gzcpPPbpX4wDWPxPM550AvEOkmpoQsG0F3pyl6fCe9ZjWAgHUkJ+boC
+	UQDlvn3Y/Oy3+PgrvkR8wtC8XgWIU9p20Wqs6ZgfT9ijHQNoxv7Oewg5Xp8FZFms
+	peb3ptiTwB5SR5BG+z3zOQfjb8UDtpcgf2sxHKBog5DybA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj53q1cck-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 16:27:06 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-92e82060977so12672985a.1
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 09:27:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793032026; x=1793636826; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7E7JheVB5mT4ZewanQJ+BiHMZ6J0mXX3JGLrjFPrttY=;
+        b=GtrO9k4jDvhRQWD68Pj7BwygSdgOeohVA/zscJ3C/35C3jdBZ3LJpdSfwYE1OgXLaR
+         2Qjy3asFgTu+W1AQVBtPjnsDucdizqgnuHGyKFjJpjCUjBHWKaEr8zh6gQXmyjHNMSTs
+         8qwAddOKrIZDn6F5i7bsomibWy2gVpe220/Sju2ea12upzOdU6WkKhyxoqxINDWmHvVq
+         d3eWeKmx9B0HD5do6cst/oBXFnFaWXOhnZewAC6/PPyy1PGSQt928CwfNhs8c5fLaQQo
+         23799JuV+Y+IJQj4SgH7gr9Orbl/t0YhZBTOAix2St/UdWHKWbOUXlNLWpTrZnm+b0Pf
+         qOVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793032026; x=1793636826;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7E7JheVB5mT4ZewanQJ+BiHMZ6J0mXX3JGLrjFPrttY=;
+        b=M+Bp0TE/TtyM8TMRY9feHHJlYzlAL75ACTq9MKL6GisIpCxHWHlPmNqRgPIdrTNlLg
+         iCL5u8J/3ByK0eF06mlSG9GO3aeZRJrNCyDfD7VMbPTkb4ONEv14MAGfbSDHKg+/JkB0
+         EBt4CdkxQKgSSPLUx6LLyRIlm+SUAN5IgwN7xBvEcZqJ5YwPXfcWT+kW5UaUmloKXyhx
+         yP5JitpFLQvmKtSYwZLCFL/9PG3fDcGLZ5dhRqQcEosZ+GP7n4O5wk8mGz0LdW+xFrEh
+         b4qZcyp6L54fYst850x+t5ftXgzVTcHdDijVna1s3IRaRQIESzNQJ5gYGFwOnjB1Rp+R
+         93ZA==
+X-Forwarded-Encrypted: i=1; AKwUvByiCGgJQIcAKxRZfkAasxmH/RfNic4oqBEg5PjKMNjgwtK/+Ewt8MW0JHmvI/COA9gRVC0Kn8phCZek@vger.kernel.org
+X-Gm-Message-State: AFq9FYKuM0LXMclz2eU3lcAyBmE7vSwx0YHPlICAWv5mmtH12pE7dDB0
+	Bo6PhR15E5lUFGTYzKGrejIWtjpkJz8NgQBxys2tY0daTUu0wFcKgkNaFNBSAv7BddlWI1N5I8g
+	OII66qRTRq3WNhdk4y2u8BQlhh3up79L/j6OOcYD9R/YK8IxEGrexbhNfvkuMyR3/
+X-Gm-Gg: AYBFou0wyvLAyUAQ/y+LbdZm2+TIw7UiDZFhIhLEjwLkA1cWrVmVsGbZu/xvSE+5ve5
+	5+dcg+x10w+x27/yKqgj9RNHciWvOkG5I0+aI2cixE/8rELHankKl8+G0CAsfj3u3lMTInK+QRA
+	l5GWGcfsY8SR9KMioD1VxfVPSOMuAbV7T/T8H6SinYDYfS5EoFV2iU/gNqcCjTC0fp/Y5EAts4h
+	XmkPD43KPGuHQlIX1tYzXEecKrTCmGPKxmT+Iy0ZOa934WXgHsECTFXELCHecP/l8HTY+FvzDO8
+	Ozo+kI5JF+5AizEx4c2TpvI9UrC2G7U157j05gjIhbE2inn5IP1xzVj5IhyHN//uBudV/3eQDng
+	rTeadR2x3U7rTRhkE
+X-Received: by 2002:a05:620a:1983:b0:93e:c12d:4eca with SMTP id af79cd13be357-943f4c19e2dmr28296685a.42.1793032025640;
+        Mon, 26 Oct 2026 09:27:05 -0700 (PDT)
+X-Received: by 2002:a05:620a:1983:b0:93e:c12d:4eca with SMTP id af79cd13be357-943f4c19e2dmr28288685a.42.1793032024967;
+        Mon, 26 Oct 2026 09:27:04 -0700 (PDT)
+Received: from oss.qualcomm.com ([188.27.161.187])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc39b3sm17910255f8f.10.2026.10.26.09.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 09:27:04 -0700 (PDT)
+Date: Mon, 26 Oct 2026 18:27:02 +0200
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 12/12] arm64: dts: qcom: qcs615: Add GP M/N clock
+ controller
+Message-ID: <yf25xvzeb5gabhb6hp63ssir6g6odvfrtg7vjpej7tfjmi5seu@fr7hwa5omxug>
+References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
+ <20261026-b4-pdm_clk_gp_mnd_v2-v2-12-ff8e4bc8d567@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,134 +133,92 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-12-ff8e4bc8d567@oss.qualcomm.com>
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA2NSBTYWx0ZWRfX87a5Rq7DCl5s
+ L6Y9iBwuVtFI40+22TMsfvfam+4t5irSyDlakSWj0uoP633dvu89YEVlwmGcet9/scyZWb1miMg
+ q6keG4B5S/CLK9ojJ2B1HDJqBRyoxaA=
+X-Proofpoint-ORIG-GUID: 8yk8sEK-P12la_Dq4WgPoLLlCwE3t8QC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA2NSBTYWx0ZWRfX2i+PYxIiRcPN
+ R0Be3UXGLWLF9mydFYJXV+CJwR+Jz3/vfOLKmUk2MgO51Zazupri1cSMGC2ERYN5aKS9bAjvQLI
+ kjdaawZJCYSGMAvxvkWGcS70Dh5gnpt6ys6RRqHUQdEBmh5aOdfROCipwPEcWE9a5ka0sKOjKNg
+ oBWRtYcLX+3I7jP0Pr/91W4qetg5u0yYXGrvpUlZ8J84vQ5z2bM6g4bDS8azv/c4QL4Ql4L2pme
+ 8PMQisCevjvQKzPdbZjoMNBe6jNOG+NFfahMrd1xR5TE3MbVVtFDJMCCNsZ1QKt7XFMD5+MccXs
+ Cyuu8z8Xw2JRlj83CPHvCztZYixmjKL827iXzogMJfJ/aFVUGzj566ET3wdZJkEmYwH2H1UnlDT
+ BM1p12wayB3R4Q9BjdSru1TAhyi9Rj+R69rf8ITrq+aHyQP3FEF0cekE+3O2YMlNHsfltwY+VLw
+ a/Cm+gNtfXJtQELEhUg==
+X-Authority-Analysis: v=2.4 cv=D93SufRj c=1 sm=1 tr=0 ts=6adf7f5a cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=Qvngrl3H0rQgGg+94q4QgA==:17
+ a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=EUspDBNiAAAA:8 a=3ivmLXalSb2FnHeqfEMA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: 8yk8sEK-P12la_Dq4WgPoLLlCwE3t8QC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-26_03,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260065
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] pinctrl: sunxi: unbalanced bank regulator refcount in sunxi_pmx_re=
-quest()
---
-
-commit 387a0217944495d51d6191636af797bf5c7e5da5
-Author: Yang Siyuan <hsyysy@163.com>
-
-pinctrl: sunxi: request the per-bank supply optionally
-
-This commit switches sunxi_pmx_request() from regulator_get() to
-regulator_get_optional() so that banks without a per-bank supply in the
-device tree do not trigger a dummy regulator warning. When
-regulator_get_optional() returns -ENODEV, sunxi_pmx_request() returns 0
-with s_reg->regulator left as NULL, and sunxi_pmx_free() skips cleanup when
-s_reg->regulator is NULL.
-
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.c
-> index 31cd142ce0f79..f6c48a287a0e4 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -925,11 +925,19 @@ static int sunxi_pmx_request(struct pinctrl_dev *pc=
-tldev, unsigned offset)
->  	}
-> =20
->  	snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
-> -	reg =3D regulator_get(pctl->dev, supply);
-> -	if (IS_ERR(reg))
-> +	reg =3D regulator_get_optional(pctl->dev, supply);
-> +	if (IS_ERR(reg)) {
-> +		/*
-> +		 * The per-bank supply is optional: boards that do not
-> +		 * describe it simply have no regulator to manage.
-> +		 */
-> +		if (PTR_ERR(reg) =3D=3D -ENODEV)
-> +			return 0;
+On 26-10-26 16:59:38, Taniya Das wrote:
+> Add the GP M/N clock controller and its pin configuration for QCS615.
+> The controller uses the PDM XO4 and AHB clocks from GCC and routes its
+> output to gpio29.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/talos.dtsi | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qcom/talos.dtsi
+> index 8ed6f2755705c38796698747dfe7bba1afd1859e..c415e782804ca8c9d09670cb8c8cd2353d796b23 100644
+> --- a/arch/arm64/boot/dts/qcom/talos.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/talos.dtsi
+> @@ -1611,6 +1611,13 @@ cam_mclk1_default: cam-mclk1-default-state {
+>  				bias-disable;
+>  			};
+>  
+> +			gp_mn_active: gp-mn-active-state {
+> +				pins = "gpio29";
+> +				function = "gp_mn";
+> +				drive-strength = <2>;
+> +				bias-disable;
+> +			};
 > +
->  		return dev_err_probe(pctl->dev, PTR_ERR(reg),
->  				     "Couldn't get bank P%c regulator\n",
->  				     'A' + bank);
-> +	}
-> =20
->  	ret =3D regulator_enable(reg);
->  	if (ret) {
-> @@ -959,6 +967,10 @@ static int sunxi_pmx_free(struct pinctrl_dev *pctlde=
-v, unsigned offset)
->  					    PINS_PER_BANK;
->  	struct sunxi_pinctrl_regulator *s_reg =3D &pctl->regulators[bank_offset=
-];
-> =20
-> +	/* The per-bank supply is optional, so this bank may not have one. */
-> +	if (!s_reg->regulator)
-> +		return 0;
+>  			cam_mclk2_default: cam-mclk2-default-state {
+>  				pins = "gpio30";
+>  				function = "cam_mclk";
+> @@ -4028,6 +4035,20 @@ opp-202000000 {
+>  			};
+>  		};
+>  
+> +		gp_mn: clock-controller@88d3000 {
+> +			compatible = "qcom,qcs615-gp-mnd", "qcom,sc7280-gp-mnd";
+> +			reg = <0x0 0x088d3000 0x0 0x1000>;
+> +			clocks = <&gcc GCC_PDM_XO4_CLK>,
+> +				 <&gcc GCC_PDM_AHB_CLK>;
+> +			clock-names = "pdm_clk", "ahb_clk";
+> +			#clock-cells = <0>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&gp_mn_active>;
 
-[Severity: High]
-Can leaving s_reg->regulator as NULL on -ENODEV cause s_reg->refcount to
-become unbalanced and disable the bank regulator while other pins in the
-same bank are still active?
+pinctrl-0
+pinctrl-names
 
-In sunxi_pmx_request(), returning 0 on -ENODEV without recording that the
-bank has no supply or incrementing s_reg->refcount means every subsequent
-pin request in the same bank will call regulator_get_optional() again.
-
-Inside regulator_get_optional() -> _regulator_get() ->
-regulator_dev_lookup(), when the pinctrl device tree node does not have a
-vcc-pX-supply property, regulator_dt_lookup() returns NULL and
-regulator_dev_lookup() falls back to a global name lookup:
-
-drivers/regulator/core.c:regulator_dev_lookup() {
-	/* first do a dt based lookup */
-	r =3D regulator_dt_lookup(dev, supply);
-	if (r)
-		return r;
-...
-	r =3D regulator_lookup_by_name(supply);
-	if (r)
-		return r;
-
-	return ERR_PTR(-ENODEV);
-}
-
-On several Allwinner boards (for example,
-arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi and
-sun50i-a64-pine64.dts), vcc-pl-supply is omitted from r_pio to avoid a
-circular dependency with the PMIC bus on PL0/PL1, while the PMIC regulator
-node defines regulator-name =3D "vcc-pl":
-
-	&r_pio {
-		/*
-		 * FIXME: We can't add that supply for now since it would
-		 * create a circular dependency between pinctrl, the regulator
-		 * and the RSB Bus.
-		 *
-		 * vcc-pl-supply =3D <&reg_aldo2>;
-		 */
-	};
-	...
-	&reg_aldo2 {
-		regulator-always-on;
-		regulator-min-microvolt =3D <1800000>;
-		regulator-max-microvolt =3D <1800000>;
-		regulator-name =3D "vcc-pl";
-	};
-
-When the PMIC bus driver probes before the PMIC and requests PL0/PL1,
-regulator_get_optional(pctl->dev, "vcc-pl") returns -ENODEV, leaving
-s_reg->regulator as NULL and s_reg->refcount at 0 for those active pins.
-
-Once the PMIC registers the regulator named "vcc-pl", a later request for
-another pin in bank PL sees s_reg->regulator =3D=3D NULL, calls
-regulator_get_optional(pctl->dev, "vcc-pl") again, matches the regulator via
-regulator_lookup_by_name("vcc-pl"), and initializes s_reg->refcount to 1:
-
-drivers/pinctrl/sunxi/pinctrl-sunxi.c:sunxi_pmx_request() {
-	...
-	s_reg->regulator =3D reg;
-	refcount_set(&s_reg->refcount, 1);
-}
-
-If that later pin (or one of the earlier pins requested before the PMIC
-probed) is subsequently freed in sunxi_pmx_free(), s_reg->regulator is now
-non-NULL, so refcount_dec_and_test(&s_reg->refcount) drops the refcount to 0
-and calls regulator_disable() and regulator_put() while other pins in the
-bank remain requested.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026152027.1417=
-178-1-hsyysy@163.com?part=3D1
+> +			assigned-clocks = <&gcc GCC_PDM_XO4_CLK>;
+> +			assigned-clock-rates = <19200000>;
+> +			status = "disabled";
+> +		};
+> +
+>  		qspi: spi@88df000 {
+>  			compatible = "qcom,qcs615-qspi",
+>  				     "qcom,qspi-v1";
+> 
+> -- 
+> 2.34.1
+> 
