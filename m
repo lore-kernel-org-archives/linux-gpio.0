@@ -1,11 +1,11 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793032178;
-	b=di799sYTnF9olXlxo43cOlwxjuXHtM4jI73Z8fKp0iH8hTG8xRrsKXdUTl0Q7xk94hLZ
-	 cX6NSufVBNkTV0HF8+MZcGpC966RcwiucfaJpWEJ0JtC6REOSsUwXozOzTRB+uJdwOEU2
-	 XzVyeWoKZqZHIRwfth62IXDKLIEosfb7/S93sUxynOhRXg0PpIwPv+mtPDaSrvZ6Rew63
-	 qhySUadq2g9TwzwnACssgdhGjngaj8axsN95CV0cWyG7YikiRCDNGT0RAyOuz9jC5Iobc
-	 XSaCrXa/8/iA5xGWgCqBjSrunrrg4gzdp049DL4C5BO+COtdOZP1T2Sc5o0/gBse3kA==
+	b=3Lr4ujHcL4XgzjDUMiLiOmKDptkKBtU6H5bPo2pMtVdE+TNOk5jZukI/QyZNqMO+YcTs
+	 XzNOZcMxnC8brFE6psYxIKi3p/CiGs2mA1hhlPdFlCcpooPO2ZlHaAWHXjFuFlN+qdgC3
+	 r4ujEwtSwzffTr8rAq10j189TNBJv4hCmdHykM5jaif2+qBy5e6SHqva/S/o0IOWGZtaY
+	 F0qF+MoC/1VjxWT1YoiRB0fG5qZa6Hz7GHL5+4iqP3nQU2P1hdV8R8no8PvZOobyY+6kg
+	 9+KXE7q5Y7d17R0WCUCotpsVnT4uyefBsy30KlkFf00O+Hxh+3PEvX+V7Kj13O7x1gQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793032178;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
@@ -13,82 +13,82 @@ ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Type:X-Developer-Signature:X-Developer-Key:
 	 Content-Transfer-Encoding;
-	bh=DufeBrqyUbSnmQ8skjhQG6l+F7Ults2Rkyo8mZPpFPY=;
-	b=osL2Q73qCEe8gLErGZA/bvStatB8d5E0uX7xtvEAhUpDxqrAARYz5V+XBn4sK0/Nl3f0
-	 nOmjffdc7l0tJ9eqBAtNOoBzGrlTS0VKpqpQTykpFLSNFsHmP4m7sOjILC2Mzy4PEQG+t
-	 3L7K9jmi0VIfiZJ6OKfF77+y1wBfYNpc76eMwE1Uyy5EvM6zulXKqsndnls/oINFB42NA
-	 5BffDugwsqtjweA5CcVC0mDq6t7k0I3LYihCFX+GCjluJn4WCVdbbJRXYt7B4Z2I/BBdV
-	 3jViyZ+GbxmF+UZA8ZK08MlAd4qKvOF/5oQGHRTwY6B9FEfMEaAL9gJSLEHLJLwUM1g==
+	bh=3iU/9XOoXxjGXWV87AO2U5RNEIinC/W0NIsFEdFoIIo=;
+	b=LHNFOleduDPDgXEi6dZX2F3ZgEUbNiDiG3WlNHCDzRAaAma4gUQyafiG43Szf+bB3ORD
+	 0NWjibrgouFWmaPoU4WMgQbAn4nBzsF7V1RHToBTI6k7aoFjieaJBEZdIBKmnrAH4yh5p
+	 4iWd+zx2A+03QBU+rOuvPvhToS1qPe2oBuXt87ZlV1LRui8sYG5fw8h1/etAMynJghcl7
+	 g1Cu3ktCxRfcFOONkI3zEtkUconU1pzby1T2XSaOlx+llpNikO9k4YhY4LPs2VtBFj+lD
+	 CFs5O/qnTard/G4/WWLx5XaY6AFYuJQNbORAwHHs4PeXYN+eScBMFbauitBdQJAvz7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=PYnX8AoJ;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=E0FtTemE;
+	arc=none smtp.remote-ip=209.85.221.51
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56E760A2603
-	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 16:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E56E760A2603
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A207606A33B
+	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 16:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A207606A33B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=PYnX8AoJ
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so20292375e9.3
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 09:29:37 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=E0FtTemE
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48441a2ba1bso2050511f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 09:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793032176; x=1793636976; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793032172; x=1793636972; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=DufeBrqyUbSnmQ8skjhQG6l+F7Ults2Rkyo8mZPpFPY=;
-        b=PYnX8AoJBp/EPdaPAmaDOiu3H57VwLmwaOQUV5W3sgX4kJjOkFEeFCVImeI07D4EVe
-         7acb6XlKclznwA/HL0h6WvfQk544az6Z3tls79dQ/h6oZFaUKyoqdsqNhDtIvmxCuX4y
-         4hkh03fwvRkCNUlugIj4akmoJ8NU3cDTQ15imXGfZu7lWTMPej7dgh21d2CYHukpMmQX
-         O6Smen/nerGOQKFi187wgZaL89SKjojLaVSaQgVguY7vO1MK2SmYP/qL2u4Ii3th7lch
-         Qe/T5HKt7WNPcyH5sPkD0FPkDPVDZs4iMC4ymMlDYAtnKRyOldim4VdV2CSi+/e8NvIr
-         cz3Q==
+        bh=3iU/9XOoXxjGXWV87AO2U5RNEIinC/W0NIsFEdFoIIo=;
+        b=E0FtTemEXX057tr9SgI3unFAxonc+HEyP0zeKgE2avK+1AkgKsWhuwCwsNUnK5idoU
+         ctArH/iZC8z49XrEiY42bMaKr2Euk5zbd+YsUELX/H+vQvzT47RuA+AdYFv2CqzEyGLa
+         qb2abk+U4PiUSsBHnW54TV2Nvtczsh77yT5wzJsGBd7+ee99TmL/WGI9iF8qY+HUKMYA
+         SSwHs4qKbP3zlnLi2JJfE8ZelS+whXoHXWxMuN7qvqCRxhNzR/ycoSLyAtQSrp8MI6Ew
+         2OFB+QCed9B/HgLMkilzUs364x52iRHWbvWbZyUVgP8kkz/PRuQbKE6SSvKE9axZoCP/
+         PbKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793032176; x=1793636976;
+        d=1e100.net; s=20260707; t=1793032172; x=1793636972;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=DufeBrqyUbSnmQ8skjhQG6l+F7Ults2Rkyo8mZPpFPY=;
-        b=O3YIbxeaYc7t0VahXqEK3rtZzFC7ElRfe07fWKtvKdfz0HRcDFF5tcgY6JuDdpnZaA
-         w9FLbGzAU8O2BWJNA6PHazmil/aHJLLLRTLrPBCR/nJ2X89PiJ1rrQLrJVPtwauci1DZ
-         nJ7vrNbooJsO8bUAWB7ZRFJ2iH2vBiDlJW/7FwXL6JJAbH2IPxd7f2b0vXtYMf4Wx8ZE
-         pXN8DcOinx9OdqnCibIQhCy/yR602SXN7NbtpqXFhTYyo9fjy7SkCu7Zcq8iz7H2M4bp
-         qVdutAmF3iN/G6JurFRWJnhiE5J+3PJpu7kwDCFmlBadknA+9yD+Gyj1SUgy0MrsQ/sO
-         HzVw==
-X-Forwarded-Encrypted: i=1; AKwUvBy5P0cCNs1VubINkP6ytAitTj61KPaa9fixpcRgEYC4eTpV1yEh8B/xCDjqzBavR8p8ph8UAwtjrqH7@vger.kernel.org
-X-Gm-Message-State: AFq9FYIGpY6JRIdDsoKxCn7cS9EqUvvQsSlL+lQ4fqz4XR9/F9eBYU+7
-	SP++Da13IKxsOdlwM7sAFmCGLUMmMaI8aBPFAmvP4gsXB9viuIBG6qYzYhujpoQ3OFE=
-X-Gm-Gg: AYBFou3aV/KHIifx7wARYGFaqB85t6qxmPKLuGpd4van312TrYkeGqfT42YWyVnKqDr
-	NgFHq9FnA0n1GaRxNQqLSGxao4B6V+SQF6mcNt8DkJJ9QH2j9WB7Hzraf5kM5dYE0xwzbbTayj0
-	eUPfWntdISGl73N6TtW5q7GGKbim3oaQy5P1Mzri/2PpGIdOlkjHbgK6wwI0JcA5IFG+ZPMJ5Gu
-	LaPfbXjoT95+5NshKGHdQ9VN2h+sCchblKWsrVRB5lMgdWMggdRmvfQbZAi9qQ+PpdmZf7rCWce
-	IETYolOF27nJ+9m+w4fE7kcvtGKfuBhlwdqdQIOXofMSwhuMghrA8j5z6Vck5pSVuRW7G7yBEuI
-	3oC5hYHEs3Oh/TWa59jguDttoResqGDm5ibkSgtQMSXyfc1XjB9HUoJFSCC5pPBD7GOxCsgxA+J
-	4oy00q1uETC3KamzewPi/ydYQJ2AUu3BbBWKz/qG8ilPfxsRlpkyGZJ2l9iFkDOejYDEY/aJVVL
-	nl40ggqIL09wtuUg4+D1WyIVrMx8bIrr97klJpjQ9tbay5DMg9jNvZxXp1SEFNBLkMg5AKqYVll
-	mAsmoOpDNz7zYum7PoWajITDTVky6mWH8MrW3S+wHms=
-X-Received: by 2002:a05:600c:3e8c:b0:4a1:d2b5:38e0 with SMTP id 5b1f17b1804b1-4a35acbcc9cmr119400055e9.25.1793032176435;
-        Mon, 26 Oct 2026 09:29:36 -0700 (PDT)
+        bh=3iU/9XOoXxjGXWV87AO2U5RNEIinC/W0NIsFEdFoIIo=;
+        b=vsbMSEQtjrg27R9wU/VyuI9EdU8bexWjxwUczLEYraUhlOkCZyWNIQqrFZ5ZIBmO8e
+         6IHd5RQXSHU3BaDmVOXdrWuhf99LSPyrYgJUUHpVt+cuuGXAF7XX1tMVh7t68C7xstjJ
+         +GxgJU+Xqob8bibxGew1icKsEjdCkumLoGDHcrK2hueKgcL+NyTdVbVSaMs5wS9kssEo
+         FeiBYfH6sOXp7yF2cA8gMU0q0Up1xZ/61IOrfK96s5AhX2iU65Ftls0yY0Kt4PBmURKD
+         AGGBl/0eMi4N8s3mN0rJb1Wrnfu2zlnm7E/2G+u13I7eMBDYVMbKuM9SeWcvypdh9+hf
+         GWNQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxXwaeD5VczRHyrW8/BazGmMLEmIBoI2nUMy9VksJXxJBVDokJ/Lmq2OXvtpJ5NTeClfzE9c0CV31gH@vger.kernel.org
+X-Gm-Message-State: AFq9FYJnHAxqpwd3JnxutKpsbNBBnUdbxkaIHpOY3MLW/MTs931T11ef
+	y6tKUohMdv/XGwxeH1rIEYJsA1YU/9Ol63T00qxKQ8omd4glgsr/wIAGvsHye5PGREU=
+X-Gm-Gg: AYBFou2TYWkZ99am0/SuExW0BsquQT7VD2PDc6BCmrB5posBPpnFwrYI4IFUSB9cWNR
+	ek2sYMAVyeZjy5KfSxwFPwEPgcXKzkaQYE5lVLCruymgccDL1Ndm6kYdsKACmDwggrg+bJb62JQ
+	UZsnlUtoZuVvKIIzxs5Shcm3OwKgWVXP/oaiAc83PoFJqCgHJFhzpCCeoRR9GiJohS0VfzuZvtO
+	ue2MwbTg2GZV+IwyVfaDm0cFP3wz1rar2zl6fioGQFv1pj1+7hVNpnvSoWJ1PJefx5cTG+L2o01
+	SCoN4c4XWWcFYsnQqc+jeZGLiHlkkEdKlEjaGpwG0EKkRDiW8LVOLurGHJZ6iAQWO/q59XzN3FZ
+	CvSPh09qQtbGObAwNCS43wRp80IfDKzbCb3M+1CSwC1B7WOnfoupvNQNTN3gMh2dU6c7oz3RVJd
+	AI6rQAhNRXRFyP/cQfoY1qu5E+el7OV6Km4cpey3rmGVWGl30iyM5ucxRT47JQrNEJS/cQas88z
+	hu+OIwdfWSGceLCjupaeXKVp8m84kDSAzc4idvWZhdZMZdRBlnu5Ff80qszJi0pxc9bf0dvjnYi
+	/ouZXQ+z++vMIEGcTaPrj17/hHSZEYayiJHzK0xO2cM=
+X-Received: by 2002:a5d:6881:0:b0:48d:f14a:917e with SMTP id ffacd0b85a97d-48e3eb7e54bmr10139771f8f.11.1793032171585;
+        Mon, 26 Oct 2026 09:29:31 -0700 (PDT)
 Received: from localhost (p200300f65f19a904cbccaa7a4d73ac15.dip0.t-ipconnect.de. [2003:f6:5f19:a904:cbcc:aa7a:4d73:ac15])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a35a03654fsm101933995e9.2.2026.10.26.09.29.34
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48e3ebcb9cesm18148057f8f.27.2026.10.26.09.29.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 09:29:35 -0700 (PDT)
+        Mon, 26 Oct 2026 09:29:30 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
 Cc: Andy Shevchenko <andy@kernel.org>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 07/22] gpio: xgene: Add missing ACPI module annotation
-Date: Mon, 26 Oct 2026 17:28:18 +0100
-Message-ID:  <cfd62d95bdeeff03197d772e311a7d88c838bd6a.1793030820.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v3 05/22] gpio: mmio: Drop unused assignment of platform_device_id driver data
+Date: Mon, 26 Oct 2026 17:28:16 +0100
+Message-ID:  <cd5c33b74b630f31841f4c570d61c3bf47ec712a.1793030820.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.56.0.rc1
 In-Reply-To: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
 References: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
@@ -102,31 +102,36 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=781; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=xq5mEKXuCDf/ep4/z+js4VuJ0kfEYf1RuGm8A0Z4zms=; b=kA0DAAoBj4D7WH0S/k4ByyZiAGrff62iv6nAXYPQVhP+hTiQDr9MoVev4MMt/WvduocvAV11K okBMwQAAQoAHRYhBD+BrGk6eh5Zia3+04+A+1h9Ev5OBQJq33+tAAoJEI+A+1h9Ev5O/HQIAKxB 4Fek+ZzgGDE7Gm6NtkogRCQEEs5u/HGw2/us5twb5jC06z/ItbG9XAAL2TVWb1fz5+mipXzDeAS muBlbpN2a5XG6YCSsoVfHeLQLW5nemlCoUuDuDt8/tfbyXX2MfMUrjYvWlM34+Q9gxfqFOOmAHX CdxqLGGxR5zAp/GQrh4brInDYAYwf4tEPHLxASlU2rJz6G3OD/EUHDcb5Nvr8LcCIj04THvDFv+ 49od8IDyffC7CqPEgnbjdVzBUSFIKCCkOpCnBj4ka33l3ZO+uqDl93S0v8B6i30aTB6umTdg5FS ZQVU7uuLcK59vd6Nlp/SBevXrTBaf1NpGRJS+Is=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=874; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=6ijQYwjczGie5kQc8ROmUpQycONZ/hY8dLBsJPtE8rg=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq33+oqOpj8Oq2dnINrnmjMCAZEAXq9JE8ombgX lTj6fI6s0mJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCat9/qAAKCRCPgPtYfRL+ TtUWB/9QrH/LdSed2CsRA2n+Dgpg20IphUxMyZLYPYEx/UpH295YbPWSvVcWjoObO4lNJZCBSup Icukqbi5Q602/PJPktuTA7xpKvTpQhSbyTLRPBP7VMFJPwP1uH2OOTrlyKnzbzAFwRn7s9aaVV2 6npGor9MmJkWL94qRIq9vMd+sMxqi4qMLokI6J+gSl0eY7VaZtJKjmdGvFu7d4vOUlMWwlVNg4s cMIpsaK+WlJoAGCmUcQEwCKAuOrjlCxoQ1IlmWPbDtDHvxM/tBS/gDkUSpAI1fSLvnTgFAOKcQj dFMDTs9h2lKZ9LDPMeomNYdYQmvwY9B+0QryuuHLV2lPg/AK
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-A driver module matching devices using an ACPI device id table is
-supposed to declare that in the module's metadata. Add this information
-for the xgene gpio driver that failed to declare this.
+The driver explicitly sets the .driver_data member of struct
+platform_device_id to zero without relying on that value. Drop this
+unused assignment.
+
+This patch doesn't modify the compiled array, only its representation
+in source form benefits.
 
 Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 ---
- drivers/gpio/gpio-xgene.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-mmio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index 22d22962963b..ad0f1551c271 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -197,6 +197,7 @@ static const struct acpi_device_id xgene_gpio_acpi_match[] = {
- 	{ "APMC0D14" },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(acpi, xgene_gpio_acpi_match);
- #endif
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index 0709ffaab4de..ec7c2b73f2f6 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -870,8 +870,7 @@ static int gpio_mmio_pdev_probe(struct platform_device *pdev)
  
- static struct platform_driver xgene_gpio_driver = {
+ static const struct platform_device_id gpio_mmio_id_table[] = {
+ 	{
+-		.name		= "basic-mmio-gpio",
+-		.driver_data	= 0,
++		.name = "basic-mmio-gpio",
+ 	},
+ 	{ }
+ };
 -- 
 2.56.0.rc1
 
