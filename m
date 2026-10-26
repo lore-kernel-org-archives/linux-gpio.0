@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793032603;
-	b=EZxk8YTnarMNT+bTBgeC26Xqe0nFF7jSZ511wgxYeF9odrX9xMsBll02LOK5eguYsMkc
-	 H8mbmLep9eoaGTteJz4l8oJ5J3keqqPTWvD1iCiYMiD/QIXepAAOL7yvOuKzJskoIAJGc
-	 95K4k5ovfiYxHf06Ejsd1ilnsd1tRZ9oQTg++t1+hgn1U9v3eoAnygayMUYJn4XrctWaH
-	 dlP36eOcCHyVwIVhw/Gl54xrrvluoDenRaj1ZiNotPzTYzl+0B+tQvNIygVwwgFdlKsg6
-	 cJBZSr5KTX2Jbpx6xg5DgF3koNCM/e0BN42uke0gEURO+53SCvPfHz3lkwhoNWD68PQ==
+	t=1793032669;
+	b=yh5vxKi72/Oyd6o7zHSV2cjqJI0SBdNcvDgiGbDtUcqVtvWvSYAU8wTK2hkZSezdQSnn
+	 njEnygD2m6y3Nr04FWw6G/Du7A+9/BBrLKRuwufkG8fW45uDpDmLzPM+WAezR5bsqBhA7
+	 25G/b62QVjpIxLmpgdUj7MFTdMuh+NNEzIdY7Gi9fhlyloNEqVjtWKeQoBEFPTnOo0koD
+	 lOMa707/6+g5ByFsZEUHKnK0rzAOOLiIUGdvR+vNOEQM5jhVguYz6E1j80asxWtj2q/oY
+	 lPRygz2A0ZlAQfe1xtDGQ0tJl/8s2lkSKyTVhvY+enjQ/E0r7j+jVTF992L/INT9Y6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793032603;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793032669;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=nwM4au63Jsk5odFgeRlnWu38AtJdKmUCfU5XAypWDpY=;
-	b=yo5d9x9H0Xk09xtsvVzIT8tZP0VzbLmAKmwxg1m7zYy1Wf+k55Z19ygoTBQql/NfhDdx
-	 drBysdDfK5+OfCuPSMKWFFsj2xwtAH3nRUXiHAVHcPoB2W3AsfPA7806krGNsDHTBYKHq
-	 YVUrqOsMKpF3WTdX+K1EpIZv8GHPgeRzecwX1a5xuos82phYRqPUcGWrHekBcDPdaCxu6
-	 ovJzFHny4ARCyoPWz3AH58SetP+8RsPOOey5tRBJG47VF8tYKhRbZVkIcfiBsoTWWIpNO
-	 C/o4SHrjDsE0R1OHuVibD6oGueucYBv813Glp6QavOGSLAxQdtBK6zuvno+KQMtDctA==
+	bh=19mSluI290qTihlO3U7zmMMhmqL79tgYvlSRd75/cfg=;
+	b=Xg42JNuzYz0Lp87u1XCDZCcTpV3oEI4Jq6tlkw50tnQJOvKsSt41HGzCdeLtk97SjCz/
+	 1kB6NPLKAvQrbuCyLvQDMJk90YHTSVMO6kuCVM3VluLI63HtDa6ul9MuqxeVvYBtt/Edk
+	 pPkMb8IkHlcdsGvQnSbXqE4nMzyZwpWyjz2GekrzwHbROi943h/fWvNgAvwlew4vh8mKc
+	 i2XMbZPFmxMzp42zvVdToxvWcNaYHZIZbDJwj5KgQl3GjHCUvYKPsos+i9UB8IZ2eUqTk
+	 saUZxfAtY+yqrkUojOdu39kEAPzYpyf0NLuel/NMdolQjO6MkR2e+wPVqpksN1AzoxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="FeT9/YWF";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=na36WeTF;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8846B606A31D;
-	Mon, 26 Oct 2026 16:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3E8606A31A;
+	Mon, 26 Oct 2026 16:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FeT9/YWF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B23A1F01825;
-	Mon, 26 Oct 2026 16:36:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=na36WeTF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB95F1F031E6;
+	Mon, 26 Oct 2026 16:37:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793032603;
-	bh=nwM4au63Jsk5odFgeRlnWu38AtJdKmUCfU5XAypWDpY=;
+	s=k20260515; t=1793032669;
+	bh=19mSluI290qTihlO3U7zmMMhmqL79tgYvlSRd75/cfg=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=FeT9/YWFOvvNJwYffe1oh53V/ZpbAzeU3N5E6YUbigridTbsav/ZjYlD3uTgEhF+w
-	 V7iDRnRvjRGk8VhpYawM1YcuL6h8n/xUyBeWUi6DFwfyhxd/+3/Bo5m3bgtZUeEvPh
-	 8iCRmGQsm9neN0TKqwnmz3DMsnrVnDNmf6VB2KeAXTed7VT2qlpHc/c4XFGP3HSsBP
-	 SVnhJzRSXuDrhh9OHC9pdyGTe4GJHVfn0azyftP1Bm++ZrzQ4BL18RN9zra8gDCQfA
-	 OeqhHdy7SDNmGYXQM6/fO3tXk9dLE5CetcVZEdinW91DJlBRKb4F0Kn0w6DI9aiIwS
-	 uVMz+0bxqWcxA==
-Message-ID: <sashiko-outbox-185542@kernel.org>
+	b=na36WeTFI3CK8UxC/AqT+s0D6hMwTnMKVvfeZF+I/dRKUniZ+BuF/jtWbATEVSfUH
+	 9oHQmB5I+TXbQHczDeoSruOG16RozUddk3126JPTe095pAwxBnz9cmwYA4iPYb+KYf
+	 x12Chm95tSsi9rIGzs0gHymeNIBm9QBtipK7GXkUdTnZs5OL7hTncW6IXrqDihO94R
+	 56p/IZHdmmEJpE38YLwCyou3mBtGGjPMVxxz0sVKxmdrKBIN9FushYYf/IAvl8Xotu
+	 9j8lkurJNdZUy7WD+uem4UeCyGsPuuUUwaaqK8oZE2QmVkc46EwD8RA0Ubuv4ohOGw
+	 YebSuPqWe3Acg==
+Message-ID: <sashiko-outbox-185544@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 18/22] gpio: Unify style of of_device_id arrays
+Subject: Re: [PATCH v3 09/22] gpio: Add missing OF module annotations
 Reply-To: sashiko-reviews@lists.linux.dev
 To: =?utf-8?b?VXdlIEtsZWluZS1Lw7ZuaWcgKFRoZSBDYXBhYmxlIEh1Yik=?= <u.kleine-koenig@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, imx@lists.linux.dev, Frank.Li@kernel.org, wsa+renesas@sang-engineering.com
-In-Reply-To: <600e39b6a1b7d76b9247c2651bc2d060a55fe633.1793030820.git.u.kleine-koenig@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, imx@lists.linux.dev, Frank.Li@kernel.org
+In-Reply-To: <844cb6a50d79486b95e8cf1cb369bb031268cca1.1793030820.git.u.kleine-koenig@baylibre.com>
 References: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
- <600e39b6a1b7d76b9247c2651bc2d060a55fe633.1793030820.git.u.kleine-koenig@baylibre.com>
+ <844cb6a50d79486b95e8cf1cb369bb031268cca1.1793030820.git.u.kleine-koenig@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 26 Oct 2026 16:36:42 +0000
+Date: Mon, 26 Oct 2026 16:37:48 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,95 +62,56 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] gpio: remaining of_device_id arrays violating stated coding style r=
-ules
+- [Low] gpio: mpc5200: missing MODULE_DEVICE_TABLE() for mpc52xx_simple_gpi=
+ochip_match
 --
 
-commit bbadc9bb71d86d6711999d534e5d9672f8b1e52e
+commit 7d75c8390d5c804a0671444aa9096ad1c750b879
 Author: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@baylibre.c=
 om>
 
-gpio: Unify style of of_device_id arrays
+gpio: Add missing OF module annotations
 
-This commit updates the of_device_id arrays across drivers/gpio/ to follow a
-consistent coding style for initializers, spaces around braces, and list
-terminators.
+This commit adds missing MODULE_DEVICE_TABLE(of, ...) declarations to sever=
+al
+GPIO drivers that match devices via Open Firmware device ID tables.
 
-[ ... ]
-
-> diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-> index e4fa84e227262..fbbe201cce4ca 100644
-> --- a/drivers/gpio/gpio-grgpio.c
-> +++ b/drivers/gpio/gpio-grgpio.c
-> @@ -444,7 +444,7 @@ static int grgpio_probe(struct platform_device *ofdev)
->  static const struct of_device_id grgpio_match[] =3D {
->  	{.name =3D "GAISLER_GPIO"},
->  	{.name =3D "01_01a"},
-> -	{},
-> +	{ }
+> diff --git a/drivers/gpio/gpio-mpc5200.c b/drivers/gpio/gpio-mpc5200.c
+> index 00f209157fd0f..2c828bc922ae3 100644
+> --- a/drivers/gpio/gpio-mpc5200.c
+> +++ b/drivers/gpio/gpio-mpc5200.c
+> @@ -180,6 +180,7 @@ static const struct of_device_id mpc52xx_wkup_gpiochi=
+p_match[] =3D {
+>  	{ .compatible =3D "fsl,mpc5200-gpio-wkup", },
+>  	{}
 >  };
+> +MODULE_DEVICE_TABLE(of, mpc52xx_wkup_gpiochip_match);
 
 [Severity: Low]
-Should the two non-sentinel entries in grgpio_match[] also have a space aft=
-er
-the opening { and before the closing } to match the style described in the
-commit message?
+Should mpc52xx_simple_gpiochip_match in drivers/gpio/gpio-mpc5200.c also be
+annotated with MODULE_DEVICE_TABLE(of, mpc52xx_simple_gpiochip_match)?
 
-[ ... ]
+This file registers two platform drivers in mpc52xx_gpio_init() via
+platform_register_drivers(): mpc52xx_wkup_gpiochip_driver and
+mpc52xx_simple_gpiochip_driver:
 
-> diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek=
--otto.c
-> index 5d98ad597d9e2..46ded0e228827 100644
-> --- a/drivers/gpio/gpio-realtek-otto.c
-> +++ b/drivers/gpio/gpio-realtek-otto.c
-> @@ -356,7 +356,7 @@ static const struct of_device_id realtek_gpio_of_matc=
-h[] =3D {
->  		.compatible =3D "realtek,rtl9607-gpio",
->  		.data =3D (void *)GPIO_PORTS_REVERSED,
->  	},
-> -	{}
-> +	{ }
->  };
+static const struct of_device_id mpc52xx_simple_gpiochip_match[] =3D {
+	{ .compatible =3D "fsl,mpc5200-gpio", },
+	{}
+};
 
-[Severity: Low]
-Earlier in realtek_gpio_of_match[] in drivers/gpio/gpio-realtek-otto.c, the
-"realtek,rtl9300-gpio" entry is missing a trailing comma on its .data
-initializer even though the closing } is on the next line:
-
-	{
-		.compatible =3D "realtek,rtl9300-gpio",
-		.data =3D (void *)(GPIO_PORTS_REVERSED | GPIO_INTERRUPTS_PER_CPU)
+static struct platform_driver mpc52xx_simple_gpiochip_driver =3D {
+	.driver =3D {
+		.name =3D "mpc5200-gpio",
+		.of_match_table =3D mpc52xx_simple_gpiochip_match,
 	},
+	.probe =3D mpc52xx_simple_gpiochip_probe,
+};
 
-Should a comma be added there as well?
-
-In addition, were the following three of_device_id arrays in drivers/gpio/
-intentionally left out, or should they also be updated to match the stated
-rules?
-
-drivers/gpio/gpio-bcm-kona.c (bcm_kona_gpio_of_match[], missing space in the
-terminator):
-	static struct of_device_id const bcm_kona_gpio_of_match[] =3D {
-		{ .compatible =3D "brcm,kona-gpio" },
-		{}
-	};
-
-drivers/gpio/gpio-pca953x.c (pca953x_dt_ids[], trailing commas before closi=
-ng
-} on single-line entries):
-	static const struct of_device_id pca953x_dt_ids[] =3D {
-		{ .compatible =3D "nxp,pca6408", .data =3D OF_953X(8, PCA_INT), },
-		...
-
-drivers/gpio/gpio-ppc44x.c (ppc44x_gpio_match[], missing space and trailing
-comma on the terminator):
-	static const struct of_device_id ppc44x_gpio_match[] =3D {
-		{
-			.compatible =3D "ibm,ppc4xx-gpio",
-		},
-		{},
-	};
+Without MODULE_DEVICE_TABLE(of, mpc52xx_simple_gpiochip_match), the module
+metadata generated for drivers/gpio/gpio-mpc5200.c omits the OF modalias for
+"fsl,mpc5200-gpio".
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1793030820.gi=
-t.u.kleine-koenig@baylibre.com?part=3D18
+t.u.kleine-koenig@baylibre.com?part=3D9
