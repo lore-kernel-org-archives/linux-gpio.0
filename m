@@ -1,59 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.119.170.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792968006;
-	b=eg9JhcPuVv21phBUQQPzKid3sXmgjyM3+TGm4ULeUNQbBzFh5z8nxykrZmYk0cVqqNqc
-	 awjTzDWseubhUnrKotEDAxL/XE2fn4KtfqeprdMG5l0HwdFb2sagjJYO6Pk1EOSeiRCQ5
-	 nwOqmdB6AnmMFOVMR7beIdw8Lr3ufDxgeSs60iJ1VI0HNsVzH/1aPbrIPJ91bzEsSiVNr
-	 Y3YtqqhqezGHNT1CrxVvXbymd+iLF14lbRmdOQpiaXse5q5ghvFzrzrjM484RDcIOlbnM
-	 sYQ6OjaiGnTx6QOmafHwX0rUrKjKam8FKFzNE0BrL1gMD0A3v0isG1wUBMS7tRo7A0g==
+	t=1792987365;
+	b=XDQRJF+OxyjY2KvuRYCvzy0Y9w1Ex5/bkKMf039lanh2CRxSNcpDTa9M4wtrwCIBmTgY
+	 qz9uBKmU5MQ3BBAwhJEGJY4tBdzzhnRppnXWqtj/GFS37NgMRVp8/DAbCL+LcRUYerG30
+	 ChmiBjC29I3rjIihD+6Z3CFzitKjRernOn0mHzGo0Aax03dNYnXwSxfAvSaA90GZy5hbt
+	 eAy5hPDAQ3mRxXlyVmoigc7/8xueyF9PR2ISXLOehNjA+Sg/UpojnSQJYZ0O8ZP0EkuUU
+	 hLGmlQIFKhgzvgsvqIwdD6jlew5Hh8LPKMsc0Zh2wPXB0lmR3di/fcmasIuyHtuvfhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792968006;
-	h=DMARC-Filter:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Autocrypt:Content-Type:Content-Transfer-Encoding:
-	 MIME-Version;
-	bh=BJFlHkjzZQkuZb2sYnE2Rmc5JG9Cgv9xdtkzLLy01dM=;
-	b=Bb7sSQDgXflGC4tBBxADBSJWNEvSz0Xm+YdNGA4DuVPdnkriezjPtZR+Xm3E/Cr27o7F
-	 r/yTOQXP//Qtc6fYWk+Am/7/eb9qNYkpc09jAjbBHwx8Dw8veKw7zF1KB0CZzIrgPMESB
-	 tz4TpA+1TxB5tMP8P1x6cBsPf0a35UiynICqLX1XgDF9EVTeJLwJzKIXmWOryCOrQHJ6i
-	 M4JPA1d7SEw0Bt5XCh56/khUKvyCi0Qjl81NNhoBuYgLnJOPuuSXSmp7OYbEBy0y9Bq3i
-	 LKEUqUt2WUti9sTLTxzm8ZnfsofU49fx634KoXwXqIHcivAh58UfFiT/zQ5C5iTvpkw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792987365;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=K2jKhwM+YQiKdSr1TcQzqEzMoQpUEpx9bgQiDQX0OfY=;
+	b=CxNuDh45Q5Yu77mfhosliLvAhZXd4dCTHqtBZUohJaqB2EcN1N9DFLib5tVnLWJIjRj1
+	 vCjf0ufgQsarr5aIv0QmgvGUfzAYYoaRXG7eHEF53S2+f5vn5qm4BIpPxB6fXHsFWZvgt
+	 7o2mdNR87l3rggfTfDNSI3pvuIozP7hu+vbZz+DlKpB41WEhB+iF3LQXD08lpcR4j4gFZ
+	 FVEJNuaFdYww4DPRmFutmJcSncvJLNf0nIWXOD10R4hwM5V3fu9NaYazhJXH5tNGeUdaX
+	 BSJYmaBnNUXQET35IiA5PD6SgE4soB6jm/FM7xnO03MELI/2Iz7G5JOp3XNO9Wy1GGQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=crapouillou.net;
-	spf=pass smtp.mailfrom=crapouillou.net;
-	arc=none smtp.remote-ip=185.119.170.32
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ayyPxwWM;
+	arc=none smtp.remote-ip=209.85.214.179
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F09F606A31A;
-	Sun, 25 Oct 2026 22:40:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1F09F606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-Message-ID: <d14f055275701e9ff4cb024a9d2389de4a0014ef.camel@crapouillou.net>
-Subject: Re: [PATCH] pinctrl: ingenic: Add the X1600's 32 kHz clock output
-From: Paul Cercueil <paul@crapouillou.net>
-To: Olivier Louvignes <olivier@mgcrea.io>, Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Sun, 25 Oct 2026 23:39:59 +0100
-In-Reply-To: <20261024051639.67806-1-olivier@mgcrea.io>
-References: <20261024051639.67806-1-olivier@mgcrea.io>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60688606A31E
+	for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 04:02:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60688606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ayyPxwWM
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2e985106c0cso21670175ad.2
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2026 21:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792987365; x=1793592165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=K2jKhwM+YQiKdSr1TcQzqEzMoQpUEpx9bgQiDQX0OfY=;
+        b=ayyPxwWM/lb+H5VABRhht0PR6vZEeUivf9sh2Rgba0uC+hcvHTu/6mrShgE43B9ZT/
+         kMs218fUY4beR83h7cZSyjRDyrIsJUF70dAmMY77n2GZ7zShdhLZofVUAk4UCxtWJFnO
+         x0vswuv9993aAFPfzJM9bDcFhz8jw8VEIr3g32fettpVMclgL0mMHLxjWO0iv6YiGhmu
+         RtvYkwSdBW0zd0sZeheju6ID8IAOSSf8yfkDe8DJCalQFyrQ39ydaP4S5yjQ7P/6aHa9
+         nAVcmEqSej2jmssIaA28ZVHJTo47vL332VCVpSHKoNrOMFGVtzVQsfrrEGpE0x/yAu9P
+         lnRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792987365; x=1793592165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=K2jKhwM+YQiKdSr1TcQzqEzMoQpUEpx9bgQiDQX0OfY=;
+        b=RKy+sB7qw+NFSa6yd4X3kC+p+Kn3gosGLNUuXvrNYn6D8GkcORuybpbmv+2qXa9Cst
+         tx9ROEVZn8UNcPu/EhV8qvzOeIoalWM2q1rKEIRIlqnuqcrazaYnDo6M1ssSSQDtjllg
+         dRRwX6KQd7CBIdRkIOn9F6FbTfjRu0eyR94+gcHArU+jUDnObPlPhHQ4vSdswC1FsqAq
+         Z/4UYV9j1/0/y94oGph5hlOscDT8R/C8mBKmARjyK4UJdTdT/FjK65QzziAIUOShg/zJ
+         xEPJtmWvgai5QhfgqMQZQazP0ugH2RqECPwpwr1JUXasXKcRHNPaEoVXHba154GDguSX
+         9ZSw==
+X-Gm-Message-State: AFq9FYJbV7YRUhUTrYZ19MaUrAJdVYwYltC2aqR4k6/+XHxTIxRMsFWi
+	xNaJ1Xu0vHePI6oGVP9xQE3K19V4W1a9USDKRBBeM+WbZ+zFKmEpQKES
+X-Gm-Gg: AYBFou1SlQ5MdaQ7zAHKxCNOqX0Lmsb5HwYo+4dTfw/0Dqh6bVHqbaV+R+6Tlhvoed7
+	LlVhBZTuC2ri85s0fcgCLlhLhIZ3LHJn/Kp+4yKunwFG7z8h/bQsKS7RGJYB5R7MoS7t+Z6LU3d
+	08IOUJI7hMQpAQ0BnzTQOYZ4dvyyQLN7kMCeIN6gEYWEKevtJf7QKo0B5JJGxj7JkrGTgyAJCRL
+	WElkLm2cY8lsmCQBnDeD8K3EnARk/WfWqytV30nrYi4xvyJmWj/2YIC9ZfYDBUxnODi7m0iXDnv
+	Gxa6pKLAt2V2hz2fZlBkVOVWOLHT9KPs0Ds4WmVV0J3qJ/0J4HUQu64mbEdDjrLg0YwbjnKLP/Z
+	/Pd56FA6Hz+CrV/ecL+tIBMQjic34ChpOVld1r2RaNSZIne8i2Qkia1j3ZWOFLGjw1O9C9g6Sv8
+	BmZ7LKb325yqeNIhstgXCqXCjX6R4YK9fdH693xnIFnp1iLHHn1ZA7RSMvzOx4gV7Uxq/z4EgXQ
+	EsFYMk+3kW16JjC/gKNrpqGyUtpZA7jAR+M0+ccjBEME6HG6fhIaa3jh79vM0v4vuvjzbNgU9SY
+	2l6735hha/sttvFRMYU=
+X-Received: by 2002:a17:902:cf12:b0:2e9:73db:3c78 with SMTP id d9443c01a7336-2ea9c63efcamr46730195ad.17.1792987364597;
+        Sun, 25 Oct 2026 21:02:44 -0700 (PDT)
+Received: from xiaolei-VMware-Virtual-Platform ([219.142.21.190])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ea9b22416bsm10626705ad.72.2026.10.25.21.02.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Oct 2026 21:02:43 -0700 (PDT)
+From: Xiaolei Wang <xiaoleiwangxiaolei@gmail.com>
+To: aisheng.dong@nxp.com,
+	festevam@gmail.com,
+	Frank.Li@nxp.com,
+	ping.bai@nxp.com,
+	kernel@pengutronix.de,
+	s32@nxp.com,
+	linusw@kernel.org,
+	s.hauer@pengutronix.de,
+	sudeep.holla@kernel.org,
+	cristian.marussi@arm.com,
+	peng.fan@nxp.com,
+	xiaoleiwangxiaolei@gmail.com
+Cc: linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] pinctrl: imx: scmi: replace custom dt_free_map with pinctrl_utils_free_map
+Date: Mon, 26 Oct 2026 12:02:30 +0800
+Message-ID: <20261026040230.22338-1-xiaoleiwangxiaolei@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,81 +106,56 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Olivier,
+From: Wang Xiaolei <xiaoleiwangxiaolei@gmail.com>
 
-Le samedi 24 octobre 2026 =C3=A0 07:16 +0200, Olivier Louvignes a =C3=A9cri=
-t=C2=A0:
-> PC26's function 0 puts out the RTC's 32 kHz clock. The vendor device
-> tree calls that pin setting "rtc32k-enable" (function 5 is its
-> "rtc32k-disable"). Add an "rtc32k" group and function for it.
->=20
-> Used on a HiBy R1, whose Bluetooth chip takes it as its sleep clock:
-> on
-> a cold boot without it the chip does not answer its reset, with it
-> the
-> chip comes up. The clock on the pin was not measured.
->=20
-> Signed-off-by: Olivier Louvignes <olivier@mgcrea.io>
+pinctrl_scmi_imx_dt_node_to_map() kmemdup_array()s the pinctrl configs
+of every pin into map[i].data.configs.configs, but the driver's own
+pinctrl_scmi_imx_dt_free_map() only frees the map array itself. The
+pinctrl core releases maps through pinctrl_dt_free_maps(), which calls
+dt_free_map(); the duplicated configs are therefore never freed and leak
+every time the DT node is parsed, e.g. on each (deferred) probe attempt.
 
-You're making two patch series in parallel to the same driver, that
-both add pin groups for the JZ4760? Next time consider grouping them
-into the same series.
+Replace the custom dt_free_map with the core helper
+pinctrl_utils_free_map(), which frees the configs of each
+PIN_MAP_TYPE_CONFIGS_* map before freeing the map itself. Its
+signature matches pinctrl_ops.dt_free_map(), so the driver-specific
+implementation can be dropped entirely.
 
-Anyway, this patch looks OK.
+Detected with kmemleak on an i.MX95 board (FRDM-IMX95).
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Fixes: b755521fd6eb ("pinctrl: imx: support SCMI pinctrl protocol for i.MX95")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wang Xiaolei <xiaoleiwangxiaolei@gmail.com>
+---
+ drivers/pinctrl/freescale/pinctrl-imx-scmi.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Cheers,
--Paul
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+index 613552e35070..8cbd66950848 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+@@ -153,18 +153,12 @@ static int pinctrl_scmi_imx_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-static void pinctrl_scmi_imx_dt_free_map(struct pinctrl_dev *pctldev,
+-					 struct pinctrl_map *map, unsigned int num_maps)
+-{
+-	kfree(map);
+-}
+-
+ static const struct pinctrl_ops pinctrl_scmi_imx_pinctrl_ops = {
+ 	.get_groups_count = pinctrl_generic_get_group_count,
+ 	.get_group_name = pinctrl_generic_get_group_name,
+ 	.get_group_pins = pinctrl_generic_get_group_pins,
+ 	.dt_node_to_map = pinctrl_scmi_imx_dt_node_to_map,
+-	.dt_free_map = pinctrl_scmi_imx_dt_free_map,
++	.dt_free_map = pinctrl_utils_free_map,
+ };
+ 
+ static int pinctrl_scmi_imx_func_set_mux(struct pinctrl_dev *pctldev,
+-- 
+2.34.1
 
-> ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 4 ++++
-> =C2=A01 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index 1aa6a6dc1209..ac6e2a152bdd 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -2452,6 +2452,7 @@ static int x1600_pwm_pwm6_b20_pins[] =3D { 0x34,
-> };
-> =C2=A0static int x1600_pwm_pwm7_b10_pins[] =3D { 0x2a, };
-> =C2=A0static int x1600_pwm_pwm7_b21_pins[] =3D { 0x35, };
-> =C2=A0
-> +static int x1600_rtc32k_pins[] =3D { 0x5a, };
-> =C2=A0static int x1600_mac_pins[] =3D {
-> =C2=A0	0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
-> =C2=A0};
-> @@ -2511,6 +2512,7 @@ static const struct group_desc x1600_groups[] =3D
-> {
-> =C2=A0	INGENIC_PIN_GROUP("pwm7-b10", x1600_pwm_pwm7_b10, 1),
-> =C2=A0	INGENIC_PIN_GROUP("pwm7-b21", x1600_pwm_pwm7_b21, 2),
-> =C2=A0	INGENIC_PIN_GROUP("mac", x1600_mac, 1),
-> +	INGENIC_PIN_GROUP("rtc32k", x1600_rtc32k, 0),
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const char * const x1600_uart0_groups[] =3D { "uart0-data",
-> "uart0-hwflow", };
-> @@ -2557,6 +2559,7 @@ static const char * const x1600_pwm6_groups[] =3D
-> { "pwm6-b9", "pwm6-b20", };
-> =C2=A0static const char * const x1600_pwm7_groups[] =3D { "pwm7-b10", "pw=
-m7-
-> b21", };
-> =C2=A0
-> =C2=A0static const char * const x1600_mac_groups[] =3D { "mac", };
-> +static const char * const x1600_rtc32k_groups[] =3D { "rtc32k", };
-> =C2=A0
-> =C2=A0static const struct pinfunction x1600_functions[] =3D {
-> =C2=A0	INGENIC_PIN_FUNCTION("uart0", x1600_uart0),
-> @@ -2581,6 +2584,7 @@ static const struct pinfunction
-> x1600_functions[] =3D {
-> =C2=A0	INGENIC_PIN_FUNCTION("pwm6", x1600_pwm6),
-> =C2=A0	INGENIC_PIN_FUNCTION("pwm7", x1600_pwm7),
-> =C2=A0	INGENIC_PIN_FUNCTION("mac", x1600_mac),
-> +	INGENIC_PIN_FUNCTION("rtc32k", x1600_rtc32k),
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ingenic_chip_info x1600_chip_info =3D {
->=20
-> base-commit: f33a24cc012d34f25bb9942681bd478a1757b806
