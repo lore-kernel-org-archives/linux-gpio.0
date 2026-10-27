@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793100681;
-	b=CWduSiiIQCcqT+A3EIsxsFLUVGnx4kmK+3qGinaUiudPyrNWWjQmPfO6PtYaVelMI0Ia
-	 2q/pi4pqYtSn57MIgtxK6JhSMzYrdegmHT5GsxbmrbWqISAomso7HDM3IIjVtfHeD4+ZT
-	 1ya6EeUt8g0QDON+LIqGVikRYPsHkpN+SoUH0FOBgYNAENnMJgT/agGFj13aLGa/N59u0
-	 wZSMGQeEjZr6NNc/Cry5PBB+erp0KkVnMibyQalGZFJkSW/cT4o7wJwW2FPyVzrxSJjhw
-	 plRpyxAr3TfJpwqBlyDNQ9xbfx767u+8UqGSTBs+iVJtFpa/mX+Q/y0hN4Czm8nEC2Q==
+	t=1793100684;
+	b=TmlDowZfP+VP4dM3LmCyoXdwbq6TocC3B5U3585dujfxEe1bguBMwqMTElzbAq0tcyec
+	 lu1uRsDwU5vWg7kLpwbGr34PFf6pvIh5/t8GI+y5FQx100MP1DTpgf7U8AqHAq9EUXMZF
+	 BwD9lICCbCytJ77QUCD7ufhlBZAECMc5mkBuRqBGZlEmyN2hgy/elDPV/oeFpcGTF3PsX
+	 vasVzLQve5YKgtYg8Cm5bvfA94pN4qjWv3Ipy2P8LAJjSzz+aNnalMFp9omBbR6qrVj6E
+	 BzRIagN3sLLnQ9vU7svfmZP0diQ6+PcZGvtHRL6pYTXP42ONmSu7CpGLdzDCpDjT7Kg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793100681;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793100684;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=zT2ox65hYWi/OvDC3GEmx4OPsZUV/KT9lVAWo7gAtJ0=;
-	b=vUzA5gBLYkBHjtAhfpkzZW8u2jDYF0ScURCCaazu6CYuUbYXWmOqbJUp0a+FnFs/zAvf
-	 nNgBcYq4cIHP5nmQnKs/KEtMXnyFrfVjLwdaAbOAFry15ulWg6xshRmh6PbQ2eZys6lET
-	 3DgiHZ1HkyNcvb3tOVHbrKS193OQg8J1tBYlpyuLung44ZwtIeyHkUyx+ubNEmOGUo3C7
-	 Sj8wNzRzVJXQnUbP6GA+BNLDcdNqdgtKj6d2qKrD6xd1J+OIE+5RYCxge87NdO57rQvjL
-	 Yov9BWVzkhU5RH520KBjKsk0Q2vweF8sG7y/7SkXDYgM66veJvP9eHbii1hdbcbK+Mw==
+	bh=LIThLV2eN5CkFwy9AFB/FmWQ60vYU4a7X7WBKNjqqms=;
+	b=EK/OvxX4+I+/g27NhhhW9JxO2etGgFt6ijtF6ozwxaHmKPesvksTZ2pM5g1Yp6fDTL7D
+	 CQFZ3xhWc2te8uuLMxVzZEaOM+2+AccFjlctPyUF0UQjymJjnTbxNls8lH3qtGbFIVl0x
+	 4X/FmvmhFPec8FeBCLOHCs1SrwfGlg4epSc5z3cNQtlaICMT5vtF6zlpoun7M6E7YMSPO
+	 vBnjl3wyF8N2Y+NlZoswhHGg6sPUyqxXSpB7PVstv3YCirKAqsUsISgNRA5sbhQNj568Z
+	 lsmE5p2LSVVizOboartFRvj8Wc6SqV98EWPW/GjNkflkQpQUWGTEkiUEc/haE4z8s0Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FA+jX59t;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aBm0+YaR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAABE606A31D;
-	Tue, 27 Oct 2026 11:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC97B606A324;
+	Tue, 27 Oct 2026 11:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FA+jX59t
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C9E1F01828;
-	Tue, 27 Oct 2026 11:31:20 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aBm0+YaR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579561F031E2;
+	Tue, 27 Oct 2026 11:31:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793100680;
-	bh=zT2ox65hYWi/OvDC3GEmx4OPsZUV/KT9lVAWo7gAtJ0=;
+	s=k20260515; t=1793100683;
+	bh=LIThLV2eN5CkFwy9AFB/FmWQ60vYU4a7X7WBKNjqqms=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=FA+jX59t/VBnjH9rVxgY9sudePKiCTDL7Gf81MZejhtIoJN2wwnZaUw8HieakkPOY
-	 lQwFurcM48NXWImVLZxLjpExdhnD1JBujZPxtKxtbLXd2UctpO+Oco6uhTVl13jRvP
-	 1ayOOKqvakXQhYnb3JEbo8S/ORUEFnLharY78kTRYYYBE5zhAzf/oqMh6B2LguA1tD
-	 AzQ9DLX0Hhnm2oW+EedL9xweZAoRybyxGh3SQvO7q09j+CgpjzA59H3erGu4Yz9smn
-	 6V2lUko52f9Bs//UEYm4RKbANZJbzW0MW+Y2Rp75e5L4vReV6cWjpQbolSoRgtjqPX
-	 TsM4DD8g1IYnQ==
-Message-ID: <sashiko-outbox-186446@kernel.org>
+	b=aBm0+YaR3jJ6NxD3ZxVoE+0+bxOTww6GxaZ7TqIXvAP/y35Rj7RML0zhvNsH3rcAv
+	 UvaP3EsKDESu4bhJpj9drKxR6a7iJlIpYCMkNeD8Lja3WqZESehTYu/4a2UdKwv6rN
+	 SFLwbHzz6R4K3GoQop1x48ChoMp+YfTkjxGO6KzRm6wEM6zG71JQdpdg1l7KsIeUEc
+	 wzK151xuH8qhqpVbyGt8hFHlBleWgStQq1yt4yPbXF5342qROZhtD6zReg9OUPrtUM
+	 AQIBpqFIbbVwuyDFXC+HLUQ6gPxKJ6DIXKRAd5uZbxuUombytFl3IijjmvqhfnvvkF
+	 xqphP3K/6NKDg==
+Message-ID: <sashiko-outbox-186456@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 01/12] dt-bindings: clock: qcom: Add bindings for PDM
- GP_MN clock divider
+Subject: Re: [PATCH v2 11/12] arm64: dts: qcom: sc7280: Add GP M/N clock
+ controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Taniya Das" <taniya.das@oss.qualcomm.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
+In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-11-ff8e4bc8d567@oss.qualcomm.com>
 References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
- <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
+ <20261026-b4-pdm_clk_gp_mnd_v2-v2-11-ff8e4bc8d567@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 27 Oct 2026 11:31:19 +0000
+Date: Tue, 27 Oct 2026 11:31:22 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,149 +61,65 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] dt-bindings: clock: qcom: invalid required assigned-clocks in cl=
-k-gp-mnd
-- [Low] dt-bindings: clock: qcom: non-standard schema filename and clock-na=
-mes suffixes
-- [Low] dt-bindings: clock: qcom: unused gp_mn label in binding example
+- [Low] arm64: dts: qcom: sc7280: undocumented gp_mn pinctrl function in ko=
+diak.dtsi
 --
 
-commit 6e14f976e140401abb92618c1275969f3fecf275
+commit 6f351e80c2c30a91b38cd18e71e46fa837dba70a
 Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
-dt-bindings: clock: qcom: Add bindings for PDM GP_MN clock divider
+arm64: dts: qcom: sc7280: Add GP M/N clock controller
 
-This commit adds the YAML device tree binding schema for the Qualcomm
-Peripheral Web's PDM GP_MN fractional clock divider.
+This commit adds the GP M/N clock controller node and its corresponding
+gpio60 pinctrl state to the SC7280 (Kodiak) device tree.
 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
-> new file mode 100644
-> index 0000000000000..8141f392c5d70
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
-> @@ -0,0 +1,98 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,clk-gp-mnd.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Peripheral Web's PDM GP_MN Clock Divider
-> +
-> +maintainers:
-> +  - Taniya Das <taniya.das@oss.qualcomm.com>
-> +
-> +description: |
-> +  The Peripheral Web's PDM GP_MN clock divider receives an input clock
-> +  (TCXO4) with frequency Fin and generates an output clock with
-> +  frequency Fout =3D Fin * (M / N) and a duty cycle controlled by D
-> +  and routed over a gpio pin.
+> diff --git a/arch/arm64/boot/dts/qcom/kodiak.dtsi b/arch/arm64/boot/dts/q=
+com/kodiak.dtsi
+> index 8c7523602d271..de27a051ee3b0 100644
+> --- a/arch/arm64/boot/dts/qcom/kodiak.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/kodiak.dtsi
 
 [ ... ]
 
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: qcom,sc7280-gp-mnd
-> +      - items:
-> +          - enum:
-> +              - qcom,sa8775p-gp-mnd
-> +              - qcom,qcs8300-gp-mnd
-> +              - qcom,qcs615-gp-mnd
-> +          - const: qcom,sc7280-gp-mnd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: PDM XO4 source clock
-> +      - description: PDM AHB bus clock for register access
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pdm_clk
-> +      - const: ahb_clk
+> @@ -6653,6 +6667,13 @@ mi2s0_sclk: mi2s0-sclk-state {
+>  				function =3D "mi2s0_sck";
+>  			};
+> =20
+> +			gp_mn_active: gp-mn-active-state {
+> +				pins =3D "gpio60";
+> +				function =3D "gp_mn";
+> +				drive-strength =3D <2>;
+> +				bias-disable;
+> +			};
 
 [Severity: Low]
-Could the schema filename, compatible enum ordering, and clock-names in
-Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml be updated to
-follow Documentation/devicetree/bindings/writing-bindings.rst?
+Does adding gp_mn_active with function =3D "gp_mn" in
+arch/arm64/boot/dts/qcom/kodiak.dtsi cause a dtbs_check regression for SC72=
+80
+device trees?
 
-1. The schema filename and $id use qcom,clk-gp-mnd.yaml, whereas the
-fallback compatible is qcom,sc7280-gp-mnd (and none of the compatibles use
-a clk- prefix). Should the file and $id be named qcom,sc7280-gp-mnd.yaml?
+While commit 3f5919ddb9c9 ("pinctrl: qcom: sc7280: Add gp_mn mux function")
+added support for gp_mn to drivers/pinctrl/qcom/pinctrl-sc7280.c, the
+function enum under qcom-sc7280-tlmm-state in
+Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml still
+omits gp_mn:
 
-2. In clock-names, pdm_clk and ahb_clk include redundant _clk suffixes.
-Should these be named pdm and ahb instead?
+    function:
+      description:
+        Specify the alternative function to be configured for the specified
+        pins.
+      enum: [ atest_char, atest_char0, atest_char1, atest_char2, atest_char=
+3,
+              ...
+              dp_lcd, edp_hot, edp_lcd, gcc_gp1, gcc_gp2, gcc_gp3,
+              gpio, host2wlan_sol, ibi_i3c, jitter_bist, lpass_slimbus,
 
-3. In the compatible enum list, should the entries (qcom,qcs615-gp-mnd,
-qcom,qcs8300-gp-mnd, qcom,sa8775p-gp-mnd) be sorted alphabetically?
-
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  assigned-clocks:
-> +    maxItems: 1
-> +    description: Parent clock phandle used to set the input frequency.
-> +
-> +  assigned-clock-rates:
-> +    maxItems: 1
-> +    description: |
-> +      Rate for the parent clock in Hz.
-> +      Supported rates: 19200000, 9600000, 6400000, 4800000.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - assigned-clocks
-> +  - assigned-clock-rates
-
-[Severity: Medium]
-Should assigned-clocks and assigned-clock-rates be omitted from properties
-and required in Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yam=
-l?
-
-In dt-schema, assigned-clocks and assigned-clock-rates are standard optional
-properties automatically allowed by the core clock schema whenever clocks or
-#clock-cells is present, even with additionalProperties: false.
-
-Defining them here with maxItems: 1 for the parent clock and listing them in
-required causes dtbs_check to reject valid device tree nodes that either
-rely on the default 19.2 MHz XO rate without explicitly assigning a parent
-rate (which clk_gp_mnd_probe() in the driver also handles as a fallback via
-if (!clk_get_rate(clk)) clk_set_rate(clk, 19200000);) or specify more than
-one entry in assigned-clocks (for example, configuring both GCC_PDM_XO4_CLK
-and the gp_mn output clock rate on the provider node).
-
-Also, the description block and commit message describe the input clock as a
-fixed TCXO4 clock, whereas assigned-clock-rates and the accompanying GCC
-changes configure a parent PDM XO4 divider clock supporting 19200000,
-9600000, 6400000, and 4800000 Hz. Could the description be updated to match?
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> +    gp_mn: clock-controller@88d3000 {
-> +        compatible =3D "qcom,sc7280-gp-mnd";
-
-[Severity: Low]
-In the examples block of
-Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml, the gp_mn node
-label on clock-controller@88d3000 is never referenced via &gp_mn, which
-triggers an unused-labels warning when running scripts/dtc/dt-check-style in
-strict mode. Should the unused gp_mn: label be dropped?
+Should gp_mn be added to the function enum in
+Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml first so
+that validating DTB files including kodiak.dtsi does not fail schema checks?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026-b4-pdm_clk=
-_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com?part=3D1
+_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com?part=3D11
