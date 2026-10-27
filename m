@@ -1,88 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793081137;
-	b=K2JANrzgNu8CX+WELzmdcr3sDqFqi+POKj9r9nvgbgVK79YNOARLEBHJ8NbBNcg8AiFu
-	 1fPYXZ1YKNCBAOl3l0YYa5lMfNnUri+niqh8/5U5BKdybfN/ZDur33ewvZ+ZdVz38MHIe
-	 SCNk4Ja9IOdl42A6mgyjW71yuFt5xzXLVjiO7e5UIxkXSE68C+dDXKDwdoPk2CJvSNmZj
-	 9IxPldLR6+JydpyBsjpSA/Odz6LUbCQt+5MeJ+YhkjTvNa0Xsep6RELHU3vCPqdJfgdH4
-	 7aj+WkIvcL9ts2yj+zCLcGYqXqlAKZPPGsoDeLIfmSbg8pZbZKEPHPXilE7CiQ+XOkw==
+	t=1793086939;
+	b=dhl8siROhXhDmY1C5jJXOU0xBNh4Wfi8uApDJUp69/LE6gpTmkGjKxarTDP59eT9l8uE
+	 H+n6cxP39k6ZBXKRDptwvZoKLes74Fm8bU/VpE9UyMM/zB5aBPfywUEccsRBYsgJSA1W8
+	 lcIJvF6IyNc0/ZjvIW8XUSGrKbIihR76KacqfQu7YlUcFfy0PNPW7qcAAaxI5IaOC4qvD
+	 XPlMDUNfGkX990StNkto2z3FmB1LeoDunh7cE7ZJx0s66ODIYz8pUv27k7POqsydmijYc
+	 6eSl3F6J6pgqrbCuL8ehXHQIF32L+/NzSkGIRkvzO0IwBZ+OUHFwb64QtWzy9WlwXfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793081137;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=FyaFjvdm32U/IxSaU5LseDLqJIT+GCnBMfwNLDa5YB8=;
-	b=Crbj9YoNEezgDaqYx/AxZr5PZMfPTdBLocobNsS0sAloLutxxLLVMKQiQqKgBdz2F0X5
-	 ZfZBUnR6MWBwjs9jH4FYsw5tNFHFb1ow/aX6JVMBZeoVBMZgHoOJ/cgZreY+R4ejToZ0c
-	 BxZAvP6wqFfM+/DIyu+vCCe0iesHFzndrd+FSQeDSZmHtAWzL1y/XoottqHRxJxi+3EXu
-	 X36nz530+l/Xf1fatpCr7k/mRfI00moNDwn+RQxb2p1VjOUrsPbuV3mNl6tEpe80LFvSe
-	 +JSiqRx9EVBniSlIoYzSRvPQxb8IFawjpL3o7LLheXJ1v9hwvjSi5I9y8iWg+y9x3cA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793086939;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=j2jvnq5LBuUdBxcMULF2dTy1RDa5fZBuXG3BJydri2s=;
+	b=b3T+iDIJ+bCz4Gg+ASk2gfGhGM2WzOSKr0OQaagLojoVanHWHE4KlnTaUqsF/OPNRj27
+	 zgF6F0XiTCe0yjvoBTvPBC2a8+OCg+465UWI8h/NNA3IlK+jGN0FetWXZWZxVq8b1Ns9Q
+	 bCNQw2J6N2lEyb5pAy3xBb+qiW36A9qJH2fzvasVWxeLXRF1R5QWbWNneCBgB/Ht7x2J+
+	 bI9aPE1eDZ3xWE5xj7k9AJ9UCg8wI4cBdmNx0Acif9w6JPKL9BsHpILxVU4fhx23oj+ah
+	 Ir90Fjzxh6ihLMuu0v6nMKBCcvFFVE2GezKuDX/gd4vkVDI/yp2h29u0wVhwwLbp85g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=PddLDvUN;
-	arc=none smtp.remote-ip=209.85.167.41
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="G4KV7/h3";
+	arc=none smtp.remote-ip=192.198.163.8
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3082A606A31B
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2026 06:05:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3082A606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA40606A32A;
+	Tue, 27 Oct 2026 07:42:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DEA40606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=PddLDvUN
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5bcb440d1cbso472057e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2026 23:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793081135; x=1793685935; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FyaFjvdm32U/IxSaU5LseDLqJIT+GCnBMfwNLDa5YB8=;
-        b=PddLDvUNztcgtwxD95E8F+7tysvbAU/1w5sHqBY5DBDP5PDOTVF/uiG8UbCMQFZd2a
-         NUUX5mW3m6woSHAhA0Fgc3x2cSiDh8KFvWq53/toFZ8t+uAQOTGx/zrgxFBqet3F8dTK
-         +gYCdnqlwbdUenUT03YHUth9m6G8RaeVPK87zXnlH4gUZlZkQPwy/wc+eKofWycXpXQJ
-         37m0EUzswFxTO2ETRHhituKW/TevVueSS0Y6TR1NnSvO2TSzzCKRxR7KBEbUE7dS//y2
-         eSByBMvNptUqBJHpwvH9ZN89mfouv71jwZ6PjfCA/s1Ik7mD+EVStyQnKYHIDlQ77TM+
-         6zlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793081135; x=1793685935;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=FyaFjvdm32U/IxSaU5LseDLqJIT+GCnBMfwNLDa5YB8=;
-        b=JjHntKff3F/xROY4uwWZNTzcZcaozomt8CFulcnLWB3VO8mnF0nEVAX704gHWn/mMg
-         020qmonXhWdCAz/EGGboQe3N0dREBik41P9xkgGRZ+GNP+pjvG76vbgV4YKDOXsM4xEU
-         dHw5u1+qZoP4h1RYMz89NqISEEYN+bOobJcKImI0P3X5CEbM5EFRXhlUfh4oWFUoZRO2
-         OzBP6Scn2UtHqfHM/JAbaWMUPLtnmTUCGvd8EqS4vJ3qSmUgetAb1Dg2DrBt3tJrRUMw
-         OrJej+sfoVN07dDtQaGuDlm5ldDBG7XeL6k+EPwwLa6/hzLU+GLDeribWHt/VsUC30M5
-         T+Hg==
-X-Forwarded-Encrypted: i=1; AKwUvBxe8cyuKTQ/IT0C4BmeR53UitVst7BJOS3BJFU2J4X1r2bew7z8RfI8NofffJuh2gFfMJKITHPHJh7e@vger.kernel.org
-X-Gm-Message-State: AFq9FYK8Km3Azc6mfmeLrRbSiOEKq1NL8WA3LANcursnz3T6ezhYp/mM
-	48t3RKYAT3edVYvfuIvs1va0FXAxfH2Lldubn66p/hbP/wnScoIsEd1y
-X-Gm-Gg: AYBFou1e9CScDnsfIl/dXVnP+SCsWQz6TXbbI1w11LfKF5P2J2caWa4nmPMkPUSwoK4
-	fnHvI1YnaGCa98sHvxkF/KcDUstPuvY8KHcQDPjo/nx3IX0Rw1lYp8EdxmV/6YQS0DJNL6cueGJ
-	+izZdrG3RaT6AuErK9AhyoapbUgpiwsx6WEj8WwuFT5LLXYuJxZxPKVgLXRwI754dlijTaLfJuY
-	nMO+2Hc/1W5KyZbTBnj+AfaGaH6wx+Q8aSyPyakE/z/PLOjYUDoUCCx2gJYAcf3wrkyqIYuWnLj
-	3j4RXdkEA/Mn+RWCxC47XCDMYzIUtoyay7YiIYyJWb8WKjSQBYbwTZsIfdePTTBxNCE+d56ZKlV
-	fgKMFHzgNhKscXxV1j3KmsssmZAbbandHyCX2zG9A+pw28BHb26O/2qT0+bJKCFBdXNLst/aBww
-	oa34Sg10IAuIJvt4RHhjDjywU1Xq0G3/Hp/UhkpSeV30/PQnXzizRqn83VGM75Gxm2+v0GbmIJi
-	sXz5obU58F4h6Yg13e2H/7p2FncxUtuocKVJYm5AvJrXguaQGP24cfQzALpzuGbaHEyZgRSCdD+
-	QA7K66+nJaAfXejuDoXfnYzeZvKG0QQVSgID
-X-Received: by 2002:a05:6512:350a:b0:5be:3cd0:e4f4 with SMTP id 2adb3069b0e04-5bfc617eb26mr436454e87.38.1793081135106;
-        Mon, 26 Oct 2026 23:05:35 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a9ce9esm1913515e87.79.2026.10.26.23.05.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 23:05:32 -0700 (PDT)
-Message-ID: <a4a176ab-d826-4f83-ba56-e86e9c6b764c@gmail.com>
-Date: Tue, 27 Oct 2026 08:05:31 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=G4KV7/h3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793086939; x=1824622939;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pn1XPwnW5qbEYdycg//2X2b1luLlW5dMRLslulayEAA=;
+  b=G4KV7/h3kMq2aAuLu6MH1ngL8Fs5ZwTV9C4YlT1a5jH5EmX5vMrGhehy
+   T4SoNRc+9aF908YahibGAXQdCOE4RXqqgZja6p0elMgfmMsiIFNs2SKt5
+   cNCbBcKRQYj2BVhQ75NLKktbuqYJgven6hUyIL6XvlBq0WyFpNcWLtOuq
+   ZylBLT0mAJSDER9+m/ZblO68RcjPym4sha0ejb4bDBeNtR7dC06unBgea
+   PqGFFSAmB0JEstASyjgiJp+/zcllVqwpKkZ9dwtBez4hZ0QoKod7X7kNF
+   OHxv70gnEa/QIiYjkZVFGVIjfvXt1zA4D6scSGEXXBpu+HKX1mgaW+XzZ
+   Q==;
+X-CSE-ConnectionGUID: DpQfXUKYThieRUtQA4UKMg==
+X-CSE-MsgGUID: U0QKeUjASVeY/p/XPGTQSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11947"; a="1676337"
+X-IronPort-AV: E=Sophos;i="6.27,180,1787036400"; 
+   d="scan'208";a="1676337"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 00:42:16 -0700
+X-CSE-ConnectionGUID: omhmNodsSJSg1YXWO+XiOA==
+X-CSE-MsgGUID: yI5dg7QyTh+i/8rkkHOfcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,180,1787036400"; 
+   d="scan'208";a="6354734"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.196])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 00:42:13 -0700
+Date: Tue, 27 Oct 2026 09:42:11 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 07/11] gpio: pl061: keep the parent device in a local
+Message-ID: <auBV0591Hjnl5i60@ashevche-desk.local>
+References: <20261027-cv75-gpio-v12-0-c22555400e18@ambarella.com>
+ <20261027-cv75-gpio-v12-7-c22555400e18@ambarella.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -92,66 +85,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/22] gpio: bd73800: Use named initializers for
- platform_device_id array
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
- <u.kleine-koenig@baylibre.com>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
- <fc1ffd672a11b0f89524c6295e4070c954eb81c0.1793030820.git.u.kleine-koenig@baylibre.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <fc1ffd672a11b0f89524c6295e4070c954eb81c0.1793030820.git.u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261027-cv75-gpio-v12-7-c22555400e18@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 26/10/2026 18:28, Uwe Kleine-König (The Capable Hub) wrote:
-> While being less compact, using named initializers allows to more easily
-> see which members of the structs are assigned which value without having
-> to lookup the declaration of the struct. And it's also more robust
-> against changes to the struct definition.
-> 
-> The mentioned robustness is relevant for a planned change to struct
-> platform_device_id that replaces .driver_data by an anonymous union
-> (though this driver doesn't use .driver_data, so this patch isn't
-> strictly necessary for the plan, but still ok for consistency).
-> 
-> This patch doesn't modify the compiled array, only its representation
-> in source form benefits.
-> 
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+On Tue, Oct 27, 2026 at 12:18:54PM +0800, Long Zhao via B4 Relay wrote:
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> IRQ logging uses gc->parent. Keep that device in a local so the
+> gpio-regmap switch can change where it comes from without rewriting
+> every log line.
 
-Thanks!
+...
 
-> ---
->   drivers/gpio/gpio-bd73800.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-bd73800.c b/drivers/gpio/gpio-bd73800.c
-> index 2be2a885820e..c960ea6e8426 100644
-> --- a/drivers/gpio/gpio-bd73800.c
-> +++ b/drivers/gpio/gpio-bd73800.c
-> @@ -189,8 +189,8 @@ static int gpo_bd73800_probe(struct platform_device *pdev)
->   }
->   
->   static const struct platform_device_id bd73800_gpio_id[] = {
-> -	{ "bd73800-gpio" },
-> -	{ },
-> +	{ .name = "bd73800-gpio" },
-> +	{ }
->   };
->   MODULE_DEVICE_TABLE(platform, bd73800_gpio_id);
->   
+> -		dev_warn(gc->parent, "no trigger selected for line %d\n",
+> +		dev_warn(parent, "no trigger selected for line %d\n",
+>  			 offset);
 
+Make it a single line now.
+
+		dev_warn(parent, "no trigger selected for line %d\n", offset);
 
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+With Best Regards,
+Andy Shevchenko
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+
