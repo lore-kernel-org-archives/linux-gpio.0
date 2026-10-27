@@ -1,78 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793074776;
-	b=tS0EPagvY8ltHB0oy5Jwn8XmqzzTrbjVD41NFZoZl3KPj/UzcGORgRuAdjMW5FmGucWc
-	 5KfOpccRTaQT+nT8SETGERYTt4dyBzygldr9P/1sdEj48tJdc8qPhySdV1Zr36KUUDApN
-	 3QEQc+CE+JdXidSae2G+QdZc8XUl9jT4+/dqRdhazBsk1XOYAOt2zcq5f9ltmNa8KjSZ5
-	 q1/J2vaNg2jHOIEVMd6XhjPlmxXtU6+YpyYF/NkGtm23KRIEY+CJhKTk34VNNMIj5iiGi
-	 bNJsMawDvM8B9MlfkgFrfJYAoPCrrxWGnEcZ87MBJW0EJqS6I6YYKJJP7nZvVspOckw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793074776;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=MN4E7aT82xy+bZjOGUk2oRwfeBWLpK4D9PSia4dRSug=;
-	b=TQfsuGsREgTzG1bbJmOD0QxVDL5HFXYfcqkgPmp6RaB6HbjUH/v262BtzvYFcxD7hfIg
-	 lAz+vbAj5zC4i+y2OuETrhfzSsIPj5ak+wC+ZJXPXDSNWo+32fb2LSJIhGd/5CqM3Witn
-	 /gHKJFnoc21KQ8Jcl8zVDul5MRk4HfjfMWyBK99FwDVJfN5hWRv+adDlu0gJjso3IZkYF
-	 42Y1dHuXYSUYRkBkBhOX1ILNP7hFNv+62g9ks8HM1Ak51ITdUXpTs5mYE02VzvKyOMFEB
-	 R4qZy/ChFqSdIpK0Jd/qoZrTz2+939KLohoTuTPtfIM/vcs0JX20ohcfFec2l3k4heA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VMxIWzQG;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793075320;
+	b=Zi9MySZvIeYL61OR30o7xcA6IHySSj0kjBga+BhuUEx/FXr/9dHHhOBkGr7iibUXqC++
+	 siyo+SKc7iIhlTwUBm9amVeyUNm3EmvV/BnmuiFgKVscL2PVBXDcF30/80vKzFCiJso9p
+	 vBj/57twsvtim0lPhYw8Y5NfFw8UBoMbb1ovlGBhos6Yk6w+y5bIxfzZgwsnUuHOatlx6
+	 yS552Dm8aHmiE29XAJGcfDaC4fvNBXR3XqIZWnJEVVyC6PsTlu/cw+Fo+Uye5DBxp5TnF
+	 mZanUEupj/J4KLO8yCT1VhaFjYCyw0Buqnr7WWROA2ApEodYNUgqSB3EF5sn+IbXSkg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793075320;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=sMWvOVtBIa1tWsgDaO3oY3FEqsdd7thgwrS2v4FAZBc=;
+	b=qaG6WbNpGLgPxuNXcWqZx8F6dbR/FdyPEippGce17XpM95XJ4r0Mxgy62WdsJFiMtQIB
+	 SBJEariH/aPwR6SJLUu6Xk1glAHIP7iaUbvzULc/S7BBHhReWGZ3WLCWiN7IdSmgDYc1X
+	 XQBoc0H/wmQZmtFXaNRDnp9hA6zoa9csQZxwTPeDH5mokyH+ZFo952uA5hsRUN8evVTAS
+	 C7yruC2Tg9A17W4XLnvZWHq/OfrJUW1xj1jFRyKBd4/MjtnJbGFVJsnJx70LpVRcrG1or
+	 nPIdCOOG5NAsVLBBzDOH4QPDl2lZQa/f2SJLTuxibk8NB9mw2HmKdIzfy4BNwEGqPDQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="BlhdA/7d";
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB5460A262F;
-	Tue, 27 Oct 2026 04:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7979D606A31E;
+	Tue, 27 Oct 2026 04:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VMxIWzQG
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793074771;
-	b=Qu/QcsFCu8kE3DXCUWtGF4UUskz7xS6K6NW+PmT5vlChkaJACSpYkgGtPbtPKOfDH7gg
-	 /K8kJMY7hDnkEi33kS/v9wV9iHyOSATG8f3fmZno+qo7XOAA7+OIlPX3mIwJWHyx+sICI
-	 nBgpJm+qaQZhg2Acay17BM6gBgFa8krIWoZ5CmkzF2RYWTW9FnB+vFOIvXyCdvpIMYeWj
-	 0q8tzm41hH2MRi2W3nMrOlmGKOEKklXJwDJp+yNlheGZ2gnkCzXDkXiZ3ZD82MgA5TG4S
-	 2+33PgQjz9HGK3mDqHeat14F8Vs8r9yw0lCB4VCR+++fXaJ0qhnr6ECY+8PwT75pjqQ==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793074771;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=MN4E7aT82xy+bZjOGUk2oRwfeBWLpK4D9PSia4dRSug=;
-	b=X3be7iP2s99LnAY0eNHBQ6AhvT5nK93bZLcDhzwnWt/mxp+xAONjtIAuVQkuBENePnY9
-	 1hi5Ir6IYVS4mrmmSuVuSIIMjElVYC870wXVP/+EhqE22TPpEVMnB5zvqtWkxWZ2KSyNd
-	 Ske4gpdIavX8/xulTDFe8CPBcQGjsxPkxUY4AWuLDb/JvT8lXfJ8l0+v7rJozB4F84UnB
-	 YqKEExYtMaKMV5TX4V/2DAH0hkHoBWXtaU/vS/nKKHSmPwgndWb0/36bCer63vh+p/8Wk
-	 kiFDGvLbQrp08fMDuNWOq/Yk9Yy889H1V/fijVWk2pnWs9dE9P/JsCI4epbjyj0998w==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id C9AD01F01825;
-	Tue, 27 Oct 2026 04:19:29 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BlhdA/7d
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B551F01825;
+	Tue, 27 Oct 2026 04:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793074771;
-	bh=MN4E7aT82xy+bZjOGUk2oRwfeBWLpK4D9PSia4dRSug=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=VMxIWzQG4YqHcTXq9Xaw7y/egQGA1lozk7LR8tX3Pk/lhXgjsvGXbHjOrQRnUvnNZ
-	 jna5jneqyLHK7LUnnv1LcH97mdE1P5L5KF/dHrnxzCDBC4ZSy9/vcmrriXIDrAkLEI
-	 FKqNGbtWixzMxdf0bXXOak2gU+MAUjVbyJpUZgQnQOc1ZIyyH7qhI6ILlotFUlSy7/
-	 eZPpqUfCFJMANbrBqoLVp0JXy8snXtZ0Vc9aBb3aqGPE6Z67slDFJ5R13QDEjFTVci
-	 htldLaaAL7UY0GZ2ScUvZaY19KBIuDRAMBVSUhc5zGQlAg6NvIDkLh/1DjzdKfS3P4
-	 V5AiDzr7xR1eQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 181E944FA8;
-	Tue, 27 Oct 2026 04:19:27 +0000 (UTC)
-From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Tue, 27 Oct 2026 12:18:58 +0800
-Subject: [PATCH v12 11/11] gpio: pl061: tidy up IRQ trigger logging
+	s=k20260515; t=1793075320;
+	bh=sMWvOVtBIa1tWsgDaO3oY3FEqsdd7thgwrS2v4FAZBc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=BlhdA/7dLhtBtFlBPilnPIKBpUqgOJWiUiWTtON/aZtmKfHkxLSVBOT+rMBR3VuFW
+	 ubKwPJYB4MdCKcTs4MlQWyOEYa20A33n0Sn02bhpWpjttuwcbka3rvwvXJZt2FslYe
+	 A380XGZBc2gR1Cl1uhw2tbeJdVndcsTjlxj2Y62NWOj39l1jKjyYkl3aKNbwL32msi
+	 IcXRJkD5dNkx50ylpgFNFHx52ZGJOpnszGr4Dii9D2LmuU4dk2ZBSH23fv9XfKFd/t
+	 EG7lTjBnnfCFJjuxXTKPadFXDTnUBUdC2ore+7QJ3ItGi8qqRqPwiSwMPxRktYSDVC
+	 Z59mafjCVU8Zg==
+Message-ID: <sashiko-outbox-186079@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v12 02/11] gpiolib: regmap: add
+ GPIO_REGMAP_QUIRK_SET_AFTER_DIR
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261027-cv75-gpio-v12-2-c22555400e18@ambarella.com>
+References: <20261027-cv75-gpio-v12-0-c22555400e18@ambarella.com>
+ <20261027-cv75-gpio-v12-2-c22555400e18@ambarella.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 27 Oct 2026 04:28:38 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -81,81 +60,77 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261027-cv75-gpio-v12-11-c22555400e18@ambarella.com>
-References: <20261027-cv75-gpio-v12-0-c22555400e18@ambarella.com>
-In-Reply-To: <20261027-cv75-gpio-v12-0-c22555400e18@ambarella.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Long Zhao <longzhao@ambarella.com>, Long Zhao <zl020895@163.com>, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793074765; l=1621;
- i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=1GuGXKlnEY6PpajjHcqcaik0zUQB0SPUsJ46RPfbalU=;
- b=GodvFEubUMxao50zjXFFH7bLQM9m4iylOUF1Gtq3c+A7J8mpRur1nocl0dI+ZStJKg69d2nKw
- K8S8hD5fdoSDNOVz63/CypOBwFVYJKmmWd9KUz1XDWaGJYtLyEP7N21
-X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
- pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
-X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
- auth_id=903
-X-Original-From: Long Zhao <longzhao@ambarella.com>
-Reply-To: longzhao@ambarella.com
-Content-Transfer-Encoding: 7bit
 
-From: Long Zhao <longzhao@ambarella.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] gpiolib: regmap: unchecked gpio_regmap_set() in gpio_regmap_dire=
+ction_output()
+--
 
-Join the level-and-edge dev_err() into one string literal so a grep
-for "edge detection" finds it.
+commit 1a15997a522bf0a981af10f62271be5cd75e972d
+Author: Long Zhao <longzhao@ambarella.com>
 
-Use str_high_low() for the level debug line. str_rising_falling()
-is not in linux-next, so the edge debug line keeps its own text.
+gpiolib: regmap: add GPIO_REGMAP_QUIRK_SET_AFTER_DIR
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
----
- drivers/gpio/gpio-pl061.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This commit adds a quirk flag to allow writing the output value of a GPIO
+line after changing its direction to output for controllers that ignore
+output writes while the line is still configured as an input.
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 0fb42c531451..1d77afd8c409 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -26,6 +26,7 @@
- #include <linux/regmap.h>
- #include <linux/seq_file.h>
- #include <linux/spinlock.h>
-+#include <linux/string_choices.h>
- 
- #define GPIODIR 0x400
- #define GPIOIS  0x404
-@@ -171,8 +172,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 
- 	if ((trigger & IRQ_TYPE_LEVEL_MASK) && (trigger & IRQ_TYPE_EDGE_BOTH)) {
- 		dev_err(parent,
--			"trying to configure line %d for both level and edge "
--			"detection, choose one!\n",
-+			"trying to configure line %d for both level and edge detection, choose one!\n",
- 			offset);
- 		return -EINVAL;
- 	}
-@@ -198,7 +198,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 		irq_set_handler_locked(d, handle_level_irq);
- 		dev_dbg(parent, "line %d: IRQ on %s level\n",
- 			offset,
--			polarity ? "HIGH" : "LOW");
-+			str_high_low(polarity));
- 	} else if ((trigger & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
- 		/* Disable level detection */
- 		gpiois &= ~bit;
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index 51b4d69b87403..0a44deae3d01e 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
+[ ... ]
+> @@ -271,9 +272,17 @@ static int gpio_regmap_direction_output(struct gpio_=
+chip *chip,
+>  			return ret;
+>  	}
+> =20
+> -	gpio_regmap_set(chip, offset, value);
+> +	if (!(gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR))
+> +		gpio_regmap_set(chip, offset, value);
+> =20
+> -	return gpio_regmap_set_direction(chip, offset, true);
+> +	ret =3D gpio_regmap_set_direction(chip, offset, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR)
+> +		gpio_regmap_set(chip, offset, value);
+> +
+> +	return 0;
 
--- 
-2.34.1
+[Severity: Medium]
+Should gpio_regmap_direction_output() in drivers/gpio/gpio-regmap.c check
+and propagate the return value of both gpio_regmap_set() calls?
 
+In drivers/gpio/gpio-regmap.c, gpio_regmap_set() returns a negative error
+code if reg_mask_xlate() or regmap_write_bits() / regmap_update_bits()
+fails:
 
+drivers/gpio/gpio-regmap.c:gpio_regmap_set() {
+	ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+	if (ret)
+		return ret;
+	...
+	if (gpio->reg_dat_base =3D=3D gpio->reg_set_base)
+		ret =3D regmap_write_bits(gpio->regmap, reg, mask, mask_val);
+	else
+		ret =3D regmap_update_bits(gpio->regmap, reg, mask, mask_val);
+
+	return ret;
+}
+
+When the quirk is not set and the initial gpio_regmap_set() fails (for
+example due to an I2C/SPI bus error or invalid register translation),
+ignoring the return value allows execution to proceed to
+gpio_regmap_set_direction(), enabling the output driver on the pin with a
+stale output value.
+
+When the quirk is set and the post-direction gpio_regmap_set() fails,
+gpio_regmap_direction_output() discards the error and returns 0 to the
+caller even though setting the output value failed.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-cv75-gpio-=
+v12-0-c22555400e18@ambarella.com?part=3D2
