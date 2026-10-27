@@ -1,81 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.39.247.168
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793086939;
-	b=dhl8siROhXhDmY1C5jJXOU0xBNh4Wfi8uApDJUp69/LE6gpTmkGjKxarTDP59eT9l8uE
-	 H+n6cxP39k6ZBXKRDptwvZoKLes74Fm8bU/VpE9UyMM/zB5aBPfywUEccsRBYsgJSA1W8
-	 lcIJvF6IyNc0/ZjvIW8XUSGrKbIihR76KacqfQu7YlUcFfy0PNPW7qcAAaxI5IaOC4qvD
-	 XPlMDUNfGkX990StNkto2z3FmB1LeoDunh7cE7ZJx0s66ODIYz8pUv27k7POqsydmijYc
-	 6eSl3F6J6pgqrbCuL8ehXHQIF32L+/NzSkGIRkvzO0IwBZ+OUHFwb64QtWzy9WlwXfg==
+	t=1793088217;
+	b=iNGm+jZ+ofccbTuwuUGzNAGNKfObbUbTFflvcsHFZVj+v/jG2ckdbSRIY9P/9OtZjf+Y
+	 GfWrbc1U7O3doKj1HMn909zdNNDHvJbCKfEebO9mPFG748bRoF2BiXis7P/btzg6a7SAa
+	 c2qZC/3wQlMQvr/St1PpEb25l2M3w8D5XDbMv1rlBb7yYGM7uOIgu/UChEZr3jgXZEQ7G
+	 SKyQWXTv3jpyDgUg3foxSERSPJL/9FAqZcQjxhEW1zJsP1WfCNX9Zu1y5pxs6JPypqe+9
+	 EhKya3YoNv0RxHkAtOvNIKEOyWUxWgLmTeVCKCwJwOKSn7XkEawR5Z/Df2pOjbsR41A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793086939;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=j2jvnq5LBuUdBxcMULF2dTy1RDa5fZBuXG3BJydri2s=;
-	b=b3T+iDIJ+bCz4Gg+ASk2gfGhGM2WzOSKr0OQaagLojoVanHWHE4KlnTaUqsF/OPNRj27
-	 zgF6F0XiTCe0yjvoBTvPBC2a8+OCg+465UWI8h/NNA3IlK+jGN0FetWXZWZxVq8b1Ns9Q
-	 bCNQw2J6N2lEyb5pAy3xBb+qiW36A9qJH2fzvasVWxeLXRF1R5QWbWNneCBgB/Ht7x2J+
-	 bI9aPE1eDZ3xWE5xj7k9AJ9UCg8wI4cBdmNx0Acif9w6JPKL9BsHpILxVU4fhx23oj+ah
-	 Ir90Fjzxh6ihLMuu0v6nMKBCcvFFVE2GezKuDX/gd4vkVDI/yp2h29u0wVhwwLbp85g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793088217;
+	h=DMARC-Filter:From:DKIM-Signature:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc;
+	bh=P5c0ApmIJ3lAMNaYphnR5Mx0YPPl4nsPPZL16lmRKXY=;
+	b=ipvDWlbYkazXee1tonHzIZ5RcZ+Yv8reIlM0JhzsVQlTtE2foD6GaKPRSw61dia+3HDN
+	 n6Z83ELSLRaVF1hjosSa6Kj8aie6Z4KK4e0uhXLEiZUAhx7wdtJjPTOJSl9ZjqSU54F20
+	 S1SviixC5gYPbqXVR+BfSt4QVI+5WRl9rKzoXk8ArC1m1gAP4ohhMvSVUMbfdINe9HAoB
+	 LWpW4FgyG35vaO7mfUOJSNdMTJ79toKgJM1KezOkmb5wFWqCJghy/0OtIcW9IewGQ5r86
+	 92Y3OT/3tJfpeHhkQ0xg4eh53DfpY877ScKImV1dhHUuu4SjeHj7ugFa97VP2ZX7xOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="G4KV7/h3";
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=cyberchaos.dev;
+	spf=pass smtp.mailfrom=cyberchaos.dev;
+	dkim=pass header.d=cyberchaos.dev header.i=@cyberchaos.dev header.a=rsa-sha256 header.s=mail header.b=crVEQopE;
+	arc=none smtp.remote-ip=195.39.247.168
+Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA40606A32A;
-	Tue, 27 Oct 2026 07:42:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DEA40606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DDE606A31A;
+	Tue, 27 Oct 2026 08:03:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D9DDE606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyberchaos.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyberchaos.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=G4KV7/h3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793086939; x=1824622939;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pn1XPwnW5qbEYdycg//2X2b1luLlW5dMRLslulayEAA=;
-  b=G4KV7/h3kMq2aAuLu6MH1ngL8Fs5ZwTV9C4YlT1a5jH5EmX5vMrGhehy
-   T4SoNRc+9aF908YahibGAXQdCOE4RXqqgZja6p0elMgfmMsiIFNs2SKt5
-   cNCbBcKRQYj2BVhQ75NLKktbuqYJgven6hUyIL6XvlBq0WyFpNcWLtOuq
-   ZylBLT0mAJSDER9+m/ZblO68RcjPym4sha0ejb4bDBeNtR7dC06unBgea
-   PqGFFSAmB0JEstASyjgiJp+/zcllVqwpKkZ9dwtBez4hZ0QoKod7X7kNF
-   OHxv70gnEa/QIiYjkZVFGVIjfvXt1zA4D6scSGEXXBpu+HKX1mgaW+XzZ
-   Q==;
-X-CSE-ConnectionGUID: DpQfXUKYThieRUtQA4UKMg==
-X-CSE-MsgGUID: U0QKeUjASVeY/p/XPGTQSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11947"; a="1676337"
-X-IronPort-AV: E=Sophos;i="6.27,180,1787036400"; 
-   d="scan'208";a="1676337"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 00:42:16 -0700
-X-CSE-ConnectionGUID: omhmNodsSJSg1YXWO+XiOA==
-X-CSE-MsgGUID: yI5dg7QyTh+i/8rkkHOfcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,180,1787036400"; 
-   d="scan'208";a="6354734"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.196])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 00:42:13 -0700
-Date: Tue, 27 Oct 2026 09:42:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 07/11] gpio: pl061: keep the parent device in a local
-Message-ID: <auBV0591Hjnl5i60@ashevche-desk.local>
-References: <20261027-cv75-gpio-v12-0-c22555400e18@ambarella.com>
- <20261027-cv75-gpio-v12-7-c22555400e18@ambarella.com>
+	dkim=pass (1024-bit key, unprotected) header.d=cyberchaos.dev header.i=@cyberchaos.dev header.a=rsa-sha256 header.s=mail header.b=crVEQopE
+From: Yureka Lilian <yureka@cyberchaos.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyberchaos.dev;
+	s=mail; t=1793088208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P5c0ApmIJ3lAMNaYphnR5Mx0YPPl4nsPPZL16lmRKXY=;
+	b=crVEQopEfm3vY6etwK7PdIB3SmLmyRWj8Epua/Soc+v5Rbpb7o+MA91lYVv9dA4lORKBQw
+	4mjWnEQToB5OR/G7JHCcBrdfWMV83H8c0Esd3NJdj6D0SCOe0QCqPkKB5TaoHXvSMDQs/P
+	EUuJISIwf1ADXGzbly7QiU3Vl3vIuls=
+Subject: [PATCH 00/10] Initial Apple Silicon M5 device trees and
+ dt-bindings
+Date: Tue, 27 Oct 2026 09:03:20 +0100
+Message-Id: <20261027-apple-m5-initial-devicetrees-v1-0-1356181bc50d@cyberchaos.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -85,30 +56,81 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261027-cv75-gpio-v12-7-c22555400e18@ambarella.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMywrCMBBG4Vcps3YgqbZSX0Vc5PKrIzWGTBSh9
+ N2NuvwW5yykKAKlQ7dQwUtUHqnBbjoKV5cuYInN1Jt+tMaO7HKewfeBJUkVN3NsVUAtgPIuwvh
+ pP0x+66ktcsFZ3r/98fS3Pv0NoX6ftK4f2RlBo4AAAAA=
+X-Change-ID: 20261016-apple-m5-initial-devicetrees-4de0b9759b3b
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+ Neal Gompa <neal@gompa.dev>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+ Radu Rendec <radu@rendec.net>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Hector Martin <marcan@marcan.st>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Sasha Finkelstein <k@chaosmail.tech>, Linus Walleij <linusw@kernel.org>, 
+ Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ Yureka Lilian <yureka@cyberchaos.dev>
 
-On Tue, Oct 27, 2026 at 12:18:54PM +0800, Long Zhao via B4 Relay wrote:
+Hi,
 
-> IRQ logging uses gc->parent. Keep that device in a local so the
-> gpio-regmap switch can change where it comes from without rewriting
-> every log line.
+This series adds initial device trees and dt-bindings for the Apple
+Silicon devices using the M5 (t8142) SoCs.
 
-...
+This series covers only a minimal amount of hardware, which is useful
+as a basis for future developments. The hardware added here has remained
+largely unchanged from the earlier Apple Silicon generations.
 
-> -		dev_warn(gc->parent, "no trigger selected for line %d\n",
-> +		dev_warn(parent, "no trigger selected for line %d\n",
->  			 offset);
+I applied some version of dt-check-style formatting to all new files
+with the exception of the generated pmgr nodes.
 
-Make it a single line now.
+Merge strategy:
+Since there are no actual driver changes, we'd prefer to merge the
+dt-bindings changes through the apple-soc tree once Acked by the
+respective maintainers.
 
-		dev_warn(parent, "no trigger selected for line %d\n", offset);
+Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
+---
+Yureka Lilian (10):
+      dt-bindings: watchdog: apple,wdt: Add t8142 compatible
+      dt-bindings: interrupt-controller: apple,aic2: Add t8142 compatible
+      dt-bindings: arm: cpus: Add Apple M5 CPU core compatibles
+      dt-bindings: arm: power: apple,pmgr-pwrstate: Add t8142 compatible
+      dt-bindings: arm: apple: apple,pmgr: Add t8142 compatible
+      dt-bindings: pwm: apple,s5l-fpwm: Add t8142 compatible
+      dt-bindings: pinctrl: apple,pinctrl: Add t8142 compatible
+      dt-bindings: i2c: apple,i2c: Add t8142 compatible
+      dt-bindings: arm: apple: Add M5 based devices
+      arm64: dts: apple: Add minimal t8142 (M5) device trees
 
--- 
-With Best Regards,
-Andy Shevchenko
+ Documentation/devicetree/bindings/arm/apple.yaml   |   15 +
+ .../devicetree/bindings/arm/apple/apple,pmgr.yaml  |    1 +
+ Documentation/devicetree/bindings/arm/cpus.yaml    |    2 +
+ .../devicetree/bindings/i2c/apple,i2c.yaml         |    1 +
+ .../bindings/interrupt-controller/apple,aic2.yaml  |    1 +
+ .../devicetree/bindings/pinctrl/apple,pinctrl.yaml |    3 +
+ .../bindings/power/apple,pmgr-pwrstate.yaml        |    1 +
+ .../devicetree/bindings/pwm/apple,s5l-fpwm.yaml    |    1 +
+ .../devicetree/bindings/watchdog/apple,wdt.yaml    |    1 +
+ arch/arm64/boot/dts/apple/Makefile                 |    3 +
+ arch/arm64/boot/dts/apple/t8142-j704.dts           |   36 +
+ arch/arm64/boot/dts/apple/t8142-j813.dts           |   36 +
+ arch/arm64/boot/dts/apple/t8142-j815.dts           |   36 +
+ arch/arm64/boot/dts/apple/t8142-jxxx.dtsi          |   50 +
+ arch/arm64/boot/dts/apple/t8142-pmgr.dtsi          | 1131 ++++++++++++++++++++
+ arch/arm64/boot/dts/apple/t8142.dtsi               |  512 +++++++++
+ 16 files changed, 1830 insertions(+)
+---
+base-commit: 498a03715b45515444fe1fc6d7b34177cafb6c38
+change-id: 20261016-apple-m5-initial-devicetrees-4de0b9759b3b
 
+Best regards,
+--  
+Yureka Lilian <yureka@cyberchaos.dev>
 
