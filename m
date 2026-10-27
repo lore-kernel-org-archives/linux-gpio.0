@@ -1,57 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793075841;
-	b=yuSupu/Gk76Z8hQC7Vx9OeNglhUM+yaaqm6gtGJ4qRHaselt4rib1xmSMWB4uhgMTtOM
-	 tINU0EIXLUFVD7jEMqYvO6kdAYfUb2GRsfgLitz4Lu1+c35usyCCoFuqqZ6X+FlrmhArx
-	 Hc8j/bCjiuJypZkMCbCNkz1XogY0jvdAalhUHxZ88u/rrj7eY8AOExiFwoZ2BRBTZsnUm
-	 1k3GCIcxqjTzM8AczLPH01hS0Cn17ZIg5rfYCAu9gfRfe16EcFwGPz2yL3kce+anaeCWW
-	 x/7QXot+zvpYSJrc+tFzqV9io6bh2z/zqkDaKh92Vpn+Nim+uPGuhi57GHRGcTJkouw==
+	t=1793079045;
+	b=J6DTmRJIub9QTGSDggXvjo45CbratGv/A8t9jD2a7Ts7sWQfDpsC5HuypoICnNsIyCKt
+	 DizFuRDjGUuh0uG9V32ir7DW35HC5lON1H0C4QeKbUed1XJTHJk54BB9MsdMgFsa8Q5QI
+	 L8yfo2x3XN4qyxlHn0erdDYDH2QnrQUJoOb90+DBmVSxRBLmwIRE9+nK/cgaPofJEPVNL
+	 AJHVOzyN7ONrMQ0LihD2VJKXOhyMhKkK3CrsYqFIetjZizZAKfTJgA3CQWB133YDPhPfN
+	 pyRo+9uRkn+D0gu7x8yHMBUtap74owoA2sUjtVN38SkS6EcN6Rw7dhhWK+EkpUyIWVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793075841;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Ks1RLjzmjl+HbtDvHuzWp+dQzhlExU4YVtMZU45YSIw=;
-	b=raDfCKWSs+Xmtcq3TTogHxRcR9Dn/EW3CDsRODLJR7THl8NyxNwq1goA0H54LMtM4TJn
-	 JyWXzDPdbb9bunM8o4resw/AB/kbR0tCiGJV3w+jrblyTnL60+ikro6yViZ5RtnVl0zoX
-	 6iHGmFrk3ZnxWplpI6+XmfEPj41xGkGeh4E5UnQQY2Yl/hI7VzYiJfirZZy30J0y+KGnI
-	 mM0ufOfua4LZdwM9rbzAtRHTCDOptLgtpUpD1L4pxZoZbgSwPYQuBJbxQbPrSyV1Vbx9v
-	 Ho6TXc3HHnF9v3LLjzdIO9BJaCkUwrt6odBJCK4Hw6sxa06G/8uxLLGib09jLpT1X8g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793079045;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=bI0ZDEugVfoInLkWTnkv29Sk5KHKc3K9ILUm+SD/dc8=;
+	b=CtVPUKlAK+xUjWOkiOZxb2ZZTKAwHPHrduA9tVF+iliUvBw5P62K36jwjF9mRDCMw8Jg
+	 FY7YH1uz4H6/h2gIzh4fGYEhjxS1NPZqe75hg5ljlKlNfQsVEDHHChXp192D8XIBcPgI9
+	 EewvhOqhyj/0Qyu00FPG8AE7hHXhhg2G2TwNeCrmLPFIkZ6rXSVF5/6g6bsSkNzFr7h3V
+	 L51RvLuYT56bi9VLnCoAV6OQfucOyAbRLgjLKjLQRBtFhGfd0Q6CFhSm/vZuhNp7nToKA
+	 ahU3OiBxm96WK1z71AwZLhe9wzR23WiTM04ubTPEEAGvJLw5d8/7Ibk4ky9fCHTXcQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VzVfavhs;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="kK1oCF/w";
+	arc=none smtp.remote-ip=192.198.163.17
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2939606A31A;
-	Tue, 27 Oct 2026 04:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB62A606A31B;
+	Tue, 27 Oct 2026 05:30:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB62A606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VzVfavhs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6DC1F01825;
-	Tue, 27 Oct 2026 04:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793075840;
-	bh=Ks1RLjzmjl+HbtDvHuzWp+dQzhlExU4YVtMZU45YSIw=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VzVfavhsVRuwpkGDuiDuU5uMUQrb1YSjIJiFNBI3F01Uuw3FzfmpoC8C0QyEWwNsw
-	 ZXnFyuzjKxTWT16hs2LT1WLerSME/QVXfnRRkxTq4o9LmY0LJB+FxUOWtc+kCWozoo
-	 PoWKP3qYeqKZ8zQW34trkRz6nVuEeUEUj/xRPSI/Sbrj7wLtcRLvkZ3/5sjHcaLAop
-	 GZ52ODqDeE0uLt3ivz6Umt5MJG3zhybLKQIXbNcJUuUgG4LnbcRN+a5vNzFS2wKPTb
-	 b2s/9cEcOU87CyqZ8uNo9E7pOV48fpCGnrnTC3irQ1QH7l5Hm1y8hx49JMaMPy/odU
-	 seuxQebkRWrSg==
-Message-ID: <sashiko-outbox-186082@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 08/11] gpiolib: request ACPI GPIO events for
- external IRQ domains
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261027-cv75-gpio-v12-8-c22555400e18@ambarella.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kK1oCF/w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793079044; x=1824615044;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2WpjaTFHROeNXncH1sB7DMvCxdj1XpNG8d7YiGokm/8=;
+  b=kK1oCF/wY9JGdW1etPEL0kpVGrkOrJ0GUHOU9yzvC+V0h0Mb1T8/V7J5
+   Sj/S38c57eUn4IE4ILDClCGZfSAKhaA83M3EtS5/2p/x2v2uWV3b/JUIV
+   l0KZ8AawTfhGTJO/VZShTBOvuJqViY5ngAFqUoQY08T75v00VZABvoe1v
+   lROlo8uEqCYgMvd/VxrJbEyieH8wD5difJBHLYB7rwL9EtXyMjKMnjVfR
+   sskPseG9NnIRmPwt5qD/3+Ug431HUEY5o+mq6BIKzhF6BLMqN9H8DixTm
+   sAOs3yfa1gQYn0sWLDpM4gdOQoKExGqVUCrfIj76QFeC7V4jZbC3X90CD
+   Q==;
+X-CSE-ConnectionGUID: ZFM7za1GTZ64o9wqqAXXfA==
+X-CSE-MsgGUID: QKTLVurTSgGJlXQXuSZWZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11947"; a="1780757"
+X-IronPort-AV: E=Sophos;i="6.27,180,1787036400"; 
+   d="scan'208";a="1780757"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2026 22:29:58 -0700
+X-CSE-ConnectionGUID: XidpNHlySEySvMSHywRj4g==
+X-CSE-MsgGUID: kzsLSwvqSuGockY+XdVgYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,180,1787036400"; 
+   d="scan'208";a="4326428"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa008.jf.intel.com with ESMTP; 26 Oct 2026 22:29:55 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id B7BB399; Tue, 27 Oct 2026 06:29:53 +0100 (CET)
+Date: Tue, 27 Oct 2026 06:29:53 +0100
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org,
+	Mika Westerberg <westeri@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v12 08/11] gpiolib: request ACPI GPIO events for external
+ IRQ domains
+Message-ID: <20261027052953.GH158991@black.igk.intel.com>
 References: <20261027-cv75-gpio-v12-0-c22555400e18@ambarella.com>
  <20261027-cv75-gpio-v12-8-c22555400e18@ambarella.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 27 Oct 2026 04:37:19 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,130 +90,60 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261027-cv75-gpio-v12-8-c22555400e18@ambarella.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] gpio: inverted irqchip teardown order in gpio_regmap_unregister()
---
+On Tue, Oct 27, 2026 at 12:18:55PM +0800, Long Zhao via B4 Relay wrote:
+> From: Long Zhao <longzhao@ambarella.com>
+> 
+> gpiochip_add_irqchip() requests GPIO-signaled ACPI events after
+> installing the irqchip. A gpiochip that gets its IRQ domain through
+> gpiochip_irqchip_add_domain() never goes through that path, so _AEI
+> events, such as the power button on ARM64 ACPI platforms, are not
+> requested.
+> 
+> Request them here as well. gpiochip_remove() already calls
+> acpi_gpiochip_free_interrupts().
+> 
+> Cc: Mika Westerberg <westeri@kernel.org>
 
-commit ee59cd5ff4cdd5a1601cf9e6bc045d90f8115ad2
-Author: Long Zhao <longzhao@ambarella.com>
+One tiny comment below, other than that looks good to me,
 
-gpiolib: request ACPI GPIO events for external IRQ domains
+Acked-by: Mika Westerberg (Intel) <westeri@kernel.org>
 
-This commit updates gpiochip_irqchip_add_domain() to call
-acpi_gpiochip_request_interrupts() so that GPIO-signaled ACPI _AEI events a=
-re
-requested when a gpio_chip attaches an external IRQ domain.
-
+> Cc: linux-acpi@vger.kernel.org
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> ---
+>  drivers/gpio/gpiolib.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
 > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e5fb60111151f..63c51d9ee0bf5 100644
+> index e5fb60111151..63c51d9ee0bf 100644
 > --- a/drivers/gpio/gpiolib.c
 > +++ b/drivers/gpio/gpiolib.c
-> @@ -2353,7 +2353,15 @@ static void gpiochip_irqchip_remove(struct gpio_ch=
-ip *gc)
+> @@ -2353,7 +2353,15 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gc)
 >  int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
 >  				struct irq_domain *domain)
 >  {
 > -	return gpiochip_irqchip_add_allocated_domain(gc, domain, true);
 > +	int ret;
 > +
-> +	ret =3D gpiochip_irqchip_add_allocated_domain(gc, domain, true);
+> +	ret = gpiochip_irqchip_add_allocated_domain(gc, domain, true);
 > +	if (ret)
 > +		return ret;
 > +
 > +	acpi_gpiochip_request_interrupts(gc);
+> +
 
-[Severity: High]
-Can calling acpi_gpiochip_request_interrupts() here trigger a use-after-free
-on gc->irq.domain and a NULL pointer dereference on irqd during teardown in
-gpio_regmap_unregister()?
+Looks better if you drop this empty line.
 
-In drivers/gpio/gpio-regmap.c, gpio_regmap_register() is the caller of
-gpiochip_irqchip_add_domain(). When config->regmap_irq_chip is set, it
-registers the gpio_chip first and then creates the regmap IRQ domain:
-
-drivers/gpio/gpio-regmap.c:gpio_regmap_register() {
-	...
-	ret =3D gpiochip_add_data(chip, gpio);
-	if (ret)
-		goto err_free_bitmap;
-
-#ifdef CONFIG_REGMAP_IRQ
-	if (config->regmap_irq_chip) {
-		gpio->regmap_irq_line =3D config->regmap_irq_line;
-		ret =3D regmap_add_irq_chip_fwnode(dev_fwnode(config->parent), config->re=
-gmap,
-						 config->regmap_irq_line, config->regmap_irq_flags,
-						 0, config->regmap_irq_chip, &gpio->irq_chip_data);
-		if (ret)
-			goto err_remove_gpiochip;
-
-		irq_domain =3D regmap_irq_get_domain(gpio->irq_chip_data);
-	} else
-#endif
-	irq_domain =3D config->irq_domain;
-
-	if (irq_domain) {
-		ret =3D gpiochip_irqchip_add_domain(chip, irq_domain);
-		...
-	}
-}
-
-With this change, gpiochip_irqchip_add_domain() calls
-acpi_gpiochip_request_interrupts(gc), which walks _AEI resources, marks each
-event descriptor with GPIOD_FLAG_USED_AS_IRQ via gpiochip_lock_as_irq(), ma=
-ps
-the virtual IRQ in gc->irq.domain, and requests a threaded IRQ.
-
-However, during teardown, gpio_regmap_unregister() destroys the regmap
-irqchip before removing the gpio_chip:
-
-drivers/gpio/gpio-regmap.c:gpio_regmap_unregister() {
-#ifdef CONFIG_REGMAP_IRQ
-	if (gpio->irq_chip_data)
-		regmap_del_irq_chip(gpio->regmap_irq_line, gpio->irq_chip_data);
-#endif
-
-	gpiochip_remove(&gpio->gpio_chip);
-	...
-}
-
-In drivers/base/regmap/regmap-irq.c, regmap_del_irq_chip() disposes all
-mapped virtual IRQs via irq_dispose_mapping(virq) while the ACPI event
-interrupts are still requested, and then frees d->domain via
-irq_domain_remove(d->domain), leaving gpio->gpio_chip.irq.domain dangling.
-
-Immediately after that, gpiochip_remove() runs:
-
-gpiochip_remove()
-  -> gpiochip_free_remaining_irqs()
-    -> gpiod_free_irqs()
-      -> gpiod_to_irq()
-        -> gpiochip_to_irq()
-          -> irq_create_mapping(gc->irq.domain, offset)
-
-Because the ACPI event descriptor still has GPIOD_FLAG_USED_AS_IRQ set,
-gpiod_free_irqs() calls gpiod_to_irq(), which dereferences the freed
-gc->irq.domain. Furthermore, in drivers/gpio/gpiolib.c:gpiod_free_irqs():
-
-	int irq =3D gpiod_to_irq(desc);
-	struct irq_desc *irqd =3D irq_to_desc(irq);
-	void *cookie;
-
-	for (;;) {
-		scoped_guard(mutex, &irqd->request_mutex) {
-
-if gpiod_to_irq() fails and returns a negative error, irq_to_desc(irq)
-returns NULL and &irqd->request_mutex dereferences a NULL pointer, followed
-by gpiochip_irqchip_remove() -> acpi_gpiochip_free_interrupts() calling
-free_irq() on an already-disposed virtual IRQ.
-
-Should gpio_regmap_unregister() call gpiochip_remove(&gpio->gpio_chip) befo=
-re
-regmap_del_irq_chip() so that the ACPI event interrupts and gpio_chip are
-torn down before the underlying regmap irq_domain is removed?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-cv75-gpio-=
-v12-0-c22555400e18@ambarella.com?part=3D8
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_domain);
+>  
+> 
+> -- 
+> 2.34.1
+> 
