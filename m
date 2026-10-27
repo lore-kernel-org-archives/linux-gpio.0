@@ -1,82 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793117894;
-	b=UV3WCiU6w/rWrqqV1KaDswccwcnr5VcUlLDEuyYO7sd8QpGxIbMVOHbMLoRTK0ZQFx0Y
-	 QCoyJH6gNeFMtijJu/uACJcw5UKnlM1cPp2/sGardA6538+FRn9T2U2sKEcFKVkiZXCvO
-	 XQMgOxwz2M0K6HA1mSLshxJ0Z2sMbmk3jd+R9C2mWmhUxJ+OiW2hFy+M9ZUik/hy38v8b
-	 SUPJ33EDIJqMZn6dGry5R/SfInWVJm2v673jo2K78olpWMBmu9IERVXibrTLuAmU3+7vC
-	 tRlosYL8f9JlIYdg3NpAyKyu+aOrITervvBpc6yRquDNEzoQIC4hU2E2xHF3S/1BPZw==
+	t=1793118939;
+	b=kEoS7/iIvp1y4C+RR3bGf3eOHx8DXhwGnByZlgJa6E/CKjAo9ox9BC3BKSQVN4uYctbD
+	 CigEJEieBxfiH4V44FpcS/YDonFaFcRYNe3unRdG10pVDqrObegUjZx6A4IFd00P04ulR
+	 8y/I0O7ZYXv8uCrSS0y8gxHods6yszs+nLCQn/fCRtaY3PvBUq4qvcS9bYiNnvlrTK1Pb
+	 Mspaykn7CbiYYuqkVfYSt3y3ZLnYqFYJPsGSMomr6KdVvaOpGb9a00gUQl6azBbNYcoZ3
+	 Gt0oP0xZySLNnFEGnXa//Q3lRnUY2WS4tiKR/wZxH/xiCeP+nvtVMsAyFIGKgJljaQQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793117894;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=gzqWKjNAt9lqP6pzm2jk44aYuqndLp4yTwvo+4KqEyE=;
-	b=MEqwQsWqgTxDW/DP1o7vsFe3KykYE4hkr++BQFtxO10+RcV1Vs14hQ4OZvHc7PzWJTHU
-	 xw8NdI0TjWlxbQktoBumXNKAI4bgH+FpeZajmFnn+9foZjHQH06b4VhMnGds2J/w8u2UQ
-	 0BbGUxxPOf+5PQ3KeLTmaYsLwwwGw33iLC5hIjiRcFEmFt9c9kZRczzdHl1MGJk06CB6q
-	 8pppsUV7vHFu06zx9ND58zNwn5l4Sdxe7qDdeh7LQouQnpfcHc04nrqNYwWvS1VWr1YiL
-	 JKyMLM4KTqTVNhWuk8GNq5D4uWkAEdQfjWf5+gmW45fYeL2aTqrl8WIWn8kJ2IlcXXA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793118939;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=o/9wK8ypPDBVfzWamrLQ9Cbs+itMuvLYD6oeTJnRkog=;
+	b=Ay/QpbFcyYBJU3qZgmDPcqQzSokf3V0bADmoDsksLxgJmnO7jmc/33VPXbezMSrmc00D
+	 GuXvOMnQR1mNEwjEIHIR2LQG5MEK+uPs7/rLTraF6IJ3Mj/e/vb5CxDD6TDDfkUBRQEEk
+	 8JqnHxLAqmnvkjRoQY3oWnPbYSRvzCKwNcjmJfzmu6a54KT6Gqi+Bqsdg3HSKSMkiT5+v
+	 wZ3sr++4fNYfKV7H9JGAsUCX9iFim2zFcKDH2RwlN1TAmw8HO933PAiiPWW2bRH8yeWpQ
+	 6cUx3gBk3vwUAS0rH+4n8/8XVMoZcjn+d5CBn4YP77rjJM1dGq0Y3c0lKL11aD0rKJg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="eaw/6xZS";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="AG/jofRC";
+	arc=none smtp.remote-ip=198.175.65.13
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B030D606A31B;
-	Tue, 27 Oct 2026 16:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86045606A33A;
+	Tue, 27 Oct 2026 16:35:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86045606A33A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eaw/6xZS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FA41F01825;
-	Tue, 27 Oct 2026 16:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793117893;
-	bh=gzqWKjNAt9lqP6pzm2jk44aYuqndLp4yTwvo+4KqEyE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=eaw/6xZSvd/iUmSOi8x3BJdGmmK2e2Au+98Gmi/jqPb/fsxjYFyg2asyyhJnch6aW
-	 wiiYi0eITIbZDq54HaW38SGswS0qGyltyrmNEvvLUgZrcg3MfWR9qehG4imuCVOpGL
-	 JLBJMFg4bFYLFuqGqIHPNPdaHWv4b1hxzIOgmIltqxGKohsv70X69oBDXW+gIkAM9P
-	 6ksq060/PG/zOz5Emn8kneLWdVFzz4b9Fry3mL204ZqJhnBuP6P3beekO0yFayQ3hq
-	 GdLB0wZ1l9tZcPdFY3Dx++WAI2wf8fFk1D10texSvMGm5UdAm082/dyBMfy0jfVO2w
-	 miwbGbIVbN6NA==
-Date: Tue, 27 Oct 2026 16:18:04 +0000
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: gaohan@iscas.ac.cn, Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH RFC 01/18] firmware: arm_scmi: Allow SCMI transports on
- RISC-V
-Message-ID: <20261027-quaint-demonic-poodle-6c1e10@sudeepholla>
-References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
- <20261027-a210-scmi-v1-1-74d58ce85bd8@iscas.ac.cn>
- <3d38c4a5-1a12-4af1-ac2e-413a457ce4c5@amd.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=AG/jofRC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793118939; x=1824654939;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Utev8fXbgts7UcDCdj3uyCBF4API0Y6uebtPL9YZJpY=;
+  b=AG/jofRCwhvlzzbJztJSJBPFamqUU1/oR7/uIjuXJ7cem2D/iESvDG9Z
+   UHCN+4AaKtALNypaGkz12rJsWywxtRy+uRR5MewgKF0Im2Hg2FhmcV/nH
+   t2E+GS5aHgRUpNKUGquMqk1bej+vZf9Pl16mTpDAueQI6hy14lgmV3ao3
+   dQcAvzTNc94XHpHp/1N7DrrtD5SbH/k1FmxIgqTyx7qO+Rd9Q4ubxRxUe
+   K6wCliMJmJnZwIWn0c5VrTi17AXFBrVm/9mVMXY0JVQs2aa+XXB6fQbX7
+   cqpHmdEelewVDsNDLm2kRPGmhPlZZqAQeAZ+/8JmEWI2KjHM5XWSOUfs6
+   Q==;
+X-CSE-ConnectionGUID: Aoe7eSttRkmCFouRb0oGDw==
+X-CSE-MsgGUID: gtZ3FwdIQ4eIOjlDWhJTnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1701106"
+X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
+   d="scan'208";a="1701106"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 09:35:38 -0700
+X-CSE-ConnectionGUID: s49YAcbWQDyVutQPsQymtw==
+X-CSE-MsgGUID: qDTWBopHSNi+M/18y/ykAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
+   d="scan'208";a="6461434"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.196])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 09:35:35 -0700
+Date: Tue, 27 Oct 2026 18:35:32 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v7 02/12] gpio: mxc: use for_each_set_bit() to iterate
+ wakeup pads
+Message-ID: <auDS1FpY-kQhP1C6@ashevche-desk.local>
+References: <20261027-gpio-mxc-cleanup-v7-4-v7-0-7b602d70c149@nxp.com>
+ <20261027-gpio-mxc-cleanup-v7-4-v7-2-7b602d70c149@nxp.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -88,42 +87,19 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3d38c4a5-1a12-4af1-ac2e-413a457ce4c5@amd.com>
+In-Reply-To: <20261027-gpio-mxc-cleanup-v7-4-v7-2-7b602d70c149@nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Oct 27, 2026 at 04:51:36PM +0100, Michal Simek wrote:
+On Tue, Oct 27, 2026 at 08:09:29PM +0800, Peng Fan (OSS) wrote:
 > 
-> 
-> On 10/27/26 16:36, Han Gao via B4 Relay wrote:
-> > From: Han Gao <gaohan@iscas.ac.cn>
-> > 
-> > Mailbox and shared-memory SCMI transports do not require ARM execution.
-> > Allow RISC-V platforms to use the existing SCMI core and protocol drivers;
-> > architecture-specific transports retain their own dependencies.
-> > 
-> > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> > ---
-> >   drivers/firmware/arm_scmi/Kconfig | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> > index 783c24a20e29..1cfe2b572d18 100644
-> > --- a/drivers/firmware/arm_scmi/Kconfig
-> > +++ b/drivers/firmware/arm_scmi/Kconfig
-> > @@ -3,7 +3,7 @@ menu "ARM System Control and Management Interface Protocol"
-> >   config ARM_SCMI_PROTOCOL
-> >   	tristate "ARM System Control and Management Interface (SCMI) Message Protocol"
-> > -	depends on ARM || ARM64 || COMPILE_TEST
-> > +	depends on ARM || ARM64 || RISCV || COMPILE_TEST
-> 
-> 
-> I would prefer to remove ARM || ARM64 dependencies completely that you don't
-> need to add RISCV there.
-> 
+> Use for_each_set_bit() to iterate over the enabled wakeup pads instead
+> of checking every bit individually.
 
-Agreed. Before merging, we should trigger exploratory builds across multiple
-architectures. This will help us catch any hardware-specific dependencies,
-such as arch-exclusive IO accessors, that I might be overlooking right now.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
 -- 
-Regards,
-Sudeep
+With Best Regards,
+Andy Shevchenko
+
+
