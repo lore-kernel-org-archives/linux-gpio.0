@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793115425;
-	b=HZ5lrwWilfkWG9sH6RyExnowRCMumWPIYknmJ9QWrD8KrBMCcPkLIGs1C9AVgA1h6VoZ
-	 Ry4OgyOcUdx9U6yPLp4jCheADplEZbU1e9obMUJNkwmau2bV9pQrkIt1qMQ+Dv58CpFwl
-	 P16tR5T9V7q8ZZFWgmiKLTlZJM5Dg5YXod6YknmZ60K4LEpWFQ66DaTs2ko+bYiDH+ozt
-	 ebLQ5OttHqGCfSS6PJBUCJTCE1ifBXvkhbU9vDrn07AUckvlrTQ0p66RTqdI0CpM8a0MD
-	 25lGBrXc+oa5AWUDuRiQerY+bOYMyPL+6exlwlYKgkrb5a1XU15ZiMepsVgulQOSVFg==
+	t=1793115430;
+	b=CRsKJNlNKf+NKTjGBCIywmGlLQ3uxweUwXHLrBUfVK3AfaEUa9QAS/msBktr6uQ9jvXL
+	 p0zY8N71PQB2tmOH1llZJPV6Olfblnd5UrbkA1SbMe7F1QRgbnoVdou493FZU6k8INMGY
+	 W3vGomLI9VdJM6onKUZSL2G3gY+ZQYTkJKGb5uJK8BKkpthJLS3h8LnJyShAD4Q8QnDaD
+	 ZMjytc9STseFIYsqJERUTrALn0T3kPHjK1mKXwYgir9+RfUFqpuLHv9Q0Ot7//GgGwXbU
+	 +bbtX5ba8sgjk12ZRw8WUcYYROq9tAbg5oqUxu+sMuaiJZAtMyLqyvPJMrXZ3KdfS3w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793115425;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793115430;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
 	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=Wg/4rCc9Y69RwQr7t1OslmfPJs2UBZmRz8gauVCMqkE=;
-	b=S7Bx3gzuuzU7z7DbIabp8XZ06EPiwB2FPU+ldFjyFz1xuNj06EzCC6mxXQSOGfQlH8AD
-	 /LgrU+t+gl6GqE8ziyCUr2JTOyolZjQ0s/oHfG2DiF2Wstxu32CJcKgkfAgqQACth+cEq
-	 TPz12kKGsurYp8neRlLQx/Fu5KgDZNbY7SKwFcW7Thag6Et/UE9r9+YY6PJWzoQkq0C/x
-	 qBh/GE4c4eu/WaJgHLJgOuOdBtb4VI8H2Woczcp180oX26cNabdWV73iZ5u23AdLOwiuC
-	 sX88qEAKUhGOmRTxOlpY5ZsAkGF700EmW9SDuXoJ3oWq2cFfuXyN1PaMuALF7Rrm8zQ==
+	bh=+p3cu7D5opnUF2UdppBUge9QydMQLoSHZJ9keRNgKhk=;
+	b=bb6QT2owNK2YkPA2HGxesuz3iwy9T3ixULHzca/ZS57li4pRYFSXG6PmbmrfqaChuZ7L
+	 jL7sWwdSFCG/G1Yi3T63SZIAa01XUbl6Dno8fRWtO43Jy9zZ1mJGqQeb5eePUWcRjBnSS
+	 ZWRipAiGlTF0H2h3mO4MunU2xctXvMEhkDmnmd8Cov78Ias/HgPVBNrcj//8uP7iRjvYZ
+	 sfDqEIoCrZ+MR0Fn9jTp5D9fSrAyPrbvYXxv5/7EymSzl34PVFdyBYdLplpGWXsiDq4Qn
+	 MuoRuPSmGXJITUrp+4bwQ+mF5tFrzqXii17hwIF548WW7W/Y7hDtTZNNNoSgjiT4dHw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k1TtMq6c;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jm8OtCnY;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512FA60A2619;
-	Tue, 27 Oct 2026 15:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718F560A5BE1;
+	Tue, 27 Oct 2026 15:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k1TtMq6c
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jm8OtCnY
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793115425;
-	b=Ywa8MSiejR/f1YYcj/kiGYnf8OoFAOwaugBiii4/UJ9OfL/t74fa3rQgsPtOcdIC3BFz
-	 f1Q9ufGaq1jZlhEwaHCYllIKk0HXiY9UEa7WKfglEzTUlbHH7YoXhCxMw3xiG7cI4L8N2
-	 iDvaJXt5XC9l8trhUGVNY/vbiT+e0yQXZ0D1ilWSOwBN18bktDLiAOj2pr3BkMbTFEP3R
-	 oAOE7D0oletW5OHlvY94F/GPgEtYHzE3s7+8l579yoTvW32a10H4iKlHkzbrnoIOJTnrz
-	 vNXihvhsc8hOvKGtB3s5gzVn2c7OXTcWq8OYgbaV+spihG33TR3inB6LzIw6DFIl5zg==
+	t=1793115430;
+	b=2Gi64QNKS9uYfhGhH7W/V6x0PVbi1HpWjb98NsKJT++GL9p2p+5ojYjfwd+yVhZS0dpE
+	 moZSJmOBdI4BIuC39cbui6UZDpVsc4Jr5bPRGRWz9f0l1vw4+nwDVT23ltPAlHb4szRaX
+	 EoGVevlqo6DMNyzrivZuY1+qSRxlnJPyP+zoUQtql4rah0AGGm65RCRwfolLMYmXHZYBW
+	 2ZkbVFidzxGu1amZ+a/g8R5NGltBJQT8Ersoje5aHYvhL1QsCJ9THjtC78qlyCbkjLhYO
+	 Dzzb/vgw7bmxm4LAB2zfCOg9JhC4yCCSGb6Tqgccf3JlSMxMxKcp+Lhzpsc0wgPinDA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793115425;
+	c=relaxed/relaxed; t=1793115430;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To;
-	bh=Wg/4rCc9Y69RwQr7t1OslmfPJs2UBZmRz8gauVCMqkE=;
-	b=U6HPvvbCj+wLEPhNIqlywgF7J7cKl4LmjF+NuhyVa0VqQREnFnYX/Vcw80XrsHhnKj4V
-	 LPO+tVI3Vt3Nk0CoiZgH6uFU0/lMtjazQs3BtpdIAkTOaizjjLGKnK2jTsYgxwxLJjC4h
-	 XV+sxC2m3bJJCDnGzh30/INaWib59CHZ4+ve5TV+QUSDgvatQx5honHY//Ow7ZUWeoYPB
-	 y0UQkgaLALlKbkfuhGY2Gsd4R1wJ6ZTfNusGPVscelhHdC2hmxQFaVmj6NmAxFU2jOEcF
-	 e9i9jThPMt6BPkWETHKn1qsAq3qcgG0bKdZwKQpeAYAmWmp7RwdcUQFC6FAShUbzdUA==
+	bh=+p3cu7D5opnUF2UdppBUge9QydMQLoSHZJ9keRNgKhk=;
+	b=jodnIeYxmlxvrG3xe+4iFPXnqyHJevRjb/xErBthTFjxJpV8plHjHQ3lpVSDdibCtDBr
+	 49ewUCK3ER9WDcYSd9m/EHQ7SUl0CZM/7nBX6g394z49qZb8tk1ToPHkXRL2exxYcSFsc
+	 q1AZEZkpncYRswLznbdRpPUUZY7zXwm1zAqKU1BzE9GkgNKMC/k+v0v0/EUnCYE324pwT
+	 EWOUaRDm8xPhlTtyzP57n2EhyRhBgp4MwrVpYsQUEUcG+cxzxkFqW7gNaCfi1wBb2PK4v
+	 HrNJh3MBbtIth7Me6PB/V9tyzyXHloqhCY715s+cfLHTDdWrikJfc3eXhUUab1jfM7Q==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id BE2A51F031F1;
-	Tue, 27 Oct 2026 15:37:03 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 3CFA11F01401;
+	Tue, 27 Oct 2026 15:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793115425;
-	bh=Wg/4rCc9Y69RwQr7t1OslmfPJs2UBZmRz8gauVCMqkE=;
+	s=k20260515; t=1793115430;
+	bh=+p3cu7D5opnUF2UdppBUge9QydMQLoSHZJ9keRNgKhk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=k1TtMq6c/WTv48i4q3qBxo5ssYXw2BOWw1W18j15xuLHNw4DwX2jGcb51WY+M6Cei
-	 5Xetw0blVNtzG1xYHxoJBM6srZDGtw5e9zY1z1CCikpjEThb91yw6yLTsBVRCsYYqo
-	 DW68+lxNR/WAYqioYEIw+8zjFTM93ioRLFEkW+Taus2iPJZVXklGA5ypRH+BGjngKQ
-	 shPrZI16eq+pg3YnmwpuOwSVbDEFqs0dfzj7ZW6OSMKC3QwxGgJVof1B66FOOi0dz5
-	 p/M9L/pmRzACbByKLDDKEyfDXAdJ3nV+u4dFvJBOvu54OZmo+qq+krAuKdtXpjrVHT
-	 zHVg+46ytmT7g==
+	b=jm8OtCnYUxOG3KyVcEDIxeW83TNSPyH7jeMQ/GbKBwqlkiv6EYxO8HtdjQG8d4GA6
+	 4L0hsxzhEnKZlQva8G47mbF+IJDhB4ar3cm20d4RiXCVU4FIqTc4DdlDf5TJqPxK4k
+	 Y3pKv6GvlnFVL9e2dly8y4RT7em/CS9WjIYax4uSiZqAMNSUmF1OIsq/iutbWDUlPY
+	 P2fCzmOSYLN4Rz4LsiuCYAx2BgLfuvJQqzcQ2w3Ef+XXdMHfp6UbJTQARu3NXwmC3Y
+	 EsAMbPV/USM9cei0x5zba9rtPF2rr/AxCoUwvAX5ijVwrw70j/D98mXfHfdDdyBC4u
+	 3s/sMOERry2Hg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 7344545157;
+	by lkml.kernel.org (Postfix) with ESMTP id B9FB14516F;
 	Tue, 27 Oct 2026 15:37:01 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Tue, 27 Oct 2026 23:36:59 +0800
-Subject: [PATCH RFC 08/18] dt-bindings: interrupt-controller: add Zhihe
- A210 PLIC
+Date: Tue, 27 Oct 2026 23:37:05 +0800
+Subject: [PATCH RFC 14/18] riscv: dts: zhihe: add A210 UARTs
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -85,7 +84,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261027-a210-scmi-v1-8-74d58ce85bd8@iscas.ac.cn>
+Message-Id: <20261027-a210-scmi-v1-14-74d58ce85bd8@iscas.ac.cn>
 References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
 In-Reply-To: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
 To: Sudeep Holla <sudeep.holla@kernel.org>, 
@@ -113,11 +112,11 @@ Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
  linux-serial@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793115418; l=961;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793115418; l=6132;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=MYmNcIdDPzIqU+lFcft+1pLSNPlzC5ZsJ4TFo0L1GrE=;
- b=Vhx+1FMKGBmb9XNkIq6p+G9/3cD2jq2U9rQkE36iw94gvXsWmdIZaqbb+gQDI3rmihzrmhBNC
- uFqJfWO5xdtCbVnBFGZ7UJCwkdi2VTYeHduCK06ARF1vJDnM8k3m/a5
+ bh=rRW4ylMF29ir1IYBIWF90YJ6C63CtXasTioTY26aDbI=;
+ b=1orY14EtxCG4UhYuWnQ834lieUC3qIb9xnmL3IQSnQDQFuyeI0SpvadwpLUUAs6OSIQjFUlVA
+ wXcEkKSq3ZYB5dx+qUkxDO/Qz15DPQZaTrPQiVPtERk3SDHK+C+QGWO
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -127,26 +126,192 @@ Reply-To: gaohan@iscas.ac.cn
 
 From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 
-Add the A210 PLIC compatible with the thead,c900-plic fallback.
+Describe the ten DW APB UARTs with SCMI clocks and their separate APB
+and serial resets.
 
 Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- .../devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml      | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/boot/dts/zhihe/a210.dtsi | 161 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 161 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-index cde4bb691897..fd5b61db3f5f 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-@@ -80,6 +80,7 @@ properties:
-               - sophgo,sg2042-plic
-               - sophgo,sg2044-plic
-               - thead,th1520-plic
-+              - zhihe,a210-plic
-           - const: thead,c900-plic
-       - items:
-           - const: ultrarisc,dp1000-plic
+diff --git a/arch/riscv/boot/dts/zhihe/a210.dtsi b/arch/riscv/boot/dts/zhihe/a210.dtsi
+index c7b623800aa7..a23f59394659 100644
+--- a/arch/riscv/boot/dts/zhihe/a210.dtsi
++++ b/arch/riscv/boot/dts/zhihe/a210.dtsi
+@@ -363,11 +363,172 @@ peri3_padctrl: pinctrl@542000 {
+ 			status = "disabled";
+ 		};
+ 
++		uart0: serial@2014000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x02014000 0x0 0x400>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(0)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(0)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <321 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(0)>,
++				 <&scmi_reset A210_RESET_UART_SRST(0)>;
++
++			status = "disabled";
++		};
++
++		uart1: serial@2015000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x02015000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(1)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(1)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <322 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(1)>,
++				 <&scmi_reset A210_RESET_UART_SRST(1)>;
++
++			status = "disabled";
++		};
++
++		uart2: serial@2016000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x02016000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(2)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(2)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <323 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(2)>,
++				 <&scmi_reset A210_RESET_UART_SRST(2)>;
++
++			status = "disabled";
++		};
++
++		uart3: serial@2017000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x02017000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(3)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(3)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <324 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(3)>,
++				 <&scmi_reset A210_RESET_UART_SRST(3)>;
++
++			status = "disabled";
++		};
++
+ 		peri1_padctrl: pinctrl@2026000 {
+ 			compatible = "zhihe,a210-peri1-pinctrl";
+ 			reg = <0x0 0x02026000 0x0 0x1000>;
+ 			clocks = <&scmi_clk A210_CLK_PERI1_PAD>;
+ 			clock-names = "pclk";
++			resets = <&scmi_reset A210_RESET_PERI1_PAD>;
++
++			status = "disabled";
++		};
++
++		uart4: serial@8401000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x08401000 0x0 0x400>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(4)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(4)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <325 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(4)>,
++				 <&scmi_reset A210_RESET_UART_SRST(4)>;
++
++			status = "disabled";
++		};
++
++		uart5: serial@8402000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x08402000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(5)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(5)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <326 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(5)>,
++				 <&scmi_reset A210_RESET_UART_SRST(5)>;
++
++			status = "disabled";
++		};
++
++		uart6: serial@8403000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x08403000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(6)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(6)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <327 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(6)>,
++				 <&scmi_reset A210_RESET_UART_SRST(6)>;
++
++			status = "disabled";
++		};
++
++		uart7: serial@8404000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x08404000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(7)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(7)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <328 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(7)>,
++				 <&scmi_reset A210_RESET_UART_SRST(7)>;
++
++			status = "disabled";
++		};
++
++		uart8: serial@8405000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x08405000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(8)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(8)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <329 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(8)>,
++				 <&scmi_reset A210_RESET_UART_SRST(8)>;
++
++			status = "disabled";
++		};
++
++		uart9: serial@8406000 {
++			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
++			reg = <0x0 0x08406000 0x0 0x1000>;
++			clocks = <&scmi_clk A210_CLK_UART_SCLK(9)>,
++				 <&scmi_clk A210_CLK_UART_PCLK(9)>;
++			clock-names = "baudclk", "apb_pclk";
++			interrupt-parent = <&intc>;
++			interrupts = <330 IRQ_TYPE_LEVEL_HIGH>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			resets = <&scmi_reset A210_RESET_UART_PRST(9)>,
++				 <&scmi_reset A210_RESET_UART_SRST(9)>;
+ 
+ 			status = "disabled";
+ 		};
 
 -- 
 2.55.0
