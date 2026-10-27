@@ -1,94 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793098255;
-	b=unXriwXuOHAOEPqVFCPL8EMJ20qz7BylyIlbl9tOJPSD+B0UJSN725MjytL7ardEMWEI
-	 UlSY0sxoHBw60IIkkL83mMR33MFzMFG617gGIATW+6XjsYNiXtI3NdL6Uy2+wPH7nNyqM
-	 Ww/4FGL7vTGMkGYOkr7D7fUezPR2RQxOm/vbF6xmG0rQS3HvbbXeNBhAjc6J/erMegGPw
-	 xDebf58pS7xsyU9zCVgmp2cTMjdhh5DWaXPpEdj9up2TYTMmr/cnaoW6qd4HAslLkqSHb
-	 Be3jlmwpW6digfJKC3rpO/iaHsU7B4XTDQyt5XbqhEJiDBQdYe8TwP8clNPk/TifwUw==
+	t=1793098250;
+	b=04bkLqBeSFbg4jnBzQSrlD5E36+2ScBKkRhbJwcdFU81u/zjdHzp8/9k3yCmwQx+imx3
+	 ZPTCp5MEeh7v43fZb31ydeslPLUwD0w/OCvbkVPa8YtwkUeCRWNFh0Fx6O5EbAzPrWb1d
+	 AncFHoAax0nIj0Orwm9E66A7yUkgwTisvXemX/xnF2Yr7x4qpkg+Vn/wiOe2ta/qK1ODp
+	 u0GvfAWYQOXB6pzAIQL7zE2EPwExRR2ZGLpX7Cp/5nW67nXG38LfaoTI8R3XfGaVBcQWL
+	 H2ID0uX3bUGVaXFL9LU+MB+hP0QOtnum2kD/UjngAlDJfGVV2GrlnFgb6DfK6TZ2Zdg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793098255;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793098250;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Type:X-Developer-Signature:X-Developer-Key:
 	 Content-Transfer-Encoding;
-	bh=uF5HkZQaHf1SCbf7usjf41MIdbklI67YDhm68D8fP78=;
-	b=kMXOUeb6bMxWyssFwgdX6W3NBySu7IqK1xDRYCeg5vjYHBMIpkHrwjJ7eu130xBrOHU5
-	 TR7r0wO0OsLxr4lpc59KZHc6eIM8FEbXf+M9HhlLtKuKPON+3zYVds4Axfw3kitDjUCec
-	 XLYS9VpomztYQqY6Tcse3tneWQwOHtgJmFWYLCjNKn/wWvYQ7j4NIxsfXU1lq4NWOxBQb
-	 kxyQVbDxD6ZenkKd/k3HOa9MD+/nCyzE2bfxDd3ZBaVq1YfTitP+dJu26wwJJjZmGEAoz
-	 GVpkthgWdSQRq9q1KsVojpm48VwGbprquryk77SdOENMKlyBipCOS79bb4zM7MvIssw==
+	bh=08drD1ymTUi9hsmUJNZ4ArGmW7O1mMyycL0HsIwG3PI=;
+	b=Usww8jCmEmTjsw/YpFbLVmCcknDNNBk7nqU2Crf0SpnSqYJdX9YoQnAm46hyAghfHAdN
+	 7tfOopVmIMyIxHUuFEw4NUxvvd5L3V1nsy7Nfmb89s/PapGYG0JP8IZ0shKec3eSLUg6i
+	 GfqDuvAVqcmTyGvf4V1XNzGWKhBQpGpbR+anbOaw34cRHbolAFtbmp5AsX48hXIWU+AmJ
+	 VB7ZBsgDvkWVOrbqtREvLURGY0VRh97vsGtgt0CgQCpJe+M5VlqCLhGS89NrmWaj+yawe
+	 6wkquUBAS14h+FM2ZPKbts6qd7gHN4e+cDibQuidCORUm/SURh/NkCrubn7QY0JU8rw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Bhd4BbK2;
-	arc=none smtp.remote-ip=209.85.221.43
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=ds7Hggy1;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD717606B7A9
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2026 10:50:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD717606B7A9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD068606ADF5
+	for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2026 10:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD068606ADF5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Bhd4BbK2
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48e04773687so1310559f8f.2
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2026 03:50:54 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=ds7Hggy1
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a35db1f202so22297025e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2026 03:50:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793098253; x=1793703053; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793098248; x=1793703048; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=uF5HkZQaHf1SCbf7usjf41MIdbklI67YDhm68D8fP78=;
-        b=Bhd4BbK2b9R2y7WiC3mCg4ICLaF0VpfovWzv5ch69CRux8xOhhqfERO0SISZ/4Lclr
-         kJHwZhDvWYHJTtAQ2OaPJ83FXKcrwLmU+awxmWpyGZxPO9t1ifUpMH5CO8Yi9+2JdYTX
-         6szs07bH9J0Eer2HUBAFOrx+6aqgNMarH1KT5o7b7IjQal2uB+XVrYpYUlJZl+6aLwo1
-         PP+etqK9D9hyN8NdW74Qg7s1pF5J1QFuSOH8pEFHSlY4EFHxowsrlT55o0LfZbW90MTa
-         SGIovh1pvg+SMu2NXNF3cuCVK6Lxqx82yUIbhtky1FXFntTA0eoYPzw6nwCuRgHNZtSR
-         V7ug==
+        bh=08drD1ymTUi9hsmUJNZ4ArGmW7O1mMyycL0HsIwG3PI=;
+        b=ds7Hggy1g7y2Jsxb88pE/u2fCtID/rsa8ZSv+O0xeHxBL3PZc8FpU1cGpfCmWckcJ7
+         KrPJEHYcgSiD+U8fEu/GS7OkhjQwIu5dZJUL2JXOf/6pvBGXzbdXiVE8JMdRvHWF4caf
+         X3ITPxH+W4bXXb0KThumJCSvMzH35CfokJ1E5m1csTM0+XY6TrddJDbaAWuGkJ/u+KOR
+         UBtIHWYoAEFjmmX4LCY1R/2T+nluHCZuW2S0JsRxKURlgrxbG/ea+t8WAQpx7nWjjuK3
+         31+4rJfMhsPy8J9Qhy+09uP4YiFqn4dvmQjkD9v6H1tkI+WLSx8Xm5er5j0sYU12Mdsf
+         Uu4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793098253; x=1793703053;
+        d=1e100.net; s=20260707; t=1793098248; x=1793703048;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uF5HkZQaHf1SCbf7usjf41MIdbklI67YDhm68D8fP78=;
-        b=HANJl5DTqc+rvtecvZmF/Z0qGBzBWBkT2l0eIqbnuYPnSFxCZXvY7r4JxnSRvw/JED
-         mqpaMp1QBhMaXhYG3MWPE+DToAfBOElOuLxRM7J7S+dSSf09Q6eV+z+Gw4ouTZun2j8D
-         tvZSqHmw0brpAggTePQ7QHZHJYwIHrY5W3n2udXHmxIHhNA3MJjDKOvNvcHyfTHg45/8
-         N9PWq4wTYYfo22cqUUtSQ4N+duX0BISeGDEMEZJT5h4LLAdc3b1mU3rbF6R4WrdfkGJC
-         /HhAwQcRRNyczzm1qA48CuFS5OivO5Jwke9mNb1cO+emIIwETUrMA3ks9Y2Wx81o/oPA
-         /ADw==
-X-Forwarded-Encrypted: i=1; AKwUvBxlGGPXQDcdh8YaF/hN+yNTkZEdcu5JCair/1BoMcTU+2AAVDLUMYlGOjZEFwkCXYk2x4dCn/GkCdf7@vger.kernel.org
-X-Gm-Message-State: AFq9FYIvId9HTxF5AaHB5f9eQIA00RrmmqdwwEY6AenOOeJ64JExze2+
-	z27c2CiAjL8C33U5BCCDiquajyOxa5mraS8nDpIyusTndYe94uJvBg5KwxXE24pEZAk=
-X-Gm-Gg: AYBFou02uVptKabCfzySU1NC1zgNyN4GcDFehU4uWr3FG2a60A8izOrNnMKOtzIH8eA
-	WoZzgEO6Wn3h/GPHoxesK9F03CAX+3g3Vv7UnWSzK3z1MtS5yDAY+O1g4YKlqaG6WwEVJ9qwXNH
-	jcYla0lcIGxot3qIsI1c31xK+LJ8oIvmYUliNZYeIG6Q91HNfqbpNh5clVZfH7nxseYvQXEtjqE
-	h4/prL9WGxKAAAZoyoRacYtP0eTdE5YCIk3Br+iJ+ZPxDpsCEa3UTTA6iavfqddbu07dMPosH8s
-	vyBpzKpRhlaECcMkaDxVYpXWT46t5tatcAPOwrXRcpF60k6PNbSbtL0XujCp5tYqFCRp9yBcdcW
-	xcLfdPSYVWBkcLUKk41cC/B2mlaGSpMxDvhQ/dNYP5ZSQ7gKTRuZ/+6o2Sgu1x6pNMp48g2VXlu
-	Fer5mA6NEpKByvBxv9VqiXVER3qX21CA1q1BbUjnMvFkO1PpS3TpWRTgc024vqkP10kfuCJ9twx
-	ftN/iz1mpjyXJUel7NyCIywz68reKLjuI3CUKl0gBVYFgFnzYIdjBQR71mlw0LlZ5EADYfjpBY6
-	65xWl3OuCKPpJBBalehax/Ge5w078FDFKLigQB4JtPcG6bXOfZSG4jbIOQGm5vde
-X-Received: by 2002:adf:e003:0:10b0:48e:370f:5aa8 with SMTP id ffacd0b85a97d-48e3eb2bcbbmr13271784f8f.2.1793098253028;
-        Tue, 27 Oct 2026 03:50:53 -0700 (PDT)
+        bh=08drD1ymTUi9hsmUJNZ4ArGmW7O1mMyycL0HsIwG3PI=;
+        b=ss6nVsaTG6xCATWYWL5W8X4y8hb1+yQoS9sjSSsT7JjCRmTM9IT06bPkoBF5hOh8qf
+         WvoVh8jgIHQ02n7uNms1/4pFs69m9E3JBcoi8jgEWO1qg3TouZrTTZ7Yu4JZnkVsa3/0
+         vpdDADHpu+Py2ja+vTm/Rm0tLOyNIwZKP6DUXU0W6lwFljSi6llR69GPsRCwWqVIFFB8
+         zZaWp4/8M/l1nQNAlYvXCqdtuhuBRocRrCpzpHoEILSI/3Q4DcVPkqWNpFINquXRSk67
+         iJgvYcD1vPKD7IaksqYG1XgS5OPgSZC0kLcMTnuMGa3cPkZLPTOIQxZ2Pkm6YgUtqDaM
+         eeeQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwNLlqt7xNBgAVTpnyJvPQJD5GeCVQ8oGg0wzw6XxY5bi5u4dDC0c2y0WkVoa6mC94JoerxnCvdG64+@vger.kernel.org
+X-Gm-Message-State: AFq9FYII85C8VC8yeWFTT35dLoBkCAZMoi/nxOCGo9A3JQ5lfobyzyHL
+	F0Mk6mVeB+UeqYOChSdU17Iv10GrbbGFQlC72cvPe3cXGzS1EnM65ewkJfDDZ2ogqDU=
+X-Gm-Gg: AYBFou0CeWEgZvdJDVN7/p9UBY0tU08lQxuhI0L+elGrDQ03Y/XGeO+Aif12T8bFApt
+	wFj+uPkKH9w9ozp+XIs8kPKTqhmmjVmlUJaJAg2uBR2bKH1T6tBWKBEGTlmC8MbQSOTbIG9NdzO
+	LlZSqn3kaknn3JFAqm+KGsZkpi84scLpHHlsgHbXt2DuFeMmU6kplsUIe2TeRw6Y16GOvn8Hfhj
+	IOBzCerbKDR/CVZWcM4N3hJeN1t3zWXZlyD1va/JZq1z0pSWpBBo9+JtvSRnpsJJcYr4XMXu7GV
+	SpXdrOAeDtXcAZOhCFY2IM9/9445QRulC0rhVt7Ld29ahiR+o11FO70Md9pLsd2x6CZZ5kHjO31
+	Ehr+jGmIMktibV5hwc8bwJvjmMZ5P9ZHfrOpgD3koZdcrLy+ELJ1aCVymtdZdhldA9NC0tdKGj8
+	3VvmJFxPbraPPJGqVyi4TMVoo8fdTsmok9YKAa0ULq3GkxkrUlqClLoMuULZYhFX2lvEwSfzTpK
+	O6AokQzs14gsQpEk00q4NhuyTDm+8XcdmG7+FY5rBkcT6QGUdTr14be1OQ7FfKc1YxNGV8fNwEP
+	4Jes6Hu6xMMILsf8KP1xdIlcmpOZ8him3BZ+Jy29NFoufeTfGscjNDvK4+LAdkLdXQl0hIFQ3Zv
+	eD9WJZg/HhE1L60NE
+X-Received: by 2002:a05:600c:8b86:b0:4a3:59c9:a754 with SMTP id 5b1f17b1804b1-4a35acb17bfmr177092795e9.22.1793098248233;
+        Tue, 27 Oct 2026 03:50:48 -0700 (PDT)
 Received: from localhost (p200300f65f19a904240e81f1f32a429c.dip0.t-ipconnect.de. [2003:f6:5f19:a904:240e:81f1:f32a:429c])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48e3ecd8c05sm28466124f8f.49.2026.10.27.03.50.52
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a359fbb725sm257775775e9.0.2026.10.27.03.50.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2026 03:50:52 -0700 (PDT)
+        Tue, 27 Oct 2026 03:50:47 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
 Cc: Andy Shevchenko <andy@kernel.org>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 20/23] gpio: max77620: Unify style of platform_device_id array
-Date: Tue, 27 Oct 2026 11:48:57 +0100
-Message-ID:  <634c0412c9d369179afae9a32b1c879813a8eac3.1793097104.git.u.kleine-koenig@baylibre.com>
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH v4 17/23] gpio: virtio: Use a named initializer for virtio_device_id array
+Date: Tue, 27 Oct 2026 11:48:54 +0100
+Message-ID:  <0ff54324a8cdb1f036bd01f05dfaff75512d8abe.1793097104.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.56.0.rc1
 In-Reply-To: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
 References: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
@@ -102,42 +107,37 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1180; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=PwZq6cSexLoeh84nIBT27WIhYIRtJCbiT1iCV8GXeTE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq4IHYfiE1/fm0dv123hRuSJEpZJd9swyYusDzH JadLd/A7kSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCauCB2AAKCRCPgPtYfRL+ TtRYB/wK9s8cgLN7UO/tLGIQ0DRnQgBx7MKgIGU8wlGupz9xOZspihJutU36MtPgU5abd6tUXmO vveYdPtbS9kBX0Z41cl7oxnuW5vRZkOr/q03nhi3FoPRbPKRklmjxinE/VBXGYylqDWSBRurill KD+0DlRrdbOVWwTvTwxejEeLe5697AXJFGIZ0kWBX63IX5cP9i5jpSK20SYGGqhtC10Ij95VDW0 H37Lk3o67zcLbHztVp4r1pD/G7UxrEiNYzOvyN6UZmkluE/OnJr+sPqvXbz5bgHZKGqNhirbmpg 6vNwxanliBGElAU3kXRhhwsKmPvzb10zPOvR/PGY5Xe/PmrU
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1078; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=HvLKZnIb7RtprxLD/D+7QxSMDdlX02hi9zaVYI1agxw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq4IHL55n0O6CbSHLAYjy/VwqEdsY+cZcVZlvXU /YSi3wb+H6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCauCBywAKCRCPgPtYfRL+ TtSNB/47f7idwujRUL62MyxZqdila+JxQe2sFy21p90zLDAWqeOh9phY6aVPSFuI3cCtJl9FIHm yXmV+NgiGxVGPbGmjtaVlNt7TvwxrKKD4DykEceu4+LgcW1qWY6KJwSVK/4pve14di0ygt8dTzv k8kToE94nDb1GWFWy8HbKhbgWVNYP21R6r7C/q+ZTrWiJtzXIW7qBg2eMpqsuQE5Ak5FAf1zgGg Dv1jyW+oJVVwfR6XK0/Ch4mhQlvqOQoEEccJ5mShNSO3wnh07Z0eu+IvJtIytag85I2oKnNtp/X pln5RT1N5amHzixg5WZB7cLEQJCDiRy392STmwpWppui45f7
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Update the platform_device_id array to conform to the most used
-and generally recommended coding style. That is:
+While being less compact, using named initializers allows to more easily
+see which members of the structs are assigned which value without having
+to lookup the declaration of the struct. And it's also more robust
+against changes to the struct definition.
 
- - no comma after the list terminator;
- - a comma after an initializer if (and only if) the closing } is not
-   directly following;
- - no explicit zeros in the list terminator;
- - a space after an opening { and before a closing }, a single space in
-   the list terminator;
+This patch doesn't modify the compiled array, only its representation in
+source form benefits.
 
-Adapt the single offender accordingly.
-
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 ---
- drivers/gpio/gpio-max77620.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-virtio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 2bf3b55a61b5..99ac7ffb650b 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -365,8 +365,8 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-virtio.c b/drivers/gpio/gpio-virtio.c
+index ed6e0e90fa8a..42871db05ec1 100644
+--- a/drivers/gpio/gpio-virtio.c
++++ b/drivers/gpio/gpio-virtio.c
+@@ -646,7 +646,7 @@ static void virtio_gpio_remove(struct virtio_device *vdev)
  }
  
- static const struct platform_device_id max77620_gpio_devtype[] = {
--	{ .name = "max77620-gpio", },
--	{ .name = "max20024-gpio", },
-+	{ .name = "max77620-gpio" },
-+	{ .name = "max20024-gpio" },
- 	{ }
+ static const struct virtio_device_id id_table[] = {
+-	{ VIRTIO_ID_GPIO, VIRTIO_DEV_ANY_ID },
++	{ .device = VIRTIO_ID_GPIO, .vendor = VIRTIO_DEV_ANY_ID },
+ 	{},
  };
- MODULE_DEVICE_TABLE(platform, max77620_gpio_devtype);
+ MODULE_DEVICE_TABLE(virtio, id_table);
 -- 
 2.56.0.rc1
 
