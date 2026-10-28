@@ -1,79 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793193178;
-	b=QfJsdfLVhue1vqo1HyPqo+2bCaHfKi4ilV1nsiqHbRfftGsRTvqDcOJNUfFJT0lh7HLB
-	 i1OW/cOr4/er4kRCTI6R1ulDZVNDcUBDStCJ5zJ25GOQXKtN+dmCffqLD7cvxKd2oFNqm
-	 nr0lZfSieH58Z4RQWwrUvREdpbOqttRKWzyNh+WkbPDUR7YfWSQspOpsgkBd8feaDX0zs
-	 70DRAY1CSpavhDdPod4iyqeQtH4k2qQp/QdC2cR76DVmwSAC87K+/K2yaKakmaAmw6jQT
-	 J0mHVaw1LP7ZOSCzncX/RT6D56WsmcJtuIAqLvj64cwq2vfV75+vcDKmdolsw2lrPtA==
+	t=1793194345;
+	b=41OcN64eRPYM/eizNLfjcBA3fjqa2PAcKvhORc2UCEd2HVZk21gFMpNowOuzBWrj1jh0
+	 54Jl3UiwmDeTNuRDESyWhF5LKufMhbYGjMXCU+Opf8NryzH3UYLs6u07nLowUtWkh6oqX
+	 Oa2vZbuudgIDcO2L28/Bj65L4zl4oYLCsZB7NzPVQFSIz9xKhnfTQOV5SBMLzTpfkwr71
+	 Dpdj20hNJegwLzV8iSqeuUFi1n2IEepp7t4WuwsS62xuWNU1ABna1gLi7jkDiFEJ5Sv8o
+	 Ohc0Noux5aM3cMsYpdYkymgT6liS3iHsOYtXaSK8ETJFFcTRljZQ95+OYdpkDky2jqw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793193178;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:User-Agent:MIME-Version:Content-Type;
-	bh=eUefPTbo5ShNdrNR6jqhsd83mgOc0UfvV5FTQi8XHu4=;
-	b=CiIutA4XGM1NJAJg154KvJkShyn9pTE/4G+aU8rRO4BeJ6lzqZtEuJpehseJ5c7+PKHW
-	 1rNKNc/irNtcCMhaj2bbKvPTXFSI/kcR8F5/R2NJGUcly8F3RFWlb13xzqzBQfe1jJkJ/
-	 ap2taOdhXQ2XpkZNgy3xlvWYfiGzL2C/LlXOQQ58RpR6A2NAlmH66w5+ORiKIm2jObKxb
-	 kstuO3tSL979DNWJM0tYrR7+AlC+O4b6o7aV8uihlIeg2hqKq+rX1+hPnE3zSSYxKRynU
-	 wHrNe+TP4n/qEZ30AA30W185Nvq1CNtUb5JMzo9Mtc8LbBu/K5+hRT82NW97Z5i7gXg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793194345;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=mgaExbvnghCg31gnn54x4d+C6t6alfhG7i2H1RjCe5A=;
+	b=5D2swOJEty9tviZF/4nAsjIhHlxiImJ2PiZ3B3dC1BkWbxKrqwZR6oJO27rjdvFHyKEr
+	 zlt2haW6L6ToMfRRf++lpT2ujiUjyqINHmNLTlOrGwHEfOeouaBen5EqhxwRODPhq3eub
+	 jhajYN75a+IwBhKS9VXq/lMhr2r/cnPQAEZ8+p0WUxt56gskAfWdKbleQtryuMmzeFbtT
+	 l4DRiwXKMveNZoyajdZc/CtShkAb+s1m0Mq+Mog0WetY/k/LhpaJLiSr5NH09K++a5bR6
+	 huBadaHOn7+BQM8W+fZeveACSWUob9dJdn3ojUg4vud3Z1h+8lezMGgY6yfN/fsas5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=crfyiaLg;
-	arc=none smtp.remote-ip=192.198.163.15
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bOWvRrde;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26136606A31C
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 13:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 26136606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25124606A31D;
+	Wed, 28 Oct 2026 13:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=crfyiaLg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793193177; x=1824729177;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=qBMChI9mclm6R+VIrgllkzd3PyXlySBY8XPMLe7B4Ss=;
-  b=crfyiaLgJmVKp9ba2Sf+sT2BNUDYAonjmeMXzYC1WLFErAq0QNQu8jA9
-   InxmXgzWKJFaeayFvIoARssDurBemX3t/cCL8dvRLNgH2AEVBBSDuOD1l
-   pi2C39ezTRZLmROyo6PR5ZMTT/9bnRULEdeD2UlrZGKn0nuxHwbyyCTM5
-   vZJKVLGR/froG3k90XL4Om294utV3+Np8RWRciUJOA52QNMlmfAeiMZ3h
-   1Jep6pK6nWeDrBUaH/txbULd34QMPQ3MLbGUkP9eQcWKco66E4PS4Klai
-   lECryeV7/V+9U1oNUuupZghmJJuOgKWrWCCC9YJuyfcgVV5Xcs6lswV4a
-   g==;
-X-CSE-ConnectionGUID: 7D80+bhJRheUNFaLCG/lsQ==
-X-CSE-MsgGUID: HglZeKdzRmeT/pYcrKITiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1915884"
-X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="1915884"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2026 06:12:56 -0700
-X-CSE-ConnectionGUID: ud3rbwg5R4usJBTv+Gqyjg==
-X-CSE-MsgGUID: DACoMpaZQoyAqzVRsb5FFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="6680909"
-Received: from igk-lkp-server01.igk.intel.com (HELO 58ca8a381a5c) ([10.211.93.152])
-  by fmviesa011.fm.intel.com with ESMTP; 28 Oct 2026 06:12:55 -0700
-Received: from kbuild by 58ca8a381a5c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xM3SX-000000004sJ-0FRk;
-	Wed, 28 Oct 2026 13:12:53 +0000
-Date: Wed, 28 Oct 2026 14:12:37 +0100
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-gpio@vger.kernel.org,
- "Thomas =?utf-8?Q?Wei=C3=9Fschuh"?= <thomas.weissschuh@linutronix.de>
-Subject: [brgl:gpio/for-next 20/30]
- drivers/gpio/gpio-virtuser.c:1603:3: error: field designator 'ct_attrs_const'
- does not refer to any field in type 'const struct config_item_type'
-Message-ID: <202610281409.XHHiFcDP-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bOWvRrde
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3CA51F01825;
+	Wed, 28 Oct 2026 13:32:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793194344;
+	bh=mgaExbvnghCg31gnn54x4d+C6t6alfhG7i2H1RjCe5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bOWvRrdeUnHYioSZaC5f8If9tjlM+7mCemmNsVYNzXBDL81TIpncPRCB29Evee1i8
+	 Ue1F+3otI1pxWLCjOvNwJ5MOH9KQ4JseVfWkue+Y1/EGGv1+Mj4MqHDMZIcHvv3atH
+	 66f0/dMj95GeP+xU2+OWhNnZbgWRo5VuoD5pDmQqLm8ncAc+VeEIjl1JMCe0hAAzuE
+	 tjROXmaSqoGiYkVP9dPvNc6QlmKXtP0pIrUteMqqlYumfWjSqvBdG/eVky1WWO2QKP
+	 1dQOw9OWfaKwDWoxQJ+kMw6tTTcnsgD4a7K/SsQksCvc7nLEdsbCzgmB4dBxGfjzBZ
+	 GU1AN1lunQ1BQ==
+Date: Wed, 28 Oct 2026 14:32:21 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yureka Lilian <yureka@cyberchaos.dev>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Neal Gompa <neal@gompa.dev>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Hector Martin <marcan@marcan.st>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Sasha Finkelstein <k@chaosmail.tech>, 
+	Linus Walleij <linusw@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 03/10] dt-bindings: arm: cpus: Add Apple M5 CPU core
+ compatibles
+Message-ID: <20261028-stylish-thick-numbat-f4f8fc@quoll>
+References: <20261027-apple-m5-initial-devicetrees-v1-0-1356181bc50d@cyberchaos.dev>
+ <20261027-apple-m5-initial-devicetrees-v1-3-1356181bc50d@cyberchaos.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,42 +67,23 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261027-apple-m5-initial-devicetrees-v1-3-1356181bc50d@cyberchaos.dev>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-head:   5e826d71d4839d8471784d968274823f1f492eb5
-commit: a67ab3994716e1bfe86b53330d1cf2f5bf6bfbad [20/30] gpio: virtuser: constify struct configfs_attribute
-config: arm-randconfig-2001-20261028 (https://download.01.org/0day-ci/archive/20261028/202610281409.XHHiFcDP-lkp@intel.com/config)
-compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 42d4451d86c175b745d6ea1c4081787994c7259b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261028/202610281409.XHHiFcDP-lkp@intel.com/reproduce)
+On Tue, Oct 27, 2026 at 09:03:23AM +0100, Yureka Lilian wrote:
+> Add "apple,hidra-e" and "apple,hidra-p" compatibles for the M5
+> efficiency and performance CPU cores respectively.
+> The compatible strings are chosen based on SoC codename ("Hidra") plus
+> core type (E-Core / P-Core).
+> 
+> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
+> ---
+>  Documentation/devicetree/bindings/arm/cpus.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202610281409.XHHiFcDP-lkp@intel.com/
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-All errors (new ones prefixed by >>):
+Best regards,
+Krzysztof
 
->> drivers/gpio/gpio-virtuser.c:1603:3: error: field designator 'ct_attrs_const' does not refer to any field in type 'const struct config_item_type'
-    1603 |         .ct_attrs_const = gpio_virtuser_lookup_entry_config_attrs,
-         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-virtuser.c:1719:3: error: field designator 'ct_attrs_const' does not refer to any field in type 'const struct config_item_type'
-    1719 |         .ct_attrs_const = gpio_virtuser_device_config_attrs,
-         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +1603 drivers/gpio/gpio-virtuser.c
-
-  1599	
-  1600	static const struct
-  1601	config_item_type gpio_virtuser_lookup_entry_config_group_type = {
-  1602		.ct_item_ops	= &gpio_virtuser_lookup_entry_config_item_ops,
-> 1603		.ct_attrs_const	= gpio_virtuser_lookup_entry_config_attrs,
-  1604		.ct_owner	= THIS_MODULE,
-  1605	};
-  1606	
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
