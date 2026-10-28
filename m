@@ -1,61 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793189462;
-	b=Qrq+XYg4aZq5yUJ/2JHHKOl4iU56wh9riHT91EETpckZEVtHktUlAZGLTwMj5UekFDb9
-	 348SnFJRuP8ECa3c3oMnam7D6/6gibmuqp9Zo5Er0WcHCYiDtmt+QTPrVMOnJI2XBucSF
-	 lfhsVrsCtgUcHN7rfvmYI6kIITaFpn/zJqcnTgCgXE2Zp3IrAsgmpIPfI2Z8SBpGdX17G
-	 xwzNeZOyYu5St4GN7pqdm/TjYMPBLz4XcSJcGzGeuEAoCZaK4Cxbj3CTP9xPViVVeG8XH
-	 AIok70s4w+GFimzYgtcrDGqmJORoXfWoriu+kRfvyW5bhnpF2/X9MPE1C8XLHWNJdaQ==
+	t=1793189482;
+	b=QOrpnw+J901Xsv/Az5F6heJx2AIAi59icTNoGiIFO3p8/b2mqad8hgFPw413CdihelRZ
+	 v1gKggCPi73t5yt+sEjZFDl5EPQwSkUF/4ht5rBXn9+G5Tf/Q7pC56edYh8ETI/KdNaoQ
+	 6r1TKdSLe3hFpR4jvxtYLXp7qdYSQ4NgOLmnCYKl1qclnOn10IW2sI/I39t0XIBTGfHQ3
+	 I3Z0f6UMYxcR+uIQKGMoY45+WmxOPgR87D9TWSgFjipbvgVEiUHcB/XOvQQnuZZ6psgoR
+	 Re0PzUWSUySHFytrHQkUDAVf20RjT1IF2E6RRbaYZts6GrVHmqH2I1sikXvlmMTPTdA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793189462;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793189482;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=YH8exneAUOKvBRopo/qKSgKRlif0KWcuV1FHtfBKY8Q=;
-	b=0IQRQA5qR6xYCcK8CeKf+z3yknTsCHfXk6GXM4aXdz+AikGaou428q7OkCfyQSvWrf/H
-	 lwEHc55S1R0oHQsbBln+ne2HNB3dyBJbNeq5P3acmvLyOp53EQ1ncB1+gIVAoFlIQMFr9
-	 WNDGi3e4ONbquLG4cpVAX57/l4kckONW83MB5c4Yeg6GVrRlEOCJ730Lo3ERqzmxcBMvG
-	 T5V7J/aivIaIFhVkMXPa0MzLNYn/YewjVTUI6bKyPJm95dOTLC0tlBi/D9J1FDBW/0vI3
-	 wzwsXElQ5tH8DkrVj/sXt97gxEviWgeOXcXxkaOmyJETYSKsvhbvd2hXnwwLZu1xQyg==
+	bh=jFp3hE6kdnKwI+OVKk4TyPsmWn3kllMvQ4D/xPqwvN4=;
+	b=FNzGSaThcsgSL9sApYRyXYVChD+qarWIE01Z2dBJspzyU+6pdVpVIgh3QZ3Av6+Z6NN7
+	 jyt2OAw/Lyclj+GmrnUYI38J6j75+QhnOGCK3CquW7BF+Y0UHJOlJtezL+IKOm51bbsM4
+	 +h9fhPpLskM1lOf8PJOqXx5Z7gOSIBXmQNEMrVMo+CudnQbcXDw6JquG7IsyLc2QwhNcV
+	 pRwIJaMnAsiRnPiDgrwriXnszobyTxM1o092dz7ZBCr2SQllMhr1sMkutK+pyCF1Mz7V1
+	 ivRymGakrEztbJSlYHoo/ZKHJDJwEi4m7VOUaU32rQpB+tnYuXBv7lNZ7wZeLvUrc3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DOBr/23h";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b1L1OPmZ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1AD606A31C;
-	Wed, 28 Oct 2026 12:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E4C606A31C;
+	Wed, 28 Oct 2026 12:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DOBr/23h
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F231F01825;
-	Wed, 28 Oct 2026 12:10:59 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b1L1OPmZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACAA1F01825;
+	Wed, 28 Oct 2026 12:11:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793189461;
-	bh=YH8exneAUOKvBRopo/qKSgKRlif0KWcuV1FHtfBKY8Q=;
+	s=k20260515; t=1793189481;
+	bh=jFp3hE6kdnKwI+OVKk4TyPsmWn3kllMvQ4D/xPqwvN4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DOBr/23hmCjh4wM2ot7hpLjiW5OPK242RMuA7tPtbu7BaF3zojrlh+H6jDUj6eCR3
-	 p4G7wLlsFHqgiTEpyvOA5cZC0cr0jh1Hfl30heUHA1iiw6bbbWsIOQe1EpQycsVeKO
-	 zFGcn3wMkCPUJaGd6FXoyz9c79jVEetuLg6M7BxJBZx+wIjIZscRQkYy/C/Cc01Obd
-	 V7T/eXY7IE9bQfe0RJvOOHD+Hic+gET50gFDnKZpqepumxIa8+iEfaZevujjdjYDJr
-	 T3uh4Uih+lLu7qRsBJpHb4mSIu1nKSG9SSIKtQadJ5ZI7y3GoBg1G6zdUpmntaTy3N
-	 cauCHtT0FOWlA==
-Date: Wed, 28 Oct 2026 12:10:57 +0000
+	b=b1L1OPmZlis0ynVvH14hToOnAQdWKPvzxEhhBHQexyu6fBbXr7XoEIQH6iHY4zUVi
+	 7tSYmaP/0oCLvhhgqTJ74OzqCgZeDu2fbK0zdBe2/v4D+wHhXBW3VUMR/+mCIXSBw+
+	 5saKrS6gFXMdmWOGBIJ3sNnp8WCqrUU2+u3m+0Q/m+z6jsVWPTE1Lx6dTZstHcuuj+
+	 dgEt1L1rSfYFoMbAGkbd4EsarOVGyUfCmuKaiocCgXxuNT/BdK/4BoUR2ip1F16h1c
+	 JI32qho8rQSrvsJ26bQs7DjCFr9qg9UEUI64yeGbgM/Tbi0tw38b0Ik75PNgI+ZlCn
+	 +PZ4xa4fqeRgA==
+Date: Wed, 28 Oct 2026 12:11:18 +0000
 From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	Jonathan Corbet <corbet@lwn.net>,
 	Shuah Khan <skhan@linuxfoundation.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>, driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v14 4/5] reset: Add KUnit test cases
-Message-ID: <auHmUVsSCbZI7V4e@google.com>
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v14 5/5] reset: Leverage revocable for accessing struct
+ reset_controller_dev
+Message-ID: <auHmZhhB9MZj_2ch@google.com>
 References: <20261011121246.162759-1-tzungbi@kernel.org>
- <20261011121246.162759-5-tzungbi@kernel.org>
- <986d1b636fc7a96b3c2e05e8725a693a496d2f62.camel@pengutronix.de>
+ <20261011121246.162759-6-tzungbi@kernel.org>
+ <CAMRc=MeWy7UQrGEr7MG5KT1b_NeLeEc9cYb+sAWuzU3shw620A@mail.gmail.com>
+ <atYEwbTCcuYa5ShB@google.com>
+ <709ddfbbc57ce8f666fc8ebd7fe48dafed39ef33.camel@pengutronix.de>
+ <CAMRc=MePpaTMC2k8C3B5ue+QtYQQK9vX63n=v18J+fnaX4=0xQ@mail.gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,149 +71,35 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <986d1b636fc7a96b3c2e05e8725a693a496d2f62.camel@pengutronix.de>
+In-Reply-To: <CAMRc=MePpaTMC2k8C3B5ue+QtYQQK9vX63n=v18J+fnaX4=0xQ@mail.gmail.com>
 
-On Mon, Oct 19, 2026 at 03:32:12PM +0200, Philipp Zabel wrote:
-> On So, 2026-10-11 at 20:12 +0800, Tzung-Bi Shih wrote:
-> > Since commit 9035073d0ef1 ("reset: convert reset core to using firmware
-> > nodes"), reset suppliers and consumers can be wired up using software
-> > nodes without requiring Device Tree or hardware devices.  Leverage this
-> > to add KUnit test cases for the reset controller framework.
-> > 
-> > The test cases cover the following scenarios:
-> > 
-> > - Basic: Verifies that a consumer can acquire a reset control via
-> >   fwnode and perform reset, assert, deassert, status, release, and
-> >   acquire operations.
-> > - Use After Unregister: Verifies that after the supplier unregisters
-> >   the reset_controller_dev while a consumer still holds a reset_control
-> >   handle, subsequent consumer operations fail safely with -ENODEV.
-> > - Concurrent Unregister: Verifies that unregistering the
-> >   reset_controller_dev concurrently with an in-flight reset operation
-> >   waits for the active operation to complete before returning.
-> > 
-> > Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+On Mon, Oct 19, 2026 at 04:05:21PM +0200, Bartosz Golaszewski wrote:
+> On Mon, 19 Oct 2026 14:41:47 +0200, Philipp Zabel <p.zabel@pengutronix.de> said:
+> > On Mo, 2026-10-19 at 11:53 +0000, Tzung-Bi Shih wrote:
+> >> On Thu, Oct 15, 2026 at 05:49:11AM -0400, Bartosz Golaszewski wrote:
+> >> > >  /**
+> >> > >   * struct reset_control - a reset control
+> >> > > - * @rcdev: a pointer to the reset controller device
+> >> > > - *         this reset control belongs to
+> >> > > - * @srcu: protects the rcdev pointer from removal during consumer access
+> >> > > + * @rev: revocable handle for accessing the reset controller device
+> >> >
+> >> > Please call it "revocable". The name "rev" does not indicate what it is at all.
+> >> > Same elsewhere if you call it the same.
+> >>
+> >> Ack, I initially used "rev" to keep the lines shorter with the revocable
+> >> APIs, but "rev" alone can indeed be confusing.  On the other hand, I feel
+> >> "revocable" is a bit verbose and doesn't indicate which target object it
+> >> protects.  How about calling it "rcdev_rev"?
+> >
+> > I strongly associate "rev" with "revision".
+> >
+> > I'd be fine with "rcdev_revocable" (in struct reset_control and
+> > "revocable" in struct reset_controller_device).
+> >
 > 
-> It looks like the Kunit tests are independent from the reset of the
-> series and could be sent individually.
-> 
-> Is there any dependency that I am missing?
+> I think "revocable" in both cases is fine. After all: we know what type the
+> dereferenced variable is.
 
-No, but I was using it to verify if [PATCH v14 5/5] breaks anything.  I'll
-send it out independently.
-
-> > +static int reset_test_init(struct kunit *test)
-> > +{
-...
-> > +	ctx->rcdev.ops = &reset_test_ops;
-> > +	ctx->rcdev.nr_resets = 1;
-> > +	ctx->rcdev.fwnode = ctx->supp_fwnode;
-> > +
-> > +	ret = reset_controller_register(&ctx->rcdev);
-> > +	KUNIT_ASSERT_EQ(test, ret, 0);
-> > +
-> > +	ctx->rstc = __fwnode_reset_control_get(ctx->cons_fwnode, NULL, 0,
-> > +					       RESET_CONTROL_EXCLUSIVE);
-> > +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->rstc);
-> > +
-> > +	test->priv = ctx;
-> 
-> The rcdev and rstc could be cleaned up in .exit for the error cases.
-
-Ack, will add a .exit() callback to clean up `rstc` and `rcdev`.
-
-> > +static void reset_test_basic(struct kunit *test)
-> > +{
-...
-> > +	reset_control_release(rstc);
-> > +	KUNIT_EXPECT_EQ(test, reset_control_acquire(rstc), 0);
-> > +
-> > +	reset_control_put(rstc);
-> > +	reset_controller_unregister(&ctx->rcdev);
-> 
-> Could be cleaned up by .exit.
-
-Ack, will let .exit() handle them.
-
-> > +static void reset_test_use_after_unregister(struct kunit *test)
-> > +{
-> > +	struct reset_test_context *ctx = test->priv;
-> > +	struct reset_control *rstc = ctx->rstc;
-> > +
-> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 0);
-> > +	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), 0);
-> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-> > +
-> > +	/* Unregister supplier while consumer still holds rstc. */
-> > +	reset_controller_unregister(&ctx->rcdev);
-> 
-> If you allocate rcdev on its own instead of embedding it in the
-> context, you could
-> 
-> 	reset_controller_unregister(ctx->rcdev);
-> 	ctx->rcdev = NULL;
-> 
-> here and still have normal cleanup if not NULL in .exit.
-
-The `reset_control_ops` callbacks use `container_of(...)` to obtain `ctx`,
-so keeping `rcdev` embedded in `ctx` is convenient.  Will add a bool flag
-so .exit() only unregisters `rcdev` if it is still registered.
-
-> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-> > +	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), -ENODEV);
-> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-> > +
-> > +	KUNIT_EXPECT_EQ(test, reset_control_assert(rstc), -ENODEV);
-> > +	KUNIT_EXPECT_EQ(test, reset_control_deassert(rstc), -ENODEV);
-> > +	KUNIT_EXPECT_EQ(test, reset_control_status(rstc), -ENODEV);
-> > +
-> > +	reset_control_release(rstc);
-> > +	KUNIT_EXPECT_EQ(test, reset_control_acquire(rstc), -ENODEV);
-> > +
-> > +	reset_control_put(rstc);
-> 
-> This would not be required either.
-
-Ack, will let .exit() handle it.
-
-> > +static void reset_test_concurrent_unregister(struct kunit *test)
-> > +{
-> > +	struct reset_test_context *rtc = test->priv;
-> > +	struct test_concurrent_unregister_context *ctx;
-> > +	int i, ret, val;
-> > +
-> > +	rtc->rcdev.ops = &reset_test_concurrent_unregister_ops;
-> > +
-> > +	ctx = kunit_kmalloc_array(test, 3, sizeof(*ctx), GFP_KERNEL);
-> > +	KUNIT_ASSERT_NOT_NULL(test, ctx);
-> > +
-> > +	for (i = 0; i < 3; ++i) {
-> > +		ctx[i].test = test;
-> > +		init_completion(&ctx[i].started);
-> > +		init_completion(&ctx[i].enter);
-> > +
-> > +		if (i == 0) {
-> > +			ctx[i].thread = kthread_run(
-> > +				test_concurrent_unregister_supplier, ctx + i,
-> > +				"supplier%d", i);
-> > +		} else {
-> > +			init_completion(&ctx[i].entered);
-> > +			init_completion(&ctx[i].exit);
-> > +
-> > +			ctx[i].thread = kthread_run(
-> > +				test_concurrent_unregister_consumer, ctx + i,
-> > +				"consumer%d", i);
-> > +		}
-> > +		KUNIT_ASSERT_FALSE(test, IS_ERR(ctx[i].thread));
-> 
-> Isn't this missing kthread cleanup in the error cases?
-
-Correct, will fix it.
-
-> > +	/* Subsequent access must see -ENODEV. */
-> > +	KUNIT_EXPECT_EQ(test, reset_control_reset(rtc->rstc), -ENODEV);
-> > +	reset_control_put(rtc->rstc);
-> 
-> reset_control_put() could be done by .exit.
-
-Ack, will let .exit() handle it.
+Ack, will rename them to `rcdev_revocable` (in `struct reset_control`) and
+`revocable` (in `struct reset_controller_dev`).
