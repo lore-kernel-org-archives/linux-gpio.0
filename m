@@ -1,61 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793185031;
-	b=sxvcH95htKgMJFVUifz23uDikAWR4kxtV6Em/UCrKWxSgLDI+p4s+yBHpwaKhwHPnmw5
-	 g6MQ75ozVZ3HO3Ze+LY5LdMmEiK/OsgJ4uOPKooOrRRnMe2mfMLA0iJE4+blrF8oGYnNI
-	 +bSORG0802pyYNVzeFwWMxeFv3t7gYd+O4Nsa4V0e6Mg7on8Px35cm8nV5VbUquQyYn0x
-	 gr0/M9RVrs/P5jq7EWx6S2HOhdUBdAb/WeohR2K1wGtGztziDQLyWuFM5EIByKa/jnDoZ
-	 1q3Gd0av2SV8o7uYyuQLufUwlvQ5dHo7Pp/ETjy+X550JcYHiWmsoMaUXxrGpqVKm7Q==
+	t=1793185382;
+	b=EDp/Mq5BZW0JZu4XWUsGKpHnAw/JJwAskhd8wpPM56CtsyAikI4w6MB6705H6SiohF1I
+	 F0t4aIf7gbnWmmTs+AQ1uoDPgXEWVOJzxt5y2idxev61UbrYFAxZsTbLpj9ix4w+L85+l
+	 rZm3Ic72sGTSN8G0a+AEJSxwNg+SdS/le891wI6v4hTnclfKMB7JBecA2FPUnZzmD264d
+	 BDsM9Z63dl+opAOPGE/Q70e5CBheJ3WsDOd7OJfp9VYHR+SfTkMHNMTd41iRIVpAMiV7e
+	 iQp4nkJzmaBzbhKWRlagSM6o2AEk56N/5cYPZU+lf+m40H4xiem9e7sbMUDMJnjz5LQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793185031;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
-	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
-	bh=CnOfciE7aUrsUL79ZmXxiiRCjQcI0KLaL6MOJkO769w=;
-	b=p5lH+Tj7Y+91nfbaVrVBgI/o8chEnbbnqTZj3KU+SDeJHhEFCHqkKdXwY7Fq4/8zRVQV
-	 CGug9GJ8JVfTZi97OT/CCM4j0VMEFA5fFr8pIuEarY+3c20h7kDItdVaBkBepqkSMnzl+
-	 ar1Kor7XKg7gq7wdJ1d0M3zVekqpOoOxq7ATKh7tFWugtm0JA1zNU1eLwvdT9ae10eJ+G
-	 g0A8CehSQThfitcUj+3t5mpDNBI73gudzIRdlSCHOCvtLO5F8OSpvS0y9uYBbW91qZ43t
-	 1rbKspDkr6OiZonFej7B6yiu4FsMfafADQ6UWKQFKGFadAMjbXB5VQf5oRIIBMwLskQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793185382;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=i0kk3aapQT2U+tj0mw7g2JYLQDYCyfi7o3Lj/LOB5+I=;
+	b=NGowee+UprNcvgkMThfEbrAB1MM7Z+Ssq0A4L1ak58BVxhA7sF9V+gG28ZVjX5brEkT+
+	 NUb+OafanYqvn2+pUk19DOna42J/ecEEYX+fvQHZ8lFXd2VhaWW5F9eoYRcuXoPKdi4Xa
+	 C5pDxvrjLPlU5ABNzhG/Q7UM4vu7ynmYH4hxn67NwbbWvLoJez81tRLf+asZzY1rUMtde
+	 he2JfBPn4SKfDIBUcA6EbtGyzFXAQjMllnjK+SgoMF8mQDxIx4GNWDAern+kqWBkHcLZH
+	 OdAK56mXJRhGBrIBb35byyjpcIihAVugdiVa+SQeZPPnlwkkDw5REWwuY+3vdHiJ9Eg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l1SXBczy;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QendF40D;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21601606A31C
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 10:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31938606A31D;
+	Wed, 28 Oct 2026 11:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l1SXBczy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4901F01825
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 10:57:10 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QendF40D
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918641F01825;
+	Wed, 28 Oct 2026 11:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793185030;
-	bh=CnOfciE7aUrsUL79ZmXxiiRCjQcI0KLaL6MOJkO769w=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=l1SXBczyP1b8Lygm4Ce/uhM+zC/Qj/IxcKjsZhkOSKUdva7tRRDl+D8IttoFSZJpR
-	 po6eruzeaNnaENKPjmp8zWsJZO4pELFdUq7G2vEe/3YufM/6+eVMLa7WwAk7rQutOG
-	 2xycxbQfjmd4BMi21MRCaiAE/671sjD9eZ2LBpZfFqQaoPy5UrQtsoCpluVRlptC+m
-	 HoQ8L6uWi4xj5YnYi3Jg58srgO056Md2s+BhnhAnV8XcY1mhmEi4GvfOj2Nyd7H3IQ
-	 5bnk3hg28SfU6PdRCLvMoXWewj2v0L3BvdFdFPBFgyxma2Fd2LuNrHyN6qhyuj8omD
-	 FPAFyrhHAEqgA==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3ab4891fc73so7354871fa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 03:57:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxFz7EA3raS2peJqAR/CFD9ooeLAaX/u0v9NiZlNUAR+gbxWVX5dtaU+iCpXZ6x7F1gxt5YC271tbjk@vger.kernel.org
-X-Gm-Message-State: AFq9FYKF1AzlFS2x69Vi1pPg5bA1jM01dHuAvuguLoU62IuNcPPd8Co8
-	fLt9tKChuoG8FBeLFcA/jkd7ZW/GQjAwuHgTuEfFsLpKJlTm/rCTLAVX/SV2VZlnbCbK1C9mqI5
-	RKSEb10G7WGbwxlppZaRm2Jmp3uSeOmmUWKwjprlexw==
-X-Received: by 2002:a2e:b887:0:b0:3ab:483c:914c with SMTP id
- 38308e7fff4ca-3ac9cf85f47mr4115441fa.21.1793185029389; Wed, 28 Oct 2026
- 03:57:09 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 06:57:07 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 06:57:07 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261024123124.3700266-1-yegorslists@googlemail.com>
+	s=k20260515; t=1793185381;
+	bh=i0kk3aapQT2U+tj0mw7g2JYLQDYCyfi7o3Lj/LOB5+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=QendF40D2eU452DZQs1CMgpLem31EhGLdWBQ9KdRxZoHWoxh83hkcNBWQL0cJ4r4x
+	 c7/RZ20mVlhygp9Q3UNqXPeuD1nDKOQ4T/6rS/9zzPmR/sRcsBLQK9Ws3GgqUSBDZm
+	 lYzFjqHUbT+zw6bgkhp9mYIxObgfO4z6X59wJHXPoPVn5HW6ijfYvd+XGaAZnfFt55
+	 wKBUDARJeieFTZhY0p2gEpaT2K66BvIKTx6hvgXW1LMIsEaazHBrYWV6aWGfhCoh5h
+	 fB83M6m9GF+xQEdmePu6y6V5taqZM814gR5DJ4KJhm+XXZFccSdpxBlHkl/vHYiFWU
+	 j7QSN35G3gzLQ==
+Date: Wed, 28 Oct 2026 06:02:58 -0500
+From: Rob Herring <robh@kernel.org>
+To: Prateek Agarwal <praagarwal@nvidia.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Prathamesh Shete <pshete@nvidia.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: Document Tegra268 pin
+ controllers
+Message-ID: <20261028110258.GA2175260-robh@kernel.org>
+References: <20261014104210.3978188-1-praagarwal@nvidia.com>
+ <20261014104210.3978188-3-praagarwal@nvidia.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,130 +64,192 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261024123124.3700266-1-yegorslists@googlemail.com>
-Date: Wed, 28 Oct 2026 06:57:07 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MdC4D4C98TH5scL7gF-hw5CZ=YtLDdi1HjWnkpzXL5vQw@mail.gmail.com>
-X-Gm-Features: AclHuK9umZMmCucMgObwTARfXvC1oHbKQaNmgh44QlS7RTcp41hXWS6hgysmqIk
-Message-ID: <CAMRc=MdC4D4C98TH5scL7gF-hw5CZ=YtLDdi1HjWnkpzXL5vQw@mail.gmail.com>
-Subject: Re: [PATCH libgpiod] build: honor default_library for the installed libraries
-To: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261014104210.3978188-3-praagarwal@nvidia.com>
 
-On Sat, 24 Oct 2026 14:31:24 +0200, Yegor Yefremov
-<yegorslists@googlemail.com> said:
-> The installed libraries (libgpiod, libgpiodcxx, libgpiod-glib and
-> libgpiodbus) are built with both_libraries(), so the shared variant is
-> always built, even with -Ddefault_library=static. When the toolchain
-> or the environment requests a fully static link (e.g. LDFLAGS=-static,
-> as done by Buildroot for static-only builds), linking the shared
-> library then fails:
->
->   FAILED: lib/libgpiod.so.3.1.2
->   [...] crtbeginT.o: relocation R_ARC_32_ME against `__TMC_END__' can not be used when making a shared object; recompile with -fPIC
->
-> Use library() instead, which follows default_library, and set
-> default_library=both in the project's default options, so that a
-> default build still installs both the shared and static libraries. As
-> library() returns an object behaving like the shared library when both
-> are built, the users of these objects (link_with, pkgconfig.generate,
-> generate_gir, full_path) keep working as before.
->
-
-I'm not sure this is true, see below.
-
-> With a default build, the only change in the installed files is that
-> libgpiotools, already declared with library(), is now also installed as
-> a static library, like the other libraries.
->
-> Fixes: 97bab4cc87dd ("build: replace autotools with meson & ninja")
-> Assisted-by: Claude:claude-opus-5-5
-> Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+On Wed, Oct 14, 2026 at 10:42:09AM +0000, Prateek Agarwal wrote:
+> From: Prathamesh Shete <pshete@nvidia.com>
+> 
+> Tegra268 contains three pin controllers. Document their compatible strings
+> and describe the list of pins and functions that they provide.
+> 
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Prateek Agarwal <praagarwal@nvidia.com>
 > ---
+>  .../pinctrl/nvidia,tegra268-pinmux-aon.yaml   |  78 ++++++++++
+>  .../nvidia,tegra268-pinmux-common.yaml        |  72 ++++++++++
+>  .../pinctrl/nvidia,tegra268-pinmux-main.yaml  | 136 ++++++++++++++++++
+>  .../pinctrl/nvidia,tegra268-pinmux-uphy.yaml  |  75 ++++++++++
+>  4 files changed, 361 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-aon.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-common.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-main.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-uphy.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-aon.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-aon.yaml
+> new file mode 100644
+> index 000000000000..0757e15c1327
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-aon.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/nvidia,tegra268-pinmux-aon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra268 AON Pinmux Controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra268-pinmux-aon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^pinmux(-[a-z0-9-]+)?$":
+> +    type: object
+> +
+> +    # pin groups
+> +    additionalProperties:
+> +      $ref: nvidia,tegra268-pinmux-common.yaml
+> +
+> +      properties:
+> +        nvidia,pins:
+> +          items:
+> +            enum: [ soc_gpio00_paa0, vcomp_alert_paa1, ao_retention_n_paa2,
+> +                    batt_oc_paa3, bootv_ctl_n_paa4, power_on_paa5,
+> +                    hdmi_cec_paa6, soc_gpio07_paa7, soc_gpio08_pbb0,
+> +                    soc_gpio09_pbb1, gen2_i2c_scl_pcc0, gen2_i2c_sda_pcc1,
+> +                    gen3_i2c_scl_pcc2, gen3_i2c_sda_pcc3, gp_pwm4_pcc4,
+> +                    uart0_tx_pcc5, uart0_rx_pcc6, spi2_sck_pcc7,
+> +                    spi2_miso_pdd0, spi2_mosi_pdd1, spi2_cs0_n_pdd2,
+> +                    soc_gpio21_pdd3, soc_gpio23_pdd5, soc_gpio24_pdd6,
+> +                    soc_gpio25_pdd7, soc_gpio26_pee0, soc_gpio27_pee1,
+> +                    drive_ao_retention_n_paa2, drive_batt_oc_paa3,
+> +                    drive_power_on_paa5, drive_vcomp_alert_paa1,
+> +                    drive_bootv_ctl_n_paa4, drive_soc_gpio00_paa0,
+> +                    drive_soc_gpio07_paa7, drive_soc_gpio08_pbb0,
+> +                    drive_soc_gpio09_pbb1, drive_hdmi_cec_paa6,
+> +                    drive_gen2_i2c_scl_pcc0, drive_gen2_i2c_sda_pcc1,
+> +                    drive_gen3_i2c_scl_pcc2, drive_gen3_i2c_sda_pcc3,
+> +                    drive_gp_pwm4_pcc4, drive_uart0_tx_pcc5,
+> +                    drive_uart0_rx_pcc6, drive_spi2_sck_pcc7,
+> +                    drive_spi2_miso_pdd0, drive_spi2_mosi_pdd1,
+> +                    drive_spi2_cs0_n_pdd2, drive_soc_gpio21_pdd3,
+> +                    drive_soc_gpio23_pdd5, drive_soc_gpio24_pdd6,
+> +                    drive_soc_gpio25_pdd7, drive_soc_gpio26_pee0,
+> +                    drive_soc_gpio27_pee1 ]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+> +
+> +    pinmux@c7a2000 {
+> +        compatible = "nvidia,tegra268-pinmux-aon";
+> +        reg = <0xc7a2000 0x2000>;
+> +
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&state_default>;
+> +
+> +        state_default: pinmux-default {
+> +            uart0 {
+> +                nvidia,pins = "uart0_tx_pcc5";
+> +                nvidia,function = "uarta_txd";
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-common.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-common.yaml
+> new file mode 100644
+> index 000000000000..1b276a211b02
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-common.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/nvidia,tegra268-pinmux-common.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra268 Pinmux Common Properties
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +$ref: nvidia,tegra-pinmux-common.yaml
+> +
+> +properties:
+> +  nvidia,function:
+> +    enum: [ dca_vsync, dca_hsync, rsvd0, dp_aux_ch0_hpd, dp_aux_ch1_hpd,
+> +            gp_pwm2, gp_pwm3, i2c7_clk, i2c7_dat, i2c9_clk, i2c9_dat, spi3_cs0,
+> +            spi3_cs3, spi3_din, spi3_dout, spi3_sck, uartf_cts, uartf_rts,
+> +            uartf_rxd, uartf_txd, spi1_cs0, spi1_cs1, spi1_din, spi1_dout,
+> +            spi1_sck, extperiph2_clk, extperiph1_clk, i2c12_clk, i2c12_dat,
+> +            nv_therm_fan_tach0, gp_pwm9, i2c0_clk, i2c0_dat, i2c1_clk, i2c1_dat,
+> +            i2s2_lrck, i2s2_sclk, i2s2_sdata_out, i2s2_sdata_in, uarte_cts,
+> +            uarte_rts, uarte_rxd, uarte_txd, i2c5_dat, i2c5_clk, i2s4_sdata_out,
+> +            i2s4_sclk, i2s4_sdata_in, i2s4_lrck, aud_mclk, i2s1_sclk,
+> +            i2s1_sdata_in, i2s1_sdata_out, i2s1_lrck, i2c11_clk, i2c11_dat,
+> +            xhalt_trig, gp_pwm1, gp_pwm6, gp_pwm7, gp_pwm8, ufs0, pe1_clkreq_l,
+> +            pe1_rst_l, pe2_rst_l, pe2_clkreq_l, pe3_clkreq_l, pe3_rst_l,
+> +            sgmii0_sma_mdio, sgmii0_sma_mdc, usb_vbus_en0, usb_vbus_en1,
+> +            pe4_clkreq_l, pe4_rst_l, eth0_mdio, eth0_mdc, eth2_mdio, eth2_mdc,
+> +            qspi0_cs_n, qspi0_io0, qspi0_io1, qspi0_io2, qspi0_io3, qspi0_sck,
+> +            dcb_vsync, dcb_hsync, dsa_lspii, dce_vsync, dce_hsync, bl_en,
+> +            bl_pwm_dim0, rsvd1, soc_therm_oc3, i2s5_sclk, i2s5_sdata_in,
+> +            extperiph3_clk, extperiph4_clk, i2s5_sdata_out, i2s5_lrck,
+> +            i2c14_dat, i2s8_sclk, i2s8_sdata_out, i2s8_lrck, i2c16_clk,
+> +            i2c16_dat, i2s3_sclk, i2s3_sdata_out, i2s3_sdata_in, i2s3_lrck,
+> +            pm_trig1, pm_trig0, dcc_vsync, dcc_hsync, rsvd2, dcf_vsync,
+> +            dcf_hsync, soundwire1_clk, soundwire1_dat0, soundwire1_dat1,
+> +            soundwire1_dat2, dmic2_clk, dmic2_dat, nv_therm_fan_tach1,
+> +            i2c15_clk, i2c15_dat, i2s7_sdata_out, dmic1_clk, dcd_vsync,
+> +            dcd_hsync, rsvd3, dcg_vsync, dcg_hsync, dspk1_clk, dspk1_dat,
+> +            soc_therm_oc2, istctrl_ist_done_n, soc_therm_oc1, tsc_edge_out0c,
+> +            tsc_edge_out0d, tsc_edge_out0a, tsc_edge_out0b, touch_clk, hdmi_cec,
+> +            i2c2_clk, i2c2_dat, i2c3_clk, i2c3_dat, gp_pwm4, uarta_txd,
+> +            uarta_rxd, spi2_sck, spi2_din, spi2_dout, spi2_cs0, tsc_sync1,
+> +            tsc_edge_out3, tsc_edge_out0, tsc_edge_out1, tsc_sync0,
+> +            soundwire0_clk, soundwire0_dat0, uartl_txd, uartl_rxd, i2s9_sclk,
+> +            i2s9_sdata_out, i2s9_sdata_in, i2s9_lrck, dmic5_dat, tsc_edge_out2 ]
+> +
+> +  # out of the common properties, only these are allowed for Tegra268
+> +  nvidia,pins: true
+> +  nvidia,pull: true
+> +  nvidia,tristate: true
+> +  nvidia,schmitt: true
+> +  nvidia,enable-input: true
+> +  nvidia,open-drain: true
+> +  nvidia,lock: true
+> +  nvidia,drive-type: true
+> +  nvidia,io-hv: true
+> +
+> +required:
+> +  - nvidia,pins
+> +
+> +# We would typically use unevaluatedProperties here but that has the
+> +# downside that all the properties in the common bindings become valid
+> +# for all chip generations. In this case, however, we want the per-SoC
+> +# bindings to be able to override which of the common properties are
+> +# allowed, since not all pinmux generations support the same sets of
+> +# properties. This way, the common bindings define the format of the
+> +# properties but the per-SoC bindings define which of them apply to a
+> +# given chip.
 
-With this patch, the following commands:
+No need for this explanation. If this is a result of sashiko, just 
+ignore it or try putting this after the commit msg (i.e. below '---').
 
-    meson setup ./build -Ddefault_library=static -Dintrospection=enabled
-    ninja -C ./build
-
-fail like so:
-
-ninja: Entering directory `./build/'
-[111/166] Generating bindings/glib/Gpiodglib-1.0.gir with a custom
-command (wrapped by meson to set env)
-FAILED: bindings/glib/Gpiodglib-1.0.gir
-env PKG_CONFIG_PATH=/tmp/libgpiod/build/meson-uninstalled
-PKG_CONFIG=/usr/bin/pkg-config CC=cc
-/usr/bin/x86_64-linux-gnu-g-ir-scanner --quiet --no-libtool
---namespace=Gpiodglib --nsversion=1.0 --warn-all --output
-bindings/glib/Gpiodglib-1.0.gir --c-include=gpiod-glib.h
---c-include=gpiod-glib.h --warn-all -DGPIODGLIB_COMPILATION
--I/tmp/libgpiod/bindings/glib -I/tmp/libgpiod/build/bindings/glib
--I/tmp/libgpiod/bindings/glib/. -I/tmp/libgpiod/build/bindings/glib/.
--I/tmp/libgpiod/bindings/glib/../../include
--I/tmp/libgpiod/build/bindings/glib/../../include
--I/tmp/libgpiod/include -I/tmp/libgpiod/build/include
---filelist=/tmp/libgpiod/build/bindings/glib/libgpiod-glib.a.p/Gpiodglib_1.0_gir_filelist
---include=Gio-2.0 --symbol-prefix=gpiodglib
---identifier-prefix=Gpiodglib --pkg-export=gpiod-glib --cflags-begin
--D_GNU_SOURCE '-DGPIOD_VERSION_STR="2.4+devel"'
-'-DGPIOD_API_VERSION_STR="2.2.1"' -I/usr/include/glib-2.0
--I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/sysprof-6
--I/usr/include/libmount -I/usr/include/blkid
--I/usr/include/gio-unix-2.0 -I/usr/include/gobject-introspection-1.0
---cflags-end -I/tmp/libgpiod/bindings/glib/.
--I/tmp/libgpiod/build/bindings/glib/.
--I/tmp/libgpiod/bindings/glib/../../include
--I/tmp/libgpiod/build/bindings/glib/../../include
---add-include-path=/usr/share/gir-1.0
---add-include-path=/tmp/libgpiod/bindings/glib/.
---add-include-path=/tmp/libgpiod/build/bindings/glib/.
---add-include-path=/tmp/libgpiod/bindings/glib/../../include
---add-include-path=/tmp/libgpiod/build/bindings/glib/../../include
---library /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a
---extra-library=glib-2.0 --extra-library=gobject-2.0
---extra-library=gio-2.0 --extra-library=girepository-1.0
---sources-top-dirs /tmp/libgpiod/ --sources-top-dirs
-/tmp/libgpiod/build/
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_on_info_event':
-/tmp/libgpiod/build/../bindings/glib/chip.c:47:(.text+0x119):
-undefined reference to `gpiod_chip_read_info_event'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_constructed':
-/tmp/libgpiod/build/../bindings/glib/chip.c:92:(.text+0x401):
-undefined reference to `gpiod_chip_open'
-/usr/bin/ld: /tmp/libgpiod/build/../bindings/glib/chip.c:100:(.text+0x45d):
-undefined reference to `gpiod_chip_get_fd'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_close':
-/tmp/libgpiod/build/../bindings/glib/chip.c:141:(.text+0x744):
-undefined reference to `gpiod_chip_close'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_get_info':
-/tmp/libgpiod/build/../bindings/glib/chip.c:251:(.text+0xaee):
-undefined reference to `gpiod_chip_get_info'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_get_line_info':
-/tmp/libgpiod/build/../bindings/glib/chip.c:289:(.text+0xc1e):
-undefined reference to `gpiod_chip_get_line_info'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_watch_line_info':
-/tmp/libgpiod/build/../bindings/glib/chip.c:297:(.text+0xc54):
-undefined reference to `gpiod_chip_watch_line_info'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_unwatch_line_info':
-/tmp/libgpiod/build/../bindings/glib/chip.c:315:(.text+0xcdf):
-undefined reference to `gpiod_chip_unwatch_line_info'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_get_line_offset_from_name':
-/tmp/libgpiod/build/../bindings/glib/chip.c:345:(.text+0xdd4):
-undefined reference to `gpiod_chip_get_line_offset_from_name'
-/usr/bin/ld: /tmp/libgpiod/build/bindings/glib/libgpiod-glib.a(chip.c.o):
-in function `gpiodglib_chip_request_lines':
-/tmp/libgpiod/build/../bindings/glib/chip.c:388:(.text+0xf24):
-undefined reference to `gpiod_chip_request_lines'
-[...]
-
-Thanks,
-Bartosz
+Rob
