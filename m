@@ -1,60 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793187034;
-	b=R2kCZzxDaR1aWFiEcnz3b8Vq9wdWdhmErHGf5sflPvJeyYUC5lYvM8XnDvHXUBqUuIph
-	 ADTpO5eT8DQi0MYWVDpdHCTEfg0mqkWy5lQghdp4QRq0ObesXgpEamwIQJXHDVOYnVcJ5
-	 hsqy0qv0E7Ub0/+3bkNv1zPq9jS+XPrfPjK5SCzVkj5VoTvkdx/RJjxUSR8+sC2puonl9
-	 T6Ifp+LH2CEbpcYivT3AV0NmpZfXuazcM1U4uihj4PCQvQo5+ns4mIm+fv5yvO8SQoDbl
-	 vUMKTJ/LS4Qto4qMGOrLjRT+TnM1f1uh6vFCECZBXoiF5XKIhk4cSfGNnkLPwsM61Uw==
+	t=1793187593;
+	b=z2T8El20vTwSzrtPHSsRmOhp1uEN6l1MR1GaeroYyrofzYyVqYdBplUKUu9r5fSI2A25
+	 OKPatdethdIJos2EESk5WPBhw1tCHGo5Qb7CaqlQMKD8U5gG1MKpceePBUHbIIjY7tnkM
+	 +GjRWzsl4oB08ANUKnYw7U97ZsloPCBz8kGEM8JhrsTEBOfSTTR2VL3YEfS9RlwJqahIc
+	 At1oAI2onB5sG4M9ytOxwA5X7roWMSpHlAgkVPFKVtXCqbdGwH8tqtsLovoNlP3xJ9UC9
+	 8PMIuCcPVjIGYZL8jztOLLqPLk/5R4J0DPw7xmKIujHeA4t2NIPF5St+gXROLIEljyA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793187034;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nK4wxJlF1X3a08zXOdP0lWerEzc2FL4X4MzbdiQi0B0=;
-	b=oRERH7BE5B0H2C3UOPDwKu7JtNk6xjN7P2ksCVcbC8jIfQ4s2HhnFW78vindHXCOttIK
-	 l6ZwDF0m3+Sa5bHRb+uko3mY3EmoZRRSSX3YfRKwrBk+kfIcfh9O4ZunjMbfoenvEF0cX
-	 ATe2MTNQGPSbKKkt1QDwj5VVETDg5JYjBoS7ITDfImU7YHjryLsaaBJjEXuFJxcrjDrzA
-	 0A7vwNen0CJJ/rO+jd7Fu/6ix39AJcUyKopZojcmi0ZjPulzob2CPd+vUxsWDgDQAvOhP
-	 WFklLmmavVvhtWOJvMAEC8gRBUy9Rd/EZmIbBPpw1CvELlQdQ1UnidFEmFk1ag9wfQQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793187593;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:User-Agent:MIME-Version:Content-Type;
+	bh=0FODrjNxzB5MvPvQ84udigeiOH/4245t9NIBABFazGQ=;
+	b=KZILc1typXO8cbUQVFrKw2ZYPDAzH6FiiWhLcoR9q+EOtLgcYr0aUpnMcynOW9NQ6eY5
+	 YW/a2a5vrE1WPuS0VPzjXs7IliED23Q/lbmimMgTbcb2vZI2FhDtdOSP994AB7xjUqtEZ
+	 SMtaTvwoc2yOMgahE5hMHXqZLzUUfoaunMPvuVLnMgmQnKkgltDNfxPHynRPtVkieZZtk
+	 e0YRaI7TN+stVYCCDOyrJ5YdiF/x3i1TTHq3yeB6wm8EfgKgWNuWj8vLTWTPfjSPGW01c
+	 8t3wh0KexkmwGmqTqZxYav1C60rCPm0xiU3q9j3d5Mj9fWa/TOUIBq3yyyJwopIO1tg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DQAtIssq;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EhVJRJKu;
+	arc=none smtp.remote-ip=192.198.163.13
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B325F606A31C;
-	Wed, 28 Oct 2026 11:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926A4606A31A
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 11:39:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 926A4606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DQAtIssq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814231F01828;
-	Wed, 28 Oct 2026 11:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793187033;
-	bh=nK4wxJlF1X3a08zXOdP0lWerEzc2FL4X4MzbdiQi0B0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DQAtIssqPLSYUwXo8Ja4LvMO2QBS6lM0CVubOc2fgVe0DYA6540L8UjP+/LUMOYxC
-	 d9f0s95LUqMcD8UJrMoh08bgrL3biChIoMrCb/9AvOJOoqgwNMaFXH0K0JWB8J9nN/
-	 9DNYr2n1eyq5ID1zEFK2+gh3ryw23/7RNNArffdKb8Og/0+RJXdC3NawUd90Bq/rus
-	 GvZKRtclUuDHvSIBNr2T/8yIqhXwccXt8gG8w0i9DmFUOg5QaaJqvxuuCzDPIrU+cp
-	 1D6LRjYJwrFrLsFOj7EPCBqTp0BW0vREj9HtWOBZNQ67ccb1hHuKOcVJQLWdLDsMJx
-	 iAI9O3rbZIALg==
-Date: Wed, 28 Oct 2026 12:30:30 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Diogo Ivo <diogo.ivo.sx@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, linux-i3c@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: i3c: renesas,i3c: Add RZ/G3L support
-Message-ID: <20261028-ecstatic-fluffy-lizard-9a5da6@quoll>
-References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
- <20261026-divo-ssgrlpcsrc-2966-i3c-v2-3-2e76b87209bb@renesas.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EhVJRJKu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793187593; x=1824723593;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=uBW3PVgVFFDTxgfjHNZTcuotQZPONMB0aCC8Ww0DpZY=;
+  b=EhVJRJKu3ACZUfoHMUsx5Q93fFOJz6+hgWR1Tq1JuPfEg2nwj8PoaFkt
+   0AdaENmKq18hKAyJXZDWEaYU7RByLUDEPgT1fy+79sCNYWAWivgfB2iE9
+   HWxVL993of2B8wch+FmcEW+H19FdYvcC2McHak9s4P/acBjG+iUwt6i2y
+   xeh66gX648zeah3GLJyofXqXbQXH741JTv088Fu/vTRveTKhkxNg16vDj
+   SDaDfkFpagSlV6iQSDyCYv1ehBPupTgX30iC2ZVR4khPqMsIn1gcRaNVH
+   A/DsfldEZDE/b3+4qX/NkbmYA7VDUleVURCAphXGTqLeg52cRdodBX3tO
+   w==;
+X-CSE-ConnectionGUID: j9wxG6vLSsSRVrww10pUFw==
+X-CSE-MsgGUID: lUWoDGInT1mPmoGoeKHqPQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1895045"
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="1895045"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2026 04:39:52 -0700
+X-CSE-ConnectionGUID: 8AGDxEgASSiXb6Rss4TxoA==
+X-CSE-MsgGUID: y95OQI4AR42cZzCY6WLC0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="5187312"
+Received: from igk-lkp-server01.igk.intel.com (HELO 58ca8a381a5c) ([10.211.93.152])
+  by fmviesa006.fm.intel.com with ESMTP; 28 Oct 2026 04:39:51 -0700
+Received: from kbuild by 58ca8a381a5c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xM20R-000000004qx-3DFH;
+	Wed, 28 Oct 2026 11:39:47 +0000
+Date: Wed, 28 Oct 2026 12:39:24 +0100
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+ "Thomas =?utf-8?Q?Wei=C3=9Fschuh"?= <thomas.weissschuh@linutronix.de>
+Subject: [brgl:gpio/for-next 19/30]
+ drivers/gpio/gpio-aggregator.c:1251:10: error: 'const struct
+ config_item_type' has no member named 'ct_attrs_const'
+Message-ID: <202610281215.PpynnBO9-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,45 +82,51 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-3-2e76b87209bb@renesas.com>
+Content-Type: text/plain; charset=us-ascii
 
-On Mon, Oct 26, 2026 at 11:35:46AM +0000, Diogo Ivo wrote:
-> Add device tree binding support for I3C on the Renesas RZ/G3L
-> (R9A08G046) SoC.
-> 
-> The I3C IP on the RZ/G3L is a subset of the one on the RZ/G3S, as the
-> RZ/G3L has no HDR Exit Pattern detection interrupt. The resources are
-> consumed by name (the tclk clock, the presetn and tresetn resets and
-> seven of the named interrupts), all of which the RZ/G3L provides, so
-> software can match and bind a RZ/G3L node through the RZ/G3S
-> compatible. Add the RZ/G3L-specific "renesas,r9a08g046-i3c" compatible
-> with a fallback to the RZ/G3S "renesas,r9a08g045-i3c" compatible.
-> 
-> The RZ/G3L is not compatible with the RZ/G3E, which has no input analog
-> filters and supports high-speed mode (up to 3.4 Mbps).
-> 
-> Split the clock and interrupt constraints into separate if/else blocks
-> so that RZ/G3L nodes inherit the 2-clock limit from the RZ/G3S fallback
-> while being constrained to 16 interrupts alongside the RZ/G3E.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
-> ---
-> Changes in v2:
-> - Describe the RZ/G3L by a SoC-specific compatible with a fallback to
->   the renesas,r9a08g045-i3c compatible of the RZ/G3S, instead of a
->   plain compatible, and drop the corresponding driver patch.
-> - Split the clock and interrupt constraints into separate if/else
->   blocks to handle the RZ/G3S fallback on RZ/G3L nodes.
-> - Explain in the commit message why the RZ/G3L is not made compatible
->   with the RZ/G3E.
-> ---
->  .../devicetree/bindings/i3c/renesas,i3c.yaml       | 27 ++++++++++++++--------
->  1 file changed, 18 insertions(+), 9 deletions(-)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+head:   5e826d71d4839d8471784d968274823f1f492eb5
+commit: 59abcfeb59426e7575e80be53b7024a151def2b2 [19/30] gpio: aggregator: constify struct configfs_attribute
+config: openrisc-randconfig-r2200-20261028 (https://download.01.org/0day-ci/archive/20261028/202610281215.PpynnBO9-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 16.2.0
+smatch: v0.5.0-9187-g5189e3fb
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261028/202610281215.PpynnBO9-lkp@intel.com/reproduce)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202610281215.PpynnBO9-lkp@intel.com/
 
-Best regards,
-Krzysztof
+All errors (new ones prefixed by >>):
 
+>> drivers/gpio/gpio-aggregator.c:1251:10: error: 'const struct config_item_type' has no member named 'ct_attrs_const'
+    1251 |         .ct_attrs_const = gpio_aggregator_line_attrs,
+         |          ^~~~~~~~~~~~~~
+>> drivers/gpio/gpio-aggregator.c:1251:27: error: initialization of 'const struct configfs_group_operations *' from incompatible pointer type 'const struct configfs_attribute * const*' [-Wincompatible-pointer-types]
+    1251 |         .ct_attrs_const = gpio_aggregator_line_attrs,
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aggregator.c:1251:27: note: (near initialization for 'gpio_aggregator_line_type.ct_group_ops')
+   drivers/gpio/gpio-aggregator.c:1318:10: error: 'const struct config_item_type' has no member named 'ct_attrs_const'
+    1318 |         .ct_attrs_const = gpio_aggregator_device_attrs,
+         |          ^~~~~~~~~~~~~~
+   drivers/gpio/gpio-aggregator.c:1318:27: error: initialization of 'const struct configfs_group_operations *' from incompatible pointer type 'const struct configfs_attribute * const*' [-Wincompatible-pointer-types]
+    1318 |         .ct_attrs_const = gpio_aggregator_device_attrs,
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aggregator.c:1318:27: note: (near initialization for 'gpio_aggregator_device_type.ct_group_ops')
+   drivers/gpio/gpio-aggregator.c:1318:27: warning: initialized field overwritten [-Woverride-init]
+   drivers/gpio/gpio-aggregator.c:1318:27: note: (near initialization for 'gpio_aggregator_device_type.ct_group_ops')
+
+
+vim +1251 drivers/gpio/gpio-aggregator.c
+
+  1248	
+  1249	static const struct config_item_type gpio_aggregator_line_type = {
+  1250		.ct_item_ops	= &gpio_aggregator_line_item_ops,
+> 1251		.ct_attrs_const	= gpio_aggregator_line_attrs,
+  1252		.ct_owner	= THIS_MODULE,
+  1253	};
+  1254	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
