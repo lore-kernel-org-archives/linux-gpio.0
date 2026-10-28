@@ -1,115 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793188971;
-	b=cNPZfk4ytIGZnKvXYypAGfDA2D9YYbvcad1u8i8pOnlUM5G4i0lUgJQNaw+8hJC/JeH0
-	 g6CZ93/aDv38io5ghF22bcvbVFKkzkYMaa7F+ldQhcK3z6tDHtM3QrzeiLsCzV3KagGoc
-	 +bo5MP7nAw8et0FpR4F6dtfUMnQdNXEUB4T93C+XktpnVKlymgK+wxqbherBwhxhUAunQ
-	 NTQNAF18TXdHMUPcyedchKqkRZ+XP/SFLJhNsf+BmwjPsAC6/Xt6hbC84P3JDluHGdryx
-	 aGEyTdN/TKjG35ccuPpqK8L1TCoVq266ivt0YTvQS/4T8r652j6CuDmN5cmzoSTOxPA==
+	t=1793189462;
+	b=Qrq+XYg4aZq5yUJ/2JHHKOl4iU56wh9riHT91EETpckZEVtHktUlAZGLTwMj5UekFDb9
+	 348SnFJRuP8ECa3c3oMnam7D6/6gibmuqp9Zo5Er0WcHCYiDtmt+QTPrVMOnJI2XBucSF
+	 lfhsVrsCtgUcHN7rfvmYI6kIITaFpn/zJqcnTgCgXE2Zp3IrAsgmpIPfI2Z8SBpGdX17G
+	 xwzNeZOyYu5St4GN7pqdm/TjYMPBLz4XcSJcGzGeuEAoCZaK4Cxbj3CTP9xPViVVeG8XH
+	 AIok70s4w+GFimzYgtcrDGqmJORoXfWoriu+kRfvyW5bhnpF2/X9MPE1C8XLHWNJdaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793188971;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=dsnhxVyCRsDB7IzLyR1PYJXVzOdADR8u2HKSk2GZFPk=;
-	b=yHqMA3H2kbZfUubHTnuBN8TYtXQtDYxrb4/4JueMVF4hNtP8xhF5JgVP/ZE22+p9KhPQ
-	 /HSoOFwmWXl6gmylzFJSqgRkVZV2Qk0YPc+bH4HtfB1RxEoURZImuFyl9wv7uXx3bQNZ/
-	 rl/rqhlOF0YXdtMirafeW2azNa7GcFbSdmHd/3IVbeERgciA+yLjoDc401hoKPkvlBHVr
-	 FunhS0MUufvqTtAM43ZNnoij173Ldk8N8rJmugVmUqHCoj4ufSBcVskHIti5wF7GxbuB3
-	 qoau4ySoRCpm5HmtlWYMlLBmTvPiktuLv90M4A6iJb+X1ZLGCB29f9um1F0dOIJixaA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793189462;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=YH8exneAUOKvBRopo/qKSgKRlif0KWcuV1FHtfBKY8Q=;
+	b=0IQRQA5qR6xYCcK8CeKf+z3yknTsCHfXk6GXM4aXdz+AikGaou428q7OkCfyQSvWrf/H
+	 lwEHc55S1R0oHQsbBln+ne2HNB3dyBJbNeq5P3acmvLyOp53EQ1ncB1+gIVAoFlIQMFr9
+	 WNDGi3e4ONbquLG4cpVAX57/l4kckONW83MB5c4Yeg6GVrRlEOCJ730Lo3ERqzmxcBMvG
+	 T5V7J/aivIaIFhVkMXPa0MzLNYn/YewjVTUI6bKyPJm95dOTLC0tlBi/D9J1FDBW/0vI3
+	 wzwsXElQ5tH8DkrVj/sXt97gxEviWgeOXcXxkaOmyJETYSKsvhbvd2hXnwwLZu1xQyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RRQVjpwH;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DOBr/23h";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECC4606A324;
-	Wed, 28 Oct 2026 12:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1AD606A31C;
+	Wed, 28 Oct 2026 12:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RRQVjpwH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282771F01828;
-	Wed, 28 Oct 2026 12:02:50 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DOBr/23h
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F231F01825;
+	Wed, 28 Oct 2026 12:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793188970;
-	bh=dsnhxVyCRsDB7IzLyR1PYJXVzOdADR8u2HKSk2GZFPk=;
-	h=From:To:Cc:Subject:Date;
-	b=RRQVjpwH4sY11i/17VHL7AM40KXNuiYJdRXnbyur+Nx1X6LRie4UMFncaXFYLvxoH
-	 vEMx+GQHbHaIzp/LF1pxgiZjCGpoM593FiSdoC0oumS9cQ+QXTG2jrhbH/rMsMGOc4
-	 ny46eU+ErXiBlXUO9wIGSiSWyJt1DtVl5MzqstZpNxbA3vh1urvuNEXUEs3XtTQKG5
-	 7Btj3/p7neZupn/jFjINQHb1iG9rUE+2UcStPVD07cRqNeLl1k7LTJk5b+1SSApV+8
-	 TQK2keKsYvQ1wZP6bUVcqP55KiyxGZ4p7tUPGT59f84Fh951p+6KXMENhtAVhM6LuI
-	 GcDn6NkyRpNOQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Linus Walleij <linusw@kernel.org>,
+	s=k20260515; t=1793189461;
+	bh=YH8exneAUOKvBRopo/qKSgKRlif0KWcuV1FHtfBKY8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=DOBr/23hmCjh4wM2ot7hpLjiW5OPK242RMuA7tPtbu7BaF3zojrlh+H6jDUj6eCR3
+	 p4G7wLlsFHqgiTEpyvOA5cZC0cr0jh1Hfl30heUHA1iiw6bbbWsIOQe1EpQycsVeKO
+	 zFGcn3wMkCPUJaGd6FXoyz9c79jVEetuLg6M7BxJBZx+wIjIZscRQkYy/C/Cc01Obd
+	 V7T/eXY7IE9bQfe0RJvOOHD+Hic+gET50gFDnKZpqepumxIa8+iEfaZevujjdjYDJr
+	 T3uh4Uih+lLu7qRsBJpHb4mSIu1nKSG9SSIKtQadJ5ZI7y3GoBg1G6zdUpmntaTy3N
+	 cauCHtT0FOWlA==
+Date: Wed, 28 Oct 2026 12:10:57 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Aakarsh Jain <aakarsh.jain@samsung.com>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	freedreno@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-media@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] dt-bindings: Fix property name typos in if/then schemas
-Date: Wed, 28 Oct 2026 07:02:12 -0500
-Message-ID: <20261028120216.2657397-1-robh@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	Linus Walleij <linusw@kernel.org>, driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v14 4/5] reset: Add KUnit test cases
+Message-ID: <auHmUVsSCbZI7V4e@google.com>
+References: <20261011121246.162759-1-tzungbi@kernel.org>
+ <20261011121246.162759-5-tzungbi@kernel.org>
+ <986d1b636fc7a96b3c2e05e8725a693a496d2f62.camel@pengutronix.de>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -119,229 +65,151 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <986d1b636fc7a96b3c2e05e8725a693a496d2f62.camel@pengutronix.de>
 
-Property names within if/then schemas currently go unchecked whether
-they have a type defined or match what's in the top-level schema. Adding
-a check finds a number of instances of typos. The typos result in the
-schema having no effect on constraints.
+On Mon, Oct 19, 2026 at 03:32:12PM +0200, Philipp Zabel wrote:
+> On So, 2026-10-11 at 20:12 +0800, Tzung-Bi Shih wrote:
+> > Since commit 9035073d0ef1 ("reset: convert reset core to using firmware
+> > nodes"), reset suppliers and consumers can be wired up using software
+> > nodes without requiring Device Tree or hardware devices.  Leverage this
+> > to add KUnit test cases for the reset controller framework.
+> > 
+> > The test cases cover the following scenarios:
+> > 
+> > - Basic: Verifies that a consumer can acquire a reset control via
+> >   fwnode and perform reset, assert, deassert, status, release, and
+> >   acquire operations.
+> > - Use After Unregister: Verifies that after the supplier unregisters
+> >   the reset_controller_dev while a consumer still holds a reset_control
+> >   handle, subsequent consumer operations fail safely with -ENODEV.
+> > - Concurrent Unregister: Verifies that unregistering the
+> >   reset_controller_dev concurrently with an in-flight reset operation
+> >   waits for the active operation to complete before returning.
+> > 
+> > Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+> 
+> It looks like the Kunit tests are independent from the reset of the
+> series and could be sent individually.
+> 
+> Is there any dependency that I am missing?
 
-With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
-exposed by the name correction.
+No, but I was using it to verify if [PATCH v14 5/5] breaks anything.  I'll
+send it out independently.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
- .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
- .../bindings/display/msm/dp-controller.yaml          |  2 +-
- .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
- Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
- .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
- .../bindings/iio/adc/amlogic,meson-saradc.yaml       |  2 +-
- .../bindings/media/mediatek,vcodec-encoder.yaml      | 12 ++++--------
- .../devicetree/bindings/media/samsung,s5p-mfc.yaml   |  2 +-
- .../devicetree/bindings/pci/mediatek-pcie.yaml       | 12 ++++++------
- 10 files changed, 19 insertions(+), 23 deletions(-)
+> > +static int reset_test_init(struct kunit *test)
+> > +{
+...
+> > +	ctx->rcdev.ops = &reset_test_ops;
+> > +	ctx->rcdev.nr_resets = 1;
+> > +	ctx->rcdev.fwnode = ctx->supp_fwnode;
+> > +
+> > +	ret = reset_controller_register(&ctx->rcdev);
+> > +	KUNIT_ASSERT_EQ(test, ret, 0);
+> > +
+> > +	ctx->rstc = __fwnode_reset_control_get(ctx->cons_fwnode, NULL, 0,
+> > +					       RESET_CONTROL_EXCLUSIVE);
+> > +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->rstc);
+> > +
+> > +	test->priv = ctx;
+> 
+> The rcdev and rstc could be cleaned up in .exit for the error cases.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
-index 88b7672123a0..ed347096df46 100644
---- a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
-@@ -62,7 +62,7 @@ then:
-     - '#clock-cells'
- else:
-   properties:
--    clock: false
-+    clocks: false
-     clock-names: false
-     '#clock-cells': false
- 
-diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-index c1cefd547391..fd4d598f6ff8 100644
---- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-@@ -145,7 +145,7 @@ allOf:
-             - description: CEC stuck at low interrupt
-             - description: Hotplug connected interrupt
-             - description: Hotplug removed interrupt
--        interrupts-names:
-+        interrupt-names:
-           items:
-             - const: cec-tx
-             - const: cec-rx
-diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-index 094a6383bb77..f72d1b354007 100644
---- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-@@ -304,7 +304,7 @@ allOf:
-         clocks:
-           minItems: 6
-           maxItems: 6
--        clocks-names:
-+        clock-names:
-           minItems: 6
-           maxItems: 6
- 
-diff --git a/Documentation/devicetree/bindings/display/msm/hdmi.yaml b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
-index dfec6c3480f3..02d27ccad024 100644
---- a/Documentation/devicetree/bindings/display/msm/hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
-@@ -113,7 +113,7 @@ allOf:
-             - const: core
-             - const: master_iface
-             - const: slave_iface
--        core-vcc-supplies: false
-+        core-vcc-supply: false
- 
-   - if:
-       properties:
-@@ -136,7 +136,7 @@ allOf:
-             - const: core
-             - const: alt_iface
-             - const: extp
--        hdmi-mux-supplies: false
-+        hdmi-mux-supply: false
- 
-   - if:
-       properties:
-diff --git a/Documentation/devicetree/bindings/dma/fsl,edma.yaml b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-index f609038e35ae..0260d177c7d0 100644
---- a/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-+++ b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-@@ -172,7 +172,7 @@ allOf:
-             const: fsl,imx7ulp-edma
-     then:
-       properties:
--        clock:
-+        clocks:
-           minItems: 2
-           maxItems: 2
-         clock-names:
-diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-index 69852444df23..07c8b233c6bd 100644
---- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-@@ -80,7 +80,7 @@ allOf:
-         - resets
-     else:
-       properties:
--        "#interrupts-cells": false
-+        "#interrupt-cells": false
-         interrupt-controller: false
-         resets: false
- 
-diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-index 70ab4e140e71..535213ba0c5e 100644
---- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-@@ -92,7 +92,7 @@ allOf:
-     else:
-       properties:
-         nvmem-cells: false
--        mvmem-cel-names: false
-+        nvmem-cell-names: false
-         clocks:
-           minItems: 4
-         clock-names:
-diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-index 4505e66876a2..52f471a070d5 100644
---- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-+++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-@@ -110,19 +110,15 @@ allOf:
- 
-     then:
-       properties:
--        clock:
--          items:
--            minItems: 1
--            maxItems: 1
-+        clocks:
-+          maxItems: 1
-         clock-names:
-           items:
-             - const: venc_lt_sel
-     else:
-       properties:
--        clock:
--          items:
--            minItems: 1
--            maxItems: 1
-+        clocks:
-+          maxItems: 1
-         clock-names:
-           items:
-             - const: venc_sel
-diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-index b46cc780703c..4488d5ca9b9c 100644
---- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-+++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-@@ -174,7 +174,7 @@ allOf:
-             - const: mfc
-         iommus:
-           maxItems: 2
--        iommus-names: false
-+        iommu-names: false
- 
- examples:
-   - |
-diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-index c009a7a52bc6..7c40361f95ec 100644
---- a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-@@ -127,7 +127,7 @@ allOf:
-         phy-names:
-           const: pcie-phy1
- 
--        power-domain: false
-+        power-domains: false
- 
-       required:
-         - resets
-@@ -150,7 +150,7 @@ allOf:
-           minItems: 2
-           maxItems: 2
- 
--        reset: false
-+        resets: false
- 
-         reset-names: false
- 
-@@ -171,7 +171,7 @@ allOf:
-         clocks:
-           minItems: 6
- 
--        reset: false
-+        resets: false
- 
-         reset-names: false
- 
-@@ -193,7 +193,7 @@ allOf:
-         clocks:
-           minItems: 6
- 
--        reset: false
-+        resets: false
- 
-         reset-names: false
- 
-@@ -215,7 +215,7 @@ allOf:
-         clock-names:
-           maxItems: 1
- 
--        reset: false
-+        resets: false
- 
-         reset-names: false
- 
-@@ -223,7 +223,7 @@ allOf:
- 
-         phy-names: false
- 
--        power-domain: false
-+        power-domains: false
- 
-         mediatek,pbus-csr: false
- 
--- 
-2.53.0
+Ack, will add a .exit() callback to clean up `rstc` and `rcdev`.
 
+> > +static void reset_test_basic(struct kunit *test)
+> > +{
+...
+> > +	reset_control_release(rstc);
+> > +	KUNIT_EXPECT_EQ(test, reset_control_acquire(rstc), 0);
+> > +
+> > +	reset_control_put(rstc);
+> > +	reset_controller_unregister(&ctx->rcdev);
+> 
+> Could be cleaned up by .exit.
+
+Ack, will let .exit() handle them.
+
+> > +static void reset_test_use_after_unregister(struct kunit *test)
+> > +{
+> > +	struct reset_test_context *ctx = test->priv;
+> > +	struct reset_control *rstc = ctx->rstc;
+> > +
+> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 0);
+> > +	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), 0);
+> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
+> > +
+> > +	/* Unregister supplier while consumer still holds rstc. */
+> > +	reset_controller_unregister(&ctx->rcdev);
+> 
+> If you allocate rcdev on its own instead of embedding it in the
+> context, you could
+> 
+> 	reset_controller_unregister(ctx->rcdev);
+> 	ctx->rcdev = NULL;
+> 
+> here and still have normal cleanup if not NULL in .exit.
+
+The `reset_control_ops` callbacks use `container_of(...)` to obtain `ctx`,
+so keeping `rcdev` embedded in `ctx` is convenient.  Will add a bool flag
+so .exit() only unregisters `rcdev` if it is still registered.
+
+> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
+> > +	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), -ENODEV);
+> > +	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
+> > +
+> > +	KUNIT_EXPECT_EQ(test, reset_control_assert(rstc), -ENODEV);
+> > +	KUNIT_EXPECT_EQ(test, reset_control_deassert(rstc), -ENODEV);
+> > +	KUNIT_EXPECT_EQ(test, reset_control_status(rstc), -ENODEV);
+> > +
+> > +	reset_control_release(rstc);
+> > +	KUNIT_EXPECT_EQ(test, reset_control_acquire(rstc), -ENODEV);
+> > +
+> > +	reset_control_put(rstc);
+> 
+> This would not be required either.
+
+Ack, will let .exit() handle it.
+
+> > +static void reset_test_concurrent_unregister(struct kunit *test)
+> > +{
+> > +	struct reset_test_context *rtc = test->priv;
+> > +	struct test_concurrent_unregister_context *ctx;
+> > +	int i, ret, val;
+> > +
+> > +	rtc->rcdev.ops = &reset_test_concurrent_unregister_ops;
+> > +
+> > +	ctx = kunit_kmalloc_array(test, 3, sizeof(*ctx), GFP_KERNEL);
+> > +	KUNIT_ASSERT_NOT_NULL(test, ctx);
+> > +
+> > +	for (i = 0; i < 3; ++i) {
+> > +		ctx[i].test = test;
+> > +		init_completion(&ctx[i].started);
+> > +		init_completion(&ctx[i].enter);
+> > +
+> > +		if (i == 0) {
+> > +			ctx[i].thread = kthread_run(
+> > +				test_concurrent_unregister_supplier, ctx + i,
+> > +				"supplier%d", i);
+> > +		} else {
+> > +			init_completion(&ctx[i].entered);
+> > +			init_completion(&ctx[i].exit);
+> > +
+> > +			ctx[i].thread = kthread_run(
+> > +				test_concurrent_unregister_consumer, ctx + i,
+> > +				"consumer%d", i);
+> > +		}
+> > +		KUNIT_ASSERT_FALSE(test, IS_ERR(ctx[i].thread));
+> 
+> Isn't this missing kthread cleanup in the error cases?
+
+Correct, will fix it.
+
+> > +	/* Subsequent access must see -ENODEV. */
+> > +	KUNIT_EXPECT_EQ(test, reset_control_reset(rtc->rstc), -ENODEV);
+> > +	reset_control_put(rtc->rstc);
+> 
+> reset_control_put() could be done by .exit.
+
+Ack, will let .exit() handle it.
