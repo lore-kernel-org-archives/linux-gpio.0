@@ -1,145 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793206240;
-	b=EID9NP0CPk3vjZzYHADBcMyM8kLQsBgI39ZbXwqegpt78+T+zt7KpPjGBwOBmgBFkXp1
-	 Hd9taektiCrcRrzp2Faz5wP1g5H7pzfoOEfjZfCcrbomgLi0ve9WUjJOiQt3NmrTA+H+Z
-	 Jeyniy5ZG9aAWY+9A1Pud9+Jo+C5bWvH5O5gJOHwv4ECmsxYYESKPTh2mgX1i7qRv6u8X
-	 BUmZPCpDxpEdGF81+0jP+pI/yGHc+9b7e6Rkkg/d+BkxHU+DWlz64dmDSqeXOyFeEXraY
-	 VwR5jHOWlWoQohpgj5Dee9q60MzJ3sy2aFGERmDIk078KHr9Y5JcQdQwCOFNbofrQ0A==
+	t=1793209690;
+	b=ipKSYgpT9sFXzJqM6nnzNjZwJjH0+0R/bsa4X1tPr2KyDmrO6euCrZn+p8SHTqEnLNnU
+	 6w7HggmQ5V4Mwn33ACyHEq5mYRTLhJOjVQ7pKiVlmzf4z0QJ6dZVV3dQKbSqlmUhLfb5H
+	 gYd5clZniEIeDYsfzJ2GMOamkmXSZdS86wVBcse76rm+Fxl3wB5ZfoaFT7AwDG95oiBzC
+	 wPZfZLzVUz+QzWpnoutFQNu0pDiu5mZf15WDMPE5NFSyBeURpTvgiFGUX23u75UvHvE6U
+	 vffb/ewwLpuRwkh4+iluxXv2giqqnLVUV9EQdspNtBzGfi5oOi+1h3JyKC/fjQJJjzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793206240;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:X-Google-Original-Message-ID:Date:From:To:Cc:Subject:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793209690;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=4bFPaFC4sn5I0ZmpvEnIMtoAAhYqi+gI/vKT8dEg8LI=;
-	b=TIYWcWI7EFFovnES28uFWkWnXh55GQsGRBZOEZrC2b3NhIcLT/5k9GS6qlISOjXOV8nZ
-	 kJgV8YNty0UsOz+Hz6IXqOaKpkFSiEMrEPn4kfOopDiqMkpDdH837MJ0LTfDDwDkNdjbL
-	 e+vZ3j64y9GImTsC89IMtlxhwd15FBGOEZWaWjH9/7hUP9jqWTDVwJegyF9StBe2xlH8H
-	 5V1SiCat8sSkckchb7yGDECI0qmy4cGIpY8iJrfgsP/Nfk6xkAhIPdARHGGMMmD3Cbzdn
-	 4R6q/c4+k+bbyYxYAH1kLwWEvZZtDyn39G6Zr8N9k+mdjfCKQvMDTMMFRxPq8eUu2iQ==
+	bh=/Wv2oduyHCB3bINkvbXDumOCP+2XIPoe6lycT40yGmU=;
+	b=lF1VmTJqzC4AWQCxfU4gdoaeIPn1nMudFvzBt+bCLvJfq+uj480GOOmE0OE9sm8tEr8H
+	 PvXTyXHy+Qyf5pu4PMPqB73XYEA6vsd/bztnzO0StIs/wGPL2+MaLhFoQzed6Jv/kPEC9
+	 r7gkGf1fKLHrn5zRG6Q+U0nZEGH1E8JzhAkYhu8V5T09nW1375Hm5BtwnBtTUenY6D+Us
+	 sXGQVG3/cti6Xw8hezgBS8O+KYYM3ORNIkzcL90g2+5ls978GcPd7ldQubBakQlL0VRdk
+	 5qpWiyRXhaYTtjnlzHUqo52Zvwk/ISUrsqcFZs5ShJ5YHBNQPN+D2HeFaIgbn/E2Yng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=bvVViE7s;
-	arc=none smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ded5COZ7;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428B7606A32A
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 16:50:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 428B7606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4455606A31E;
+	Wed, 28 Oct 2026 17:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=bvVViE7s
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a2d6d01ecbso8465785e9.0
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:50:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793206239; x=1793811039; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4bFPaFC4sn5I0ZmpvEnIMtoAAhYqi+gI/vKT8dEg8LI=;
-        b=bvVViE7sfBqKWfi/kLDJYlnvzOUXPLQxwi7WE8YcmF6ZlMSeeXt5LVtwTgYjpBwkt8
-         SYP3vMcQXr/owFcgMM1gE2QwZ/DTceP96Ogemeuc3wSVYptLjbh5WQ0zOa/QFUl5Bsyv
-         t91KeRJRSejTTfSC30ERKT+SYsNtmNlFP19tG7VGrb/Fyrtxkv8HCWTMM4co1xxufiUC
-         fsayYomNX2KXae5ip40Tnzxu0+b09pZZ8pnmB2UJbRFHhmlzRF7my1fWETNYJaMtDwI5
-         xLbeFqSzSFzkr23lLp9iNBgX8plx3P3KNsPgixIQp18S34Dqr3UjM2Pb0SImAbIC4Wby
-         52og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793206239; x=1793811039;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4bFPaFC4sn5I0ZmpvEnIMtoAAhYqi+gI/vKT8dEg8LI=;
-        b=hdH55NCBsUO52ODCZyyq7wAY2PuysNyAr+OTxJyBQBcXmrd7C2ffckx/y8UldKt0iT
-         cxXlzocuGFYl1is/NAkJWYeIo9eXIob4+J2rmq81fXA39IeAYO1w7jLDe/e4/+6G6Vxv
-         vyd7ywk9gwFU8ufOVSXM0irD8aGvJZLtaXxN81BC1DFalmkR6CGa3RfHOGXiv4cGhzg1
-         lUcqf4Fo4jzBRVY2Lx5WOs4BU21uGIyi7vEOmXBSPvF70gtoqkqSI3hwefbJfPKfIKOs
-         AvmrXIaho2KvrsOIbEa8siLMnQcdlblF1dQcoQKaxBvANkh2ZUK4J4xV+ATYk8xOZVpU
-         iirA==
-X-Forwarded-Encrypted: i=1; AKwUvByAQyfoYwHkPUU+hPPMm2OfkSCzTEqrkkQX0DDY6/rhC0pcf/Y8zwQEyEs54QtOTJeXId9cH0I9Cm8Z@vger.kernel.org
-X-Gm-Message-State: AFq9FYLXfho7eDz9vNswZPT7H6MvlC0B9btTgJ/TiprdjbkDwCA9ryUn
-	4T/Lq7FVyMwCegfLQZ7yUcTeUaYPV61wXpPJA1MoI1KMk//yiHir1m57
-X-Gm-Gg: AYBFou13O1+K6m23BApGhV5+ATlJcgnL66V3SE6F6DrnzurUs+wEZTEb0IQF0x3dGUg
-	tDXUwd7efk8PXHOsSrjmvKJhOL6QB+Lh0/Gv5+uKzTBh+kOFabY1Gi5Xx9ntyyc3uGEWoRXCW0W
-	GMAg9FcwKys01F5o5OXSyiey/7Os2Z0qSWdPwFtVKCIKNDTyJHt8COamFtQS9+vvdbztNjrQSSg
-	Yi32mK4/z53SMdYMBv3JqExyyDDLIbMggp/JT3Q4VVvT23a3bMg3VBjAlNeN5WE3QbOkKNufLKE
-	Xq/oPOI811GSReYJCiP08qYjENs+z23IajUIDLpGZ0aPQIOp0aJj/I/osGxVcbsA4/8ydgurRx8
-	DkyCmq2DdVzRqLqy1JFSYzIrJ/0fMfc4FjXHG1D145XZSc2iVqBKjwmSWQxI9fKfy15k971CL4l
-	ddyiOZqPvVxeqbasN/qYXhZAtkbdptVP2AT/7SYN2fFQRW03BGhYZI5sEYU1tI/g5o2+F35xV0x
-	gSD+pXK5xTca0rl30pLym2kXV0mBdig9GcrgwSO+kwit8ppHeZtDQmhQ3j2by4Hc8+fTdSvfqOx
-	5qitW4CxG1Og39hQa/l6aKK+zQnc5HrBnJvCQJh7YJhcOzyz4+T82Q7mm7sILEnEaIXBco3PJkr
-	/5M4KFTlwTolJgCyI
-X-Received: by 2002:a05:600c:630e:b0:4a6:7d6:821f with SMTP id 5b1f17b1804b1-4a9678bff9cmr62960175e9.29.1793206238343;
-        Wed, 28 Oct 2026 09:50:38 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-92-187.ip49.fastwebnet.it. [93.34.92.187])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc4d76sm29895785f8f.12.2026.10.28.09.50.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2026 09:50:37 -0700 (PDT)
-Message-ID: <6ae227dd.6c7231db.220083.ae75@mx.google.com>
-X-Google-Original-Message-ID: <auIn2SfzeFL2CJn-@Ansuel-XPS.>
-Date: Wed, 28 Oct 2026 17:50:33 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ded5COZ7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8996F1F01828;
+	Wed, 28 Oct 2026 17:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793209689;
+	bh=/Wv2oduyHCB3bINkvbXDumOCP+2XIPoe6lycT40yGmU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ded5COZ7NK1LzkY5zjgze165QjBxccKnZt8HKG45T+ir/wGv+XVL4qTFMgnqrqSOl
+	 L1HGKA+Fq5Yfn383MT9I0SC7m7tmCLqA6V3sO7toYVKVSu51xZ/A/DzG6kI6oHsfe3
+	 JSqLPvahttWSBHqyRmT13u6BB42i4DocncHMis9Aa3PotPzDx5DTCf7PB1VPOJXgF0
+	 s91q6oskyk4rpFa2vweOrbaaoTN+XNUVJYbsparmFsIjHZ+mkutEwZCATAltmh2HEb
+	 QNc8bTZoZCK4qOdqlfHsFZwsBsk4ZcPmjD5NlR4xudHffk1l9IY+jvfi3g7NaDRZbS
+	 XRsCIz6O09PUw==
+Date: Wed, 28 Oct 2026 17:48:00 +0000
+From: Conor Dooley <conor@kernel.org>
+To: gaohan@iscas.ac.cn
+Cc: Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Eric Anholt <eric@anholt.net>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>,
-	Aakarsh Jain <aakarsh.jain@samsung.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	freedreno@lists.freedesktop.org, imx@lists.linux.dev,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
-References: <20261028120216.2657397-1-robh@kernel.org>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH RFC 00/18] riscv: add initial Zhihe A210 support using
+ SCMI clocks and resets
+Message-ID: <20261028-shrivel-wrath-b50d6b12c259@spud>
+References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -149,24 +84,171 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RV8O/JhgCogw9BKb"
+Content-Disposition: inline
+In-Reply-To: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
+
+--RV8O/JhgCogw9BKb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 28, 2026 at 07:02:12AM -0500, Rob Herring (Arm) wrote:
-> Property names within if/then schemas currently go unchecked whether
-> they have a type defined or match what's in the top-level schema. Adding
-> a check finds a number of instances of typos. The typos result in the
-> schema having no effect on constraints.
-> 
-> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
-> exposed by the name correction.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Tue, Oct 27, 2026 at 11:36:51PM +0800, Han Gao via B4 Relay wrote:
+> This adds initial support for the Zhihe A210 SoC and the Melon Pi V1
+> and V2 boards. It replaces the earlier series [1]. The way clocks and
+> resets are handled changed completely, so I am posting it as a new RFC
+> rather than as v2.
+>=20
+> The A210 has eight RISC-V cores in two clusters, four C908 and four
+> C920, plus an E902 management core. In [1] Linux drove the clock and
+> reset registers directly. Review pointed out that those blocks were not
+> modelled properly, and they are also used by the E902 firmware, which
+> owns the power, PMIC and CPU DVFS sequencing. This series leaves those
+> registers to the firmware and uses the standard SCMI clock and reset
+> protocols instead.
+>=20
+> I also looked at RPMI before settling on SCMI. The firmware has to
+> provide reset domains for the UARTs and pad controllers and sensors for
+> thermal management, and RPMI has no ratified protocol for either yet.
+> SCMI covers everything the firmware exposes today: clock, reset, power
+> domain, performance, voltage, sensor and system power. Linux, U-Boot
+> and EDK2 already have SCMI clients, so on the Linux side only the
+> mailbox transport is new. RPMI support in U-Boot is also still being
+> debated [8].
 
-For KPSS:
+FWIW, this is perfectly fine by me - makes no difference to me if people
+want to support SCMI or RPMI on their platform.
+But I want to know what the story is going to be in terms of a) vendor
+provided firmware and b) upstream opensbi support for this.
 
-Reviewed-by: Christian Marangi <ansuelsmth@gmail.com>
+Will opensbi actually add SCMI support into the project, or will this
+method force people to use random downstream firmware indefinitely for
+this platform? That's especially true if the vendors are not behind this
+effort and will not be providing SCMI capable firmware with the board,
+or in their BSP for people that integrate the A210 SoC, forcing people
+to re-image their boards to run mainline.
 
--- 
-	Ansuel
+Cheers,
+Conor.
+
+>=20
+> The SCMI related changes compared to [1]:
+>=20
+> - The native clock and reset drivers and their bindings are gone.
+> - A new mailbox driver for the AP to E902 doorbell. One channel carries
+>   SCMI requests, the other carries notifications from the firmware. The
+>   shared memory lives in the AON SRAM.
+> - arm_scmi transports can be built on RISC-V.
+> - New dt-bindings headers for the SCMI clock and reset IDs exported by
+>   the firmware. Only the IDs used here are defined for now. More will
+>   be appended later without renumbering the existing ones.
+> - Each UART has separate APB and serial resets, so the UARTs get a
+>   "zhihe,a210-uart" compatible with two resets, as Philipp suggested.
+> - The pin controllers take their pad resets from SCMI.
+>=20
+> Other changes since [1]: the pinctrl binding explains the SDIO pad names
+> and the shared SDIO mux bit, pin nodes are ordered as pins, function,
+> then configuration, and the defconfig commit explains why ten 8250
+> ports are needed.
+>=20
+> The series covers the mailbox, the pin controller, the UARTs and the
+> bindings and device trees around them. It is based on v7.3 and boots on
+> a Melon Pi V2 to a shell on the UART console with all eight CPUs online.
+> I would mostly like feedback on the SCMI approach and the ID headers
+> before sending the rest of the platform.
+>=20
+> The E902 firmware is a Zephyr based SCMI server [2]. The rest of the
+> boot chain is coreboot [3], OpenSBI [4] and EDK2 [5][6]. The complete
+> Linux tree with the remaining peripherals is at [7].
+>=20
+> [1] https://lore.kernel.org/r/20261022-a210-init-v1-0-5e438f972d24@iscas.=
+ac.cn
+> [2] https://github.com/RevySR/zephyr/tree/xuantie/scmi
+> [3] https://github.com/revyos/coreboot/tree/a210/scmi
+> [4] https://github.com/revyos/opensbi/tree/a210/scmi
+> [5] https://github.com/revyos/edk2/tree/a210/scmi
+> [6] https://github.com/revyos/ruyiedk2/tree/a210/scmi
+> [7] https://github.com/RevySR/linux/tree/a210/scmi-bootchain-v7.3
+> [8] https://lists.u-boot-project.org/pipermail/u-boot/2026-October/635007=
+=2Ehtml
+>=20
+> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+> ---
+> Han Gao (10):
+>       firmware: arm_scmi: Allow SCMI transports on RISC-V
+>       dt-bindings: mailbox: add the A210 AP to E902 doorbell
+>       mailbox: add A210 AP to E902 doorbell support
+>       dt-bindings: timer: add Zhihe A210 CLINT
+>       dt-bindings: firmware: add A210 SCMI clock and reset IDs
+>       dt-bindings: serial: snps-dw-apb-uart: add Zhihe A210 UART
+>       riscv: dts: zhihe: add A210 module memory
+>       riscv: dts: zhihe: add Melon Pi V1 and V2
+>       riscv: defconfig: enable A210 support
+>       MAINTAINERS: add Zhihe A210
+>=20
+> Zhiguo Zhu (8):
+>       dt-bindings: vendor-prefixes: add Zhihe
+>       riscv: add Zhihe A210 support
+>       dt-bindings: pinctrl: add Zhihe A210 pin controller
+>       pinctrl: zhihe: add A210 support
+>       dt-bindings: interrupt-controller: add Zhihe A210 PLIC
+>       dt-bindings: riscv: add Melon Pi V1 and V2
+>       riscv: dts: zhihe: add A210 core support
+>       riscv: dts: zhihe: add A210 UARTs
+>=20
+>  .../interrupt-controller/sifive,plic-1.0.0.yaml    |    1 +
+>  .../bindings/mailbox/zhihe,a210-ap-mailbox.yaml    |   76 ++
+>  .../bindings/pinctrl/zhihe,a210-pinctrl.yaml       |  211 ++++
+>  Documentation/devicetree/bindings/riscv/zhihe.yaml |   27 +
+>  .../bindings/serial/snps-dw-apb-uart.yaml          |    5 +-
+>  .../devicetree/bindings/timer/sifive,clint.yaml    |    1 +
+>  .../devicetree/bindings/vendor-prefixes.yaml       |    2 +
+>  MAINTAINERS                                        |   14 +
+>  arch/riscv/Kconfig.socs                            |   10 +
+>  arch/riscv/boot/dts/Makefile                       |    1 +
+>  arch/riscv/boot/dts/zhihe/Makefile                 |    2 +
+>  arch/riscv/boot/dts/zhihe/a210-melonpi-common.dtsi |   55 +
+>  arch/riscv/boot/dts/zhihe/a210-melonpi-v1.dts      |    9 +
+>  arch/riscv/boot/dts/zhihe/a210-melonpi-v2.dts      |    9 +
+>  arch/riscv/boot/dts/zhihe/a210-som.dtsi            |   11 +
+>  arch/riscv/boot/dts/zhihe/a210.dtsi                |  619 ++++++++++
+>  arch/riscv/configs/defconfig                       |   10 +
+>  drivers/firmware/arm_scmi/Kconfig                  |    2 +-
+>  drivers/mailbox/Kconfig                            |    9 +
+>  drivers/mailbox/Makefile                           |    2 +
+>  drivers/mailbox/mailbox-a210.c                     |  205 ++++
+>  drivers/pinctrl/Kconfig                            |   14 +
+>  drivers/pinctrl/Makefile                           |    1 +
+>  drivers/pinctrl/pinctrl-a210.c                     | 1212 ++++++++++++++=
+++++++
+>  include/dt-bindings/clock/zhihe,a210-scmi.h        |   15 +
+>  include/dt-bindings/reset/zhihe,a210-scmi.h        |   13 +
+>  26 files changed, 2534 insertions(+), 2 deletions(-)
+> ---
+> base-commit: c03c1a14507dfaf8b856c2608f9ac216021fc222
+> change-id: 20261027-a210-scmi-ec32fdc246a6
+>=20
+> Best regards,
+> -- =20
+> Han Gao <gaohan@iscas.ac.cn>
+>=20
+>=20
+>=20
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+--RV8O/JhgCogw9BKb
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauI1TQAKCRB4tDGHoIJi
+0kURAQCUCYGbEMJ2NtTgInuo3iF5HLvfVD/KWlN1F3WR+DiNPwD+M0vPtUSR3sBM
+RMtElB8aaZ7S8AQB/fwplFhnSj58zg0=
+=p4sC
+-----END PGP SIGNATURE-----
+
+--RV8O/JhgCogw9BKb--
