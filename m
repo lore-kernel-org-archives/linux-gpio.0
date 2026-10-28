@@ -1,97 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793158861;
-	b=qAVv51QTqpDLIPRLGeVBrdWFevo+hH/O3iK2D5QYc0+nih11snzPGE9bSImVcXb/hJAM
-	 x7SoCblPPnYvSe5XLQcilCtblr+w+2FgDNx8SpluouiTqKOvpqP3SkywgeUeHtaE7DGYy
-	 oD/8rI08osessjZAewwPB8ZVJjIO3Pi10TTg0rnDx0LfTCQ6WkJd9LM13lhxC38LVSoiz
-	 T8jqavACm47xdsZb+bnviDKjX1oEgdRgh17LLzSKZ0ymdSLZtREOdgn31HdfsGgtx60m4
-	 OTEebbvToqBEqx7Q15L90f/3RWSNCbbHHZ1MicmvWfxDM7O8ZMMFLOIniS+Ts0yLEuw==
+	t=1793161510;
+	b=VhukPnHTtrI8HX/EGZm93RB17iAiQa+xa3AVXSRpEBqJcN/AsPk3s8uruvEf7gA1yLgK
+	 cNEw/3pxc1D9FHvTwmoL25LbXhEwVHLqcezOei30YjsFxKL59fUB23Jder33JVZPafPzc
+	 UN0TEyXoag720QMgiTmyZiV4RL0gyA/UAT6RYyWrXJb1vJQ7FbW/49oDOUZl84yY7I0Mw
+	 XFuMa3dkJaNH276brKugWEZW8eccTmS2XIXoSYVk6nPQePciB+qSd9jMUKmQKU0KrIVuL
+	 okQ+BKCQXJTucdLR8wsrVsRCiU22HKplN6BElKBejTQ71rkfEYQv4qZZK4fOb5682xg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793158861;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=DFz26Eku7ZAlqmVMiKR0VvxuKqR6CneczdW4fGPibk8=;
-	b=uqDMUyY+c7Je0fDslW7ZUJV+zOJSbOAsbm8/xqJLJbly7fe76Pbes6S1LJSU8VN7lIBt
-	 BaiGB8zJwkjj40uZbgxLCwgCP/rYUWl8/4SxRU+cfkBjAyqevMrBQZkXz1KFxmLKn52RT
-	 0e66bDwCp2KwnJvTv+vAsaHVyMMgkV0nFE2GFYclQgF1BdUh3/GvqcwhkHvlGYa1fQUKU
-	 IQ/Kq2RdqImVyNG9uXweaLuYWjlacKqoUz+7N9vi+gvyKNyDh6ojjPVSjbf1hOR6xP/6e
-	 wASWMJyKkhoGFYcDdavM7rAO35ZFVN5m4w5RSx7u2bmsgM7jRrBn612LA3ylwA/byOg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793161510;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:User-Agent;
+	bh=UU9c/tpurADhzgqDkLhTzG8U0onZ1MMW7Ow5Nr+pjOI=;
+	b=17086H745EX8ioTlzSHR/75tT0C/LSHiADu3SVI5z4YlWqufo7RePhDZhXIhwjuvbH4L
+	 tZuweFuAqo8/HOQ6Sovr/aUgE1ZJWjPxsWY3w+Q7aWf8hVEbgIVrrb4ZpI08djiRlx6iC
+	 nhCl/Ka0+GfLHDSpzmLJIjUr5162wuf6lBMB7oXyfRVlD1HBEPBfuIMvcNRYZYxxztW+m
+	 hj/z0oHwZk+jcyTjaB/uFsMPXVuw+ktg6eKmGvuNo/E+J70/l/RDcqOrNPuBwHBA230i2
+	 /r6bhn/19WzweI5szIcQIWqWlEwz63/k8tRbEScQwP4Cx4l84rrXfycND4aq61z3ttw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KI1fFyCr;
-	arc=none smtp.remote-ip=209.85.210.170
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=HM3POrnX;
+	arc=none smtp.remote-ip=198.175.65.9
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB194606A31A
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 03:41:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB194606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC3B606A31A
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 04:25:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6FC3B606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KI1fFyCr
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8a070b3f44aso225530b3a.2
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2026 20:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793158860; x=1793763660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=DFz26Eku7ZAlqmVMiKR0VvxuKqR6CneczdW4fGPibk8=;
-        b=KI1fFyCrQ6/xarfMSgFToJby/ICKLKjhUdNrft0pkdzl/Fp/VCteRjr7fHn+bqLLPh
-         kBFGBrlTdVT5K/lk9cGG9YnGbToV76MKL3wl85LvLnAair9FceeTHffe6gJR+3+pY2xt
-         YaHZPVdlyrV0Zv3EPGNj88rHvBzGkt+lkzF39H0GQpl195JVPBLORJHhGlY/Z6PTrp6D
-         XHwI5PXECBihqVS2w7To/hffRaMvR+GsiOsGvPldGwoxY+PGv5vrHzpJb3sicT4Zjdkh
-         ro8Okf6LIzVAH8noerCpRrlJ3yPuwWUPi+uGzgF3J78EbALrCRmVGVYdDkv7MrpYSAyO
-         c3kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793158860; x=1793763660;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=DFz26Eku7ZAlqmVMiKR0VvxuKqR6CneczdW4fGPibk8=;
-        b=EMNvn/gW0cdHkFbFcmncLrlyMs2VhfgmRmVLgc0nK2Mz4pa+45kR9U7zQ8jz1WD3Wa
-         17SrjbJbaSx1TtW/dq5RUKIdTEzOHZAbtxLtzLdudiNrCQa6Iz1hApYnrw78Om6llUE8
-         2aCkyud9SISna097g0S4TMvq6xmLrv1PVfJCN9JqMB5ATOJrqvTu0ctl5AX6BR0foJh0
-         wy/F0cMoySbVa4Reoez7+t5RIAxjPh//cV/0pjfU7NLTFxk4AFOPP4qre7J3dp0ljbgw
-         wurlrd1xrg6n51Z+WuuL5E1KXMDfr1zLiMOOtbhHay1mXqlafkEPBsSvcnTiIW+bDnUX
-         84mA==
-X-Forwarded-Encrypted: i=1; AKwUvBwJ7M49k9nLRBzaX4Q6iFlHFlpdPaJkV5BrOVQw9+RKFwEoCBYbjL9nrNa+Tm734ypzIotvDDw+G7aE@vger.kernel.org
-X-Gm-Message-State: AFq9FYLkWMEFvdjmCTeOt4x5CeyLNmM/gGS3DDypIDXDTU4+JhI+649t
-	JA819dA0aXoOCOBSUWsmcimHlOEcEBqqPthJbUuzotf/lfAE6XuBKC1w
-X-Gm-Gg: AYBFou1lD1KJrl5F+FEwL6PM13jiRBahAxZOpfB4Yfvx0WjC7T2JN/yw8puLZMsWE0K
-	Ij/WqQLUmqmS72B8YP2uwf05ilqjOAfv9alG2sEhxaliyaOyYHAPkyd6GI0koeH4kMcdpRiyX1b
-	ZlAu2nUedVRqYqtbYK6clNxgGS/a4KauI0dmKhoZr7kzb/Tq/cbCFwJBkJGoKUZpOv42OSLjAWO
-	n7WLc7SPTElBTxcB8ve+WZ8hpfVCYObmth2nZ5Ov/5KOePLkyBtZ4ZmgPrThrQRiydsAVhi2qHJ
-	ePdeYxMSnKamY47FoEZ3+yoNDNN0d4ti0fmouZbrta+OL8NGN3Or8O5HylQy1QDrAzodwD0YgjV
-	Kz8StrbR8daNG42MZgvZyYuxtcVjVOYWWvvSMEtt4TXLCwCmFYOm3wWUOj6qrCWIti40Ewqvats
-	yqvZYZLqdfLWcuVyrdveiBJ+wf/e1SlKYng92bnPgtdh4MGyQSg6pyhqRUXO2/EQFLnGc28/+6+
-	Ls4dCzjteUD/t4/ClNMmtaLsCGBWmWGKluKkOjRnh3+70Qlqab8eXDW07JsTgE5fd4jz3ZcwYb6
-	iybWxdEoxohGq7WabsVujenpMLYLQBqQA7i4R4RovUN9RBTvwlrN4H0QjzLop6voGFTNyl9CNnL
-	fWRn7Ku/xUE+RGAwI0dk+ixqXNCqJnKC4UX6j6p2LAf/0SDivVacyHD0PEoOCwPhP/OeBJ5xlNz
-	zyNA==
-X-Received: by 2002:a05:6a00:ab0d:b0:8a0:7dc4:95c0 with SMTP id d2e1a72fcca58-8a6e6b175a6mr1061341b3a.15.1793158860024;
-        Tue, 27 Oct 2026 20:41:00 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:37f::e34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a6a73bf7efsm596875b3a.52.2026.10.27.20.40.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2026 20:40:59 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	=?UTF-8?q?Giedrius=20Statkevi=C4=8Dius?= <giedrius.statkevicius@gmail.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM:Keyword:(devm_)?gpio_(request|free|direction|get|set))
-Subject: [PATCH ath-next v2] wifi: ath9k: don't re-request the LED GPIO in ath9k_stop()
-Date: Tue, 27 Oct 2026 20:40:57 -0700
-Message-ID: <20261028034057.114021-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=HM3POrnX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793161509; x=1824697509;
+  h=date:from:to:cc:subject:message-id;
+  bh=NkKN8GumtZjJn/+bxzubZJG03yVr5srE0401dKE8M6E=;
+  b=HM3POrnXRTfZ93Lok1xMlk0wJ0tQBS7+TQBOEjhn3IHAuWCr4Rgvknna
+   YzYcHBmjRLV6v2vS9ORo+FEbzEqQM9vP5AiZ6tWwNNHkFykXaHvJezKvH
+   gngrzGa7X4Nj93heUyqTtyMNqiBAGSlSQpZhaWzEj3/vUkKlmn4t1thmf
+   oOSnXVTbzJtI1v7llKgDp9KBbvP/FmRnMOctTAOG7FvglQpX8Ti8sqNNf
+   4wak1Qfy+ZcGFQU1mQXXzTsSnoapBVrBrIrCbwMULXGy/LMK/KHtxnLXu
+   FdMQoTjfFAcLvIbGPr/LF+shoKCWpOQlOvfX4KRlqy5OdmT1LP8T3HFGn
+   A==;
+X-CSE-ConnectionGUID: thRq2brDQDS/obgG3fZ6XQ==
+X-CSE-MsgGUID: tCVrygiQQfG//L72hzy6Hg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1755071"
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="1755071"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 21:25:08 -0700
+X-CSE-ConnectionGUID: OqP9pHCXTwKgNlJp16qbPg==
+X-CSE-MsgGUID: exhLNsGgTxWB876n9m9YfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="5070286"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 27 Oct 2026 21:25:07 -0700
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xLvDk-00000000YAY-04tI;
+	Wed, 28 Oct 2026 04:25:04 +0000
+Date: Wed, 28 Oct 2026 12:24:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio:for-current] BUILD SUCCESS
+ 15665047024e30f9c2227563d03034061c99ac2c
+Message-ID: <202610281234.hQyG3SXY-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -100,88 +79,212 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-ath9k_deinit_device() frees the LED pin in ath_deinit_leds() before it
-unregisters the hw. ath9k_stop() then switches the LED pin back to an
-input with ath9k_hw_gpio_request_in(). For a SoC GPIO outside of the
-WMAC, ath9k_hw_gpio_request() takes a new descriptor through
-gpiod_get_index() at that point, and nothing releases it again. The
-next probe fails with "request GPIO12 failed:-16" and every LED update
-hits the WARN_ON() in ath9k_hw_set_gpio(). That request also runs
-under sc->sc_pcu_lock, while gpiod_get_index() and
-gpiod_set_consumer_name() may sleep.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: 15665047024e30f9c2227563d03034061c99ac2c  gpiolib: Propagate emulated drive errors when setting arrays
 
-The input direction was only added for symmetry with ath9k_start(); the
-suspend/resume fix that brought it back only needed the output side.
-On WMAC pins it also undoes the "LED off" level written just before it.
-Drop it, so the pin simply stays an output driven to the off level.
+elapsed time: 8162m
 
-ath9k_stop() still writes the LED pin, so free the pin after
-ieee80211_unregister_hw() instead of in ath_deinit_leds(); otherwise
-that write hits the WARN_ON() in ath9k_hw_set_gpio() on SoC GPIOs. This
-also frees the pin when the LED class device could not be registered,
-which leaked it before.
+configs tested: 192
+configs skipped: 15
 
-Seen on a TP-Link Archer C7 v2 (QCA9558, LED on SoC GPIO 12) when
-reloading ath9k.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Fixes: e34f2ff40e03 ("ath9k: bring back direction setting in ath9k_{start_stop}")
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v2: remove ath9k_hw_gpio_free in ath_deinit_leds
- drivers/net/wireless/ath/ath9k/gpio.c | 2 --
- drivers/net/wireless/ath/ath9k/init.c | 5 +++++
- drivers/net/wireless/ath/ath9k/main.c | 4 +---
- 3 files changed, 6 insertions(+), 5 deletions(-)
+tested configs:
+alpha                              allnoconfig    gcc-16.2.0
+alpha                             allyesconfig    gcc-16.2.0
+alpha                                defconfig    gcc-16.2.0
+arc                               allmodconfig    clang-24
+arc                               allmodconfig    gcc-16.2.0
+arc                                allnoconfig    gcc-16.2.0
+arc                               allyesconfig    clang-24
+arc                               allyesconfig    gcc-16.2.0
+arc                                  defconfig    gcc-16.2.0
+arc                   randconfig-1000-20261023    gcc-14.4.0
+arc                   randconfig-1001-20261023    gcc-14.4.0
+arm                                allnoconfig    gcc-16.2.0
+arm                               allyesconfig    clang-24
+arm                               allyesconfig    gcc-16.2.0
+arm                                  defconfig    gcc-16.2.0
+arm                   randconfig-1000-20261023    gcc-14.4.0
+arm                   randconfig-1001-20261023    gcc-14.4.0
+arm                   randconfig-1002-20261023    gcc-14.4.0
+arm                   randconfig-1003-20261023    gcc-14.4.0
+arm64                             allmodconfig    clang-24
+arm64                              allnoconfig    gcc-16.2.0
+arm64                                defconfig    gcc-16.2.0
+arm64                 randconfig-1000-20261023    gcc-8.5.0
+arm64                 randconfig-1001-20261023    gcc-8.5.0
+arm64                 randconfig-1002-20261023    gcc-8.5.0
+arm64                 randconfig-1003-20261023    gcc-8.5.0
+csky                              allmodconfig    gcc-16.2.0
+csky                               allnoconfig    gcc-16.2.0
+csky                                 defconfig    gcc-16.2.0
+csky                                 defconfig    gcc-16.2.0
+csky                  randconfig-1000-20261023    gcc-8.5.0
+csky                  randconfig-1001-20261023    gcc-8.5.0
+hexagon                           allmodconfig    gcc-16.2.0
+hexagon                            allnoconfig    gcc-16.2.0
+hexagon                              defconfig    gcc-16.2.0
+hexagon               randconfig-1000-20261023    clang-17
+hexagon               randconfig-1001-20261023    clang-17
+i386                              allmodconfig    clang-22
+i386                               allnoconfig    gcc-16.2.0
+i386                              allyesconfig    clang-22
+i386        buildonly-randconfig-1000-20261023    clang-22
+i386        buildonly-randconfig-1001-20261023    clang-22
+i386        buildonly-randconfig-1002-20261023    clang-22
+i386        buildonly-randconfig-1003-20261023    clang-22
+i386        buildonly-randconfig-1004-20261023    clang-22
+i386        buildonly-randconfig-1005-20261023    clang-22
+i386                                 defconfig    gcc-16.2.0
+i386                  randconfig-1000-20261023    gcc-14
+i386                  randconfig-1001-20261023    gcc-14
+i386                  randconfig-1002-20261023    gcc-14
+i386                  randconfig-1003-20261023    gcc-14
+i386                  randconfig-1004-20261023    gcc-14
+i386                  randconfig-1005-20261023    gcc-14
+i386                  randconfig-1006-20261023    gcc-14
+i386                  randconfig-1007-20261023    clang-22
+i386                  randconfig-1008-20261023    clang-22
+i386                  randconfig-1009-20261023    clang-22
+i386                  randconfig-1010-20261023    clang-22
+i386                  randconfig-1011-20261023    clang-22
+i386                  randconfig-1012-20261023    clang-22
+i386                  randconfig-1013-20261023    clang-22
+loongarch                         allmodconfig    clang-24
+loongarch                          allnoconfig    gcc-16.2.0
+loongarch                            defconfig    clang-24
+loongarch             randconfig-1000-20261023    clang-17
+loongarch             randconfig-1001-20261023    clang-17
+m68k                              allmodconfig    gcc-16.2.0
+m68k                               allnoconfig    gcc-16.2.0
+m68k                              allyesconfig    clang-24
+m68k                              allyesconfig    gcc-16.2.0
+m68k                                 defconfig    clang-24
+m68k                        m5275evb_defconfig    gcc-16.2.0
+m68k                           multi_defconfig    gcc-16.2.0
+microblaze                         allnoconfig    gcc-16.2.0
+microblaze                        allyesconfig    gcc-16.2.0
+microblaze                           defconfig    clang-24
+mips                              allmodconfig    gcc-16.2.0
+mips                               allnoconfig    gcc-16.2.0
+mips                              allyesconfig    gcc-16.2.0
+mips                   cavium_octeon_defconfig    gcc-16.2.0
+mips                        lemote2f_defconfig    gcc-16.2.0
+mips                         omega2p_defconfig    gcc-16.2.0
+nios2                             allmodconfig    clang-20
+nios2                              allnoconfig    clang-24
+nios2                                defconfig    clang-24
+nios2                 randconfig-1000-20261023    clang-17
+nios2                 randconfig-1001-20261023    clang-17
+openrisc                          allmodconfig    clang-20
+openrisc                           allnoconfig    clang-24
+openrisc                             defconfig    gcc-16.2.0
+parisc                            allmodconfig    gcc-16.2.0
+parisc                             allnoconfig    clang-24
+parisc                            allyesconfig    clang-17
+parisc                               defconfig    gcc-16.2.0
+parisc                randconfig-1000-20261023    gcc-15.3.0
+parisc                randconfig-1001-20261023    gcc-15.3.0
+parisc64                             defconfig    clang-24
+powerpc                           allmodconfig    gcc-16.2.0
+powerpc                            allnoconfig    clang-24
+powerpc                     amigaone_defconfig    gcc-16.2.0
+powerpc                         fsp2_defconfig    gcc-16.2.0
+powerpc                     ge_imp3a_defconfig    gcc-16.2.0
+powerpc                   iss476-smp_defconfig    gcc-16.2.0
+powerpc                          ps3_defconfig    gcc-16.2.0
+powerpc               randconfig-1000-20261023    gcc-15.3.0
+powerpc               randconfig-1001-20261023    gcc-15.3.0
+powerpc                          wii_defconfig    gcc-16.2.0
+powerpc64             randconfig-1000-20261023    gcc-15.3.0
+powerpc64             randconfig-1001-20261023    gcc-15.3.0
+riscv                             allmodconfig    clang-24
+riscv                              allnoconfig    clang-24
+riscv                             allyesconfig    clang-24
+riscv                                defconfig    gcc-16.2.0
+riscv                 randconfig-1000-20261023    gcc-16.2.0
+riscv                 randconfig-1001-20261023    gcc-16.2.0
+s390                              allmodconfig    clang-17
+s390                               allnoconfig    clang-24
+s390                              allyesconfig    gcc-16.2.0
+s390                                 defconfig    gcc-16.2.0
+s390                  randconfig-1000-20261023    gcc-16.2.0
+s390                  randconfig-1001-20261023    gcc-16.2.0
+sh                                allmodconfig    gcc-16.2.0
+sh                                 allnoconfig    clang-24
+sh                                allyesconfig    clang-17
+sh                                   defconfig    gcc-14
+sh                    randconfig-1000-20261023    gcc-16.2.0
+sh                    randconfig-1001-20261023    gcc-16.2.0
+sh                   sh7785lcr_32bit_defconfig    gcc-16.2.0
+sparc                              allnoconfig    clang-24
+sparc                                defconfig    gcc-16.2.0
+sparc                 randconfig-1000-20261023    clang-24
+sparc                 randconfig-1001-20261023    clang-24
+sparc64                           allmodconfig    clang-20
+sparc64                              defconfig    gcc-14
+sparc64               randconfig-1000-20261023    clang-24
+sparc64               randconfig-1001-20261023    clang-24
+um                                allmodconfig    clang-17
+um                                 allnoconfig    clang-24
+um                                allyesconfig    gcc-16.2.0
+um                                   defconfig    gcc-14
+um                              i386_defconfig    gcc-14
+um                    randconfig-1000-20261023    clang-24
+um                    randconfig-1001-20261023    clang-24
+um                            x86_64_defconfig    gcc-14
+x86_64                            allmodconfig    clang-22
+x86_64                             allnoconfig    clang-24
+x86_64                            allyesconfig    clang-22
+x86_64      buildonly-randconfig-1000-20261023    clang-22
+x86_64      buildonly-randconfig-1001-20261023    clang-22
+x86_64      buildonly-randconfig-1002-20261023    clang-22
+x86_64      buildonly-randconfig-1003-20261023    clang-22
+x86_64      buildonly-randconfig-1004-20261023    clang-22
+x86_64      buildonly-randconfig-1005-20261023    clang-22
+x86_64                               defconfig    gcc-14
+x86_64                                   kexec    clang-22
+x86_64                randconfig-1000-20261023    gcc-14
+x86_64                randconfig-1000-20261024    gcc-14
+x86_64                randconfig-1001-20261023    gcc-14
+x86_64                randconfig-1001-20261024    gcc-14
+x86_64                randconfig-1002-20261023    gcc-14
+x86_64                randconfig-1002-20261024    gcc-14
+x86_64                randconfig-1003-20261023    gcc-14
+x86_64                randconfig-1003-20261024    gcc-14
+x86_64                randconfig-1004-20261023    gcc-14
+x86_64                randconfig-1004-20261024    gcc-14
+x86_64                randconfig-1005-20261023    gcc-14
+x86_64                randconfig-1005-20261024    gcc-14
+x86_64                randconfig-1006-20261023    gcc-14
+x86_64                randconfig-1007-20261023    gcc-14
+x86_64                randconfig-1008-20261023    gcc-14
+x86_64                randconfig-1009-20261023    gcc-14
+x86_64                randconfig-1010-20261023    gcc-14
+x86_64                randconfig-1011-20261023    gcc-14
+x86_64                randconfig-1012-20261023    clang-22
+x86_64                randconfig-1013-20261023    clang-22
+x86_64                randconfig-1014-20261023    clang-22
+x86_64                randconfig-1015-20261023    clang-22
+x86_64                randconfig-1016-20261023    clang-22
+x86_64                randconfig-1017-20261023    clang-22
+x86_64                                rhel-9.4    clang-22
+x86_64                            rhel-9.4-bpf    gcc-14
+x86_64                           rhel-9.4-func    clang-22
+x86_64                     rhel-9.4-kselftests    clang-22
+x86_64                          rhel-9.4-kunit    gcc-14
+x86_64                            rhel-9.4-ltp    gcc-14
+x86_64                           rhel-9.4-rust    clang-22
+xtensa                            alldefconfig    gcc-16.2.0
+xtensa                             allnoconfig    clang-24
+xtensa                            allyesconfig    clang-20
+xtensa                 generic_kc705_defconfig    gcc-16.2.0
+xtensa                randconfig-1000-20261023    clang-24
+xtensa                randconfig-1001-20261023    clang-24
 
-diff --git a/drivers/net/wireless/ath/ath9k/gpio.c b/drivers/net/wireless/ath/ath9k/gpio.c
-index 2dbc7efdd637..d525d8ef9369 100644
---- a/drivers/net/wireless/ath/ath9k/gpio.c
-+++ b/drivers/net/wireless/ath/ath9k/gpio.c
-@@ -67,8 +67,6 @@ void ath_deinit_leds(struct ath_softc *sc)
- 
- 	ath_led_brightness(&sc->led_cdev, LED_OFF);
- 	led_classdev_unregister(&sc->led_cdev);
--
--	ath9k_hw_gpio_free(sc->sc_ah, sc->sc_ah->led_pin);
- }
- 
- void ath_init_leds(struct ath_softc *sc)
-diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
-index a7a11781d83d..d35460e352d9 100644
---- a/drivers/net/wireless/ath/ath9k/init.c
-+++ b/drivers/net/wireless/ath/ath9k/init.c
-@@ -1128,6 +1128,11 @@ void ath9k_deinit_device(struct ath_softc *sc)
- 	ath9k_deinit_debug(sc);
- 	ath9k_deinit_wow(hw);
- 	ieee80211_unregister_hw(hw);
-+
-+	/* ath9k_stop() still drives the LED pin, so release it only now */
-+	if (sc->sc_ah->led_pin >= 0)
-+		ath9k_hw_gpio_free(sc->sc_ah, sc->sc_ah->led_pin);
-+
- 	ath_rx_cleanup(sc);
- 	ath9k_deinit_softc(sc);
- }
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index 740a6fc7b067..07797cc89ee0 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -942,11 +942,9 @@ static void ath9k_stop(struct ieee80211_hw *hw, bool suspend)
- 
- 	spin_lock_bh(&sc->sc_pcu_lock);
- 
--	if (ah->led_pin >= 0) {
-+	if (ah->led_pin >= 0)
- 		ath9k_hw_set_gpio(ah, ah->led_pin,
- 				  (ah->config.led_active_high) ? 0 : 1);
--		ath9k_hw_gpio_request_in(ah, ah->led_pin, NULL);
--	}
- 
- 	ath_prepare_reset(sc);
- 
--- 
-2.56.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
