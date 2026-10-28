@@ -1,61 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793179284;
-	b=x1N0M4B53Cw62ckQbfCxD6UaWBr9ESM+6p5GzicB093IKfXO5nLVthKftQcad+bqfvxA
-	 LUVpse1o4kWF403YCmL3xqb2BLRiXsd1IhIvU1FTtQZwXTKN0Y1bzxlzRn3PjvCXpfb62
-	 npitMJPMeIIFhZuJVdHjlaVbgHqUkeVFfoMvPOVQKj9T1Io33Br1zJx5JB5ojba/TnPlF
-	 GHZdkq5UsAFBi8nan/jVyr8xBDe3fllafsaHILpoiGpMyThm74UK3dpWWqo9xMkJ/Txzd
-	 yGHg6+UIG7tkH7AcGAyOSXkG5KyQfu5zHO7f/SU2/UyvQLRoohVWSNEKq+qc4wHGdPA==
+	t=1793179374;
+	b=QQuZshqhLhiBtyVhF8lOfiSeBEpH5KmtoYKDvLP1JSBLJ0vk0vv7w4MGEdqlIoUQsStu
+	 1tkjZqdkgaVecWfSTOTN9bxDpr1Qqy3W/5VhqIOG3X9xateOkwhOGQ7nCaIuPWBntvJEm
+	 W7Bqn47PhCPLuL6tu6RUZmawAs+LAput5Hs8LaQ2HoCqKkjvlVjNEsmTDbh+pop09NHj3
+	 Qza+HSs70eY2Btbyo57WyMLNMBBtxEEujEEQSeim0fVDLK7DkqUZUWEAnZFMC4GaHFL6R
+	 t5P2L+4mGZUIE+y7CsQRBy4hv8uRtKaBHWCiaver19xEd2klSH5tQHxUvbQX2C45oXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793179284;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
-	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
-	bh=pWHDga10kmW0MDLVIkUsOtMHzTyMjmDGEDdz+Zojs0I=;
-	b=Ze1aGKknJ3GxQxRTRmk+YlQqXBHPW0ztjqilQ5tWU2M6hYVnmMwQXK/RAtJOcNvctasx
-	 TTmtMCOFvqWGCHnIH+OV0eEKL7naDxjmxl6Ydj/yhyW7LgSDz2qco+cOlMLffmTNTSqzc
-	 maT1u8c//hggBn0TCEyPOgye83pKdKqH5AsDyNSG6KyFv7LQv7XDlwGK8ogCHPrkFwYsz
-	 FU981rYD68Bqs4B/QsrHPQ8d5M1Meds0G67N7QQ4VYB83mO5f0x9EyBhIZ1Fko2CsUl4T
-	 Bh1nHQfcg3rmJGsj573lVRcja0OmD4UXeN+m0P62B71jTffyL4OsTQ9Toxvoqf3pgDQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793179374;
+	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
+	 Received:Received:From:In-Reply-To:MIME-Version:References:Date:
+	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
+	 Content-Type;
+	bh=Obd6DBT8X0xh3lgiYCV38ulNGq3OGCe1QiMxMC6hx3I=;
+	b=P6XlF5+WljSZ7JrDecs2M3P0fhGGywEc+jorEO3iVxwf09R91pWK4RPkwywrHdSZ+wNO
+	 pHAOEytihAAprjKO7CpqfC/iMH+hskuJG4n7CFiA1J19RIbsaUiZoR841qzGetEiR7gr0
+	 ZB50JABsh/BguwCemebMHRGHBchLN6mLU3KZ7aDTUNKxQSAZwqN6l50mIzNn1v9bm3K5V
+	 qXqRf4vAVl5KmB71FCi2Z/CYI6cByWI4iOHI7V6F0HnT5XCS7WeD3OL69KvWoijNdwP/5
+	 hVHPQdKZccT32FE0/SwSfZAOdsUdvz3qK2cQpKD9+QAjOSJNhonFZ7SYrf9IcjefDUg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gxEvsllx;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="aQIBYwy/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C34606A31D
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D382606A320
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gxEvsllx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642121F031E3
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:21:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aQIBYwy/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7A381F031E1
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:22:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793179283;
-	bh=pWHDga10kmW0MDLVIkUsOtMHzTyMjmDGEDdz+Zojs0I=;
+	s=k20260515; t=1793179373;
+	bh=Obd6DBT8X0xh3lgiYCV38ulNGq3OGCe1QiMxMC6hx3I=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=gxEvsllxhpcnF3kbhzLtmLzCn82LqKIT1LuX/PaT+Xo7aIB7Rjy8Dv3ELHG/xSQU3
-	 HQ/S4VH23pajim3H64XGlq8oO5FQpwG31H4kifzpCWOVryqeS6Q4HofbCOhDbf2u1U
-	 CNphw1+5RFMs60ENl07TfsuMb+CAz1KvGcg/cVrApat5gURqy9do5FBFjKofU36IuJ
-	 DryZa8N1vHgWaZpIFRXiHdV/rqZGpa2ybDeHf+XFscGFzPtyhGIZV2FzLSP0/mWISh
-	 Ml3oUu0k7jq59UINbUASNTxqNiYVtfJu2eCqklHJJsAJWciZYfzpVbCe6sHftgKGVt
-	 xZEkVA3BuniKQ==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3ab27b4924aso4765761fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 02:21:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzTQoQtclYKZk0cxrfFNE7iX2eLRM8z/QsbiCSIzfSW+uIq30GMvQRxBEjZ1MlyFiEVQnSN4OuTkZ4E@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ8oji4wOVWQF+gx4pDbtBhkWOMVd8c6g98T69uNHghRT/SbZWc
-	DkSrFIwEohUXvOIqbtOkwfuzSyvNuaYAimF9JQ0xgCKx3Bulz8XmTF9coFJqcrQFG92162H5kwz
-	xQoJO+6ZCPuf+6gE2yBCPjPu6rDlwoYO8ZTl7Rj8q2w==
-X-Received: by 2002:a05:651c:31c4:b0:3ac:42be:7e50 with SMTP id
- 38308e7fff4ca-3ac9cf5b3b5mr3472451fa.14.1793179282092; Wed, 28 Oct 2026
- 02:21:22 -0700 (PDT)
+	b=aQIBYwy/m9UrJS4YAHUhYXzzc7JVpTAKhtcJ9R9jNbXz9LZRAm+3AlgXt9jfxd7Gd
+	 L5aSNBr0EUWE3OavMSrTNK0kRIrwww4bUc/OD1VgUUceUz4Bfn/N/emb0uc1yMs1Pe
+	 Cwr2WYrxCSHGoPdhFStgkvxsIuSfZcSCPUOtkgW4jZkCpIrCacIDNlOYBh1GoSHFUr
+	 LGF3TJ69TjL2jxF+/OCpvmPBhcaDQxGQ5csUNSMUgMhzYCr+kg4l2HIJ93kb411UXT
+	 Hdf/cuRKKnDtxoBJ+6m1GQKfVbjnqb/D4Y/RbQ6ci9E6fV8GUfaa8q8MiYIB57TpKQ
+	 rno1OHKrDA6RA==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ab4c608a6dso6984041fa.1
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 02:22:53 -0700 (PDT)
+X-Gm-Message-State: AFq9FYLE+YJyBLfPEN9WuhSp2tbGdxYX1WGW11Bez6j4o0bVCMJn7qMZ
+	99Gymw69tHWdEBJEcyBidRzOcQSB7PGw7tqqvHWcHE8f7+s4vizNe54Z9dC0Toc8uwhYBpB5HfC
+	0l9EEo0bCJEHFZbK22I2b+VhfesF/PPgnNUGzdn9rpg==
+X-Received: by 2002:a05:651c:554:b0:3a6:6f81:1027 with SMTP id
+ 38308e7fff4ca-3ac9cf92016mr3387891fa.24.1793179372646; Wed, 28 Oct 2026
+ 02:22:52 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 04:21:20 -0500
+ HTTPREST; Wed, 28 Oct 2026 02:22:51 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 04:21:20 -0500
+ HTTPREST; Wed, 28 Oct 2026 02:22:51 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261028034057.114021-1-rosenp@gmail.com>
+In-Reply-To: <auGdrYC_mZeJft0q@QCOM-aGQu4IUr3Y>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,47 +64,69 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261028034057.114021-1-rosenp@gmail.com>
-Date: Wed, 28 Oct 2026 04:21:20 -0500
-X-Gmail-Original-Message-ID: <CAMRc=MeG89HjLc42yK0-f6mWx8E96n6xA4wZ9CKyBa3Kgnn2ZQ@mail.gmail.com>
-X-Gm-Features: AclHuK89EM60jjCdfR0SjAa3kzZ0tIN6wpR4VeQqwEqNXM9tUVvgV4iLumJ-xvw
-Message-ID: <CAMRc=MeG89HjLc42yK0-f6mWx8E96n6xA4wZ9CKyBa3Kgnn2ZQ@mail.gmail.com>
-Subject: Re: [PATCH ath-next v2] wifi: ath9k: don't re-request the LED GPIO in ath9k_stop()
-To: Rosen Penev <rosenp@gmail.com>
-Cc: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	=?UTF-8?Q?Giedrius_Statkevi=C4=8Dius?= <giedrius.statkevicius@gmail.com>, 
-	Kalle Valo <kvalo@qca.qualcomm.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:GPIO SUBSYSTEM:Keyword:(devm_)?gpio_(request|free|direction|get|set)" <linux-gpio@vger.kernel.org>, linux-wireless@vger.kernel.org
+References: <20261017043605.1503563-1-shengchao.guo@oss.qualcomm.com>
+ <20261017043605.1503563-4-shengchao.guo@oss.qualcomm.com> <CAMRc=McoAYKHojJCT6yeTvsMLKDTisD3V42VH5ebRapuG-UGBg@mail.gmail.com>
+ <auGdrYC_mZeJft0q@QCOM-aGQu4IUr3Y>
+Date: Wed, 28 Oct 2026 02:22:51 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Mf1k4ZKi9L+UVshuQnbomJAPV+jPR1jgH8Q2QWnMbqOVw@mail.gmail.com>
+X-Gm-Features: AclHuK_dZXUibCWs0t-BhTAf_ntpzeX3ptAFBulw6eXjtSP7RPvDwHaWd5jEueY
+Message-ID: <CAMRc=Mf1k4ZKi9L+UVshuQnbomJAPV+jPR1jgH8Q2QWnMbqOVw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] gpio: shared-proxy: Drive the default value when
+ no votes are cast
+To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 28 Oct 2026 04:40:57 +0100, Rosen Penev <rosenp@gmail.com> said:
-> ath9k_deinit_device() frees the LED pin in ath_deinit_leds() before it
-> unregisters the hw. ath9k_stop() then switches the LED pin back to an
-> input with ath9k_hw_gpio_request_in(). For a SoC GPIO outside of the
-> WMAC, ath9k_hw_gpio_request() takes a new descriptor through
-> gpiod_get_index() at that point, and nothing releases it again. The
-> next probe fails with "request GPIO12 failed:-16" and every LED update
-> hits the WARN_ON() in ath9k_hw_set_gpio(). That request also runs
-> under sc->sc_pcu_lock, while gpiod_get_index() and
-> gpiod_set_consumer_name() may sleep.
+On Wed, 28 Oct 2026 08:01:01 +0100, Shawn Guo
+<shengchao.guo@oss.qualcomm.com> said:
+> On Tue, Oct 20, 2026 at 09:17:00AM -0400, Bartosz Golaszewski wrote:
+>> On Sat, 17 Oct 2026 06:36:04 +0200, Shawn Guo
+>> <shengchao.guo@oss.qualcomm.com> said:
+>> > A consumer that requests a shared line with GPIOD_ASIS never calls
+>> > direction_output(), so def_val keeps its initial value of 0. If the
+>> > line was left high, for instance by the bootloader, a later
+>> > gpiod_set_value(0) from that consumer matches def_val and the proxy
+>> > treats it as withdrawing a vote it never cast. It returns success
+>> > without writing the hardware, and the line stays high.
+>> >
+>> > The consumer has no way to tell. Its request to drive the line low is
+>> > silently ignored until it first votes for high and then withdraws
+>> > that vote.
+>> >
+>> > When the requested value is the default and no votes are
+>> > outstanding, write it to the hardware instead of returning early.
+>> > For lines configured via direction_output() this is a redundant
+>> > write of the value the line already has. With votes outstanding the
+>> > request remains a no-op, as the line must stay at the voted value.
+>> >
+>>
+>> Wouldn't this only matter for a line requested as-is? We could avoid the
+>> redundant write if we only did it for such lines instead of for all
+>> unconditionally.
 >
-> The input direction was only added for symmetry with ath9k_start(); the
-> suspend/resume fix that brought it back only needed the output side.
-> On WMAC pins it also undoes the "LED off" level written just before it.
-> Drop it, so the pin simply stays an output driven to the off level.
+> It also matters for a line configured via direction_output(), after
+> patch 2. When a proxy releases the line and restoring the default value
+> fails, gpio_shared_proxy_free() still drops its vote. The line is then
+> at the non-default value with votecnt == 0, so "no votes outstanding"
+> no longer implies "line is at the default" either way. The unconditional
+> write lets any remaining user that sets the default bring the line back.
+> Gating it on as-is lines would leave it stuck there.
 >
-> ath9k_stop() still writes the LED pin, so free the pin after
-> ieee80211_unregister_hw() instead of in ath_deinit_leds(); otherwise
-> that write hits the WARN_ON() in ath9k_hw_set_gpio() on SoC GPIOs. This
-> also frees the pin when the LED class device could not be registered,
-> which leaked it before.
+> The proxy also has no direct notion of as-is; it would need a flag in
+> gpio_shared_desc tracking whether def_val has ever been written to the
+> hardware, set and cleared in the init paths of direction_output() and
+> direction_input().
 >
-> Seen on a TP-Link Archer C7 v2 (QCA9558, LED on SoC GPIO 12) when
-> reloading ath9k.
+> The write itself is cheap and rare: it only happens when a proxy that
+> hasn't voted sets the default while no votes are outstanding.
 >
-> Fixes: e34f2ff40e03 ("ath9k: bring back direction setting in ath9k_{start_stop}")
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
+> If you still prefer the gating, I can do that in v5 and keep the
+> free-failure case recoverable some other way. Otherwise I'll add the
+> reasoning above to the commit message.
+>
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+No, that's alright, let's keep the write.
+
+Bart
