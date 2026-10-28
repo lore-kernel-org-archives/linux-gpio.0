@@ -1,61 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793180675;
-	b=3Uj5roI6AIFTNdWisGz83qe00AHK3PuyoHvdX5lj9w1mk6p0ZOCyak817ObFumgQk3Xo
-	 1Q4dT7A2DqjhGtZc9OT3CY0oJVlxvYAXY1ssmeCuqNyrqVes8oQXm2Nkoa8ukDTSvQYRx
-	 +9a9sabcSqxQIbx9eaTPcXPSTarUJBKWGkGfhZaUsGH84nofC0N+6xbqCm+ctTeYnjze5
-	 jjWWOMo0Nfqf9A//jByxFjshTZ1O7qFLSVZ3CKX3SaQ1pOCjlJ53O5jW9prmkf18L2zuu
-	 CQ2IAMFuuIJRevIexRw3W85rnb61Jj9sGK9uVCxGPdh2H+V+G9/0clacqULjGYkeLiw==
+	t=1793180780;
+	b=EI1c//GisOsn1bsNrZs6XC6DdALWFVpgkDgjRgfdfR4N+qZ3AQmJynC7zcGKc7HJcjIt
+	 effC1Buwfwj3q1OIsC0FiATngaZG61Q/CK52Nbg0xTKmpFRoE3i1noZfegxv8gGKpEvBD
+	 NehfFKFDr0luhOsiA7DvsEjf4FA7nQiS/lL9HC6aitmpaTn7pIM3QqvvOnQce554cs+da
+	 RYLtr52uuwg92XAF8nqzjDm//kznZDvUMfagkNkCLprqVtMjPiBg3gsLFrGZjziK038OB
+	 eYYElcgkrf6BllZkNgexc2SHyUZvRC65eeVQh+BRIm7LL9Wz9oI9tuY+SSFTxKPGHMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793180675;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
-	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
-	bh=LrdgbXUa6z0Y+LQlvYe3uBNAKemA2wKtujkxyMRCSf4=;
-	b=Fhbu9Z6kcmjICyWAIh9G4JgG60M5gQqc1uGbHwVRE8JRnA7JAZhkm9OEYJX5MH6+QFdj
-	 M0bdEfttLstgTeYO8rt8dxM6VraIkYIbBWvVF0T8z5SuDQP6Ljpl3GXDDnXs+wDpO1tTG
-	 XuCOPM2Ycp9fOtAJo9zZUe1uyI9YJQj7K0cXHc47XD/vbYRUdQV29HuaerbWZGUAaoiaI
-	 93vBkMTl8IwVtQX9TKMjOnQ1135zb7pDHpMuyLHgNc3lr/RfCvmyGKSNch0SFqf1JIq+W
-	 /1a3RlmkNxMVyTImtfnsJtGccsh2xcV6RUaWDvXHBmGjPC3PDVhvkCXXrFF774Jw6Lg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793180780;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=3A7sCrPf5XBmefcPTnQWdbsYupGHp+WgEFWYi+0+UaM=;
+	b=mXlN92ZCb0YZZnWTCGiL6boQsNAThn8oECkrLfz4uhc4WLrrtgaM57Nwr029+j3SstNz
+	 +dr8+s/9afUoKroAYvDdMl+liEZzVCMUcc2ngtecXraFugA8x4tGCqHrltsA+4EtdIhOO
+	 zeT0SB9DoaCJ5iTrften3EZAA0BLUEC8LNSuVwUVVtifxN40owGQUmZ/UmOgNFCWpN8+q
+	 JL9M59LGwmlMO9VLRFj2RDzXNjKEG0RInCzD/mAub9nCIKxZna8tiaq0STFV15NEpw+m7
+	 5pS2xryA2RGlE6Ama4SEdWvmjWSKwt9t/f6Tha/ZlD5P1+iznGwOw6Mn6zsbhCwXPQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g9Zptmwz;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=POvrRvz4;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Fw0gS1jk;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237FE606A31E
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEDE606A31A
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:46:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1EEDE606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g9Zptmwz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEBC71F01825
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793180674;
-	bh=LrdgbXUa6z0Y+LQlvYe3uBNAKemA2wKtujkxyMRCSf4=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=g9ZptmwzRLs6hFP0ri5PGG/VdS21dkgEUq8MSMOGFMv+llZiFjwZy03nLL6K3RGAE
-	 gFWRcjZRVQrIH+G9u41eBqWdRVDsLz+tHZ8K9AfxrletJ8ME5ty0y8BWzJXxAzSmN6
-	 C4JY9zJGxt6RKUbQdVqcazolhOePgXfyANE3znaARC6qT8qZY79qpHmGkgDcoLqkaZ
-	 CTuEXRS1euNXuQXCCI6N80PByHWzSWR/r/LzzuZIYNb8PXb9G9CU28p0lT/ZFj7ro8
-	 eURUyetIdDg4KR+dOp9FLDVxWtZdwCubP6YXIIxy8yUqrS9NIjfpYGjgABhwoKxWLN
-	 VHpQp6IoCIbjQ==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3a595487d43so5635551fa.3
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 02:44:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxgwV/52mIEMnTm7cDnQimEHfw7X8isZ6mtNWs8oOPqs6+/LfVpHUSDU2ZAI7HAa7S3PJ4jTLcdLBKo@vger.kernel.org
-X-Gm-Message-State: AFq9FYIUl77h/gjDf7dO90bTXmyZmcZQtsXMJ4VdLXNWjL+CitJoCTs9
-	QStOn/m4iPBXMSW3jDETGlpzT16kNHMKfOdS1yhMnl1Vi1jI8g3wVPmds+z1ZKGnTI00P2aOfab
-	uLYric6O1MXofIAZxHhnW6pW+WUQm8PcMMCUT9HpTfw==
-X-Received: by 2002:a2e:a986:0:b0:3a9:7711:1cd7 with SMTP id
- 38308e7fff4ca-3ac9cfae41fmr4295071fa.23.1793180673415; Wed, 28 Oct 2026
- 02:44:33 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 02:44:31 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 02:44:31 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=POvrRvz4;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Fw0gS1jk
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69S8K3gu557123
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:46:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3A7sCrPf5XBmefcPTnQWdbsYupGHp+WgEFWYi+0+UaM=; b=POvrRvz41W9uThg0
+	GNb2eSltDIZ4tAbRUDcekQ/rOoqJIoXChAw4eu1Q/LI17G92gb9Wj6lcirYmxdmp
+	b3NVhb1Cr1eA9qhLcoWjC0m6hIZBTSsyTi6WVMIKW05Mzqy2CeGE6VDdKXNZwi20
+	s81mcapVW49ByfDbm/zMGYRZQCHvSbUmGnfJOgymQPQV+gO8ZWNkRKzb8/VrCWog
+	1IEdnFU2WgFo9raGVwb7bYFWFD1Ywa0vWM/JFdIazYf2vadYhmXiAF5KcAqyvGt3
+	XLaYVnuLTKGJxV2ZTfjdm+t6D81D8YzQxk35GC+bNEyTBblp62RO23yqb9MnmY8H
+	ZieSww==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hk82tsf3v-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 09:46:18 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-91c84af45c8so3913026d6.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2026 02:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793180778; x=1793785578; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=3A7sCrPf5XBmefcPTnQWdbsYupGHp+WgEFWYi+0+UaM=;
+        b=Fw0gS1jkOwkR3M4exwNXb5vamIBa56jLco4yIHiJAo8MLefN4dHWxPfo3TaNizYL1Q
+         vDH4D2Wxift1HnW5SqGJs0mrkxz0D2486Ug+4g9wkKlkoUugYDh6ccBonbEYLeX1X44z
+         1ZepPdzA0+QyVi+Aot06VYOoiwqVdF4Wdzp91acPUs228E2gOrt+mLNwwr7w8QTqjtPB
+         SGYMQi4REmscyJl+uZkef3Xu6raUTdczzNEQQNOvJiFegB5y1a3GgpRuML6J7rinTC5O
+         o8G61ZGFUvzx7AxbnHRMAXZzzMBzi+pQLVUVfwNxq2rmQbltACZ/shwjvaGbY33QMmY/
+         RiSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793180778; x=1793785578;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3A7sCrPf5XBmefcPTnQWdbsYupGHp+WgEFWYi+0+UaM=;
+        b=WiUGv02lpx/LPh7yEYo9Q1orv641013OfJeZAbwei/bIEE4ci8uwzfXyDdPAIBegCF
+         cgX83i5Idl/+FgDTfnitVA0NFyR0WwQ0nxJKmO+N1Av+JFXbo86EG2LX70KgaCKCFTFJ
+         +oaPRap0Xmzk1pxRvPOOOHVrsQ/V6Oy0TcXQCzLk6X5odAjmAGliV+OLGto/08tJc+TG
+         1IGCvN1pLjW6s6hdM2bpigJUZMzm7pa0uvU/s79hFggsxkJgSAWzyeCL2yJPP4a2oagr
+         kABhBBlW6BZdg/nXSCd/iVR4jj4z6QY6qghG1Cn2AKLUZOwMSPgKQztEGscWCimzwyC0
+         ShSA==
+X-Forwarded-Encrypted: i=1; AKwUvBzc8Dcvypxl9/XTg+XlxY/lG4oAmDgMuj3Xya7rFV7ICySfc+nzPOZIC2QTIKy6SftmbVJ/IZsRPGuE@vger.kernel.org
+X-Gm-Message-State: AFq9FYKxoX4W0Z8uM08zvghBXtyauqMVdFIa3+1jMxHLZStn1EGJPN59
+	wJdC2j2jnLoWeusvUIX3Tzzcd9l6dObDd3fZXZi0dBxxuHllFd0V4RshIF7oj0AjoK56J8j/V9A
+	OEVXtVPF5wIeXT2kGwkEMxcdG1zYmmTyFQ9D2Fvv+oCjJQGPlNISsaHQL3lml1KFE
+X-Gm-Gg: AYBFou2gGjmHw55JUhDP0yEmjkgwIp85OSxzYJDkapXPC7TCV2C8M5y99ku4/180mbw
+	H7PfBhMeg2QWrh1zNGYbZ7klqwstklRDHsjEj4+/KMIp7s/YFpzNDKsWuSR8UKdKdHzF/IGPnmq
+	Q4aVkuwlaQbeWnh0QmMpn+kEepJ3SuIiT6C6yaU8MNydQuX7byqju+8/RTSZB5F0N7sEqqH5Ut2
+	hD6jXml5vzwQR6Q90atp0ob4F3PsfaXhMJpFMDUDfYMg1rbnT9bQyQzavfzjPLh7oeKd8ICXtbN
+	qw4FjJ9IMn83S4BIwyyFVRNGb+gc8REq0+pygKBjM39W3zcWMTbsdW7a1y5J1jUcO8CUyyrDoqB
+	QSm7bBNRXHFTt6LsmzKtmy4kkiVukFAqWWC5X7EeIoD2GXt/LjvLj9uPnLIsxkrXZ7JfJhFENqd
+	YC
+X-Received: by 2002:a05:620a:46a6:b0:93a:82a:71e5 with SMTP id af79cd13be357-94408aa271amr236648685a.19.1793180778418;
+        Wed, 28 Oct 2026 02:46:18 -0700 (PDT)
+X-Received: by 2002:a05:620a:46a6:b0:93a:82a:71e5 with SMTP id af79cd13be357-94408aa271amr236646685a.19.1793180777987;
+        Wed, 28 Oct 2026 02:46:17 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a969e61f9bsm20311365e9.2.2026.10.28.02.46.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2026 02:46:16 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: linusw@kernel.org, brgl@kernel.org, Orgad Shaneh <orgads@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: octeon: allocate the GPIO base dynamically
+Date: Wed, 28 Oct 2026 10:46:14 +0100
+Message-ID: <179318077288.13137.6470160689389731507.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261027060221.2687941-1-orgads@gmail.com>
+References: <20261027060221.2687941-1-orgads@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,70 +122,56 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
-Date: Wed, 28 Oct 2026 02:44:31 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MeK=BV6WEQNVC5wXo8giAgnrjtdROswXF8Py3BMDLZa2A@mail.gmail.com>
-X-Gm-Features: AclHuK-TgPLK5QfzM7dwlPZli1UwVXLAoH6m3aWG7qnH8A2NWOyXFwaC5rx4nH0
-Message-ID: <CAMRc=MeK=BV6WEQNVC5wXo8giAgnrjtdROswXF8Py3BMDLZa2A@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] clk: qcom: Add PDM GP_MN fractional clock
- divider driver and DT support
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
-	Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: qafVJ-QGGPQruqFwLPB-Dz6NWzg5lhnR
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI4MDAzOCBTYWx0ZWRfX8ROkKrBIAD7d
+ 4vHPZYY/N5q7fXg35IHO8BQVJOE+YYgunUpEYnHk5zdiNjW0Fk7G7EZfu+TVGyScopAiySoQ68y
+ 531WAbth508hN0abHabzY6mY5RWJgCg=
+X-Authority-Analysis: v=2.4 cv=Tr1zFzXh c=1 sm=1 tr=0 ts=6ae1c46a cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=feGN3rDt8dsL0tduLgkA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-ORIG-GUID: qafVJ-QGGPQruqFwLPB-Dz6NWzg5lhnR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI4MDAzOCBTYWx0ZWRfX0xeRGIPKN058
+ my6mWvg5jqI+T5samiVoGNzX2+/hZthxont951VWMirHdJ3+zPoc+O7VTE4ewrjZoulDkDX1KgQ
+ EKkNlEq/whcoEtC5SrzxaEN0y3TgfQTS3Y/9kPZmJlW8RSEa6JYjMqZV5isT9axwRZ4aURrR+F9
+ j9U3/HZsxTLxE7omu+t/LzhPhN6gJj2TpRjKEVb1VxDq7gMPDynW9Y0s4/MCzEWWm51jjS50MIS
+ IM9vYRy6shyu7ncb8zwdfecWvvT9J1ZjBRUlQjRVR9cyOnul+zemVrGk/eIUX4QsA8PlDKgBscO
+ EnGEdisr0hLK/5FQthNKRGpDQyBEBh6QJYYmfUO+0885WKDOlTPC8nrhDLcsPG5e280SvLqug6b
+ 9dtwW01Ig8w0UmkEHepVDYIdJue7IdrsuwGrybtV5fIprr6Afw8+RAShcRgnW/LOOhEHZi1p6uG
+ kfYSUjgetgx9h/PTOYA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-28_03,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015 phishscore=0
+ impostorscore=0 malwarescore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610280038
 
-On Mon, 26 Oct 2026 12:29:26 +0100, Taniya Das
-<taniya.das@oss.qualcomm.com> said:
-> The Peripheral Web PDM block on several Qualcomm SoCs contains a GP_MN
-> fractional divider that generates a clock output from the PDM XO4 clock.
-> The output can be routed to a dedicated GPIO pin for use as an external
-> reference clock.
->
-> This series adds the binding, a runtime PM-aware GP_MN divider driver,
-> and the GCC, pinctrl, and DT support needed on QCS615, QCS8300, SA8775P,
-> and SC7280. GP_MN controller nodes are disabled by default so boards must
-> explicitly opt in before the output pin is muxed.
->
-> Changes in v2:
-> - Add SoC-specific compatible strings with a qcom,sc7280-gp-mnd
->   fallback, map the 0x1000-byte register region, and document the PDM
->   source rates. [#Konrad Dybcio]
-> - Use runtime PM and pm_clk for AHB register-access clock management,
->   rely on the pinctrl core's default-state selection, and generate the
->   output-clock name. [#Dmitry Baryshkov]
-> - Enforce valid GP_MN duty-cycle constraints and report high-phase duty
->   cycles through the common clock framework.
-> - Add and register configurable PDM XO4 divider clocks and their public
->   IDs for all supported SoCs, allowing the source rate to be configured.
-> - Split the pinctrl changes by SoC, retain Reviewed-by tags, and combine
->   each SoC's pin state and controller node into one DTS patch.
->   [#Konrad Dybcio]
-> - Correct the SC7280 output to gpio60 and disable every GP_MN controller
->   node by default. Add QCS615 support as well. [#Luca Weiss]
-> - Link[v1]: https://lore.kernel.org/lkml/20260602-pdm_clk_gp_mnd_v1-v1-0-1522662b6c53@oss.qualcomm.com/
->
-> The series is organized as follows:
->
->   1. DT binding for the PDM GP_MN divider
->   2. GCC PDM XO4 divider clock IDs
->   3. PDM GP_MN divider driver
->   4. GCC PDM XO4 divider clocks
->   5-8. GP_MN pin mux support for QCS8300, SA8775P, SC7280, and QCS615
->   9-12. GP_MN DT support for QCS8300, SA8775P, SC7280, and QCS615
->
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
 
-What is the merging strategy?
+On Tue, 27 Oct 2026 06:02:21 +0000, Orgad Shaneh wrote:
+> The driver registers its chip with base 0, which gpiolib reports on
+> every boot:
+> 
+>   gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
+> 
+> Nothing needs the fixed numbers. The only in-tree consumers, the
+> gpio-leds nodes of the D-Link DSR boards, reference the controller by
+> phandle; the GPIO interrupts go through the octeon-irq domain; and no
+> board code uses the legacy integer API. Let gpiolib pick the base. Only
+> the chip's number in the deprecated sysfs interface changes.
+> 
+> [...]
 
-Bart
+Applied, thanks!
+
+[1/1] gpio: octeon: allocate the GPIO base dynamically
+      https://git.kernel.org/brgl/c/dd2ad62e78990087bb62864ae76e7c2251fe5b90
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
