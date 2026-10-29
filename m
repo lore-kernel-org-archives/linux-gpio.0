@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793267647;
-	b=moACymeOL/zroMZ1OtXUMbX68JMfV+NbeZNwjovYx9G7otwDCGCdv10Dz5Ref2DASKcr
-	 L+OHNGrMGs1+H8CMYU2tg40FpZ1IqY90iz16h9OOglxMYrWdrWEocLideV7ACSSV1LHHM
-	 MtrBeEVjh9bz334T1Q6HRxRd/8+843X7JAAo60z7UMijX7es7hkf/pVmX3wzdT0bV6B6z
-	 eDnxEUX3hO3l3G8gF3WMLyakwtmfaissL/jLI6rUhj+C8Ky0sgqYLJyj8bnpmnpukANuu
-	 ieB2+rF1iXBtBddJsB4GYPprvyZWq86MBmk866YK1RfG17zqfm4gJj9V24CPPOeSiUA==
+	t=1793267904;
+	b=hT8D0XNCWtoW5dARP67OtqEZSua4c9QAnGVEifbtc4gnssAwKHjcqC4nPdg85zA+yDnf
+	 tOnl0jskW03M/LnXq8OLXcBG2FVadZHp7EHkiHpd7u+7+msG4GVwHQzccbRmOfJXx2/kO
+	 dP8BQqD1WiZiCvDP6RBOp7LVjMxlK33U/cvgNrbnEkisxe9RNsfurrZWNViwkoU9qEaDI
+	 mWcbMI25ES1QaKYjfDjPe+SNmTJ2GFdnFv2bs5WNPu6xdUo3R47/rhAswv86cyWp//hot
+	 KJWXnygzalS0PDuOx/fyxCoeX7LVvPgj8z46wHIR6biOoCmDOMbVyNGZV0oDcvgrMUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793267647;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=OkdQNpqFK74AqsoSuQLpJuuXQ3xGNg7YSqinWqkNxfE=;
-	b=zC6yHavaGbPjKcxVorRjtZPK0N1Lzq6sojd8Z5E85pz8vMfaAozyXMkxmI5UN1yuutSh
-	 TWhLCuEuDJXWa+vXaaB1itJP7TUX8rEYfQshZfZWqV4ZQFfebOoDNXAQM7yz+tBukBAr9
-	 ZruN+MmtWzrwCEP+r7smLlF/Zb6FjN0GGMi1CbE6cXlcCSKdQpOkF483zWBcVlF/WzlXj
-	 R0xhd9Vf1WRUKF1YixmKF0Gj6bXR0yoFW5Zww6ls6HN4KyHJ27AmutlQuseyoLck/nrsC
-	 6412sPS2OznBjfNfM6dm1HWNPaYx6VfZFZ6nj3FsyP3og7qFKa1fZGJk5Z1aWgFhrgA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793267904;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Ehad/V6Xbh5JId3uEy79I5nAeDepddQdYNwUbSw35YQ=;
+	b=aUU+lRagF5XHwvPv6VujsbzP0kz1Fy5Yqr2akCVqUl4A/Zl1TTYj8zBlyMAxxwxawT76
+	 BxMgVtPil8JuKR1nPkG0XkvAotjlQQNFOpGD05JxU2tJdvfVrmQbYSrWsqykQZWXo4jJX
+	 IVoCqhvlvVqi3Kr+9+tVVSFxb0RQ+feYtRGQVW1CEow0gesnb5/346f1kKQUsNJ1AwsMF
+	 uR+8qwQ8mxtesudHzYEZMeMphZofA7wU9mCDcQHmxDsc4BseO/HcRUzjjzJokCdBTkj3F
+	 P2LUul6VKJpceePhm/jJjzGAMHgm8b4XQcFAKgSkQRFmlQtsjjTlC0oQ7S/lZr0yd0g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mjWT5VNg;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AOqBrbBi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9904606A327
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 09:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D667606A31C;
+	Thu, 29 Oct 2026 09:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mjWT5VNg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C60451F01828
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 09:54:06 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AOqBrbBi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8444B1F01828;
+	Thu, 29 Oct 2026 09:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793267646;
-	bh=OkdQNpqFK74AqsoSuQLpJuuXQ3xGNg7YSqinWqkNxfE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=mjWT5VNgiPaSJ5lL6v8vJA2D+QPpmDhhZd8khOPZFpoOJ/KeeS12tYhqe2hEv89F6
-	 JeYt3W8rZyGB/xt6Pe13LkTEPla1OQ94VbCVSdH2/k/CiJB/2BDXhCMdiDWFFtVGH5
-	 wR9cWMK+hviMsXb3g9r5d1vJ9OW4IdDGgksEHkh7NTnq0hme4PYtgyInpDhaYvVd0F
-	 qwm38sWdsAoy5DIRnVEIrbEMnGSf6BlEQJ9HgOGZnJZXih0vK/BpW3ZpAgf/ZHJaUR
-	 wyjzvLFnV4Rv+p3Z5CD9sfRSnkriRPAFl8krLF2ukbTcYIj6s3czLzZ1m0c3APw1PU
-	 8BnS+BjDabx3g==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5be3ea5a7adso1959353e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 02:54:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByj7+lx9KvustIsW1jizXVj6HKUpzb/3fB8UkjaAXNjsIGA5CJ0yujrdQn+ZlCf1/rj1XsUvW5io1pv@vger.kernel.org
-X-Gm-Message-State: AFq9FYLs6Uxsoc8ddnz79SFkTov+MlHpQhwXWxZZPRT1Mi/jVj4CJgNs
-	RVzC62GGksMCL6R8nWOHwWxPUNPs1FoU8IAU72QtPPX+MxnWWVgJjl3+EoRWr+8kSp+ohBQt3yN
-	0ji4/b1ITVCTCWylEEyTP2qVcHc3xMMk=
-X-Received: by 2002:a05:6512:39c5:b0:5bf:cabe:23b6 with SMTP id
- 2adb3069b0e04-5bfcad8adb2mr1930089e87.33.1793267642415; Thu, 29 Oct 2026
- 02:54:02 -0700 (PDT)
+	s=k20260515; t=1793267903;
+	bh=Ehad/V6Xbh5JId3uEy79I5nAeDepddQdYNwUbSw35YQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=AOqBrbBi1Cm+XWBBqmePq72TskRADhH1xnlA2zy1SJwy2BOYe828/clupJ1f81wDG
+	 DHWTpp3NJR5LSslc1nXspp/VraMBsqaycO3ZysDz3pw3vhcCUx9cJAUlojcmujKDew
+	 6pqnYy2uQj00mtvaNYEH4Fsj0OyjIhngGsBsDGGH8e+nbrN83AxCnwPvqGz2krozw2
+	 ZmSq97eDnlQADoY6Yd/d2372rRVkkDVgmeXLzln8eTvrZe/pJsEI1eHFTynMBXU6a0
+	 FTE1amNS+rSJv5sR43XLMbR9t5jxSNSULfHMThivHt+cEwQrNtZDmjrrwI7mqjgVSg
+	 jb7Zmq9KEzLEQ==
+Message-ID: <sashiko-outbox-189075@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sc8280xp: add Radxa Dragon Q8B
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Xilin Wu" <sophon@radxa.com>
+Cc: linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261029-q8b-dts-v3-3-655696dfec45@radxa.com>
+References: <20261029-q8b-dts-v3-0-655696dfec45@radxa.com>
+ <20261029-q8b-dts-v3-3-655696dfec45@radxa.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Oct 2026 09:58:23 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,246 +59,73 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn> <20261027-a210-scmi-v1-7-74d58ce85bd8@iscas.ac.cn>
-In-Reply-To: <20261027-a210-scmi-v1-7-74d58ce85bd8@iscas.ac.cn>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 29 Oct 2026 10:53:50 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkwe+Vby4swUC85buxPMjm0=ZVZXY2+UfeMStemfh3fGA@mail.gmail.com>
-X-Gm-Features: AclHuK-EdA1h9oU-ad6g7JzfaGvAyb9JuROsLdwvHKxOHcdM6tjvaL_X7Nax-1E
-Message-ID: <CAD++jLkwe+Vby4swUC85buxPMjm0=ZVZXY2+UfeMStemfh3fGA@mail.gmail.com>
-Subject: Re: [PATCH RFC 07/18] pinctrl: zhihe: add A210 support
-To: gaohan@iscas.ac.cn
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Samuel Holland <samuel.holland@sifive.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Han,
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] arm64: dts: qcom: missing pinctrl properties on uart2 in dragon-=
+q8b
+--
 
-thanks for your patch!
+commit 806aef47629e5a5fdf23480747e829d1b21764d6
+Author: Xilin Wu <sophon@radxa.com>
 
-On Tue, Oct 27, 2026 at 4:38=E2=80=AFPM Han Gao via B4 Relay
-<devnull+gaohan.iscas.ac.cn@kernel.org> wrote:
+arm64: dts: qcom: sc8280xp: add Radxa Dragon Q8B
 
->  drivers/pinctrl/pinctrl-a210.c | 1212 ++++++++++++++++++++++++++++++++++=
-++++++
+This commit adds initial device tree support for the Radxa Dragon Q8B
+single-board computer based on the Qualcomm Snapdragon 8cx Gen 3 SC8280XP
+platform.
 
-Can you please name this pinctrl-zhihe-a210.c
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8b.dts b/arc=
+h/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8b.dts
+> new file mode 100644
+> index 0000000000000..fd1e29ce83b27
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8b.dts
+> @@ -0,0 +1,2049 @@
 
-> +config PINCTRL_A210
+[ ... ]
 
-And this symbol PINCTRL_ZHIHE_A210
-
-> +       tristate "Pinctrl driver for the ZhiHe A210 SoC"
-> +       depends on 64BIT
-
-Why?
-
-> +       depends on OF && (ARCH_ZHIHE || COMPILE_TEST)
-
-Isn't this enough of constraints?
-
-> +       select GENERIC_PINMUX_FUNCTIONS
-> +       select GENERIC_PINCONF
-> +       select PINMUX
-
-Nice use of generic helpers!
-
-> +struct a210_pinctrl;
-
-Why this forward declaration? since...
-
-> +enum a210_pinctrl_type {
-> +       A210_PADCTRL_AON,
-> +       A210_PADCTRL_0,
-> +       A210_PADCTRL_1,
-> +       A210_PADCTRL_2,
-> +};
+> +/* E-key Bluetooth */
+> +&uart2 {
+> +	uart-has-rtscts;
+> +	status =3D "okay";
 > +
-> +struct a210_pad_group {
-> +       const char *name;
-> +       const struct pinctrl_pin_desc *pins;
-> +       unsigned int npins;
-> +       unsigned int offset_mux;
-> +       unsigned int mask_mux;
-> +       unsigned int offset_cfg;
-> +       unsigned int mask_cfg;
-> +       enum a210_pinctrl_type type;
+> +	port {
+> +		uart2_ep: endpoint {
+> +			remote-endpoint =3D <&wlan_uart_ep>;
+> +		};
+> +	};
 > +};
 
-... it anyway isn't used before we get here.
+[Severity: Medium]
+Should the &uart2 node in arch/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8=
+b.dts
+include pinctrl-0 and pinctrl-names properties?
 
-> +struct a210_pinctrl {
-> +       struct pinctrl_desc desc;
-> +       raw_spinlock_t lock; /* serialize register access */
-> +       void __iomem *base;
-> +       struct clk *clk;
-> +       bool clk_enabled;
-> +       unsigned int offset_mux;
-> +       unsigned int mask_mux;
-> +       unsigned int offset_cfg;
-> +       unsigned int mask_cfg;
-> +       enum a210_pinctrl_type type;
-> +       struct pinctrl_dev *pctl;
-> +#ifdef CONFIG_PM_SLEEP
-> +       struct a210_register_state cfg_state[A210_MAX_CFG_REGS];
-> +       struct a210_register_state mux_state[A210_MAX_MUX_REGS];
-> +#endif
-> +};
-> +
-> +static void __iomem *a210_padcfg(struct a210_pinctrl *pp, unsigned int p=
-in)
-> +{
-> +       int width =3D hweight32(pp->mask_cfg);
-> +
-> +       return pp->base + pp->offset_cfg + 4 * (pin * width / 32);
+In arch/arm64/boot/dts/qcom/sc8280xp.dtsi, the base uart2: serial@988000 no=
+de
+does not define default pinctrl properties:
 
-Explain in a comment in the code exactly what is going on here, why 4*
-why /32 why hweight32 etc. People can't parse this.
+    uart2: serial@988000 {
+        compatible =3D "qcom,geni-uart";
+        reg =3D <0 0x00988000 0 0x4000>;
+        ...
+        status =3D "disabled";
+    };
 
-> +static unsigned int a210_padcfg_shift(struct a210_pinctrl *pp, unsigned =
-int pin)
-> +{
-> +       int width =3D hweight32(pp->mask_cfg);
-> +
-> +       return width * (pin & (32 / width - 1));
+Instead, the pin configuration state qup_uart2_default (for gpio121 CTS,
+gpio122 RTS, gpio123 TX, and gpio124 RX) is defined separately under &tlmm =
+in
+sc8280xp.dtsi for board device trees to reference.
 
-Dito.
+When qcom_geni_serial probes uart2 for the M.2 E-key Bluetooth interface and
+activates resources via pinctrl_bind_pins() and geni_se_resources_on() ->
+pinctrl_pm_select_default_state(), the TLMM pins for UART2 will not be muxed
+to the qup2 function or configured by Linux without:
 
-> +static void __iomem *a210_muxcfg(struct a210_pinctrl *pp, unsigned int p=
-in)
-> +{
-> +       int width =3D hweight32(pp->mask_mux);
-> +
-> +       return pp->base + pp->offset_mux + 4 * (pin * width / 32);
+    pinctrl-0 =3D <&qup_uart2_default>;
+    pinctrl-names =3D "default";
 
-Here is is fine to reference earlier explanation.
-
-
-> +static unsigned int a210_muxcfg_shift(struct a210_pinctrl *pp, unsigned =
-int pin)
-> +{
-> +       int width =3D hweight32(pp->mask_mux);
-> +
-> +       if (pp->type =3D=3D A210_PADCTRL_2)
-> +               return 0;
-> +
-> +       return width * (pin & (32 / width - 1));
-
-Here is is fine to reference earlier explanation.
-
-> +enum a210_muxtype {
-> +       A210_MUX_____,
-
-I've seen this *______ stuff in other drivers, I guess it's something
-with making things readable, just explain it to me please.
-
-> +static const struct pinctrl_pin_desc a210_group0_pins[] =3D {
-> +       A210_PAD(0, OSC_CLK_IN, ____, ____, ____, ____, ____, ____, ____,=
- ____, A210_PAD_NO_PADCFG),
-
-I guess for this to mean "no pad here for this setting" or something.
-
-> +static const u8 a210_drive_strength_in_ma[16] =3D {
-> +       1, 2, 3, 5, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 23, 25,
-> +};
-> +
-> +static int a210_drive_strength_from_ma(u32 arg)
-> +{
-> +       unsigned int i;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(a210_drive_strength_in_ma); i++)
-> +               if (arg =3D=3D a210_drive_strength_in_ma[i])
-> +                       return i;
-
-Don't you want some fuzzing here?
-
-arg <=3D a210_drive_strength_in_ma[i]? So you get 5 if you list 4.
-
-Default to 25 if > 25? Or no maybe that should indeed fail...
-
-> +static int a210_padcfg_rmw(struct a210_pinctrl *pp, unsigned int pin, u3=
-2 mask, u32 value)
-> +{
-> +       void __iomem *padcfg =3D a210_padcfg(pp, pin);
-> +       unsigned int shift =3D a210_padcfg_shift(pp, pin);
-> +       u32 tmp;
-> +
-> +       mask <<=3D shift;
-> +       value <<=3D shift;
-
-That's pretty straight forward and easy to read, thanks!
-
-> +
-> +       scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-> +               tmp =3D readl_relaxed(padcfg);
-> +               tmp =3D (tmp & ~mask) | value;
-> +               writel_relaxed(tmp, padcfg);
-> +#ifdef CONFIG_PM_SLEEP
-> +               pp->cfg_state[pin * hweight32(pp->mask_cfg) / 32].mask |=
-=3D mask;
-
-What's going on here and why? Add a comment explaining it.
-
-> +static int a210_sdio_pinconf_get(struct a210_pinctrl *pp, unsigned int p=
-in,
-> +                                unsigned long *config)
-> +{
-> +       enum pin_config_param param =3D pinconf_to_config_param(*config);
-> +       u32 value =3D readl_relaxed(a210_padcfg(pp, pin)) & A210_SDIO_BIA=
-S;
-> +
-> +       switch (param) {
-> +       case PIN_CONFIG_BIAS_DISABLE:
-> +               if (value)
-> +                       return -EINVAL;
-> +               break;
-> +       case PIN_CONFIG_BIAS_PULL_UP:
-> +               if (value !=3D A210_SDIO_PULL_UP)
-> +                       return -EINVAL;
-> +               break;
-> +       case PIN_CONFIG_BIAS_PULL_DOWN:
-> +               if (value !=3D A210_SDIO_PULL_DOWN)
-> +                       return -EINVAL;
-> +               break;
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
-> +
-> +       *config =3D pinconf_to_config_packed(param, param !=3D PIN_CONFIG=
-_BIAS_DISABLE);
-
-Explain why *config is set like this in a comment.
-
-> +static int a210_sdio_pinconf_set(struct a210_pinctrl *pp, unsigned int p=
-in,
-> +                                unsigned long *configs, unsigned int num=
-_configs)
-
-This is pretty straight forward to read though.
-
-> +static int a210_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pi=
-n, unsigned long *config)
-
-So is this.
-
-Review cut short due to time problems, will review next version!
-
-Yours,
-Linus Walleij
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-q8b-dts-v3=
+-0-655696dfec45@radxa.com?part=3D3
