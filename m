@@ -1,57 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793293958;
-	b=ZcYVtCWkhnS+8UMxK4LCZoOOo5VV27W6smDABrMw0PhVwf54luUkFFUOCFEPkOzmaV43
-	 tS/B8TK7VKIHyx5MJIdmyB9CdHVJTaCUEUv73wCInxgLffCDj0XUdlFypMwHUXwrcPn+e
-	 /Z9lW8i/C2OeXXGoa/WvqWi3Z/cSKmbrYV86n89HlCHBJZtwB9CAOYZhmhCjrgNf9jr2J
-	 cKgC9Yd49tdd1c6d0oKXKa8I6l6ldkHyy7Hkbo7W917S7V2Q2v1suRLj5cuChOxO28XdX
-	 WwXPVqvQtaD+hcGOTjMapA9gD/rmNX/baJ1tF19Tx0207VJKq8hkq6D7xtugX3L+/9w==
+	t=1793300319;
+	b=iWMCY0oQ6ZTCvWmcRv7h3ZtjguEBfEa1//ojqoH1pTOtSIzAlLz8L2pljdauHKPAqs5g
+	 S+TIQp1rtxMossWawkH6vS8n1S/chzjAJNoACYIpbqGhs04X9ZIDZRi4pm9B5Mr/EYyK+
+	 nv4ULubYZM6VENZKljuVQS4TQtZXZz2fdpSYzbvCHw03pSQcHJm8JRjoOtcT7AC1Xc+DF
+	 INqTwr6VKttcDllkn0we39u5IEIAOULax5UYr83lqO7BPejrtJoqoy1cEvdqBBVjq/0wJ
+	 fnn8/ObWNztryNtJqT5XM25lTKH8QgS4Bx+BAsr7/0ZWwepAOttv+2kO3yaBebTTNnA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793293958;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=r9fNoRxPSH9l1ZD0u4hFzdCHFO1TzmAEFYvepbGOv/4=;
-	b=zXsiztH5r5bcWSQVp71OZP136L2nLFJEC3+c7iNNkzuyqfQL8Wd23oS5qbIp8uAohSDt
-	 7gCQJIhYDW+APbXBgpgiG1ePYVLNYT62/T3an2aaBp24ZDGW6Y3Paj7PYd4n329KiCrnd
-	 CekhOYfE4KUxRutqmw/uNwkyDV0VUeQiDICXve73psPMxEdoZ9n7jicWCWYsmPkhUjcU3
-	 rOAn+FvXN+OsJspzVk2It8KquoOeW0WvUPgbgoq/XnE/aCQ5H0/osISbryQRYB7sy/sw6
-	 5U022UXQ5Fh39cyatzJInWAZjPWa8IPl/KRaJs89nFce5QPwDmlTMm2M4nRzf0GtOgw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793300319;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=XE6ycAnMXu1bQU/ooZUSiqmjYw2pSbI0uNI5n7hv+8Y=;
+	b=rwSs/UtHJQDa6E1VaV6t73+6Tlsioyvy1sMyG7DWKaI2SEuNVxU5yumZQdhfP8/u6Olu
+	 IuBwHvXFVfnFX8aOAOIVMzEO37p3tQZF9CPnQdx33g9KQGwz8e7thiC3Lyf/EbYA+q2Zp
+	 YruTbJLE7Um1RxZ18Bi1DDFpHvnurd0PGOp1q1fvmpTF2HYo1UF/yHvxVgVWIsfyIEJND
+	 uE/6gsfIwKMwq4nzvmknq1B6W5TF1Y+0bBHMmz3vVM9OtpEz0eMqW7B/jFaD/V61keEeX
+	 oz2R391Ma5J2sITB9QnpcxKdkHu+U9gYXLN5lcS5Yvlax4o7/uXbA3aNyi5V7Z2fSMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="BI/f93HV";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SHGEAkqW;
+	arc=none smtp.remote-ip=74.125.82.182
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCBC606A31C
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 17:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3CF606A333
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 18:58:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DF3CF606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BI/f93HV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D8EF1F031E9;
-	Thu, 29 Oct 2026 17:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793293958;
-	bh=r9fNoRxPSH9l1ZD0u4hFzdCHFO1TzmAEFYvepbGOv/4=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=BI/f93HV7r+aEoDh491lwbw6tLO6wPwbqEpu98qZ3w/wyqrqjg9h30YQ721KNXX0I
-	 Px9GjF6CSnmnHepERw8SqZKcfS8UxHL7onrzohTAz7Oo0sNY+6qdtwZCm6ZfTspwFD
-	 sR6O+pTxLZ3B+sqCo+dFaHelpZuJrMQJDvzgJILOsI0I57j53hSGAaMAZ7o6L+7EB5
-	 EROCxOrNH/3QLlAoayuzzFy9QIx8PoJz1FrRcRLhgOPVMVJ2moHpWpY2xk82FTcd3Q
-	 EqjU51I/ZlF/srspYpYql3XJa4E/RX9gHf+FGDCwaJsDU0b3+5NgmsTfkeyb/WwiX1
-	 8xDFu13cma73g==
-Message-ID: <sashiko-outbox-189723@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v8 5/5] gpio: shared: convert to using software nodes
- for GPIO shared proxy lookup
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261029-gpio-shared-fwnode-lookup-v8-5-d15d75cd560f@oss.qualcomm.com>
-References: <20261029-gpio-shared-fwnode-lookup-v8-0-d15d75cd560f@oss.qualcomm.com>
- <20261029-gpio-shared-fwnode-lookup-v8-5-d15d75cd560f@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 17:12:37 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SHGEAkqW
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-35cd4e8bdbdso3185362eec.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 11:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793300313; x=1793905113; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=XE6ycAnMXu1bQU/ooZUSiqmjYw2pSbI0uNI5n7hv+8Y=;
+        b=SHGEAkqWPsT/YfAZqG1IaYNh/Bv6h62Oq9yHdJ8L3qMsjd8lyuM6qKjkLlqT4UXNS7
+         Zf2sxePWISw+KvpcI8uv0soEzjR0e7DgqtAgGBvBNy8BkwFdwIPEuOOT/AMyMFllBvlF
+         uvZu8/0tVUifVKo8chRZuPqM4Gj61Y38pa4LAKzBrjIUZ1F+YLgDp0ccem0OPDXwGMqQ
+         6aGV6/TSroLOdjc6GQNYgpYWheQgsQaPv5aAvGr7lN5D4RkZhy23kBtQXQGNza2Kwe2e
+         4LyD3LGciVw+u0+MLIPxrr2hyk2viQfhvu/jCJaQUYi+ea0FMCROZBh1rXsr20Lhmb58
+         NPRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793300313; x=1793905113;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=XE6ycAnMXu1bQU/ooZUSiqmjYw2pSbI0uNI5n7hv+8Y=;
+        b=x/2sS9phz2Drw0+46BpME9hanKeURoMj7u3QdCyxrSnjQ0PxX2S33jpm9BKQI9cHWv
+         sV0ZNr+6+D2hBCzIoUoNb7txCPoFDm+sp431X3aKPBOGqcPPYoXyPlJB8iAwig/GpACp
+         R+v9ILKO2DNsgwtjhb8/DiFPKgmSw7/QsctTTx4HGQLZsCMUiMO6O4JxNbt13EXuwetD
+         Ef8Gh36JjdDslW8r88pFTgFIQM0q0dqnfe/LWAQFTdBd0KQQKqC7xCZZbPI6gdUYuMi0
+         r1pnZW9eqJ4v5chk+weMULtS85D8KaZIkdo9CX+2hwd97ZYQiXVjq87UUv6kNSm0SIVo
+         HUzg==
+X-Forwarded-Encrypted: i=1; AKwUvByKtxYu8dVtAQR+L+imjMJ3vJy6azLMujgQTm5Uqsi+CQ9WnScWPJ78rHcOwlXSSueo8VAAMvRP/HeX@vger.kernel.org
+X-Gm-Message-State: AFq9FYK77eXVHE6O2CSc2L8rd2CnWVDdoLPpqW8VHvEmg1Fs7/nhBYFW
+	BBzC6jVOKaPEQqLuGb+13rRJM/CHkGSIbU7HrIlg2L8HPAzkdHh/YiaL
+X-Gm-Gg: AYBFou3vSP+z2Z4ZUc09KTHYY8OkRQu3MWAbGFChbCx8o812jGAbo75Gd/+GbUYUXNr
+	RpVX/lQ00h02ig3BVHkenF733tT2jkvU273Dmt/hJud+Zw6YsWgIZ9kDIFeveu+vt3s+6HbRP3g
+	GVuoXuQO0bnlwQuTAhASFiQukICaqdSI9qc+jh7kf1UnqqcdKviPsZRSqIhNDK9thWaoIfRFCWm
+	EroJ+43PoWtZnY6xO/KzcrcivgzVWWlmmWi43eHnHK8dF10FV2TRHHCZ+f8tCkPyREevDdmekcc
+	lqoBgaoreWc21T1lNslNPO+ZSGPdYzUwG0fQPkfKuePnQm2SVOw8W2cQwEXVAK7hXTfq+FOq/A1
+	OmRhJ0JEQzK/ogObxv7/mHnBHnPDXEQeHw98V5526STYeQQfmQ5hydl4yFVliZ2oVt9rmNaANaD
+	XqkmxfmKBjre5Vw4ku39ZmcHqtqjUCD3ygbXNcbIc9AxYynx9s/hR3WQzE53G2kkTI0+c/T9lhP
+	KlVTnSAzTvn1anm20oYW+TKlCikb/6BJ6xHBPCXfByVAqzfOyydpjvBiivqOCAO+N59VJoGTgEJ
+	d+wdMRyXLjkGIVqOvlCsWbKepmowNZrqOXQ5V67wGVJ+rVCBmNpyfg2gOa5M4B3SQEfR2EfVjXt
+	h85gnT1NDnvHx111MPA==
+X-Received: by 2002:a05:701b:4589:b0:14b:cf58:ce15 with SMTP id a92af1059eb24-1a6d208add6mr7430450c88.43.1793300312786;
+        Thu, 29 Oct 2026 11:58:32 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:8310:80a5:1043:3f70])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1ac18458fa3sm603891c88.4.2026.10.29.11.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 11:58:30 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Thu, 29 Oct 2026 11:58:15 -0700
+Subject: [PATCH] gpio: sa1100: defer GPIO chip registration to
+ postcore_initcall
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,200 +91,112 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261029-sa1100-swnode-fix-v1-1-112f4d83d191@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEaX42oC/yXMywqDMBCF4VeRWTuQSYsSX6W4SHS000WUjJeC+
+ O5NdfkdOP8ByklYoSkOSLyJyhQzqCyge/s4MkqfDdbYiox1qJ7IGNQ9Tj3jIF8kejpX04ND7SH
+ /5sR5vpqv9rau4cPd8g/Bef4AD6TQWXUAAAA=
+X-Change-ID: 20261029-sa1100-swnode-fix-11499713eb7a
+To: Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+ Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-Mailer: b4 0.17-dev-e56a4
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Critical] gpio: shared: use-after-free from embedding software_node in g=
-pio_shared_proxy
-- [Critical] gpio: shared: use-after-free from premature software_node_unre=
-gister()
---
+Registering the software node and the GPIO chip for the SA-1100 GPIO
+controller during early IRQ initialization causes boot hangs on
+SA-1100 platforms because the software node subsystem has not yet
+been initialized. At that early boot stage, attempting to register
+software nodes dereferences a NULL kset pointer before console or
+driver model initialization.
 
-commit 0a2fa40980d92969568b8b100eb268910f6d88f6
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Nothing on SA-1100 platforms requests GPIO lines via gpiolib during
+early boot before initcalls run; only the GPIO IRQ controller and
+domain must be initialized during init_IRQ(). Defer registering the
+software node, assigning its firmware node, and registering the GPIO
+chip with gpiolib to postcore_initcall, running after driver and
+gpiolib device initialization and before board consumers register.
 
-gpio: shared: convert to using software nodes for GPIO shared proxy lookup
+Fixes: e4671f292ebb ("gpio: sa1100: register software node for GPIO controller")
+Cc: stable@vger.kernel.org
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/r/2a561a27-a3bf-4cac-a4dc-bfbc5c859f45@roeck-us.net
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/gpio/gpio-sa1100.c | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
-This commit replaces platform GPIO lookup tables with dummy software nodes
-assigned to shared proxy auxiliary devices so that shared GPIO descriptors
-can be looked up by firmware node even when no consumer device is present.
+diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
+index e4f3bf949b87..1916200ebbd5 100644
+--- a/drivers/gpio/gpio-sa1100.c
++++ b/drivers/gpio/gpio-sa1100.c
+@@ -8,6 +8,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
++#include <linux/printk.h>
+ #include <linux/syscore_ops.h>
+ #include <soc/sa1100/pwer.h>
+ #include <mach/hardware.h>
+@@ -322,7 +323,6 @@ static const int sa1100_gpio_irqs[] __initconst = {
+ void __init sa1100_init_gpio(void)
+ {
+ 	struct sa1100_gpio_chip *sgc = &sa1100_gpio_chip;
+-	struct gpio_chip *gc = &sgc->chip;
+ 	int i;
+ 
+ 	/* clear all GPIO edge detects */
+@@ -330,10 +330,6 @@ void __init sa1100_init_gpio(void)
+ 	writel_relaxed(0, sgc->membase + R_GRER);
+ 	writel_relaxed(-1, sgc->membase + R_GEDR);
+ 
+-	software_node_register(&sa1100_gpiochip_node);
+-	gc->fwnode = software_node_fwnode(&sa1100_gpiochip_node);
+-	gpiochip_add_data(gc, NULL);
+-
+ 	sa1100_gpio_irqdomain = irq_domain_create_simple(NULL,
+ 			28, IRQ_GPIO0,
+ 			&sa1100_gpio_irqdomain_ops, sgc);
+@@ -342,3 +338,29 @@ void __init sa1100_init_gpio(void)
+ 		irq_set_chained_handler_and_data(sa1100_gpio_irqs[i],
+ 						 sa1100_gpio_handler, sgc);
+ }
++
++static int __init sa1100_gpio_init_chip(void)
++{
++	struct gpio_chip *gc = &sa1100_gpio_chip.chip;
++	int error;
++
++	error = software_node_register(&sa1100_gpiochip_node);
++	if (error) {
++		pr_err("failed to register sa1100 gpiochip software node: %d\n",
++		       error);
++		return error;
++	}
++
++	gc->fwnode = software_node_fwnode(&sa1100_gpiochip_node);
++
++	error = gpiochip_add_data(gc, NULL);
++	if (error) {
++		pr_err("failed to add sa1100 gpiochip: %d\n", error);
++		gc->fwnode = NULL;
++		software_node_unregister(&sa1100_gpiochip_node);
++		return error;
++	}
++
++	return 0;
++}
++postcore_initcall(sa1100_gpio_init_chip);
 
-> diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
-> index c0e2a1207cccf..75529336c6cd9 100644
-> --- a/drivers/gpio/gpiolib-shared.c
-> +++ b/drivers/gpio/gpiolib-shared.c
-> @@ -27,6 +27,12 @@
->  #include "gpiolib.h"
->  #include "gpiolib-shared.h"
-> =20
-> +struct gpio_shared_proxy {
-> +	struct auxiliary_device aux;
-> +	struct software_node swnode;
-> +	struct fwnode_handle *fwnode;
-> +};
+---
+base-commit: 6d0933ae9d46674a6ea63a87e9e9ab4e662670c9
+change-id: 20261029-sa1100-swnode-fix-11499713eb7a
 
-[ ... ]
+Thanks.
 
-> @@ -304,43 +309,62 @@ static int gpio_shared_of_scan(void)
->  static void gpio_shared_proxy_dev_release(struct device *dev)
->  {
->  	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> +	struct gpio_shared_proxy *proxy =3D container_of(adev,
-> +						struct gpio_shared_proxy, aux);
-> =20
->  	ida_free(&gpio_shared_ida, adev->id);
-> -	kfree(adev);
-> +	kfree(proxy);
->  }
-> =20
->  static int gpio_shared_make_proxy_dev(struct gpio_device *gdev,
->  				      struct gpio_shared_entry *entry,
->  				      struct gpio_shared_ref *ref)
->  {
-> +	struct gpio_shared_proxy *proxy;
->  	struct auxiliary_device *adev;
-> +	struct software_node *swnode;
-> +	struct device *dev;
->  	int ret, id;
-> =20
-> -	adev =3D kzalloc_obj(*adev);
-> -	if (!adev)
-> +	proxy =3D kzalloc_obj(*proxy);
-> +	if (!proxy)
->  		return -ENOMEM;
-> =20
-> +	adev =3D &proxy->aux;
-> +	swnode =3D &proxy->swnode;
-> +
->  	id =3D ida_alloc(&gpio_shared_ida, GFP_KERNEL);
->  	if (id < 0) {
-> -		kfree(adev);
-> -		return id;
-> +		ret =3D id;
-> +		goto err_free_proxy;
->  	}
-> =20
-> +	ret =3D software_node_register(swnode);
-> +	if (ret)
-> +		goto err_free_ida;
+-- 
+Dmitry
 
-[Severity: Critical]
-Does embedding struct software_node inside struct gpio_shared_proxy and
-registering it with software_node_register() introduce a use-after-free
-regression when the proxy device is released?
-
-In drivers/base/swnode.c, software_node_register() -> swnode_register()
-creates a separately reference-counted struct swnode kobject on
-swnode_kset->list with swnode->allocated =3D 0 and stores the raw pointer
-swnode->node =3D &proxy->swnode:
-
-drivers/base/swnode.c:swnode_register() {
-	...
-	swnode->node =3D node;
-	swnode->parent =3D parent;
-	swnode->allocated =3D allocated;
-	swnode->kobj.kset =3D swnode_kset;
-	...
-}
-
-Because struct swnode does not hold a reference to proxy->aux.dev, when
-gpio_shared_remove_proxy_dev() or the auxiliary_device_add() error path in
-gpio_shared_make_proxy_dev() calls auxiliary_device_uninit(&proxy->aux),
-put_device(&proxy->aux.dev) triggers gpio_shared_proxy_dev_release() and
-immediately executes kfree(proxy).
-
-If swnode->kobj outlives proxy->aux.dev (for example, due to an active
-fwnode_handle_get() reference, an open sysfs attribute under
-/sys/kernel/software_nodes/, or delayed kobject release), swnode->node
-becomes a dangling pointer into the freed proxy slab while swnode remains
-linked in swnode_kset->list. Subsequent calls to
-software_node_to_swnode(), software_node_find_by_name(),
-software_node_register(), to_software_node(), or fwnode property accessors
-will then dereference freed memory, and a new struct gpio_shared_proxy
-allocated at the same address can fail software_node_register() with
--EEXIST.
-
-Would using fwnode_create_software_node(NULL, NULL) and
-fwnode_remove_software_node() (which sets swnode->allocated =3D 1 so the
-software_node is freed in software_node_release() when swnode->kobj reaches
-zero references), or matching the proxy gpio_device directly via
-gdev->dev.parent =3D=3D &ref->proxy->aux.dev, avoid tying the software_node
-backing memory to the auxiliary_device release callback?
-
-[ ... ]
-
-> @@ -515,18 +534,27 @@ int gpio_shared_add_proxy_lookup(struct device *con=
-sumer, struct fwnode_handle *
->  static void gpio_shared_remove_proxy_dev(struct gpio_shared_ref *ref)
->  {
-> -	struct auxiliary_device *proxy;
-> +	struct gpio_shared_proxy *proxy;
-> =20
->  	scoped_guard(mutex, &ref->lock) {
-> -		proxy =3D ref->proxy_dev;
-> -		ref->proxy_dev =3D NULL;
-> +		proxy =3D ref->proxy;
-> +		ref->proxy =3D NULL;
-> +		software_node_unregister(&proxy->swnode);
->  	}
-> =20
-> -	auxiliary_device_delete(proxy);
-> -	auxiliary_device_uninit(proxy);
-> +	auxiliary_device_delete(&proxy->aux);
-> +	auxiliary_device_uninit(&proxy->aux);
->  }
-
-[Severity: Critical]
-Can calling software_node_unregister(&proxy->swnode) before
-auxiliary_device_delete(&proxy->aux) cause a use-after-free in
-software_node_notify_remove()?
-
-In gpio_shared_make_proxy_dev(), software_node_register() creates the
-struct swnode with an initial kref of 1 and attaches &swnode->fwnode as the
-primary fwnode of proxy->aux.dev via device_set_node(). When
-auxiliary_device_add() calls device_add(&adev->dev), software_node_notify()
-increments the swnode kref to 2, and when the gpio-shared-proxy driver binds
-and registers its child gpio_device (which inherits gc->parent->fwnode in
-gpiochip_add_data_with_key()), software_node_notify(&gdev->dev) increments
-the swnode kref to 3.
-
-In gpio_shared_remove_proxy_dev(), software_node_unregister(&proxy->swnode)
-is called while both devices are still registered, dropping the initial
-creation reference first (from 3 to 2, or from 2 to 1 if the driver was not
-bound).
-
-When auxiliary_device_delete(&proxy->aux) then calls
-device_del(&proxy->aux.dev):
-
-1. bus_remove_device() unbinds gpio-shared-proxy and deletes gdev->dev,
-   where software_node_notify_remove(&gdev->dev) drops the swnode kref from
-   2 to 1.
-
-2. device_platform_notify_remove(&proxy->aux.dev) calls
-   software_node_notify_remove(&proxy->aux.dev), which drops the final
-   reference from 1 to 0 in swnode_put(swnode), freeing struct swnode via
-   software_node_release(), and then immediately reads swnode->managed from
-   the freed struct swnode:
-
-drivers/base/swnode.c:software_node_notify_remove() {
-	...
-	swnode_put(swnode);
-
-	if (swnode->managed) {
-		set_secondary_fwnode(dev, NULL);
-		swnode_put(swnode);
-	}
-}
-
-In addition, because device_del() does not clear dev->fwnode, both
-proxy->aux.dev.fwnode and gdev->dev.fwnode remain dangling pointers to the
-freed struct swnode for any remaining lifetime of those struct device
-instances (such as when a consumer still holds a gpio_desc or /dev/gpiochipN
-is open).
-
-Should the software node only be unregistered after the devices using it
-have been deleted or released?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-gpio-share=
-d-fwnode-lookup-v8-0-d15d75cd560f@oss.qualcomm.com?part=3D5
