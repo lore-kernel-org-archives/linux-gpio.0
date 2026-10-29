@@ -1,96 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793270193;
-	b=13OWnwp0RGeOiLV9YyAJan88047L+RVrdz0Iqntq5x1LNtCEN4EjrPICzq0/U3xP2kyK
-	 UsVr1w3smendCYLktdl4qKKOJrH7tqR4zXHP8sSU8ZVGP99UE9yyNLo9wGXjv+PnCePdc
-	 owcp7xzZPehX6oDpehyXoIP0sQhzclHsdIdgrKnP+JiF1aNivubc+mLwmItpXr8Zkt8Jm
-	 4xpGjgvuvn4wBiPdaK76SOEe6huF63/TF9QFLgy00+J4FC61/G97w7N0vTdsL04gxmfsj
-	 CMAZsslmlc/yW/8yZ+WUR8Nqk2GYRNgKB8vCje2993OtNasU6+BR2FEfxNgcIfYDyGw==
+	t=1793270657;
+	b=asVuVjvmwh1e5wymuvOiitkGMdKinaJJmoYn6jR5t2M/jR1KdRe4t9j+T3X2uB1JSOas
+	 myPPh+4tK3+26/iz33UZRBniftPI8gvXMLIzPiQWJJserjIwHYRVIiliBKlChQYbJEFkD
+	 eIRqb1SIu1dQE75sP+qNHhFCc2C6eS3hupzo5Ubh1hD5mtSi1MuITHFUWVT9nqhPXU+Kl
+	 DHSeB+9anAN2DHJhq1EbRHk5pzFn1LqD9YaWUboU3AXSnydWuE0lKH1TkHO4/fX/K+pjl
+	 e1oXj/+EXDPnKfwlgC6TxvtOLmTnVQMZk8i8ItQDpiIKhkxERUElmhcENTnuctY0PQA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793270193;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=jehMkVEgMGBUzExRW4jLTeS4kpPNr3py8r2FnDt6bfI=;
-	b=A5zb40YRpHKi9ROQE3lF+zo5C57Cs5sbF6/85WoZ9QYR2HMMW9ha6qrxNHlNsGamcm18
-	 c1+FRmbCySIv3tEXMvCxpMRaY+/sbU0eogvA51GGKjkHu7iAHHSGSLcVzIOAZQUNSSpLQ
-	 loRt4ZvwAI+PowMjw1rUmWPZXk3QWF64UQ1vuVaNLkJHt/n3AlqTnJlhFLuNKw+DoUw8e
-	 0371gyD0OX7cqe4AOn2bS1A0ljyni2NIgOajOK2XSi67eiZPC80Gb+dMwDPXhwaeSqcny
-	 llUvqlsl9PtFfLB7jbMBQCRtbSvrK2DLVZgxLIjGPFoESOuCdLuc8LU8aTi6VCUhMNg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793270657;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=+/WwjKbZcBdnKdvk2yMh2fCuGiIiefEl1kls9qfi+Ss=;
+	b=wL43v264OrGj6te2lZcmqSgZwU5t8qj1swj+1xOFImuTgnu06+RXEwVBF7xayIuSFnRf
+	 kYYHg59pSKyFeXGzcuu7xsfIIiPqXGjES3YtJjJmjZXZ2EhXb6m7kl4HobMJ+tR4sS/2w
+	 L8HKnEDTAsZDzhbTFZ9X7jtlp+sSt2QXKq/EwDUNJpprz+DQtSoZ3+vm+CxRpwZ+ZB8LH
+	 5UDIcKQUOM/V0wLtixDhB8QFlubZI0GcJBl0pyF80AdZL3qiRwHn2FMwQo8dgUMa8rlRO
+	 q4lIrEMr0wUVWO6PKuPf+3VzQbhVoUEO30TUhKPVJ7O6w/ff5LMj7bqschzskvsxhmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gd4GPgsj;
-	arc=none smtp.remote-ip=209.85.221.48
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JsZjxksa;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB839606A31E
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB839606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E9D606A325;
+	Thu, 29 Oct 2026 10:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gd4GPgsj
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48e20ed3b9dso1515382f8f.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 03:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793270191; x=1793874991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jehMkVEgMGBUzExRW4jLTeS4kpPNr3py8r2FnDt6bfI=;
-        b=gd4GPgsjVo6GcYklyr1/n1T+RIm/k3Kyr0LN0pHHmi0WpE+3LYFksPgqRfLZhxpWO8
-         rTEQYvkf30gK2Jc+/VGp6ld4qZD8LMdn6EvRJMwNI6DswMMb5bRJ2fs1Zk1rEQM5CK+m
-         3EshKbyw2XIgoDPG0+ldJGles3WBcJP2sZpWBkTsJZWnvwseD9CKkN1sE7waoSOPhZK4
-         5BSUusbSKU3UIxWNCEkHPn76dxUwcvsa4/yCRj0YRxxrYSns18l+eQxWh6xDts8bLhK1
-         HNK7rckLaQfqeHOgye/wqpFNdh23bS5dOk/EbYM7qonlCOq02rMf6bNh16lMaca32bKY
-         Cgwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793270191; x=1793874991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jehMkVEgMGBUzExRW4jLTeS4kpPNr3py8r2FnDt6bfI=;
-        b=n3fN8719aDRiSLRf8WpIobJtU596wvQv6vMGriiyzk5Fb5Q4IP3/r3pqXXHOb7WDJR
-         gXdqiC/5xn8fWUm/ywASu0F98xb63ZSx6lTqDWIPgnYfcgbkWBZfUJjoZWknchkr/zJg
-         ZPsaEjQEoxVhPjqLMDchgxDmS6Zr+hoYv3j8n/DUGAejmxQaCqWi6kTtUzytkRCJh1DL
-         sjg/6wYLIAeSippwBE0/5HMxM/KRuldhLLdoHT9wh6Xqys5+VuJKCsKMGzsZizZ/2DSE
-         yjFlbh9bw5ARWOWORNly44SVS1sXqHTuEfEuUNpvICK8ZuTD9mYM1cMQTSbVPG9x1YbK
-         5DQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwfFgeIwRUYjO6AgAiHMci60VHA6yeY1KnUOQeUXnLMfRTCPTNlPpIPzqE1w7JG1rAzfSgHU8geJZHg@vger.kernel.org
-X-Gm-Message-State: AFq9FYJPhKYk5i1VyUR+CRKnfTSeBOtgd1e4V4o+GVCF7GGr47wtvdvk
-	E+kMbJ/DLmvlbnT27m8dcURxN8lX2CLXtudh5MOah/HvhAtr99c6Y5UZ
-X-Gm-Gg: AYBFou2Bg9U77cx9g05i5BhGabq6Y+JNh13Yhg/Pr0YSn9ojRsGbdqUBSpg95vE73uP
-	VWbak3YoA6SPcxsxPmTXL2VfnYwPmj1xNDwP+iYZVmzzBIUHDlZ//43GffV9IA8swmgP99Zfjv/
-	VZNtffzQ+U8MQfGCaTr+CM1xGkJdt0Q3QUKdDjbDGWWe8e+FYIkCwHvwTiWyTWwcNN3V2UqH8Sb
-	Lf6Co6HUXSit1zQfR571qaMjqPxWVRAmVQNt1IWla3oSg9CjNe6AJ0nnp0tNXmFYPbG040d7HEv
-	TNzNlls0Bn5OgJePrEvNXenf6A25PCnfMyjFv8DCzNtQLY9EXnuGTE0d9QgUyGBNGvKZpclU6s7
-	QyTq3bKC+E7SJVLnBvnBm5vWNyEIcg8+m14rAc+J+MQouxB+oeDpHw87+AwNNpucOc5WdTxkuJC
-	NFCx3h037f3j2P9mGrmyMSnIXWc9mFnNGml1JFQlGmK67lnKI9vhzcPIyCKi7zz/0U7mwRfz/7F
-	uGUjTYuFcu1sqoFUu3R+lhaEi2I7WrzzjQrcYfo9UYSX0koh2Co7b0wXvB1B24RSnCjF3mb8piF
-	0OBlTtmj5kHJnCKup6CwwORndRVfGpt0vOraHyBu7v0Z9uY5OT5KtkBggA==
-X-Received: by 2002:adf:e283:0:b0:48e:1299:c00f with SMTP id ffacd0b85a97d-48e5d288c04mr9053525f8f.3.1793270190865;
-        Thu, 29 Oct 2026 03:36:30 -0700 (PDT)
-Received: from LAPTOP-AVI.lan ([2a06:c701:4778:c500:4cef:6e83:1a47:83fa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecde7easm33914037f8f.52.2026.10.29.03.36.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 03:36:30 -0700 (PDT)
-From: Avi Weiss <thnkslprpt@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-	Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Avi Weiss <thnkslprpt@gmail.com>
-Subject: [PATCH] gpio: omap: Propagate runtime PM failures in probe and request
-Date: Thu, 29 Oct 2026 12:36:26 +0200
-Message-ID: <20261029103626.1527919-2-thnkslprpt@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JsZjxksa
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DC11F031E0;
+	Thu, 29 Oct 2026 10:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793270657;
+	bh=+/WwjKbZcBdnKdvk2yMh2fCuGiIiefEl1kls9qfi+Ss=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=JsZjxksauwKD/Zbdj/1Z1P36BC5OSO0nr1Hi38qx9u2taRfIFuhpY5LP53DpKfI2g
+	 7+FEf4A4yuPCGzMaqNu8C2Wmo/xy6bhcn3CbPuJnJA32vFybvyuUWX3selj9ZZ/jcN
+	 WeSQJn3rhuCyqTx5q+lZjleH8sFR50WBV+togjaTQdq3XhEcMrgp/qjS4fELEJEBeY
+	 BRnBsCS3XOTWJTOXQf4GCQ7pKXMdOS8aeR4lkELO1vgfyWkchpjKwxIQD0WjvXSIda
+	 5yOFk6mq211dQgnScZ/aoNhevnqsDpF/RP6+YIXfqXcPpjBnLf1IJ5RIn7YqfD3cpL
+	 wtdlSE3hdBLqQ==
+Message-ID: <sashiko-outbox-189146@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 3/4] arm64: dts: qcom: sc8280xp: add Radxa Dragon Q8B
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Xilin Wu" <sophon@radxa.com>
+Cc: linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261029-q8b-dts-v4-3-e8e7438f5545@radxa.com>
+References: <20261029-q8b-dts-v4-0-e8e7438f5545@radxa.com>
+ <20261029-q8b-dts-v4-3-e8e7438f5545@radxa.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Oct 2026 10:44:16 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,75 +59,189 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-pm_runtime_get_sync() can fail when the OMAP PM domain cannot
-resume a GPIO controller, but omap_gpio_probe() and
-omap_gpio_request() ignore its return value.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] arm64: dts: qcom: unpopulated ADC7_AMUX_THM5 channel breaks adp1=
+2v_voltage
+- [Medium] arm64: dts: qcom: invalid trip2 in pmc8280c-thermal breaks CPU t=
+hrottling
+--
 
-Consequently, probe can register a GPIO controller despite a failed
-resume, while a GPIO request can report success and modify GPIO
-state even though runtime-PM acquisition failed.
+commit 1587f072e6febbe214d258d0ce37a60770079813
+Author: Xilin Wu <sophon@radxa.com>
 
-Use pm_runtime_resume_and_get() in both paths and propagate
-resume errors. On probe failure, disable runtime PM and unprepare
-the debounce clock when applicable.
+arm64: dts: qcom: sc8280xp: add Radxa Dragon Q8B
 
-Reproduced both failures on QEMU N800 by injecting -EIO from the
-OMAP PM-domain resume callback. The original driver continues
-probe and accepts the GPIO request - while the patched driver
-rejects both operations with -EIO. Normal GPIO controller
-registration continues to work without fault injection.
+This commit adds initial device tree support for the Radxa Dragon Q8B
+single-board computer based on the Qualcomm Snapdragon 8cx Gen 3 SC8280XP
+platform.
 
-Fixes: 77640aabd755 ("OMAP: GPIO: Implement GPIO as a platform device")
-Fixes: 55b93c32520d ("gpio/omap: use pm-runtime framework")
-Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
----
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8b.dts b/arc=
+h/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8b.dts
+> new file mode 100644
+> index 0000000000000..e0fae337ab667
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-radxa-dragon-q8b.dts
 
-Related/similar upstream GPIO runtime-PM commits:
+[ ... ]
 
-  e9438ab5328a (gpio: zynq: fix runtime PM leak on request error path)
-  ff82fc3a4a1d (gpio: xilinx: fix runtime PM leak on request error path)
+> +	thermal-zones {
 
-Both use pm_runtime_resume_and_get() to avoid retaining a PM usage
-reference when acquisition fails.
+[ ... ]
 
- drivers/gpio/gpio-omap.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> +		pmc8280c-thermal {
+> +			cooling-maps {
+> +				map0 {
+> +					trip =3D <&pmc8280c_alert0>;
+> +					/* Throttle X1C cores to 2496MHz at 105C */
+> +					cooling-device =3D <&cpu4 5 5>,
+> +							 <&cpu5 5 5>,
+> +							 <&cpu6 5 5>,
+> +							 <&cpu7 5 5>;
+> +				};
+> +			};
+> +
+> +			trips {
+> +				pmc8280c_alert0: trip2 {
+> +					temperature =3D <105000>;
+> +					hysteresis =3D <0>;
+> +					type =3D "passive";
+> +				};
+> +			};
+> +		};
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index a9b9a3d9631e..31525a8eedf5 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -813,8 +813,11 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
- {
- 	struct gpio_bank *bank = gpiochip_get_data(chip);
- 	unsigned long flags;
-+	int ret;
- 
--	pm_runtime_get_sync(chip->parent);
-+	ret = pm_runtime_resume_and_get(chip->parent);
-+	if (ret < 0)
-+		return ret;
- 
- 	raw_spin_lock_irqsave(&bank->lock, flags);
- 	omap_enable_gpio_module(bank, offset);
-@@ -1459,7 +1462,13 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, bank);
- 
- 	pm_runtime_enable(dev);
--	pm_runtime_get_sync(dev);
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret < 0) {
-+		pm_runtime_disable(dev);
-+		if (bank->dbck_flag)
-+			clk_unprepare(bank->dbck);
-+		return ret;
-+	}
- 
- 	if (bank->is_mpuio)
- 		omap_mpuio_init(bank);
--- 
-2.43.0
+[Severity: Medium]
+Can this trip2 node in pmc8280c-thermal work as intended alongside the base
+definition in arch/arm64/boot/dts/qcom/sc8280xp-pmics.dtsi?
 
+In sc8280xp-pmics.dtsi, pmc8280c_thermal already defines two trips on
+pmc8280c_temp_alarm (which has no io-channels property):
+
+	pmc8280c_thermal: pmc8280c-thermal {
+		polling-delay-passive =3D <100>;
+
+		thermal-sensors =3D <&pmc8280c_temp_alarm>;
+
+		trips {
+			trip0 {
+				temperature =3D <95000>;
+				hysteresis =3D <0>;
+				type =3D "passive";
+			};
+
+			trip1 {
+				temperature =3D <115000>;
+				hysteresis =3D <0>;
+				type =3D "critical";
+			};
+		};
+	};
+
+Appending trip2 at 105000 mC results in three trips ordered as 95000, 11500=
+0,
+and 105000. In drivers/thermal/qcom/qcom-spmi-temp-alarm.c:
+
+1. On GEN2 rev2 hardware, qpnp_tm_init() ->
+   qpnp_tm_gen2_rev2_configure_trip_temps() programs the three hardware sta=
+ges
+   in DTB order and then enforces strictly increasing thresholds:
+
+	for (i =3D 1; i < STAGE_COUNT; i++) {
+		if (chip->temp_thresh_map[i] <=3D chip->temp_thresh_map[i - 1]) {
+			dev_err(chip->dev, "Threshold %d=3D%ld <=3D threshold %d=3D%ld\n",
+				i, chip->temp_thresh_map[i], i - 1,
+				chip->temp_thresh_map[i - 1]);
+			return -EINVAL;
+		}
+	}
+
+   Because threshold 2 (105000) is less than threshold 1 (115000), probe
+   fails with -EINVAL.
+
+2. On GEN2 rev0/rev1 hardware without an ADC channel, qpnp_tm_get_temp() ->
+   qpnp_tm_update_temp_no_adc() only reports discrete stage temperatures
+   (37000 mC in Stage 0, 97000 mC in Stage 1, and 117000 mC in Stage 2):
+
+	if (stage_new > stage_old) {
+		/* increasing stage, use lower bound */
+		chip->temp =3D qpnp_tm_decode_temp(chip, stage_new)
+				+ TEMP_STAGE_HYSTERESIS;
+	}
+
+   As temperature rises, the reported value jumps directly from 97000 mC to
+   117000 mC (crossing trip1 at 115000 mC), so trip2 at 105000 mC and its C=
+PU
+   cooling map will never activate before shutdown.
+
+Should pmc8280c-thermal override trip0 (or wire an ADC channel to
+pmc8280c_temp_alarm) instead of adding trip2?
+
+[ ... ]
+
+> +	adp12v_voltage: voltage-divider-adp12v {
+> +		compatible =3D "voltage-divider";
+> +		io-channels =3D <&pmk8280_vadc PM8350_ADC7_AMUX_THM5(1)>;
+> +		#io-channel-cells =3D <1>;
+> +
+> +		/* R470 (110K) in series with R471 (10K) to ground. */
+> +		full-ohms =3D <120000>;
+> +		output-ohms =3D <10000>;
+> +	};
+
+[ ... ]
+
+> +&pmk8280_vadc {
+> +	channel@108 {
+> +		reg =3D <PM8350_ADC7_AMUX_THM5(1)>;
+> +		qcom,hw-settle-time =3D <200>;
+> +		qcom,pre-scaling =3D <1 1>;
+> +		label =3D "adp12v_det";
+> +	};
+
+[Severity: Medium]
+Will channel@108 and its consumers adp12v_voltage and iio-hwmon fail to pro=
+be
+at runtime when using PM8350_ADC7_AMUX_THM5(1)?
+
+In drivers/iio/adc/qcom-spmi-adc5.c, pmk8280_vadc (compatible "qcom,spmi-ad=
+c7")
+uses adc7_chans_pmic[]. That array defines [ADC7_AMUX_THM5_100K_PU] (0x48),
+but has no entry for unpulled [ADC7_AMUX_THM5] (0x08):
+
+	static const struct adc5_channels adc7_chans_pmic[ADC5_MAX_CHANNEL] =3D {
+		[ADC7_REF_GND]		=3D ADC5_CHAN_VOLT("ref_gnd", 0,
+						SCALE_HW_CALIB_DEFAULT)
+		...
+		[ADC7_AMUX_THM5_100K_PU] =3D ADC5_CHAN_TEMP("amux_thm5_pu2", 0,
+						SCALE_HW_CALIB_THERM_100K_PU_PM7)
+
+When adc5_get_fw_data() initializes channel@108 from adc7_chans_pmic[0x08],
+the zero-initialized entry leaves iio_chan->info_mask_separate as 0.
+
+When drivers/iio/afe/iio-rescale.c probes adp12v_voltage via rescale_probe(=
+) ->
+rescale_configure_channel(), it checks the source channel capabilities:
+
+	if (iio_channel_has_info(schan, IIO_CHAN_INFO_RAW) &&
+	    (iio_channel_has_info(schan, IIO_CHAN_INFO_SCALE) ||
+	     iio_channel_has_info(schan, IIO_CHAN_INFO_OFFSET))) {
+		dev_info(dev, "using raw+scale/offset source channel\n");
+	} else if (iio_channel_has_info(schan, IIO_CHAN_INFO_PROCESSED)) {
+		dev_info(dev, "using processed channel\n");
+		rescale->chan_processed =3D true;
+	} else {
+		dev_err(dev, "source channel is not supported\n");
+		return -EINVAL;
+	}
+
+Because neither IIO_CHAN_INFO_RAW nor IIO_CHAN_INFO_PROCESSED is set on the
+source channel, adp12v_voltage fails to probe with -EINVAL, and the
+downstream iio-hwmon node defers probe indefinitely.
+
+Does adc7_chans_pmic[] in drivers/iio/adc/qcom-spmi-adc5.c need an
+ADC7_AMUX_THM5 voltage channel entry before this channel can be used here?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-q8b-dts-v4=
+-0-e8e7438f5545@radxa.com?part=3D3
