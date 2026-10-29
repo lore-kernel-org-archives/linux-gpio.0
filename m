@@ -1,112 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793271440;
-	b=Mku+tLcT9KQACaRI/o+y1eg+i/4tJB9VMoPo4R2grkvMBodkN2xjMsndGor2oIambOu4
-	 fctS24ojWYQAi6PkaA7J1GNrug46SWaDkyAkY1vXqJt9JYbZRN7wfdTuBf7ayHRbi7QNQ
-	 jUNyxG78SdiJEe7NgmiHgti67cuojwe8ZHO11+1+nv1WxuQRaEM8MkQxbRm7yMAuKXRcY
-	 VwLq5CAyqSiU4Rn7CIhSshVDy8ZHbfSBpsFgiBNWbQZpeBYsEXFy3Ig5BU+QXpDibdRcs
-	 5JnXJCqF40pLIxvx1nITNXzFjN5LTMENRWMCTAZHeX1NfBnKyKRds3OJcS26NZYEV9Q==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793271440;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=;
-	b=q8k7GTmyR+2KGsiJF3HZVHJcdySPNQmTDspJLnHXAI0ic1pXKgMxuPoX9eCiQQGIsI3X
-	 otGYhHydobpt3O8jJkRMZzmNqufFNNuc20e7Lf3Yh0HO8fcIWlo4z9A2+yT/h0v1LS11m
-	 yLLgNNeD3By8rtnnWR/YUSS7SEt+V8lCPkUWXR5Q2kIxd+1SskU7fnbA/SxXHyprgAmVj
-	 eozEjQb+1RgI1XMOjQrWoagbPq18iH6JGL/BxPCILrGpCeTHG8m5I8mTJb+YMvogjqOEs
-	 vTthe2DWcLgYAmqXEaIZLaJhR8B20ZzWE71A0k3xeJcwnqtuCLrTWSO5xwZANjSlNGg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="i2MZuy2/";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A4yLlYON;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.61.10
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793273392;
+	b=W+4h0is8wjsWc47bEyLQ7BbNkK9UXBArgQvkcsbSw53TlxaHEQ1sh4iYwoASt7JwuymS
+	 UOlqg8Yy188Q/muE03aB60iSVde62b2vYSc0MNHD9alt9ZaYfhWPR3LMdk0dPsDaJQAgS
+	 V+s67xYRKxzKqvqEuX8PRX2nToy4PfNi7XbIJsuKZaWoiILdAT8Ck59omWJ4cctXddcz0
+	 Pq3xfUNfBOhfceNGtZSJdhDixbuxjSK3S8hUxStkSIiy8mya6viFq8whwqd6kRG9KOud/
+	 z5cAkjjmmFJ+LTTVlj8bkebrYM6WCt+A8DZp68nbP/QipSjejdnfG1TuD4g8SgzU7lw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793273392;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=BneBbXpWsXnLUtxejHbUoH5uGlNDwCyP/I3lldVzha0=;
+	b=A/kKPKuXF4VG3ZTEXGuTGP6UlZ2Wzs6Wa8dRYtdNEmj5D/uXWIvw/a8ZnMrR99y1HcIE
+	 9nCmBtNUw3KeHCJsfmWN/GGdpQkz+c3plDYp4YQsQXpHKv5Laz9n6ExbmOUX84/nktEqo
+	 GH37O4Xbyl0/96VpJT4600xcle40+OUNlI6izQbcOXYrWRAIgQ+kMGX6GAltRbTDaetcW
+	 98UYHM4stsaYu7TwCzamNDAwN1FF7XeAg/bhdw55GvX+RTx8HIxFx6yU5J2Q4fO2T9kh5
+	 HViP61BrP9JfDEkIaLK4FbJ+fhZH215olY6DteKSLiF/ggOFnuK+hew8rJTDt2UM0FQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=kGTkj0fs;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.61.10
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010010.outbound.protection.outlook.com [52.101.61.10])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511BC606A323
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 511BC606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A76A606A330;
+	Thu, 29 Oct 2026 11:29:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6A76A606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=i2MZuy2/;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A4yLlYON
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69T8vF3Q3765975
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:57:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=; b=i2MZuy2/yK96cTff
-	Tb89mgWGzwkD/bIkDe/ptWarvCjxPg71VlfwLNYa2tJkpmSYU125ypVl9vbjNhht
-	OgkynYu3i13PLqDWVtEwzxyHubcM27fz7cCRigLbcb9aYe8Xi2+fGLzgk+xTdOes
-	teBhzNrs1FyvGEt/zfBXJiDP2dQ+lqk8Qb2BKEcnptVeVYFjQ9ixaGmmDJ0+XhJB
-	jfZIuHJKcd8wf+epUhVimG4Ch7ymfslIP6Ffq8ie9hDSovae7RJ55PsdzVaHxqBf
-	Np/K3JfbsVTgu7CWRYy6+bQH8egrBeXFV61BDDEMkLqaVI/qxe3MV7ZfN3vJ5uXi
-	H7gFZQ==
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com [74.125.82.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hkpgpu84e-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:57:18 +0000 (GMT)
-Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-16bc6f3fdb1so2135854c88.0
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 03:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793271438; x=1793876238; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=;
-        b=A4yLlYON7sXgJCjE37zIQmykFs7pnYaUCMusZ4R7nvJ5IDLlKbYEJ51nzqWS3Ji1P/
-         BtvgwYu59MZj6u/emQofn3Y0/jcHC5RJrX8s5a1olhuhrLPQmwcNnPRV/Iyrns28h9K6
-         T3hHalSVBgZK3sfFOAjyfBeImnEZbyLRb21Dtx6ZmFYxCzLbPgNjaEj/yl6pT2M2q2UN
-         enhNutdido0UYGBbpDCG+vojXekVa6cLyvet7nryaF1ymulQY7cvIggTbfzHWIQmcnpC
-         9gVnITPMWGlYuxBdsoSjyBbmi3p6U9q+j3G5BF4t9bDSqSXR7K6tjcS+tlFIQcTUg7XK
-         YB8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793271438; x=1793876238;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=;
-        b=UfXGgHZteOUCjX4LA5HVMLWTcLiKMHLTYQDnAXJPYDO6rEdbxc/eVDSGV4or5DBbO3
-         nFLkvazkOJQfzLmaX+zavHpMGsl4CF9EUMia3JWOWPBlb1XUMwt7ePGF+6H8xASA7wBj
-         mKtqyzN/LuL7hNXA3JPktYmjJAZ9ymW2sIFp9yn/o5OzV8xxYl+m9LpXYspOa2Gf9DIr
-         VoNTDMvlBZxC/QQjBVeTHiu5Zf9Jg4BP77N1deelMAO4XvVKIp72N93VeCKUbL5Wu3MQ
-         jI8xR+NoPzTRFedEkARwITNC4AHXwOYpaeuZbEu90aR9YWRSQSVKa3XvBvYfKu1HbEzR
-         TcoQ==
-X-Forwarded-Encrypted: i=1; AKwUvByr5xo9sejtIENNHme1xFk9gH7/qXAxVrlGdmuZBBhxaQubFdyqGKbQb/e/qsQDKwJ8wn8vTW4+DnFP@vger.kernel.org
-X-Gm-Message-State: AFq9FYKRBLzK6jDMozo8dyHGw/3gPDR7yDF5e2f3x7u0/gbaVgpJ9ts7
-	q4TQCLg0isNRr+kw7E9qxGWNFUbcqS8wikrgAC4Y30dYJkKA9VRNrJUuKdvF44CNpacCtbDdZjL
-	BXvZKnOC7BHjODYQV84VWtuO//NOaG1GuFOKCGc56BF8tAm1hkfN4bS8ZnGEF+I2/
-X-Gm-Gg: AYBFou2LWZ0v2aEpKmf0RTUGuI5sNnwikc+4AoZ0EmiMY3HB9yqBBcPA/nwVyQr8mQt
-	CMg2b3DrvXPtPa2EjHqBzzPPeaCvRqRrf9nO4BIdvgFmEc8XlUgGLin3+ib/8Gb2D6CG2WWOaHX
-	IQyDFdisRtduCSlJZAMTPWFeQwxlM59dpRr9pOrW5S6UCXXsDatny+ofMFMIrkGPbStMIpINSae
-	7eIGYISWrAmXQq1yH15nWLz8ji0Kk35uw7bTumOkzUxNeDFwPzMdseGl7PVN3e+nucjAD6ZkUDU
-	vQZvAflsU1yurdrkUOByiWwy0WcKLM87YoHQnlvB0ukgbvXYaWumzTdg31FMJRNz8Hnm7i3eudZ
-	VvPlR+x9T9In4L5QQ47c5li+RgcWnh4DrHEfqOQVNb+BELvn/TYXGD6NB0HyDYU5RIsd4rUT83+
-	pFFg==
-X-Received: by 2002:a05:7022:7f03:b0:166:9e0d:3b50 with SMTP id a92af1059eb24-1a6ce7cc6f1mr6591294c88.42.1793271437508;
-        Thu, 29 Oct 2026 03:57:17 -0700 (PDT)
-X-Received: by 2002:a05:7022:7f03:b0:166:9e0d:3b50 with SMTP id a92af1059eb24-1a6ce7cc6f1mr6591244c88.42.1793271436760;
-        Thu, 29 Oct 2026 03:57:16 -0700 (PDT)
-Received: from [10.217.217.199] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1a76037e2b5sm20562986c88.21.2026.10.29.03.57.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Oct 2026 03:57:16 -0700 (PDT)
-Message-ID: <fc2c4943-0482-4c72-b713-5a66c9995c5e@oss.qualcomm.com>
-Date: Thu, 29 Oct 2026 16:27:08 +0530
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=kGTkj0fs
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GoIqJH9QS7TBCIJkraeKJKnhhv3EmTk7+Y8dzYnm2cMekSlCzz7fytninx4i3S7FN5qo+ka/Zc9abwqkvuST1ryhKnve7iL+VVZ170qahfXwHP2HU6pT0/QkmyYYhGv5xTYoIUqXcAZ+XLyx+IxMDgwMNeVVXJHWYT+wdguypeckeY4uoW2Qx5ixQBFWCEb+RVs6uT1KYvidTa60K8XniFNUA3w+FgF5+D7M3W0Z29sygvL+ArzTc79Z9Q4y/F3H3z2lw5giJKdpYrqKt2NG5VGH8MWte6ZAHR/aLl9c5ZWTVJ6HTT4iTDh8Ad9XdfNSXWjGGTrgq/E/rCY/52XRfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BneBbXpWsXnLUtxejHbUoH5uGlNDwCyP/I3lldVzha0=;
+ b=DzENQ5H/G27AQUG297/Dz7LKrjdDVoaLrtTiNi3TG2H//SRNAzPBRupNPLrX5uYC0PWDJo3GFXtiuhuezdLhzr05Uu0QjXpwxU6Q7Rg5/sHUNs32ll3eXkEF/yriSJXBjCXF9tVxMADI+wRViBGlBgLX+HPGu/YJYWcgCHI3XHJaPh54zW8UBO6rps0ZHkUOxc4KeNprdQT/bVrUEN9+ZWaGtJJnprkAQPTfoO6K63duDKlZjfsVqCOyII/vRnDIvUoWZLVV/9+IoukRsamXUJoly/OY4YBMkBJBkaJsfq4puvgCdJkcg/X46N50r75N5Gaw2Ksd5AArNfOFo73Wyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BneBbXpWsXnLUtxejHbUoH5uGlNDwCyP/I3lldVzha0=;
+ b=kGTkj0fsFv/7/sBSRhDdVi0fDGEt9duKazXl/UNC3eVBIEKSSwUMMYhSBOaHPbjtg1rfB03Hm3Csy7160bNZz4YDCU9Jk7iVpmCxgjhVh7Fz2weFSZmcQS6IwvoSmfpFaKVp+HC2UnRPqy7S1ZOGkjxAwIjOtEl6U32J8xa33zmxhJcxnSMv+jf3hgHaEq5Q8aAgsSCpt2mCJvEEaEebeIUxFa01nbC0VAGZgW9C2aFDVHmM4nu10PdClEwoXwYv71/ZDEYRW4pGYYO564YJhXFna/S7+P/sBjEvS+y2Qnm9lJYmrOGzy4JRrjkjzrc4ZrvfpKmjMGYNn0MYg9DnTw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by DM4PR12MB6134.namprd12.prod.outlook.com (2603:10b6:8:ad::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.8; Thu, 29 Oct
+ 2026 11:29:40 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0569.008; Thu, 29 Oct 2026
+ 11:29:40 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v4 4/7] gpiolib: cdev: don't sleep in the SRCU read section in read()
+Date: Thu, 29 Oct 2026 13:29:19 +0200
+Message-ID: <20261029-gpiolib-chip-removal-v4-4-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261029-gpiolib-chip-removal-v4-0-aambrozewicz@nvidia.com>
+References: <20261029-gpiolib-chip-removal-v4-0-aambrozewicz@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TL2P290CA0012.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:2::16) To PH7PR12MB5974.namprd12.prod.outlook.com
+ (2603:10b6:510:1d9::19)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -116,199 +104,201 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] dt-bindings: clock: qcom: Add bindings for PDM
- GP_MN clock divider
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Richard Cochran
- <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, netdev@vger.kernel.org
-References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
- <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
- <20261027-inescapable-rough-viper-6cd56d@quoll>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20261027-inescapable-rough-viper-6cd56d@quoll>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI5MDA0MiBTYWx0ZWRfX3hhPTq/IPiOl
- t2KzSJdKVWhU4nXbpZ9UyuJqZ6gu9Gs4HW23nV1+MLq3iM5KdMFucgwGpJJM96cvqbxkBnUYaV3
- YgTED8lyigdNd6pVd4nSyqKKUYguRTsm3z4ytb/AO9NnBjw7FCw1rAYlq0o2597pG6pBjHWpMC0
- UBLzyYZE40oz8uivRbigRgDxCH7rEIicFriP/u/IyFK7CTjaAmVgJLalfohynKu6RHOeH0htPQ3
- MOsM86V+o0QXM3FM4igVRDxXeatOpEQhL0pXcZYZOSycbDai+D+uym3ZTwYxMkKSWSg/fm3ZBkx
- GPZvyubSYRHSQUBVpxgiOzgmof4+1sZB437WOk5wF5w0bYBadxCDRelDmd0v/xJl1TlgCJfgwBK
- wfbOIcEKg5BcgVhIE4dGxDW124FsLOxvmI7FSUXp3KjM3UACn8xvf7lS9lDgo5HMkOw4dk+vvPU
- igdAhAj/ir4Bl32hHaw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI5MDA0MiBTYWx0ZWRfX2vR+elx+jB1F
- Vaxt1/ZhZMtz8499jW1mUh7kjl4cIBH+pY2fYaJLB+6GEgUxys+jpiGDQ1tiDglTbY41fTt1F9J
- zP1RAJmKsbke5jzRe+M1WYe86aS9CcI=
-X-Proofpoint-ORIG-GUID: wXRkUQk6UGaUJf-tBvgwKL8-pvCqn5HA
-X-Proofpoint-GUID: wXRkUQk6UGaUJf-tBvgwKL8-pvCqn5HA
-X-Authority-Analysis: v=2.4 cv=T4oZ3PKQ c=1 sm=1 tr=0 ts=6ae3268e cx=c_pps
- a=kVLUcbK0zfr7ocalXnG1qA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=LB2yG9bKkngd5w-dMicA:9 a=QEXdDO2ut3YA:10
- a=vr4QvYf-bLy2KjpDp97w:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-29_03,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610290042
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|DM4PR12MB6134:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb3b696d-870c-4d80-cc8e-08df35afebd7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|23010399003|7416014|376014|261028144727099003|11063799006|56012099006|5023799004|261009223027099003|261021123027099003|261026140227099003|261026121527099003|261021121427099003|261022105027099003|10067099003|261022075727099003|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	P3E0W+lr8LfeDKRlG5bVnON3vOK6OLvKpfx15LB6O5sdbznX0FzOoonoPPwcb6ew2DlmPtgmjJ//eQmmK+OuOZWjStbYzjjwmHNavlm4g/E6McupSEyUhtKDd6Gbg4lFB9WE3cOCq/A/2ylMW/1XYv1t/Cm32f5Zo8FUezjEAs7lAo88+ifYRadC3Jv1PW4tSE7TVm/WRWJkIWJwKVG+6wMmZwjN4RAUgUIKaEuD7+smLJZBWbX8W9haS7sv3IA5tnKEfBiT5Tf25+cy9fuApW/C5hxb3dPksddzK+a6QqtpyJ7/KwUKjPtLzCLnHpvIzm7TneLaQ4En2588awXZ3Mr116WVwgENw60azuLvjvPs9DhkGfyIHdSCGA6/8hYkaGXDTF6+CNKgamGOnzLCVTR1qUiW5Ve1hXLWlyxw+pz7pKqCg2DJhfrUXkxA1k0hgMsXfi3yI6jSwe1Mu1j/I7U9q2T5WxloCKxBKdpBFx30lmzO8LGNYowJu0e1/art78R/RX7+jsSJvUmaygfUiigkQyT50LTwnbhPs23HXDIQ/6bGAF7z2FmWeyKAyrHVoX9vtXa4MjoWta2C5hu9PeJEXDchwj7r0NlUnO715nGjlkJgnXryMPn8crMJ9SlKX8QXmq4aKWe2ITfwk/QlvHJrG2ufH/A1tu5jVtj2bQI=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(7416014)(376014)(261028144727099003)(11063799006)(56012099006)(5023799004)(261009223027099003)(261021123027099003)(261026140227099003)(261026121527099003)(261021121427099003)(261022105027099003)(10067099003)(261022075727099003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ckiZQ+k42FLsv7eOxBuB7HgxQqMteW4qhZ5hTsq93GjomRHVsf9zmQcMPwtz?=
+ =?us-ascii?Q?1vyyY2NcD6SHcWxbT94pIoRIhL7PiElbKYLfRwp+2Eq4leEtbR2/Vri8uBH9?=
+ =?us-ascii?Q?jdkzJ6FmaUH9laC6wWfbMQ6rpY8vNNOJbTL8x0VZoNelWg8oEODuCKpt6G7e?=
+ =?us-ascii?Q?sWnduv7M2yC2Vhkio2P/r1dndL2uhs0tCKpG1el63yQJOF9Lkn8piPrQcMPl?=
+ =?us-ascii?Q?gJb5gzMaBL6qZ3NOKhHIqsSh8NEbMFY9VYo9mpjREsqU5cqu+BT92sZ8CniY?=
+ =?us-ascii?Q?6X07euRVIOs8+hC8T3+to6LHBI/znEqg2/dVb79NAu0OqmBlhZxqIoOWeNwZ?=
+ =?us-ascii?Q?5QXnSrhLWbkQYsNPcM+smxmVjFIG+vyyWy6lUQZD78dGV/HfbSoyY1ewBEGt?=
+ =?us-ascii?Q?C4sSyMqdC1BHlBEin5WNPicbo6U6I8ZvU1DMhAgZpuY4yK45ai57cJswaWUs?=
+ =?us-ascii?Q?1ptA84hWf+ehaMVAZ5/4gs1meyHwa9SJgNysSyVt5uTWPzMlNWl5czhYIXvc?=
+ =?us-ascii?Q?5zd1eHXnSu3XHC7VenUZmYq1OvmPE9ziw+NmQwNpT/Ly8OWPpghS5w8IQmpB?=
+ =?us-ascii?Q?1TUAX1ZbEhL08TSr61aLghpDuEbe2yyIbHaMgyXEujUNba0LLx1Z/gf9p3wH?=
+ =?us-ascii?Q?2XNC5WfLSpJrHurkl2D1M/tLdme9+A0gZi5d7jwQrVWdGEuuPqiwxD1BxwKy?=
+ =?us-ascii?Q?dkCafBitpuxqlj3unZXlmmJfNKsVjeFGx7NnTj1j+8X8exCH3SqfggiuIIoQ?=
+ =?us-ascii?Q?6FadMyjXClfbHlMLp/iYVwCJ4sDWQAdD5ne7+jEqJ92NOfMLbijKohILzEiz?=
+ =?us-ascii?Q?+Yx4n489vzpwWoGKpHjJLsCN/zrqvsdS7M7LjFREc53lougmD0ilHwOY2+k/?=
+ =?us-ascii?Q?q972zSDnN22eKZWrAPdemSi/dP9SFNWVWYNn5uAPb6nDwOp9FoXdzZBbtkA6?=
+ =?us-ascii?Q?Eu6P6u1RAIfPBVrbiXRZpk+h0Zyi/OaaVD4KOVXJ7LThbZisl/gJq9xxyrG8?=
+ =?us-ascii?Q?Uyrzhb4GfzdbMRSy3FiO6FbRDDPuETkOJR7K+tS38UXCk6b8A9Qc3NJIXemv?=
+ =?us-ascii?Q?bbakb2gKYXFS5jsIww4V5UET7EVKwB2oCQ3bzt9d52QZlugkeAhX5kkbrMkh?=
+ =?us-ascii?Q?Iqwg5wQo5t7UmmS64x40yTVWkaF6Yk4vxSs2qt/ym2pmPo6Vfi3i9Lp18Zl6?=
+ =?us-ascii?Q?ALZI/k6oQ++dHBubLHgb1e8uIPxZ90QorRw+TFVU3PDHrKutwjNPWhLDHkCr?=
+ =?us-ascii?Q?/cb3CnHbRjIdq7wZimYGEPvqN0bHXheulc1ZkJ3TjSujQ6pT90MIC6cGmJO9?=
+ =?us-ascii?Q?FHreDXVgMcaY+UMTOza4lw+qph6Ur1E9YI4+iJQIAZFWL7Z5n5/VWXDl4VYt?=
+ =?us-ascii?Q?m/o+qzhMfl/UYteaEVrgp34rm3Fi/34Zf98NWXYIhfO17+/Yo6jmBHCt8T6Z?=
+ =?us-ascii?Q?7czpaNbpDMBgIDjUSp1zgevueE2JCEjStHA3E4vvuITCVyMiHVfvOU1eeC4T?=
+ =?us-ascii?Q?ww3LF6Rishyi91pUhAzBJhS2QBjJYZyTsGKvKIa0rUfJXK6AaOR2Bg+1MMXF?=
+ =?us-ascii?Q?C9w+7KZn113jVNg17EG7Za3wR9UjlFsrEx75A8G+A7f3lx3uxlJGRet81nGF?=
+ =?us-ascii?Q?m72imwBAKDw/qvdetfpVd90h/F38RjVjFVbBzr01ZTEtgB63/XWPe89RAFik?=
+ =?us-ascii?Q?NWTbeKYasXeFjhRLKcLba/mScYL5/XNVXdlCWy096dfQ+3l0dwZR9tkr2ovt?=
+ =?us-ascii?Q?9eqL90GzUw=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb3b696d-870c-4d80-cc8e-08df35afebd7
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2026 11:29:40.2941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wDpeJTmpMvMywjK/KcXGG86Zm7EpbvAj3Lx6y3exiVzJFoC+1sfQl6FxOW81F+2J2WPM7K2cZc0t8V3UpgVRBA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6134
 
+linereq_read(), lineevent_read() and lineinfo_watch_read() stay in the
+gdev->srcu read section while they sleep waiting for an event, so
+gpiochip_remove() blocks in synchronize_srcu() until an event arrives
+or the reader is signalled. The device lock is held meanwhile, which
+also blocks device_shutdown():
 
+  task:init state:D stack:0 pid:1 tgid:1 ppid:0
+  Call Trace:
+   __synchronize_srcu
+   gpiochip_remove
+   devres_release_all
+   device_release_driver_internal
+   platform_device_unregister
+   gpio_sim_device_deactivate
 
-On 10/28/2026 12:17 AM, Krzysztof Kozlowski wrote:
-> On Mon, Oct 26, 2026 at 04:59:27PM +0530, Taniya Das wrote:
->> Add device tree bindings for the Qualcomm Peripheral Web's PDM GP_MN
->> clock divider. The hardware generates a fractional output frequency
->> from a fixed input clock (typically TCXO4) using the relation
->> Fout = Fin * (M / N), with duty cycle controlled by a separate D
->> register. The clock output is routed over a gpio controlled pin.
->>
->> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->> ---
->>  .../devicetree/bindings/clock/qcom,clk-gp-mnd.yaml | 98 ++++++++++++++++++++++
->>  1 file changed, 98 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..8141f392c5d70acfc42cf1ff4b1722e1eff23afa
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
-> 
-> Use fallback as filename, so qcom,sc7280-gp-mnd.yaml
+Check the chip in a scoped SRCU section only; nothing after the check
+dereferences it. End the wait once the chip is gone, and return -ENODEV
+if there is no event to report.
 
-Sorry my bad, should have renamed it.
+Reproduced with gpio-sim: setting "live" to 0 hangs while a reader is
+blocked in read() on a line request; with this change, the write
+returns at once and read() fails with -ENODEV.
 
-> 
->> @@ -0,0 +1,98 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,clk-gp-mnd.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Peripheral Web's PDM GP_MN Clock Divider
->> +
->> +maintainers:
->> +  - Taniya Das <taniya.das@oss.qualcomm.com>
->> +
->> +description: |
->> +  The Peripheral Web's PDM GP_MN clock divider receives an input clock
->> +  (TCXO4) with frequency Fin and generates an output clock with
->> +  frequency Fout = Fin * (M / N) and a duty cycle controlled by D
->> +  and routed over a gpio pin.
->> +
->> +  The divider is configured using three registers:
->> +
->> +  - GP_MN_CLK_MDIV: holds the M value.
->> +  - GP_MN_CLK_NDIV: holds the ones complement of (N - M).
->> +  - GP_MN_CLK_DUTY: holds the D value.
->> +
->> +  For every N input clock cycles the GP_MN produces M output clock
->> +  cycles. D is the number of native clock cycles in which the GP_MN
->> +  output is low, counted over 2^13 native clock cycles.
->> +
->> +  Hardware constraints:
->> +
->> +    M <= 511
->> +    N <= 8191
->> +    N > 2 * M
->> +    M < D < (N - M)
->> +    M and N must be coprime (no common divisor)
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - const: qcom,sc7280-gp-mnd
->> +      - items:
->> +          - enum:
->> +              - qcom,sa8775p-gp-mnd
->> +              - qcom,qcs8300-gp-mnd
->> +              - qcom,qcs615-gp-mnd
->> +          - const: qcom,sc7280-gp-mnd
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: PDM XO4 source clock
->> +      - description: PDM AHB bus clock for register access
->> +
->> +  clock-names:
->> +    items:
->> +      - const: pdm_clk
-> 
-> pdm
-> 
->> +      - const: ahb_clk
-> 
-> ahb
-> 
+Fixes: bdbbae241a04 ("gpiolib: protect the GPIO device against being dropped while in use by user-space")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+---
+ drivers/gpio/gpiolib-cdev.c | 50 ++++++++++++++++++++++++++-----------
+ 1 file changed, 35 insertions(+), 15 deletions(-)
 
-will drop _clk suffix.
-
->> +
->> +  '#clock-cells':
->> +    const: 0
->> +
->> +  assigned-clocks:
->> +    maxItems: 1
->> +    description: Parent clock phandle used to set the input frequency.
->> +
->> +  assigned-clock-rates:
->> +    maxItems: 1
->> +    description: |
->> +      Rate for the parent clock in Hz.
->> +      Supported rates: 19200000, 9600000, 6400000, 4800000.
-> 
-> Neither assigned-clocks nor assigned-clock-rates should be needed.
-> Parent clock is outside of scope of this binding.
-> 
-
-Sure I will remove, but the parent clock input is a requirement of the
-Hardware and the output of this module entirely depends on the above
-ranges of frequencies mentioned and that is the reason to keep the rates
-specifically. I will capture it in the description and hope that should
-be fine.
-
-> 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - '#clock-cells'
->> +  - assigned-clocks
->> +  - assigned-clock-rates
-> 
-> And these two should not be required, either.
-
-Will remove.
-
-
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 6350b2fca8a7..c5869e3f7767 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -1507,6 +1507,20 @@ static __poll_t linereq_poll(struct file *file,
+ 	return events;
+ }
+ 
++/*
++ * For the read() paths, which must not stay in the SRCU read section while
++ * sleeping: that would stall gpiochip_remove() until an event arrives.
++ */
++static int gpiodev_check_chip(struct gpio_device *gdev)
++{
++	guard(srcu)(&gdev->srcu);
++
++	if (!rcu_access_pointer(gdev->chip))
++		return -ENODEV;
++
++	return 0;
++}
++
+ static ssize_t linereq_read(struct file *file, char __user *buf,
+ 			    size_t count, loff_t *f_ps)
+ {
+@@ -1515,10 +1529,9 @@ static ssize_t linereq_read(struct file *file, char __user *buf,
+ 	ssize_t bytes_read = 0;
+ 	int ret;
+ 
+-	guard(srcu)(&lr->gdev->srcu);
+-
+-	if (!rcu_access_pointer(lr->gdev->chip))
+-		return -ENODEV;
++	ret = gpiodev_check_chip(lr->gdev);
++	if (ret)
++		return ret;
+ 
+ 	if (count < sizeof(le))
+ 		return -EINVAL;
+@@ -1533,9 +1546,12 @@ static ssize_t linereq_read(struct file *file, char __user *buf,
+ 					return -EAGAIN;
+ 
+ 				ret = wait_event_interruptible_locked(lr->wait,
+-						!kfifo_is_empty(&lr->events));
++						!kfifo_is_empty(&lr->events) ||
++						!rcu_access_pointer(lr->gdev->chip));
+ 				if (ret)
+ 					return ret;
++				if (kfifo_is_empty(&lr->events))
++					return -ENODEV;
+ 			}
+ 
+ 			if (kfifo_out(&lr->events, &le, 1) != 1) {
+@@ -1830,10 +1846,9 @@ static ssize_t lineevent_read(struct file *file, char __user *buf,
+ 	ssize_t ge_size;
+ 	int ret;
+ 
+-	guard(srcu)(&le->gdev->srcu);
+-
+-	if (!rcu_access_pointer(le->gdev->chip))
+-		return -ENODEV;
++	ret = gpiodev_check_chip(le->gdev);
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * When compatible system call is being used the struct gpioevent_data,
+@@ -1861,9 +1876,12 @@ static ssize_t lineevent_read(struct file *file, char __user *buf,
+ 					return -EAGAIN;
+ 
+ 				ret = wait_event_interruptible_locked(le->wait,
+-						!kfifo_is_empty(&le->events));
++						!kfifo_is_empty(&le->events) ||
++						!rcu_access_pointer(le->gdev->chip));
+ 				if (ret)
+ 					return ret;
++				if (kfifo_is_empty(&le->events))
++					return -ENODEV;
+ 			}
+ 
+ 			if (kfifo_out(&le->events, &ge, 1) != 1) {
+@@ -2607,10 +2625,9 @@ static ssize_t lineinfo_watch_read(struct file *file, char __user *buf,
+ 	int ret;
+ 	size_t event_size;
+ 
+-	guard(srcu)(&cdev->gdev->srcu);
+-
+-	if (!rcu_access_pointer(cdev->gdev->chip))
+-		return -ENODEV;
++	ret = gpiodev_check_chip(cdev->gdev);
++	if (ret)
++		return ret;
+ 
+ #ifndef CONFIG_GPIO_CDEV_V1
+ 	event_size = sizeof(struct gpio_v2_line_info_changed);
+@@ -2628,9 +2645,12 @@ static ssize_t lineinfo_watch_read(struct file *file, char __user *buf,
+ 					return -EAGAIN;
+ 
+ 				ret = wait_event_interruptible_locked(cdev->wait,
+-						!kfifo_is_empty(&cdev->events));
++						!kfifo_is_empty(&cdev->events) ||
++						!rcu_access_pointer(cdev->gdev->chip));
+ 				if (ret)
+ 					return ret;
++				if (kfifo_is_empty(&cdev->events))
++					return -ENODEV;
+ 			}
+ #ifdef CONFIG_GPIO_CDEV_V1
+ 			/* must be after kfifo check so watch_abi_version is set */
 -- 
-Thanks,
-Taniya Das
+2.43.0
 
