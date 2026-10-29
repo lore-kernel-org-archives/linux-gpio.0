@@ -1,108 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793280625;
-	b=oxYq2OYKfVJox8F1eNs7yGZKIGbd3c7bxFtgDq4sEkxrC4/XcUEiiM+Y+pBtdPUVBVvt
-	 W90h9bYKMfGRFdo14YTO6C0hQ76ZZqLE2lUlga5V86PUo47Z5M+nZbriRGS6O8CbIr3u+
-	 nnElu7rBtyL7VPM0CIO6mane9BBUKh8zif2heaUi5o2MOtnMm5ypA2VvXELMUrEVJZNHK
-	 Z0uoKHvJwP7zx3OEaEdGJt1QCAsUXd/L9jVoKoLaSfxughMRezmd17nhr/yCUdbc5CG9U
-	 4p9iU9ZgsB4jo3h5R8vkTQ+s20TJTedt6gjn2QHGTAlUHxv0izqwKnakIcA8gojY9Rw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793280625;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=Mb2nUQU4M00SSUzZJSeoQpnNXAraCq7x3LdAKS30Euw=;
-	b=av59mA0JFVoyz4HJOq9OYY+bqom6HCJpdGpiVJZgY+AAAAPVDwFOBscIb2eE9diepS8a
-	 838mm8Qv1AJ5Ew7hqXjfDP08UFl5ExS2cKSlAhmM755PQbQ8sFnI93jLjEkU1AMzcega6
-	 I+P/CSQSOQqFPMkAYQI6/W7WEU+yng1qLG1kRzE4F5mquQXMfMaeL/nl9G6o74heCvQEa
-	 rpQqU7kMzF8FNOkada1v+mxwpETZCFwUIYkuux5HVTxkEX/osFBJflMCLDKoUROsZnXWa
-	 2Ob+h0uRQla21ncH85NoA+sTZKMIRLVybaHkb40iHT2q74gjkm7C+1c0AnHdWhQsHdA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW;
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.32
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793281542;
+	b=2LdgjSUPlmkiq9nfdeTamUZQ5hYEN2EoLuyOovtuHRqy99hvq+NTjyLChcAdYHvJ2s8L
+	 Y0DbRljbc//QHwsw1ApNcts36fx8yLR85hCv6LimYE6xSTDCKpGq8G/iovHSF3wFGVUqG
+	 TIHpabylWC8+/wnms8l3T6cxsaM+CYe9MvmKiHUS4AEcaafsJpQLV2gaVCRJEKlwTGHo/
+	 X19G46JTyapXmXv2v6XFAkxC15rwxYV50EYrdflDawN8gpPstk9Qv1Z+rQVqr16Vw6Wr6
+	 LKS3L0Qgb8eWoqZmznRzeR/Y9cKEFx2T+EuGX+4RVPSZdA07gqSF899dNaKNjCqSUeQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793281542;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Subject:Date:
+	 Message-Id:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=FNRrkMt7whwBkS9pPwmkGQQJY0dLd+wJ2clDJP13xpI=;
+	b=m72LT8T2199X7qOXQFhQOWHdQj/BC3wd6QxziHEiaqsZZO0DgsbNumCIBBExU3Vw8ake
+	 fkouCucdQER9askwGlXGo5eSFLfyO9ZkMatQk7DZe/pDazzd26WZc2HHLqPgULRE3aVXg
+	 COx/jlvcDATjPIQtcw4fU4W5NGKW61FbApU76VnsMPUfMbJYNH4qCQc0JFQQwjNB88VmJ
+	 1Dg2xKSKwF7miCJ6eFcX9sVaQHhh/OEz7cjLYzN/xlu2Q7VzSy6KwzOZed/arO9MrQPeh
+	 3igUSwDoZDcVlEm9BoVBTAb+SHWgttj4Loa8/0viEkQlHa5c2GIJ7hu9ZYKj3B2R48g==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b="bA5lIL/z";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.32
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011032.outbound.protection.outlook.com [52.101.70.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67996606A326;
-	Thu, 29 Oct 2026 13:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67996606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7264F606A31C;
+	Thu, 29 Oct 2026 13:45:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7264F606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793280624; x=1824816624;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XiB/P3z67uNi54hQwr+HoGceAi4KeJ58DpxovBSc0bg=;
-  b=moKhVdIWHTlYBTM27yPpptcYvWfZxeoV5vQDl8tROPJHxcy1XOyrsLiH
-   UEC0pOG8yTIBOxOxX+8Sx3MfPvthNhhSVbg7hmXMLdY75L0ynvudB2qUB
-   xwDw8dlq+JFqmrEH1vF2p5uZ15A+7QpDyhHdm3QkceUndx7CjaFFhUM69
-   MGYS36fDRAR2PqPL1vCXsKjhaE/atqXAWFvoXUpwofjuL2spLHNDxelfM
-   4s5Iqm0+JQ+1YT0Rz6kf+pLQU6USwnYQL+Zb3tysqKRg5FvDcKhZdVdhv
-   IUM8pJpk+riQyMmNtQTeyuROg0DxK1r+WJdKbdMqvpLe47T3qLyVJqwQX
-   A==;
-X-CSE-ConnectionGUID: X1a7bbI8SnWe9Ef4aSkLOQ==
-X-CSE-MsgGUID: CjMqrJc6RY20tCJkecc5HQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1915313"
-X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
-   d="scan'208";a="1915313"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:23 -0700
-X-CSE-ConnectionGUID: pazyI6DLSZO+QuLDn2CgVg==
-X-CSE-MsgGUID: Eiw0OS5rRee86K4uWKSdfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
-   d="scan'208";a="5273644"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.129])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:12 -0700
-Date: Thu, 29 Oct 2026 15:30:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-gpio@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	mfd@lists.linux.dev, platform-driver-x86@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 03/14] watchdog: add driver for apple smc
-Message-ID: <auNKYRpfqrtKa50O@ashevche-desk.local>
-References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
- <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=bA5lIL/z
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WttwDV+qN2jkrxCRgm7FQS2M2C074h3/ga83QjxPN/G5ZBIw29wpPzBulCgv08BQttO96C3EohkmvN67DRHmmzRkk5rQO5xMdxP49KFrTdhIRi5tXnjarxdrjFK2asNTj8kOjCv0vWLnDDj8MkvZUL0/tpbMbwF11U7w/DbN4NUPQxmb3/vv/sSBhmR6qa2yXZQWXDW9NCB/bkMOAu+dCwgl5XzFJ8QX5tqpNgmivM7OaGRSUM21Y0mjkcDir0JnNaCtDcAhIvj/g4uLVQcVds35LzxNQNnT0zFIk2Jg+yutP4rzxSRplxkH4wHGsUDwzDoRLvDLk4hO8Un9jcFh+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FNRrkMt7whwBkS9pPwmkGQQJY0dLd+wJ2clDJP13xpI=;
+ b=QV6lICGuWHcbHnklnY2z1xpBWNHaddvXz04MWyqaFdbDzd2yftvHTMMQabUXoTMxOKXotAd/nPWvVBfiR72rLrLCsu1qtE1pZbP7SaTcZm4uFcoZkN96X6afLPVE6eVPwRc+x24CXrQ3QXe0t3Jh+kSEGSzwACg/V4efkbAeViNSrPf0wEb0Ao6DImIFpXWLf2tXWyCxjFZnBtJ19xknjKjKNeec8btMLSb0NdzGYRez3ngzOzUsgpGoUVh/eOFzfBuRbP9EvSYpT1GfJnWmWBOTLHK3KvdnvccTmbS/QmfPFdk/dQGI+HERSi6DO8o7K2C3t7k0CM8fNlZjWuOFHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FNRrkMt7whwBkS9pPwmkGQQJY0dLd+wJ2clDJP13xpI=;
+ b=bA5lIL/z1tvczD4mAv9rWZzoyTSNB9ja8/AAdIdcSsxozFAKmSXsKxCl/HX1AAR3wCIE1AVD1BHykFeqd6+KXDFGurZCVBzxLwMjcxnGIf8cVXW5YDNlPTq+iYERc4s80NGvxiY1GcXZIcIy3nGKZMWavGLhuQ4DLcAzKKBibHH2AmrHTxypqmqz5E7ncOfVRXEv4KahIa4qf/Vlg4ucVQcl6vfCNMVwnzSXUt1p1m820MSU4s1q6wapUkcoqvEzNRuhOY1Oe89HrKWIF7ezU+Bwda3viRqNkh3y4gK/JsIfTE4lRFbrfsActBei9JmQDm1JBqVhpw0kYWHrSMC2ZA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by MRWPR04MB12355.eurprd04.prod.outlook.com (2603:10a6:501:82::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.8; Thu, 29 Oct
+ 2026 13:45:36 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0569.007; Thu, 29 Oct 2026
+ 13:45:36 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH 00/11] gpio: vf610: fix clocks and misc cleanup
+Date: Thu, 29 Oct 2026 21:42:24 +0800
+Message-Id: <20261029-gpio-vf610-fixes-v1-0-45b484b4c434@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEBN42oC/yXMSwqEQAxF0a1Ixga02v9WpAdtmdI4UKlo0SDu3
+ ajDw+O+A4Q8k0ATHeApsPAyK9I4Ajv+5oGQezWYxBRpYmocVl4wOAU6/pOgzYvsU5dV7mwPmq2
+ enkGr9vta9m4iu90/cJ4XR7IboHQAAAA=
+X-Change-ID: 20261029-gpio-vf610-fixes-c56439785fcd
+To: Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stefan Agner <stefan@agner.ch>, 
+ Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.15.2
+X-ClientProxiedBy: TY6P286CA0016.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:3b9::13) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -112,78 +107,111 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|MRWPR04MB12355:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1db6f734-58ce-466e-f97f-08df35c2e8ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|7416014|19092799006|921020|11063799006|56012099006|261028144727099003|10067099003|261009223027099003|261021121427099003|261026140227099003|261022105027099003|261021123027099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	eFZX2qS04a4c8Bb8yQ3y0e7U0eClhN3jZGLF2NvZBnPPU5aO8zRlrvNLBbtUkvYEwzex3Sb1ybHzF+lc0ELdpiOK6FYkB37SHCuDcIh0nLG44/odpgkPwymZeEPkMKytuMdMLELVms18z16JKbMKxDCqiPv1PKADHLlcrvN46mXfe7POZStWgVjtAR3D1gtPwyLUPJnBfXLrQBHUHsq7x1NnCYLr24bVnAR3+rsU4hAE4xpJpylq1kY3kWpuA9bACK9zfaIOZNGM4cj+H9pRVqtk/66AqH56wUZ58QtKuTx0JiXEAI7wJuDipbRdB50RHgx1EeN+dFQt+HntWx7t8jLilYZOTILl0tIEgz89DV9aJiUpSG56ZOxwnsI1xcjlznmHDC5MPmo7dE54rCJrkwCO5DwZKo9nMUzfaRa8028CA6vDV8U06GImRdclkIsQA4T6d/3wS3BoFU0NwGE9QwCJQ4XuEWZwrphqgB60iNn1ySyDXRyhJcIdyqBWW/eulwpwnbhW7g2UiYDysHWASlMCQ6mi9uaABUimGyRyrMnUvgmOqJYbIRZ9SWgtO+/ShF8Rfy1qan08Bra3aZrKcbSGS19ty1BSBn9Td98dhJRMj3FWdSoSYjYq9KWWvVNgnEi4P+PZLE19Mki9H+yu3iKA+HB5LO0W2TKVK5V1dgfftJCQ8aUDrHXE73s4K+Ik3Axa5gR8yBA/gO7f6le5sw==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(7416014)(19092799006)(921020)(11063799006)(56012099006)(261028144727099003)(10067099003)(261009223027099003)(261021121427099003)(261026140227099003)(261022105027099003)(261021123027099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YnBJT1I0Q2VseUFSeU1xaHlSRTltaS9KYkQyUmFtVStMalk4SEV2OGtWV1ZX?=
+ =?utf-8?B?ZEd2dVE2SjdOQWMrMW1tc0xEMXZDOXVtQlh6Sk9ZRlRsRElQa2FXZ1BYVkxi?=
+ =?utf-8?B?dkJNcHBGYnIya1VtdlRtUXJFNFVKUlE0SE9YV1BqeXV0NW45Q2x0YWt0WElR?=
+ =?utf-8?B?cks4UmNXQ2xudHJHTUlvWGN2K05sN2M2cXlKQTcvbXo0U1c1QXRFQmtpd0xl?=
+ =?utf-8?B?a0QvVUZ6elV4alhYRlNMK3hoNUd5MzlidGpVWW84ZHoyWEVYV0l3WnJ2RXJD?=
+ =?utf-8?B?YmFQSTY5eHlIekZ4dVltWTNNOG4xdlNxbHlaMHUwYzFxckQ0RzFsWmhyVlN2?=
+ =?utf-8?B?WUZJSFk2cjFxeG1TaVZYRjVSNHBnZTBOYkFGSUM3Q3hvamRZRExUWG9uaVVI?=
+ =?utf-8?B?WTV2NmF1MVVLRzVXSFRPK0xtTkNyeUhxRW1VRzZlbVZIYVlsSTk3RG1IQVht?=
+ =?utf-8?B?Y0ZhR2FiZ2QrZVo0MFp6bS93djFPdjUwUzVaUW5XT2NBcnZGRS9VMHpURCtN?=
+ =?utf-8?B?VDZRWVZBRWZiQ2QzcTFpTU8wTGRrZFgyWlRNUmlOeEt6Wm9WS3JXSmRkSURV?=
+ =?utf-8?B?dFN1ajlEaTNIbFhBU0JLSXN4eWJKVGtWTU1CNzBTdk5pREtJcCtXQ3ZRMEts?=
+ =?utf-8?B?MElZbENyQ0pPZkhCZUt2ODFVQWxOVkNpTk1IN1lTeHVtanlhMFpDcXhBL1BU?=
+ =?utf-8?B?VXRxaVU4Q0wvT0NaSmxXaFpDRERuYVRKdlB4Qk9MRDYrRTVqZWdPQ0VRemdB?=
+ =?utf-8?B?NWg5cUpEWDRVWXY2MEpDalJ1d1ExdG5WZUNRZVlzYk1PQVJDeXVsMXZJd2xM?=
+ =?utf-8?B?R3p5R01hSE1zSE9IYVVSRGhyOWF6M1RTWUUvU2pRZ1Nvc0VnQWU3TFIzNmUw?=
+ =?utf-8?B?YzdMSnBJdk5pbk91akxLa1FnSEhTM2VLamNJOWh5WGpHVk10R24wVjVUVnow?=
+ =?utf-8?B?L21CbmRKRmxLWHhIb3pnVGpsL1hKMGs1SzlXOE4wRTI4Zjh3djJVMmxadk1p?=
+ =?utf-8?B?ZTdUMUhONU1zcEtabGtwVEJHcjVzVyt3OVdKTTdydGtDbDZIZTc0MmVmZU1t?=
+ =?utf-8?B?eVZZbDArOGVSS1hGTDBRY1ZHWmp4bmc4aGwwQVVLNDN0UklTdXJzV1NWV1dF?=
+ =?utf-8?B?STRJa0h4Y2VqRXdVL1RwajM5V3lIL3FEanNSQkRFT0Zxc3ZpWDlVUGRUV1hx?=
+ =?utf-8?B?bmNlQzVzeU9qTEt3TnIrVFlUdXpVTEoxbkpsMTMvNTdZL1dmeXVsTzM5d3ow?=
+ =?utf-8?B?TnhlZkswNE1VSnhpNDFZQ3A3OGQ1UTd2a1FwNGw5SGIxa29lRXppNDhQbzRH?=
+ =?utf-8?B?VE9xUzBvTEV3NjRxeTZsWFpXM2VNQkM3M1o4R2VUeXVyZG5PaUVyRFE2YUVw?=
+ =?utf-8?B?aG5RNy81K3ptbVZSeGtRbXlzdjJSUkl0RlVVaGpMT0tBdzkrU1QvY0tKNVk1?=
+ =?utf-8?B?WWM0M2NYa0lvaDFwb2w2VEVOMkgrSHpqb2plL3R6WHMrUWthV0k1bUI5aXNF?=
+ =?utf-8?B?dlRUMENtN2YxSUtUTXdveVREWVkwWTNETE1oejZIWitiVVJ3czFSNm13amFr?=
+ =?utf-8?B?enAwNkNsd2JBQ3g3ZVBuK0xsRE5Dc2RFUWxGSVg0Zi93cmxLdXdXVUtnaDgy?=
+ =?utf-8?B?cFFFUy9aakxVN24ySGkzSEduTFlsTVJXQ2ZRMEdmMFRBUlR2Zjc0Rzd6aUNC?=
+ =?utf-8?B?UkF4bk1neTZQTFJFdTZpZmxuTlBDUlVsUTE5VDdqSi84VDMydHlPNmRGS0tJ?=
+ =?utf-8?B?MGtyRTV6STBudlJLNStFUWd2MmpOY0tBcWZWQ01XckZjd080MENqekRsYVJJ?=
+ =?utf-8?B?SGNaMjBNeWN2elQ4Umo5cURkN0t1M0dsVEp4bms3V1FxNW1WT1d0aXdoWDht?=
+ =?utf-8?B?NS9YRDRNMXJQOXQ2cVA5bGNZTWg4WFRqcm1TK1ZyTklQdnBxcXloN0szTUhv?=
+ =?utf-8?B?Qnozbll3b3pxQTQxSGE4b0ZiWGVEOG56Q3JuWWdKL0VKWlA5MkI5T2I5V3hr?=
+ =?utf-8?B?NE1lc015cDdDbHRWVk1kTlZDV2FZU3FySGMvU2Jpc3NORXJNaVQwWHJRdGZ5?=
+ =?utf-8?B?ZUJiSDZVankxSVZsZ3BndTZvZWEyNElBSnZVN2lMMEZiMXpUV1dlWjAwWTQy?=
+ =?utf-8?B?bjUrdjN5UU11eUxnSUZmN3QxZzBIbFhuZXFNcFJWenRGWmk4RlB6OTVQd2la?=
+ =?utf-8?B?b2dJeEMxRk5NRnUvN2RDVnA2Y3d1emErZWNqVlNQM1FpUGludXB0bXIwSXpq?=
+ =?utf-8?B?WDJmOEJXTEUxUWN0K3QwWHl2b0ZjeVJvbDY2NUdtb29TNng3eS91L0tEU0p5?=
+ =?utf-8?B?SWlLUzU1N2d1ZjlPTkdxV2JUeGpDTFV2VnhSckNiS1ROU1RBaTlDK3hadzJ6?=
+ =?utf-8?Q?sAfSZlMorMimOj4dAppuvJ0OS6OPqUS4yyEM+?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1db6f734-58ce-466e-f97f-08df35c2e8ef
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2026 13:45:36.1076
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O0SkxryqQKT85fIdNkuONye1DvsIp9qt74tLyA7PsPT0TZu4jFBDgAn+G9DaS/XYnvOiI0ioMb1eFodYm6dYFv/f5Iv4TjTwP/O+mSsy8MqFvp0TPDClLTb+sQdoIgSy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRWPR04MB12355
 
-On Thu, Oct 29, 2026 at 04:52:00AM -0400, Atharva Tiwari wrote:
-> Add a watchdog driver for the SMC on Intel Macs. It can
-> reset the machine if the system stops responding. It works
-> on both newer and older SMC versions.
+Per i.MX8ULP/93/95 and etc reference mannual, there is only one
+clock for a GPIO controller, so drop the 2nd 'port' clock.
+And for i.MX8ULP, the 'port' clock is for digital filter for iomuxc
+PAD, not for gpio controller. If we need to support digital filter,
+we need to add the support in pinctrl driver.
 
-...
+With binding fixed, to avoid dt-schema failure, correct gpio node for
+i.MX8ULP/93/95/94/952.
 
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -1810,6 +1810,17 @@ config SIEMENS_SIMATIC_IPC_WDT
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called simatic-ipc-wdt.
->  
-> +config MACSMC_WDT
-> +	tristate "Apple SMC Watchdog"
-> +	depends on X86 && MACSMC_ACPI
-> +	select WATCHDOG_CORE
-> +	help
-> +	  This driver adds support for Watchdogs in Intel macs Using
-> +	  Apple SMC.
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called macsmc_wdt.
-> +
->  # M68K Architecture
->  
->  config M54xx_WATCHDOG
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index 9ac406677..f142a5d8d 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -158,7 +158,7 @@ obj-$(CONFIG_NIC7018_WDT) += nic7018_wdt.o
->  obj-$(CONFIG_MLX_WDT) += mlx_wdt.o
->  obj-$(CONFIG_KEEMBAY_WATCHDOG) += keembay_wdt.o
->  obj-$(CONFIG_SIEMENS_SIMATIC_IPC_WDT) += simatic-ipc-wdt.o
-> -
-> +obj-$(CONFIG_MACSMC_WDT) += macsmc_wdt.o
->  # M68K Architecture
->  obj-$(CONFIG_M54xx_WATCHDOG) += m54xx_wdt.o
+While at here, a few misc gpio driver cleanup patches are also
+included, more info could be found in each commit log.
 
-In moth files the entries seems misplaced to me. Also, why did you touch
-the blank line?
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Peng Fan (11):
+      dt-bindings: gpio: vf610: fix clock requirements per SoC
+      gpio: vf610: propagate return value to callers
+      gpio: vf610: simplify with irq_set_irq_wake
+      gpio: vf610: use devm_clk_get_optional_enabled for clock handling
+      gpio: vf610: drop unneeded header
+      gpio: vf610: drop unnecessary wrappers
+      arm64: dts: imx8ulp: fix gpio clocks
+      arm64: dts: imx93: fix gpio clocks
+      arm64: dts: imx95: fix gpio clocks
+      arm64: dts: imx952: fix gpio clocks
+      arm64: dts: imx94: add clocks for gpio controller
 
-...
+ .../devicetree/bindings/gpio/gpio-vf610.yaml       | 32 +++++++++
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi         | 15 ++--
+ arch/arm64/boot/dts/freescale/imx91_93_common.dtsi | 20 +++---
+ arch/arm64/boot/dts/freescale/imx94.dtsi           | 12 ++++
+ arch/arm64/boot/dts/freescale/imx95.dtsi           | 25 +++----
+ arch/arm64/boot/dts/freescale/imx952.dtsi          | 25 +++----
+ drivers/gpio/gpio-vf610.c                          | 80 +++++-----------------
+ 7 files changed, 96 insertions(+), 113 deletions(-)
+---
+base-commit: 8a36f53fd5ec3eff01f1b637d42cbdc3821d0493
+change-id: 20261029-gpio-vf610-fixes-c56439785fcd
 
-> +struct macsmc_wdt {
-> +	struct apple_smc *smc;
-> +	bool has_oswd; /* Newer version of watchdogs in macsmc */
-> +	struct watchdog_device wdd;
-> +};
-
-Try with `pahole`.
-
-...
-
-> +	.probe = macsmc_wdt_probe,
-> +	.driver = {
-> +		.name = "macsmc-wdt"
-
-Always add a comma to non-terminator entries in the initializers
-(yes, there are some exceptions, but it's not the case here).
-
-> +	},
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+--  
+Peng Fan <peng.fan@nxp.com>
 
