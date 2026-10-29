@@ -1,57 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793269811;
-	b=xISH7vkMnPqaTWr8IEa8fDu+BHjCRvm3zPldSp+jNwQKwa7b/PY07xCAjHcUs94ur+vq
-	 vL6U+hrgDO5UQMKWUjGfw7Mjge+u8dWUMVrd5x0ldQsaZ/T3csuExKh/p6yTbQa1DZRW3
-	 QS4rOQHmezeDdisi41zKsDql7lZc8WrnzEMtYqA3Rv+KyP8Ev7uln6aorUjFzqXjeIuIo
-	 faz04eWfIPAqK8CaSERRU0DC6J5cdLldqzzalCGwQhVaVIwAiZJSrySxYhxQdtmi4O+0p
-	 tSTU9xD2n8AK3Xl9gT9Rvi2Xq34dobcCW7dbUtptQ7dnINArlU3oAC9j9UmMuVlABxw==
+	t=1793270193;
+	b=13OWnwp0RGeOiLV9YyAJan88047L+RVrdz0Iqntq5x1LNtCEN4EjrPICzq0/U3xP2kyK
+	 UsVr1w3smendCYLktdl4qKKOJrH7tqR4zXHP8sSU8ZVGP99UE9yyNLo9wGXjv+PnCePdc
+	 owcp7xzZPehX6oDpehyXoIP0sQhzclHsdIdgrKnP+JiF1aNivubc+mLwmItpXr8Zkt8Jm
+	 4xpGjgvuvn4wBiPdaK76SOEe6huF63/TF9QFLgy00+J4FC61/G97w7N0vTdsL04gxmfsj
+	 CMAZsslmlc/yW/8yZ+WUR8Nqk2GYRNgKB8vCje2993OtNasU6+BR2FEfxNgcIfYDyGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793269811;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=AZC7Kq+rNbABpnx+qnFFaseVBAn2cBmm3lL+yoxx9VU=;
-	b=DoG6RmKYIjRyeXxw9S2mHdMBiC4FPkuxcn8p22u2QGBPPr1zNVL/U9ur8fMuHYEBmCyg
-	 plOlsusjIFG1IInlEdHANYLnzC8gUV2LV5NWf3/salaQtE26nZnMl4ScJ2TLUDEaIiZqz
-	 QNGw6z0U9dEttqX3ulk439g91TWMcjziNOv+GSvuDUlvjzCvpp08nYGxXdpeoWqV0jpUX
-	 B+BUexAzsKIdUnNOde/E3mDdVSBGrWAKTM5QEh0rQLaKCv/Buq5turbQInxjkZ0hCmi9J
-	 m/7lWxrOCDzXyGvSCrWV7e8Ruo2dT0NM2SIbZTGN4vwl0mApUNLlKfOt654Lk+16l4Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793270193;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=jehMkVEgMGBUzExRW4jLTeS4kpPNr3py8r2FnDt6bfI=;
+	b=A5zb40YRpHKi9ROQE3lF+zo5C57Cs5sbF6/85WoZ9QYR2HMMW9ha6qrxNHlNsGamcm18
+	 c1+FRmbCySIv3tEXMvCxpMRaY+/sbU0eogvA51GGKjkHu7iAHHSGSLcVzIOAZQUNSSpLQ
+	 loRt4ZvwAI+PowMjw1rUmWPZXk3QWF64UQ1vuVaNLkJHt/n3AlqTnJlhFLuNKw+DoUw8e
+	 0371gyD0OX7cqe4AOn2bS1A0ljyni2NIgOajOK2XSi67eiZPC80Gb+dMwDPXhwaeSqcny
+	 llUvqlsl9PtFfLB7jbMBQCRtbSvrK2DLVZgxLIjGPFoESOuCdLuc8LU8aTi6VCUhMNg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BN+vbkXU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gd4GPgsj;
+	arc=none smtp.remote-ip=209.85.221.48
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8171E606A320;
-	Thu, 29 Oct 2026 10:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB839606A31E
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB839606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BN+vbkXU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A811D1F01829;
-	Thu, 29 Oct 2026 10:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793269811;
-	bh=AZC7Kq+rNbABpnx+qnFFaseVBAn2cBmm3lL+yoxx9VU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=BN+vbkXUZxMvfKqEK4vfHBF3Zh23+Ao6r1kolOZus6Ff7M+SjPeiTopeWZ5OjX0lg
-	 BQ1JvCHkAQBTL5Ii5H82Kj6oEQGxWdZbkfujTRa82d2dw25VfdzVwR/gBdQNML8iv9
-	 iD/0n4ne1z7y1y2y4dhss5SJM17ldlzluVzvVTZN7BNGSd6bIcVqpPwELUz9BHvu7E
-	 mTBT48bD38m0++YDOUhpX7lDIKTE+JDnJPs80Vs8GOTzfdB7T9hi96dg32wbmRpufX
-	 91Xz8qvEeoa/XZR7q/ffxSbxkbOb4dUhC5vEg1oPvEaoK0Vf7RZrDD7KpZqEBwTDQn
-	 /JYpNuGk/z88g==
-Message-ID: <sashiko-outbox-189134@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 1/4] arm64: dts: qcom: sc8280xp: enable PCIe ECAM and
- 64-bit memory
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Xilin Wu" <sophon@radxa.com>
-Cc: linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261029-q8b-dts-v4-1-e8e7438f5545@radxa.com>
-References: <20261029-q8b-dts-v4-0-e8e7438f5545@radxa.com>
- <20261029-q8b-dts-v4-1-e8e7438f5545@radxa.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 10:30:10 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gd4GPgsj
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48e20ed3b9dso1515382f8f.2
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 03:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793270191; x=1793874991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=jehMkVEgMGBUzExRW4jLTeS4kpPNr3py8r2FnDt6bfI=;
+        b=gd4GPgsjVo6GcYklyr1/n1T+RIm/k3Kyr0LN0pHHmi0WpE+3LYFksPgqRfLZhxpWO8
+         rTEQYvkf30gK2Jc+/VGp6ld4qZD8LMdn6EvRJMwNI6DswMMb5bRJ2fs1Zk1rEQM5CK+m
+         3EshKbyw2XIgoDPG0+ldJGles3WBcJP2sZpWBkTsJZWnvwseD9CKkN1sE7waoSOPhZK4
+         5BSUusbSKU3UIxWNCEkHPn76dxUwcvsa4/yCRj0YRxxrYSns18l+eQxWh6xDts8bLhK1
+         HNK7rckLaQfqeHOgye/wqpFNdh23bS5dOk/EbYM7qonlCOq02rMf6bNh16lMaca32bKY
+         Cgwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793270191; x=1793874991;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=jehMkVEgMGBUzExRW4jLTeS4kpPNr3py8r2FnDt6bfI=;
+        b=n3fN8719aDRiSLRf8WpIobJtU596wvQv6vMGriiyzk5Fb5Q4IP3/r3pqXXHOb7WDJR
+         gXdqiC/5xn8fWUm/ywASu0F98xb63ZSx6lTqDWIPgnYfcgbkWBZfUJjoZWknchkr/zJg
+         ZPsaEjQEoxVhPjqLMDchgxDmS6Zr+hoYv3j8n/DUGAejmxQaCqWi6kTtUzytkRCJh1DL
+         sjg/6wYLIAeSippwBE0/5HMxM/KRuldhLLdoHT9wh6Xqys5+VuJKCsKMGzsZizZ/2DSE
+         yjFlbh9bw5ARWOWORNly44SVS1sXqHTuEfEuUNpvICK8ZuTD9mYM1cMQTSbVPG9x1YbK
+         5DQQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwfFgeIwRUYjO6AgAiHMci60VHA6yeY1KnUOQeUXnLMfRTCPTNlPpIPzqE1w7JG1rAzfSgHU8geJZHg@vger.kernel.org
+X-Gm-Message-State: AFq9FYJPhKYk5i1VyUR+CRKnfTSeBOtgd1e4V4o+GVCF7GGr47wtvdvk
+	E+kMbJ/DLmvlbnT27m8dcURxN8lX2CLXtudh5MOah/HvhAtr99c6Y5UZ
+X-Gm-Gg: AYBFou2Bg9U77cx9g05i5BhGabq6Y+JNh13Yhg/Pr0YSn9ojRsGbdqUBSpg95vE73uP
+	VWbak3YoA6SPcxsxPmTXL2VfnYwPmj1xNDwP+iYZVmzzBIUHDlZ//43GffV9IA8swmgP99Zfjv/
+	VZNtffzQ+U8MQfGCaTr+CM1xGkJdt0Q3QUKdDjbDGWWe8e+FYIkCwHvwTiWyTWwcNN3V2UqH8Sb
+	Lf6Co6HUXSit1zQfR571qaMjqPxWVRAmVQNt1IWla3oSg9CjNe6AJ0nnp0tNXmFYPbG040d7HEv
+	TNzNlls0Bn5OgJePrEvNXenf6A25PCnfMyjFv8DCzNtQLY9EXnuGTE0d9QgUyGBNGvKZpclU6s7
+	QyTq3bKC+E7SJVLnBvnBm5vWNyEIcg8+m14rAc+J+MQouxB+oeDpHw87+AwNNpucOc5WdTxkuJC
+	NFCx3h037f3j2P9mGrmyMSnIXWc9mFnNGml1JFQlGmK67lnKI9vhzcPIyCKi7zz/0U7mwRfz/7F
+	uGUjTYuFcu1sqoFUu3R+lhaEi2I7WrzzjQrcYfo9UYSX0koh2Co7b0wXvB1B24RSnCjF3mb8piF
+	0OBlTtmj5kHJnCKup6CwwORndRVfGpt0vOraHyBu7v0Z9uY5OT5KtkBggA==
+X-Received: by 2002:adf:e283:0:b0:48e:1299:c00f with SMTP id ffacd0b85a97d-48e5d288c04mr9053525f8f.3.1793270190865;
+        Thu, 29 Oct 2026 03:36:30 -0700 (PDT)
+Received: from LAPTOP-AVI.lan ([2a06:c701:4778:c500:4cef:6e83:1a47:83fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecde7easm33914037f8f.52.2026.10.29.03.36.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 03:36:30 -0700 (PDT)
+From: Avi Weiss <thnkslprpt@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Avi Weiss <thnkslprpt@gmail.com>
+Subject: [PATCH] gpio: omap: Propagate runtime PM failures in probe and request
+Date: Thu, 29 Oct 2026 12:36:26 +0200
+Message-ID: <20261029103626.1527919-2-thnkslprpt@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,108 +99,75 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] arm64: dts: qcom: sa8540p: missing reg and ranges on pcie2b, pcie3=
-b, pcie4
---
+pm_runtime_get_sync() can fail when the OMAP PM domain cannot
+resume a GPIO controller, but omap_gpio_probe() and
+omap_gpio_request() ignore its return value.
 
-commit 835660c7a888130654e80196f354e12277da4a3f
-Author: Xilin Wu <sophon@radxa.com>
+Consequently, probe can register a GPIO controller despite a failed
+resume, while a GPIO request can report success and modify GPIO
+state even though runtime-PM acquisition failed.
 
-arm64: dts: qcom: sc8280xp: enable PCIe ECAM and 64-bit memory
+Use pm_runtime_resume_and_get() in both paths and propagate
+resume errors. On probe failure, disable runtime PM and unprepare
+the debounce clock when applicable.
 
-This commit updates the SC8280XP PCIe nodes to use 64-bit ECAM configuration
-spaces and adds 64-bit memory windows, while preserving the 32-bit address
-map on SA8540P for PCIe2a.
+Reproduced both failures on QEMU N800 by injecting -EIO from the
+OMAP PM-domain resume callback. The original driver continues
+probe and accepts the GPIO request - while the patched driver
+rejects both operations with -EIO. Normal GPIO controller
+registration continues to work without fault injection.
 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8540p.dtsi b/arch/arm64/boot/dts/=
-qcom/sa8540p.dtsi
-> index 23888029cc117..e5393a237497c 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-> @@ -180,6 +180,15 @@ &gpu_smmu {
-> =20
->  &pcie2a {
->  	compatible =3D "qcom,pcie-sa8540p";
-> +	reg =3D <0x0 0x01c20000 0x0 0x3000>,
-> +	      <0x0 0x3c000000 0x0 0xf1d>,
-> +	      <0x0 0x3c000f20 0x0 0xa8>,
-> +	      <0x0 0x3c001000 0x0 0x1000>,
-> +	      <0x0 0x3c100000 0x0 0x100000>,
-> +	      <0x0 0x01c23000 0x0 0x1000>;
-> +
-> +	ranges =3D <0x01000000 0x0 0x00000000 0x0 0x3c200000 0x0 0x100000>,
-> +		 <0x02000000 0x0 0x3c300000 0x0 0x3c300000 0x0 0x1d00000>;
+Fixes: 77640aabd755 ("OMAP: GPIO: Implement GPIO as a platform device")
+Fixes: 55b93c32520d ("gpio/omap: use pm-runtime framework")
+Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
+---
 
-[Severity: High]
-Should the legacy 32-bit reg and ranges properties also be preserved on
-&pcie2b, &pcie3b, and &pcie4 in arch/arm64/boot/dts/qcom/sa8540p.dtsi?
+Related/similar upstream GPIO runtime-PM commits:
 
-This patch updates all five PCIe controllers in
-arch/arm64/boot/dts/qcom/sc8280xp.dtsi (pcie4, pcie3b, pcie3a, pcie2b, and
-pcie2a) to use the 64-bit ECAM config and MMIO address windows, but
-arch/arm64/boot/dts/qcom/sa8540p.dtsi only preserves the 32-bit windows for
-&pcie2a (and &pcie3a, which already overrides reg and ranges):
+  e9438ab5328a (gpio: zynq: fix runtime PM leak on request error path)
+  ff82fc3a4a1d (gpio: xilinx: fix runtime PM leak on request error path)
 
-arch/arm64/boot/dts/qcom/sa8540p.dtsi:
-    &pcie2b {
-        compatible =3D "qcom,pcie-sa8540p";
+Both use pm_runtime_resume_and_get() to avoid retaining a PM usage
+reference when acquisition fails.
 
-        linux,pci-domain =3D <1>;
+ drivers/gpio/gpio-omap.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-        interrupts =3D <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-        interrupt-names =3D "msi";
-    };
-    ...
-    &pcie3b {
-        compatible =3D "qcom,pcie-sa8540p";
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index a9b9a3d9631e..31525a8eedf5 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -813,8 +813,11 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned long flags;
++	int ret;
+ 
+-	pm_runtime_get_sync(chip->parent);
++	ret = pm_runtime_resume_and_get(chip->parent);
++	if (ret < 0)
++		return ret;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	omap_enable_gpio_module(bank, offset);
+@@ -1459,7 +1462,13 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, bank);
+ 
+ 	pm_runtime_enable(dev);
+-	pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0) {
++		pm_runtime_disable(dev);
++		if (bank->dbck_flag)
++			clk_unprepare(bank->dbck);
++		return ret;
++	}
+ 
+ 	if (bank->is_mpuio)
+ 		omap_mpuio_init(bank);
+-- 
+2.43.0
 
-        linux,pci-domain =3D <3>;
-
-        interrupts =3D <GIC_SPI 565 IRQ_TYPE_LEVEL_HIGH>;
-        interrupt-names =3D "msi";
-    };
-
-    &pcie4 {
-        compatible =3D "qcom,pcie-sa8540p";
-
-        linux,pci-domain =3D <4>;
-
-        interrupts =3D <GIC_SPI 518 IRQ_TYPE_LEVEL_HIGH>;
-        interrupt-names =3D "msi";
-    };
-
-Meanwhile, arch/arm64/boot/dts/qcom/sa8295p-adp.dts includes sa8540p.dtsi a=
-nd
-enables both &pcie3b and &pcie4 without overriding reg or ranges:
-
-arch/arm64/boot/dts/qcom/sa8295p-adp.dts:
-    &pcie3b {
-        pinctrl-names =3D "default";
-        pinctrl-0 =3D <&pcie3b_default>;
-
-        status =3D "okay";
-    };
-    ...
-    &pcie4 {
-        pinctrl-names =3D "default";
-        pinctrl-0 =3D <&pcie4_default>;
-
-        status =3D "okay";
-    };
-
-As noted in commit b8bf63f8eb72 ("arm64: dts: qcom: sa8540p-ride: enable PC=
-Ie
-support"), accessing unconfigured PCIe address windows on SA8540P/SA8295P
-TrustZone firmware causes the board to crash into ramdump mode. When
-qcom_pcie_probe() -> dw_pcie_host_init() runs on SA8295P-ADP (or any SA8540P
-board enabling pcie2b, pcie3b, or pcie4), won't those controllers inherit t=
-he
-SC8280XP 64-bit address ranges (0x4_00000000..0x4_ffffffff) and trigger a
-crash at boot?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-q8b-dts-v4=
--0-e8e7438f5545@radxa.com?part=3D1
