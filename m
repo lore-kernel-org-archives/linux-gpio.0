@@ -1,106 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793288938;
-	b=uv8PsDZtPSZOvs3t75eYxjkRArB5BiVFilmOTgNT/neDz6Wd/4cN3ZqDoJJsAHAwmM7Z
-	 9exub0QMIzYQXLYanAOl5Uq1bRJekrviUtM/haCARPt8+AWEk7h6W41ZfP+9Vty5Kev44
-	 4mG9fQZr6erRx4rTiO0HrteIvy4gdpFTyFWojZAduCnd5hcotCYv9D5aMwBHcmmIUqByM
-	 TYLbXW08oVgFcat8gxIw+fB/E+cF2dkIVlI+U/ehfgBkmtnos4OX0lLl76oOBVl5anY+f
-	 JJLGwrE63sIVim/Uk1av8xKFD42LH1HPpRqmu3YDKxWI2qiKzRh1fMSQjRaUEapFZrQ==
+	t=1793290422;
+	b=zOfF9TMeia2zbxBtAMoAHmGiyAIfmSFBlPYZoGkuxrCwT7UbwVPFj0yI5fkdheaL3JIF
+	 65fRtECUphWFB0p2S11VmB4LucPnTPYwEQ3BdBvDH3yWAQRFenHUMuC6870i8nFffOtoI
+	 GIbXOAiysqixZgzHstTnQMzU8YPAqbPagrP3Uj0KP7oAXItVmA2Ve6XCa1q0T1oFFfQKT
+	 pzCP1+pTB8JgVHjiG8F/U3JgTU619ZaPSQ8ZOi8Cax1Funvkop+IuLf11Bv/zvcCTWp03
+	 x/VkTR4UAWU9m5VXVUf7MHdmdJUZNn+93qKyNiXFA3CGaS2MrcaOg/C6OpYYx7p0dvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793288938;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=eeEUmGxrMpMZqWG1Qts6PPxT81+Hv3D75laR0be6LSA=;
-	b=FThV7LVGRuLulF9TbZGLJQZUtuFLNqPMq/l4+Y5q9L5cp/WCjpVqK4JEoQ7Bv5m2EAhz
-	 kX8ox2OZcFOeH+FOUIZsuVrol9hMOnU3aAS8ywAAMzaMBSv+Fx4tWnACBjl2JJYkfADFe
-	 4WtHkvGHYDDUadOWcZNRcNbInnGRBVZgNjwg75LtNdOlG8/rz7vV1hnx/pKKwT6J1GKlT
-	 5vkNgsJOiHNz37PNqtC4fD0J2HU+lp9lkOkLBOoC0vKOLDOK77RRUDbwCodUBECB71qus
-	 97GFxHi+Id3kY9sYE3wE7+zC7FDRXxYHN0YBygMrMdaogYPpJJTz8HAGPk1YSYjdi+Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793290422;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=uT1J6bKMfPDh6Cp/Pg806qQt5aisvbifTOqIdeAAv8U=;
+	b=YF1JK6lDjx4MR/fi3p6zanYOJBwyxoXyo+8YfwrO0FLrMW3K0+eb8tds3GRMFWaZBVDG
+	 /bXUjS6+rIE7UQLkmjMyupTfMwzglHx3EojAmcF4XdnirQfg0KxW66TXtwNiTbsIKOhXL
+	 PM2QOqzsl3iJh2f76ve6dTuZnOZutMSZz8xoU8WQDH+gGXhkuY/aTXKrIBptjwDb2AsMr
+	 GD1gRLy6VsE/a+EpcXa6u/TxxGV4hZDys71EyTeEoNW+pIqz3OLeMrzbcF4DncylnJtwT
+	 AbfYdEDbVLwnbmR4X9npP1b914261ixlPIH/D2Dm0a4U7DOyQt9Xfufdyy8UuDSi4Uw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hA3HvPav;
-	arc=none smtp.remote-ip=209.85.221.53
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DtkvhEVm;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36F3606A31D
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 15:48:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E36F3606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E38A606A31A
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 16:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hA3HvPav
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-48c4d99c32bso1849189f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 08:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793288936; x=1793893736; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=eeEUmGxrMpMZqWG1Qts6PPxT81+Hv3D75laR0be6LSA=;
-        b=hA3HvPavX2sHuUPiuFsemzRqz5ehY9s6we+dmLmLNMdWvuWI51GSFgjG4swuVOc98Y
-         JUSdketNBfRTtLKbg4LQVRDYc63Jwl9ofkc/SFJQC9Hfu2maQKWnkpXQ/SKWM2FGSNj8
-         9FRbFhNq8e3DvEcYicBhDtn81JQOunMt0dkYcmKjbyIP13WaO1kqVByk1aAdn28Vwcf9
-         NV0szqzQIGCwyJ6Et409rdEk95YXNDl1Ac0JYAnfr19ZzKfCH8PuPr4v+aF1qDC07WFX
-         WERRvXibFIVnR9BZstGjP3XLU++Eb3TaA6IDyD4rdRfX/ZDR+0ahK55+PUk5nM2eondb
-         ZQyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793288936; x=1793893736;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=eeEUmGxrMpMZqWG1Qts6PPxT81+Hv3D75laR0be6LSA=;
-        b=Yll6X97YH4Fz/XQDWJQWl6vQfGPWi5mMfNkjl3xFF554a0HafDC3b9EioJGXfTGmuG
-         PSKc1DXFOF1kuB6koR+Jxr1y0bRJI7aKXhaSjNog8Kk3YRUj5Z9HXgnEl67/AS+C0RwA
-         eep+WZH+oIbE6e2FK8XQJuCSc4aZbVctVx2agvCAhOL77GteDK9lUCeeqUkUaSJBVZw3
-         eJlH2v8u8ihX7phFWHxmR2FFQsgrvyMaSsAFOJEFXh+BJ19+koWeXEC1g2ElC/gc0esZ
-         3EC/2F/mOXXEGiG+K28IqN7zlG6JsKYJQymjaty4ktIkfXHWNf5YVl4gHP4z191Zkd5v
-         5ABA==
-X-Forwarded-Encrypted: i=1; AKwUvBwQSWvesdgvolmsLXTDapzQwM/XD9nCx7gf4Lg7PEDYi4ExJilBdUGacw1YiRHJLQ4YmQQgljrPSGUG@vger.kernel.org
-X-Gm-Message-State: AFq9FYLm3H9kKBjQLxHQDAijc1tXQbySVQB0M2kn3kziDPOsU03Tj/57
-	u+qfro0GTloKIo+HXfJGvv3K0K1g/FaEHgrf+7cWyz1BeQS3MCDjPAwk
-X-Gm-Gg: AYBFou1vXoanm8kwqfsVPJ8l11G0e+TVZCVmdvIN3O4e9LH2IGRGEjkk9N2qWL/fuZW
-	cEESn4xyZsy9Ru9s5JN7ir2dS2uT+JyBW45j/u6nAxaj2gqR2tQ3v/JAZymMpjJ7oxpLZ776ltD
-	WLlWCQzl2e4Qw+zrJdMRCZhqCYl2Xq8RXd9sZpk2T3RfCo9OGgxWba3RmaGs3ph5iWUgQ2L1GZY
-	AzDw9I7R3O7GrtO0tt4FMnfykZivNiE4L00THlkI6mQVxWO7+A1WXzDDGbUW3a+P9XJeayYTtib
-	teUz6O6wkbV6SVXQzz8mWEmNoOLhjSCP76kVjj19CxOFgRdXZdHLfJX8XFlAaYHoYIUo8+NGs4Z
-	maBqgd0bgmiW8rFGgyCw/Oot/YCIaUdEMxq2zjNtY54hMMWlCMMCxK7iLRDJ6dvGBtcDYqaOUgf
-	ThsW5x+/fcm06Mr9a5/ZWDH3mItPblThR9dTe0K+mAxwfpHrOsR8sF5cjPcfxepy+1vVaqJOJmo
-	tYMnRD4k5MgXq0yn9q3A7NUb0htzWkYYiRHkvi47zHCtAb9hiA92JKWvz8ucPtBCqvunZhRVSTm
-	2gkueLyNP1il1l9jbio/52EjZ5fk64CGoFcpaoZnfenLnRQHOfowX4FiYkIBaV5noEFbHgOdewm
-	y1DxtQ281rJwcdDdi28RA9da6suvb+vsUrqDeB7ytuVD6qN56YiswgTUp
-X-Received: by 2002:a05:6000:1a8c:b0:48d:eec6:308b with SMTP id ffacd0b85a97d-48e5d2ecf6fmr13635522f8f.21.1793288935685;
-        Thu, 29 Oct 2026 08:48:55 -0700 (PDT)
-Received: from ernest.hoecke-nb (static-2a02-1368-6200-2fbc-d3e8-e0a5-7e8a-a15c.cust.swissbackbone.net. [2a02:1368:6200:2fbc:d3e8:e0a5:7e8a:a15c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd8ddasm38102304f8f.48.2026.10.29.08.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 08:48:54 -0700 (PDT)
-Date: Thu, 29 Oct 2026 16:48:53 +0100
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-To: Saravana Kannan <saravanak@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Herve Codina <herve.codina@bootlin.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Leonardo Costa <leonardo.costa@toradex.com>, Frieder Schrempf <frieder.schrempf@kontron.de>, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	stable@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v3 0/8] of: property: Make fw_devlink follow GPIO, PWM
- and clock nexus maps
-Message-ID: <33yzkmwkcyzhmoyxcotdsnsy3mddkueyjyvlqno2qlio5tjziy@cf6a6dxfctlz>
-References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
- <CACRMN=cR0P0ETKLKkM2k67Kuv5oe4+gz8vY8DhhuZGZ6LiCGhQ@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DtkvhEVm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256D61F01816;
+	Thu, 29 Oct 2026 16:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793290421;
+	bh=uT1J6bKMfPDh6Cp/Pg806qQt5aisvbifTOqIdeAAv8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=DtkvhEVmJE7XxrbtKgBDaaYlYdYVbsyGhKqy+77u1e/wib+DHImV1qyfJpkTKsk/K
+	 n+JygYIuIqDMftyYia2zB6DaijGCeFId+rQhusSa8/0O7xfHpYsVrWJ0AqFX8WwGw0
+	 8JKzTWaqQZzO2T5N0tTQeTERS+xawbPJoni6+4WbF/v43BjwbUaK/0dAS7RaAoCuJW
+	 ETroaVrbX/kVgb6yRXeBxtYxRUplxLzeU2pg9ZzyEAL+HPD6Vc6lkCxmqDmxmCmyqn
+	 FMKDy3WLSIt0Z5lfua4u+n48F6H8wx4uq3r5cwlNI4+y+RHwe2kWjk6Cvbkf3nwz6e
+	 cAzW/YcVQmN9g==
+Date: Thu, 29 Oct 2026 17:13:37 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Payton Fack <facksweng@gmail.com>
+Cc: bartosz.golaszewski@oss.qualcomm.com, linux-gpio@vger.kernel.org, 
+	vfazio@gmail.com
+Subject: Re: [libgpiod][PATCH v2] dbus: add optional D-Bus activation file
+ for gpio-manager
+Message-ID: <jnlornbkzegl25va72v6v6pnlkabapk5xex5eldvlwk2vqxrgc@5fof6xiqfknm>
+References: <CAMRc=Mc_K1B=5S3YsAiRc6s0My4rAb0ktLk26XawijnVEOGvow@mail.gmail.com>
+ <20261029154623.387575-1-facksweng@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -110,129 +58,37 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRMN=cR0P0ETKLKkM2k67Kuv5oe4+gz8vY8DhhuZGZ6LiCGhQ@mail.gmail.com>
+In-Reply-To: <20261029154623.387575-1-facksweng@gmail.com>
 
-On Sun, Oct 25, 2026 at 09:59:36PM -0700, Saravana Kannan wrote:
-> On Tue, Oct 20, 2026 at 6:00 AM Ernest Van Hoecke
-> <ernestvanhoecke@gmail.com> wrote:
-> >
-> > This series fixes an fw_devlink supplier-resolution problem reported by
-> > Leonardo Costa while using a Devicetree nexus to describe GPIO and PWM
-> > resources routed through an LVDS connector. Consumers referencing the
-> > nexus could remain deferred because fw_devlink linked them to the nexus
-> > rather than to the providers selected by gpio-map and pwm-map. [1]
-> >
-> > GPIO, PWM and clock consumer APIs use of_parse_phandle_with_args_map()
-> > to resolve specifiers through gpio-map, pwm-map and clock-map
-> > properties. The corresponding fw_devlink parsers use direct phandle
-> > parsing instead. Given a consumer which references a nexus, the consumer
-> > API and fw_devlink therefore resolve the reference to different nodes:
-> >
-> >   consumer API:  consumer -> nexus -> mapped provider
-> >   fw_devlink:    consumer -> nexus
-> >
-> > A nexus is a translation node rather than the resource provider and need
-> > not have a driver. The link to it can consequently remain unresolved and
-> > defer the consumer even though the mapped provider is available.
-> >
-> > Make the fw_devlink GPIO, PWM and clock parsers use the same map-aware
-> > resolver as their consumer APIs. The resolver also handles valid direct
-> > references by returning the original provider when no map is present.
-> > Use dedicated exact-name and suffix declaration macros to opt these
-> > bindings into map-aware parsing without changing unrelated property
-> > parsers. Retain GPIO's existing exclusions and compatibility handling.
-> >
-> > Since fw_devlink runs the resolver for every consumer when its device is
-> > created, patch 1 first fixes a stack buffer overflow in the resolver
-> > when the provider referenced by the consumer has more than
-> > MAX_PHANDLE_ARGS cells.
-> >
-> > The regression tests call the OF add_links operation and verify that a
-> > mapped reference creates exactly one link to the provider selected by
-> > the referenced map entry, not to the nexus. They also cover valid direct
-> > references. The GPIO tests exercise all property spellings recognized by
-> > fw_devlink, including the deprecated singular and unprefixed forms.
-> >
-> > The clock patch fixes aacc54c67869 ("clk: Add support for clock nexus dt
-> > bindings"), which has been in clk-next and linux-next with the same hash
-> > since next-20260907. There is no build-time dependency on it, but the
-> > clock patch should not reach mainline before it. The series applies to
-> > next-20261014.
-> >
-> > Tested with:
-> >   - The CONFIG_OF_UNITTEST cases under QEMU/x86_64: all passed. With the
-> >     fw_devlink parser changes reverted, exactly the six mapped consumer
-> >     cases fail.
-> >   - W=1 builds of each patch on arm64, including the OF unittest data
-> >   - Toradex Verdin iMX8M Plus hardware using a connector nexus for the
-> >     display GPIO and PWM resources (v2, same fw_devlink changes): the
-> >     display probes successfully
-> >
-> > [1] https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
+On Thu, Oct 29, 2026 at 10:46:23AM -0500, Payton Fack wrote:
+> Add an io.gpiod1.service D-Bus system-service file whose
+> SystemdService= points at gpio-manager.service, which lets dbus-daemon
+> start the manager through systemd on demand when a client sends a
+> request to io.gpiod1.
 > 
-> Thanks for the patch series to keep this updated! Took a close look at
-> all the patches and they mostly look good.
+> On-demand activation is not wanted on every system, so gate it behind
+> a new dbus-activation feature option. It defaults to disabled and
+> requires systemd support. When disabled, the activation file is not
+> installed.
 > 
-> Left some minor comments. Should be easy to address/clarify.
+> Signed-off-by: Payton Fack <facksweng@gmail.com>
+> ---
+> On Wed, 28 Oct 2026 at 12:27, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com> wrote:
+> > This has none of the sandboxing features the original .service file has. :(
+> >
+> > It also runs as root, as opposed to the gpio-manager user.
 > 
-> When they are addressed:
-> Reviewed-by: Saravana Kannan <saravanak@kernel.org>
-> 
-> Thanks,
-> Saravana
-> 
+> I updated the file so that the dbus service must always use systemd to
+> start, since dbus service files do not really have the same sandboxing
+> features.
 
-Hi Saravana,
+Don't send new iterations in reply to previous threads. Each new
+iteration should be a new thread. Consider using b4 for managing patch
+series.
 
-Thanks for the review. I will address your comments in v4 which will
-follow in December as I'll be away in November.
+Please resend it as a new thread.
 
 Thanks,
-Ernest
-
-> >
-> > Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> >
-> > ---
-> > Changes in v3:
-> > - New patch 1 fixing a stack overflow in
-> >   of_parse_phandle_with_args_map() (Uwe)
-> > - Tests: route map entries to different providers and reference a
-> >   non-first entry with non-zero cells (Herve)
-> > - Collected R-b tags
-> > - Rebased onto next-20261014
-> > - Link to v2: https://lore.kernel.org/r/20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com
-> >
-> > Changes in v2:
-> > - Split the unit tests into per-resource follow-up commits
-> > - Added clock nexus as well because the clock nexus series was merged:
-> >   https://lore.kernel.org/all/20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com/
-> > - Link to v1: https://lore.kernel.org/r/20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com
-> >
-> > ---
-> > Ernest Van Hoecke (8):
-> >       of: base: Fix stack overflow in of_parse_phandle_with_args_map()
-> >       of: property: fw_devlink: Follow GPIO nexus maps
-> >       of: property: fw_devlink: Report unsupported supplier linking
-> >       of: unittest: Test fw_devlink with GPIO nexus maps
-> >       of: property: fw_devlink: Follow PWM nexus maps
-> >       of: unittest: Test fw_devlink with PWM nexus maps
-> >       of: property: fw_devlink: Follow clock nexus maps
-> >       of: unittest: Test fw_devlink with clock nexus maps
-> >
-> >  drivers/of/base.c                           |  5 ++
-> >  drivers/of/property.c                       | 53 ++++++++++++++-----
-> >  drivers/of/unittest-data/tests-phandle.dtsi | 81 +++++++++++++++++++++++++++++
-> >  drivers/of/unittest.c                       | 79 ++++++++++++++++++++++++++++
-> >  4 files changed, 205 insertions(+), 13 deletions(-)
-> > ---
-> > base-commit: d419d682257d813f6cb7a28e42b35d0edf4ad038
-> > change-id: 20260901-fw-devlink-nexus-ready-c859706b019d
-> >
-> > Best regards,
-> > --
-> > Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> >
+Bartosz
