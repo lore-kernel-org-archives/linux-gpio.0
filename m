@@ -1,55 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793269386;
-	b=OOIF1odSc/wlj3RnL3PfeMogcFcj9m3Vzo0ukb0pZkfzYaBkOoXNGfuOairo4mrsOwrp
-	 buhKZFoF5dcgbMeGkBt/De//cuhWzATGM8T8A0KETLScGjiHodXpe4ya+Q700RoSK1jtF
-	 aJ/v91z3cXEGzKWBjaEe39WpjIH6GULJyeqwu2UziBU6xS93dWQb8mVIWdR3OKWRPQ60y
-	 Df7FyZMXGaZrIvqsLjtGbnqox7nfO5bN2RdA4KmRiHtm3GbSLql30R3VxVBmRp/LOBtbz
-	 u602LwM+wta1baZxKREgxL7pCA+3B/NewFcbj1ReelFlca4kILDABW0WKfN2njXtydg==
+	t=1793269429;
+	b=Jh8PDeQThFNwikS7Am718X6AX3ch3au/PufBYcvEBqLl6WnOP2/xsJfUdw15g6fjf4lP
+	 J/vL9uNbXVYydyN68r1nqH69u/NpiGd4ee44Bm46DTd3Es5ZIUUVYHs7CV+kpa0dSdTcG
+	 ay2NKAuulCM77xUmqHUWJS5JN96MFAO25mRQ4Nq7RLBae3NF+g1IJMN8YTZ1VaNSVmysh
+	 menNaeTWM11kKrNq63ezn0EK5HG9kJ0TKV61R1UVjrcL49BK0Sd0h+OBwKqOtzktG0jTg
+	 LmpfQOZDJNKJpgupmEGSp/NQ6p8C/YIBv9sb786oCQwfSGT04tKLFbWut1gLy0PcWpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793269386;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Pm4shQIXu/YBtkkHvvK7yJLwXmgaG24l6vzhneZ0tVs=;
-	b=juv/iURd8RKtswozVAgK5f5lzxUqWyhSFVsdWKqrHwasfT7FsZWnZlECN3wO7BRmgkeW
-	 Ylkqo/Xae1btzFM7GpFS9zf01y9dqK++YhOwKmq/sCZz7sEydMkyRsPWclaBMWUN6DMFa
-	 wWtrH7UR8X1EDVY8hN4l3KO+JGRtCQtVmdmGFGz0sk7XC+sinVMSonun5MOr6ys5Wo4R1
-	 Fq74LruH3EUWGObkibp1goqzSVmmwewg5V7s8bXxa2y6D9HzHMc7fJ0YhLQDssxKx5b82
-	 sCye1qFtM5TeKREzNTtQ7FdjiBHco1JPPqTdDaWTOnG+I3pYemYkJGhVtb8U8Wfv3DA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793269429;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Last-TLS-Session-Version;
+	bh=26yG4eXWQUuRwTEMaMGincq8OXRaC7BKnOkTFxcAKtI=;
+	b=hLv8vqIB/zIERJ+zrlTJsa10naHGM3RWdrGXhNkrb3fKJ3zW5Ewl6I4uXlGSBBiIvgqW
+	 gkP3/5htFdgWxV6Hgo95sZzdgCooOrzGW2A7174bJAig24JzPNDOCk9Jvmk5WGGZAEh0U
+	 r82CEcbe12X559vSiQS7D/3FNPEXPQeNJLwOGPVhqQS+1qKe9bufpaaW4ewQrZZQpPc21
+	 WGO4Hy+YNBFN54VaU4b7TrV5oSN+8XaU+BcDpmTjfpHURlt/NAA3tef7DFXGKLmiUP2G0
+	 7pLzo4d/mmO9St7WYGxIhMjJJ1OlfPEhTgjbMzWxeI5zkTRJwI1x9NBUqoD++EUGvvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IEnKcu8U;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=1EHMp+Zv;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBA9606A31A
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A001606A326;
+	Thu, 29 Oct 2026 10:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A001606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IEnKcu8U
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9BF91F031E0
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 10:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793269384;
-	bh=Pm4shQIXu/YBtkkHvvK7yJLwXmgaG24l6vzhneZ0tVs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=IEnKcu8UtP76yNacDP5k4gfV7AdJ4dG9zb2qYDS6ok7II+UGUNCRd8PV2c7yHLdsJ
-	 0uF4O2iSxZBdcmD7rbwJuXpZB8xmDqK84ZcZxsfYZdB9izO0JeQGr59FaBalxzBr8s
-	 GFLUeCDE0yzhJVox7/gtYTyW7zapd9sTJXy2NNTyAkSXP+lQ3WFs67vPn5aoV4VqYt
-	 uNtbTV9p4Z3J2sTf8/dsDVW86nRsrjbdBybazolXdH5Oaq4jOCXihYHsLJAqiFnA58
-	 z0fjEDbokRqSu6+CRON7oA5vk+Pd0b2Gh7hBncs9m+h9caCq7v6yeALhG2byAZzhS3
-	 UmOGju9HwMzrg==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6df7f544919so1218882eaf.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 03:23:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzZxAOfL35C3JjwGlgItPqpUsvpoRylb3lnYqvfkXZn+HUexq6ZgyXzXE90h/O8K9pxjVvtYDyfCpe6@vger.kernel.org
-X-Gm-Message-State: AFq9FYLruzZS7bpEFUsiNJMGRhyKzmY8RzDoRx48amBZwfeKI62Nocnv
-	ezTI3k5uooYCst9xZBlsAJF9wxrkjsrQkgD6hAp9FT7fZJe5k4f2BROxVr+kwMlfS6cnJZswtNX
-	9bvhrLZklTzFKN7mcx7V3MaJl/XQPw/0=
-X-Received: by 2002:a05:6820:1501:b0:6dd:3534:478f with SMTP id
- 006d021491bc7-713f1f4f57dmr2819317eaf.73.1793269384310; Thu, 29 Oct 2026
- 03:23:04 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=1EHMp+Zv
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 489B14E4137A;
+	Thu, 29 Oct 2026 10:23:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 06E7560360;
+	Thu, 29 Oct 2026 10:23:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D69DF10329104;
+	Thu, 29 Oct 2026 11:23:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793269423; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=26yG4eXWQUuRwTEMaMGincq8OXRaC7BKnOkTFxcAKtI=;
+	b=1EHMp+ZvIZYUiY0Fs+NQ34l+xN9Aa85DGUxDMkpVM+qBPKo78H5FoqAiT2z7MnI4VpJHP6
+	bQIpXzpHh7c0SP5+HghUNK4LwwdREjXPgOT6/8bdVUJtolx0KulDYttcoZ1KljrRN89whF
+	xWIRGxe/Qj/RvZeMzLZf+2RjkUhr3qCJ8BaSR8XbTHLNzA/MguOk9airmBS4wB10/q+vu6
+	h+1xcPoHWeMampabcBvw2YvzucrPJLkQiGwmNbA6TdltVtdSfDrTYK5p3MXxToXBxRiKqx
+	Rm75b1vlDK8cekIvT2/fXsIn0BFABuoqmrXH2nOSzyNpqj8x1yoXFkSr2M5iIg==
+Date: Thu, 29 Oct 2026 11:23:38 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Langer <michael.brainbug.langer@googlemail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Markus Probst <markus.probst@posteo.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 0/6] rtc: s35390a: Allow use of output pin for
+ interrupt signal 1 for wakealarm
+Message-ID: <179326901959.870466.10617976319707000854.b4-ty@b4>
+References: <20260930-rtc_s35390a_int1-v10-0-e7b1cbc50a7b@posteo.de>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,38 +77,43 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261027-gpio-mxc-cleanup-v7-4-v7-0-7b602d70c149@nxp.com> <20261027-gpio-mxc-cleanup-v7-4-v7-3-7b602d70c149@nxp.com>
-In-Reply-To: <20261027-gpio-mxc-cleanup-v7-4-v7-3-7b602d70c149@nxp.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 29 Oct 2026 11:22:47 +0100
-X-Gmail-Original-Message-ID: <CAD++jLngEKZOQm6QK7BzMdCRqNj9-9Ui8JxP+yvCtOOvGFPWxA@mail.gmail.com>
-X-Gm-Features: AclHuK_F2FYCXxfvG5vSK3S2hpbujv-j-QBd2VPacOk9bLxQe1BEL834ojBgIss
-Message-ID: <CAD++jLngEKZOQm6QK7BzMdCRqNj9-9Ui8JxP+yvCtOOvGFPWxA@mail.gmail.com>
-Subject: Re: [PATCH v7 03/12] gpio: mxc: use 'unsigned int' instead of bare 'unsigned'
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260930-rtc_s35390a_int1-v10-0-e7b1cbc50a7b@posteo.de>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Oct 27, 2026 at 1:13=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.co=
-m> wrote:
+On Wed, 30 Sep 2026 15:31:45 +0000, Markus Probst wrote:
+> Add pinctrl to allow the use of output pin for interrupt signal 1
+> for wakealarm. This is needed for wakealarms to work on Synology NAS
+> devices.
+> 
+> I could only partially test the pinctrl patch. My testing system runs
+> ACPI, which makes it impossible for me to configure pinctrl there. I did
+> however verify that with missing pinctrl configuration in the devicetree,
+> the register were correctly set. So there should be no regressions.
+> Every other function than ignore, disable and wakeup should also be
+> considered untested.
+> 
+> [...]
 
-> From: Peng Fan <peng.fan@nxp.com>
->
-> The kernel coding style prefers 'unsigned int' over bare 'unsigned'.
-> Fix all instances in struct mxc_gpio_hwdata and mxc_gpio_to_irq().
->
-> No functional change.
->
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Applied, thanks!
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+[1/6] dt-bindings: rtc: Add pinctrl for S35390A
+      https://git.kernel.org/abelloni/c/2166aaa173cd
+[2/6] rtc: s35390a: Add missing newline to dev_err
+      https://git.kernel.org/abelloni/c/a27b25bb9b42
+[3/6] rtc: s35390a: Fix alarm not disabling
+      https://git.kernel.org/abelloni/c/d93f29e41089
+[4/6] rtc: s35390a: Read 24-hour mode on access
+      https://git.kernel.org/abelloni/c/6199051016cd
+[5/6] rtc: s35390a: Add pinctrl
+      https://git.kernel.org/abelloni/c/cb4e92b15114
+[6/6] rtc: s35390a: Add synology quirk
+      https://git.kernel.org/abelloni/c/f6550426f21e
 
-Yours,
-Linus Walleij
+Best regards,
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
