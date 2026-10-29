@@ -1,55 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793279200;
-	b=e99TFurZ6HRx4e0+uN5yWiP0xgIWKUYyi2j/+aj0Ikh7VQXy9xuzBIPvxg3dQVcK7se8
-	 eXAQ0i9QrTMVHsb/S5IJH4YJ9AUavSWdBiNsB32lmedchLuSXWlW6+eJoxgjFuRdBW78b
-	 zWA165dqZppnVRiEq8LeWGvVfooJ7CN003d/eAWR73NmPXBP3tuZDxmwc8+4I+HYhMd8A
-	 KUgic/K7MmSYG7sPmN9lVyiCiQij6CL/l7mBZ9yXAPIPh9r/gWeV9ms/f/E2hJiU8q9hX
-	 3Adk+fkgWgy1DI85SpCK8gcoKOUHgp3w6+FG9qYa5oZDP7GzCTtXbZ+F306+gSpHeBg==
+	t=1793280625;
+	b=oxYq2OYKfVJox8F1eNs7yGZKIGbd3c7bxFtgDq4sEkxrC4/XcUEiiM+Y+pBtdPUVBVvt
+	 W90h9bYKMfGRFdo14YTO6C0hQ76ZZqLE2lUlga5V86PUo47Z5M+nZbriRGS6O8CbIr3u+
+	 nnElu7rBtyL7VPM0CIO6mane9BBUKh8zif2heaUi5o2MOtnMm5ypA2VvXELMUrEVJZNHK
+	 Z0uoKHvJwP7zx3OEaEdGJt1QCAsUXd/L9jVoKoLaSfxughMRezmd17nhr/yCUdbc5CG9U
+	 4p9iU9ZgsB4jo3h5R8vkTQ+s20TJTedt6gjn2QHGTAlUHxv0izqwKnakIcA8gojY9Rw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793279200;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=j9d8HMdPOBLx2izzwVSbxm7Ew442zRczjYj1drdD8eQ=;
-	b=vXH2bUPXeost2Pg/5nh8OPN8UnnDbmVKoofSuPwgjG7vXPiPV6gyxh9lz40Xpk7yLcWK
-	 w3XTLe3ukNrmsVFdmk+fEeCyyYP5mUSeNA+glkLGMqLL4d+f3ZMsn/zmnC0pwZ3Gj8LNA
-	 oAINwb6teNN48r+7277Bm+hmUztJTEEa7lbNq9GcRwmAvwOLv3tjq1rzyK4F/kSG7eQjj
-	 BShAwqolaorR1hqGrpvLzvrDItUIY40htgLBulJgcagoUxsH3bLqSBSlJODMhPhpbMBf5
-	 34M1oovrTbb0dGMK7Pq0Pw64K6VsIn7FXhKkoMzKmgRih/SfNJ0mYqzEL60sUk9HOdA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793280625;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=Mb2nUQU4M00SSUzZJSeoQpnNXAraCq7x3LdAKS30Euw=;
+	b=av59mA0JFVoyz4HJOq9OYY+bqom6HCJpdGpiVJZgY+AAAAPVDwFOBscIb2eE9diepS8a
+	 838mm8Qv1AJ5Ew7hqXjfDP08UFl5ExS2cKSlAhmM755PQbQ8sFnI93jLjEkU1AMzcega6
+	 I+P/CSQSOQqFPMkAYQI6/W7WEU+yng1qLG1kRzE4F5mquQXMfMaeL/nl9G6o74heCvQEa
+	 rpQqU7kMzF8FNOkada1v+mxwpETZCFwUIYkuux5HVTxkEX/osFBJflMCLDKoUROsZnXWa
+	 2Ob+h0uRQla21ncH85NoA+sTZKMIRLVybaHkb40iHT2q74gjkm7C+1c0AnHdWhQsHdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UW+EsRMb;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW;
+	arc=none smtp.remote-ip=192.198.163.8
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A37606A31A
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 13:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67996606A326;
+	Thu, 29 Oct 2026 13:30:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67996606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UW+EsRMb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C0A1F031E0
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 13:06:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793279200;
-	bh=j9d8HMdPOBLx2izzwVSbxm7Ew442zRczjYj1drdD8eQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=UW+EsRMbpOtnUZJkL8ULWM5F+FbBi+YSir5WfgzdfSKmr6/u6RtLOLbhJwMK7BrCF
-	 uY2O453fYdRT+aSNSC1mIrI7t0sHIXqG/76ihb2yGfkOO1bHRdBzTptMhiboZBw0H2
-	 TdTfapOKcyNEECz2evB3TcNtspTWG7MkcAuvmYuFdzULWZi5w7uAZij8wg00ebVjh4
-	 utinmmVi/ORqAcByLiH5BaeysrsnoQmEQAdBzOPyDsV05xYIYRiFuTAHRnyJfjR0i3
-	 XNahjKRB1nbTWiLXxv4UGWhePRsI9XHc2M0xsaNSjxzFQDYBr65X30FrK2u6zXqqYm
-	 X4noo7VDlEtUA==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5bcb4f23ddeso2032764e87.3
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 06:06:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByZPQWci3vfZLmfaNWodh+w+UMBbJxKtDj6reDkhPdWX/pCONknmUCzTWECI8cEGWgqNsOzrk2NB56M@vger.kernel.org
-X-Gm-Message-State: AFq9FYLi+lYyGpz/+w8AxY4NsIm0SN8tSutY/wDDyNCnAlmvM3KqMEy4
-	6NZAnX1N0puVLfH8hLJlAp+nzJUtXLbEJDj4sFwjz0l4b0XtupASenYnckiNG+dTqZS/rTr1z+i
-	8dKfPsBwxfuwUn64SZInh0LKlT6EpFzE=
-X-Received: by 2002:a05:6512:3c9a:b0:5be:50d5:1909 with SMTP id
- 2adb3069b0e04-5bfcad58b3dmr2147748e87.27.1793279198981; Thu, 29 Oct 2026
- 06:06:38 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793280624; x=1824816624;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XiB/P3z67uNi54hQwr+HoGceAi4KeJ58DpxovBSc0bg=;
+  b=moKhVdIWHTlYBTM27yPpptcYvWfZxeoV5vQDl8tROPJHxcy1XOyrsLiH
+   UEC0pOG8yTIBOxOxX+8Sx3MfPvthNhhSVbg7hmXMLdY75L0ynvudB2qUB
+   xwDw8dlq+JFqmrEH1vF2p5uZ15A+7QpDyhHdm3QkceUndx7CjaFFhUM69
+   MGYS36fDRAR2PqPL1vCXsKjhaE/atqXAWFvoXUpwofjuL2spLHNDxelfM
+   4s5Iqm0+JQ+1YT0Rz6kf+pLQU6USwnYQL+Zb3tysqKRg5FvDcKhZdVdhv
+   IUM8pJpk+riQyMmNtQTeyuROg0DxK1r+WJdKbdMqvpLe47T3qLyVJqwQX
+   A==;
+X-CSE-ConnectionGUID: X1a7bbI8SnWe9Ef4aSkLOQ==
+X-CSE-MsgGUID: CjMqrJc6RY20tCJkecc5HQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1915313"
+X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
+   d="scan'208";a="1915313"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:23 -0700
+X-CSE-ConnectionGUID: pazyI6DLSZO+QuLDn2CgVg==
+X-CSE-MsgGUID: Eiw0OS5rRee86K4uWKSdfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
+   d="scan'208";a="5273644"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.129])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:12 -0700
+Date: Thu, 29 Oct 2026 15:30:09 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-gpio@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	mfd@lists.linux.dev, platform-driver-x86@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 03/14] watchdog: add driver for apple smc
+Message-ID: <auNKYRpfqrtKa50O@ashevche-desk.local>
+References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
+ <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,123 +112,78 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com>
- <20261011-gpio-mxc-cleanup-v6-7-cb47ce2ad758@nxp.com> <CAD++jLnDxTAz2=ge5RgvO02mp+BJyLBV0zR8xqsm8LSsSEcRYQ@mail.gmail.com>
- <as8+sqlBEuhfdtZ8@shlinux89> <CAD++jL=tKnT0qr5chD-fhxgTM-f9kcdFRsKVBbbqionBp9iTyw@mail.gmail.com>
- <atIqPOBaflct369Q@shlinux89>
-In-Reply-To: <atIqPOBaflct369Q@shlinux89>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 29 Oct 2026 14:06:26 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=nkoYnPfU_swDYrtrxNZtAy+yq8O5SnoLdtqrh_QoxTA@mail.gmail.com>
-X-Gm-Features: AclHuK-fkIL7gTTQhakmRRraBxB0TPX72u2Kqo5bF_nURy3d6i6ZKcYJu7FOOm0
-Message-ID: <CAD++jL=nkoYnPfU_swDYrtrxNZtAy+yq8O5SnoLdtqrh_QoxTA@mail.gmail.com>
-Subject: Re: [PATCH v6 07/13] gpio: mxc: convert pad wakeup compatible checks
- to hwdata flags
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Peng,
+On Thu, Oct 29, 2026 at 04:52:00AM -0400, Atharva Tiwari wrote:
+> Add a watchdog driver for the SMC on Intel Macs. It can
+> reset the machine if the system stops responding. It works
+> on both newer and older SMC versions.
 
-On Fri, Oct 16, 2026 at 3:39=E2=80=AFPM Peng Fan <peng.fan@oss.nxp.com> wro=
-te:
-> Hi Linus,
-> On Fri, Oct 16, 2026 at 11:13:28AM +0200, Linus Walleij wrote:
-> >On Wed, Oct 14, 2026 at 10:30=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com>=
- wrote:
-> >> On Wed, Oct 14, 2026 at 01:10:48AM +0200, Linus Walleij wrote:
-> >
-> >> >Hi Peng,
-> >> >
-> >> >On Sun, Oct 11, 2026 at 1:51=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.=
-nxp.com> wrote:
-> >> >
-> >> >>  static bool mxc_gpio_generic_config(struct mxc_gpio_port *port,
-> >> >>                 unsigned int offset, unsigned long conf)
-> >> >>  {
-> >> >> -       struct device_node *np =3D port->dev->of_node;
-> >> >> +       int ret;
-> >> >> +
-> >> >> +       if (!mxc_gpio_has_pad_wakeup(port))
-> >> >> +               return false;
-> >> >
-> >> >Why is the entire call to mxc_gpio_generic_config()
-> >> >bailing out here if the port does not have pad wakeup?
-> >> >
-> >> >> -       if (of_device_is_compatible(np, "fsl,imx8dxl-gpio") ||
-> >> >> -           of_device_is_compatible(np, "fsl,imx8qxp-gpio") ||
-> >> >> -           of_device_is_compatible(np, "fsl,imx8qm-gpio"))
-> >> >> -               return (gpiochip_generic_config(&port->gen_gc.gc,
-> >> >> -                                               offset, conf) =3D=
-=3D 0);
-> >> >> +       ret =3D gpiochip_generic_config(&port->gen_gc.gc, offset, c=
-onf);
-> >> >> +       if (ret)
-> >> >> +               return false;
-> >> >
-> >> >Then no generic config can happen.
-> >> >
-> >> >This looks weird, isn't it just some of the configs that
-> >> >don't work?
-> >>
-> >> The early return is correct and matches the original behavior - only
-> >> i.MX8 SoCs with SCU have pad wakeup hardware.
-> >>
-> >> gpiochip_generic_config() here calls into the pinctrl backend's
-> >> pin_config_set(), which on i.MX8 programs the SCU firmware with the
-> >> PAD wakeup source type.  Non-i.MX8 SoCs don't have an SCU pinctrl back=
-end.
-> >>
-> >> The function name is misleading - its only caller is mxc_gpio_set_pad_=
-wakeup().
-> >
-> >This is just a big hack and I want it removed.
-> >
-> >Implicit in this reasoning is: the only config we support on
-> >the pinctrl back-end is wakeups so let's gate the entire function
-> >call if we don't support wakeup.
-> >
-> >This is a *generic* back-end like the function says:
-> >gpiochip_generic_config() so the GPIO driver can't make
-> >assumptions about what the pinctrl backend can and
-> >cannot do. In a new SoC using the same driver the
-> >pinctrl back-end could be something different.
-> >
-> >So this is breaking modularization and encapsulation.
-> >
-> >It is better to let the pin controller return -ENOTSUPP
-> >or whatever is appropriate instead of gating the
-> >call like this,
->
-> Sure. To get rid of the hack in gpio-mxc.c, we need update pinctrl imx dr=
-iver
-> and gpio-mxc driver both, which will create cross-dependency. So I need
-> to take two steps:
->
-> 1. Update pinctrl-imx.c to return -ENOTSUPP for non-i.MX8 SoC
-> 2. get rid of the hack in gpio-mxc.c
->
-> The current patch is mainly code style change. Could the above 2 steps ba=
-sed
-> on current patch/patchset? Then we no need to carry more changes in one
-> patchset.
+...
 
-The current patch is NOT a cleaup because you add this:
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1810,6 +1810,17 @@ config SIEMENS_SIMATIC_IPC_WDT
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called simatic-ipc-wdt.
+>  
+> +config MACSMC_WDT
+> +	tristate "Apple SMC Watchdog"
+> +	depends on X86 && MACSMC_ACPI
+> +	select WATCHDOG_CORE
+> +	help
+> +	  This driver adds support for Watchdogs in Intel macs Using
+> +	  Apple SMC.
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called macsmc_wdt.
+> +
+>  # M68K Architecture
+>  
+>  config M54xx_WATCHDOG
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index 9ac406677..f142a5d8d 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -158,7 +158,7 @@ obj-$(CONFIG_NIC7018_WDT) += nic7018_wdt.o
+>  obj-$(CONFIG_MLX_WDT) += mlx_wdt.o
+>  obj-$(CONFIG_KEEMBAY_WATCHDOG) += keembay_wdt.o
+>  obj-$(CONFIG_SIEMENS_SIMATIC_IPC_WDT) += simatic-ipc-wdt.o
+> -
+> +obj-$(CONFIG_MACSMC_WDT) += macsmc_wdt.o
+>  # M68K Architecture
+>  obj-$(CONFIG_M54xx_WATCHDOG) += m54xx_wdt.o
 
-+       if (!mxc_gpio_has_pad_wakeup(port))
-+               return false;
+In moth files the entries seems misplaced to me. Also, why did you touch
+the blank line?
 
-If you want you can drop this and related parts and make a pure cleanup
-patch, that is fine.
+...
 
-If you want the above semantic change, make change 1 above, fix the
-pinctrl driver.
+> +struct macsmc_wdt {
+> +	struct apple_smc *smc;
+> +	bool has_oswd; /* Newer version of watchdogs in macsmc */
+> +	struct watchdog_device wdd;
+> +};
 
-Yours,
-Linus Walleij
+Try with `pahole`.
+
+...
+
+> +	.probe = macsmc_wdt_probe,
+> +	.driver = {
+> +		.name = "macsmc-wdt"
+
+Always add a comma to non-terminator entries in the initializers
+(yes, there are some exceptions, but it's not the case here).
+
+> +	},
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
