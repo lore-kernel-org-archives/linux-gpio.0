@@ -1,72 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.144
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793265982;
-	b=DcZepHrnXX8YJdc9e9HD7qOVxavh3/zK+DM/CdKzDUTljXxDLIij1ks1eJQqduUp4YgS
-	 I+xBoYp9B3rihZlLcOB5G+BIBt17ynsB3aE03e3tmsENYn5ih798XU/AQ8H4/T6j8aoAh
-	 zO0+BXmfA6pPW452oIa44Wuv5FRPlsUazeZQJvMIzoGrv5du58oOq7kK4kZB7+d21JkU3
-	 Ce+jru1nKC1lfVltEy5PGPRsA6Xn0R/lX8sTzvP6R2klOV4LCvfMX42wv/mpj5yvd/c32
-	 Ur81WBlHa4CFVH6SCCbUHfr2YeWxvBuPEf6waTJAlu8YC8NI0n2Vd/7mVZnMGLGhndw==
+	t=1793265995;
+	b=P7FR0gRJRE82YlORic5yoh8eU+0SOpl41JtaIL5sK9y5XKFrz7E2RiNIJrk10fb69mbj
+	 qpUMV4gdeLBUZtYe3XtJXsWK8oU+aJkxCWK2UeD0vXbCCxvXw6UmXavoI0O0J35zmXHrg
+	 4suOev65i/tjQzukbFkDXBEK/yE5LwDPwZskAyVMhuTS4w/yC0DG97XFkUPebdN/C1XpT
+	 NsSegGgWKr5NAvZofsNcmKnHw5As+LtBxxf5gT6P5OXiV13Dbi//goFRLCCk0VaioRAoZ
+	 b7c700kuci/UGFePc7CYoyxhIZ4+8ORN/JJVBMSsHMYcHR8gm0DztbFsla3V3euMIag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793265982;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=4Xbj3/i9atnWntAjbez4qPemNAtJuDYWyOhE+0HbibQ=;
-	b=lZq5PA9tNGZXqZp24T3P5uztBLJxCGBQINgBPU06Kp8S0Jmfn/Im0D1FmbgKMaZqC2Dn
-	 CsQ3WJA+FSw+XcYw7L/mAl/bJuDeHKV7IUYYcKpR0CrnOCmaXiBwU9hvirNuHmkRA1buK
-	 dhxJq86d32WrAZUMHsiKKp6hEJw3XiRKMlGadabBie8NzScBBxP/xuqsIewgrwIGRBwDp
-	 InmLE8MmWXpSD8qalhYa2tNfLPpELVoumuop3F1ooUKbMo+HU5RruBcmVDjoC7eYSXGg+
-	 x+9sELWjpkEBgrsGv0Cz3wnQBrVu3Mv8CfoSOUHGjvuV8fhFKKRhaA5GsaGe1o/HYMg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793265995;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=JUlaM9WpYiweHE0HGw2Q5wyJ053Zlh4fRUNiE0Sei2Y=;
+	b=3OC9lPRehA3VjpVMmCB4vm3wv+b+eB7G4koNZ4b+L7rU43MwpAh1jZb4vQPIpFpWiu+Y
+	 ni4TCSwBnKcXe/gOTnfi+jfbXIxa/BmrGC7xDKkREDqv681h1nK/5rKsPYiwoKqkMckSa
+	 Tj9dB1EzW/Sv6cslS9XWqRIkpiYj0RDNejGXRvaOGFRKTRWheSVIletbDX1TI9bVZeneB
+	 sq2cbpVRzcMfbErStC9dxnKdnFY7JsUss4s7RBYVaE8SdaLJeVk+AO7uK6BDUPxzlNvRU
+	 AOIgTYhJXWTD3XKQUMGHoZtRj/p8cLDxPD3jtUHUgCDPwJsFZAY3vatoYqbXhk+0d5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ja91PU4v;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=arndb.de;
+	spf=pass smtp.mailfrom=arndb.de;
+	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=M3HzErsW;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=Rcpho1FS;
+	arc=none smtp.remote-ip=103.168.172.144
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EB6606A31D;
-	Thu, 29 Oct 2026 09:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B755E606A31D
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 09:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B755E606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ja91PU4v
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D64B1F01825;
-	Thu, 29 Oct 2026 09:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793265981;
-	bh=4Xbj3/i9atnWntAjbez4qPemNAtJuDYWyOhE+0HbibQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ja91PU4vPbX6rgW3/SqQiH2C6ahMYlFn1iM6Yhk5K2vsH1AUrHvwaGV0losZneLPc
-	 fkPuK0pVqZdLmW0pnU61e0jrAM3xHVc7rt+gZByXNX2jssRbiGf7zzpJ0TeyD9NS4s
-	 36k58aSpT2pqxM589jOx5Mvq5xI9Ph8In1/NYDGdLPpaFE8yKd2lrkDxm82ET9xuJX
-	 TPSnSkwvymOwucPYiKI7/qqjfT8MF6aps9Xp6WPuxjToTXg6bepqbIX9SArnXiGiy8
-	 Q54QoRp37OpUs72qZCw8uiJBVzrw7Waq3mjq2e5UG7SKpMbkFmwzX4HnMeJAMisnrk
-	 7sKxUnqKW19zA==
-Message-ID: <sashiko-outbox-189036@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 14/14] mfd/macsmc: add ioctl to access smc keys
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Atharva Tiwari" <atharvatiwarilinuxdev@gmail.com>
-Cc: "Bjorn Helgaas" <bhelgaas@google.com>, "Thomas Gleixner" <tglx@kernel.org>, "Ingo
- Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org, "H.
- Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, "Len
- Brown" <lenb@kernel.org>, "Linus Walleij" <linusw@kernel.org>, "Bartosz
- Golaszewski" <brgl@kernel.org>, "Sven Peter" <sven@kernel.org>, "Janne
- Grunau" <j@jannau.net>, "Neal Gompa" <neal@gompa.dev>, "Guenter Roeck" <linux@roeck-us.net>, "Jonathan
- Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
- =?utf-8?b?TnVubyBTw6E=?= <nuno.sa@analog.com>, "Andy Shevchenko" <andy@kernel.org>, "Lee
- Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Griffin
- Kroah-Hartman" <griffin@kroah.com>, "Hans de Goede" <hansg@kernel.org>,
- =?utf-8?b?SWxwbyBKw6RydmluZW4=?= <ilpo.jarvinen@linux.intel.com>, "Sebastian
- Reichel" <sre@kernel.org>, "Alexandre Belloni" <alexandre.belloni@bootlin.com>, "Wim
- Van Sebroeck" <wim@linux-watchdog.org>, "Jarkko Sakkinen" <jarkko@kernel.org>, "Mimi
- Zohar" <zohar@linux.ibm.com>, "Roberto Sassu" <roberto.sassu@huawei.com>, "Dmitry
- Kasatkin" <dmitry.kasatkin@gmail.com>, "Eric Snowberg" <eric.snowberg@oracle.com>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org, mfd@lists.linux.dev, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20261029085504.3547-15-atharvatiwarilinuxdev@gmail.com>
-References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
- <20261029085504.3547-15-atharvatiwarilinuxdev@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 09:26:19 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=M3HzErsW;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=Rcpho1FS
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfout.phl.internal (Postfix) with ESMTP id C308CEC02B4
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 05:26:33 -0400 (EDT)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Thu, 29 Oct 2026 05:26:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1793265989;
+	 x=1793352389; bh=JUlaM9WpYiweHE0HGw2Q5wyJ053Zlh4fRUNiE0Sei2Y=; b=
+	M3HzErsW/g6HECQpY7jEbx00vA3JNOD0kWxX+foi0GfvdjHTK5bvycW/1PYGmTr3
+	HXiMzam2M9yfj7HLx/HjYHLICKqF78o79VaD99UdwPJrgOV5n95dmpl5huX/C41R
+	583nUwoWQn8IOC2VLMbDEyEJjcLMrd/bkySXlAHzAqK26+w0Hxt/Fs3Py67DjSaM
+	hOm2yZbn4g8k5GgzyLEEx2wj30Lw+vLIBFh9cyGpZ08KsfU/BnW2u7qf4cwF8r9F
+	1XKQjsKIuCjqfbGO5AUfeKQFePT7m2GnWadnLy0KCHGzNbviLKQrohuK2OyIJ1Cn
+	dyAltzXnA4159R6LAVzhqA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793265989; x=
+	1793352389; bh=JUlaM9WpYiweHE0HGw2Q5wyJ053Zlh4fRUNiE0Sei2Y=; b=R
+	cpho1FSSUHQJdVWcblRwyKVFWAc1mc/yyvdoPfIvGo5JnIEA1rHPwfS5ah7ZL1S+
+	AXhGsg705BvLISDFkkDYKJEE1ABfvoADIryrlH2Q83rcOZkyK+23DzKguBvnrhMv
+	eq8YFCFVQqz7AL48pvl60jpudi/X7Rbo67eW9N277ekXrKoMxWRsbpZKr6+dLUo/
+	UGA0qnx6xhZ9Ac+kAIBoXJCxI/Z0nlrhIKlLWYsv0JuvY96pBYC6EZSrsgz0qnfi
+	6Oel5RvolyjRAVnkGj8ToUxNvJtdPSo1R7fVS9blbJgHOtwultDUSUHGXh8e3IX4
+	wyfzLLdUtxZOMHE0Gt7Ug==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+	action=sign d=arndb.de a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793265989; d=arndb.de;
+	mf=PGFybmRAYXJuZGIuZGU+;
+	rt=PGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:RKG+fpdmZQOFmg1oB1ZEcHNHE935PXFAOBTsgTKI1iB03hM
+	SYgYan4CEA8yvCjJ5DAHWywc6fDSC6OZPaO8P2YcRq5hgCKeBYfOR55fEyDm58Tj
+	/+PuT0PYTd9nvtSAjYAnvgv34AaOcccBVowCUcOM5IpjZ7pfsinOv/It1ey3doM6
+	IFVzhIPOjFnS2Wvi0XZFpLqi9H38srlwO3kHvKG7lGzNlJ8V5fw4OtIqwq0/zS17
+	gpNrFCr5tvrATVJLb3rR5gL/gwf0g+op4WvnUdpaQZSFq0wF6zXPepN4eWciXTUp
+	iVlvZg2AuqrFLhSeGNVG54odrxu/Gnwkw2M8Oww==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:gRYhEuLfYPjj84Rlc/L9H4sSFVrF9TV51oEklc5wsJQ=:bt3SsfUt4OeNoUM7vK/Z73nVZvQ599oSq5hQ3F+V9AI=;
+X-ME-Sender: <xms:QRHjaglpHll0wa0l8ETUmtD9fM5hSvvBOWT2MCvZq0yT0h5ZGae5HQ>
+    <xme:QRHjaqqiK8J__Kj3fKPDmRKHEiYduaHxPC4bjINj82iGPD8vb2HbloTQp_gdiorCj
+    ibsLnh2eVw9IlFpRd5y-vsAxC9yWa6CTcEaHeUsZefCmfJZvO-jMh9k>
+X-ME-Proxy-Cause: dmFkZTEydLGx17G3tJGFs8/rLhDDNPytwT57npfrZUsvU4FFkOlqCeshcDsfNw4WRb6bmp
+    nc8bKdNhN2BRlvzUFgKOPR/2G7dfvA7UlOBEAJFiSuSCqWHgqEsEceT7rOvJIy8oZVyOpx
+    p6kS3PcLzBdM3t378p35pFs6p3tjubY1QAzXP/Et/3h1zVQfzgII1sArGBOvcD/6XR8GzZ
+    2WAQsgjJsipmY8ohsl4WNPenetVPsHxKauAu1Qs6hdpE5PJo9vxvBHSxuGj3tlC6EBbFlz
+    S+kuJDxq2+gHyzSK6BwlQ3DmT4N9KJitrVREfXyjBMvc+8tNkmmIZlOWNGWuuYAR4yoFZ9
+    aXfKa0KUApkRfHpIwg2v3AyJ0UMKsjzM2OmNSdWwJt6NrVWk8JiYZB5jLlM36GleMhcWVp
+    P+nQy2CmN1sCiVEfqsNtOo+eMYXEaLyNuDIaLcvCppwG/9qkOkPqWN1CB4kVIeXT+yrIGq
+    rl2pogtbB64T5sFQtscodPHZObWWTnuXyIKsWQ8sMifty4ZjUo507faJg+OqLPm0i21tdS
+    P56oU4Y89ftFskAL8z0X8Wu0PuWnfGM6W8aYzwlbVpWiWC4mNh8YR1+5jlXHq2gP3f2mBr
+    G9dDvOCTfHMl0adVS8sGckH/ecJma8ygW6YzCLG6+1ZzZUGRkosTg75eQ4Og
+X-ME-Proxy: <xmx:QxHjagw_8zbmMxvqDdbuWxyG4Qx3L7KYSqHPCbe_SA3wmIoh2_35Xg>
+    <xmx:QxHjaqQXSVD4itmDLfpAKla35wOOvskshe8BrjBVRa-uDy7GefjC3A>
+    <xmx:QxHjatLRTHH0rmJlT9CX0moceHf8GOVMTmBNWuUrjOGbNcFSb_MW6g>
+    <xmx:QxHjahUTQo5x1QXjcASV2nrIy5VLwHtEYrZk74UWhWPvYuzeY9-sEQ>
+    <xmx:RRHjahM0wXMhwIWa9bdUu7ADKEwwP0GgydMwqRgjldSArJNW2S6Cnch9>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id D347932A0093; Thu, 29 Oct 2026 05:26:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -75,292 +114,55 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+X-ThreadId: Ax_s3xrhtzps
+Date: Thu, 29 Oct 2026 10:26:05 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Guenter Roeck" <linux@roeck-us.net>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linusw@kernel.org>, "Bartosz Golaszewski" <brgl@kernel.org>,
+ soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Message-Id: <8bc1c573-bd4f-4dfe-9d7b-8b17d386ada7@app.fastmail.com>
+In-Reply-To: <2a561a27-a3bf-4cac-a4dc-bfbc5c859f45@roeck-us.net>
+References: <20260706-sa1100-swnode-v1-0-332759bbd930@gmail.com>
+ <20260706-sa1100-swnode-v1-1-332759bbd930@gmail.com>
+ <2a561a27-a3bf-4cac-a4dc-bfbc5c859f45@roeck-us.net>
+Subject: Re: [PATCH 1/4] gpio: sa1100: register software node for GPIO controller
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
-- [High] mfd: macsmc: use-after-free in apple_smc_fops_ioctl() after device=
- unbind
-- [Medium] mfd: macsmc: size_t in ioctl payload breaks compat_ioctl in appl=
-e_smc_fops
-- [Medium] mfd: macsmc: incomplete write blocklist in apple_smc_fops_ioctl()
-- [Low] mfd: macsmc: return -ENOTTY for unknown cmd in apple_smc_fops_ioctl=
-()
-- [Low] mfd: macsmc: commit subject violates MFD prefix and capitalization =
-rules
---
-
-commit 352ee7db8cfde297319806ac2e104b433cfad104
-Author: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-
-mfd/macsmc: add ioctl to access smc keys
-
-This commit registers a /dev/smc miscdevice in macsmc-core to allow
-userspace to read, write, and query Apple SMC keys via ioctls, while
-blocking writes to a static list of keys managed by kernel drivers.
-
->     mfd/macsmc: add ioctl to access smc keys
+On Thu, Oct 29, 2026, at 05:23, Guenter Roeck wrote:
+> On Mon, Jul 06, 2026 at 08:14:00PM -0700, Dmitry Torokhov wrote:
+>> Define and register a static software node (sa1100_gpiochip_node) for the
+>> SA-1100 GPIO controller during sa1100_init_gpio(). Assign its firmware node
+>> directly to the GPIO chip prior to calling gpiochip_add_data().
+>> 
+>> This allows StrongARM SA-1100 board setup files to reference the SoC GPIO
+>> controller in property entries when converting legacy platform data to
+>> software nodes, resolving pin bindings directly via the attached firmware
+>> node without relying on name matching.
+>> 
+>> Assisted-by: Antigravity:gemini-3.5-flash
+>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 >
->     Add a /dev/smc device so userspace can talk to the SMC
->     directly. Some keys that need to be written aren't handled by
->     any driver, or affect several drivers at once, so they
->     can't be exposed cleanly through the kernel interfaces.
+> With this patch in the tree, the qemu "collie" emulation no longer works.
+> There is no console output.
 >
->     Keys already managed by kernel drivers can't be written this
->     way, to avoid conflicts.
+> Bisect log is attached for reference.
 >
->     Signed-off-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+> I am not suggesting a revert if that is even possible, but maybe it is time
+> to retire collie support if no one else reported this problem.
 
-[Severity: Low]
-This isn't a bug, but the MFD subsystem convention uses the prefix format
-"mfd: <driver>: <Capitalized description>". Should the commit subject be
-formatted as "mfd: macsmc: Add ioctl to access SMC keys"?
+Thanks for the report. My current plan is to retire all of sa1100 by
+merging my board file removal series for v7.5-rc1, so it should be gone
+from linux-next soon but still be available for the LTS release (whether
+that is 7.3 or 7.4).
 
-> diff --git a/drivers/mfd/macsmc-core.c b/drivers/mfd/macsmc-core.c
-> index bc4200f574bd5..a30f7386ef9cd 100644
-> --- a/drivers/mfd/macsmc-core.c
-> +++ b/drivers/mfd/macsmc-core.c
+Hopefully Dmitry can spot an obvious fix for the regression, otherwise
+a revert is probably best so we can leave collie working in the LTS
+kernel and not spend much work on that.
 
-[ ... ]
-
-> @@ -112,6 +115,144 @@ static void apple_smc_disable_notifications(void *d=
-ata)
->  	smc->be->disable_notifications(smc->be_cookie);
->  }
-> =20
-> +static long apple_smc_fops_ioctl(struct file *file, unsigned int cmd, un=
-signed long arg)
-> +{
-> +	struct apple_smc *smc =3D file->private_data;
-> +	void __user *argp =3D (void __user *)arg;
-> +	int ret;
-> +
-> +	switch (cmd) {
-
-[ ... ]
-
-> +	case IOCTL_SMC_WRITE: {
-> +		struct ioctl_smc_rw_payload payload;
-> +		struct apple_smc_key_info info;
-> +
-> +		if (copy_from_user(&payload, argp, sizeof(payload)))
-> +			return -EFAULT;
-> +
-> +		ret =3D apple_smc_get_key_info(smc, payload.key, &info);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (payload.size !=3D info.size)
-> +			return -EINVAL;
-> +
-> +		if (payload.size > 32)
-> +			return -EINVAL;
-> +
-> +		switch (payload.key) {
-> +		case __SMC_KEY('C', 'H', '0', 'I'):
-> +		case __SMC_KEY('C', 'H', '0', 'C'):
-> +		case __SMC_KEY('C', 'H', '0', 'K'):
-> +		case __SMC_KEY('C', 'H', '0', 'B'):
-> +		case __SMC_KEY('C', 'H', 'T', 'E'):
-> +		case __SMC_KEY('C', 'H', 'L', 'S'):
-> +		case __SMC_KEY('B', 'C', 'L', 'M'):
-> +		case __SMC_KEY('M', 'B', 'S', 'E'):
-> +		case __SMC_KEY('C', 'L', 'K', 'L'):
-> +		case __SMC_KEY('C', 'L', 'K', 'O'):
-> +		case __SMC_KEY('O', 'S', 'W', 'D'):
-> +		case __SMC_KEY('N', 'A', 'T', 'J'):
-> +		case __SMC_KEY('N', 'A', 'T', 'i'):
-> +		case __SMC_KEY('N', 'E', 'S', 'N'):
-> +		case __SMC_KEY('M', 'O', 'C', 'N'):
-> +		case __SMC_KEY('L', 'K', 'S', 'B'):
-> +		case __SMC_KEY('N', 'T', 'O', 'K'):
-> +		case __SMC_KEY('N', 'T', 'A', 'P'):
-> +		case __SMC_KEY('F', '0', 'T', 'g'):
-> +		case __SMC_KEY('F', '1', 'T', 'g'):
-> +		case __SMC_KEY('F', '0', 'M', 'd'):
-> +		case __SMC_KEY('F', '1', 'M', 'd'):
-> +		case __SMC_KEY('F', 'S', '!', ' '):
-> +			return -EPERM;
-> +		}
-
-[Severity: Medium]
-Does this static blocklist miss other keys actively managed by MFD child
-drivers?
-
-In drivers/hwmon/macsmc-hwmon.c, macsmc_hwmon_create_fan_acpi() registers
-all fans up to FNum using keys F<num>Tg and F<num>Md, and
-macsmc_hwmon_create_fan() registers fan keys from DT on Apple Silicon:
-
-drivers/hwmon/macsmc-hwmon.c:macsmc_hwmon_create_fan_acpi() {
-	const char num_char =3D num + '0';
-	...
-	ret =3D macsmc_hwmon_create_sensor_acpi(smc, &fan->set,
-			__SMC_KEY('F', num_char, 'T', 'g'), NULL, 0);
-	if (ret)
-		return ret;
-
-	if (apple_smc_key_exists(smc, __SMC_KEY('F', num_char, 'M', 'd'))) {
-		ret =3D macsmc_hwmon_create_sensor_acpi(smc, &fan->mode,
-				__SMC_KEY('F', num_char, 'M', 'd'), NULL, 0);
-}
-
-On systems with more than two fans, fans 2 and above remain writable via
-IOCTL_SMC_WRITE, which bypasses the min/max RPM validation in
-macsmc_hwmon_write_fan() and desynchronizes hwmon->fan.fans[channel].manual.
-
-Similarly, drivers/gpio/gpio-macsmc.c (registered as macsmc-gpio) manages
-and writes PMU GPIO keys gP00..gPff in macsmc_gpio_set():
-
-drivers/gpio/gpio-macsmc.c:macsmc_gpio_set() {
-	struct macsmc_gpio *smcgp =3D gpiochip_get_data(gc);
-	smc_key key =3D macsmc_gpio_key(offset);
-	int ret;
-
-	value |=3D CMD_OUTPUT;
-	ret =3D apple_smc_write_u32(smcgp->smc, key, CMD_OUTPUT | value);
-}
-
-None of the gPxx keys are filtered here either, allowing userspace to
-modify GPIO outputs behind the kernel driver's back.
-
-[ ... ]
-
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-[Severity: Low]
-Should the default case in apple_smc_fops_ioctl() return -ENOTTY instead of
--EINVAL for unrecognized ioctl commands?
-
-> +
-> +static int apple_smc_fops_open(struct inode *inode, struct file *file)
-> +{
-> +	struct miscdevice *misc =3D file->private_data;
-> +
-> +	file->private_data =3D container_of(misc, struct apple_smc, miscdev);
-> +	return 0;
-> +}
-> +
-> +static const struct file_operations apple_smc_fops =3D {
-> +	.owner		=3D THIS_MODULE,
-> +	.open		=3D apple_smc_fops_open,
-> +	.unlocked_ioctl	=3D apple_smc_fops_ioctl,
-> +	.compat_ioctl	=3D compat_ptr_ioctl,
-> +	.llseek		=3D noop_llseek,
-> +};
-> +
-> +static void apple_smc_misc_unregister(void *data)
-> +{
-> +	misc_deregister(data);
-> +}
-> +
->  int apple_smc_probe(struct device *dev, const struct apple_smc_backend_o=
-ps *ops,
->  		void *cookie, struct blocking_notifier_head *event_handlers, bool is_a=
-cpi)
->  {
-> @@ -150,6 +291,20 @@ int apple_smc_probe(struct device *dev, const struct=
- apple_smc_backend_ops *ops,
->  	if (ret)
->  		return ret;
-> =20
-> +	smc->miscdev.minor =3D MISC_DYNAMIC_MINOR;
-> +	smc->miscdev.name =3D "smc";
-> +	smc->miscdev.fops =3D &apple_smc_fops;
-> +	smc->miscdev.parent =3D dev;
-> +	smc->miscdev.mode =3D 0600;
-> +
-> +	ret =3D misc_register(&smc->miscdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D devm_add_action_or_reset(dev, apple_smc_misc_unregister, &smc->=
-miscdev);
-> +	if (ret)
-> +		return ret;
-> +
-
-[Severity: High]
-Can this trigger a use-after-free in apple_smc_fops_ioctl() if the backend
-device is unbound (or if a subsequent devm_mfd_add_devices() call in
-apple_smc_probe() fails) while /dev/smc is open?
-
-In apple_smc_probe(), smc is allocated via devm_kzalloc(dev, sizeof(*smc),
-GFP_KERNEL), and smc->be_cookie is similarly devm-allocated on the backend
-device. When /dev/smc is opened, apple_smc_fops_open() stores a raw pointer
-to smc in file->private_data, and misc_open() only pins apple_smc_fops.owner
-(macsmc-core, not the backend driver).
-
-When the device is unbound or probe fails after misc_register(), devres
-runs apple_smc_misc_unregister() -> misc_deregister(&smc->miscdev) and then
-frees both smc and smc->be_cookie. Because misc_deregister() does not wait
-for in-flight ioctls or revoke already-open file descriptors, any concurrent
-or subsequent call to apple_smc_fops_ioctl() on the open file will
-dereference freed memory via file->private_data when locking smc->mutex and
-invoking smc->be callbacks with smc->be_cookie.
-
-> diff --git a/include/linux/mfd/macsmc.h b/include/linux/mfd/macsmc.h
-> index 4b4368b99adb6..29fd7b20ce9c8 100644
-> --- a/include/linux/mfd/macsmc.h
-> +++ b/include/linux/mfd/macsmc.h
-
-[ ... ]
-
-> @@ -141,8 +144,32 @@ struct apple_smc {
-> =20
->  	struct mutex mutex;
->  	spinlock_t lock;
-> +
-> +	struct miscdevice miscdev;
-> +};
-> +
-> +struct ioctl_smc_rw_payload {
-> +	smc_key key;
-> +	size_t size;
-> +	u8 buf[32];
-> +};
-> +
-> +struct ioctl_smc_index_payload {
-> +	int index;
-> +	smc_key key;
-> +};
-> +
-> +struct ioctl_smc_info_payload {
-> +	smc_key key;
-> +	struct apple_smc_key_info info;
->  };
-> =20
-> +#define APPLE_SMC_MAGIC 'S'
-> +#define IOCTL_SMC_READ           _IOWR(APPLE_SMC_MAGIC, 1, struct ioctl_=
-smc_rw_payload)
-> +#define IOCTL_SMC_WRITE          _IOW(APPLE_SMC_MAGIC, 2, struct ioctl_s=
-mc_rw_payload)
-> +#define IOCTL_SMC_GET_KEY_INDEX  _IOWR(APPLE_SMC_MAGIC, 3, struct ioctl_=
-smc_index_payload)
-> +#define IOCTL_SMC_GET_KEY_INFO   _IOWR(APPLE_SMC_MAGIC, 4, struct ioctl_=
-smc_info_payload)
-
-[Severity: Medium]
-Does using size_t in struct ioctl_smc_rw_payload break 32-bit compat ioctls
-even though apple_smc_fops sets .compat_ioctl =3D compat_ptr_ioctl?
-
-On 64-bit kernels, size_t is 8 bytes with 8-byte alignment, which adds 4
-bytes of padding after key (placing size at offset 8, buf at offset 16, and
-making sizeof(struct ioctl_smc_rw_payload) =3D=3D 48). In 32-bit userspace,
-size_t is 4 bytes with 4-byte alignment (placing size at offset 4, buf at
-offset 8, and making sizeof(struct ioctl_smc_rw_payload) =3D=3D 40). Because
-IOCTL_SMC_READ and IOCTL_SMC_WRITE encode the struct size, 32-bit compat
-callers will pass a command number with size 40 that fails to match the
-64-bit kernel's command number, or have mismatched field offsets and copy
-8 bytes past the userspace struct if invoked with the 64-bit command number.
-
-Also, since these ioctl structs and macros form a userspace ABI, should they
-be placed in a header under include/uapi/ using fixed-size UAPI types (__u3=
-2,
-__u8) with explicit padding rather than in the kernel-internal
-include/linux/mfd/macsmc.h header?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029085504.3547=
--1-atharvatiwarilinuxdev@gmail.com?part=3D14
+      Arnd
