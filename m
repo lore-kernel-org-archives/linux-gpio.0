@@ -1,49 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.204.34.129
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793268866;
-	b=qAoLroCUg/bsVg4GNeAtBjxGzA5rAXPSVkFr5EeZhXYKGb2I8wvNwKJddepW3HatAYIB
-	 vJRso3znGAzMLPNn92kgC1UU/sEQm3AAimLzrzDbT7dHGpqZjtGKvBknOUSFqbFUoBVN4
-	 qPlcsLtvOqiy/CFldyu8aILrI4h555UNC6hwv3a1OTf1p1ig07N7JVraaVnWDQXHhiBG1
-	 j/HC+JJZl+ef8RgBJsJlebWGH1noj1EAXQpZ9IvWcyWn/8RezjZmLdBwS4OjlrDO3zXD/
-	 LbEP5BzAg0t0Trx7J1Rbq5D0THCLSGlr02g9TUblT/0DMdn/jLDuxQdqAt1H5ahbMEQ==
+	t=1793268882;
+	b=qQ/7MFUHP6+xAn5J2n/A1H0ntfPYnIn0GCi4xviXBaRgKhtcy0KRV7D3lxcZuAIbl/Tv
+	 rCMVgwT5IcQ+qOCdSbBrS6Gboi79pUUOUUA6dYJjavzQYnKfL/nG46IfmoEnbTSJgE1wo
+	 P6CZzOCq+CxI3fvbafZ6uDeA3yMrhKDMiWyDV1tyMM4C4Abkafo9NdfmuOdlwMUGtaVt9
+	 sDtfubt8DfJnJ7hhpxSMVqBYxJzQVvkqxMa6KmAT8NcEkVNSwjuN9UYxIR59+C83PwzHx
+	 6f6x4LGA9rnWHlAhBoWbDref1Bas2hge1Dk3xZdMpMm5L6uEweI7dZNZoME9dZSWmbw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793268866;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793268882;
 	h=DMARC-Filter:X-QQ-mid:X-QQ-Originating-IP:Received:X-QQ-SSF:
 	 X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
 	 X-Developer-Key:X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:X-QQ-XMRINFO:
 	 X-QQ-RECHKSPAM;
-	bh=ngdVk19IWkwlW/Xsxleb20R0fUdw6REuM7F5mAZ4T9U=;
-	b=4qlXyixz9dqVnKr3dSZTycBBIT5yymengI6fjUfRylRZMRJdKmLnkaAYCTi4wJwhcDhY
-	 3+zjrtFdXljcbRgswhgVPLcfhI69FSo+DtZwjY7HsoFVENsPTHkzmvd+oN2ihpUmEiipM
-	 zjkwMM0ZvuzRTIkOLLPjb9EbpjvetCEhurPIklVhdznhNfpyuZPQQX6clPnu7hEa3nKF8
-	 ox1I2znMwWjRpUhG1EIh0kLu6+Hn8Qy/CROx6xjsSXuDoCiWOF6lImvkRURyq+bXICjZ9
-	 0zVIQYVq+lUBxTys8pZj3kOgmhOEOGx2jRtJRGSHabxE0W7hB0FjmgWkaMuTQ0eZp9w==
+	bh=ZTQjA8zljN1ZEB/RMOcOmcshPHsNIzGWEobToCZYhQU=;
+	b=HRl10gTTXa/ZEGkOgxJlWYw9KpsukdEPkh+y7fYZOPUbwdJCTOF+aq0ZpoDXDb4UFnpR
+	 ErhPzvCQd/bAIycZmecre5eyRJMeKwOIEUaT9GeKpjHJiCEpgqng08pKIblaG/fscf3p8
+	 5zpRn4OjXdEPkjfDc0yrKvt62BPy7Vf5+GFXXKbArthCdkYMg8BWZAuQOF4BL9oa7mhNl
+	 X8CXYdNT2JFyalaMMuS9q1txddL1KwOOpB68YaN20qfDj8oFZ3c2D4v7oxamehWPYFz1H
+	 X8MwBbf1WGUemDgFhKbPydooBbrBkrw8FxHH/SVgVMr4b1OuRu0T8HgpkTxL9NJveSQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=radxa.com;
 	spf=pass smtp.mailfrom=radxa.com;
-	arc=none smtp.remote-ip=54.254.200.92
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	arc=none smtp.remote-ip=54.204.34.129
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581CF606A31E;
-	Thu, 29 Oct 2026 10:14:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 581CF606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF3F606A31A;
+	Thu, 29 Oct 2026 10:14:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6CF3F606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip4t1793268835t02a8b639
-X-QQ-Originating-IP: oHmhU6HSKHVoVhkiqrVTCiRUAubECZuQVTC+gyjTpIE=
+X-QQ-mid: zesmtpip4t1793268844tcabb610e
+X-QQ-Originating-IP: sMMrFrowwf6ZzoovnqFE/cAgzaCLtmR+197kXHsgFbE=
 Received: from [192.168.30.244] ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 29 Oct 2026 18:13:52 +0800 (CST)
+	id ; Thu, 29 Oct 2026 18:14:01 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12470455325039139127
-EX-QQ-RecipientCnt: 32
+X-BIZMAIL-ID: 12288290236240033629
+EX-QQ-RecipientCnt: 31
 From: Xilin Wu <sophon@radxa.com>
-Date: Thu, 29 Oct 2026 18:13:36 +0800
-Subject: [PATCH v4 2/4] dt-bindings: arm: qcom: document Radxa Dragon Q8B
+Date: Thu, 29 Oct 2026 18:13:38 +0800
+Subject: [PATCH v4 4/4] firmware: qcom: scm: Allow QSEECOM for Radxa Dragon
+ Q8B
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -55,7 +56,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261029-q8b-dts-v4-2-e8e7438f5545@radxa.com>
+Message-Id: <20261029-q8b-dts-v4-4-e8e7438f5545@radxa.com>
 References: <20261029-q8b-dts-v4-0-e8e7438f5545@radxa.com>
 In-Reply-To: <20261029-q8b-dts-v4-0-e8e7438f5545@radxa.com>
 To: Bjorn Helgaas <bhelgaas@google.com>, 
@@ -76,63 +77,59 @@ Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
  linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
  Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>, 
- dragon@radxa.com, Xilin Wu <sophon@radxa.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ dragon@radxa.com, Xilin Wu <sophon@radxa.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=859; i=sophon@radxa.com;
- h=from:subject:message-id; bh=KHvssF0xBmxgfBrsMVKXU7Qx0Wh+vcWm5edVG9ChHrI=;
- b=owGbwMvMwCVmdFg0fe08Iz/G02pJDFmPZcJ2+2oob+0IMT9esGkB+5ra2yIyQTuSJV5kaC7tK
- WT9uulrRykLgxgXg6yYIotCPMNc9srca0/FSvVg5rAygQxh4OIUgIlocTH8dzjSVnOs41+wpuH3
- I1o1n/Ja1muHegU//Dfp7t+uqrhKV4b/8ZLO5sFaf64xue7/5LjmU/9njpJ4iaYFH1Z7O/C1uy9
- jBAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=731; i=sophon@radxa.com;
+ h=from:subject:message-id; bh=ha+6AXBZg8vPgpy9CUy+X6vPtWkIMSbkDFJ7rZDLj7g=;
+ b=owGbwMvMwCVmdFg0fe08Iz/G02pJDFmPZcIF+TNUXRbej6+7dv2upr+XYqPri+crHjdPdv0Tv
+ fNXnuvmjlIWBjEuBlkxRRaFeIa57JW5156KlerBzGFlAhnCwMUpABP5v5Hhf82uiXcrO+dMPuC1
+ rtS5cb1jZLHGkRnym8pqQ56/Szg0x5Thn+Yk/tj3/yL0pnOkCYtH54jW75xTWXhGpjbOlWFlhs5
+ LTgA=
 X-Developer-Key: i=sophon@radxa.com; a=openpgp;
  fpr=205F009D07796DD6E516752E32C31567AD9E324E
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MsTlFT5/XJkMXFgs+IB/vFWsq5QfLWP3ObDZ3SjMsg7+j+ZKWYsYb/MU
-	gSjW7YiT+1mmlGRfY6X4hgm2kORHbsjiEXrne6OTbkYR/MOa6vPD15RnovVkZdMvS3PKmf4
-	rvw+l7C4d4taeo7Os3KBcSiMSRRHrHa7DURibLrVdV3aWmS3XovA3qcc/3lbyaSBeanwoD/
-	8np7VlOuDsJsyzPy4WuiTtfKflV6PLYyLLr4p7UCiKiLp5g+KG/zW8yHgqDkXXIVXJhviAF
-	g/9Jh8oEGjN8g0oX9plQPjdmHHNA3Vx0H3aX6gIYlYt/lBYV3Nll+WbZSD/KysGW2EHzYN/
-	JD3T8xFm31j526Vp6ZmxSlLhfOJzYp20ppp8oe4yvVFER8XQT/XyVCM0VEQXrS9OJjnrR1T
-	ldTeyQuMnuI4x4KjN7pLh/3YML/PSqCAoXL/ObCBr+GBfufz+lrDXCxhj2HzOd1/CFelx9G
-	2eIQ6kgl0FJXC1s8UT6CRSoW/2Y0v9pF5Gr7DMyrqJ8kK2S8k9CPq44oqag0lfa2VnzXFtP
-	tXxsQk6k5q2A20kgeh7H7APvlRfLz0wP1PFW2IQhyuUUHNocyV2IcS3Sys0SZpPWEyhuKno
-	mR0UWZUHmLkeG7E8taFR/+6ug2PjMTm3/q4XG43LatN+q2Bs0TZsCt7RDnYWs84Jb+eSjgR
-	RHsQt6+cJHxyLxEBdUNTgePYNnyTXZhnx3QfID4tmhzejmwYP/uqfTexmCCdZYvLdbsXh/+
-	tO1dsW1nhpSqqY8oDsAg2BsCJgEd6/Mbv/7NFm76tzilz68BHj+eLUVWx8K3+96aVPIq3oR
-	uGjYf5MnsKIsgdo813c81UlMJ1TlIT//WoFAXtgk68F3XL/dDorviLbCK299IiV42unyAuB
-	HnTyiKhGOObPAgk6/wfl01hQzV/Ia8GwFPajWPz36CzGOlbxrjGpiBvL+xL4uWweydwrxDM
-	NzM3DqABc8vCG6b55/L1dtMDEdN17DSpMe0jjoIF1OBWSWJYumXTct7L8swXMq60ifq9Jkx
-	RLD5MgRX7/I7rMy9ThCHQR/YxVUUTWTiGi5T2Sr3ycr7r+L4Q+GcxKSq8KWAdLb+AScm/NS
-	oIOg5UeMkPI0pRpgejLpoTX0VrlRad6yUdhXOGyAyqV4Wih3lWZa7Nl7/H2QQHdpXaGYgqx
-	y+ndJupuGmZJwpzWsHb/0fcjz/4R1aAdQnZW
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-XMAILINFO: MV4bJPEodRzJHjFtEiJzheNZeVnpZocpvDF71bWg4qc5xWWHy0WAqCVG
+	rLgJEkAtTJ3ngmrZxpd5ICdZm7U67ojUsSxLRiigrudORLVbxWGjMGDK8rfdOsOi4jSgTcF
+	sFlLPFkoBL4TY/a2S8J0r6sMnTKyezo/74lyhhgAdnVPAmh+GsKjgCbFmk5Um4N/+PtkGsR
+	eSl7WqtbUEtiX2pXptfrJjOV7mL/41Lv6flqdTUm/rZnAfrq5PtfPFpDAbG6i62SLyExeqX
+	2QaQrN0yqTVArmN9gE2W+uSnOZvCm2qGx5/LX+lQgH/aai+DE7tL3ax9fxBspAkMnsrpPM0
+	2qUSM3f55XVlZa7GWgW1KiHjwnUC5Z3T3Fbl0KWfSBlbws8gCLlzCbXt6M5In+C9wjqidE/
+	4gAJAWi7V68U+vIsgQkoa6KQNfk2GtS8um7/LNrB49BGpjfRw+TqyJIFHUevyIo/Ymnd4WU
+	BczHvaA3wbq4om60fmMeY1KTrg3KYWL4CRoHCfS1J4n682Srj778Sa+YhyRjFCgW4gVoa4y
+	us81CE92LFUKazK/xx4YRm68aR0PGL9BFADEX3wPvq72I5QjpQtmcXhdWvqDAMV8FbVgCZW
+	ViXqKUAQ3K0bCaNLRIPB5WV2GqCuOTTfQlnSZmcHCn5iCXMJvkHgj3fKKRcPw4+Y+49ox0F
+	Oluh+mbl2EMJFKxb67OsTTvwc9e3DajoB5h7FJo30bXMrqVnifzW9wYCJ85rzPV0E8dfGgB
+	IWNrK1/sN6jrvW5CF9/IC1OdRnGs4WX02N8BqoEM0VCeWEy8CQeqLOlwXt6hOe8JStLl1Se
+	YAVp5brUAa8a3+RgRKXSTu7A2uIyEJPdf+rV1ZTjlrU46uDi8AvIlxr6L338YWmBuXGVRcp
+	wkDxGfUlroaUdMETcpc18zSz0OvsHk5g4h8mXTBFwzLNe7RaEGWTpR/nVi4yha4UroPiYCG
+	fyif+6H2y1cz+Kos4Sua5v3HDaEkCDqXspiKwcq/UO9GGlNT4abYjnK0O7gLgQc3dfr+CGs
+	We/vBIEN/Qr+ukDWYWCCuVGstCI7LoMZaQZ4/45RPXwAejuNVSdow90sR2zKDrhpNNzpzQB
+	wlVqhYj6uAGHk1tU5sFU5EyENCSddiQSCbCQilNpm+hFD+Xgz0iO/vHKRuUaHfKMkdqgVdf
+	B4U83QcRpvIPR4w=
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
 X-QQ-RECHKSPAM: 0
 
-The Radxa Dragon Q8B is a single-board computer based on the Qualcomm
-SC8280XP platform.
+Add Radxa Dragon Q8B to the QSEECOM allowlist for enabling access to
+efivars and uefi bootloader.
 
-Document its radxa,dragon-q8b compatible.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Xilin Wu <sophon@radxa.com>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+ drivers/firmware/qcom/qcom_scm.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 121ca557ce1e..f28645b0088e 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -937,6 +937,7 @@ properties:
-               - microsoft,blackrock
-               - qcom,sc8280xp-crd
-               - qcom,sc8280xp-qrd
-+              - radxa,dragon-q8b
-           - const: qcom,sc8280xp
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 43e250faea75..0cb6f8e3a5d3 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -2266,6 +2266,7 @@ static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
+ 	{ .compatible = "qcom,x1e80100-crd" },
+ 	{ .compatible = "qcom,x1e80100-qcp" },
+ 	{ .compatible = "qcom,x1p42100-crd" },
++	{ .compatible = "radxa,dragon-q8b" },
+ 	{ }
+ };
  
-       - items:
 
 -- 
 2.56.0
