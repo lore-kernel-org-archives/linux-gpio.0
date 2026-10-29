@@ -1,83 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793247812;
-	b=3VJWU8Ll9jgJ/yfeZuA/dt8PKP/dt9hgOwZzTcLE214KxMjJZR4GVKIb/+u6U59CfSXC
-	 22nONeEnObMMjwqOleoQh1b4kZrnSxMNtptLsTujlnhybv3arInUaqNuNNSdzFYz4BiC0
-	 hmfKcM61EDv3U3VG4swmRe7saJ2JmORiOyuDNQMgoJI+bcuSjiaTCgRNfji3p6/I/3LSv
-	 cLK3rQ2PmRLnrOsV3ve61MHsxCiyeQYed9M9jHK4V2IlfhbdugWtzkj28ZQxI+4gmEHCX
-	 PKkAuxDpNn3zAmIGRzILSyLRloxTi8nUpXxq+cO4TH82jTFmHELsC/lRV3Rf4NpXJpw==
+	t=1793254389;
+	b=Tes/sfBGuImzrGcRTSeX4LG4ZuUcqZm91UM4Iu1r8vc8GQaFcfGsaRsiJsvjMkJs3VXq
+	 ejUaASoxMs0NvbLVz3cY/TTtE0UlDSHIkmAwNvO/blIYLwudLdkMDxZToY6EU1uALehBs
+	 SjzuclP/WvxVrbDbJcAUG2uXXwGeriHthTzE/LNGZ5jChWo4R7Ch0GwSmoqihsxCaXRko
+	 yEEEbaAT4xDeq/v+pqyq4henciKcwPyepS58oP2bsSKFFtvD5uJcOTQtkDYniia8mwciv
+	 +cytMTeG7vajxP5sf6XpSZ7jgXTYvJQfQHK4COkThC9Jqe9UKjxxfKOVsquq3EifBqA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793247812;
-	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
-	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
-	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
-	 X-Local-Domain:X-CMAE-Envelope;
-	bh=WY5wnUr0YMRLXTa+IeVdTK62D3adKCL9XnatFjihAzk=;
-	b=vK6xa2q7nKZRMjOxGghyPt22FGh7rKkyObLgQgBIxXrpjUG7nJyt3gyegKGucDfrZf8a
-	 61k51b5ACKHzQa73bGvYhwzCd9QFXkCVLD03qfzEX1Tk/1/wWyYJ5eKEQvyQUFJRDes/d
-	 BwcXR/NzOHx9ZCWkyirHVFzI51ahhZ6m/uwALdl61xIlWK9MiWDvOrQLHiJkykymvklLP
-	 ojPVWal6HsUNb7p2GdnGhMs2+18GqTQiD3d+5zFcRNVxTuPbBgdfs816vsaxzLI1YzNJ5
-	 MW7WXcO107cvuatnCvm5qbBlMnOS4JaeoczSi9LNMQ281wR9pIlnp9Dwl3GrU3WWBrA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793254389;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=8HfICeltQZtZCQ5hD60I+Ms/gO7apKM3P6RJyOQSEUI=;
+	b=ygpf8oSIetfgdHDl0NfHPaR6Yo2nxtU/ayi5CGecBeXHfOd/8UUHYzeBpyXRe8gpL7NV
+	 oD3Af+M27S4KG1WZi3Ksgf5Wvptf3sVJo5COf8NYvF3xxAGJtcwd+kDaWSl58bszJK8RY
+	 B1MNXrhG6jCrkqQAhBj0GyG1hd7YhH5m3Uo4L3XpP0wKLOeyoFYgCG7b41rUCBnMp55sm
+	 WRssEs3XmoMUXuCF9ErOr+rPvbazyHDnL0yRfJRE2slgITnb2fc0jJd2O70n5Kkvka0y1
+	 y6hxAGXmAYNczyOGDdovVMYW6O8Svx8qiVXBmH/6+5iJ0QjU1gwIKdWtjRrGdvKZcBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=roeck-us.net;
-	spf=fail smtp.mailfrom=roeck-us.net;
-	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=OKYVWu5I;
-	arc=none smtp.remote-ip=44.202.169.39
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AY9fCZM8;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A7C606A31E
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 04:23:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D6A7C606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0309606A31D;
+	Thu, 29 Oct 2026 06:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=OKYVWu5I
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id M6A3x69bqMylkMHfhxRni4; Thu, 29 Oct 2026 04:23:25 +0000
-Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
-	by cmsmtp with ESMTPS
-	id MHfgx08dlJxMvMHfgxbXLV; Thu, 29 Oct 2026 04:23:24 +0000
-X-Authority-Analysis: v=2.4 cv=bdBrUPPB c=1 sm=1 tr=0 ts=6ae2ca3c
- a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
- a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=M0FbrtG7MMAA:10 a=e5mUnYsNAAAA:8
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=MDvQDARPIxcOL7T4D4kA:9 a=CjuIK1q_8ugA:10
- a=Vxmtnl_E_bksehYqCbjh:22 a=7h6zrudLq975CqBWz9ej:22 a=KPbNTLLc3YvdawN95zVk:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WY5wnUr0YMRLXTa+IeVdTK62D3adKCL9XnatFjihAzk=; b=OKYVWu5IWjJ697XodiKp8mPZMo
-	40q5C15s3gWM5WgNuKMhIM/I/DdoMBnOZEVTC4mZJ3rkZlUi7YFnmmP8ZdHLwRMtdnYHiKr0axDhw
-	sUjuhm3tLAxeIUsdw+3B3FOF+jOOQVcgrqx3+4NWXrsA3nEJJD1b9o/AtIzVSlz5kAbonopoGfsbz
-	UL54DZdn4m6hRNDgMWbBfA3yWRIoYCm12+9AKRzH7Y+fTxiEuV92MZHtvHRxSaqcpzx+T448ao3Y6
-	TL+lmTOJOACd4tLbeMYHz7xc//MaZ2ZJxWVm2+VNJbpRo8YnOb1T48ZuDrcXD9c0mnrEE1sOlrg/m
-	RJzWpe4g==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:53758 helo=server.roeck-us.net)
-	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <linux@roeck-us.net>)
-	id 1xMHff-00000003SdK-3t8p;
-	Thu, 29 Oct 2026 09:53:24 +0530
-Date: Wed, 28 Oct 2026 21:23:22 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, soc@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/4] gpio: sa1100: register software node for GPIO
- controller
-Message-ID: <2a561a27-a3bf-4cac-a4dc-bfbc5c859f45@roeck-us.net>
-References: <20260706-sa1100-swnode-v1-0-332759bbd930@gmail.com>
- <20260706-sa1100-swnode-v1-1-332759bbd930@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AY9fCZM8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFD61F01825;
+	Thu, 29 Oct 2026 06:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793254387;
+	bh=8HfICeltQZtZCQ5hD60I+Ms/gO7apKM3P6RJyOQSEUI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=AY9fCZM838jxvzO1LZjlGpXv0W8K3teqSZL7RijTgFK+vMuR9I/rLM2tTDsuEdu49
+	 D2/wj4MDZjo91NakOEaX5qSF5O95U3YG8/G5UHWIxf80ZCUvpFSL90WwQh/5OnZhB+
+	 IxV3Ir9hpPOUOgGFeO+ZNTpumWj+emmZLNf8wkK2peC6tx3JvxcCwhRjIp/8vl4fIF
+	 5Te7rIsn3LXYjnylmmiG2eWT/I2O7NNXE/I6Z/jqqYBvXQ+flDBPRbsCb9u28Gwj8Z
+	 Wm++8Vi3KmsJ2uSOrdepJb1M4tZjsQyVIQao8cR8k7StT66yaZCypWnGb4AtixMYe1
+	 607LwJx2luOOA==
+Date: Thu, 29 Oct 2026 07:12:52 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Clark
+ <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang
+ <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, Frank Li <Frank.Li@nxp.com>, Vinod Koul
+ <vkoul@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan
+ Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Tiffany Lin
+ <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej
+ Hajda <andrzej.hajda@intel.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5?=
+ =?UTF-8?B?xYRza2k=?= <kwilczynski@kernel.org>, Manivannan Sadhasivam
+ <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Christian Marangi
+ <ansuelsmth@gmail.com>, Eric Anholt <eric@anholt.net>, Kuogee Hsieh
+ <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>, Aakarsh Jain
+ <aakarsh.jain@samsung.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, freedreno@lists.freedesktop.org,
+ imx@lists.linux.dev, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
+Message-ID: <20261029071252.586c8cbc@foz.lan>
+In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
+References: <20261028120216.2657397-1-robh@kernel.org>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -87,85 +97,240 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260706-sa1100-swnode-v1-1-332759bbd930@gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1xMHff-00000003SdK-3t8p
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:53758
-X-Source-Auth: guenter@roeck-us.net
-X-Email-Count: 1
-X-Org: HG=direseller_whb_net_legacy;ORG=directi;
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfAi2metjWyUEms41Lhl7QShudPrj9FDR8YrpA+oeHsMgQGqXKdWwlRwohVRw2QzI1/CTgRnTMsQE5hv9arTD7bd0NITjRkOcrYK87cgwK2L1gTl7Q8xD
- wxyRdd/6gAwwbZwiCZ9SivFDVDLtNA8orwHEgTUD+h4OI4OPH7RjXwfd62QbWMKN8/6FP7GgwwCiO5xEH9+X/QQuvvQci57d0ht+8JaIAnniKOMNgHKtGR8R
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Wed, 28 Oct 2026 07:02:12 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-On Mon, Jul 06, 2026 at 08:14:00PM -0700, Dmitry Torokhov wrote:
-> Define and register a static software node (sa1100_gpiochip_node) for the
-> SA-1100 GPIO controller during sa1100_init_gpio(). Assign its firmware node
-> directly to the GPIO chip prior to calling gpiochip_add_data().
+> Property names within if/then schemas currently go unchecked whether
+> they have a type defined or match what's in the top-level schema. Adding
+> a check finds a number of instances of typos. The typos result in the
+> schema having no effect on constraints.
 > 
-> This allows StrongARM SA-1100 board setup files to reference the SoC GPIO
-> controller in property entries when converting legacy platform data to
-> software nodes, resolving pin bindings directly via the attached firmware
-> node without relying on name matching.
+> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
+> exposed by the name correction.
+
+For media:
+
+Acked-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
 > 
-> Assisted-by: Antigravity:gemini-3.5-flash
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
+>  .../bindings/display/msm/dp-controller.yaml          |  2 +-
+>  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
+>  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
+>  .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
+>  .../bindings/iio/adc/amlogic,meson-saradc.yaml       |  2 +-
+>  .../bindings/media/mediatek,vcodec-encoder.yaml      | 12 ++++--------
+>  .../devicetree/bindings/media/samsung,s5p-mfc.yaml   |  2 +-
+>  .../devicetree/bindings/pci/mediatek-pcie.yaml       | 12 ++++++------
+>  10 files changed, 19 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> index 88b7672123a0..ed347096df46 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> @@ -62,7 +62,7 @@ then:
+>      - '#clock-cells'
+>  else:
+>    properties:
+> -    clock: false
+> +    clocks: false
+>      clock-names: false
+>      '#clock-cells': false
+>  
+> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> index c1cefd547391..fd4d598f6ff8 100644
+> --- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> @@ -145,7 +145,7 @@ allOf:
+>              - description: CEC stuck at low interrupt
+>              - description: Hotplug connected interrupt
+>              - description: Hotplug removed interrupt
+> -        interrupts-names:
+> +        interrupt-names:
+>            items:
+>              - const: cec-tx
+>              - const: cec-rx
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index 094a6383bb77..f72d1b354007 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -304,7 +304,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>            maxItems: 6
+> -        clocks-names:
+> +        clock-names:
+>            minItems: 6
+>            maxItems: 6
+>  
+> diff --git a/Documentation/devicetree/bindings/display/msm/hdmi.yaml b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> index dfec6c3480f3..02d27ccad024 100644
+> --- a/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> @@ -113,7 +113,7 @@ allOf:
+>              - const: core
+>              - const: master_iface
+>              - const: slave_iface
+> -        core-vcc-supplies: false
+> +        core-vcc-supply: false
+>  
+>    - if:
+>        properties:
+> @@ -136,7 +136,7 @@ allOf:
+>              - const: core
+>              - const: alt_iface
+>              - const: extp
+> -        hdmi-mux-supplies: false
+> +        hdmi-mux-supply: false
+>  
+>    - if:
+>        properties:
+> diff --git a/Documentation/devicetree/bindings/dma/fsl,edma.yaml b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> index f609038e35ae..0260d177c7d0 100644
+> --- a/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> @@ -172,7 +172,7 @@ allOf:
+>              const: fsl,imx7ulp-edma
+>      then:
+>        properties:
+> -        clock:
+> +        clocks:
+>            minItems: 2
+>            maxItems: 2
+>          clock-names:
+> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> index 69852444df23..07c8b233c6bd 100644
+> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> @@ -80,7 +80,7 @@ allOf:
+>          - resets
+>      else:
+>        properties:
+> -        "#interrupts-cells": false
+> +        "#interrupt-cells": false
+>          interrupt-controller: false
+>          resets: false
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> index 70ab4e140e71..535213ba0c5e 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> @@ -92,7 +92,7 @@ allOf:
+>      else:
+>        properties:
+>          nvmem-cells: false
+> -        mvmem-cel-names: false
+> +        nvmem-cell-names: false
+>          clocks:
+>            minItems: 4
+>          clock-names:
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> index 4505e66876a2..52f471a070d5 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> @@ -110,19 +110,15 @@ allOf:
+>  
+>      then:
+>        properties:
+> -        clock:
+> -          items:
+> -            minItems: 1
+> -            maxItems: 1
+> +        clocks:
+> +          maxItems: 1
+>          clock-names:
+>            items:
+>              - const: venc_lt_sel
+>      else:
+>        properties:
+> -        clock:
+> -          items:
+> -            minItems: 1
+> -            maxItems: 1
+> +        clocks:
+> +          maxItems: 1
+>          clock-names:
+>            items:
+>              - const: venc_sel
+> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> index b46cc780703c..4488d5ca9b9c 100644
+> --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> @@ -174,7 +174,7 @@ allOf:
+>              - const: mfc
+>          iommus:
+>            maxItems: 2
+> -        iommus-names: false
+> +        iommu-names: false
+>  
+>  examples:
+>    - |
+> diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> index c009a7a52bc6..7c40361f95ec 100644
+> --- a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> @@ -127,7 +127,7 @@ allOf:
+>          phy-names:
+>            const: pcie-phy1
+>  
+> -        power-domain: false
+> +        power-domains: false
+>  
+>        required:
+>          - resets
+> @@ -150,7 +150,7 @@ allOf:
+>            minItems: 2
+>            maxItems: 2
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -171,7 +171,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -193,7 +193,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -215,7 +215,7 @@ allOf:
+>          clock-names:
+>            maxItems: 1
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -223,7 +223,7 @@ allOf:
+>  
+>          phy-names: false
+>  
+> -        power-domain: false
+> +        power-domains: false
+>  
+>          mediatek,pbus-csr: false
+>  
 
-With this patch in the tree, the qemu "collie" emulation no longer works.
-There is no console output.
 
-Bisect log is attached for reference.
 
-I am not suggesting a revert if that is even possible, but maybe it is time
-to retire collie support if no one else reported this problem.
-
-Guenter
-
----
-# bad: [c03c1a14507dfaf8b856c2608f9ac216021fc222] Linux 7.3
-# good: [8d3ae59288f1e7d58d76558a6ee96d533bc5019f] Linux 7.2
-git bisect start 'v7.3' 'v7.2'
-# bad: [4e69c1856bfd9ffb7e9d335a25842fa211628929] Merge tag 'drm-next-2026-08-20' of https://gitlab.freedesktop.org/drm/kernel
-git bisect bad 4e69c1856bfd9ffb7e9d335a25842fa211628929
-# bad: [5a8cd539ac19f7a68e68e1d25ef9ca2ff55b8500] Merge tag 'bpf-next-7.3' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next
-git bisect bad 5a8cd539ac19f7a68e68e1d25ef9ca2ff55b8500
-# bad: [abea5c349368a683e40fdc2e745099aaaacc89d7] Merge tag 'i2c-7.3-part1' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux
-git bisect bad abea5c349368a683e40fdc2e745099aaaacc89d7
-# good: [bbd0571269b5a17bb0685fc30ea0b89b950801f5] Merge tag 'x86_cleanups_for_v7.3_rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect good bbd0571269b5a17bb0685fc30ea0b89b950801f5
-# good: [658ed6d54e9775a627662f152c8e21509eea68c7] Merge tag 'dt64-cleanup-7.3' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt into soc/dt
-git bisect good 658ed6d54e9775a627662f152c8e21509eea68c7
-# good: [368cf60c36a3a311474de08e52dc6314df3b06ce] Merge tag 'soc-drivers-7.3' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
-git bisect good 368cf60c36a3a311474de08e52dc6314df3b06ce
-# bad: [1be05c6afbb2c4052d0a13fc91ddcd89aaee9614] Merge tag 'input-for-v7.3-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
-git bisect bad 1be05c6afbb2c4052d0a13fc91ddcd89aaee9614
-# bad: [c36a4991e231242c04141536718d47255ec80887] Merge tag 'chrome-platform-v7.3' of git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux
-git bisect bad c36a4991e231242c04141536718d47255ec80887
-# bad: [7c8af4b5b627d8bbf88c6783db49c52dd6b43f5a] Merge tag 'imx-soc-7.3' of https://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux into soc/arm
-git bisect bad 7c8af4b5b627d8bbf88c6783db49c52dd6b43f5a
-# good: [809177dbf32e3c649abcd027334dbcfe34720446] Merge tag 'arm-feature-deprecation-for-7.3' of https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc into soc/arm
-git bisect good 809177dbf32e3c649abcd027334dbcfe34720446
-# bad: [ab1c3ab445b44d6b412bc4f7fad3db4f3857a80e] ARM: sa1100: h3xxx: convert gpio-keys to use software nodes
-git bisect bad ab1c3ab445b44d6b412bc4f7fad3db4f3857a80e
-# good: [9212f660d34c385f2ba8ad5fb7b94c1d45c166cb] Merge tag 'ixp4xx-arm-v7.3' of https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-integrator into soc/arm
-git bisect good 9212f660d34c385f2ba8ad5fb7b94c1d45c166cb
-# bad: [ea07a154791e7e95525f843beaa72402a4fcf88a] ARM: sa1100: assabet: convert gpio-keys to use software nodes
-git bisect bad ea07a154791e7e95525f843beaa72402a4fcf88a
-# bad: [e4671f292ebb363fdea08ae3b0cd18ba7a2b486f] gpio: sa1100: register software node for GPIO controller
-git bisect bad e4671f292ebb363fdea08ae3b0cd18ba7a2b486f
-# first bad commit: [e4671f292ebb363fdea08ae3b0cd18ba7a2b486f] gpio: sa1100: register software node for GPIO controller
+Thanks,
+Mauro
