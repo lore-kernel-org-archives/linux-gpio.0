@@ -1,81 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=35.89.44.39
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793303606;
-	b=wSD+ECNwrGcJXJRuKEfQzQRC/rkSJCxzwQ9oBVaAA9RRtzN5CsK/cryOM3FZiPHlPNPA
-	 J1lFsBdNdk79olknosPgO1afM0Kp77xIUnp4xmjI2BCmbCZJbvMUwx2Gq1/ZKz6/3AxN9
-	 qPkvvB4Bah6ZYkHKaI2dxugFBl6sNV7/EkToN8G5qDjhyB43PL+sRWG3ltDDhjhaqtemi
-	 N3/SapwoeIWUztE8Q8Mq1KJu7pvZroSsUcvIKUNoalWQGcNJzzj48sZXBJN3lcYMONvMw
-	 K4/u7vEVdQmzOnxeVTVbV1I12mPRmxJgaFKRi2waVBqz9hOUf7UWHlo1P/DBTaya46Q==
+	t=1793307738;
+	b=qNzofJVL62SNPUmOT+Iglj/nJTZMQCrIe9iz7JId1X5Np8NmyNizRAhlKw25rlC+oI0z
+	 BBkOnpXyHQBEwv5yp2jda+KIZ9Ql9Ej0wOUgZdEDzmId9K8g5bfEOSqbCX6wtRf+UJG2Y
+	 uGRNBmFcO6+Mel7PK7pFiPHpgaQoy5F6JuKyM2M0GTLPkg12DKovnYJfX3lgIzKMU0oKy
+	 Zjz7Q63D1zQFgvjoHTdbrOpdnweGemCcJvGpdRTli8kP24XfsFSvMPgyM5h+aEmYsuRDc
+	 TH8gRU1e8Uo17Gj/lqBgHsH4vHfbdplplw0xSFuy+ESJ/6WTcpzCXNOx7ICPfiVEpqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793303606;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=sxufEbmJccbPCMBIVWCkzuEvgvSqJww+j7Cv/utg30c=;
-	b=nGABrRlKuRdHbNNeL+hDPldoBsjpF/wKPlH9Xr7Qmd7IvYEnj8YcRPRhwIZ88nZPpG80
-	 9bDIpeRGhsny4G+OUQUpdrS//JmLKgDSJA6PE6Dum7S1d2Jg24dPcgXejb2SZ7PiG25H1
-	 omWFKeYRzKMaASj50uoKzvY95SB6i6ttqdHAEmhvomML5AeYF+7BeRyyhvwJHmXtmieYq
-	 kAYWje/f3uzCdgPml05T1XBlv8JrGRIU/RkDvnjQi1VmKb8X5oPAzAdUTfFQpdQAdkQzu
-	 1Qdtli0mufBbV1h8HKu9JXobmrnDljC6t26GneV5M4H+Rov7vXcdY2TA6FQWVjRAbyw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793307738;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 References:Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:X-Source-L:X-Exim-ID:
+	 X-Source:X-Source-Args:X-Source-Dir:X-Source-Sender:X-Source-Auth:
+	 X-Email-Count:X-Org:X-Source-Cap:X-Local-Domain:X-CMAE-Envelope;
+	bh=VQcEJLQXJIuyQP3EY6HM4/0GGnBX9p5roig7lUfJ3jk=;
+	b=hBNSHXJVDfY56gxT+EirPf51XoofN/qI92IsK3GPhY6a3cSLEAbJncNYNik7qXQ2tPft
+	 9VuhVLQRw3ukRsurCCDFTV+bOernBId6fzljllBcyPuclGzBQDQzHivlO5KoCjRrr48ZX
+	 Y8NNDM5Di19W2YFBn56jYxcN+6a+TjfIjN8fiuhv9/Jc7R/l5N0UzcC0Qohkrxx7bjILh
+	 JjOOpo9hjAibCS4nwsecGPSxg8EwFdeugL4C4UkGUYUN8ISFhBy/mM7BW/CAA/5ySs+NU
+	 f8wL0XCUnelDqhCk3LYo+rBJrxeoTQG6wI/ogmHVe2wuNv23siCyCaO7+89Arbw+Vjg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VuzKxIaK;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=mrKWSUnf;
+	arc=none smtp.remote-ip=35.89.44.39
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DCA606A31A;
-	Thu, 29 Oct 2026 19:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30C3606A31D
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2026 21:02:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D30C3606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VuzKxIaK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6E11F01816;
-	Thu, 29 Oct 2026 19:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793303606;
-	bh=sxufEbmJccbPCMBIVWCkzuEvgvSqJww+j7Cv/utg30c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VuzKxIaK1tOS0QvcCfnoS3lX532BUYdgQ2HPsgUhMZ57Uaj2IxhzN4UsDX4okAdIV
-	 4opVn1/ygbhMc3z3Z2yppkD7zhFyP37vkwDSlDx2iEf9G7+wdVk6sfHh8+Un6xEr5x
-	 0fB1tbaKdt/TyEQFA95vSPN8K9e2ffoUIk+N71AeIkY1emvKO+t+Wfv/M8mdo9cSyp
-	 ab3W9pWHEO/+P0R7Rhthj0dtNhUigysikpMynCiEKBkBzqkpxUtUkQpCSxS/hsU5dD
-	 5tXjrkzTznS4xWo7lvxqskebO5FC52ObdsIa1JFXqSnNtfc6b9ihbEGbJokZRlQcVg
-	 3HBIIifVij5zQ==
-Date: Thu, 29 Oct 2026 19:53:17 +0000
-From: Conor Dooley <conor@kernel.org>
-To: gaohan@iscas.ac.cn
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH RFC 12/18] dt-bindings: serial: snps-dw-apb-uart: add
- Zhihe A210 UART
-Message-ID: <20261029-imagines-suggest-46436f99114a@spud>
-References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
- <20261027-a210-scmi-v1-12-74d58ce85bd8@iscas.ac.cn>
+	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=mrKWSUnf
+Received: from eig-obgw-5007b.ext.cloudfilter.net ([10.0.29.167])
+	by cmsmtp with ESMTPS
+	id MUfMxRejXc3XsMXGLx5i8U; Thu, 29 Oct 2026 21:02:17 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id MXGKxqtpTLr2uMXGKxzH28; Thu, 29 Oct 2026 21:02:16 +0000
+X-Authority-Analysis: v=2.4 cv=UudjN/wB c=1 sm=1 tr=0 ts=6ae3b459
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=M0FbrtG7MMAA:10 a=VwQbUJbxAAAA:8
+ a=_jlGtV7tAAAA:8 a=pGLkceISAAAA:8 a=13cl543gbcbPMrBg_SMA:9 a=QEXdDO2ut3YA:10
+ a=nlm17XC03S6CtCLSeiRr:22 a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:
+	List-Archive; bh=VQcEJLQXJIuyQP3EY6HM4/0GGnBX9p5roig7lUfJ3jk=; b=mrKWSUnf9UfZ
+	x3SYt1ns2FqVkOyRnHHOb966nCmeYI0l4pH9Xpy03bVknw+PQSjw4modrufXUaIXhe1MkmReB8Cj7
+	j0rpqSXrfrH4wV5p99fBdWKvh63EPDz1fX4Stl2Kp27zUB9HQMJurXIvBZFg8pjXBrJd9ghdqoFsN
+	m7DQSHl98TU5QYqEy0Uc6usnHMuaG/Q7nnWq5+F7wrnyzweV35wYmglgWIRwaYcy6yAb7C4wiZOD9
+	NU2K2DXhgW0nz+JH5OjJ44qYrAHd+XgymBdXIXb7PaptrvBd+Yo4y3myBxW7ozvTUUa9UIWl/Lcov
+	bU9dZWk2iisBFAeHSY46Pw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:53448)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xMXGJ-000000004Rf-40B3;
+	Fri, 30 Oct 2026 02:32:16 +0530
+Message-ID: <5a38e9d0-e50e-437c-a480-77429c59be70@roeck-us.net>
+Date: Thu, 29 Oct 2026 14:02:14 -0700
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -85,27 +76,178 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NHW4k1IZxtJrQ5WH"
-Content-Disposition: inline
-In-Reply-To: <20261027-a210-scmi-v1-12-74d58ce85bd8@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: sa1100: defer GPIO chip registration to
+ postcore_initcall
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20261029-sa1100-swnode-fix-v1-1-112f4d83d191@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20261029-sa1100-swnode-fix-v1-1-112f4d83d191@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xMXGJ-000000004Rf-40B3
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net [108.223.40.66]:53448
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 3
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfC+4Fq7rgvFciJZD7utjc65kLkC4s+qhJLAPXpLtgddHyWOchFVdaWZc7Px/I6Liwp0M9SXtoBOPveFPNA4N5QHP2H2jPmY4cL9OlU7rQv4Rt1g9WrWX
+ pj4lXtXd9MkT512P6X/o9YyYamGHluqExun20+bmnKjjKsfuZbYByzYlwuaYEeU2nnYbrikCQDzi1RcLPFn2WzDdKHQaUZXPvJIJzDxu1hxdZYH/25KTiC/M
 
---NHW4k1IZxtJrQ5WH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10/29/26 11:58, Dmitry Torokhov wrote:
+> Registering the software node and the GPIO chip for the SA-1100 GPIO
+> controller during early IRQ initialization causes boot hangs on
+> SA-1100 platforms because the software node subsystem has not yet
+> been initialized. At that early boot stage, attempting to register
+> software nodes dereferences a NULL kset pointer before console or
+> driver model initialization.
+> 
+> Nothing on SA-1100 platforms requests GPIO lines via gpiolib during
+> early boot before initcalls run; only the GPIO IRQ controller and
+> domain must be initialized during init_IRQ(). Defer registering the
+> software node, assigning its firmware node, and registering the GPIO
+> chip with gpiolib to postcore_initcall, running after driver and
+> gpiolib device initialization and before board consumers register.
+> 
+> Fixes: e4671f292ebb ("gpio: sa1100: register software node for GPIO controller")
+> Cc: stable@vger.kernel.org
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/r/2a561a27-a3bf-4cac-a4dc-bfbc5c859f45@roeck-us.net
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
---NHW4k1IZxtJrQ5WH
-Content-Type: application/pgp-signature; name=signature.asc
+> ---
+>   drivers/gpio/gpio-sa1100.c | 32 +++++++++++++++++++++++++++-----
+>   1 file changed, 27 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
+> index e4f3bf949b87..1916200ebbd5 100644
+> --- a/drivers/gpio/gpio-sa1100.c
+> +++ b/drivers/gpio/gpio-sa1100.c
+> @@ -8,6 +8,7 @@
+>   #include <linux/init.h>
+>   #include <linux/module.h>
+>   #include <linux/io.h>
+> +#include <linux/printk.h>
+>   #include <linux/syscore_ops.h>
+>   #include <soc/sa1100/pwer.h>
+>   #include <mach/hardware.h>
+> @@ -322,7 +323,6 @@ static const int sa1100_gpio_irqs[] __initconst = {
+>   void __init sa1100_init_gpio(void)
+>   {
+>   	struct sa1100_gpio_chip *sgc = &sa1100_gpio_chip;
+> -	struct gpio_chip *gc = &sgc->chip;
+>   	int i;
+>   
+>   	/* clear all GPIO edge detects */
+> @@ -330,10 +330,6 @@ void __init sa1100_init_gpio(void)
+>   	writel_relaxed(0, sgc->membase + R_GRER);
+>   	writel_relaxed(-1, sgc->membase + R_GEDR);
+>   
+> -	software_node_register(&sa1100_gpiochip_node);
+> -	gc->fwnode = software_node_fwnode(&sa1100_gpiochip_node);
+> -	gpiochip_add_data(gc, NULL);
+> -
+>   	sa1100_gpio_irqdomain = irq_domain_create_simple(NULL,
+>   			28, IRQ_GPIO0,
+>   			&sa1100_gpio_irqdomain_ops, sgc);
+> @@ -342,3 +338,29 @@ void __init sa1100_init_gpio(void)
+>   		irq_set_chained_handler_and_data(sa1100_gpio_irqs[i],
+>   						 sa1100_gpio_handler, sgc);
+>   }
+> +
+> +static int __init sa1100_gpio_init_chip(void)
+> +{
+> +	struct gpio_chip *gc = &sa1100_gpio_chip.chip;
+> +	int error;
+> +
+> +	error = software_node_register(&sa1100_gpiochip_node);
+> +	if (error) {
+> +		pr_err("failed to register sa1100 gpiochip software node: %d\n",
+> +		       error);
+> +		return error;
+> +	}
+> +
+> +	gc->fwnode = software_node_fwnode(&sa1100_gpiochip_node);
+> +
+> +	error = gpiochip_add_data(gc, NULL);
+> +	if (error) {
+> +		pr_err("failed to add sa1100 gpiochip: %d\n", error);
+> +		gc->fwnode = NULL;
+> +		software_node_unregister(&sa1100_gpiochip_node);
+> +		return error;
+> +	}
+> +
+> +	return 0;
+> +}
+> +postcore_initcall(sa1100_gpio_init_chip);
+> 
+> ---
+> base-commit: 6d0933ae9d46674a6ea63a87e9e9ab4e662670c9
+> change-id: 20261029-sa1100-swnode-fix-11499713eb7a
+> 
+> Thanks.
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauOkLAAKCRB4tDGHoIJi
-0uS0AP9yvaqaeXIgZ6Q8UiuXm3rCSxIas74cfCcrHRrYUjPouAD+I1PZv3LKS1gm
-ahygoYVVdGzKpaSEjzWcHGQkXEqtnQc=
-=IozQ
------END PGP SIGNATURE-----
-
---NHW4k1IZxtJrQ5WH--
