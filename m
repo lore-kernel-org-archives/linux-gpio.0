@@ -1,57 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793380617;
-	b=OghO0hm6CVWPpL1M97cEj1pSmeKsAyZO5+hySiSGSMH8DIxQyPEDoo4vFkVXNkS28Tjs
-	 JHr1alsBSdMVf3rEufj6GG6Ir1G/3AAs0TmhCPiuOgtpnhtVR8k3Yq1t+m627dcdYJA7B
-	 E06mDj/8fJ9nT9aEggrTmx0x2uow8k30dcfxqnrRyBQGCK85/G0Ge/F4z1CZqtVBjnbkk
-	 vNBQ2luiJEmpbAvPVRtJi46c4XLMdwZ8BtWMaM4DJ3Eqdu2/deaWxRWtfGvQHplrEBKpl
-	 mnH/bkfUaISqE5nqB0CCtCOgGHnB0ltshwCxih7QmQhxXE27+2rFxG3xxYOAnkgoVNA==
+	t=1793382555;
+	b=knYuQiWgPWIIfj82hvE+milhxdvn0Lo4CubGWDXYOSfiO07jl18nk6uOQj21E3LJROGe
+	 FBQdRyRH/rDUGl5JAxhqx1VgImC3JqrexE3wJEy8a/EhK6Q80vWygus81CWZAYH0KGcrC
+	 9xAcUQcK8FyrE7QQHD9IIkzzpP3B3Ag2bz6AwqnWqZwjHoV2wTEjjPQM4kdE1tiGTy2tM
+	 3eCe0Gyx+wCzq009jkZqsIo4+HXC/q7yJMizWQrHR7HwrGVsIbvnlpsrphFhLpBqoKl0v
+	 qviIYtHTsmPstT1LAXbJ7xM+h/gN/D5q41el4HJnJ5VaHP4qtzA637AXO/3i/mNnBDQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793380617;
-	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 Content-Type;
-	bh=1eWKOZJmHFTw8mc51zVsa6b6BFNw6zxGkRiFuN9WWuk=;
-	b=u1+tnqvPZGsub0BlGyQPn7l5xK+SvhFW3X0LKos4r/rK9a8jALhIihR2JUYzhHIcaKRX
-	 Sr8zfCUwnuj7PUhnQjTKdndudh7PkWzLB9jXHjga/UnnSZj7sBKgUGSoq/KYh/ReG3kWo
-	 cYPC4FrieLnnilx5QVY9zFaxHFNQLA5RtOGL3fkOSCn4k0G5iaKolcpT7/Lg9wvWe2s8N
-	 Gp9b77NSThnAZvMk1bnJFNgMH8Ne3UuvtYFNP3LpO2rNGcbaUqp/uS4z/dqoiYKKEZi7J
-	 7KPTVVliH7TjlMxlWaPf3NdHZK+1rxKwGJFp6EIy3q38pty1PQXmwO5Qv9rjFPUHqVA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793382555;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ZLx/b2ua4Zd1yUXxRK6Mux+7pE/jsjGxjCPHmBP7rM4=;
+	b=vwmxTwwnjraYMVPRSf67ht1yYQW5CjDpIP8WKfHA+Llnjhvbx85Fkv9RBdaNALzikqbu
+	 Rzru6eYT/ZJAksnWOVO+ZhS41bB9BGAunw+D+lSqlESJX+s3q3IJ1jZE10VrceUs9uNZC
+	 9z3WTFjJWU8k8NraMljYRmSDg/z1e0Y4A0cy7t90zkmf1JsvFBdkLOJEy+51mMQ8AATqx
+	 kt6A0aFyaHRn5p2uoJ5WKJjUcCxhYLGRKL12x4Dyhd0d1WuRBOFwx7LBZV2S1gQz6T5KQ
+	 xWbQjpbE+drV6kWH9zDGG0pzXikgDMdJj8ad0lmB9qNc0k/2pfZ9fIhhvBnLnDAZRRw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=sntech.de;
-	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=XXYuRJ7R;
-	arc=none smtp.remote-ip=185.11.138.130
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JVXKBOye;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1359C606A333;
-	Fri, 30 Oct 2026 17:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1359C606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39602606A31C;
+	Fri, 30 Oct 2026 17:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=XXYuRJ7R
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=1eWKOZJmHFTw8mc51zVsa6b6BFNw6zxGkRiFuN9WWuk=; b=XXYuRJ7RSD2jFJ21WZqf+71hfT
-	9WAHaPum2eX90phj58hYyfAPeFY8Ol5WyaHlPALiUDr2GkE45rDvg8LMtnlVMzUYDDN5zQns26kIO
-	qg3xSEBKM+S7gr6x51Q8HWHcsWJwMPH+b91uHoCv/nQMHQcI4thcfCu+ruWOYdJdov0Of8FScP38b
-	/CG5pylUDoUC1lBJgXxlfR98D3Y3mpKDiALnTkCUTNMR6Wk/JnmO4JYzlvSX+qPYrxYzyWNF/tnoR
-	EqKc4k8OpJVCXUVyccO6JEcLMHbBiwnDZ5HyPHkDm1P8lvsoxcodikL/+pOzX5YSBQE2L0qdT1LIw
-	PcafdHfQ==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-gpio@vger.kernel.org
-Subject:
- Re: [PATCH] pinctrl: rk805: fix ordering of gpio and pinctrl registration
-Date: Fri, 30 Oct 2026 18:16:52 +0100
-Message-ID: <51242770.MN2xkq1pzW@phil>
-In-Reply-To: <sashiko-outbox-190969@kernel.org>
-References:
- <20261030115540.3660242-1-heiko@sntech.de> <sashiko-outbox-190969@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JVXKBOye
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71B951F00A02;
+	Fri, 30 Oct 2026 17:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793382554;
+	bh=ZLx/b2ua4Zd1yUXxRK6Mux+7pE/jsjGxjCPHmBP7rM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JVXKBOyeacLReNNa2EEW3SAE8Ys5gImVRYowVR1gsFBt+Bu8DUy6D2cLOJw92crbf
+	 Ysrn4MNX4WGx5BqOWOxpn5RwmdiLabSOcqkXbiuvtw+bqLEek0rA6CcEE9WA0j7pr9
+	 cfiCvIP6eAb4H2GQyGhEd+qezjMDOFiUFpZ8cznscnZtVxfDLS+VziBqPeXe4lmq64
+	 S0n62bXlHRiBzJQDIF3dkXiq5EuS7j5k4qrg3XTvKLVl0TvbFf6ucpwBkrcrQdy8+C
+	 eNrGUxkyg+QCaevcoMKLTZ8QEcD8A9lL+yYUSOXKBU81us4OrwtgFUEUi+xD65uY8J
+	 hOTu58dWq2tGg==
+Date: Fri, 30 Oct 2026 12:49:11 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cunhao Lu <1579567540@qq.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, linux-clk@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-phy@lists.infradead.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>, mfd@lists.linux.dev,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Paolo Abeni <pabeni@redhat.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-pm@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	David Wu <david.wu@rock-chips.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-i2c@vger.kernel.org,
+	linux-mmc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Linus Walleij <linusw@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-rockchip@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Eric Dumazet <edumazet@kernel.org>
+Subject: Re: [PATCH 03/27] dt-bindings: soc: rockchip: Add RK3572 PMU and GRF
+Message-ID: <179338255087.1001548.4507997389311414177.robh@kernel.org>
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-3-0b0fd85a31ee@qq.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,89 +93,21 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Am Freitag, 30. Oktober 2026, 13:05:40 Mitteleurop=C3=A4ische Normalzeit sc=
-hrieb sashiko-bot@kernel.org:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [High] pinctrl: rk805: NULL dereference in gpiochip_get_data() via pinc=
-onf
-> --
->=20
-> commit a49ae4e9bf527300ce287085a0623b150f2db443
-> Author: Heiko Stuebner <heiko.stuebner@cherry.de>
->=20
-> pinctrl: rk805: fix ordering of gpio and pinctrl registration
->=20
-> This commit reorders rk805_pinctrl_probe() so that devm_pinctrl_register(=
-) is
-> called before devm_gpiochip_add_data(), ensuring the GPIO chip and its pin
-> ranges are torn down before the pinctrl device during devres release.
->=20
-> > diff --git a/drivers/pinctrl/pinctrl-rk805.c b/drivers/pinctrl/pinctrl-=
-rk805.c
-> > index 22f576337faa9..8e04da3ef0f3a 100644
-> > --- a/drivers/pinctrl/pinctrl-rk805.c
-> > +++ b/drivers/pinctrl/pinctrl-rk805.c
-> > @@ -663,13 +663,6 @@ static int rk805_pinctrl_probe(struct platform_dev=
-ice *pdev)
-> >  		return -EINVAL;
-> >  	}
-> > =20
-> > -	/* Add gpio chip */
-> > -	ret =3D devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
-> > -	if (ret < 0) {
-> > -		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
-> > -		return ret;
-> > -	}
-> > -
-> >  	/* Add pinctrl */
-> >  	pci->pctl =3D devm_pinctrl_register(&pdev->dev, &pci->pinctrl_desc, p=
-ci);
-> >  	if (IS_ERR(pci->pctl)) {
-> > @@ -677,6 +670,13 @@ static int rk805_pinctrl_probe(struct platform_dev=
-ice *pdev)
-> >  		return PTR_ERR(pci->pctl);
-> >  	}
-> > =20
-> > +	/* Add gpio chip */
-> > +	ret =3D devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
-> > +	if (ret < 0) {
-> > +		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
-> > +		return ret;
-> > +	}
->=20
-> [Severity: High]
-> Can registering pinctrl before the gpio_chip cause a NULL pointer derefer=
-ence
-> in gpiochip_get_data() when pinconf callbacks run?
->=20
-> In rk805_pinctrl_probe(), device_set_node() attaches the parent PMIC fwno=
-de to
-> pdev->dev, and devm_pinctrl_register() immediately claims default pinctrl=
- hogs
-> via:
->=20
->   devm_pinctrl_register()
->     pinctrl_register()
->       pinctrl_enable()
->         pinctrl_claim_hogs()
->           create_pinctrl()
->           pinctrl_select_state()
->             pinctrl_commit_state()
->               pinconf_apply_setting()
->                 rk805_pinconf_set()
-
-that is a correct finding.
-
-It seems the correct way to resolve this, is to switch from
-devm_pinctrl_register() to the newer devm_pinctrl_register_and_init()
-and calling pinctrl_enable() at the appropritate time in the driver
-as suggested by the documentation.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261022-add-board-ok3572-c-v1-3-0b0fd85a31ee@qq.com>
 
 
-Heiko
+On Thu, 22 Oct 2026 00:11:00 +0800, Cunhao Lu wrote:
+> The RK3572 PMU and GRF blocks are system controllers shared with the
+> clock, power-domain, and USB PHY drivers.
+> 
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+> ---
+>  Documentation/devicetree/bindings/arm/rockchip/pmu.yaml |  2 ++
+>  Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 12 ++++++++++++
+>  2 files changed, 14 insertions(+)
+> 
 
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
