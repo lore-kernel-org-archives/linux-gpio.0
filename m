@@ -1,149 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=139.219.17.100
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793322401;
-	b=AeeyP75svHJ+YbEfG8lrf7SpuisKKbJgP83vA1qadi45XmaFVR7jBB+PT+XlWsYzLWBj
-	 vdBYPSx+RO6HafTe/kdWqECSbeMpzPOVgfFzeewyiaJCabI+d2tqhFwEBt7o+fA/ft8RD
-	 iLbk/BuXTS/+JJeiBNS9tue81PSTb7Z1FaY70sZ7O9KPTBFE//Z4hqzqYoCxsMsPp7gxb
-	 rmdEyiO+PgY55rnOZD+W1oghEayBR3eGppWkNzsQyUx7TfdKlP53suDaEb+kXmQiSF2vC
-	 TD7OwfN6OLfMphCkGCudKsl1x9FxQ2SADwzXrDpX04pWbT9HllmzXSh+f4zULWiiP9A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793322401;
-	h=DMARC-Filter:Received:Received:From:To:CC:Subject:Thread-Topic:
-	 Thread-Index:Date:Message-ID:References:In-Reply-To:Accept-Language:
-	 Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
-	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
-	 x-ms-office365-filtering-correlation-id:x-ms-exchange-senderadcheck:
-	 x-microsoft-antispam:x-microsoft-antispam-message-info:
-	 x-forefront-antispam-report:
-	 x-ms-exchange-antispam-messagedata-chunkcount:
-	 x-ms-exchange-antispam-messagedata-0:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-originalarrivaltime:
-	 X-MS-Exchange-CrossTenant-fromentityheader:
-	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-	 X-MS-Exchange-CrossTenant-userprincipalname:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=uy1BP/z/1iwouwiqXH4itqLb/MmjN7H+EmIsJ6KYHjI=;
-	b=LzzWRz8MuJJsm30OTzN/T1y5Wfm3GjMdNAbga5PlSS+6sSgpsQ0kwoqb+nHChEAiutD9
-	 Mnhqi3Ii4Yv/uVcS7KghFplNC3VFEiDiWwbPUhD7E3tvaKyPCNErhVhtDVkBfVRASRSYJ
-	 K/v7RgJ2kF8bTrKpumwjrtWGhHnRj60T1+Q6rRvM8GMbnnVcILh32FcqE0GXv2jNc+zdX
-	 ab39+a5qxKL/AoGSRP7lXcn1AFPYHYhl6AXyPveUnzVNnaGhE7dK++bD/fmSnNo21qXiw
-	 j7YLFfULEQ6/qB0jQ5XkMpYGiMQN51vlhrhnDUVXP3F6cs4wE1/3yoiScnLJ3DJxYYw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=starfivetech.com;
-	spf=pass smtp.mailfrom=starfivetech.com;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=139.219.17.100
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2100.outbound.protection.partner.outlook.cn [139.219.17.100])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.29.241.158
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793333186;
+	b=nhJNCfRsCGodx0/DCc2AH9WdxAI1FKGGIYskSwSIgqv9D0k1QcndYc4mtqzU8dpv7lIM
+	 PvcdfgYNXolGwyCp3fyl4D13PjNg5j9+dO0iBrQNIbbRDYZMpJiKZTLw3pVJ6OAwj5LeA
+	 ADsby87dcFGrkmHnbGcUBS0QxNTg4znOiypNvIdzupkjgFT+20nzTfJhFY4LbOdGQ24Q3
+	 Xgpu3ovWK5mE9RhetQ1ZhtqQQk348JRjRBJIYhKJYWpKRl+3EsUeNfKi2T9SrbIcaNxQ0
+	 9uWiXdCHFaT2bnjF/UPKihCHn78TKiogdCiciUB7SSyn60S6n1DHU5HQ+3trH8czZVA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793333186;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=grdHjhMd7QvaUC0XVPHxOaowqqDmcsmw2rXkQG3QSuY=;
+	b=p5IwRt9xXXFcUVbokMtt8i2NuT7ezLxx+tiNvYyB9bnADr2xxI5LUbgVmCeyvy0cUV/L
+	 4uSpsmGSmuBruijVgiyl9OFB2nBCv1xSMMdUSxvxTsNm2Bh3PKt2qZiWbmNAH3GCt3G8S
+	 U48ZJeSAzKoNO2frzp/2r1tN4p+1/F5bYMxcUORKazl8/LC98pYd4A1Y/pIvedpIKUqyU
+	 MrRXet0MIh+9tvPQJsyhOKsSrtv9dtlpu3VrM1i6oyeh1dzGPC9DZFUnZrkAoo+SVM9kG
+	 6JbpLbj40mX42eTcBzEhduCgq+pB5o9aDN2d2bB9ykkFao6gFo6r5NE8HKPQ+tuYGLg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=codeconstruct.com.au;
+	spf=pass smtp.mailfrom=codeconstruct.com.au;
+	dkim=pass header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.a=rsa-sha256 header.s=2022a header.b=gP4O6XbB;
+	arc=none smtp.remote-ip=203.29.241.158
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F44606A31C;
-	Fri, 30 Oct 2026 01:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88F44606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ll1fphk4VJF/f6oA4NrwFAmAUz3R+0oRIPJ2Zs4hTodjZHQAQ6LyM0KDdaShuxPFIA/fYUVYeVsIZYdds188I0lt0K0e+OYzlJONnmvnP12mAdu/fVz1RvS5BKR8KtJHyRcCeHkkCHVM8/m3NFsvOdtQUjXhRvozSZ+kHCgfDVFGObTVCVQivFdN4jKgg07yDRrH1CSXBukfmAzKI4EZE/i38aiQKCxVVBUwEITcK++gbwY7Zwt4JurWebABrr9HwjYA7NGpPLUoe90g0RkSWmDr2x6ZYq/sKV8Elo/sDdfE+PwhHRCiBdJLm9k0xEhN4OV/jw7A0+qxGJ9JgYZyCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uy1BP/z/1iwouwiqXH4itqLb/MmjN7H+EmIsJ6KYHjI=;
- b=kwBvwUqT+wqcHb/Gdhd7Cwypao+z2IZqwU+ihdaGyV7UTNaCAF13gLukr21maqp9C8MAe6aDkkK3j8IbMbvF/GrP7tKmkvx+nF4jaRA1PMAn+lskvuYXRTltTb3l9oddb2qMS1vEAu3vLvceB3Zgp51pCnc9LKYUBqZXi6ua3u8GIuR2+gpm3PhkEOB7+y17PBg34aA/bam/cc6bFaYFds9oUp2tphzKRi+qwpDYi3NI+d2HeU5vTnMj3eVSmUJ9ejFt+kd8pwXtkz4As0QuTPIJWIrMRW+i0/gr0ftTzrHFRz4W5dIrFaSdPYXjhtrg26L1E4hKM33kb5OaLOyEvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1201.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:13::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.9; Fri, 30 Oct
- 2026 01:06:28 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0569.008; Fri, 30 Oct 2026 01:06:28 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Linus Walleij <linusw@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartosz
- Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lianfeng Ouyang
-	<lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v1 6/8] pinctrl: starfive: Add StarFive JHB100 emmc
- controller driver
-Thread-Topic: [PATCH v1 6/8] pinctrl: starfive: Add StarFive JHB100 emmc
- controller driver
-Thread-Index: AQHdXff3MLQEsB7Aa0qNDpNd5DKM97cUjviAgADK3vA=
-Date: Fri, 30 Oct 2026 01:06:27 +0000
-Message-ID:
- <ZQ4PR01MB1202E5FC8229FF60B53B495EF26D2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20261017052534.115203-1-changhuang.liang@starfivetech.com>
- <20261017052534.115203-7-changhuang.liang@starfivetech.com>
- <CAD++jLmtOcNMZsXWgH5Q1fHk1A3vAZx3OnX3=RDvOjKpcefCcA@mail.gmail.com>
-In-Reply-To:
- <CAD++jLmtOcNMZsXWgH5Q1fHk1A3vAZx3OnX3=RDvOjKpcefCcA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1201:EE_
-x-ms-office365-filtering-correlation-id: f31110c0-58e1-4b4a-ea6e-08df362206c4
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|23010399003|376014|1800799024|22082099003|18002099003|56012099006|4143699003|10067099003|38070700021;
-x-microsoft-antispam-message-info:
- gDFaTtjt+V+4UBNCQdzhUF8xtbhJLmj5ff4h1Kalm2BU22iXYOHRRAAe7b4r44TfRTMcY2lPe9RpSHiurl5b7ciaCbmWXx4utSpx/C6y5iycAQ/aWddt1MEMSeRmv8vAFIGqLV+VQt9t+/0xjxVj7AQFllHb/Z2iIBhAYfkqvOOBL5aZ5szPMZgCDGp9uUvx1nxFKeGP6L8I57Q1tiPmHT8F3oc80fVqbjm9juvGkyR917RwlxlqIgAbCWu255a84JVCbBtiNW/JKyaiYqSRNNdv3SwqFFa7VE9/K6ba3fq4au2eAwJ7ocHJZkQrs0zfUXLHj3O7vBlIQt7T6DiOOwkYKwb4/k078vhEZPQ2Cucg3mczWP+r1rqyPyv+Fws6ErV8cJkpUUuY7InJCaMw9/Gm1crJr3Rf7F/w1900qvRER/LVz7J137I+6YDbaDrWFJqdrJR61ob23jE74jq8pUDwnIxMAe59o4QZXQCppBsGHesSW8+Sbk/0go0dE9VXGasqQ1BIPayLKLA+6sRZbzUvbx8A0+vSFUbj4zoRTQpxgWXw9vV9X3F/TLEDX8Mi
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(22082099003)(18002099003)(56012099006)(4143699003)(10067099003)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cTdsOUtSRENVbEcrdTFvZFNRSzBRR0hYK2RhYlI4ZkFTVHJWaEkyYVZYenVK?=
- =?utf-8?B?a0RhV2FpUXJpellZbHJTMHhjSGtYbFVtUVhxQ1JjdWVEMFN5UlVleENKYkpx?=
- =?utf-8?B?UjJ0Mkx3cVpFU29MMVVsd2NCT3FFbGpXdW5rUC94d2tpOHhwcy9uOEJ3M2tJ?=
- =?utf-8?B?VzBoejE1cHJuVStjaTZ0ZXNOK0MvZEFHb21zbU5mUUZHaVM2MUZPUnI2Nldj?=
- =?utf-8?B?OFdXSGorb1ZjWG1aaUVWLzhjaTFwUEJlSEMzU2dJQlBNKzNIU0hMWFdPalV2?=
- =?utf-8?B?WkMzazYxZ3JtdFBreW84ajhVSk16bHJ3REg3TGlrZWdOWjVudnZrZisxd2tZ?=
- =?utf-8?B?RzdxcGMyVXI4YS8vcVVURkFzWEY5VElIYk0vTWpMV2NRK0Jsd1hKMDhmMlpF?=
- =?utf-8?B?ZThjcE9zeVJicklid0R0ZzNLbkNwY3lSRDlYckZ6VkwwS1ZWcE1uNUJWam1I?=
- =?utf-8?B?bjJTeE53aTZCR1hZeUdSaHZvd2xPS1dJbkp4NFhmR3pOWXhLdEtzdlZZYkov?=
- =?utf-8?B?S0VhMkZMYjZ2UFN5aGdveTFBZjUreFpCRUxSamE2eGRvV0dBQVA0VFJnVmM0?=
- =?utf-8?B?cStLa0dZeE51eXZWdWJvMXhmekFldHBhZU1icUNDenF4ZlFtQUtYWGljMnVR?=
- =?utf-8?B?VEs4MGVsQmZvN0V5d0tpdzlsN2MvbE5tZGZ2Y1hoS3VEd2JrRGRwZGZUZlRq?=
- =?utf-8?B?TWlOVHNncnAzK25YeWMyU2dvNmtHY2xuRHZRZi9MVE02NkYwYU02TXJUMTd4?=
- =?utf-8?B?Um9JVFZFdk4wVlh6OWJhVVh4bW9qVTN1R1hzNjMwZDdoM0p6STRxdHRWVWV3?=
- =?utf-8?B?V1c4NVEvcE9NbW0vMFNibTNWZFU4b0ROREJzNUpQcEl0ZFltVWQxdE0rYTJ4?=
- =?utf-8?B?UmExdmZQSVJUeE9jSTU1Misvb0ZVaFMyWUJTeVN3bko2dlFaOTZzNW12YWlK?=
- =?utf-8?B?andIV01ONDFXM1FJZHJpdFFMeVBnVm9TVFJhMjd2bFNjd29vWlpPMVcyTkFT?=
- =?utf-8?B?NVZyWTNmc250aW5iNWhRVEZMZ0NZOHlqY0Y2SDZYL0dGai90RVliZzM5cmNH?=
- =?utf-8?B?VnpRaTlvQkpDNEh1UFNJWW9LTE1lMzQrdWtIYkpTakQvN3dzMFo0THY0clNz?=
- =?utf-8?B?VlFValFtYUphdEo1MFJVTXRadlNlbTUyeE5jV1hwRUVNZTFrazB5OG5QelBj?=
- =?utf-8?B?VWtZSVNnYXhjNjZjb0ErL2kxNkJFeFRkbVJRYVN6S3UyOWhrTVEyNlVrWDVq?=
- =?utf-8?B?b2xwbTN5dzQ3VGp6RzJUQVVVTnlIVERWdFJyODNrWmI1dDhuMnIxQU5MWnRZ?=
- =?utf-8?B?enJHL280TmdEOHQwR1RjNnNFOHAxc0gxTnBBSU0vSUFBc1ZwWWRSMkFId2k5?=
- =?utf-8?B?VGFhbDJKRE84ZHc2UTBmVEpvMGNWRlJxZzJxcWoraEFvejZjOU42Wmh2M2dU?=
- =?utf-8?B?cUZDYkY5T3ZLSDdVZDBoekE5MUp2UVcwQ0Z0a0o1c0lMdHB6dzRvSkRPNWhh?=
- =?utf-8?B?VlJBUG9ndzFCNi8vdVNYZkhVK0lOdDNSV0IzZkE1bDljRnQ4NGkzR1Voalln?=
- =?utf-8?B?MFQ5R3N6WFRib1BRVFBaOWZzOEZnUDJ5d2RtYUpBeEh5SXhYR2luQSs4dDk0?=
- =?utf-8?B?aU5TU1BnKzJOdHRzNU1rUVRSZU5SeHQ1T0E1dlBValdIZjZlNTRHNWxlMnVw?=
- =?utf-8?B?bTFEVmJ5OG9OcThIZHVTaWpOeGdMS1pmb084ckdnQUx3NlI0WGJJU3NlaFZu?=
- =?utf-8?B?amxyakNRd1ZBRmd1UnJiRGRaS3BPYzZ2b28vK0ZhTlMrSjVsNitWcEJIU0lU?=
- =?utf-8?B?T1dXSDk5TnEwQVhSMEk3THVHVkZBY1V0a0cwdXorZUViTzRPVC9PaWJmUWQr?=
- =?utf-8?B?M1BlNlljbWdOOU5oUFA4RExhdktqc0p6Y252aEZGaXVnNkxXUlRrUmgyKzM4?=
- =?utf-8?B?V3dWandnT0J0NjNCUXZlbldPTzN1cGZjcjQyL2RiMFlnd25ac3dRTHhFeWJk?=
- =?utf-8?B?bVBFSWE0cHJSdm1XcFE1cUppbkRiUm1yL1lXQk5wb0RhT3ZHU0w3S1VsNVZY?=
- =?utf-8?B?V1ozb0ZXT3NWK1plNXpPd1RRdmw3VERXRnJUc2hYV3VaSWdSczJKc3JVUmd2?=
- =?utf-8?B?anMxbVFydmYyNHNzd0dGbUY1R0ZRVVZCKzdWajBzQ1R4T2lUc0FFVS9FMDJM?=
- =?utf-8?B?dHpCQzRkaEJ1N1VjMzl6S29sNEphcEI2WisxMExZWFQzd1VJUGlHS1ZoRkxR?=
- =?utf-8?B?cHcxUU9UUlYwSDBSZGRSSm9hUUF5aEsvWUZ1RWc1VElDeTB3NlJiSGpqSjc3?=
- =?utf-8?B?VUlrSGJja204QmlzbHoxSU5LZWkvaHd1d2tqNlJUdG51QUNRWC9ucnViWmY5?=
- =?utf-8?Q?Jx6BMHIQICSMxtWw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9C6606A31C;
+	Fri, 30 Oct 2026 04:06:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2C9C6606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.a=rsa-sha256 header.s=2022a header.b=gP4O6XbB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1793333177;
+	bh=grdHjhMd7QvaUC0XVPHxOaowqqDmcsmw2rXkQG3QSuY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=gP4O6XbBNP3E0tCn55RYSkni7rxRKdrPd+cAyKq7Q7ka6AX+fl+13CnYSbEz7qfEV
+	 LUM/eSwndXbzayTZMnEAp911V2klLbt5RdolBTtGj9AJTcE18qFP1hOh1I7GA16LN9
+	 PECOUTfLQgdUDd06Osrb37D8zntZ+Lgd9AICm5Z3Z9dkLnvotzrpcjxQseRVizJ4Ja
+	 5Ht44VRDHFQXUOgBigtuRcLyXFEmMcx7oavVBo3fsC6Yih5Gp6XxAiuSXecPSpLKUg
+	 lTfO1PMhHtvMi6NObu4pDTT21lbh/vev1DcBDlJCjrCS0cRbkFOrTlFJFvpNXcQ1Jn
+	 7NZqQTlVp2x1w==
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8496470E87;
+	Fri, 30 Oct 2026 12:06:15 +0800 (AWST)
+Message-ID: <f3f305a0f3195948bd25ca7eea4348113f998ee2.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 00/11] Add NVIDIA LSTP USB adapter drivers
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Adrian Ambrozewicz
+	 <aambrozewicz@nvidia.com>
+Cc: Donald Shannon <donalds@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij	 <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Lee Jones	 <lee@kernel.org>, Pavel Machek
+ <pavel@kernel.org>, Andi Shyti	 <andi.shyti@kernel.org>, Mark Brown
+ <broonie@kernel.org>, Jiri Slaby	 <jirislaby@kernel.org>, Corey Minyard
+ <corey@minyard.net>, "Rafael J. Wysocki"	 <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,  Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?=	 <ilpo.jarvinen@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Hans de Goede <hansg@kernel.org>, Lixu
+ Zhang <lixu.zhang@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Johan
+ Hovold <johan@kernel.org>, Oliver Neukum <oneukum@suse.com>, Quan Nguyen
+ <quan@os.amperecomputing.com>,  Andrew Jeffery
+ <andrew@codeconstruct.com.au>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org,
+ linux-leds@vger.kernel.org, 	linux-i2c@vger.kernel.org,
+ linux-spi@vger.kernel.org, 	linux-serial@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net, 	linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, 	driver-core@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Bart Van Assche	 <bvanassche@google.com>
+Date: Fri, 30 Oct 2026 12:06:15 +0800
+In-Reply-To: <c569c912141e9da7530121b8b2fc81527e0518a4.camel@codeconstruct.com.au>
+References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
+		 <2026101310-scuttle-unison-d4c3@gregkh>
+	 <c569c912141e9da7530121b8b2fc81527e0518a4.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -153,27 +88,72 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: f31110c0-58e1-4b4a-ea6e-08df362206c4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2026 01:06:27.9449
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rAQSJQFvtv0qIw6StPCtqCdokJy9cy4JrUfOOOtFplQ2NHo7JNZUC6hPcDFrATr1KED8vxyZCQE5OIsrvhT09Fnn5dPo/R7pd7Rlpuj1p/LfYY7Da9xYlKPnKi63ljXb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1201
 
-SGksIExpbnVzDQoNCj4gT24gU2F0LCBPY3QgMTcsIDIwMjYgYXQgNzoy4oCvQU0gQ2hhbmdodWFu
-ZyBMaWFuZw0KPiA8Y2hhbmdodWFuZy5saWFuZ0BzdGFyZml2ZXRlY2guY29tPiB3cm90ZToNCj4g
-DQo+ID4gQWRkIHBpbmN0cmwgZHJpdmVyIGZvciBTdGFyRml2ZSBKSEIxMDAgU29DIGVNTUMoZW1t
-YykgcGluY3RybA0KPiA+IGNvbnRyb2xsZXIuDQo+ID4NCj4gPiBDby1kZXZlbG9wZWQtYnk6IExp
-YW5mZW5nIE91eWFuZyA8bGlhbmZlbmcub3V5YW5nQHN0YXJmaXZldGVjaC5jb20+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogTGlhbmZlbmcgT3V5YW5nIDxsaWFuZmVuZy5vdXlhbmdAc3RhcmZpdmV0ZWNo
-LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4IFNvbyA8eXVrbGluLnNvb0BzdGFyZml2ZXRl
-Y2guY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENoYW5naHVhbmcgTGlhbmcgPGNoYW5naHVhbmcu
-bGlhbmdAc3RhcmZpdmV0ZWNoLmNvbT4NCj4gDQo+IE92ZXJhbGwgTEdUTQ0KPiBXaWxsIHlvdSBy
-ZXNlbmQgdGhlIHBhdGNoIHNlcmllcyBhZnRlciB2Ny40LXJjMT8NCg0KWWVzLCBJJ2xsIHJlc2Vu
-ZCB0aGUgcGF0Y2ggc2VyaWVzIGFmdGVyIHY3LjQtcmMxIGlzIG91dC4NCg0KQmVzdCBSZWdhcmRz
-LA0KQ2hhbmdodWFuZw0K
+Hi Greg,
+
+> FWIW, we did raise greybus as an approach to various HW vendors; I
+> assume there were reasons behind OBMF-ICP, and assume some prior-art
+> assesment was involved, but I don't have specifics for those reasons.
+>
+> HW peeps: This would be an excellent opportunity for elaboration on the
+> motivation there, either for LSTP or OBMF-OCP.
+
+I have been doing some asking around, and a few items came up around
+motivations for OBMC-ICP over Greybus. My motivation here is entirely
+around OBMF-ICP; the NVIDIA contributions for LSTP somewhat comes under
+this, and so we're working on composing a unified solution.
+
+Collating some of those items here:
+
+As a bit of background, the typical use case for OBMF-ICP is for
+platform pre-boot environments, with limitations in capabilities of both
+the hardware and software stack. Microcontroller and mask-ROM
+implementations of either side of the protocol are potential targets.
+
+This leads to the structure of OBMF-ICP being intentionally
+light-weight; the channel configuration (ie, definition of the
+encapsulated devices) is static, and the channel-level messaging is kept
+simple, mainly through a requirement of only one message in flight per
+channel.
+
+[Greg, this is related to one of your points around why not use a
+multi-function USB device for individual, separate devices: the typical
+device-side hardware does not have support for enough USB endpoints to
+do so. Like greybus, the intention is to be able to support multiple
+downstream peripherals without constraints from USB hardware on existing
+SoC devices]
+
+There are a few design points that lead to the preference for OBMF-ICP:
+
+The front-loaded configuration mechanism means less state to manage on
+both sides of the protocol; the channel set and channel-specific
+parameters (like individual GPIO descriptors and flash geometry) being
+stable over the lifetime of the device means simpler core protocol
+support and channel driver implementations.
+
+The simpler channel communication protocol is better suited to
+lower-complexity interfaces that are needed for the pre-boot
+environments (GPIO control, uart, IPMI, flash access) than the greybus
+targets for mobile device runtime, with higher-bandwidth communication
+requirements (camera, audio, display). For example, typical platform
+management functions generally involve a lot of short i2c operations -
+ICP messages for these are around half the length of greybus
+equivalents.
+
+For the platform-boot use-cases, we would need to provide a bunch of new
+channel definitions for greybus. This certainly isn't a showstopper in
+itself, but the specification does not appear to be in active
+development; last change was 10 years ago, and the spec repository has
+since been archived as far as I can tell (and so is read-only).
+
+With OBMF-ICP's super-minimal core protocol, and the use-case
+appropriate channels, seems like a suitable approach to me.
+
+The USB-IF has a class ID allocated for OBMF-ICP interface descriptors,
+with the intention that we have multiple vendor implementations of the
+common protocol; we would like Linux to be one of those.
+
+Cheers,
+
+
+Jeremy
