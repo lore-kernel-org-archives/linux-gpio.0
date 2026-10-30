@@ -1,99 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.50
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793361909;
-	b=qYArwX6MVfjtwLMDaXtiZqxaQic3KWVX+/v0m8ijMINzo3C9+rdXEhA4yHhQKIpUJp/h
-	 IxGukHeJVvj6clHHM3RREsyHd5wAcjUU1aSeXGdLbgm9cRK72zkjCOzPKun9jrw39V2cW
-	 27YsvVEjzQEPLNueQE798/iTugbc7JE93MugobZeBfAqGi9MkSn82cbBCTbGV+ELpsm8L
-	 WptRbZ8UdMF793XZc5rWIX3ll1EL4XOSYhC15/izVKG4COacHqfZvGeT+VeAvFYtKS8ST
-	 VeUDA64ffrec7pFw5xDgqWN5pepeUZg/NU9AFFqObs9PU5mLfIlpu7jAcOWVTUHBaRg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793361909;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:References:
-	 In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=MKEdR6MwTpftZ6HWG3VgYEs6WlAERRjWBT/IE5pl+qs=;
-	b=rqV3v8rh857EOzCIoae98kWWIYKZjI+O/E4DwcECO7CmdKOgqStUdvWIscWHYsyaVEpC
-	 BnBLcdpNskHVxpIr7mdHjNqwg2k7FnKzHKPYYj891wXAeoHwnYh6W1obewyibP8a/Eqos
-	 v3MkKUdzDA8u3n7ij7sgBWbg/5ag6CNSLlcun1umgddsYFWL4CJCM209u0MSLamvjuo/o
-	 G2+78xeHMYbnf0vmRqzQZhMd9ur15TUQ8aUdqnY16KrZonafe1opp/tj/b36Dzyu+5Si9
-	 YeiHMvZdQVqjuNT66DD2VGVB/P7u9QNmq6OQG4SL+rvYbjqlBloar80G6plL+Xwva4Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=googlemail.com;
-	spf=pass smtp.mailfrom=googlemail.com;
-	dkim=pass header.d=googlemail.com header.i=@googlemail.com header.a=rsa-sha256 header.s=20260707 header.b=wnTWUNcT;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.50
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793361941;
+	b=4tL+7UdReZb+Rakvniyb+fnzs56gRiqFKXC/XDwKY1MR5LypTV1bcGlUjF1zMeXgeZ0n
+	 y1mgE38TSucvERSzf1qhPn3YT3gEfPYrtMyr80ejYRIZL0fgvx4+aQv1WHqq+m73fveF9
+	 BS+BwhaneuF/dmmLZmRLsrPIzHo9N8thJBOnXvU6kLR1SAPLG5Ewm/Z03uMBhDJDRwF6X
+	 TrkDKvxd1d8qj/7nzF86zL5R7wJhbRvZ6iuCQr2SxucRJ324MbN3Op01ovLYIXaFeuckU
+	 XgBc+5Tn495yHWWD0maZ0B8asaqEE/Wpjmp4iHQYQCsNMSgT2EIeuVHHzqsOnblfVtA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793361941;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=vG4+Y5ev5aXq/zpCrmKcxw1jxAeYwBvGY/RKpbEVbQ8=;
+	b=XuBan3xC/Df4yz9XmLOILromb2wBIf9/RjmY72c5JStRLyt6rdiHzHeKL7iJ74G6yN44
+	 TUa1NEWy8XZXqOZpzIn6n/3NSfHR/2Ouo5u8lp+S2tD30Yg5NtbUxk54fwqZ3X03Y/J9B
+	 sXCcx3Jr5+6W7ZbKrkspoVskPYe6vIMpD1UeS48U45U1b7+mydgnLwiQglPAUCDgLLeUD
+	 2F+GFQPNx9JKX4BD4+grJKili6opm5Y59zuy7tS9mWfIrCAz9wHw0Ne7/bBnMUUa/siYd
+	 vjLmTzfwu3athIy2SnQs9GNpBOeHarZsb1w4unlvLGiPhsQB7PSIjY7L+HOlXeO8cLA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fVMfT8R1;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4041606A338
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 12:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4041606A338
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C914606A33B
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 12:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=googlemail.com header.i=@googlemail.com header.a=rsa-sha256 header.s=20260707 header.b=wnTWUNcT
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6b486e1d02eso767840a12.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 05:05:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793361907; cv=none;
-        d=google.com; s=arc-20260327;
-        b=KoeewtKnAESrFa0iIJUpnLVyFBdrkuA3PagwHuymXt1+m18Osm1INoitriGqekPJJe
-         Zj/h7WPvgS1R8cwrRvFe42eaJhWNimPQZxAEpeXEc9htoJz2quBvphArUK//ni9NGcbo
-         ewRPmY8F2wrngRzkVtlttmEBG/d9hDdSq1X6oZ3Dxuq14vtcthecNwmvUDJGQjH1y1m8
-         wr5EdTTEFnBf6PDPiCbekWnFxwsDRhu4GYi/RayDWunNGYfdALC59lNSXNrfuFQK6xAC
-         FZ3tCfisdPQdpKoQGgUAPuGDScBzVaPce403vnboZ2cW1r+71LUueWpPy7N1VDMe+zL5
-         WTDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=MKEdR6MwTpftZ6HWG3VgYEs6WlAERRjWBT/IE5pl+qs=;
-        fh=lVbY9JkkIKGU0bgEFTL/gADrkzuiP+/5Ir7IXoxPEiY=;
-        b=m4e6IKuW+mli6iSSa9s+IP5jMHECV5pfPb01J6X4YxkePBhyxeYuviuKDLATOEGPri
-         w33sx1Vhm/7vcUM5CRXQSAGNjk3KMqfQES4NitVBjqu8eI1D7JjowaGKMUpdbVreZTRX
-         QSxlHuWz+0qqIGfzWvsBC03ExW4KHPCJCITTblaj5x4Sv7Iy1RlsR/bt9/a7ugHA7QW8
-         2dDgHK89nHcLMwfaVz67A80TB60JJ7Eh25sr/T0FRVvIL2Zy9dO98VAXyK19q2tRSNe3
-         KLMK+lwG1zrRmYbWzEWeRAUPanr+aTvqXIXH37j2rb99Utnxlkkf58u8ItbW9lH4VNm8
-         QN4Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20260707; t=1793361907; x=1793966707; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MKEdR6MwTpftZ6HWG3VgYEs6WlAERRjWBT/IE5pl+qs=;
-        b=wnTWUNcTNvNE9M6yaax7HRAsC7hVSJc1cNYeZ5Gqgvd8NMuxQB2Ux9E0AqL3HnvvHS
-         izDrpnJo/an13KqWYQycQ1zN8araqq7wQQSJMlxdARxB0uVHUbLkNlL6rfL4YQsLAqRk
-         DJjQ3W7gjoJBolCqJJAIlcN0Vozt2vbzUAuWqzdShPHQDJi4VyZ2BAhjmfrJnV7VoErF
-         rLXzJgWBVBPVm8P6lUrUCIGzw1JFjllSMeYlmZe57yY+JcxWVBjeNqiRq8KZdNwzgKz4
-         CTSogdROlJCxzkADF0N1vSJMEfXuNPmK2Mq8g2ClynNoVthyW9xDFocft9m1hMubsJwd
-         3pmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793361907; x=1793966707;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MKEdR6MwTpftZ6HWG3VgYEs6WlAERRjWBT/IE5pl+qs=;
-        b=TNf+TDEcSpwuJhcFqiIHLEdkgtQZahwgMPrHOvdq3r+F+QPZNgU045LSTFc52TtKja
-         SNVnRfsEpnKpRNXLKiEdLwX6Pl19D/c9nTCCxdlN/8lY7aQetTfJQsiMmOYQZFOJPcLr
-         gFF0JUppSk+6WnrYueof7q5R20Fu6ihJ808CTzzaaQ8JjnMNVc251GHCdJ7qoazdYcAk
-         193VHerAzta5pyPB7HIV1g6VhzT79JYBw9+yZ+f5AL0eMD8Jah4EnvP6V8UK5LQ0KPya
-         z4XHmmNs6acbE+7qIkznCwzciVDzVCX9s6UVW0X/Z5rcCKmpqrqUY0l/WihgbdM4F8/a
-         iVrw==
-X-Gm-Message-State: AFq9FYK6xz/S/hb43rVi97NcyVq/dhzq0SMdvcPReFUxDP74OsRJy3go
-	0X6S/HNxzeSSv6toPoI5QuinHA/ytTqaSFos9WIwrBo/k/IaORU1yib/yp91QZcVjYd43tHZwn0
-	He0UKCUWtsmKoOZaI+K6sI0gI1GsDUqY=
-X-Gm-Gg: AYBFou06LiDAn623ljycYSesQewIsYDzLGkOjupOE7BXobGNjZ0EMy5DUpimMBSthOQ
-	PM2mTbrLro3L45FCNY5QmQDMLf/RygJsH2lR4fUKCqw7cU2UTAJOrOwtjsJSGRfQrnyRUEjcsxf
-	+Ji72j/oQBxRlWJMJAMxLnd21WrXs1BTqduJckvyRxSLM8+FrHRbAVJHDMri8r3NSDmKALSuSYh
-	IK3o9D7ddRyfZyvII5m8MckEIWv5nYPgV5/qAFggVzo9id9oGsvE5JW3g5ZBWcOhKC3ww7kZnfq
-	A5kZfNeFxN7Y9dI0JDjj6gE3hRLLuYctERi61il5QdIaMRsCKfB2SeT40dVHFcawOPPIYfP2eBR
-	dYJXpoEho5lyjl4Pia7xwvXej3r6Y8WNnZckF+Q==
-X-Received: by 2002:a05:6402:a505:10b0:6aa:e46b:2ca with SMTP id
- 4fb4d7f45d1cf-6b4d5537ae9mr978700a12.30.1793361906937; Fri, 30 Oct 2026
- 05:05:06 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fVMfT8R1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88941F0093A;
+	Fri, 30 Oct 2026 12:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793361941;
+	bh=vG4+Y5ev5aXq/zpCrmKcxw1jxAeYwBvGY/RKpbEVbQ8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=fVMfT8R1oHlMpwTsKTnSFNnO4MASrnnkpSi7JXjPsbjWF2EfjRun6ygiVaAvcEyNY
+	 hGwehKKHSprzTgsQevQIq/GgMhI5vRqInX+QPJ9EGx82+cHAR6cIw2zwBXPicw7B3Q
+	 jcQKCuIx61su25ZYKc4JYo6Xdz1n4eHekuUoLZAS9BT6mnM+MYGPfpHZaO1oc4Otex
+	 t3Izmo56RKbKLaL2geFWTsvoHk3mmn//anXDQG9oKp1sQ+9Jpg4VIHmD25tDprtQMv
+	 QjXFHjbv0ZjHkWEnNjm4DvyNuaWIA0SP15V4FoMqwvFrfM1bMG78wIp0gV+bUChfoq
+	 YfZbK1WXeso6g==
+Message-ID: <sashiko-outbox-190969@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] pinctrl: rk805: fix ordering of gpio and pinctrl
+ registration
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Heiko Stuebner" <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261030115540.3660242-1-heiko@sntech.de>
+References: <20261030115540.3660242-1-heiko@sntech.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 30 Oct 2026 12:05:40 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -102,54 +59,113 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261024123124.3700266-1-yegorslists@googlemail.com>
- <20261030104631.1044556-1-yegorslists@gmail.com> <z6uzdpsuwffjjlca5isgrznpxzlbmfgc5rryvw7keb37r5xogf@aiw7cjkayux6>
- <CAGm1_ktZLP4UrSfie0FOybLX=p3dPodyvg-SmucFtm-2u32ryw@mail.gmail.com> <if2xlew7mmnmc7svjesuycgxfpkkmbckc67fe77dnoeuhmiopo@c6jw6damflxf>
-In-Reply-To: <if2xlew7mmnmc7svjesuycgxfpkkmbckc67fe77dnoeuhmiopo@c6jw6damflxf>
-From: Yegor Yefremov <yegorslists@googlemail.com>
-Date: Fri, 30 Oct 2026 13:05:33 +0100
-X-Gm-Features: AclHuK_3AUqrGkK6OxarzSfDGCTxneu0Qe0YyY6Nhm2uoj5D2QidL5nJNNUb_lQ
-Message-ID: <CAGm1_kuvESfDh4fsvNeQSBWRqgrGXi12iEw3NtnL+TcQdOcHUw@mail.gmail.com>
-Subject: Re: [PATCH libgpiod v3] build: honor default_library for the
- installed libraries
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 30, 2026 at 12:51=E2=80=AFPM Bartosz Golaszewski <brgl@kernel.o=
-rg> wrote:
->
-> On Fri, Oct 30, 2026 at 12:39:07PM +0100, Yegor Yefremov wrote:
-> > On Fri, Oct 30, 2026 at 12:24=E2=80=AFPM Bartosz Golaszewski <brgl@kern=
-el.org> wrote:
-> > >
-> > > On Fri, Oct 30, 2026 at 11:46:31AM +0100, Yegor Yefremov wrote:
-> > > > From: Yegor Yefremov <yegorslists@googlemail.com>
-> > > >
-> > > > The installed libraries (libgpiod, libgpiodcxx, libgpiod-glib,
-> > > > libgpiodbus and libgpiosim) are built with both_libraries(), so the
-> > > > shared variant is always built, even with -Ddefault_library=3Dstati=
-c.
-> > > > When the toolchain or the environment requests a fully static link
-> > > > (e.g. LDFLAGS=3D-static, as done by Buildroot for static-only build=
-s),
-> > > > linking the shared library then fails:
-> > > >
-> > > >   FAILED: lib/libgpiod.so.3.1.2
-> > > >   [...] crtbeginT.o: relocation R_ARC_32_ME against `__TMC_END__' c=
-an not be used when making a shared object; recompile with -fPIC
-> > > >
-> > >
-> > > This is a reply to a previous thead again. :(
-> >
-> > My bad. The In-Reply-To was embedded into the patch file so I missed it=
- :-(
-> >
->
-> Please consider using b4 for managing patches.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] pinctrl: rk805: NULL dereference in gpiochip_get_data() via pinconf
+--
 
-Interesting tool. Thanks for the hint.
+commit a49ae4e9bf527300ce287085a0623b150f2db443
+Author: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Yegor
+pinctrl: rk805: fix ordering of gpio and pinctrl registration
+
+This commit reorders rk805_pinctrl_probe() so that devm_pinctrl_register() =
+is
+called before devm_gpiochip_add_data(), ensuring the GPIO chip and its pin
+ranges are torn down before the pinctrl device during devres release.
+
+> diff --git a/drivers/pinctrl/pinctrl-rk805.c b/drivers/pinctrl/pinctrl-rk=
+805.c
+> index 22f576337faa9..8e04da3ef0f3a 100644
+> --- a/drivers/pinctrl/pinctrl-rk805.c
+> +++ b/drivers/pinctrl/pinctrl-rk805.c
+> @@ -663,13 +663,6 @@ static int rk805_pinctrl_probe(struct platform_devic=
+e *pdev)
+>  		return -EINVAL;
+>  	}
+> =20
+> -	/* Add gpio chip */
+> -	ret =3D devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
+> -		return ret;
+> -	}
+> -
+>  	/* Add pinctrl */
+>  	pci->pctl =3D devm_pinctrl_register(&pdev->dev, &pci->pinctrl_desc, pci=
+);
+>  	if (IS_ERR(pci->pctl)) {
+> @@ -677,6 +670,13 @@ static int rk805_pinctrl_probe(struct platform_devic=
+e *pdev)
+>  		return PTR_ERR(pci->pctl);
+>  	}
+> =20
+> +	/* Add gpio chip */
+> +	ret =3D devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
+> +		return ret;
+> +	}
+
+[Severity: High]
+Can registering pinctrl before the gpio_chip cause a NULL pointer dereferen=
+ce
+in gpiochip_get_data() when pinconf callbacks run?
+
+In rk805_pinctrl_probe(), device_set_node() attaches the parent PMIC fwnode=
+ to
+pdev->dev, and devm_pinctrl_register() immediately claims default pinctrl h=
+ogs
+via:
+
+  devm_pinctrl_register()
+    pinctrl_register()
+      pinctrl_enable()
+        pinctrl_claim_hogs()
+          create_pinctrl()
+          pinctrl_select_state()
+            pinctrl_commit_state()
+              pinconf_apply_setting()
+                rk805_pinconf_set()
+
+Both rk805_pinconf_set() and rk805_pinconf_get() delegate PIN_CONFIG_LEVEL
+(and PIN_CONFIG_INPUT_ENABLE in rk805_pinconf_get()) to rk805_gpio_set() and
+rk805_gpio_get(), passing &pci->gpio_chip:
+
+drivers/pinctrl/pinctrl-rk805.c:rk805_pinconf_set() {
+	...
+		switch (param) {
+		case PIN_CONFIG_LEVEL:
+			rk805_gpio_set(&pci->gpio_chip, pin, arg);
+			rk805_pmx_gpio_set_direction(pctldev, NULL, pin, false);
+			break;
+	...
+}
+
+drivers/pinctrl/pinctrl-rk805.c:rk805_gpio_set() {
+	struct rk805_pctrl_info *pci =3D gpiochip_get_data(chip);
+	...
+}
+
+drivers/gpio/gpiolib.c:gpiochip_get_data() {
+	return gc->gpiodev->data;
+}
+
+Because devm_gpiochip_add_data() has not run yet when devm_pinctrl_register=
+()
+is called, pci->gpio_chip.gpiodev is still NULL. If a default hog state on =
+the
+PMIC node sets output-low or output-high, or if a consumer or debugfs reader
+queries pinconf before devm_gpiochip_add_data() completes (or during unbind
+after devm_gpio_chip_release() clears gc->gpiodev->data), wouldn't
+gpiochip_get_data() dereference a NULL pointer?
+
+Would it be safer for rk805_pinconf_get() and rk805_pinconf_set() to use a
+helper that takes struct rk805_pctrl_info *pci directly (obtained via
+pinctrl_dev_get_drvdata(pctldev)) rather than going through
+&pci->gpio_chip and gpiochip_get_data()?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030115540.3660=
+242-1-heiko@sntech.de?part=3D1
