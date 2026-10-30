@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793399832;
-	b=hxr1voB2x4HrKzo43GXOZDK9jbJKtB8cueuzn1aqfq0yTnt/gl+OGhZ0egPNnwHYoy1W
-	 130zMp02n7HUeppH30udxa+WHI4lLS0QkV4jTZgdOHqtU981wnfu4wFdwgGIpr88KIKNT
-	 lgEo18K5vFRGUca8SY9BrdOuEGk2BNcQVPG8T2T++eRwpOFu/HIkzgiyH8xtNpP4MkUFL
-	 wxtdhJPGMhrUAcHROsdN8LKJsj2jFDmUBu40p8uD6jlKFnslcqvGX229A5AIZPw52my0M
-	 dC9Y8oUUX2Rtu7ZoRnSFYJWE9WVXWtA9WKjt4bb+N8q5xklagP4HNq1gBbDTXiUv/rA==
+	t=1793399839;
+	b=34OF6Y84OQOpzJLAy5hQe+r4hBE4IXyKETWRBiG/TW50qV11Yzxi893JaFCE6yElMGOA
+	 SkhjcvWFkDbqdNkSZLmNpSJ/wumShgRchChNJl40ZvvrBKuFX4gN6QBRCP9VKmBdg5hFB
+	 CBZz/IJ/GBqs72q6lursdBvmZI0DxEkRBfneyfm8sfWZB/1nLmiNTpHKH+XITWs5zoofT
+	 ObNkDCNrP2NH0mFqWwRIzwyFpR+XNzfsIV83D4eF70huh71BAp6leLm56GWYvWaEFQ2jR
+	 td9ywQL9QCudfAKo4p6EFkT6tOeqZbK++ZWwd3FF1BWGY+eS1Te3nJgrEnZZeZEKn6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793399832;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793399839;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=ITruexzC3YrUxXEBUSI41RKRjFRMFCmpkb9IBOKFR5g=;
-	b=XEwaqPW1Fa3+39pWiyxsv5GAA5PlgO387Ni+nxuiMg0PVVrP/L0dOF3mMzLcx3tT+0uK
-	 z2wxPVX3/pVCW6gMcHddNzBXTJCEr29diP5oTtt96TN61mH2zgR9RqeWRrlIs+ReE6zqs
-	 3/jiAcjWFSzEOTW5iBSikAN+9TZCCmn5wdOWZw5OROfkRaTENqe8ZTR8GNh5AHLCc5jre
-	 l5GUVOhQoTylo8lUz8w6zbEJXXuWizXwxvN6Wkfn18vLvXCUG6qKm2EtgGEJYnNR8nsAH
-	 Ehg8Ew+R5FA1ubqYZ2Sy/Zg2fL5O6JLMZGMFQ3/yhAoZOgfv4jOBXJxp8DxUjdFQIvw==
+	bh=pNehLARC7qvOa4dOkHR5b0YmY6kYtso4GzuHZMjqnQY=;
+	b=gHk8joj6iOLzt13FIPZqP70ea8rIZKqy7KL+QLMm4KplGL0aQx0aCA4U0y6heXqtcbNF
+	 bcgVPDFpS5yrYbU83SxomRbApxjuCQKSvq1Mlh2tBnEv2822DzgBz14rFcJOzilIcZ/td
+	 yKXJ7DMScZzGZI6/1y337ENtU1EbqhanFrtdWcQQyk9Cvku/h90mzCzxtv//Z5HMWetCR
+	 zRmz2QerQXX8LGX450rUPfFuRc6z2U+9NE/qREbSV2iNZEO5RZRdlwCXuhEPaG7DDpXmR
+	 JO279t5Qv9ub641pIoiRtHog0g1SU/7AIyup/4M9A/4yB228BcTmDLY3gi/tIMtV4EA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="PBKZ/jnW";
-	arc=none smtp.remote-ip=209.85.221.51
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Lj8XtCWp;
+	arc=none smtp.remote-ip=209.85.128.43
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C9A60A2620
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 51C9A60A2620
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A1160A2626
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:37:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36A1160A2626
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PBKZ/jnW
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48c5358fc28so945657f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:37:12 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Lj8XtCWp
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a3517554f7so10531225e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793399831; x=1794004631; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793399837; x=1794004637; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ITruexzC3YrUxXEBUSI41RKRjFRMFCmpkb9IBOKFR5g=;
-        b=PBKZ/jnWa7mmm0tS9g1kfixlHrM8IMYxEIHY2MEbheruyGor+NpYfhGtHuBAVe4OEn
-         Rlhq1kUQhAokfvYgRY8u4jkmegL4T4AcB1oEplG9FIz61gKmJYcVUPIaCv8boO1zaYcA
-         o6R46deS0v1dTBsiCHpNe5rB+V/TxVK1tP4uy53Vm69DxvvkRJR3YKaLfUQ/hnEgJaKM
-         bJ1CdjOSK+dr+iKAbRthch670fYqnBO9M0VVg7NdGVHqQwregA6vSLYbIzjr52XRWQdS
-         xOXa0TOG+UIeeRHYnCCzrhLpdp9aqxXWJFwjyvLXwsBdMksu3/zAm4Ziw7MctucOEoJo
-         n1Eg==
+        bh=pNehLARC7qvOa4dOkHR5b0YmY6kYtso4GzuHZMjqnQY=;
+        b=Lj8XtCWpgrhdkkc1l0JBl7kexeOB2LGOh6ikC1MoEHtPGNa+QPgwcnBzjEluqZPFFs
+         FdMV0s81vmkKar/h4lhnyGuNDfIdzW5XLbl8TjMtQ2rhTp/n8SNfDhbA6GOBxXr7fuhv
+         QnNszvB0Xzl6eoQXd+uT7fzvkYnSC95SAxDLzIzfsVkYzvzCnOj6ffL7KgyVwYbCk8tn
+         sITMf2BA+k+TKjy538d5NZSqj4PqD8kmAFIlc2zEqOIMzPfYS39PN7Asv/UCQIRfgseG
+         E6gME8Cl+dXKqn2+ugabSg7oi1yRj2+E4IeZyH+1F0WeAdhXArd/KGorhYr2XZEfAJTA
+         qbYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793399831; x=1794004631;
+        d=1e100.net; s=20260707; t=1793399837; x=1794004637;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ITruexzC3YrUxXEBUSI41RKRjFRMFCmpkb9IBOKFR5g=;
-        b=wYEfMU4pWg+oj2mClM9uA0hAjYj8bstuT4iCsnJ8RrdrdE2Um5rb/WyKoedxE0kaJx
-         XDKvVs0aTzK51o5cDJxzbRnTX8tm2A81raD4ED6lY12WQLKaHdwCWy1gD1+QNUT6Zhqe
-         3o+SpMCO9hhZfwK82vB6TcbJYHOmNVrM4FBV3K0uouwOe+B8nk3vbt6KqetDudNhNBEm
-         XtCblP+f5xBOd2AreHmWp3d1BSr/ph8OZG2wjXxtdJ2DGRx7qTWYVdamUy6CBjnxSIgy
-         2e9y+CXV+FSppnQuEXNgLfFHB3gNYADqCQkFCGkTi9b23k54XTjfze7lP/rCY1PtqHgU
-         deKw==
-X-Forwarded-Encrypted: i=1; AKwUvByl244uTqPn01cZE9wDfAjCeUjRBzY6YtQPcZinkbrMb4MzFlJaCkbiDQwoumlZIolNAczrZpQBB202@vger.kernel.org
-X-Gm-Message-State: AFq9FYJIDM0kb3p0GcKHmUda8tlgLloewdjdfD5WT2zbq4rOeCizU0Fj
-	Aog8j6eXm9sldSXBOY48iKbT+e7eEY/GHwIoCYAJ/HWmP5GZsgVA+SZr
-X-Gm-Gg: AYBFou0u/euGyltZ9KwlONEjM4V3I5dOxLxfdgIbc5ZqpVewlDIhQyb8vGfi1M1ApQP
-	YI8RO/D3w02tgnH+9Ljf3FZhTRlO6+api7/Qxc4jsdSt2hxOtNgPOO2Q+FiprRL4P6HhPQHjZ+K
-	SuK5JTBB1JH3tycKuPyQJQ6Qzr6CsPOMKAcH4h6AO23WgDO/LZfuivSxuGFoOVDblZ82PdLSKdQ
-	zF9HoBcBTM8CGSyyxz89TIKvW4DVk0yliktNY3zQqSLQ4HGH081MGAS3QksGMLfs4tUoUrhLkpT
-	QpgHDtpy8N6QbLQNT3VjfIZOHSv2TPI1+YY0JDB6Ezu5Z8TQiiV4Fl6HZRx6FwzFmGZ/yT6J9zp
-	DRUE/TMWm7930TRqhbL0MeL2CUVqApiJMjUh+6O9baNg6mRGL1SWr7NCR9Gk7f7ZLQJ/5FB+Ey7
-	6e/pEQPQ20A9OYhwhAyiHG7h/zwdOhE9WObtLWd3xJq+lSTIhyx+OUot2e3I6+EDrjPWUM47QLL
-	xvD95GSQXOGf8QWiVfL8AO1sJ8FvikUkbsYVBO1COaiBJufPsnuwZKZbH5JjfmtUEtlO2C7TgW0
-	a6uwhfslYuykzTWmM02KcMckO3wP
-X-Received: by 2002:a05:6000:310c:b0:48e:2a6c:153b with SMTP id ffacd0b85a97d-48e6e2fb0e6mr8615074f8f.35.1793399830633;
-        Fri, 30 Oct 2026 15:37:10 -0700 (PDT)
+        bh=pNehLARC7qvOa4dOkHR5b0YmY6kYtso4GzuHZMjqnQY=;
+        b=ztCO4Iwch2TJOif7MH5prXz8vN7RGe6lPxmFJiFKEDwbQExNVXibqTkFvKxkw1LlbR
+         /C1H7J5445F1JsL834I0SISLzaHoNlssbQaSMMkXEJSsu5/w/jiZZ0zK8GkaV5C7Mipb
+         sIPSvtukMpD5RmeHWEVkjIFlw7OzmUdZiGgMSmRZ35edSaEj1MeXq+SbQXqdt08i8kq6
+         uR/nYDiBcWFe8scpNP+mZ2m1ApSnp0dsIn/7HyTnEKHo0jRI4xRo+mICkRFyGWB2A0En
+         gqFwcUG1ktcU40FvOm9VldAJ2/tHXoNyDDlcxfSGJ94JXhriFRe4IKrehpA1VjSuKwmY
+         mD0w==
+X-Forwarded-Encrypted: i=1; AKwUvBxisrutZNPIevzOVOnxq/zqOwkiJQ1kgxe1wRRS4x1FpRFjfm7OlnmFlVTdsedxjxbbBKq/VwcFUA+p@vger.kernel.org
+X-Gm-Message-State: AFq9FYKGqbWFLvL3UuQN5PADsDK/svTAijgpbBqhe/y08RZBFiFiYXv6
+	+GzcCdqs26ugQO89/xp6XF94FWNO7fn0YxQMEuahLK8ma+V7ScLawnFD
+X-Gm-Gg: AYBFou0n9Z+EmVDbeZCNhHCs9apGrnslgO7J93248xhr/V/CN8C0hOv68tVVRnLErMq
+	B/RW3RFzWo2HCbVvEdjQY23mrk7j/+psNvZJf6t9/OvG1+Uj/7pRH6s8+dH7IzpmxsjtubvecHN
+	BcyOmBUbUi4ANRdmIXA4/i2ay8K/4pASsqLEorDFEv6FrImJUgc7ddFdwvFsmAWbOpsk2CaKkpF
+	uNsIuKMvXq5J5OkPSnF+hJBG4fs3dUwkUWFGs5RW3r5f9IoMF5SC3Z2sZ7Ufe+NV89+tzx6tj1/
+	N20l9S20vjvWDG6lIrSXzRPVKozPav258FR05JFgAD4X7i4Wcv93PSdB/KFyT7KmOxwEROovdFC
+	VQGLtQXnApnxFVmysRQ7yJFF1TgqTdtkDFVlRDDxr0+JrgV7Z9hYhcg9TMCuAazIffMfyREwbyh
+	MNgeGgXi9YRr0gP9DGZDrlCHzi17O1oyCYGr7WNmmU/mfireemAG2QnQOTSzJL0MAAhmWQVJTqF
+	n9zd4cLBIhL/X73DvDEjDUolyvn9IORiBcuUeCG8jHh4rXX+P2LvaO12Sud2IxvElzNDXt50/88
+	1YGsTLanRmG6peP5HZeizXvQTRkc2FyRdCjCKo8DYOfQfowOtQ==
+X-Received: by 2002:a05:6000:4021:b0:48e:4300:c70e with SMTP id ffacd0b85a97d-48e6e304059mr8145616f8f.46.1793399836599;
+        Fri, 30 Oct 2026 15:37:16 -0700 (PDT)
 Received: from m2.. ([37.142.145.227])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.37.08
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.37.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 15:37:10 -0700 (PDT)
+        Fri, 30 Oct 2026 15:37:16 -0700 (PDT)
 From: Michael Zaidman <michael.zaidman@gmail.com>
 To: Jiri Kosina <jikos@kernel.org>,
 	Benjamin Tissoires <bentiss@kernel.org>
@@ -96,9 +96,9 @@ Cc: Linus Walleij <linusw@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Michael Zaidman <michael.zaidman@gmail.com>
-Subject: [PATCH v2 06/15] HID: ft260: i2c: reduce bus-error message severity
-Date: Sat, 31 Oct 2026 00:36:28 +0200
-Message-ID: <20261030223637.86907-7-michael.zaidman@gmail.com>
+Subject: [PATCH v2 09/15] HID: ft260: group sysfs attrs per HID interface
+Date: Sat, 31 Oct 2026 00:36:31 +0200
+Message-ID: <20261030223637.86907-10-michael.zaidman@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261030223637.86907-1-michael.zaidman@gmail.com>
 References: <20261030223637.86907-1-michael.zaidman@gmail.com>
@@ -113,86 +113,144 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The driver logged errors when the FT260 reported an I2C bus error or when
-ft260_i2c_write / ft260_smbus_write failed after such a status. That was
-meant to flag unexpected failures, but bus scans (i2cdetect, HWMON
-discovery, transceiver monitoring, and similar) hit missing devices
-routinely and should not spam dmesg with either:
+Split the single sysfs attribute group into per-interface groups based
+on chip mode (DCNF0/DCNF1):
 
-  i2c bus error: %#02x
-  ft260_i2c_write: failed with -5
+- I2C-only (mode 1): I2C and GPIO attributes on the I2C HID interface
+- Dual mode (0/3): hid_over_i2c_en, i2c_reset and clock on the I2C
+  interface; GPIO and UART attrs on the UART interface
+- UART-only (mode 2): GPIO and UART attrs on the UART interface
 
-Keep returning -EIO, but print those via ft260_dbg. Still use hid_err in
-ft260_hid_output_report_check_status for actual HID/USB transport
-failures, which are genuine errors.
+Put i2c_enable on the UART group. In modes 0 and 3 ft260_gpio_init()
+runs from the UART probe, so that interface registers the gpiochip. A
+write to i2c_enable updates dev->gpio_en of the interface that owns
+the attribute. On the I2C interface the write would re-mux GPIO0 and
+GPIO1 on the chip and leave the gpiochip's mask unchanged, so the two
+lines would stay unavailable.
 
-Drop the extra __func__ from the write-path ft260_dbg calls; the helper
-already prints the function name (reported by Sashiko).
+Do not expose i2c_reset on the UART group (reported by Sashiko).
 
 Signed-off-by: Michael Zaidman <michael.zaidman@gmail.com>
 
 ---
-v2: do not print __func__ twice through ft260_dbg (reported by Sashiko).
+v2: i2c_enable moves to the UART group, which owns the gpiochip; UART
+group drops i2c_reset (reported by Sashiko).
 ---
- drivers/hid/hid-ft260.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/hid/hid-ft260.c | 60 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 51 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-index d2c5c9ed7927..6f8d72938702 100644
+index 4106066b6a89..dca0250f2c25 100644
 --- a/drivers/hid/hid-ft260.c
 +++ b/drivers/hid/hid-ft260.c
-@@ -575,7 +575,7 @@ static int ft260_xfer_status(struct ft260_device *dev, u8 bus_busy)
- 	 * to 1, bit 1 is also set to 1.
- 	 */
- 	if (report.bus_status & FT260_I2C_STATUS_ERROR) {
--		hid_err(hdev, "i2c bus error: %#02x\n", report.bus_status);
-+		ft260_dbg("i2c bus error: %#02x\n", report.bus_status);
- 		return -EIO;
- 	}
- 
-@@ -609,6 +609,7 @@ static int ft260_hid_output_report_check_status(struct ft260_device *dev,
- 
- 	ret = ft260_hid_output_report(hdev, data, len);
- 	if (ret < 0) {
-+		hid_err(hdev, "%s: failed with %d\n", __func__, ret);
- 		ft260_i2c_reset(hdev);
- 		return ret;
- 	}
-@@ -648,7 +649,6 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
- 			   int len, u8 flag)
- {
- 	int ret, wr_len, idx = 0;
--	struct hid_device *hdev = dev->hdev;
- 	struct ft260_i2c_write_request_report *rep =
- 		(struct ft260_i2c_write_request_report *)dev->i2c_wr_buf;
- 
-@@ -679,7 +679,7 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
- 		ret = ft260_hid_output_report_check_status(dev, (u8 *)rep,
- 							   wr_len + 4);
- 		if (ret < 0) {
--			hid_err(hdev, "%s: failed with %d\n", __func__, ret);
-+			ft260_dbg("failed with %d\n", ret);
- 			return ret;
- 		}
- 
-@@ -695,7 +695,7 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
- static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
- 			     u8 *data, u8 data_len, u8 flag)
- {
--	int ret = 0;
-+	int ret;
- 	int len = 4;
- 
- 	struct ft260_i2c_write_request_report *rep =
-@@ -720,7 +720,7 @@ static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
- 
- 	ret = ft260_hid_output_report_check_status(dev, (u8 *)rep, len);
- 	if (ret < 0)
--		hid_err(dev->hdev, "%s: failed with %d\n", __func__, ret);
-+		ft260_dbg("failed with %d\n", ret);
- 
- 	return ret;
+@@ -1630,7 +1630,7 @@ static ssize_t i2c_reset_store(struct device *kdev,
  }
+ static DEVICE_ATTR_WO(i2c_reset);
+ 
+-static const struct attribute_group ft260_attr_group = {
++static const struct attribute_group ft260_i2c_chip_mode_1_attr_group = {
+ 	.attrs = (struct attribute *[]) {
+ 		  &dev_attr_chip_mode.attr,
+ 		  &dev_attr_pwren_status.attr,
+@@ -1641,8 +1641,6 @@ static const struct attribute_group ft260_attr_group = {
+ 		  &dev_attr_gpio2_func.attr,
+ 		  &dev_attr_gpioa_func.attr,
+ 		  &dev_attr_gpiog_func.attr,
+-		  &dev_attr_uart_mode.attr,
+-		  &dev_attr_uart_dcd_ri.attr,
+ 		  &dev_attr_clock_ctl.attr,
+ 		  &dev_attr_i2c_reset.attr,
+ 		  &dev_attr_clock.attr,
+@@ -1650,6 +1648,32 @@ static const struct attribute_group ft260_attr_group = {
+ 	}
+ };
+ 
++static const struct attribute_group ft260_i2c_chip_mode_0_3_attr_group = {
++	.attrs = (struct attribute *[]) {
++		  &dev_attr_hid_over_i2c_en.attr,
++		  &dev_attr_i2c_reset.attr,
++		  &dev_attr_clock.attr,
++		  NULL
++	}
++};
++
++static const struct attribute_group ft260_uart_chip_mode_0_2_3_attr_group = {
++	.attrs = (struct attribute *[]) {
++		  &dev_attr_chip_mode.attr,
++		  &dev_attr_pwren_status.attr,
++		  &dev_attr_suspend_status.attr,
++		  &dev_attr_power_saving_en.attr,
++		  &dev_attr_i2c_enable.attr,
++		  &dev_attr_gpio2_func.attr,
++		  &dev_attr_gpioa_func.attr,
++		  &dev_attr_gpiog_func.attr,
++		  &dev_attr_uart_mode.attr,
++		  &dev_attr_uart_dcd_ri.attr,
++		  &dev_attr_clock_ctl.attr,
++		  NULL
++	}
++};
++
+ static DEFINE_MUTEX(ft260_uart_list_lock);
+ static LIST_HEAD(ft260_uart_device_list);
+ 
+@@ -2275,7 +2299,16 @@ static int ft260_i2c_probe(struct ft260_device *dev,
+ 		if (ret)
+ 			goto err_i2c_free;
+ 
+-		ret = sysfs_create_group(&hdev->dev.kobj, &ft260_attr_group);
++		ret = sysfs_create_group(&hdev->dev.kobj,
++					 &ft260_i2c_chip_mode_1_attr_group);
++		if (ret < 0) {
++			hid_err(hdev, "failed to create sysfs attrs\n");
++			goto err_i2c_free;
++		}
++	} else if (cfg->chip_mode == FT260_MODE_ALL ||
++		   cfg->chip_mode == FT260_MODE_BOTH) {
++		ret = sysfs_create_group(&hdev->dev.kobj,
++					 &ft260_i2c_chip_mode_0_3_attr_group);
+ 		if (ret < 0) {
+ 			hid_err(hdev, "failed to create sysfs attrs\n");
+ 			goto err_i2c_free;
+@@ -2341,12 +2374,14 @@ static int ft260_uart_probe(struct ft260_device *dev,
+ 	cfg->uart_mode = FT260_UART_CFG_FLOW_CTRL_NONE;
+ 
+ 	if (dev->chip_mode & FT260_MODE_UART ||
+-	    dev->chip_mode == FT260_MODE_ALL) {
++	    dev->chip_mode == FT260_MODE_ALL ||
++	    dev->chip_mode == FT260_MODE_BOTH) {
+ 		ret = ft260_gpio_init(dev, cfg);
+ 		if (ret)
+ 			goto err_hid_report;
+ 
+-		ret = sysfs_create_group(&hdev->dev.kobj, &ft260_attr_group);
++		ret = sysfs_create_group(&hdev->dev.kobj,
++					 &ft260_uart_chip_mode_0_2_3_attr_group);
+ 		if (ret < 0) {
+ 			hid_err(hdev, "failed to create sysfs attrs\n");
+ 			goto err_hid_report;
+@@ -2464,11 +2499,18 @@ static void ft260_remove(struct hid_device *hdev)
+ 					   dev->index);
+ 		ft260_uart_port_remove(dev);
+ 		if (dev->chip_mode & FT260_MODE_UART ||
+-		    dev->chip_mode == FT260_MODE_ALL)
+-			sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
++		    dev->chip_mode == FT260_MODE_ALL ||
++		    dev->chip_mode == FT260_MODE_BOTH)
++			sysfs_remove_group(&hdev->dev.kobj,
++					   &ft260_uart_chip_mode_0_2_3_attr_group);
+ 	} else {
+ 		if (dev->chip_mode == FT260_MODE_I2C)
+-			sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
++			sysfs_remove_group(&hdev->dev.kobj,
++					   &ft260_i2c_chip_mode_1_attr_group);
++		else if (dev->chip_mode == FT260_MODE_ALL ||
++			 dev->chip_mode == FT260_MODE_BOTH)
++			sysfs_remove_group(&hdev->dev.kobj,
++					   &ft260_i2c_chip_mode_0_3_attr_group);
+ 		i2c_del_adapter(&dev->adap);
+ 	}
+ 
 -- 
 2.43.0
 
