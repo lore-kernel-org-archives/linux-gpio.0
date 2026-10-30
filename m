@@ -1,103 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793367508;
-	b=nfmM391N8RjLUmUaQ49LmyknHTChGbXk/aJyO7nw3rO6XJd/g21fdDAPBHBXcDnzJL6N
-	 e1eFd8qvooCmvAPjC1EL6OdtJM/yMjRDQiGqkIIK8O2ZFoQfOlbXiOp8BNIDNDg+DTNzE
-	 cZBOc8g6sjBW83K4AWls3pDZ65PREu3mTEgpfeWFFE9Nqb9Oe4hqhaFuGEA8uZBiO/9nL
-	 MgmtD6Vhgi0czRspyfO7bl5zXi7AyqOudmaKk7Rre7vLPS9unP+P5+bG8K2fySteTHYM7
-	 bNefMkM6R66bEmEvyLEKztcpgbeQcA9h3EyrSEhDc51RGVr9hvQ/7QUerk1RIF099pw==
+	t=1793368014;
+	b=dYzclABZsxAMn+rmzN/eCzlt0xRZkQ26WRGQ2lW0x5KcGZW30tH8sCjOym/IfShbaWis
+	 PueMKLe0Qmhq+yBVI9jz6h0xqjsUJvCNkg6XKJQNLbvdFPFgq/xm2d2aBmk07K7ZpH9Rf
+	 wTzAtbP94JksVKH/JA8UE8ZKggKaxFIPOduDXEQRGEKxq+3sqrr5RMOZO22qbbYYU1QbD
+	 CnIsxEDrkSJSfQLm1dqOCZ86OsoJVVbJDKJVDiAdZZVK/70X84yxBiRt4D9bA9+J0fyIA
+	 yLPLg3BnXWIbDh06SayvWqS49g05ZzN+6LLRAsuvQc9DKlhRXlnujjYVz+a2DWJT4Fw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793367508;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=C2S7rduE7F27e/ACslqZKocTp/JTh21Fn7y8iprLI+s=;
-	b=M5k43/Npz8+9mNuleljK4fSEgP3aQTtD3QJXk8vpKiDqdcXehn3OvBx9Qt/rl0Ti542E
-	 yOgqYsBCdIUTH6awikQ3KYv+pZ75axb0i6nsbJq9qFVYC6OV1xouG+ac36Swv1+mGnwm5
-	 Q95BUGRezRkqeLnBC0exfOAAbO0slQuwHV70fedY0gV2WPMHv7uqXxmTvUJWH/joP6MTD
-	 3dhuUyLv+PfLdF6aXnScUhdMqoMw0I/NNOm9e3PDYsxhTR6djkZeYfFG/h9L7BeUO963l
-	 eq0+PW6ESXbMjxEpU9AUEPrjA3DoHunGRriJn9YuqrB5doWz3AeNyZ6icmxtIs652Ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793368014;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=jpSzV26D6Rjz/NJkyTxMWgMImq37uaP+9bbwc82yg1k=;
+	b=Xpo5o/+hkiUsjZeQSlRZfv/oFIcQ6DSUzrspdf360dXI/4d7191Oa0Tr0PqobLDZKxq5
+	 +6S6VoaeybcZ3UqFeZMxJn+o5QRK6TC5vjda3wbOZHhk1HNNROysiN43uYcS+Btp6JUJy
+	 9lKsytgc81P3BJUjzqSmE7kfgcMI35cRVc0ysi4gOXmdVXw6H3Ij5ZoLzRWvwLkK4WYdV
+	 9M2JpCaBwwnsarhH4CDX9ck4B4QQk20TW4pLSDv40LnpRwvPZNl1wvrC4gLGdJpD9Oaop
+	 lvGYcAZazKsTlpUQ4By6Ie3HJY2/iafm5VDBXm623cW09wrtx6Cusc5/GyijY2HfI3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F6pwSGRN;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tEMVM9yt;
+	arc=none smtp.remote-ip=209.85.215.179
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673D7606A31C;
-	Fri, 30 Oct 2026 13:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADBF606A31C
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 13:46:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1ADBF606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F6pwSGRN
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B895D1F000C1;
-	Fri, 30 Oct 2026 13:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793367508;
-	bh=C2S7rduE7F27e/ACslqZKocTp/JTh21Fn7y8iprLI+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=F6pwSGRNK0eicHwv4sWaVzrGABaI7Kcr8UwklPuzziX/9g4PceqQiyip94FKU92Sn
-	 yK+wgRrs54sOD0/Afs8KSLgbc1XHhfMD1sTCAMKOEVOXBuRidENzicTpRkFwC5Drsh
-	 TFqswhNmzAyPeXj4y0zDecf++b1piEtnkJVqvpF+hLWG5sAGP2AiJZL9e47EBH78bW
-	 et8iaI4wnqFB7A7TsU9/PFkQ+NhS0+9ztnNFeU1IgNWoayj62P723V2TXOXccc+euZ
-	 SmtChrl8Mr0i2fvr4iGY6GeHD6WAKK/fYcDPPFkt/TeYkC0lT16nSZhem5wJfjJcE9
-	 /A4du6Xt6WWNw==
-Date: Fri, 30 Oct 2026 08:38:24 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
-	David Airlie <airlied@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sean Paul <sean@poorly.run>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-iio@vger.kernel.org, linux-pci@vger.kernel.org,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, imx@lists.linux.dev,
-	dmaengine@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Aakarsh Jain <aakarsh.jain@samsung.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	freedreno@lists.freedesktop.org,
-	David Lechner <dlechner@baylibre.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Peng Fan <peng.fan@nxp.com>, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tEMVM9yt
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cc751eddf25so441845a12.3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 06:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793368013; x=1793972813; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=jpSzV26D6Rjz/NJkyTxMWgMImq37uaP+9bbwc82yg1k=;
+        b=tEMVM9ytv4rWMJK8XQ+62+lBj1mX8zgGbbJCTo/Jk65iCKRvUVZnxa5aTEBTP6vDjW
+         N2FpYrTBUV5Kg/wCqrS6mBJ1EL35JYfAToBL9Ipo/38Sve8mWYXWd8v2180GOzoRZDmf
+         JVwsUF4OXmYd752CdtLReIlE4YOexd6EfptJSBQjg//ILWR7agYdbUQLskQAIslDRwcE
+         RwWt3uJOG/rjlh4zAjAOFHLFk5FRVmRa5Y1rNX9CqIhXBrpyQ3+JExhEU2p62XmBg5A1
+         tjpzaYDnZWZj/B6yjWrzO4uVQjPnYSWK7lSDrCFazUDUKcc2DHIP+FFvAhSU+zkUBAzf
+         XHSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793368013; x=1793972813;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jpSzV26D6Rjz/NJkyTxMWgMImq37uaP+9bbwc82yg1k=;
+        b=Bz2x5h47+8zh6558b+UTD7NrieQ/UfoQGdOiKlD0N7wTq7L9O7nInoW6a6/d14j1VS
+         oAuE2eEwJWtHUONn3UlyickwuMgWFTjeniP+xsolxVnsc3LZy5dTdOMyylo+9absZNgI
+         W9RN2I+kjd1p3EhnEcCqyHoV+7YK4VpQQAJvbT3PeMvXBFKpMiqVGRUSho1ucoo6x+7x
+         IvyTuhQky+rOzfHVqpCV9L8rguIpe4WJhBcojrj1TmusXNnxnubhpIfw8iKRoKN7qS8s
+         OG23uLB7KTz7jj3qO257k5VPs28Zeo6s6Fgd+6m83L2JUiPoub5ycVfGAzQ7I3kSPEoM
+         /+sQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzYkHhX90nLhoOj6YYmQArGPpfkg9UIhRdNlDHFkMJgaL94YyVvi6ah/eGvS7ywqtc82dDi+tuv26Gd@vger.kernel.org
+X-Gm-Message-State: AFq9FYLpZbSfEo5uATUGN6mjCjsbIiYAfQ+LKHlJYWYlO/1rA4o4Ofq8
+	F5Le6FzyHCLK6M+Bb9AdvRpwK/V3Hg/LtXbn/4VfUXa/sj9w+oQ9bZZa
+X-Gm-Gg: AYBFou1UI/A15+4ONmDRPTwzWIqOr4zEvHHw30Gav65lLcZTfCfu8bNBDxiairlrZ7/
+	HYtnxmTB+xmsDCo4SBAAvAH1GWnbnxcMTYKM6R+ZerKx0P58WuhvF7TuG9Xhf5THrHt/tAXLurH
+	etQeuMJYYtSMaFiozwwoL65+TLvF+uKbHIr7pY8dKdOXJ9i1kaSlLXXqdS82Z11hIClCOsqLTIJ
+	WVisoPn4J8VR12md3FKVli9kPlmGAp1+auuHnX619xyDcMYgIczU1FKzXPghU5ONq+UL/ZArrc1
+	bSc3hc7uCsW1jo9BuZfsptYsbgFRwOdYLeWegX5dzot96qRleQJ57n8i1vDMocNYqmbnyqJPNWz
+	hwwziU4XGfsCyBfDGzgisoT49VUvCKCpBTFG3atYHkoiJ5K9Urjy/1DwEXMMnVcfChmc/WASvZK
+	6HSZZ3gLmorsw8+9nd3Tbd7CErtBJOroSSi1d/OOsQVCrrxK69C+OMQsF/nSAun3U/jh4roAt2J
+	OMAZm8KNTjHkibvPAsrre8XjVDzbzcCgQQXVEs+BXKOiobA10RceWpMjwhi5vFD75/6BMwOiUcz
+	wUs7OSsP+7ZACEEwg40gX2m7kYreR62OMMldHyCYA7M+xSSZ/g==
+X-Received: by 2002:a05:6a20:2583:b0:3e5:904c:78d3 with SMTP id adf61e73a8af0-3e928aa2158mr2405789637.69.1793368013382;
+        Fri, 30 Oct 2026 06:46:53 -0700 (PDT)
+Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a9eef96e53sm791024b3a.20.2026.10.30.06.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 06:46:52 -0700 (PDT)
+Date: Fri, 30 Oct 2026 21:46:39 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>, linux-gpio@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>, linux-media@vger.kernel.org,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Andy Shevchenko <andy@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
-	Jessica Zhang <jesszhan0024@gmail.com>
-Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
-Message-ID: <179336750291.3442134.12651355159128189290.robh@kernel.org>
-References: <20261028120216.2657397-1-robh@kernel.org>
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+Subject: Re: [PATCH v4 6/7] gpiolib: cdev: don't report a failed line read as
+ an edge
+Message-ID: <20261030134639.GA94733@rigel>
+References: <20261029-gpiolib-chip-removal-v4-0-aambrozewicz@nvidia.com>
+ <20261029-gpiolib-chip-removal-v4-6-aambrozewicz@nvidia.com>
+ <20261030111435.GA76958@rigel>
+ <20261030123109.1935475-2-aambrozewicz@nvidia.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -109,32 +109,49 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
+In-Reply-To: <20261030123109.1935475-2-aambrozewicz@nvidia.com>
 
-
-On Wed, 28 Oct 2026 07:02:12 -0500, Rob Herring (Arm) wrote:
-> Property names within if/then schemas currently go unchecked whether
-> they have a type defined or match what's in the top-level schema. Adding
-> a check finds a number of instances of typos. The typos result in the
-> schema having no effect on constraints.
+On Fri, Oct 30, 2026 at 02:31:10PM +0200, Adrian Ambrozewicz wrote:
+> On Fri, Oct 30, 2026 at 07:14:35PM +0800, Kent Gibson wrote:
+> > > Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+> > > Fixes: 73e0341992b6 ("gpiolib: cdev: support edge detection for uAPI v2")
+> > > Fixes: 2068339a6c35 ("gpiolib: cdev: Add hardware timestamp clock type")
+> >
+> > How did you determine that?  Those commits are where the associated blocks
+> > of code were first added - not where the problem first exhibited.
 > 
-> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
-> exposed by the name correction.
+> From the hot-plug case in the message: a driver's ->get() error has
+> reached these checks since each was added. Removal is newer, as you
+> say.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
->  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
->  .../bindings/display/msm/dp-controller.yaml          |  2 +-
->  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
->  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
->  .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
->  .../bindings/iio/adc/amlogic,meson-saradc.yaml       |  2 +-
->  .../bindings/media/mediatek,vcodec-encoder.yaml      | 12 ++++--------
->  .../devicetree/bindings/media/samsung,s5p-mfc.yaml   |  2 +-
->  .../devicetree/bindings/pci/mediatek-pcie.yaml       | 12 ++++++------
->  10 files changed, 19 insertions(+), 23 deletions(-)
+> > The failure mode you are addressing was added by
+> > commit d83cee3d ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU").
+> > Prior to that gpiod_get_raw_value_commit(), and gpiod_get_value_cansleep()
+> > and gpiod_get_raw_value_cansleep() that wrap it, wouldn't return the error
+> > that you are handling.
+> >
+> > Could you bisect to confirm?
+> 
+> Confirmed: with gpio-sim and delayed IRQ threads, a falling edge
+> during removal reads as falling on the parent of commit d83cee3d2bb1
+> ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
+> and as rising on it, 10 of 10 each.
+> 
+> A test chip whose ->get() returns -EIO gives a rising edge on that
+> parent and on gpio/for-current, none with this patch. pcf857x and dln2
+> already returned such errors at commit 61f922db7221
+> ("gpio: userspace ABI for reading GPIO line events").
 > 
 
-Applied, thanks!
+Ok, so the driver ->get() itself may return an error if the physical chip
+has gone away.  Hadn't considered that path.
 
+Could you update the commit message to better describe that case?
+
+> I would use Fixes: 61f922db7221 for ->get() errors and d83cee3d2bb1
+> for removal. Is that OK?
+
+Not sure - I'll defer to Bart on that.
+
+Cheers,
+Kent.
