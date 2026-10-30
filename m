@@ -1,56 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.152
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793361941;
-	b=4tL+7UdReZb+Rakvniyb+fnzs56gRiqFKXC/XDwKY1MR5LypTV1bcGlUjF1zMeXgeZ0n
-	 y1mgE38TSucvERSzf1qhPn3YT3gEfPYrtMyr80ejYRIZL0fgvx4+aQv1WHqq+m73fveF9
-	 BS+BwhaneuF/dmmLZmRLsrPIzHo9N8thJBOnXvU6kLR1SAPLG5Ewm/Z03uMBhDJDRwF6X
-	 TrkDKvxd1d8qj/7nzF86zL5R7wJhbRvZ6iuCQr2SxucRJ324MbN3Op01ovLYIXaFeuckU
-	 XgBc+5Tn495yHWWD0maZ0B8asaqEE/Wpjmp4iHQYQCsNMSgT2EIeuVHHzqsOnblfVtA==
+	t=1793363119;
+	b=fWGlT/c4KT8hIqdLmoreoPBl+lbmOSEaAkj5bZrDLn5VlfZ96j0uTZLwuA6g/39J45jz
+	 dLDtIMNq5hC3/wKfw/cPKmtlsYT9Tfe1DBdj7jADAehcq+tgA0b7ZO40umZK6jNx68rcf
+	 qWtxztMrZdlOZ4pPEFN26QH0GfNi7sWfoTSF8woQp2hs0mSov9iLoWzsv9t+Gzq9qJFG4
+	 66wsS/ps74yK35CznO30ELw560h/RklHWT4WpY6GRS54iZtY4BRZEvDaz1P8DGkzDlbVz
+	 MjPj3YE3ecyErfg1Oj4QNrkch+6dweBfihVuB64cJbTaHpP3fsgnXEnOPfbs9yebI2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793361941;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=vG4+Y5ev5aXq/zpCrmKcxw1jxAeYwBvGY/RKpbEVbQ8=;
-	b=XuBan3xC/Df4yz9XmLOILromb2wBIf9/RjmY72c5JStRLyt6rdiHzHeKL7iJ74G6yN44
-	 TUa1NEWy8XZXqOZpzIn6n/3NSfHR/2Ouo5u8lp+S2tD30Yg5NtbUxk54fwqZ3X03Y/J9B
-	 sXCcx3Jr5+6W7ZbKrkspoVskPYe6vIMpD1UeS48U45U1b7+mydgnLwiQglPAUCDgLLeUD
-	 2F+GFQPNx9JKX4BD4+grJKili6opm5Y59zuy7tS9mWfIrCAz9wHw0Ne7/bBnMUUa/siYd
-	 vjLmTzfwu3athIy2SnQs9GNpBOeHarZsb1w4unlvLGiPhsQB7PSIjY7L+HOlXeO8cLA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793363119;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=J8dAsB3ABUd2P8nmGjUreI+WMzKE8n8IiSWGI4JbEHM=;
+	b=PHO8y/khRayLUcOo4YosznC0d/uenQBWJxAtbFom2XKvT7KxM+vhUwW3yIPo+Ufuhs43
+	 6RW/SlcSthhxJqmumFFAOfQqZ05N+S2s0S/LEKWshqZF958esylJ3lgRMeKk7KBEtqXeB
+	 t74LpuAeqjfBwAlM3TwWXEi0AA3EhtgBnu7NzTOGWm8oNwpvGUtknw34awj/WVlLfemF3
+	 r6W+GnwqTt/11VZyG6dNZl0KwRJ6DV/wTU9Ml3CYt7Ul9jTlk0vE4wVe2+s8C5509U+Uw
+	 h6HbDIwEwPXojcGsWoF+I0MtV9B4P8Wu48dkKVCW463cXEZyhodjkdAL21EdDu1i0cA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fVMfT8R1;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=arndb.de;
+	spf=pass smtp.mailfrom=arndb.de;
+	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=NnYKhc8O;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=ruVTPoyU;
+	arc=none smtp.remote-ip=103.168.172.152
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C914606A33B
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 12:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A117A606A320
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 12:25:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A117A606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fVMfT8R1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88941F0093A;
-	Fri, 30 Oct 2026 12:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793361941;
-	bh=vG4+Y5ev5aXq/zpCrmKcxw1jxAeYwBvGY/RKpbEVbQ8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=fVMfT8R1oHlMpwTsKTnSFNnO4MASrnnkpSi7JXjPsbjWF2EfjRun6ygiVaAvcEyNY
-	 hGwehKKHSprzTgsQevQIq/GgMhI5vRqInX+QPJ9EGx82+cHAR6cIw2zwBXPicw7B3Q
-	 jcQKCuIx61su25ZYKc4JYo6Xdz1n4eHekuUoLZAS9BT6mnM+MYGPfpHZaO1oc4Otex
-	 t3Izmo56RKbKLaL2geFWTsvoHk3mmn//anXDQG9oKp1sQ+9Jpg4VIHmD25tDprtQMv
-	 QjXFHjbv0ZjHkWEnNjm4DvyNuaWIA0SP15V4FoMqwvFrfM1bMG78wIp0gV+bUChfoq
-	 YfZbK1WXeso6g==
-Message-ID: <sashiko-outbox-190969@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] pinctrl: rk805: fix ordering of gpio and pinctrl
- registration
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Heiko Stuebner" <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261030115540.3660242-1-heiko@sntech.de>
-References: <20261030115540.3660242-1-heiko@sntech.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 30 Oct 2026 12:05:40 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=NnYKhc8O;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=ruVTPoyU
+Received: from ams-compute-01.internal (ams-compute-01.internal [10.64.2.61])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CC2961400183
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 08:25:17 -0400 (EDT)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-01.internal (MEProxy); Fri, 30 Oct 2026 08:25:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1793363114;
+	 x=1793449514; bh=J8dAsB3ABUd2P8nmGjUreI+WMzKE8n8IiSWGI4JbEHM=; b=
+	NnYKhc8OxhnuTLAhJbRHmsyXxr7iSNm0NhcLETnHmLlwdxquROZS10DPKZYNpL4Q
+	2yGHRipLfeq+D+PICH7hFpla9cQKTnLkjDZRQMAhKNmO3YjoDr9cBbh9cUifoZyS
+	Rsuy1vecDxoowQCiiHSAojqtmYSosyG9I1CkvoGUcVXbwPMx+yVxfPq2a2iekEAP
+	6+ObZ7JV//KJgZeKBDgjjdOQd+YWI7UVhk1mOU1LDZMdz8VqWc5PDeQ6+/+WmY7L
+	rn1ebJM3gUW7MQj/nc9g9tZPWv7e2WTiwvXwrH4l+jlkMpp9+UOYZTYUVGxtTTxj
+	zf0eJh5PLI6gWtLhqYnsXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793363114; x=
+	1793449514; bh=J8dAsB3ABUd2P8nmGjUreI+WMzKE8n8IiSWGI4JbEHM=; b=r
+	uVTPoyUCLgWu8Gm1TzCJzzH+w4hWxGlrNxJSYZ90I5H07rGOApI9czQvQH5G7d6c
+	MMto7icwSOJmceDzxaNL71BpzFOOL7CvgFn22fXnU0oP/oBYTYFX7cjWN7Bvp9LH
+	8ZgR397lCepU2FTQizCBqQ3nHpH3TaX2NbLiIgizJqn/jf9+APztJyz5hyWIRPJG
+	xbnUqF7/FcCWhYIHf3aAQRNZtnBbTE4z4ZkTOmPouSkquRYm9hpzlrLLdOSPNzrL
+	lMDTMCmRfb9kwjhw+zB4YojlCv/t63NPxzgqxONQj90MRnvo2aON8xN693GJL4Aq
+	KmeCf85K70b9f1tXH1xQA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+	action=sign d=arndb.de a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793363114; d=arndb.de;
+	mf=PGFybmRAYXJuZGIuZGU+;
+	rt=PGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:J8QaEaq7IJOq0JDA3G2Fcn5vWF5KZGbnf/QQUtZXYJ0Aw/Z
+	0fU4z2pLty11iYbehhdlvuSAjcW1bFlnwju8UfA5YzAoCQT0Abz1eZo8siV+/7UA
+	E+UJhM9V+GT1o/dsSGUDrBjLzZRgFTcq9FCtmTIm0ju2Af8qHbFIVk20l7Ilgh/i
+	GpIvpXGuPGEl3EuZb0pS02Pnge+d7IisSVkfu/MoihBnYj7z4Jr3wAv8SxdQsWP0
+	IxYWeIvd0Q7YtUQBfe5/v0+HrNtHS94h5vM384Wq6ZCFD9yfnun9vL05ASqHVzxz
+	el00o5NgoZTf13RwdksWVQxq35zTpjgEVamZ+Yw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:UxV6YTAoizPqtWa2AKjflWrZ77Hac13iK0pOv5rsOTE=:Zb2QRSDduhAAZaKJYul8Fpn1yObyVkEUtJHw3o0ClbQ=;
+X-ME-Sender: <xms:pYzkahReiNadF71TTxmY85O4IfeA8J1dmYOUcAOEZh_x7xClk6S69A>
+    <xme:pYzkakM8R5xQWll_ZILuDt4bMTHxxZ0kFWawAJE2FYahkKoQ24yZdri_oxVUb_cQ8
+    GaeFE1OlwN0RCwuVzw4UjcFPSV5ll9UXmUkwv0G8lWM-Q9yPblQmtTN>
+X-ME-Proxy-Cause: dmFkZTEjdZ0WgKkDeZ8IivnHN+6FPi2JsxEAcdLRcU74d11ptltXsOcEZjcgcfftZR168E
+    EIO6J7QiGPQhuHkRDyG6EOG4oAJQ4UYkVdOUJI20ULjkxm7ziBeG52p28bahXxlpCY3UNE
+    g68WjC/XnD4RBVHNhJPdtq8tXpN0R5KRf1WNe5IaB45Yfj7TJKbZsiduV3NicElToLV7iW
+    qV/o0BNeWEflK2OQESy5mqGWEijeriULooLwws4KKtnIneMx2NbMoOU+UyJr+4zbEXLsuO
+    TNznEF6cHoRSev/AS+8N74XtUlIj0s0NkQfiF3PikAxBSLvgApRMMEmYCgH/vdDcUdeUcU
+    7LFIwMXT3KUo1Kke0WrSjSCAcgJZW5iA6vr7sDlpVB42Rt5s7yDXU0VjvrHBGVkLOgR63h
+    TRua6UzXd/s8L51Jw1YXLOdVQ4WBdeKCkiHwheGudyzR3KI8mNHDZ9zXvr5vLV/rjZnZBf
+    O06vlJ6cocxbVKkqJd276EuuOOUdteQzEi6PbFR1n3zhMQf4yVo+0MNgvzy4iZZRKFf9Iv
+    NXEyzqvwcJPXrWIFJ6HwdLmBH2i/rq6SxRrAOwpa3aIYFzwv5z1zxrijy1dUl35cWxiIne
+    pvjlj+1L9ZShKPsQVLOvF8prqgnjARLBYbezMCKhswtkwubg+4pHt/fILLHw
+X-ME-Proxy: <xmx:qIzkalTJdaYVdlRDHnqAMt1yAN8Zdiu_lyxC9YS9WY-ZrQbrEfYqig>
+    <xmx:qIzkamo7Iz_ZsiYWFDE6AThXyvdqemjpNBvO-1YTVUzvPT_wnbK4bA>
+    <xmx:qIzkaqPnzO5SSUvkUhpu5GFniLnw3mSEiEJWGDwmShbtjxMqsxiGCg>
+    <xmx:qIzkakya8L1StVeIWzkABZsO-WjOwJ0emIqiXVTcA28L_9-Z-MHCuA>
+    <xmx:qozkajw6P7XiW7VrfJnlv8PvD5-6XSb2j8BYbCY7QveDIbQPgymwf90e>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id ED26F32A0097; Fri, 30 Oct 2026 08:25:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,113 +114,98 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+X-ThreadId: A9hbWorxIEzB
+Date: Fri, 30 Oct 2026 13:24:49 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "James Clark" <jjc@jclark.com>, "Matthias Kaehlcke" <mka@chromium.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Doug Anderson" <dianders@chromium.org>,
+ "Ravi Chandra Sadineni" <ravisadineni@chromium.org>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ regressions@lists.linux.dev
+Message-Id: <10ad94b3-66db-49b5-95c6-3ce9090f3278@app.fastmail.com>
+In-Reply-To: <20261030114705.3159093-1-jjc@jclark.com>
+References: <20261030114705.3159093-1-jjc@jclark.com>
+Subject: Re: [PATCH] usb: misc: onboard_usb_dev: don't defer the USB device probe
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] pinctrl: rk805: NULL dereference in gpiochip_get_data() via pinconf
---
+On Fri, Oct 30, 2026, at 12:47, James Clark wrote:
+> On a BeagleY-AI with BeagleBoard's device tree, kernels since commit
+> f918e3804498 ("arm64: enable HAVE_SHARED_GPIOS for all ARM64 platforms")
+> no longer boot to a usable system. The log repeats "hub 1-1:1.0: USB hub
+> found" for the on-board TUSB8041 hub every few milliseconds, with no USB
+> disconnect in between. The flood of uevents stalls udev and the boot ends
+> in emergency mode. Reverting that commit makes the board boot normally
+> again.
+>
+> The underlying problem is in onboard_usb_dev. Both peer hub nodes in this
+> device tree carry the same reset-gpios, so the GPIO is now a shared one,
+> and with CONFIG_GPIO_SHARED_PROXY=m (the default) the hub's platform
+> probe is legitimately deferred until udev has loaded that module. The
+> bootloader leaves the hub running, so the USB core enumerates it long
+> before, and the USB device probe finds the platform device without
+> driver data.
 
-commit a49ae4e9bf527300ce287085a0623b150f2db443
-Author: Heiko Stuebner <heiko.stuebner@cherry.de>
+> At that point, onboard_dev_usbdev_probe() returns -EPROBE_DEFER. This is
+> what causes the problem. The driver has generic_subclass set, so
+> usb_probe_device() has already run the generic probe, which configured
+> the device and bound the interface drivers. Each binding is a
+> deferred-probe trigger, and the driver core re-triggers when a trigger
+> happened during a probe that then deferred. So the device is re-probed
+> straight away, reconfigured, its interfaces bound again, and so on for
+> as long as the platform device remains unbound. This is not specific to
+> shared GPIOs: it happens whenever the platform probe is deferred, and
+> briefly whenever onboard_usb_dev is a module.
 
-pinctrl: rk805: fix ordering of gpio and pinctrl registration
+It sounds like the underlying problem should be fixed elsewhere,
+possibly by preventing the deferred probe to be retried each time.
+ 
+> +/*
+> + * Attach a USB device that was bound by onboard_dev_usbdev_probe() 
+> while its
+> + * platform device was still unbound. The device lock serialises this 
+> with
+> + * the probe and with an unbind. This walks the USB bus, not the 
+> driver's
+> + * device list: unbinding a device holds its lock while it waits for 
+> all
+> + * references to its node on the driver's list to be dropped, so an 
+> iterator
+> + * over that list that takes the device lock would deadlock with it.
+> + */
+> +static int onboard_dev_attach_usbdev(struct usb_device *udev, void 
+> *data)
+> +{
 
-This commit reorders rk805_pinctrl_probe() so that devm_pinctrl_register() =
-is
-called before devm_gpiochip_add_data(), ensuring the GPIO chip and its pin
-ranges are torn down before the pinctrl device during devres release.
+This conceptually looks like a layering violation: no driver should
+have to look through the list of devices like this.
 
-> diff --git a/drivers/pinctrl/pinctrl-rk805.c b/drivers/pinctrl/pinctrl-rk=
-805.c
-> index 22f576337faa9..8e04da3ef0f3a 100644
-> --- a/drivers/pinctrl/pinctrl-rk805.c
-> +++ b/drivers/pinctrl/pinctrl-rk805.c
-> @@ -663,13 +663,6 @@ static int rk805_pinctrl_probe(struct platform_devic=
-e *pdev)
->  		return -EINVAL;
->  	}
-> =20
-> -	/* Add gpio chip */
-> -	ret =3D devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
-> -		return ret;
-> -	}
-> -
->  	/* Add pinctrl */
->  	pci->pctl =3D devm_pinctrl_register(&pdev->dev, &pci->pinctrl_desc, pci=
-);
->  	if (IS_ERR(pci->pctl)) {
-> @@ -677,6 +670,13 @@ static int rk805_pinctrl_probe(struct platform_devic=
-e *pdev)
->  		return PTR_ERR(pci->pctl);
->  	}
-> =20
-> +	/* Add gpio chip */
-> +	ret =3D devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
-> +		return ret;
-> +	}
+> +	struct device *dev = &udev->dev;
+> +	struct onboard_dev *onboard_dev;
+> +	int err;
+> +
+> +	/* Unlocked pre-check, so as not to wait for every USB device's lock. 
+> */
+> +	if (READ_ONCE(dev->driver) != &onboard_dev_usbdev_driver.driver)
+> +		return 0;
+> +
+> +	device_lock(dev);
+> +
+> +	if (dev->driver != &onboard_dev_usbdev_driver.driver ||
+> +	    dev_get_drvdata(dev))
+> +		goto out;
+> +
+> +	onboard_dev = _find_onboard_dev(dev);
+> +	if (IS_ERR_OR_NULL(onboard_dev))
+> +		goto out;
 
-[Severity: High]
-Can registering pinctrl before the gpio_chip cause a NULL pointer dereferen=
-ce
-in gpiochip_get_data() when pinconf callbacks run?
+IS_ERR_OR_NULL() is almost always a bug, make sure you understan
+the interface and what this can return. If the function can
+actually return both error codes or NULL pointers, fix that
+first.
 
-In rk805_pinctrl_probe(), device_set_node() attaches the parent PMIC fwnode=
- to
-pdev->dev, and devm_pinctrl_register() immediately claims default pinctrl h=
-ogs
-via:
-
-  devm_pinctrl_register()
-    pinctrl_register()
-      pinctrl_enable()
-        pinctrl_claim_hogs()
-          create_pinctrl()
-          pinctrl_select_state()
-            pinctrl_commit_state()
-              pinconf_apply_setting()
-                rk805_pinconf_set()
-
-Both rk805_pinconf_set() and rk805_pinconf_get() delegate PIN_CONFIG_LEVEL
-(and PIN_CONFIG_INPUT_ENABLE in rk805_pinconf_get()) to rk805_gpio_set() and
-rk805_gpio_get(), passing &pci->gpio_chip:
-
-drivers/pinctrl/pinctrl-rk805.c:rk805_pinconf_set() {
-	...
-		switch (param) {
-		case PIN_CONFIG_LEVEL:
-			rk805_gpio_set(&pci->gpio_chip, pin, arg);
-			rk805_pmx_gpio_set_direction(pctldev, NULL, pin, false);
-			break;
-	...
-}
-
-drivers/pinctrl/pinctrl-rk805.c:rk805_gpio_set() {
-	struct rk805_pctrl_info *pci =3D gpiochip_get_data(chip);
-	...
-}
-
-drivers/gpio/gpiolib.c:gpiochip_get_data() {
-	return gc->gpiodev->data;
-}
-
-Because devm_gpiochip_add_data() has not run yet when devm_pinctrl_register=
-()
-is called, pci->gpio_chip.gpiodev is still NULL. If a default hog state on =
-the
-PMIC node sets output-low or output-high, or if a consumer or debugfs reader
-queries pinconf before devm_gpiochip_add_data() completes (or during unbind
-after devm_gpio_chip_release() clears gc->gpiodev->data), wouldn't
-gpiochip_get_data() dereference a NULL pointer?
-
-Would it be safer for rk805_pinconf_get() and rk805_pinconf_set() to use a
-helper that takes struct rk805_pctrl_info *pci directly (obtained via
-pinctrl_dev_get_drvdata(pctldev)) rather than going through
-&pci->gpio_chip and gpiochip_get_data()?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030115540.3660=
-242-1-heiko@sntech.de?part=3D1
+     Arnd
