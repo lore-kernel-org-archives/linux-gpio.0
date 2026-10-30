@@ -1,99 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793365668;
-	b=qsUl/c5C2V4Uoq6ujE+mNguz6hwJSF2hXB7CqjvXvvLfzkf3Df3dsc20hH8vbjtPKO1Q
-	 Tx3QsXDJ7mBcsQmVu3M9VNIVuQOVW9XY+9vQBEroqjnUhpzIeoYu+WACERQX9OJWMKz3d
-	 PsE3bfwjevJWVt0id3uq56r/tVyrCbMmRLEmNfLW6L+URg4XlJaWPM+NYgI5+Z4zRwnuO
-	 1ds7IEjVMRRyyBuJ81zF0hb3shraLoWliAGhMiOiAdc5bXqs/P3/Za1vtO+gcMTA9BYpi
-	 Xj0qu58Xdr5uVCgEj7aTssDrF1pAA8/uDfCCZx6dZTG6CSum8CJfNPkmopoOw3tljsg==
+	t=1793367302;
+	b=4074klFN+evjw39NNkOsEaCSIxl3ifWA5TdRJ+X8bKvWJzJF/U+nZ1GWD6aZbggFKlR0
+	 IfdOu2rnvx4KXWp4rK37RW4xokdECTK8eZJDDp2JH2MtOIfNGdHMlmSZzekCfA7yBfu/Y
+	 FqChi/wCoKC72ab/CPgHU+jdzHgEHmEwUW+DQuFzNf2A66qKQfpkqzh38hdgsxKWOQ5ec
+	 94k4k1er/M6sk0DnLca5H4ewV7AC8rKQp5pedKuUk+4up2WYajRr/XUfWtHC3gJ4vDvFa
+	 6/01QNagoPg+ZOywAmKTATeiSIvCIGCGOvqpMJsHZoMkEBJmGg4TV62WHPK8mlGzecw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793365668;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=VBqZNaxtB8zlZSrHdHu8zRInBozrHHy4u4axvoQIeWo=;
-	b=NwuQ992SVCJUqr84TTU/wfDTb+q+2I4P5JeS0L+iXgtCSTHKZH5PldpVhnBExUS5j624
-	 f66hS+1ilDfWtYCuklAkBukfmOBE/U6GNSBUI7NUpXzR+l4EbetH2wHNzyFOtwwWUcMu8
-	 xc3IjZITNhZfdb77wBzILI6rzL3uvYxIml5nhFZjPb3dA2FuaA/9QP21SBa186/vjmjUM
-	 iTUOoecQvWwrCX0NsUuhHkWNLLuuoYe2tPL2VOrhWX3NIquF55o8e5A4//gmVREfor4wf
-	 RHuI5c7Ra8dTpVt3tUoN6aQwb7zbssRMRW7ocSVPEgRlILNHH0yy4QoqRsMNCoT+eUQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793367302;
+	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=uHhs2Frapb+ViGH4KaTKr8YXy+CDqz7jwoVfgAxpV0s=;
+	b=oxG+6+vk5MThYJpY6RfayuNnWQ970WoTF/IDe5j6tc8XBbqIUATI1T83Eowu/QLvyGL0
+	 KmEUlNz7v5YBeUrJe5XA511GWN+SZ1M9q/MTw/1m2pxNWAv23PB576a4rf2XhGjMKtFpM
+	 GbMph3MED5ugJiewmWIjN0d02f09xFpUSiYANuzkE4+20a7nFZcvLEo2p3CEHIb9HX5DP
+	 HGwE6I5M+zbDTrfdl1NyZtF6hHKSuR86IRSAntl0Faip9h97Q7GtrJfqQoHPhwTPsvRu8
+	 UVO60rQJjxSjHPgFNKo+oGpzz8eDDKEOuq7F5Ucd8Ff7ZaheS3aHxYLT0jqSvx9thYg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=jclark.com;
-	spf=pass smtp.mailfrom=jclark.com;
-	arc=none smtp.remote-ip=209.85.215.178
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ke5rIw78;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055E1606A33C
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 13:07:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 055E1606A33C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jclark.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jclark.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-cd5d2dafeccso348013a12.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 06:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1793365667; x=1793970467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=VBqZNaxtB8zlZSrHdHu8zRInBozrHHy4u4axvoQIeWo=;
-        b=kAsJs6idydB45DbKxh0swYdwPWoeUoz1fMSGuSg9Z10c1chhaLoD3NptrwkZkLa8WT
-         MQDu5Iguv586MYJ7G0ZC8DGNqd1vZ0N9puv6NuMN80cQa1qur3iLqUZJRGjEIVUkhWKB
-         7XrW5G3zFjWjGzpZl+GD78rr14kcNm2HU98isJRTU7hjAslGu5Cb30150/cSqUDwb523
-         04wscuBw+kp8Y3+caUYCmfoq5q3eSp1K3mjObUOV7IAk7OaBJAhBvv1wK001+OnCURDa
-         BnqqyFvr/lkDI0S8TIpcz+w1RWkBFKthZFRYkm57tJkBwAhVJdy67PyN30grm8vXRg7v
-         Y+qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793365667; x=1793970467;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=VBqZNaxtB8zlZSrHdHu8zRInBozrHHy4u4axvoQIeWo=;
-        b=KRGXYeGAw5pYt6FAubrKCoTYIXli46V5+hQFLlaQYWnJs3/MtMDjj99TPTFBy8VxyF
-         zlZSchJwE/1X43uAprGrAJ+AKl3Hm/22G/t8nRD6b89TJQR/UXUbGuqpkVeLklOQNg4f
-         6X76dr1UedGI4sYL/2DqJTCY5DdMUFsXKgZcZ0D5DxrGs1Q1bSlJ90oDwJfqrSLMSh5W
-         Z0R7RIvUPWSLrb8ITv+l8ET2iIlHFuZnEmpqxbR10P9ui4Y0jZaJCYLztcIIwsExK3gW
-         e/PMD4iu+ttrK1DkwLPIx91IYAqJGpHJuhSJyQGCyiZutLstljI6H3Lqek5bz47M2k6P
-         OoDA==
-X-Forwarded-Encrypted: i=1; AKwUvBzDd8R2BxsNhE+Iu/SWvxgGpfCjJkyEzkFTCpVZJ86ETyn/W4f1m7ItaO4TSa5auNqbakZbtzpCIrZd@vger.kernel.org
-X-Gm-Message-State: AFq9FYI/9+d4Y3isaNM1mEluPNcaQ845gTX1IS1pTEbxgRZEoYQb9mQF
-	ZA2xNOn1YDi/EIbbU6oexlU6Bl/lpDhVRLuXsoJ5jjSYbGMCExQM12Em5K3+PBg6pStxZKx039F
-	TFK39tA4O
-X-Gm-Gg: AYBFou0+Ortu3/gHA6+hxEKSTjI1IzfLAPdvSEErHZlAuCCamJ0oUgfIZFtI152BFIT
-	lADEWWG7PRt+7CnAYD+bZ/Q6aj86jVcP0FvKSjmXkK3l0f2a79IjDrrL5nbvM4Sl2xo7mR1wqin
-	PbrpyPvy0vBbhYZUwHaobCtZR/q2sKyFnLNBXCtNzFz9rZnHtgNsDdjRXSlV0BzLHVa2EBd+vra
-	OTIBuYpkJKB0T6rMF2nrczY6mA7PIndaCHebb+CAH2rXzxX9yIZA3f/ARF3KCaS3kWun71X3Lj8
-	Ta589Gep4Q2Q9PwRTsBaAE6igikfaL186Nbbt2viPxadWShEFsMY7b+Ror4XY2tLJFBGoD9xTMT
-	ZcRYrWHzyfdBl/9K0hQqcoMP5kE2ceF9anbj1PbvyA+3tFXMNyDUSzoGaIQDPUcyOccY0fq3DFw
-	Se69jz00glDam+O3vdTSSrg8fkEiXe1/uBN58zfUO20D747Frt7uifWQxFIUtouklddb5oSWsUN
-	u/xgipfJC/94L3hpj6tNr3E9fXUr7YCSYB2iq0li9SQvXSyDNTfmYb25UsUOzv/YKGGXEtDT3WX
-	qG6ix6i9SDakr+kyd98yZmWbokmEzpxRZ4BdnTRb22k/4Et6OBy3POHo2F5RKLAAKh7QXqEm3sX
-	1QvxTPUWa0p/jsk3M
-X-Received: by 2002:a17:90b:5243:b0:3ad:3e8:12 with SMTP id 98e67ed59e1d1-3ae89806353mr1634562a91.48.1793365667017;
-        Fri, 30 Oct 2026 06:07:47 -0700 (PDT)
-Received: from cantal.lan ([58.136.77.93])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae6e2a703esm8733413a91.0.2026.10.30.06.07.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 06:07:46 -0700 (PDT)
-From: James Clark <jjc@jclark.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3AE606A31A;
+	Fri, 30 Oct 2026 13:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ke5rIw78
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C18D1F000C1;
+	Fri, 30 Oct 2026 13:35:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793367302;
+	bh=uHhs2Frapb+ViGH4KaTKr8YXy+CDqz7jwoVfgAxpV0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ke5rIw78lG2+y4r3vmmGq5CBbNux4s6fwlQZ0NTP5Qxu5qDonWDDXMOWQ4RB5QtIK
+	 9HRE/E7RF+chc4O4M203eIhPPFVHFSPML0WyoT81HwIojNlv6TFTzu0G3nxg7VqvPp
+	 PyNLrEf7YxQk9SXJXhrZlgrlh4o8m7WT6+3pDq634yVAaa0YdaiXz1EeD+sb+jcViW
+	 dst2fLKFrpqi3GT9BnLK0/JmOQKFWvUyzpKYorYpfAkqGtMlaY93GIR2dXsw5MXEN9
+	 SpgNX5aWa4HBnst7dcduLZoibMHV2K9PBT1XyKUaa2Vm2pxjxtnz/4RDG5IyoL11L+
+	 ZEfuC9UY5u03g==
+Received: from johan by xi.lan with local (Exim 4.99.5)
+	(envelope-from <johan@kernel.org>)
+	id 1xMml1-00000004hHd-3tNd;
+	Fri, 30 Oct 2026 14:34:59 +0100
+Date: Fri, 30 Oct 2026 14:34:59 +0100
+From: Johan Hovold <johan@kernel.org>
+To: James Clark <jjc@jclark.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Douglas Anderson <dianders@chromium.org>,
 	Ravi Chandra Sadineni <ravisadineni@chromium.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
 	regressions@lists.linux.dev
-Subject: Re: [PATCH] usb: misc: onboard_usb_dev: don't defer the USB device probe
-Date: Fri, 30 Oct 2026 20:07:42 +0700
-Message-ID: <20261030130742.3211592-1-jjc@jclark.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <10ad94b3-66db-49b5-95c6-3ce9090f3278@app.fastmail.com>
-References: <20261030114705.3159093-1-jjc@jclark.com> <10ad94b3-66db-49b5-95c6-3ce9090f3278@app.fastmail.com>
+Subject: Re: [PATCH] usb: misc: onboard_usb_dev: don't defer the USB device
+ probe
+Message-ID: <auSdA8MfolA8OhdM@hovoldconsulting.com>
+References: <20261030114705.3159093-1-jjc@jclark.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,15 +67,33 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261030114705.3159093-1-jjc@jclark.com>
 
-On Fri, 30 Oct 2026 13:24:49 +0100, Arnd Bergmann wrote:
-> It sounds like the underlying problem should be fixed elsewhere,
-> possibly by preventing the deferred probe to be retried each time.
+On Fri, Oct 30, 2026 at 06:47:05PM +0700, James Clark wrote:
 
-Hi Arnd,
+> At that point, onboard_dev_usbdev_probe() returns -EPROBE_DEFER. This is
+> what causes the problem. The driver has generic_subclass set, so
+> usb_probe_device() has already run the generic probe, which configured
+> the device and bound the interface drivers. Each binding is a
+> deferred-probe trigger, and the driver core re-triggers when a trigger
+> happened during a probe that then deferred. So the device is re-probed
+> straight away, reconfigured, its interfaces bound again, and so on for
+> as long as the platform device remains unbound. This is not specific to
+> shared GPIOs: it happens whenever the platform probe is deferred, and
+> briefly whenever onboard_usb_dev is a module.
 
-Thanks for the feedback. It looks to me like it is probably possible to
-fix this better in the USB core. I will attempt a v2 fix that does this.
+This is indeed a bug in the onboard_usb_dev driver as a driver is not
+allowed to probe defer after it has registered devices for precisely the
+reason that it will trigger a probe loop (see commit fbc35b45f9f6 ("Add
+documentation on meaning of -EPROBE_DEFER")).
 
-James
+Any USB driver using generic_subclass that may probe defer is currently
+broken.
+
+I guess you can look into replacing generic_subclass with having the
+onboard_usb_dev driver call usb_generic_driver_probe() itself or
+possibly adding a pre-probe callback to usb_device_driver.
+
+Johan
