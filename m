@@ -1,57 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793359359;
-	b=vvWfgsQSkBCMwMqgt1xPoPTGIgcew/gM9Sl0KYJP4QtuZTkceCaAmigqrppif2YIgDvf
-	 /1VKInz/Jd5B8pIL+HzERwOQ0i0IE8Ox/wM/DjqeKAdWCN9BV2ovv9L+2uEJTuK7olWfY
-	 n87z1PgxHWP8mt4qxTujYTWFNziEHQEtLW2CiT5ujSSI//oxhRz4wXjIE/KV6vhDQSy5+
-	 DZVhhoh0tbImAOFFP2zFgu9qCVWQtVHg+0OhXbjm2SGuElbjjDQ+mVDXTetybxRMPfMHS
-	 ztDL1Y1PWk7iJ55Gd3tQ5RMF/L8R4XNcpt/w6LBK2PKf1ull9HiQEqB8YE80exdzdaw==
+	t=1793359496;
+	b=TTAMTw1pCvzeKa1aviuKvf7xG6+RNDHRIwlIb49B6H8BYJslOAUe8qrs1Qd6zO1Sinp9
+	 B8g5rvbX6iqU+jCfvPKHkTOrO1HsN6QFRwwL06i3m5MY1GL3Ax5Q08sQ+/qWO1mdTUN7O
+	 9l75+pBLOs1l0Huo6pRDb4m9YgTFctSH2PaqeCMP14OTedh0sD9Na88HbIMJ63uRdmamE
+	 woMfQfvL0E3MtGrA7FMuhZP3fmvz4nAc+VewIfz77pGZ/LYCooqQVt7TTIeQtjkQfTL6C
+	 D6COu/Jn2ToYpYNIkbWqNkZDQYVUPvP4swS/xOCayyKDXSR9IO8N81jaU9K2NzHpJyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793359359;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793359496;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=yJqDl0TWWpvU7A0NfZvQiMiQvyoQM27Wt5aSa3fPKKo=;
-	b=DOXsFWdI7/U87GBqgqikaMXeKGO6v/AlQ7Xj+D9Blhn5k1yHbbDqVWDHEFyK6yMVn2q0
-	 fEFrxtNjEjneN/c8iCIGKo5nEavSxO/pYEMNeICinzP9NfeT0R0qzstXCMjB+MYz5aqF4
-	 ZiBb49jIBoChoWkm9c31TMEkbryuSBwgwhIBJLqYoVn9k6+BtZbt5oPVdNIY9cxaPES4t
-	 iT8RNfKEoOKTn+n0HayLpQoWaMSHYRGec8b+4KlX/5guZcHVFZagKRpijDfSIen3UKqSz
-	 LippAFME+MFDGcE5yYNAv18yvFI650/282ub5E3woHgzUA7quesgHuhzBUeY5dL7mLw==
+	bh=9PzY5mz6ds13WKfBrCOILrAu0H/XBjf4ap+3KvHd3ts=;
+	b=e8p9mVmSpIEnkrrMY7IPulinyHrUFAE+3mHt915MDcabqE+mbSXXSD+2OZ+qH9ieFkIQ
+	 wmSLtM5DKzKv9suQcC+MAOy61S2Z84aX8rtZ/UQa48WsjlRK676UIm2bY9EQv83L6tWe+
+	 p1vTwXoUBET68qU7bHjOxZuxzDV+A2fdIbN6ZQ6/3sRQ5KAMxmVxavfJtH15a30pEOAET
+	 dYi3BWQtP33UKJArvk6ACbSNTAzh5YaPqBB5GvDq7B2+XRVcQZEJpSYW6E8h5uIJuZ8Kw
+	 yGY9OuWtSNKtSAXsENAQqGp0z8Ina/4uboh4qIHVNx76GJ0h1N5uJBltutG1geyOP3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a3BSZfY+;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D5SnmHPI;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4218C606A31C;
-	Fri, 30 Oct 2026 11:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D96606A31C
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 11:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a3BSZfY+
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E3B1F000C1;
-	Fri, 30 Oct 2026 11:22:36 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D5SnmHPI
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7691F000C1;
+	Fri, 30 Oct 2026 11:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793359358;
-	bh=yJqDl0TWWpvU7A0NfZvQiMiQvyoQM27Wt5aSa3fPKKo=;
+	s=k20260515; t=1793359496;
+	bh=9PzY5mz6ds13WKfBrCOILrAu0H/XBjf4ap+3KvHd3ts=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=a3BSZfY+Y1EQAwV6Wq+uGYr94s4Hno6DW3nPAPWNAt3qF07f9yM3Gh2YsZUee1ngI
-	 9xqNwU3PhvvAmOutw2yA/nQ3r3UuHZNgmvtFml45qPHvAZIEaQztd8Jp9ObQ+vmP/p
-	 xlQqoZdorP5J0zm+HFlAwpCCu2goVvBuJdwwaxxhrHCexYdIg/AMu68Nfl8JkHh61Z
-	 BNeEexvORDA/R64QAJM28/4KLP8pWXPj2DnGjERiV4SKZUE+yDCDqNVZXRAsuh9C3g
-	 DeTuBQgMGtkD6JDS4i7Exscr0gF1SvzgrzGB0xDqOGoE/M8wy6B814On0OUmwefOYU
-	 lRxz27NWojIAw==
-Date: Fri, 30 Oct 2026 12:22:33 +0100
+	b=D5SnmHPIz+3LE9lNujXnpqEfRPGcOgTz87PCA3OI726oAOb1NqkN2v1jWqrx68W2h
+	 MSI1R/FndyQVXuyk1MbgGAg5O0ylkYtAJnHjNDvGSfgWdnVR7FvzFVaOVnnmEHQCzl
+	 VCpPIaMWg2Nqyk4kBaI1AL9UhATTfNJtctnbZbehPIF9yH5LuTgl5UCR0BPQ9DXT0y
+	 WY2UDSJpqfLlLCuxZ7Pr4/beATM0soEsXzfwwUU+sunnseZAFIt2h8On+psmSvYFwY
+	 qGdfV/Cm5/oIHddhjruqoVe/blupTdLPPAJVZ4XZkpiRV0VO8/6KVG1/UkO+UqrNSH
+	 RaIpB7J2YctXA==
+Date: Fri, 30 Oct 2026 12:24:52 +0100
 From: Bartosz Golaszewski <brgl@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Shawn Guo <shengchao.guo@oss.qualcomm.com>, 
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] gpio: shared-proxy: Fix race between concurrent
- first users
-Message-ID: <svjb2ivlopgphqueanfjykfedqejyr4akxbo4y4eycuf5qesxq@3efk7hu6xeft>
-References: <20261028123448.510401-1-shengchao.guo@oss.qualcomm.com>
- <20261028123448.510401-2-shengchao.guo@oss.qualcomm.com>
- <CGME20261030095806eucas1p1227bd86bd46487d5dfdbe36bd4df8e94@eucas1p1.samsung.com>
- <01841455-880c-4477-ac69-ea8c117cc6cd@samsung.com>
+To: Yegor Yefremov <yegorslists@googlemail.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: Re: [PATCH libgpiod v3] build: honor default_library for the
+ installed libraries
+Message-ID: <z6uzdpsuwffjjlca5isgrznpxzlbmfgc5rryvw7keb37r5xogf@aiw7cjkayux6>
+References: <20261024123124.3700266-1-yegorslists@googlemail.com>
+ <20261030104631.1044556-1-yegorslists@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,48 +59,22 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01841455-880c-4477-ac69-ea8c117cc6cd@samsung.com>
+In-Reply-To: <20261030104631.1044556-1-yegorslists@gmail.com>
 
-On Fri, Oct 30, 2026 at 10:58:05AM +0100, Marek Szyprowski wrote:
-> On 28.10.2026 13:34, Shawn Guo wrote:
-> > The proxy lets a consumer set the line direction and reset the
-> > default value and vote tally only when usecnt == 1, i.e. when it is
-> > the sole requester. But request() and direction_output() take the
-> > descriptor mutex separately. When two consumers probe concurrently,
-> > both request the line before either configures it, both see
-> > usecnt == 2, both fall into the shared path, read back the still
-> > unconfigured direction (input) and fail with -EPERM.
-> >
-> > On Nord RRD the two DAC supplies are reg-fixed-voltage regulators
-> > sharing tlmm GPIO 41. They probe asynchronously and intermittently
-> > both fail, leaving the codecs without supplies:
-> >
-> >   reg-fixed-voltage regulator-3p3-dac: setup of GPIO (default) failed: -1
-> >   reg-fixed-voltage regulator-5p0-dac: setup of GPIO (default) failed: -1
-> >
-> > Requesting the line is not evidence that a consumer has claimed it.
-> > Instead, count proxies that have actually configured the line (set its
-> > direction or voted for a value) in a new cfgcnt, with a per-proxy
-> > configured flag, and allow (re)initialization only while no other
-> > proxy has done so. A consumer obtained with GPIOD_ASIS that votes via
-> > gpiod_set_value() without ever setting the direction counts as
-> > configured, so a later user can never reset def_val/votecnt behind its
-> > vote. The count is dropped when the proxy frees the line.
-> >
-> > Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
-> > Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+On Fri, Oct 30, 2026 at 11:46:31AM +0100, Yegor Yefremov wrote:
+> From: Yegor Yefremov <yegorslists@googlemail.com>
 > 
-> I've hit the same issue on RUBIK Pi3 board, see:
+> The installed libraries (libgpiod, libgpiodcxx, libgpiod-glib,
+> libgpiodbus and libgpiosim) are built with both_libraries(), so the
+> shared variant is always built, even with -Ddefault_library=static.
+> When the toolchain or the environment requests a fully static link
+> (e.g. LDFLAGS=-static, as done by Buildroot for static-only builds),
+> linking the shared library then fails:
 > 
-> https://lore.kernel.org/all/20261028222803.2682808-1-m.szyprowski@samsung.com/
+>   FAILED: lib/libgpiod.so.3.1.2
+>   [...] crtbeginT.o: relocation R_ARC_32_ME against `__TMC_END__' can not be used when making a shared object; recompile with -fPIC
 > 
-> This patch fixes it, so feel free to add:
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> 
- 
-Thanks, I'll queue this instead of your patch as it's more
-comprehensive.
+
+This is a reply to a previous thead again. :(
 
 Bart
