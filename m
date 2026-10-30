@@ -1,111 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.152
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793363119;
-	b=fWGlT/c4KT8hIqdLmoreoPBl+lbmOSEaAkj5bZrDLn5VlfZ96j0uTZLwuA6g/39J45jz
-	 dLDtIMNq5hC3/wKfw/cPKmtlsYT9Tfe1DBdj7jADAehcq+tgA0b7ZO40umZK6jNx68rcf
-	 qWtxztMrZdlOZ4pPEFN26QH0GfNi7sWfoTSF8woQp2hs0mSov9iLoWzsv9t+Gzq9qJFG4
-	 66wsS/ps74yK35CznO30ELw560h/RklHWT4WpY6GRS54iZtY4BRZEvDaz1P8DGkzDlbVz
-	 MjPj3YE3ecyErfg1Oj4QNrkch+6dweBfihVuB64cJbTaHpP3fsgnXEnOPfbs9yebI2A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793363119;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=J8dAsB3ABUd2P8nmGjUreI+WMzKE8n8IiSWGI4JbEHM=;
-	b=PHO8y/khRayLUcOo4YosznC0d/uenQBWJxAtbFom2XKvT7KxM+vhUwW3yIPo+Ufuhs43
-	 6RW/SlcSthhxJqmumFFAOfQqZ05N+S2s0S/LEKWshqZF958esylJ3lgRMeKk7KBEtqXeB
-	 t74LpuAeqjfBwAlM3TwWXEi0AA3EhtgBnu7NzTOGWm8oNwpvGUtknw34awj/WVlLfemF3
-	 r6W+GnwqTt/11VZyG6dNZl0KwRJ6DV/wTU9Ml3CYt7Ul9jTlk0vE4wVe2+s8C5509U+Uw
-	 h6HbDIwEwPXojcGsWoF+I0MtV9B4P8Wu48dkKVCW463cXEZyhodjkdAL21EdDu1i0cA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arndb.de;
-	spf=pass smtp.mailfrom=arndb.de;
-	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=NnYKhc8O;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=ruVTPoyU;
-	arc=none smtp.remote-ip=103.168.172.152
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.14
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793363479;
+	b=bpnrHdyAsj+kRGRCi9Qfmqh2xItqMSBSYwz7M7h6zlv2TbQ28WbHvw29pJVZBlORoAYn
+	 JIik5UPLqPMLDXR5pgu3EvjPxWBxfar3+PHrQ241oqbbLO+A/LAhqj50AXDqRs5oaz3oU
+	 xJvKLhufJH76nlGzPvmv8ywAK2nuThBX9bdTSX3+oLmP1zoArqpOdT30tx+8UwXVHB7kk
+	 BvB6qN3m588UbT2dfsPILCGJ+UhkRRgqXd6Gsz6lCPgRvSIKuPBxpiE7+Vleyr45IQVrw
+	 Y/lCtpF+ipf4hqHT6G5+yGCbcuiflZG9s2URszyEHbAYKi8PViJGKnnHi1ehj2HYt8w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793363479;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=kTis4An4UyWz4xlpu/d8537qtJJIgPi/vZRnyXTaoaY=;
+	b=idxAkhDLWA3dSqKafMygKThzAUFCqRaC8mxuHNo7oCnPyfDKWkU7hI9QpEL3Myrcc8cb
+	 CMfHzeQ5pIs+Ily+vCuxPMTDeEW6iLnw8cXRtXTYQCUrLBD+0N/jQ3eWSqwCb2g/wTyqP
+	 2mQSV2t3wCa2Bu3d7noYZeVzYblIiiF/KqKIulqf7lHNZrzIBEDpxsRuh1mcCdft5aopE
+	 P3Kd4o0sFfWcoRH6S3qsLQiqRnNNZwEgMLcNbsoOrqyzpYG12pMCb0zOkUqB1egcgVGkg
+	 P0+zDboicznRxMz51OrxCm5RO3Xg0UKmkGAldCjC6vfslZIxKuyHEAaqAOjyr5Dh9GA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=PiLSE8Fz;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.14
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013014.outbound.protection.outlook.com [40.93.201.14])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A117A606A320
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 12:25:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A117A606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3627F606A31C;
+	Fri, 30 Oct 2026 12:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3627F606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=NnYKhc8O;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=ruVTPoyU
-Received: from ams-compute-01.internal (ams-compute-01.internal [10.64.2.61])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CC2961400183
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 08:25:17 -0400 (EDT)
-Received: from ams-imap-03 ([10.64.2.23])
-  by ams-compute-01.internal (MEProxy); Fri, 30 Oct 2026 08:25:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1793363114;
-	 x=1793449514; bh=J8dAsB3ABUd2P8nmGjUreI+WMzKE8n8IiSWGI4JbEHM=; b=
-	NnYKhc8OxhnuTLAhJbRHmsyXxr7iSNm0NhcLETnHmLlwdxquROZS10DPKZYNpL4Q
-	2yGHRipLfeq+D+PICH7hFpla9cQKTnLkjDZRQMAhKNmO3YjoDr9cBbh9cUifoZyS
-	Rsuy1vecDxoowQCiiHSAojqtmYSosyG9I1CkvoGUcVXbwPMx+yVxfPq2a2iekEAP
-	6+ObZ7JV//KJgZeKBDgjjdOQd+YWI7UVhk1mOU1LDZMdz8VqWc5PDeQ6+/+WmY7L
-	rn1ebJM3gUW7MQj/nc9g9tZPWv7e2WTiwvXwrH4l+jlkMpp9+UOYZTYUVGxtTTxj
-	zf0eJh5PLI6gWtLhqYnsXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793363114; x=
-	1793449514; bh=J8dAsB3ABUd2P8nmGjUreI+WMzKE8n8IiSWGI4JbEHM=; b=r
-	uVTPoyUCLgWu8Gm1TzCJzzH+w4hWxGlrNxJSYZ90I5H07rGOApI9czQvQH5G7d6c
-	MMto7icwSOJmceDzxaNL71BpzFOOL7CvgFn22fXnU0oP/oBYTYFX7cjWN7Bvp9LH
-	8ZgR397lCepU2FTQizCBqQ3nHpH3TaX2NbLiIgizJqn/jf9+APztJyz5hyWIRPJG
-	xbnUqF7/FcCWhYIHf3aAQRNZtnBbTE4z4ZkTOmPouSkquRYm9hpzlrLLdOSPNzrL
-	lMDTMCmRfb9kwjhw+zB4YojlCv/t63NPxzgqxONQj90MRnvo2aON8xN693GJL4Aq
-	KmeCf85K70b9f1tXH1xQA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
-	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
-	action=sign d=arndb.de a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793363114; d=arndb.de;
-	mf=PGFybmRAYXJuZGIuZGU+;
-	rt=PGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:J8QaEaq7IJOq0JDA3G2Fcn5vWF5KZGbnf/QQUtZXYJ0Aw/Z
-	0fU4z2pLty11iYbehhdlvuSAjcW1bFlnwju8UfA5YzAoCQT0Abz1eZo8siV+/7UA
-	E+UJhM9V+GT1o/dsSGUDrBjLzZRgFTcq9FCtmTIm0ju2Af8qHbFIVk20l7Ilgh/i
-	GpIvpXGuPGEl3EuZb0pS02Pnge+d7IisSVkfu/MoihBnYj7z4Jr3wAv8SxdQsWP0
-	IxYWeIvd0Q7YtUQBfe5/v0+HrNtHS94h5vM384Wq6ZCFD9yfnun9vL05ASqHVzxz
-	el00o5NgoZTf13RwdksWVQxq35zTpjgEVamZ+Yw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
-	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:UxV6YTAoizPqtWa2AKjflWrZ77Hac13iK0pOv5rsOTE=:Zb2QRSDduhAAZaKJYul8Fpn1yObyVkEUtJHw3o0ClbQ=;
-X-ME-Sender: <xms:pYzkahReiNadF71TTxmY85O4IfeA8J1dmYOUcAOEZh_x7xClk6S69A>
-    <xme:pYzkakM8R5xQWll_ZILuDt4bMTHxxZ0kFWawAJE2FYahkKoQ24yZdri_oxVUb_cQ8
-    GaeFE1OlwN0RCwuVzw4UjcFPSV5ll9UXmUkwv0G8lWM-Q9yPblQmtTN>
-X-ME-Proxy-Cause: dmFkZTEjdZ0WgKkDeZ8IivnHN+6FPi2JsxEAcdLRcU74d11ptltXsOcEZjcgcfftZR168E
-    EIO6J7QiGPQhuHkRDyG6EOG4oAJQ4UYkVdOUJI20ULjkxm7ziBeG52p28bahXxlpCY3UNE
-    g68WjC/XnD4RBVHNhJPdtq8tXpN0R5KRf1WNe5IaB45Yfj7TJKbZsiduV3NicElToLV7iW
-    qV/o0BNeWEflK2OQESy5mqGWEijeriULooLwws4KKtnIneMx2NbMoOU+UyJr+4zbEXLsuO
-    TNznEF6cHoRSev/AS+8N74XtUlIj0s0NkQfiF3PikAxBSLvgApRMMEmYCgH/vdDcUdeUcU
-    7LFIwMXT3KUo1Kke0WrSjSCAcgJZW5iA6vr7sDlpVB42Rt5s7yDXU0VjvrHBGVkLOgR63h
-    TRua6UzXd/s8L51Jw1YXLOdVQ4WBdeKCkiHwheGudyzR3KI8mNHDZ9zXvr5vLV/rjZnZBf
-    O06vlJ6cocxbVKkqJd276EuuOOUdteQzEi6PbFR1n3zhMQf4yVo+0MNgvzy4iZZRKFf9Iv
-    NXEyzqvwcJPXrWIFJ6HwdLmBH2i/rq6SxRrAOwpa3aIYFzwv5z1zxrijy1dUl35cWxiIne
-    pvjlj+1L9ZShKPsQVLOvF8prqgnjARLBYbezMCKhswtkwubg+4pHt/fILLHw
-X-ME-Proxy: <xmx:qIzkalTJdaYVdlRDHnqAMt1yAN8Zdiu_lyxC9YS9WY-ZrQbrEfYqig>
-    <xmx:qIzkamo7Iz_ZsiYWFDE6AThXyvdqemjpNBvO-1YTVUzvPT_wnbK4bA>
-    <xmx:qIzkaqPnzO5SSUvkUhpu5GFniLnw3mSEiEJWGDwmShbtjxMqsxiGCg>
-    <xmx:qIzkakya8L1StVeIWzkABZsO-WjOwJ0emIqiXVTcA28L_9-Z-MHCuA>
-    <xmx:qozkajw6P7XiW7VrfJnlv8PvD5-6XSb2j8BYbCY7QveDIbQPgymwf90e>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id ED26F32A0097; Fri, 30 Oct 2026 08:25:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=PiLSE8Fz
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PL+l5ur7I1JRCLQ41MIkn9ts8mCGxwFf1lQDHR502SYVGQYU6tRmb8JMQbtnlt+/WQzqOreM3nOxcBb95P3goxc1jaEIphnlljGmdON7NHxw5QCS8/pPS2j/sQvuL4NKGrhr7dz92w9doS0X7j7+KE4qokxIM59mJyAGfY6Q0Oa23zM9QwepMmJJhqehutgSBFM0xRMvX15Ngby+p8RHTctgDpTc7eYuJkSDvVq/BVC5345H2PswMJYK4NxWClnTOlRfdf/Su6vfMaBJ+PZZ+6GdF5DD7W19XK40k7JQl/MYgEkOBcL61A0jQvuBAmXfkd2NQ9pp/c4XykmtrJf1aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kTis4An4UyWz4xlpu/d8537qtJJIgPi/vZRnyXTaoaY=;
+ b=gIFnuoxeFyhix8GJbZv5IJVQ2Bcwq3ZtmBfYC0zIh/BDIQoXuuD1xAPkUghbBiPOZ3S40vSqDQv4oYMRML0Y8mfvgB5ef6SkH6CDHFUQy85rx574+PEsvXhMFs5ygjXiDaq3h7Dk8+YxEgivWBh18+Tvgyxodf2yTdrnH8M7Ruj8doAruewWmpM+Stje343Y6b/0ndsJR+F+870RbQXjyQ+PJZLSQFPL63qWbo/BUn7NQD7PUEtkB59haw5U2G/BUm6nI0vk9m/EiXEbEs5/uAEmncZCAaQamuq1xoDkJckmIjmE0zH70FYXUeKxn6Iv64XD+qGQOeWmjy9xO9CnTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kTis4An4UyWz4xlpu/d8537qtJJIgPi/vZRnyXTaoaY=;
+ b=PiLSE8FzQcp9LG0wRqkGEKFtArFiRXFq3QyGNf/EdFURmVlJSbcFhvKNKLJTvOLb29OncEiW9ihmnjs6tFMue9qW/8Wt/IRcu8yI60Wsa4MrjVWXEb02rMPci9EZ4Mda/yorkZh6zqsCr0F3xb1ZbBtu27Hs5RfBCcU9Kgb6sGo/R6jobQzCkTHA/jDJ+0Dg+HkGtGlSkfBy9IHoAKxqaFPF//fInBy+8a28y0gLjxAQJ9RQUlR622F+XAUwSJOwmODwMuW1rjkiA3CAarvxflc1Av1ZrfWx1tnjCUR5ZKy7bX2XuDZGMz2tj6R6wtvwidNLxaiUGOfBYd/sme+2NQ==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by IA1PR12MB8239.namprd12.prod.outlook.com (2603:10b6:208:3f7::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.9; Fri, 30 Oct
+ 2026 12:31:13 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0569.008; Fri, 30 Oct 2026
+ 12:31:13 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Sashiko <sashiko-bot@kernel.org>
+Subject: Re: [PATCH v4 6/7] gpiolib: cdev: don't report a failed line read as an edge
+Date: Fri, 30 Oct 2026 14:31:10 +0200
+Message-ID: <20261030123109.1935475-2-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261030111435.GA76958@rigel>
+References: <20261029-gpiolib-chip-removal-v4-0-aambrozewicz@nvidia.com> <20261029-gpiolib-chip-removal-v4-6-aambrozewicz@nvidia.com> <20261030111435.GA76958@rigel>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TL2P290CA0010.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:2::8)
+ To PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -115,97 +104,90 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: A9hbWorxIEzB
-Date: Fri, 30 Oct 2026 13:24:49 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "James Clark" <jjc@jclark.com>, "Matthias Kaehlcke" <mka@chromium.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Doug Anderson" <dianders@chromium.org>,
- "Ravi Chandra Sadineni" <ravisadineni@chromium.org>,
- "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- regressions@lists.linux.dev
-Message-Id: <10ad94b3-66db-49b5-95c6-3ce9090f3278@app.fastmail.com>
-In-Reply-To: <20261030114705.3159093-1-jjc@jclark.com>
-References: <20261030114705.3159093-1-jjc@jclark.com>
-Subject: Re: [PATCH] usb: misc: onboard_usb_dev: don't defer the USB device probe
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|IA1PR12MB8239:EE_
+X-MS-Office365-Filtering-Correlation-Id: 837cd9d0-83c1-4b9c-7ddc-08df3681af60
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|23010399003|376014|7416014|1800799024|22082099003|18002099003|56012099006|4143699003|11063799006|261022075727099003|261028144727099003|261021123027099003|261021121427099003|261009223027099003|261022105027099003|261026140227099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	nkJciIJdETWJ7MtwxNQ99Xdw8ks57OUmOu3no1A3X3CAPYPIqPlhCPaNXl2+gGaZjByVpnIu7ai8daO2Sj/wNKzUcTdbZMYwQvDqCOXit3EfPt+6+PkptswY6q6Pb955PNu6F8gJEdq3zAlVXu25tqzeh59JIXkGEy1DNJXKrm/9JIXyAwrnAzKye6jtrHzA3bTECYl1WojWZB+9MIGYRzBhpZ1r0KjYhlyAm1L51S9Lic0oh8hXVrqWvt9dOpNmjDnq56Sm8U32jk7843dlHuVfcVaib0Cs+O+wizsAusxqaIxpL8GIwpzgdsh8PEQz6arL1Lp8skrzTPfftNLsuOzATKKq7kiluHg2EeBzB8N5JBfgFX2j23aLuFMtW+OSE+EIerymWhFWeidJmGdyQAIP0aACfqu5cqikBQWQEE4lTtaZUJmvniKCuOxM2T4Rp5fRHGoYbESDWQO3cIFjZkQqTJdfBKZj9z4fJ3fqFHMkxVA/t3aUUkTVENY8p/yLUnY5Lype72K+TGdpExmLUu1bbBPBx83pLkh3Qz43X//ptwmoOuuAk8XfXxdoD4ZL9kHmw3VB+EUjzrTEx4lbJIDmi5QDdPSwqT3guNPX2itKCpfNUkECd63OsiF6V8c86j2z9CJ4WqMuSkmZ2Zs+BNGvs3UQ8G/ygAlberVeNxQ=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(7416014)(1800799024)(22082099003)(18002099003)(56012099006)(4143699003)(11063799006)(261022075727099003)(261028144727099003)(261021123027099003)(261021121427099003)(261009223027099003)(261022105027099003)(261026140227099003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YL7orgwbvTIUP7JmZE7IMlb4HXtaSR8IGOHbwV+yFrth1Yi901xqCywYJ1f2?=
+ =?us-ascii?Q?n4I82mnES9Fdvea7IQ5UsrtE0ouq3XxNkIlkZTOS2oxYDRK/dmkFIp1W6W9L?=
+ =?us-ascii?Q?H5NHL7FLoGBTVdRaubzF1Sd6TbgllWmf3foi7hYV7dErrJ12Xhwd4qa6wiH4?=
+ =?us-ascii?Q?CwTToXOYnp0MTLRly5s20lris32cwdYj1MKWB4ez7ZJPLcA7tEAciBPF/owR?=
+ =?us-ascii?Q?3cQlS3lcwmO6o4ziOri3dnOrrYmrj1OerrU8RSzEnco0bRCm8NdMJRvbxwiT?=
+ =?us-ascii?Q?2bUOmOLcY8sHZHxtcaBV0FXhy7i94DPcpjvHW+tugr2w4DkO6vhB+B+N9Dye?=
+ =?us-ascii?Q?nAJEGzbLyJi8RiQAD6SUu+yZncBB2ujLSCubKr9l7N8dmdO21KKm/5GJmNcu?=
+ =?us-ascii?Q?+P13bW4/0frmTJ21VGSN+qL45VQaRHDeMR8Kzvb5IAFtQZVdErCbSZww9NJi?=
+ =?us-ascii?Q?ebgyGKr87lS7gEV5TJ1JIZZQ85zbKc34bCqr7vGtkm9uNnd099J1SnsxVwok?=
+ =?us-ascii?Q?0RBa1wBR7/GhfTPyVeDSlySSlEw3TmlTW3MX3biafKAqqAooCvNw7BnzFhas?=
+ =?us-ascii?Q?VyarQvnCmxTaD4K4jD/W3ns0ag96oIyeD88dF9lAUtVYt6vCGtHqQhRD1DQU?=
+ =?us-ascii?Q?qqsGEG8iJQ6RabUpVY1pFYzdOA01L0/ghPt+ZALj+cQaxC3p3Yjvm2/EEGmf?=
+ =?us-ascii?Q?vJyGckBlN2fjVDAbX69FQZI3Sw2I5O5xfhXeLgolArnS7YWxP8Qltcne6cfy?=
+ =?us-ascii?Q?eDa0Op8EDicULTekByS+pLstEwCDpLLPRxuXOaTo/BUNzcEn8jUyMrGhw/yf?=
+ =?us-ascii?Q?t/+4qubVv++HEGoqgXg9E20hMwcrUQZmV44sHzujlBxpuR7x2IMLDb6WJC7o?=
+ =?us-ascii?Q?rzJpsmuhEhq3eRi/P0LcKJfYC3Jykjdvzepy6p75ElJB+TBUwuFZVqvC0H0H?=
+ =?us-ascii?Q?644+ZZRlRrQnOOUF0SA833d9AuGyIQTNDNMHFzTILSfp5b0sbGadCWJIN4WH?=
+ =?us-ascii?Q?lVjRskGEjmNy1o7CJ5HO3wwu95emzOqVHTJF4mMZPJCrGy28Dmo1eqfSTMEv?=
+ =?us-ascii?Q?QxSf8xOII3F1cqKutSarVK46/e+gk9+I1Td4y/UKkTwuDfxhVq+5aJOAjajh?=
+ =?us-ascii?Q?bQlCX4weFV4CLMqc+GLMmeEfFJaNwMZP5OywJhHe4jMVAsQzklI7ddQxymoI?=
+ =?us-ascii?Q?DECXKEKJJGI6EIpfs4+YI9wa9uE9XxS6Wp3kJSdMheP2SOHJbZR4Sil1CY22?=
+ =?us-ascii?Q?Wqvz7l5C6ZK6fC4KNAuWZYmAdtcvVqz6P5/JYM+In8TpVkuDO7GXJipcrdgB?=
+ =?us-ascii?Q?+xfYeFfcJLF/8AyzWPoE49saETIVa4mQNQKMoUmlJz0gczbIPhSYqLeJwqRR?=
+ =?us-ascii?Q?ZzLSq3ZLVTFSmDe7kGSr0OOAVKQ6Fpo17a9k4K/JdVml+WaQUbm10euy+Ypq?=
+ =?us-ascii?Q?FgmH4Hjf1gIvipSpEchSjWGX5PRuEchHvJy30sz3hHopJMz/E5Vk42p7k7OL?=
+ =?us-ascii?Q?TUjdndto/i6X/CnQ+Cb2i34v0Vs4AVBrg9GQNj3/2wwWt+ot9yI2it9GGwva?=
+ =?us-ascii?Q?7j5OhccxHF0VG3gi8XjxWCdCb4b2SQRw8GEEQAA2EwDyMVprhl3JFAPkD3jw?=
+ =?us-ascii?Q?pM+7zLgJEiXq6IoheEDrW2GjsWwp/xR8y4h7Y0ZllVX+R30zF8pVk68Pnmru?=
+ =?us-ascii?Q?lyRSx5x+g/hjX4lbpC5QadTEzM7ShtPlzYx6IcIF3Bsx+bJPcco51BOKWhz6?=
+ =?us-ascii?Q?XVwoSHB1fg=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 837cd9d0-83c1-4b9c-7ddc-08df3681af60
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2026 12:31:13.3275
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nvTZt8c7pmhfrPA6raDYHCfIGXdAZs3RXkSDTTJsqdfZuScWk2btbaFdloCQQzv5i5L/bImmzMxmbWgOD1rSyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8239
 
-On Fri, Oct 30, 2026, at 12:47, James Clark wrote:
-> On a BeagleY-AI with BeagleBoard's device tree, kernels since commit
-> f918e3804498 ("arm64: enable HAVE_SHARED_GPIOS for all ARM64 platforms")
-> no longer boot to a usable system. The log repeats "hub 1-1:1.0: USB hub
-> found" for the on-board TUSB8041 hub every few milliseconds, with no USB
-> disconnect in between. The flood of uevents stalls udev and the boot ends
-> in emergency mode. Reverting that commit makes the board boot normally
-> again.
+On Fri, Oct 30, 2026 at 07:14:35PM +0800, Kent Gibson wrote:
+> > Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+> > Fixes: 73e0341992b6 ("gpiolib: cdev: support edge detection for uAPI v2")
+> > Fixes: 2068339a6c35 ("gpiolib: cdev: Add hardware timestamp clock type")
 >
-> The underlying problem is in onboard_usb_dev. Both peer hub nodes in this
-> device tree carry the same reset-gpios, so the GPIO is now a shared one,
-> and with CONFIG_GPIO_SHARED_PROXY=m (the default) the hub's platform
-> probe is legitimately deferred until udev has loaded that module. The
-> bootloader leaves the hub running, so the USB core enumerates it long
-> before, and the USB device probe finds the platform device without
-> driver data.
+> How did you determine that?  Those commits are where the associated blocks
+> of code were first added - not where the problem first exhibited.
 
-> At that point, onboard_dev_usbdev_probe() returns -EPROBE_DEFER. This is
-> what causes the problem. The driver has generic_subclass set, so
-> usb_probe_device() has already run the generic probe, which configured
-> the device and bound the interface drivers. Each binding is a
-> deferred-probe trigger, and the driver core re-triggers when a trigger
-> happened during a probe that then deferred. So the device is re-probed
-> straight away, reconfigured, its interfaces bound again, and so on for
-> as long as the platform device remains unbound. This is not specific to
-> shared GPIOs: it happens whenever the platform probe is deferred, and
-> briefly whenever onboard_usb_dev is a module.
+From the hot-plug case in the message: a driver's ->get() error has
+reached these checks since each was added. Removal is newer, as you
+say.
 
-It sounds like the underlying problem should be fixed elsewhere,
-possibly by preventing the deferred probe to be retried each time.
- 
-> +/*
-> + * Attach a USB device that was bound by onboard_dev_usbdev_probe() 
-> while its
-> + * platform device was still unbound. The device lock serialises this 
-> with
-> + * the probe and with an unbind. This walks the USB bus, not the 
-> driver's
-> + * device list: unbinding a device holds its lock while it waits for 
-> all
-> + * references to its node on the driver's list to be dropped, so an 
-> iterator
-> + * over that list that takes the device lock would deadlock with it.
-> + */
-> +static int onboard_dev_attach_usbdev(struct usb_device *udev, void 
-> *data)
-> +{
+> The failure mode you are addressing was added by
+> commit d83cee3d ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU").
+> Prior to that gpiod_get_raw_value_commit(), and gpiod_get_value_cansleep()
+> and gpiod_get_raw_value_cansleep() that wrap it, wouldn't return the error
+> that you are handling.
+>
+> Could you bisect to confirm?
 
-This conceptually looks like a layering violation: no driver should
-have to look through the list of devices like this.
+Confirmed: with gpio-sim and delayed IRQ threads, a falling edge
+during removal reads as falling on the parent of commit d83cee3d2bb1
+("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
+and as rising on it, 10 of 10 each.
 
-> +	struct device *dev = &udev->dev;
-> +	struct onboard_dev *onboard_dev;
-> +	int err;
-> +
-> +	/* Unlocked pre-check, so as not to wait for every USB device's lock. 
-> */
-> +	if (READ_ONCE(dev->driver) != &onboard_dev_usbdev_driver.driver)
-> +		return 0;
-> +
-> +	device_lock(dev);
-> +
-> +	if (dev->driver != &onboard_dev_usbdev_driver.driver ||
-> +	    dev_get_drvdata(dev))
-> +		goto out;
-> +
-> +	onboard_dev = _find_onboard_dev(dev);
-> +	if (IS_ERR_OR_NULL(onboard_dev))
-> +		goto out;
+A test chip whose ->get() returns -EIO gives a rising edge on that
+parent and on gpio/for-current, none with this patch. pcf857x and dln2
+already returned such errors at commit 61f922db7221
+("gpio: userspace ABI for reading GPIO line events").
 
-IS_ERR_OR_NULL() is almost always a bug, make sure you understan
-the interface and what this can return. If the function can
-actually return both error codes or NULL pointers, fix that
-first.
-
-     Arnd
+I would use Fixes: 61f922db7221 for ->get() errors and d83cee3d2bb1
+for removal. Is that OK?
