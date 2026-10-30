@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793399843;
-	b=gpRbErvMw3NGoeCUCEVQQH1k1AaMboq9wjlJNrpHe6kocoCiqykZ68bIGcE2I2PD4Drm
-	 7aBiP2aIySUBTDIJAb904SbFLnWGwN+TrY9lOmkAIuXwU9AKQUqBu5y2Cnav7FQxNrrVa
-	 qg93M00o6ZYEkjWLJCEhiRGrftyVmlP3IyYZHlPcp8Va63xpn6Ko8S/VOImk5sPoMF6mx
-	 DRRZoVOAkui8uGjDRlBoQm7UNUlzMRaRW208GlGe5K+gYYCbmTXplFnU2y/dhD5f5QEHu
-	 rQvrYQ0MRx5SBEitATk1xB/xyKbTlXKaUAANxLsbBTRNFRfisk9D1kXHfxMaRfknmUQ==
+	t=1793399848;
+	b=wjkY6SyT+jicPLOWCmEVGagK421D9YCIa30YbWJNOU3z3ZagLFRfiNhUVPc5d5BiAgdi
+	 ZkyF4jvyalakh86JUAQNxji5aXE8EeybtrgkB5td/i6DyQXiPMGiCp77s3w+ZuxyTpZFR
+	 2qo8SrQhx4XINgD10Q/J9ImCuu9EwyQhRLsVMSNve6LfZkSL7aUjS1umpOKpbo49i0hGr
+	 QoFrXIUk+6PLu0RHhGs7+r6tfNOURg/5pDvxQYWBgUzTM/4f0mP4lVQTlhWeIkC9PCkK1
+	 A394dvTT9Tl6/CA33s7jfXp1e44EGU0f+u2uuV6tgW3lI4KGiJ3MKsHieut5fQbQZLw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793399843;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793399848;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=iy2vWnAv47fFBVaJTkHBzmpFs80GGZb6KnvE0IocUHo=;
-	b=x5mXnwXxd6v/Sc8VW1e/lbif4WQHLD3UNqr8WSXSBNI63JQBx9VvrSvN59BY0SmYD+Gp
-	 W6js4hs1Nb3Ek473NyDLMlMO6I4/oTPzcFLOM1z7ChWXnwJfbPAn23EMDctqRMxVsfyx2
-	 sVhYOHXRPI11pSsXujdrrx3btYSOfmgv7MDUXpqAsS9+6VFsoIfIjmzRhKHTE7oyRQiRy
-	 iYwEKBkubQ6KVmoFvVRb1/oYWoptXUdnLf9iNsUtqpYiBrlR208C74hoqmJ06lAaw+1yM
-	 sCH/0V6KpaZq2AN/fj9+10FnlLdmP5tbOj4YmKRrmbJRTm6Gg682BvHQQq+db/G4l6A==
+	bh=uJVUWRv+X+dXynVZ6IIPhUljYt+AbMuyn+nbQfPo/N0=;
+	b=kAq2j3CN2XsuzAstPsiJZthDPbrrI4KT7gUrp34bvg+V2EsPOzEbA370YGv4J2rV9J4N
+	 onu8enoWapbZw8MPmTQQxuzpA4bBauSL9ekmvXTh8buwdz1ftHL/OjO1Cvd3rv4j9WfHR
+	 H2ObUwewR2ZhL6k4UkgC4cM4LoQtHm7jSBGgNGapBIzTFs9tryyWfUzJBfrgUnqfqJ5wu
+	 3TArkFo32OGgGeylnXM7ZYlK96F6PXCLQtByCM0OD7tF+x0tAXbGueL6oThzjOsrbUz13
+	 VxgBhPSnKRkB+LRkgP8W8fIhhtFQ/Vg+mjfHM/6qxb9UkkNotnNIySvMDZ4DED9YAKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=liDP2yMk;
-	arc=none smtp.remote-ip=209.85.221.41
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yd5EpnNO;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D56960A2615
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D56960A2615
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A3160A261B
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66A3160A261B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=liDP2yMk
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48b060ec084so695245f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:37:22 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yd5EpnNO
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a215e64962so12085175e9.1
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:37:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793399841; x=1794004641; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793399839; x=1794004639; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=iy2vWnAv47fFBVaJTkHBzmpFs80GGZb6KnvE0IocUHo=;
-        b=liDP2yMkAQsavocyDzM8xkVy8FVhK/1vLsOoln2jfsx66BKSp/9TY4gurQ/Piuq3FM
-         grR5p7cpB/cPdLjeoJzFH3adEg01Iu5lOImrTIYTiGOJ1eBlVZ8kwW61QZ8EdamNIL4z
-         IJfjV+BuWfoKUWXm44zxmi17oKU8AnxMuNclGjomM5yeFzm6n4dr/WKn3bUEUid4SLQj
-         tp0MVn5eyQERzWvEVnf9JAjWJ7YgL7a5ckdURnvOk/Z4pJhLIzkH5dXoZ2FEQOI43FkT
-         likNs1IiIZooAPlglJzC4/Y6r6lw/ReOGdfUra7UET4eWUUgCI1EchqdPBqRUqI4KBcW
-         WgVQ==
+        bh=uJVUWRv+X+dXynVZ6IIPhUljYt+AbMuyn+nbQfPo/N0=;
+        b=yd5EpnNOD2uZtleapc+hZXnJ+TEjXTpUZJmmTe21kU25Yu9fYu/s/whBTAuP3x/wM1
+         V8WVki5h1ivcr/NvTgB/TSTWqpQTfTVwqIwYn553dt0xaJtEb4TuWmeWmnHx1JLLAAxE
+         KzWhcuPfI4kmVS06PeLeQrrNtckKErC+nCg+N1oO+yVXbrfyqwLpyZ5NFcj4nE6Mqdg9
+         X6rQHL3kift3MfQof0XedmmzQedYkMTMeFTRGx1/MGrKVve+vxLlUKZTBOQ2EtMfYtQO
+         rkHZJIzfu/mf50nmcYlvQACKBaK5OR7zp48II0T/3RsRzqTqddDLj3P1fHHUCj57nHC4
+         8jZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793399841; x=1794004641;
+        d=1e100.net; s=20260707; t=1793399839; x=1794004639;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=iy2vWnAv47fFBVaJTkHBzmpFs80GGZb6KnvE0IocUHo=;
-        b=byIL0k3R+k48H7eJNyqoXK+9eBuPUruO0mTV7pVx5ZwaKybEvOx0rXhB5GML0xAk72
-         QK/TD2Nj97wkc1/DguIshM/v/yIICJOZYUggXotoI5RMSLgdcRMhQUUqn9wjtBeaTRgZ
-         ImbZqhfVEWN1FAXnDVQQp92kTAzWQsJoGB665gfAI3WdvlOE1cEHiHgtwDhg4yH//Ij4
-         OMb4rXMBwmjI1jFQkp8DclOYJDW0soTP/vw8iZIaXnMIpamkn+dgHdMrXvxyfY9LotIZ
-         cADOfKDJaVsys6WyzLahq7Ch069GfPwnCEbQE3hX+RPEW8GTqOO3AiXgqmH/kFLAl5TH
-         w72g==
-X-Forwarded-Encrypted: i=1; AKwUvBwzGMHxtCRyQ8rML7ajLpgB5uqDJzw7Mu2/zCqVIlzl6phQHZmTvmGVsSKZtkLWa0LLLdHHIU8TylnZ@vger.kernel.org
-X-Gm-Message-State: AFq9FYKaKpl4byuxmQpry4zUavuy2U4hdNnzYjxd+Q4RgQbp29NNlXib
-	X3I28vNbzNnIW5BoC0bIZLCrXvypk9hdvT221HOLJJ76E3/8uP4MsoE+
-X-Gm-Gg: AYBFou24sN5Q8LdpqekkjWwTPHmbGcSXUxhe3hC4nHcLVqnAc5EKlR3TPtLNvEpK7Ha
-	6b8K216qhChOrCUd6F3VEmIorg7S6AdCLWSZRs5zMVKUfREIbkLF7kqAwpHsPuVlhO8JBp4Gc5x
-	8g+AuQygvQZqEFMSOhcbgvFE4wbcdsMC4Qp0YCyEX/Y83BczZHVX7wlUievL/aTi+GRL3f6teGz
-	MwUQ/a9KFT62SllLM2Wr1otGBRHqzv9kSN13YYxpo83/RbQxo/e5s8Gg/N38pJ7udosXZRe+Pkt
-	4Ws8tOTbpA+tEfU3Nh1YkURElg4oicnqN1/eF2aCZNC/mZSckBsKtSlC6OyyLXrVvSpOt6ldT1Z
-	mi5OqNERIFEjijHypYKnpJm/MhcJbeiASrzfRSKfPriEGfN00Cwlb41du7FVvcb5RMkEJ7fqUGj
-	CGb/MV8rSuoFk+ACMlhwWcBNejX7BMHEyryOtGOJKwV2knzzE793fhLgnTN8yz5IQlgXm9TKrpn
-	dk4Mfdtk1NhefaVPwTjYQCAzq9Syd+Zip830GeIDgEEP7e2Fz/nZmUzLbWq4J/Kc/g80E6nlKvZ
-	QtjChaenCQxoWx2DGi6/musuDzjngw==
-X-Received: by 2002:a05:6000:2c0f:b0:48d:faf4:54a8 with SMTP id ffacd0b85a97d-48e6e2eb434mr8052401f8f.11.1793399840783;
-        Fri, 30 Oct 2026 15:37:20 -0700 (PDT)
+        bh=uJVUWRv+X+dXynVZ6IIPhUljYt+AbMuyn+nbQfPo/N0=;
+        b=M45A2fGVl/yZ3ePEWO3Itwmf2RWvx7TcpvXIZanOFW8MNDyedtBH50XpFJ3pU58yd8
+         tU40Pvjp0Kw0cCUQ+tZJYTIAixd5DzsBwAgFa7MyXudzkqbzgBJMVYpkqhsU3SVAsiNu
+         AsHOnGaayaUMjSqnv/Ad4dHkd3Jc/9iid8m8MW5mFwGHU1JcX9QBOzPZ9SBDeoTjKnah
+         rCEXeX5DIh2/PjOafR6sGmaxpybRzx74w8r7JyMazPV8GeWEkv1DILLARZA7XNEhJonW
+         BZ7enA/qD0uAQWnRTiQAiI2a8k6BEAJAllw5VqUyJgvLpPc0S45TbRRTEv3aYgFYbrBE
+         gh1Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxJEKHUY7ESgTmumzMg/lKdA5bxAkNibnBOT4eo8ZCRHOSxgiPalNsgPM4IDt5au3jYJ78g1fgdUcmW@vger.kernel.org
+X-Gm-Message-State: AFq9FYLBKOa2N903zO3j7R6Hnc+9XPjMBbyXhU9WeYJDW3fPDU6FbTvO
+	HuLmy3YZan+9Lqju1+86HNW+g4QXaY6JcKn6Ekeq6AmZSPv0E/NkJSBK
+X-Gm-Gg: AYBFou2+n58qJuYdcDWp0KDkEhSzVygVs/CKp0aMs7PkFJenjqtOn9G9N8ZlIee804g
+	OWH/3RwgCda41XLQdKY4gNx3oHAoIGo+egM4ZlqoHTWIyS9YsXcjbVF91psfOtR9HdzgKU5udyU
+	RG3NsNlefhIn3EGFYgJOLsB+2qsXs2EbLAiY/TYuRSMnfpX/ysGXhQQKVL9pE7D/JwLgIliUHA7
+	76LUlunuGjL7t/9MQ1vcUcogPNXee1C2TDxltKiLYer6utMV+Xn53Jy+fH/zFWqgE0jU7PG+clW
+	Tu2q7UHBthTStX9N3CIJ6oitQeOxEFfWX86GbZJUZmYjA8XdEJ9ZGYzaiuuod0pO597wIsUkQq9
+	LBma4gQXIZ95FPEbEn5JjgTPWynL2J18TSmvEsAttQWT04APsupCvPoQoiPbJo4WrlFATES1Hz1
+	bUF1YKvohLcdcMowipkMpZlz0jdEg3ECrYo4jOCHVymQ3bF/Zra8OVVvnjG0e3OZ4GPmjU7WEjD
+	gnjtj+ZO+FE3Kwcjj05xg3Mp50q3z4DZi/BJuzFp3rEDE24MIlFYibfhJFsRdQX74YDvFQ06wi3
+	SHeiQeJ6dOYP22azZvR0QlP446a6
+X-Received: by 2002:a05:600c:1f93:b0:4a0:1fb9:2f51 with SMTP id 5b1f17b1804b1-4ac182dbc34mr81626205e9.14.1793399838726;
+        Fri, 30 Oct 2026 15:37:18 -0700 (PDT)
 Received: from m2.. ([37.142.145.227])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.37.18
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.37.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 15:37:20 -0700 (PDT)
+        Fri, 30 Oct 2026 15:37:18 -0700 (PDT)
 From: Michael Zaidman <michael.zaidman@gmail.com>
 To: Jiri Kosina <jikos@kernel.org>,
 	Benjamin Tissoires <bentiss@kernel.org>
@@ -96,10 +96,10 @@ Cc: Linus Walleij <linusw@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Michael Zaidman <michael.zaidman@gmail.com>,
-	Andreas Boose <Andreas.Boose@almex.de>
-Subject: [PATCH v2 11/15] HID: ft260: workaround for TN_189 errata endpoint STALL after enumeration
-Date: Sat, 31 Oct 2026 00:36:33 +0200
-Message-ID: <20261030223637.86907-12-michael.zaidman@gmail.com>
+	Chris Keeser <chriskeeser@meta.com>
+Subject: [PATCH v2 10/15] HID: ft260: i2c: fix large write transaction failure
+Date: Sat, 31 Oct 2026 00:36:32 +0200
+Message-ID: <20261030223637.86907-11-michael.zaidman@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261030223637.86907-1-michael.zaidman@gmail.com>
 References: <20261030223637.86907-1-michael.zaidman@gmail.com>
@@ -114,363 +114,134 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-FTDI errata TN_189 (Section 2.1) documents a silicon bug where the
-FT260's USB interrupt endpoints are occasionally halted right after
-enumeration. When this happens, Clear-Feature ENDPOINT_HALT does not
-recover the endpoint and the only known recovery is a USB device reset.
+Fixes a regression from commit 5afac727defa ("HID: ft260: missed NACK
+from busy device"), which waited for bus-idle after every HID write
+report except when the report flag was exactly FT260_FLAG_START.
 
-This patch implements an in-driver workaround:
+Multi-report I2C writes keep the bus busy between chunks for atomicity.
+Treating those middle reports like a final STOP caused ft260_xfer_status()
+to spin on -EAGAIN after the second HID report and fail large writes.
+Write-then-read combined transfers still worked.
 
-  1. ft260_check_intr_ep_health() observes the STALL by attempting an
-     actual interrupt IN transfer. The FT260 does not honestly report
-     its halt state via USB_REQ_GET_STATUS (returns 0 even when
-     STALLed; confirmed separately by FTDI engineering with a USB
-     analyzer trace), so we cannot rely on it; instead we let the
-     host controller return -EPIPE when it sees the STALL handshake.
+Pass the bus-busy check policy from the caller: ft260_i2c_write() and
+ft260_smbus_write() wait for idle only when the report they send carries
+STOP; intermediate chunks and the command phase of a combined transfer
+do not.
 
-  2. ft260_check_dev_responsive() catches the broader broken state
-     where the interrupt endpoint may look healthy but the device
-     still fails to respond to control transfers. A USB_REQ_GET_STATUS
-     to the device with a short 500 ms timeout fails fast on a broken
-     device, preventing later probe stages from hanging on usbhid's
-     default 10 s timeouts and starving the usb_hub_wq workqueue.
+The SMBus side matters for register reads. The command phase is written
+with FT260_FLAG_START and no STOP, because a repeated START read follows
+and the controller deliberately keeps the bus busy to keep the
+transaction atomic. Checking the busy bit there makes
+ft260_xfer_status() return -EAGAIN on every retry and the command write
+fail with -EIO, which breaks probing of clients that read registers:
 
-  3. When either check fails, probe schedules a deferred work item
-     and returns -ENODEV so that hub_event releases the device lock
-     quickly. The work item retries usb_lock_device_for_reset() up to
-     10 times (~10 s; each attempt already polls for up to one second)
-     before giving up, then calls usb_reset_device() and explicitly
-     unbinds/rebinds all USB interfaces to force usbhid to recreate
-     the HID devices and trigger a fresh ft260_probe(). The
-     unbind+rebind step is needed because usbhid's pre_reset and
-     post_reset both return 0, so usb_reset_device() alone keeps
-     usbhid bound to stale HID device state.
+  ads1x19 6-0040: Failed to read config register: -5
+  leds-pca963x: probe of 6-0008 failed with error -5
 
-FTDI engineering tested this on a Raspberry Pi 4 Model B Rev 1.5
-running Linux 6.12.62-v8+ on an xhci_hcd host, with the FT260 connected
-at full-speed through a downstream USB 2.0 hub. Across 28,684
-re-enumeration cycles, 350 cycles triggered the recovery path. Two of
-those required two consecutive USB resets before the device returned.
-All 28,684 cycles recovered to a fully functional state with I2C and
-UART working end-to-end.
-
-Queue the work on a driver-owned ordered workqueue flushed on module
-exit. Do not treat a GFP failure as a TN_189 stall (reported by
-Sashiko). Leave the reset requeue uncapped: that is the recovery FTDI
-tested.
-
-Reported-by: Andreas Boose <Andreas.Boose@almex.de>
-Closes: https://github.com/MichaelZaidman/hid-ft260/issues/40
-Link: https://ftdichip.com/wp-content/uploads/2026/05/TN_189-FT260-Errata-Technical-Note.pdf
+Fixes: 5afac727defa ("HID: ft260: missed NACK from busy device")
+Reported-by: Chris Keeser <chriskeeser@meta.com>
+Closes: https://github.com/MichaelZaidman/hid-ft260/issues/35
+Tested-by: Chris Keeser <chriskeeser@meta.com>
+Reported-by: Bruno Giacomazzi <brunoceg1@gmail.com>
+Closes: https://github.com/MichaelZaidman/hid-ft260/issues/42
 Signed-off-by: Michael Zaidman <michael.zaidman@gmail.com>
-
 ---
-v2: flush reset work on unload; do not reset on -ENOMEM (reported by
-Sashiko). Reset requeue left uncapped (FTDI recovery path).
----
- drivers/hid/hid-ft260.c | 245 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 245 insertions(+)
+ drivers/hid/hid-ft260.c | 35 ++++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-index 65835e13fa2a..923ce6ee9dcf 100644
+index dca0250f2c25..65835e13fa2a 100644
 --- a/drivers/hid/hid-ft260.c
 +++ b/drivers/hid/hid-ft260.c
-@@ -12,6 +12,7 @@
- #include <linux/hidraw.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/workqueue.h>
- #include <linux/usb.h>
- #include <linux/serial.h>
- #include <linux/serial_core.h>
-@@ -2396,15 +2397,229 @@ static int ft260_uart_probe(struct ft260_device *dev,
- 	return ret;
- }
- 
-+/*
-+ * FT260 errata TN_189 Section 2.1: the USB interrupt endpoints are
-+ * occasionally halted right after enumeration. When this happens:
-+ *  - Standard Clear-Feature ENDPOINT_HALT does not recover the endpoint
-+ *  - Subsequent communication with the device is dead
-+ *  - The only known recovery is a USB device reset
-+ *
-+ * A separate finding from FTDI engineering (confirmed by USB analyzer
-+ * trace while testing this workaround) is that the FT260 does NOT
-+ * honestly report the halt state via USB_REQ_GET_STATUS: it returns 0
-+ * even when the endpoint is STALLed. Detection must therefore observe
-+ * the STALL handshake at the host controller level rather than ask
-+ * the device.
-+ *
-+ * Recovery is performed by a deferred work item that resets the USB
-+ * device and unbinds/rebinds all interfaces to force usbhid to
-+ * destroy stale HID devices and create fresh ones, which triggers a
-+ * new ft260_probe() that succeeds.
-+ *
-+ * https://ftdichip.com/wp-content/uploads/2026/05/TN_189-FT260-Errata-Technical-Note.pdf
-+ */
-+struct ft260_reset_work {
-+	struct work_struct work;
-+	struct usb_interface *usbif;
-+};
-+
-+static struct workqueue_struct *ft260_reset_wq;
-+
-+static void ft260_reset_and_rebind(struct work_struct *ws)
-+{
-+	struct ft260_reset_work *rw =
-+		container_of(ws, struct ft260_reset_work, work);
-+	struct usb_interface *usbif = rw->usbif;
-+	struct usb_device *usbdev = interface_to_usbdev(usbif);
-+	struct usb_host_config *actconfig;
-+	int ret, i, attempt;
-+
-+	/*
-+	 * Retry the device lock for up to ~10 seconds. The lock is held
-+	 * by hub_event for the duration of device enumeration; with the
-+	 * fast-fail responsiveness check in probe, both interfaces should
-+	 * abort within ~1-2 seconds, after which the lock becomes free.
-+	 * Each usb_lock_device_for_reset() attempt already polls for up to
-+	 * one second internally.
-+	 */
-+	for (attempt = 0; attempt < 10; attempt++) {
-+		ret = usb_lock_device_for_reset(usbdev, NULL);
-+		if (ret >= 0)
-+			break;
-+		if (ret == -ENODEV || ret == -EHOSTUNREACH) {
-+			dev_dbg(&usbif->dev,
-+				"device gone before reset (%d), abort\n", ret);
-+			goto out;
-+		}
-+		/* -EBUSY: someone else holds the lock; retry. */
-+	}
-+	if (ret < 0) {
-+		dev_err(&usbif->dev,
-+			"failed to acquire USB device lock for reset after %d attempts: %d\n",
-+			attempt, ret);
-+		goto out;
-+	}
-+
-+	ret = usb_reset_device(usbdev);
-+	if (ret < 0) {
-+		dev_err(&usbif->dev, "USB reset failed: %d\n", ret);
-+		usb_unlock_device(usbdev);
-+		goto out;
-+	}
-+
-+	/*
-+	 * usb_reset_device() keeps usbhid bound (its pre_reset/post_reset
-+	 * both return 0) and does not re-trigger HID-level driver probing.
-+	 * Unbind and rebind all USB interfaces to force usbhid to destroy
-+	 * stale HID devices and create new ones, which triggers fresh
-+	 * ft260_probe() calls.
-+	 */
-+	actconfig = usbdev->actconfig;
-+	for (i = 0; actconfig && i < actconfig->desc.bNumInterfaces; i++) {
-+		struct usb_interface *intf = actconfig->interface[i];
-+
-+		if (intf && intf->dev.driver)
-+			device_release_driver(&intf->dev);
-+	}
-+	for (i = 0; actconfig && i < actconfig->desc.bNumInterfaces; i++) {
-+		struct usb_interface *intf = actconfig->interface[i];
-+
-+		if (!intf)
-+			continue;
-+		ret = device_attach(&intf->dev);
-+		if (ret < 0)
-+			dev_err(&intf->dev,
-+				"failed to rebind USB interface: %d\n", ret);
-+	}
-+
-+	usb_unlock_device(usbdev);
-+out:
-+	usb_put_intf(usbif);
-+	kfree(rw);
-+}
-+
-+static int ft260_schedule_reset(struct usb_interface *usbif)
-+{
-+	struct ft260_reset_work *rw;
-+
-+	rw = kmalloc_obj(*rw, GFP_KERNEL);
-+	if (!rw)
-+		return -ENOMEM;
-+
-+	usb_get_intf(usbif);
-+	rw->usbif = usbif;
-+	INIT_WORK(&rw->work, ft260_reset_and_rebind);
-+	queue_work(ft260_reset_wq, &rw->work);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Detect whether the device's interrupt IN endpoint is in the STALL
-+ * state described by TN_189. GET_STATUS is unreliable on the FT260
-+ * (returns 0 even when halted, confirmed by FTDI with a USB analyzer
-+ * trace), so observe the STALL handshake by attempting an actual
-+ * interrupt IN transfer. The host controller returns -EPIPE when it
-+ * receives a STALL handshake.
-+ *
-+ * Must be called before hid_hw_open() so it does not race against
-+ * usbhid's own interrupt IN URB.
-+ */
-+static int ft260_check_intr_ep_health(struct hid_device *hdev)
-+{
-+	struct usb_interface *usbif = to_usb_interface(hdev->dev.parent);
-+	struct usb_device *usbdev = interface_to_usbdev(usbif);
-+	struct usb_host_interface *iface_desc = usbif->cur_altsetting;
-+	struct usb_endpoint_descriptor *ep = NULL;
-+	unsigned int pipe;
-+	u8 *buf;
-+	int ret, actual_length, i;
-+
-+	for (i = 0; i < iface_desc->desc.bNumEndpoints; i++) {
-+		if (usb_endpoint_is_int_in(&iface_desc->endpoint[i].desc)) {
-+			ep = &iface_desc->endpoint[i].desc;
-+			break;
-+		}
-+	}
-+	if (!ep)
-+		return 0;
-+
-+	buf = kmalloc(FT260_REPORT_MAX_LEN, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	pipe = usb_rcvintpipe(usbdev, ep->bEndpointAddress);
-+	ret = usb_interrupt_msg(usbdev, pipe, buf, FT260_REPORT_MAX_LEN,
-+				&actual_length, 100);
-+	kfree(buf);
-+
-+	if (ret == -EPIPE) {
-+		hid_warn(hdev,
-+			 "interrupt IN ep %#x halted (TN_189 errata), scheduling USB reset and rebind\n",
-+			 ep->bEndpointAddress);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Quick check that the device responds to a standard control transfer.
-+ * When the FT260 is in the buggy post-enumeration state, control
-+ * transfers initiated by later probe stages (chip version retrieval,
-+ * UART/I2C configuration, etc.) can hang for very long periods,
-+ * starving the usb_hub_wq workqueue and preventing the reset work
-+ * from acquiring the device lock.
-+ *
-+ * Issue USB_REQ_GET_STATUS to the device (any compliant USB device
-+ * must answer immediately) with a short explicit timeout. If it
-+ * fails, treat the device as broken and bail out before reaching
-+ * anything that can block.
-+ *
-+ * The interrupt-endpoint health check above only catches STALLs on
-+ * the interrupt IN path; this check catches the broader broken state
-+ * that affects the other interface even when its interrupt endpoint
-+ * happens to look healthy.
-+ */
-+static int ft260_check_dev_responsive(struct hid_device *hdev)
-+{
-+	struct usb_interface *usbif = to_usb_interface(hdev->dev.parent);
-+	struct usb_device *usbdev = interface_to_usbdev(usbif);
-+	__le16 *status;
-+	int ret;
-+
-+	status = kmalloc_obj(*status, GFP_KERNEL);
-+	if (!status)
-+		return -ENOMEM;
-+
-+	ret = usb_control_msg(usbdev, usb_rcvctrlpipe(usbdev, 0),
-+			      USB_REQ_GET_STATUS,
-+			      USB_DIR_IN | USB_RECIP_DEVICE,
-+			      0, 0, status, sizeof(*status), 500);
-+	kfree(status);
-+
-+	if (ret < 0) {
-+		hid_warn(hdev,
-+			 "device unresponsive to GET_STATUS (%d), suspected TN_189 errata, scheduling USB reset and rebind\n",
-+			 ret);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
- static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
- {
- 	struct ft260_device *dev;
-+	struct usb_interface *usbif;
- 	struct ft260_get_chip_version_report version;
- 	struct ft260_get_system_status_report cfg;
- 	int ret;
- 
- 	if (!hid_is_usb(hdev))
- 		return -EINVAL;
-+
-+	usbif = to_usb_interface(hdev->dev.parent);
- 	/*
- 	 * We cannot use devm_kzalloc here because the port has to survive
- 	 * until destroy function call.
-@@ -2432,6 +2647,27 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		goto hid_fail;
+@@ -576,9 +576,14 @@ static int ft260_xfer_status(struct ft260_device *dev, u8 bus_busy)
  	}
  
+ 	dev->clock = le16_to_cpu(report.clock);
+-	ft260_dbg("bus_status %#02x, clock %u\n", report.bus_status,
+-		  dev->clock);
++	ft260_dbg("bus_status %#02x, clock %u, bus_busy %#02x\n",
++		  report.bus_status, dev->clock, bus_busy);
+ 
 +	/*
-+	 * TN_189 errata workaround: bail out fast on a broken device so
-+	 * that hub_event releases the device lock quickly, allowing the
-+	 * scheduled reset work to acquire it and recover the device.
++	 * Do not check the busy bit for combined transactions
++	 * since the controller keeps the bus busy between writing
++	 * and reading IOs to ensure an atomic operation.
 +	 */
-+	ret = ft260_check_intr_ep_health(hdev);
-+	if (ret == -ENODEV) {
-+		ft260_schedule_reset(usbif);
-+		goto err_hid_stop;
-+	}
-+	if (ret)
-+		goto err_hid_stop;
-+
-+	ret = ft260_check_dev_responsive(hdev);
-+	if (ret == -ENODEV) {
-+		ft260_schedule_reset(usbif);
-+		goto err_hid_stop;
-+	}
-+	if (ret)
-+		goto err_hid_stop;
-+
- 	ret = hid_hw_open(hdev);
- 	if (ret) {
- 		hid_err(hdev, "failed to open HID HW\n");
-@@ -2621,6 +2857,12 @@ static int __init ft260_driver_init(void)
- 		goto err_reg_driver;
+ 	if (report.bus_status & (FT260_I2C_STATUS_CTRL_BUSY | bus_busy))
+ 		return -EAGAIN;
+ 
+@@ -612,13 +617,10 @@ static int ft260_hid_output_report(struct hid_device *hdev, u8 *data,
+ }
+ 
+ static int ft260_hid_output_report_check_status(struct ft260_device *dev,
+-						u8 *data, int len)
++						u8 *data, int len, u8 bus_busy)
+ {
+-	u8 bus_busy;
+ 	int ret, usec, try = 100;
+ 	struct hid_device *hdev = dev->hdev;
+-	struct ft260_i2c_write_request_report *rep =
+-		(struct ft260_i2c_write_request_report *)data;
+ 
+ 	ret = ft260_hid_output_report(hdev, data, len);
+ 	if (ret < 0) {
+@@ -635,16 +637,6 @@ static int ft260_hid_output_report_check_status(struct ft260_device *dev,
+ 		ft260_dbg("wait %d usec, len %d\n", usec, len);
  	}
  
-+	ft260_reset_wq = alloc_ordered_workqueue("hid-ft260-reset", 0);
-+	if (!ft260_reset_wq) {
-+		ret = -ENOMEM;
-+		goto err_reg_driver_unreg;
-+	}
-+
- 	ret = hid_register_driver(&ft260_driver);
- 	if (ret) {
- 		pr_err("hid_register_driver failed: %d\n", ret);
-@@ -2630,6 +2872,8 @@ static int __init ft260_driver_init(void)
- 	return 0;
- 
- err_reg_hid:
-+	destroy_workqueue(ft260_reset_wq);
-+err_reg_driver_unreg:
- 	tty_unregister_driver(ft260_tty_driver);
- err_reg_driver:
- 	tty_driver_kref_put(ft260_tty_driver);
-@@ -2640,6 +2884,7 @@ static int __init ft260_driver_init(void)
- static void __exit ft260_driver_exit(void)
+-	/*
+-	 * Do not check the busy bit for combined transactions
+-	 * since the controller keeps the bus busy between writing
+-	 * and reading IOs to ensure an atomic operation.
+-	 */
+-	if (rep->flag == FT260_FLAG_START)
+-		bus_busy = 0;
+-	else
+-		bus_busy = FT260_I2C_STATUS_BUS_BUSY;
+-
+ 	do {
+ 		ret = ft260_xfer_status(dev, bus_busy);
+ 		if (ret != -EAGAIN)
+@@ -661,6 +653,7 @@ static int ft260_hid_output_report_check_status(struct ft260_device *dev,
+ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
+ 			   int len, u8 flag)
  {
- 	hid_unregister_driver(&ft260_driver);
-+	destroy_workqueue(ft260_reset_wq);
- 	tty_unregister_driver(ft260_tty_driver);
- 	tty_driver_kref_put(ft260_tty_driver);
- }
++	u8 bus_busy = 0;
+ 	int ret, wr_len, idx = 0;
+ 	struct ft260_i2c_write_request_report *rep =
+ 		(struct ft260_i2c_write_request_report *)dev->i2c_wr_buf;
+@@ -673,8 +666,10 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
+ 	do {
+ 		if (len <= FT260_WR_I2C_DATA_MAX) {
+ 			wr_len = len;
+-			if (flag == FT260_FLAG_START_STOP)
++			if (flag == FT260_FLAG_START_STOP) {
+ 				rep->flag |= FT260_FLAG_STOP;
++				bus_busy = FT260_I2C_STATUS_BUS_BUSY;
++			}
+ 		} else {
+ 			wr_len = FT260_WR_I2C_DATA_MAX;
+ 		}
+@@ -690,7 +685,7 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
+ 			  rep->flag, data[0]);
+ 
+ 		ret = ft260_hid_output_report_check_status(dev, (u8 *)rep,
+-							   wr_len + 4);
++							   wr_len + 4, bus_busy);
+ 		if (ret < 0) {
+ 			ft260_dbg("failed with %d\n", ret);
+ 			return ret;
+@@ -731,7 +726,9 @@ static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
+ 	ft260_dbg("rep %#02x addr %#02x cmd %#02x datlen %d replen %d\n",
+ 		  rep->report, addr, cmd, rep->length, len);
+ 
+-	ret = ft260_hid_output_report_check_status(dev, (u8 *)rep, len);
++	ret = ft260_hid_output_report_check_status(dev, (u8 *)rep, len,
++						   (flag & FT260_FLAG_STOP) ?
++						   FT260_I2C_STATUS_BUS_BUSY : 0);
+ 	if (ret < 0)
+ 		ft260_dbg("failed with %d\n", ret);
+ 
 -- 
 2.43.0
 
