@@ -1,58 +1,90 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793384154;
-	b=ykUeJ32NVni2D/Qos0kmqObVuhmmwob1XlpwESfDZLJwSla13LCepec4s006ywvypzFA
-	 /kvae/Icu0I+SFtBQi4FEc5NfUdsOgMM5eYmHi9qUMs+tGgeiuBULAXHH6an8qYuHoGAb
-	 t5npBGpj+Vr0VkydFp8aYIkt51pcS71dMYVL38VS/gI6fXRImklA9PsGP1r/p5WcMB6z0
-	 uwNCi8Cs5p5SexYeaig9TlVCUVr98H9SvFHTaGJobEWc+v8EDwiQGI03bCnuR/W5oP1oR
-	 5o7KTV7/Gv1SFmRrLDk7eK2SxJQMmEV3ZOQidKguFNA+U8VvOU0h6/a286ovr4+/t3g==
+	t=1793384253;
+	b=ZLIqwcl71CDNK+7XF5nHJZSOnSyHQVglqsQdOZEtFZ1KVR0tEHkp+fUrQTdddlURT397
+	 bgjwXTkTped7YiUXbrq/NtuRZoykmApX73vUgO0M6+lLzA/3YKkCi04TJa1e2e1QfnNdn
+	 zkRw2A33I76tZY6xiMFxmHSzhDltUAPEKfV6f0yRHstD8RAbfvqBSNPBIM3mpT4O6TE8Y
+	 B56i1r9cCUSCZ2qOO7VsL8lhDZtEI7VgB7vwpUHnNprcSyr/89psn1sfG9gfrSVjEQzOh
+	 ESEa3SvLhfcNu75UlvEVefcWW2S4UC5yn34ZWIptDWAWUwenlF14qJ5h+xJFxMPovrA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793384154;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:X-Developer-Signature:X-Developer-Key:
-	 Content-Transfer-Encoding;
-	bh=p6XBeS28YdeKR1FrvM+4ypySmOBgmuPeaEe4fr40c/Y=;
-	b=mLQR3pqiRLYYIKMjnI67fGJQ9J2wYPir1XMf4sKSt+4VqgiJA0FScz2sO7ruRsoU+Cwj
-	 K//FX3mr6SC4KWh+wxHKHVCBRNd6cTCuQT/Rp/udKKbZCSQkrmv4Iot1sHi6GfZYvJxQU
-	 uNcjIHgPSFI3zAZAdZjn+nBuyebWFSNn6bwcSrlVWOn86WZMCDZdxUmjeYSF2Ha9aOfhr
-	 oatBCpLCLKk8xRHw+08tP4TK2miNDg9tbToTSKhHbi1DykGqJi5hCJKTQvxmwhVc4q4V5
-	 qYZHrxtnSSNPng8fHzIwrHMgsgp440ZCh75r52vJ9WD7LWoCX56RQm28KG3pxxK4Nbg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793384253;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=X5x7xBzSu9MQJx0VW5rlzSeRxFUOvmHNtGRPFRc0mBI=;
+	b=teIp1lRicFI8Hml4k8QZThoduiRANQo8Kz8904dagDzYfkKn1/RFp2LZqd4aiTcUSgx6
+	 8GkxPDq7W9jnC12/X6V77fn6EJePSjsRfyHTNAwS7PynWTfwnfN32tu3HFR7qKauX6DHA
+	 6lYaIUviabZpOhXcLlFy3KR80+ah528lEb2sg5kv0HDBPvSnE/IhKT4MWRSnxnwcyXhI0
+	 Vj3PnKsd320pZeXA03C9/sJcDUO+swBG4BaZwHoLovB0jAiTn1t7GKQ2nyWVNeV3+ymZO
+	 0JvqD9w5N+mTR+aOtuJ/1nmf2kQrhk954QfsdAFH7vO38sWOU1V2rM6FiK4t+e/Flfg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eTpNv1es;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m1+tweTA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BFE60A260A;
-	Fri, 30 Oct 2026 18:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DEB606A325;
+	Fri, 30 Oct 2026 18:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eTpNv1es
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 495E01F00A17;
-	Fri, 30 Oct 2026 18:15:52 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m1+tweTA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90241F000C1;
+	Fri, 30 Oct 2026 18:17:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793384153;
-	bh=p6XBeS28YdeKR1FrvM+4ypySmOBgmuPeaEe4fr40c/Y=;
-	h=From:To:Cc:Subject:Date;
-	b=eTpNv1es5b+ljOxmfoakZGsli9Xn2JnIbLUIyejGvKlPgVxycFZH6IGqIzhd41hbu
-	 eC1jvCjpYBnT7aD/5MEvPnkcKR+W3N4yGPgFNXg2Tdou5EnHQBxsG7WDTG+TFBGBvt
-	 e07VrI5qFeD5DDHzmOgbwJitvJv7HhX0+GuBZe5Z4t1211Os7y0TI3xXhkaGzNg143
-	 h3VPFDB51fwauqkGh4ZQQt2Kxl7Ehahf3oe+R2hv4zyImywT/aV917PRZ53oMqJ6Dl
-	 m0O76w9SUPMOTlzn3Y+qj2+o58xofh3f1+MylqAgm6tB/zGm4oCTMjMitgKDG9abAA
-	 0JvfCu7BNGjAw==
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: mpfs-mssio: remove unused mutex
-Date: Fri, 30 Oct 2026 18:12:14 +0000
-Message-ID: <20261030181214.2448140-3-conor@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20260515; t=1793384253;
+	bh=X5x7xBzSu9MQJx0VW5rlzSeRxFUOvmHNtGRPFRc0mBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=m1+tweTAyDL+KzKUMPs4dGwRjv+e38a0bJy8T2f9MRPJqMUJdetcYqltW7co3sQLO
+	 6uare3isNFNyCc057oyfIbeQxzQVz5ReHHOWiJWDTKKTcP4Ah3Bpw/KyAHTcrPiQU3
+	 ivIZPnmfsM934Ejwl5FUp6jACqhsqgI09YPpDmq+k47eKhC93J1dU9+EhzL9K8PJC8
+	 jcEkg8jBgib97x7RuNt0KkA9/5e/Wm16Xr7D9lmFtu2EtSqKZbZRZ8rre8u68kJA6C
+	 n8PBZdVdlJ97ogHIhBHMPxU+l3kJK4w6GE7TlVSTGW760S0BBNCWz5AA3NOF1mOXUs
+	 /K81BO/2wxgOA==
+Date: Fri, 30 Oct 2026 13:17:29 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cunhao Lu <1579567540@qq.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lee Jones <lee@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, netdev@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	linux-mmc@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Elaine Zhang <zhangqing@rock-chips.com>, linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	devicetree@vger.kernel.org, David Wu <david.wu@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>, mfd@lists.linux.dev,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Zhang Rui <rui.zhang@intel.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-clk@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 19/27] dt-bindings: phy: rockchip-naneng-combphy: Add
+ RK3572
+Message-ID: <179338424846.1186130.13019984691130046587.robh@kernel.org>
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-19-0b0fd85a31ee@qq.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,64 +94,19 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1905; i=conor.dooley@microchip.com; h=from:subject; bh=Cij3GL7z2OJhW4lZm9udhmYEzhHSkCOKSkfmcKM8MXI=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDFlP7v4TOJc0NWfPD/FD8yOXiQYenj4hRGPidQk9A9Gof j0LqfqKjlIWBjEuBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzk2V1Ghl9P5GUmdTEmGc/7 JH2PY23eaj8+VoWqq3s3HO+cN+vyoTSGv4IT17bfF01YuCNk33L/+StcnQ4Wy/HGLd7gfyOxP6q zhRUA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261022-add-board-ok3572-c-v1-19-0b0fd85a31ee@qq.com>
 
-From: Conor Dooley <conor.dooley@microchip.com>
 
-The pinctrl core creates a mutex that is used to protect things like the
-generic dt node mapping functions. The (currently) unused mutex was added
-when the driver was in RFC state and contained a custom dt node mapping
-function, and used the driver's own mutex to protect it. The driver
-probably could have borrowed the core's, but this is moot since the merged
-version of the driver no longer has a custom dt node mapper. Remove the
-unused mutex.
+On Thu, 22 Oct 2026 00:11:16 +0800, Cunhao Lu wrote:
+> The RK3572 combo PHY uses two input clocks and one reset.
+> 
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+> ---
+>  .../bindings/phy/phy-rockchip-naneng-combphy.yaml  | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Linus Walleij <linusw@kernel.org>
-CC: linux-riscv@lists.infradead.org
-CC: linux-gpio@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c b/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c
-index 8da0c5312ce3..17c6d4190053 100644
---- a/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c
-+++ b/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c
-@@ -56,7 +56,6 @@ struct mpfs_pinctrl {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	struct regmap *sysreg_regmap;
--	struct mutex mutex;
- 	struct pinctrl_desc desc;
- };
- 
-@@ -677,7 +676,6 @@ static int mpfs_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mpfs_pinctrl *pctrl;
--	int ret;
- 
- 	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
- 	if (!pctrl)
-@@ -703,10 +701,6 @@ static int mpfs_pinctrl_probe(struct platform_device *pdev)
- 
- 	pctrl->dev = dev;
- 
--	ret = devm_mutex_init(dev, &pctrl->mutex);
--	if (ret)
--		return ret;
--
- 	platform_set_drvdata(pdev, pctrl);
- 
- 	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
--- 
-2.53.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
