@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793375920;
-	b=ebqSWYFkRPIiiYk/GppP3PPNRvJcITpvWxlWMNZqH2nvfEENMMLr/+3L+DxMubcwkJpg
-	 ng0XLinuFXzDYWw4s6lY6DA5vZ8WyE6qvLT6zSVTeV5CgoBSqDKC5/6lkUqX/f+2Gh/Y7
-	 BVm2cbZMRe/Gh+MTs2jDxX0FVMcVZuRCGU62DAXduLNw4vlVhCeqfpTHf1IYiZb/ingrp
-	 huugghnDUDPg1aVCF0LUwJieLeV1/JNwl8YWOse7IfYydU5TViwBFMtGuiBr6TAEgXr4/
-	 TExCQUePBenEVhipOnKDQUx927qfd2YD4BptX5KWuRAzmToR2nY89QoyIxFm2fvvYcA==
+	t=1793375921;
+	b=V0STaRdO7DBc34z/37PT+DpV0X66L6MsMa/W2cWxUzQKyZSATRqyVbAV6+3oBRTugr4V
+	 5Sroz4Fz66wrkD7U6KxHg6ZO9y+BGYd4ghwrpN1/xRYbFMUYISHjO1aNzgTluElRrSokz
+	 QFg/ogmZ687L0UIXQq+qs6xDL/6zW0Av/d/f1qxS1Fahh6i4LTwxuzf1ZggxG8/AMUpiA
+	 oDeKMmxgdddldN7G+jPe+OEOhyeqtTvXBx5hPpRi0PajC9SXwCMZVr0UihEmQX+2OL2En
+	 4YjbRCTzsjAez1iRvKEQqS21aIh+DsZIIhfwuUPseaFwbueESKA4ZITNwGthh7LtwFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793375920;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793375921;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=TbaN4D4zPrCE0j2WU/cjpZg5LgYUpD3eA+3kZLrtZK0=;
-	b=uGKxSPeBRBl8Ht41ABhOez3vDcaRTXsFjeh+OvDvz02/B2o8ygRDWHAT7x1ztFGFnSvX
-	 fcrOJaxUcUlnxPxtxC4aUOOHZueCPOyrpU2JxfoASqqnF2jwGYxDPctGvuGu2UvyMyy8q
-	 sKRBPuPm3qZVd8B9qHd85CQptBlOQqeYzMVF+62/M4JmrqVUbDSjpzHK+fU6QNH6zERZl
-	 I0zQrp1pGEj5bIckH9TC8V8JcC53gUh6fn/9mbTc88mwA+KVp8UIWEomh3RpLdToMXtay
-	 PODMRIqNXCIfPrGCWD2EE/7LDFLm4cT6XwMn0NAFy4+YneZ/2EB/GWgujd8GYvryo5w==
+	bh=sdGs2n+FjnN9kQRvhMCKfS4IaxNbiNIQ2+gny9XTHQg=;
+	b=Eq/K360ud0zxakT7J2LJ6euzHowFRqwi/wIgLT2V8Oupt01cHIQbis6BI5q8onn+/lJV
+	 Q/0Zdhd78N7VCyFjuQXvJW7yy4peY+QvoPR32uy5ZuQEGVdm4xtTULmg7dw18d/NUhrps
+	 bEdbMefouffBcsh8Tyjh2N82g5KtMwpJ1Z9DvzW2IHcxKnKK4VKZYekFVVhzT8QM1vR+S
+	 RhMmSe+DdgJ+iE0+PyAIRSV2W0Z7WIvja0gbnmzl/vckwZ0ZgXsyYHcsxDZED13x+PGOw
+	 42C+QeKHsRO2Oax5YmlDW+dxxGf3ZCgP7LEK9pRmdlxOKMhEHFn62A+In1UW1DDOSug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=QcX7czRU;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=TkPrSPOh;
+	arc=none smtp.remote-ip=209.85.221.46
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8253606A32C
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:58:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E8253606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8999606A31D
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:58:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8999606A31D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=QcX7czRU
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a35db1f202so8852935e9.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 08:58:39 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=TkPrSPOh
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-48bbb06e746so445856f8f.3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 08:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793375918; x=1793980718; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793375919; x=1793980719; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=TbaN4D4zPrCE0j2WU/cjpZg5LgYUpD3eA+3kZLrtZK0=;
-        b=QcX7czRU7i5SmOrIAuO82prn6x/lb2cIaIcvGWBYQmSqy07CTmQsdM0bqqZLopTxWT
-         ERLJIt1gU9Gary3puHOeypsrLaZAg1D/yFoBPGHc0WKV9aMFTq8nhxFcgX2y2Vd08ILK
-         vTSnUnh+ORhxTQ9jJKOP7JzpfZCYXdsn8Hyd4Hr5mCAfyIrhXx/ZmEw3WPJOZ4eAv4cT
-         /seqlTf9QpAVI53Hxlo7OepHfycULrHKt09H5BUFu5ymcI6esSPpyKveUFp26jHJJNyK
-         8v2Tmwy0Tl2l2vDSwC5UZHJdQsl6UpbPtorWUl5H0rUhy+FjptNgrw0wlqg8MSXwnUT1
-         ud5Q==
+        bh=sdGs2n+FjnN9kQRvhMCKfS4IaxNbiNIQ2+gny9XTHQg=;
+        b=TkPrSPOhxPJ8/bxACPBSXVJ+BuLIvkXtRzxSHQG72tIqYLAMBWGX8ZMWGWVtCqWmQp
+         N01CLFwpGFpFYlXH+bMZEjarAtD2WBgpICxPW5pAfFoH4T8b2Sb3eF/8pemtj5sj6zt6
+         nr1EbGe2N0xwV0VUrkjnsCBvvueXWqPUfwXqu8ORlknhzB2JS7lYcvcIXZHYYK9Ep8PK
+         DyVA/yLPcSmjLT8kcEgeMumP85YaVCItGKWb0/VFLR6mkvCo3a314ziPXHaH4y8Yy0n+
+         1JmvVJk7cXax2dL9tV19lWq+AxYwxOTP80JdQt6CtRaFdPGPsavY/gHTo5foawxftbBU
+         Sfqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793375918; x=1793980718;
+        d=1e100.net; s=20260707; t=1793375919; x=1793980719;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=TbaN4D4zPrCE0j2WU/cjpZg5LgYUpD3eA+3kZLrtZK0=;
-        b=BOgC/qa83p4XwbYMbNX+7xywDjJC83d4qdU7N0wirz1NZ1lmb/whrtpMWjqYqv4hmh
-         am5ER/KyzbKcCI4CIGlHyt8t7oNRlAVdSo24wlvRT1KMf9M85HWUo4FKrNm622AEvGBK
-         GGcgqkd2hQ5tgboER5EXA2PQhbKEsHUQyNDqUkFKbBxN8dfMHm7xVEFbftQ0KjHyGJg5
-         4H4TGHBwtbBu80cHM3xlDeNS/IfolgVe/Fn1lbtVVFTecw0qVHuB7upIY9YjIual3UVk
-         nGZwBRlS0wrS5emKqUQcmHrX3RY9C7p/1WxdsJmkZNUEa5yV1LiYrQbZUj8XQ424yDPK
-         KpcQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxHORO7VZMv3uPcHLTg59RdrxsIjkaqOIJgRElZ4dCN3k57BQ1muLCtQ2cQAeA2FRg++/u69yMGrIL+@vger.kernel.org
-X-Gm-Message-State: AFq9FYJTL1rbGtTs53k1twHPdbFckGPjHWhYLg8p7V4LLwaBFlEU2LBz
-	Nnkw6XETLS/oWGFi1reTC8TRDQ5VcDlWOFSVQPfPqPzER7mHBr75oN94cB2WURB2LD8=
-X-Gm-Gg: AYBFou2IDpbhXYnwY0Z+3k7hwliUPLPx42PWAIo27MBMh89HeyldsdNxE7iYSucS9c4
-	O0c2eZg+mNbARBAX03X0NyksY6iednTY4MXYVxb3XMMpaoYO8yqlMbFIRNchFnK67s3g9CUO+BF
-	6XkSqh9DECRZNwES39cWRFsxDf6GKjnA1x03MOMGoeLESqzBs5XluyZbQfkyCMD3tNPvrlXgeNn
-	ou8rpMm+UzJwd8TqcXU/wTIqUEERDWFEtlJOVoBm4RygsBdQFi6lWy/EcsOh0qpQPicDhW9fswz
-	xQimFqQIeSvOGQhMzNEJf8XtTak9Vz0NL6ov8DF8wVwhkbl9GBffzVDQwcgpYhRpDdEWyVh7mCH
-	S2KgLh0fOxgKbAjKEK6YIubqMAHPjFNvgHtSBlOcP9Td7C6MWxjQxcDnesrmY7kBTUKJwbUTWYf
-	xvbTaqB9p0NaCcOaF33RxAU8vXa+Ttza9ix4WlafCtwvkmCZvqeMhUvuLNZ9xc4Xh96meRVaEJ+
-	I4DNul1i/Bqu6DG014+FM8RnZE4ZPWnMre3eAgb/XHqa73HCYD0oTtQtz1NdC7p74uWzjoVD+ID
-	SoqX6iX8WzIlbc8wk96Ghur85w1tB7TW4Q+rXn5MRiQ4gke3JsE=
-X-Received: by 2002:a05:600c:818e:b0:49f:fd40:80fa with SMTP id 5b1f17b1804b1-4ac1932aa2amr62355485e9.34.1793375918383;
-        Fri, 30 Oct 2026 08:58:38 -0700 (PDT)
+        bh=sdGs2n+FjnN9kQRvhMCKfS4IaxNbiNIQ2+gny9XTHQg=;
+        b=hk8S6YXJ0TIupL5FdNIfktZuUF8W+6hoJugAgX4OHTAK8RpH6sH0bTnfCmf6+UzFZp
+         9k9olA+rXfRcyM1G9NavJO/RWH5XaayUEoQJuqoDuIQvsU82A3QB54ZM/n6il51rdd5+
+         6hiL7Wb0uY+saBDcZvvTgErQy2z6oaNyz36cXaPC3KD9LqATQrKpCPBSmuP3/yIJqz4K
+         O1ljAMJ1sPNvtNo2q5dbs5B1GbaBggCUX0YUt0H97fB6cJhoqFwuQ+CgtEdfdpV5e+4B
+         m8wQsaNw9R9kSBVje2K1hSGJqobAxKEX0+nGDMtRpKAAMjPFnTNjn7/Mp1RRZAeBY/C0
+         rSJQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwzhal9aNiFSO+WlYPCzLqCgLaUEvvxVPkHwChPK8z/vkxdjIDpYwJauVyqWdeNnkFqV75vqTWyUXm+@vger.kernel.org
+X-Gm-Message-State: AFq9FYLDf0MuuFXpC6EujYnqX++q1MAPTCsXWhR0AZO+Povk5qV0uwGi
+	Ebf/P/MHU1ygVPC1qBUa21lHrrwPwoBgKUkznEwInNl7VQL0Qx8cCWZji8Dz5b6YgU2t4FoZK0+
+	D7db6is6itw==
+X-Gm-Gg: AYBFou1tsH9kfnjEm+t+znqVemMWj62dXVJOz+NPY+SWSj6W6N0ybNRQsF5GTPCLZxY
+	3H+kbaBuylC7xLl6MwSMKBWjVOuvNxv4LTcq1pSMJN7REJxBe+XwHb7XJnWEOTvNfGU6ZWMtRzx
+	DjEkHtkVPVxZZ9grxaQAF5pMmUQn3aErxlbYg5o2XPEmfhqEquAGkXB+2qQ6FUK4hPZUbuui9Kd
+	q2HBmM8ZpuYZgXJUOH7jFaGXDlsxqoNu6AYLfs4+uaJQGYgzk5zINPPKBdw6ZrLeFdjQjvv/5kf
+	vOXTW97CKzmqEGip7SrRB+UjYt8y+g4plkUREV74/kMfRSCgm4bsVtti8DR/lcPUs1OIhpiJIcq
+	a79qDZ2qBittoI40he8Afnjn6xSxA028i584YYgSSWSORYihP4c3sqOyTqAjsg22budKlKnwSXO
+	/YMD5Agau2fMk2Hc3PwZxjV3edBM74rNaH2JhgWaM8bifhDohyNOKgJMaXfdqPdulfTE/x3ajug
+	TcGv/U1I9UkIFp6qZ51BEggJ/UyeL76JX+I2TgKFCE0fP82TMvrRjpFe/iNp3C/0qM9+w17FEjZ
+	bGAFd8adYk8cBChwmM/sKCTKRbBrgO1NTWES4eubQjYiM0G7+XM=
+X-Received: by 2002:a05:6000:250a:b0:48a:f073:336b with SMTP id ffacd0b85a97d-48e6e2fcd88mr6043986f8f.23.1793375919216;
+        Fri, 30 Oct 2026 08:58:39 -0700 (PDT)
 Received: from localhost (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ac08b72578sm27102895e9.2.2026.10.30.08.58.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b789ecsm3862691f8f.29.2026.10.30.08.58.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 30 Oct 2026 08:58:38 -0700 (PDT)
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Date: Fri, 30 Oct 2026 16:58:34 +0100
-Subject: [PATCH 03/11] pinctrl: scmi: send the settings without argument as
- enabled
+Date: Fri, 30 Oct 2026 16:58:35 +0100
+Subject: [PATCH 04/11] pinctrl: scmi: report an off setting as not set
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -94,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20261030-clegoffic-pinctrl-scmi-gpio-v1-3-52d92843ad97@baylibre.com>
+Message-Id: <20261030-clegoffic-pinctrl-scmi-gpio-v1-4-52d92843ad97@baylibre.com>
 References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
 In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
 To: Sudeep Holla <sudeep.holla@kernel.org>, 
@@ -108,53 +108,92 @@ Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
 X-Mailer: b4 0.17-dev
 
-bias-bus-hold, bias-disable, bias-high-impedance, drive-open-drain,
-drive-open-source and drive-push-pull take no argument in Linux, so
-they were sent with the value 0, which the protocol reads as disabled.
-Send 1.
+A get of a setting that is on or off, the flags and the pulls, returned
+0 as a value, so every one of them showed as set on every pin. Return
+-EINVAL when the platform answers 0, which is how pinconf reports a
+setting that is not active.
 
 Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
 Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
 ---
- drivers/pinctrl/pinctrl-scmi.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/pinctrl/pinctrl-scmi.c | 48 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 41 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-scmi.c b/drivers/pinctrl/pinctrl-scmi.c
-index 5de47e060e8c..f74ef0952ba9 100644
+index f74ef0952ba9..355ad26cb215 100644
 --- a/drivers/pinctrl/pinctrl-scmi.c
 +++ b/drivers/pinctrl/pinctrl-scmi.c
-@@ -173,6 +173,21 @@ static int pinctrl_scmi_map_pinconf_type_get(enum pin_config_param param,
- 	return pinctrl_scmi_map_pinconf_type(param, type);
+@@ -153,13 +153,41 @@ static int pinctrl_scmi_map_pinconf_type(enum pin_config_param param,
+ 	return 0;
  }
  
-+static bool pinctrl_scmi_pinconf_arg_ignored(enum pin_config_param param)
-+{
+-static u32 pinctrl_scmi_map_pinconf_arg_get(enum pin_config_param param,
+-					    u32 value)
++static bool pinctrl_scmi_pinconf_inactive_flag(enum pin_config_param param,
++					       u32 value)
+ {
+-	if (param == PIN_CONFIG_DRIVE_STRENGTH)
+-		return value / MILLI;
++	if (value)
++		return false;
+ 
+-	return value;
 +	switch (param) {
 +	case PIN_CONFIG_BIAS_BUS_HOLD:
 +	case PIN_CONFIG_BIAS_DISABLE:
 +	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++	case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
++	case PIN_CONFIG_BIAS_PULL_UP:
 +	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
 +	case PIN_CONFIG_DRIVE_OPEN_SOURCE:
 +	case PIN_CONFIG_DRIVE_PUSH_PULL:
++	case PIN_CONFIG_INPUT_ENABLE:
++	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++	case PIN_CONFIG_OUTPUT_ENABLE:
 +		return true;
 +	default:
 +		return false;
 +	}
 +}
 +
- static int pinctrl_scmi_map_pinconf_type_set(enum pin_config_param param,
- 					     enum scmi_pinctrl_conf_type *type,
- 					     u32 *arg)
-@@ -182,6 +197,9 @@ static int pinctrl_scmi_map_pinconf_type_set(enum pin_config_param param,
- 		return 0;
- 	}
- 
-+	if (pinctrl_scmi_pinconf_arg_ignored(param))
-+		*arg = 1;
++static int pinctrl_scmi_map_pinconf_arg_get(enum pin_config_param param,
++					    u32 *value)
++{
++	if (pinctrl_scmi_pinconf_inactive_flag(param, *value))
++		return -EINVAL;
 +
- 	if (param == PIN_CONFIG_DRIVE_STRENGTH)
- 		*arg *= MILLI;
++	if (param == PIN_CONFIG_DRIVE_STRENGTH)
++		*value /= MILLI;
++
++	return 0;
+ }
  
+ static int pinctrl_scmi_map_pinconf_type_get(enum pin_config_param param,
+@@ -232,7 +260,10 @@ static int pinctrl_scmi_pinconf_get(struct pinctrl_dev *pctldev,
+ 	if (ret)
+ 		return ret;
+ 
+-	config_value = pinctrl_scmi_map_pinconf_arg_get(config_type, config_value);
++	ret = pinctrl_scmi_map_pinconf_arg_get(config_type, &config_value);
++	if (ret)
++		return ret;
++
+ 	*config = pinconf_to_config_packed(config_type, config_value);
+ 
+ 	return 0;
+@@ -390,7 +421,10 @@ static int pinctrl_scmi_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 	if (ret)
+ 		return ret;
+ 
+-	config_value = pinctrl_scmi_map_pinconf_arg_get(config_type, config_value);
++	ret = pinctrl_scmi_map_pinconf_arg_get(config_type, &config_value);
++	if (ret)
++		return ret;
++
+ 	*config = pinconf_to_config_packed(config_type, config_value);
+ 
+ 	return 0;
 
 -- 
 2.56.0
