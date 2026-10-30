@@ -1,96 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793390915;
-	b=d+yzgPPFUBujc/SfYW+Pau8u8oIpqdDprEdSP/4vJV3NDncDkO6NnGtkehuRmRR7JYh5
-	 BzZXJTBktE+MusA02ShD1PLI5rOSYA43G4eZ0SWSvQewxJhjgqj56YvApSS/8RfP/fS+t
-	 zE93YpjwsEhbPn+DFSgOkJZiZrLn/6NwTHBQSM7DKXtpNz7IBj4aS7D3NkQleynuxw0Qw
-	 EEP4YxQSsvjaiZhou7CjG/SFF4y6R+MeOdod5LeWGfwA7wfwf9IFcFSA3x/m7ZWzd3vwn
-	 0TjSlyhx6cnBBpuEcB1UM6TAAowqciMoPx0Zs33DXRaPg/uAQAicXJJW67BYjrXrO0g==
+	t=1793399820;
+	b=uDpmeAYcj9QYhpdcFjd/iOC2qu98i/cBDfHT/hBQKrQOjMe0FG/pm1s3KOyfJZq52NkZ
+	 NKxWpmTRKFVDu1bSoz7HjdyxwqgDBVuduoW+2G38OegfkE/f++toD6c0MCKjWZgk3IZGE
+	 yl/CtMulcUp6E/p2+fBQt7MQVZ5wX215xLtH+ml+gfoh6qJDltQOgKawiMRVISogVZbWo
+	 3HPSUpWA5emBlE516d200p3FDraUQTYA/0kqiRuByya8lcN04P1PQn2P5XAIE4FF8Mz25
+	 giKuZkQqAdeDO0B1N9Jb69bphSW/uGlbh/+caApthjFaGO1IuffKqeUsUE45IAqjzfw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793390915;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793399820;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=GY1dOc+sIQV6eOH7fOm7uU7Ssi1Yk8CqdFR46ek8fNI=;
-	b=pK94b+dl/0vgyEpvS0lZ5l89S/95JXfCaMTiDOFh9zobH7scBRRcJuzWuUxd6nVatQm1
-	 d+CMaMbS2of0q/OM4xIz36feyxhE9uNXLVIHeUQKX3ArfIIA6l57tjRjANQS1tJErpf2G
-	 fjXMIRPPgfS7j/BiK9xp1CISunqSAQagrA8RYduTVwOMZU6KuUo4G24hcLLeXappgqDWY
-	 WUbrxnJGw3Pa/gF20KW7TAUFgSht+csr5oYh1ObEVi4e2e7OevTIp6wKMyniHMSUQhHhS
-	 xZr7VXF7gUp4IwksVXfnYuOwohcm5WOpYRzSeA/7VFng7l1tIvclG1kkTRqMIGnfpxQ==
+	bh=Ut+9IA7+uboYNcIm8+J4cxAe0hs4W7L46fYN/DTBCtw=;
+	b=0tNKQ89jq7AcbgbfpjjNcLtL7xoObaD2nsFm6QSueClUJA/KD18M17HVqntSDeI6Z0Ff
+	 xcTxyUJpVMV0V3mixRwpuasCQFDb6qqtugoTXEfvAvwKSxhaa1g9vu7LPxpgR9xPSMe5P
+	 G8B+Xp8cnaaWwch1qQ3u+l5wSTmO8B/dCiIdkKgYIQL3IcpfNAz5j2w3umjJbbR2S4mnw
+	 z8PukhRzELmgFunc/j7jEFF1cA1P2fP8De88OjMFlwX7o3bRcfV3WpVXYngMwKQo8RFmR
+	 nN5QRi6cOJg8Sb4qIw0ERSSKy1B5qF+41OszINVbMoAlc9RZtLLhFQFqKM8g5/gjxgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=D7SAVhHO;
-	arc=none smtp.remote-ip=209.85.217.52
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LeQ3hKdr;
+	arc=none smtp.remote-ip=209.85.221.53
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BDC606A321
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 20:08:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96BDC606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F933606A320
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F933606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=D7SAVhHO
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-74ab99038afso741890137.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 13:08:34 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LeQ3hKdr
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-48e09aa5264so609514f8f.2
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:36:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793390913; x=1793995713; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GY1dOc+sIQV6eOH7fOm7uU7Ssi1Yk8CqdFR46ek8fNI=;
-        b=D7SAVhHOi28Ioy3WF/EWn85cFtZrYbbr5DiJaoFuqe4GREHCscRY03cfrX1LIW/UER
-         hR/6ySqB4OHXZV+Y1ORmuJHCmryZT4vL/3sRP91M4L9dxIfLShSH3pza0AamkpLW6+3f
-         s6aQx9VSGBxsnWSpzLC/8cz9gBHZ/udO70BPefyeUy45U7m47rmAKP0IomK5pw/gH5H/
-         8Jz2dDCER58szfVsyX+76O6b1yPbA5LBMVHltqeV24/U/zmtSS74xbdDFgvk02Rd5oS2
-         bMmSTQTSvkBjMDeYUst94gM94vCLJ2NsOWUZ5dYR4P/0FadZPhdkgKrRcwNVtPhhDCgV
-         T9uw==
+        d=gmail.com; s=20260707; t=1793399818; x=1794004618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Ut+9IA7+uboYNcIm8+J4cxAe0hs4W7L46fYN/DTBCtw=;
+        b=LeQ3hKdrRiIwJ9WYm2818uTU6CMcLXU7f11PkZfTD8EzLL97P/fnUbqAy9BMBy7E03
+         6NPK8ze4FplLeq+oWoDl8osUEVLq7vY0i2zZl33ZWEGfHBt3x7kjE1ug950xIjyIs/r6
+         ZQTcm+jnDmaNFUNfpyD6PmhPMVbpEKR8+xqdbUxul3IDlgDYtYOLWIjzZGEoFVG5LllS
+         8PvQmfguG0350jsGWGl1AosdCZq9lQTCPAZwKLE0Be979prA6RaajtpJIGRk4Skeq4m9
+         EaSqtNO0hDj46Ev/wTqpwvzdMwm9j24iVUDRYeG9stAOQsATLOe+zwS8Y7891vAz745N
+         Kl8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793390913; x=1793995713;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GY1dOc+sIQV6eOH7fOm7uU7Ssi1Yk8CqdFR46ek8fNI=;
-        b=aW5Mx7x4bjPbATOe3GbTBj8F6MT+1bCx216maTlItxtWSFNFhUXBWFPdkmXurMkmtE
-         G8tBB7r+BKaecudbSYw3XyJ0JsDWN7RBj3X+X4tBIkvfvH9mzPU6GosQ7gDYD35AdRTq
-         A/a5ZiotYGf6vqfP9DmD9PXjQ8ItzlJu7Dz8XKJC6uI24S0vvn3MIGcEACnQmHA5Lx1J
-         z9ubX7XVx+jdqOeshX0rQN7L9IYTha1ZH/INz2X1v2rnnUpHZ2euXDqHkO/L0gNMbsOe
-         wgN49Fo5zTq750zbSJAszYO/xkeg7gM+zAi1jgeoWiLz1ubXQCML5LctY9E3rnduG45r
-         f8pw==
-X-Gm-Message-State: AFq9FYIHGGjaaxcloGs8p9REhly2SF0zL8F0Xsm4IZIFSzGEMi+INce6
-	8kb7Ez6Z93Zoq4wgG3lPt9dXP9/E2Or8xjw6MTyZc9hw96PRy77uwqhI
-X-Gm-Gg: AYBFou2PvQ+PviKJn2fWAIjIPFlzFIT3Cb1yrQChvtbDSeFlcE39hI+XZTm47TaVgqs
-	o1Y9j/HlPe4JihOpw3RLurtcp9bVSakyZfZSIOMU/nG4W586XhfgiROWM+s6DqPF9Bd2opRUcGl
-	J2pJoqVirCczJcK4jt64AqIIPkapWn64SZVenQvdZ9+nutz203J6XNeE/oIadJV4i0wBTVt4k69
-	Vc18d6R8lbWj9hP9QHG3emxabM9fwbIMoaspQ0P4bec79iR1gx/BNehAnv0QvEDMCnyyCD9AJ9w
-	mlzY4SBHJwuejICmCu3p0aFuIJNt3KSnkUTrBIesl6zQjQl7fFu0vbMGwQ+/ViMhe+Ob+H0Af9q
-	Nbxpk+q0R17wMo9WD7URtt9UMoZlJUUE6vm0a9wRXB/rT0vrDRX+gMv5zHeVY+Hvu/C6LwpGANX
-	2WcNMfJCGXYfKuWCVVrCKZgjI4yPxrECDM2M3MjOkpJZlehgPoheR4l5R3qKvmka9kmf1KQcI10
-	O7Ijn1O9PTDTMJ0+Czge0cj8Dz3tGo8nWl7jlN7GsyH877OOJloNO+fdvocEh3rNcVu3r6sLy0K
-	8WN/jX9Kl1RH+0o8adBzoNAX7AxLF/ABAOahzT8=
-X-Received: by 2002:a05:6102:8086:b0:7cc:32ce:4c5e with SMTP id ada2fe7eead31-7d0726b4e19mr2004616137.16.1793390913530;
-        Fri, 30 Oct 2026 13:08:33 -0700 (PDT)
-Received: from munique-a520 ([2804:3bf0:fe29:ac41:2d94:706:4bfd:852e])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d07768d366sm3315699137.10.2026.10.30.13.08.30
+        d=1e100.net; s=20260707; t=1793399818; x=1794004618;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Ut+9IA7+uboYNcIm8+J4cxAe0hs4W7L46fYN/DTBCtw=;
+        b=fELnylbnFETJnqbYZNlQnYtVmg/aOi/ZuRSUQD5JNsORyqeIyiWdRxvXtTyX7tMPGj
+         lUbp/+xf0W+6QiJm6vDJrbg1ttvdi1L7svVzEm5SESVDt7VjcIvH3i7pgqc8ZDbPw6Ud
+         8TSaeheQ8SBE/4Lq59gWujuMzd+vKeie1KKwT5ScQcF4au58YymqNU7DLTzvKojK2z+O
+         jWSSJpz2NeSIFWWHVJuKt676fbytKFOqIHWQyTTu1ZRZa/lLY/Y9yQw/JBo/U9Xm9KG4
+         szRGWwC0nFADX6DZI7AU2q+Uk8CnPBmtC8fetT4vTfjRaQkvuV2TWNKG4QTq1nJLzoKI
+         eCeA==
+X-Forwarded-Encrypted: i=1; AKwUvBw+43TH5fHSkIdQ1jJTNSxJizZGZV2+eUTZHOypyoZe7Y1o4CN+v/bZmkZvr8qyn+wHU6lajXy32KT6@vger.kernel.org
+X-Gm-Message-State: AFq9FYIX5lxFHOiOeHFe0X/NoZgH972g+hGIdQl3nMF+sWSqwG7nleOZ
+	cPq9tliWVZqz3r461BxCit3abZzI4o1CKECNI+lPjDwzl8iVYIR9CKhO
+X-Gm-Gg: AYBFou3Z6Re4UCjsVgkiQvA9o/F/2qoLAMbx+fKRccGlkuu5uvfFPEZa9dEopGJE/BV
+	pmMwJ8s6DkuV9g52Pe6QuNb09qV6M+d8xU6RKLQnteZJ5rCvNymRL7RXUe/n0ZoW4Z8Qve7gVGn
+	HuplzgTJW3VIHp5rEXbVuVhZJO3tdDo3XgTtnsKpstl60DPxbMX+jhnbGzRDAFCfoJ/Y6C2dmzd
+	lM1gRdSlBz/Yd9LPAWuMk2s30aAmxzxPmSD4w87kTksbRiExfMtG6ukUI9rrkqJVFw+PZsZt6Ud
+	ysqlwt8S5H/3T6+u2F3n1kDMYpcy0Vw9vapKaeudpbuFeub72y/SMx2TEAY0zy+LvVjJZh5cqPF
+	Yghkt/IRYTsLlza//AtzaBj57+Eb34lAX7c3E8NMuYelE0rNgASaCKk8lQFS8V80ufP0/6UZa0b
+	cetexAzHu/AGC2YGhtAygcIclk4I5ox95DJzHuGRUsspYkrwGZAGP5Xzxb/pv5mn5vt9IoEuKdu
+	UqOT9EuqtuU6xg9KOXagQeCgYundX8pvI12oYLqiSWbK8xwLxcAbHatsPUFYaLzZqhMlAgg6viX
+	gY66M5jvX0GFKIu8N1+18UaBkC8f
+X-Received: by 2002:a05:6000:2011:b0:48d:f14a:917e with SMTP id ffacd0b85a97d-48e6e2f24f9mr9160016f8f.11.1793399817797;
+        Fri, 30 Oct 2026 15:36:57 -0700 (PDT)
+Received: from m2.. ([37.142.145.227])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.36.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 13:08:33 -0700 (PDT)
-From: Munique Feitoza <muniquefeitoz4@gmail.com>
-To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
+        Fri, 30 Oct 2026 15:36:57 -0700 (PDT)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Raman Varabets <kernel-linux-20260610-80b7ab08@raman.v1.sg>,
+	Germain Hebert <germain.hebert@ca.abb.com>,
+	Christina Quast <contact@christina-quast.de>,
+	Rio Liu <rio@r26.me>,
+	Bruno Giacomazzi <brunoceg1@gmail.com>,
+	linux-input@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	sashiko-bot@kernel.org,
-	Munique Feitoza <muniquefeitoz4@gmail.com>
-Subject: [PATCH v2] pinctrl: amd: Clear interrupt enable bit on spurious GPIO IRQ
-Date: Fri, 30 Oct 2026 17:08:27 -0300
-Message-ID: <20261030200827.24648-1-muniquefeitoz4@gmail.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261030195025.5153-1-muniquefeitoz4@gmail.com>
-References: <20261030195025.5153-1-muniquefeitoz4@gmail.com>
+	Michael Zaidman <michael.zaidman@gmail.com>
+Subject: [PATCH v2 00/15] HID: ft260: add UART and GPIO support, plus I2C fixes
+Date: Sat, 31 Oct 2026 00:36:22 +0200
+Message-ID: <20261030223637.86907-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -102,51 +110,92 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When do_amd_gpio_irq_handler() detects a spurious interrupt on a pin
-that is not configured as an IRQ line (!gpiochip_line_is_irq()), it
-currently only clears BIT(INTERRUPT_MASK_OFF) while leaving
-BIT(INTERRUPT_ENABLE_OFF) set. Unlike amd_gpio_irq_disable(), leaving
-INTERRUPT_ENABLE_OFF enabled allows the pin interrupt status bit to
-keep asserting in WAKE_INT_STATUS_REG0/1.
+Mainline supports only the FT260's I2C bridge. This series adds the
+UART/TTY interface and GPIO on top of it, and carries the I2C fixes
+made alongside them [1].
 
-Clear both INTERRUPT_MASK_OFF and INTERRUPT_ENABLE_OFF when disabling
-a spurious GPIO IRQ on both the main and RGPIO banks.
+Patch 1 is Christina Quast's v4 serial driver, ported to the current
+I2C code. Patch 2 holds the fixes it needed on hardware. They stay
+two patches, as agreed with Jiri, so that each has its own author.
+Patches 7 and 8 add flow control and the modem pins.
 
-Signed-off-by: Munique Feitoza <muniquefeitoz4@gmail.com>
----
+The v1 thread:
+https://lore.kernel.org/all/20260822213941.98882-1-michael.zaidman@gmail.com/T/#t
+
+As said in the v1 thread, this series lands the current driver first.
+The MFD split follows as its own series once this one is in the tree.
+
 Changes in v2:
-- Drop the early return on !ret before writing EOI_MASK to
-  WAKE_INT_MASTER_REG so that spurious GPIO interrupts disabled in the
-  !gpiochip_line_is_irq() path still receive an EOI signal on the
-  controller.
 
- drivers/pinctrl/pinctrl-amd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+- Patch 1: the UART config enums are split per field and use the
+  UART_ infix from the start (Linus Walleij). Lock, read_lock and
+  wait are initialised before hid_hw_open(). Lifetime and TTY fixes
+  (reported by Sashiko).
+- Patch 2: subject now says what it fixes. FT260_UART_RI_DCD_STATUS
+  corrected to 0xE2, as in AN_394 section 4.3. 0xB1 length check and
+  wake-up timer re-arm (Sashiko).
+- Patch 3: subject drops "on top of UART". linux/bits.h, GENMASK()
+  and BIT() for the GPIO masks, FT260_GPIO_MAX renamed (Linus
+  Walleij). GPIO shadow, combined direction/value report, uart_mode
+  OFF (Sashiko).
+- Patch 4: timeout of the last I2C read chunk from its length
+  (Sashiko).
+- Patch 5: a failed feature report is no longer masked; word stores
+  use cpu_to_le16() (Sashiko).
+- Patch 6: __func__ is printed once (Sashiko).
+- Patch 8: v1 patch 10, Rio Liu's RTS/CTS/DTR/DSR polarity fix, is
+  folded in, with Co-developed-by. Error paths of tiocmget and
+  tiocmset (Sashiko). The TIOCM ioctls stay; the switch to the
+  serial_mctrl_gpio helpers needs serial core changes first, as
+  discussed with Linus Walleij.
+- Patch 9: subject drops "gpio:". i2c_enable moves to the interface
+  that owns the gpiochip, so it changes the mask the gpiochip uses.
+- Patch 11: the reset work is flushed on unload, and -ENOMEM does not
+  trigger a reset (Sashiko).
+- Patches 13 to 15 are new: reject an I2C clock outside 60-3400 kHz,
+  return the byte count from the i2c_reset store, and recover a bus
+  that a slave holds low.
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 9fa752f55..92a08f240 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -671,7 +671,8 @@ static bool do_amd_gpio_irq_handler(int irq, void *dev_id)
- 			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 			regval = readl(amd_gpio_pin_reg(gpio_dev, irqnr + i));
- 			if (!gpiochip_line_is_irq(gc, irqnr + i)) {
--				regval &= ~BIT(INTERRUPT_MASK_OFF);
-+				regval &= ~(BIT(INTERRUPT_MASK_OFF) |
-+					    BIT(INTERRUPT_ENABLE_OFF));
- 				dev_dbg(&gpio_dev->pdev->dev,
- 					"Disabling spurious GPIO IRQ %d\n",
- 					irqnr + i);
-@@ -722,7 +723,8 @@ static bool do_amd_gpio_irq_handler(int irq, void *dev_id)
- 			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 			regval = readl(amd_gpio_pin_reg(gpio_dev, pin));
- 			if (!gpiochip_line_is_irq(gc, pin)) {
--				regval &= ~BIT(INTERRUPT_MASK_OFF);
-+				regval &= ~(BIT(INTERRUPT_MASK_OFF) |
-+					    BIT(INTERRUPT_ENABLE_OFF));
- 				dev_dbg(&gpio_dev->pdev->dev,
- 					"Disabling spurious GPIO IRQ %d\n",
- 					pin);
+Testing: two FT260 boards, one in chip mode 0x03 with a 24LC512 and
+an FT2232 wired to its UART, one with a 24C02. A pytest suite of 202
+tests [2] drives sysfs, the gpiochip, the I2C adapter and the tty. It
+ran on 7.3.0-rc4 with this series applied, built with PROVE_LOCKING
+and DEBUG_ATOMIC_SLEEP, loading the in-tree module. The second board
+was strapped to 0x00, 0x01 and 0x02 in turn; each of the 202 tests
+passed in at least one of the three runs, with no lockdep report.
+Every patch builds with W=1 without warnings.
+checkpatch --strict reports no errors and one warning, for a quoted
+kernel log line in patch 15.
+
+[1] https://github.com/MichaelZaidman/hid-ft260
+[2] https://github.com/MichaelZaidman/hid-ft260/tree/main/tests
+
+Christina Quast (1):
+  HID: ft260: add serial driver
+
+Michael Zaidman (14):
+  HID: ft260: uart: fix the serial driver
+  HID: ft260: add GPIO support
+  HID: ft260: i2c: reduce driver module loading time
+  HID: ft260: i2c: silence sysfs store big-numbers
+  HID: ft260: i2c: reduce bus-error message severity
+  HID: ft260: uart: enable flow control
+  HID: ft260: uart: add modem pins control via ioctl
+  HID: ft260: group sysfs attrs per HID interface
+  HID: ft260: i2c: fix large write transaction failure
+  HID: ft260: workaround for TN_189 errata endpoint STALL after
+    enumeration
+  HID: ft260: i2c: abort in-flight transfers with STOP before reset
+  HID: ft260: i2c: reject an I2C clock outside the supported range
+  HID: ft260: i2c: fix i2c_reset sysfs store return value
+  HID: ft260: i2c: recover a bus held by a slave
+
+ drivers/hid/Kconfig     |   10 +-
+ drivers/hid/hid-ft260.c | 2435 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 2175 insertions(+), 270 deletions(-)
+
+
+base-commit: 720806515cb6921ab05caaa6f470f7054b56385e
 -- 
-2.56.0
+2.43.0
 
