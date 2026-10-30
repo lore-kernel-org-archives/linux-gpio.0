@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793399831;
-	b=oV5jc05IPUNq/Kb3EKim3qTV0+jeBZUvmowXJvJgreLDrAT0nZNciUMd+D1ai3ZEzepe
-	 qmDxcScn/J46vDzcQ6oIVUbG8SrHSxseW1DL5lglyP3W1kccSOOXMeaLtXacUZPsKucam
-	 NVCDKP8ZreksV3iqBIfjZXFq2MgWKeuACrJ/0JV27HiM7LNhu1eOox7tiSDQa5J6J2nzv
-	 D/msLXiw9ec3WMxR8bZXjUQTloVLJ1W2TMxdj2pMIHSMhD0wEo+jlM1HTBtSpJUpx9OjU
-	 VuLCELsJlpACsdN2daI3l3tFtxxA1VHn0X9IR7i3AQl6uMk5W2E4TyYGggQ8T8M6pdw==
+	t=1793399837;
+	b=rOpDmH7b7kxgpboMg5SgsHpBFvPy25rDVacz6FIg6MJE+rOjEcXABp7zHz0mHI9qpp/g
+	 Uf7e5K8Xfxw3SNxWtYAIlzvtEAXXfJYoXC2vZmXP7khLX8ZYzI7R24tRWd5M/eKt67CDE
+	 i8CQqkIkPGB0vQpVfC7T0QDbfT4C9zAfwpHsa+a3pzKeiqbC9fMPpUpWXYtBvhSKkrZ9b
+	 FxP1wtDJVKgy+p3NoTgK5Y7NRDltbkckj1CLZNn+uE8cG0Ost710HSRgWtuFa9afUbxFc
+	 JvnRddIu/t0ZrJZIvEbG6ihmuosA7bbL+ZahAMOV8jQnXsHlIr+5mztnL8c9VEEKIqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793399831;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793399837;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=ba5bYhgr6cFUpEyFJKX9JHAzh61EDkiu0uHMJZnKIBs=;
-	b=XeguLrwJi8g+RQD0XKW4wYaQOeSJ1BEs1ywa9MDGuYJi8wBToB5ASeDqR5kf/fWSzdhh
-	 Z3wZ4SyTsTDu35AQKFGIRGZMMbmzYALSJloKB6TAQgi73ikFrlS48vHN+aFuuAKmQjq87
-	 hReLy4Q2ZeFElV09BTqoZOMeWtTIJlsdjoxbzeAGbROrTN9u6MijgU+NF/SgeZs8FYa5T
-	 uGUlw2On5ZoysXUphj2DWixgBAYJQsoAGYsNFHbA/GuXc3IXfFbrQaYYEgJqlx2x4TriY
-	 uoNtQfUSKwNkTg/IfC+cpkmtfpV+MDtqOFivNb/d+pxAad93vnypPsKOpYgZO59UMIQ==
+	bh=tZyvsNnXMh56pai5U5Ss1kd8tGraHDrvslv6z3x9w14=;
+	b=YhqFvGwraoGJpYXY0ZWOIvsTJrlPqrYbRoB1xgmNcfHhJC5eeTNu7FHjjytw1P8Y7sWg
+	 5fhj1vHkuEOp9xr3ckI7Y+Js3yr59IgqJ+N0X+Quo36MlqMVpmAXw2RpV/xebneJjDlLV
+	 v7bDCzDESo6HgbaM55XGtKNbh/JkWPMObtJVvjGbamLMmcbB+1yoEY5cv62PaWKfdsCbX
+	 AZL9KcsbV8rG6YrpFr6xYK1HdLwh8GwZKR2lKPUDXlozsdivIq/2nm7U+lUlyots1WYqH
+	 +GVEqh+4sGjIab1asI9/hRdklDGqkph6cctFHGcAqqiURJH7O0hzFo/AyTrFxbPOL3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Oqx+qjv0;
-	arc=none smtp.remote-ip=209.85.221.43
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lXsEmerP;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D0160A260D
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 35D0160A260D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F2660A2623
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 22:37:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48F2660A2623
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Oqx+qjv0
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48e1d0e5dafso1269232f8f.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:37:10 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lXsEmerP
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so12763125e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:37:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793399829; x=1794004629; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793399835; x=1794004635; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ba5bYhgr6cFUpEyFJKX9JHAzh61EDkiu0uHMJZnKIBs=;
-        b=Oqx+qjv0B9aYmzbqrMp6NkPYsKGGi6CEdI3ZwK5m4ZvQIgJD6evJAB+UldKvLqSTEZ
-         BAc6YFrfJTQotqsXG3LNY7s1VE6RFYAvVn5Y+RrW0v4mrNot6K9R0Qn3SRqRmGOZtXLd
-         4v4W33vfDbb2KWtX5p013ch1eFE0tQV6yIrlPH6p6zPgsLcDDH3lXQUHPfT5C12peinI
-         4tA/lzTaOYjrqJYJQNTwSRjHQ8M34PdIKWhV/Nuw/+oAM3Z0851VMw4i3G75SG92CE79
-         s37ATMZ76M/Mp6O8VmDLgE4BdSSP2Ya09b4eJbZB/VdP0BEDz8OjRatycIkRhNKS3MFU
-         N3Zw==
+        bh=tZyvsNnXMh56pai5U5Ss1kd8tGraHDrvslv6z3x9w14=;
+        b=lXsEmerPy41FiZUadHpGhU9/RRwjtTquaIaHnhtDYeUcOZvVZWKp/jBfv1dkqYKa4G
+         W6DB2wLtmrbrxq0ocPiK9ZdVMNdgQcxNSH9xjXG5vkgP2Hr7XGCSMO/Rs45yyfvr+OJM
+         G6N8WxO8cVxARay1xNjZbMXcnoBeicgNvfMpozJJdRP6ab9AaSDngIy/h6bpW0LM/JqN
+         FyqmRiR8m96n8b+ukhxa4hDp2cW81X7TAchROnadfKxNc8U1e5i/X1C7TLwi9zs5msgr
+         c8mWwuqXKMKeBFMu+7hjNd4iQYEqmcbfT8MZu51UlMbbadeXoWVG+KQdfV0frKVH8bqh
+         hWfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793399829; x=1794004629;
+        d=1e100.net; s=20260707; t=1793399835; x=1794004635;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ba5bYhgr6cFUpEyFJKX9JHAzh61EDkiu0uHMJZnKIBs=;
-        b=Qp31NMZDbV7Nfo0NChzCqe8x1Nc3kdtFdtei8K/65tKlKhMo1B+QnwzmuUb1j/0mio
-         t40LRnqtcM+0VKAbwQKls4fwH6joCcpnA2JRAlpTIgqG3pN558kDVoEG5X07Ze7daEVM
-         fmSCFxMuIetnCELijcSkI1mZ4HQGtyrbC2JMyEqftRX8Gjwe1jjpwA06U4nRoiPZReYK
-         cT6XlFQhS+S4QkyMSpqqUq+HZrg8N7/NwhIoK5gTaX2EfAafjAyeAJtFogs7VT6umAcs
-         bgZbJwj+lxEPnS2bvso9m1l49EPnBV+Kyv5vTYeAKT5rsxufU2r87QdXYeAxZQBfF/6y
-         QsbA==
-X-Forwarded-Encrypted: i=1; AKwUvBz9FEZq/asg9KoL6n+ss/H9ezstFYOSPe8682iDdMUJSvADieXD0xk6XZyNr0b7TvuiFcQha6ftQGU3@vger.kernel.org
-X-Gm-Message-State: AFq9FYIKrmCcnPxiaOv5fF+fGt7q9oVzj4+aoTITcdG5yriVm1Clymtj
-	YYAqDfmQMx6yknCQKEJxJ0ImozzqWgVIuYPMzNtEBxd+02MM+t2/JKdf
-X-Gm-Gg: AYBFou1LiXPXBCpEaUrlVyu6l6qjpsFnM8xZDd65tAthj9tyI9JfLPw3YXVfljfwE25
-	/cXC/+Z6XLiWPv1/XWSUbpm9kHvKmaZzHTKIzR2HtWq4ppDbGja4S7umh9Q/wSWhqF7y0O8h2lH
-	qqXBbBvQPlYNlKRlngzVjy2BAGch221n8zAHaPMhVtosU9LUs06H1VkASuPWNYjKsxMOQ3lmO8P
-	ctKFauBVLJQIPWFo0K7CUJ8s4HsZPllWVV6UzldGDTVJ9yafbTxQyXRvkzyJH7+UTde7M7KYj/Q
-	TDybrpOR6DSpP+yVPoaslbLmoGOz3pFgTcxnSRnjH72sb02Ry3XtqEZIsPh6I0H4eWEJH6ohgdR
-	1Aeenf9wQnR87OqPQYuNvwGdKWyYm1BW8vN43/PHPryN9lZGM+dah5qePz4ihoH4SUX5uOa4OaW
-	6YfTeO9tpLVPIGNN5sSfWVTzfY8ZJjxOO+VdVTGsziMKxbExQ5/Nc3VafuLUXeVnWd+sJaziAGb
-	jBnSBJ6mDJfiqaaezij7EBJYV9QGucIw5K26DiP5gsZZ86S+LAEYBRqTWWlEkeqYQXQJmHUh5Qs
-	Oqs23HuLxSSWi5I/SuT1Z3Ehtbhy
-X-Received: by 2002:a05:6000:4910:b0:48c:69b3:6114 with SMTP id ffacd0b85a97d-48e6494c24fmr18207678f8f.3.1793399828561;
-        Fri, 30 Oct 2026 15:37:08 -0700 (PDT)
+        bh=tZyvsNnXMh56pai5U5Ss1kd8tGraHDrvslv6z3x9w14=;
+        b=1BcyDQsWD2UxWVar81hO4H6yh8m0Wsp2kmRhLEs/lcfLDsoxIcQHxjsHKXEUYFMMaE
+         hYtcXPhRb/t7P/2qmv5veNeRG7jfN3DjAjdZnXEB7UUQ3mWH0FIcKKWTcPqyQR/N7Jn0
+         ekTg2U24C4xmR89e6/PI7p1Ja2cGILw0j04MGI/Hikp3TGE/NRKaLMaWxKB7SB7QNsH0
+         kS1PDCnrv4xUdFykLH+XY0hElPYCOJbRa9FZAGLCqlQDB0+n0P2SpPlZlYqw5Q7ISmSE
+         kSnNy8MeF6/vEQBXH+Yi3P+qTiynZUZm8byGstmzkRYfhlRWexkqaU/hKExZ/CCV5Q4h
+         lcCw==
+X-Forwarded-Encrypted: i=1; AKwUvByEOse0NRY6ruCSAcQb/t+EUAVd9Oxb0iTyxY3rbtaTAizz5GfWNiocs23J+8dg+tq+MDYd4/fuQIWb@vger.kernel.org
+X-Gm-Message-State: AFq9FYJRx9ONn7PyhxD4kxFqVRdjyWOjAG4WmLDyNQ9kqo/MMbaNzwAH
+	3xwnMTqxnEEr5RfpYD1/homJA8ijz6I/lFwqji5B80e1fVwDA1dzGu2W
+X-Gm-Gg: AYBFou1tzDIHUy6zdhU7ledmAmpIqHTmHUXhlSD1fhFTJWIY0f0bwLd5jlgQUphXCCR
+	NsmXcJJvlqweV6Ejbx6JnOL36I0ON1qaRQuAiQD0QGGr0MnTn+e94lMWIqSjG1ZozsdGJ/JbPNQ
+	M7Zu4uUKcyCigjLKlRkluv/qtq1KglDtxgC7ZCUDSrtcmErRUDfOrnuDOSJKLtULcZVCDZeiinc
+	i2P4YwnMAZKbZQFASU16sqRsGcXijtHazp5+rJck8YujFZmoqz3uX7HuK4NfSiZ4BeldOy+Ul1F
+	MibafZ5GlBJzk1PIQbgWblfv7d7mVS3WcQCGqY2/lo1eABsNKHkNU2HTjdE3jA+ufbfzbUyj5kj
+	3xssZcnScRP1P9kcWHTTB9X4Yh3nfEd6KAxZ4lKVEnpEUcsZXjlWLiV7O5ySpwr7HgtLwK2QfZX
+	ACUeaLFRdiQukyLa6/3P78EG3WVxHOvarMhSZLCTULMPGE2XwQo/epgttUlw4gaBSRVT6BIkjm2
+	A8ESCYPL2fZ7K5zKXwMSn8mTe36eIr8KScgut+ZtRsvZz802awChooiQBUezT28LYiCvk0zxuAj
+	WUZl7A4CUS4uoNUoWUon7xs4XduMifmhKzR3ZrWoP7YQXlm+9A==
+X-Received: by 2002:a05:600c:840e:b0:4a1:813f:2a60 with SMTP id 5b1f17b1804b1-4ac17d168b1mr89453445e9.11.1793399834458;
+        Fri, 30 Oct 2026 15:37:14 -0700 (PDT)
 Received: from m2.. ([37.142.145.227])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.37.06
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-48e71b959c1sm5457300f8f.45.2026.10.30.15.37.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 15:37:08 -0700 (PDT)
+        Fri, 30 Oct 2026 15:37:14 -0700 (PDT)
 From: Michael Zaidman <michael.zaidman@gmail.com>
 To: Jiri Kosina <jikos@kernel.org>,
 	Benjamin Tissoires <bentiss@kernel.org>
@@ -96,9 +96,9 @@ Cc: Linus Walleij <linusw@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Michael Zaidman <michael.zaidman@gmail.com>
-Subject: [PATCH v2 05/15] HID: ft260: i2c: silence sysfs store big-numbers
-Date: Sat, 31 Oct 2026 00:36:27 +0200
-Message-ID: <20261030223637.86907-6-michael.zaidman@gmail.com>
+Subject: [PATCH v2 08/15] HID: ft260: uart: add modem pins control via ioctl
+Date: Sat, 31 Oct 2026 00:36:30 +0200
+Message-ID: <20261030223637.86907-9-michael.zaidman@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261030223637.86907-1-michael.zaidman@gmail.com>
 References: <20261030223637.86907-1-michael.zaidman@gmail.com>
@@ -113,109 +113,314 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-FT260_ATTR_STORE returned the feature-report transfer length from
-ft260_hid_feature_report_set() instead of the sysfs write size. For
-values like 1000, userspace writes more bytes than the HID report
-length, so the VFS retries the remainder and reports "Invalid argument"
-even though the attribute was applied correctly:
+Add TIOCMGET/TIOCMSET (and thus TIOCMBIS/TIOCMBIC) support so userspace
+can drive DTR/RTS when the modem pins are in GPIO mode. This enables
+programming an ESP32 over the FT260 with esptool, which resets the chip
+via those lines.
 
-  $ echo 1000 > .../clock
-  bash: line 1: echo: write error: Invalid argument
-  $ cat .../clock
-  1000
+Also key GPIO sysfs registration off chip_mode rather than USB interface
+number 0, and include DCD/RI in UART mode 3/4 GPIO sets so the modem
+mask matches the pins esptool needs.
 
-Return count after a successful parse so the full write is consumed.
+The RTS, CTS, DTR and DSR pins are active-low, so TIOCMGET inverts the
+sense of those four lines and TIOCMSET drives 0 to assert them. DCD and
+RI are not inverted. Rio Liu found and fixed the polarity.
 
-Do not report success when the feature report fails. Store 16-bit
-attributes in little endian (reported by Sashiko).
+Keep the errno from ft260_get_interface_type() so a failed status read
+does not probe-succeed after teardown. Return -EINVAL when the modem
+pins are not in GPIO mode, propagate gpio_get_all() errors from
+TIOCMGET, and copy the GPIO shadow under the port lock for TIOCMSET
+(reported by Sashiko).
 
+Co-developed-by: Rio Liu <rio@r26.me>
+Signed-off-by: Rio Liu <rio@r26.me>
 Signed-off-by: Michael Zaidman <michael.zaidman@gmail.com>
 
 ---
-v2: do not mask a failed feature report; cpu_to_le16 on word store
-(reported by Sashiko).
+v2: polarity fix folded in (Rio Liu); preserve get_interface_type
+errno; tiocmget/tiocmset error paths and locked shadow copy (reported
+by Sashiko).
 ---
- drivers/hid/hid-ft260.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/hid/hid-ft260.c | 150 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 131 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-index f134fab08285..d2c5c9ed7927 100644
+index 4b0b55c98f90..4106066b6a89 100644
 --- a/drivers/hid/hid-ft260.c
 +++ b/drivers/hid/hid-ft260.c
-@@ -1471,63 +1471,67 @@ static int ft260_word_show(struct hid_device *hdev, int id, u8 *cfg, int len,
- static void ft260_attr_dummy_func(struct hid_device *hdev, u8 req, u16 value)
- {
+@@ -16,6 +16,7 @@
+ #include <linux/serial.h>
+ #include <linux/serial_core.h>
+ #include <linux/kfifo.h>
++#include <linux/tty.h>
+ #include <linux/tty_flip.h>
+ #include <linux/math.h>
+ #include <linux/minmax.h>
+@@ -183,7 +184,7 @@ enum {
+ 	FT260_GPIO_DIR_OUTPUT		= 0x01,
+ };
+ 
+-/* GPIO offsets */
++/* GPIO bit masks */
+ #define FT260_GPIO_0		BIT(0)
+ #define FT260_GPIO_1		BIT(1)
+ #define FT260_GPIO_2		BIT(2)
+@@ -213,7 +214,8 @@ enum {
+ #define FT260_GPIO_UART_MODE_1_SET	FT260_GPIO_UART_DTR_DSR
+ #define FT260_GPIO_UART_MODE_2_SET	FT260_GPIO_UART_RTS_CTS
+ #define FT260_GPIO_UART_MODE_3_SET	(FT260_GPIO_UART_RTS_CTS | \
+-					 FT260_GPIO_UART_DTR_DSR)
++					 FT260_GPIO_UART_DTR_DSR | \
++					 FT260_GPIO_UART_DCD_RI)
+ #define FT260_GPIO_UART_MODE_4_SET	FT260_GPIO_UART_MODE_3_SET
+ #define FT260_GPIO_UART_DEFAULT		FT260_GPIO_UART_MODE_0_SET
+ #define FT260_GPIO_UART_MODE_1_CLR	(FT260_GPIO_UART_RX_TX | \
+@@ -223,6 +225,16 @@ enum {
+ #define FT260_GPIO_UART_MODE_3_CLR	FT260_GPIO_UART_RX_TX
+ #define FT260_GPIO_UART_MODES		5
+ 
++/* UART modem control GPIO offsets */
++enum {
++	FT260_GPIO_UART_DCD		= (4),
++	FT260_GPIO_UART_RI		= (5),
++	FT260_GPIO_UART_RTS		= (7),
++	FT260_GPIO_UART_CTS		= (10),
++	FT260_GPIO_UART_DTR		= (11),
++	FT260_GPIO_UART_DSR		= (13),
++};
++
+ #define FT260_SET_REQUEST_VALUE(report_id) ((FT260_FEATURE << 8) | (report_id))
+ 
+ /* Feature In reports */
+@@ -449,6 +461,7 @@ MODULE_DEVICE_TABLE(hid, ft260_devices);
+ struct ft260_device {
+ 	struct i2c_adapter adap;
+ 	struct hid_device *hdev;
++	int chip_mode;
+ 	int iface_type;
+ 	int iface_id;
+ 	struct list_head device_list;
+@@ -1106,7 +1119,27 @@ static void ft260_gpio_en_update(struct hid_device *hdev, u8 req, u8 value)
+ 	else
+ 		ft260_gpio_en_clr(dev, bitmap);
+ exit:
+-	hid_info(hdev, "enabled GPIOs: %04x\n", dev->gpio_en);
++	hid_info(hdev, "enabled GPIOs: %04x, bitmap %04x\n",
++		 dev->gpio_en, bitmap);
++}
++
++static void ft260_gpio_output_cfg(struct ft260_gpio_state *gpio,
++				  u32 offset, int value)
++{
++	if (offset < FT260_GPIO_0_5_COUNT) {
++		gpio->dirs |= BIT(offset);
++		if (value)
++			gpio->vals |= !!value << offset;
++		else
++			gpio->vals &= ~BIT(offset);
++	} else {
++		offset = offset - FT260_GPIO_0_5_COUNT;
++		gpio->ex_dirs |= BIT(offset);
++		if (value)
++			gpio->ex_vals |= !!value << offset;
++		else
++			gpio->ex_vals &= ~BIT(offset);
++	}
  }
  
- #define FT260_ATTR_SHOW(name, reptype, id, type, func)			       \
- 	static ssize_t name##_show(struct device *kdev,			       \
- 				   struct device_attribute *attr, char *buf)   \
- 	{								       \
- 		struct reptype rep;					       \
- 		struct hid_device *hdev = to_hid_device(kdev);		       \
- 		type *field = &rep.name;				       \
- 		int len = sizeof(rep);					       \
- 									       \
- 		return func(hdev, id, (u8 *)&rep, len, field, buf);	       \
+ static int ft260_gpio_set(struct gpio_chip *gc, u32 offset, int value)
+@@ -1155,7 +1188,7 @@ static int ft260_gpio_set(struct gpio_chip *gc, u32 offset, int value)
+ 			rep.gpio.ex_vals &= ~BIT(offset);
  	}
  
- #define FT260_SSTAT_ATTR_SHOW(name)					       \
- 		FT260_ATTR_SHOW(name, ft260_get_system_status_report,	       \
- 				FT260_SYSTEM_SETTINGS, u8, ft260_byte_show)
+-	ft260_dbg("dirs %#02x vals %#02x ex_dir %#02x ex_vals %#02x\n",
++	ft260_dbg("dirs %#02x vals %#02x ex_dirs %#02x ex_vals %#02x\n",
+ 		  rep.gpio.dirs, rep.gpio.vals,
+ 		  rep.gpio.ex_dirs, rep.gpio.ex_vals);
  
- #define FT260_I2CST_ATTR_SHOW(name)					       \
- 		FT260_ATTR_SHOW(name, ft260_get_i2c_status_report,	       \
- 				FT260_I2C_STATUS, __le16, ft260_word_show)
+@@ -1307,8 +1340,6 @@ static int ft260_gpio_init(struct ft260_device *dev,
+ 	char prefix[] = "ft260_";
+ 	u8 mode = cfg->chip_mode;
  
--#define FT260_ATTR_STORE(name, reptype, id, req, type, ctype, strtou, func)    \
-+#define FT260_STORE_NATIVE(v) (v)
+-	hid_info(hdev, "initialize gpio chip\n");
+-
+ 	dev->gpio_uart_mode[0] = (u16)FT260_GPIO_UART_MODE_0_SET;
+ 	dev->gpio_uart_mode[1] = (u16)FT260_GPIO_UART_MODE_1_SET;
+ 	dev->gpio_uart_mode[2] = (u16)FT260_GPIO_UART_MODE_2_SET;
+@@ -1352,7 +1383,6 @@ static int ft260_gpio_init(struct ft260_device *dev,
+ 		goto exit;
+ 	}
+ 	snprintf(label, label_sz, "%s%s", prefix, dev_name(&hdev->dev));
+-	hid_info(hdev, "initialize gpio chip on %s\n", label);
+ 
+ 	dev->gc->label			= label;
+ 	dev->gc->direction_input	= ft260_gpio_direction_input;
+@@ -1423,6 +1453,7 @@ static int ft260_get_interface_type(struct ft260_device *dev,
+ 	ft260_dbg("wakeup_int: 0x%02x\n", cfg->enable_wakeup_int);
+ 
+ 	dev->power_saving_en = cfg->power_saving_en;
++	dev->chip_mode = cfg->chip_mode;
+ 
+ 	switch (cfg->chip_mode) {
+ 	case FT260_MODE_ALL:
+@@ -1440,7 +1471,6 @@ static int ft260_get_interface_type(struct ft260_device *dev,
+ 		break;
+ 	}
+ 
+-	dev->iface_type = ret;
+ 	return ret;
+ }
+ 
+@@ -1941,6 +1971,80 @@ static void ft260_uart_set_termios(struct tty_struct *tty,
+ 	ft260_uart_change_speed(port, &tty->termios, NULL);
+ }
+ 
++static int ft260_uart_tiocmget(struct tty_struct *tty)
++{
++	struct ft260_device *port = tty->driver_data;
++	int gpios;
 +
-+#define FT260_ATTR_STORE(name, reptype, id, req, type, strtou, func, conv)     \
- 	static ssize_t name##_store(struct device *kdev,		       \
- 				    struct device_attribute *attr,	       \
- 				    const char *buf, size_t count)	       \
- 	{								       \
- 		struct reptype rep;					       \
- 		struct hid_device *hdev = to_hid_device(kdev);		       \
- 		struct ft260_device *dev = hid_get_drvdata(hdev);	       \
- 		type name;						       \
- 		int ret;						       \
- 									       \
--		if (!strtou(buf, 10, (ctype *)&name)) {			       \
--			rep.name = name;				       \
-+		if (!strtou(buf, 10, &name)) {				       \
-+			rep.name = conv(name);				       \
- 			rep.report = id;				       \
- 			rep.request = req;				       \
- 			mutex_lock(&dev->lock);				       \
- 			ret = ft260_hid_feature_report_set(hdev, (u8 *)&rep,   \
- 							   sizeof(rep));       \
- 			if (ret < 0)					       \
- 				hid_err(hdev, "%s: failed!\n", __func__);      \
--			else						       \
-+			else {						       \
- 				func(hdev, req, name);			       \
-+				ret = count;				       \
-+			}						       \
- 			mutex_unlock(&dev->lock);			       \
- 		} else {						       \
- 			ret = -EINVAL;					       \
- 		}							       \
- 		return ret;						       \
++	/*
++	 * The modem lines control via ioctl is allowed only
++	 * when the related pins are in the gpio mode.
++	 */
++	int mask = FT260_GPIO_UART_MODE_4_SET;
++
++	if ((port->gpio_en & mask) != mask) {
++		ft260_dbg("Illegal gpio config %#02x != mask %#04x\n",
++			  port->gpio_en, mask);
++		return -EINVAL;
++	}
++
++	gpios = ft260_gpio_get_all(port->gc, FT260_GPIO_VALUE);
++	if (gpios < 0)
++		return gpios;
++
++	return ((!(gpios & FT260_GPIO_B) ? TIOCM_RTS : 0) |
++		(!(gpios & FT260_GPIO_E) ? TIOCM_CTS : 0) |
++		(!(gpios & FT260_GPIO_F) ? TIOCM_DTR : 0) |
++		(!(gpios & FT260_GPIO_H) ? TIOCM_DSR : 0) |
++		((gpios & FT260_GPIO_4) ? TIOCM_CAR : 0) |
++		((gpios & FT260_GPIO_5) ? TIOCM_RNG : 0));
++}
++
++static int ft260_uart_tiocmset(struct tty_struct *tty,
++			       unsigned int set, unsigned int clear)
++{
++	int ret;
++	struct ft260_device *port = tty->driver_data;
++	struct ft260_gpio_write_request_report rep;
++	struct hid_device *hdev = port->hdev;
++	int mask = FT260_GPIO_UART_MODE_4_SET;
++
++	if ((port->gpio_en & mask) != mask) {
++		ft260_dbg("Illegal gpio config %#02x != mask %#04x\n",
++			  port->gpio_en, mask);
++		return -EINVAL;
++	}
++	rep.report = FT260_GPIO;
++
++	mutex_lock(&port->lock);
++	rep.gpio = port->gpio;
++
++	if (set & TIOCM_RTS)
++		ft260_gpio_output_cfg(&rep.gpio, FT260_GPIO_UART_RTS, 0);
++	if (set & TIOCM_DTR)
++		ft260_gpio_output_cfg(&rep.gpio, FT260_GPIO_UART_DTR, 0);
++	if (clear & TIOCM_RTS)
++		ft260_gpio_output_cfg(&rep.gpio, FT260_GPIO_UART_RTS, 1);
++	if (clear & TIOCM_DTR)
++		ft260_gpio_output_cfg(&rep.gpio, FT260_GPIO_UART_DTR, 1);
++
++	ft260_dbg("dirs %#02x vals %#02x ex_dirs %#02x ex_vals %#02x\n",
++		  rep.gpio.dirs, rep.gpio.vals,
++		  rep.gpio.ex_dirs, rep.gpio.ex_vals);
++
++	ret = ft260_hid_feature_report_set(hdev, (u8 *)&rep, sizeof(rep));
++	if (unlikely(ret < 0)) {
++		hid_err(hdev, "%s: cannot set GPIO: %d\n", __func__, ret);
++		mutex_unlock(&port->lock);
++		return -EIO;
++	}
++
++	port->gpio = rep.gpio;
++	mutex_unlock(&port->lock);
++
++	return 0;
++}
++
+ static int ft260_uart_install(struct tty_driver *driver, struct tty_struct *tty)
+ {
+ 	int idx = tty->index;
+@@ -2021,6 +2125,8 @@ static const struct tty_operations ft260_uart_ops = {
+ 	.write_room		= ft260_uart_write_room,
+ 	.chars_in_buffer	= ft260_uart_chars_in_buffer,
+ 	.set_termios		= ft260_uart_set_termios,
++	.tiocmget		= ft260_uart_tiocmget,
++	.tiocmset		= ft260_uart_tiocmset,
+ 	.hangup			= ft260_uart_hangup,
+ 	.install		= ft260_uart_install,
+ 	.cleanup		= ft260_uart_cleanup,
+@@ -2164,14 +2270,16 @@ static int ft260_i2c_probe(struct ft260_device *dev,
+ 		return ret;
  	}
  
- #define FT260_BYTE_ATTR_STORE(name, reptype, req, func)			       \
- 		FT260_ATTR_STORE(name, reptype, FT260_SYSTEM_SETTINGS, req,    \
--				 u8, u8, kstrtou8, func)
-+				 u8, kstrtou8, func, FT260_STORE_NATIVE)
+-	ret = ft260_gpio_init(dev, cfg);
+-	if (ret)
+-		goto err_i2c_free;
++	if (cfg->chip_mode == FT260_MODE_I2C) {
++		ret = ft260_gpio_init(dev, cfg);
++		if (ret)
++			goto err_i2c_free;
  
- #define FT260_WORD_ATTR_STORE(name, reptype, req, func)			       \
- 		FT260_ATTR_STORE(name, reptype, FT260_SYSTEM_SETTINGS, req,    \
--				 __le16, u16, kstrtou16, func)
-+				 u16, kstrtou16, func, cpu_to_le16)
+-	ret = sysfs_create_group(&hdev->dev.kobj, &ft260_attr_group);
+-	if (ret < 0) {
+-		hid_err(hdev, "failed to create sysfs attrs\n");
+-		goto err_i2c_free;
++		ret = sysfs_create_group(&hdev->dev.kobj, &ft260_attr_group);
++		if (ret < 0) {
++			hid_err(hdev, "failed to create sysfs attrs\n");
++			goto err_i2c_free;
++		}
+ 	}
  
- FT260_SSTAT_ATTR_SHOW(chip_mode);
- static DEVICE_ATTR_RO(chip_mode);
+ 	return 0;
+@@ -2232,7 +2340,8 @@ static int ft260_uart_probe(struct ft260_device *dev,
+ 
+ 	cfg->uart_mode = FT260_UART_CFG_FLOW_CTRL_NONE;
+ 
+-	if (dev->iface_id == 0) {
++	if (dev->chip_mode & FT260_MODE_UART ||
++	    dev->chip_mode == FT260_MODE_ALL) {
+ 		ret = ft260_gpio_init(dev, cfg);
+ 		if (ret)
+ 			goto err_hid_report;
+@@ -2311,8 +2420,9 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	ret = ft260_get_interface_type(dev, &cfg);
+ 	if (ret <= FT260_IFACE_NONE)
+ 		goto err_hid_close;
++	dev->iface_type = ret;
+ 
+-	if (ret == FT260_IFACE_I2C) {
++	if (dev->iface_type == FT260_IFACE_I2C) {
+ 		ret = ft260_i2c_probe(dev, &cfg);
+ 		if (ret)
+ 			goto err_hid_close;
+@@ -2353,10 +2463,12 @@ static void ft260_remove(struct hid_device *hdev)
+ 		tty_port_unregister_device(&dev->port, ft260_tty_driver,
+ 					   dev->index);
+ 		ft260_uart_port_remove(dev);
+-		if (dev->iface_id == 0)
++		if (dev->chip_mode & FT260_MODE_UART ||
++		    dev->chip_mode == FT260_MODE_ALL)
+ 			sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
+ 	} else {
+-		sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
++		if (dev->chip_mode == FT260_MODE_I2C)
++			sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
+ 		i2c_del_adapter(&dev->adap);
+ 	}
+ 
 -- 
 2.43.0
 
