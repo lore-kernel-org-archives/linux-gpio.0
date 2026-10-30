@@ -1,60 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793354290;
-	b=fTH2yNuqIpekBegvNZXNl5YNQXBwmm5mglUq9CHxA22L/gDighGhQOPaQQdzpeRTfb/V
-	 dt4S87HNCE+a3cmnx5Ye6E+gWe/RvLyT/gGIef2xUELDrwpMrPN5lfclw13J92NjpOPwT
-	 Xyw6WMQ+oFTl4h7q3aPQXTB11a2n6CugEID20wzsPwF1r7IFLVCwpn0VWFpFvjGoVy22b
-	 1TwI9byI6qm0tvbm7uPl2N0IwsJTNKMUjVfI2/cUxN0lAwnPMfUgIoH6so2pWL6L35LwY
-	 3i2BNH64uFAgvqYvKGKCM9t4Neg1J9tgL2OW+p/nEg7sVp1tLzSnU9PZ5PF1TMWBRqw==
+	t=1793357199;
+	b=dVp/nZQTmLDd4vfUSz2JrjlgSyzhKRnOL5rdG9IVQVlhdoN5xCLVkMDC5uItMX/0ZAMA
+	 ACaFXGxehW9GE2/C9wEkaS8cvmvZdbCvtrfQ3sfLk8c98laFVt2AdQj12QIYb9NFPABmP
+	 M92dmXnp0sT7hn+5glkj5Xd/HByORoPUehI8aMO3eM2loQF6pv0f99RVa6CLzv9hFsXP3
+	 jCCren9QySVN2lQQkJoKhOT40APT22k548U37+8S/n8q5S3r8n6+g2Ry74NVbrww3sWh8
+	 3nNwrRESUu4wZ5pSyONEysv0dFqifnA5bH2eVsF1Geo3oxm1V5x3ktdZfc7KtWH8uBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793354290;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
-	 X-CMS-RootMailID:References;
-	bh=yNhU8GgQUg1o1nYtT+CT1yyH9rXOeQLdJVtY/2QBf5A=;
-	b=ZMHH/dkz9xJjK+a2hIeens56a9JFxg9T/1b1pDOZDBlHLx8JmWuayDKi052HRM3HyaTv
-	 bQnrIy8tvvCGTDpBSxPXw46UNMAq78E/3rLUIf+++Wob/r+Yhre9ru/Ij5wyCAuRwFP5b
-	 RMjjphR82WPt4UXTPmAro5xXFJzc/vYOrUbwKqVsF+BKhkU7TiUb5DzUq7jpsC0C2x76t
-	 CmHvfq4KdvKK+D5HxOc3zGUahFiWZUOSnUrololYRqXW8cGfj4DBh2Cn5O3ppHpDi/GGO
-	 zXpkKpVEj+SUlSrfSPq+RZoWGgyHBbOPskvVh4pSA50B+bR50SibSeouPnsk+2FYXrg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793357199;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
+	 X-Google-Original-From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=TxJ3rrWwCBf4mESTzPnieLzM7IFD8MPiDYpGVT65dNo=;
+	b=HEvL2NQF7p9RwJgz0H7nrkzJ2Qvg8F7Wwzc5RB/zH7fWXCLQFPaJYUBQeUUE07xwtWc5
+	 YlS4Bg8TntiBtPeq517VrvWw25zn0vXkPs0xFCu/jjjWPRZT+XfOS2gQS9vZTVWABiKAg
+	 /ET6+CDNvaBd60CQGtlvTNsCCKEhx3+Y+gFhHz79KZGS9n7RUVn5zyqyfd0qz8ZldQ+1S
+	 OdCH2wW8GlzdrjPy+6bSIHj+WNaSsr5FVM85FjwmqQ2iy41ivOtzIjBSZue2dROHtlM39
+	 ZFEB9zzl+Za3aef6U1A5B4Ec4Z18UxU2bRPmJkZj3RItBGGhhis416J/7osOn4dOFMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=NtvUXfff;
-	arc=none smtp.remote-ip=210.118.77.11
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=googlemail.com;
+	spf=pass smtp.mailfrom=googlemail.com;
+	dkim=pass header.d=googlemail.com header.i=@googlemail.com header.a=rsa-sha256 header.s=20260707 header.b=zw4Anzgm;
+	arc=none smtp.remote-ip=209.85.218.46
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2921606A31F
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 09:58:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A2921606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83713606A31E
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 10:46:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83713606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=NtvUXfff
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261030095806euoutp01b68fe6b041ec6fd37aa7f04a47fa18ea~jRjjPG2wc0772107721euoutp01H
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 09:58:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261030095806euoutp01b68fe6b041ec6fd37aa7f04a47fa18ea~jRjjPG2wc0772107721euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793354286;
-	bh=yNhU8GgQUg1o1nYtT+CT1yyH9rXOeQLdJVtY/2QBf5A=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=NtvUXfff5dKjwBX0uM7X8ZM/3/RbE2GOv0oE+FmvpIbQNd3CHiOOEO4VCDVdLDCJh
-	 wXiSS4SadpXPwkLFCjZFTahhsAikSSMdcmoPyeBU7QSd3ZjrRRQ73pTT3c7eqLKjyG
-	 d9ZofaBWa24bwsKrH1ZIERUYMC9SzueXqIg4BGmo=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261030095806eucas1p1227bd86bd46487d5dfdbe36bd4df8e94~jRjjGqrbL2917029170eucas1p1k;
-	Fri, 30 Oct 2026 09:58:06 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261030095805eusmtip1ac47d4a4931e52d5610654736cf914b2~jRjik2heC1953319533eusmtip1E;
-	Fri, 30 Oct 2026 09:58:05 +0000 (GMT)
-Message-ID: <01841455-880c-4477-ac69-ea8c117cc6cd@samsung.com>
-Date: Fri, 30 Oct 2026 10:58:05 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=googlemail.com header.i=@googlemail.com header.a=rsa-sha256 header.s=20260707 header.b=zw4Anzgm
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c43fbcb4393so79818766b.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 03:46:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20260707; t=1793357197; x=1793961997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=TxJ3rrWwCBf4mESTzPnieLzM7IFD8MPiDYpGVT65dNo=;
+        b=zw4AnzgmgxnV2LkYfgGv3ZID0GsmZRAB9S+IcHAcqvKkFoI87U5pj2uKaWlqe5U4mJ
+         HBFpyEKG+29WYANzruygnGv6/jwcR5RbfoI6/H1pvyuyr2oc1tGLVxBQbC9QuSFed/+/
+         gKGzNz/089SlUoXdo9iphzqENwaZNkKG3B0HNmF+toPHpalbvHWPJ/uXbytLWAEm19d2
+         OVunQwd8dAko1MomEsZX9hSZmpPV616BYBMLDFd6eIqCMWN7m1H2vBJj1CUgoCun7FKG
+         w4uZHM6L/gK8jePvCqetQZI131NON2URiT3gGpxspMjJ+SRZ1nd9mxRkAyIo56z27JRA
+         HBqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793357197; x=1793961997;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=TxJ3rrWwCBf4mESTzPnieLzM7IFD8MPiDYpGVT65dNo=;
+        b=G+hgNC9SAdJbJNLFIN6wnVxVr7NnktBW06JkjU1BbWA+IqeikNRfdqznwF2QdRtPBz
+         qbNqLGuuGSBDMhFkGZCTe37TG28tHMI4QbtfYYMec3lzl5xgf1r2HNlZjQBJPYBs6sUY
+         eDrji2R/6Bd5655dohiVg2TNBfLsdZCKpWWbATHdgUbBbmnLIof43JOw4ymHg7SCW1Au
+         a8ZlX9XsBv9jdg9upxhutpa6F3nMVSCWOngHReTx/IBlKwiEI6abeqYUA3jCWE5TETqQ
+         4aabaielv2xUdKEL0qBYX37i2uBPE3eYQInUw3JfyKb9ueK1zk3Fd83iPpRJfsaoBDU6
+         hh8w==
+X-Gm-Message-State: AFq9FYLxykM6cGEo1Fjo0GYWVROJMWgrFMFMjTJd+rpO3AwxTZO+CAlA
+	GenWtLGT6a+CMbCx40prJvw6L+hw+XlToUL3y4er6irNEV4E/Bc9ciwGPmrbqQ==
+X-Gm-Gg: AYBFou2HrVcbaUqbhCaMvt1FfWHX2SktH42TiD1UwhGwWmTEvquC8Zwy4+9dcDKu3KV
+	BKLup0LDzPpHfkSfO6XWT/8wb7O6TFVq8gc4aO3DuqyLEWhp64cew6osk/pQKqV4n8H7BiO+VP1
+	x9brImGijThN0Jw43YpiLMyZ+EFl5V+x23GnJpzUXaAoXgzwoFMOkzCHntMhLU2BLrb7Zj1HdpQ
+	wFZhPzVxhL45O3WfC4OQluBxd+F78E3OOI/vO6SN8Diq2OT7UhA8Ms4JnAfLmpnSFpQD1aUn0oM
+	sVSN7xMTSTiGkyf32yj3ax5GlHAYQi5y1ggVfiMKqFGcXBq2Qq1SSuO5DEX1/9L4F3A9D4Ha5Yh
+	51vFQAZKoHCo1DNDvq52XyZ84yRE4aJTH204r20nda3dMvHPVm0aDFzDE2YeEX4RNwNvwdY2X0V
+	qCyu0sTuuwoyuUcGtaOoJd6WZ19XsLL7iagGHtDagkzn2sHswcyOh25ULsUXyX/YlwSzbUVH49E
+	ENWr8kkN2imJY2lT1kNQTXeDuGrJTB3ctw5444hCFfmaFzdr58z1HcLLkcvgv7el+I7NevX16Qc
+	l1YF2t8O4ehVsa/Dav7UCUtTmBsllMi/MWMadTWuo/9HCPb+EuGEPYx6sTObz/7j8b3qucsgB97
+	qll8=
+X-Received: by 2002:a17:907:e84a:b0:c49:901c:d9f with SMTP id a640c23a62f3a-c4ca7ad1408mr186303366b.49.1793357196832;
+        Fri, 30 Oct 2026 03:46:36 -0700 (PDT)
+Received: from development2.visionsystems.local (mail.visionsystems.de. [213.209.99.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4cabe4d6e1sm49973366b.62.2026.10.30.03.46.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 03:46:36 -0700 (PDT)
+From: Yegor Yefremov <yegorslists@googlemail.com>
+X-Google-Original-From: Yegor Yefremov <yegorslists@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: brgl@kernel.org,
+	Yegor Yefremov <yegorslists@googlemail.com>
+Subject: [PATCH libgpiod v3] build: honor default_library for the installed libraries
+Date: Fri, 30 Oct 2026 11:46:31 +0100
+Message-Id: <20261030104631.1044556-1-yegorslists@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261024123124.3700266-1-yegorslists@googlemail.com>
+References: <20261024123124.3700266-1-yegorslists@googlemail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,243 +98,208 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v5 1/4] gpio: shared-proxy: Fix race between concurrent
- first users
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>, Linus Walleij
-	<linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20261028123448.510401-2-shengchao.guo@oss.qualcomm.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20261030095806eucas1p1227bd86bd46487d5dfdbe36bd4df8e94
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261030095806eucas1p1227bd86bd46487d5dfdbe36bd4df8e94
-X-EPHeader: CA
-X-CMS-RootMailID: 20261030095806eucas1p1227bd86bd46487d5dfdbe36bd4df8e94
-References: <20261028123448.510401-1-shengchao.guo@oss.qualcomm.com>
-	<20261028123448.510401-2-shengchao.guo@oss.qualcomm.com>
-	<CGME20261030095806eucas1p1227bd86bd46487d5dfdbe36bd4df8e94@eucas1p1.samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On 28.10.2026 13:34, Shawn Guo wrote:
-> The proxy lets a consumer set the line direction and reset the
-> default value and vote tally only when usecnt == 1, i.e. when it is
-> the sole requester. But request() and direction_output() take the
-> descriptor mutex separately. When two consumers probe concurrently,
-> both request the line before either configures it, both see
-> usecnt == 2, both fall into the shared path, read back the still
-> unconfigured direction (input) and fail with -EPERM.
->
-> On Nord RRD the two DAC supplies are reg-fixed-voltage regulators
-> sharing tlmm GPIO 41. They probe asynchronously and intermittently
-> both fail, leaving the codecs without supplies:
->
->   reg-fixed-voltage regulator-3p3-dac: setup of GPIO (default) failed: -1
->   reg-fixed-voltage regulator-5p0-dac: setup of GPIO (default) failed: -1
->
-> Requesting the line is not evidence that a consumer has claimed it.
-> Instead, count proxies that have actually configured the line (set its
-> direction or voted for a value) in a new cfgcnt, with a per-proxy
-> configured flag, and allow (re)initialization only while no other
-> proxy has done so. A consumer obtained with GPIOD_ASIS that votes via
-> gpiod_set_value() without ever setting the direction counts as
-> configured, so a later user can never reset def_val/votecnt behind its
-> vote. The count is dropped when the proxy frees the line.
->
-> Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
-> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+From: Yegor Yefremov <yegorslists@googlemail.com>
 
-I've hit the same issue on RUBIK Pi3 board, see:
+The installed libraries (libgpiod, libgpiodcxx, libgpiod-glib,
+libgpiodbus and libgpiosim) are built with both_libraries(), so the
+shared variant is always built, even with -Ddefault_library=static.
+When the toolchain or the environment requests a fully static link
+(e.g. LDFLAGS=-static, as done by Buildroot for static-only builds),
+linking the shared library then fails:
 
-https://lore.kernel.org/all/20261028222803.2682808-1-m.szyprowski@samsung.com/
+  FAILED: lib/libgpiod.so.3.1.2
+  [...] crtbeginT.o: relocation R_ARC_32_ME against `__TMC_END__' can not be used when making a shared object; recompile with -fPIC
 
-This patch fixes it, so feel free to add:
+Use library() instead, which follows default_library, and set
+default_library=both in the project's default options, so that a
+default build still installs both the shared and static libraries. As
+library() returns an object behaving like the shared library when both
+are built, the users of these objects (link_with, pkgconfig.generate,
+generate_gir, full_path) keep working as before.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+The Rust bindings always link against the static libgpiosim. With
+default_library=shared, build a static archive from the objects of the
+shared libgpiosim for them, which is neither installed nor built by
+default.
 
+With default_library=static, generate_gir() would get the static
+libgpiod-glib, but meson's gnome module does not pass internal static
+libraries to g-ir-scanner, so linking libgpiod-glib.a then fails with
+undefined references to libgpiod. A typelib for a static-only library
+would also be useless, as it has no shared library to load at runtime.
+Disable introspection when only static libraries are built, and error
+out if it was explicitly enabled.
 
-> ---
->  drivers/gpio/gpio-shared-proxy.c | 78 ++++++++++++++++++++++++++++----
->  drivers/gpio/gpiolib-shared.h    |  1 +
->  2 files changed, 70 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-proxy.c
-> index bc69b8729d19..2e9ccd8a8d83 100644
-> --- a/drivers/gpio/gpio-shared-proxy.c
-> +++ b/drivers/gpio/gpio-shared-proxy.c
-> @@ -21,9 +21,37 @@ struct gpio_shared_proxy_data {
->  	struct gpio_chip gc;
->  	struct gpio_shared_desc *shared_desc;
->  	struct device *dev;
-> +	bool configured;
->  	bool voted_change;
->  };
->  
-> +/*
-> + * A proxy may (re)initialize the line - set its direction and reset the
-> + * default value and the vote tally - only while no other proxy has set the
-> + * direction or voted for a value. Requesting the line is not enough: consumers
-> + * may request concurrently, so counting requests lets every one of them
-> + * conclude that it is not first.
-> + */
-> +static bool gpio_shared_proxy_may_init(struct gpio_shared_proxy_data *proxy)
-> +{
-> +	unsigned int cfgcnt = proxy->shared_desc->cfgcnt;
-> +
-> +	lockdep_assert_held(&proxy->shared_desc->mutex);
-> +
-> +	return !cfgcnt || (cfgcnt == 1 && proxy->configured);
-> +}
-> +
-> +static void gpio_shared_proxy_mark_configured(struct gpio_shared_proxy_data *proxy)
-> +{
-> +	lockdep_assert_held(&proxy->shared_desc->mutex);
-> +
-> +	if (proxy->configured)
-> +		return;
-> +
-> +	proxy->configured = true;
-> +	proxy->shared_desc->cfgcnt++;
-> +}
-> +
->  static int
->  gpio_shared_proxy_set_unlocked(struct gpio_shared_proxy_data *proxy, int value)
->  {
-> @@ -117,6 +145,11 @@ static void gpio_shared_proxy_free(struct gpio_chip *gc, unsigned int offset)
->  
->  	proxy->shared_desc->usecnt--;
->  
-> +	if (proxy->configured) {
-> +		proxy->configured = false;
-> +		shared_desc->cfgcnt--;
-> +	}
-> +
->  	dev_dbg(proxy->dev, "Shared GPIO freed, number of users: %u\n",
->  		proxy->shared_desc->usecnt);
->  }
-> @@ -131,7 +164,7 @@ static int gpio_shared_proxy_set_config(struct gpio_chip *gc,
->  
->  	guard(mutex)(&shared_desc->mutex);
->  
-> -	if (shared_desc->usecnt > 1) {
-> +	if (!gpio_shared_proxy_may_init(proxy)) {
->  		if (shared_desc->cfg != cfg) {
->  			dev_dbg(proxy->dev,
->  				"Shared GPIO's configuration already set, accepting changes but users may conflict!!\n");
-> @@ -155,15 +188,21 @@ static int gpio_shared_proxy_direction_input(struct gpio_chip *gc,
->  	struct gpio_shared_proxy_data *proxy = gpiochip_get_data(gc);
->  	struct gpio_shared_desc *shared_desc = proxy->shared_desc;
->  	struct gpio_desc *desc = shared_desc->desc;
-> -	int dir;
-> +	int ret, dir;
->  
->  	guard(mutex)(&shared_desc->mutex);
->  
-> -	if (shared_desc->usecnt == 1) {
-> +	if (gpio_shared_proxy_may_init(proxy)) {
->  		dev_dbg(proxy->dev,
-> -			"Only one user of this shared GPIO, allowing to set direction to input\n");
-> +			"No other user configured this shared GPIO, allowing to set direction to input\n");
->  
-> -		return gpiod_direction_input(desc);
-> +		ret = gpiod_direction_input(desc);
-> +		if (ret)
-> +			return ret;
-> +
-> +		gpio_shared_proxy_mark_configured(proxy);
-> +
-> +		return 0;
->  	}
->  
->  	dir = gpiod_get_direction(desc);
-> @@ -176,6 +215,8 @@ static int gpio_shared_proxy_direction_input(struct gpio_chip *gc,
->  		return -EPERM;
->  	}
->  
-> +	gpio_shared_proxy_mark_configured(proxy);
-> +
->  	return 0;
->  }
->  
-> @@ -189,18 +230,20 @@ static int gpio_shared_proxy_direction_output(struct gpio_chip *gc,
->  
->  	guard(mutex)(&shared_desc->mutex);
->  
-> -	if (shared_desc->usecnt == 1) {
-> +	if (gpio_shared_proxy_may_init(proxy)) {
->  		dev_dbg(proxy->dev,
-> -			"Only one user of this shared GPIO, allowing to set direction to output with value '%s'\n",
-> +			"No other user configured this shared GPIO, allowing to set direction to output with value '%s'\n",
->  			str_high_low(value));
->  
->  		ret = gpiod_direction_output(desc, value);
->  		if (ret)
->  			return ret;
->  
-> +		/* Only this proxy can have voted, so the tally is ours to reset */
->  		shared_desc->def_val = value;
->  		shared_desc->votecnt = 0;
->  		proxy->voted_change = false;
-> +		gpio_shared_proxy_mark_configured(proxy);
->  
->  		return 0;
->  	}
-> @@ -215,7 +258,13 @@ static int gpio_shared_proxy_direction_output(struct gpio_chip *gc,
->  		return -EPERM;
->  	}
->  
-> -	return gpio_shared_proxy_set_unlocked(proxy, value);
-> +	ret = gpio_shared_proxy_set_unlocked(proxy, value);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpio_shared_proxy_mark_configured(proxy);
-> +
-> +	return 0;
->  }
->  
->  static int gpio_shared_proxy_get_cansleep(struct gpio_chip *gc,
-> @@ -230,10 +279,21 @@ static int gpio_shared_proxy_set_cansleep(struct gpio_chip *gc,
->  					  unsigned int offset, int value)
->  {
->  	struct gpio_shared_proxy_data *proxy = gpiochip_get_data(gc);
-> +	int ret;
->  
->  	guard(mutex)(&proxy->shared_desc->mutex);
->  
-> -	return gpio_shared_proxy_set_unlocked(proxy, value);
-> +	/*
-> +	 * A GPIOD_ASIS consumer may vote without ever setting the direction;
-> +	 * count it as configured so a later user can't reset its vote.
-> +	 */
-> +	ret = gpio_shared_proxy_set_unlocked(proxy, value);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpio_shared_proxy_mark_configured(proxy);
-> +
-> +	return 0;
->  }
->  
->  static int gpio_shared_proxy_get_direction(struct gpio_chip *gc,
-> diff --git a/drivers/gpio/gpiolib-shared.h b/drivers/gpio/gpiolib-shared.h
-> index 618756f6c6aa..ae10506b7029 100644
-> --- a/drivers/gpio/gpiolib-shared.h
-> +++ b/drivers/gpio/gpiolib-shared.h
-> @@ -41,6 +41,7 @@ struct gpio_shared_desc {
->  	struct gpio_desc *desc;
->  	unsigned long cfg;
->  	unsigned int usecnt;
-> +	unsigned int cfgcnt;
->  	unsigned int votecnt;
->  	int def_val;
->  	struct mutex mutex; /* serializes all proxy operations on this descriptor */
+With a default build, the only change in the installed files is that
+libgpiotools, already declared with library(), is now also installed as
+a static library, like the other libraries.
 
-Best regards
+Fixes: 97bab4cc87dd ("build: replace autotools with meson & ninja")
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+Changes v2 -> v3:
+- also convert libgpiosim, which is installed too and still built the
+  shared library with default_library=static; keep providing a static
+  libgpiosim for the Rust bindings with default_library=shared
+
+Changes v1 -> v2:
+- disable introspection with default_library=static, as meson does
+  not pass internal static libraries to g-ir-scanner (Bartosz)
+
+ bindings/cxx/meson.build  |  3 +--
+ bindings/glib/meson.build |  3 +--
+ dbus/lib/meson.build      |  3 +--
+ lib/meson.build           |  3 +--
+ meson.build               |  6 ++++++
+ tests/gpiosim/meson.build | 17 ++++++++++++++---
+ 6 files changed, 24 insertions(+), 11 deletions(-)
+
+diff --git a/bindings/cxx/meson.build b/bindings/cxx/meson.build
+index 92625b5..a23c70a 100644
+--- a/bindings/cxx/meson.build
++++ b/bindings/cxx/meson.build
+@@ -3,7 +3,7 @@
+ 
+ cxx_inc = include_directories('.', '../../include')
+ 
+-libgpiodcxx_both = both_libraries('gpiodcxx',
++libgpiodcxx_lib = library('gpiodcxx',
+   sources: [
+     'chip.cpp',
+     'chip-info.cpp',
+@@ -29,7 +29,6 @@ libgpiodcxx_both = both_libraries('gpiodcxx',
+   soversion: libgpiodcxx_soversion,
+   install: true,
+ )
+-libgpiodcxx_lib = libgpiodcxx_both.get_shared_lib()
+ 
+ install_headers('gpiod.hpp')
+ 
+diff --git a/bindings/glib/meson.build b/bindings/glib/meson.build
+index 0ccd8e8..17e071c 100644
+--- a/bindings/glib/meson.build
++++ b/bindings/glib/meson.build
+@@ -61,7 +61,7 @@ glib_public_headers = files(
+ 
+ glib_inc = include_directories('.', '../../include')
+ 
+-libgpiod_glib_both = both_libraries('gpiod-glib',
++libgpiod_glib_lib = library('gpiod-glib',
+   sources: glib_sources + [gen_enum_c, gen_enum_h],
+   include_directories: glib_inc,
+   c_args: ['-DG_LOG_DOMAIN="gpiod-glib"', '-DGPIODGLIB_COMPILATION'] + profiling_c_args,
+@@ -71,7 +71,6 @@ libgpiod_glib_both = both_libraries('gpiod-glib',
+   soversion: libgpiod_glib_soversion,
+   install: true,
+ )
+-libgpiod_glib_lib = libgpiod_glib_both.get_shared_lib()
+ 
+ install_headers('gpiod-glib.h')
+ 
+diff --git a/dbus/lib/meson.build b/dbus/lib/meson.build
+index 9acf5e1..12cff4a 100644
+--- a/dbus/lib/meson.build
++++ b/dbus/lib/meson.build
+@@ -14,7 +14,7 @@ generated_dbus = gnome.gdbus_codegen('generated-gpiodbus',
+ 
+ dbus_lib_inc = include_directories('.', '../../include')
+ 
+-libgpiodbus_both = both_libraries('gpiodbus',
++libgpiodbus_lib = library('gpiodbus',
+   sources: ['gpiodbus.h', generated_dbus],
+   include_directories: dbus_lib_inc,
+   c_args: ['-DG_LOG_DOMAIN="gpiodbus"'],
+@@ -22,7 +22,6 @@ libgpiodbus_both = both_libraries('gpiodbus',
+   soversion: 1,
+   install: true,
+ )
+-libgpiodbus_lib = libgpiodbus_both.get_shared_lib()
+ 
+ install_data('io.gpiod1.xml',
+   install_dir: get_option('datadir') / 'dbus-1' / 'interfaces',
+diff --git a/lib/meson.build b/lib/meson.build
+index ea1d92c..fb09b71 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # SPDX-FileCopyrightText: 2026 Qualcomm Technologies, Inc. and/or its subsidiaries
+ 
+-libgpiod_both = both_libraries('gpiod',
++libgpiod_lib = library('gpiod',
+   sources: [
+     'chip.c',
+     'chip-info.c',
+@@ -22,7 +22,6 @@ libgpiod_both = both_libraries('gpiod',
+   soversion: libgpiod_soversion,
+   install: true,
+ )
+-libgpiod_lib = libgpiod_both.get_shared_lib()
+ 
+ pkgconfig = import('pkgconfig')
+ pkgconfig.generate(libgpiod_lib,
+diff --git a/meson.build b/meson.build
+index b70098b..c92179c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -6,6 +6,7 @@ project('libgpiod', 'c',
+   license: 'LGPL-2.1-or-later',
+   default_options: [
+     'c_std=gnu89',
++    'default_library=both',
+     'cpp_std=gnu++17',
+     'warning_level=2',
+   ],
+@@ -79,6 +80,11 @@ if opt_introspection.enabled()
+     'introspection requires -Dbindings-glib=enabled')
+ endif
+ 
++# Introspection requires the shared library.
++opt_introspection = opt_introspection.require(
++  get_option('default_library') != 'static',
++  error_message: 'introspection requires -Ddefault_library=shared or both')
++
+ # systemd requires D-Bus.
+ if opt_systemd.enabled()
+   assert(opt_dbus.allowed(),
+diff --git a/tests/gpiosim/meson.build b/tests/gpiosim/meson.build
+index 078a241..6f6b78b 100644
+--- a/tests/gpiosim/meson.build
++++ b/tests/gpiosim/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # SPDX-FileCopyrightText: 2026 Qualcomm Technologies, Inc. and/or its subsidiaries
+ 
+-libgpiosim_both = both_libraries('gpiosim',
++libgpiosim_lib = library('gpiosim',
+   sources: ['gpiosim.c'],
+   c_args: ['-fvisibility=hidden'],
+   dependencies: [libkmod_dep, mount_dep, threads_dep],
+@@ -9,8 +9,19 @@ libgpiosim_both = both_libraries('gpiosim',
+   soversion: libgpiosim_soversion,
+   install: true,
+ )
+-libgpiosim_lib = libgpiosim_both.get_shared_lib()
+-libgpiosim_static = libgpiosim_both.get_static_lib()
++
++# The Rust bindings always link against the static libgpiosim.
++if get_option('default_library') == 'both'
++  libgpiosim_static = libgpiosim_lib.get_static_lib()
++elif get_option('default_library') == 'static'
++  libgpiosim_static = libgpiosim_lib
++else
++  libgpiosim_static = static_library('gpiosim',
++    objects: libgpiosim_lib.extract_all_objects(recursive: false),
++    build_by_default: false,
++  )
++endif
++
+ libgpiosim_inc = include_directories('.')
+ 
+ executable('gpiosim-selftest',
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.55.0
 
