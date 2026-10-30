@@ -1,56 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793374895;
-	b=Zx64OlHxsJwKXKDq18cIK5KabbKP7vvwzFTICCOBux9T8wbmkGrOr9axNnC3DvdwY6lL
-	 t0V8YL5q47S1+D2h7sp9pW/2kiORgAU//XTlsPGLGoF10XB3fikCMLg4jtOEAQ6P1oI/B
-	 +5NuscuKh0syq6QyPuf4pcCJ15iaZDVR6l0DupnSCDzli7r/psgjL64aKQh3FRjl8yEIh
-	 Nsiuso9YLyJukEmQGHfw6p/36yyPoM3aCNaZKsIuPHv7n8bCzmYw41jG/3kJcd7VKw6AJ
-	 k2/fxfOS/z61Gv2WqjoJGBDJDlK18oiMvTfA8lMbUKX4J2x/rP4Z2hjU1PTdxGRvepA==
+	t=1793375919;
+	b=yRQBVbKyY5XkEbCtMex12WpXAxcWrmX9IUUm/dYndn8okx0e5xEY2pMglSQ8dBOVDjor
+	 w5VAvj/VwvckbxiR043ASXkL0H5xS+b27auUYBhArkQjWpJuEHvCmU1QrSn0HEmAscRC+
+	 W62TWaVHkiFAqNPTdzkkIW15852PiDMDpGdmw069VEipzrTBLIMDIOXeAd0FjZpy4CumL
+	 8U1QVE+iLVybqOQrTWIVEkHx9kAw62vrxPRfcbGv0jeVY0az48w18gc+jdQVnjoXAjpPE
+	 WVu4MzmutMwfTY+M+UYPsyA+0hoSAFWCFJ6umf8Rt1eVFLwf21/58W43rSlttdKkbdw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793374895;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=LIWNixqv9zrMy8vRtJQSIYMwJdRtiwKtjAJ57lkACKw=;
-	b=OiFtGgSBoiA4SaQCm6bz8hHipwo1JCIQyO2UrFmbCpHcQi+xiOlR6GVP6wPYLtRByVx5
-	 aJSVP9HKEGLSXLer1tUa5Q+yccwMcGXdugwCFiwsl/GqOAfOVH337kKI/a9PNM6nboD0Y
-	 8rYOUfZHXvfVbJ8L+562NRJ8jHTvS/HD5hJljFVUSn7m4qmpf4JFS/axSAbzHK5UL0MPi
-	 Vu/hjkWoukphEl/fQXFVlljI2LcIugr/U2cNOI32kmFOI6JI+Ci7Jvnr4WCgIIOLi0rtj
-	 WgBx2aL22v6H6JpRO5w+4etyud26G+8qsgjI6iLnvBJldcTiemF/Ub9nUvvFh8ialtg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793375919;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=pY5J61TIFJyOgKIaQTw1d+jDJ02fxs2l8GZ+SUQWAGo=;
+	b=wqOv/ZZj2tVxpfzZ5tB/JCxcDo+LfwAJtV9gUHycoCqwovrgtHJqt12SPT/3L67ZzTX6
+	 p0LRKZMxau0MAbzzqpLoLEJ4UKikDdNNVB4LHXbO+oTLzAooTwNqNn8hazqrwCVU5G01Q
+	 A171SgkFY7ghH0hHFJ1jaGcbnvn3ZpWJPRBqfhzV88rWr1szJeAUWMKlOL8EN1u8hxxea
+	 mb8i94lj6cGba179cCQJ5i4ZQMuTIac2f880CHSImJgjCd9mmFKb34FExxJIzSsxgR3kB
+	 IeqQyOO/xhSqayIPWRwKxq2jGsk4VBqCsbYqM0i4V2BxRn9hmXEz9Snnz9bcLc90hhw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JIq4m5iR;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=oU3dR5ae;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492E5606A31C;
-	Fri, 30 Oct 2026 15:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBA4606A31A
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 15:58:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8FBA4606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JIq4m5iR
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE9C1F000C1;
-	Fri, 30 Oct 2026 15:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793374895;
-	bh=LIWNixqv9zrMy8vRtJQSIYMwJdRtiwKtjAJ57lkACKw=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JIq4m5iRzWHPU+qDK/tfysc/K8E2znxJEoHi4Tcbf7BU6HeQNW9cHj8iwEZ+6VFHK
-	 XZw2iMqgjiOdxJYuohPEwZGYmryQeLdr2EZZE6wEPZTh2RAfoWLWUgC9jD07KA1ewy
-	 uxQ7ohcBeIDIBczoXMMO7TGcCoAgkUMKlmMYyoy6wjgpOUW45JSAnugCnE+mCx4OBz
-	 ZeWT1dfw6ZPhi2vV2s59nrckH+rcJraI09kxjhzwLG4IJVLXq9qGK9maFeykmvg2k2
-	 apdmta0+88tlzJojcysicsnJa+elj9JEXpP2w6Uos2+uI48ul5d7ZMGpex4ZSzfbB0
-	 l59w8qjtLgFdg==
-Message-ID: <sashiko-outbox-191184@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] usb: core: add a pre_probe callback for device
- drivers that may defer
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "James Clark" <jjc@jclark.com>
-Cc: linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <20261030151919.3511106-1-jjc@jclark.com>
-References: <20261030151919.3511106-1-jjc@jclark.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 30 Oct 2026 15:41:34 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=oU3dR5ae
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48e46e449e8so566043f8f.3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 08:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793375916; x=1793980716; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=pY5J61TIFJyOgKIaQTw1d+jDJ02fxs2l8GZ+SUQWAGo=;
+        b=oU3dR5aelx0X9640Axl1wdU5N826Lj2FpiVN7eFTYeHxQKvffig6RMfeuhajBvKn2A
+         FdotIcuWDuqVlcGG9FfCu/6MOfjl1iSdOMx/1UV51DLC3Dv6S4QmYoqfWjasf6y74vHV
+         psz5P7t8D9evnlDKBVa+fHwsjKGZZ4l7BoOH+PZvufmmPucGIBzQaas8OTMI7UuTINFD
+         xiHD+xXapOffintzlul5Ma+QrDa19w89GFgU2MQFkIFklc1RqhHCwJTALtSUolwlZ+o3
+         M2P7Q6Y+4C6PIevrACIcSkDust6eWN4yQMQFIt5ZZj14jFWcJKgjNSWoVdgxhYQjEGxo
+         8H0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793375916; x=1793980716;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=pY5J61TIFJyOgKIaQTw1d+jDJ02fxs2l8GZ+SUQWAGo=;
+        b=KTIh5p2nPeISky8z3ozIImiyBjOHOifF434vxFkOaSut0Pgu7q+LypLIiyHsCvxW0O
+         +Na+ojJ0pbxqkZYulLfz8ZQV19N0Sdd4MmLCv7YLPzkFmwKWyoHgMpofkTLq8Sittb5k
+         VUNfyBwpVrZbRVn+B3yZjYNiKo7SCi2QqBv3x7F30dmJOCA8ZJme0eImEcq2fng9mlJl
+         MzOIBwtmQE50rJ8S0PicQAHH2rZ+cVJswT9ZBHY1SqXWQ7lV4I7F+u7yACIG1F+tX8gH
+         6n6P6objUbri04oMnnhmJPOSi56oHLIYk1gtRUnBurVyojwhqRQfDkwWCAsQjdLAlbqd
+         3Chg==
+X-Forwarded-Encrypted: i=1; AKwUvBwpYI9EbnXNa5oUMupUf34uoMZZdMZWVgFH3bx4U699dA2sGFTCvpUEIaFZCqOwSbDiHYJYdC8dV7Ei@vger.kernel.org
+X-Gm-Message-State: AFq9FYJvOhWfB9vyMBiwOLXp2CncGyET5xom/itip12aVkXShq+GPjaC
+	vSgsFn9SakMBbam9eVOP/9kzzC4QW+Xl2fBCgtvG0oZSCCmH4+N+Te3180j/3dupgv8=
+X-Gm-Gg: AYBFou2Kn99pL7Xcrl8xONXYJzCxAUygmn9QMpAg4nWYabcksv08upSUGWCN9NM733a
+	xJ2KkIayXflwmqp2ytKpFzAJWevgyH1JinKs4PHPzFQP74MYiPkpzC16kKi1obho4qGzoh3z4+6
+	T5e7G7hd062eCQuQxu4QopmDnlyK1oMdQu6CUGk4MplILi1Rk1StL/CD2uDH0hEx+AKhPlRpO+d
+	EUK1utyTmEW+HlbkIF8ghuDoUTPlUIWoCGwOqA/Y6daQR/Y6WF9boy/qsXI9+AOxpnTTmGvtODT
+	r+++cZ0iMsZyjkiAxX5UoWvEtp9uWH+YBPlr8p4Y2jKhRpWPk/qKzMlw2mq3obE7/toTxiRIMyz
+	sRc0JoPN7pOJ/wYMfnVHfI0REgorB24ZbbNu2aQhjO9muVsnDc/ARIG7ZvyHBYo/F0+jotGvnWm
+	daaK1gMQ3akEzMkozU4vxv9QSf8rnFDRgmXOu/9KEXTmi4oeI03BgEMdkDij+vx3Af/fiBypUTM
+	zqRMYj2sm1OTNU1Iws2w2GShMhn7BTzxInsHPHmnvpjP6cWPSSOBHAMySGR08YOBY3esFQHHEOx
+	eN2OicpjG77NTcBm0MIsRmodI1m4RSviDn35m88+hWzuJVm/zyE=
+X-Received: by 2002:a5d:5f88:0:b0:48e:6419:dc6e with SMTP id ffacd0b85a97d-48e6e4f5431mr6781512f8f.16.1793375915915;
+        Fri, 30 Oct 2026 08:58:35 -0700 (PDT)
+Received: from localhost (140.30.66.37.rev.sfr.net. [37.66.30.140])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b789ecsm3862471f8f.29.2026.10.30.08.58.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 08:58:35 -0700 (PDT)
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
+Subject: [PATCH 00/11] pinctrl: scmi: fixes and GPIO function support
+Date: Fri, 30 Oct 2026 16:58:31 +0100
+Message-Id: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,146 +90,62 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKe+5GoC/yXMwQrCMAwA0F8ZORtotiHir4gHm6U1MtvSbCKM/
+ btVj+/yNjCpKgbnboMqLzXNqYEOHfD9lqKgTs3Qu/5IbnDIs8QcgjIWTbzUGY2firFoxvHEQRy
+ N3hNBG0qVoO/ffrn+bat/CC/fEvb9A/N85Cx/AAAA
+X-Change-ID: 20261030-clegoffic-pinctrl-scmi-gpio-48cfe014bb11
+To: Sudeep Holla <sudeep.holla@kernel.org>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Oleksii Moisieiev <oleksii_moisieiev@epam.com>, 
+ Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>, 
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
+X-Mailer: b4 0.17-dev
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] usb: core: missing generic and runtime PM cleanup in usb_probe_d=
-evice()
---
+Five fixes: the drive strength went out in milliamperes, the schmitt
+trigger enable was mapped to the input buffer, the settings Linux
+carries without argument went out as disabled, a setting the platform
+reports off read as set, and the protocol layer read past a
+PINCTRL_LIST_ASSOCIATIONS reply larger than its receive buffer.
 
-commit c4ba8a98e9f819e5526aef5f1c45cb74910c09c6
-Author: James Clark <jjc@jclark.com>
+Then GPIO function support: report the pin-only and GPIO attributes of
+a function, give pin-only functions no groups, mark the GPIO functions,
+and select the GPIO function of a pin on a GPIO request.
 
-usb: core: add a pre_probe callback for device drivers that may defer
+Tested on R-Car X5H with a v6.18 backport that needed adapting, all but
+the schmitt mapping, which the platform does not implement. An LLM was
+used to review the patches and to set up the tests.
 
-This commit adds a pre_probe callback to struct usb_device_driver so that
-device drivers with generic_subclass set can defer probing before
-usb_generic_driver_probe() configures the device and binds its interfaces.
-It also converts onboard_usb_dev to use pre_probe to avoid a re-probe loop
-when the companion platform device has not finished probing.
+---
+Clément Le Goffic (11):
+      pinctrl: scmi: send the drive strength in microamperes
+      pinctrl: scmi: map the schmitt trigger enable to its SCMI type
+      pinctrl: scmi: send the settings without argument as enabled
+      pinctrl: scmi: report an off setting as not set
+      firmware: arm_scmi: stop reading past PINCTRL_LIST_ASSOCIATIONS replies
+      firmware: arm_scmi: report the pin-only and GPIO flags of functions
+      pinctrl: scmi: give no groups to pin-only functions
+      pinctrl: scmi: mark the GPIO functions
+      pinctrl: scmi: report whether a function is GPIO
+      firmware: arm_scmi: add an operation to set the function of a single pin
+      pinctrl: scmi: select the GPIO function on GPIO requests
 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index d3a61ebc6afb0..724cfa9da4e01 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -249,24 +249,41 @@ static int usb_probe_device(struct device *dev)
->  {
->  	struct usb_device_driver *udriver =3D to_usb_device_driver(dev->driver);
->  	struct usb_device *udev =3D to_usb_device(dev);
-> -	int error =3D 0;
-> +	int error =3D 0, pre_error =3D 0;
-> =20
->  	dev_dbg(dev, "%s\n", __func__);
-> =20
->  	/* TODO: Add real matching code */
-> =20
-> +	/*
-> +	 * Give the driver a chance to defer before anything is done to the
-> +	 * device. The generic probe below binds the interface drivers, and
-> +	 * each binding triggers deferred probing, so a probe that deferred
-> +	 * after it would be retried straight away and the device re-probed
-> +	 * in a loop.
-> +	 *
-> +	 * Any other error from pre_probe() is not acted on until the generic
-> +	 * probe has run, so that the -ENODEV fallback below works as it does
-> +	 * for probe().
-> +	 */
-> +	if (udriver->pre_probe) {
-> +		pre_error =3D udriver->pre_probe(udev);
-> +		if (pre_error =3D=3D -EPROBE_DEFER)
-> +			return pre_error;
-> +	}
-> +
->  	/* The device should always appear to be in use
->  	 * unless the driver supports autosuspend.
->  	 */
->  	if (!udriver->supports_autosuspend)
->  		error =3D usb_autoresume_device(udev);
->  	if (error)
-> -		return error;
-> +		goto err_pre_probe;
-> =20
->  	if (udriver->generic_subclass)
->  		error =3D usb_generic_driver_probe(udev);
->  	if (error)
-> -		return error;
-> +		goto err_pre_probe;
-> =20
->  	/* Probe the USB device with the driver in hand, but only
->  	 * defer to a generic driver in case the current USB
-> @@ -289,15 +306,26 @@ static int usb_probe_device(struct device *dev)
->  	 * specialised device drivers prior to setting the
->  	 * use_generic_driver bit.
->  	 */
-> -	if (udriver->probe)
-> +	if (pre_error)
-> +		error =3D pre_error;
-> +	else if (udriver->probe)
->  		error =3D udriver->probe(udev);
->  	else if (!udriver->generic_subclass)
->  		error =3D -EINVAL;
->  	if (error =3D=3D -ENODEV && udriver !=3D &usb_generic_driver &&
->  	    (udriver->id_table || udriver->match)) {
->  		udev->use_generic_driver =3D 1;
-> -		return -EPROBE_DEFER;
-> +		error =3D -EPROBE_DEFER;
->  	}
-> +	if (error)
-> +		goto err_pre_probe;
-> +
-> +	return 0;
-> +
-> +err_pre_probe:
-> +	/* The driver core doesn't call disconnect() for a failed probe. */
-> +	if (udriver->pre_probe && !pre_error && udriver->disconnect)
-> +		udriver->disconnect(udev);
->  	return error;
->  }
+ drivers/firmware/arm_scmi/pinctrl.c |  62 +++++++++++--
+ drivers/pinctrl/pinctrl-scmi.c      | 170 +++++++++++++++++++++++++++++++++---
+ include/linux/scmi_protocol.h       |   9 +-
+ 3 files changed, 222 insertions(+), 19 deletions(-)
+---
+base-commit: a39c950806213f6861d00f90729acaaa21f2d95a
+base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+change-id: 20261030-clegoffic-pinctrl-scmi-gpio-48cfe014bb11
 
-[Severity: Medium]
-When udriver->pre_probe(udev) returns a non-deferral error (for example,
--EINVAL or -ENOMEM from onboard_dev_usbdev_pre_probe() when
-_find_onboard_dev() or onboard_dev_add_usbdev() fails), or when pre_probe()
-succeeds and udriver->probe(udev) fails, usb_probe_device() runs
-usb_autoresume_device(udev) and usb_generic_driver_probe(udev) before jumpi=
-ng
-to err_pre_probe.
+Best regards,
+--  
+Clément Le Goffic <clegoffic@baylibre.com>
 
-However, err_pre_probe only invokes udriver->disconnect(udev) and does not
-undo usb_generic_driver_probe(udev) or usb_autoresume_device(udev) the way
-usb_unbind_device() does:
-
-drivers/usb/core/driver.c:usb_unbind_device() {
-	if (udriver->disconnect)
-		udriver->disconnect(udev);
-	if (udriver->generic_subclass)
-		usb_generic_driver_disconnect(udev);
-	if (!udriver->supports_autosuspend)
-		usb_autosuspend_device(udev);
-}
-
-Because the driver core does not call usb_unbind_device() when
-usb_probe_device() fails, doesn't a non-deferral failure leave udev unbound
-(udev->dev.driver =3D=3D NULL) while still configured with bound child
-interfaces, an unbalanced runtime PM usage count when !supports_autosuspend,
-and a sent USB_DEVICE_ADD notification that will never be paired with
-USB_DEVICE_REMOVE on unplug (leaking struct usbport_trig_port and sysfs
-attributes in usbport_trig_notify())?
-
-Similarly, on the -ENODEV fallback path where udev->use_generic_driver is s=
-et
-to 1 and usb_probe_device() returns -EPROBE_DEFER, won't leaving
-usb_generic_driver_probe(udev) and usb_autoresume_device(udev) in place cau=
-se
-the subsequent usb_generic_driver probe to call usb_generic_driver_probe() a
-second time and emit a duplicate USB_DEVICE_ADD notification without an
-intervening USB_DEVICE_REMOVE?
-
-Should pre_probe() handle the -ENODEV fallback and return immediately on any
-error before touching the device, and should the error path after
-usb_generic_driver_probe() and usb_autoresume_device() also unwind them via
-usb_generic_driver_disconnect() and usb_autosuspend_device()?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030151919.3511=
-106-1-jjc@jclark.com?part=3D1
