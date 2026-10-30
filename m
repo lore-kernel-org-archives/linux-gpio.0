@@ -1,103 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793368014;
-	b=dYzclABZsxAMn+rmzN/eCzlt0xRZkQ26WRGQ2lW0x5KcGZW30tH8sCjOym/IfShbaWis
-	 PueMKLe0Qmhq+yBVI9jz6h0xqjsUJvCNkg6XKJQNLbvdFPFgq/xm2d2aBmk07K7ZpH9Rf
-	 wTzAtbP94JksVKH/JA8UE8ZKggKaxFIPOduDXEQRGEKxq+3sqrr5RMOZO22qbbYYU1QbD
-	 CnIsxEDrkSJSfQLm1dqOCZ86OsoJVVbJDKJVDiAdZZVK/70X84yxBiRt4D9bA9+J0fyIA
-	 yLPLg3BnXWIbDh06SayvWqS49g05ZzN+6LLRAsuvQc9DKlhRXlnujjYVz+a2DWJT4Fw==
+	t=1793369027;
+	b=D4qmxTgE//+K2q+j204zAPWKglbJXyh39XcJIu0cLgGIp7Uo2+eeqHUvIRGsVS5f1Nqb
+	 UHIP54bAbnwp0or45Wj93iA2qayr6iqcQwgW7/YhIElms6nUwBmZZHkXJsSA/CNmwQGYZ
+	 rQZa8uOlrCTQKmm8u+aQePVRZPS2nebDiSGKc3OiT2Rzxjqpm3q+ymf/4dVPBxLtbJ3Up
+	 mvxJjOpprLwcBvp328tzApraTBnCa34UgE60vDN5QtJirZXpu2M69xMGbOyPKH4BL0gBd
+	 8MJ5MWCJUDrwf/o2QlbogFZajNvup3btvyptY1EiXXZE2t/mqgbgFH23xjSLAxVW/8Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793368014;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793369027;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=jpSzV26D6Rjz/NJkyTxMWgMImq37uaP+9bbwc82yg1k=;
-	b=Xpo5o/+hkiUsjZeQSlRZfv/oFIcQ6DSUzrspdf360dXI/4d7191Oa0Tr0PqobLDZKxq5
-	 +6S6VoaeybcZ3UqFeZMxJn+o5QRK6TC5vjda3wbOZHhk1HNNROysiN43uYcS+Btp6JUJy
-	 9lKsytgc81P3BJUjzqSmE7kfgcMI35cRVc0ysi4gOXmdVXw6H3Ij5ZoLzRWvwLkK4WYdV
-	 9M2JpCaBwwnsarhH4CDX9ck4B4QQk20TW4pLSDv40LnpRwvPZNl1wvrC4gLGdJpD9Oaop
-	 lvGYcAZazKsTlpUQ4By6Ie3HJY2/iafm5VDBXm623cW09wrtx6Cusc5/GyijY2HfI3A==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=RNi/YV07iESSp5HzRPxOu8kqkEJ5qhQDfYYkAe+T8VA=;
+	b=u8I6sM2gF/kRg+uXPSZ9ROuebiU8PyhAiZapAWjJJN1mo5aogoY5LaKvlNBpVdPOdHTd
+	 VavPTRMtfQDMe3s8AU5cKMBW3OkjrCf2R5YG3gCGK8EhsrZj36sGH1WcORlCPln8oZiLE
+	 Lkknip6zekQrr/f+qHUTe7qC9JGLTTAfFEmJ22avYW5R/7Fqy9QpDRdxl48vON2KSmOPW
+	 YvuSqpniRRhJ/jkL3w/kqRNRCy2B+HI3UTGxQSxDcL2o1CyCOW+sYX+Iz2MhOFmbf1XEO
+	 S5VAi1WKqUvNCGchvZngZCVNH6W5USGQunzGdi6+WKDVJmXdF5Ai6nJOBaOAMpQFSUA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tEMVM9yt;
-	arc=none smtp.remote-ip=209.85.215.179
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dmarc=none header.from=jclark.com;
+	spf=pass smtp.mailfrom=jclark.com;
+	dkim=pass header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=efYy8ccY;
+	arc=none smtp.remote-ip=209.85.216.49
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADBF606A31C
-	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 13:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1ADBF606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C23606A31D
+	for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 14:03:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 63C23606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jclark.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jclark.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tEMVM9yt
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cc751eddf25so441845a12.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 06:46:53 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=efYy8ccY
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3ad41b47541so614971a91.1
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 07:03:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793368013; x=1793972813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=jpSzV26D6Rjz/NJkyTxMWgMImq37uaP+9bbwc82yg1k=;
-        b=tEMVM9ytv4rWMJK8XQ+62+lBj1mX8zgGbbJCTo/Jk65iCKRvUVZnxa5aTEBTP6vDjW
-         N2FpYrTBUV5Kg/wCqrS6mBJ1EL35JYfAToBL9Ipo/38Sve8mWYXWd8v2180GOzoRZDmf
-         JVwsUF4OXmYd752CdtLReIlE4YOexd6EfptJSBQjg//ILWR7agYdbUQLskQAIslDRwcE
-         RwWt3uJOG/rjlh4zAjAOFHLFk5FRVmRa5Y1rNX9CqIhXBrpyQ3+JExhEU2p62XmBg5A1
-         tjpzaYDnZWZj/B6yjWrzO4uVQjPnYSWK7lSDrCFazUDUKcc2DHIP+FFvAhSU+zkUBAzf
-         XHSQ==
+        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1793369027; x=1793973827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=RNi/YV07iESSp5HzRPxOu8kqkEJ5qhQDfYYkAe+T8VA=;
+        b=efYy8ccYHATE2WA0wZRSaVlN8TOl1bJEJ/pwwKfOu7DOOKWLhFAfasds2OCArHT+Id
+         84hoQgBBMImfH+kgaJN7XBxMxUbJ/yLWe3W+SogXWdXvJP6oLcEOVQCJqfDcIPqXS9gl
+         QvpoaRu0KxaKcux8E+xlqIt37lfVM0gjjntcZ0uIrOJRLUOywSYqBQo4mKh66qmIAo7D
+         Clnl2+00funikVLTNchh065sDyi9fuLOw80s+ibNFzdoLsIWKUgJj5J9m4yUEWxYNbVR
+         srKt6BY1prlXhzgsO30teQwzpNf1yJc87KqdhVRT+vaqvzhD2OhMIWEpq35Q8ohNpm+y
+         4YaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793368013; x=1793972813;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=jpSzV26D6Rjz/NJkyTxMWgMImq37uaP+9bbwc82yg1k=;
-        b=Bz2x5h47+8zh6558b+UTD7NrieQ/UfoQGdOiKlD0N7wTq7L9O7nInoW6a6/d14j1VS
-         oAuE2eEwJWtHUONn3UlyickwuMgWFTjeniP+xsolxVnsc3LZy5dTdOMyylo+9absZNgI
-         W9RN2I+kjd1p3EhnEcCqyHoV+7YK4VpQQAJvbT3PeMvXBFKpMiqVGRUSho1ucoo6x+7x
-         IvyTuhQky+rOzfHVqpCV9L8rguIpe4WJhBcojrj1TmusXNnxnubhpIfw8iKRoKN7qS8s
-         OG23uLB7KTz7jj3qO257k5VPs28Zeo6s6Fgd+6m83L2JUiPoub5ycVfGAzQ7I3kSPEoM
-         /+sQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzYkHhX90nLhoOj6YYmQArGPpfkg9UIhRdNlDHFkMJgaL94YyVvi6ah/eGvS7ywqtc82dDi+tuv26Gd@vger.kernel.org
-X-Gm-Message-State: AFq9FYLpZbSfEo5uATUGN6mjCjsbIiYAfQ+LKHlJYWYlO/1rA4o4Ofq8
-	F5Le6FzyHCLK6M+Bb9AdvRpwK/V3Hg/LtXbn/4VfUXa/sj9w+oQ9bZZa
-X-Gm-Gg: AYBFou1UI/A15+4ONmDRPTwzWIqOr4zEvHHw30Gav65lLcZTfCfu8bNBDxiairlrZ7/
-	HYtnxmTB+xmsDCo4SBAAvAH1GWnbnxcMTYKM6R+ZerKx0P58WuhvF7TuG9Xhf5THrHt/tAXLurH
-	etQeuMJYYtSMaFiozwwoL65+TLvF+uKbHIr7pY8dKdOXJ9i1kaSlLXXqdS82Z11hIClCOsqLTIJ
-	WVisoPn4J8VR12md3FKVli9kPlmGAp1+auuHnX619xyDcMYgIczU1FKzXPghU5ONq+UL/ZArrc1
-	bSc3hc7uCsW1jo9BuZfsptYsbgFRwOdYLeWegX5dzot96qRleQJ57n8i1vDMocNYqmbnyqJPNWz
-	hwwziU4XGfsCyBfDGzgisoT49VUvCKCpBTFG3atYHkoiJ5K9Urjy/1DwEXMMnVcfChmc/WASvZK
-	6HSZZ3gLmorsw8+9nd3Tbd7CErtBJOroSSi1d/OOsQVCrrxK69C+OMQsF/nSAun3U/jh4roAt2J
-	OMAZm8KNTjHkibvPAsrre8XjVDzbzcCgQQXVEs+BXKOiobA10RceWpMjwhi5vFD75/6BMwOiUcz
-	wUs7OSsP+7ZACEEwg40gX2m7kYreR62OMMldHyCYA7M+xSSZ/g==
-X-Received: by 2002:a05:6a20:2583:b0:3e5:904c:78d3 with SMTP id adf61e73a8af0-3e928aa2158mr2405789637.69.1793368013382;
-        Fri, 30 Oct 2026 06:46:53 -0700 (PDT)
-Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a9eef96e53sm791024b3a.20.2026.10.30.06.46.48
+        d=1e100.net; s=20260707; t=1793369027; x=1793973827;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=RNi/YV07iESSp5HzRPxOu8kqkEJ5qhQDfYYkAe+T8VA=;
+        b=vnFVLsXSJQMzILTlFbS941EGUiFHcjxRTOPZVjWd6J48ompZQMsD4KtD0Tiaper3tO
+         FIWVu1rhdbzD3uavU2Z4y6J8C0ULz3pvRGYQJs0jN/+7JRRX4jbAQVrbIFlkD7TP6Y7y
+         D/4mGgi9ICayS6VWotyu8/xUdRxW5PqMMVsZbPK9mr9MDXhGdJtBE8nKniFVKdzZGfnN
+         /Ft7iTEiGBm6c0ex+Cus1UC0KvDgT7JdeDyAGB1fSESO4rjesAIA1abh/2QbMKTQsNK8
+         cOnKpoqdIeuBC4ew67eq+g2iWwuXfhKHmp2Z+iQD9MY5vBxC17N/cPrOc9JXvtJMRxx8
+         bxcQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw1duqQvZVqtxz9nI+s5ZXN+nl8JGiSMutM6llFk/8bEfsJNDfaB3XUQ5oGyDAYkWhs0TXWfQD5wiZk@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ1a34Pw3g4yhMM+/4DiZqJSaaWtJ6C3MlOvNFuPP3FcQgUEiA9
+	aMQ33kyBvAX1OdKUdAzYUHN9rhu2hHbRO3prhmzfbcDn2b6JlkePR8w24EA8evWc+g==
+X-Gm-Gg: AYBFou2yYYOHApO1vY0x3lyrIvg/5mASBCHe6qT3wLkA2kWrF0hS+takW26JrjENXDE
+	DVCrbPBu6G+HNiGsln8+ybq2JZSs2Hu4Kh0aaTQ1rKioY3im+vBLY5j/ZnmAx+BfU5qhZTX7wy8
+	EOxAIx1qKGkzT4sD9rzZ/fLNQ7r6KO4lkM7IuEUuPv+k5GbUJHGGeOZIEPuTQ5IC/SKcsYvJeQK
+	yA2nWDg7taOnkbMvGbwAGpnno++kbmSimhgzCdqMrtHgTxXoxHkjPcut72l+J9QQLyIPh4Q5ERr
+	Ch8jKo6owH/Az/wSo37IDD2lVDZ7m+bhG3ZyOZLGlDHTbEEjREegeTgEcDAzQYDnIdsomnAGCn6
+	KKFUrjvOxZGFvp6cxo/ENyJjz4WpLDWM1iyAlK7PXtv8XEjX0Ihzeqo9wbTHdceHTlXMvBXGYuM
+	vVx858YozoMUnY4jtEtiP4rLhrzItDQ8QAUPquN5XqHDXaFbBhLhZD7icrLuYMq0VT6q6Ef3U0R
+	tandiPocMaDLAvbyOA4fXEp6u9Eg4OROGFWs7ouVBYXczEwcjMu8Uu1QT5aENSvlXpHJ7mIu4h9
+	wlxtnnzStq/hLQAS9AgC3NYWbtBYOc+UKl79KsOHxWftlbR42y22WRWifJaPFHg54vGJ9hPdzTU
+	R8qbPmLSblNKAUZny
+X-Received: by 2002:a17:90b:1b02:b0:3ad:8769:8741 with SMTP id 98e67ed59e1d1-3ae8957453dmr1915084a91.4.1793369026593;
+        Fri, 30 Oct 2026 07:03:46 -0700 (PDT)
+Received: from cantal.lan ([58.136.77.93])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae85f3e087sm2002137a91.1.2026.10.30.07.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 06:46:52 -0700 (PDT)
-Date: Fri, 30 Oct 2026 21:46:39 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
+        Fri, 30 Oct 2026 07:03:45 -0700 (PDT)
+From: James Clark <jjc@jclark.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Ravi Chandra Sadineni <ravisadineni@chromium.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jia Jia <physicalmtea@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH v4 6/7] gpiolib: cdev: don't report a failed line read as
- an edge
-Message-ID: <20261030134639.GA94733@rigel>
-References: <20261029-gpiolib-chip-removal-v4-0-aambrozewicz@nvidia.com>
- <20261029-gpiolib-chip-removal-v4-6-aambrozewicz@nvidia.com>
- <20261030111435.GA76958@rigel>
- <20261030123109.1935475-2-aambrozewicz@nvidia.com>
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-gpio@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH] usb: misc: onboard_usb_dev: don't defer the USB device probe
+Date: Fri, 30 Oct 2026 21:03:40 +0700
+Message-ID: <20261030140340.3383998-1-jjc@jclark.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <auSdA8MfolA8OhdM@hovoldconsulting.com>
+References: <20261030114705.3159093-1-jjc@jclark.com> <auSdA8MfolA8OhdM@hovoldconsulting.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -107,51 +106,14 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261030123109.1935475-2-aambrozewicz@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 30, 2026 at 02:31:10PM +0200, Adrian Ambrozewicz wrote:
-> On Fri, Oct 30, 2026 at 07:14:35PM +0800, Kent Gibson wrote:
-> > > Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
-> > > Fixes: 73e0341992b6 ("gpiolib: cdev: support edge detection for uAPI v2")
-> > > Fixes: 2068339a6c35 ("gpiolib: cdev: Add hardware timestamp clock type")
-> >
-> > How did you determine that?  Those commits are where the associated blocks
-> > of code were first added - not where the problem first exhibited.
-> 
-> From the hot-plug case in the message: a driver's ->get() error has
-> reached these checks since each was added. Removal is newer, as you
-> say.
-> 
-> > The failure mode you are addressing was added by
-> > commit d83cee3d ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU").
-> > Prior to that gpiod_get_raw_value_commit(), and gpiod_get_value_cansleep()
-> > and gpiod_get_raw_value_cansleep() that wrap it, wouldn't return the error
-> > that you are handling.
-> >
-> > Could you bisect to confirm?
-> 
-> Confirmed: with gpio-sim and delayed IRQ threads, a falling edge
-> during removal reads as falling on the parent of commit d83cee3d2bb1
-> ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
-> and as rising on it, 10 of 10 each.
-> 
-> A test chip whose ->get() returns -EIO gives a rising edge on that
-> parent and on gpio/for-current, none with this patch. pcf857x and dln2
-> already returned such errors at commit 61f922db7221
-> ("gpio: userspace ABI for reading GPIO line events").
-> 
+On Fri, 30 Oct 2026 14:34:59 +0100, Johan Hovold wrote:
+> I guess you can look into replacing generic_subclass with having the
+> onboard_usb_dev driver call usb_generic_driver_probe() itself or
+> possibly adding a pre-probe callback to usb_device_driver.
 
-Ok, so the driver ->get() itself may return an error if the physical chip
-has gone away.  Hadn't considered that path.
+Thanks for the suggestions. It looks to me like your pre-probe callback
+idea will give the cleanest fix. I will try that for v2.
 
-Could you update the commit message to better describe that case?
-
-> I would use Fixes: 61f922db7221 for ->get() errors and d83cee3d2bb1
-> for removal. Is that OK?
-
-Not sure - I'll defer to Bart on that.
-
-Cheers,
-Kent.
+James
