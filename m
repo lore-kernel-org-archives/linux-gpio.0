@@ -1,56 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793401395;
-	b=g04L7dXmPj1Pt8C3fTc23NRv1lTKFkHSRNM3ieYtH6lctu6OnIO8WM3oRAL/E+jNmtDD
-	 EevRXmfjumO4n0RPYEaCJmqu4TORoS299aeqRwF7d8x54AKlyQ+7BLchfyq0YgLFgnAvK
-	 qQG9GGBlOj6UjbmroxqRhvQRThIntC6/H0c8dMgwXha2KyRJddhvZvZ0FaGx0xosdVQrl
-	 /x4YAi05VmuZ64iEIk5MSQorZ/u0kOdwDs8gaT0oKVni2m8Rmgw1svUPIdu/apKsY+vbL
-	 CD/wNbGh8Fig+jowF38/rRJvA6xOPTNVchtyn8V7wM59ZY6+cpJ8H7igaDWJp50/eIg==
+	t=1793413608;
+	b=iRAnRd1slX8rxTyA7/wSFS2FAKAj1Q1BgsnWeZN4iWJhDDj77Q82sI2c0lrARPNl1Lb0
+	 zwCHcYKcQIItn/byzRfWmGs18nVfUAUWxxVAkkUJbw5/kCls/dNPk+i2e7APIXu/p+OzZ
+	 kH1mEy35jGAxlS/tfuSbXMkT5eczyk42/R439t6w3p048Bvrjig5M1F3Wj6itBHAb6aRh
+	 o9Ejt7RLa7+8WcKiGptuG40nix7tN9S4Jb1bpvIifkF01Lklwpral8cnX752+0cdQgebD
+	 B9msPajHx2iMwFg9QOlF3W2QW0Xg7F0M83MUlrHupjsKTSQWLC5i22PyCCGh3cbyZPQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793401395;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=W2UmZSWclkhhavpuxs42JKM0kzMM2/tca2oq13k49x0=;
-	b=b5XmbecTclh2F0rZI3m2S/kdbkJBCxR3kIv95k69aRcUQN5jOWTrUN7tkzust0hMe8SX
-	 nfszu+Th+YlAaLtff+fzHzbuusJYBl4yHapUZyzkti6GIV2N683Krl4Bw/iWYN1Ok8Gxb
-	 xYdW46nlh2pQ/HWdRC/cjHHNdtuK5aIyVuEK9VzLbABcRwtycVHvJnrPyzwY6JRItU0k3
-	 U1I3IqCW8tj7SGjD8v4sUK5NCYsbEsAfQm14R9EKOcxpAJNHV6cRnCI40nXNZsB17p2kw
-	 0zUSQ1nvBMkNL7HQRMXcPCnZBLnQrK2jgF+pPS0NziVd1ceISUARnGdN/sLQaDNsJEg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793413608;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=onJ9qopBB2j2Cgb6Ett7zzhP9v/di/tu3NzVy6YdsQI=;
+	b=m/HjXLQcce4FnS5P6Xfz52e+ra9fGIrvcTOORdJMHPfogullLcVBIjIw91gZjlQv+Gq/
+	 6EebgWcWVt677ifNMN0wfeyldACAKKM7OT19G2bkfBB3AU94i4M7hkPNa6dne5ZFcTT1L
+	 43/RSMxkOPTJuzVK4t/S+9Ht0iqFonSyiCAXbLWI4nAXL/PAc3B07x20sSPndoiKOuUFJ
+	 NeJWb2yPrqTZILyRmv+8IgnDr7mvHIJIvBGGh4lkcvOojLnhfRUf9YduXTROlTyuqBVyM
+	 mlSLFYLt2+KN7gBU+jowQU3PV1mqmX+nRC3CmDnMh/uX4IO3JzaoVepz5Dc3pUTSg+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eCPCYp3d;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IL1sHmPL;
+	arc=none smtp.remote-ip=209.85.161.41
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D334A606A31A;
-	Fri, 30 Oct 2026 23:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5F606A323
+	for <linux-gpio@vger.kernel.org>; Sat, 31 Oct 2026 02:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5EB5F606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eCPCYp3d
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B841F000C1;
-	Fri, 30 Oct 2026 23:03:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793401394;
-	bh=W2UmZSWclkhhavpuxs42JKM0kzMM2/tca2oq13k49x0=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=eCPCYp3dnRLVfRvstXyZ8Mk/R4EgOn7wdusVJhMemjcQaPlVX3t2ohsFHrRWuTiY4
-	 AQK5nKLbO7nAccjGtJXEGl/n7tn/ZixAKuy0/DqelpBzip1THu1EDwV5fuatZSm0Xv
-	 8yyt0SbIxsIdRt9Y2NBtw3SWXRe+d568+v8BvPTzboMOz40cDLKhBTjHNWnyhKpRY0
-	 KARpbpL/FFkL7lDaDALDPYKn1MnsloC3EbzEXelRmzQDxkYTdvAPHpqdU6IC4nu2qa
-	 q7T4x0/n/ASkhJGw8az9H6+nfV9O9LOERpOLANPze5P+rKBzClQgAGawbC030QCtYv
-	 k740sSj9Y3x+Q==
-Message-ID: <sashiko-outbox-191615@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 02/15] HID: ft260: uart: fix the serial driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Michael Zaidman" <michael.zaidman@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, dmitry.torokhov@gmail.com
-In-Reply-To: <20261030223637.86907-3-michael.zaidman@gmail.com>
-References: <20261030223637.86907-1-michael.zaidman@gmail.com>
- <20261030223637.86907-3-michael.zaidman@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 30 Oct 2026 23:03:13 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IL1sHmPL
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-704597ef1d8so525587eaf.3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 19:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793413607; x=1794018407; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=onJ9qopBB2j2Cgb6Ett7zzhP9v/di/tu3NzVy6YdsQI=;
+        b=IL1sHmPLKtU0rRg7pygkrSoGdCemnp4peUGe9lQsQ030tgO11MecsUjgIgrc7Mbvo0
+         yVRoNCx1afODLfYi3xDfik0x18vPeNj0te/ipCOmoFHtNBj4PvA6hI7QExBlTuvMzOaF
+         y8q3VTYqoQAjia5p413YOfp3UvhYDLzZ2px7PJEeYPYIi/yx2rlx/ATVDazOIWbapHi1
+         0lT4tiJXv39Jm0kXOy3+vzub3W9oaFiwK05Q8foJycbM++Vc5H+HSieLnbObT2n5u6NG
+         hAEnv5sEh5Osd9J92AKSXeA087grqxKaLcGaSA3nAlWVQ3c1f1Q+VrJ/3v+axbEnpNHe
+         nEQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793413607; x=1794018407;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=onJ9qopBB2j2Cgb6Ett7zzhP9v/di/tu3NzVy6YdsQI=;
+        b=x5v7KKg7hJBeKGBGKf50iYrdKNjdzzkWDW5OANy2o8hDp6eMNakSNZmTooY9BmUjsl
+         rj4Ml1vXtl+2rDAT9ugbw1QH2QymIWlyaFkm0ZLgqGwtxWVPfBeevguBAbsQHXGoB3d6
+         s+6NhzBpkt/tq50G+MtNIozNSPYz92u4Q6st64w8AIGx8wtT8z1F8ss77Od8PzqTxVHS
+         qSFBbMfZ6ftayMGl3U1hu4cpxkRvL7MEObuKCbDc0z1nCzRGmlhHDiUS0UxMQCS24phU
+         ry+Zut3S5vWwmmJn54f0OfD26CPQXOWjbbWMGEX4rPYzMyXqPI1rlKgMlCqyjp9BiLQw
+         EV+w==
+X-Gm-Message-State: AFq9FYKndYkH5uaGcRhMcHrE1ZC6jv3dXyK+RS7b2/S19wKw9ljllSwm
+	TMqyMY3uh5uqN3JoQVR5gRVyAc7qQBNSeH3yUpkb1eyE6kZxoLrErbhYvvYrMQ==
+X-Gm-Gg: AYBFou1x65+ygOf6rvqkSfTP+z0+KDN4/zH+AWhuFzZcCYbTR/KV/HwQii++trNGG5G
+	bvRcoicOc5VsVPpFkplFKOnKPmq/NxXpKzWwn8ZmIVW836nrYm7mwBbtMxYCThZUVEsMwJYoC9w
+	AHFOjLjUN+/YTJw4aCFCrmeBMZw67TjbBLE+AEbhjHE+eaSR1VJj9zWdQ9Ccap7ZUF4O2bu6ntQ
+	uPKOUob1uyKNmuNERAXxn8w31SeTymxqLPH46Lcz2r4ECbo74RqU4QEi9qtHeOow+mgUrItTcWV
+	fLv9EkKIVPm0lQf5TPAxeLs6RPKN1boRZWHrc0+uV2ijC90/Oq8Ha7QxHk3PVdqlUxYcIH5YAY9
+	m2nHxkkAvv7aNDxEdqLFoIuW+xlneNquM/TSMPrVYsUpA+d52X95aF39wmqTtL1odabSYfe/Uy2
+	JqcUhdlb3sR0wCwsvyrRYTcrhptWdnIT793GHDGc/wgodJycWM8Kosa1jtsfjcPqWrRVS8U3OYT
+	L8BKSiIdEUjly62dDiQ8RDX1K60Yk02s9AFxpRBkXCpLXF7IsczF2/4jaaxGDF9de3nfw2zNKgR
+	hYlUtoq3I8R7x4zPf5KZ8Qjj+yoki6p54gfrDZTjLRrSFTWB83yaKsWZl1oc4G5/ACGe2VvmcKS
+	BI2UmqQ==
+X-Received: by 2002:a05:6820:1c84:b0:6dd:696d:b21f with SMTP id 006d021491bc7-714f24e7c6bmr2638903eaf.2.1793413607382;
+        Fri, 30 Oct 2026 19:26:47 -0700 (PDT)
+Received: from AMD.home.internal (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4a92167984dsm1438390fac.1.2026.10.30.19.26.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 19:26:47 -0700 (PDT)
+From: Enzo Adriano <enzo.adriano.code@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Pablo Mazzini <pmazzini@gmail.com>,
+	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+Subject: [PATCH] pinctrl: sunxi: preserve A733 firmware voltage modes
+Date: Fri, 30 Oct 2026 22:26:45 -0400
+Message-ID: <20261031020640-263f7b05-a7s-pinctrl@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,547 +100,117 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 9 potential issue(=
-s) to consider:
-- [High] HID: ft260: invalid report ID 0xFF in ft260_uart_transmit_chars()
-- [High] HID: ft260: race and infinite loop in ft260_uart_transmit_chars()
-- [High] HID: ft260: wakeup timer and work teardown race in ft260_remove()
-- [High] HID: ft260: broken index allocation and bounds check in ft260_uart=
-_add_port()
-- [High] HID: ft260: UAF and double free when ft260_get_interface_type() re=
-turns 0
-- [High] HID: ft260: missing iface_type check for UART reports in ft260_raw=
-_event()
-- [Medium] HID: ft260: unconditional wakeup timer in ft260_uart_port_activa=
-te()
-- [Medium] HID: ft260: ft260_uart_probe() registers TTY device before confi=
-guring UART
-- [Low] HID: ft260: unneeded ft260_uart_wakeup() prototype and changelog mi=
-smatches
---
+The A733 voltage-selection fields are two bits wide. The main controller
+uses a separate VCCIO field at bits 25:24 for PB; the older one-bit
+handler instead writes bit1 when PB is requested. A733 R-PIO also
+differs from A523: its documented table has SEL at 0x340 and VAL at
+0x348, without the A523 control register at 0x344.
 
-commit 120d1c2c1f711fdf1a272089095a3cbf1a2d1d34
-Author: Michael Zaidman <michael.zaidman@gmail.com>
+Stop using those incompatible layouts on A733. Select BIAS_VOLTAGE_NONE
+for both controllers and give A733-R its own descriptor, retaining the
+A523-R descriptor and behavior. This preserves firmware voltage modes
+when explicit bank supplies are requested. It does not implement dynamic
+voltage switching or choose among conflicting manual AUTO descriptions.
 
-HID: ft260: uart: fix the serial driver
+The public October 14 discussion recommends this conservative treatment:
+https://lore.kernel.org/all/20261014183516.172060-1-vinicius.eduardo.pedrosa@gmail.com/
 
-This commit updates the FT260 serial driver to separate the UART and I2C TX
-buffers, adjust the power-save wakeup timer logic, validate HID input report
-lengths against the received report size, and clean up interface detection =
-and
-FIFO handling.
+AI assistance: Codex:gpt-6-astra.
 
->     HID: ft260: uart: fix the serial driver
->    =20
->     Fix the serial driver added by the previous patch, a port of
->     Christina Quast's v4, so that it works reliably on hardware.
->    =20
->     The UART and I2C paths shared write_buf without proper separation,
->     so concurrent use could corrupt transfers on both channels. Give
->     UART its own TX buffer. The write request report is now built in
->     that fixed per-port buffer, so its payload member becomes a fixed
->     FT260_WR_UART_DATA_MAX (62) array rather than a __counted_by()
->     flexible array, which describes a runtime-counted allocation this
->     path no longer makes.
->    =20
->     The FT260 enters power-save after ~5s idle, which drops RX data at
->     higher baud rates. Keep a timed dummy wakeup, but only when needed:
->     skip it below 4800 baud and when EEPROM disables power-save; wake
->     earlier before RX; avoid configuring baud or disabling the workaround
->     twice; and arm the timer when a tty session starts.
->    =20
->     The received report length was validated against the actual HID report
->     size only on the I2C path. The UART path instead bounded the
->     device-supplied length against FT260_RD_DATA_MAX (180), which is the
->     maximum I2C read payload, not a bound on the report buffer. As a UART
->     payload cannot exceed FT260_WR_UART_DATA_MAX (62) bytes, a report
->     claiming more would make ft260_uart_receive_chars() push data past the
->     end of the report buffer into the tty flip buffer. Validate the length
->     against the received report size once, before dispatching on the repo=
-rt
->     type, and drop the two now-redundant FT260_RD_DATA_MAX checks.
->    =20
->     Also fix RX data loss after reopening the device, improve TX
->     throughput, simplify HID interface-type detection, use kfifo_avail
->     for write-room, and ignore spurious UART interrupt status (0xb1)
->     reports instead of treating them as errors.
->    =20
->     Also includes UART cleanup and refactoring to match the rest of the
->     driver style: replace the kfifo_*_locked aliases with
->     kfifo_*_spinlocked, and drop the parentheses around single-value
->     defines, which coding-style asks for only when the value is an
->     expression.
->    =20
->     This replaces the UART bring-up fix series:
->     https://lore.kernel.org/all/20240210215147.77629-1-michael.zaidman@gm=
-ail.com/
->    =20
->     Do not treat UART interrupt status (0xB1) as a payload length. When
->     re-enabling the power-save wakeup workaround after a baud change,
->     re-arm the timer (reported by Sashiko).
->    =20
->     Report 0xE1 is defined as FT260_UART_RI_DCD_STATUS, but AN_394 section
->     4.3 lists 0xE2 for "UART RI and DCD Status". Correct the value. The
->     macro has no user, because the DCD and RI levels arrive in the 0xB1
->     interrupt report, which ft260_raw_event() handles.
->    =20
->     Signed-off-by: Michael Zaidman <michael.zaidman@gmail.com>
+Suggested-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+Assisted-by: LLM
+Signed-off-by: Enzo Adriano <enzo.adriano.code@gmail.com>
+---
+This implements Vinicius Pedrosa's recommended conservative approach
+for both A733 controllers, including a separate A733-R descriptor:
+https://lore.kernel.org/r/20261014183516.172060-1-vinicius.eduardo.pedrosa@gmail.com
+It avoids the disputed AUTO encoding and does not replace that public
+discussion with a claim that voltage switching is solved.
 
-[Severity: Low]
-This isn't a bug in the code, but does the commit message match what the pa=
-tch
-does here?
+The standalone base is official commit
+d89e1d186ec9271bf78e62771779e9fc03bf0fc3 plus Pablo Mazzini's three
+IRQ-bank v3 patches:
+https://lore.kernel.org/r/20261025142412.112216-1-pmazzini@gmail.com
+The IRQ changes are prerequisites, not part of this patch's diff.
 
-The changelog mentions waking earlier before RX, but
-FT260_WAKEUP_NEEDED_AFTER_MS remains 4800 ms and ft260_uart_wakeup() is only
-called from the periodic ft260_uart_do_wakeup() work handler.
+With the separate A7S DT v2 and its PMIC/bank supplies enabled, two
+final-candidate RAM boots preserved the main and R SEL controls and
+PF supply selector across kernel handoff. UART0, R-I2C0/PMIC and
+read-only MMC0 traffic worked, including after unused-regulator cleanup.
+The firmware's PF high-voltage path was verified before each boot.
 
-The last paragraph also states that DCD and RI levels arrive in the 0xB1
-interrupt report, which ft260_raw_event() handles, whereas ft260_raw_event()
-ignores FT260_UART_INTERRUPT_STATUS (0xB1) and returns 0.
+A regression harness exercised 60 A733 no-read/no-write cases, the old
+main-handler wrong-bit counterexample, and the unchanged A523-R
+handler behavior. Both changed objects built with W=1. A523-R hardware
+was not tested; its behavior is retained and checked by the regression
+harness. No analog voltage, UHS or dynamic voltage-switching claim is
+made. The read-only VAL observations are not precision measurements.
 
-> diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-> index 982e2ca7a2de6..c859486cb28c8 100644
-> --- a/drivers/hid/hid-ft260.c
-> +++ b/drivers/hid/hid-ft260.c
-[ ... ]
-> @@ -38,11 +34,14 @@ MODULE_PARM_DESC(debug, "Toggle FT260 debugging messa=
-ges");
->  			pr_info("%s: " format, __func__, ##arg);	  \
->  	} while (0)
-> =20
-> -#define FT260_REPORT_MAX_LENGTH (64)
-> -#define FT260_I2C_DATA_REPORT_ID(len) (FT260_I2C_REPORT_MIN + (len - 1) =
-/ 4)
-> -#define FT260_UART_DATA_REPORT_ID(len) (FT260_UART_REPORT_MIN + (len - 1=
-) / 4)
-> +#define FT260_REPORT_MAX_LEN 64
-> +#define FT260_DATA_REPORT_ID(min, len) (min + (len - 1) / 4)
-> +#define FT260_I2C_DATA_REPORT_ID(len) \
-> +		FT260_DATA_REPORT_ID(FT260_I2C_REPORT_MIN, len)
-> +#define FT260_UART_DATA_REPORT_ID(len) \
-> +		FT260_DATA_REPORT_ID(FT260_UART_REPORT_MIN, len)
-> =20
-> -#define FT260_WAKEUP_NEEDED_AFTER_MS (4800) /* 5s minus 200ms margin */
-> +#define FT260_WAKEUP_NEEDED_AFTER_MS 4800 /* 5s minus 200ms margin */
-> =20
->  /*
->   * The ft260 input report format defines 62 bytes for the data payload, =
-but
-> @@ -55,8 +54,9 @@ MODULE_PARM_DESC(debug, "Toggle FT260 debugging message=
-s");
->   * of I2C for potentially troublesome amounts of time, we select the max=
-imum
->   * read payload length to be 180 bytes.
->   */
-> -#define FT260_RD_DATA_MAX (180)
-> -#define FT260_WR_DATA_MAX (60)
-> +#define FT260_RD_DATA_MAX 180
-> +#define FT260_WR_I2C_DATA_MAX 60
-> +#define FT260_WR_UART_DATA_MAX 62
+ drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 20 +++++++++++++++----
+ drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c   |  3 ++-
+ 2 files changed, 18 insertions(+), 5 deletions(-)
 
-[Severity: High]
-When ft260_uart_write() calls ft260_uart_transmit_chars() with 61 or more
-bytes in xmit_fifo, len is clamped to FT260_WR_UART_DATA_MAX (62):
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
+index cffc1e53eef141cf5f00ec37435af0f8f6a94b45..1cfd8118435066b403f8b9b0b3725e849643ff84 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
+@@ -30,17 +30,29 @@ static struct sunxi_pinctrl_desc a523_r_pinctrl_data = {
+ 	.pin_base = PL_BASE,
+ };
+ 
++static struct sunxi_pinctrl_desc a733_r_pinctrl_data = {
++	.irq_banks = ARRAY_SIZE(a523_r_irq_bank_map),
++	.irq_bank_map = a523_r_irq_bank_map,
++	/* A733 has two-bit voltage modes, without the A523 control register. */
++	.io_bias_cfg_variant = BIAS_VOLTAGE_NONE,
++	.pin_base = PL_BASE,
++};
++
+ static int a523_r_pinctrl_probe(struct platform_device *pdev)
+ {
++	struct sunxi_pinctrl_desc *desc;
++
++	desc = (struct sunxi_pinctrl_desc *)of_device_get_match_data(&pdev->dev);
+ 	return sunxi_pinctrl_dt_table_init(pdev, a523_r_nr_bank_pins,
+-					   a523_r_irq_bank_muxes,
+-					   &a523_r_pinctrl_data,
++					   a523_r_irq_bank_muxes, desc,
+ 					   SUNXI_PINCTRL_NCAT2_REG_LAYOUT);
+ }
+ 
+ static const struct of_device_id a523_r_pinctrl_match[] = {
+-	{ .compatible = "allwinner,sun55i-a523-r-pinctrl", },
+-	{ .compatible = "allwinner,sun60i-a733-r-pinctrl", },
++	{ .compatible = "allwinner,sun55i-a523-r-pinctrl",
++	  .data = &a523_r_pinctrl_data },
++	{ .compatible = "allwinner,sun60i-a733-r-pinctrl",
++	  .data = &a733_r_pinctrl_data },
+ 	{}
+ };
+ 
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+index 3ebe926a1bc6ba75716f13804db718174b4be229..e2cd7a431af7bc5ec47e8f5719ab11c22b461658 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+@@ -27,7 +27,8 @@ static struct sunxi_pinctrl_desc a733_pinctrl_data = {
+ 	.irq_banks = ARRAY_SIZE(a733_irq_bank_map),
+ 	.irq_bank_map = a733_irq_bank_map,
+ 	.irq_read_needs_mux = true,
+-	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
++	/* Preserve the firmware-configured two-bit voltage modes. */
++	.io_bias_cfg_variant = BIAS_VOLTAGE_NONE,
+ };
+ 
+ static int a733_pinctrl_probe(struct platform_device *pdev)
 
-    len =3D min(data_len, FT260_WR_UART_DATA_MAX);
-    rep->report =3D FT260_UART_DATA_REPORT_ID(len);
+base-commit: d89e1d186ec9271bf78e62771779e9fc03bf0fc3
+prerequisite-patch-id: 85db03df3394cdcb2780a0da122a74b2c1fe220d
+prerequisite-patch-id: a3e883da50bf03e8f522444def66fec7f996ffbe
+prerequisite-patch-id: c6889699a6dc13c336ce4cf4659e21b551e9a9fc
+-- 
+2.53.0
 
-For len =3D 61 or 62, (len - 1) / 4 evaluates to 15, so
-FT260_UART_DATA_REPORT_ID(len) produces 0xF0 + 15 =3D 0xFF.
-
-Since the valid UART data report IDs end at FT260_UART_REPORT_MAX (0xFE, wh=
-ich
-carries 57 to 62 payload bytes), won't setting rep->report to 0xFF cause
-transfers of 61 or 62 bytes to fail with an invalid HID report ID?
-
-[ ... ]
-> @@ -937,27 +951,25 @@ static int ft260_get_interface_type(struct hid_devi=
-ce *hdev, struct ft260_device
->  	ft260_dbg("i2c_enable: 0x%02x\n", cfg.i2c_enable);
->  	ft260_dbg("uart_mode:  0x%02x\n", cfg.uart_mode);
-> =20
-> -	dev->ft260_is_serial =3D false;
-> +	dev->power_saving_en =3D cfg.power_saving_en;
-> =20
->  	switch (cfg.chip_mode) {
->  	case FT260_MODE_ALL:
->  	case FT260_MODE_BOTH:
-> -		if (interface =3D=3D 1) {
-> +		if (interface =3D=3D 1)
->  			ret =3D FT260_IFACE_UART;
-> -			dev->ft260_is_serial =3D true;
-> -		} else {
-> +		else
->  			ret =3D FT260_IFACE_I2C;
-> -		}
->  		break;
->  	case FT260_MODE_UART:
->  		ret =3D FT260_IFACE_UART;
-> -		dev->ft260_is_serial =3D true;
->  		break;
->  	case FT260_MODE_I2C:
->  		ret =3D FT260_IFACE_I2C;
->  		break;
->  	}
-> =20
-> +	dev->iface_type =3D ret;
->  	return ret;
->  }
-
-[Severity: High]
-If cfg.chip_mode does not match any of the four cases in
-ft260_get_interface_type(), ret remains 0 (from ft260_get_system_config()),
-which equals FT260_IFACE_NONE.
-
-In ft260_probe(), hid_set_drvdata(hdev, dev) is called before
-ft260_get_interface_type(), and the check:
-
-    ret =3D ft260_get_interface_type(hdev, dev);
-    if (ret <=3D FT260_IFACE_NONE)
-        goto err_hid_close;
-
-jumps to err_hid_close with ret =3D=3D 0. That error path frees dev via kfr=
-ee(dev)
-and returns 0 from ft260_probe().
-
-Won't returning 0 cause the driver core to treat probe as successful, leadi=
-ng
-to a use-after-free and double free of dev when ft260_remove() later retrie=
-ves
-dev from hid_get_drvdata(hdev)?
-
-[ ... ]
-> @@ -1101,12 +1113,36 @@ static const struct attribute_group ft260_attr_gr=
-oup =3D {
->  	}
->  };
-> =20
-> -/***
-> - * START Serial dev part
-> - */
->  static DEFINE_MUTEX(ft260_uart_list_lock);
->  static LIST_HEAD(ft260_uart_device_list);
-> =20
-> +static void ft260_uart_wakeup(struct ft260_device *dev);
-
-[Severity: Low]
-This isn't a bug, but is this forward declaration of ft260_uart_wakeup()
-needed? Its only caller is ft260_uart_do_wakeup(), which is defined right
-below ft260_uart_wakeup().
-
-[ ... ]
-> @@ -1123,8 +1159,8 @@ static int ft260_uart_add_port(struct ft260_device =
-*port)
->  	int index =3D 0, ret =3D 0;
->  	struct ft260_device *dev;
-> =20
-> -	spin_lock_init(&port->write_lock);
-> -	if (kfifo_alloc(&port->xmit_fifo, FIFO_SIZE, GFP_KERNEL))
-> +	spin_lock_init(&port->xmit_fifo_lock);
-> +	if (kfifo_alloc(&port->xmit_fifo, XMIT_FIFO_SIZE, GFP_KERNEL))
->  		return -ENOMEM;
-> =20
->  	mutex_lock(&ft260_uart_list_lock);
-
-[Severity: High]
-In ft260_uart_add_port(), the minor index search assumes
-ft260_uart_device_list is sorted by index, but new ports are appended to the
-tail of the list without checking UART_COUNT_MAX:
-
-    mutex_lock(&ft260_uart_list_lock);
-    list_for_each_entry(dev, &ft260_uart_device_list, device_list) {
-        if (dev->index !=3D index)
-            break;
-        index++;
-    }
-
-    port->index =3D index;
-    list_add_tail(&port->device_list, &ft260_uart_device_list);
-    mutex_unlock(&ft260_uart_list_lock);
-
-If ports 0 and 1 are added, port 0 is removed, and a new port A is probed,
-port A gets index 0 and is placed at the tail (making the list order [1, 0]=
-).
-If another port B is then probed, the first entry has dev->index =3D=3D 1 !=
-=3D 0, so
-the loop breaks immediately and assigns index 0 to port B as well.
-
-When ft260_uart_probe() then calls tty_port_register_device_attr(),
-tty_port_link_device() overwrites ft260_tty_driver->ports[0] with &devB->po=
-rt
-before tty_register_device_attr() fails with -EEXIST and frees devB, leaving
-ft260_tty_driver->ports[0] dangling for ft260_uart_install() ->
-tty_standard_install(). Also, if more than UART_COUNT_MAX (4) ports are
-probed, index >=3D UART_COUNT_MAX triggers WARN_ON(index >=3D driver->num) =
-in
-tty_port_link_device().
-
-Should ft260_uart_add_port() insert before dev->device_list to keep the list
-sorted and return an error when index >=3D UART_COUNT_MAX?
-
-[ ... ]
-> @@ -1217,30 +1253,24 @@ static int ft260_uart_transmit_chars(struct ft260=
-_device *port)
->  		goto tty_out;
->  	}
-> =20
-> -	rep =3D (struct ft260_uart_write_request_report *)port->write_buf;
-> +	rep =3D (struct ft260_uart_write_request_report *)port->uart_wr_buf;
-> =20
->  	do {
-> -		len =3D min(data_len, FT260_WR_DATA_MAX);
-> +		len =3D min(data_len, FT260_WR_UART_DATA_MAX);
-> =20
->  		rep->report =3D FT260_UART_DATA_REPORT_ID(len);
->  		rep->length =3D len;
-> =20
-> -		len =3D kfifo_out_locked(xmit, rep->data, len, &port->write_lock);
-> +		len =3D kfifo_out_spinlocked(xmit, rep->data, len, &port->xmit_fifo_lo=
-ck);
-> =20
-> -		ret =3D ft260_hid_output_report(hdev, (u8 *)rep, len + sizeof(*rep));
-> -		if (ret < 0) {
-> -			hid_err(hdev, "Failed to start transfer, ret %d\n", ret);
-> +		ret =3D ft260_hid_output_report(hdev, (u8 *)rep, len + 2);
-> +		if (ret < 0)
->  			goto tty_out;
-> -		}
-> =20
->  		data_len -=3D len;
->  		port->icount.tx +=3D len;
->  	} while (data_len > 0);
-> =20
-> -	len =3D kfifo_len(xmit);
-> -	if ((FIFO_SIZE - len) > TTY_WAKEUP_WATERMARK)
-> -		tty_wakeup(tty);
-> -
->  	ret =3D 0;
-> =20
->  tty_out:
-
-[Severity: High]
-As reported by Sashiko on v1 [1], ft260_uart_transmit_chars() builds outgoi=
-ng
-reports in the shared per-port buffer port->uart_wr_buf without holding a l=
-ock
-across the loop while ft260_hid_output_report() sleeps.
-
-If two threads enter ft260_uart_write() -> ft260_uart_transmit_chars()
-concurrently (or if kfifo_reset() runs in ft260_uart_port_activate()):
-
-1. Both threads can overwrite port->uart_wr_buf concurrently before kmemdup=
-()
-   in ft260_hid_output_report() copies it.
-2. Because rep->report and rep->length are set from data_len before
-   kfifo_out_spinlocked(), a racing thread draining xmit_fifo can cause
-   kfifo_out_spinlocked() to return fewer bytes than rep->length, or 0 byte=
-s.
-3. If kfifo_out_spinlocked() returns 0, ft260_hid_output_report() sends a
-   2-byte report with a non-zero rep->length and data_len -=3D 0 never
-   terminates the while (data_len > 0) loop.
-
-Also, with tty_wakeup(tty) removed here, what wakes up a writer waiting for
-write room after xmit_fifo fills up?
-
-[ ... ]
-> @@ -1503,53 +1537,68 @@ static void ft260_uart_start_wakeup(struct timer_=
-list *t)
-[ ... ]
-> +static int ft260_uart_port_activate(struct tty_port *tport, struct tty_s=
-truct *tty)
-> +{
-> +	int ret;
-> +	int baudrate;
-> +	struct ft260_get_uart_settings_report cfg;
-> +	struct ft260_device *port =3D container_of(tport, struct ft260_device, =
-port);
-> +
->  	set_bit(TTY_IO_ERROR, &tty->flags);
-> =20
-> -	spin_lock(&port->write_lock);
-> +	spin_lock(&port->xmit_fifo_lock);
->  	kfifo_reset(&port->xmit_fifo);
-> -	spin_unlock(&port->write_lock);
-> +	spin_unlock(&port->xmit_fifo_lock);
-> =20
-> -	ft260_uart_change_speed(port, &tty->termios, NULL);
->  	clear_bit(TTY_IO_ERROR, &tty->flags);
-> =20
-> -	if (port->reschedule_work) {
-> -		mod_timer(&port->wakeup_timer, jiffies +
-> -			  msecs_to_jiffies(FT260_WAKEUP_NEEDED_AFTER_MS));
-> -	}
-> +	/*
-> +	 * The port setting may remain intact after session termination.
-> +	 * Then, when reopening the port without configuring the port
-> +	 * setting, we need to retrieve the baud rate from the device to
-> +	 * reactivate the wakeup workaround if needed.
-> +	 */
-> +	ret =3D ft260_get_uart_settings(port->hdev, &cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	baudrate =3D get_unaligned_le32(&cfg.baudrate);
-> +	if (baudrate > FT260_UART_EN_PW_SAVE_BAUD)
-> +		ft260_uart_wakeup_workaraund_enable(port, true);
-> +
-> +	ft260_dbg("configured baudrate =3D %d", baudrate);
-> +
-> +	mod_timer(&port->wakeup_timer, jiffies +
-> +		  msecs_to_jiffies(FT260_WAKEUP_NEEDED_AFTER_MS));
-> =20
->  	return 0;
->  }
-
-[Severity: Medium]
-In ft260_uart_port_activate(), mod_timer(&port->wakeup_timer, ...) is now
-called unconditionally rather than only when port->reschedule_work is true.
-Also, if baudrate <=3D FT260_UART_EN_PW_SAVE_BAUD on the first open after
-ft260_uart_probe() enabled the workaround, port->reschedule_work remains tr=
-ue.
-
-Should ft260_uart_port_activate() pass baudrate > FT260_UART_EN_PW_SAVE_BAUD
-directly to ft260_uart_wakeup_workaraund_enable() and guard mod_timer() with
-if (port->reschedule_work), as in ft260_uart_change_speed()?
-
-[ ... ]
-> @@ -1641,10 +1689,10 @@ static int ft260_uart_probe(struct hid_device *hd=
-ev, struct ft260_device *dev)
->  		ret =3D PTR_ERR(devt);
->  		goto err_register_tty;
->  	}
-> -	hid_info(hdev, "Registering device /dev/%s%d\n",
-> +	hid_info(hdev, "registering device /dev/%s%d\n",
->  		ft260_tty_driver->name, dev->index);
-> =20
-> -	/* Send Feature Report to Configure FT260 as UART 9600-8-N-1 */
-> +	/* Configure UART to 9600n8 */
->  	req.report	=3D FT260_SYSTEM_SETTINGS;
->  	req.request	=3D FT260_SET_UART_CONFIG;
->  	req.flow_ctrl	=3D FT260_UART_CFG_FLOW_CTRL_NONE;
-> @@ -1656,8 +1704,7 @@ static int ft260_uart_probe(struct hid_device *hdev=
-, struct ft260_device *dev)
-> =20
->  	ret =3D ft260_hid_feature_report_set(hdev, (u8 *)&req, sizeof(req));
->  	if (ret < 0) {
-> -		hid_err(hdev, "ft260_hid_feature_report_set failed: %d\n",
-> -			ret);
-> +		hid_err(hdev, "failed to configure uart: %d\n", ret);
->  		goto err_hid_report;
->  	}
-
-[Severity: Medium]
-In ft260_uart_probe(), tty_port_register_device_attr() exposes /dev/ttyFT* =
-to
-userspace before ft260_hid_feature_report_set() configures the UART to 9600=
-n8.
-
-Since ft260_uart_port_activate() now reads the active UART settings from the
-chip via ft260_get_uart_settings() instead of calling
-ft260_uart_change_speed(), can a userspace process opening the port
-immediately after registration read uninitialized UART settings or have its
-termios changes overwritten by the 9600n8 feature report in
-ft260_uart_probe()?
-
-[ ... ]
-> @@ -1765,7 +1812,7 @@ static void ft260_remove(struct hid_device *hdev)
->  	if (!dev)
->  		return;
-> =20
-> -	if (dev->ft260_is_serial) {
-> +	if (dev->iface_type =3D=3D FT260_IFACE_UART) {
->  		timer_delete_sync(&dev->wakeup_timer);
->  		cancel_work_sync(&dev->wakeup_work);
->  		tty_port_unregister_device(&dev->port, ft260_tty_driver,
-> @@ -1779,7 +1826,7 @@ static void ft260_remove(struct hid_device *hdev)
->  	hid_hw_close(hdev);
->  	hid_hw_stop(hdev);
-> =20
-> -	if (dev->ft260_is_serial)
-> +	if (dev->iface_type =3D=3D FT260_IFACE_UART)
->  		ft260_uart_port_put(dev);
->  	else
->  		kfree(dev);
-
-[Severity: High]
-As reported by Sashiko on v1 [2], is the teardown ordering of wakeup_timer =
-and
-wakeup_work safe against concurrent TTY operations during removal?
-
-In ft260_remove() and ft260_uart_port_remove():
-
-    ft260_remove()
-        timer_delete_sync(&dev->wakeup_timer);
-        cancel_work_sync(&dev->wakeup_work);
-        tty_port_unregister_device(&dev->port, ft260_tty_driver, dev->index=
-);
-        ft260_uart_port_remove(dev)
-            timer_delete_sync(&port->wakeup_timer);
-            list_del(&port->device_list);
-            tty_port_tty_vhangup(&port->port);
-
-Because port->reschedule_work is only cleared when tty_port_tty_vhangup()
-invokes ft260_uart_port_shutdown():
-
-1. If wakeup_timer fires between cancel_work_sync() in ft260_remove() and
-   timer_delete_sync() in ft260_uart_port_remove(), ft260_uart_start_wakeup=
-()
-   schedules wakeup_work, which is never cancelled afterwards (and the
-   err_hid_report error path in ft260_uart_probe() never calls
-   cancel_work_sync() at all).
-2. Until list_del() and tty_port_tty_vhangup() complete, a concurrent
-   ft260_uart_change_speed() or ft260_uart_port_activate() can set
-   port->reschedule_work =3D true and re-arm wakeup_timer via mod_timer() a=
-fter
-   timer_delete_sync() has already run, leaving the timer or work active af=
-ter
-   hid_hw_stop() and ft260_uart_port_put() free dev.
-
-Should timer_delete_sync(&port->wakeup_timer) and
-cancel_work_sync(&port->wakeup_work) happen after list_del() and
-tty_port_tty_vhangup() have finished shutting down the port?
-
-> @@ -1797,6 +1844,13 @@ static int ft260_raw_event(struct hid_device *hdev=
-, struct hid_report *report,
-[ ... ]
-> @@ -1837,12 +1884,11 @@ static int ft260_raw_event(struct hid_device *hde=
-v, struct hid_report *report,
-> =20
->  		return 0;
-> =20
-> -	} else if (xfer->length > FT260_RD_DATA_MAX) {
-> -		hid_err(hdev, "received data too long (%d)\n", xfer->length);
-> -		return -EBADR;
->  	} else if (xfer->report >=3D FT260_UART_REPORT_MIN &&
->  		   xfer->report <=3D FT260_UART_REPORT_MAX) {
->  		return ft260_uart_receive_chars(dev, xfer->data, xfer->length);
-> +	} else if (xfer->report =3D=3D FT260_UART_INTERRUPT_STATUS) {
-> +		return 0;
->  	}
->  	hid_err(hdev, "unhandled report %#02x\n", xfer->report);
-
-[Severity: High]
-In ft260_probe(), tty_port_init(&dev->port) is only called on the UART path=
- in
-ft260_uart_probe(). When dev->iface_type =3D=3D FT260_IFACE_I2C, dev->port =
-is left
-zero-initialized with dev->port.buf.tail =3D=3D NULL.
-
-If an input report in the range FT260_UART_REPORT_MIN..FT260_UART_REPORT_MAX
-arrives on an I2C interface, ft260_raw_event() calls
-ft260_uart_receive_chars() -> tty_insert_flip_string(&port->port, ...), whi=
-ch
-dereferences port->port.buf.tail in __tty_buffer_request_room().
-
-Should ft260_raw_event() check that dev->iface_type =3D=3D FT260_IFACE_UART=
- before
-dispatching UART reports to ft260_uart_receive_chars()?
-
-[1] https://lore.kernel.org/r/20260822215615.2D8541F000E9@smtp.kernel.org
-[2] https://lore.kernel.org/r/20260822215615.2D8541F000E9@smtp.kernel.org
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030223637.8690=
-7-1-michael.zaidman@gmail.com?part=3D2
