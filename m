@@ -1,97 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793413608;
-	b=iRAnRd1slX8rxTyA7/wSFS2FAKAj1Q1BgsnWeZN4iWJhDDj77Q82sI2c0lrARPNl1Lb0
-	 zwCHcYKcQIItn/byzRfWmGs18nVfUAUWxxVAkkUJbw5/kCls/dNPk+i2e7APIXu/p+OzZ
-	 kH1mEy35jGAxlS/tfuSbXMkT5eczyk42/R439t6w3p048Bvrjig5M1F3Wj6itBHAb6aRh
-	 o9Ejt7RLa7+8WcKiGptuG40nix7tN9S4Jb1bpvIifkF01Lklwpral8cnX752+0cdQgebD
-	 B9msPajHx2iMwFg9QOlF3W2QW0Xg7F0M83MUlrHupjsKTSQWLC5i22PyCCGh3cbyZPQ==
+	t=1793417097;
+	b=UNpfqoj17lb5WiZVcQky7zWjHPXBpj79UkdZfYr6iUfpD0O3hU4cMrzw21XQphrJuIUg
+	 wOJQ1V/82hHV07V23I2ZsmEJH3EKuXOLn+mWt4oZFqUAOmvYNcG5RE60hOIv+uKRLdnXw
+	 e2YA268nz64EmsaVbMdA247b9JfOYZcMzXd90E6SMRrQPnsKY6EfbmoQSF7GRBf3zDK/3
+	 WL7h4/ffCyJxJQFauouzSj+2AXcqcKd/7JZ8ROiZT4ZJfvfjR6hGYFaxzes6crfqoUea5
+	 qyWxejAdvgSijtJZrIMfrH+SA3MlbWsYnkEdc1I+VCAu9GrfXHIQ03MN1jNGs63Vf4w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793413608;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793417097;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=onJ9qopBB2j2Cgb6Ett7zzhP9v/di/tu3NzVy6YdsQI=;
-	b=m/HjXLQcce4FnS5P6Xfz52e+ra9fGIrvcTOORdJMHPfogullLcVBIjIw91gZjlQv+Gq/
-	 6EebgWcWVt677ifNMN0wfeyldACAKKM7OT19G2bkfBB3AU94i4M7hkPNa6dne5ZFcTT1L
-	 43/RSMxkOPTJuzVK4t/S+9Ht0iqFonSyiCAXbLWI4nAXL/PAc3B07x20sSPndoiKOuUFJ
-	 NeJWb2yPrqTZILyRmv+8IgnDr7mvHIJIvBGGh4lkcvOojLnhfRUf9YduXTROlTyuqBVyM
-	 mlSLFYLt2+KN7gBU+jowQU3PV1mqmX+nRC3CmDnMh/uX4IO3JzaoVepz5Dc3pUTSg+w==
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=xjFmgriWXzydd1YKnmihJ3tonTeyGDj5VqBui4OA5C8=;
+	b=YvGGe/lFmDDimjXlaiLLAt7y6es/VaRlC8uDGr+XwtIvwR+Cj+/A5I5b1fog3ph8LLi2
+	 qJ52bkQMtI7fGjpXy7aIPbiIsjVVVt97XWwDKhKJnEr4kMmcW+38wuRTOrWYUHwSAfiFQ
+	 Lz1JIWBRjD2vxgK1oJpHAo5qO64jrMXeukYDfs+MvwG2t5DKQsEoZvoip4t7pEeNl2ZXq
+	 nkAjqr6yJQRBiWK5mFEQiwN0IvGbviCjG79XLogSxffRWTL3SP/aAHBH/1dAhvKrlmSIQ
+	 wY/s1wMemHVDWnXOK8L0W/JiqViW7b+MGIE58M7tHBMmmun5LMa3yGNZALSvpykOSEQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IL1sHmPL;
-	arc=none smtp.remote-ip=209.85.161.41
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dmarc=none header.from=jclark.com;
+	spf=pass smtp.mailfrom=jclark.com;
+	dkim=pass header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=aDgZ3UpT;
+	arc=none smtp.remote-ip=209.85.214.180
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5F606A323
-	for <linux-gpio@vger.kernel.org>; Sat, 31 Oct 2026 02:26:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5EB5F606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFF7606A325
+	for <linux-gpio@vger.kernel.org>; Sat, 31 Oct 2026 03:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1AFF7606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jclark.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jclark.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IL1sHmPL
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-704597ef1d8so525587eaf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 19:26:48 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=aDgZ3UpT
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2eb0f1b592bso4929055ad.1
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2026 20:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793413607; x=1794018407; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=onJ9qopBB2j2Cgb6Ett7zzhP9v/di/tu3NzVy6YdsQI=;
-        b=IL1sHmPLKtU0rRg7pygkrSoGdCemnp4peUGe9lQsQ030tgO11MecsUjgIgrc7Mbvo0
-         yVRoNCx1afODLfYi3xDfik0x18vPeNj0te/ipCOmoFHtNBj4PvA6hI7QExBlTuvMzOaF
-         y8q3VTYqoQAjia5p413YOfp3UvhYDLzZ2px7PJEeYPYIi/yx2rlx/ATVDazOIWbapHi1
-         0lT4tiJXv39Jm0kXOy3+vzub3W9oaFiwK05Q8foJycbM++Vc5H+HSieLnbObT2n5u6NG
-         hAEnv5sEh5Osd9J92AKSXeA087grqxKaLcGaSA3nAlWVQ3c1f1Q+VrJ/3v+axbEnpNHe
-         nEQw==
+        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1793417096; x=1794021896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=xjFmgriWXzydd1YKnmihJ3tonTeyGDj5VqBui4OA5C8=;
+        b=aDgZ3UpToUzDOlnxjbE7VNaBZ7cdT+IEag6WoI9S/ekgWsEOfCHcDjkjKIS+JOhFTD
+         /k3oUgD+3btUmUjvLioU1ab4F3dLBVtjW0AcoPwHZc7QLiB12xn/KNi+Msj3TLZX3+46
+         XGbEG4pbl+KHZcoGpoKcgsg84bIybc2QqFpLTRnnQcutN8v6P6Z4aqQkHCzzYyvtlOvC
+         aJak7nKtDXuOMX2GcPsjnZ2q3bMOuvq+Z3uDed9zW94UGkexgA+ZlxCfmvxmsHOu0uBR
+         UZZxRRCaYekQ1gTEAg6a2hIot9TGmODssEuU//ODKx9v+/yeoeZQKFQfLRuQiXv6TRUC
+         efBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793413607; x=1794018407;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=onJ9qopBB2j2Cgb6Ett7zzhP9v/di/tu3NzVy6YdsQI=;
-        b=x5v7KKg7hJBeKGBGKf50iYrdKNjdzzkWDW5OANy2o8hDp6eMNakSNZmTooY9BmUjsl
-         rj4Ml1vXtl+2rDAT9ugbw1QH2QymIWlyaFkm0ZLgqGwtxWVPfBeevguBAbsQHXGoB3d6
-         s+6NhzBpkt/tq50G+MtNIozNSPYz92u4Q6st64w8AIGx8wtT8z1F8ss77Od8PzqTxVHS
-         qSFBbMfZ6ftayMGl3U1hu4cpxkRvL7MEObuKCbDc0z1nCzRGmlhHDiUS0UxMQCS24phU
-         ry+Zut3S5vWwmmJn54f0OfD26CPQXOWjbbWMGEX4rPYzMyXqPI1rlKgMlCqyjp9BiLQw
-         EV+w==
-X-Gm-Message-State: AFq9FYKndYkH5uaGcRhMcHrE1ZC6jv3dXyK+RS7b2/S19wKw9ljllSwm
-	TMqyMY3uh5uqN3JoQVR5gRVyAc7qQBNSeH3yUpkb1eyE6kZxoLrErbhYvvYrMQ==
-X-Gm-Gg: AYBFou1x65+ygOf6rvqkSfTP+z0+KDN4/zH+AWhuFzZcCYbTR/KV/HwQii++trNGG5G
-	bvRcoicOc5VsVPpFkplFKOnKPmq/NxXpKzWwn8ZmIVW836nrYm7mwBbtMxYCThZUVEsMwJYoC9w
-	AHFOjLjUN+/YTJw4aCFCrmeBMZw67TjbBLE+AEbhjHE+eaSR1VJj9zWdQ9Ccap7ZUF4O2bu6ntQ
-	uPKOUob1uyKNmuNERAXxn8w31SeTymxqLPH46Lcz2r4ECbo74RqU4QEi9qtHeOow+mgUrItTcWV
-	fLv9EkKIVPm0lQf5TPAxeLs6RPKN1boRZWHrc0+uV2ijC90/Oq8Ha7QxHk3PVdqlUxYcIH5YAY9
-	m2nHxkkAvv7aNDxEdqLFoIuW+xlneNquM/TSMPrVYsUpA+d52X95aF39wmqTtL1odabSYfe/Uy2
-	JqcUhdlb3sR0wCwsvyrRYTcrhptWdnIT793GHDGc/wgodJycWM8Kosa1jtsfjcPqWrRVS8U3OYT
-	L8BKSiIdEUjly62dDiQ8RDX1K60Yk02s9AFxpRBkXCpLXF7IsczF2/4jaaxGDF9de3nfw2zNKgR
-	hYlUtoq3I8R7x4zPf5KZ8Qjj+yoki6p54gfrDZTjLRrSFTWB83yaKsWZl1oc4G5/ACGe2VvmcKS
-	BI2UmqQ==
-X-Received: by 2002:a05:6820:1c84:b0:6dd:696d:b21f with SMTP id 006d021491bc7-714f24e7c6bmr2638903eaf.2.1793413607382;
-        Fri, 30 Oct 2026 19:26:47 -0700 (PDT)
-Received: from AMD.home.internal (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4a92167984dsm1438390fac.1.2026.10.30.19.26.46
+        d=1e100.net; s=20260707; t=1793417096; x=1794021896;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xjFmgriWXzydd1YKnmihJ3tonTeyGDj5VqBui4OA5C8=;
+        b=vO7Ifnf5qKue213LA9bwgKbXy9Sm7v7TXtdUHLT3TAwehXCoilqnwctlauc8/mPnml
+         7/Q6vplVelToPWkbcDCs1Lfi7MZ4Npv2UsMfStYefsqyRsGXvnWF3hzMqDynnk/sPEvJ
+         7m63FiGEeBsZmDKl/Ddkol9e6u/+jbpeg9L67ZgLBSqkxYUxyhyl1jmuzSkDTRKM+QDr
+         rR6CcOhKtLLtu2UDfWNXNZkNdCnVOCv4/AjOpkSLcbHzsXoZf31NC0F5haLk2qo9Bjet
+         im6fbhV4+YIZtVFyt+HQYqW+6xUzRvhvqfaS9Grg/a3dmq4xmbn6GkfeLNnVrRG7cmGO
+         w5zQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwl0suE3Lp/U2hyI6XdmeRYDtWNl/jbDSUekn0f9gI+OGWR3h/fsiwcic0qstr9Ie2iCeof/sdlIo4m@vger.kernel.org
+X-Gm-Message-State: AFq9FYIuVlbOv6+M28pZBmKkHK7HLtZ+WKf3lynhAP7FO6u8qzM8eTmf
+	YYcmonlRPhr1gp6/YNRFe5r/HgWuUoATKq87+J6rOf2L+fUbfQ7PnDOvFej6aCnqPg==
+X-Gm-Gg: AYBFou3UqYGL8wov0J84GoXk+nbFfGUVn+EJ22pUwk2BsxkdsDSG0vz352PUSKEuPmW
+	tvUHFqy9OIy6RhSjIsS2QV3VnUE4nwh0QGhqfevEl6yEVr7n7VOH6HSQ5P16d+bKlBxY0oU5M1p
+	F4nbAPce711rIHXfpTKaPNc0DJIIcozhaF3rzffZ+zCYryORQGDoI9sarO2TwknVnWTrbsN4D1Z
+	0EwHv2d/5BbILwJ79S+PAiDgcm4v0JL1nQSsG5w53XheJ9SnOtqntLTKA9+Ujg+3t6EW3hxcLRX
+	ms1UO2BHME/YYVnbE06Wehhha3DPOtB1B4E/+awUQksSVU555N6HJYmhf3kAm3vtR2QN/Jwy/H4
+	M8duqIFJ5g6IR8WE/XCy5j6VjLIC3ful3oiPQ/dkorNwAiGcjFUP6PK40n5ukHYwRMeBhlmmaOv
+	+c3a5RBJezdY7qfJBnjhZANvvyJr97od/pMkPs0nZVroPwKgaabzszNfSHvxIesRrvTHBMw4djI
+	eP9fEw/YNhWQ5Oi48vmIVXzw9jJKK58RYW5Sk/N+b33J0Y5nqIXZJozNQuSkuou+llglsN24XWA
+	8uZviLYXrlpYyArl6zlflWVGN5wdCcMoriAJiIyffEsq5PXmZUKeadSM+MQvt5tRjKdJh0CcMMl
+	Jj/m8JDe4n2H1YuX55DhyfCGiZdV+QWrmUcbATw==
+X-Received: by 2002:a17:90a:ec8e:b0:3ac:a203:e0a1 with SMTP id 98e67ed59e1d1-3ae8980ede9mr2974708a91.37.1793417096261;
+        Fri, 30 Oct 2026 20:24:56 -0700 (PDT)
+Received: from cantal.lan ([58.136.77.93])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae87f99899sm2940976a91.2.2026.10.30.20.24.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 19:26:47 -0700 (PDT)
-From: Enzo Adriano <enzo.adriano.code@gmail.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
+        Fri, 30 Oct 2026 20:24:55 -0700 (PDT)
+From: James Clark <jjc@jclark.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Johan Hovold <johan@kernel.org>,
+	Bastien Nocera <hadess@hadess.net>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Pablo Mazzini <pmazzini@gmail.com>,
-	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Subject: [PATCH] pinctrl: sunxi: preserve A733 firmware voltage modes
-Date: Fri, 30 Oct 2026 22:26:45 -0400
-Message-ID: <20261031020640-263f7b05-a7s-pinctrl@gmail.com>
+	linux-gpio@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v2] usb: core: add a pre_probe callback for device drivers that may defer
+Date: Sat, 31 Oct 2026 10:24:49 +0700
+Message-ID: <20261031032449.3536559-1-jjc@jclark.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <sashiko-outbox-191184@kernel.org>
+References: <20261030151919.3511106-1-jjc@jclark.com> <sashiko-outbox-191184@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,116 +108,36 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 
-The A733 voltage-selection fields are two bits wide. The main controller
-uses a separate VCCIO field at bits 25:24 for PB; the older one-bit
-handler instead writes bit1 when PB is requested. A733 R-PIO also
-differs from A523: its documented table has SEL at 0x340 and VAL at
-0x348, without the A523 control register at 0x344.
+On Fri, 30 Oct 2026 15:41:34 +0000, sashiko-bot@kernel.org wrote:
+> However, err_pre_probe only invokes udriver->disconnect(udev) and does not
+> undo usb_generic_driver_probe(udev) or usb_autoresume_device(udev) the way
+> usb_unbind_device() does:
+[...]
+> Similarly, on the -ENODEV fallback path where udev->use_generic_driver is set
+> to 1 and usb_probe_device() returns -EPROBE_DEFER, won't leaving
+> usb_generic_driver_probe(udev) and usb_autoresume_device(udev) in place cause
+> the subsequent usb_generic_driver probe to call usb_generic_driver_probe() a
+> second time and emit a duplicate USB_DEVICE_ADD notification without an
+> intervening USB_DEVICE_REMOVE?
 
-Stop using those incompatible layouts on A733. Select BIAS_VOLTAGE_NONE
-for both controllers and give A733-R its own descriptor, retaining the
-A523-R descriptor and behavior. This preserves firmware voltage modes
-when explicit bank supplies are requested. It does not implement dynamic
-voltage switching or choose among conflicting manual AUTO descriptions.
+Both of Sashiko's points are correct, but both are pre-existing and this
+patch does not change them.
 
-The public October 14 discussion recommends this conservative treatment:
-https://lore.kernel.org/all/20261014183516.172060-1-vinicius.eduardo.pedrosa@gmail.com/
+Before the patch, a probe() failure returned straight after
+usb_generic_driver_probe() had run, with neither the configuration nor
+the runtime PM reference undone. That has been so since commit
+c9d503370f24 ("USB: Make it possible to "subclass" usb_device_driver").
+The -ENODEV fallback has re-run the generic probe under
+usb_generic_driver since commit 88b7381a939d ("USB: Select better
+matching USB drivers when available").
 
-AI assistance: Codex:gpt-6-astra.
+The patch deliberately handles a pre_probe() error other than
+-EPROBE_DEFER exactly as it handles the same error from probe(), so that
+the fallback keeps working. This is stated in the kerneldoc. The only
+new code on the error path is the disconnect() call, which undoes what
+pre_probe() set up. A complete unwind in usb_probe_device() would be a
+separate change.
 
-Suggested-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Assisted-by: LLM
-Signed-off-by: Enzo Adriano <enzo.adriano.code@gmail.com>
----
-This implements Vinicius Pedrosa's recommended conservative approach
-for both A733 controllers, including a separate A733-R descriptor:
-https://lore.kernel.org/r/20261014183516.172060-1-vinicius.eduardo.pedrosa@gmail.com
-It avoids the disputed AUTO encoding and does not replace that public
-discussion with a claim that voltage switching is solved.
-
-The standalone base is official commit
-d89e1d186ec9271bf78e62771779e9fc03bf0fc3 plus Pablo Mazzini's three
-IRQ-bank v3 patches:
-https://lore.kernel.org/r/20261025142412.112216-1-pmazzini@gmail.com
-The IRQ changes are prerequisites, not part of this patch's diff.
-
-With the separate A7S DT v2 and its PMIC/bank supplies enabled, two
-final-candidate RAM boots preserved the main and R SEL controls and
-PF supply selector across kernel handoff. UART0, R-I2C0/PMIC and
-read-only MMC0 traffic worked, including after unused-regulator cleanup.
-The firmware's PF high-voltage path was verified before each boot.
-
-A regression harness exercised 60 A733 no-read/no-write cases, the old
-main-handler wrong-bit counterexample, and the unchanged A523-R
-handler behavior. Both changed objects built with W=1. A523-R hardware
-was not tested; its behavior is retained and checked by the regression
-harness. No analog voltage, UHS or dynamic voltage-switching claim is
-made. The read-only VAL observations are not precision measurements.
-
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 20 +++++++++++++++----
- drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c   |  3 ++-
- 2 files changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-index cffc1e53eef141cf5f00ec37435af0f8f6a94b45..1cfd8118435066b403f8b9b0b3725e849643ff84 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-@@ -30,17 +30,29 @@ static struct sunxi_pinctrl_desc a523_r_pinctrl_data = {
- 	.pin_base = PL_BASE,
- };
- 
-+static struct sunxi_pinctrl_desc a733_r_pinctrl_data = {
-+	.irq_banks = ARRAY_SIZE(a523_r_irq_bank_map),
-+	.irq_bank_map = a523_r_irq_bank_map,
-+	/* A733 has two-bit voltage modes, without the A523 control register. */
-+	.io_bias_cfg_variant = BIAS_VOLTAGE_NONE,
-+	.pin_base = PL_BASE,
-+};
-+
- static int a523_r_pinctrl_probe(struct platform_device *pdev)
- {
-+	struct sunxi_pinctrl_desc *desc;
-+
-+	desc = (struct sunxi_pinctrl_desc *)of_device_get_match_data(&pdev->dev);
- 	return sunxi_pinctrl_dt_table_init(pdev, a523_r_nr_bank_pins,
--					   a523_r_irq_bank_muxes,
--					   &a523_r_pinctrl_data,
-+					   a523_r_irq_bank_muxes, desc,
- 					   SUNXI_PINCTRL_NCAT2_REG_LAYOUT);
- }
- 
- static const struct of_device_id a523_r_pinctrl_match[] = {
--	{ .compatible = "allwinner,sun55i-a523-r-pinctrl", },
--	{ .compatible = "allwinner,sun60i-a733-r-pinctrl", },
-+	{ .compatible = "allwinner,sun55i-a523-r-pinctrl",
-+	  .data = &a523_r_pinctrl_data },
-+	{ .compatible = "allwinner,sun60i-a733-r-pinctrl",
-+	  .data = &a733_r_pinctrl_data },
- 	{}
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-index 3ebe926a1bc6ba75716f13804db718174b4be229..e2cd7a431af7bc5ec47e8f5719ab11c22b461658 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-@@ -27,7 +27,8 @@ static struct sunxi_pinctrl_desc a733_pinctrl_data = {
- 	.irq_banks = ARRAY_SIZE(a733_irq_bank_map),
- 	.irq_bank_map = a733_irq_bank_map,
- 	.irq_read_needs_mux = true,
--	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
-+	/* Preserve the firmware-configured two-bit voltage modes. */
-+	.io_bias_cfg_variant = BIAS_VOLTAGE_NONE,
- };
- 
- static int a733_pinctrl_probe(struct platform_device *pdev)
-
-base-commit: d89e1d186ec9271bf78e62771779e9fc03bf0fc3
-prerequisite-patch-id: 85db03df3394cdcb2780a0da122a74b2c1fe220d
-prerequisite-patch-id: a3e883da50bf03e8f522444def66fec7f996ffbe
-prerequisite-patch-id: c6889699a6dc13c336ce4cf4659e21b551e9a9fc
--- 
-2.53.0
-
+James
