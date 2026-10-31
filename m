@@ -1,98 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793437204;
-	b=XvWHpYXYL3XzzWH43kdFsoAsKVL1adqkvxbXHsmoFPuMQ26JE1modHUtYrfn8yY5NBh8
-	 S06j/4tGNWrntYMdFE2QjuuVBK7+KQ159BLPPlWwKIYGrygbmjEG+hClDikg2vLvhVoeq
-	 J9wosQci8jhvaORzbtRnpZXoYCEbSvUU7fpPs5HYNegaC+t8FON8m37gLs/K8C3wq4bqa
-	 zHNg2aWEW3ZU5r3QLJAnTSxspzeimeYw8/xzjWSV1oz7zMbeuR1Zy/VhMfVpW3On6MHu1
-	 GJaqrsNyULrlUK71dJqxI+kgEXCtsg3ETHPf+alW5Srow0wcGlgsjHk/eSwR6w+50Dw==
+	t=1793438260;
+	b=f22rFZ1MfKsH98r9ekSz9dh8yUJG0zpJWNNpsg3VcDH9rohH0tr1ZjyhKHXMO+L6vKR0
+	 u9jnn88E3womkdTLm1UPOVTbC2oulCc/IY+zRJAyjZPNOOoYk3sl63Zf2jhY/88SMLCx+
+	 UlUIF+JlldIBshIEPZG64U7/JW3115EfHmOGnA1UfFySZBAjdSSO/erY4YpHSQQVGgoZh
+	 AGU8gUadh1cRuBxQ50uxJbw0DPjsf9Wc+05UnEyED0czexLpCEMW8pMBrZyxrSIPPVqWi
+	 Kwg8gdUlCWTSU3IS8u3h3F6YDz/7VqaRO5IJZCMRO8zI9wGGK7csoVSiT1ZDf39G8Gw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793437204;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=+sZ2SGBKL+wA+F9N/uPCteUC32WVd5RJNFGupXt8+xA=;
-	b=mhq4EAHWfElBAUx74yIuUqUs6z5AuT7uERBM4k+++Zsf/YX1C9npP1aT64A1jDr8WF4t
-	 Tn0IgoaKGzE21eRHVkFvdRMvvnBIY+BkVOb3kJ3j1O9bmZwIOc5JQ0J60NJtXBusxSTan
-	 EqLnVpIgEWEf7EgOJXdfUoQpxLsJF/kA6bD+hsN5/T/NsGSS7ztKrHKCsxtiBPnhx2y3T
-	 V21MhrP5uy+Vk3Fndrpm9PEkZQpXS2rUbETWW/Bnd4icc/MISOWjPL4lwVG720mgzWwmW
-	 rCyD9iGxl1x95ldlrCn9Irhrz9rEqxMmvyVPQvvxp4hv/1gM5N5Z79SDIbM8r6JMdcQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793438260;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=nFHi5+PTbvdWMIRkq8j1w9A4qvjg0FjKEaYZyLyCejI=;
+	b=FRjK4kQsJDBG1+XSPhOtvESMQ/YPZ3mkTmFVjSBtfxRtMgDJsTNYnDflPWYMktwu7aHS
+	 WMdqEqm9+YXss3tDsaMlbLkbnJlE4+SpYsVorHDDzbQ1tdCrsKNY9PVssVtq1pvN8X/1v
+	 ZPZsF5TEZ0e2IMqisjw1k4agoP0pwhYPLnMKjOEmf5etD54oNI8Didi+W3LCdGnPal0YQ
+	 FXTjoD/AxviH0NPrgnZVDBVcj8Jjm3CSWvAM+gucs7X0VLFqirJa2zBU75IYKw8wYbxgU
+	 ztieyOYYWY93un1LCzPwts4VQpcHxdXxQduHN6jCFKHJrJafWMGQIVzJmSpW61oNYNQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wLC4nbCN;
-	arc=none smtp.remote-ip=209.85.214.178
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RoykFTo1;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC0D606A31A
-	for <linux-gpio@vger.kernel.org>; Sat, 31 Oct 2026 09:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4AC0D606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5AE606A31D
+	for <linux-gpio@vger.kernel.org>; Sat, 31 Oct 2026 09:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wLC4nbCN
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2ea94541adbso6744625ad.2
-        for <linux-gpio@vger.kernel.org>; Sat, 31 Oct 2026 02:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793437203; x=1794042003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+sZ2SGBKL+wA+F9N/uPCteUC32WVd5RJNFGupXt8+xA=;
-        b=wLC4nbCNzS5Lc4pkvG+1R0lZT4CKRKMLrcJ3C7eYNgveSM4ha4ySCLJTKQctRIzj3q
-         pp+KACA3l8OqyNhgTlNA24UEH0JkmomtWkd4Zl4Ixyf3DCuwSbqXpFh7REB+uNN94CD8
-         46KwRIDy2yqHlHmQDz5dMvJsa3ZEQTg9YVyEZAMtZuq7b3HYXNBPkKJapl2yfAPeJzSk
-         PCEtVj72AvkpDVsxtj2QQlHPD7e81GEHcBQZuHZcPZeVNplsA3nOOvBxYA5SrJ3vReKK
-         +HkxaLToOyKReO41QPDuKw/FZtH7JVz9Hf0n4+ioOZvwNyiLer2CE5A0Ogt0bwJiG60S
-         RCiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793437203; x=1794042003;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+sZ2SGBKL+wA+F9N/uPCteUC32WVd5RJNFGupXt8+xA=;
-        b=VRL0EE1ZvK0tYNGxKG0ak/8E4S0TmWHKenJ2zK7oAJF1u09Nwa/rDSoVlea3xvXjrd
-         JXxtRlW/KPRBf/jAmxzfANzoyOCMD609eiClCm8Lb3K3UwNi2nX60GvZvjl2QSKPfTbs
-         pqVskeF7vFdqQgDJ+Sd3hwnPHi1L0CHb71PT4RgU3P55O18ut+rpiFOZzAOSM0vmcCyG
-         3OoayJl+AALHx1hSDa+rqAYLsy1N/vbn31XWcL0okwGF/+HOt9JOWSFVuntFv/PjNY4B
-         gnHkpjEQHM8eoj8JJLRmqbjHTQ7AR2pWfLS5v7jACsIAeOhUIWGVe5/yjVrsnBnC6nwL
-         N39g==
-X-Forwarded-Encrypted: i=1; AKwUvBwn5f3C/yYbFjx0JgZXOxfPi+MxJJeHIkA7q4Ha4hBqu668dPR00ddBcOiT8A298LhT7NSeCiHdkhF6@vger.kernel.org
-X-Gm-Message-State: AFq9FYKpYKwvLWQinGtrjkweN0D3bb+ikJDEOCehHSO14lSuQ7+4QEYC
-	MtoBsAXIKYfuidTUfXVWSS/e6yjHWeqo2ZpcQyRqw24qigAepeP8iMF3ak+4UA==
-X-Gm-Gg: AYBFou2+3nBDzKoIQf3yEVw9PHZwhF2/MoD7hmjlkooXiXQAlP90V1+oO48Zm4qvHmH
-	RYg8RQGuR5qsRjI5k8zljhO4KvQwRZtlSdkd0WsKuei+HmJrvRThy9QKfino3VhXDblY2hoOU0o
-	T/07M6snN3zx4AvMjJHoaY70+BnhH5eRhxsHqRLT2dReYFQoP302Zg90ZkEzBpRg8f+/9UjHbQ3
-	MCktABslNikJQ7IxqsySSuYhdOtb1qjiF/pr/o2aegjk0fuRG9zRT2ZQ0vj0gYYHqouMQ/5ge04
-	5QOJQphjtnHFG+n0dp/FLwOCa4GhVmKFRkWxCiSdnkx9/9mmRZWZDcoej5UMu9NEhO/BnUqcO3o
-	59FcDpKhNGRpOrQezPnczqvnRUNck5oh5GCgKXfOD+RAugj+su1U17BO41HB8Jh2Il5nOf7BYb4
-	mnrPseIlEjGlGIni6H7lWS23OTpQ/Z5egRdzFV40fTe47CS8eR8xPIDUe9CLAVjaqZ0M3JOz8Ip
-	2IDGEmQyje9ntfvTN+qtx7Zper6HtFE85BqB+jprlH8rljhvnPdR+txFwQm044XbJ2AAtGgyUON
-	WeBk65xd87U29F9uk1y3A4Y2Ebxow/RCg5BtuKYhZpsD0Tu53wWFIcyAD0qGQEb/q0Y67YIA6cL
-	BaAzv4DxpZ7aOu6W2mzNCZUfzj88gjhU5ANEfs2iAL362SSw3W0M4JdS6HpEbdnIFbDmr7870y8
-	VycMLJuqG5QYlDIvThS+Sxq2q2
-X-Received: by 2002:a17:902:d548:b0:2e2:d9fe:51fb with SMTP id d9443c01a7336-2eb363ffa94mr46855425ad.4.1793437202530;
-        Sat, 31 Oct 2026 02:00:02 -0700 (PDT)
-Received: from EAIT-H54D9Q2FJQ.eait.uq.edu.au ([130.102.10.191])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eb392486bbsm13932775ad.30.2026.10.31.01.59.50
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 31 Oct 2026 02:00:01 -0700 (PDT)
-From: Yu Zhang <yuz08559@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Koichiro Den <koichiro.den@canonical.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3] gpio: sim: fix the configfs lockup racing with mkdir/rmdir
-Date: Sat, 31 Oct 2026 18:58:21 +1000
-Message-ID: <20261031085821.23385-1-yuz08559@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261027085653.90471-1-yuz08559@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RoykFTo1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 728891F0093A;
+	Sat, 31 Oct 2026 09:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793438259;
+	bh=nFHi5+PTbvdWMIRkq8j1w9A4qvjg0FjKEaYZyLyCejI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=RoykFTo1D1Gja5BtFUs5LRPpBhHshJjDRFbGmSn2rLKl4NPhBwDpgBC4ILTLnqhYQ
+	 SjVv7Bt4dfxh5EhOEWS7/BEfFsB/fafHbLGInQcTJv68qpy0EdgMEcEH1Mfx5gbfeb
+	 +C/s3/7t6B4Br40O+2WL+wYo8m39fK+eVEhP/1CkDZBALWaSHCpish7kg9Ij4FInMB
+	 7RIl131npjtqJESgZVnszTjeXirFYMeXiyDbsP6oBRUBSGlekqYhqWC+ZlcrwYtqDO
+	 I+QsRnDJHo7OgJDdpoX6Vh5VS/YXNcm210Le0Krzv68doaSt+L+T7MrIGb8fj88dKc
+	 0c6vvWZx1X5Ig==
+Message-ID: <sashiko-outbox-191860@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] gpio: sim: fix the configfs lockup racing with
+ mkdir/rmdir
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Yu Zhang" <yuz08559@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261031085821.23385-1-yuz08559@gmail.com>
 References: <20261027085653.90471-1-yuz08559@gmail.com>
+ <20261031085821.23385-1-yuz08559@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 31 Oct 2026 09:17:38 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,227 +60,135 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-gpio_sim_device_lockup_configfs() depends (on activation) and undepends
-(on deactivation) the leaf configfs entries of a device. It walks
-dev->bank_list and bank->line_list without dev->lock, while the lists
-are modified and their nodes freed under dev->lock by the configfs
-make/release callbacks. It also walks the lists twice, once to depend
-and once to undepend, and the two walks can see different entries:
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] gpio: sim: missing leaf bank dependency in gpio_sim_device_locku=
+p_configfs()
+--
 
- - A hog created while the device is live is never depended on, but
-   it is undepended on deactivation, hitting
-   BUG_ON(sd->s_dependent_count < 1) in configfs_undepend_item().
-   The following is enough to trigger it:
+commit e531f54ece1332b506f6748423ca9ef1c7ee7f17
+Author: Yu Zhang <yuz08559@gmail.com>
 
-	mkdir $G/dev $G/dev/bank0 $G/dev/bank0/line0
-	echo 1 > $G/dev/live
-	mkdir $G/dev/bank0/line0/hog
-	echo 0 > $G/dev/live
+gpio: sim: fix the configfs lockup racing with mkdir/rmdir
 
- - An entry that is being created or removed when the device goes live
-   cannot be depended on (the WARN_ON() fires), but it is undepended
-   later, hitting the same BUG_ON(). If it has already been unlinked,
-   configfs_depend_item_unlocked() dereferences its NULL ci_group.
+This commit fixes races between activating/deactivating a simulated GPIO
+device and concurrent configfs mkdir/rmdir operations by holding the config=
+fs
+subsystem mutex and dev->lock across live transitions and recording the
+depended leaf items.
 
-Toggling "live" while concurrently creating and removing line and hog
-directories hits the WARN_ON() and then the BUG_ON() within a second.
+> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+> index 34b45d0d35750..041bbdc5187b6 100644
+> --- a/drivers/gpio/gpio-sim.c
+> +++ b/drivers/gpio/gpio-sim.c
 
-Hold the configfs subsystem mutex and dev->lock across the whole live
-transition. The subsystem mutex is what configfs holds when it links
-and unlinks entries and when it calls the make_group()/make_item()
-callbacks, which then take dev->lock, so the lock order is the same.
-Record the entries that were actually depended on and undepend exactly
-those. If an entry cannot be depended on because it is being created
-or removed, undo the dependencies already taken and fail with -EBUSY
-instead of warning.
+[ ... ]
 
-configfs_depend_item_unlocked() and configfs_undepend_item_unlocked()
-only take configfs_dirent_lock for an item of the caller's own
-subsystem, so calling them under these locks is fine.
+> @@ -974,31 +978,80 @@ static void gpio_sim_device_deactivate(struct gpio_=
+sim_device *dev)
+>  	gpio_sim_remove_swnode_recursive(swnode);
+>  }
+> =20
+> -static void
+> -gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev, bool lock)
+> +static void gpio_sim_device_unlock_configfs(struct gpio_sim_device *dev)
+> +{
+> +	unsigned int i;
+> +
+> +	lockdep_assert_held(&dev->lock);
+> +
+> +	for (i =3D 0; i < dev->num_deps; i++)
+> +		configfs_undepend_item_unlocked(dev->deps[i]);
+> +
+> +	kfree(dev->deps);
+> +	dev->deps =3D NULL;
+> +	dev->num_deps =3D 0;
+> +}
+> +
+> +static int gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev)
+>  {
+>  	struct configfs_subsystem *subsys =3D dev->group.cg_subsys;
+>  	struct gpio_sim_bank *bank;
+>  	struct gpio_sim_line *line;
+>  	struct config_item *item;
+> +	unsigned int num =3D 0;
+> +	int ret;
+> +
+> +	lockdep_assert_held(&subsys->su_mutex);
+> +	lockdep_assert_held(&dev->lock);
+> =20
+>  	/*
+>  	 * The device only needs to depend on leaf entries. This is
+>  	 * sufficient to lock up all the configfs entries that the
+>  	 * instantiated, alive device depends on.
+> +	 *
+> +	 * dev->lock keeps the bank and line lists stable and the subsystem
+> +	 * mutex keeps the entries' ci_group stable. An entry that is still
+> +	 * being created or removed cannot be depended on, in which case the
+> +	 * device is not brought up. The entries that were actually depended
+> +	 * on are recorded, so that exactly those are undepended when the
+> +	 * device goes down.
+>  	 */
+> +	list_for_each_entry(bank, &dev->bank_list, siblings)
+> +		num +=3D list_count_nodes(&bank->line_list);
+> +
+> +	if (!num)
+> +		return 0;
+> +
+> +	dev->deps =3D kzalloc_objs(*dev->deps, num);
+> +	if (!dev->deps)
+> +		return -ENOMEM;
+> +
+>  	list_for_each_entry(bank, &dev->bank_list, siblings) {
+>  		list_for_each_entry(line, &bank->line_list, siblings) {
 
-Fixes: 8bd76b3d3f3a ("gpio: sim: lock up configfs that an instantiated device depends on")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yu Zhang <yuz08559@gmail.com>
----
-v3:
- - Count the lines with list_count_nodes() (Bartosz).
-v2: https://lore.kernel.org/all/20261027085653.90471-1-yuz08559@gmail.com/
- - Supersedes v1 "gpio: sim: snapshot configfs leaf items before
-   depending on them". The v1 approach of taking references on the
-   entries and depending on them after dropping dev->lock still raced
-   with mkdir/rmdir, as the sashiko review pointed out, so the fix
-   was redone: hold the subsystem mutex and dev->lock across the whole
-   live transition, record the entries that were depended on and fail
-   with -EBUSY instead of warning.
-v1: https://lore.kernel.org/all/20261026060049.60599-1-yuz08559@gmail.com/
----
- drivers/gpio/gpio-sim.c | 108 +++++++++++++++++++++++++++++++---------
- 1 file changed, 84 insertions(+), 24 deletions(-)
+[Severity: Medium]
+What happens in gpio_sim_device_lockup_configfs() when a bank has no line
+subdirectories and bank->line_list is empty?
 
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index 0c73bec..abc73bb 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -560,6 +560,10 @@ struct gpio_sim_device {
- 	struct mutex lock;
- 
- 	struct list_head bank_list;
-+
-+	/* Leaf entries depended on while the device is live. */
-+	struct config_item **deps;
-+	unsigned int num_deps;
- };
- 
- static struct gpio_sim_device *to_gpio_sim_device(struct config_item *item)
-@@ -974,31 +978,80 @@ static void gpio_sim_device_deactivate(struct gpio_sim_device *dev)
- 	gpio_sim_remove_swnode_recursive(swnode);
- }
- 
--static void
--gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev, bool lock)
-+static void gpio_sim_device_unlock_configfs(struct gpio_sim_device *dev)
-+{
-+	unsigned int i;
-+
-+	lockdep_assert_held(&dev->lock);
-+
-+	for (i = 0; i < dev->num_deps; i++)
-+		configfs_undepend_item_unlocked(dev->deps[i]);
-+
-+	kfree(dev->deps);
-+	dev->deps = NULL;
-+	dev->num_deps = 0;
-+}
-+
-+static int gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev)
- {
- 	struct configfs_subsystem *subsys = dev->group.cg_subsys;
- 	struct gpio_sim_bank *bank;
- 	struct gpio_sim_line *line;
- 	struct config_item *item;
-+	unsigned int num = 0;
-+	int ret;
-+
-+	lockdep_assert_held(&subsys->su_mutex);
-+	lockdep_assert_held(&dev->lock);
- 
- 	/*
- 	 * The device only needs to depend on leaf entries. This is
- 	 * sufficient to lock up all the configfs entries that the
- 	 * instantiated, alive device depends on.
-+	 *
-+	 * dev->lock keeps the bank and line lists stable and the subsystem
-+	 * mutex keeps the entries' ci_group stable. An entry that is still
-+	 * being created or removed cannot be depended on, in which case the
-+	 * device is not brought up. The entries that were actually depended
-+	 * on are recorded, so that exactly those are undepended when the
-+	 * device goes down.
- 	 */
-+	list_for_each_entry(bank, &dev->bank_list, siblings)
-+		num += list_count_nodes(&bank->line_list);
-+
-+	if (!num)
-+		return 0;
-+
-+	dev->deps = kzalloc_objs(*dev->deps, num);
-+	if (!dev->deps)
-+		return -ENOMEM;
-+
- 	list_for_each_entry(bank, &dev->bank_list, siblings) {
- 		list_for_each_entry(line, &bank->line_list, siblings) {
- 			item = line->hog ? &line->hog->item
- 					 : &line->group.cg_item;
- 
--			if (lock)
--				WARN_ON(configfs_depend_item_unlocked(subsys,
--								      item));
--			else
--				configfs_undepend_item_unlocked(item);
-+			/* Already unlinked by a concurrent rmdir(). */
-+			if (!item->ci_group) {
-+				ret = -EBUSY;
-+				goto err_unlock;
-+			}
-+
-+			ret = configfs_depend_item_unlocked(subsys, item);
-+			if (ret) {
-+				ret = -EBUSY;
-+				goto err_unlock;
-+			}
-+
-+			dev->deps[dev->num_deps++] = item;
- 		}
- 	}
-+
-+	return 0;
-+
-+err_unlock:
-+	gpio_sim_device_unlock_configfs(dev);
-+	return ret;
- }
- 
- static ssize_t
-@@ -1013,26 +1066,32 @@ gpio_sim_device_config_live_store(struct config_item *item,
- 	if (ret)
- 		return ret;
- 
--	if (live)
--		gpio_sim_device_lockup_configfs(dev, true);
--
--	scoped_guard(mutex, &dev->lock) {
--		if (live == gpio_sim_device_is_live(dev))
--			ret = -EPERM;
--		else if (live)
--			ret = gpio_sim_device_activate(dev);
--		else
--			gpio_sim_device_deactivate(dev);
--	}
--
- 	/*
--	 * Undepend is required only if device disablement (live == 0)
--	 * succeeds or if device enablement (live == 1) fails.
-+	 * Lock order: subsystem mutex, then dev->lock. This is the same
-+	 * order as in the make_group()/make_item() callbacks.
- 	 */
--	if (live == !!ret)
--		gpio_sim_device_lockup_configfs(dev, false);
-+	guard(mutex)(&dev->group.cg_subsys->su_mutex);
-+	guard(mutex)(&dev->lock);
-+
-+	if (live == gpio_sim_device_is_live(dev))
-+		return -EPERM;
-+
-+	if (live) {
-+		ret = gpio_sim_device_lockup_configfs(dev);
-+		if (ret)
-+			return ret;
- 
--	return ret ?: count;
-+		ret = gpio_sim_device_activate(dev);
-+		if (ret) {
-+			gpio_sim_device_unlock_configfs(dev);
-+			return ret;
-+		}
-+	} else {
-+		gpio_sim_device_deactivate(dev);
-+		gpio_sim_device_unlock_configfs(dev);
-+	}
-+
-+	return count;
- }
- 
- CONFIGFS_ATTR(gpio_sim_device_config_, live);
-@@ -1546,6 +1605,7 @@ static void gpio_sim_device_config_group_release(struct config_item *item)
- 
- 	mutex_destroy(&dev->lock);
- 	ida_free(&gpio_sim_ida, dev->id);
-+	kfree(dev->deps);
- 	kfree(dev);
- }
- 
--- 
-2.43.0
+In gpio_sim_device_config_make_bank_group(), a bank is initialized with
+bank->num_lines =3D 1 and an empty bank->line_list, so creating line<offset>
+subdirectories is optional. When bank->line_list is empty,
+&bank->group.cg_item is itself the leaf configfs entry for that bank.
 
+Because gpio_sim_device_lockup_configfs() only counts and iterates over
+bank->line_list, any bank with an empty line_list is skipped:
+
+1. If a bank has no line subdirectories when the device is activated,
+   &bank->group.cg_item is never depended on. While the device is live,
+   userspace can rmdir the bank directory (causing
+   gpio_sim_bank_config_group_release() to unlink and free struct
+   gpio_sim_bank) and even rmdir the live device directory itself.
+
+2. A bank directory in the middle of configfs_mkdir() or configfs_rmdir()
+   also has an empty bank->line_list. During configfs_rmdir(), for example,
+   subsys->su_mutex is unlocked before config_item_put() invokes
+   gpio_sim_bank_config_group_release() to remove bank->siblings from
+   dev->bank_list under dev->lock:
+
+   fs/configfs/dir.c:configfs_rmdir() {
+       ...
+       unlink_group(group);
+       client_drop_item(parent_item, item);
+       mutex_unlock(&subsys->su_mutex);
+
+       /* Drop our reference from above */
+       config_item_put(item);
+   }
+
+   If gpio_sim_device_config_live_store() acquires subsys->su_mutex and
+   dev->lock in that window (or the similar window in configfs_mkdir() befo=
+re
+   configfs_attach_group() finishes), gpio_sim_device_lockup_configfs() ski=
+ps
+   the empty bank instead of checking &bank->group.cg_item and returning
+   -EBUSY, allowing gpio_sim_device_activate() to use a bank that is still
+   being created or is about to be freed.
+
+Should gpio_sim_device_lockup_configfs() count and depend on
+&bank->group.cg_item whenever list_empty(&bank->line_list) is true?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261031085821.2338=
+5-1-yuz08559@gmail.com?part=3D1
