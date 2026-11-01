@@ -1,45 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.62.57.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793530353;
-	b=Nbk55Z4LyT9pNBc9d/yXtC+QwLR8xNi3kqABCx37Dh0WWFl6DMwYzZpQQdDlb79WGZLh
-	 xT3+1snebId6G+O+t+j00+6VfbilhyDgIAIEw7g056wGDg6+ZMHhzvwGRIlBYGiP4Nf9U
-	 TrDx7/+88I9o2nYacvpjblBXXquKsHypkYjXWs9FMvCzmnUlROb2YN8+IQBtOw5o/cUFz
-	 F1egCtwKy+GXjLkz4Lkal1CiCVJXxIdzj78Gr70SBSbyZb7qzYCARUdl4QBDg1Tq4/kk5
-	 a0ZeHbaIyeOsW7yfSEzZq0AgzoqyX0MeXcvKch+PJB9sRud/GNyLhF8+CV2tOQauIGw==
+	t=1793532709;
+	b=mNacLWKUwF65WcaPnwkNtwjjyVV9sgOtGEg3MSEM24TVh0/WQQVSxJiyu8IFa9lfo4q9
+	 iT1mkpfcfBPxSDSWapfGyPnCMJ6lAQCSud46m8TKjnSIpZoeqL+lNWyvY46YmWD1hLK0p
+	 EotShNq234iwtbZIr3x9v04HTb5g1rkNdBFVjrMan2p2EnBLrYej/mERBN535nu+6xl+F
+	 EQjju24K3LkSuSlcNLletWtC9J/pqFsnaSOkt/sNER7bVxjVoStmYmnEGkxxMhXJPGz7q
+	 t+DG8844kb0XKGe44vovx8OQTWoNKG3YEPH00rFPzoG+E2YJqzcoeNcVc8uXfoMtAxA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793530353;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=xlm70zJicMZ77PdEMVbRYRPtF07ul0gsfdGP8rkkP/0=;
-	b=jw97zG9yd8usNEHuCJ1iC4xT7b0Dp7Yj7ceVSxBhJU54lJhDFzzqCrm8C+zf9u7+7Q4b
-	 ipqQYMrldslWsLyonm8vdGn6LyZ3zjvcm+rXw1iheBTBQlnBTviuFCk6gpaXeveHMmqn9
-	 iUmyx2SOsMJEvVi/Efhl+Aavs+rkQKTq9kGHuKZog354SUnV15ceByBPEhGppduvW0U7o
-	 aAmuihF5IdhWxAE2mPZBwfHPqmS2g9hfAONOV8j2VlMJ4EBa0YmdHycZiGPSdObK6Tlzb
-	 VgTPDGyamMIjve2uX5J4MOPQdm4HiWGboCL5mfrdnglcWITfvISvHI5cIkvQP3x6L7Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793532709;
+	h=DMARC-Filter:DKIM-Signature:X-QQ-XMRINFO:X-QQ-XMAILINFO:From:To:Cc:
+	 Subject:Mime-Version:Content-Type:Content-Transfer-Encoding:Date:
+	 X-Priority:Message-ID:X-QQ-MIME:X-Mailer:X-QQ-Mailer:References:
+	 In-Reply-To:X-QQ-mid;
+	bh=4PXzGc2Rw2fCXjkklglmjwOBpwPL/t0RkrO1+a8BwTs=;
+	b=eWpxdfLbN7f2BEIJMUTaqRLXlSjuvsv/IH8cV2pl7w/e5zz+W9s4TUnFSKWF7xmyciSE
+	 G7D3Ti5kul4N8itOYOy3pvWLYgkrM4PGKvJvk2kVLbASAGe/tqf/O0JmYAkfR93uLLDUl
+	 v0jEBVChDFCLafMTekyLh034W395nmQ11V3wIGJelJHk9EGg/r82ltjnzYjRnDAM16dPS
+	 UAsC2HZqsp6QVjakqnT/GY0fHWSbinoPW7A1oxu6A3PsLplY/oMAkSKo3VJ1YfWgFWYSt
+	 eeSG9p6SYwGhvGPCgqD1Dqt2kA62rrh2xBENRJurakI0FiFKY9Iis/0+NxWruHutYMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P8dU9Alg;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=zuHVTW5t;
+	arc=none smtp.remote-ip=162.62.57.49
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136D4606A324;
-	Sun,  1 Nov 2026 10:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CA9606A324;
+	Sun,  1 Nov 2026 11:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4CA9606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P8dU9Alg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BE91F00919;
-	Sun,  1 Nov 2026 10:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793530352;
-	bh=xlm70zJicMZ77PdEMVbRYRPtF07ul0gsfdGP8rkkP/0=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=P8dU9Alg7dNejqGOtDAiPGLdjb7OVRTdUPw5/10mKpEjIjVVCFalD/HOhK3FbunKC
-	 A/KZ5UoaT42jLXx60Yn+s8tc+5fCiA6F0IFwpS6pfSqrKyY/SeqaJk+7EZ68nzwXxX
-	 WYAvAy6sqizSA9Y5txW1DQWq0rmEDc30vpDJIrN4aHnm/iCEHtjSTvemZ+RPwfdYbZ
-	 i915xKFfgVJRluUmnNIOWDeZQOtBD849cI5q3eQHQTZQQqL++Xr3+Xm+ZXkHPeiOsS
-	 O8tEizdg30ngq0w7KN3lpRoTY+2zUdbNYr4ewJoIwH1l8ZRb5tc/UD2jrkSuGDBPgM
-	 N8z42dgQ0TKXw==
+	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=zuHVTW5t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1793532694; bh=4PXzGc2Rw2fCXjkklglmjwOBpwPL/t0RkrO1+a8BwTs=;
+	h=From:To:Cc:Subject:Date:References:In-Reply-To;
+	b=zuHVTW5traxZzn7gUPJQzknvG+nR+QwyXrFO3v5WEaqzbrVbjLyfuHkhh46TEzDZD
+	 9w07+o/XwWCYXC+BFh021ps/ZUDKzZM6kbsTbPEsJADmRVRn3E2KfsSfodVAMBNL3B
+	 1/UnuvVzzFFVwL9ap+Go3dS1sz3JMr/wkGaEt3RQ=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-XMAILINFO: N55iztL8edgQybSWYxuz+O1+9mOuF4a6o9IlPHWQBhRVZDIrch1h77KPomNJ/B
+	 Nw0cRyirxwQuJC/Zmd9tvtdVZv9PIkx4G8zIqW3WkKGx3+cz5H6hAW0nO2abi4WxCICewmrkz24Y5
+	 4gDCn5unlZ9E3H60lTVIBbeedRLttniY1vF6P9OkMwhsxezC6F/Wdf7dIRvfr+YD+120vBhn/EVBX
+	 Z0N4RXfibxF4cTfeJfIO9XgA7m9H/qNUUUk8L/7XCfIxNeszcTEPCGxFw6cbzvCR8bK0urlao9GMp
+	 b37eQJj1TNDomNLU4TlauNG2MLLe/m6YT/3/daLN4faXMG9c3Xv8RaIs6t2zXF5M9/eeO1kd6UZ2b
+	 qRRMx99oge2xpz0V8EtCD10Y5P1nGdSQfF2s8jOzNVqJGx6NJyHBDk0jc+rhHR9yR/SPYT8f6qrW1
+	 4AH8rJhciGcs722AuzpnWmRIZU+HlMtmSespSzXPb/TB+bLm4QWrGZ43zbe9ossVbsrsjxrneGKmS
+	 iJ3OANCDWjL62o2EH5AQxN87S9cp0sdIgWeXC2gkMiPbP52LwlhXkgqI13Wp61sJdjNESXD/tYMw/
+	 FDqhNQEC/MuXxCKLRbfplE+7AKq2OIADHhXFBVNHxB+rPvcsspfezSH0BGT51y7K47ikmjMehRln2
+	 XWXJ1TbdnuKbJHEt16Itz/HLx9CBfKekPE8HES17zLT+hFZ35ZGBKcUbidyOyFfPbkvr1ptXCJ5vi
+	 jCfJJRhxeq4WHq0tXZBSqCzc2y6d7t/BOfI7Gb0ixJuT8p+VxWRBzVmqtHW85fHoTA37+dT4zoSOY
+	 w8K/yEhg2nELVC6UMYix9sTVhxJsTDFQTbuITdWsJ9n0meTHwLdzzhm1rdiJobHe0SUzQm5WxIxta
+	 3wh2swzy6RCJswD+r8vpyXjztAdk2Mk9f5zgSuLLHtAAiUwfAyvc0pBoQQRWitDOALiwngHR9cfSh
+	 9+4rckDH+rQFDCSdGXFPIvdjjpbNrKpevfwBSE9Msw10Uq7yxuPAgGU2didtugTq2H4sFXiiObg9Q
+	 bIM9UM6CLnA2PE5SoggXwT3z2442zqIKO00Li2FJRLYqZppzIxLq1grqXRclociJt+SPB
+From: "=?utf-8?B?Q3VuaGFvIEx1?=" <1579567540@qq.com>
+To: "=?utf-8?B?QmFydG9zeiBHb2xhc3pld3NraQ==?=" <brgl@kernel.org>
+Cc: "=?utf-8?B?bGludXgtY2xr?=" <linux-clk@vger.kernel.org>, "=?utf-8?B?ZGV2aWNldHJlZQ==?=" <devicetree@vger.kernel.org>, "=?utf-8?B?bGludXgtYXJtLWtlcm5lbA==?=" <linux-arm-kernel@lists.infradead.org>, "=?utf-8?B?bGludXgtcm9ja2NoaXA=?=" <linux-rockchip@lists.infradead.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bGludXgtZ3Bpbw==?=" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH 09/27] gpio: rockchip: Add RK3572 GPIO support
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -48,131 +67,38 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 22/27] phy: rockchip-naneng-combphy: Add RK3572 support
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, mfd@lists.linux.dev, linux-gpio@vger.kernel.org, 
- linux-serial@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-usb@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
- vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com, 
- lee@kernel.org
-In-Reply-To: <sashiko-outbox-181786@kernel.org>
-References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
- <20261022-add-board-ok3572-c-v1-22-0b0fd85a31ee@qq.com>
- <sashiko-outbox-181786@kernel.org>
-Date: Sun, 01 Nov 2026 16:22:26 +0530
-Message-Id: <179353034684.2955.5901398331920172946.b4-reply@b4>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3978; i=mani@kernel.org;
- h=from:subject:message-id; bh=PV6+TwlxSS26CdoN0gMespT5APA2NOMOowYoRN7732Y=;
- b=owGbwMvMwMUYOl/w2b+J574ynlZLYsh6LvkmXFHPqu+jnbqWznXpxmt51zbNSDJYO7f7Yu3Ee
- c8ZK1pjOxmNWRgYuRhkxRRZ0pc6azV6nL6xJEJ9OswgViaQKQxcnAIwkRI99v/5otU24k0fq9rP
- Cq8IsLVU265bnSZW/mzx7AKdw8ncx/P/LZ3zt3PPoiUJPDO3lPH0RhxkOS1swBxbu+pT6f3t6xp
- EhJTqZNo3COTI6oeXHG3Q9nZqvGPYEtH7JzRW42lp/RJG3awZwr+bnlqXCfFckekOVLSQaftTWa
- zs//mUZ9c3791Hdi/o23/Do6Y2NPhL017RUwEMndv3P/gisESyI8W5Y6ZV9L4nlUr7X/m5fW4Sn
- Or7K3DiuWWGUik9PbbPBJbeWVEx68LmCa8adE0mXCwS4xVcq60s7M5p4W+/zerOk/z6l9MUynOZ
- eJfIVVzwZHBfYxZ74820Rx2RvzV/XUpy83vwYtI1mwlHAQ==
-X-Developer-Key: i=mani@kernel.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Sun, 1 Nov 2026 19:31:33 +0800
+X-Priority: 3
+Message-ID: <tencent_82A28995065FC62D017F243F201551C14F05@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com> <20261022-add-board-ok3572-c-v1-9-0b0fd85a31ee@qq.com>
+	<CAMRc=MeNF_=T2Yb6wzsQFFcpO+w7sLgaKR=sZhZRzRDFcpgumw@mail.gmail.com>
+In-Reply-To: <CAMRc=MeNF_=T2Yb6wzsQFFcpO+w7sLgaKR=sZhZRzRDFcpgumw@mail.gmail.com>
+X-QQ-mid: xmsezb41-0t1793532693thpegsapc
 
-On 2026-10-22 16:13 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Medium] phy: rockchip-naneng-combphy: writel() clobbers SSC bit in rk3572_combphy_cfg()
-> --
-> 
-> commit 9ca36a68e2ebd41ee7e126faeae68aae4fa05eae
-> Author: Cunhao Lu <1579567540@qq.com>
-> 
-> phy: rockchip-naneng-combphy: Add RK3572 support
-> 
-> This commit adds configuration tables, register programming, and device tree
-> matching support for the RK3572 combo PHY operating in PCIe, USB3, and SATA
-> modes.
-> 
-> > diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > index 7843356a4dd47..e13a78ab57779 100644
-> > --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > @@ -1000,6 +1000,204 @@ static const struct rockchip_combphy_cfg rk3568_combphy_cfgs = {
-> >  	.combphy_cfg	= rk3568_combphy_cfg,
-> >  };
-> >  
-> > +static int rk3572_combphy_cfg(struct rockchip_combphy_priv *priv)
-> > +{
-> 
-> [ ... ]
-> 
-> > +	switch (rate) {
-> > +	case 24000000:
-> > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_24m, true);
-> > +		if (priv->type == PHY_TYPE_USB3 || priv->type == PHY_TYPE_SATA) {
-> > +			/* Set ssc_cnt[9:0]=0101111101 & 31.5KHz */
-> > +			rockchip_combphy_updatel(priv, GENMASK(7, 6), BIT(6), 0xe << 2);
-> > +
-> > +			rockchip_combphy_updatel(priv, GENMASK(7, 0), 0x5f, 0xf << 2);
-> > +		} else if (priv->type == PHY_TYPE_PCIE) {
-> > +			/* PLL KVCO tuning fine */
-> > +			rockchip_combphy_updatel(priv, GENMASK(4, 2), 0x4 << 2, 0x20 << 2);
-> 
-> [ ... ]
-> 
-> > +	if (priv->ext_refclk) {
-> > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
-> > +		if (priv->type == PHY_TYPE_PCIE && rate == 100000000) {
-> > +			writel(0x10, priv->mmio + (0x20 << 2));
-> > +
-> > +			writel(0x0c, priv->mmio + (0x1b << 2));
-> > +
-> > +			/*
-> > +			 * Set up su_trim: T3_P1 650mv
-> > +			 * CKRCV termination resistor adjust 11: Hi-Z
-> > +			 */
-> > +			writel(0x90, priv->mmio + (0xa << 2));
-> > +			writel(0x43, priv->mmio + (0xb << 2));
-> > +			writel(0xb8, priv->mmio + (0xc << 2));
-> > +			writel(0x56, priv->mmio + (0xd << 2));
-> > +		}
-> > +	}
-> > +
-> > +	if (priv->enable_ssc) {
-> > +		rockchip_combphy_updatel(priv, GENMASK(4, 4), BIT(4), 0x7 << 2);
-> > +		/* PLL control SSC module period should be set */
-> > +		rockchip_combphy_updatel(priv, GENMASK(5, 5), BIT(5), 0x20 << 2);
-> > +
-> > +		if (priv->type == PHY_TYPE_PCIE && rate == 24000000) {
-> > +			/* xin24m T0_1 650mV */
-> > +			writel(0x00, priv->mmio + (0x10 << 2));
-> > +			writel(0x32, priv->mmio + (0x11 << 2));
-> > +			writel(0x00, priv->mmio + (0x1b << 2));
-> > +			writel(0x90, priv->mmio + (0x0a << 2));
-> > +			writel(0x02, priv->mmio + (0x0b << 2));
-> > +			writel(0x08, priv->mmio + (0x0c << 2));
-> > +			writel(0x57, priv->mmio + (0x0d << 2));
-> > +			writel(0x40, priv->mmio + (0x0e << 2));
-> > +			writel(0x5f, priv->mmio + (0x0f << 2));
-> > +			writel(0x10, priv->mmio + (0x20 << 2));
-> 
-> [Severity: Medium]
-> Does this writel(0x10, priv->mmio + (0x20 << 2)) in rk3572_combphy_cfg()
-> clobber the SSC period control bit that was just set above?
-> 
-> When priv->enable_ssc is true, rk3572_combphy_cfg() sets BIT(5) in register
-> offset 0x20 << 2 via rockchip_combphy_updatel(). Immediately afterwards, when
-> priv->type == PHY_TYPE_PCIE and rate == 24000000, this writel() overwrites the
-> entire register at 0x20 << 2 with 0x10, clearing BIT(5) back to 0.
-> 
-> Should both this write and the writel(0x10, priv->mmio + (0x20 << 2)) in the
-> priv->ext_refclk block above use rockchip_combphy_updatel() with GENMASK(4, 2)
-> instead, matching how the 24 MHz and 100 MHz PHY_TYPE_PCIE cases update the
-> PLL KVCO tuning field earlier in rk3572_combphy_cfg()?
-> 
-
-Looks valid.
-
-- Mani
-
+SGksCgo+PiAgIHBlbmRpbmcgPSByZWFkbF9yZWxheGVkKGJhbmstPnJlZ19iYXNlICsgYmFu
+ay0+Z3Bpb19yZWdzLT5pbnRfc3RhdHVzKTsKPgo+IFBsZWFzZSBzcHJpbmtsZSBpbiBzb21l
+IG5ld2xpbmVzIGZvciByZWFkYWJpbGl0eSBoZXJlLi4uCj4KPj4gKyBmb3IgKHVuc2lnbmVk
+IGludCBpID0gMDsgaSA8IGJhbmstPm5yX2lycXM7IGkrKykgewo+PiArIGlmIChiYW5rLT5p
+cnFzW2ldID09IGlycV9kZXNjX2dldF9pcnEoZGVzYykpIHsKPj4gKyBwZW5kaW5nICY9IGJh
+bmstPmlycV9tYXNrc1tpXTsKPj4gKyBicmVhazsKPj4gKyB9Cj4+ICsgfQo+Cj4gLi4uIGhl
+cmUgLi4uCj4KPj4gICBmb3JfZWFjaF9zZXRfYml0KGlycSwgJnBlbmRpbmcsIDMyKSB7Cj4+
+IC4uLgo+PiArIGFzc2lnbmVkIHw9IGJhbmstPmlycV9tYXNrc1tpXTsKPj4gKyB9Cj4KPiAu
+Li4gaGVyZSwgZXRjLgo+Cj4+ICsgYmFuay0+aXJxX21hc2tzWzBdID0gfmFzc2lnbmVkOwoK
+SSB3aWxsIGFkZCBibGFuayBsaW5lcyBhdCB0aGVzZSBwbGFjZXMgdG8gaW1wcm92ZSByZWFk
+YWJpbGl0eSBpbiB0aGUKbmV4dCB2ZXJzaW9uLgoKPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUv
+c29jL3JvY2tjaGlwL3JvY2tjaGlwX3NpcC5oIGIvaW5jbHVkZS9zb2Mvcm9ja2NoaXAvcm9j
+a2NoaXBfc2lwLmgKPgo+IFRoZSBjaGFuZ2VzIGluIGhlYWRlcnMgaW4gb3RoZXIgc3Vic3lz
+dGVtcyBzaG91bGQgYmUgaW4gc2VwYXJhdGUgcGF0Y2hlcy4KCkkgYW0gYWxyZWFkeSB3b3Jr
+aW5nIG9uIHNwbGl0dGluZyB0aGUgcGF0Y2hlcyBieSBzdWJzeXN0ZW0sIGFuZCBJIHdpbGwK
+cHV0IHRoZXNlIGhlYWRlciBjaGFuZ2VzIGludG8gc2VwYXJhdGUgcGF0Y2hlcy4gSSB3aWxs
+IHJlc3VibWl0IHRoZSBHUElPCnBhcnQgbGF0ZXIgd2l0aCB0aGVzZSBjaGFuZ2VzIGFkZHJl
+c3NlZC4KClRoYW5rIHlvdSBmb3IgdGFraW5nIHRoZSB0aW1lIHRvIHJldmlldyBteSBwYXRj
+aCEKCkJlc3QgcmVnYXJkcywKQ3VuaGFvIEx1Cg==
 
