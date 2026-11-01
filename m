@@ -1,96 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793490877;
-	b=sWND3ttHibqpKy4AMju8lnOE/ev1yuVD5++atR+cUms3InR7Zyz8xK2UlOoN/BNDG9+w
-	 mE1VLXD7VoczL04fQJNd1hiVdWZyFLXBduVlmF3Bvtsw5zlLIMjZkaM2dLnDBnkkhmgWL
-	 4tgBqVLSjM46nLoYjzR1cGOS4aiFEwS5KuOTJ2BY+8qeQLNQUwaGfFTeYoHBJ0FuWA/9X
-	 E65Omlzzvy6756xY/yAYIOYW2bxR9XsLOSkoMIUHzg2FO/RZMn3BF1bqcIv7vU1d0E0+u
-	 8KXKMaiHqMqZBymZzZsFoqg53g1mMZYkyyfqTlHproFVZuYlFORWz6PtqToie1Xgeag==
+	t=1793495270;
+	b=sV+nKmmp4mfUUU9VheKr89SkE1FlZhZSw2ACT3S4jXUblh4XX32LKLnxOZ3XvglC17GH
+	 gQ4ZL+oXAVT84ZAlvL63DpXzPE8vtpVQB+7LmBqM7+uAbrM2p5yG9nPxsgxxe99kgpCMb
+	 WkMmUyT3aSLPyncoudO0PayJD/wna7GM6JC/bWopzKqLWs10L0MQnHBUrS4B0XagnCy2p
+	 wWSbFWUWDmx2fYp0ABS4i1kD/VcSqU8gFmWfukTqTw599kLjiogcobhuBPXbQ06Ml1bzA
+	 TyAixXulQ4dVdvO9ynKFvh5LBZoV9M938wSkPnLCdpFt+Wtfhv7wlA6d9ApsqR9YKcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793490877;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=/O1QuS7+tRKjJCe36mLJ5Gs9QsE8OnsKMAzsZ8ju5JA=;
-	b=jGBvnFmwEkVI04bQRcvCiILzC+P52mRWxN1ql//cNkFJ5DSwIk1eEmv/3/Jlx1v8i4jF
-	 iBobuqk2Njke0qm3tesTLEIXP51T7xnFqIVkKi12OHiLOUqzJw6ZIpe0cwUBtdx+gK2Np
-	 XDdTWdsEyQ/6cX6c/Ixl+mNxeocQwY/PIz1QQMJK0xOdYG5mew4Zx3vCs7tJi+H8jLnuB
-	 dsrDzE8K6nHVtJ0No+m2IYQJIjA1YRgDpt/NlN5bMUlyryDGayAkX95j9yn2H4SqzYAFz
-	 OJ0LkT9mPK19YBpapV0/l+VP39c+09CMgnEAx0xB/giBbL7tBuei9nGzuWw8HI4DDRw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793495270;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=o0dKNKFP2TnkjHjwq1OngqcbhclebE6bDgXM6dq7QKU=;
+	b=GRz/w0aoy0qF0RZFUBYZeUqAQZoMuOA9Vl8Uaj3osM+d+s3VOu+H9ryamds43U1rhq2C
+	 1Bi5WBvmTOXRxDohD+QMNQJ5TlkaswkbE2P8S8BPjJl6uru19Z15uWAUdBodTtVbpI+dR
+	 4ivIz+yxKVQ/D8+5MUAuNa8GQk0pDYdDKxb/N6wxFD2QmBLNKqtuQl3Q//ktm5iuSPEx1
+	 8OG5rFpmkyt8EJ3hqexEJxGJUH+VLIP6ZwCOXiATSzydR4nqBQgkBDE3k1fj9uV99QP1/
+	 Z0AKFjoInj7cwvAbIQKRoEa9vkTjZRAzCHF1OQv2MN7+qmF1NwnHA689xtIb3pn+MOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eTom9iFn;
-	arc=none smtp.remote-ip=192.198.163.15
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a1eb1dRO;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EED0606A31A;
-	Sat, 31 Oct 2026 23:54:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EED0606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF086606A31A;
+	Sun,  1 Nov 2026 01:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eTom9iFn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793490875; x=1825026875;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=onCPx45jawKu9ge3zeP6P/yMp8qkq874YfzuNRUh1dE=;
-  b=eTom9iFnz2ns+8WlvHLW97FS3h32Kz49d3YGXAlmGS10WvlgOm3fphZi
-   y2R6umxjS3aL0j4Yfcr+4FVTzr5lXJ8EFpo/FyJzDvWuq5UMib48KZ2TR
-   M0vC2PkdBdmAaZMWaZOQ/xana45ieNsk55rWElMDsY1pcOpnFbP0OPPXv
-   h3uTug49/4CnqucSph33IWWaX6zH6B+cTH88suQxzJEH6tXlJeW9+tXFc
-   OPCDlD42Fn/I+hpBdr3+COVFeBHvrCzwsCUMcSRT+T0OdywaT6d/+ZZmj
-   Srd1Ek1tJ/AfTWYbqNgrlYd/GfmFW6jX3yyDY1Uj5Z3aFhT6jr66832P0
-   g==;
-X-CSE-ConnectionGUID: /FCaWxYKSMmeduEKc8Tdxw==
-X-CSE-MsgGUID: fUhshoPWQSyixsMlsg+w5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11952"; a="2220647"
-X-IronPort-AV: E=Sophos;i="6.27,188,1787036400"; 
-   d="scan'208";a="2220647"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2026 16:54:34 -0700
-X-CSE-ConnectionGUID: V2rALCjrSseDfEOys8L50Q==
-X-CSE-MsgGUID: OZonhpcURWKtmmbCBaLWUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,188,1787036400"; 
-   d="scan'208";a="6079165"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 31 Oct 2026 16:54:29 -0700
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xNIu2-00000000dH6-35cm;
-	Sat, 31 Oct 2026 23:54:26 +0000
-Date: Sun, 1 Nov 2026 07:53:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Subject: Re: [PATCH v2 03/12] clk: qcom: Add a driver for PDM GP_MN
- fractional clock divider
-Message-ID: <202611010752.aU8NDTD1-lkp@intel.com>
-References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a1eb1dRO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADE9E1F000C1;
+	Sun,  1 Nov 2026 01:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793495269;
+	bh=o0dKNKFP2TnkjHjwq1OngqcbhclebE6bDgXM6dq7QKU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=a1eb1dROmAhVQ61MQlal6Ap7Wbtl+Ngz2TIMIAwEsgCwttIY4YtbfkeB4YLLcsjlZ
+	 nz2xZEH1C/YJ9YaO/y6ogOD0fTzo/Me7AaL8H1e6qmsGqtN10cu2zlIWrgi/kBM+wB
+	 MLMQ5Nu7I9HGgwHt0MM4z7x8pDENFn2pbc5+hHJXjTo72OrLTLBFDOSBdGX3dhDSSR
+	 bBHJNI+ivrnkPZM/X8KAU/N3tBO5EDmY8B4PfVrayskaUDgvp1GxwKuytbBEbHXGe0
+	 YH8p3wDfYo7OWUEof1MPQcH304m2+9ot0CEYIxjGL8lrPtQDY3oiB2v6/T7dtKSTT+
+	 AiBAUdcvR+i4g==
+Date: Sun, 1 Nov 2026 01:07:37 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski
+ <brgl@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+ <j@jannau.net>, Neal Gompa <neal@gompa.dev>, Guenter Roeck
+ <linux@roeck-us.net>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Griffin
+ Kroah-Hartman <griffin@kroah.com>, Hans de Goede <hansg@kernel.org>, Ilpo
+ =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Sebastian Reichel
+ <sre@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim
+ Van Sebroeck <wim@linux-watchdog.org>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-leds@vger.kernel.org, mfd@lists.linux.dev,
+ platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 00/14] Add macsmc support for Intel Macs, replacing
+ applesmc
+Message-ID: <20261101010737.203951cd@jic23-hlaptop>
+In-Reply-To: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
+References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -100,33 +85,136 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Taniya,
+On Thu, 29 Oct 2026 04:51:57 -0400
+Atharva Tiwari <atharvatiwarilinuxdev@gmail.com> wrote:
 
-kernel test robot noticed the following build errors:
+> applesmc is very old, and all of its code is lumped into one
+> driver. Fan control, sensors, the light sensor, the motion
+> sensor and the keyboard backlight in a single file
+> with its own way of talking to the SMC. It is hard to extend
+> and to support new machines.
+> 
+> This series adds Intel Mac support to the macsmc drivers that
+> were written for Apple Silicon (the Asahi implementation).
+> The SMC works the same way on both platforms, so we share a
+> lot of code with Asahi. Only the way of talking to the SMC
+> differs.
+> 
+> To make that work, patch 1 splits the macsmc driver into a
+> common core and a backend. The existing RTKit code moves into
+> its own backend. Patch 2 adds an ACPI backend for Intel Macs
+> with I/O port, MMIO and interrupt support. After that, each
+> function gets its own small driver using the standard kernel
+> interfaces (hwmon, IIO, LEDs, power supply, RTC, watchdog),
+> instead of one large driver doing everything.
 
-[auto build test ERROR on 4eb2586bd40db27d77cc5b724ca9386ed0c71d53]
+Are we looking at ABI changes as a result of this? That
+tends to happen with split ups of unified drivers and mapping
+them to more standard kernel subsystems.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/dt-bindings-clock-qcom-Add-bindings-for-PDM-GP_MN-clock-divider/20261026-165927
-base:   4eb2586bd40db27d77cc5b724ca9386ed0c71d53
-patch link:    https://lore.kernel.org/r/20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567%40oss.qualcomm.com
-patch subject: [PATCH v2 03/12] clk: qcom: Add a driver for PDM GP_MN fractional clock divider
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20261101/202611010752.aU8NDTD1-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261101/202611010752.aU8NDTD1-lkp@intel.com/reproduce)
+What is the plan to handle them if so?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611010752.aU8NDTD1-lkp@intel.com/
+Thanks,
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Jonathan
 
->> ERROR: modpost: drivers/clk/qcom/clk-gp-mnd.ko: symbol '__udivdi3' undefined!
+> 
+> On Intel Macs these drivers replace applesmc (hwmon, light
+> sensor, motion sensor and keyboard backlight) and acpi-sbs
+> (battery and adapter). They are mutually exclusive with the
+> drivers they replace, so only one is used at a time.
+> 
+> This is an RFC to get early feedback on the design. The macsmc
+> split and the Intel Mac backend touch fundamental parts, so I
+> would rather change them now if maintainers ask. After that I
+> will test the series on more macsand send it upstream as a
+> proper series.
+> 
+> The series is organised as follows:
+> 
+>   1      Split macsmc into a core and backends
+>   2      ACPI backend for Intel Macs
+>   3-6    New drivers: watchdog, IIO light and accelerometer,
+>          keyboard backlight LED
+>   7-9    RTC support for T2 Macs, a T2 detection flag, and
+>          disabling the broken ACPI RTCs
+>   10-11  Power supply support, replacing acpi-sbs
+>   12-13  hwmon support for Intel Macs
+>   14     ioctl for userspace access to SMC keys
+> 
+> 
+> Tested-on: MacBookPro16,1 , iMac20,1 , MacBookAir4,2 , MacBookPro12,1 ,
+> MacBookPro15,1
+> 
+> NOTE: Almost all drivers have been tested except the motion sensor
+> driver as i was not able to find any device that had one.
+> 
+> Atharva Tiwari (14):
+>   treewide: Add backend for macsmc
+>   platform/x86: add backend for macsmc in intel macs
+>   watchdog: add driver for apple smc
+>   iio/light: add new driver for macsmc
+>   iio/accel: add driver for apple SMS
+>   leds: add support for macsmc kbl
+>   rtc: add support for x86 macs in macsmc-rtc
+>   treewide: Add a flag to detect the Apple T2 chip
+>   treewide: disable other rtc's in t2 macs
+>   power/supply: add support for x86 macs in macsmc-power
+>   acpi: disable battery and adapter for x86 apple machines
+>   hwmon/macsmc: add more types
+>   hwmon: add support for x86 macs in macsmc-hwmon
+>   mfd/macsmc: add ioctl to access smc keys
+> 
+>  MAINTAINERS                                   |    2 +-
+>  arch/x86/kernel/quirks.c                      |   37 +
+>  drivers/acpi/acpi_tad.c                       |    4 +
+>  drivers/acpi/sbs.c                            |   17 +-
+>  drivers/acpi/x86/utils.c                      |    4 +
+>  drivers/gpio/Kconfig                          |    2 +-
+>  drivers/gpio/gpio-macsmc.c                    |   13 +-
+>  drivers/hwmon/Kconfig                         |    7 +-
+>  drivers/hwmon/macsmc-hwmon.c                  | 1126 ++++++++++++++++-
+>  drivers/iio/accel/Kconfig                     |   10 +
+>  drivers/iio/accel/Makefile                    |    1 +
+>  drivers/iio/accel/macsmc-accel.c              |  248 ++++
+>  drivers/iio/light/Kconfig                     |   11 +
+>  drivers/iio/light/Makefile                    |    1 +
+>  drivers/iio/light/macsmc-light.c              |  189 +++
+>  drivers/leds/Kconfig                          |   11 +
+>  drivers/leds/Makefile                         |    1 +
+>  drivers/leds/leds-macsmc.c                    |   69 +
+>  drivers/mfd/Kconfig                           |   15 +-
+>  drivers/mfd/Makefile                          |    2 +-
+>  drivers/mfd/macsmc-core.c                     |  362 ++++++
+>  drivers/platform/x86/Kconfig                  |   10 +
+>  drivers/platform/x86/Makefile                 |    1 +
+>  drivers/platform/x86/macsmc-acpi.c            |  642 ++++++++++
+>  drivers/power/reset/Kconfig                   |    2 +-
+>  drivers/power/supply/Kconfig                  |    2 +-
+>  drivers/power/supply/macsmc-power.c           |  751 ++++++++---
+>  drivers/rtc/Kconfig                           |    2 +-
+>  drivers/rtc/rtc-cmos.c                        |    4 +
+>  drivers/rtc/rtc-macsmc.c                      |  126 +-
+>  drivers/soc/apple/Kconfig                     |   14 +
+>  drivers/soc/apple/Makefile                    |    2 +
+>  .../macsmc.c => soc/apple/macsmc-rtkit.c}     |  185 ++-
+>  drivers/watchdog/Kconfig                      |   11 +
+>  drivers/watchdog/Makefile                     |    2 +-
+>  drivers/watchdog/macsmc_wdt.c                 |  140 ++
+>  include/linux/mfd/macsmc.h                    |  104 +-
+>  include/linux/platform_data/x86/apple.h       |    5 +
+>  .../platform_certs/keyring_handler.h          |    8 -
+>  security/integrity/platform_certs/load_uefi.c |   38 +-
+>  40 files changed, 3786 insertions(+), 395 deletions(-)
+>  create mode 100644 drivers/iio/accel/macsmc-accel.c
+>  create mode 100644 drivers/iio/light/macsmc-light.c
+>  create mode 100644 drivers/leds/leds-macsmc.c
+>  create mode 100644 drivers/mfd/macsmc-core.c
+>  create mode 100644 drivers/platform/x86/macsmc-acpi.c
+>  rename drivers/{mfd/macsmc.c => soc/apple/macsmc-rtkit.c} (70%)
+>  create mode 100644 drivers/watchdog/macsmc_wdt.c
+> 
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
