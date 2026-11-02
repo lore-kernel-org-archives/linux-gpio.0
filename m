@@ -1,49 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793571381;
-	b=MbFrqDptL1eKJ7j5Z4PEKzApptJWfoAS9qAWEKc6KCJj8ptzXlzbLNeiVCKT5kXbwfRV
-	 OSQPC2b+hQYVG/N4o8zWAh3aBGuMRRBcoLxuDg3nz4sWd+nQR7DNMRvZoadc5s55h4Fzl
-	 qnVTfp8iiXOBqwxxRjnEpVeyHmjMvnz4AP16ZpsF5CQ3KQkUIENaCBgZdWmxfK7wMy2sV
-	 +oiqWB2XKFk74hgaZUR0EXjPTNnb0WQO9Q5TnG7m83PYy4KoIhL1CHbrESFE/8bWf2KbF
-	 AP/GESnbdwzLdQnTT7ivQSM4HGPDp2mzOonH7prxbtz2knOxO7FnrKqlZbINkixXtPg==
+	t=1793587334;
+	b=fcOOQrWDGrPKi1VFoHiDNDVSWpjp6PeDI//NBslkcNHT2BHQ0wi8OUFo/9Ppt/MhNvCx
+	 LLDf6eWDxVlQZNi/v3jgmY0Vy4xRBfehnO2DSZnnPOufsNG33/Iu5L28P46/sEXHgxMJ8
+	 NYsCBzFls0Gu5aa8A31u+/nfiQAsM8K4c7hqyWJ2+PATrj1q4QftYZOgecrj9m6pu42k/
+	 4qX50rtp60nQY+RkgzioUr4kWiq4VKef5c6ZUwp1xNOHfms7yj82Z7ptnUoi+euCz2r4q
+	 HC+iJlFNPC+9TwHlpFeDHAUBlQgSTHDW7wjYvdN17pOzv0KFDZaIsoQ+MQdbFZyRLOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793571381;
-	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
-	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc;
-	bh=dO8IDvnKbQ89guABqKeHsYCIoKDAIsVkhl3ddA1wtcc=;
-	b=eVJ+9IZLGuNwuDR7VWBq8Ud9nbndtiATsdIBxwjA88EnIm/AARilWnYM0KRzw8QNi1TK
-	 Kd98WZ9S1PNeSQGkNvZe8N3zOOFkOwpuSHOUux3iPoH+WAXUemW3dC1sDn4eYBSuwSYiU
-	 CKXzFdaZBZk7YQcZ6bDi4g5VOqVxSho4U0cEYvPQ6Xy6FdAihAJqNyTZkf5x7P5nT/Fda
-	 QOn/yng9eQkwhON68tfCYglfLMP+T5CnmoO63AUD3kEdPQEuuUjNT8Lwa0cdxXzsw5qk2
-	 6aMtg1EbwCPDUubftXUtOyUfEOhmppXKnZqK2PsrhHVOK7CPmDQFV6nCj2hRCJFUUyg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793587334;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=j2TRRoSnT/Jv3a4iwHG1ldeVncOShjDWYYLdrAMUUEI=;
+	b=5W9+SisyunEbuQ58615vln/HoQ4RP15eIGrMkQgJbekUFIZxRkLc9zYhXUt2mMHZR9Oh
+	 rIbP/fHxGLCH8syCcQxu+qDg5Mjsy+DBopz8tYxmt66x67tG5O2LR8yggkNmOVsgfSnlL
+	 yfI0dwlOWGlkTrRpBAsrtbWo8m3MLLhEE1UYHaDyU+MlnHFW9CHolD26OzmvWnLlNHZ7h
+	 kbA09cfEJ2T5lqTuW1xD2tP1MdaViBSlNceWgCGwu2eycmabjd6Ta9qWFIN/XBeeM4b5E
+	 I2HYGU0kNefW2hZfClrXvQnzvSowV3RaIwxb1Ry9RbjdArsub8wPZgUSu7Knl2/OAGw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PKfbTIwU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=rowland.harvard.edu;
+	spf=fail smtp.mailfrom=g.harvard.edu;
+	dkim=pass header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=FzCmt13c;
+	arc=none smtp.remote-ip=209.85.160.180
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91559606B075;
-	Sun,  1 Nov 2026 22:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79FF606A326
+	for <linux-gpio@vger.kernel.org>; Mon,  2 Nov 2026 02:42:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E79FF606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PKfbTIwU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F151F00A1F;
-	Sun,  1 Nov 2026 22:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793571381;
-	bh=dO8IDvnKbQ89guABqKeHsYCIoKDAIsVkhl3ddA1wtcc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=PKfbTIwUwRg7utef2I61K+61rzrtDd/F/7eBveR00naBoqdh8F3uPt9bannBILkUq
-	 FQXvy8Z0s5mkEUdeNhZmZVKFkBmt/LUE+5D1CvzgeMepBxoKf1PdLKC8RwoCB40Mf5
-	 OdkcjsQ690c2MU+DctNOxnLmgdhbGaelLNRiN/qixigRpPtaiG2ijQmAVgt/H9pdCb
-	 FiOvUSJsvaZ7CtN4srqpYrX5YQCsqj7N4Wxx4hnjOnXfuL07C7Ow54npn+WdSZ8oPe
-	 Plja86Te6UpKeeKPM7LXj3NXO5VI//NBfrJ+Uv+0AsJVqmhPK+HaK/XHSo8YOL1C3I
-	 iVVMD5YkVeKPA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 4025738003B8;
-	Sun,  1 Nov 2026 22:16:21 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key, unprotected) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=FzCmt13c
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5363c8de563so31688491cf.0
+        for <linux-gpio@vger.kernel.org>; Sun, 01 Nov 2026 18:42:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1793587333; x=1794192133; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=j2TRRoSnT/Jv3a4iwHG1ldeVncOShjDWYYLdrAMUUEI=;
+        b=FzCmt13cG+aKsnwVBtMJ9Fmc970lVhhc0e6juVp8IQ97lKL5tpXK3/7CBqRRs2hyJN
+         Tze0XcdilstpMTPfqXpq8JvpLywnDzkJFC1em60OFU2G6Cx/netBP4j7KLlFiynKpB5T
+         4wjfPJjpyh1zg1x10htvP77jqd854dNdSDKFpzQt7uhTCr0aW3s37SZ2jl9yQ6SJruqC
+         mO25pb1tsMdmfK4+VqtiIJUDekdVFkmmOAuCNqcPMROcLtJ/H0h64e7TLmr4QS42uCck
+         7/OZebM2x4eqGwYljgydfAXealLtCmRC43f6V733FbDl+vvQHAKuxsetvrkovYH9HTDI
+         nT7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793587333; x=1794192133;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=j2TRRoSnT/Jv3a4iwHG1ldeVncOShjDWYYLdrAMUUEI=;
+        b=VjrYtiLhEilY+AbRe6/zYL6X3VxWdkGH6cQeAGqQZqxxr8FwIKADtFARnSMjbBtSMr
+         78O/QCZgmJ90ylOdgjjiJK8yC7MgjVKLGchzjkTvOKGBH6dG1htjennppJ7B0+C2iH0k
+         BycDxE0FW30gjNP/XnFzJfLdn2E2k1UVzYmfLqGJRb2jBbN3yaaDo7zXEdOcLragv+vW
+         0vESAKXu0v3n8dNeJYRddHwaUNSjUVK1ULvLu4G5DuJRdTun9T2wWznYSvV72zT3Upz+
+         LJBha6LB8Mhc48RlpHzqK3PXrGajTEn3LE2QOQTlESoEi2vUSu6+Cbnl+GbPfRv5/j94
+         tjkA==
+X-Forwarded-Encrypted: i=1; AKwUvBxD64MPp1ZW32L943XkwVUo/sZ6xHMQ8O8253NshzE5hQYm5Hz8QMfwcc+5BBxfE58ZIzkfbBXO7VLO@vger.kernel.org
+X-Gm-Message-State: AFq9FYK9sAqpGohfDOROAYVIBuQRD+6pK0T/Ymd1xje3AP2TMYIK4Pfu
+	UHpzjYSVnSZeOJlqJEV4J/0MFMXBgZXd/5mAeNtXRt7td4TN1HMvRzrmN5ezAaM81J9yamfHlZ0
+	ZgT5jcg==
+X-Gm-Gg: AYBFou3Hg2JDWgLTYYBBXJ0NZZKxrjGEZrbMkcQ0i0eDTKnrJpH+qRZWEbBX//koKmT
+	td9+dBINJ73rZ/lUbccZcGJirULmfCytHp6oLge0j/iHMdFC2ysB9YphTmBGYZmTL5cjf/Yn15C
+	8zTHRyoT/5Nhlm3dIxSDWTvhaEizRnH6s/3xk6jpeNM6e+67EL6OSlZxXU1hA1h6UFkQEIgQsuU
+	XcusyDWqQf0CAGiMl+y8THRIkG2GVy9TDPN8eft9jUlQajWNB3xahg/+3eSyIrsaAWCddH5nBdC
+	O8a5+xS7EmlbrNGwpIQFbw6Voy07Jzg1i8HolY0izM00O02uqtMfKnIWbwYhla2gxgSgOJgmX2M
+	n++EmdnuE5MJKw2YuOAs3+VO7vf/6MBCPajoviGCoj+ykr/pQzAYZEtiJUXWhRVU99H4TUED8l/
+	QtT+jJ4QweMeXSxsxiz+1msV9xyQo//Tq1zSKqe3cbnLlrlvagTXjljrGXQ4nApUdbfVXC2WrC4
+	cfOu+k6Q0DqfNMAOCrAgHsxSQ8N6GwC9IyejaoQ+OnntbX6QtwNeWUFfjldOsbVQA20AxTcVfPt
+	AldC4ueo62TrjGqWlnIAVlj4QFAl
+X-Received: by 2002:a05:620a:3916:b0:93f:47fa:b722 with SMTP id af79cd13be357-94421618771mr1465258685a.13.1793587332748;
+        Sun, 01 Nov 2026 18:42:12 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:d01:d210::66b0])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-94425a7195esm724633685a.27.2026.11.01.18.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Nov 2026 18:42:12 -0800 (PST)
+Date: Sun, 1 Nov 2026 21:42:09 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: James Clark <jjc@jclark.com>
+Cc: sashiko-reviews@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johan Hovold <johan@kernel.org>, Bastien Nocera <hadess@hadess.net>,
+	Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Douglas Anderson <dianders@chromium.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v2] usb: core: add a pre_probe callback for device
+ drivers that may defer
+Message-ID: <b666dc31-1dde-41c3-be0c-3ae5091b9683@rowland.harvard.edu>
+References: <20261030151919.3511106-1-jjc@jclark.com>
+ <sashiko-outbox-191184@kernel.org>
+ <20261031032449.3536559-1-jjc@jclark.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -53,86 +106,43 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v8 00/22] Add basic pinctrl drivers for JHB100 SoC
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <179357137979.2624073.5964699004424197111.git-patchwork-notify@kernel.org>
-Date: Sun, 01 Nov 2026 22:16:19 +0000
-References: <20260910100357.130134-1-changhuang.liang@starfivetech.com>
-In-Reply-To: <20260910100357.130134-1-changhuang.liang@starfivetech.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: linux-riscv@lists.infradead.org, linusw@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, kernel@esmil.dk, pjw@kernel.org,
- aou@eecs.berkeley.edu, palmer@dabbelt.com, alex@ghiti.fr,
- p.zabel@pengutronix.de, brgl@kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- lianfeng.ouyang@starfivetech.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261031032449.3536559-1-jjc@jclark.com>
 
-Hello:
-
-This series was applied to riscv/linux.git (fixes)
-by Linus Walleij <linusw@kernel.org>:
-
-On Thu, 10 Sep 2026 03:03:35 -0700 you wrote:
-> The JHB100 SoC has 13 pinctrl domains - sys0, sys0h, sys1, sys2, per0, per1,
-> per2, per2pok, per3, adc0, adc1, emmc, and vga.
-> 
-> In the current series, we will only add the following pinctrl:
->  - sys0, sys0h, sys1, sys2
->  - per0, per1, per2, per2pok, per3
-> 
+On Sat, Oct 31, 2026 at 10:24:49AM +0700, James Clark wrote:
+> On Fri, 30 Oct 2026 15:41:34 +0000, sashiko-bot@kernel.org wrote:
+> > However, err_pre_probe only invokes udriver->disconnect(udev) and does not
+> > undo usb_generic_driver_probe(udev) or usb_autoresume_device(udev) the way
+> > usb_unbind_device() does:
 > [...]
+> > Similarly, on the -ENODEV fallback path where udev->use_generic_driver is set
+> > to 1 and usb_probe_device() returns -EPROBE_DEFER, won't leaving
+> > usb_generic_driver_probe(udev) and usb_autoresume_device(udev) in place cause
+> > the subsequent usb_generic_driver probe to call usb_generic_driver_probe() a
+> > second time and emit a duplicate USB_DEVICE_ADD notification without an
+> > intervening USB_DEVICE_REMOVE?
+> 
+> Both of Sashiko's points are correct, but both are pre-existing and this
+> patch does not change them.
+> 
+> Before the patch, a probe() failure returned straight after
+> usb_generic_driver_probe() had run, with neither the configuration nor
+> the runtime PM reference undone. That has been so since commit
+> c9d503370f24 ("USB: Make it possible to "subclass" usb_device_driver").
+> The -ENODEV fallback has re-run the generic probe under
+> usb_generic_driver since commit 88b7381a939d ("USB: Select better
+> matching USB drivers when available").
+> 
+> The patch deliberately handles a pre_probe() error other than
+> -EPROBE_DEFER exactly as it handles the same error from probe(), so that
+> the fallback keeps working. This is stated in the kerneldoc. The only
+> new code on the error path is the disconnect() call, which undoes what
+> pre_probe() set up. A complete unwind in usb_probe_device() would be a
+> separate change.
 
-Here is the summary with links:
-  - [v8,01/22] dt-bindings: pincfg-node: Add property 'input-debounce-ns'
-    https://git.kernel.org/riscv/c/5dde08ea70b9
-  - [v8,02/22] pinctrl: pinconf-generic: Add property 'input-debounce-ns'
-    (no matching commit)
-  - [v8,03/22] dt-bindings: pinctrl: Add starfive,jhb100-sys0-pinctrl
-    https://git.kernel.org/riscv/c/9d3dc8decb60
-  - [v8,04/22] pinctrl: starfive: Add StarFive JHB100 sys0 controller driver
-    (no matching commit)
-  - [v8,05/22] dt-bindings: pinctrl: Add starfive,jhb100-sys0h-pinctrl
-    https://git.kernel.org/riscv/c/6701c1c00891
-  - [v8,06/22] pinctrl: starfive: Add StarFive JHB100 sys0h controller driver
-    (no matching commit)
-  - [v8,07/22] dt-bindings: pinctrl: Add starfive,jhb100-sys1-pinctrl
-    https://git.kernel.org/riscv/c/bf8241062c79
-  - [v8,08/22] pinctrl: starfive: Add StarFive JHB100 sys1 controller driver
-    https://git.kernel.org/riscv/c/1d5c13990916
-  - [v8,09/22] dt-bindings: pinctrl: Add starfive,jhb100-sys2-pinctrl
-    https://git.kernel.org/riscv/c/941cc8022c21
-  - [v8,10/22] pinctrl: starfive: Add StarFive JHB100 sys2 controller driver
-    https://git.kernel.org/riscv/c/594deb7f74f4
-  - [v8,11/22] dt-bindings: pinctrl: Add starfive,jhb100-per0-pinctrl
-    https://git.kernel.org/riscv/c/402323de0c04
-  - [v8,12/22] pinctrl: starfive: Add StarFive JHB100 per0 controller driver
-    (no matching commit)
-  - [v8,13/22] dt-bindings: pinctrl: Add starfive,jhb100-per1-pinctrl
-    https://git.kernel.org/riscv/c/d6001140c2e8
-  - [v8,14/22] pinctrl: starfive: Add StarFive JHB100 per1 controller driver
-    (no matching commit)
-  - [v8,15/22] dt-bindings: pinctrl: Add starfive,jhb100-per2-pinctrl
-    https://git.kernel.org/riscv/c/b598855cc302
-  - [v8,16/22] pinctrl: starfive: Add StarFive JHB100 per2 controller driver
-    (no matching commit)
-  - [v8,17/22] dt-bindings: pinctrl: Add starfive,jhb100-per2pok-pinctrl
-    https://git.kernel.org/riscv/c/c9ed9daba98a
-  - [v8,18/22] pinctrl: starfive: Add StarFive JHB100 per2pok controller driver
-    (no matching commit)
-  - [v8,19/22] dt-bindings: pinctrl: Add starfive,jhb100-per3-pinctrl
-    https://git.kernel.org/riscv/c/340588f9b94c
-  - [v8,20/22] pinctrl: starfive: Add StarFive JHB100 per3 controller driver
-    (no matching commit)
-  - [v8,21/22] riscv: dts: starfive: Add JHB100 pinctrl pad number header
-    (no matching commit)
-  - [v8,22/22] riscv: dts: starfive: jhb100: Add pinctrl nodes
-    (no matching commit)
+Since your new pre_probe() will interact with the bugs mentioned by 
+Sashiko, perhaps you could submit a patch series which implements 
+pre_probe() _and_ fixes those bugs?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Alan Stern
