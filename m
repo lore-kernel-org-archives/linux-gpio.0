@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1793648724;
-	b=P5xKSFpGqiU7GqlstxKf458UNhvvUG4CF17Ni6ujd++64XYPnFY9ORzynuJzm9roWYaY
-	 QijdIB6Z2OJKEa4cZa2FQUvIdLsl3furbGSPNoZJzmuXQc+61DZ6GaiqtDfdl8UqYxU1J
-	 Xj2HaGGkzecQzqzTYzzpT5pz16tyjUJYerjok4B5qipLY6xeRUSwiuGM0f2VlwggP+G/C
-	 9vjaGOf2lo0Ggrcn8hr/126HFdyc0dfNWbRuiJob/z8VnHFlayDKGwvgY3qb7X71pRuQh
-	 d1+rCDyee3J66MMSTfBkbW7+OZVto4sc0ORXmVwipW57BrQ1ZsdYj+vVz7Z2HkYFqkA==
+	b=ey5Ow5C9ljdQwHry4BHb9ehmIKv5PC375SPShbv/rvlxIDPhO2kzke/T1GJlUTHW8epu
+	 qgWl866fxrsbh4M+wVMkLf0/IHluf3jGry4Enhg7R21paOSMSY3lnLkwcq7NpV/zecYXg
+	 nVeocINHiJOVVpkC7Hk+WRndEV8CFi7vXVPSAq0/fYCop0yUBnSX+86jHYfczDH4/qcvd
+	 Hgrg0uHiWqLOxoE7vSx5PtPWK6YiwfdbCBo/gu4nuO6ftVTzKM5mz1oNK0gi6FXzA5knj
+	 vVsema2FJX/ypiJty3S+/t4qXeSjd+uLJDdlNmqjY64L2uCr294RRuMLnhcMWBYk0rg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793648724;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=aCo6XwDUGKHrJrZqVvT8fOWO5dQALu2JDMEOxosLhT4=;
-	b=PgtYT2L2jbNlpR+H0sSc6zh/agHBjwl4c2ajgjoYU9iXHYvPW4yFyAAROHKivzIaWzV0
-	 /lb5Bx47lMYjfQQQIhz9UitxAm0OcAcP/pg5LRoo/Hck0iJaVxi3DTW++vrZMwHlez55o
-	 urEGj7AcTnYHPsH3f/hrxTmUgiqFiNnI1xBlezLGT8BbP4dx51U4kxRmm4ihZV5UJKn0e
-	 I4E8vxyh1kRjyj/DIVt7gBX0JgQb7aHYvmgBt9l2u8zo8+cD1+CQsapO3JJXe4WMlsA32
-	 PB3+zoTIhGChZrrMiL/wTUF6NTVagf6hr/GDqpEH2fS8L6Eqa3GZkoooVXoCEAp6tiw==
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=O3an+/q3JaFkFvnjOlTdpdXG9frcgBLFrKEyJdxf5OE=;
+	b=zUqht7Ge5KrA03MvVnMOKuhNFMb9Nzr5oexoqaRC1qkwRHCD6b7HRXQ4umw5pBfUQW0Z
+	 zbjOkDkg/p1atzZik8GyT39cAGtceOGccrrnRuCNYlJDdru/LqbwGR5bMjZTQFT4SWFaG
+	 GAmff7SFtidSByp40etxiEJ2RXbXg0G7Yd5xteCuAFWHGBidEUCBcZrstClLCtz+FTwnw
+	 g546hHoT+JLstdSYdUSvgxmSwmxskaWvSRL+NvsA4vEKldSv86vju0Jg05Voy0lMkBpZG
+	 P4gEPs2fcQfBa6RFPHCFrxG9pVA9ezPzJ6WIGruzmmn391HYiITTf9fhiuh03neaE0w==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZutfjvTW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BuNEFe1h;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2121F6085099;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9E260850AB;
 	Mon,  2 Nov 2026 19:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZutfjvTW
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BuNEFe1h
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1793648724;
-	b=yWcmbEounmY9uf64v9G7aVZ31gcsDY07i/6mPm6qumkRig8ZfmrEcerEgKpVbCKC/TYX
-	 EkbBTcQGY4e9UE+xLTZm59QFx6UNioatBpXk91/ryYpi9Ap0d/0W4yjvL+k3IlQdQ9psW
-	 mNfaJSqKBjwJX6/tR+lcl4t85v4X0vJ4hSvF+QmpErjbHMcKc1mS4jATiYj0UeT0ocToB
-	 jCUcO32NyNly52J0vLlj3eI72TnJBkGs/oIjtmsWwInzUPr10Fr69p0lWe2LIiw1Y4FP4
-	 XoJ/KWBXC1ZnkmG6e1OXPYagNejWDsQ++gBZsOV2TVe7gpQH8Yx0LfnLRwdpgMABz3A==
+	b=SbeRy2vnjST4rVn/xZbnvrA7q4EN0F28T+c1ZnXJpna9RhRS6hV4/FS4HtlTVorFwLQx
+	 I71iiU12CeQuQ/kifT06NONn4F02PBfPbXEiO1HqYPmgr+7JgqZhnXbIF47WZt5zGraEb
+	 Ko5uZ2d6lJWIvXn7bs8kxIYsLwV+ihJT/bPlebOP61kngdETE3VhxczBAXGHLGOfuZyKW
+	 FNlMkFemQPToc8r/qrcH7zDS4A3MC3M3EOeooezXT9O/Ml6G5eGQ4ms63nlobwNUjECXc
+	 27Ly8Y68DkfjIfC4isQGrNDl7JMqzSwhdFH39FiwYWjlsz7hTYaPO1NV7t2yS2xDrRA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1793648724;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=aCo6XwDUGKHrJrZqVvT8fOWO5dQALu2JDMEOxosLhT4=;
-	b=MteQcWtSHajKSdjAKRep6PIMxlkuppafRWa2ehywROohs3dID7SAN3BGi565cOvuYN0L
-	 R3a/wJwGsAu8o3axQNNZ7J5xpwIHFlOlF8TaKTfi2FxIeMjI2M6Wq7f7sKRyELVtphgeM
-	 YXDEF7NiCnjrgfV8lQtJFp5THK2M13NhiHchjDpFoWfzr3nWxsJmYNlGzQX85JDJja/rL
-	 SuM1fSSrUnv24EcPzQWYiq2V58I2rKkmt4JlYmUU09rqvRepJ6+83l/NstY3OBYVgUEzF
-	 K+l1KBwvNkhLm6sFjAALiGCl5Up3oal6IiOfvLFiu33dOCPOKYMQi1JQr3nyTDKw6JA==
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=O3an+/q3JaFkFvnjOlTdpdXG9frcgBLFrKEyJdxf5OE=;
+	b=E6/9ox+E+mFMpuSvyuoqqKfOp2BI8kZwpWjH+Lej5EyB7xXojKSB48tVEEb0/RJpdhtK
+	 H6sXqfhveLgsmLuZdS7Bsc0/U+FulrhIR1wiZCThd3qzROVSNZmJK1F7X/47ADwlQcfsV
+	 vk0BBnOU5MA/Vjl4RRM4jX/zPA22ldFpJSnwMXXd3bH8+lWe/dMxtQ3brSIUU+b9vfE+J
+	 TwRiJIvXmX+4rOIPmLy8UE3ML4db/Vcr1NJav+CFWfBFIK1yc+TkByRD82H53HiCpvrgu
+	 57xAZtIV26QGMlkEvHZNmltHTe7oMGdDyQbnWq8a6WarBQRoOY/UI7UdvuuN0zQeg+w==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E33651F0180C;
-	Mon,  2 Nov 2026 19:45:13 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 6903B1F00A18;
+	Mon,  2 Nov 2026 19:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793648723;
-	bh=aCo6XwDUGKHrJrZqVvT8fOWO5dQALu2JDMEOxosLhT4=;
+	s=k20260515; t=1793648724;
+	bh=O3an+/q3JaFkFvnjOlTdpdXG9frcgBLFrKEyJdxf5OE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=ZutfjvTWEPO1jGYl550spBI5fhcN1W+0bk0lJ718Xoss0uKIU853700AMNV/tHRQr
-	 m80mjBTO+YGoDHNCBUK3V2Ia44Hiig9dmbIJsrNCgMS6QLUHbvZG1bKCKguv3du8MC
-	 a2/D6nXCyn90NYZX/csgtKtVu2PCYk4vwx7UkG/UgN1lv3bzh183tZIIfxDcU8Dsnl
-	 1gfTCZ/chQ0A61Zi63dNkfsIFw8Uy7aHI043rI1TDVzoJ5k4P7hul1guYexSYrOUNj
-	 zZ+57iLPpjPRNfZsB+Mpi1JeVHXtPgsha4SoM5KhIhRjR9mytWoDODXgViJksb12Bc
-	 AfjLvB6xEuRuw==
+	b=BuNEFe1hSy4cE3FW/67KnZOMITNSCO9vDBG5qGk3IkzVxhZCeIDzQGXtfBK/QWoAJ
+	 2yMz9CRg12pnPhHlYL7PWwUlfYjQDvv1kOk1MA2975L6ug4xGxDnH6T/z5x8z+I3Ln
+	 tYrpzlfolinJ5evdKeVpBkj1P4P0vDru7OLKZwbQ40dNNpJ9Vik+/PvzM3aBg2VrTl
+	 5S3KngCNF7YyM96aJKZhQ086EFIMFo6si5d3teTFv37DVqbWSUV4HpGHLD9lpDBx8u
+	 C1z1rEM52YZVLR457Dz+5fpZI9i4/U7Mm/LQcJjPooRX1FoarksOz0TC1jUDZuYBQw
+	 BlIfQGE/DFc8g==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A62FA46641;
+	by lkml.kernel.org (Postfix) with ESMTP id 389C146625;
 	Mon,  2 Nov 2026 19:45:09 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Tue, 03 Nov 2026 03:45:19 +0800
-Subject: [PATCH RFC v3 16/17] riscv: defconfig: enable A210 support
+Date: Tue, 03 Nov 2026 03:45:12 +0800
+Subject: [PATCH RFC v3 09/17] dt-bindings: riscv: add Melon Pi V1 and V2
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,7 +83,8 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261103-a210-scmi-v3-16-ee6b31580808@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261103-a210-scmi-v3-9-ee6b31580808@iscas.ac.cn>
 References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
 In-Reply-To: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
 To: Sudeep Holla <sudeep.holla@kernel.org>, 
@@ -112,90 +113,66 @@ Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
  Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
  linux-serial@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>, 
- Han Gao <gaohan@iscas.ac.cn>
+ Han Gao <gaohan@iscas.ac.cn>, Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793648705; l=2125;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793648705; l=1374;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=gbFp8UQIqmjgXxLfsth1MuBUL/I680UNXyToqmM6t9o=;
- b=Dh1vBF2bkMeI2CYu4RYDr5VU3Y4Lzwcq1wHwve5KVlRm15AJiGEerFvfdmFnAHx8jRLA7J3Xf
- rGIOiX5jaYICn9CAwkrVPMCQ0Pg4LKJ4MVDn2113pKtBU9UIQ8xi3dN
+ bh=on0k3/ROjA851j7Dksi+n9Xdm06/pOAfayb1Q0RsTuY=;
+ b=yw0IrnyLTxmztJavqYfKhhL2myTsoZy7TMwCtCKz6+Y7dKW/IYH9BiFXU9mExAFIIVwQZTeoY
+ i4l298DpxJ8Axd6Vf7Va9DUyyrhEKnbacj0VmCMJjtdnxOHkT0/9HKB
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
  auth_id=1262
 X-Original-From: Han Gao <gaohan@iscas.ac.cn>
 Reply-To: gaohan@iscas.ac.cn
-Content-Transfer-Encoding: 7bit
 
-From: Han Gao <gaohan@iscas.ac.cn>
+From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 
-Enable the A210 pinctrl and mailbox drivers, SCMI and the SCMI clock
-driver. The SCMI mailbox transport and reset driver follow SCMI by
-default.
+Add bindings for Melon Pi V1 and V2 with the A210 module. V3 uses the
+same board compatible as V2.
 
-The A210 has 10 UARTs. With the default of 4, UARTs beyond the 4th
-don't get a fixed ttyS index and end up in whatever slot is free. Set
-SERIAL_8250_NR_UARTS and SERIAL_8250_RUNTIME_UARTS to 10 to keep the
-index stable.
-
+Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Co-developed-by: Han Gao <gaohan@iscas.ac.cn>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- arch/riscv/configs/defconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/riscv/zhihe.yaml | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 04ae305d5511..e9275be22e8c 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -34,6 +34,7 @@ CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_TENSTORRENT=y
- CONFIG_ARCH_THEAD=y
- CONFIG_ARCH_ULTRARISC=y
-+CONFIG_ARCH_ZHIHE=y
- CONFIG_ARCH_VIRT=y
- CONFIG_ARCH_CANAAN=y
- CONFIG_SMP=y
-@@ -111,6 +112,7 @@ CONFIG_PCIE_STARFIVE_HOST=m
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_SIFIVE_CCACHE=y
-+CONFIG_ARM_SCMI_PROTOCOL=y
- CONFIG_MTD=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_CFI=y
-@@ -149,6 +151,8 @@ CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_SUN4I_LRADC=m
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_NR_UARTS=10
-+CONFIG_SERIAL_8250_RUNTIME_UARTS=10
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
-@@ -168,6 +172,7 @@ CONFIG_SPI_SIFIVE=y
- CONFIG_SPI_SUN6I=y
- # CONFIG_PTP_1588_CLOCK is not set
- CONFIG_PINCTRL_TH1520=y
-+CONFIG_PINCTRL_ZHIHE_A210=y
- CONFIG_PINCTRL_SOPHGO_CV1800B=y
- CONFIG_PINCTRL_SOPHGO_CV1812H=y
- CONFIG_PINCTRL_SOPHGO_SG2000=y
-@@ -255,6 +260,7 @@ CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_INPUT=y
- CONFIG_VIRTIO_MMIO=y
-+CONFIG_COMMON_CLK_SCMI=y
- CONFIG_CLK_SOPHGO_CV1800=y
- CONFIG_CLK_SOPHGO_SG2042_PLL=y
- CONFIG_CLK_SOPHGO_SG2042_CLKGEN=y
-@@ -262,6 +268,7 @@ CONFIG_CLK_SOPHGO_SG2042_RPGATE=y
- CONFIG_SPACEMIT_K1_CCU=y
- CONFIG_SPACEMIT_K3_CCU=y
- CONFIG_SUN8I_DE2_CCU=m
-+CONFIG_ZHIHE_A210_MBOX=y
- CONFIG_SUN50I_IOMMU=y
- CONFIG_RPMSG_CHAR=y
- CONFIG_RPMSG_CTRL=y
+diff --git a/Documentation/devicetree/bindings/riscv/zhihe.yaml b/Documentation/devicetree/bindings/riscv/zhihe.yaml
+new file mode 100644
+index 000000000000..aa778275ab5d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/riscv/zhihe.yaml
+@@ -0,0 +1,27 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/riscv/zhihe.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zhihe SoC-based boards
++
++maintainers:
++  - Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: Melon Pi V1 and V2 with the A210 SODIMM module
++        items:
++          - enum:
++              - zhihe,a210-melonpi-v1
++              - zhihe,a210-melonpi-v2
++          - const: zhihe,a210-som
++          - const: zhihe,a210
++
++additionalProperties: true
++
++...
 
 -- 
 2.55.0
