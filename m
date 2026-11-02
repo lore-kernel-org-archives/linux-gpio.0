@@ -1,67 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793646991;
-	b=jQOedbi10Wt/DjOYSDE4LI2H4mZEHMzgBHmf2uA1EcCUmFkkcFoVA0P+0ls5JK1oUr0r
-	 yaOzhV8FqLOhe5MYzFVN0eGZEk0Z38996QfQobox/6pHf33FMtsUUaH0RJQpbzBtS7kio
-	 rLHgfiT1AoHd3bp7lzsOkWGpyLW/g5p+w8YyqYPPvVH7PXT2khdSmEeGo7ahImuSGMUwN
-	 wXUuI3dsu0oRbgMZnBSKj2iIqf6y53j4OkW0KainCi9iVlQ2lbSg6PSw19gWiJ08n3tBJ
-	 S+T38MbI1A1WV1uLhhcUBF4vrtBKMBOFjXFd/k6FzO+EejGGptgucej+HpodrisYhSQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793646991;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=VbAaauU+tOjWUhy13M+E36i6rI1cWNNx68RKW+3FocQ=;
-	b=NJA3nUZdHO7t93UVAqzU0z8m4TAe4b84UeKlMD3XfLRWF3PlViJFpGKUEJNi1cq8z55T
-	 lsLIMRQhnfdkxk1ClTcIBE3lPwn7DsGaHoKXxv+XMk5yTsQu1CGGBWoUGtgHKqXNOGq+w
-	 IW6SG3+yyxRLNhxwCWL66VdPAeywqPblxwdXe9auDEoJhRSRyCF5G951cZ8hdyCgduydq
-	 xfC42Dzqzu06oAfs1xW6r66VtQt+erDl5I89rEZjF9hoYyXF5Xdckywo/gkEcflAWy4Hk
-	 CLCPUgB29meEBZ5crOkjzSkO0Gavp3WV4Uq1XfY8aqWWO8CeznBUZ/0VQ/Kn5JsaIZA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UDu0+tIg;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793648711;
+	b=zhvLsuxM6tZZW0AgeBDFWt5imQfNkPg9Egr04opQQmXq8TsFLbtTjz2GxWMyJr8OkJh1
+	 UxO2yXUbfVG6R4wjm2BCMAmZIHfQaJLrccr7ZEPek3trBad0SUQuU9vu2V2JvohvtneJz
+	 4G4KVQm7d2cqEQMBr/p4bfvDoGXqIESuvZ+iIOlVQ6ShQebK3SpduJzDNpJYG8UY1hj9b
+	 HHKS/7e3QVCz/rcSk5mYWpuEQfC5Q0uQYVyNVIH8zxvbfHU4flR/iavd4K+MaTqQwc/WF
+	 XjEZLA8x4A6sF5OAYWaaqpxlHlGms7ba7HOgj+sb7ZYOLoiqN97lLWB3+Qd/8IuSoRg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793648711;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=UsM44Bz2hR0jwZlDUjpk1mrvCsTX73s8ccqm/Jjs4CI=;
+	b=I0KQvpo1yIg8eOLzMCWmBlmFZJLzyPTEJT+W5QTtFKQUwQC4tcp8yrTg1zZxWk3l+SMo
+	 hL1TF2JaqSDEM/2bb0weAdB/TdfQHZwqf4elebMa01UKKMfL93l4UNxURhqJpovMOhEh1
+	 Pcr9ITlYjSsrmWVMABCaC9D7O6FeA7AoYAr01UKjh6dHRWv631jsSKqR57q3PR7lW8mva
+	 nAJtipgtC7jdtqamax20kjObEVWMm+Mr7N96LLcabUEKCTSbr3vdyh/zCieQ2Tehk5b3U
+	 oYjeRZwLySd+ifhGz8NcBEt6mTEXeRzc4zp74HmcOZVfLfYgtuw+snijOHoD5J+0c/g==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DfR132yd;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D476F606D812;
-	Mon,  2 Nov 2026 19:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4719606A32E;
+	Mon,  2 Nov 2026 19:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UDu0+tIg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC061F0157E;
-	Mon,  2 Nov 2026 19:16:30 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DfR132yd
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1793648710;
+	b=iSy78I70IOJYScaOUENQkyhXTm6jG5lPLbf1YCxnafzfUjkRKFbLfO/wWkHx25o8nMIC
+	 memyx3LQD1VYL2gOGxE5exW7A/KuJBQAZ12XBEoXdm62nMxBCGQUqpSUDfTYf0DWdNZeS
+	 5L0S1FcSOXXwMrXErzovOICcuQ3udivo9DiS9Kh7P5SDG5HrWWp5cFdBJSnv9egLF0p3Q
+	 aJbP/fcEUc1/Eh/5t+P2+src/1H9MRzv4coQzJ6JVV55C9vmLUQghZexJuesL8MkdSQBf
+	 HOrN8gJUp7lSVBP7u99pOzX5q68fHpx7VtF9zKNhPyLnsLDrXF4vP+sJd94QvqThmuw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1793648710;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=UsM44Bz2hR0jwZlDUjpk1mrvCsTX73s8ccqm/Jjs4CI=;
+	b=wbPelbF7H0+N+IF6hoV6PhI9pB3x4m3ArJvnapdPVukEzB/1cSVN4iPkyWlnfSMIXgcH
+	 sf9U7aN/IfvO9GhNZa/+POkC5pd5gR2TNVknyfs1k4NurwF6g3L1Jwqz4TBJywpQGYAmk
+	 oFc1zA6p0BdZbirVsr0zPGozqcR/HD9PZSNW2WAw2RV9TjtZzfL9ZyWTuCxFPhF42iTZB
+	 bjQtzjXJuiMpTL2PPQXdUh6yt7YMDaD7XNTeVx4k9HHs0ibZ7TEuk8jgWzYNr6X24veQK
+	 u5abZUukJ/se6SnDQZYvQ+O/O9xtHNziW6FW+jzd2nOzGnuHtX8GWGTePVcsnt612eg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 54B3A1F00A1F;
+	Mon,  2 Nov 2026 19:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793646990;
-	bh=VbAaauU+tOjWUhy13M+E36i6rI1cWNNx68RKW+3FocQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UDu0+tIg0nx+V6+xDSJs8thduUykWOL2F2oShDpZKNBFu1NUv9poV+V23KMDTFNvk
-	 wSEvWtETln2mAVoevNNBpPXIG0rLKOq8Q+msXIYOolYSekNQHHcN+IqASL4u3kk+TV
-	 7tlZl+PxJOYfsrcKSt7wX1DqdS14Rx1oil8CYcQcf77AmXxJNGYgzryHxBM/mmH06Q
-	 i7WLkUJZSdV+8HG44KhkiB+17Gzf+Z/1wiM1y203VZF4Q/iR7VM9HR+Dx3dt9gvwM+
-	 KIu4jSJ5sCgb238PRJIotWYq2DyqEs3VrxllHDTTi4rf916nwVtKBdyNo2H0/FHjFo
-	 CrvbqItaIBEWw==
-Date: Mon, 2 Nov 2026 13:16:28 -0600
-From: Rob Herring <robh@kernel.org>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Benjamin Bara <benjamin.bara@skidata.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Jon Nettleton <jon@solid-run.com>,
-	Mikhail Anikin <mikhail.anikin@solid-run.com>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v10 03/11] dt-bindings: usb: cypress,hx3: make peer-hub
- property optional
-Message-ID: <20261102191628.GA834063-robh@kernel.org>
-References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com>
- <20260928-rzg2-sr-boards-v10-3-91752ea39cbc@solid-run.com>
+	s=k20260515; t=1793648710;
+	bh=UsM44Bz2hR0jwZlDUjpk1mrvCsTX73s8ccqm/Jjs4CI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=DfR132ydmb5vPE4KOoRCNZFkjm6C2zbFRvJ9NkcC1qAb81zc0SBf8H1+2JPMdtziy
+	 pkTqsRWqVK/l7uvyjyEQudasTqgKjaXfdtOq/ljhyJHjw7dip49d0OYEK7C5fcPLp4
+	 jJjxOz3pF1w0TlPKftjX9TrOChJ3gePdcvoRrno3YvIMEYDdcQcdHtaI4V1y5y6RdE
+	 aR4Bk3hIB8KiYjYKwqBfbk8IJ+rYLEWmIihB1A4RXdiWFaDJNSUPCRAobvpNGi0jxl
+	 gbubKPo3KZXR2CTJVRDAQl9JHBf3lNDXpigRh03O7OClIwroFxQaYi1+Ts0rHBRmMB
+	 5glZVYrF4yiUg==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id B2A3B465D3;
+	Mon,  2 Nov 2026 19:45:08 +0000 (UTC)
+From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
+Date: Tue, 03 Nov 2026 03:45:04 +0800
+Subject: [PATCH RFC v3 01/17] firmware: arm_scmi: Drop the ARM architecture
+ dependency
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,26 +83,80 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260928-rzg2-sr-boards-v10-3-91752ea39cbc@solid-run.com>
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261103-a210-scmi-v3-1-ee6b31580808@iscas.ac.cn>
+References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
+In-Reply-To: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
+To: Sudeep Holla <sudeep.holla@kernel.org>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@kernel.org>, 
+ Radu Rendec <radu@rendec.net>, Samuel Holland <samuel.holland@sifive.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Drew Fustini <fustini@kernel.org>, 
+ Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
+ linux-serial@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>, 
+ Han Gao <gaohan@iscas.ac.cn>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793648705; l=1053;
+ i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
+ bh=/i2Hrato1ZaddmWBACOcAsu4rA2pM7/klcdfY2u7RqE=;
+ b=twSKt1n9O18ON1twtQeq9bHAwBn2LoDRA9GzybRh7RNj6v2Uld03XL7r+2OKTy+S8evBTnbrt
+ dLLzVzpNnkEAQRSfFZMsoejt9+FVb1uF2RGgxFrig8PAyxgPBzVtZUJ
+X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
+ pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
+X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
+ auth_id=1262
+X-Original-From: Han Gao <gaohan@iscas.ac.cn>
+Reply-To: gaohan@iscas.ac.cn
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 28, 2026 at 07:33:54PM +0200, Josua Mayer wrote:
-> Cypress HX3 Hubs are combined USB-2.0 and USB-3.0 devices, and should be
-> described by one node per speed and linked by peer-hub property.
-> 
-> It is however possible to install this Hub to a USB-2.0-only host, in
-> which case the USB-3.0 peer has no place in device-tree.
-> 
-> Remove peer-hub from required properties.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> ---
->  Documentation/devicetree/bindings/usb/cypress,hx3.yaml | 1 -
->  1 file changed, 1 deletion(-)
+From: Han Gao <gaohan@iscas.ac.cn>
 
-Applied for 7.4-rc as the .dts change has already been applied, and 
-Greg seems a bit behind.
+The SCMI core and the mailbox and shared memory transports only use
+generic kernel interfaces. Transports that need architecture support,
+such as SMC, already carry their own dependencies.
 
-Rob
+Drop the ARM and ARM64 dependency so that other architectures can use
+SCMI.
+
+Suggested-by: Michal Simek <michal.simek@amd.com>
+Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+---
+ drivers/firmware/arm_scmi/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
+index 783c24a20e29..b56aed46a387 100644
+--- a/drivers/firmware/arm_scmi/Kconfig
++++ b/drivers/firmware/arm_scmi/Kconfig
+@@ -3,7 +3,6 @@ menu "ARM System Control and Management Interface Protocol"
+ 
+ config ARM_SCMI_PROTOCOL
+ 	tristate "ARM System Control and Management Interface (SCMI) Message Protocol"
+-	depends on ARM || ARM64 || COMPILE_TEST
+ 	help
+ 	  ARM System Control and Management Interface (SCMI) protocol is a
+ 	  set of operating system-independent software interfaces that are
+
+-- 
+2.55.0
+
+
