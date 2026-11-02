@@ -1,102 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.29.241.158
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793587334;
-	b=fcOOQrWDGrPKi1VFoHiDNDVSWpjp6PeDI//NBslkcNHT2BHQ0wi8OUFo/9Ppt/MhNvCx
-	 LLDf6eWDxVlQZNi/v3jgmY0Vy4xRBfehnO2DSZnnPOufsNG33/Iu5L28P46/sEXHgxMJ8
-	 NYsCBzFls0Gu5aa8A31u+/nfiQAsM8K4c7hqyWJ2+PATrj1q4QftYZOgecrj9m6pu42k/
-	 4qX50rtp60nQY+RkgzioUr4kWiq4VKef5c6ZUwp1xNOHfms7yj82Z7ptnUoi+euCz2r4q
-	 HC+iJlFNPC+9TwHlpFeDHAUBlQgSTHDW7wjYvdN17pOzv0KFDZaIsoQ+MQdbFZyRLOA==
+	t=1793598962;
+	b=YavxbU5EMo1ezAd4Cj3l8VBm4jRbc+w+2nJCDUqF7BApcpVMNppvjcDvKpAzBb++nwsq
+	 mvjJxwP7e/4xrt1U4luzeAZYrYzB9eSNnlMGKmP8krumpu8sW/DU548stjQNUX5rz9hrh
+	 fbadN7rbs9zW7nyU+zDORh6K6ryHrOFAFteAvE7i2W5XPny9JwF6c103OlRFwIO514rIe
+	 zE0Jl0+00iYELKUbxHgJAISJuIRKFeCYEuJQiJtwMJzkZeDX+brt6LfAElaL3bsVKw292
+	 ITomeniGyHb+1veNHQtPWWQeSRrDwWRicjVQ4tfzaCM0WMaMZNWIYL2fCAkh37M/wVQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793587334;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=j2TRRoSnT/Jv3a4iwHG1ldeVncOShjDWYYLdrAMUUEI=;
-	b=5W9+SisyunEbuQ58615vln/HoQ4RP15eIGrMkQgJbekUFIZxRkLc9zYhXUt2mMHZR9Oh
-	 rIbP/fHxGLCH8syCcQxu+qDg5Mjsy+DBopz8tYxmt66x67tG5O2LR8yggkNmOVsgfSnlL
-	 yfI0dwlOWGlkTrRpBAsrtbWo8m3MLLhEE1UYHaDyU+MlnHFW9CHolD26OzmvWnLlNHZ7h
-	 kbA09cfEJ2T5lqTuW1xD2tP1MdaViBSlNceWgCGwu2eycmabjd6Ta9qWFIN/XBeeM4b5E
-	 I2HYGU0kNefW2hZfClrXvQnzvSowV3RaIwxb1Ry9RbjdArsub8wPZgUSu7Knl2/OAGw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793598962;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=galmyEn4LbKSLuawhs4ZGQeiueItg3W/HcKq5KP6Bgs=;
+	b=vzkMZdVvmgQyjU5YcZ01n0KmtEVBlLrTtZxF/afaprf07O57UsshoN1T6bqH2ts4/O8T
+	 8W/ZYio3AKMohrNDA0hYdgrNeMaUEiwYpugTCmrsR+q2YWnGSIPwD9Rnh2SGhncQCskjA
+	 srrm+R+RgmsBCnYDpRHJwnzUhavayJH7fB7tiHBOrYyplbILYR9neHQ/3dmi3gIWsTXXr
+	 i+VO1Uxq6+j9mP5hGNo5sWhjGLU15L6acyRnoypPfAWoetXc3Gz0Y63n5b57j3nu5cGNy
+	 royho+hP6GnIcuF3apjkTT+ddD4DzsQ7RalOC7qu6KgBGmp14uYqsTF+3A6oWypWcYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rowland.harvard.edu;
-	spf=fail smtp.mailfrom=g.harvard.edu;
-	dkim=pass header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=FzCmt13c;
-	arc=none smtp.remote-ip=209.85.160.180
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=codeconstruct.com.au;
+	spf=pass smtp.mailfrom=codeconstruct.com.au;
+	dkim=pass header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.a=rsa-sha256 header.s=2022a header.b=joEgN+t6;
+	arc=none smtp.remote-ip=203.29.241.158
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79FF606A326
-	for <linux-gpio@vger.kernel.org>; Mon,  2 Nov 2026 02:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E79FF606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA3606A326;
+	Mon,  2 Nov 2026 05:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8BCA3606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=FzCmt13c
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5363c8de563so31688491cf.0
-        for <linux-gpio@vger.kernel.org>; Sun, 01 Nov 2026 18:42:13 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.a=rsa-sha256 header.s=2022a header.b=joEgN+t6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1793587333; x=1794192133; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=j2TRRoSnT/Jv3a4iwHG1ldeVncOShjDWYYLdrAMUUEI=;
-        b=FzCmt13cG+aKsnwVBtMJ9Fmc970lVhhc0e6juVp8IQ97lKL5tpXK3/7CBqRRs2hyJN
-         Tze0XcdilstpMTPfqXpq8JvpLywnDzkJFC1em60OFU2G6Cx/netBP4j7KLlFiynKpB5T
-         4wjfPJjpyh1zg1x10htvP77jqd854dNdSDKFpzQt7uhTCr0aW3s37SZ2jl9yQ6SJruqC
-         mO25pb1tsMdmfK4+VqtiIJUDekdVFkmmOAuCNqcPMROcLtJ/H0h64e7TLmr4QS42uCck
-         7/OZebM2x4eqGwYljgydfAXealLtCmRC43f6V733FbDl+vvQHAKuxsetvrkovYH9HTDI
-         nT7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793587333; x=1794192133;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=j2TRRoSnT/Jv3a4iwHG1ldeVncOShjDWYYLdrAMUUEI=;
-        b=VjrYtiLhEilY+AbRe6/zYL6X3VxWdkGH6cQeAGqQZqxxr8FwIKADtFARnSMjbBtSMr
-         78O/QCZgmJ90ylOdgjjiJK8yC7MgjVKLGchzjkTvOKGBH6dG1htjennppJ7B0+C2iH0k
-         BycDxE0FW30gjNP/XnFzJfLdn2E2k1UVzYmfLqGJRb2jBbN3yaaDo7zXEdOcLragv+vW
-         0vESAKXu0v3n8dNeJYRddHwaUNSjUVK1ULvLu4G5DuJRdTun9T2wWznYSvV72zT3Upz+
-         LJBha6LB8Mhc48RlpHzqK3PXrGajTEn3LE2QOQTlESoEi2vUSu6+Cbnl+GbPfRv5/j94
-         tjkA==
-X-Forwarded-Encrypted: i=1; AKwUvBxD64MPp1ZW32L943XkwVUo/sZ6xHMQ8O8253NshzE5hQYm5Hz8QMfwcc+5BBxfE58ZIzkfbBXO7VLO@vger.kernel.org
-X-Gm-Message-State: AFq9FYK9sAqpGohfDOROAYVIBuQRD+6pK0T/Ymd1xje3AP2TMYIK4Pfu
-	UHpzjYSVnSZeOJlqJEV4J/0MFMXBgZXd/5mAeNtXRt7td4TN1HMvRzrmN5ezAaM81J9yamfHlZ0
-	ZgT5jcg==
-X-Gm-Gg: AYBFou3Hg2JDWgLTYYBBXJ0NZZKxrjGEZrbMkcQ0i0eDTKnrJpH+qRZWEbBX//koKmT
-	td9+dBINJ73rZ/lUbccZcGJirULmfCytHp6oLge0j/iHMdFC2ysB9YphTmBGYZmTL5cjf/Yn15C
-	8zTHRyoT/5Nhlm3dIxSDWTvhaEizRnH6s/3xk6jpeNM6e+67EL6OSlZxXU1hA1h6UFkQEIgQsuU
-	XcusyDWqQf0CAGiMl+y8THRIkG2GVy9TDPN8eft9jUlQajWNB3xahg/+3eSyIrsaAWCddH5nBdC
-	O8a5+xS7EmlbrNGwpIQFbw6Voy07Jzg1i8HolY0izM00O02uqtMfKnIWbwYhla2gxgSgOJgmX2M
-	n++EmdnuE5MJKw2YuOAs3+VO7vf/6MBCPajoviGCoj+ykr/pQzAYZEtiJUXWhRVU99H4TUED8l/
-	QtT+jJ4QweMeXSxsxiz+1msV9xyQo//Tq1zSKqe3cbnLlrlvagTXjljrGXQ4nApUdbfVXC2WrC4
-	cfOu+k6Q0DqfNMAOCrAgHsxSQ8N6GwC9IyejaoQ+OnntbX6QtwNeWUFfjldOsbVQA20AxTcVfPt
-	AldC4ueo62TrjGqWlnIAVlj4QFAl
-X-Received: by 2002:a05:620a:3916:b0:93f:47fa:b722 with SMTP id af79cd13be357-94421618771mr1465258685a.13.1793587332748;
-        Sun, 01 Nov 2026 18:42:12 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:d01:d210::66b0])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-94425a7195esm724633685a.27.2026.11.01.18.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Nov 2026 18:42:12 -0800 (PST)
-Date: Sun, 1 Nov 2026 21:42:09 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: James Clark <jjc@jclark.com>
-Cc: sashiko-reviews@lists.linux.dev,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, Bastien Nocera <hadess@hadess.net>,
-	Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Douglas Anderson <dianders@chromium.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH v2] usb: core: add a pre_probe callback for device
- drivers that may defer
-Message-ID: <b666dc31-1dde-41c3-be0c-3ae5091b9683@rowland.harvard.edu>
-References: <20261030151919.3511106-1-jjc@jclark.com>
- <sashiko-outbox-191184@kernel.org>
- <20261031032449.3536559-1-jjc@jclark.com>
+	d=codeconstruct.com.au; s=2022a; t=1793598959;
+	bh=galmyEn4LbKSLuawhs4ZGQeiueItg3W/HcKq5KP6Bgs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=joEgN+t6NvoovW7oKCyZDr2eqdix+/duqp4PMFPCW3+RRwMNBkk04YEGTrQqXFBfa
+	 tCJu2UBAyLCb6xV2/OxjkIAgqYEwt8p4FKq7NIXZ8waf1xyRvl97ugJ8Az60PQtVde
+	 NvMCCJ2xvX1Y80yfKQIMFQPgliXk6vJBrQiVp8GlhsxUBGqyqXyFYipUEdra2x9jW6
+	 7tbTiIxaXd9V6tZX11NmuzG84SPnnozNpGRH4UM+InMJfNnB/aLnlIf/7VxlhdH9xn
+	 720JtOYjZ6d7n7DjPBBG7Dva9h3DRuPJgRgoxCI6V889anGcx67nbuYl1n0zXg5WFV
+	 FmmJo+qfQ9KKA==
+Received: from [192.168.72.161] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 6A55B648DC;
+	Mon,  2 Nov 2026 13:55:57 +0800 (AWST)
+Message-ID: <06e25064f8a5455c12b47033a1a62b94100e7590.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 00/11] Add NVIDIA LSTP USB adapter drivers
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>, Donald Shannon	
+ <donalds@nvidia.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij	
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Lee Jones	
+ <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Andi Shyti	
+ <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>, Jiri Slaby	
+ <jirislaby@kernel.org>, Corey Minyard <corey@minyard.net>, "Rafael J.
+ Wysocki"	 <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>,  Ilpo =?ISO-8859-1?Q?J=E4rvinen?=	
+ <ilpo.jarvinen@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Hans de Goede <hansg@kernel.org>, Lixu
+ Zhang <lixu.zhang@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Johan
+ Hovold <johan@kernel.org>, Oliver Neukum <oneukum@suse.com>, Quan Nguyen
+ <quan@os.amperecomputing.com>,  Andrew Jeffery
+ <andrew@codeconstruct.com.au>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org,
+ linux-leds@vger.kernel.org, 	linux-i2c@vger.kernel.org,
+ linux-spi@vger.kernel.org, 	linux-serial@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net, 	linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, 	driver-core@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Bart Van Assche	 <bvanassche@google.com>
+Date: Mon, 02 Nov 2026 13:55:56 +0800
+In-Reply-To: <2026103015-stained-shudder-1582@gregkh>
+References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
+	 <2026101310-scuttle-unison-d4c3@gregkh>
+	 <c569c912141e9da7530121b8b2fc81527e0518a4.camel@codeconstruct.com.au>
+	 <f3f305a0f3195948bd25ca7eea4348113f998ee2.camel@codeconstruct.com.au>
+	 <2026103015-stained-shudder-1582@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -106,43 +90,38 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261031032449.3536559-1-jjc@jclark.com>
 
-On Sat, Oct 31, 2026 at 10:24:49AM +0700, James Clark wrote:
-> On Fri, 30 Oct 2026 15:41:34 +0000, sashiko-bot@kernel.org wrote:
-> > However, err_pre_probe only invokes udriver->disconnect(udev) and does not
-> > undo usb_generic_driver_probe(udev) or usb_autoresume_device(udev) the way
-> > usb_unbind_device() does:
-> [...]
-> > Similarly, on the -ENODEV fallback path where udev->use_generic_driver is set
-> > to 1 and usb_probe_device() returns -EPROBE_DEFER, won't leaving
-> > usb_generic_driver_probe(udev) and usb_autoresume_device(udev) in place cause
-> > the subsequent usb_generic_driver probe to call usb_generic_driver_probe() a
-> > second time and emit a duplicate USB_DEVICE_ADD notification without an
-> > intervening USB_DEVICE_REMOVE?
-> 
-> Both of Sashiko's points are correct, but both are pre-existing and this
-> patch does not change them.
-> 
-> Before the patch, a probe() failure returned straight after
-> usb_generic_driver_probe() had run, with neither the configuration nor
-> the runtime PM reference undone. That has been so since commit
-> c9d503370f24 ("USB: Make it possible to "subclass" usb_device_driver").
-> The -ENODEV fallback has re-run the generic probe under
-> usb_generic_driver since commit 88b7381a939d ("USB: Select better
-> matching USB drivers when available").
-> 
-> The patch deliberately handles a pre_probe() error other than
-> -EPROBE_DEFER exactly as it handles the same error from probe(), so that
-> the fallback keeps working. This is stated in the kerneldoc. The only
-> new code on the error path is the disconnect() call, which undoes what
-> pre_probe() set up. A complete unwind in usb_probe_device() would be a
-> separate change.
+Hi Greg,
 
-Since your new pre_probe() will interact with the bugs mentioned by 
-Sashiko, perhaps you could submit a patch series which implements 
-pre_probe() _and_ fixes those bugs?
+> I haven't read all of OBMF, as obviously that isn't what is being
+> proposed here, I was just complaining about the madness of attempting to
+> create a device tree representation for a single USB device that wanted
+> to be carved up into different virtual devices because no one decided to
+> learn from history.
+>=20
+> I have other objections about OBMF-ICP, but that's not what this thread
+> is about, sorry.=C2=A0 Please propose your own patch series for that and =
+I'll
+> be glad to criticize it there.
 
-Alan Stern
+OK, fair enough - I'll defer this for an OBMF-ICP submission, rather
+than piling it on to this LSTP thread.
+=20
+> > With OBMF-ICP's super-minimal core protocol, and the use-case
+> > appropriate channels, seems like a suitable approach to me.
+> >=20
+> > The USB-IF has a class ID allocated for OBMF-ICP interface descriptors,
+> > with the intention that we have multiple vendor implementations of the
+> > common protocol; we would like Linux to be one of those.
+>=20
+> It's always fun to make a new spec and protocol,
+
+We seem to have different definitions of "fun" :D
+
+Thanks for the discussion so far, I'll follow up again when we have a
+series to propose. That shouldn't be too long.
+
+Cheers,
+
+
+Jeremy
