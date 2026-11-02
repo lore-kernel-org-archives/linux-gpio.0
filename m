@@ -1,113 +1,113 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793623834;
-	b=iypeFfIuw8sYHqsaQwHcGgarRwXavuYYcuR2n7bUjWdNpsnw1Qq73raTj19BQWxEBz/N
-	 By/dZ+uCcDSjZZjrqqj+Q31zCPwrt4VSg09Cf0JKAGeYdVdTqgFGl6DD3lPcX/yL+yxL+
-	 FQAVbOkZ+WNn4gDGXQ4XRr2rI+GUIgoxNgvsWj58ZmunqdZiKSQY9f1tl5zJi1l/C1IFH
-	 WX96ifKrsIQVS4ctz41fTuLNa/vLY3+MM9NUhlTflYmYYRfKLBHNgewIyI/FGCOGNUth5
-	 4fmC7XyFFNmlpYH1eEVEXa7PxtMpg7BDbPsZARQ7OKcimrEqqtK7sN37GBuOBtfpDpA==
+	t=1793623837;
+	b=G11lJThCL/rJXLXFYToIZYp+JlyzQJtqbWyKqYhxWxtPTwVbcJqm46XV5XocSFBvGDbU
+	 TJDP6+UjtiEg2BO/dLGP6twrpMHBrsmzH1bOys3k2hIfMO8Usmc7CIDZBveyBoLQzPgfT
+	 MihQdscucqQBwEpU0PNzlQqaNIB/bjNq6ffp3q9S3o4KZjzPC+OALpA69OCHvoj801xUm
+	 j622tsgt+kIJk0rclQRe16RdUc/CpVwczbGfgnGNx75VOsar+yzGCL+w6rGRs32s4E9ko
+	 zE2nUxxB3yhbMcIJ9EjGdrLd0/69B12OyCpmXDHcFxAEcIUCh6AJ7B8l/lhPJ8oEZmw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793623834;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793623837;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
-	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Developer-Signature:X-Developer-Key:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=C5FZt9tKHEYnklbrXH4tFShFaNZxBtay+nhOBMjLp2E=;
-	b=cxK6DPCr0Rr6m2ZxIJsw2UAACpJSw0TT8fOsfbi3CGqeSynRrbu7Zx69DQ161SJutHiQ
-	 QVSFysYl8jH4ZIBB1VPF9Rg1waMWrDnfweY4GQLe8iEguXAfvZ7lW7A5nAqwNM44mcnnD
-	 03e+wl80uSmrbG9j6FEMS7l0Pg0AKl5cPyRI0o4NpFS/N2IkgJ/jMLzf+kj4IocRKFkSq
-	 cUUceKEhOw4PF28DZb3BkWhQZgIjjWJbM3vbZK0mMQIfkLXfjQqroGs3k3yAaH8yikj9/
-	 eGf78wDnK7gDPzNA9vTdueksvqRxkm9Cv2uha3ELlkZq00nLK6fSKPxhhRy33+pISQQ==
+	bh=jVsUHPoyhDSKww0+dFJuDm9UgxlWudWo2Y0gRhQ0Pis=;
+	b=l7+yhMJiXCnFSYeUGRQjJQEdcQrBQRtPnbwXH9kGE8+DrR8qG0w/rjYH0ojAZ0igYh2J
+	 wOxUu1wjOmNrIzcCbJOl2w40ukSTaHYjO8/p7ZP8erMVKlaarZpxeWgeY2HtMokDDcNLh
+	 UA1N8bvsbopbd1HLhJe//XUbZtn5Dp3wVnJAtXQS8qNj/HJfMAYGbbL1iI5hYacR27Ekv
+	 0GXw4DZquQPxMDKi6Aczkh/RAPXqgSBmslnc935o78xki9Hxbkr+UrlfHeY79pnAVUFGN
+	 TCHPIZFkM7rWb8RzLi+QnN0BTxKFWjr3XI4Yp9DuApmsGoUPMA2dglt14tYH+RvLSYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=dOxRQ0Vi;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=TVEN2hFQ;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=MXagzSFL;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=MckJ6UXs;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C5A60A261D
-	for <linux-gpio@vger.kernel.org>; Mon,  2 Nov 2026 12:50:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 51C5A60A261D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDB960A3825
+	for <linux-gpio@vger.kernel.org>; Mon,  2 Nov 2026 12:50:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3EDB960A3825
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=dOxRQ0Vi;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=TVEN2hFQ
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2B2vcO077082
-	for <linux-gpio@vger.kernel.org>; Mon, 2 Nov 2026 12:50:33 GMT
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=MXagzSFL;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=MckJ6UXs
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A299xp73402433
+	for <linux-gpio@vger.kernel.org>; Mon, 2 Nov 2026 12:50:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	C5FZt9tKHEYnklbrXH4tFShFaNZxBtay+nhOBMjLp2E=; b=dOxRQ0VifOOi1Wag
-	7EeAXT6rvM5OfKuCga7vXZrG+9b6Am6zl+BoxVwggaAT5ng8ftPt5EopRtE35DFV
-	DspYVnHZy+OBJFmiOtk8WH7ChVhOZkon1q7Bd79f0HqDkMXI1ogEVOxvFHI6DzG/
-	CU5Pty32PYwB1NXS4Nt3WNPxZQDRdR74gO9XfRjIwXIDS5OcnDGAK0jmGVRLOG4r
-	Hv4FZuee59boe0HbqfneECl5XXQvc6bkwMAtJAhX6RqXHwCcN/DZPQ0+nDHFgSSi
-	bPMpSM2KUS55O1JoVcSO5cNZQd+sEGIsTKL4fCaPyrZ0NRghh92XEbJm3pCr3upV
-	SSBTUA==
-Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hpsa6rbub-1
+	jVsUHPoyhDSKww0+dFJuDm9UgxlWudWo2Y0gRhQ0Pis=; b=MXagzSFL16RdDPZW
+	LMoKn2MNbOJajyWxLVcs0kPhADPKDtj0L2ELDcRdFn1y3YpAOTVKPD6KX3WLfF2S
+	EapAcTHOkKIf8oqPErQVFMTEm3z2/J20T1STfGkdE0cWtGcluponpGfbdjWXhOBw
+	Kh0U9eInEIkY+ZD/j5tLGYgg/XrStfA3eJ+37SkmidRo/uql/1RvnNl0p6rgIGPk
+	E3Y3+C6lN1nfp1fz0mRhQ6dvsTqS8JSGZbpjFiAfgrjGdFvrj1ts1cEkP+FLWJX8
+	/cS4jRvbm4NI8T9Cop2jjNcDy/Pqh7OV1Cs0AYy9dzOaz/upcGNfgSm5ANH1yIjP
+	qq5WOg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hppfe95cn-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2026 12:50:33 +0000 (GMT)
-Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-988bc0ef0easo560302241.1
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2026 04:50:33 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2026 12:50:35 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93f6f4fe531so479981085a.0
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2026 04:50:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793623832; x=1794228632; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1793623834; x=1794228634; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=C5FZt9tKHEYnklbrXH4tFShFaNZxBtay+nhOBMjLp2E=;
-        b=TVEN2hFQ/MFUY93zJDjMNQijMKf3kG8uLY2ofZ4zvD9NprGRHiLGz1x2KEWN3/+k/H
-         /5fHZuY2CeQVG7Anyzf93yNvWjxnMnWXuqR7lUk+B4+NyfCKevycugdOjhcAY7dSQhQh
-         waGk7WCDvCX9r6EZxpsGRv7onN2ar2Z4ZsRJ0mPOXszDjHXTix38tJ8GN/n3QU+tiplm
-         tdhau3goPOka65gX9kS/YDC/4Cw5OvQjj+GAJaaS4edh+eXJi7RyFFVV1DMwZZyYyoib
-         9w1FW8uu0KHE5A0pTTd7kYZkr6MyvFwdHy08+mFKccBR3CloUWkdZxqkumkDFs/WQZf4
-         MTCw==
+        bh=jVsUHPoyhDSKww0+dFJuDm9UgxlWudWo2Y0gRhQ0Pis=;
+        b=MckJ6UXsxbOg1H7/368zFQt3xKhUMWHUqVOcISR3ixwLsMVP07/O7oRziiJL+vrtUj
+         EvtHxEVp9v62s9UkNqWpDH3nOSX8i6ebt/LYWVGV/qZSS4PkJ2+2Enb0GHe+eKasH08m
+         /uqeEu9rLtFJEbU5fOn9DmbbRkDTwgxXeoW0wnD+8FdZlk2sBmyihwqL6euRqNEqZ6C8
+         m+Dxi7pK22cWe7BTo+w6yWDsT1542G/1xi7HP+D/eJQPZLHAggTk5iqCxsZWvMo9CrFN
+         OqJwL3bSMi+88pndVO4uEe4WfbCee9xW1PhhFrncYe+WeedeeIa5p/Dp7tAHtniWTomQ
+         tiBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793623832; x=1794228632;
+        d=1e100.net; s=20260707; t=1793623834; x=1794228634;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=C5FZt9tKHEYnklbrXH4tFShFaNZxBtay+nhOBMjLp2E=;
-        b=EB8+FKum4QzRbeR+nEyP8nv7XID/7V8WwkfrZbrVZ64JiFeTjKK8oCqG3H2qepDl5J
-         05C/BeB0oXGdVrA7J4rJ1QzzlkM5Gt744uUKaNfG9MB+6Y9qq+0eb00hRVx6Qi/FIghm
-         Fc+dZPhJbU5+GA8QrGNaOplyUNAY17025L09lvhyA9JoQDRiNPhJsw7S7NtBcMc0WMb9
-         ocdc23Rgme1nZVw/MDAlt5sp7qq/NYyCqDT+ej3rW1Zo7L/8ct46y+ZqQvJcDWYLKHIa
-         4drwWWKEITMLZAPP/Ng3M26xlcpNgyq8xTrdGKBOVfiq34zunacP8jCbQx8hHFqsxsGB
-         gZ0Q==
-X-Forwarded-Encrypted: i=1; AKwUvByKZ/0kDQn1JyTzs8BUadAlXVqsg5z9m+Z+yjZZvnBDFCyN//CVlLvqvsz+ZaQyzVQvv30WcLUMugli@vger.kernel.org
-X-Gm-Message-State: APuU4Z9nkVjxavAzrPuXgVBJIDkzXhfre78dqknpSzwPd8RVe3Y0AoNQ
-	kGcuNHW4/D/QeDdw+biDqb8m/G2PDUhKVzabQ0oiYGGmiupQjgK0XW8BhsS/kbNlos1GVlTa8Yw
-	f8//RPTeIhSOtr6Kml8flx2W7/ifsX8usGD+PgPlOpKxRR32hhmtQl8eOXm5Lhjyu
-X-Gm-Gg: AYBFou1U0kxusZrUnYQjcZOjvLLDV4mLl/dFmBqS3DtxNWVlE7Uy8Xbk+OlAPNmLGoC
-	kaF+feqn/ps1e/NRLMa4CJvGSGCpSmKHaY/5mJEHbn/jZRVzE5u414JtA39Y2eeSNkN3w00wvNp
-	x9Agvbv2EoF2mgt9DNyMRAtIr+NydjpVZ+MP8vWEAoHfqOy2i7U4da5thecVyqEMlEc7DrhUDUQ
-	+fZMpq/q/hV1MHz+DQq6M4QSbjw8n2Qa73HfJmze8P51abQwUG8y1GypwCoYeZRhOXJnb4mQ8fl
-	z3bOAkmzyBELe2urr18Bp0iDn8oZ/mx/cyR4wIvJFxFYSEEqbqI9aqzHZBXhN2VRgorVmMMxM6c
-	kU4HqtW0sP5qpCkdvFSHz4niRmya5kvgokPnllS2msvn/KVmwS05ykNuCllbvRlj9qm01gilDZP
-	YLqA==
-X-Received: by 2002:a05:6102:e10:b0:7cc:32ce:4c49 with SMTP id ada2fe7eead31-7d07275e5demr2966920137.27.1793623832352;
-        Mon, 02 Nov 2026 04:50:32 -0800 (PST)
-X-Received: by 2002:a05:6102:e10:b0:7cc:32ce:4c49 with SMTP id ada2fe7eead31-7d07275e5demr2966909137.27.1793623831845;
-        Mon, 02 Nov 2026 04:50:31 -0800 (PST)
+        bh=jVsUHPoyhDSKww0+dFJuDm9UgxlWudWo2Y0gRhQ0Pis=;
+        b=o9JzxO8AsSSDIgMqhP5E6kjAxAoJ+xPCpVeeB4JNoYwz9gIdqKBTv8ALqYF0L6ZKLI
+         5VeA6Qm6+2hLunHR9KdsEeZjloY3TrVdudNK09KhU8a/E+Xz/tNFQYUtDrxWA57TLHXm
+         NrjCYH+l+7m4RgRzsitC8C20c5Bof43t/W+L2bTSF5oisY4BRqFlqhe/F/tnI7jnRIGC
+         0YAii5EEFxU/2xWKol9FIWsheQp8psEaxGQxeadL8PuSGbDlkhyThCvkDdIHw49haZWf
+         0VyW9WNANx7hxVaZU2W80WQ4zXnThL/LMkpi7yGctCqObLRQqELp0/ovn6widoKhPmkF
+         pERA==
+X-Forwarded-Encrypted: i=1; AKwUvBzzZS3fFTaeMLz/cFwmyPmUvDo1nWzQog+TmcCNOUGuN1oNA/z/xFBun1WMQP/WXefkuMD5wG7UhPC1@vger.kernel.org
+X-Gm-Message-State: AFq9FYLDd5c3Duscxt/R0FPgHUqzuW4GlLC0c5wqmYxh+rp8uF0EsXYu
+	uZeB7Z5FXFQuK+FN9aLPjMVuJnt6Xie4sdeTPDx0vtuCOtAAk62I/6naFSe+Iogcn0YwCzU3NWF
+	LjzlZW9a0ho2RGBYBF+mTcBgNZrFMbk3pnzm8KQ7kADfki5T6ux5bOSoUaKtww3P8
+X-Gm-Gg: AYBFou0Ui1qvNH4+dvUR2sLRxbnt60yaJnMvO/mW/29eeZgTq/BFABMXcBMM4ctKkt+
+	B4f1SYHzwqBuNKf0SYG2yasfGudEeO3YUBqpeIFE+HbQaLN6t24AQ0LEsIe/DGwYGm8CvUpCbXV
+	ORmgX0XGaVxAMJqggZLP56xeFF6bIVS0fnpXnnRg3cUZ+KflmJFOqKZxD/FQ1HlOTvThnk9siwt
+	I9NHV9Rwg3uIjBiFXWDvR9FkMlLBFyGOTX9JPwmSxVRKW+0GDcyfpM6dTMVx2yfLSLwf54ZEjLP
+	iXfIJoB1fM8mmcxsMwXScxauWtkWAboEN6N5k4c3FPOpIqU5AeLseOQp9VacX9rY33Elx0oTvqW
+	NZlsosVKtl/TxpGy5dq8ZpDEyLPou/VY/M0DUfuDKtPYm1PxZQK9O5d2ZRV/8yRYmGLktWUQIIX
+	mvPA==
+X-Received: by 2002:a05:620a:3705:b0:93f:19fe:e6ca with SMTP id af79cd13be357-94421745e9bmr1712750285a.43.1793623834402;
+        Mon, 02 Nov 2026 04:50:34 -0800 (PST)
+X-Received: by 2002:a05:620a:3705:b0:93f:19fe:e6ca with SMTP id af79cd13be357-94421745e9bmr1712746485a.43.1793623833739;
+        Mon, 02 Nov 2026 04:50:33 -0800 (PST)
 Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71ba24f6sm20464910f8f.51.2026.11.02.04.50.30
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71ba24f6sm20464910f8f.51.2026.11.02.04.50.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 04:50:31 -0800 (PST)
+        Mon, 02 Nov 2026 04:50:32 -0800 (PST)
 From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Mon, 02 Nov 2026 13:50:21 +0100
-Subject: [PATCH v9 3/5] gpio: shared: unwind partial failures in
- gpiochip_setup_shared()
+Date: Mon, 02 Nov 2026 13:50:22 +0100
+Subject: [PATCH v9 4/5] gpio: shared: detach the proxy device from struct
+ gpio_shared_ref
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -119,7 +119,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261102-gpio-shared-fwnode-lookup-v9-3-a1d6cc501098@oss.qualcomm.com>
+Message-Id: <20261102-gpio-shared-fwnode-lookup-v9-4-a1d6cc501098@oss.qualcomm.com>
 References: <20261102-gpio-shared-fwnode-lookup-v9-0-a1d6cc501098@oss.qualcomm.com>
 In-Reply-To: <20261102-gpio-shared-fwnode-lookup-v9-0-a1d6cc501098@oss.qualcomm.com>
 To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
@@ -128,122 +128,238 @@ Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2799;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6235;
  i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=QekYjtrADoWd66GPIisjizU3FTTnaBTEJebZvmRuj4A=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq6IcRbkgj5+sEUFU82Fh7Z12mvQB9YzCAJXzUZ
- D7qB8ecMp+JAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCauiHEQAKCRAFnS7L/zaE
- w1VSEACOB2FBLuE+dBJtiy/iR+H9gW7LCvnBNCo6RFL4xvyaeyXPMEeVoMlEExwZHpVhvi3TqI5
- A89R86/RNeDikeoX6UCB0i7aEoNOT667qedgxVQZnqjryheeh11ep70kBwugVTgrW+ATZHPrYTF
- sl4QOzwyKeIDkUcaxq12Nap6EKDNDZA7O6kBWrIWt2KavlOAzK3Q1Ep/0umqPkIVBAgXvKk0SCf
- uCFE5bAc90sOMngfBHPh1YaV+fRTR2YYgAzsHaPNjpFxa6mIQnD6V7HV02RpL7mi8tmazXQduGY
- gG/7Epy4lbmkJYGwWB2uXx0BWt2pDlTc4x0xgc6dsp1d1OFiVKuD2fE+kr/E8yGmqFfdyd8zwTg
- 1/yhSUQ4Am5OgvgnQuzjSisHTgwl9LwEHL97pSE0aYDQ7xOnBLgG+P/gfrQ9z6PSuG2niqsxViM
- AT9de6KTmJpOSIG8EpHPgNokIpE1/LuM9VrpBYAugWGG83ovwNibxB+6Yjis4PdzTswZtApRlSP
- LDac2Qt8Yi3FLrBcQKRgdo2TgCwSniX6G6wB3wkFoKl84kZNjcj7wdwJxqEbHf+wS02MwVlC81E
- Pv8DebsR+RMZ2w1039/wjCImGFeSe+q/HfcOWTaQUlHZ/hNX7b9paltWF8YPIcNWRJxIruqYWTH
- EiFFQKy+WI5AVbw==
+ bh=r6QbQj8Ax9PQvoHE2LMYLkSa8l18ETTwNCg83EIkJhI=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq6IcR2aAmLu3amjGoeJXIZIPPfPqQDE6LIOwWA
+ btDZYsAjv2JAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCauiHEQAKCRAFnS7L/zaE
+ w00rD/9xLjTw7C+3m68uzxaax+mBVyMZOuJu/IWPxLSCqWpCZ4K1eLJ86txLdpJ2fOgH1wsSW8p
+ 7Z4oZtH4Ib9GZsAx6UGW5cUQAcjRoQVVKwdCOUETR/R0u6YlzjQV3BmLZQfmfn3sFrETFu7An+v
+ Tn59e3WNV462LwO4vij19gYzNVO768tJPkTeaULoT0ikXDPxt2CxmHAWF0/+dQey3KbYBnoYICD
+ fWtu34Tw7XQT9NjRv/e3xiUFClnErrCkxWsAB/wwBMHkoKYSdfb/Ju9SbhprsFjt1R0w+kQPv6N
+ sPuqxtfMk0YhiR1kFxzM1z9hk1iDxov3ie/O96W/9EZPc5ud3UOAdBfZGCzmy9nVFRjnyOlBF1F
+ gY4xgWoWSObk7SMwT7U5qba/hGVPMwsCwv/93dir51OOjWtw/MBmM4WMgPUV9T5iOnMns0AMrek
+ 14MgFHgixi4TXA3fr8L1OkS5uOmzIG5+1Vc0Fm7iXIcygpJUfAGvPUJbIfq1un/rYBDqscoSgAZ
+ hMNJLZH/hdJ47t0NjckgF656u6GPL/uU/8EDC31goGykqzZAXmY13jTqLlIC7S800JCJQlF/QWd
+ btTQ1LegngdfbM92K9wDknZ1dOWYGg/at5Z+xpoKNnFhpA7bJTCyzHkGp7tHCuUdUc0FkbsDBsZ
+ BVUMyjbxEJqXJ3Q==
 X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA1MSBTYWx0ZWRfX+cpxf9/EJqoH
- lvsUnKdmal+9QjIf5UD/WQZJKMZ7tDDpKkFx1gxma9j+7bgrCrfxl3coSLqBJeQNLdzCfWbxr9u
- slPwA5nHAIMPGT6x4Sx77h3zugwFaZH7pfr0BDoRk1rDyOY8xi+Wb2CO18uOcAqS7iw3hwcx/Nz
- JDehhCFUV09mi6m7qTakqmQCnGqGv9s7I7nUoTdFD+3xuJ9RTo6tft5FJB0siiJfct2faEs3MOc
- euumBv9b7/jAbE1c9Fk6Wbmz1fdeYfa7VGFquV82FhXGdsW7gOnzYjCbChA1ArHzWJfjF+qnLlM
- KHEME5CajlX9xfM/WYOckLZCSMIRjVPa2bV6swS/A8cl0gpZy/alQGGW7MKM7XHU9lXkkMlVv5H
- eIybna32cs/0hxL6Q/z7MT+t8TDAI7CRpnYnIlo9X9RL41lJUtqQhgsoe44v4yS6NwZeQnaCv0V
- xxtpbUnkdOGHPwjHEEQ==
-X-Proofpoint-GUID: mMlLCsZQdXqVNaMFmxvvsElQg0xv1Hsl
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA1MSBTYWx0ZWRfX4yZ/6O4PwntX
- Xdf7Fws0T2DE+aqSkBEbPskdS1rrmBKhQX7yfZGHApQzeAFaZ9omYxOk/RJv8XAiKp+yVPGcT+K
- ynS5TzQJhmt2Jh1ASSjRa0ZSe+J84A0=
-X-Proofpoint-ORIG-GUID: mMlLCsZQdXqVNaMFmxvvsElQg0xv1Hsl
-X-Authority-Analysis: v=2.4 cv=I9fw19gg c=1 sm=1 tr=0 ts=6ae88719 cx=c_pps
- a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Authority-Analysis: v=2.4 cv=SeZi5fRu c=1 sm=1 tr=0 ts=6ae8871b cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
- a=aEXDUd4ZCashyi2nXeEA:9 a=QEXdDO2ut3YA:10 a=TD8TdBvy0hsOASGTdmB-:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
+ a=nd_FmhSvACMRRlF81YkA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA1MSBTYWx0ZWRfXxUEWEB0WOAzR
+ P5R9zrT4+Jh0JsSTO8TBjnFWq1fkzF55ea7s4G8TeY55sqm9HaEidybzMAkQieg/UlFFnzEzWQX
+ VWUnj5GxF8TXKYTCU/LLQVzq88+pNkRuIz6wbw8CFYAt5A4UaNm6AewLqn/76GGaS2xeaXkHLGe
+ pjtuuz4wAUXoFC/Asipq1Fp4dP8+mhopqE9/rTurgxFWU62eqRHLxwsToiLqDTJqR58Il5k2XN8
+ 2NzLxOqCwFfP+//VEepfTaO5Ei2VfmzB5BDs9URvNlb9GpPleuJLRNOPbvQNU/SkovfEoe5d3/j
+ XgyJtTRKjaRsMxyImVq0ZoviYOOAr3earq20h6RNtX7DsMCC+FCmksL4zTBnkt8CR8O/6YECrqV
+ 6xKwY254sCFvRXm0v0R1EXkaAiEVUFYcb7HPpMlddgGPdMfsTtwrGN7Zld2hhDdUoiu2Fp63nu5
+ Tl0/NX/TmlCcR5SsvPQ==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA1MSBTYWx0ZWRfX64lB9r/x8kw/
+ 1hcibC0beYvovR2v5mMAiPYRZFeGnKL2P+7HuTiSW19ZkYqOJvzr88rN/kO/p3yATmlth7ETtac
+ NgKY8DQ3btYVSp1gLtSGq2pfkIl3i+k=
+X-Proofpoint-ORIG-GUID: RS4Ay7avYqG3KW5hv4gpHljuR9_htc23
+X-Proofpoint-GUID: RS4Ay7avYqG3KW5hv4gpHljuR9_htc23
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-02_03,2026-10-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 clxscore=1015 phishscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611020051
 
-If gpio_shared_make_adev() fails for one of the references of a shared
-GPIO entry, the auxiliary devices already registered for the preceding
-references are never removed. Similarly, when setting up an entry fails,
-the entries that were successfully set up before it keep their requested
-descriptors and proxy devices, as the caller does not call
-gpio_device_teardown_shared() when gpiochip_setup_shared() fails.
+Sashiko reported a pre-existing issue with the reference-counted
+auxiliary device being embedded in struct gpio_shared_ref. We
+unconditionally memset() the struct when setting up the GPIO shared
+proxy parent while there may still be references to it held by users.
 
-Make gpiochip_setup_shared() all-or-nothing. Have
-gpio_shared_setup_entry() undo its own partial work: free the descriptor
-and remove only the auxiliary devices of the references that precede the
-failed one, so that no device is removed that was never registered. On
-failure of an entry, tear down the previously completed entries in
-reverse order using the same helper as the regular removal path.
+While in practice this would never happen and sashiko seems to have
+confused the parent auxiliary device and the separately allocated struct
+device embedded in struct gpio_device, it's still a bad pattern and
+could lead to memory corruption if a user deliberately took reference to
+the auxiliary device via one of the lookup functions and kept it over
+the GPIO parent's teardown.
 
-Fixes: a060b8c511ab ("gpiolib: implement low-level, shared GPIO support")
+Move the auxiliary device struct out of the shared reference structure
+and allocate its memory separately on proxy setup.
+
+Since we're already touching that field: change the name to something
+more meaningful: it's more important to point out this is the proxy
+device instead of indicating its type in the name.
+
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 ---
- drivers/gpio/gpiolib-shared.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ drivers/gpio/gpiolib-shared.c | 69 +++++++++++++++++++++++++++----------------
+ 1 file changed, 43 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
-index c9500c2b904ca53dd1e3cfe1bdb921d767d18b3d..6b183864933870e54780715c4dd9179faf800d09 100644
+index 6b183864933870e54780715c4dd9179faf800d09..9d73a02e998909746f5216f40dfe4d82f7be9e1c 100644
 --- a/drivers/gpio/gpiolib-shared.c
 +++ b/drivers/gpio/gpiolib-shared.c
-@@ -591,6 +591,9 @@ static int gpio_shared_setup_entry(struct gpio_chip *gc,
- 		ret = gpio_shared_make_adev(gdev, entry, ref);
- 		if (ret) {
- 			gpiod_free_commit(desc);
-+			list_for_each_entry_continue_reverse(ref, &entry->refs, list)
-+				gpio_shared_remove_adev(&ref->adev);
-+
- 			return ret;
- 		}
+@@ -35,11 +35,10 @@ struct gpio_shared_ref {
+ 	/* GPIO flags this consumer uses for the request. */
+ 	enum gpiod_flags flags;
+ 	char *con_id;
+-	int dev_id;
+ 	/* Protects the auxiliary device struct and the lookup table. */
+ 	struct mutex lock;
+ 	struct lock_class_key lock_key;
+-	struct auxiliary_device adev;
++	struct auxiliary_device *proxy_dev;
+ 	struct gpiod_lookup_table *lookup;
+ 	bool is_reset_gpio;
+ };
+@@ -94,10 +93,6 @@ static struct gpio_shared_ref *gpio_shared_make_ref(struct fwnode_handle *fwnode
+ 			return NULL;
  	}
-@@ -598,6 +601,13 @@ static int gpio_shared_setup_entry(struct gpio_chip *gc,
+ 
+-	ref->dev_id = ida_alloc(&gpio_shared_ida, GFP_KERNEL);
+-	if (ref->dev_id < 0)
+-		return NULL;
+-
+ 	ref->flags = flags;
+ 	ref->con_id = no_free_ptr(con_id_cpy);
+ 	ref->fwnode = fwnode;
+@@ -306,31 +301,43 @@ static int gpio_shared_of_scan(void)
+ }
+ #endif /* CONFIG_OF */
+ 
+-static void gpio_shared_adev_release(struct device *dev)
++static void gpio_shared_proxy_dev_release(struct device *dev)
+ {
++	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+ 
++	ida_free(&gpio_shared_ida, adev->id);
++	kfree(adev);
+ }
+ 
+-static int gpio_shared_make_adev(struct gpio_device *gdev,
+-				 struct gpio_shared_entry *entry,
+-				 struct gpio_shared_ref *ref)
++static int gpio_shared_make_proxy_dev(struct gpio_device *gdev,
++				      struct gpio_shared_entry *entry,
++				      struct gpio_shared_ref *ref)
+ {
+-	struct auxiliary_device *adev = &ref->adev;
+-	int ret;
++	struct auxiliary_device *adev;
++	int ret, id;
+ 
+-	guard(mutex)(&ref->lock);
++	adev = kzalloc_obj(*adev);
++	if (!adev)
++		return -ENOMEM;
+ 
+-	memset(adev, 0, sizeof(*adev));
++	id = ida_alloc(&gpio_shared_ida, GFP_KERNEL);
++	if (id < 0) {
++		kfree(adev);
++		return id;
++	}
+ 
+-	adev->id = ref->dev_id;
++	adev->id = id;
+ 	adev->name = "proxy";
+ 	adev->dev.parent = gdev->dev.parent;
+ 	adev->dev.platform_data = entry;
+-	adev->dev.release = gpio_shared_adev_release;
++	adev->dev.release = gpio_shared_proxy_dev_release;
+ 
+ 	ret = auxiliary_device_init(adev);
+-	if (ret)
++	if (ret) {
++		ida_free(&gpio_shared_ida, id);
++		kfree(adev);
+ 		return ret;
++	}
+ 
+ 	ret = auxiliary_device_add(adev);
+ 	if (ret) {
+@@ -341,6 +348,10 @@ static int gpio_shared_make_adev(struct gpio_device *gdev,
+ 	pr_debug("Created an auxiliary GPIO proxy %s for GPIO device %s\n",
+ 		 dev_name(&adev->dev), gpio_device_get_label(gdev));
+ 
++	scoped_guard(mutex, &ref->lock) {
++		ref->proxy_dev = adev;
++	}
++
  	return 0;
  }
  
-+static bool gpio_shared_entry_needs_setup(struct gpio_device *gdev,
-+					  struct gpio_shared_entry *entry)
-+{
-+	return device_match_fwnode(&gdev->dev, entry->fwnode) &&
-+	       list_count_nodes(&entry->refs) > 1;
-+}
-+
- int gpiochip_setup_shared(struct gpio_chip *gc)
+@@ -480,7 +491,7 @@ int gpio_shared_add_proxy_lookup(struct device *consumer, struct fwnode_handle *
+ 			char *key __free(kfree) =
+ 				kasprintf(GFP_KERNEL,
+ 					  KBUILD_MODNAME ".proxy.%u",
+-					  ref->adev.id);
++					  ref->proxy_dev->id);
+ 			if (!key)
+ 				return -ENOMEM;
+ 
+@@ -511,10 +522,17 @@ int gpio_shared_add_proxy_lookup(struct device *consumer, struct fwnode_handle *
+ 	return -ENOENT;
+ }
+ 
+-static void gpio_shared_remove_adev(struct auxiliary_device *adev)
++static void gpio_shared_remove_proxy_dev(struct gpio_shared_ref *ref)
  {
- 	struct gpio_device *gdev = gc->gpiodev;
-@@ -624,15 +634,18 @@ int gpiochip_setup_shared(struct gpio_chip *gc)
- 	 * exposing shared pins. Find them and create the proxy devices.
- 	 */
- 	list_for_each_entry(entry, &gpio_shared_list, list) {
--		if (!device_match_fwnode(&gdev->dev, entry->fwnode))
--			continue;
--
--		if (list_count_nodes(&entry->refs) <= 1)
-+		if (!gpio_shared_entry_needs_setup(gdev, entry))
- 			continue;
- 
- 		ret = gpio_shared_setup_entry(gc, entry);
--		if (ret)
-+		if (ret) {
-+			list_for_each_entry_continue_reverse(entry, &gpio_shared_list, list) {
-+				if (gpio_shared_entry_needs_setup(gdev, entry))
-+					gpio_shared_teardown_entry(gdev, entry);
-+			}
+-	auxiliary_device_delete(adev);
+-	auxiliary_device_uninit(adev);
++	struct auxiliary_device *proxy;
 +
- 			return ret;
-+		}
- 	}
++	scoped_guard(mutex, &ref->lock) {
++		proxy = ref->proxy_dev;
++		ref->proxy_dev = NULL;
++	}
++
++	auxiliary_device_delete(proxy);
++	auxiliary_device_uninit(proxy);
+ }
  
- 	return 0;
+ static void gpio_shared_teardown_entry(struct gpio_device *gdev,
+@@ -534,7 +552,7 @@ static void gpio_shared_teardown_entry(struct gpio_device *gdev,
+ 			ref->lookup = NULL;
+ 		}
+ 
+-		gpio_shared_remove_adev(&ref->adev);
++		gpio_shared_remove_proxy_dev(ref);
+ 	}
+ }
+ 
+@@ -588,11 +606,11 @@ static int gpio_shared_setup_entry(struct gpio_chip *gc,
+ 			 fwnode_get_name(ref->fwnode) ?: "(no fwnode)",
+ 			 ref->con_id ?: "(none)");
+ 
+-		ret = gpio_shared_make_adev(gdev, entry, ref);
++		ret = gpio_shared_make_proxy_dev(gdev, entry, ref);
+ 		if (ret) {
+ 			gpiod_free_commit(desc);
+ 			list_for_each_entry_continue_reverse(ref, &entry->refs, list)
+-				gpio_shared_remove_adev(&ref->adev);
++				gpio_shared_remove_proxy_dev(ref);
+ 
+ 			return ret;
+ 		}
+@@ -617,7 +635,7 @@ int gpiochip_setup_shared(struct gpio_chip *gc)
+ 
+ 	list_for_each_entry(entry, &gpio_shared_list, list) {
+ 		list_for_each_entry(ref, &entry->refs, list) {
+-			if (gdev->dev.parent == &ref->adev.dev) {
++			if (ref->proxy_dev && gdev->dev.parent == &ref->proxy_dev->dev) {
+ 				/*
+ 				 * This is a shared GPIO proxy. Mark its
+ 				 * descriptor as such and return here.
+@@ -752,7 +770,6 @@ static void gpio_shared_drop_ref(struct gpio_shared_ref *ref)
+ 	mutex_destroy(&ref->lock);
+ 	lockdep_unregister_key(&ref->lock_key);
+ 	kfree(ref->con_id);
+-	ida_free(&gpio_shared_ida, ref->dev_id);
+ 	fwnode_handle_put(ref->fwnode);
+ 	kfree(ref);
+ }
 
 -- 
 2.47.3
