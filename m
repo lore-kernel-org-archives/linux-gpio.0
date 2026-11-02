@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793636269;
-	b=ieUHLZavsJDXfFANvYMv17dDuQQnyuYxwmD6FctY+Ga3wZEc6JId1+4zQbAQiBvIa+gE
-	 VAtCbztRxy4//c12naudeROJJaC1zQ6LdrByKDMtCwMwrwn2eNBaf6dfBa5F/z/mdnm7j
-	 MMJnDxdQ4pzS0ckWIVXef5hr4zNHMKvB4EbbxPLqLjGPy/ulSstQZfW/bBWIes+DdB/+d
-	 nP2FUfvDmBJWiDdEzcQG+7I9WRZ8luaHPhc0t7vkG9nOPGiTE6+3TRCSUuiONeiG77tpT
-	 M2W4jXYSrk7llLddfX/Y6aj8jUCV5/AjJjeqXEFggrWQDUTbKwC8hlGPMge8fga52Nw==
+	t=1793636272;
+	b=kjnkFlnAuQpAlCRUKQ+lgGbjNAylRuWQn9W1qqm46zBuMOL2oZ+e4PGszM3QDETS/M/W
+	 s2soiR9ZfpZc+1ck0oHPt8O3ehjRDH+7KKdpGmNd7YUbXLcp3PLfgpGX7muLGSaHllWDS
+	 WUwLH///hIdRFT6e1bcKYosdGSXgpcqAk/JXrWkPzthCeHZCjgE0jkI24xEh0kDhR9dWZ
+	 J5m3lJZlihaWAHYNZcHf1P8mp6mC82548SQqRY4DnNZSPBn1l53NuP06+SFqfD6B+wCV8
+	 sXYNgL4FhlL/58B/o4HGyyRltCURVfuHeLbcPqWOz8l0EryWfUlI7Ae0Zla8ptP4CHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793636269;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793636272;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=xJVMGPqO96EnBKAc8+vZ6sT3tQ0xAGK6pqjbscnGbB0=;
-	b=JnOYeb12Brf+/Ck+pktTqXx+19EjSNqdKu2T4qMbRu9ZpGf5bqPtfWeApoHpVg54d6HV
-	 WUdbRlQbgXcgMWAtEzKi5rz4sd0f1fl5M9vJq9C1dMYLdROsrc5YyRoRu1Ujoeck+PEu9
-	 CrscsA2XCVgljXdrSW7qy2Gkui/iIYl7bnJi8p79JLHZtHQYLb2yG0mcFMNirFpgt9MmP
-	 B3l9V1+E6j3w0SrKXiaGtds0SU3F4dfNi+fph13+HmmghZVDeiZEyND2cyHBq12xpxRbs
-	 zubRQ69p76Kb+6rvm7tcCYkHFiOdeAOAZazYNsNnI04eP6AxTqx3jBS/rnvnA0zIWVA==
+	bh=5ZG0aSxZtvp5HOLn4tluFrSC0UwwVprOmRcg6hA6TV8=;
+	b=mZaUgSzArMZdgJoptAIgWjO9c28WV+ym++DbPf1QZ9xhujB5JQTx0oQMDJwEIOxWG48i
+	 q+HrZrsNoOFCaQhlhxL9qkxgojYiQABTe4Cqei0SISdb/DP20ubDotIVwf5YvXuvTo6kv
+	 MTGqb34dCPQJEx+rSsUOsqR2V4UWZCPnKjhfZjBwM/lXmp42tOMEWB2NOYjWz2u0wI308
+	 R4532hoQU5hx655YBdOCSwFeZVUJfiFSWR1i+Cpx6Q3AFWFl5KFnZ0jjm/C1+g5qoNHRy
+	 KV0SaN+yzH8KxWjWdNWuV9z6hPIMohkd1oa8ABplSj0BfIpqrcwTypCVsQ2y7eJTf7w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eamaLDes;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CyZVfmlA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97169608555F;
-	Mon,  2 Nov 2026 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9AC609620F;
+	Mon,  2 Nov 2026 16:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eamaLDes
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD921F00A17;
-	Mon,  2 Nov 2026 16:17:45 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CyZVfmlA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A431F00A16;
+	Mon,  2 Nov 2026 16:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793636268;
-	bh=xJVMGPqO96EnBKAc8+vZ6sT3tQ0xAGK6pqjbscnGbB0=;
+	s=k20260515; t=1793636271;
+	bh=5ZG0aSxZtvp5HOLn4tluFrSC0UwwVprOmRcg6hA6TV8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eamaLDes6pJCRqtDBhAqjzbsoDaQMIz+zhvnG+rqVVCZlWB1pZ9AY/XgrmbpIiy5r
-	 t+oh5FqykvSgCy6aQaxL3mP5kRGtkvies2KIgRx+9VfBrzyZ7tOWVG9HxAilrLXyjI
-	 WzZ2rREAagPClJg64HF0WrSM7SwvQMObXJ63NETs4Fk4yyTORjh4ICc94IIZ3XiPEs
-	 SOc/tR0t8XcVGiZRlsPLsCnHx8Jd6Kw8mGnnOSD0Mcvmh8l2oybx4npk+Tm0mbCIoo
-	 Fl5hzWyd0nR0WphDr/qGAUcLuQhr//iujvFo4QD1nbAFgXwOspfKmm8i/Kbkbv7x/a
-	 2+a6XXZYmOpDQ==
+	b=CyZVfmlAmKL1QKOzunpK8/aVLCZXONsn825+MmVrMur140un8JrARd+vAoRjW2XNg
+	 HMYf0IvrfUXHdJzdCZ4A8D4HvxPdDUU3o2Hk4xi9WGM3ph/XLqnQPXo7VI4DfsQxkP
+	 6Kr4wB8HNYj+0ZOJSWl89sX4VQLA7VxoTHi/WE2batjTlbOEQwLhyH55wGhdTaYVAx
+	 VEYwE7Ic3d8cHWhlU+D77n2HXjgly9lMz3V3tPw2rWk8pr9ADORDvk4kb/8S1hQzlm
+	 uzdwHSZZ2Ifka3EwwJaKUl7pRgPjt2ZREMW3TuqAhrntp3zWPBYqUBOrYMW1ARmRRx
+	 Pjbv0wmkmJHNw==
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
@@ -55,9 +55,9 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	linux-gpio@vger.kernel.org,
 	tzungbi@kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH v15 1/4] revocable: Revocable resource management
-Date: Tue,  3 Nov 2026 00:17:06 +0800
-Message-ID: <20261102161710.24076-2-tzungbi@kernel.org>
+Subject: [PATCH v15 2/4] revocable: Add KUnit test cases
+Date: Tue,  3 Nov 2026 00:17:07 +0800
+Message-ID: <20261102161710.24076-3-tzungbi@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261102161710.24076-1-tzungbi@kernel.org>
 References: <20261102161710.24076-1-tzungbi@kernel.org>
@@ -72,1236 +72,752 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The "revocable" mechanism is a synchronization primitive designed to
-manage safe access to resources that can be asynchronously removed or
-invalidated.  Its primary purpose is to prevent Use-After-Free (UAF)
-errors when interacting with resources whose lifetimes are not
-guaranteed to outlast their consumers.
+Add KUnit test cases for the revocable API.
 
-This is particularly useful in systems where resources can disappear
-unexpectedly, such as those provided by hot-pluggable devices like
-USB.  When a consumer holds a reference to such a resource, the
-underlying device might be removed, causing the resource's memory to
-be freed.  Subsequent access attempts by the consumer would then lead
-to UAF errors.
+The test cases cover the following scenarios:
 
-Revocable addresses this by providing a form of "weak reference" and
-a controlled access method.  It allows a resource consumer to safely
-attempt to access the resource.  The mechanism guarantees that any
-access granted is valid for the duration of its use.  If the resource
-has already been revoked (i.e., freed), the access attempt will fail
-safely, typically by returning NULL, instead of causing a crash.
-
-It uses a provider/consumer model built on Sleepable RCU (SRCU) to
-guarantee safe memory access:
-
-- A resource provider, such as a driver for a hot-pluggable device,
-  initializes a struct revocable with a pointer to the resource.
-  The provider handle can either be embedded in another structure
-  or dynamically allocated on the heap.
-
-- A resource consumer that wants to access the resource allocates a
-  struct revocable_handle containing a reference to the provider.
-
-- To access the resource, the consumer uses revocable_try_access().
-  This function enters an SRCU read-side critical section and returns
-  the pointer to the resource.  If the provider has already freed the
-  resource, it returns NULL.  After use, the consumer calls
-  revocable_withdraw_access() to exit the SRCU critical section.  There
-  are some macro level helpers for doing that.
-
-  The API provides the following contract:
-
-  - revocable_try_access() can be safely called from both process and
-    atomic contexts.
-  - It is permitted to sleep within the critical section established
-    between revocable_try_access() and revocable_withdraw_access().
-  - revocable_try_access() and the matching revocable_withdraw_access()
-    must occur in the same context.  For example, it is illegal to
-    invoke revocable_withdraw_access() in an irq handler if the matching
-    revocable_try_access() was invoked in process context.
-
-- When the provider needs to remove the resource, it calls
-  revocable_revoke().  This function sets the internal resource
-  pointer to NULL and then calls synchronize_srcu() to wait for all
-  current readers to finish before the resource can be completely torn
-  down.
+- Basic: Verifies that a consumer can successfully access the resource.
+- Revocation: Verifies that after the provider revokes the resource,
+  the consumer correctly receives a NULL pointer on a subsequent access.
+- Try Access Macro: Same as "Revocation" but uses the macro level
+  helpers.
+- Concurrent Access: Verifies multiple threads can access the resource.
 
 Tested-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
 ---
 Test:
-$ make O=build SPHINXDIRS=driver-api/driver-model/ htmldocs
-$ python3 -m http.server --directory \
-        build/Documentation/output/driver-api/driver-model/
+$ ./tools/testing/kunit/kunit.py run \
+        --kconfig_add CONFIG_REVOCABLE_KUNIT_TEST=y \
+        revocable_test
+
+$ ./tools/testing/kunit/kunit.py run \
+        --kconfig_add CONFIG_REVOCABLE_KUNIT_TEST=y \
+        --kconfig_add CONFIG_PROVE_LOCKING=y \
+        --kconfig_add CONFIG_DEBUG_KERNEL=y \
+        --kconfig_add CONFIG_DEBUG_INFO=y \
+        --kconfig_add CONFIG_DEBUG_INFO_DWARF5=y \
+        --kconfig_add CONFIG_KASAN=y \
+        --kconfig_add CONFIG_DETECT_HUNG_TASK=y \
+        --kconfig_add CONFIG_DEFAULT_HUNG_TASK_TIMEOUT="10" \
+        --arch=x86_64 \
+        --make_options="C=1 W=1" \
+        revocable_test
 ---
 v15:
-- No changes.
+- Clean up kthreads and revocable handles on error paths in concurrent
+  access tests.
 
-v14: https://lore.kernel.org/all/20261011121246.162759-2-tzungbi@kernel.org
+v14: https://lore.kernel.org/all/20261011121246.162759-3-tzungbi@kernel.org
 - Add Tested-by tag.
-- Rename:
+- Change revocable API usages accordingly:
   - revocable_deinit() -> revocable_destroy().
   - revocable_handle_deinit() -> revocable_handle_destroy().
-- revocable_alloc() now holds 1 initial reference instead of 2.
-- revocable_revoke() only invalidates the resource;  it doesn't drop the
-  reference count now.  An explicit revocable_put() is required if the
-  handle is dynamically allocated.
+  - Adjust expected refcounts as revocable_alloc() holds 1 initial
+    reference and revocable_revoke() no longer drops a reference.
+- Refactor embedded test cases and concurrent access setup to reduce
+  code duplication.
+- Replace msleep() with completion/polling in concurrent access tests.
+- Hold task_struct references with get_task_struct() and stop threads
+  with kthread_stop_put() to prevent Use-After-Free.
 
-v13: https://lore.kernel.org/all/20260912123529.7951-2-tzungbi@kernel.org
-- Invert flag "embedded" -> "dynamic" so that "embedded" looks like
-  default one since it has concrete user.
-- Embedded allocation:
-  - Don't work with kref as it's meaningless to embedded provider
-    handle.
-  - Introduce revocable_deinit() to clean up.
-  - Cache 'dynamic' flag in struct revocable_handle so that it doesn't
-    rely on the memory from the container of struct revocable.
-- Dynamic allocation:
-  - Defer cleanup to a workqueue to prevent sleeping-in-atomic panics.
+v13: https://lore.kernel.org/all/20260912123529.7951-3-tzungbi@kernel.org
+- Explicitly indicate "dynamic" vs. "embedded" in test case names.
+- Embedded allocation
+  - Add tests and separate "stack" vs. "heap".
+  - Add tests on macros and concurrent access.
 
-v12: https://lore.kernel.org/all/20260908134223.13638-2-tzungbi@kernel.org
+v12: https://lore.kernel.org/all/20260908134223.13638-3-tzungbi@kernel.org
 - Rebase onto next-20260907.
-- Fix "struct revocable_consumer" -> "struct revocable_handle" in the
-  commit message.
-- Add "Documentation/driver-api/driver-model/revocable.rst" to
-  MAINTAINERS.
+- Fix path in MAINTAINERS: "drivers/base/revocable_test.c" ->
+  "drivers/base/test/revocable-test.c".
 
-v11: https://lore.kernel.org/all/20260513091043.6766-2-tzungbi@kernel.org
-- Add Reviewed-by and Tested-by tags.
+v11: https://lore.kernel.org/all/20260513091043.6766-3-tzungbi@kernel.org
+- Move the test to drivers/base/test/.
+- Add R-b tag.
 
-v10: https://lore.kernel.org/all/20260508105448.31799-2-tzungbi@kernel.org
-- Drop unused header.
-- Unify handling of embedded and dynamic allocation.
-- Rename:
-  - struct revocable_consumer -> struct revocable_handle.
-  - revocable_init() -> revocable_handle_init().
-  - revocable_deinit() -> revocable_handle_deinit().
-  - revocable_embed_init() -> revocable_init().
+v10: https://lore.kernel.org/all/20260508105448.31799-3-tzungbi@kernel.org
+- Merge revocable_test_try_access_macro*() cases.
+- Change revocable API usages accordingly.
 
-v9: https://lore.kernel.org/all/20260427135841.96266-2-tzungbi@kernel.org
-- Add revocable_embed_init() and revocable_embed_destroy() for embedded
-  resource provider per
-  https://lore.kernel.org/all/CAMRc=MehkJc-js=Wk9vBAcXOpazqjtYDLPUEhmbN8U7Wu2YpgA@mail.gmail.com
+v9: https://lore.kernel.org/all/20260427135841.96266-3-tzungbi@kernel.org
+- Add test cases for embedded resource provider.
 
-v8: https://lore.kernel.org/all/20260213092307.858908-2-tzungbi@kernel.org
+v8: https://lore.kernel.org/all/20260213092307.858908-3-tzungbi@kernel.org
 - Squash:
-  - fdeb3ca3cca8 revocable: Remove redundant synchronize_srcu() call
-  - 4d7dc4d1a62d revocable: Fix races in revocable_alloc() using RCU
-  - 377563ce0653 revocable: fix SRCU index corruption by requiring caller-provided storage
-- Rename macro names:
-  - REVOCABLE_TRY_ACCESS_WITH() -> revocable_try_access_with().
-  - REVOCABLE_TRY_ACCESS_SCOPED() -> revocable_try_access_with_scoped().
-- Rename terminologies as now normal users should only "see" provider
-  handles, using a shorter name for provider handle to echo the main
-  concept.
-  - struct revocable -> struct revocable_consumer.
-  - struct revocable_provider -> struct revocable.
-  - revocable_provider_alloc() -> revocable_alloc().
-  - revocable_provider_revoke() -> revocable_revoke().
-- New APIs:
-  - revocable_get().
-  - revocable_put().
-  - revocable_try_access_or_return_err().
-  - revocable_try_access_or_return().
-  - revocable_try_access_or_return_void().
-  - revocable_try_access_or_return_err_scoped().
-  - revocable_try_access_or_return_scoped().
-  - revocable_try_access_or_void_scoped().
-  - revocable_try_access_or_skip_scoped().
-- Add API contract that revocable_try_access() works from process and
-  atomic context while also allowing sleeping inside the critical
-  sections.
-- Add revocable.h to the DRIVER CORE entry in MAINTAINERS.
+  - c259cd7ea3c9 revocable: fix missing module license and description
+  - a243f7fb11fe revocable: Add KUnit test for provider lifetime races
+  - 988357628c2c revocable: Add KUnit test for concurrent access
+- Change accordingly due to its dependency "revocable: Revocable resource
+  management" changes.
 
-v7: https://lore.kernel.org/all/20260116080235.350305-2-tzungbi@kernel.org
+v7: https://lore.kernel.org/all/20260116080235.350305-3-tzungbi@kernel.org
 - "2025" -> "2026" in copyright.
-- Documentation/
-  - Rephrase section "Revocable vs. Devres (devm)".
-  - Include sections for struct revocable_provider and struct revocable.
-- Minor rename: "revocable" -> "access_rev" for DEFINE_FREE().
-- Add Acked-by tag.
+- Rename the test name "macro" -> "try_access_macro".
 
-v6: https://lore.kernel.org/all/20251106152330.11733-2-tzungbi@kernel.org
+v6: https://lore.kernel.org/all/20251106152330.11733-3-tzungbi@kernel.org
 - Rename REVOCABLE_TRY_ACCESS_WITH() -> REVOCABLE_TRY_ACCESS_SCOPED().
-- Add new REVOCABLE_TRY_ACCESS_WITH().
-- Remove Acked-by tags as the API names changed a bit.
+- Add tests for new REVOCABLE_TRY_ACCESS_WITH().
 
-v5: https://lore.kernel.org/all/20251016054204.1523139-2-tzungbi@kernel.org
+v5: https://lore.kernel.org/all/20251016054204.1523139-3-tzungbi@kernel.org
 - No changes.
 
-v4: https://lore.kernel.org/all/20250923075302.591026-2-tzungbi@kernel.org
-- Rename:
-  - revocable_provider_free() -> revocable_provider_revoke().
-  - REVOCABLE() -> REVOCABLE_TRY_ACCESS_WITH().
-  - revocable_release() -> revocable_withdraw_access().
-- rcu_dereference() -> srcu_dereference() to fix a warning from lock debugging.
-- Move most docs to kernel-doc, include them in Documentation/, and modify the
-  commit message accordingly.
-- Fix some doc errors.
-- Add Acked-by tags.
+v4: https://lore.kernel.org/all/20250923075302.591026-3-tzungbi@kernel.org
+- REVOCABLE() -> REVOCABLE_TRY_ACCESS_WITH().
+- revocable_release() -> revocable_withdraw_access().
 
-v3: https://lore.kernel.org/all/20250912081718.3827390-2-tzungbi@kernel.org
+v3: https://lore.kernel.org/all/20250912081718.3827390-3-tzungbi@kernel.org
 - No changes.
 
-v2: https://lore.kernel.org/all/20250820081645.847919-2-tzungbi@kernel.org
-- Rename "ref_proxy" -> "revocable".
-- Add introduction in kernel-doc format in revocable.c.
-- Add MAINTAINERS entry.
-- Add copyright.
-- Move from lib/ to drivers/base/.
-- EXPORT_SYMBOL() -> EXPORT_SYMBOL_GPL().
-- Add Documentation/.
-- Rename _get() -> try_access(); _put() -> release().
-- Fix a sparse warning by removing the redundant __rcu annotations.
-- Fix a sparse warning by adding __acquires() and __releases() annotations.
-
-v1: https://lore.kernel.org/all/20250814091020.1302888-2-tzungbi@kernel.org
+v2: https://lore.kernel.org/all/20250820081645.847919-3-tzungbi@kernel.org
+- New in the series.
 ---
- .../driver-api/driver-model/index.rst         |   1 +
- .../driver-api/driver-model/revocable.rst     | 440 ++++++++++++++++++
- MAINTAINERS                                   |  10 +
- drivers/base/Makefile                         |   2 +-
- drivers/base/revocable.c                      | 305 ++++++++++++
- include/linux/revocable.h                     | 220 +++++++++
- 6 files changed, 977 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/driver-api/driver-model/revocable.rst
- create mode 100644 drivers/base/revocable.c
- create mode 100644 include/linux/revocable.h
+ MAINTAINERS                        |   1 +
+ drivers/base/test/Kconfig          |   5 +
+ drivers/base/test/Makefile         |   2 +
+ drivers/base/test/revocable-test.c | 598 +++++++++++++++++++++++++++++
+ 4 files changed, 606 insertions(+)
+ create mode 100644 drivers/base/test/revocable-test.c
 
-diff --git a/Documentation/driver-api/driver-model/index.rst b/Documentation/driver-api/driver-model/index.rst
-index abeb4b36636b..cc90b20bb192 100644
---- a/Documentation/driver-api/driver-model/index.rst
-+++ b/Documentation/driver-api/driver-model/index.rst
-@@ -14,3 +14,4 @@ Driver Model
-    overview
-    platform
-    porting
-+   revocable
-diff --git a/Documentation/driver-api/driver-model/revocable.rst b/Documentation/driver-api/driver-model/revocable.rst
-new file mode 100644
-index 000000000000..49a6f44a18d7
---- /dev/null
-+++ b/Documentation/driver-api/driver-model/revocable.rst
-@@ -0,0 +1,440 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==============================
-+Revocable Resource Management
-+==============================
-+
-+Overview
-+========
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :doc: Overview
-+
-+Revocable vs. Devres (devm)
-+===========================
-+
-+Revocable and Devres address different problems in resource management:
-+
-+*   **Devres:** Primarily addresses **resource leaks**.  The lifetime of the
-+    resources is tied to the lifetime of the device.  The resource is
-+    automatically freed when the device is unbound.  This cleanup happens
-+    irrespective of any potential active users.
-+
-+*   **Revocable:** Primarily addresses **invalid memory access**,
-+    such as Use-After-Free (UAF).  It's an independent synchronization
-+    primitive that decouples consumer access from the resource's actual
-+    presence.  Consumers interact with a "revocable object" (an intermediary),
-+    not the underlying resource directly.  This revocable object persists as
-+    long as there are active references to it from consumer handles.
-+
-+**Key Distinctions & How They Complement Each Other:**
-+
-+1.  **Reference Target:** Consumers hold a reference to the *revocable object*,
-+    not the encapsulated resource itself.
-+
-+2.  **Resource Lifetime vs. Access:** The underlying resource's lifetime is
-+    independent of the number of references to the revocable object.  The
-+    resource can be freed at any point.  A common scenario is the resource
-+    being freed by `devres` when the providing device is unbound.
-+
-+3.  **Safe Access:** Revocable provides a safe way to attempt access.  Before
-+    using the resource, a consumer uses the Revocable API (e.g.,
-+    revocable_try_access()).  This function checks if the resource is still
-+    valid.  It returns a pointer to the resource only if it hasn't been
-+    revoked; otherwise, it returns NULL.  This prevents UAF by providing a
-+    clear signal that the resource is gone.
-+
-+4.  **Complementary Usage:** `devres` and Revocable work well together.
-+    `devres` can handle the automatic allocation and deallocation of a
-+    resource tied to a device.  The Revocable mechanism can be layered on top
-+    to provide safe access for consumers whose lifetimes might extend beyond
-+    the provider device's lifetime.  For instance, a userspace program might
-+    keep a character device file open even after the physical device has been
-+    removed.  In this case:
-+
-+    *   `devres` frees the device-specific resource upon unbinding.
-+    *   The Revocable mechanism ensures that any subsequent operations on the
-+        open file handle, which attempt to access the now-freed resource,
-+        will fail gracefully (e.g., revocable_try_access() returns NULL)
-+        instead of causing a UAF.
-+
-+In summary, `devres` ensures resources are *released* to prevent leaks, while
-+the Revocable mechanism ensures that attempts to *access* these resources are
-+done safely, even if the resource has been released.
-+
-+API and Usage
-+=============
-+
-+For Resource Providers
-+----------------------
-+
-+There are two ways to manage the resource provider handle (``struct revocable``):
-+
-+Embedded Allocation
-+~~~~~~~~~~~~~~~~~~~
-+
-+If the ``struct revocable`` can be embedded within a parent kernel object
-+(e.g., a foo_device struct), this method can be simpler as the lifetime is
-+inherently tied to the parent.
-+
-+*   **Initialization:** Declare a ``struct revocable`` within your parent
-+    structure and initialize it with revocable_init().
-+*   **Revocation:** Call revocable_revoke() when the resource is going away.
-+    This sets the resource pointer to NULL and waits for active readers to
-+    complete.
-+*   **Cleanup:** The owner *must* call revocable_destroy() during the parent
-+    object's teardown process.  This cleans up internal resources like the SRCU
-+    domain.  The memory for the ``struct revocable`` is freed when the parent
-+    object is freed.
-+
-+Dynamic Allocation
-+~~~~~~~~~~~~~~~~~~
-+
-+If the lifetime of the ``struct revocable`` is not tied to another specific
-+kernel object, or if multiple independent consumers need to hold references,
-+dynamic allocation should be used.
-+
-+*   **Creation:** Use revocable_alloc() to allocate and initialize with an
-+    initial reference count of 1.
-+*   **Ownership:** The caller owns the initial reference.  Additional
-+    references can be acquired via revocable_get().
-+*   **Revocation:** Call revocable_revoke() when the resource is going away.
-+    This sets the resource pointer to NULL and waits for active readers to
-+    complete.
-+*   **Cleanup:** Call revocable_put() to drop a reference when the handle is
-+    no longer needed.  The memory is freed automatically when the last
-+    reference is dropped.
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_init
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_destroy
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_alloc
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_get
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_put
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_revoke
-+
-+Example Usage (Embedded Allocation)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    struct foo_device {
-+        struct device dev;
-+        struct revocable rev;
-+        ...
-+    };
-+
-+    static void foo_device_release(struct device *dev)
-+    {
-+        struct foo_device *foo_dev = container_of(dev, struct foo_device, dev);
-+
-+        // Cleanup the embedded revocable internal state once no consumers remain.
-+        revocable_destroy(&foo_dev->rev);
-+        kfree(foo_dev);
-+    }
-+
-+    int foo_device_probe(struct device *dev)
-+    {
-+        struct foo_device *foo_dev;
-+        void *res;
-+        int ret;
-+
-+        foo_dev = kzalloc(sizeof(*foo_dev), GFP_KERNEL);
-+        if (!foo_dev)
-+            return -ENOMEM;
-+
-+        // Acquire the actual resource.
-+        res = ...(...);
-+
-+        // Initialize the embedded revocable.
-+        ret = revocable_init(&foo_dev->rev, res);
-+        if (ret) {
-+            kfree(foo_dev);
-+            return ret;
-+        }
-+
-+        device_initialize(&foo_dev->dev);
-+        foo_dev->dev.release = foo_device_release;
-+
-+        dev_set_drvdata(dev, foo_dev);
-+        // ... further device setup ...
-+        return 0;
-+    }
-+
-+    void foo_device_remove(struct device *dev)
-+    {
-+        struct foo_device *foo_dev = dev_get_drvdata(dev);
-+
-+        revocable_revoke(&foo_dev->rev);
-+        put_device(&foo_dev->dev);
-+    }
-+
-+    // Consumer side would use revocable_try_access_* macros on &foo_dev->rev.
-+
-+Example Usage (Dynamic Allocation)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    struct foo_device {
-+        struct revocable *rev;
-+        ...
-+    };
-+
-+    int foo_device_probe(struct device *dev)
-+    {
-+        struct foo_device *foo_dev;
-+        void *res;
-+        int ret;
-+
-+        foo_dev = devm_kzalloc(dev, sizeof(*foo_dev), GFP_KERNEL);
-+        if (!foo_dev)
-+            return -ENOMEM;
-+
-+        // Acquire the actual resource.
-+        res = ...(...);
-+
-+        // Allocate the revocable handle.
-+        foo_dev->rev = revocable_alloc(res);
-+        if (!foo_dev->rev)
-+            return -ENOMEM;
-+
-+        dev_set_drvdata(dev, foo_dev);
-+        // ... further device setup ...
-+        return 0;
-+    }
-+
-+    void foo_device_remove(struct device *dev)
-+    {
-+        struct foo_device *foo_dev = dev_get_drvdata(dev);
-+
-+        revocable_revoke(foo_dev->rev);
-+        revocable_put(foo_dev->rev);
-+    }
-+
-+    // Consumer side would use revocable_try_access_* macros on foo_dev->rev.
-+
-+For Resource Consumers
-+----------------------
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_handle
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_handle_init
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_handle_destroy
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_try_access
-+
-+.. kernel-doc:: drivers/base/revocable.c
-+   :identifiers: revocable_withdraw_access
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_with
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        revocable_try_access_with(rev, res);
-+        // Always check if the resource is valid.
-+        if (!res) {
-+            pr_warn("Resource is not available\n");
-+            return -EAGAIN;
-+        }
-+
-+        // 'res' is guaranteed to be valid until this function exits.
-+        do_something_with(res);
-+        return 0;
-+    } // revocable_withdraw_access() is automatically called here.
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_return_err
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        // Returns -ENXIO if access fails.
-+        revocable_try_access_or_return_err(rev, res, -ENXIO);
-+
-+        // 'res' is guaranteed to be valid if we reach here.
-+        do_something_with(res);
-+        return 0;
-+    } // revocable_withdraw_access() is automatically called here.
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_return
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        // Returns -ENODEV if access fails.
-+        revocable_try_access_or_return(rev, res);
-+
-+        // 'res' is guaranteed to be valid if we reach here.
-+        do_something_with(res);
-+        return 0;
-+    } // revocable_withdraw_access() is automatically called here.
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_return_void
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    void consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        // Returns earlier if access fails.
-+        revocable_try_access_or_return_void(rev, res);
-+
-+        // 'res' is guaranteed to be valid if we reach here.
-+        do_something_with(res);
-+    } // revocable_withdraw_access() is automatically called here.
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_with_scoped
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        revocable_try_access_with_scoped(rev, res) {
-+            // Always check if the resource is valid.
-+            if (!res) {
-+                pr_warn("Resource is not available\n");
-+                return -EAGAIN;
-+            }
-+
-+            // 'res' is valid for the rest of this block.
-+            do_something_with(res);
-+        }
-+        // revocable_withdraw_access() is automatically called here.
-+
-+        return 0;
-+    }
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_return_err_scoped
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        // Returns -ENXIO if access fails.
-+        revocable_try_access_or_return_err_scoped(rev, res, -ENXIO) {
-+            // 'res' is guaranteed to be valid in this block.
-+            do_something_with(res);
-+        }
-+        // revocable_withdraw_access() is automatically called here.
-+
-+        return 0; // Only reached if resource was accessed.
-+    }
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_return_scoped
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        // Returns -ENODEV if access fails.
-+        revocable_try_access_or_return_scoped(rev, res) {
-+            // 'res' is guaranteed to be valid in this block.
-+            do_something_with(res);
-+        }
-+        // revocable_withdraw_access() is automatically called here.
-+
-+        return 0; // Only reached if resource was accessed.
-+    }
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_return_void_scoped
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    void consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        // Returns earlier if access fails.
-+        revocable_try_access_or_return_void_scoped(rev, res) {
-+            // 'res' is guaranteed to be valid in this block.
-+            do_something_with(res);
-+        }
-+        // revocable_withdraw_access() is automatically called here.
-+    }
-+
-+.. kernel-doc:: include/linux/revocable.h
-+   :identifiers: revocable_try_access_or_skip_scoped
-+
-+Example Usage
-+~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    int consumer_use_resource(struct revocable *rev)
-+    {
-+        struct foo_resource *res;
-+
-+        revocable_try_access_or_skip_scoped(rev, res) {
-+            // This block is ONLY entered if 'res' is not NULL.
-+            do_something_with(res);
-+        }
-+        // revocable_withdraw_access() is automatically called here.
-+
-+        return 0;
-+    }
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 93abbb315065..a69407a9fefa 100644
+index a69407a9fefa..ba15f942ee07 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8161,6 +8161,7 @@ F:	include/linux/fwnode.h
- F:	include/linux/kobj*
- F:	include/linux/ksysfs.h
- F:	include/linux/property.h
-+F:	include/linux/revocable.h
- F:	include/linux/sys_soc.h
- F:	include/linux/sysfs.h
- F:	kernel/ksysfs.c
-@@ -23982,6 +23983,15 @@ F:	include/uapi/linux/rseq.h
- F:	kernel/rseq.c
- F:	tools/testing/selftests/rseq/
+@@ -23990,6 +23990,7 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
+ F:	Documentation/driver-api/driver-model/revocable.rst
+ F:	drivers/base/revocable.c
++F:	drivers/base/test/revocable-test.c
+ F:	include/linux/revocable.h
  
-+REVOCABLE RESOURCE MANAGEMENT
-+M:	Tzung-Bi Shih <tzungbi@kernel.org>
-+L:	driver-core@lists.linux.dev
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
-+F:	Documentation/driver-api/driver-model/revocable.rst
-+F:	drivers/base/revocable.c
-+F:	include/linux/revocable.h
-+
  RFKILL
- M:	Johannes Berg <johannes@sipsolutions.net>
- L:	linux-wireless@vger.kernel.org
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index 435710f643a5..43723162379e 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -6,7 +6,7 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
- 			   cpu.o firmware.o init.o map.o devres.o \
- 			   attribute_container.o transport_class.o \
- 			   topology.o container.o property.o cacheinfo.o \
--			   swnode.o faux.o
-+			   swnode.o faux.o revocable.o
- obj-$(CONFIG_AUXILIARY_BUS) += auxiliary.o
- obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
- obj-y			+= power/
-diff --git a/drivers/base/revocable.c b/drivers/base/revocable.c
+diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
+index 1ecf0791241a..80353db68a4f 100644
+--- a/drivers/base/test/Kconfig
++++ b/drivers/base/test/Kconfig
+@@ -23,3 +23,8 @@ config DRIVER_SWNODE_KUNIT_TEST
+ 	tristate "KUnit Tests for software node fw_devlink links" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+ 	default KUNIT_ALL_TESTS
++
++config REVOCABLE_KUNIT_TEST
++	tristate "KUnit tests for revocable" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
+diff --git a/drivers/base/test/Makefile b/drivers/base/test/Makefile
+index 9ced7bbd569f..cb74d3fff1ae 100644
+--- a/drivers/base/test/Makefile
++++ b/drivers/base/test/Makefile
+@@ -8,3 +8,5 @@ obj-$(CONFIG_DRIVER_PE_KUNIT_TEST) += property-entry-test.o
+ CFLAGS_property-entry-test.o += $(DISABLE_STRUCTLEAK_PLUGIN)
+ 
+ obj-$(CONFIG_DRIVER_SWNODE_KUNIT_TEST) += swnode-devlink-test.o
++
++obj-$(CONFIG_REVOCABLE_KUNIT_TEST) += revocable-test.o
+diff --git a/drivers/base/test/revocable-test.c b/drivers/base/test/revocable-test.c
 new file mode 100644
-index 000000000000..a7fcda012f3c
+index 000000000000..e317f9ffdfd8
 --- /dev/null
-+++ b/drivers/base/revocable.c
-@@ -0,0 +1,305 @@
++++ b/drivers/base/test/revocable-test.c
+@@ -0,0 +1,598 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright 2026 Google LLC
 + *
-+ * Revocable resource management
++ * KUnit tests for the revocable API.
++ *
++ * The test cases cover the following scenarios:
++ *
++ * - Basic: Verifies that a consumer can successfully access the resource.
++ *
++ * - Revocation: Verifies that after the provider revokes the resource,
++ *   the consumer correctly receives a NULL pointer on a subsequent access.
++ *
++ * - Try Access Macro: Same as "Revocation" but uses the macro level
++ *   helpers.
++ *
++ * - Concurrent Access: Verifies multiple threads can access the resource.
 + */
 +
-+#include <linux/kref.h>
++#include <kunit/test.h>
++
++#include <linux/completion.h>
++#include <linux/iopoll.h>
++#include <linux/kthread.h>
++#include <linux/refcount.h>
 +#include <linux/revocable.h>
-+#include <linux/slab.h>
-+#include <linux/srcu.h>
++#include <linux/sched/task.h>
 +
-+/**
-+ * DOC: Overview
-+ *
-+ * The "revocable" mechanism is a synchronization primitive designed to
-+ * manage safe access to resources that can be asynchronously removed or
-+ * invalidated.  Its primary purpose is to prevent Use-After-Free (UAF)
-+ * errors when interacting with resources whose lifetimes are not
-+ * guaranteed to outlast their consumers.
-+ *
-+ * This is particularly useful in systems where resources can disappear
-+ * unexpectedly, such as those provided by hot-pluggable devices like
-+ * USB.  When a consumer holds a reference to such a resource, the
-+ * underlying device might be removed, causing the resource's memory to
-+ * be freed.  Subsequent access attempts by the consumer would then lead
-+ * to UAF errors.
-+ *
-+ * Revocable addresses this by providing a form of "weak reference" and
-+ * a controlled access method.  It allows a resource consumer to safely
-+ * attempt to access the resource.  The mechanism guarantees that any
-+ * access granted is valid for the duration of its use.  If the resource
-+ * has already been revoked (i.e., freed), the access attempt will fail
-+ * safely, typically by returning NULL, instead of causing a crash.
-+ *
-+ * It uses a provider/consumer model built on Sleepable RCU (SRCU) to
-+ * guarantee safe memory access:
-+ *
-+ * - A resource provider, such as a driver for a hot-pluggable device,
-+ *   initializes a struct revocable with a pointer to the resource.
-+ *   The provider handle can either be embedded in another structure
-+ *   or dynamically allocated on the heap.
-+ *
-+ * - A resource consumer that wants to access the resource allocates a
-+ *   struct revocable_handle containing a reference to the provider.
-+ *
-+ * - To access the resource, the consumer uses revocable_try_access().
-+ *   This function enters an SRCU read-side critical section and returns
-+ *   the pointer to the resource.  If the provider has already freed the
-+ *   resource, it returns NULL.  After use, the consumer calls
-+ *   revocable_withdraw_access() to exit the SRCU critical section.  There
-+ *   are some macro level helpers for doing that.
-+ *
-+ *   The API provides the following contract:
-+ *
-+ *   - revocable_try_access() can be safely called from both process and
-+ *     atomic contexts.
-+ *   - It is permitted to sleep within the critical section established
-+ *     between revocable_try_access() and revocable_withdraw_access().
-+ *   - revocable_try_access() and the matching revocable_withdraw_access()
-+ *     must occur in the same context.  For example, it is illegal to
-+ *     invoke revocable_withdraw_access() in an irq handler if the matching
-+ *     revocable_try_access() was invoked in process context.
-+ *
-+ * - When the provider needs to remove the resource, it calls
-+ *   revocable_revoke().  This function sets the internal resource
-+ *   pointer to NULL and then calls synchronize_srcu() to wait for all
-+ *   current readers to finish before the resource can be completely torn
-+ *   down.
-+ */
-+
-+/**
-+ * revocable_init() - Initialize struct revocable.
-+ * @rev: The pointer of resource provider.
-+ * @res: The pointer of resource.
-+ *
-+ * This initializes a resource provider handle embedded within another struct.
-+ */
-+int revocable_init(struct revocable *rev, void *res)
++static int get_refcount(struct revocable *rev)
 +{
++	return refcount_read(&rev->kref.refcount);
++}
++
++static void _revocable_embedded_test_basic(struct kunit *test,
++					   struct revocable *rev)
++{
++	struct revocable_handle rh;
++	void *real_res = (void *)0x12345678, *res;
 +	int ret;
 +
-+	ret = init_srcu_struct(&rev->srcu);
-+	if (ret)
-+		return ret;
++	ret = revocable_init(rev, real_res);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++	KUNIT_EXPECT_FALSE(test, rev->dynamic);
 +
-+	rev->dynamic = false;
-+	RCU_INIT_POINTER(rev->res, res);
++	revocable_handle_init(rev, &rh);
++
++	res = revocable_try_access(&rh);
++	KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++	revocable_withdraw_access(&rh);
++
++	revocable_handle_destroy(&rh);
++	revocable_revoke(rev);
++	revocable_destroy(rev);
++}
++
++static void revocable_embedded_test_basic_stack(struct kunit *test)
++{
++	struct revocable rev;
++
++	_revocable_embedded_test_basic(test, &rev);
++}
++
++static void revocable_embedded_test_basic_heap(struct kunit *test)
++{
++	struct revocable *rev;
++
++	rev = kunit_kzalloc(test, sizeof(*rev), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, rev);
++
++	_revocable_embedded_test_basic(test, rev);
++}
++
++static void revocable_dynamic_test_basic(struct kunit *test)
++{
++	struct revocable *rev;
++	struct revocable_handle rh;
++	void *real_res = (void *)0x12345678, *res;
++
++	rev = revocable_alloc(real_res);
++	KUNIT_ASSERT_NOT_NULL(test, rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	KUNIT_EXPECT_TRUE(test, rev->dynamic);
++
++	revocable_handle_init(rev, &rh);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++
++	res = revocable_try_access(&rh);
++	KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++	revocable_withdraw_access(&rh);
++
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++	revocable_handle_destroy(&rh);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	revocable_revoke(rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	revocable_put(rev);
++}
++
++static void _revocable_embedded_test_revocation(struct kunit *test,
++						struct revocable *rev)
++{
++	struct revocable_handle rh;
++	void *real_res = (void *)0x12345678, *res;
++	int ret;
++
++	ret = revocable_init(rev, real_res);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++	KUNIT_EXPECT_FALSE(test, rev->dynamic);
++
++	revocable_handle_init(rev, &rh);
++
++	res = revocable_try_access(&rh);
++	KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++	revocable_withdraw_access(&rh);
++
++	revocable_revoke(rev);
++
++	res = revocable_try_access(&rh);
++	KUNIT_EXPECT_PTR_EQ(test, res, NULL);
++	revocable_withdraw_access(&rh);
++
++	revocable_handle_destroy(&rh);
++	revocable_destroy(rev);
++}
++
++static void revocable_embedded_test_revocation_stack(struct kunit *test)
++{
++	struct revocable rev;
++
++	_revocable_embedded_test_revocation(test, &rev);
++}
++
++static void revocable_embedded_test_revocation_heap(struct kunit *test)
++{
++	struct revocable *rev;
++
++	rev = kunit_kzalloc(test, sizeof(*rev), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, rev);
++
++	_revocable_embedded_test_revocation(test, rev);
++}
++
++static void revocable_dynamic_test_revocation(struct kunit *test)
++{
++	struct revocable *rev;
++	struct revocable_handle rh;
++	void *real_res = (void *)0x12345678, *res;
++
++	rev = revocable_alloc(real_res);
++	KUNIT_ASSERT_NOT_NULL(test, rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	KUNIT_EXPECT_TRUE(test, rev->dynamic);
++
++	revocable_handle_init(rev, &rh);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++
++	res = revocable_try_access(&rh);
++	KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++	revocable_withdraw_access(&rh);
++
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++	revocable_revoke(rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++
++	res = revocable_try_access(&rh);
++	KUNIT_EXPECT_PTR_EQ(test, res, NULL);
++	revocable_withdraw_access(&rh);
++
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++	revocable_handle_destroy(&rh);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	revocable_put(rev);
++}
++
++static int call_revocable_try_access_or_return_err(struct revocable *rev)
++{
++	void *res;
++
++	revocable_try_access_or_return_err(rev, res, -ENXIO);
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(revocable_init);
 +
-+/**
-+ * revocable_destroy() - Destroy struct revocable.
-+ * @rev: The pointer of resource provider.
-+ *
-+ * This destroys a resource provider handle embedded within another struct.
-+ */
-+void revocable_destroy(struct revocable *rev)
++static int call_revocable_try_access_or_return(struct revocable *rev)
 +{
-+	cleanup_srcu_struct(&rev->srcu);
++	void *res;
++
++	revocable_try_access_or_return(rev, res);
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(revocable_destroy);
 +
-+/**
-+ * revocable_alloc() - Allocate struct revocable.
-+ * @res: The pointer of resource.
-+ *
-+ * This allocates a resource provider handle with an initial reference count
-+ * of 1.  On success, the caller owns the initial reference and must call
-+ * revocable_put() to drop it when done.
-+ *
-+ * Additional references can be acquired and released with revocable_get()
-+ * and revocable_put().
-+ *
-+ * Return: The pointer of struct revocable.  NULL on errors.
-+ */
-+struct revocable *revocable_alloc(void *res)
++static void call_revocable_try_access_or_return_void(struct kunit *test,
++						     struct revocable *rev)
 +{
-+	struct revocable *rev;
++	void *res;
++
++	revocable_try_access_or_return_void(rev, res);
++	KUNIT_FAIL(test, "unreachable");
++}
++
++static int call_revocable_try_access_or_return_err_scoped(struct revocable *rev)
++{
++	void *res;
++
++	revocable_try_access_or_return_err_scoped(rev, res, -ENXIO) {}
++	return 0;
++}
++
++static int call_revocable_try_access_or_return_scoped(struct revocable *rev)
++{
++	void *res;
++
++	revocable_try_access_or_return_scoped(rev, res) {}
++	return 0;
++}
++
++static void call_revocable_try_access_or_return_void_scoped(struct kunit *test,
++							    struct revocable *rev)
++{
++	void *res;
++
++	revocable_try_access_or_return_void_scoped(rev, res) {}
++	KUNIT_FAIL(test, "unreachable");
++}
++
++static void revocable_embedded_test_try_access_macro(struct kunit *test)
++{
++	struct revocable rev_on_stack, *rev = &rev_on_stack;
++	void *real_res = (void *)0x12345678, *res;
 +	int ret;
++	bool accessed;
 +
-+	rev = kzalloc_obj(*rev);
-+	if (!rev)
-+		return NULL;
++	ret = revocable_init(rev, real_res);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++	KUNIT_EXPECT_FALSE(test, rev->dynamic);
 +
-+	ret = revocable_init(rev, res);
-+	if (ret) {
-+		kfree(rev);
-+		return NULL;
++	{
++		revocable_try_access_with(rev, res);
++		KUNIT_EXPECT_PTR_EQ(test, res, real_res);
 +	}
 +
-+	rev->dynamic = true;
-+	kref_init(&rev->kref);
-+	return rev;
-+}
-+EXPORT_SYMBOL_GPL(revocable_alloc);
++	accessed = false;
++	revocable_try_access_with_scoped(rev, res) {
++		KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++		accessed = true;
++	}
++	KUNIT_EXPECT_TRUE(test, accessed);
 +
-+/**
-+ * revocable_get() - Increment the reference count of the provider handle.
-+ * @rev: The pointer of resource provider.
-+ *
-+ * (Only for dynamically allocated provider handles)
-+ * This increments the reference count of @rev.
-+ */
-+void revocable_get(struct revocable *rev)
-+{
-+	if (!rev->dynamic)
-+		return;
-+	kref_get(&rev->kref);
-+}
-+EXPORT_SYMBOL_GPL(revocable_get);
++	revocable_revoke(rev);
 +
-+static void revocable_release_worker(struct work_struct *work)
-+{
-+	struct revocable *rev = container_of(work, typeof(*rev), release_work);
++	{
++		revocable_try_access_with(rev, res);
++		KUNIT_EXPECT_PTR_EQ(test, res, NULL);
++	}
++
++	accessed = false;
++	revocable_try_access_with_scoped(rev, res) {
++		KUNIT_EXPECT_PTR_EQ(test, res, NULL);
++		accessed = true;
++	}
++	KUNIT_EXPECT_TRUE(test, accessed);
++
++	ret = call_revocable_try_access_or_return_err(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENXIO);
++
++	ret = call_revocable_try_access_or_return(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENODEV);
++
++	call_revocable_try_access_or_return_void(test, rev);
++
++	ret = call_revocable_try_access_or_return_err_scoped(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENXIO);
++
++	ret = call_revocable_try_access_or_return_scoped(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENODEV);
++
++	call_revocable_try_access_or_return_void_scoped(test, rev);
++
++	accessed = false;
++	revocable_try_access_or_skip_scoped(rev, res)
++		accessed = true;
++	KUNIT_EXPECT_FALSE(test, accessed);
 +
 +	revocable_destroy(rev);
-+	kfree(rev);
 +}
 +
-+static void revocable_release(struct kref *kref)
++static void revocable_dynamic_test_try_access_macro(struct kunit *test)
 +{
-+	struct revocable *rev = container_of(kref, typeof(*rev), kref);
-+
-+	/*
-+	 * Defer cleanup to a process context safely, because the final
-+	 * kref_put() might happen in an atomic context which is unsafe for
-+	 * cleanup_srcu_struct().
-+	 */
-+	INIT_WORK(&rev->release_work, revocable_release_worker);
-+	schedule_work(&rev->release_work);
-+}
-+
-+/**
-+ * revocable_put() - Decrement the reference count of the provider handle.
-+ * @rev: The pointer of resource provider.
-+ *
-+ * (Only for dynamically allocated provider handles)
-+ * This drops a reference to the resource provider.  If it is the final
-+ * reference, revocable_release() will be called to free the handle and its
-+ * internal resources.
-+ */
-+void revocable_put(struct revocable *rev)
-+{
-+	if (!rev->dynamic)
-+		return;
-+	kref_put(&rev->kref, revocable_release);
-+}
-+EXPORT_SYMBOL_GPL(revocable_put);
-+
-+/**
-+ * revocable_revoke() - Revoke the managed resource.
-+ * @rev: The pointer of resource provider.
-+ *
-+ * This invalidates the resource by setting `(struct revocable *)->res` to NULL
-+ * to indicate the resource has gone.
-+ */
-+void revocable_revoke(struct revocable *rev)
-+{
-+	rcu_assign_pointer(rev->res, NULL);
-+	synchronize_srcu(&rev->srcu);
-+}
-+EXPORT_SYMBOL_GPL(revocable_revoke);
-+
-+/**
-+ * revocable_handle_init() - Initialize struct revocable_handle.
-+ * @rev: The pointer of resource provider.
-+ * @rh: The pointer of resource_handle.
-+ *
-+ * This initializes a handle owned by the consumer.
-+ *
-+ * (Only for dynamically allocated provider handles)
-+ * This holds a reference to the resource provider.
-+ */
-+void revocable_handle_init(struct revocable *rev, struct revocable_handle *rh)
-+{
-+	rh->rev = rev;
-+	/*
-+	 * Cache @rev->dynamic so revocable_handle_destroy() does not need to
-+	 * dereference @rh->rev, which may already be freed if @rev is embedded.
-+	 */
-+	rh->dynamic = rev->dynamic;
-+
-+	if (!rh->dynamic)
-+		return;
-+
-+	kref_get(&rev->kref);
-+}
-+EXPORT_SYMBOL_GPL(revocable_handle_init);
-+
-+/**
-+ * revocable_handle_destroy() - Destroy struct revocable_handle.
-+ * @rh: The pointer of resource_handle.
-+ *
-+ * (Only for dynamically allocated provider handles)
-+ * This drops a reference to the resource provider.  If it is the final
-+ * reference, revocable_release() will be called to free the handle and its
-+ * internal resources.
-+ */
-+void revocable_handle_destroy(struct revocable_handle *rh)
-+{
-+	/*
-+	 * For an embedded @rh->rev, no kref is held, so the provider may free
-+	 * @rh->rev as soon as revocable_withdraw_access() exits the SRCU
-+	 * critical section.  Check the cached @rh->dynamic flag to avoid
-+	 * dereferencing a potentially freed @rh->rev.
-+	 */
-+	if (!rh->dynamic)
-+		return;
-+
-+	kref_put(&rh->rev->kref, revocable_release);
-+}
-+EXPORT_SYMBOL_GPL(revocable_handle_destroy);
-+
-+/**
-+ * revocable_try_access() - Try to access the resource.
-+ * @rh: The pointer of resource_handle.
-+ *
-+ * This tries to de-reference to the resource and enters a SRCU critical
-+ * section.
-+ *
-+ * The function is safe to be called from both process and atomic contexts.
-+ * While holding the access (i.e. before calling revocable_withdraw_access()),
-+ * the caller is allowed to sleep.
-+ *
-+ * Note that revocable_try_access() and the matching
-+ * revocable_withdraw_access() must occur in the same context.  For example, it
-+ * is illegal to invoke revocable_withdraw_access() in an irq handler if the
-+ * matching revocable_try_access() was invoked in process context.
-+ *
-+ * Return: The pointer to the resource.  NULL if the resource has gone.
-+ */
-+void *revocable_try_access(struct revocable_handle *rh)
-+	__acquires(&rh->rev->srcu)
-+{
-+	struct revocable *rev = rh->rev;
-+
-+	rh->idx = srcu_read_lock(&rev->srcu);
-+	return srcu_dereference(rev->res, &rev->srcu);
-+}
-+EXPORT_SYMBOL_GPL(revocable_try_access);
-+
-+/**
-+ * revocable_withdraw_access() - Stop accessing to the resource.
-+ * @rh: The pointer of resource_handle.
-+ *
-+ * Call this function to indicate the resource is no longer used.  It exits
-+ * the SRCU critical section.
-+ *
-+ * The function is safe to be called from both process and atomic contexts.
-+ *
-+ * Note that revocable_try_access() and the matching
-+ * revocable_withdraw_access() must occur in the same context.  For example, it
-+ * is illegal to invoke revocable_withdraw_access() in an irq handler if the
-+ * matching revocable_try_access() was invoked in process context.
-+ */
-+void revocable_withdraw_access(struct revocable_handle *rh)
-+	__releases(&rh->rev->srcu)
-+{
-+	struct revocable *rev = rh->rev;
-+
-+	srcu_read_unlock(&rev->srcu, rh->idx);
-+}
-+EXPORT_SYMBOL_GPL(revocable_withdraw_access);
-diff --git a/include/linux/revocable.h b/include/linux/revocable.h
-new file mode 100644
-index 000000000000..577ee1a8dc17
---- /dev/null
-+++ b/include/linux/revocable.h
-@@ -0,0 +1,220 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2026 Google LLC
-+ */
-+
-+#ifndef __LINUX_REVOCABLE_H
-+#define __LINUX_REVOCABLE_H
-+
-+#include <linux/cleanup.h>
-+#include <linux/kref.h>
-+#include <linux/srcu.h>
-+#include <linux/workqueue.h>
-+
-+/**
-+ * struct revocable - A handle for resource provider.
-+ * @srcu: The SRCU to protect the resource.
-+ * @res:  The pointer of resource.  It can point to anything.
-+ * @kref: The refcount for this handle.
-+ * @dynamic: Indicate if the handle is dynamically allocated.
-+ * @release_work: Work item for deferred cleanup in process context.
-+ *
-+ * Note: All members of this structure are intended to be opaque and should
-+ * not be accessed directly by the users.
-+ */
-+struct revocable {
-+	struct srcu_struct srcu;
-+	void __rcu *res;
-+	struct kref kref;
-+	bool dynamic;
-+	struct work_struct release_work;
-+};
-+
-+/**
-+ * struct revocable_handle - A handle for resource consumer.
-+ * @rev: The pointer of resource provider.
-+ * @idx: The index for the SRCU critical section.
-+ * @dynamic: Indicate if @rev is dynamically allocated.
-+ *
-+ * Note: All members of this structure are intended to be opaque and should
-+ * not be accessed directly by the users.
-+ */
-+struct revocable_handle {
 +	struct revocable *rev;
-+	int idx;
-+	bool dynamic;
++	void *real_res = (void *)0x12345678, *res;
++	int ret;
++	bool accessed;
++
++	rev = revocable_alloc(real_res);
++	KUNIT_ASSERT_NOT_NULL(test, rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	KUNIT_EXPECT_TRUE(test, rev->dynamic);
++
++	{
++		revocable_try_access_with(rev, res);
++		KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++		KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++	}
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++
++	accessed = false;
++	revocable_try_access_with_scoped(rev, res) {
++		KUNIT_EXPECT_PTR_EQ(test, res, real_res);
++		KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++		accessed = true;
++	}
++	KUNIT_EXPECT_TRUE(test, accessed);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++
++	revocable_revoke(rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++
++	{
++		revocable_try_access_with(rev, res);
++		KUNIT_EXPECT_PTR_EQ(test, res, NULL);
++		KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++	}
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++
++	accessed = false;
++	revocable_try_access_with_scoped(rev, res) {
++		KUNIT_EXPECT_PTR_EQ(test, res, NULL);
++		KUNIT_EXPECT_EQ(test, get_refcount(rev), 2);
++		accessed = true;
++	}
++	KUNIT_EXPECT_TRUE(test, accessed);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++
++	ret = call_revocable_try_access_or_return_err(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENXIO);
++
++	ret = call_revocable_try_access_or_return(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENODEV);
++
++	call_revocable_try_access_or_return_void(test, rev);
++
++	ret = call_revocable_try_access_or_return_err_scoped(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENXIO);
++
++	ret = call_revocable_try_access_or_return_scoped(rev);
++	KUNIT_EXPECT_EQ(test, ret, -ENODEV);
++
++	call_revocable_try_access_or_return_void_scoped(test, rev);
++
++	accessed = false;
++	revocable_try_access_or_skip_scoped(rev, res)
++		accessed = true;
++	KUNIT_EXPECT_FALSE(test, accessed);
++
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	revocable_put(rev);
++}
++
++struct test_concurrent_access_context {
++	struct completion started, enter;
++	struct task_struct *thread;
++
++	union {
++		/* Used by test provider. */
++		struct revocable *rev;
++
++		/* Used by test consumer. */
++		struct {
++			struct kunit *test;
++			struct completion entered, exit;
++			struct revocable_handle rh;
++			void *expected_res;
++		};
++	};
 +};
 +
-+/* For embedded provider handle. */
-+int revocable_init(struct revocable *rev, void *res);
-+void revocable_destroy(struct revocable *rev);
++static int test_concurrent_access_provider(void *data)
++{
++	struct test_concurrent_access_context *ctx = data;
 +
-+/* For dynamically allocated provider handle. */
-+struct revocable *revocable_alloc(void *res);
-+void revocable_get(struct revocable *rev);
-+void revocable_put(struct revocable *rev);
++	complete(&ctx->started);
 +
-+void revocable_revoke(struct revocable *rev);
++	if (wait_for_completion_interruptible(&ctx->enter))
++		return 0;
++	revocable_revoke(ctx->rev);
 +
-+void revocable_handle_init(struct revocable *rev, struct revocable_handle *rh);
-+void revocable_handle_destroy(struct revocable_handle *rh);
-+void *revocable_try_access(struct revocable_handle *rh)
-+	__acquires(&rh->rev->srcu);
-+void revocable_withdraw_access(struct revocable_handle *rh)
-+	__releases(&rh->rev->srcu);
++	return 0;
++}
 +
-+DEFINE_FREE(access_rev, struct revocable_handle *, if (_T) {
-+	revocable_withdraw_access(_T);
-+	revocable_handle_destroy(_T);
-+})
++static int test_concurrent_access_consumer(void *data)
++{
++	struct test_concurrent_access_context *ctx = data;
++	void *res;
 +
-+#define _revocable_try_access_with(_rev, _rh, _res)				\
-+	struct revocable_handle _rh;						\
-+	struct revocable_handle *__UNIQUE_ID(name) __free(access_rev) = &_rh;	\
-+										\
-+	revocable_handle_init(_rev, &_rh);					\
-+	_res = revocable_try_access(&_rh)
++	complete(&ctx->started);
 +
-+/**
-+ * revocable_try_access_with() - A helper for accessing revocable resource
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * The macro simplifies the access-release cycle for consumers, ensuring that
-+ * corresponding revocable_withdraw_access() and revocable_handle_destroy() are
-+ * called, even in the case of an early exit.
-+ *
-+ * It creates a local variable in the current scope.  @_res is populated with
-+ * the result of revocable_try_access().  Callers **must** check if @_res is
-+ * ``NULL`` before using it.  The revocable_withdraw_access() function is
-+ * automatically called when the scope is exited.
-+ *
-+ * Note: It shares the same issue with guard() in cleanup.h.  No goto statements
-+ * are allowed before the helper.  Otherwise, the compiler fails with
-+ * "jump bypasses initialization of variable with __attribute__((cleanup))".
-+ */
-+#define revocable_try_access_with(_rev, _res)					\
-+	_revocable_try_access_with(_rev, __UNIQUE_ID(name), _res)
++	if (wait_for_completion_interruptible(&ctx->enter))
++		return 0;
++	res = revocable_try_access(&ctx->rh);
++	KUNIT_EXPECT_PTR_EQ(ctx->test, res, ctx->expected_res);
 +
-+/**
-+ * revocable_try_access_or_return_err() - Variant of revocable_try_access_with()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ * @_err: The error code to return if resource is revoked.
-+ *
-+ * Similar to revocable_try_access_with() but returns from the current function
-+ * with @_err if the resource is revoked.  Callers don't need to check @_res for
-+ * ``NULL`` as this handles the revocation case by returning early.
-+ */
-+#define revocable_try_access_or_return_err(_rev, _res, _err)			\
-+	_revocable_try_access_with(_rev, __UNIQUE_ID(name), _res);		\
-+	if (!_res)								\
-+		return _err
++	complete(&ctx->entered);
 +
-+/**
-+ * revocable_try_access_or_return() - Variant of revocable_try_access_with()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * Similar to revocable_try_access_or_return_err() but returns -ENODEV if the
-+ * resource is revoked.
-+ */
-+#define revocable_try_access_or_return(_rev, _res)				\
-+	revocable_try_access_or_return_err(_rev, _res, -ENODEV)
++	wait_for_completion_interruptible(&ctx->exit);
++	revocable_withdraw_access(&ctx->rh);
 +
-+/**
-+ * revocable_try_access_or_return_void() - Variant of revocable_try_access_with()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * Similar to revocable_try_access_or_return_err() but returns void if the
-+ * resource is revoked.
-+ */
-+#define revocable_try_access_or_return_void(_rev, _res)				\
-+	_revocable_try_access_with(_rev, __UNIQUE_ID(name), _res);		\
-+	if (!_res)								\
-+		return
++	return 0;
++}
 +
-+#define _revocable_try_access_with_scoped(_rev, _rh, _label, _res)		\
-+	for (struct revocable_handle _rh,					\
-+			*__UNIQUE_ID(name) __free(access_rev) = &_rh;		\
-+	     ({ revocable_handle_init(_rev, &_rh);				\
-+		_res = revocable_try_access(&_rh);				\
-+		true; });							\
-+	     ({ goto _label; }))						\
-+		if (0) {							\
-+_label:										\
-+			break;							\
-+		} else
++static struct test_concurrent_access_context *
++revocable_test_concurrent_access_prepare(struct kunit *test,
++					 struct revocable *rev, bool dynamic)
++{
++	struct test_concurrent_access_context *ctx;
++	int i, ret;
 +
-+/**
-+ * revocable_try_access_with_scoped() - Variant of revocable_try_access_with()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * Similar to revocable_try_access_with() but with an explicit scope from a
-+ * temporary ``for`` loop.
-+ */
-+#define revocable_try_access_with_scoped(_rev, _res)				\
-+	_revocable_try_access_with_scoped(_rev, __UNIQUE_ID(name),		\
-+					  __UNIQUE_ID(label), _res)
++	ctx = kunit_kmalloc_array(test, 3, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx) {
++		if (dynamic)
++			revocable_put(rev);
++		else
++			revocable_destroy(rev);
++		KUNIT_ASSERT_NOT_NULL(test, ctx);
++	}
 +
-+/**
-+ * revocable_try_access_or_return_err_scoped() - Variant of revocable_try_access_with_scoped()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ * @_err: The error code to return if resource is revoked.
-+ *
-+ * Similar to revocable_try_access_with_scoped() but returns from the current
-+ * function with @_err if the resource is revoked.  Callers don't need to check
-+ * @_res for ``NULL`` as this handles the revocation case by returning early.
-+ */
-+#define revocable_try_access_or_return_err_scoped(_rev, _res, _err)		\
-+	_revocable_try_access_with_scoped(_rev, __UNIQUE_ID(name),		\
-+					  __UNIQUE_ID(label), _res)		\
-+	if (!_res) {								\
-+		return _err;							\
-+	} else
++	for (i = 0; i < 3; ++i) {
++		init_completion(&ctx[i].started);
++		init_completion(&ctx[i].enter);
 +
-+/**
-+ * revocable_try_access_or_return_scoped() - Variant of revocable_try_access_with_scoped()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * Similar to revocable_try_access_or_return_err_scoped() but returns -ENODEV
-+ * if the resource is revoked.
-+ */
-+#define revocable_try_access_or_return_scoped(_rev, _res)			\
-+	revocable_try_access_or_return_err_scoped(_rev, _res, -ENODEV)
++		if (i == 0) {
++			ctx[i].rev = rev;
++			ctx[i].thread = kthread_run(
++				test_concurrent_access_provider, ctx + i,
++				"provider%d", i);
++		} else {
++			ctx[i].test = test;
++			init_completion(&ctx[i].entered);
++			init_completion(&ctx[i].exit);
++			revocable_handle_init(rev, &ctx[i].rh);
++			if (dynamic)
++				KUNIT_EXPECT_EQ(test, get_refcount(rev), 1 + i);
 +
-+/**
-+ * revocable_try_access_or_return_void_scoped() - Variant of revocable_try_access_with_scoped()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * Similar to revocable_try_access_or_return_err_scoped() but returns void
-+ * if the resource is revoked.
-+ */
-+#define revocable_try_access_or_return_void_scoped(_rev, _res)			\
-+	_revocable_try_access_with_scoped(_rev, __UNIQUE_ID(name),		\
-+					  __UNIQUE_ID(label), _res)		\
-+	if (!_res) {								\
-+		return;								\
-+	} else
++			ctx[i].thread = kthread_run(
++				test_concurrent_access_consumer, ctx + i,
++				"consumer%d", i);
++		}
++		if (IS_ERR(ctx[i].thread)) {
++			ret = PTR_ERR(ctx[i].thread);
++			if (i > 0)
++				revocable_handle_destroy(&ctx[i].rh);
++			while (i--) {
++				kthread_stop_put(ctx[i].thread);
++				if (i > 0)
++					revocable_handle_destroy(&ctx[i].rh);
++			}
++			if (dynamic)
++				revocable_put(rev);
++			else
++				revocable_destroy(rev);
++			KUNIT_ASSERT_EQ(test, ret, 0);
++		}
++		get_task_struct(ctx[i].thread);
 +
-+/**
-+ * revocable_try_access_or_skip_scoped() - Variant of revocable_try_access_with_scoped()
-+ * @_rev: The pointer of resource provider.
-+ * @_res: A pointer variable that will be assigned the resource.
-+ *
-+ * Similar to revocable_try_access_with_scoped() but skips the following code
-+ * block if the resource is revoked.
-+ */
-+#define revocable_try_access_or_skip_scoped(_rev, _res)				\
-+	_revocable_try_access_with_scoped(_rev, __UNIQUE_ID(name),		\
-+					  __UNIQUE_ID(label), _res)		\
-+	if (!_res) {								\
-+		break;								\
-+	} else
++		wait_for_completion(&ctx[i].started);
++	}
 +
-+#endif /* __LINUX_REVOCABLE_H */
++	return ctx;
++}
++
++static void revocable_embedded_test_concurrent_access(struct kunit *test)
++{
++	struct revocable rev_on_stack, *rev = &rev_on_stack;
++	void *real_res = (void *)0x12345678, *res;
++	struct test_concurrent_access_context *ctx;
++	int ret, i;
++
++	ret = revocable_init(rev, real_res);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++	KUNIT_EXPECT_FALSE(test, rev->dynamic);
++
++	ctx = revocable_test_concurrent_access_prepare(test, rev, false);
++
++	ctx[1].expected_res = real_res;
++	/* consumer1 enters read-side critical section. */
++	complete(&ctx[1].enter);
++	wait_for_completion(&ctx[1].entered);
++
++	/* provider0 revokes the resource. */
++	complete(&ctx[0].enter);
++	ret = read_poll_timeout(rcu_access_pointer, res, !res, 1000, 100000,
++				false, rev->res);
++	if (ret) {
++		for (i = 2; i >= 0; --i) {
++			kthread_stop_put(ctx[i].thread);
++			if (i > 0)
++				revocable_handle_destroy(&ctx[i].rh);
++		}
++		revocable_destroy(rev);
++		KUNIT_ASSERT_EQ(test, ret, 0);
++	}
++	/* provider0 can't exit.  It's waiting for the grace period. */
++
++	ctx[2].expected_res = NULL;
++	/* consumer2 enters read-side critical section. */
++	complete(&ctx[2].enter);
++	wait_for_completion(&ctx[2].entered);
++
++	/* consumer{1,2} exit read-side critical section. */
++	for (i = 1; i < 3; ++i) {
++		complete(&ctx[i].exit);
++		kthread_stop_put(ctx[i].thread);
++		revocable_handle_destroy(&ctx[i].rh);
++	}
++
++	/* provider0 exits as all readers exit their critical section. */
++	kthread_stop_put(ctx[0].thread);
++
++	revocable_destroy(rev);
++}
++
++static void revocable_dynamic_test_concurrent_access(struct kunit *test)
++{
++	struct revocable *rev;
++	void *real_res = (void *)0x12345678, *res;
++	struct test_concurrent_access_context *ctx;
++	int ret, i;
++
++	rev = revocable_alloc(real_res);
++	KUNIT_ASSERT_NOT_NULL(test, rev);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++	KUNIT_EXPECT_TRUE(test, rev->dynamic);
++
++	ctx = revocable_test_concurrent_access_prepare(test, rev, true);
++
++	ctx[1].expected_res = real_res;
++	/* consumer1 enters read-side critical section. */
++	complete(&ctx[1].enter);
++	wait_for_completion(&ctx[1].entered);
++
++	/* provider0 revokes the resource. */
++	complete(&ctx[0].enter);
++	ret = read_poll_timeout(rcu_access_pointer, res, !res, 1000, 100000,
++				false, rev->res);
++	if (ret) {
++		for (i = 2; i >= 0; --i) {
++			kthread_stop_put(ctx[i].thread);
++			if (i > 0)
++				revocable_handle_destroy(&ctx[i].rh);
++		}
++		revocable_put(rev);
++		KUNIT_ASSERT_EQ(test, ret, 0);
++	}
++	/* provider0 can't exit.  It's waiting for the grace period. */
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 3);
++
++	ctx[2].expected_res = NULL;
++	/* consumer2 enters read-side critical section. */
++	complete(&ctx[2].enter);
++	wait_for_completion(&ctx[2].entered);
++
++	/* consumer{1,2} exit read-side critical section. */
++	for (i = 1; i < 3; ++i) {
++		complete(&ctx[i].exit);
++		kthread_stop_put(ctx[i].thread);
++		revocable_handle_destroy(&ctx[i].rh);
++	}
++
++	/* provider0 exits as all readers exit their critical section. */
++	kthread_stop_put(ctx[0].thread);
++	KUNIT_EXPECT_EQ(test, get_refcount(rev), 1);
++
++	/* Drop the provider reference. */
++	revocable_put(rev);
++}
++
++static struct kunit_case revocable_test_cases[] = {
++	KUNIT_CASE(revocable_embedded_test_basic_stack),
++	KUNIT_CASE(revocable_embedded_test_basic_heap),
++	KUNIT_CASE(revocable_dynamic_test_basic),
++	KUNIT_CASE(revocable_embedded_test_revocation_stack),
++	KUNIT_CASE(revocable_embedded_test_revocation_heap),
++	KUNIT_CASE(revocable_dynamic_test_revocation),
++	KUNIT_CASE(revocable_embedded_test_try_access_macro),
++	KUNIT_CASE(revocable_dynamic_test_try_access_macro),
++	KUNIT_CASE(revocable_embedded_test_concurrent_access),
++	KUNIT_CASE(revocable_dynamic_test_concurrent_access),
++	{}
++};
++
++static struct kunit_suite revocable_test_suite = {
++	.name = "revocable_test",
++	.test_cases = revocable_test_cases,
++};
++
++kunit_test_suite(revocable_test_suite);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Tzung-Bi Shih <tzungbi@kernel.org>");
++MODULE_DESCRIPTION("KUnit tests for the revocable API");
 -- 
 2.53.0
 
