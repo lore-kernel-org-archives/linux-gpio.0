@@ -1,65 +1,162 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793636278;
-	b=qq+KbB8nv/Kg85/+HzNtsdodOU1Ai7X8lBbQutRehpfzTwEtl5WV8J40FpsWS/poa28Y
-	 mKTJoVMTf65WiRoNhRHUI3jor1iRd7Ov4ogDpPeNCz4RTgHHvKPGAYva4MF86rHgy6tTw
-	 lbNVvsvQI7C+lz2wE/JKYZDqAzdNsJYJj6fzloEcsL35mUYTZg/2GRyUP8WHsWtY4VXlu
-	 EPHaBE5WQsrZeQ8vdvlzOnnVwUbXK5XavD3aShBiDR4mdXEITqi5skjanl/2kJTHhAFj5
-	 66tU6OVbiuBHKh6VTl+E86Crda/Y8NyXEBNqZ2MkonaI48NUG14jjIbSxRy7wbW4+PQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793636278;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=tSlhZlCS6U6DSS1pN1LYEAHztvmXI+pBSdiw2T3/jww=;
-	b=nTmEM94ZmvnSRNFiFUZVZn3ld1aE0+P/vnB0jjYrSa4xZwirZWpv6OmHe1Hqci34NVTr
-	 ykkx50MDwAqodHmXV4E3Gq/ioJdCDl1MLHzeKKIHZo1o6aAwJr380EoYFty/XGlkMgYSe
-	 42No0gbDWfpePEt6f7SEF7c38K6oqcUlyvuDu0PvMgJjwQy5pdRNhtY/kJZRSeTWcrY/f
-	 q158GjMHTxr2c3SBIIEmpK5HaGpF1VMeHu9khY8ovgBgbosG3qgFsp5FXbqwMibCt0MMj
-	 y7ZeMs0udsuIKY7wJvMNCW6hp3x8nkqxNb/3NjT0ycD4K7Pm7R0tdvZZTGNpjNMFXhQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CQULjrXj;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.31
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793637659;
+	b=DS5Utq0TSuufPe+4lTopwgb/OZkNWmvY1Ug9MdvoNNXL44NXcQpgGmbn6Oo6kfSqjNwp
+	 LP98rrjX/40Y9OZnuKdFwP7iLn5hOkhgtsmVpjWltkyH/QDLmj6v6DmytKMqYWPnuV5Q9
+	 3/ogYToKnWt4dxEDMXIVPfCUOR50SydX71NZkKYwGBxMWMkQ/zIDX/fgvYXT5yyuqBzZ2
+	 CJdiy3lG7MGlp82QR4NA1pxKr1KHu+ZuIdOIuNKRSEMOLJf1xH2jOckKxwbzAosx7PKj1
+	 79f0CYtmSSTeUVV74rXL9RmwYvUHR6H2GhYLmnd2cZ/OFMu9dGuUmWCVEgv5YLeRkYg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793637659;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=0AZEXm4C/DMSzFUg9+vViNaMwpucOgErMY5P1OzWIXE=;
+	b=NAgULYuXvkrjfNgf1QSCvKEdEeyLLJTd9yDZsZX2k4C3hDJVAGyiIzrHCETOHhwfx9Dt
+	 ZRvFa2gDEexBU1CLTpN1qisCboUA3IGYLmlxVjtvde1V43iF3ZPLnOTgiPClRdjfUP+YJ
+	 /nQvq0/xWleW4Webo0h4bUrKh/XLZFqwvEq2kfP7O23pqnqqXPKFQ7FlJv3sI0MLcYwkJ
+	 9Gs2oLeaOnn21zd9NCHa3i5BlsR5XUtSiaq1e5JnfsYl8wVcaYf5WJZhXEoogzcxzIL0z
+	 Zp4PZ4DtSQ7r/S6z8Pt9xaBWEdMDlk04/x3pTQnhFhaR6+r9OXKW3hPyohG3HpnkpLg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=V3ykH38V;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.31
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012031.outbound.protection.outlook.com [52.101.66.31])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C729A6099952;
-	Mon,  2 Nov 2026 16:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C2C608762C;
+	Mon,  2 Nov 2026 16:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 74C2C608762C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CQULjrXj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070271F00A16;
-	Mon,  2 Nov 2026 16:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793636277;
-	bh=tSlhZlCS6U6DSS1pN1LYEAHztvmXI+pBSdiw2T3/jww=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=CQULjrXjrjsOWi0iaCtq/TdLS6jX+M6bZUeB0z1jv8FrMpPnWiSnknJi9t24FCWl2
-	 ZTpS/c5oksveMDee5Otug5ADTMdsWPbfOvTNVv251kvmG259hBRTfAt2/Yt8MkCIdX
-	 0EyrmcWbDgGILQnX++ZyjkoQJd+Orlg7A3uZSb9O0rZy/rjMJYkdrKhaPz31hZpHHX
-	 j5sc2ySkUSWOFS0PfA/KZK+5iI7qzU+EQN0N5hw+ruT54+S1tF3CnIe2bZA10tYjRm
-	 fFqd7sbbH9z57tqEA7tVHhUlGbmJB3bcjEKIf0AiVJRl7eKhmvKry91vTyxAtAkiZC
-	 c/mtzxzoCSifQ==
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Johan Hovold <johan@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=V3ykH38V
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UUahqT6OH80SrFgl+J8Dl0qQuEn9rpBY/sf6cMIiybmTtPW/B0oQ8mpWx/3hFmjH5kM3BorOwqSSuQeNYkik1ZDQNpQmWvoYIoWtmK0U8pLVqhvucBo9oVRJhSztrB3rpJKKQWoAQF5Cq6L7jyeurjP6RzoQ+Ua3B6z+fM+m+D7m3Dpyhq1C+qbH5bgzIVqRrLMt7U6KX2atZK38B0xIK7Kl306xFeFPSkelpw5FBHPrpDaTcV4B6s2TQxkI3kh6pCGMT37TbGrJVTbyLmeLGwS0Cxuo5GIVoM1ZiNl36tC35ESLTD9fRUaa767TI2vjZjQcUlmQf3BBeUbqmZHqCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0AZEXm4C/DMSzFUg9+vViNaMwpucOgErMY5P1OzWIXE=;
+ b=PrK0rnU2MQXRwPgJUUNGCRXQUyJZbjYp9VdLV86LlUg7HKLRtSypXjYL8GjRJ1PTh5HvCp1FDYBwAk67NfLbsc2171siuwW6Vukja1xYMHayoW8Rm6EEY3epYw21AX2UozOsMkJEK/GElQXfRg1PRaV5WAHK9VAWGaoC39ugw16XpPrgRc/nz+4bz9ElG4nFtSMUp7VpLaiZgclBf9KHaOcwyfVtgYZDoo47EsFn0wFBVuUTQQqfsifVyL/kX2ZP8ZglrxrF2KZb8vyto1FBtHBDQspIF2BWUkS8tsUD09nZwBQENMSDtX0c6CMzabo30vOQgUDq3leqETIR6QSdeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0AZEXm4C/DMSzFUg9+vViNaMwpucOgErMY5P1OzWIXE=;
+ b=V3ykH38VVd8brV2cpxqM1yZIcyzF4+A+yXTcS+Y08BhlXL8iCqyoF1CGucLJ0jjpUzZB9MY787jCeghPRfcXGTdFd7dRAf8GpjP/X3qHOnbZpuikYmwa8IjPyjldv0Be1F47Qdm1F3Xzh/WHSzmxyoJlLLsiop21RzwzwdEyGO2cDNUwc77Yo+11q3D2+sNSwXOHSMSUN4VUjtcC7GV5ZUJ62QAgBRlsm93KXdBfz6CvMAeL/O7l6Rbid5eO8/WdsUa1jgoo1N8pSOTL03memeUBbtREi+uXasKnsrrWGNW/yGKlO4tGvKf64bgR8rKwct+1FAjeKF65dE/dDW/6IA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
+ by AMBPR04MB468013.eurprd04.prod.outlook.com (2603:10a6:20b:7dc::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
+ 2026 16:40:54 +0000
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0569.011; Mon, 2 Nov 2026
+ 16:40:54 +0000
+Date: Mon, 2 Nov 2026 10:40:32 -0600
+From: Frank Li <Frank.li@oss.nxp.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Ivan Vecera <ivecera@redhat.com>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
 	Linus Walleij <linusw@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	tzungbi@kernel.org
-Subject: [PATCH v15 4/4] reset: Leverage revocable for accessing struct reset_controller_dev
-Date: Tue,  3 Nov 2026 00:17:09 +0800
-Message-ID: <20261102161710.24076-5-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261102161710.24076-1-tzungbi@kernel.org>
-References: <20261102161710.24076-1-tzungbi@kernel.org>
+	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Chanh Nguyen <chanh@os.amperecomputing.com>,
+	Alistair Francis <alistair@alistair23.me>,
+	Julius Werner <jwerner@chromium.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Ray Jui <ray.jui@broadcom.com>,
+	Scott Branden <scott.branden@broadcom.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-tegra@vger.kernel.org, mfd@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
+Message-ID: <aui9AFUS3JpDKZGP@SMW015318>
+References: <20261102135330.2493332-1-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261102135330.2493332-1-robh@kernel.org>
+X-ClientProxiedBy: DM6PR08CA0037.namprd08.prod.outlook.com
+ (2603:10b6:5:1e0::11) To MI3PR04MB12438.eurprd04.prod.outlook.com
+ (2603:10a6:290:76::14)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -69,346 +166,75 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|AMBPR04MB468013:EE_
+X-MS-Office365-Filtering-Correlation-Id: 710964e4-aa24-4f3f-656a-08df39000ff5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|23010399003|7416014|376014|19092799006|11063799006|56012099006|261009223027099003|261026121527099003|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	713wdXmk0i3UHxEIluM11rOJcS4OyrF7QOCTSCmsWR3F+SjkAdWZMFG3VRd0RCZKsqzpwX79lW1ZURuA3XEG7NIHBOZkV4JnrBWaysJUjfdr0OUhol0yuECzmr5wd3Nm/UzUM5EwqVAR+QYj4W+SmtI761IP9KN6lWHWjbg/n6SjJOTOZ6msklaDfkH5hHnQP5StAKVHT9W9gsJqjzuHxfg+rf0Iy0mWgbFk/+2WbI9v3juaCvw7xc4DzCXO8QDOsKOf0JTc/cU+xocxpGBsM3RFG3QMuHAC7orJV2D4pCTGg+taaQlyWzi0XNsiASg4QbYrJjzl7BXz43cgvH2MI86i/EDbP3gel5zoG6yTkwuvQvt57UY/UKg10W3NY2jmRzvt3Yj4M0JT5rf+2tRzdGe4URWejHSMwBbt4nx1cepRuoiWpUjX9gRbpsw/QEpefuZoAaSV/BzdgQH0DnOqHyFkedCnbiZg2+NPQilXv15wWhHxWqVJo3gJyR3aPKC6jr75/ssgaUgLkJHrhSeVflsAaQPz210v76AxAOM8DUIj6uv3N/6DLX4v+06x+XEACqAiCrg7bAtQkMqY7vhViG9Xsn+83/QhcG5Aa+mQ0s+Ug8NVT1qTZHFSqjoL2yS2Oej19qpGLZNAe/mS3BTFlfVA9NqYnddes7uOh97mW6M=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(7416014)(376014)(19092799006)(11063799006)(56012099006)(261009223027099003)(261026121527099003)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?miViUnAHLHlSfVvNykj6itq4LYyZuvFGajuF5/WfPyzRO2cwd46TenQEyCr6?=
+ =?us-ascii?Q?Bk4r20OdtHVg4+E7+ONinqI5X1cdimy1a4RAJrw7ype9obM1asQI7C6wVGex?=
+ =?us-ascii?Q?Df1a+opO+isY+bZYbPK+5uq9C0EPVS8XTio1wzxbktQqXm4DPSyMNlHwhDK2?=
+ =?us-ascii?Q?aYIg/lsjPz5d0+J5Aq1tyf3Ql4rkk1IC/h2HDxCOqOnAv34JyclhCPcgiNbR?=
+ =?us-ascii?Q?alQr1FUqDeJ0JZBNQQCyAFKUUPhc+Sp10sDhkY8MhLqeqclUPZaiGWh1G25u?=
+ =?us-ascii?Q?/tnG5n8jk6GeM6ikrfrLEzOq4eFDktSaxonpzwhdZHHO/RpL/moKzOktaioj?=
+ =?us-ascii?Q?bwvNWJ8kslkjWCVbXk34R+W9nFzirZrw1OgNcjeXw6WWP8nN+wVCTC3SwFsK?=
+ =?us-ascii?Q?lqlMYYK4UUkLl8I10PH5DXJ/+b5zKdD0WRQpHrQKj6dTkT8I6lHNtIMs1aR9?=
+ =?us-ascii?Q?SZm+gZOod+VCue2X7ykMd3vGD0ODjAUWC/H4hZN6dqtP2BWtPIKP/qldFX/W?=
+ =?us-ascii?Q?gfMpxNPGxoRgkEWOHNIgcYZVOCpdSqID+31il65/Bcybng6IbJMsM7dBiKpA?=
+ =?us-ascii?Q?Rtb38dq4PZU0FUeVKK3Vz/z080KxNNnFskrpNkpQcRbpWFcdMmkrQzJ8ZKrO?=
+ =?us-ascii?Q?nYPU7BFNOrqUb27tqERv6Xs756Uy5lA2ZlkbXpLXAGPBvQ5YvhF0q8EWINPM?=
+ =?us-ascii?Q?INXukbJB3rJzOSDgtYaLwDvjYt5jxBHIztmfDtfTLP3RhFrBGRl54GzrtQGD?=
+ =?us-ascii?Q?GBMtwe77nUkzYN+Frpk8YjRQI1D49KpKlCz4km3foInJ5woh43Q+nnOamqVw?=
+ =?us-ascii?Q?iNg3mJYCUzNLErYW3KrJK2Vug/N2aO9qtVWorfrspwxETpQFe1uyAf4sYncg?=
+ =?us-ascii?Q?p54Wa7UuTfCtdCdZqoeDgk5IC4np4oFKL8L8k1pOzzDWS39CARqFI/8vJCGh?=
+ =?us-ascii?Q?yRx+sBbeP7pH94bqiOUnrNIWxqQsh+JOvf8w1amHOYmYW0MaVFl9xivXCvtA?=
+ =?us-ascii?Q?1StguKNayIluWpa5ZP98xmjQ4TZYHWjqktNNmQ0s7Dd3+uEy4AlkKZlrv+Gt?=
+ =?us-ascii?Q?AwVCvMGHPG8LC+HfNdzDm3O+kPFZ/lbwg53ZLBWNbbL6+4YQh+L+1f5/m4n5?=
+ =?us-ascii?Q?ZrHWXUBCzlhJzIvkFu0LkcXOx1IimA8eG0Fn/GFwOn+BnWHLonse0k38EsnB?=
+ =?us-ascii?Q?SOryFVi1m+3pEWpDYg/CHmkfIfeV2XgQo5bMrQ1ljgiteO6/cR19/BGEUTRM?=
+ =?us-ascii?Q?XGV7505tjTA8t+KETQsjdbh2WWr/hgWIjAcCWjK676y/o1Mz4sE5PSWmvqH3?=
+ =?us-ascii?Q?w4zOWqbwBy594KUxDz8BjNgoHIW7eKWwhnBdt0hnYOmS3VuWwL5RNS0tfy4H?=
+ =?us-ascii?Q?XswApNiAAjdTiaqz1dpu1PkoXwpLAZb4YTswjQ8O1inKWhW+uKlLqUO41O2H?=
+ =?us-ascii?Q?p/DbllPNiHLg0WzdGQ8giUOBU84ga1119QfWGX2j5MPov+ToQ3aOZyZxaRMi?=
+ =?us-ascii?Q?504bKjsTVvHpfPvhqOzUD8vWeqWfeI8vz4dFKOQ9v6/wLnWNUmgeNURUYGKC?=
+ =?us-ascii?Q?Z2wQBjPnoF3Qd7xhB9WAv2uFCSKazrD7kudcoq5yLrZHn2uTlzt2nuOrXCMj?=
+ =?us-ascii?Q?4ee5Q5NyAp8kxg9QZM+Vxjq+p7qNrg63cwOBY0tQh7FZTQRLWmbXYnHJCFGa?=
+ =?us-ascii?Q?jtDpxtDJFM/z8+TqgBrLmYj15xcMy4P1rhaPvLbngkWw24YHQmK7COJY2OfR?=
+ =?us-ascii?Q?YrfL1GNcONRkuUNhApZMdmxAbyCn3FxiBAYU608PkRryqUCh0Wgd?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 710964e4-aa24-4f3f-656a-08df39000ff5
+X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 16:40:54.2384
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8fnO+R+KwExK8plb8UKHkb7CwqdyiR8BlWlu9O+f9zFhqX8xE8pSb4waLCfO7C9oxjAZQ1G2O3uYmut5fG5dOLhTOrhSgilIYT7HZsW1Lg8Yl0rUHI5yaM00tF9J8zP6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR04MB468013
 
-Commit 78ebbff6d1a0 ("reset: handle removing supplier before consumers")
-protected the `rcdev` pointer in `struct reset_control` with SRCU so
-that the reset core can handle suppliers unbinding while consumers still
-hold reset control handles.
+On Mon, Nov 02, 2026 at 07:53:22AM -0600, Rob Herring (Arm) wrote:
+> Unit-addresses by default (and most commonly) are hexadecimal. There's a
+> number of cases using decimal patterns. Fix all of them, limiting the
+> pattern to match the 'reg' limits if there are any.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/display/xylon,logicvc-display.yaml      |  2 +-
+>  .../devicetree/bindings/dpll/dpll-device.yaml        |  2 +-
+>  .../bindings/embedded-controller/google,cros-ec.yaml |  4 ++--
+>  .../intel,ixp4xx-network-processing-engine.yaml      |  2 +-
+>  Documentation/devicetree/bindings/gpio/gpio-mxs.yaml |  4 ++--
 
-Because `struct reset_control` handles can outlive `rcdev`, each of the
-N handles had to embed its own `srcu_struct` and call synchronize_srcu()
-on release, and reset_controller_unregister() had to call
-synchronize_srcu() N times in a loop.
+for gpio-mxs.xml
 
-Leverage dynamic revocable to allocate a single reference-counted
-`struct revocable` for `rcdev` shared across all N `struct reset_control`
-handles (1-to-N).  This reduces N `srcu_struct` instances per controller
-to 1, drops synchronize_srcu() from reset_control_put_internal(), and
-replaces the N synchronize_srcu() calls on unregistration with a single
-revocable_revoke().
-
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
-Applied after https://lore.kernel.org/all/20261102155840.20376-1-tzungbi@kernel.org
----
-Test:
-$ ./tools/testing/kunit/kunit.py run \
-        --kconfig_add CONFIG_RESET_CONTROLLER=y \
-        --kconfig_add CONFIG_RESET_KUNIT_TEST=y \
-        reset_test
-
-$ ./tools/testing/kunit/kunit.py run \
-        --kconfig_add CONFIG_RESET_CONTROLLER=y \
-        --kconfig_add CONFIG_RESET_KUNIT_TEST=y \
-        --kconfig_add CONFIG_PROVE_LOCKING=y \
-        --kconfig_add CONFIG_DEBUG_KERNEL=y \
-        --kconfig_add CONFIG_KASAN=y \
-        --arch=x86_64 \
-        --raw_output=all \
-        reset_test
----
-v15:
-- Rename:
-  - "rev" -> "revocable" in struct reset_controller_dev.
-  - "rev" -> "rcdev_revocable" in struct reset_control.
-
-v14: https://lore.kernel.org/all/20261011121246.162759-6-tzungbi@kernel.org
-- New to the series.
----
- drivers/reset/core.c             | 125 ++++++++++---------------------
- include/linux/reset-controller.h |   3 +
- 2 files changed, 42 insertions(+), 86 deletions(-)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index a36a4d6ff445..c699e7550cf5 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -24,8 +24,8 @@
- #include <linux/property.h>
- #include <linux/reset.h>
- #include <linux/reset-controller.h>
-+#include <linux/revocable.h>
- #include <linux/slab.h>
--#include <linux/srcu.h>
- 
- static DEFINE_MUTEX(reset_list_mutex);
- static LIST_HEAD(reset_controller_list);
-@@ -37,9 +37,7 @@ static DEFINE_IDA(reset_gpio_ida);
- 
- /**
-  * struct reset_control - a reset control
-- * @rcdev: a pointer to the reset controller device
-- *         this reset control belongs to
-- * @srcu: protects the rcdev pointer from removal during consumer access
-+ * @rcdev_revocable: revocable handle for accessing the reset controller device
-  * @list: list entry for the rcdev's reset controller list
-  * @id: ID of the reset controller in the reset
-  *      controller device
-@@ -54,8 +52,7 @@ static DEFINE_IDA(reset_gpio_ida);
-  * @lock: serializes the internals of reset_control_acquire()
-  */
- struct reset_control {
--	struct reset_controller_dev __rcu *rcdev;
--	struct srcu_struct srcu;
-+	struct revocable *rcdev_revocable;
- 	struct list_head list;
- 	unsigned int id;
- 	struct kref refcnt;
-@@ -141,6 +138,10 @@ int reset_controller_register(struct reset_controller_dev *rcdev)
- 			return -EINVAL;
- 	}
- 
-+	rcdev->revocable = revocable_alloc(rcdev);
-+	if (!rcdev->revocable)
-+		return -ENOMEM;
-+
- 	if (rcdev->of_xlate)
- 		rcdev->fwnode_reset_n_cells = rcdev->of_reset_n_cells;
- 
-@@ -160,14 +161,20 @@ int reset_controller_register(struct reset_controller_dev *rcdev)
- }
- EXPORT_SYMBOL_GPL(reset_controller_register);
- 
--static void reset_control_put_internal(struct reset_control *rstc);
--
- static void reset_controller_remove(struct reset_controller_dev *rcdev,
- 				    struct reset_control *rstc)
- {
- 	lockdep_assert_held(&rcdev->lock);
- 
--	list_del(&rstc->list);
-+	/*
-+	 * reset_control_put_internal() may observe a non-NULL rcdev before
-+	 * revocable_revoke() runs, and then wait on rcdev->lock while
-+	 * reset_controller_unregister() already detaches rstc.
-+	 */
-+	if (list_empty(&rstc->list))
-+		return;
-+	list_del_init(&rstc->list);
-+
- 	module_put(rcdev->owner);
- 	put_device(rcdev->dev);
- }
-@@ -179,38 +186,22 @@ static void reset_controller_remove(struct reset_controller_dev *rcdev,
- void reset_controller_unregister(struct reset_controller_dev *rcdev)
- {
- 	struct reset_control *rstc, *pos;
--	LIST_HEAD(reset_control_head);
- 
- 	scoped_guard(mutex, &reset_list_mutex)
- 		list_del(&rcdev->list);
- 
- 	scoped_guard(mutex, &rcdev->lock) {
--		/*
--		 * Numb but don't free the remaining reset control handles that are
--		 * still held by consumers.
--		 *
--		 * Hold a temporary reference on rstc before clearing rstc->rcdev:
--		 * once rstc->rcdev is NULL, a concurrent reset_control_put_internal()
--		 * will not acquire rcdev->lock and could otherwise free rstc.
--		 */
--		list_for_each_entry_safe(rstc, pos, &rcdev->reset_control_head, list) {
--			kref_get(&rstc->refcnt);
--			rcu_assign_pointer(rstc->rcdev, NULL);
-+		list_for_each_entry_safe(rstc, pos, &rcdev->reset_control_head, list)
- 			reset_controller_remove(rcdev, rstc);
--			list_add(&rstc->list, &reset_control_head);
--		}
- 	}
- 
- 	/*
--	 * Run synchronize_srcu() outside rcdev->lock to avoid a circular
-+	 * Run revocable_revoke() outside rcdev->lock to avoid a circular
- 	 * locking dependency with paths that acquire rcdev->lock inside
--	 * the rstc->srcu read-side critical section.
-+	 * the revocable read-side critical section.
- 	 */
--	list_for_each_entry_safe(rstc, pos, &reset_control_head, list) {
--		list_del(&rstc->list);
--		synchronize_srcu(&rstc->srcu);
--		reset_control_put_internal(rstc);
--	}
-+	revocable_revoke(rcdev->revocable);
-+	revocable_put(rcdev->revocable);
- 
- 	mutex_destroy(&rcdev->lock);
- }
-@@ -401,11 +392,7 @@ int reset_control_reset(struct reset_control *rstc)
- 	if (reset_control_is_array(rstc))
- 		return reset_control_array_reset(rstc_to_array(rstc));
- 
--	guard(srcu)(&rstc->srcu);
--
--	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
--	if (!rcdev)
--		return -ENODEV;
-+	revocable_try_access_or_return(rstc->rcdev_revocable, rcdev);
- 
- 	if (!rcdev->ops->reset)
- 		return -ENOTSUPP;
-@@ -522,11 +509,7 @@ int reset_control_assert(struct reset_control *rstc)
- 	if (reset_control_is_array(rstc))
- 		return reset_control_array_assert(rstc_to_array(rstc));
- 
--	guard(srcu)(&rstc->srcu);
--
--	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
--	if (!rcdev)
--		return -ENODEV;
-+	revocable_try_access_or_return(rstc->rcdev_revocable, rcdev);
- 
- 	if (rstc->shared) {
- 		if (WARN_ON(atomic_read(&rstc->triggered_count) != 0))
-@@ -618,11 +601,7 @@ int reset_control_deassert(struct reset_control *rstc)
- 	if (reset_control_is_array(rstc))
- 		return reset_control_array_deassert(rstc_to_array(rstc));
- 
--	guard(srcu)(&rstc->srcu);
--
--	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
--	if (!rcdev)
--		return -ENODEV;
-+	revocable_try_access_or_return(rstc->rcdev_revocable, rcdev);
- 
- 	if (rstc->shared) {
- 		if (WARN_ON(atomic_read(&rstc->triggered_count) != 0))
-@@ -698,11 +677,7 @@ int reset_control_status(struct reset_control *rstc)
- 	if (WARN_ON(IS_ERR(rstc)) || reset_control_is_array(rstc))
- 		return -EINVAL;
- 
--	guard(srcu)(&rstc->srcu);
--
--	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
--	if (!rcdev)
--		return -ENODEV;
-+	revocable_try_access_or_return(rstc->rcdev_revocable, rcdev);
- 
- 	if (rcdev->ops->status)
- 		return rcdev->ops->status(rcdev, rstc->id);
-@@ -750,11 +725,7 @@ int reset_control_acquire(struct reset_control *rstc)
- 	if (rstc->acquired)
- 		return 0;
- 
--	guard(srcu)(&rstc->srcu);
--
--	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
--	if (!rcdev)
--		return -ENODEV;
-+	revocable_try_access_or_return(rstc->rcdev_revocable, rcdev);
- 
- 	scoped_guard(mutex, &rcdev->lock) {
- 		list_for_each_entry(rc, &rcdev->reset_control_head, list) {
-@@ -850,7 +821,6 @@ __reset_control_get_internal(struct reset_controller_dev *rcdev,
- 	bool shared = flags & RESET_CONTROL_FLAGS_BIT_SHARED;
- 	bool acquired = flags & RESET_CONTROL_FLAGS_BIT_ACQUIRED;
- 	struct reset_control *rstc;
--	int ret;
- 
- 	lockdep_assert_held(&rcdev->lock);
- 
-@@ -881,19 +851,13 @@ __reset_control_get_internal(struct reset_controller_dev *rcdev,
- 	if (!rstc)
- 		return ERR_PTR(-ENOMEM);
- 
--	ret = init_srcu_struct(&rstc->srcu);
--	if (ret) {
--		kfree(rstc);
--		return ERR_PTR(ret);
--	}
--
- 	if (!try_module_get(rcdev->owner)) {
--		cleanup_srcu_struct(&rstc->srcu);
- 		kfree(rstc);
- 		return ERR_PTR(-ENODEV);
- 	}
- 
--	rcu_assign_pointer(rstc->rcdev, rcdev);
-+	revocable_get(rcdev->revocable);
-+	rstc->rcdev_revocable = rcdev->revocable;
- 	list_add(&rstc->list, &rcdev->reset_control_head);
- 	rstc->id = index;
- 	kref_init(&rstc->refcnt);
-@@ -909,17 +873,9 @@ static void __reset_control_release(struct kref *kref)
- {
- 	struct reset_control *rstc = container_of(kref, struct reset_control,
- 						  refcnt);
--	struct reset_controller_dev *rcdev;
--
--	lockdep_assert_held(&rstc->srcu);
--
--	rcdev = rcu_replace_pointer(rstc->rcdev, NULL, true);
--	if (rcdev) {
--		lockdep_assert_held(&rcdev->lock);
--		reset_controller_remove(rcdev, rstc);
--	}
- 
- 	mutex_destroy(&rstc->lock);
-+	revocable_put(rstc->rcdev_revocable);
- }
- 
- static void reset_control_put_internal(struct reset_control *rstc)
-@@ -930,22 +886,19 @@ static void reset_control_put_internal(struct reset_control *rstc)
- 	if (IS_ERR_OR_NULL(rstc))
- 		return;
- 
--	scoped_guard(srcu, &rstc->srcu) {
--		rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
--		if (rcdev) {
--			guard(mutex)(&rcdev->lock);
--			ret = kref_put(&rstc->refcnt, __reset_control_release);
--		} else {
--			/* Already detached from rcdev. */
--			ret = kref_put(&rstc->refcnt, __reset_control_release);
--		}
-+	revocable_try_access_with(rstc->rcdev_revocable, rcdev);
-+	if (rcdev) {
-+		guard(mutex)(&rcdev->lock);
-+		ret = kref_put(&rstc->refcnt, __reset_control_release);
-+		if (ret)
-+			reset_controller_remove(rcdev, rstc);
-+	} else {
-+		/* Already detached from rcdev. */
-+		ret = kref_put(&rstc->refcnt, __reset_control_release);
- 	}
- 
--	if (ret) {
--		synchronize_srcu(&rstc->srcu);
--		cleanup_srcu_struct(&rstc->srcu);
-+	if (ret)
- 		kfree(rstc);
--	}
- }
- 
- static void reset_gpio_aux_device_release(struct device *dev)
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 52a5a4e81f18..a5547a742cde 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -28,6 +28,7 @@ struct reset_control_ops {
- struct module;
- struct device_node;
- struct of_phandle_args;
-+struct revocable;
- 
- /**
-  * struct reset_controller_dev - reset controller entity that might
-@@ -48,6 +49,7 @@ struct of_phandle_args;
-  *                :c:func:`fwnode_reset_simple_xlate`
-  * @nr_resets: number of reset controls in this reset controller device
-  * @lock: protects the reset control list from concurrent access
-+ * @revocable: revocable provider handle for itself
-  */
- struct reset_controller_dev {
- 	const struct reset_control_ops *ops;
-@@ -65,6 +67,7 @@ struct reset_controller_dev {
- 			    const struct fwnode_reference_args *reset_spec);
- 	unsigned int nr_resets;
- 	struct mutex lock;
-+	struct revocable *revocable;
- };
- 
- #if IS_ENABLED(CONFIG_RESET_CONTROLLER)
--- 
-2.53.0
+Acked-by: Frank Li <Frank.Li@nxp.com>
 
