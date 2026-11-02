@@ -1,56 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793603424;
-	b=QBEqJkQrkAqwuSAS8l19pM+rqkdBrBCRNQ5b6BX9u1zAo9AlgO6Dy0Uu5tUmMt0XyQEI
-	 aF1aiIQh9Nx0Dp7CETFOpSYuAySvCymXn8J7oY/9s2eAExDI/nQLoV9XxCDQ8H4xThmfX
-	 JXHrOqUIttYdh0YXCSUQdzO7m+5D7pTalWdPqwDYUJhskG3IDpGZVeh5P1H8QNX4CFmYv
-	 uzn9sv5LpchMOTiya9cYOk1ns3SPYEYRPunwjuWjIljmZXNI2li+a2KCo5W0xwWVOvWo5
-	 m/eXMhGzyCs1eHkQu5WiG9ZZjEhlis4yYzj1dvt9zMPgQoP0M8feClEDTaLkw+89lkg==
+	t=1793606241;
+	b=oas0T0jLFCovp6tagFu3tWtlRkC7qdOJERvkrJb1JC7mglUNUjHCWPlQXBT39lpjA7LJ
+	 OtQEt1qLiRswa5Rz3XrgvtEP6idkf0FpNb0Fb52R+NgOwGF9nUGChrzmDM9jJMM9DE3iT
+	 05NYxPQfbE+YCSrlb4bHxoOggsS3BjuWDtJEyvDUphF+QS/RQj9fgwJx2D+Uu7tvblExA
+	 /s1nSEWHZU4roeUOl7f4XShO6lQqt7UdNNdEKyF2pmjPtva1VCvwB0E6CE+CQnRvFsMfF
+	 1C/YuUQ8yORSLoK3Ax+bE7yTAtezRSgi8ddVJREH/ZVQnjDj3zSRL3xPlF9Bm3kLlOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793603424;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=71FZePZh0SfpCwU5gyU0mbWl8GFXJo1phIqc8eWVSCE=;
-	b=LrY8UbIlxVbljY/nkQzrOzmZm2Xj5exNxcKnqxnT99sOqX04daTkKQt2E4Qlg1CCZ+dz
-	 qJN1aGNG1ho3+NsybX0yxZsk8hjYMnWuFTFarVzoUXeuBxgaRUsMIYJpUZA08X4GDiOGe
-	 jgRYlkcP3/lypLud92uHdCnIGGW6nT90VkdfIxSXgOliRJWRwc3c/elsQvHCAuK88RCli
-	 a9FNZGEtSAzrG3BQu35FHYt7ZgTjT54wVH9pzU6qQcOS2r3x0zpIN+wTm8thI8oiZqxYI
-	 v2bCLi1j6IGwKgRedfSy9EhgKWmaY+3NPeRmhnyh175g8s3EHdJHkRJs5axUFT9uSBQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793606241;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=5c8E46H9D8n1iz1NiuFP9wVSIjo8xwMshDoKle/plSc=;
+	b=VOrY0IjYiyjGqTDePFgNQTCdf/Ru8aNs6h/aWgGuqLg7MSVxbQZTd+vhAaivL+OA13Wi
+	 F2BebuyW3ikInJiBTyEDUuCq6nH/Z36JTXGzcNRsvUGq9NdXUoi4VuELU3sCWpLdUDLFr
+	 a/syN7PWnXOXhBGeSzXFHT/be8canziOUn4zV7A+o7tFupvKFsGcJOcEW4QcXnzhRgKKn
+	 INYCTVK4pBcLEPG9EvyUDmBIh9qTrZJs32wxTKfYIaHS2U55+eXWk8/yTr/6lva9FhmoD
+	 MugyRd6coXW+wDhE1mF+zJLL9J4OmKNj6gRGXVzyBC8qIb2PyyWScD6upC6PcllZP6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="N//0Kuz7";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PDdzpWtG;
+	arc=none smtp.remote-ip=209.85.214.174
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4384C606A324;
-	Mon,  2 Nov 2026 07:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E198606A32E
+	for <linux-gpio@vger.kernel.org>; Mon,  2 Nov 2026 07:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5E198606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N//0Kuz7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC911F000C1;
-	Mon,  2 Nov 2026 07:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793603423;
-	bh=71FZePZh0SfpCwU5gyU0mbWl8GFXJo1phIqc8eWVSCE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=N//0Kuz7v4UXomZCj47VB+G/UZA9rMVBxPkCih4uIryvrQ+OEOf4JN/zN1I7Ef9NI
-	 TDnwsnX7SaT0G2+o56wEnNTM4XvMaGu3LctY0VgY87ccFOrHw1Gq2cLiqfLTssNcFo
-	 s7Do+Hv9T+3Zwa+cLG1z5c1lFV6pPfWb+pMhKUXDXJKCnyxYHR9XVk8MQFVz5KoQEs
-	 Jx9wJSddmkg8kQuKAPRx7IDzmXHF7SeOa4QAVyyooD0CoVKqbtwpsqEYrUets9HL7G
-	 RoDOHfGr6m5YIT/w5bIv4UIlKWRG6V3YgGS063AAymu0HMXFd5nzrCg42OpCJiFEHS
-	 TKRlhfpKJkwLQ==
-Message-ID: <sashiko-outbox-193002@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 10/13] gpio: pl061: switch data path to gpio-regmap
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261102-cv75-gpio-v13-10-4f93114ea204@ambarella.com>
-References: <20261102-cv75-gpio-v13-0-4f93114ea204@ambarella.com>
- <20261102-cv75-gpio-v13-10-4f93114ea204@ambarella.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 07:10:23 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PDdzpWtG
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2e942864693so14820455ad.1
+        for <linux-gpio@vger.kernel.org>; Sun, 01 Nov 2026 23:57:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793606241; x=1794211041; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5c8E46H9D8n1iz1NiuFP9wVSIjo8xwMshDoKle/plSc=;
+        b=PDdzpWtGMOwoOLfrPO8sDsEm8c1q5TKZxZsfhrFyo/wZpemg/P6zlhmZzFUPk79JHV
+         3oBL1ytEl1/IWa8+Bn8VeSqcZxIVkdHNCFAMI/ucugnIZucZrmBBuaJuTpXHcc9a8hKo
+         WSmfZu8PFRQeafdtChAIr9j0wOBnqCS2dIjTEt7sS5ZKdGpCyIivbLWgq+h+FGZ5v8cY
+         YSs79YBlKK2gglW313UAlFcNmovMailRncuC7HQVR2C5Y0beO1LvMO5Ho1MrP1kcyx4P
+         tOTtulTapMN97YlVnz5cKUawd1meRglO964+tIlZHUdHA71Ny8JjhkZM3B6n0jbZcpuk
+         dZoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793606241; x=1794211041;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5c8E46H9D8n1iz1NiuFP9wVSIjo8xwMshDoKle/plSc=;
+        b=tjA6piUgNjySxCYqQ15IO6SdAl7mK1VBrnV5pNmyt0WNncTaqvkCEUmwusM9BRMfy8
+         VTw6P/eEuUsJWNDx59eqeGk2eEUzTQbTB8hyXMaZapgiNFsR2IwCvrx+ONneZ/FC5ssH
+         ouuVRTnmCa4w3CSP/MJwtMnzdAItoup7bzGyxRTqv6tdgaQ3nOP+h8KZoqgPS+JKDuFm
+         VCmPZFdpiKmrqC9mVTn7IEP+i5MG3CIuOPVhd+v/Wxf2lIt5GSAdp5tZhe2VxUWzcmsf
+         NzKl8pSYDNpGeMly86qEx3+HG334Q0tvQOeHfPIQjmkjlX5cQGGMrGKJe/wxK/xRNLrP
+         rdyA==
+X-Gm-Message-State: APuU4Z8Un129wGIJSUC9iYiBmSgRVRywsWRHvLZ9vxdi5RFnbjGf8zPi
+	XMFFRbHm2lkIUyoAcHP/HVJ5GR4PzGtWOnq2hykcF//UkOSC5hcIfW9KgpbtbQ==
+X-Gm-Gg: AYBFou2Tmw8Y7GVYloM9Ie9wlqaUhv4VE3TdXb8RwpMp2sP0Z2nBjYMIUjiTujtZCL1
+	/bLhVZGa0N22wXA43RvT+dLp3g/z6VvHmODeBD6BSlNsmbjpffEPbijQgEe72aIeR07UtcUWBTg
+	5vj69/4onPzNOzEncTbItsmZmdypDHVnQDhzQIVv7vgxD8XEMoREPhbix3rG/YivUGnjc4k9pJC
+	MiFHq0CyZ7NkIznTP4+Ml+u/xs6sdvmnVUnoEcfHefRm1OHSM4JZVyianpWiLoxqi4AfGjfDfZe
+	NiMtPo2YFjEuSU/T/B5jBCw+zejC2KgBj51s7ueTXkplQjQKeioai8ihKja5HDS1kaaxH7StthF
+	oJwmjLcZ3RSHafOfcR5BIzEzxAYAqpoMHyMIari3XPt870FMgh89y2+/Wbx5ZWzrY/2JS3x2W3i
+	tFWD+CqFrTnkgDGMSGuD6ZuMIYe5HHbFFMUPdO8HUozEESqq7upnGqDH1tddYuvw6UdgSpBUzi6
+	ohxOYvVBBCVQWIjNQDvxyQQknFmTM5nH5FvWf5pgpiQp24qET/tPs5fSpuWSnpJXwnQMZgQKaAq
+	NvBPTRf5DL20OCZPWDP3o2SHyY1kziDECLK4j7OfdQok4QpiG+QjE7LM359+t2zShRCtg/wmZAs
+	ew+Ydpseg+SzBQcXsdE3cf563lo57kuIFckjoQNK9zof41k1p02IUoLpT+m/0zzDx5fG+Rccafm
+	82VeU=
+X-Received: by 2002:a17:90b:4b90:b0:3a4:7730:33dd with SMTP id 98e67ed59e1d1-3ae8984b662mr7868096a91.58.1793606240670;
+        Sun, 01 Nov 2026 23:57:20 -0800 (PST)
+Received: from EAIT-H54D9Q2FJQ.eait.uq.edu.au ([130.102.10.191])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae6e9583c1sm18649416a91.10.2026.11.01.23.57.15
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 01 Nov 2026 23:57:20 -0800 (PST)
+From: Yu Zhang <yuz08559@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: virtuser: remove the debugfs files before freeing the line data
+Date: Mon,  2 Nov 2026 17:57:07 +1000
+Message-ID: <20261102075707.41742-1-yuz08559@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,159 +95,131 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] gpio: pl061: dropping IRQ resource helpers breaks IRQ locking and =
-unbind
---
+gpio_virtuser_probe() registers the devm action that removes the debugfs
+directory before it allocates the per-line and per-array data that the
+debugfs files point to. devres releases resources in reverse order, so
+on unbind the line data is freed, the consumer_lock mutex is destroyed
+and the GPIO descriptors are put first, and the debugfs files are only
+removed afterwards.
 
-commit 074c89211872cf47652e8bf1f251d42902b7bc3b
-Author: Long Zhao <longzhao@ambarella.com>
+A read or write of any of the per-line debugfs files (value, direction,
+consumer, interrupts, ...) that runs in that window dereferences the
+freed data. debugfs_remove_recursive() waits for in-flight file
+operations, but by then the data has already been freed.
 
-gpio: pl061: switch data path to gpio-regmap
+Running eight threads that read the per-line debugfs files while
+another task writes 1 and 0 to the configfs "live" attribute triggers
+this within a second on a KASAN kernel, with gpio-sim as the provider:
 
-This commit switches the PL061 GPIO data path callbacks (get, set, and
-direction) to use the gpio-regmap helper library while keeping a custom
-irq_chip and instantiating an external irq_domain for gpio-regmap to attach.
+  BUG: KASAN: slab-use-after-free in gpio_virtuser_value_get+0x19/0x60
+  Read of size 8 at addr ffff888005109e38 by task vu_race/3479
+  Call Trace:
+   gpio_virtuser_value_get+0x19/0x60
+   simple_attr_read+0x109/0x290
+   debugfs_attr_read+0x5e/0x80
+   full_proxy_read+0xae/0xe0
+   vfs_read+0x1bc/0x7a0
+  Allocated by task 1:
+   devm_kmalloc+0x89/0x1d0
+   gpio_virtuser_probe+0x56f/0x910
+  Freed by task 1:
+   kfree+0x196/0x430
+   release_nodes+0x77/0xa0
+   devres_release_all+0xf3/0x150
+   device_unbind_cleanup+0x18/0x130
+   ...
+   platform_device_unregister+0x3c/0x50
+   gpio_virtuser_device_deactivate+0x3c/0xc0
 
-> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-> index 27ed759486caf..cb1ef0f3774c1 100644
-> --- a/drivers/gpio/gpio-pl061.c
-> +++ b/drivers/gpio/gpio-pl061.c
+The same run also reports use-after-free on the freed consumer_lock
+from the consumer attribute.
 
-[ ... ]
+Register the debugfs removal action after the line data has been set
+up, so that it runs first on unbind, and remove the directory by hand
+on the probe error paths before that point.
 
-> @@ -229,54 +198,47 @@ static int pl061_irq_type(struct irq_data *d, unsig=
-ned trigger)
+Fixes: 91581c4b3f29 ("gpio: virtuser: new virtual testing driver for the GPIO API")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yu Zhang <yuz08559@gmail.com>
+---
+ drivers/gpio/gpio-virtuser.c | 46 +++++++++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
 
-[ ... ]
+diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
+index 70ddccc..03fa951 100644
+--- a/drivers/gpio/gpio-virtuser.c
++++ b/drivers/gpio/gpio-virtuser.c
+@@ -927,38 +927,50 @@ static int gpio_virtuser_probe(struct platform_device *pdev)
+ 				     "Failed to get the IDs of GPIOs to request\n");
+ 
+ 	dbgfs_entry = debugfs_create_dir(dev_name(dev), gpio_virtuser_dbg_root);
+-	ret = devm_add_action_or_reset(dev, gpio_virtuser_debugfs_remove,
+-				       dbgfs_entry);
+-	if (ret)
+-		return ret;
+ 
+ 	for (i = 0; i < num_ids; i++) {
+ 		descs = devm_gpiod_get_array(dev, ids[i], GPIOD_ASIS);
+-		if (IS_ERR(descs))
+-			return dev_err_probe(dev, PTR_ERR(descs),
+-					     "Failed to request the '%s' GPIOs\n",
+-					     ids[i]);
++		if (IS_ERR(descs)) {
++			ret = dev_err_probe(dev, PTR_ERR(descs),
++					    "Failed to request the '%s' GPIOs\n",
++					    ids[i]);
++			goto err_remove_debugfs;
++		}
+ 
+ 		ret = gpio_virtuser_dbgfs_init_line_array_attrs(dev, descs,
+ 								ids[i],
+ 								dbgfs_entry);
+-		if (ret)
+-			return dev_err_probe(dev, ret,
+-					     "Failed to setup the debugfs array interface for the '%s' GPIOs\n",
+-					     ids[i]);
++		if (ret) {
++			dev_err_probe(dev, ret,
++				      "Failed to setup the debugfs array interface for the '%s' GPIOs\n",
++				      ids[i]);
++			goto err_remove_debugfs;
++		}
+ 
+ 		for (j = 0; j < descs->ndescs; j++) {
+ 			ret = gpio_virtuser_dbgfs_init_line_attrs(dev,
+ 							descs->desc[j], ids[i],
+ 							j, dbgfs_entry);
+-			if (ret)
+-				return dev_err_probe(dev, ret,
+-						     "Failed to setup the debugfs line interface for the '%s' GPIOs\n",
+-						     ids[i]);
++			if (ret) {
++				dev_err_probe(dev, ret,
++					      "Failed to setup the debugfs line interface for the '%s' GPIOs\n",
++					      ids[i]);
++				goto err_remove_debugfs;
++			}
+ 		}
+ 	}
+ 
+-	return 0;
++	/*
++	 * The debugfs files point to the devres-managed line data allocated
++	 * above. Register the removal last so that it runs first on unbind,
++	 * before any of that data is released.
++	 */
++	return devm_add_action_or_reset(dev, gpio_virtuser_debugfs_remove,
++					dbgfs_entry);
++
++err_remove_debugfs:
++	debugfs_remove_recursive(dbgfs_entry);
++	return ret;
+ }
+ 
+ static const struct of_device_id gpio_virtuser_of_match[] = {
+-- 
+2.43.0
 
->  static void pl061_irq_mask(struct irq_data *d)
->  {
-> -	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> -	struct pl061 *pl061 =3D gpiochip_get_data(gc);
-> -	u8 mask =3D BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
-> +	struct pl061 *pl061 =3D irq_data_get_irq_chip_data(d);
-> +	unsigned int mask =3D pl061_line_mask(pl061, irqd_to_hwirq(d));
-> =20
-> -	scoped_guard(raw_spinlock, &pl061->lock)
-> -		regmap_clear_bits(pl061->regmap, GPIOIE, mask);
-> -
-> -	gpiochip_disable_irq(gc, d->hwirq);
-> +	regmap_clear_bits(pl061->regmap, pl061->data->regs->ie, mask);
->  }
-> =20
->  static void pl061_irq_unmask(struct irq_data *d)
->  {
-> -	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> -	struct pl061 *pl061 =3D gpiochip_get_data(gc);
-> -	u8 mask =3D BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
-> -
-> -	gpiochip_enable_irq(gc, d->hwirq);
-> +	struct pl061 *pl061 =3D irq_data_get_irq_chip_data(d);
-> +	unsigned int mask =3D pl061_line_mask(pl061, irqd_to_hwirq(d));
-> =20
-> -	scoped_guard(raw_spinlock, &pl061->lock)
-> -		regmap_set_bits(pl061->regmap, GPIOIE, mask);
-> +	regmap_set_bits(pl061->regmap, pl061->data->regs->ie, mask);
->  }
-
-[ ... ]
-
-> @@ -320,67 +280,169 @@ static const struct irq_chip pl061_irq_chip =3D {
->  	.irq_set_wake		=3D pl061_irq_set_wake,
->  	.irq_print_chip		=3D pl061_irq_print_chip,
->  	.flags			=3D IRQCHIP_IMMUTABLE,
-> -	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-> +};
-
-[ ... ]
-
-> +	if (irq) {
-> +		const struct irq_domain_info info =3D {
-> +			.fwnode		=3D dev_fwnode(dev),
-> +			.size		=3D data->ngpio,
-> +			.hwirq_max	=3D data->ngpio,
-> +			.ops		=3D &pl061_irq_domain_ops,
-> +			.host_data	=3D pl061,
-> +		};
-> +
-> +		pl061->irq_domain =3D devm_irq_domain_instantiate(dev, &info);
-> +		if (IS_ERR(pl061->irq_domain))
-> +			return PTR_ERR(pl061->irq_domain);
-> +
-> +		/*
-> +		 * Registered before the gpiochip so unbind runs it after
-> +		 * gpiochip_free_remaining_irqs(), while the domain is still
-> +		 * alive. devm removes the domain after this action.
-> +		 */
-> +		ret =3D devm_add_action_or_reset(dev, pl061_dispose_irq_mappings, pl06=
-1);
-> +		if (ret)
-> +			return ret;
-> +	}
-
-[Severity: High]
-As reported by Sashiko on v11 [1], does dropping GPIOCHIP_IRQ_RESOURCE_HELP=
-ERS
-from pl061_irq_chip and removing gpiochip_disable_irq() and
-gpiochip_enable_irq() from pl061_irq_mask() and pl061_irq_unmask() introduce
-regressions during device unbind and GPIO direction changes?
-
-Without gpiochip_reqres_irq() and gpiochip_relres_irq(),
-GPIOD_FLAG_USED_AS_IRQ and GPIOD_FLAG_IRQ_IS_ENABLED are never set on the G=
-PIO
-descriptors.
-
-On device unbind while an interrupt is requested (for example via userspace
-cdev edge detection in edge_detector_setup() -> request_threaded_irq() or an
-in-kernel consumer), devm_gpio_regmap_unregister() -> gpiochip_remove() ->
-gpiochip_free_remaining_irqs() only frees descriptors that have
-GPIOD_FLAG_USED_AS_IRQ set:
-
-drivers/gpio/gpiolib.c:gpiochip_free_remaining_irqs() {
-	for_each_gpio_desc_with_flag(gc, desc, GPIOD_FLAG_USED_AS_IRQ) {
-		...
-	}
-}
-
-Because that flag is never set, gpiochip_free_remaining_irqs() becomes a no=
--op
-despite the comment in pl061_probe() above devm_add_action_or_reset(). Next,
-pl061_dispose_irq_mappings() calls irq_dispose_mapping() -> irq_free_desc()
-while desc->action and any threaded handler are still active. This triggers=
- a
-warning in remove_proc_entry() on /proc/irq/<virq> and frees the irq_desc.
-When the consumer later calls free_irq() (such as on closing the GPIO chara=
-cter
-device file descriptor), irq_to_desc(virq) returns NULL, leaking the irqact=
-ion
-and leaving the edge_irq_thread kthread running with a dangling dev_id poin=
-ter
-to the freed struct line.
-
-In addition, without these helpers:
-- gpiochip_lock_as_irq() is not called when an interrupt is requested, so
-  requesting an IRQ on a line configured as a push-pull output is no longer
-  rejected.
-- gpiod_direction_output() no longer prevents switching a line with an acti=
-ve
-  interrupt to output mode.
-- Module reference counting in gpiochip_reqres_irq() and gpiochip_relres_ir=
-q()
-  is bypassed.
-
-Although the commit message compares this with gpio-idio-16,
-gpio-pcie-idio-24, and gpio-104-idi-48, those drivers use fixed-direction
-inputs for their interrupt-capable lines and did not previously use
-GPIOCHIP_IRQ_RESOURCE_HELPERS, whereas PL061 lines have software-configurab=
-le
-direction.
-
-[1] https://lore.kernel.org/r/20261020-cv75-gpio-v11-8-e058bae19571@ambarel=
-la.com
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102-cv75-gpio-=
-v13-0-4f93114ea204@ambarella.com?part=3D10
