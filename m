@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793701781;
-	b=ax5zbSdml+o94GRvnVxmlf1zNeYMUZjwHG8nKGYVIEd/XgbaVMl8TC/eMPpgZIZh5Ace
-	 FFJmWlcrod3dFXkfyCLXEWCuz8cW3Aoo8ArKSxLAq1WGMmGCijILmMBXNX32KW7iZi3SQ
-	 nlh47qZI77JetQ/0C00+ErjolyPnohCppi9+BoduMNMoI0vW2Hk/RJXhsb4JevyYG5O+n
-	 Tr0m24Z5F6wEKQf49Zp6h39nyxJCXncKpaVMO4KN7PocewnwCbC1Uyif+ISPCOj+183pS
-	 LP3PB4EZ1vd75c0RTqnZuiCVtLrfMUu6fp6X7QN1O4o/KFQVIPByErmQ2vk27bvqsWQ==
+	t=1793701822;
+	b=tuWFuXfP8I/k4tNzThL58ZAIfNlu3i4Z82l2Gjt+z0Ue5cQSkgx8OOYd34hj5i3KjP0q
+	 7gqw7oTnVUXWcCg1X0TjyDqW32PIDLv3nR7CmlgPK//bTE1pON295LjZLzsH47aWRed18
+	 vZMADVs0vss7lNHeLvUUM2dnrbQBQrrmrjR/A0sCKWtfNXtGa0KQtEbmnffia4azjjnYt
+	 t2OM23XCIlUobUoI2DR01RwYw76rOHOvxzX/jvqegzD6FD6rQ4AY/BVaREKMXUk7WOuzF
+	 ww03LP664Ltl3aYBWn3308YJP3RqwzCt1bAAbSwShoMwpp+tQQ5hZreQXJQ5munxptA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793701781;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793701822;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/56EG2svL5jLewnaDgcht19g0SMZfzMbPzK9/rj5pqM=;
-	b=A3ZTN0kJ3BSgTtP6ee5bf4kzu5nLo4/8Qg2hHmDEeAm07pr0BN/wg4pNR7iIOaNfKJdv
-	 4qHh3l8J/C/QCeAZH0TDpTPm3BVSOGgzbz91GOL6BNcv/OIWmxAyK417XonrUWmwCW+6s
-	 sT/PnBPINZyKXtNSMtgXaCuEtzz5X4al0LDIvdof1vDqrFHJ3JpiOAegFZ1QScHHWvWwO
-	 IuVd4Ltab7jjzcrDiF2NkXhuwOEUzkW+E4l5pkoEZwUjrYCKhr3hUPQQi/3sOL55BmOXY
-	 w5MTnc1iyK9RiNsdss3ljw5iaOKQUIHNYttg3jp3f/qk1HaTXjjrwX8EWT26YyEF2ng==
+	bh=cS9be5BNblTcpaFLs7pFkLhSzIti9qF+o9j0kW9uoVk=;
+	b=prDKSL3uMkwMVK4FUpO/8IRATtd34FCP+PPGx4Dk6CF2blmEM8k7Rf9ij4ATL9hQFUsE
+	 zZlD7PnTaSaNZGhkOB9Lwx4ly9U4XeCcYboZByaVB08gmAgTiBvUZLjeCCyzC1cOGJXs0
+	 q/UMoHKbY8eNpcgGnQ2FQYKRSjMz57dCZX3GHoOKPvGhR2zp/30ZiV5P1dVwJTBM7MEIX
+	 eE8riwDKdIXX4Lqony9l+CXGF9ZQS1iCpmQGGz2+o1+RShhWcoZAj8sQ/khWV7uRhD2ia
+	 V3N2Fw8o8E/fZnZPOIfY1hUaFaS+Fd0aTFWOHej2GYTZjb4v7AHDwMvAVh+RFtrLDDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LqkrdLAi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ICKHSy2y;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E24606B127;
-	Tue,  3 Nov 2026 10:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57A4606A802;
+	Tue,  3 Nov 2026 10:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LqkrdLAi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0AF1F000C1;
-	Tue,  3 Nov 2026 10:29:40 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ICKHSy2y
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DFBD1F0093A;
+	Tue,  3 Nov 2026 10:30:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793701780;
-	bh=/56EG2svL5jLewnaDgcht19g0SMZfzMbPzK9/rj5pqM=;
+	s=k20260515; t=1793701821;
+	bh=cS9be5BNblTcpaFLs7pFkLhSzIti9qF+o9j0kW9uoVk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LqkrdLAiDcS27vHd9yOzLJUjE4i0sxjFP4iIl+ZGnGwnmpPXlDUnxysk/cKvQBzAi
-	 +ruUNYm5j/0r9fXRi7Lm31j2uNrqq4XgeF2fyol8tcnI2E4rRk0nwVBvIIFokZrv8c
-	 HyK5ChHhgzOSHr9M0esKj70VbfouLIlE+efpnWeMavym4dsOBsbJ6UEf80DyHHZPpb
-	 ELVI/za3hdKskC+NM3e96WZNEb9hsrQRY8VgMAuniU694VhOgVndx2heDEEXfirRx2
-	 VWlJIBKS/QdOZNJ/mrboY97C7X93wptF8Lhdc5l4h76Nhm7RkvvI8Cp7+48udSklxW
-	 KwNJaVauqDaSw==
-Message-ID: <sashiko-outbox-195052@kernel.org>
+	b=ICKHSy2yZpwKGnO5I3FAHYazCgrvmea7ZVrKynVTIaR8Z8hunL6I5ZZdMUVuCOXQJ
+	 +sZuG60cHBDKhmOtPJ0LkDXc5oGJM8ERboFwhMoBricXP0KxatwdAFD1zPFix6jfy4
+	 W8kouw8GNqgTQqKrzzTm4K7Nch954GwrWcGA1f8oy0bVB/sqfEnlajWod8XOAwvjgi
+	 nrF0OLL11LPBmabS0lTKwWDZ/jebQbzwzFVGiSC2zVJYv9P13ig7xJC0MYo38Io9Y0
+	 l4V8dsGGtXdJQExWF3yb1DVe94SQAjrZ5tZPoYXrDtd/WMvg09b7tRYEa2WJxZD8jh
+	 IcwtflQI7bnsg==
+Message-ID: <sashiko-outbox-195053@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 RESEND 1/8] dt-bindings: pinctrl: Add
- starfive,jhb100-adc0-pinctrl
+Subject: Re: [PATCH v1 RESEND 3/8] dt-bindings: pinctrl: Add
+ starfive,jhb100-adc1-pinctrl
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Changhuang Liang" <changhuang.liang@starfivetech.com>
 Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261103102236.96872-2-changhuang.liang@starfivetech.com>
+In-Reply-To: <20261103102236.96872-4-changhuang.liang@starfivetech.com>
 References: <20261103102236.96872-1-changhuang.liang@starfivetech.com>
- <20261103102236.96872-2-changhuang.liang@starfivetech.com>
+ <20261103102236.96872-4-changhuang.liang@starfivetech.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 03 Nov 2026 10:29:39 +0000
+Date: Tue, 03 Nov 2026 10:30:20 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,34 +63,32 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] dt-bindings: pinctrl: jhb100-adc0: inverted resets item order vs ex=
-ample
+- [Low] dt-bindings: pinctrl: starfive,jhb100-adc1: reset order mismatch
 --
 
-commit 9d39373a8467ea55e837444aa5a8e524ca666cc8
+commit 4c932bf5e112630c79796db81f0b0cecf418f57b
 Author: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-dt-bindings: pinctrl: Add starfive,jhb100-adc0-pinctrl
+dt-bindings: pinctrl: Add starfive,jhb100-adc1-pinctrl
 
 This commit adds the Device Tree binding schema for the StarFive JHB100
-SoC ADC-0 pin controller.
+SoC ADC-1 pin controller.
 
 > diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-ad=
-c0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100=
--adc0-pinctrl.yaml
+c1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100=
+-adc1-pinctrl.yaml
 > new file mode 100644
-> index 0000000000000..5b4b44c5776c1
+> index 0000000000000..6f1486b4a8bdf
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc0-pinc=
+> +++ b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc1-pinc=
 trl.yaml
-> @@ -0,0 +1,168 @@
 
 [ ... ]
 
 > +  resets:
 > +    items:
-> +      - description: ADC0 IOMUX
-> +      - description: ADC0 core
+> +      - description: ADC1 IOMUX
+> +      - description: ADC1 core
 
 [ ... ]
 
@@ -100,31 +98,30 @@ trl.yaml
 > +        #address-cells =3D <2>;
 > +        #size-cells =3D <2>;
 > +
-> +        pinctrl_adc0: pinctrl@11bc2800 {
-> +            compatible =3D "starfive,jhb100-adc0-pinctrl";
-> +            reg =3D <0x0 0x11bc2800 0x0 0x400>;
-> +            clocks =3D <&per2crg 67>;
-> +            resets =3D <&per2crg 10>,
-> +                     <&per2crg 11>;
+> +        pinctrl_adc1: pinctrl@11bc2c00 {
+> +            compatible =3D "starfive,jhb100-adc1-pinctrl";
+> +            reg =3D <0x0 0x11bc2c00 0x0 0x400>;
+> +            clocks =3D <&per2crg 68>;
+> +            resets =3D <&per2crg 12>,
+> +                     <&per2crg 13>;
 
 [Severity: Low]
-Is the order of items in properties.resets inverted relative to the example?
+In Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc1-pinctrl.y=
+aml,
+properties.resets defines the first entry as ADC1 IOMUX and the second entry
+as ADC1 core, whereas the example lists <&per2crg 12> followed by
+<&per2crg 13>.
 
-In properties.resets, the first positional reset is documented as ADC0 IOMUX
-and the second as ADC0 core. However, the example passes reset 10 followed =
-by
-reset 11 from per2crg, and include/dt-bindings/reset/starfive,jhb100-crg.h
-defines them in the opposite order:
+In include/dt-bindings/reset/starfive,jhb100-crg.h, those reset indices are
+defined in the opposite order:
 
-#define JHB100_PER2RST_ADC0_PRESETN				10
-#define JHB100_PER2RST_ADC0_IOMUX_PRESETN			11
+    #define JHB100_PER2RST_ADC1_PRESETN			12
+    #define JHB100_PER2RST_ADC1_IOMUX_PRESETN		13
 
-While jhb100_pinctrl_probe() currently requests all resets together via
-devm_reset_control_array_get_optional_shared(), any consumer indexing the
-resets property by position according to the schema would target the wrong
-reset line. Should the descriptions in properties.resets or the example be
-swapped so they match?
+Are the reset descriptions in properties.resets.items or the reset indices =
+in
+the example reversed?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103102236.9687=
-2-1-changhuang.liang@starfivetech.com?part=3D1
+2-1-changhuang.liang@starfivetech.com?part=3D3
