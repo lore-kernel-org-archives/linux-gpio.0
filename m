@@ -1,55 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793743074;
-	b=hxzXpVDNaIhgt0EBUns3H8JJ837+xN+3ZQ4J2UptmkSwlQ77H/D3O2x/9jyPL46P0Zds
-	 MDtVC8tAZui2aLK4yBha8plx7GI/m3jNmR/SnvI9nVVqhudNi/lSUOnW8R88Zb9l8TPvH
-	 rDySQLxhJUrMeg461mKix9kp4wPGU8uIGAf/a5Cet4LXa5rtbC3rYxh8fN1c5uTr6zNYo
-	 2GzEfu0eSaKhq58Bc7ViPo4Ltve480tKB7C665da5MpKZM0WWU+6+MP9Z/e//5qBCshnn
-	 dCTcErmF3mM+NgBzYPwJoLfVq8x3kKaYLlMdjeCzGXQGXZvlFzK6BBwslHX/etiAUkg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793743074;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=4H8eU6z2JR3iXPnaXPV2uTwunMPI539+3YmBBPsTqq8=;
-	b=elfDWBAO+SnS1sZvJOkOEc/xQMfstHiHOSbUqif/DMfN4cMkFaam8nwHHGxshRU3VB8F
-	 q36B0eBMTqQ5golDqtKuWsl+1+RaNhtJrb5hzUVvVG1eDYdeZe/fgw2Ob9rF2aTbIKx0M
-	 pC42V0TFsMMUyftapn4FmuFmTcepfCuGjsjN3ta6Isu76xqestVzBq7027n3TmGKv3vuD
-	 zgWfErUaM7ohKPUVJYFDivmFzEekvccLQs1QVUPmIfxb114j8GDEaH0+JyHg/ZLiJi6EA
-	 KkgqJZ6PqSTLU4AlLweHOhMYEPcxlKbLL2bCflTWxwKR5jezAvaFdR0u53Z/9LwguZg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NN4zXVrv;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=81.169.146.166
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1793743281;
+	b=n2S9bZB3Db6iknQUFemddnyQuSvURvmQJLuKV7yGeENYyqsQ+z5Y5zC5Pw51gfxKlsOZ
+	 tcNBIDnN8hNgP43o4aPhT0abDxEC7HHkG46p4EfFBhjMAvuQYj30FvhSLiSRQEtYNw68+
+	 q8yymXcQxJ+q1vV8fY4gNOdryVs7OdEJWYtnoTeiNVhK+hyrEiv2mM/P7DCUjGADObSnB
+	 Mwho2RVwtM2duvk7GnZg/VdwIBeIdof0w1p2BDcnaMS59h4AtDtiddkic5RyJSVKpRMvT
+	 UxzamiTCMdabh8a3Xc89zIGaQ22X+BsD0jeOzOHl9RB29e1Nvdvjn8cPrU9/EWIDc2A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793743281;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
+	bh=0K7c2SWrjNpVZZvIFiWuTHz1VbqNfiLeX75RpOaIbCI=;
+	b=jO0wYQ8YgVkz1zm1qPZ+ctz0MvGoSzDbjj63TtoPbn5zG+qvDLj34a7ana+wYnbPC1h+
+	 +j7hCpEHYtR18/xoQWTE34eXuNAvXzpYPYOoWPXk3GCzIs2pmHLdMd5RxgeyPaCwqY5XS
+	 anSwpf+mzG/6e+BLtYsCqGs/Pxqltdg6m6/nop//WAZDo9E/Z/rqTmFNCF8nwDmjMte5d
+	 AE0hOUfOSB0C31GOktaX58g22QQrANFDOnpRrWdSMU9TlDeEYYBa1+FmwXRlYeiNRFz5p
+	 /dIwB/4bSdWTNzi3/M8VK9b3PVzrUo4OVYBbTFGYwR7h5ws6EbQuLScn+zplRzsNzBg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=o3wlplCz;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=GkLBUkVI;
+	arc=fail smtp.remote-ip=81.169.146.166
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19D3606D810
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 21:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9665F606A324;
+	Tue,  3 Nov 2026 22:01:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9665F606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NN4zXVrv
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4D31F00A1B
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 21:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793743074;
-	bh=4H8eU6z2JR3iXPnaXPV2uTwunMPI539+3YmBBPsTqq8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=NN4zXVrv4HX75rNjDW8n2rGhpIdcwT226SOYEzZIJkf4wky///aAUqXsW/LNjWIkB
-	 +jqhBmbKEGHqpB/RfJ3IOme2x4Uro3Y6FFkYU7Lcb9k3EYVAL1RdZOfZBIO6UiCdmd
-	 KU9/YPoFAEbimG8yPTj0+ET9beRolcznhTqYs/aM+V+aZskkRu62idx1+KnN4AwSau
-	 1qKaj1M79st+FVG6mdkANAoRT1WY2ezZ902n3LEXe1SUMJ3M1nio7P61uGsrtysmqO
-	 t+l8RFDh+9jqGqOg9Z/Kt58ZxPm2v6e40EATAVtiGV3R2E35gTnJzuKbjPNba1LZpc
-	 +CFP4IuYefF8g==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5be3d5927ceso627e87.3
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Nov 2026 13:57:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBz4D1OlgNmpQCnzgeSi1hyWXyaTaGu0kM2NBgq0dNzaWSmkxxgxjvGpO6BevnkFDlKS5GCP5rTLPVEu@vger.kernel.org
-X-Gm-Message-State: APuU4Z8WwWwc4/t7SiFxV8Bj3AMkHnMG0Et64sInTHuOGKBmWyeg6IIQ
-	JNsZO7oP7kNh773CH6k3FeOxRBT9dsiH6ZidK4QCdvsHuBFOg/sKuP+xhTuC6N2sJztqlpnyNb7
-	RoG1C8DxAjo0v5kqct4tkwFks0JN/M/c=
-X-Received: by 2002:a05:6512:a94:b0:5bf:b246:87a2 with SMTP id
- 2adb3069b0e04-5bfd957b610mr4953868e87.10.1793743072116; Tue, 03 Nov 2026
- 13:57:52 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=o3wlplCz;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=GkLBUkVI
+ARC-Seal: i=1; a=rsa-sha256; t=1793743269; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=cWJ2X1qUnVoIwy6mXG9UWOLlxSh0nvpjMjuOCrk3ksf6AuVgFL5vbA0aZLBW8Q5wXH
+    bsozsdKJKiqbb73lsMRXc3QG0kUvSfvXSmgoycCUJBpgbOjwXi3LYNWnfR6V0fZ0Pu7m
+    U433+40dSr03Zves4GyDScFffOTuSQQVPM/Ck5Z2NRWDskzxQGFsi7DqjExmLMZA/F2/
+    weaZrlv19cvy+kNkOWnpE2x1bAqkX8q/JBdYgfrnycZJrvYBxL7KKlVEPOzAWTeVLd2b
+    5mJhVTZlwuA2F9gB34XGRVUFIoc9B7RxkBmb9zhcTGPmxhntGE0WHIQtRUvaOzAE8jAn
+    caAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1793743269;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=0K7c2SWrjNpVZZvIFiWuTHz1VbqNfiLeX75RpOaIbCI=;
+    b=BMDdVZY9Zlrjf96EBNMvg4iwsnepjre9ZYxhotJFq1Wg4ZPBHPS0I4cbdi1diiI+qL
+    +vab4aNozaz9W221SshUw5nlQGIAHy9oNBv0pOXZg8NSp80DHSL/1FfZfCHnVt89xN5w
+    /qbTTTrXWNOk9cajPvkjwkw+4l+b+ykkKB9yBNi+zuOX8TSjzHnfdn5TXnXDe8raDNVI
+    k2hRt1X5Wybl3eg7nDRXT49ZbHk0UGc+HtfAWymI2VfBRWWROxhJgmJc553emxQTwaFB
+    efz9TZQlGg1VATAJZOhkhOMALasHjwU/EGgIAzHlAolK5SA1SX02CKhh1hn1ALh/s0Qn
+    M0jA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1793743269;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=0K7c2SWrjNpVZZvIFiWuTHz1VbqNfiLeX75RpOaIbCI=;
+    b=o3wlplCzsr3nVISrQ9rcWITxX5WFf5e1Oy6I6gUj2+mQ460cB8Cpe4OuJLC2fhiiZb
+    xqzHEZg3tQ2JdC9lbmMjM0Y9FzbEBKQKrxXXJhtJ/Ii4dvP4pRt+tJqA2+hvYVulYTCm
+    ifcM5zFyTiW3KqRTCoIVoySa4dRqUF7OFsmoalgD4RzNs68A9t7YlQLL7OZ5HdVNvR4+
+    rtF3nEVos90CwjaUiiioX7Mqt9ERuQxMgl0bY2tl3HPHEupMlGxp32HbNPlYLJVDZWyR
+    oeJq9MDlGZ1YN2qIn9rFQrELpsU+8UWqepnCwzEZWpdMr0MsI1M1ydWyRf9axaekv84l
+    ZRoQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1793743269;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=0K7c2SWrjNpVZZvIFiWuTHz1VbqNfiLeX75RpOaIbCI=;
+    b=GkLBUkVIBTJr9bqdozfb/DPt0TFnd9rutfAq262NF8d4s5mUxgE3PGWtbrlSORajJd
+    RV5BaNa8sYv14PuZF7DA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrTippensiNHh5GQdF5Gj7a+zmR6WbRdXRV8k3u"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22A3M18bYE
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Tue, 3 Nov 2026 23:01:08 +0100 (CET)
+Content-Type: text/plain;
+	charset=us-ascii
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,73 +93,74 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261102135330.2493332-1-robh@kernel.org>
-In-Reply-To: <20261102135330.2493332-1-robh@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 3 Nov 2026 22:57:39 +0100
-X-Gmail-Original-Message-ID: <CAD++jLm10TL4FkkyhvyF-CKNREA-mOSjbR5zKUisC_Wx1-nqgg@mail.gmail.com>
-X-Gm-Features: AclHuK-xZTzLWXlPWAOCiWHBj5C4K-MSmY2Fnjjj517UPimoWDCn2vjwhrapfPU
-Message-ID: <CAD++jLm10TL4FkkyhvyF-CKNREA-mOSjbR5zKUisC_Wx1-nqgg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Ivan Vecera <ivecera@redhat.com>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Lee Jones <lee@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, 
-	Ulf Hansson <ulfh@kernel.org>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Chanh Nguyen <chanh@os.amperecomputing.com>, 
-	Alistair Francis <alistair@alistair23.me>, Julius Werner <jwerner@chromium.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Dmitry Osipenko <digetx@gmail.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Ray Jui <ray.jui@broadcom.com>, Scott Branden <scott.branden@broadcom.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sound@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, mfd@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.700.51.1.3\))
+Subject: Re: [PATCH 03/10] pinctrl: ingenic: Fix element type of
+ x1600_sfc_funcs array
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20261103213002.1673560-4-lee@kernel.org>
+Date: Tue, 3 Nov 2026 23:00:56 +0100
+Cc: Paul Cercueil <paul@crapouillou.net>,
+ Linus Walleij <linusw@kernel.org>,
+ Paul Boddie <paul@boddie.org.uk>,
+ zhouyanjie@wanyeetech.com,
+ Andreas Kemnade <andreas@kemnade.info>,
+ linux-mips@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <2BA2B26F-C0A2-4E25-A612-D9DA513D6217@goldelico.com>
+References: <20261103213002.1673560-1-lee@kernel.org>
+ <20261103213002.1673560-4-lee@kernel.org>
+To: Lee Jones <lee@kernel.org>
+X-Mailer: Apple Mail (2.3864.700.51.1.3)
 
-On Mon, Nov 2, 2026 at 2:53=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org> =
-wrote:
+Hi,
 
-> Unit-addresses by default (and most commonly) are hexadecimal. There's a
-> number of cases using decimal patterns. Fix all of them, limiting the
-> pattern to match the 'reg' limits if there are any.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Am 03.11.2026 um 22:29 schrieb Lee Jones <lee@kernel.org>:
+>=20
+> ingenic_pinmux_set_mux() treats grp->data as a u8 array of per-pin mux
+> modes (u8 *pin_modes =3D grp->data), and every other *_funcs array in =
+the
+> Ingenic pinctrl driver is declared as u8[].  Because x1600_sfc_funcs[]
+> was declared as int[], indexing pin_modes[0..6] reads the first seven
+> bytes of the int array (0, 0, 0, 0, 0, 0, 0) instead of reading mode 2
+> for the seventh pin.
+>=20
+> Change the element type of x1600_sfc_funcs[] from int to u8.
+>=20
+> Fixes: 4da56f9c6f14 ("pinctrl: ingenic: add x1600 support")
+> Closes: =
+https://sashiko.dev/#/bug/linux-5dccd0ae-9450-440a-87d0-44cc86d1af45
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+> drivers/pinctrl/pinctrl-ingenic.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c =
+b/drivers/pinctrl/pinctrl-ingenic.c
+> index 1aa6a6dc1209..5c06208b8854 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -2456,7 +2456,7 @@ static int x1600_mac_pins[] =3D {
+> 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
+> };
+>=20
+> -static int x1600_sfc_funcs[] =3D { 0, 0, 0, 0, 0, 0, 2, };
+> +static u8 x1600_sfc_funcs[] =3D { 0, 0, 0, 0, 0, 0, 2, };
 
-Acked-by: Linus Walleij <linusw@kernel.org>
+Yes, that appears to be the correct fix. All other =
+INGENIC_PIN_GROUP_FUNCS()
+use u8 arrays.
 
-Yours,
-Linus Walleij
+I can not test as our x1600 board does not use the SFC interface.
+
+>=20
+> static const struct group_desc x1600_groups[] =3D {
+> INGENIC_PIN_GROUP("uart0-data", x1600_uart0_data, 0),
+> --=20
+> 2.56.0.385.gac671c819a-goog
+
+Reviewed-by: H. Nikolaus Schaller <hns@goldelico.com>
+
