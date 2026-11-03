@@ -1,84 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793707138;
-	b=LYVpsuI+5cSg05tUaEuTIujp8kSGtY7S3Epmupftjgttuf0BfGAIghCFUruAIOWZtYFH
-	 7dz0a6nePW6UkC1g+mzobUqm8FNWtdhgOhj5XPwFJKqdsZJ66OTf+SMt+wohrnE+fg0EZ
-	 ZRLoU+K3oVR10kdv17nGia8/ZiCHNxrQvLcSkte8wU3+x4cj7Nwjj26jIF4WHZHCUe/XO
-	 WBoOJPDRIAgOX6wm4bJJIo/3+mlH3KzW8zUUnyh69DLaS+Vb7Yhze62QUI5lnkxPjMyit
-	 BaHstyuSyznZLK7OfLhLLC7mbwFRNfd9+Mx8OZk3gYbbilmsGQlYHHHAtWMvjV5svpg==
+	t=1793707409;
+	b=YGBzaZEHqJBOnsK+AwOorkIRU8byPBdSb87ZZJ/mJ48JBdVPtfJs3T/drioNdkVjEyDZ
+	 /Lrs3NOuSdimp+8kijg5iGvomIUo8OvgB1hDEFeAT3lf5aPy1rUxENIErwwGNRf/CPPWt
+	 DJqSJ1iOLWn9QwZWBzXNz+9JRoB5V+yPNtOPgEek1teU/f6f7k0lW3Wjw1jwuLkdocqfH
+	 86+JynUinOBqW7cn5tyJhc1TI5AIuCLPj0NNlvTQdW7pv0gl8LHWCL6pnMcjRVEyI6elN
+	 zI5IVlPsJCqZQGnoxcUbPDXy9Fnoptf14YY7BxA2sm3c/iaY0/eocK89LruIFnTzG8A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793707138;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=qpvyviXlID8uNVyHZE6wnGhYmpIoIVVOIzz6sMnLrv8=;
-	b=VlViKkqnPpygvY7ebozyPAqXqY55DN8Hriju1YPNOAoyZ/L7vLZrD1Nh8nWWQv+oYjTS
-	 8lAlnhLdqMBYm8f+qbQchbNBIsgKLhH/nFaGw7d9UCN/NJ1dSLkw6V1vBAZUUkwhXLoUb
-	 3cElvG8x8GJRNQ8XCmbFMUTBDdvcJoSuKRXZRDRp8SQv6VwbLECGBZfPjhHmYPHLcnbgI
-	 GjZR3n4VDW3Caddh+agKPkLkvU1Uyt9FK1nI+FBKQmaVQim0Zu34t+gzyKcIH2Ovd2oa0
-	 iqzLU74qzOjNl36BQTlUoqk1HtOVtWK7wPaMn8FR7sjCQPv9j8p57SvwYZTMUK8p31g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793707409;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=y9aPNFGCvOBfYL6yagKJAZ1xf+M/uZ25jLOYEAEuavI=;
+	b=suM257AakGjHFo2AHPCj3NucyRZ+ibXkHX2z4/BDJzNAMxJlIn/pjFQLyxjJLMZO711g
+	 y7Tmnm+LQPnN8FWzrDRGlMD5whsfFJhbaBycf8kwxYW1bL0Z18xk2xXgjWyTBZo0vJx43
+	 ngyFXtPR79sYdTYvQ75b1kMs2euBbGiEsUPOFU3NN8caE01zr2Gqx+SHW0QPPytSusPwJ
+	 Fin8y1jmj2uI333EaNMEbb9zGSDBo/TCd0b67hWQ0S2FlJo54XOz+RkTJ6OX18DrY3vAW
+	 m3SLteC2W/g5EG3vq+1OU0/JzW++Rga+7JrLn2X7tHYU/5/5q3zqV9DexQrXHEIAYKw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QyaiQLen;
-	arc=none smtp.remote-ip=192.198.163.17
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gENvvwNA;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E5E606A326;
-	Tue,  3 Nov 2026 11:58:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 89E5E606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C4F6082BD9
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 12:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QyaiQLen
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793707138; x=1825243138;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LjepnItfHAR2JK8YVXjy9fiac3M0l5w1kC9Wmf6b8vM=;
-  b=QyaiQLenJwpmF/4iCNFeXVh2YXFuKl+VoFntVAXG4nFEYBujdAOQXEcm
-   uLRTx5sh52Etxu+AgqHncW7Ew1c0OBvzy36KLWSC2AAdyzLdjyw0wxbYK
-   iIdQmOVsIBIyxYe29bnWa7jiG9WK/Ti0h+ekFIC5k68N/SRut2CKnssY9
-   rkZkf0+8/BVEot6CX7HMzoQE5L4zKaFMRAzTTNvUYm+StdEKhLaPhCR9l
-   B1cllJM8xQAxhRcW3kPwXTVIAOYeSsTz7WSCAUr0rODn6ZcnNPuO6e3Ok
-   ATjwzZ433qTHB2132IX5KUD/gaQw9ct4lqgay3VFXFDkOHP4jCkfqwmfE
-   w==;
-X-CSE-ConnectionGUID: yT6mX2MVQjaShrriMtPjpw==
-X-CSE-MsgGUID: J4sc4oFPQWajw1MpbRRGJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2437418"
-X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="2437418"
-Received: from fmviesa013.fm.intel.com ([10.60.135.153])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:58:56 -0800
-X-CSE-ConnectionGUID: cE4qeZEiSLCzv7/JTLVHuA==
-X-CSE-MsgGUID: FFpnA7LXSua669K6W4eriw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="8253668"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.108])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:58:52 -0800
-Date: Tue, 3 Nov 2026 13:58:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>, linux-acpi@vger.kernel.org,
-	devicetree@vger.kernel.org, Long Zhao <zl020895@163.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 09/13] gpiolib: request ACPI GPIO events for external
- IRQ domains
-Message-ID: <aunMedCPibzJsfUi@ashevche-desk.local>
-References: <20261102-cv75-gpio-v13-0-4f93114ea204@ambarella.com>
- <20261102-cv75-gpio-v13-9-4f93114ea204@ambarella.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gENvvwNA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82B71F00A21;
+	Tue,  3 Nov 2026 12:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793707408;
+	bh=y9aPNFGCvOBfYL6yagKJAZ1xf+M/uZ25jLOYEAEuavI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=gENvvwNASVGvKxMfFIYUwM5zRjcywQyitw8Z9F10em4bd6laaTxDDATDJ5mBk0yi8
+	 eje0wzcoJWIDGj9QpAm69FVuHLaDH0hh4HLFJPDwhneN4IqnNUqOjzSXVI1qGAvCVh
+	 hIKJ1UqvHl7s4PhkeMa0P1ZjGW7cMzzjgSUYRSNASrvqgNwHhyyfWc4qTTrvt/ivQz
+	 YM9jwmgAY1ecUjDABVeA1qBIi+lR2dsrALlcmBr7cRYMAqge8SCbyrwfMiDasOpntU
+	 PDq6+3Ebwg5o8ufeBzPpQDnw5nfazTn3plChh+4w3NfzunsneTf+DUD+sBsrcrXgHd
+	 6c7o4G3CV+zuA==
+Message-ID: <sashiko-outbox-195211@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v5 7/7] gpiolib: let the character device free its IRQs
+ first on chip removal
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Adrian Ambrozewicz" <aambrozewicz@nvidia.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261103-gpiolib-chip-removal-v5-7-aambrozewicz@nvidia.com>
+References: <20261103-gpiolib-chip-removal-v5-0-aambrozewicz@nvidia.com>
+ <20261103-gpiolib-chip-removal-v5-7-aambrozewicz@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 03 Nov 2026 12:03:28 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -87,57 +60,103 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261102-cv75-gpio-v13-9-4f93114ea204@ambarella.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 02, 2026 at 02:46:02PM +0800, Long Zhao via B4 Relay wrote:
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] gpiolib: gpiochip_remove() frees remaining IRQs before shared prox=
+y teardown
+--
 
-> gpiochip_add_irqchip() requests GPIO-signaled ACPI events after
-> installing the irqchip. A gpiochip that gets its IRQ domain through
-> gpiochip_irqchip_add_domain() never goes through that path, so _AEI
-> events, such as the power button on ARM64 ACPI platforms, are not
-> requested.
-> 
-> Request them here as well. gpiochip_remove() already calls
-> acpi_gpiochip_free_interrupts().
+commit 07e6ca00e41fdaf7c8e36bd7d53c2988f88d1da3
+Author: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 
-> Cc: Mika Westerberg <westeri@kernel.org>
+gpiolib: let the character device free its IRQs first on chip removal
 
-First of all, Cc is a dup when other trailer for the same person is present.
+This commit reorders GPIO chip removal so that the device unregistration
+notifier is invoked after clearing gdev->chip and waiting for an SRCU grace
+period, allowing the character device to free its IRQs before
+gpiochip_free_remaining_irqs() force-frees any remaining ones. It also
+serializes character device release paths with the removal notifier so IRQs
+are freed before unregistering from the notifier chain.
 
-> Cc: linux-acpi@vger.kernel.org
+Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@boot=
+lin.com/
 
-Second, move Cc: list to be after the '---' line, it will reduce the noise in
-the commit message while sending to the same list of people.
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index ec5f81f4fd9e6..2aba76f79fd6c 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
 
-> Acked-by: Mika Westerberg (Intel) <westeri@kernel.org>
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+[ ... ]
 
-...
-
->  int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
->  				struct irq_domain *domain)
->  {
-> -	return gpiochip_irqchip_add_allocated_domain(gc, domain, true);
-> +	int ret;
+> @@ -1431,6 +1441,14 @@ void gpiochip_remove(struct gpio_chip *gc)
+>  	/* Numb the device, cancelling all outstanding operations */
+>  	rcu_assign_pointer(gdev->chip, NULL);
+>  	synchronize_srcu(&gdev->srcu);
 > +
-> +	ret = gpiochip_irqchip_add_allocated_domain(gc, domain, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	acpi_gpiochip_request_interrupts(gc);
+> +	/*
+> +	 * No new interrupts can be requested through the character device now.
+> +	 * Have it free the ones it holds before forcibly freeing the rest, and
+> +	 * both before the irqchip and its mappings go away.
+> +	 */
+> +	blocking_notifier_call_chain(&gdev->device_notifier, 0, NULL);
+> +	gpiochip_free_remaining_irqs(gc);
+>  	gpio_device_teardown_shared(gdev);
 
-In such a case where is the freeing these requested interrupts?
+[Severity: High]
+What happens here when the physical gpio_chip exposes shared lines through
+gpio-shared-proxy devices?
 
-> +	return 0;
->  }
+When a character device client requests edge detection on a proxy gpio_devi=
+ce
+(proxy_gdev), gpio_shared_proxy_to_irq() delegates the IRQ mapping to the
+underlying physical descriptor:
 
--- 
-With Best Regards,
-Andy Shevchenko
+drivers/gpio/gpio-shared-proxy.c:gpio_shared_proxy_to_irq() {
+	struct gpio_shared_proxy_data *proxy =3D gpiochip_get_data(gc);
 
+	return gpiod_to_irq(proxy->shared_desc->desc);
+}
 
+Requesting the IRQ sets GPIOD_FLAG_USED_AS_IRQ on the physical chip's
+descriptor via gpiochip_reqres_irq() -> gpiochip_lock_as_irq(), while the
+character device registers its device_unregistered_nb notifier on
+proxy_gdev->device_notifier.
+
+During gpiochip_remove() on the physical chip, calling
+blocking_notifier_call_chain(&gdev->device_notifier, 0, NULL) only notifies
+users of the physical gdev. Because gpiochip_free_remaining_irqs(gc) runs
+before gpio_device_teardown_shared(gdev) tears down the child proxy devices
+and triggers proxy_gdev->device_notifier, gpiod_free_irqs() will force-free
+the IRQ still owned by the proxy character device while proxy_gdev is activ=
+e:
+
+drivers/gpio/gpiolib-cdev.c:free_line_irq() {
+	const char *name =3D *label;
+
+	if (irq && irq_has_action(irq))
+		free_irq(irq, dev_id);
+
+	free_irq_label(name);
+	*label =3D NULL;
+}
+
+If linereq_free(), lineevent_free(), or linereq_set_config() on proxy_gdev
+runs concurrently with gpiod_free_irqs(), could both paths call free_irq() =
+and
+trigger the "Trying to free already-free IRQ" warning, or could
+free_line_irq() see irq_has_action(irq) return false right after __free_irq=
+()
+clears desc->action (before __synchronize_irq() and irq_stop_thread() finis=
+h)
+and free irq_label and the line state while the IRQ teardown or threaded
+handler is still using them?
+
+Should gpio_device_teardown_shared(gdev) be called before
+gpiochip_free_remaining_irqs(gc) so that proxy character devices also relea=
+se
+their IRQs via their notifier before the remaining IRQs are force-freed?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103-gpiolib-ch=
+ip-removal-v5-0-aambrozewicz@nvidia.com?part=3D7
