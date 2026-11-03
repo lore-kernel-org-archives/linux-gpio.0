@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793701574;
-	b=0S/y+IXny8ZfpFLoF+/tqGBY0uz/hncNcDH7PrCCnDNn/vvBT+SlAUHqmUchkdb9P2iG
-	 v44p1QGwfHf7YI5I5tXzy0WiNIExVuptORZS3eHVLlPk93gIc8OnCp76FzCeQFPHZfTBi
-	 0WywVY0rsYGM+V8yXk/pFSZsZ6bLz83HsZtJ7xDqxt5UrSpTEgNBgbzy7m2CLNBz3osH6
-	 0UY41dJ3TlNprBmSiCaM2juQWBWI1KUtE98DW3SQRV4yF3n0cLYmXvfNSVqn6oJSPZLQZ
-	 g0MwzdOQR/JvEMrWybdZoM8bjvM8juihZkcXRibx33qnhgXoOJznYVeCQw0zguRJkpg==
+	t=1793701781;
+	b=ax5zbSdml+o94GRvnVxmlf1zNeYMUZjwHG8nKGYVIEd/XgbaVMl8TC/eMPpgZIZh5Ace
+	 FFJmWlcrod3dFXkfyCLXEWCuz8cW3Aoo8ArKSxLAq1WGMmGCijILmMBXNX32KW7iZi3SQ
+	 nlh47qZI77JetQ/0C00+ErjolyPnohCppi9+BoduMNMoI0vW2Hk/RJXhsb4JevyYG5O+n
+	 Tr0m24Z5F6wEKQf49Zp6h39nyxJCXncKpaVMO4KN7PocewnwCbC1Uyif+ISPCOj+183pS
+	 LP3PB4EZ1vd75c0RTqnZuiCVtLrfMUu6fp6X7QN1O4o/KFQVIPByErmQ2vk27bvqsWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793701574;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793701781;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Obx8OtNRA6+z4+FID0lm5gipj49ZtIPABC5Ay0Lcy3g=;
-	b=25pVq/lmkECRRtMK58GvAHXVxElGDWGu+Ab5GrAL9EvVO/ldfFEL6cokuDRHrVspQHjo
-	 yyuzTkw5gWSNDHfCE9NE/viznN/T/oJoZV89li9lXTrkBUKQVNbSCbrxb0l6VIADAG/xR
-	 KK5pEXHAmqHOs0AJUSRnqn43QA2oKQ0333Kh9xRyySq4RHdRzHoNTP8dGJZnJv6tn+0LT
-	 L2v3Iy9ZNi0iYYkbBaRuG1A1sw+cMkvpO3RHLbzKM27iMU1WHdWL3Dv+CfJc2Uynxa7jy
-	 Duv2V20TLkIMpBNTpphsaxrUWnZ69ldpB1cHa+zRFzPSPT9rLfFm/CGJvtNamFYWsvA==
+	bh=/56EG2svL5jLewnaDgcht19g0SMZfzMbPzK9/rj5pqM=;
+	b=A3ZTN0kJ3BSgTtP6ee5bf4kzu5nLo4/8Qg2hHmDEeAm07pr0BN/wg4pNR7iIOaNfKJdv
+	 4qHh3l8J/C/QCeAZH0TDpTPm3BVSOGgzbz91GOL6BNcv/OIWmxAyK417XonrUWmwCW+6s
+	 sT/PnBPINZyKXtNSMtgXaCuEtzz5X4al0LDIvdof1vDqrFHJ3JpiOAegFZ1QScHHWvWwO
+	 IuVd4Ltab7jjzcrDiF2NkXhuwOEUzkW+E4l5pkoEZwUjrYCKhr3hUPQQi/3sOL55BmOXY
+	 w5MTnc1iyK9RiNsdss3ljw5iaOKQUIHNYttg3jp3f/qk1HaTXjjrwX8EWT26YyEF2ng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CsbLJNuc;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LqkrdLAi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66E4606EEAA
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 10:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E24606B127;
+	Tue,  3 Nov 2026 10:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CsbLJNuc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D421F0093A;
-	Tue,  3 Nov 2026 10:26:13 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LqkrdLAi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0AF1F000C1;
+	Tue,  3 Nov 2026 10:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793701573;
-	bh=Obx8OtNRA6+z4+FID0lm5gipj49ZtIPABC5Ay0Lcy3g=;
+	s=k20260515; t=1793701780;
+	bh=/56EG2svL5jLewnaDgcht19g0SMZfzMbPzK9/rj5pqM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CsbLJNucTeIZkI1szt+yKxWCq20ior44CWumlPxD5iMxXjrgQx5gPOK7QnEyegIx7
-	 CttL+zTKQceNCkGRFovcsP4fpqR0RgJUD4ZXTV3u8yIat89JsMyPq6KUKfKDl/fo2E
-	 OkGJf3n6GmDFcQEtBht6EiTxQnHD/SPl/kvq37cxFaniizSyWyp3iNek+HfxYtJZT4
-	 +F8ASCB4XTLmF3fUL8bXc5GFjW/90K9ehM5UlQitNhF8VxLmZe1tU8RhU4FvRT1zdj
-	 0kzy2ee6Tel9izRmRo17WTVw6YDpU172VJxBWaVk3KC1dRy/tIzcuLqlP9+rCh/aYm
-	 HlXUk4OvQHhmw==
-Message-ID: <sashiko-outbox-195044@kernel.org>
+	b=LqkrdLAiDcS27vHd9yOzLJUjE4i0sxjFP4iIl+ZGnGwnmpPXlDUnxysk/cKvQBzAi
+	 +ruUNYm5j/0r9fXRi7Lm31j2uNrqq4XgeF2fyol8tcnI2E4rRk0nwVBvIIFokZrv8c
+	 HyK5ChHhgzOSHr9M0esKj70VbfouLIlE+efpnWeMavym4dsOBsbJ6UEf80DyHHZPpb
+	 ELVI/za3hdKskC+NM3e96WZNEb9hsrQRY8VgMAuniU694VhOgVndx2heDEEXfirRx2
+	 VWlJIBKS/QdOZNJ/mrboY97C7X93wptF8Lhdc5l4h76Nhm7RkvvI8Cp7+48udSklxW
+	 KwNJaVauqDaSw==
+Message-ID: <sashiko-outbox-195052@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 5.10.y] gpio: dwapb: mask/unmask IRQ when disable/enale
- it
+Subject: Re: [PATCH v1 RESEND 1/8] dt-bindings: pinctrl: Add
+ starfive,jhb100-adc0-pinctrl
 Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?TWlndWVsIEdhenF1ZXogKFNjaG5laWRlciBFbGVjdHJpYyk=?= <miguel.gazquez@bootlin.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261103-dwapb-fix-v1-1-c93ef2f20695@bootlin.com>
-References: <20261103-dwapb-fix-v1-1-c93ef2f20695@bootlin.com>
+To: "Changhuang Liang" <changhuang.liang@starfivetech.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261103102236.96872-2-changhuang.liang@starfivetech.com>
+References: <20261103102236.96872-1-changhuang.liang@starfivetech.com>
+ <20261103102236.96872-2-changhuang.liang@starfivetech.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 03 Nov 2026 10:26:13 +0000
+Date: Tue, 03 Nov 2026 10:29:39 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,43 +63,68 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] gpio: dwapb: missing semicolon in dwapb_irq_enable() causes build f=
-ailure
+- [Low] dt-bindings: pinctrl: jhb100-adc0: inverted resets item order vs ex=
+ample
 --
 
-commit 8cbb31bc1b5314b8269d987acc47c5043fa04ab3
-Author: xiongxin <xiongxin@kylinos.cn>
+commit 9d39373a8467ea55e837444aa5a8e524ca666cc8
+Author: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-gpio: dwapb: mask/unmask IRQ when disable/enale it
+dt-bindings: pinctrl: Add starfive,jhb100-adc0-pinctrl
 
-This commit synchronizes the GPIO_INTMASK register state in
-dwapb_irq_enable() and dwapb_irq_disable() so that interrupts are masked wh=
-en
-disabled and unmasked when enabled.
+This commit adds the Device Tree binding schema for the StarFive JHB100
+SoC ADC-0 pin controller.
 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index d6240ae0f87ca..c2c9b42a60865 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -282,13 +282,15 @@ static void dwapb_irq_enable(struct irq_data *d)
->  {
->  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
->  	struct dwapb_gpio *gpio =3D to_dwapb_gpio(gc);
-> +	irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
->  	unsigned long flags;
->  	u32 val;
-> =20
->  	spin_lock_irqsave(&gc->bgpio_lock, flags);
-> -	val =3D dwapb_read(gpio, GPIO_INTEN);
-> -	val |=3D BIT(irqd_to_hwirq(d));
-> +	val =3D dwapb_read(gpio, GPIO_INTEN) | BIT(hwirq)
->  	dwapb_write(gpio, GPIO_INTEN, val);
+> diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-ad=
+c0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100=
+-adc0-pinctrl.yaml
+> new file mode 100644
+> index 0000000000000..5b4b44c5776c1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc0-pinc=
+trl.yaml
+> @@ -0,0 +1,168 @@
+
+[ ... ]
+
+> +  resets:
+> +    items:
+> +      - description: ADC0 IOMUX
+> +      - description: ADC0 core
+
+[ ... ]
+
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +
+> +        pinctrl_adc0: pinctrl@11bc2800 {
+> +            compatible =3D "starfive,jhb100-adc0-pinctrl";
+> +            reg =3D <0x0 0x11bc2800 0x0 0x400>;
+> +            clocks =3D <&per2crg 67>;
+> +            resets =3D <&per2crg 10>,
+> +                     <&per2crg 11>;
 
 [Severity: Low]
-In dwapb_irq_enable() in drivers/gpio/gpio-dwapb.c, the assignment to val is
-missing a trailing semicolon before the dwapb_write(gpio, GPIO_INTEN, val)
-call. Does this break compilation when CONFIG_GPIO_DWAPB is enabled?
+Is the order of items in properties.resets inverted relative to the example?
+
+In properties.resets, the first positional reset is documented as ADC0 IOMUX
+and the second as ADC0 core. However, the example passes reset 10 followed =
+by
+reset 11 from per2crg, and include/dt-bindings/reset/starfive,jhb100-crg.h
+defines them in the opposite order:
+
+#define JHB100_PER2RST_ADC0_PRESETN				10
+#define JHB100_PER2RST_ADC0_IOMUX_PRESETN			11
+
+While jhb100_pinctrl_probe() currently requests all resets together via
+devm_reset_control_array_get_optional_shared(), any consumer indexing the
+resets property by position according to the schema would target the wrong
+reset line. Should the descriptions in properties.resets or the example be
+swapped so they match?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103-dwapb-fix-=
-v1-1-c93ef2f20695@bootlin.com?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103102236.9687=
+2-1-changhuang.liang@starfivetech.com?part=3D1
