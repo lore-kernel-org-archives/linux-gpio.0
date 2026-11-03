@@ -1,57 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793677903;
-	b=sMMJuMqn/gVKxZXp+fKG7F6MK9PTWXFReGiAHc5NStwSad0257hJzsr+wXQl/pX/cfxm
-	 E5UT3pfVP1Ix+BgmPYrxUmrggSNE44+WptVeUdsByi6cKtY1HCXqjrgaLBuMcgtFsUD6M
-	 XYSJ4XxL9mGTjqgDZ9fvxEtdHveMYh4PcqPyVpTBi8thHlCs+LGy5DQwKnwAYIDx6nZCu
-	 HhUozGD5nMlF0NzUq+WjXwzU0QcaSQyFh+OlOJ4Dlayet+Ge6HwAVoijslSwv884khCbT
-	 QaB+ey5U8oLscfhTaWyu0VaZ2KyvzwGP+M7k722NMJ71MiDCw4ZUnPiB+JIqitL4C1w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793677903;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=m3kp2cwP9o26WrQR2C4uENtrB3voODHYgUyWrVHSols=;
-	b=N/TloZyBB1ezrEsZ7gRwWMcNo4Lv3iQ40YzMgTVVARoR0kS/VHWOrrfSmNmW22U1rP8u
-	 V6iWmRKUXDw4KK5bOAt48IIhVQc8xyVkWGvt2fyN+Id7DeqwphgqRL3oraUhWJjiMMo1a
-	 eKFx+3rB0INnke8LLQkHnBUhgMJfHY5YlbcbCvE5OC6asr2yRyQ3W+vHU4m2jx2l1Kh5v
-	 u1bNoBe2Sb5M9B1ZW+hYFvi2jSSkFLClc/HlicXuujt0Hs6jCYMu9VzlcwpiQxvJpPFI6
-	 d5tFgWqxZoi8OoYmTfVVZtAeCA4Vc2zUFegKTYVydc7/0ZryhzLtds+yDWdxJQU25wg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="YzKW6q/X";
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793681255;
+	b=EaE99hTMMUZ8adJJkLbUWGvQBjJpDR36yYyRSo5dWCG1xigN9kkrTXkBgcDAvTMLb8O7
+	 m7Gjn8OOgMRQevEYIGP6iHOdxzC+Sqra6/128fvhsV4eiagLlr9afU3XvndgQp560eTlS
+	 lxS6oyo2PE0Mf4SbxQIJU9O5XhXHu2jTUSD1l6ruWOiYUAh31PvyXuCxkkMNLq1WijUvA
+	 qGfO2HjgROjy2svm2AF8c8O5VJGOfggerrAI1TM5QtAu/cJbBb6ntnOMHN7E/FrYEu2sA
+	 s8bNepiXZDbv51gP+NUIQXQYX+ujznq1sGNH74v6h72d7UGcOxFPXbPUDfWpw8qZupg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793681255;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=0+rSm+E1dOcLmFiVoLzR3TBiqneWOgmoux8nAhY2dl4=;
+	b=4fYjRmL+b3Va1bZq7kT/gfhAb5c4rKtO5nVa/ykPaH6ouOauXTqpeMQOfMhQin9n8N9i
+	 AjcTV52yLaAmq6qkEt+mQXLnZ8NnfCgTNmba164gVin0V4eyqjJM7JIFWEMrEQps8t8a3
+	 /G9ViCUcK69zcATbLfe/nHhzYzht5PPJGNUFOp8yRYxaGU+IFksoVmQISI3qWucumOezq
+	 owzCR9AD6GLqolN/2WqNnatlIH5XQbIVGpjZB5BuOkSS4upglzM86NPJvuGGFrWVr6tN1
+	 sIm1SuiJYTH+jJl9Kr1krw3RBE6MMYbcBNO+hFpWrNbrmKdSXRsAwvCxmH+qT9L2qOQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aCV2PwhM;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0287606A326;
-	Tue,  3 Nov 2026 03:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBB1606A324
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 04:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YzKW6q/X
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BCE91F000C1;
-	Tue,  3 Nov 2026 03:51:42 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aCV2PwhM
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1793681254;
+	b=3hjgjkF9GZtU9l+3Kh/7ptySxAuA40RP8oi1EYyRx0B1+ErgvesTOlxouhJ1MbKT/4pB
+	 iwkDLsNENZN1Vt64AGr6RTe/z5ziypZ7KqLTzFZv3KxAEwiU7gQK0LUnVoSSpfnN8BcBW
+	 lghYShoRN8DYbPkzpmXNrv7xng03g97/2ASYMH9dEIAYCVFYry8oQ4MVms1/Yxl+t0/ic
+	 0AlKIcWlgpEYfvY4BiwGIVmAreDaj8OPtus9bj9d4CEvbvLBnZCQM4/ez2ZezhE5z1o36
+	 3tMlrW54PwSeir0rl94hI9oWAAHjl8M5Urc3gm+LmNkU27Ykht1IcL7bnFVOJiJKwiA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1793681254;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=0+rSm+E1dOcLmFiVoLzR3TBiqneWOgmoux8nAhY2dl4=;
+	b=hCWLrmUKlgj11TzXemmPYQpeV/eLy95bFM+Uj0XZoo7D6jmt4goPIh1zb2q2JpdKb5o5
+	 vF7YLKFPeMJqLp7TaHMpJ1ZLvN8KGPB4ouo8jW1SlkUccyewSTtvZZhCQxYdTrkeR7YVy
+	 MwX4IeR/qj7uBhA4fIuwCB4J97tvb6HbxBE+t8cDOH2LknVHN1DtoNuGPCwaoNBEk0yen
+	 d3W/iGsKZznVUAlgdBGSlyj2foE8/dn6oZ5akhB86wO/XSSVZg8F5CAUtCaDNS10vCPSY
+	 M8wJZ4Ey26gh6JgXmGYTHtF7KkJu2JKzMfRdsRz1IRcOldUFMImNV4Aag4BPCxqPyHA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 5A5BB1F000C1;
+	Tue,  3 Nov 2026 04:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793677902;
-	bh=m3kp2cwP9o26WrQR2C4uENtrB3voODHYgUyWrVHSols=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=YzKW6q/X/awcdK0kYqZxP1Zkt/KXTgmM0O6Xm2XXyglzs3ItoOAKKF3ukEk1x8EYj
-	 iOkDFv8tiN4cqUi9/k73bGNhWYjuSTvqvWKi1kbHMTmLEDjjWidiY656cGgN7WrDWF
-	 rxbtGwngolC2AA6ZIyGDtYrB4iRRn72/cK9yEf0mVCvPKtS5D55q4+jstghbg+Jte5
-	 AWk57nF0012hgDudmtV8GxK/QNjSi9pYQUd7gWDrp6fqASqctrKvd6q0U/dBI0PP5A
-	 /cxt53sNj3WRjHl9h4MDdNKhHwBxOfQTuJ6Gj9mLn5id1KwjOJ8kvUKGNPrylEn2sH
-	 qHhstemHJbk9w==
-Message-ID: <sashiko-outbox-194542@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/2] usb: core: add a pre_probe callback for device
- drivers that may defer
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "James Clark" <jjc@jclark.com>
-Cc: linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <e96b91c85945237ca455869bf4d5a1e177358b54.1793669297.git.jjc@jclark.com>
-References: <cover.1793669297.git.jjc@jclark.com>
- <e96b91c85945237ca455869bf4d5a1e177358b54.1793669297.git.jjc@jclark.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 03 Nov 2026 03:51:41 +0000
+	s=k20260515; t=1793681254;
+	bh=0+rSm+E1dOcLmFiVoLzR3TBiqneWOgmoux8nAhY2dl4=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=aCV2PwhM63KxuM6qUwMQFQ2YhXTY0T8o33uaGrPpysX7Lb1jx6RPPLM6PB0kDOJE3
+	 CqPtl4RzECwv607K89L5gArTFM4Yk/M245a38JnPQGiIG63YpFhZA7zTrBiNNmx/o+
+	 weaE64wS5mwsk+XVuZgqkabRzjHcn6S1Z3j8Y887VJHz0eLuexJW5mlWyyqEuPrM66
+	 QINkVCC6o0unHLp4Q7mNsvssZFBVVj7pKuN+CVNNlePLide3g/AWo2pFOLz4GecTZ9
+	 P+eiN1dve3kuuryxTXSQSy8QCG5sTRezpnSFpViuQxroY3XNPxBszV6mA8Ld+FAs+P
+	 ZelvuBHBrD5iw==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id AF00C467A4;
+	Tue,  3 Nov 2026 04:47:33 +0000 (UTC)
+From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
+Date: Tue, 03 Nov 2026 12:47:17 +0800
+Subject: [PATCH] gpio: regmap: free the irqchip if adding the irq domain
+ fails
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,159 +82,71 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261103-gpio-regmap-irqchip-leak-v1-1-d038a20840f7@ambarella.com>
+X-B4-Tracking: v=1; b=H4sIAFRn6WoC/yXMQQ6CMBBA0auQWTNJi2DUqxAXpZ2WAYU6FWNCu
+ DtFl2/x/wqJhCnBrVhB6MOJ5ylDlwXY3kyBkF02VKo6a61OGCLPKBSeJiLLy/Yc8UFmRHVtvHM
+ X72pvIedRyPP3t27vf6elG8i+jx9s2w7js8X4fAAAAA==
+X-Change-ID: 20261103-gpio-regmap-irqchip-leak-095fdd8fd4fc
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ linux-gpio@vger.kernel.org, Long Zhao <zl020895@163.com>, 
+ Long Zhao <longzhao@ambarella.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793681252; l=1350;
+ i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
+ bh=Ps5e/qP45YCSpKvvs/e6pcBfQwAXRSNPUSMOfnRO6O4=;
+ b=RIt6MuHFlBF6UlBNw/AyAdNEzdopsxmq+/uqBkgFQHRj+GPJ2T76bvbz3iUiiJYNQ5mjwEfVR
+ EWkVPec8AHIBvSCHpPgkQ+chXP3SCcKMhISBI3SZe+Rn6OYtSf0Vxme
+X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
+ pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
+X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
+ auth_id=903
+X-Original-From: Long Zhao <longzhao@ambarella.com>
+Reply-To: longzhao@ambarella.com
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] usb: core: broken error handling and missing cleanup in usb_prob=
-e_device()
---
+From: Long Zhao <longzhao@ambarella.com>
 
-commit cc1df1b83e846aac43292fba9d36f8933ba3b140
-Author: James Clark <jjc@jclark.com>
+gpio_regmap_register() creates a regmap irqchip and then calls
+gpiochip_irqchip_add_domain(). If that call fails, the error path
+only removes the gpiochip, so the irqchip and its domain leak.
 
-usb: core: add a pre_probe callback for device drivers that may defer
+Free the irqchip there when this function allocated it. An external
+irq domain is not affected: irq_chip_data stays NULL and the caller
+owns that domain.
 
-This commit adds a pre_probe callback to struct usb_device_driver so that
-USB device drivers with generic_subclass set can defer probing before
-usb_generic_driver_probe() configures the device and binds interface
-drivers. It also converts onboard_dev_usbdev_driver to use pre_probe to
-avoid a deferred-probe loop on platforms such as BeagleY-AI.
+Fixes: 553b75d4bfe9 ("gpio: regmap: Allow to allocate regmap-irq device")
+Cc: Michael Walle <mwalle@kernel.org>
+Signed-off-by: Long Zhao <longzhao@ambarella.com>
+---
+ drivers/gpio/gpio-regmap.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index 9b8cd0e4219e6..137b53beb236a 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -249,24 +249,41 @@ static int usb_probe_device(struct device *dev)
->  {
->  	struct usb_device_driver *udriver =3D to_usb_device_driver(dev->driver);
->  	struct usb_device *udev =3D to_usb_device(dev);
-> -	int error =3D 0;
-> +	int error =3D 0, pre_error =3D 0;
-> =20
->  	dev_dbg(dev, "%s\n", __func__);
-> =20
->  	/* TODO: Add real matching code */
-> =20
-> +	/*
-> +	 * Give the driver a chance to defer before anything is done to the
-> +	 * device. The generic probe below binds the interface drivers, and
-> +	 * each binding triggers deferred probing, so a probe that deferred
-> +	 * after it would be retried straight away and the device re-probed
-> +	 * in a loop.
-> +	 *
-> +	 * Any other error from pre_probe() is not acted on until the generic
-> +	 * probe has run, so that the -ENODEV fallback below works as it does
-> +	 * for probe().
-> +	 */
-> +	if (udriver->pre_probe) {
-> +		pre_error =3D udriver->pre_probe(udev);
-> +		if (pre_error =3D=3D -EPROBE_DEFER)
-> +			return pre_error;
-> +	}
-> +
->  	/* The device should always appear to be in use
->  	 * unless the driver supports autosuspend.
->  	 */
->  	if (!udriver->supports_autosuspend)
->  		error =3D usb_autoresume_device(udev);
->  	if (error)
-> -		return error;
-> +		goto err_pre_probe;
-> =20
->  	if (udriver->generic_subclass)
->  		error =3D usb_generic_driver_probe(udev);
->  	if (error)
-> -		goto err_pre_probe;
-> +		goto err_pre_probe;
-> =20
->  	/* Probe the USB device with the driver in hand, but only
->  	 * defer to a generic driver in case the current USB
-> @@ -289,7 +306,9 @@ static int usb_probe_device(struct device *dev)
->  	 * specialised device drivers prior to setting the
->  	 * use_generic_driver bit.
->  	 */
-> -	if (udriver->probe)
-> +	if (pre_error)
-> +		error =3D pre_error;
-> +	else if (udriver->probe)
->  		error =3D udriver->probe(udev);
->  	else if (!udriver->generic_subclass)
->  		error =3D -EINVAL;
-> @@ -300,8 +319,17 @@ static int usb_probe_device(struct device *dev)
->  		if (!udriver->supports_autosuspend)
->  			usb_autosuspend_device(udev);
->  		udev->use_generic_driver =3D 1;
-> -		return -EPROBE_DEFER;
-> +		error =3D -EPROBE_DEFER;
->  	}
-> +	if (error)
-> +		goto err_pre_probe;
-> +
-> +	return 0;
-> +
-> +err_pre_probe:
-> +	/* The driver core doesn't call disconnect() for a failed probe. */
-> +	if (udriver->pre_probe && !pre_error && udriver->disconnect)
-> +		udriver->disconnect(udev);
->  	return error;
->  }
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 51b4d69b8740..7689357e6077 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -418,6 +418,11 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 
+ err_remove_gpiochip:
+ 	gpiochip_remove(chip);
++
++#ifdef CONFIG_REGMAP_IRQ
++	if (gpio->irq_chip_data)
++		regmap_del_irq_chip(gpio->regmap_irq_line, gpio->irq_chip_data);
++#endif
+ err_free_bitmap_output:
+ 	bitmap_free(gpio->fixed_direction_output);
+ err_free_bitmap_dirmask:
 
-[Severity: Medium]
-As reported by Sashiko on v2 [1], what happens in usb_probe_device() when
-udriver->pre_probe(udev) returns an error other than -EPROBE_DEFER, or when
-udriver->probe(udev) fails after usb_generic_driver_probe(udev) has run?
+---
+base-commit: 34cf6dafc47441dfb6b356a095b89c3585a93714
+change-id: 20261103-gpio-regmap-irqchip-leak-095fdd8fd4fc
 
-First, when udriver->pre_probe(udev) returns -ENODEV (for example from
-onboard_dev_usbdev_pre_probe() -> _find_onboard_dev()), usb_probe_device()
-still calls usb_autoresume_device(udev) and usb_generic_driver_probe(udev)
-to configure the device, bind all child interface drivers (triggering
-deferred probing), and emit USB_DEVICE_ADD, only to immediately tear them
-all down a few lines later in the error =3D=3D -ENODEV block via
-usb_generic_driver_disconnect(udev) and usb_autosuspend_device(udev).
+Best regards,
+--  
+Long Zhao <longzhao@ambarella.com>
 
-Second, if udriver->pre_probe(udev) or udriver->probe(udev) fails with any
-other error (such as -EINVAL or -ENOMEM), usb_probe_device() jumps to
-err_pre_probe, which only calls udriver->disconnect(udev) and does not call
-usb_generic_driver_disconnect(udev) or usb_autosuspend_device(udev) to
-unwind the generic probe and runtime PM state. Because really_probe()
-clears udev->dev.driver to NULL when usb_probe_device() fails:
 
-- When udev is later unplugged, usb_disconnect() -> device_del() skips
-  usb_unbind_device() because udev->dev.driver is NULL, so
-  usb_notify_remove_device() (USB_DEVICE_REMOVE) is never sent. Subscribers
-  such as usbport_trig_notify() in drivers/usb/core/ledtrig-usbport.c never
-  remove the port entries added on USB_DEVICE_ADD, leaking struct
-  usbport_trig_port objects and sysfs attributes with a dangling port->hub
-  pointer to the freed struct usb_device, and usbdev_notify() in
-  drivers/usb/core/devio.c never runs usbdev_remove().
-
-- For drivers with supports_autosuspend =3D 1 (such as
-  onboard_dev_usbdev_driver), usb_probe_device() does not take a runtime PM
-  reference, and hub_configure() enables autosuspend on hub devices; once
-  the device suspends, usb_resume_device() fails with -ENOTCONN because
-  udev->dev.driver is NULL.
-
-Third, if udriver->pre_probe(udev) succeeds and udriver->probe(udev) then
-returns -ENODEV, the error =3D=3D -ENODEV block runs
-usb_generic_driver_disconnect(udev) and usb_autosuspend_device(udev) before
-err_pre_probe calls udriver->disconnect(udev), reversing the teardown order
-used in usb_unbind_device():
-
-drivers/usb/core/driver.c:usb_unbind_device() {
-	if (udriver->disconnect)
-		udriver->disconnect(udev);
-	if (udriver->generic_subclass)
-		usb_generic_driver_disconnect(udev);
-	if (!udriver->supports_autosuspend)
-		usb_autosuspend_device(udev);
-}
-
-Could usb_probe_device() handle errors from udriver->pre_probe() before
-resuming or configuring the device, and unwind usb_generic_driver_probe()
-and usb_autoresume_device() in reverse order on probe failure?
-
-[1] https://lore.kernel.org/r/sashiko-outbox-191184@kernel.org
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1793669297.gi=
-t.jjc@jclark.com?part=3D2
