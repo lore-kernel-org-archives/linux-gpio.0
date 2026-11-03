@@ -1,74 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793705209;
-	b=toHurYKxRydkDtCNHVvzeVIv8EMRBQZxJzaePTVMB6/XZiAS3U8DklQYr/5g2FEjW1hY
-	 Af8ajEvCtYYuf0X0+pNaPfafZkh8MnbE+0JYSjO74cxqziGTbRS7WouQXHInkO3HpV5lR
-	 H1LNwZGRPK48mi35DcMl4FWYVBWGN2Ohdc0H8vwZQk3DL6ml2/DQJMceRQN9RZfnbyJZ0
-	 CNmJMnHhur09sWEUmQHlqWODvsHaXlBpypYgs4LolIa4OxmPRWOp5kL013WekJoCYplOU
-	 vn9Iu06t+EUhmJexYwRtTTEoW0mVLaL2+/W7V/U5T0HWyEK66sFBqpYH02tSP7zZpWw==
+	t=1793705708;
+	b=amtVUW85rSvzmSzIj+puJcmfXLWRvuNhlFLBjWXOrfJwvNIRucGJQ2Xta1pMbXzdZBe+
+	 nd88exaji5RSRkh+dPpb5kp52W06vOhzrvfkxr3yYtwFrR26ZEnz4dtKvLquqXUVXxV81
+	 gNNofanXPJ0K6MO6ooZTibGHy3g8opxtnoNUwVOEyP6AshMDugj9MTgzLta5IADLvoABd
+	 3Olq6yc8Ct/rp2TneZW5SojZMHlvwqOw4RL2s+sLMTIeAgAfKS7KQX1V+TIavs2HjxuNS
+	 zB+Hmp2IPLeGhfgJT38gb/dp/W1AWxyt/C3w6iG8FS9El5KbLolO4MCj4ilZTZ4q2Vg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793705209;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Date:From:To:
-	 Cc:Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Last-TLS-Session-Version;
-	bh=ln1Gfx2C7OvWYG5rzrLZ5qKFGoKJuGTOe8+ucqxorGA=;
-	b=AaAbvgolacgfpiy5Wtswz1j4qz/5OuiyXXINylcjcHBcgtCJJObHNleFoiUoIt/Rt2dk
-	 1Needm6q7Xu8QLrw8tFhXYbv4CCczsFLPwtaOYFicx88p4L8l35KDaVZYV+QWMQFAfflC
-	 7xJMdmlTsyVJDfRlTAQR/w1SralAIzEBu2ZyHwMntbduBr42ewyxjmxyN6iFdrTWfZVtU
-	 acg2NPpBZsb75xBxHnKcYY3z3fE6lg8P+OWn1XVHEcbZzeAZTQKlIkfaJlFfN7hXodubU
-	 pwHIjJh5rYC65rai+3E1gAxHZ2tRkZfKLfOpg5qo4/EdWfU2TRmi8n4eYAwkgLDcXEw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793705708;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=c4JVriSqnhUXcVvzsLVWWTJSNNQ43arV+TIdoGKN4wc=;
+	b=0HgoXP5sWxsvya+3rc1O/tKM4wHzm3wyyetvbJo1FnkXCHDn0Yt4ucHJUzEnMx6icinI
+	 feVYEu1kWlYKBV+ojIVrMkP7/H9+xwCkN32vLVNKoo+szMjHCDUFLCxT+EJ6jIZZdZaYN
+	 G7IHP6A2pcfpMrHu9v9xf9tgYrrpOycn01NHvaV2J37nALtCz1VTLB6c6Q5SsuTh8V9OP
+	 Go/47+9CRIn7JrAZHd3wPMXQGqkFKDCOY9g8umtmVTbxApVR1A6OlCBD3QrfthmPwu/ND
+	 ia2tKvV4HBRIc1kUPt99fApXZKO3wLg9cKYlwWsI6o8gYg4SY9fVqY6z6oTjFrgCXSA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=HQZTGIja;
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="TCjQ2/+u";
+	arc=none smtp.remote-ip=198.175.65.16
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E5B606B12A
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 11:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23E5B606B12A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0167606A335;
+	Tue,  3 Nov 2026 11:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0167606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=HQZTGIja
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 962121A142E;
-	Tue,  3 Nov 2026 11:26:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 68F746046C;
-	Tue,  3 Nov 2026 11:26:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0539F10328267;
-	Tue,  3 Nov 2026 12:26:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793705200; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ln1Gfx2C7OvWYG5rzrLZ5qKFGoKJuGTOe8+ucqxorGA=;
-	b=HQZTGIjadwPVfY6+SbWjaWIYTwLe2OtfbC92/TwdKkPq1C2Gs7aEdVQQOIHSpHeD7BOwpk
-	TRMTLnZdA75OoB7ZcAnFa78BTkBUzvSQHyD5jDVNLO4R5HlAqjfYHw562qE+UOv+sSiBGd
-	ZDsW4SAWn5EGT+lBMTWipEEbAfAEvQnDIHwoJ6+PcqLOeaPiwsUP68PDKqARQseE10tsJr
-	KnuEyJmD6mM4Pj9X5b+bZVEL7gZ0h+fX1mqKtgyWkiBSbTci9LaQOw9lrX2On4OC9qI8Bt
-	AWAsUGJai+T9Rws5uFJTuLeboJj6pglnT6IGfs/YOeaCxl6kyhJQ2rsgEKqgAg==
-Date: Tue, 3 Nov 2026 12:26:34 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>, Bartosz Golaszewski
- <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>, Kent Gibson <warthog618@gmail.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Jia Jia <physicalmtea@gmail.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=TCjQ2/+u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793705707; x=1825241707;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tOgvAIWfP2qhCgfnXFmqJFEJPtgyNY65FfFSjXCkrF0=;
+  b=TCjQ2/+u049wJbDb8DTu1nLMdwCkTynso2p4aDOStjizdvTHxp7NZRAq
+   5H1RxOVDeJbvwnvQM+QNliEwGvtoSkY6WtqvMr4D6XOCzO0e48zxDFBqI
+   7TH8iGnVCifRMbxJUIU09C7zP9zK5TC8DzjWzH7OSasXlskdwAO2806z6
+   LdA3/oN/Iy/3x5273rAhjQkACR4cZrF8/Ba4mJg5dGyHG87cdn4A393aC
+   LRBWp/KgwWLQ/1d0FGIKQeu/26YBv3RNJiiknRweYfx1E48NBhxzfSKr5
+   E/3ASdfkv/Ukj3By7jodGpbE+/8sSj/H9DauGN4MAVNsNonqo3vi9PilS
+   w==;
+X-CSE-ConnectionGUID: DW2bZ6pUSGGGfDgCMNJe5A==
+X-CSE-MsgGUID: k6kEylNHRe60U3xm20TH5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2419704"
+X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
+   d="scan'208";a="2419704"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:35:06 -0800
+X-CSE-ConnectionGUID: 1kyjFEKOSMKKVAo4bH7i9w==
+X-CSE-MsgGUID: G++Ps7n8TbyaAh1xolbZhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
+   d="scan'208";a="6231256"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.108])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:35:05 -0800
+Date: Tue, 3 Nov 2026 13:35:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Subject: Re: [PATCH v5 7/7] gpiolib: let the character device free its IRQs
  first on chip removal
-Message-ID: <20261103122634.6badd16e@bootlin.com>
-In-Reply-To: <aum82qe3S5W0FvK2@ashevche-desk.local>
+Message-ID: <aunG5r3aKrJG-vJA@ashevche-desk.local>
 References: <20261103-gpiolib-chip-removal-v5-0-aambrozewicz@nvidia.com>
-	<20261103-gpiolib-chip-removal-v5-7-aambrozewicz@nvidia.com>
-	<aum82qe3S5W0FvK2@ashevche-desk.local>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+ <20261103-gpiolib-chip-removal-v5-7-aambrozewicz@nvidia.com>
+ <aum82qe3S5W0FvK2@ashevche-desk.local>
+ <20261103122634.6badd16e@bootlin.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -78,67 +88,53 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261103122634.6badd16e@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Andy, Adrian,
+On Tue, Nov 03, 2026 at 12:26:34PM +0100, Herve Codina wrote:
+> On Tue, 3 Nov 2026 12:52:10 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Nov 03, 2026 at 12:32:40PM +0200, Adrian Ambrozewicz wrote:
 
-On Tue, 3 Nov 2026 12:52:10 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+...
 
-> On Tue, Nov 03, 2026 at 12:32:40PM +0200, Adrian Ambrozewicz wrote:
-> > gpiochip_remove() force-frees the remaining IRQs, removes the irqchip,
-> > and only then calls the device notifier on which the character device
-> > frees its own IRQs. The character device can then free an IRQ it no
-> > longer owns: after its mapping was disposed of and the number reused, or
-> > from a release that races gpiod_free_irqs() and
-> > gpiochip_irqchip_remove(). free_irq() then warns "Trying to free
-> > already-free IRQ" or uses a disposed descriptor.
+> > > Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/
 > > 
-> > Call the notifier once the chip pointer is cleared and the SRCU grace
-> > period has elapsed, when no ioctl can request IRQs any more, and free
-> > the remaining IRQs after it. Have the release paths free their IRQs
-> > before unregistering from the notifier, under the lock its callback
-> > takes (config_mutex, or a new mutex for v1 line events). Herve Codina
-> > first proposed calling the notifier earlier.
+> > No. Either make it Closes tag (if appropriate) or add a reference like
 > > 
-> > IRQs that in-kernel users leave requested are now freed after the chip
-> > pointer is cleared, when gpiod_*() calls on the chip fail.
+> > Link: $URL [1]
 > > 
-> > Reproduced with a test-only chip on the hierarchical irqchip: both races
-> > warn in all 30 cycles; with this change, none does.  
+> > and mention [1] in the text, otherwise it makes Linus T. grumpy. I think
+> > I already told that.
+> > 
 > 
-> > Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/  
+> IHMO, "Link:" instead of "Closes:" according to this reply in the series
+> pointed out [2].
 > 
-> No. Either make it Closes tag (if appropriate) or add a reference like
+> [2]: https://lore.kernel.org/all/20240923150522.66b418d1@bootlin.com/
 > 
-> Link: $URL [1]
+> The history was:
+>  - [1] (the link in this patch) proposed a fix
+>  - It has been rejected and a improved one has been done [2]
+>  - [2] has been accepted and led to the commit ec8b6f55b981 ("gpio: free irqs
+>    that are still requested when the chip is being removed"). This commit
+>    is already mentioned as 'Fixes:" in this patch.
 > 
-> and mention [1] in the text, otherwise it makes Linus T. grumpy. I think
-> I already told that.
-> 
+> So, IMHO, in this patch:
+>   ...
+>   takes (config_mutex, or a new mutex for v1 line events). Herve Codina
+>   first proposed calling the notifier earlier [1].
+>   ...
+>   Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/ [1]
+>   Fixes: ec8b6f55b981 ("gpio: free irqs that are still requested when the chip is being removed")
 
-IHMO, "Link:" instead of "Closes:" according to this reply in the series
-pointed out [2].
+Thanks, WFM!
 
-[2]: https://lore.kernel.org/all/20240923150522.66b418d1@bootlin.com/
+-- 
+With Best Regards,
+Andy Shevchenko
 
-The history was:
- - [1] (the link in this patch) proposed a fix
- - It has been rejected and a improved one has been done [2]
- - [2] has been accepted and led to the commit ec8b6f55b981 ("gpio: free irqs
-   that are still requested when the chip is being removed"). This commit
-   is already mentioned as 'Fixes:" in this patch.
 
-So, IMHO, in this patch:
-  ...
-  takes (config_mutex, or a new mutex for v1 line events). Herve Codina
-  first proposed calling the notifier earlier [1].
-  ...
-  Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/ [1]
-  Fixes: ec8b6f55b981 ("gpio: free irqs that are still requested when the chip is being removed")
-  ...
-
-Best regards,
-Hervé
