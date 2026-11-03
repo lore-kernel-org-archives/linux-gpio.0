@@ -1,60 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793706427;
-	b=jxx8tHOGbMRZHnvqajVPT0VPsmkIYz6Asp21akgu7xdpaJGIey8Eh+1hSKhHxu5hWTg/
-	 4UxHdCdFMnAmJIgK95nYpE24m0DdZAOetYOYeZI/sH/M2CECfYrDObk5gGK+jH0sYge8F
-	 DropI4Y5k63xin+M3g0XZwOaYbJUNMvNDTp6Pz0uKyYJVKiIbtggXGf9P0z4RZwja19rs
-	 q3eFt4Dfc/x/bs5xBhPOxcu2D5yGWI8XuQnIANdjEmevzYztLw7CqW4c+nqHyiX4pOaoA
-	 vE2xLDLgB0Ii1ON87vTPMArRgu6q/vx3x5Z11ZesvVvneJo8zlUmtHNIWO4H17+3fvg==
+	t=1793707138;
+	b=LYVpsuI+5cSg05tUaEuTIujp8kSGtY7S3Epmupftjgttuf0BfGAIghCFUruAIOWZtYFH
+	 7dz0a6nePW6UkC1g+mzobUqm8FNWtdhgOhj5XPwFJKqdsZJ66OTf+SMt+wohrnE+fg0EZ
+	 ZRLoU+K3oVR10kdv17nGia8/ZiCHNxrQvLcSkte8wU3+x4cj7Nwjj26jIF4WHZHCUe/XO
+	 WBoOJPDRIAgOX6wm4bJJIo/3+mlH3KzW8zUUnyh69DLaS+Vb7Yhze62QUI5lnkxPjMyit
+	 BaHstyuSyznZLK7OfLhLLC7mbwFRNfd9+Mx8OZk3gYbbilmsGQlYHHHAtWMvjV5svpg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793706427;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=oyJaOsgyVg7i7yxpvVvv++9mxwF1nRekeAVvZqUnvdY=;
-	b=Jxbj1kSoxddtQZ8Q3aINm9SAFJtG7cYnvUrwN8F5qsVkW+0opyN44cDGog+Sjs/3o+H0
-	 44DffxC03t/szv5Bt8FzUYTLYwYBNu1EGTADxri7ad3KYKu8bWgVKn0ySfD4GeeA9P40h
-	 /VE2Kj3ivbD2wO/96Ornc1smpGiblcfLSQkcAbs1g5V1dAMO9U16KvELBq3cEWTRok//i
-	 /aI6Ygp8mgceCKOTiLKEvFH+b9oQ9S38RcGjmNHQVZ8Ae6EQPnuabGkaQnpprPqNa8XF5
-	 IjLti05F/AWL/R2lW92mtiI9dOpArV1EdtAo7T/3NlpBLaSFc+BirBKTYGZpFCVg51w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793707138;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=qpvyviXlID8uNVyHZE6wnGhYmpIoIVVOIzz6sMnLrv8=;
+	b=VlViKkqnPpygvY7ebozyPAqXqY55DN8Hriju1YPNOAoyZ/L7vLZrD1Nh8nWWQv+oYjTS
+	 8lAlnhLdqMBYm8f+qbQchbNBIsgKLhH/nFaGw7d9UCN/NJ1dSLkw6V1vBAZUUkwhXLoUb
+	 3cElvG8x8GJRNQ8XCmbFMUTBDdvcJoSuKRXZRDRp8SQv6VwbLECGBZfPjhHmYPHLcnbgI
+	 GjZR3n4VDW3Caddh+agKPkLkvU1Uyt9FK1nI+FBKQmaVQim0Zu34t+gzyKcIH2Ovd2oa0
+	 iqzLU74qzOjNl36BQTlUoqk1HtOVtWK7wPaMn8FR7sjCQPv9j8p57SvwYZTMUK8p31g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fLGOiZwJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QyaiQLen;
+	arc=none smtp.remote-ip=192.198.163.17
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF82606A326;
-	Tue,  3 Nov 2026 11:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E5E606A326;
+	Tue,  3 Nov 2026 11:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 89E5E606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fLGOiZwJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA531F000C1;
-	Tue,  3 Nov 2026 11:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793706426;
-	bh=oyJaOsgyVg7i7yxpvVvv++9mxwF1nRekeAVvZqUnvdY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fLGOiZwJtsEitAbzUlKFcW5d9p7XkcaPwIxaI3jXZAAG7Fdh6jLMYwRVNfWbfjkSO
-	 5HWjNfrN495p1IEvlw5iXNsjfkVexPbHeC6diREKCVqL5nIT97WFhpdB2ATv+JSJbN
-	 CM84WjJeHHpSRvq569RAhulh7iHiLdVT+yBz6NtpLWkXtANRKIsVIOzqaB3cBMIuYS
-	 RRFLDq92c++Kje+nSPx4pd8Dr7kkbbxo4ge15MSqGTV3wLH8RIFm2kzwPFT2o9UJ9L
-	 VEceCvgQzL4+NQHSjqJtRaV+UUD47eMKlhXJSFoRN7ejpCqubU2MxAVQbTmlmsPswi
-	 fDmef2zvh7YvA==
-Date: Tue, 3 Nov 2026 12:47:02 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stefan Agner <stefan@agner.ch>, Dong Aisheng <aisheng.dong@nxp.com>, 
-	Jacky Bai <ping.bai@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 06/11] MAINTAINERS: Update i.MX GPIO entry
-Message-ID: <20261103-essential-uber-snail-ff3be7@quoll>
-References: <20261103-gpio-vf610-fixes-v2-0-7c71fb36e184@nxp.com>
- <20261103-gpio-vf610-fixes-v2-6-7c71fb36e184@nxp.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QyaiQLen
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793707138; x=1825243138;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LjepnItfHAR2JK8YVXjy9fiac3M0l5w1kC9Wmf6b8vM=;
+  b=QyaiQLenJwpmF/4iCNFeXVh2YXFuKl+VoFntVAXG4nFEYBujdAOQXEcm
+   uLRTx5sh52Etxu+AgqHncW7Ew1c0OBvzy36KLWSC2AAdyzLdjyw0wxbYK
+   iIdQmOVsIBIyxYe29bnWa7jiG9WK/Ti0h+ekFIC5k68N/SRut2CKnssY9
+   rkZkf0+8/BVEot6CX7HMzoQE5L4zKaFMRAzTTNvUYm+StdEKhLaPhCR9l
+   B1cllJM8xQAxhRcW3kPwXTVIAOYeSsTz7WSCAUr0rODn6ZcnNPuO6e3Ok
+   ATjwzZ433qTHB2132IX5KUD/gaQw9ct4lqgay3VFXFDkOHP4jCkfqwmfE
+   w==;
+X-CSE-ConnectionGUID: yT6mX2MVQjaShrriMtPjpw==
+X-CSE-MsgGUID: J4sc4oFPQWajw1MpbRRGJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2437418"
+X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
+   d="scan'208";a="2437418"
+Received: from fmviesa013.fm.intel.com ([10.60.135.153])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:58:56 -0800
+X-CSE-ConnectionGUID: cE4qeZEiSLCzv7/JTLVHuA==
+X-CSE-MsgGUID: FFpnA7LXSua669K6W4eriw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
+   d="scan'208";a="8253668"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.108])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:58:52 -0800
+Date: Tue, 3 Nov 2026 13:58:49 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>, linux-acpi@vger.kernel.org,
+	devicetree@vger.kernel.org, Long Zhao <zl020895@163.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 09/13] gpiolib: request ACPI GPIO events for external
+ IRQ domains
+Message-ID: <aunMedCPibzJsfUi@ashevche-desk.local>
+References: <20261102-cv75-gpio-v13-0-4f93114ea204@ambarella.com>
+ <20261102-cv75-gpio-v13-9-4f93114ea204@ambarella.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,20 +88,56 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261103-gpio-vf610-fixes-v2-6-7c71fb36e184@nxp.com>
+In-Reply-To: <20261102-cv75-gpio-v13-9-4f93114ea204@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Nov 03, 2026 at 07:44:10AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Mon, Nov 02, 2026 at 02:46:02PM +0800, Long Zhao via B4 Relay wrote:
+
+> gpiochip_add_irqchip() requests GPIO-signaled ACPI events after
+> installing the irqchip. A gpiochip that gets its IRQ domain through
+> gpiochip_irqchip_add_domain() never goes through that path, so _AEI
+> events, such as the power button on ARM64 ACPI platforms, are not
+> requested.
 > 
-> Update i.MX GPIO entry to include VF610 GPIO driver and dt-binding.
+> Request them here as well. gpiochip_remove() already calls
+> acpi_gpiochip_free_interrupts().
 
-Here and in subject - pointless "Update". Everything is update. If
-people were using such syntax, then entire `git log --oneline` would be
-useful.
+> Cc: Mika Westerberg <westeri@kernel.org>
 
+First of all, Cc is a dup when other trailer for the same person is present.
 
-Best regards,
-Krzysztof
+> Cc: linux-acpi@vger.kernel.org
+
+Second, move Cc: list to be after the '---' line, it will reduce the noise in
+the commit message while sending to the same list of people.
+
+> Acked-by: Mika Westerberg (Intel) <westeri@kernel.org>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+
+...
+
+>  int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
+>  				struct irq_domain *domain)
+>  {
+> -	return gpiochip_irqchip_add_allocated_domain(gc, domain, true);
+> +	int ret;
+> +
+> +	ret = gpiochip_irqchip_add_allocated_domain(gc, domain, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	acpi_gpiochip_request_interrupts(gc);
+
+In such a case where is the freeing these requested interrupts?
+
+> +	return 0;
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
