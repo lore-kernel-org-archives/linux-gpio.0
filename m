@@ -1,58 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793701390;
-	b=FOU2FNROU96Z0OS+XO2V4gdooH64955oCw02B8lXVVZg+1uuFIhlbmhFdbu0zDJul+EQ
-	 TOr/q7Su8Kq4Ye8hO1omBzfC5WxzsxW061rmKRdatTOwV59l6TcpHEE33E22HL7vjXjCv
-	 LrBzCEHHlSlWCTfjWzfKLcL6gLHyhVYkck7bRJV4of7qcithNVhSMH+YvJDOZWVcJ1bEf
-	 3qTpv121MG69h1AJVTJ6WVJPYb5GNQVWgzvOpogG05x+kiSiOrPVghMedwnrxO7kY+Buh
-	 0h7N/gqHSQOCHlVAJ5zavRos16u5Dy5Kn9ir2jJdNgqzTmR4CebV8BNoN4DSVt1mqsA==
+	t=1793701574;
+	b=0S/y+IXny8ZfpFLoF+/tqGBY0uz/hncNcDH7PrCCnDNn/vvBT+SlAUHqmUchkdb9P2iG
+	 v44p1QGwfHf7YI5I5tXzy0WiNIExVuptORZS3eHVLlPk93gIc8OnCp76FzCeQFPHZfTBi
+	 0WywVY0rsYGM+V8yXk/pFSZsZ6bLz83HsZtJ7xDqxt5UrSpTEgNBgbzy7m2CLNBz3osH6
+	 0UY41dJ3TlNprBmSiCaM2juQWBWI1KUtE98DW3SQRV4yF3n0cLYmXvfNSVqn6oJSPZLQZ
+	 g0MwzdOQR/JvEMrWybdZoM8bjvM8juihZkcXRibx33qnhgXoOJznYVeCQw0zguRJkpg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793701390;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:Date:
-	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Last-TLS-Session-Version;
-	bh=UYmSENSjXIqHkTii+FsN+sTED4hZ7gPUeMWF2Y6fbXw=;
-	b=CWYsL0lKRqH3oQGl9jXYjaadyMSRDhK6NlCRpwjb6CDcnaDDT/oETTm5l07hy88bw5z0
-	 p6pcEZzsXqENwzK7ePV0IILhaEw7uZXqX9GMPaWqs3U4GmEZuv20gEiMvzMHNw3TZJhUs
-	 RKzDD0vppzr1UrNoY/vJKCiCzpGsaHKTlr8fohp7EfWStaW1n4SqAjRlhlEMJmkE+qIJf
-	 2HdwD2FFe5VFGvaxpXsbvoVp+xA2X0QFdbfS6yPGWnhk/AEAjPWcV+Cx8TkbiKHnufOa5
-	 ECt7q4mmUiFnvoJ1ClB+zyT5XqBnlspNmZRr/g2pL82q+zF54XDkDhCecDSYjSScSWA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793701574;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Obx8OtNRA6+z4+FID0lm5gipj49ZtIPABC5Ay0Lcy3g=;
+	b=25pVq/lmkECRRtMK58GvAHXVxElGDWGu+Ab5GrAL9EvVO/ldfFEL6cokuDRHrVspQHjo
+	 yyuzTkw5gWSNDHfCE9NE/viznN/T/oJoZV89li9lXTrkBUKQVNbSCbrxb0l6VIADAG/xR
+	 KK5pEXHAmqHOs0AJUSRnqn43QA2oKQ0333Kh9xRyySq4RHdRzHoNTP8dGJZnJv6tn+0LT
+	 L2v3Iy9ZNi0iYYkbBaRuG1A1sw+cMkvpO3RHLbzKM27iMU1WHdWL3Dv+CfJc2Uynxa7jy
+	 Duv2V20TLkIMpBNTpphsaxrUWnZ69ldpB1cHa+zRFzPSPT9rLfFm/CGJvtNamFYWsvA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=ISfpL6R+;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CsbLJNuc;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBE160850B6
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 10:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5BBE160850B6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66E4606EEAA
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 10:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=ISfpL6R+
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id DCC23C8F45C;
-	Tue,  3 Nov 2026 10:24:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 644036046C;
-	Tue,  3 Nov 2026 10:23:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C0278103290E8;
-	Tue,  3 Nov 2026 11:22:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793701384; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=UYmSENSjXIqHkTii+FsN+sTED4hZ7gPUeMWF2Y6fbXw=;
-	b=ISfpL6R+E6N4N6aVzNXRYGzz2AA/3NYgZ9IrB12pd7ROCn+nSHGcmS2yQNbfBvaYJjXkM6
-	4E4KuHlXKDhwqeG+Nzs8Ivp/8+NWnGtQwJ3jMOCi/4ZDuMIB5MnPEvGMAa6XA031YwN6r2
-	CnWe135b3ER1vbuKyGeGzb8nZ2aRyBHDoCyvGk6cVnYrAYRicyVq6gqgDji2+E1GLJuIyE
-	ag7hb33JKof9rpoyT7gWmTcyzsfcLwYQkBEQTXTE7/9Xh7aBO+WC87J52sxT/v57kkSL7b
-	tmfCho/klrGMJ+J7LQIhPGgriqMadPed5B+omHTyOI6GwopizI0OUF59FGh3iw==
-From: "Miguel Gazquez (Schneider Electric)" <miguel.gazquez@bootlin.com>
-Date: Tue, 03 Nov 2026 11:21:38 +0100
-Subject: [PATCH 5.10.y] gpio: dwapb: mask/unmask IRQ when disable/enale it
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CsbLJNuc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D421F0093A;
+	Tue,  3 Nov 2026 10:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793701573;
+	bh=Obx8OtNRA6+z4+FID0lm5gipj49ZtIPABC5Ay0Lcy3g=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=CsbLJNucTeIZkI1szt+yKxWCq20ior44CWumlPxD5iMxXjrgQx5gPOK7QnEyegIx7
+	 CttL+zTKQceNCkGRFovcsP4fpqR0RgJUD4ZXTV3u8yIat89JsMyPq6KUKfKDl/fo2E
+	 OkGJf3n6GmDFcQEtBht6EiTxQnHD/SPl/kvq37cxFaniizSyWyp3iNek+HfxYtJZT4
+	 +F8ASCB4XTLmF3fUL8bXc5GFjW/90K9ehM5UlQitNhF8VxLmZe1tU8RhU4FvRT1zdj
+	 0kzy2ee6Tel9izRmRo17WTVw6YDpU172VJxBWaVk3KC1dRy/tIzcuLqlP9+rCh/aYm
+	 HlXUk4OvQHhmw==
+Message-ID: <sashiko-outbox-195044@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 5.10.y] gpio: dwapb: mask/unmask IRQ when disable/enale
+ it
+Reply-To: sashiko-reviews@lists.linux.dev
+To: =?utf-8?b?TWlndWVsIEdhenF1ZXogKFNjaG5laWRlciBFbGVjdHJpYyk=?= <miguel.gazquez@bootlin.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261103-dwapb-fix-v1-1-c93ef2f20695@bootlin.com>
+References: <20261103-dwapb-fix-v1-1-c93ef2f20695@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 03 Nov 2026 10:26:13 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,118 +59,46 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261103-dwapb-fix-v1-1-c93ef2f20695@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMTQ6DIBQGr2K+dTGgARKvYroAfNbnQg1of2K8u
- 2iXM5nMjkSRKaEpdkR6c+J5yqAeBcLgphcJ7jKjkpVRStai+7jFi56/wnltrdHa9iYg90ukrO9
- XC10qWf7w/Pu0+ZHCeo1wHCcO/xKydQAAAA==
-X-Change-ID: 20261103-dwapb-fix-ab5776557f6c
-To: stable@vger.kernel.org, Hoan Tran <hoan@os.amperecomputing.com>, 
- Serge Semin <fancer.lancer@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <bgolaszewski@baylibre.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Alan Tull <atull@altera.com>, Jamie Iles <jamie@jamieiles.com>
-Cc: Benjamin Robin <benjamin.robin@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ralph Siemsen <ralph.siemsen@linaro.org>, 
- xiongxin <xiongxin@kylinos.cn>, stable@kernel.org, 
- Riwen Lu <luriwen@kylinos.cn>, Andy Shevchenko <andy@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Miguel Gazquez (Schneider Electric)" <miguel.gazquez@bootlin.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793701321; l=3286;
- i=miguel.gazquez@bootlin.com; s=20250708; h=from:subject:message-id;
- bh=raXdsmUXhUMXLoQv/+U2gS57CUX95PJSVR9MJSEhvXE=;
- b=n0J1NxaeWywnesRrmu6cgGjMdeym+G8ooueSX1IC1ePo9To5tg4tXa4WeBSEUhrdNiTz8Kznv
- uaWvKvCUNwgAB2zYIJ/sOtAFrXCyErtY/9iSsk+5e2BLAeZRdnzVki+
-X-Developer-Key: i=miguel.gazquez@bootlin.com; a=ed25519;
- pk=k/2KI9jkmayaF0ghZ8QYUH9Wm/kFHDhl8QoZ0RHbr4w=
-X-Last-TLS-Session-Version: TLSv1.3
 
-From: xiongxin <xiongxin@kylinos.cn>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] gpio: dwapb: missing semicolon in dwapb_irq_enable() causes build f=
+ailure
+--
 
-commit 1cc3542c76acb5f59001e3e562eba672f1983355 upstream.
+commit 8cbb31bc1b5314b8269d987acc47c5043fa04ab3
+Author: xiongxin <xiongxin@kylinos.cn>
 
-In the hardware implementation of the I2C HID driver based on DesignWare
-GPIO IRQ chip, when the user continues to use the I2C HID device in the
-suspend process, the I2C HID interrupt will be masked after the resume
-process is finished.
+gpio: dwapb: mask/unmask IRQ when disable/enale it
 
-This is because the disable_irq()/enable_irq() of the DesignWare GPIO
-driver does not synchronize the IRQ mask register state. In normal use
-of the I2C HID procedure, the GPIO IRQ irq_mask()/irq_unmask() functions
-are called in pairs. In case of an exception, i2c_hid_core_suspend()
-calls disable_irq() to disable the GPIO IRQ. With low probability, this
-causes irq_unmask() to not be called, which causes the GPIO IRQ to be
-masked and not unmasked in enable_irq(), raising an exception.
+This commit synchronizes the GPIO_INTMASK register state in
+dwapb_irq_enable() and dwapb_irq_disable() so that interrupts are masked wh=
+en
+disabled and unmasked when enabled.
 
-Add synchronization to the masked register state in the
-dwapb_irq_enable()/dwapb_irq_disable() function. mask the GPIO IRQ
-before disabling it. After enabling the GPIO IRQ, unmask the IRQ.
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index d6240ae0f87ca..c2c9b42a60865 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -282,13 +282,15 @@ static void dwapb_irq_enable(struct irq_data *d)
+>  {
+>  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+>  	struct dwapb_gpio *gpio =3D to_dwapb_gpio(gc);
+> +	irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
+>  	unsigned long flags;
+>  	u32 val;
+> =20
+>  	spin_lock_irqsave(&gc->bgpio_lock, flags);
+> -	val =3D dwapb_read(gpio, GPIO_INTEN);
+> -	val |=3D BIT(irqd_to_hwirq(d));
+> +	val =3D dwapb_read(gpio, GPIO_INTEN) | BIT(hwirq)
+>  	dwapb_write(gpio, GPIO_INTEN, val);
 
-Fixes: 7779b3455697 ("gpio: add a driver for the Synopsys DesignWare APB GPIO block")
-Cc: stable@kernel.org
-Co-developed-by: Riwen Lu <luriwen@kylinos.cn>
-Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
-Signed-off-by: xiongxin <xiongxin@kylinos.cn>
-Acked-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Miguel Gazquez (Schneider Electric) <miguel.gazquez@bootlin.com>
----
- drivers/gpio/gpio-dwapb.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+[Severity: Low]
+In dwapb_irq_enable() in drivers/gpio/gpio-dwapb.c, the assignment to val is
+missing a trailing semicolon before the dwapb_write(gpio, GPIO_INTEN, val)
+call. Does this break compilation when CONFIG_GPIO_DWAPB is enabled?
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index d6240ae0f87ca..c2c9b42a60865 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -282,13 +282,15 @@ static void dwapb_irq_enable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 	unsigned long flags;
- 	u32 val;
- 
- 	spin_lock_irqsave(&gc->bgpio_lock, flags);
--	val = dwapb_read(gpio, GPIO_INTEN);
--	val |= BIT(irqd_to_hwirq(d));
-+	val = dwapb_read(gpio, GPIO_INTEN) | BIT(hwirq)
- 	dwapb_write(gpio, GPIO_INTEN, val);
-+	val = dwapb_read(gpio, GPIO_INTMASK) & ~BIT(hwirq);
-+	dwapb_write(gpio, GPIO_INTMASK, val);
- 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
- }
- 
-@@ -296,12 +298,14 @@ static void dwapb_irq_disable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 	unsigned long flags;
- 	u32 val;
- 
- 	spin_lock_irqsave(&gc->bgpio_lock, flags);
--	val = dwapb_read(gpio, GPIO_INTEN);
--	val &= ~BIT(irqd_to_hwirq(d));
-+	val = dwapb_read(gpio, GPIO_INTMASK) | BIT(hwirq);
-+	dwapb_write(gpio, GPIO_INTMASK, val);
-+	val = dwapb_read(gpio, GPIO_INTEN) & ~BIT(hwirq);
- 	dwapb_write(gpio, GPIO_INTEN, val);
- 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
- }
-
----
-base-commit: f23b568f7597f98a241454018a34361ce2523c05
-change-id: 20261103-dwapb-fix-ab5776557f6c
-
-Best regards,
---  
-Miguel Gazquez (Schneider Electric) <miguel.gazquez@bootlin.com>
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103-dwapb-fix-=
+v1-1-c93ef2f20695@bootlin.com?part=3D1
