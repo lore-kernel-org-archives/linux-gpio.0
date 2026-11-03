@@ -1,85 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793728209;
-	b=atmBmr1oDR1uXFr3u0Y/U5ubgQUHv7InuwDyXnmUBfRpQhnduTWTEtWev5yubRjFU/8Y
-	 EkVUtyteaHnOXHk8E7V56MRvCavklPrMp6oW37VaCB5hyChVpNtMCy/e5F6mGT0kPyvUu
-	 TAP58Cf1VijHwbUl20kQlWrXxqvLmH6zrvy3HsLv5wp8SVOzdRE/fCAunkAuhQ7yfsSSo
-	 iQ9FlDCzHf4MyzO0buPx2wkqfV7ZDMqugIyqCXzX15sJ56JpJNEfBWVNWBfIQ+dD/7+4U
-	 6rcrjPTN0kZAF07jC14TRSIW1N7kGyCrv0m7TrI/rdOvzU/pfn5QfgaeLdXamqcud2A==
+	t=1793729247;
+	b=5kuCJNfGhqtCsQMJrXk782ET9oNt+zcYoI4On9geWOmypolIPDvK5GqS1BBIJiAHevGx
+	 /58nCovTh4IkrocVC0naLiyKecfwJK2HlZAUvE+/YtKBNtqQ3BQYPh4BWExyh/zor63bq
+	 feZwYsTjbbTlwQDUMhlOON/3Zs3RTfNlhk4efJZdceYq/9FBk2uzzZ/gY/xsVJ1JvsOTH
+	 uiDbCnRZmyAxsc6cGOUZbcS7tuVWqzCfG8tCHy5nweFKO0BSaOTuh+yu1t2gwKIpNntAV
+	 VsCcU7H/TWUuYxB6KLjPXw/989AmsV2ipQf33+7SNm+bynSteN3S1GEjvfLDYuJAq4Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793728209;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793729247;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=rK8Oyi1EVEyMMt2fZfOKvUCg++w38odpzGTd7OnPeuY=;
-	b=SXyoTG+f1s4PCLyTWfzhlkOi/GVdLAp4Vo/a1ZmJ291qxzrHJXMH5UramVaUR4hB+cBD
-	 2sR15tZ+rB20BO0uD4Qw8RgK2Q8dCRCAZZ2n3r1lcS3DgTIVD4i8XV9gZlWwFcnKERvEw
-	 yERk2ZFCdEgoO5NqZltHRtPFagegOdY45138fDUUJW4ugosAQuPCbpBPN79pDOZaTQMXF
-	 v2LwjyI2ZmAlIezeSnpIYGg5jArt4EbUcYWCpG8WtOn2pTq5CvbXQLHscN2t6GmSbdrMM
-	 0uEIOX/eP4pov2MkY4Y1uoHBshcISUKrJnX6T3O2LTvFq5bsCs7+lO+cyG3AxdSK39g==
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=36cm16tufu7kjTcTNSq16Pm9zCzreKSbe6goJz6bMTQ=;
+	b=A9MNEjQpBzjB2T7w+Fd5EcE0fkIe2QTpv1p434fkqOb86QJkcptMt/AzbaPXXNrWSkbI
+	 OqwuCcGXJHxfAhccjTdt2HWnycsBAndGXh6up6FVaZy3E7WNzPWO0bzMeh5mp46owZwVd
+	 66eU1qRn3fP/q/pSzWEx4Cufapj0RMb9VzUex9EyHmjkAB/Gdtd4/JT8N2BSpbnzIZRhd
+	 J++gm/Hlci+k89Jw0cXUIzjjD+TMiWmv6x1PmRLKkeGrw8eGX8DzsWmSZXZPlhLb5BrEc
+	 obsFUQ7OtCdqNYjOUtpnOu8C08cuhUT34NkJD0ZwsLoTZGL9EIKLYwJRG8WGfcoabog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EgCZqgSw;
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NpZxaxKG;
+	arc=none smtp.remote-ip=198.175.65.16
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87612606A31B;
-	Tue,  3 Nov 2026 17:50:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87612606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F90606A32C;
+	Tue,  3 Nov 2026 18:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 24F90606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EgCZqgSw
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NpZxaxKG
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793728209; x=1825264209;
+  t=1793729246; x=1825265246;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=vkMUZ8Mg4qCpdEUhz5E8ZLoH+xJDC3jv0x1a8OM3Wfo=;
-  b=EgCZqgSwBiLhoz9mBgCyJjlKqSf6B/ddfjCx515MgmLiE6mj7yPJqdZ5
-   jugw8TxvaF4OSU7YiZDm5zGl8m9YInT1xxQPPOTH4DB27ckRjhjgvOz0I
-   5qFs/FSpvi15BISXxyJnHOFP6wiastKoP1NRT8SRUdt0GPsY9GeyLlYDZ
-   Lrahl+ASodxa5XLDFh9E/oENTvUWtE/mjZbifREktxYTTd4J48c8XdpbE
-   CVZqpW24sWaIJJc60xsmLv/KW5tEzKHwC9u7A9BsrBfxcA5BVWrDmhRI7
-   ygFgEO8gvcbUV9wqfB2eTgfKH9yf/dfDJnu2udgHeQFSiYoI4yIBiDttS
+  bh=PTAlkxju/fJJHCh73QmaawX6QCKknpPLilXfmcReF7g=;
+  b=NpZxaxKGTdiJ9RqPPBqR6gxl98eV67EPY+XZDbpatk+RzEpEeIFzF6ei
+   CRc3q9yvnH5W1nSGAA7QZ6qX8Y9ToKkRvUKZevWC3PpVPoi6J+7+mjCkj
+   hMPr2EFBgbB15TITeGxR8Yrv1I+ywtjy3kXtgwP2ESxU/mrMjmoTnLPC2
+   sLJFK7i/3K39jr+NjN9YgMqL0AaJTx0ARuE42VzMpdvQnhRSsfZ3+hCrK
+   6+z6Zdrz9VOaFhyPCYPP8yHbFQ1JL6VeLZYbCShTaR1aMZVEQshoDPd0d
+   STlCUynWDZYnsprUFOzq7M/7XjgCALe8wIghV5psboLN1LN3/TqkoiViE
    w==;
-X-CSE-ConnectionGUID: SgwUSJDRTHuHfYVIz7swfw==
-X-CSE-MsgGUID: i721Eu2VS8+n7EzYjMQSKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2354121"
+X-CSE-ConnectionGUID: v+XbsAUMTNuQi5bQ6lxukg==
+X-CSE-MsgGUID: MSTbrTU+S4WelKk/ZgzcyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2462674"
 X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="2354121"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 09:50:08 -0800
-X-CSE-ConnectionGUID: W8U5kkjERKmmqPh8cg97YQ==
-X-CSE-MsgGUID: U12cYMDXTpeSN9n2zbd3/g==
+   d="scan'208";a="2462674"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 10:07:26 -0800
+X-CSE-ConnectionGUID: WvR26PhPSiaDr0w86VeDNw==
+X-CSE-MsgGUID: SqOd2sBOTTS5AMW0gY8a0A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="7014913"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.108])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 09:50:04 -0800
-Date: Tue, 3 Nov 2026 19:50:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: longzhao@ambarella.com, Bartosz Golaszewski <brgl@kernel.org>,
-	linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>, linux-acpi@vger.kernel.org,
-	devicetree@vger.kernel.org, Long Zhao <zl020895@163.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 08/13] gpio: regmap: remove gpiochip before tearing
- down irqchip
-Message-ID: <auoeysEHqGemmuhO@ashevche-desk.local>
-References: <20261102-cv75-gpio-v13-0-4f93114ea204@ambarella.com>
- <20261102-cv75-gpio-v13-8-4f93114ea204@ambarella.com>
- <DMKL43ZCOSQ3.3TAJL8BRQ6ZTH@kernel.org>
+   d="scan'208";a="6576967"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 03 Nov 2026 10:07:23 -0800
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xOIun-00000000j73-0fbB;
+	Tue, 03 Nov 2026 18:07:21 +0000
+Date: Wed, 4 Nov 2026 02:07:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Szuying Chen <Chloe_Chen@asmedia.com.tw>, linusw@kernel.org,
+	Markus.Elfring@web.de, brgl@kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Yd_Tseng@asmedia.com.tw,
+	Jesse1_Chang@asmedia.com.tw, Richard_Hsu@asmedia.com.tw,
+	Chloe_Chen@asmedia.com.tw
+Subject: Re: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
+Message-ID: <202611040148.eJCUsJBi-lkp@intel.com>
+References: <20261028084531.6237-1-Chloe_Chen@asmedia.com.tw>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,39 +87,68 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DMKL43ZCOSQ3.3TAJL8BRQ6ZTH@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20261028084531.6237-1-Chloe_Chen@asmedia.com.tw>
 
-On Mon, Nov 02, 2026 at 09:33:20AM +0100, Michael Walle wrote:
-> On Mon Nov 2, 2026 at 7:46 AM CET, Long Zhao via B4 Relay wrote:
-> >
-> > gpio_regmap_unregister() currently calls regmap_del_irq_chip() before
-> > gpiochip_remove(). That disposes the mapped virtual IRQs and frees the
-> > irq_domain while ACPI GPIO-signaled events may still be requested and
-> > while gpiod_free_irqs() still needs gc->irq.domain.
-> 
-> Maybe Andy have an opinion here. But that deviated from the usual
-> cleanup in the reverse order and at least deserves a comment in the
-> code.
+Hi Szuying,
 
-Yeah, this is unfortunate. I think to make it work as proposed the IRQ domain
-handling in GPIOLIB should be revisited. So, at least a good comment is a must,
-indeed.
+kernel test robot noticed the following build errors:
 
-> > Remove the gpio_chip first so ACPI teardown and USED_AS_IRQ cleanup run
-> > against a live domain, then delete the regmap irqchip. Use the same
-> > order on the registration error path, which previously leaked the
-> > irqchip when gpiochip_irqchip_add_domain() failed after
-> > regmap_add_irq_chip_fwnode().
-> 
-> This should be split into a seperate patch with a Fixes: tag.
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v7.3 next-20261030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Not sure if we need a separate change here as two are coupled.
-I leave it to Bart to decide.
+url:    https://github.com/intel-lab-lkp/linux/commits/Szuying-Chen/gpio-amdptpci-add-support-for-AMD-PT-PCI-controller/20261028-164531
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20261028084531.6237-1-Chloe_Chen%40asmedia.com.tw
+patch subject: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
+config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20261104/202611040148.eJCUsJBi-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261104/202611040148.eJCUsJBi-lkp@intel.com/reproduce)
 
--- 
-With Best Regards,
-Andy Shevchenko
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202611040148.eJCUsJBi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/gpio/gpio-amdptpci.c:75:8: error: unnamed field has incomplete type
+      75 | struct gpio_generic_chipgen;
+         |        ^~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-amdptpci.c: In function 'pt27_gpio_isr':
+>> drivers/gpio/gpio-amdptpci.c:369:51: error: 'struct pt27_gpio' has no member named 'gen'
+     369 |                 if (generic_handle_domain_irq(chip->gen.gc.irq.domain, hwirq)) {
+         |                                                   ^~
+   drivers/gpio/gpio-amdptpci.c: In function 'pt27_gpio_probe':
+   drivers/gpio/gpio-amdptpci.c:454:43: error: 'struct pt27_gpio' has no member named 'gen'
+     454 |         ret = gpio_generic_chip_init(&chip->gen, &config);
+         |                                           ^~
+   drivers/gpio/gpio-amdptpci.c:458:19: error: 'struct pt27_gpio' has no member named 'gen'
+     458 |         gc = &chip->gen.gc;
+         |                   ^~
+   drivers/gpio/gpio-amdptpci.c: In function 'pt27_gpio_runtime_suspend':
+>> drivers/gpio/gpio-amdptpci.c:561:17: error: break statement not within loop or switch
+     561 |                 break;
+         |                 ^~~~~
 
 
+vim +75 drivers/gpio/gpio-amdptpci.c
+
+    72	
+    73	struct pt27_gpio {
+    74	struct device                     *dev;
+  > 75	struct gpio_generic_chipgen;
+    76		void __iomem              *base;
+    77		struct pt27_saved_regs	  saved;
+    78		raw_spinlock_t            lock;
+    79		u16                       wake_mask;
+    80		bool                      use_msi;
+    81		int                       irq;
+    82	};
+    83	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
