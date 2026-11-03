@@ -1,79 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793681255;
-	b=EaE99hTMMUZ8adJJkLbUWGvQBjJpDR36yYyRSo5dWCG1xigN9kkrTXkBgcDAvTMLb8O7
-	 m7Gjn8OOgMRQevEYIGP6iHOdxzC+Sqra6/128fvhsV4eiagLlr9afU3XvndgQp560eTlS
-	 lxS6oyo2PE0Mf4SbxQIJU9O5XhXHu2jTUSD1l6ruWOiYUAh31PvyXuCxkkMNLq1WijUvA
-	 qGfO2HjgROjy2svm2AF8c8O5VJGOfggerrAI1TM5QtAu/cJbBb6ntnOMHN7E/FrYEu2sA
-	 s8bNepiXZDbv51gP+NUIQXQYX+ujznq1sGNH74v6h72d7UGcOxFPXbPUDfWpw8qZupg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793681255;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=0+rSm+E1dOcLmFiVoLzR3TBiqneWOgmoux8nAhY2dl4=;
-	b=4fYjRmL+b3Va1bZq7kT/gfhAb5c4rKtO5nVa/ykPaH6ouOauXTqpeMQOfMhQin9n8N9i
-	 AjcTV52yLaAmq6qkEt+mQXLnZ8NnfCgTNmba164gVin0V4eyqjJM7JIFWEMrEQps8t8a3
-	 /G9ViCUcK69zcATbLfe/nHhzYzht5PPJGNUFOp8yRYxaGU+IFksoVmQISI3qWucumOezq
-	 owzCR9AD6GLqolN/2WqNnatlIH5XQbIVGpjZB5BuOkSS4upglzM86NPJvuGGFrWVr6tN1
-	 sIm1SuiJYTH+jJl9Kr1krw3RBE6MMYbcBNO+hFpWrNbrmKdSXRsAwvCxmH+qT9L2qOQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aCV2PwhM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBB1606A324
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 04:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aCV2PwhM
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793681254;
-	b=3hjgjkF9GZtU9l+3Kh/7ptySxAuA40RP8oi1EYyRx0B1+ErgvesTOlxouhJ1MbKT/4pB
-	 iwkDLsNENZN1Vt64AGr6RTe/z5ziypZ7KqLTzFZv3KxAEwiU7gQK0LUnVoSSpfnN8BcBW
-	 lghYShoRN8DYbPkzpmXNrv7xng03g97/2ASYMH9dEIAYCVFYry8oQ4MVms1/Yxl+t0/ic
-	 0AlKIcWlgpEYfvY4BiwGIVmAreDaj8OPtus9bj9d4CEvbvLBnZCQM4/ez2ZezhE5z1o36
-	 3tMlrW54PwSeir0rl94hI9oWAAHjl8M5Urc3gm+LmNkU27Ykht1IcL7bnFVOJiJKwiA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793681254;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=0+rSm+E1dOcLmFiVoLzR3TBiqneWOgmoux8nAhY2dl4=;
-	b=hCWLrmUKlgj11TzXemmPYQpeV/eLy95bFM+Uj0XZoo7D6jmt4goPIh1zb2q2JpdKb5o5
-	 vF7YLKFPeMJqLp7TaHMpJ1ZLvN8KGPB4ouo8jW1SlkUccyewSTtvZZhCQxYdTrkeR7YVy
-	 MwX4IeR/qj7uBhA4fIuwCB4J97tvb6HbxBE+t8cDOH2LknVHN1DtoNuGPCwaoNBEk0yen
-	 d3W/iGsKZznVUAlgdBGSlyj2foE8/dn6oZ5akhB86wO/XSSVZg8F5CAUtCaDNS10vCPSY
-	 M8wJZ4Ey26gh6JgXmGYTHtF7KkJu2JKzMfRdsRz1IRcOldUFMImNV4Aag4BPCxqPyHA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.181
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793684406;
+	b=mB4jAJe3zxohaOu4hSUaXqNvtfI5FUvvR97UpPO5ACerxJhpYPn826qQoBVuao7kDcK6
+	 YhY77Sai3thGWM+bzu2MT7D9pBBwTgaOmnzwpvUKchg5OmjH8XztmxD4oDen3yCUFkh+q
+	 pkJxXsajwjM0wTMJQeZeplonZWivLCdlMrditWEd5zriBWrWhXxypv4fCp6OdsGdC7+Xx
+	 +oDiNgl3mdYYetMRXwGl8YpoDFLzqb2IHo7QXN+ReCmIIuosRszzqYSGbXfEMFZ2WjJZN
+	 8C/7NeRbhLrfP9c3wRZ2u3rUfxlAGVFs05zoAoGOkm84La9VVSgZf2iPiIeHk8r8IXQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793684406;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=SNfcSVIGEmINCcVw+uB8DPAiuuIIPUqBYgGuYhjglr0=;
+	b=e/G5SsuzCkM7AifMgG18b1xQhu4Gy/XACvnnGFSqIoGq3rrxEqIL/mhk+die1IyF7zjd
+	 lqSaYnNvSV7AQWiJfH5IcwfeIl/L4MRFnlAGmnAnLSEuGdKH/gskjPIwrjQtodGgZWbLa
+	 Hh5YBUONV7/WN47aMKLu6JnaqWy7nXTOj9rJ9Q3C9jG+Vq66nSTJImzzY7or+ngc037lK
+	 uSSGEFjLlf6ErwmOuUQA3U3GBuEKgx0i6c2GnAa5QgWB59aJIrdsdR9D0JNDxReyLt6+B
+	 uhXG6jW+ujX6QYQQRLEIgG4oDgNbk28y1NTgDg/Pmh8mwnZKvZiwuMXoGhSnqH+MY2w==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=jclark.com;
+	spf=pass smtp.mailfrom=jclark.com;
+	dkim=pass header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=XG7lEL+c;
+	arc=none smtp.remote-ip=209.85.214.181
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 5A5BB1F000C1;
-	Tue,  3 Nov 2026 04:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793681254;
-	bh=0+rSm+E1dOcLmFiVoLzR3TBiqneWOgmoux8nAhY2dl4=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=aCV2PwhM63KxuM6qUwMQFQ2YhXTY0T8o33uaGrPpysX7Lb1jx6RPPLM6PB0kDOJE3
-	 CqPtl4RzECwv607K89L5gArTFM4Yk/M245a38JnPQGiIG63YpFhZA7zTrBiNNmx/o+
-	 weaE64wS5mwsk+XVuZgqkabRzjHcn6S1Z3j8Y887VJHz0eLuexJW5mlWyyqEuPrM66
-	 QINkVCC6o0unHLp4Q7mNsvssZFBVVj7pKuN+CVNNlePLide3g/AWo2pFOLz4GecTZ9
-	 P+eiN1dve3kuuryxTXSQSy8QCG5sTRezpnSFpViuQxroY3XNPxBszV6mA8Ld+FAs+P
-	 ZelvuBHBrD5iw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id AF00C467A4;
-	Tue,  3 Nov 2026 04:47:33 +0000 (UTC)
-From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Tue, 03 Nov 2026 12:47:17 +0800
-Subject: [PATCH] gpio: regmap: free the irqchip if adding the irq domain
- fails
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2248606A329
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 05:40:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E2248606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jclark.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jclark.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=XG7lEL+c
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2e9d7791b00so29819815ad.0
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2026 21:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1793684400; x=1794289200; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SNfcSVIGEmINCcVw+uB8DPAiuuIIPUqBYgGuYhjglr0=;
+        b=XG7lEL+ceAJMrb013ECErNIArebvo21jKlpmwlwCIk72+UgmBRv2fFMHRknWaEXY+W
+         iV0+e3X/dEY596kCb8JdOOQYDsW/+cqZGOf/B7uediCRkGs/hwXE/NP2iHHdqFCNJCqy
+         Wc/04viUI1tAfYqtI88RHCoj/ywm/gJvKLpUleWDv9FkBAx0SUV3TFanEYbDWt8BeoYC
+         PLyzQlrE4z51j1NE2aE65wV4rcZbI8oxFoepRZPIMrTSjvy+Q+gzNCqIcTml2Vs6HJCC
+         o0NBfiKkgkBNGM52WZ7Ze2Dg1NJ5/lmYmt3z1WsfSt50xk7xo0zGaTBw3j4NHKsfgDfm
+         YfRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793684400; x=1794289200;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SNfcSVIGEmINCcVw+uB8DPAiuuIIPUqBYgGuYhjglr0=;
+        b=DfP86mFjVbXs2xNrztLV6c94ZAkhBoNV7bfHC8zWX1aO198SrPrD3GNOJMWvKwx/+g
+         mPZlcjBe7SKGEXuWCXvOpzBEp+UaUxglyUcJsWy5mAuzxl9j2Ve+L3fn8vQRN2XwreZV
+         lzEya0ZqIYvvHrg8yFH4hr0MZwzGIIqa4dORi8yFD1WQcDZUZIO4i9XlZtSy7P7AGK1I
+         dwwWZpDq2WZENndqR2H8RoyHCrJw/wgu24IbFSK+yGer1h5SzjxhJTUes+zXf7OP+Eoa
+         z+YjKlbRH7VbK1w18RZeCJfk0QaUxRWovU77EzTOk+wrVmAuatT/3ng1v9TjHrhpUsFB
+         4ZdQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxEpCnlOmJp1ADajM/Akh0vcj0E1DWOXvdTeJEa7BYenQuAy7ck+fZeP3c7i3e8woI5z5L/faZ9bYyT@vger.kernel.org
+X-Gm-Message-State: APuU4Z+UN76JbkNqVQKMpwehC0itoCzWdQkbHctzIjN+H0jJoKS+LCeG
+	euXI+MuT3EqpsN4Par/Meal5HMlqdRuWWhafpEOF3PuODWfAPX38yZImWczoOg4Siw==
+X-Gm-Gg: AYBFou22PcDTNUr/SfTboYMv/hhhZ/1Ym60CsbU2LlNsbRPf9tIr+pWXw3x7lMzfMex
+	Na4sYCasRgBg0otaQT8mVmNLRN7WqnaW48RZRvEH6evB/m8oguuoOP69BzGy8Gw+LIvI4WAmUtr
+	2HxwSf/PhUhwYIy2yZ28MUbp32isbtTnMEZJS2GBux+74DMYNUpVahUM1HwRN2KtoVGHZjKzNrp
+	oOdinnYerR9SojNOphr5ioCaeYLaiZu/PS4jgLEu6BArs3d2Eo58AQ/Ky+h/Yv5/Dtuxr5CiIHo
+	afk4bjP7Cph+HMrWjDEZ+cwN+R74sAZQO6+0gl8WdgeJhJF7Eb2I74ji9B9yl6MxNmtc6DSWL+G
+	KiBOIknTYwmnAhWcP4WDJvaS6Hjc5O/pEsxsLPr5/vU0oltREnpbfzpC05iOUDGh5hlN1baAb+/
+	SubfUecUOXHZJ2SKOZrIrDMN8t6LH7MWgXKs/ImotPQ2q325D+/vxdpIBXadDXFlOaL4x0m5RGx
+	J/T3iMQAZaOZTiXypjLmunZ7/wo3zoUB6GxN473+vmjfjVqHEfUx6H7GDRPClCnLCQemD6nY14B
+	7+D+wAx8LTEERVm/gvNxWzKgqCGRDDxBsoZBDy1xByO+7/+FR4qwzyQGYP/NpiIB+iqt0E9eXTB
+	6qCWf/WBrm5H91vZ6Ng==
+X-Received: by 2002:a17:902:ce05:b0:2dd:ad73:5b6f with SMTP id d9443c01a7336-2eb364b55camr111236385ad.31.1793684400160;
+        Mon, 02 Nov 2026 21:40:00 -0800 (PST)
+Received: from cantal.lan ([58.136.77.237])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eb392494edsm35154505ad.31.2026.11.02.21.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2026 21:39:58 -0800 (PST)
+From: James Clark <jjc@jclark.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Johan Hovold <johan@kernel.org>,
+	Bastien Nocera <hadess@hadess.net>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Robert Nelson <robertcnelson@gmail.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v3 2/2] usb: core: add a pre_probe callback for device drivers that may defer
+Date: Tue,  3 Nov 2026 12:39:52 +0700
+Message-ID: <20261103053952.1138398-1-jjc@jclark.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <sashiko-outbox-194542@kernel.org>
+References: <cover.1793669297.git.jjc@jclark.com> <e96b91c85945237ca455869bf4d5a1e177358b54.1793669297.git.jjc@jclark.com> <sashiko-outbox-194542@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,70 +109,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261103-gpio-regmap-irqchip-leak-v1-1-d038a20840f7@ambarella.com>
-X-B4-Tracking: v=1; b=H4sIAFRn6WoC/yXMQQ6CMBBA0auQWTNJi2DUqxAXpZ2WAYU6FWNCu
- DtFl2/x/wqJhCnBrVhB6MOJ5ylDlwXY3kyBkF02VKo6a61OGCLPKBSeJiLLy/Yc8UFmRHVtvHM
- X72pvIedRyPP3t27vf6elG8i+jx9s2w7js8X4fAAAAA==
-X-Change-ID: 20261103-gpio-regmap-irqchip-leak-095fdd8fd4fc
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- linux-gpio@vger.kernel.org, Long Zhao <zl020895@163.com>, 
- Long Zhao <longzhao@ambarella.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793681252; l=1350;
- i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=Ps5e/qP45YCSpKvvs/e6pcBfQwAXRSNPUSMOfnRO6O4=;
- b=RIt6MuHFlBF6UlBNw/AyAdNEzdopsxmq+/uqBkgFQHRj+GPJ2T76bvbz3iUiiJYNQ5mjwEfVR
- EWkVPec8AHIBvSCHpPgkQ+chXP3SCcKMhISBI3SZe+Rn6OYtSf0Vxme
-X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
- pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
-X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
- auth_id=903
-X-Original-From: Long Zhao <longzhao@ambarella.com>
-Reply-To: longzhao@ambarella.com
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-From: Long Zhao <longzhao@ambarella.com>
+On Tue, 03 Nov 2026 03:51:41 +0000, sashiko-bot@kernel.org wrote:
+> First, when udriver->pre_probe(udev) returns -ENODEV (for example from
+> onboard_dev_usbdev_pre_probe() -> _find_onboard_dev()), usb_probe_device()
+> still calls usb_autoresume_device(udev) and usb_generic_driver_probe(udev)
+> to configure the device, bind all child interface drivers (triggering
+> deferred probing), and emit USB_DEVICE_ADD, only to immediately tear them
+> all down a few lines later in the error == -ENODEV block via
+> usb_generic_driver_disconnect(udev) and usb_autosuspend_device(udev).
 
-gpio_regmap_register() creates a regmap irqchip and then calls
-gpiochip_irqchip_add_domain(). If that call fails, the error path
-only removes the gpiochip, so the irqchip and its domain leak.
+This is deliberate, and documented in the @pre_probe kerneldoc. An
+error from pre_probe() other than -EPROBE_DEFER is handled as if
+probe() had returned it, after the generic probe has run. This keeps
+the -ENODEV fallback to the generic driver working as it does for
+probe(). For onboard_usb_dev nothing changes: its -ENODEV used to come
+from probe().
 
-Free the irqchip there when this function allocated it. An external
-irq domain is not affected: irq_chip_data stays NULL and the caller
-owns that domain.
+> Second, if udriver->pre_probe(udev) or udriver->probe(udev) fails with any
+> other error (such as -EINVAL or -ENOMEM), usb_probe_device() jumps to
+> err_pre_probe, which only calls udriver->disconnect(udev) and does not call
+> usb_generic_driver_disconnect(udev) or usb_autosuspend_device(udev) to
+> unwind the generic probe and runtime PM state. Because really_probe()
+> clears udev->dev.driver to NULL when usb_probe_device() fails:
+>
+> - When udev is later unplugged, usb_disconnect() -> device_del() skips
+>   usb_unbind_device() because udev->dev.driver is NULL, so
+>   usb_notify_remove_device() (USB_DEVICE_REMOVE) is never sent. Subscribers
+>   such as usbport_trig_notify() in drivers/usb/core/ledtrig-usbport.c never
+>   remove the port entries added on USB_DEVICE_ADD, leaking struct
+>   usbport_trig_port objects and sysfs attributes with a dangling port->hub
+>   pointer to the freed struct usb_device, and usbdev_notify() in
+>   drivers/usb/core/devio.c never runs usbdev_remove().
 
-Fixes: 553b75d4bfe9 ("gpio: regmap: Allow to allocate regmap-irq device")
-Cc: Michael Walle <mwalle@kernel.org>
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
----
- drivers/gpio/gpio-regmap.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This was raised in Sashiko's review of v2. I missed that it can be fixed
+when the device is unplugged. I will attempt to fix this in v4. I think
+it can be fixed by recording in struct usb_device that USB_DEVICE_ADD
+has been sent, and having usb_disconnect() send USB_DEVICE_REMOVE for a
+device that has no driver.
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index 51b4d69b8740..7689357e6077 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -418,6 +418,11 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
- 
- err_remove_gpiochip:
- 	gpiochip_remove(chip);
-+
-+#ifdef CONFIG_REGMAP_IRQ
-+	if (gpio->irq_chip_data)
-+		regmap_del_irq_chip(gpio->regmap_irq_line, gpio->irq_chip_data);
-+#endif
- err_free_bitmap_output:
- 	bitmap_free(gpio->fixed_direction_output);
- err_free_bitmap_dirmask:
+> - For drivers with supports_autosuspend = 1 (such as
+>   onboard_dev_usbdev_driver), usb_probe_device() does not take a runtime PM
+>   reference, and hub_configure() enables autosuspend on hub devices; once
+>   the device suspends, usb_resume_device() fails with -ENOTCONN because
+>   udev->dev.driver is NULL.
 
----
-base-commit: 34cf6dafc47441dfb6b356a095b89c3585a93714
-change-id: 20261103-gpio-regmap-irqchip-leak-095fdd8fd4fc
+This is a pre-existing bug that is new in this review.
+usb_suspend_device() does a generic suspend for a device without a
+driver, but usb_resume_device() refuses to resume one. I don't know
+why resume is refused. If a generic resume is safe there, that would
+fix it.
 
-Best regards,
---  
-Long Zhao <longzhao@ambarella.com>
+> Third, if udriver->pre_probe(udev) succeeds and udriver->probe(udev) then
+> returns -ENODEV, the error == -ENODEV block runs
+> usb_generic_driver_disconnect(udev) and usb_autosuspend_device(udev) before
+> err_pre_probe calls udriver->disconnect(udev), reversing the teardown order
+> used in usb_unbind_device():
 
+I will fix this in v4.
 
+James
