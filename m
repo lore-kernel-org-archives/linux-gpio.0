@@ -1,78 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=139.219.17.129
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793699528;
-	b=GRSZ9Xfqe+JMX49XUOGwM6wDWH4XWbSmcq2NKx6gnarTufiHs0oiLlGY1wvmVeicGQby
-	 Bm0d57A2CJv03M4ogRLQXJLdVvThXAypxNTKelnETvbpv1KrH+QeDdv1SIJDdFTtum9wv
-	 sF9T7Ev7HYd3xA3LoT44pwo4KyyNPpzCDoSO73dBtgngdBt3lFmdS9Uvac2WhMOz2U9s6
-	 bCvv3uLZLaqNbDb16ARMI+efQAZaBJnraHNuJOnSyO0Q5BZsvRwgdrDdbXS5JlxdrwOcF
-	 uyVO8jY3UWrMC8VfTjDEj5nAxOBxYGQIhh89QU6szBBfd0QIwdy2dXW7Lpc0gikFk5A==
+	t=1793701379;
+	b=xJh/lh2WN6zLw4weibLWTESWLNC30OLnWohGEwaY2Jr8kzMiN3mTBh3XN2ue4r7iGNoe
+	 R/Ew1/TB0oUWH+VbH2WCXEHbAVXrLP6HqUcc62TgJkdL03ylF8oxW2pNt1003vh53CTfl
+	 1puIC33AbMoukEBwFD0KphnHRflSuPhYvytjFrUsC6EPKpDQ8AyL7sjWpezPF6nJBR9GE
+	 UPs4hvIkG4GVV9IzRoYEdRF/XZBx1yVpmOMx1pDLDFCqZ4gQjl3iJPA/GMFP525MyT/t8
+	 6bmkLVv0KUuLZfFSDw7KHKymS4LOstpmH9XEeNX50XA+TlHlYiT1hmqouW6f3g2eocg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793699528;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=2Rjk1OJO5Aj+he8nLnF01U7gZlB1bfdmBrf/5i2ju0o=;
-	b=BbUTIFr70eL3jsum8i4ynAHy7uRaQ34RNXF7YQVDoduadMXH58FZca0KXjkvZIg7Bjlz
-	 c5vSNFx/I0FXrvxBjns+Wj2yTqS3CUWqiJRcPnC/jfZmGrHvCI4zyH3+tiyn6X/e7mXhN
-	 tSceAOcNvydn2a+jRYNyS3gRo/EEjAEhh7cZS3LIaZ/x0+15Tmc0Hkgue4m8r6UFYHlF2
-	 YawnZrmMYnkMybFPJBAdB3+eBolesNSqb1GEpBZn0pNnWslmZ+zoL8eh+HthSg43s5Zii
-	 4PGZ9pFbuFAP5YX+slx309MDPrgSrpbtnaaipjPm7hdq/8ca3nCDRhZW/G+PA/HlLqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793701379;
+	h=DMARC-Filter:Received:Received:From:To:Cc:Subject:Date:Message-Id:
+	 X-Mailer:In-Reply-To:References:Content-Transfer-Encoding:
+	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=cZVPigbL4RhxQy6CEu2vKnJ5YT0HuFDLfDGoHs+/bAs=;
+	b=GkpWP390RQF/qWqcmoQacMAhPrw9VozoNR7N0nyQjKEaOI6mqwg9hBfoI+pgwQG06m71
+	 Qek82108ClzRp6W5O5y/tPyT2u291TbCljcVQOmwnByMmRzQRuArlbQgfPzWzRNL+Tn14
+	 K+CUmBSOFinXl5e6f/2n/ICGfzRvQHvAwXzhZcKMU+q6HtPEYdXiuWUAfCV5ACthrvAP/
+	 B5WH2frFhcus9ARIH6OEM5iUaPs3RzBpSB2Fa5lzFx8zv+j8hE3UP3n4BOIHgyJUEIMiB
+	 So2h/SlmJ5eYTYOJ1JAMFYg+d256GFgXQKUzzHpiTZY+7G4QOsjrZ4oHZsnNytwPUnQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UZ2ZraZZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=starfivetech.com;
+	spf=pass smtp.mailfrom=starfivetech.com;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=139.219.17.129
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2129.outbound.protection.partner.outlook.cn [139.219.17.129])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9DE606D80C;
-	Tue,  3 Nov 2026 09:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UZ2ZraZZ
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793699527;
-	b=CKSlb2ZU+HW+SJlp5zta0Mr2BUlJ1wyYiY6ZIZLXp0xQqrShWlNp9Xeo6q5N60reep+T
-	 w6lA5vI9Ps7XSWu+Ux1vrbtFnKJqytqQoGvnXcn2Jy4j6K/0cYwEfTXYTM10xK3GAK4Ka
-	 Uo1c9vP9uVhzLdIdD3ZdnV6oARHc8F7fCqAThp0Wr6ymoeF0eZryD2CFMhwV7KfcDyJK7
-	 B4ZaziPpjxHvAlaik8ZmOAN+q1nm4ZtThHeNYIT5wwMTfkJBDqs82JCyiSnQk1MjBCAl7
-	 ELe6trrN9JEMHRUSaU02pVoiVy5iumzLeMEm++qIKJOVOcMVlZp+3CG0yde0XWP2M9A==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793699527;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=2Rjk1OJO5Aj+he8nLnF01U7gZlB1bfdmBrf/5i2ju0o=;
-	b=wMeuu7sckTtARp4ATfU389Jv1JETL+ZCVCyMy+Ehv+mNcamA/PSXrFxb8ZrYgAiwWkdl
-	 nBvD8gbYx6TDovyl0QkDDbuXkmHADgjUNX9qj5qlW5L9C/paD8D5PjXit74gV7V9j2V3y
-	 Mx9KFIrfNQu2+o7IDlRGg3oCN+Q3IQLkbwtGrGwVsb3jk1fwaULGCow6c7EEvBVwIxcGk
-	 DOYqjt9q6JEboFIKd9bOcgF5UbgB//aN/fIOPANigEvaL0qMuJq7rki5iffgrKjsyo/Mk
-	 18/ejQZJtEEkHDAuzkZIxGP+7vPqOJliCuy7f0cf0Nd9RZAXFGAZWYN3xyCmZHEZbsQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E8D991F00A16;
-	Tue,  3 Nov 2026 09:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793699527;
-	bh=2Rjk1OJO5Aj+he8nLnF01U7gZlB1bfdmBrf/5i2ju0o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=UZ2ZraZZM33daAZ0wzH8BEogcz6rAGLRG/8dUSqAAE1e67vmAU3LUqwJBARjmkwlk
-	 TG1NmLXwzImuxfBv2K3Q33QB95mNbNvcgwEVpbCOSWVxQuwjro09CE454U/GCjekyQ
-	 OnAvzvlXUEk6TTkf+Ss/f/oSOdf2IMmUzZ9Epcp5rTX1ztwvfS0QU9qP7qFgeflosw
-	 brTgZzjHZp2RWSnBgvuhOe0jpe2apEoKlpeT9iOJbfWd8LvaZ732QZF/qDpxvlIcRe
-	 SUsj80RIHHq133VxwMNJwvvWXNbzWJT+4PZy9gVYTgWAFXegvhQ6AjYm4vXEpcrdJD
-	 ihG2dzxRmRNqQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 72E5846882;
-	Tue,  3 Nov 2026 09:52:05 +0000 (UTC)
-From: Vincent Jardin via B4 Relay <devnull+vjardin.free.fr@kernel.org>
-Date: Tue, 03 Nov 2026 10:51:57 +0100
-Subject: [PATCH 4/5] pinctrl: freescale: add the LX2160A RCW pad-mux driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD6B606A801;
+	Tue,  3 Nov 2026 10:22:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8FD6B606A801
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xu3rzzOvKvb1BiMYTC2EqFI6jykLvn/hk2R7zUZdKcpqEXF5IJLlW2M55dITak6YrTxEC7oduF7gIoWrDYJDI+K+NcsmsW41DNWLnXU48e8Gb58DNfcF7w27dkY51cxa1z/XIGlOu5Tv0TlcBJWMLhhtJPf0IhWNSM43HMm20naWfbDcQNXkaWNOIRxIzBPk4/cpmP5BoRr6A1eJee3X4BFni4mehz/1500vcVfRdt/9mYYdafTnsb78C4ziLEgyrQaTaIWJ8XgTSjeQxqPoGvfpaYLCMWoEPfK1oh/KFCstLj2E0YI2iwlEAqeGW4kS3fYwB8FqBjaPrt3akMFnpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cZVPigbL4RhxQy6CEu2vKnJ5YT0HuFDLfDGoHs+/bAs=;
+ b=KCmY5iVIhTEjsJzXWlOOUIdQzWyKoxJFX5fSbxjx8DfhFNQYXN2OB+d0xP08SkZ086gRzOVl8aN3vlgQSspUu5cADA193wFXLzPpkNdgLCFvQgDzQZj9tJD227OEtkqR73YsPdrPt/McUXRkOWYuFVCJF24UnKYDwaFpAtwo7Ej7zyZKFusYvPrakEOTOBfHABLrUoi1LkX8vFd/d3klqnhxmDfwISo6QmTd5xgbVIw+VxUrtETurXY4iHHoB1RPJiHK3cnDcCRWESRHWw5/F2BvscTxZCcNZ3HB+cw9/4QbQwSTzQ1NRZ811v3LdCgIHfGrDrHuikZEjqXaygi7RQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6) by ZQ4PR01MB1329.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:16::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Tue, 3 Nov
+ 2026 10:22:46 +0000
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e7d4:256c:b066:850d]) by
+ ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
+ with mapi id 15.21.0569.011; Tue, 3 Nov 2026 10:22:46 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Subject: [PATCH v1 RESEND 1/8] dt-bindings: pinctrl: Add starfive,jhb100-adc0-pinctrl
+Date: Tue,  3 Nov 2026 02:22:29 -0800
+Message-Id: <20261103102236.96872-2-changhuang.liang@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20261103102236.96872-1-changhuang.liang@starfivetech.com>
+References: <20261103102236.96872-1-changhuang.liang@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJXPR01CA0066.CHNPR01.prod.partner.outlook.cn (10.43.33.33)
+ To ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn (10.2.3.102)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -82,477 +93,244 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v1-4-0a61a9837744@free.fr>
-References: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v1-0-0a61a9837744@free.fr>
-In-Reply-To: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v1-0-0a61a9837744@free.fr>
-To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- Vladimir Oltean <vladimir.oltean@nxp.com>, Vincent Jardin <vjardin@free.fr>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793699524; l=14211;
- i=vjardin@free.fr; s=20260525; h=from:subject:message-id;
- bh=mgJWUp01N8MKAH+Eg4XUymjim1QvmmPHCrTSnou8fE8=;
- b=1+VBhkwfliJ2Pu2V+8B3v+SsdmmVcv6xdtp9tcOV4xaJ5pVPLvm7Kq0/dfCQBeCmqQUdBrL1T
- 7Z7bLMkJwf6Djn34ipjza8pHVVem+f/P3SVLoWnRuRDmfWq4D6x+Xa3
-X-Developer-Key: i=vjardin@free.fr; a=ed25519;
- pk=hppgLeFpGpKOi7LNwGEZ4jOYofJCoGd4Jf1ltAabiLw=
-X-Endpoint-Received: by B4 Relay for vjardin@free.fr/20260525 with
- auth_id=871
-X-Original-From: Vincent Jardin <vjardin@free.fr>
-Reply-To: vjardin@free.fr
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1329:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb2def4b-37e4-4a87-d431-08df39946753
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|23010399003|6133799003|10067099003|261102123227099003|22082099003|18002099003|3023799007|38350700014|56012099006|261022075727099003|261026121527099003|261026140227099003|261021121427099003|261022105027099003|261009223027099003|261028144727099003;
+X-Microsoft-Antispam-Message-Info:
+	O6nUIV9KHq4/S/TcRrN5dXhWz1hRb6TStMRRI6ekr3Hwd4ZvHPk11haAZaHlfxWDLPDC62ps3TlKwXxjNhuNbR9zgStdYpKhIm3tvWi2rBH3gtj1mXZRHN6o9jHJow1l5P6NHfnJOq8m+cbcI7lKXQWGwefeByHj/u5b7ATBoB2kV0L2Sds5uZZSfaqWMDOcJWfzlgwpBmvKVo/Ult3Sv3mt9bdq9tqNS1UBExLjHJBMUDcAqDqYZV4EzFUjj98cl6seYD1gukj1UfRPyKIX11J8ApS7VZUfwM1ivnQ7GHBesmUlckpoREuMXtQtVvCCc5L9EjES2sQauRVxW02hi26BEuhJiywYqrNO5sk2eZx6+x8ORv5dSHeP4NDiota41J7ALCKdNPA9/SI7ZVqxgAzwCJg0Vo/nIqEjjBrkonlnLJZiPlZLMmvHgwRHw4NJRuH+XoPzWmmUv7a1Wz8UT7bfpnwrm45k1429pyoOpOwxrUR07DGxhPElahZLh2htdf1GWsUSjlp/p8JVuO9WcP5Z83lt/OuDNliJGuP92PyS+lYuMXtg3O0tyCPxnokv
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(23010399003)(6133799003)(10067099003)(261102123227099003)(22082099003)(18002099003)(3023799007)(38350700014)(56012099006)(261022075727099003)(261026121527099003)(261026140227099003)(261021121427099003)(261022105027099003)(261009223027099003)(261028144727099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YJR31grVRKUbbmnVnXSO7EQnm2zWBClmIOnlhUaaZmGRyQUNvQt+uYhOlLeJ?=
+ =?us-ascii?Q?kBf4kFSxraIsh/RFUE7RE8Bc8Xe2RsDK6yurLnD7XtS5J0wtJnuNfoWDCLal?=
+ =?us-ascii?Q?HsQUM4YGEti8sNnvKSrspm92dsaMucFi4CkDhs7pbc38pgRdhtfuRMBSQU4s?=
+ =?us-ascii?Q?5EcZL5Q3DgdJpisXLMheMmR3TR940YNrcZ0VZ6YXec9SZKhoENhlWUN0Nj4Y?=
+ =?us-ascii?Q?w0HpKQY2Bwdz0lP/sKvMZoYOu5ZBBOGQFahbgWqARGehQcdhpCjYLBMi4fSI?=
+ =?us-ascii?Q?p/lwvtgE7Y6BIB2XP3ItwdPhi+Fisg6z+eKX10oqFmOlwiAXFjvj20hkMjad?=
+ =?us-ascii?Q?B1Zx6ydML/yfo+QVjxFFjWVvzfsCMU0t7P2aNJSxShaNV9qWrAz6bZTlok2A?=
+ =?us-ascii?Q?6g29Rpt0dR0ZBV51govMDhYNikuhTIkD7aEssYcrNxbQ0N4VMZkX4I3kIMGc?=
+ =?us-ascii?Q?LsR3/ufwYG2FZTod6AGmDcTBPN6ESyzHFLiSBXtCsvMynsN3wHtcfSuQR7Z6?=
+ =?us-ascii?Q?m/5ZkAHLqJi9v/sHvBtkZ5HWKL/f4kEbtMj3ZkyrMqbqE/P4/XW9PP+2Y6ek?=
+ =?us-ascii?Q?qUW0XaYGFhKrePKU7iMPPrNlflGckCg/TzzDU0WSSSL/14GL7H79Djv11+hA?=
+ =?us-ascii?Q?vNr7IMSpxrXNkOnItHed3SyWXApDbpjBeR2EgQcwTr2AKZwCGnNir2TOxReV?=
+ =?us-ascii?Q?DpYqCpEa2eLBT4Jz7jHX0wdG+Oe4l9c/iwk9Hg06/nFlAbc0/USk5MZIxvmG?=
+ =?us-ascii?Q?q+u8E8oqOWaQiRFvzNR8wwpmrgjxGv6VNC+94aVxefAjzpyC5iBAvRIhSXon?=
+ =?us-ascii?Q?23bx1Gaww8QenkfP+/i7THVI2Pp5HMdqKJHf4eabIe211SFOnnnK61phlkzh?=
+ =?us-ascii?Q?f73HixbpkY0c9J3piSkrzJMk0Cg6zkFKasW1gUGUeJILRmSaOrAFdW+Wic2U?=
+ =?us-ascii?Q?yU79rhL8A9J9BPviIl4CsSn45U9QRnokuXnX4NXnUZcLyxqajUz1bV5XML3i?=
+ =?us-ascii?Q?XOSBYovle+FvVRPNk9PJjNo8FJzj7ey7SSn5RwZWXNNZroYn6nuBRIPZibG1?=
+ =?us-ascii?Q?cnzPWpx1zhJVVVUYa0NJShMMLUXVLUMGJfQFSAzUcJIyVYukdOXENSNTVuBK?=
+ =?us-ascii?Q?cXoBa1IqZ+eHkZq1tnx5LQXnCrkNx7KrJelm3ZR47ZXJmr/1xi9ql2PlNOfM?=
+ =?us-ascii?Q?dqRK8qK0mLwe7Hd2p/RMtOfBcjy7cYKzQwYoY712Jx/lPTjUFaSy0+EhYjtE?=
+ =?us-ascii?Q?Ky1f6RZ3Jm2xbj06ESuAiUME3U0McUm5dkPYJvpAEDUnqU1vzcbal6vZIBIk?=
+ =?us-ascii?Q?Iih6fire6qVzk7FDO7Xjcb4w3xkmow2EtPyCQpGfyB1qq1CYdhD/eLQKtza+?=
+ =?us-ascii?Q?bpCcbHQMVrEX1TtPgkKqvIHyqdcvQIUuTSk6rWb/6RI7zL5AiaRK6zjveQgp?=
+ =?us-ascii?Q?qfInk8RfOI+YT//v3AXV8hnsaqYSVub1F+84ms+SWdd5XovsjvW4fZROCR+v?=
+ =?us-ascii?Q?6NuEkBf6sVIvXwyaWn6NrpHPUHNEJ0x8kObL5lLB3Yx5ctKMikAq4gWGuJSp?=
+ =?us-ascii?Q?LaBn+2X1emzSv8h184ghVrY7c3MWVh3X5kc3lBM8z/wpmR/z16rEGML5oOad?=
+ =?us-ascii?Q?IEUwr83clEkFif3NoaSRL/ZmFbSjw4XpPX2ZR0LmVw7wg28Uxxiy7xeTmxqH?=
+ =?us-ascii?Q?SIAaS0Rh6iSF/4Gr3McSjbSlF0JIs4FOKzTzX3292FOdlqKIFVEmq3h9k3rF?=
+ =?us-ascii?Q?YhEe6IKH1dw8vDB1YqpN/mkGRao8KEe+C3WJu8WYn2mbe/cgCPVL?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb2def4b-37e4-4a87-d431-08df39946753
+X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 10:22:46.2722
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pMdHhvk1JOdc8lkwD7Y7/8nSn9eqtpbU2yKKi3JP98nxQff2exURxUcCsGUQDshOjdlI0YizEtQQWmiNyUZ9XHwSzx/gMu/7FD+u/i23btN+Ukj8QSqNfEFEpwLkbXA9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1329
 
-From: Vincent Jardin <vjardin@free.fr>
+Add pinctrl bindings for StarFive JHB100 SoC ADC-0(adc0) pinctrl
+controller.
 
-The LX2160A muxes its IIC, XSPI, SDHC, UART, IRQ and EVT pads from
-fields of the RCW, read-only in RCWSR12..14 of DCFG and changed at
-runtime through the same fields of the override registers in its DCSR
-view, which read 0 until written.
-
-Since commit 8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c
-gpio to support bus recovery") Linux drives them with pinctrl-single on
-the override registers, so its first pin state clears every other field
-of the word: a board whose RCW programs a non-zero pad mux loses those
-pads at the first I2C probe.
-
-Add a driver for the pad mux as a child of the DCFG node: the fields
-of RCWSR12..14 and their encoding.
-Then pin states select them with the generic function and groups
-properties, and every change goes through the RCW override
-of fsl-guts, which reads the status register, writes the override and
-waits for the status register to follow.
-
-Signed-off-by: Vincent Jardin <vjardin@free.fr>
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- MAINTAINERS                                 |   7 +
- drivers/pinctrl/freescale/Kconfig           |  15 ++
- drivers/pinctrl/freescale/Makefile          |   1 +
- drivers/pinctrl/freescale/pinctrl-lx2160a.c | 355 ++++++++++++++++++++++++++++
- 4 files changed, 378 insertions(+)
+ .../pinctrl/starfive,jhb100-adc0-pinctrl.yaml | 168 ++++++++++++++++++
+ 1 file changed, 168 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc0-pinctrl.yaml
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93abbb315065..6c488605f5da 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20207,6 +20207,13 @@ F:	Documentation/devicetree/bindings/clock/*imx*
- F:	drivers/clk/imx/
- F:	include/dt-bindings/clock/*imx*
- 
-+NXP LX2160A RCW PAD-MUX DRIVER
-+M:	Vincent Jardin <vjardin@free.fr>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pinmux.yaml
-+F:	drivers/pinctrl/freescale/pinctrl-lx2160a.c
-+
- NXP NETC ETHERNET SWITCH DRIVER
- M:	Wei Fang <wei.fang@nxp.com>
- R:	Clark Wang <xiaoning.wang@nxp.com>
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index fd53cf5bb843..a3222714c970 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -283,3 +283,18 @@ config PINCTRL_IMXRT1170
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imxrt1170 pinctrl driver
-+
-+config PINCTRL_LX2160A
-+	bool "NXP LX2160A RCW pad-mux driver"
-+	depends on OF
-+	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-+	default ARCH_LAYERSCAPE
-+	select FSL_GUTS
-+	select GENERIC_PINCTRL_GROUPS
-+	select GENERIC_PINMUX_FUNCTIONS
-+	select GENERIC_PINCONF
-+	help
-+	  Say Y here to mux the IIC, XSPI, SDHC, UART, IRQ and EVT pads of the
-+	  LX2160A at runtime. The pads are muxed by fields of the RCW:
-+	  the driver changes it in the DCSR view of the DCFG that fsl-guts
-+	  drives, and is what the I2C bus recovery of the LX2160A needs.
-diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
-index d27085c2b4c4..5ec0d1710ad5 100644
---- a/drivers/pinctrl/freescale/Makefile
-+++ b/drivers/pinctrl/freescale/Makefile
-@@ -35,3 +35,4 @@ obj-$(CONFIG_PINCTRL_IMX25)	+= pinctrl-imx25.o
- obj-$(CONFIG_PINCTRL_IMX28)	+= pinctrl-imx28.o
- obj-$(CONFIG_PINCTRL_IMXRT1050)	+= pinctrl-imxrt1050.o
- obj-$(CONFIG_PINCTRL_IMXRT1170)	+= pinctrl-imxrt1170.o
-+obj-$(CONFIG_PINCTRL_LX2160A)	+= pinctrl-lx2160a.o
-diff --git a/drivers/pinctrl/freescale/pinctrl-lx2160a.c b/drivers/pinctrl/freescale/pinctrl-lx2160a.c
+diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc0-pinctrl.yaml
 new file mode 100644
-index 000000000000..ba5bbcfab9fd
+index 000000000000..5b4b44c5776c
 --- /dev/null
-+++ b/drivers/pinctrl/freescale/pinctrl-lx2160a.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * LX2160A pad muxes: fields of the RCW, changed at
-+ * runtime.
-+ *
-+ * Copyright 2026 Free Mobile - Vincent Jardin
-+ */
++++ b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-adc0-pinctrl.yaml
+@@ -0,0 +1,168 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/starfive,jhb100-adc0-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/bits.h>
-+#include <linux/fsl/guts.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/seq_file.h>
++title: StarFive JHB100 ADC-0 Pin Controller
 +
-+#include "../core.h"
-+#include "../pinmux.h"
++description: |
++  Pinctrl bindings for JHB100 RISC-V SoC from StarFive Technology Ltd.
 +
-+struct lx2160a_pmux_func {
-+	const char *name;
-+	u8 val;
-+};
++  The JHB100 SoC has 13 pinctrl domains - sys0, sys0h, sys1, sys2, per0, per1,
++  per2, per2pok, per3, adc0, adc1, emmc, and vga.
++  This document provides an overview of the "adc0" pinctrl domain.
 +
-+struct lx2160a_pmux_group {
-+	const char *name;
-+	u8 rcwsr; /* 12..14 */
-+	u8 shift;
-+	u8 width;
-+	const struct lx2160a_pmux_func *funcs;
-+	u8 nfuncs;
-+};
++  The "adc0" domain has a pin controller which provides
++  - function selection for GPIO pads.
++  - GPIO pad configuration.
++  - GPIO interrupt handling.
 +
-+#define FUNC(_name, _val)	{ .name = _name, .val = _val }
-+#define GROUP(_name, _rcwsr, _shift, _width, _funcs)			\
-+	{								\
-+		.name = _name, .rcwsr = _rcwsr,				\
-+		.shift = _shift, .width = _width,			\
-+		.funcs = _funcs, .nfuncs = ARRAY_SIZE(_funcs),		\
-+	}
++  In the ADC-0 Pin Controller, there are 8 multi-function GPIO_PADs. Each of
++  them can be multiplexed to several peripherals through function selection.
++  Each iopad has a maximum of up to 4 functions - 0, 1, 2, and 3. Function 0
++  is the default function which is generally the GPIO function. Function 1,
++  2, and 3 are the alternate functions or peripheral signals that can be
++  routed to an iopad. The function selection can be carried out by writing
++  the function number to the iopad function select register.
 +
-+static const struct lx2160a_pmux_func iic2_funcs[] = {
-+	FUNC("i2c", 0), FUNC("gpio", 1), FUNC("flextimer", 2), FUNC("sdhc", 6),
-+};
++  Each iopad is configurable with parameters such as input-enable, internal
++  pull-up/pull-down bias, drive strength, schmitt trigger, slew rate, input
++  debounce nanoseconds.
 +
-+static const struct lx2160a_pmux_func iic3_funcs[] = {
-+	FUNC("i2c", 0), FUNC("gpio", 1), FUNC("can", 2), FUNC("evt", 6),
-+};
++maintainers:
++  - Changhuang Liang <changhuang.liang@starfivetech.com>
 +
-+static const struct lx2160a_pmux_func iic5_funcs[] = {
-+	FUNC("i2c", 0), FUNC("gpio", 1), FUNC("sdhc-clk", 2), FUNC("spi", 3),
-+};
++properties:
++  compatible:
++    items:
++      - const: starfive,jhb100-adc0-pinctrl
 +
-+static const struct lx2160a_pmux_func iic6_funcs[] = {
-+	FUNC("i2c", 0), FUNC("gpio", 1), FUNC("sdhc-clk", 2),
-+};
++  reg:
++    maxItems: 1
 +
-+static const struct lx2160a_pmux_func xspi1_funcs[] = {
-+	FUNC("flexspi", 0), FUNC("gpio", 1),
-+};
++  clocks:
++    maxItems: 1
 +
-+static const struct lx2160a_pmux_func sdhc1_base_funcs[] = {
-+	FUNC("sdhc", 0), FUNC("gpio", 1), FUNC("spi", 2), FUNC("sdhc-spi", 3),
-+	FUNC("sdhc-data4", 4),
-+};
++  resets:
++    items:
++      - description: ADC0 IOMUX
++      - description: ADC0 core
 +
-+static const struct lx2160a_pmux_func sdhc1_dir_funcs[] = {
-+	FUNC("sdhc", 0), FUNC("gpio", 1), FUNC("spi", 3), FUNC("sdhc-data", 4),
-+};
++  interrupts:
++    maxItems: 1
 +
-+static const struct lx2160a_pmux_func sdhc2_data74_funcs[] = {
-+	FUNC("sdhc", 0), FUNC("gpio", 1), FUNC("i2c", 2), FUNC("flexspi", 6),
-+};
++  interrupt-controller: true
 +
-+static const struct lx2160a_pmux_func sdhc2_base_funcs[] = {
-+	FUNC("sdhc", 0), FUNC("gpio", 1), FUNC("spi", 2), FUNC("flexspi", 6),
-+};
++  '#interrupt-cells':
++    const: 2
 +
-+static const struct lx2160a_pmux_func uart_funcs[] = {
-+	FUNC("uart", 0), FUNC("gpio", 1),
-+};
++  gpio-controller: true
 +
-+static const struct lx2160a_pmux_func uart1_rtscts_funcs[] = {
-+	FUNC("uart", 0), FUNC("gpio", 1), FUNC("uart3", 2),
-+};
++  '#gpio-cells':
++    const: 2
 +
-+static const struct lx2160a_pmux_func uart2_rtscts_funcs[] = {
-+	FUNC("uart", 0), FUNC("gpio", 1), FUNC("uart4", 2),
-+};
++  gpio-ranges: true
 +
-+static const struct lx2160a_pmux_func irq_funcs[] = {
-+	FUNC("irq", 0), FUNC("gpio", 1),
-+};
++  gpio-line-names: true
 +
-+static const struct lx2160a_pmux_func irq_flextimer_funcs[] = {
-+	FUNC("irq", 0), FUNC("gpio", 1), FUNC("flextimer", 2),
-+};
++patternProperties:
++  '-grp$':
++    type: object
++    additionalProperties: false
++    patternProperties:
++      '-pins$':
++        type: object
++        description: |
++          A pinctrl node should contain at least one subnode representing the
++          pinctrl groups available in the domain. Each subnode will list the
++          pins it needs, and how they should be configured, with regard to
++          function selection, bias, input enable/disable, input schmitt
++          trigger enable/disable, slew-rate, input debounce and
++          drive-strength.
++        allOf:
++          - $ref: /schemas/pinctrl/pincfg-node.yaml
++          - $ref: /schemas/pinctrl/pinmux-node.yaml
++        additionalProperties: false
 +
-+static const struct lx2160a_pmux_func evt_funcs[] = {
-+	FUNC("evt", 0), FUNC("gpio", 1), FUNC("flextimer", 2),
-+};
++        properties:
++          pins:
++            description:
++              The list of IOs that properties in the pincfg node apply to.
 +
-+static const struct lx2160a_pmux_func clk_out_funcs[] = {
-+	FUNC("gpio", 1), FUNC("flextimer", 2),
-+};
++          function:
++            description:
++              A string containing the name of the function to mux for these
++              pins.
++            enum: [ adc, gpio, host0_port80, smbalert ]
 +
-+static const struct lx2160a_pmux_func asleep_funcs[] = {
-+	FUNC("asleep", 0), FUNC("gpio", 1), FUNC("evt", 2),
-+};
++          bias-disable: true
 +
-+static const struct lx2160a_pmux_func reset_req_funcs[] = {
-+	FUNC("reset-req", 0), FUNC("gpio", 1),
-+};
++          bias-pull-down:
++            type: boolean
 +
-+static const struct lx2160a_pmux_func iic1_funcs[] = {
-+	FUNC("i2c", 0), FUNC("gpio", 1),
-+};
++          bias-pull-up:
++            type: boolean
 +
-+static const struct lx2160a_pmux_group lx2160a_pmux_groups[] = {
-+	/* RCWSR12 */
-+	GROUP("iic2", 12, 0, 3, iic2_funcs),
-+	GROUP("iic3", 12, 3, 3, iic3_funcs),
-+	GROUP("iic4", 12, 6, 3, iic3_funcs),
-+	GROUP("iic5", 12, 9, 3, iic5_funcs),
-+	GROUP("iic6", 12, 12, 3, iic6_funcs),
-+	GROUP("xspi1-data74", 12, 15, 3, xspi1_funcs),
-+	GROUP("xspi1-data30", 12, 18, 3, xspi1_funcs),
-+	GROUP("xspi1-base", 12, 21, 3, xspi1_funcs),
-+	GROUP("sdhc1-base", 12, 24, 3, sdhc1_base_funcs),
-+	GROUP("sdhc1-dir", 12, 27, 3, sdhc1_dir_funcs),
-+	/* RCWSR13 */
-+	GROUP("sdhc2-data74", 13, 0, 3, sdhc2_data74_funcs),
-+	GROUP("sdhc2-base", 13, 3, 3, sdhc2_base_funcs),
-+	GROUP("uart1-soutsin", 13, 6, 3, uart_funcs),
-+	GROUP("uart1-rtscts", 13, 9, 3, uart1_rtscts_funcs),
-+	GROUP("uart2-soutsin", 13, 12, 3, uart_funcs),
-+	GROUP("uart2-rtscts", 13, 15, 3, uart2_rtscts_funcs),
-+	GROUP("irq11-8", 13, 18, 3, irq_funcs),
-+	GROUP("irq7-4", 13, 21, 3, irq_flextimer_funcs),
-+	GROUP("irq3-0", 13, 24, 3, irq_flextimer_funcs),
-+	GROUP("evt4-3", 13, 27, 3, evt_funcs),
-+	/* RCWSR14 */
-+	GROUP("evt2-0", 14, 0, 3, evt_funcs),
-+	GROUP("clk-out", 14, 3, 3, clk_out_funcs),
-+	GROUP("asleep", 14, 6, 3, asleep_funcs),
-+	GROUP("reset-req", 14, 9, 1, reset_req_funcs),
-+	GROUP("iic1", 14, 10, 1, iic1_funcs),
-+};
++          drive-strength:
++            enum: [ 2, 5, 8, 10, 14, 16, 18, 20 ]
 +
-+struct lx2160a_pmux {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+	struct pinctrl_desc desc;
-+	struct pinctrl_pin_desc pins[ARRAY_SIZE(lx2160a_pmux_groups)];
-+};
++          drive-strength-microamp:
++            enum: [ 2000, 5000, 8000, 10000, 14000, 16000, 18000, 20000 ]
 +
-+static u32 lx2160a_pmux_group_mask(const struct lx2160a_pmux_group *group)
-+{
-+	return GENMASK(group->shift + group->width - 1, group->shift);
-+}
++          input-debounce-ns:
++            minimum: 0
++            maximum: 10485680
++            description:
++              Debounce time in nanoseconds. The hardware counts in 80 ns
++              stages with a 17-bit counter, so the maximum is 10485680 ns.
 +
-+static void lx2160a_pmux_pin_dbg_show(struct pinctrl_dev *pctldev,
-+				      struct seq_file *s, unsigned int pin)
-+{
-+	const struct lx2160a_pmux_group *group = &lx2160a_pmux_groups[pin];
-+	unsigned int i;
-+	u32 val;
++          input-disable: true
 +
-+	if (fsl_guts_rcw_read(group->rcwsr, &val))
-+		return;
++          input-enable: true
 +
-+	val = (val & lx2160a_pmux_group_mask(group)) >> group->shift;
-+	for (i = 0; i < group->nfuncs; i++) {
-+		if (group->funcs[i].val == val) {
-+			seq_puts(s, group->funcs[i].name);
-+			return;
-+		}
-+	}
-+	seq_printf(s, "0x%x", val);
-+}
++          input-schmitt-enable: true
 +
-+static const struct pinctrl_ops lx2160a_pmux_pctlops = {
-+	.get_groups_count = pinctrl_generic_get_group_count,
-+	.get_group_name = pinctrl_generic_get_group_name,
-+	.get_group_pins = pinctrl_generic_get_group_pins,
-+	.pin_dbg_show = lx2160a_pmux_pin_dbg_show,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_group,
-+	.dt_free_map = pinconf_generic_dt_free_map,
-+};
++          input-schmitt-disable: true
 +
-+static int lx2160a_pmux_set_mux(struct pinctrl_dev *pctldev,
-+				unsigned int fsel, unsigned int gsel)
-+{
-+	struct lx2160a_pmux *pmux = pinctrl_dev_get_drvdata(pctldev);
-+	const struct function_desc *func;
-+	const struct lx2160a_pmux_group *group;
-+	const struct group_desc *grp;
-+	unsigned int i;
++          slew-rate:
++            enum: [ 0, 1 ]
++            default: 0
++            description: |
++                0: slow
++                1: fast
 +
-+	func = pinmux_generic_get_function(pctldev, fsel);
-+	grp = pinctrl_generic_get_group(pctldev, gsel);
-+	if (!func || !grp)
-+		return -EINVAL;
-+	group = grp->data;
++required:
++  - compatible
++  - reg
++  - clocks
++  - resets
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - gpio-controller
++  - '#gpio-cells'
++  - gpio-ranges
 +
-+	for (i = 0; i < group->nfuncs; i++) {
-+		if (!strcmp(group->funcs[i].name, func->func->name))
-+			break;
-+	}
-+	if (i == group->nfuncs) {
-+		dev_err(pmux->dev, "%s has no %s function\n",
-+			group->name, func->func->name);
-+		return -EINVAL;
-+	}
++additionalProperties: false
 +
-+	return fsl_guts_rcw_override(group->rcwsr,
-+				     group->funcs[i].val << group->shift,
-+				     lx2160a_pmux_group_mask(group));
-+}
++examples:
++  - |
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
 +
-+static const struct pinmux_ops lx2160a_pmux_pmxops = {
-+	.get_functions_count = pinmux_generic_get_function_count,
-+	.get_function_name = pinmux_generic_get_function_name,
-+	.get_function_groups = pinmux_generic_get_function_groups,
-+	.set_mux = lx2160a_pmux_set_mux,
-+	.strict = true,
-+};
-+
-+static int lx2160a_pmux_add_functions(struct lx2160a_pmux *pmux)
-+{
-+	const struct lx2160a_pmux_group *group;
-+	const char **groups;
-+	unsigned int i, j, k, n;
-+	int ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(lx2160a_pmux_groups); i++) {
-+		group = &lx2160a_pmux_groups[i];
-+		for (j = 0; j < group->nfuncs; j++) {
-+			const char *name = group->funcs[j].name;
-+			bool seen = false;
-+
-+			/* already added from an earlier group? */
-+			for (k = 0; k < i && !seen; k++) {
-+				const struct lx2160a_pmux_group *g =
-+					&lx2160a_pmux_groups[k];
-+				unsigned int l;
-+
-+				for (l = 0; l < g->nfuncs; l++)
-+					if (!strcmp(g->funcs[l].name, name))
-+						seen = true;
-+			}
-+			if (seen)
-+				continue;
-+
-+			groups = devm_kcalloc(pmux->dev,
-+					      ARRAY_SIZE(lx2160a_pmux_groups),
-+					      sizeof(*groups), GFP_KERNEL);
-+			if (!groups)
-+				return -ENOMEM;
-+			n = 0;
-+			for (k = i; k < ARRAY_SIZE(lx2160a_pmux_groups); k++) {
-+				const struct lx2160a_pmux_group *g =
-+					&lx2160a_pmux_groups[k];
-+				unsigned int l;
-+
-+				for (l = 0; l < g->nfuncs; l++)
-+					if (!strcmp(g->funcs[l].name, name))
-+						groups[n++] = g->name;
-+			}
-+			ret = pinmux_generic_add_function(pmux->pctl, name,
-+							  groups, n, NULL);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int lx2160a_pmux_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct lx2160a_pmux *pmux;
-+	unsigned int i;
-+	u32 val;
-+	int ret;
-+
-+	/* The override needs the DCSR view of DCFG, mapped by fsl-guts */
-+	if (!fsl_guts_rcw_override_supported())
-+		return dev_err_probe(dev, -ENODEV,
-+				     "no RCW override through fsl-guts: the dcfg node needs its DCSR reg\n");
-+
-+	pmux = devm_kzalloc(dev, sizeof(*pmux), GFP_KERNEL);
-+	if (!pmux)
-+		return -ENOMEM;
-+	pmux->dev = dev;
-+
-+	for (i = 0; i < ARRAY_SIZE(lx2160a_pmux_groups); i++) {
-+		pmux->pins[i].number = i;
-+		pmux->pins[i].name = lx2160a_pmux_groups[i].name;
-+	}
-+	pmux->desc.name = dev_name(dev);
-+	pmux->desc.pins = pmux->pins;
-+	pmux->desc.npins = ARRAY_SIZE(pmux->pins);
-+	pmux->desc.pctlops = &lx2160a_pmux_pctlops;
-+	pmux->desc.pmxops = &lx2160a_pmux_pmxops;
-+	pmux->desc.owner = THIS_MODULE;
-+
-+	ret = devm_pinctrl_register_and_init(dev, &pmux->desc, pmux,
-+					     &pmux->pctl);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "pinctrl registration failed\n");
-+
-+	for (i = 0; i < ARRAY_SIZE(lx2160a_pmux_groups); i++) {
-+		ret = pinctrl_generic_add_group(pmux->pctl,
-+						lx2160a_pmux_groups[i].name,
-+						&pmux->pins[i].number, 1,
-+						(void *)&lx2160a_pmux_groups[i]);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	ret = lx2160a_pmux_add_functions(pmux);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 12; i <= 14; i++) {
-+		fsl_guts_rcw_read(i, &val);
-+		dev_dbg(dev, "RCWSR%u = 0x%08x\n", i, val);
-+	}
-+
-+	return pinctrl_enable(pmux->pctl);
-+}
-+
-+static const struct of_device_id lx2160a_pmux_of_match[] = {
-+	{ .compatible = "fsl,lx2160a-rcw-pinmux" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lx2160a_pmux_of_match);
-+
-+static struct platform_driver lx2160a_pmux_driver = {
-+	.driver = {
-+		.name = "lx2160a-rcw-pinmux",
-+		.of_match_table = lx2160a_pmux_of_match,
-+	},
-+	.probe = lx2160a_pmux_probe,
-+};
-+module_platform_driver(lx2160a_pmux_driver);
-+
-+MODULE_AUTHOR("Vincent Jardin <vjardin@free.fr>");
-+MODULE_DESCRIPTION("NXP LX2160A RCW pad-mux driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("FSL_GUTS");
-
++        pinctrl_adc0: pinctrl@11bc2800 {
++            compatible = "starfive,jhb100-adc0-pinctrl";
++            reg = <0x0 0x11bc2800 0x0 0x400>;
++            clocks = <&per2crg 67>;
++            resets = <&per2crg 10>,
++                     <&per2crg 11>;
++            interrupts = <147>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++            gpio-controller;
++            #gpio-cells = <2>;
++            gpio-ranges = <&pinctrl_adc0 0 0 8>;
++        };
++    };
 -- 
-2.43.0
-
+2.25.1
 
