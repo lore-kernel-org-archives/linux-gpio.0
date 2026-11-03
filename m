@@ -1,59 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793741446;
-	b=uUilN0dnFYRLndT4M/COTiZKf0VWlq4YX2E1CcibWu9WRNyzih78hSIlHpwwgI3D8QVQ
-	 ZC/Qo9gDMi1GI55RnpTJyc0D8MjM5An/BhiZsVTQkvQ410GlUgP3O5AWzGttkzJGC/CeZ
-	 j5257vxNrz3nvFwlRyroz87jlv1XI9v+3VJjE8h8MGQqqKuSzGfvHao3+u2xKQFOfeHg/
-	 wBAQZfVrbj7SNwmOzUiVB4cq8nQ1YA3cAs/FD7pAqwHH1Gpn8MDr1BGpwtM2wUIVEx1Ct
-	 E46iyksHBLRxHb8brWGK9BIXwu5cADF1cgLL3IUVUSo2nCnJul33GfhaSfknkwuT4yA==
+	t=1793741466;
+	b=gcWQBz+ihplGz/L00C8Vb1aQwVyTReVJWXMuz0L4DNBLwPWmw6bVLk8xY/IxeqjuiBPZ
+	 +37vgq3Y69bkEtjLaO6SfRRwwWXU3GoY/F8CzvMPStszweowvP1QNJXfnBpTY87jHlmC2
+	 0TqnODbo603qCCeIllFUKHa3K3lHwJzqcfeUEdaGf18r9egSvk0v2GcLdAJrDz1W7+97p
+	 kUmns4YtlyrcXgggTX7cVMMaaY1IzhbIHH+Dd5sQN535+B7AYv7FxH0DXXyZ3uyzwUUDO
+	 TUuT+YLzTI0TiAp9wxXO32Y/WDI6H7gG1uzgN1psgGcS82SLl/lmyspigM1qZSKDP0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793741446;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793741466;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=KBiAFwJBjOECAsi6lOaXohAXyvd5VSKVrxjrzr7WTOQ=;
-	b=butmwnwlakU+slNLJAHGEcoDCbEwa+389YGB8J6TV6+iIR4vSkbt3VE9YxjggArl4Kz8
-	 yH3ThzBOZn0FHvE0fi4eZ1CoLn0BlURCbSSsVN7HGhZr3p6T4jtaeRhY6724pN8IuiGS5
-	 CURmKI/jNor36lwMq5UZXyJWXu/IQDH4eNB3nLulzZqicHeKGab+Fr0N7jjrRknIhlmyT
-	 JRDTjWEt40r4ZNu/nXrLFxXgsRYNe3iSgqbZlqK82vp77U2dlPwh3v1vYsgChBIuc0Dy5
-	 z6eopAq5KFk+zzvsk+/w0983zCQR2CcAuXhorKx0AbaDIKyn1e26X5nvgioJpEmKVXA==
+	bh=3/oOsHewxoaJAaDJ/rO1u+yX1SuMv/P/AudEIBEMG7w=;
+	b=JVbd4cSpfSCYdHmLngU15azdgdIbE+Lfqos/8azEAKJ8ZAMvyhilN/4yMmGR4hdG1dqY
+	 M8xMwtDM5t0FY+tD6zluUahhdgahV4MD4IhOht2FTHKt/m8tfUqlFCx0UnkrGDKbvAiqY
+	 0HKMA1qr4yqWGlcy/E9b/sMPnDNTs4ASjeLCOrAcU5kS3Zojq6e6Uxs5p2LJjS/Yo07so
+	 SbSjuiZ/WqBEAG2b/9ey3JqM5nQCMIHdFjHLO+5h15rHgaRmSGUEu/j7pjad2WOY9K6qj
+	 iwdTIGdNsplyNRDy2bGEKupQNi+lz1Tg2JD78KXALHtFDzD/OSvFExwiXHfT7yAXiDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NVBgVzxk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FMWVqxa1;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E38606A31B;
-	Tue,  3 Nov 2026 21:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C1C606A31B;
+	Tue,  3 Nov 2026 21:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NVBgVzxk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77531F000C1;
-	Tue,  3 Nov 2026 21:30:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FMWVqxa1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5025F1F0093A;
+	Tue,  3 Nov 2026 21:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793741445;
-	bh=KBiAFwJBjOECAsi6lOaXohAXyvd5VSKVrxjrzr7WTOQ=;
+	s=k20260515; t=1793741466;
+	bh=3/oOsHewxoaJAaDJ/rO1u+yX1SuMv/P/AudEIBEMG7w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NVBgVzxkOHue8Bg8JZMVboN8UaAg+gjtemfKI+FdOkT7atn0v5vN2e9Fm67rCiD32
-	 cYKDgbjBaFAD6SoS5R9qVbTl/nLZVR0MWI5qtlYlRey/oBI05VPAUfUU7uAbB5oa6Q
-	 UH9GRuAA0idLh31GkoGdWpWZDW8kZt2wLKIRepoKrt00lC20JGhw0RUEWDsaGGGNaH
-	 nZNupU8pZM2rBvzt7agksL8BoHDoJJGAhcVDJX31O0u/GpFq0bcpy+kF97rMX50mvf
-	 /GTcmFrqnyOD3FZLJfKl3jOqT/cnSGur4nevvqukBL/uJRoz6+E+IBgi6DjOtDJx0Y
-	 jH3VSMCq49BXQ==
+	b=FMWVqxa1FNxP1228G32bTLVARYQ3QmprHch71ewzUY/3cokfxHRbiLY8bJdd7QIY6
+	 9b/IJJINomPPHFXkkbRjzQzlMnWaXqmIX+D0uM2IC+ik7B1EtxY/6c1gwP2PLupO2w
+	 WRcQ2O0Lir3/wtmX7pB8ql3mia8EWlLhDi0UU0U0jUGC69f7a9Kmpx7tvNdDykFhd1
+	 zg2VtXHVIuY9Aql8rftE6fdeCdhIyA28K6ntxQOvOcCI9pRn5/aTK7I8YRNkIRcLGN
+	 mXIoqqqbzvuyYRXz3W5+3ANaY/QYRVxDF1ODKuPaEq+0KsSOk5xU9YWMikFRVHt0B3
+	 KgWBzfYAUBKUA==
 From: Lee Jones <lee@kernel.org>
 To: lee@kernel.org,
-	James Tai <james.tai@realtek.com>,
-	Yu-Chun Lin <eleanor.lin@realtek.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.com>,
+	Sean Wang <sean.wang@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
-	Tzuyi Chang <tychang@realtek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-realtek-soc@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hao Chang <ot_chhao.chang@mediatek.com>,
+	Qingliang Li <qingliang.li@mediatek.com>,
+	linux-mediatek@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
 Cc: stable@vger.kernel.org
-Subject: [PATCH 05/10] pinctrl: realtek: Prevent out-of-bounds access in rtd_pinctrl_find_config()
-Date: Tue,  3 Nov 2026 21:29:10 +0000
-Message-ID: <20261103213002.1673560-6-lee@kernel.org>
+Subject: [PATCH 08/10] pinctrl: mediatek: Clean up partially initialised hw->eint on error
+Date: Tue,  3 Nov 2026 21:29:13 +0000
+Message-ID: <20261103213002.1673560-9-lee@kernel.org>
 X-Mailer: git-send-email 2.56.0.385.gac671c819a-goog
 In-Reply-To: <20261103213002.1673560-1-lee@kernel.org>
 References: <20261103213002.1673560-1-lee@kernel.org>
@@ -68,38 +69,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Several Realtek SoC pin configuration tables (such as rtd1319d_iso_configs,
-rtd1619b_iso_configs, and the rtd1625 config tables) omit trailing pins
-that do not support pin configuration, making data->info->num_configs
-smaller than data->info->num_pins.  Because rtd_pinctrl_find_config()
-indexes data->info->configs[pin] without checking data->info->num_configs,
-requesting pin configuration on a trailing pin reads out-of-bounds memory.
+In mtk_build_eint(), if of_property_count_strings() fails or
+hw->eint->nbase is non-positive, the function returns -EINVAL directly
+after allocating hw->eint without jumping to err_free_base.  Because
+callers such as mtk_paris_pinctrl_probe() and mtk_moore_pinctrl_probe()
+log a warning and continue probing when mtk_build_eint() fails, leaving
+hw->eint non-NULL with hw->eint->hw unset causes subsequent GPIO or
+suspend/resume callbacks to dereference a NULL pointer inside
+mtk_eint_do_suspend() or mtk_gpio_to_irq().
 
-Check that pin is less than data->info->num_configs before indexing
-data->info->configs[].
+Jump to err_free_base on both error paths so hw->eint is freed and
+reset to NULL.
 
-Fixes: e99ce78030db ("pinctrl: realtek: Add common pinctrl driver for Realtek DHC RTD SoCs")
-Closes: https://sashiko.dev/#/bug/linux-60e13761-fd9e-4fd3-826a-47344f36d4fa
+Fixes: 3ef9f710efcb ("pinctrl: mediatek: Add EINT support for multiple addresses")
+Closes: https://sashiko.dev/#/bug/linux-0689c07e-ef74-4bc2-b5de-bd2f361124bd
 Cc: stable@vger.kernel.org
 Signed-off-by: Lee Jones <lee@kernel.org>
 ---
- drivers/pinctrl/realtek/pinctrl-rtd.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index 60222339726b..2b877099ec85 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.c
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -252,6 +252,9 @@ static const struct pinctrl_pin_desc
- static const struct rtd_pin_config_desc
- 	*rtd_pinctrl_find_config(struct rtd_pinctrl *data, unsigned int pin)
- {
-+	if (pin >= data->info->num_configs)
-+		return NULL;
-+
- 	if (data->info->configs[pin].name)
- 		return &data->info->configs[pin];
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index faa6dbf0f635..aa15c9e047d8 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -382,12 +382,16 @@ int mtk_build_eint(struct mtk_pinctrl *hw, struct platform_device *pdev)
+ 		return -ENOMEM;
  
+ 	count_reg_names = of_property_count_strings(np, "reg-names");
+-	if (count_reg_names < 0)
+-		return -EINVAL;
++	if (count_reg_names < 0) {
++		ret = -EINVAL;
++		goto err_free_base;
++	}
+ 
+ 	hw->eint->nbase = count_reg_names - (int)hw->soc->nbase_names;
+-	if (hw->eint->nbase <= 0)
+-		return -EINVAL;
++	if (hw->eint->nbase <= 0) {
++		ret = -EINVAL;
++		goto err_free_base;
++	}
+ 
+ 	hw->eint->base = devm_kmalloc_array(&pdev->dev, hw->eint->nbase,
+ 					    sizeof(*hw->eint->base), GFP_KERNEL | __GFP_ZERO);
 -- 
 2.56.0.385.gac671c819a-goog
 
