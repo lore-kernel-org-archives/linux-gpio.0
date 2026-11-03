@@ -1,80 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793729575;
-	b=W1FiHof5fi+dvUm4hz8iV+ZQb81564wI3s/GoRV963ID0XusKJV0lcpPUqSNRVtiKBNK
-	 sCHCVDX/OgqFiRsiU+JJNKAQqdGE5Ma+H1ZEaCe+Y76K6WVWvm+JaTqaGoWv3TlcgZqr0
-	 nKwJ2Qq+YA15JLexPEkqbbtBpNLATtOJ0sRNlj5IJnkruDapAOgwd7oK+ASoPX8SwrzRu
-	 ZgPO1zEKUGU/V+efX6aYf/qBqYEGRfnvLgxAaFigtGDUFXFwsFgVYvMzoJrm2dZkBlYrG
-	 UTcQOKlccYadlOfYxF1Jihuzfc9yhBX3ou9z/vafOa8FtMPw9LPSvvg7n3joqPdnglA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793729575;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=8ZmFtc8U9FV0AiYvmqGuNwKTKAhvpZNUyvvbwtA3sfw=;
-	b=XPZcpGEiVRMCqs9j1Nve8y91SEE/DLE/SmcjMw36uRJ1tDRvK1E87lYs/cjwtzr1V8B+
-	 xrKzmhwnlq2eaQ4CVa7FvAfn3N5TBDdkaAKLbbEkCuIatq2A7m44bOT0Z7SnNu/3oiTiq
-	 qxz7MK26vGr90Q9MqPs7Lmoz82QX+5Rg4v3qgXNjAEh61l/54Lqsofb68aWOKEQ/jL2aG
-	 U7GSlCT4Q3kKbdasvoqNFFUXsfNPtOt8InNjrtK6BYIeCNmrMJkwX8QyF20rGXhAYyrke
-	 S6CNKwRJfk3uMhx5+KIlxfcrEq8eE7WOo4DERqZKQ1ZZjrU1lxJJ0mVLdwBkXL8dzEA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D2kRnXQw;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793730191;
+	b=uqjHc4qkxiqriFjllS5gxX2G6jTdGK3znzLC259+O6uSP1ZVFFoclmhWraJwsL2e2kuH
+	 Mmg9LWbcQ91eq2p1WV1uYnD19Af8cwdKnGRzGSsRoo2V/NmVP31MsC9EwngpEgUDYTMXp
+	 U2qqXph6mA75Y+wuBKnvmolmjCvpnLuWkfz1CspUKwc9nOLf1wH1ckXCiywKKA+h9ArEz
+	 Na3yX/Eq0CONFIOFyfKUaj60EJX43ma8Mydqhsuoryhp0vKK1Ht6hItzo0+u4iwJyZs+2
+	 6pAGVNRP+5+2WwQWVvGxZmsvpvwjlq3iyXHbK9+uLaM2l787RvpeGRjvR2qIFVgTWRg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793730191;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=SLn9woxh8f9RGTdlsIbxZAdrYooqEJ954SXQjVmLUxA=;
+	b=BOY2FZS7mTG11cPbXCU0nWU8z09xlDtLWDA+snxMq0J39MIp52IEVExecv9ODOgIHg1X
+	 hnijEFa7dVIiHMJok6wpVpfNxsTalVV68F8fSkb4NEQ61NyHot0rcUO3ATvDbSuUqPmJZ
+	 a8bXQBfCYvK3O5gUooV/aIFVcSCgyBcrwyuRjXbnddIDdT5+MRZTxZx07vbzoztlKc0sM
+	 D628WZ8I9JBDh1YQ0Ztyv7McVnAuScDWaiq9XKPRHbRqVed+SVQ4P/gJjF3bZQAKCJMdZ
+	 GrS1OiJ4IHeX+LjAwGOtmu/S8Sjy7TeG3hbSNFLjclI/g82tbER6WyaxekMDNGl1okQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kD7HOXbb;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9FE606A324;
-	Tue,  3 Nov 2026 18:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33277606A31B;
+	Tue,  3 Nov 2026 18:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D2kRnXQw
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793729575;
-	b=I7qG0OsBnsTJtIZg81+bcKocV6Ph5TiHEufVUgM/3Fu55A7LK2RlUx7ezG6NWsSKw74v
-	 MotN02J/D+Fu71HgeCADzzY0sZoirTkLlpox47/RriNNyt8gH35K4GAuQ9maaoOKAOcGN
-	 fpWgUrFHCCd3gmi0k2hT28M+z4VmTvpvzkuYqV5ii9q/75xoUOQ2Rdrj9HKmyoppXTC5e
-	 XpU6p3WXP6BCja4wPfHFv4flfbRTe9SRp7d+LsnJ1F6gDOXsmX+utnj9a5jCiNKRYw8D3
-	 RtpIHHgM28EI3D2ruTEdp3o90WZb01I3O43xTYNWUa3Kq6Kcoi+O/jFp0xxTgCrv7RA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793729575;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=8ZmFtc8U9FV0AiYvmqGuNwKTKAhvpZNUyvvbwtA3sfw=;
-	b=wc8u75D1LhXx7osvUc5Cr1OAFoRV0ED/vior9ZnCkpnrK1eNu7iGsgNPmw02w7fAhNED
-	 YVVRIP99d8Kb/0wn0goOyf1ylOoYhTHAVYNrIemEACpYS6pOCsaXtlIYbMwPjU+e45Vbi
-	 aJSYVgKxvJVlV7HUrgX6xhm1PIMLwEeBNAmeqJUXIomj3ZyLc7uRbwkxB7SBrBpvuAv9n
-	 cMZTadSqqWYSty3u2il6mX+oacUgBVOvFTLF6trE6mJLedy3+5RKr1hU63DuiK62YoGSh
-	 3loTwFcs2SjP2WW2CYtRt1QWoZTJIse6RmgffWbJUZevlpj51c576bfEMX8ydslCCcA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 6DF6D1F000C1;
-	Tue,  3 Nov 2026 18:12:54 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kD7HOXbb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6367A1F000C1;
+	Tue,  3 Nov 2026 18:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793729575;
-	bh=8ZmFtc8U9FV0AiYvmqGuNwKTKAhvpZNUyvvbwtA3sfw=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=D2kRnXQwUD4y4WcPsq1uzCrH1rsdRS5BnqS1c57f0Ivx0ZyNjScy/GnSjmVkQId4g
-	 YWDhNXcguPbZo3yjsDFx1zK/GD6+N7Vxvs5uc6QjqrlMKvkHPdBzZjB/VdFidjOfgU
-	 tZMFALvBK37dFTHUNFVxd52XAkfjB/w1wJ/P5HY8yp3EfjWJEdW8fmbC8T+FvJrWvH
-	 MeOADhLo6fJYveiDLrFe5pTLjWLuzQGKEz5ryRQ09NtNhPWBB3rS4Ki5Lo0xX0hmCB
-	 YuLl9P9iATUYggv1pQV+2/r04a+PkoVZ525VnMS9kYe4sfti/UWjRlwjcbhrK5u+Cf
-	 Kyl4tWVKUx7yg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 0266446A71;
-	Tue,  3 Nov 2026 18:12:54 +0000 (UTC)
-From: Vincent Jardin via B4 Relay <devnull+vjardin.free.fr@kernel.org>
-Subject: [PATCH v2 0/5] lx2160a: change the pad muxes through the RCW
- override
-Date: Tue, 03 Nov 2026 19:12:08 +0100
-Message-Id: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-0-3aad0860b984@free.fr>
+	s=k20260515; t=1793730190;
+	bh=SLn9woxh8f9RGTdlsIbxZAdrYooqEJ954SXQjVmLUxA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=kD7HOXbbXkTc+fu7AfV37n3kw/sAQbCSNA2+3hSAOZPPoWgvSzWAY3VIB9ANK3zl+
+	 f2l7nn2z42y9L0X7v9e2eYZcVrEK39i3NnDM5d92E6Kng7ZpuiO31vsFoowOuR8YCP
+	 0ZbYAOhja7sUE1cEHOUhEVwtusy8qpZO/iS8/qobSir5Gm3peCEAvA32/Fa6kxYNkf
+	 xC3xNQmWOz9y9EbBfXaZcnDUshUCCpXr4ZW5+BI6AQg/rgEO7ce7Td5pevI8osfkx8
+	 S9vhIqN4kcCkPXrRWUagp3oA7HGgkonZS5LFEFm7PWBG+AV1zLzB99VRuPdfdreIOa
+	 +s9i2BB65+WXQ==
+Message-ID: <sashiko-outbox-195824@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: add the NXP LX2160A RCW
+ pad mux
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Vincent Jardin" <vjardin@free.fr>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org, Frank.Li@kernel.org
+In-Reply-To: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-1-3aad0860b984@free.fr>
+References: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-0-3aad0860b984@free.fr>
+ <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-1-3aad0860b984@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 03 Nov 2026 18:23:09 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,112 +60,67 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPgj6moC/5WNTQ6CMBBGr0Jm7ZhOIQVceQ/DooGpNJGfTKFiC
- He3cgOTb/O+xXs7BBbPAW7ZDsLRBz+NCfQlg7a345PRd4lBK22IVI5uElznsAjbAV+bJqMsSvv
- G2Y/DumEkzMnVtqvLrq0MJNEs7Px2Rh5N4t6HZZLP2Yz0e//SpylU1pCtq7wsi+LuhPnqBJrjO
- L7vkbbv0gAAAA==
-To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- Vladimir Oltean <vladimir.oltean@nxp.com>, Vincent Jardin <vjardin@free.fr>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793729572; l=3659;
- i=vjardin@free.fr; s=20260525; h=from:subject:message-id;
- bh=0LjsWnaiiLIaWzA8f1eKCexyJ3xjv0VT78KoZgdG1qA=;
- b=phgZRnMAvFRQMKKkay1sieT/ZvbPQm9gx4vCgob9X8ymrn7HG33n9PRARygDPqI4AdSYCD3GS
- CzJM/2cPj31BGAbNHKTVk2GKgDFoxkHlKPZ6yLiILgyRPUz2dcEJ55A
-X-Developer-Key: i=vjardin@free.fr; a=ed25519;
- pk=hppgLeFpGpKOi7LNwGEZ4jOYofJCoGd4Jf1ltAabiLw=
-X-Endpoint-Received: by B4 Relay for vjardin@free.fr/20260525 with
- auth_id=871
-X-Original-From: Vincent Jardin <vjardin@free.fr>
-Reply-To: vjardin@free.fr
 
-The LX2160A muxes its IIC, XSPI, SDHC, UART, IRQ and EVT pads from
-fields of the RCW. They are read-only in RCWSR12..14 of DCFG, and are
-changed at runtime through the override registers in the DCSR view of
-DCFG, which read 0 until written.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] dt-bindings: pinctrl: lx2160a: missing clk-out function for clk-=
+out group
+--
 
-Since commit 8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c
-gpio to support bus recovery"), fsl-lx216x.dtsi drives the override
-registers with pinctrl-single for the I2C bus recovery. Its first pin
-state clears every other field of the word: a board whose RCW programs
-a non-zero pad mux loses those pads at the first I2C probe.
+commit 099426f7b054b7c6ba8ac26438539221c6367516
+Author: Vincent Jardin <vjardin@free.fr>
 
-This series reads the fields in effect from RCWSR and writes RCWCR, as
-fsl_guts_rcw_rmw() already does for the SerDes protocols:
+dt-bindings: pinctrl: add the NXP LX2160A RCW pad mux
 
-- patches 1 and 2 describe the pad mux as a child of the DCFG node,
-  which gains its DCSR view
-- patch 3 exports the RCW override of fsl-guts for any RCWSR
-- patch 4 adds the pinctrl driver: one group per RCW field, one
-  function per encoding
-- patch 5 moves the pad muxes of fsl-lx216x.dtsi under DCFG. Labels
-  and pin node names stay, so no board file changes, and the
-  pinctrl-single node goes
+This commit adds the Device Tree binding schema for the NXP LX2160A RCW
+pad muxes, defining the valid pin groups and functions mapped to the
+RCWSR12..14 registers of DCFG.
 
-Patch 4 uses the exports of patch 3, and patch 5 needs the driver of
-patch 4, since the I2C pin states of fsl-lx216x.dtsi then belong to it.
-DTBs built before patch 5 keep their pinctrl-single node and behave as
-before. There is no Fixes: tag, since patch 5 depends on a new driver.
-I did not believe it should be backported then.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pi=
+nmux.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pinmu=
+x.yaml
+> new file mode 100644
+> index 0000000000000..b1ccd153a43bb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pinmux.ya=
+ml
+> @@ -0,0 +1,262 @@
+[ ... ]
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    $ref: pinmux-node.yaml#
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      function:
+> +        enum: [ asleep, can, evt, flexspi, flextimer, gpio, i2c, irq,
+> +                reset-req, sdhc, sdhc-clk, sdhc-data, sdhc-data4, sdhc-s=
+pi,
+> +                spi, uart, uart3, uart4 ]
+> +
+> +      groups:
+> +        items:
+> +          enum: [ iic1, iic2, iic3, iic4, iic5, iic6, xspi1-data74,
+> +                  xspi1-data30, xspi1-base, sdhc1-base, sdhc1-dir,
+> +                  sdhc2-data74, sdhc2-base, uart1-soutsin, uart1-rtscts,
+> +                  uart2-soutsin, uart2-rtscts, irq11-8, irq7-4, irq3-0,
+> +                  evt4-3, evt2-0, clk-out, asleep, reset-req ]
 
-Tested on a Nodebox v3 (LX2160A) whose RCW muxes XSPI1_A_DATA[7:4],
-SDHC1 and IIC5 are not set with the defaults, so I could confirm:
- - pinctrl-single the first I2C probe cleared those fields
- - with this series RCWSR12..14 read after boot exactly what the RCW and
-   the board's pin states select
- - all I2C controllers come up with their recovery states and a
-   forced bus recovery on IIC1 (multi-master enabled for the test)
-   changes only that field
+[Severity: Medium]
+Should clk-out also be listed in the function enum (with a corresponding
+if/then rule in allOf allowing the clk-out group)?
 
-Thanks to Vladimir Oltean for pointing at fsl_guts_rcw_rmw() when I
-tried to prime the override registers from the RCW instead:
-https://github.com/nxp-qoriq/rcw/pull/8
+The other single-pad groups in RCWSR14 (asleep for ASLEEP_PMUX and
+reset-req for RESET_REQ_PMUX) expose their encoding 0 primary functions
+(asleep and reset-req) alongside their alternate functions.
 
-Signed-off-by: Vincent Jardin <vjardin@free.fr>
----
-Changes in v2:
-- dt-bindings: list, for each function, the groups, so the
-  schema refuses the associations the driver refuses (Frank Li)
-- Patches 2 to 5 are unchanged
-- Link to v1: https://lore.kernel.org/r/20261103-for-upstream-lx2160a-rcw-pinmux-v1-v1-0-0a61a9837744@free.fr
+For the clk-out group (CLK_OUT_PMUX in RCWSR14[5:3]), the schema permits
+the gpio (0b001) and flextimer (0b010) functions in allOf, but omits the
+primary clk-out (0b000) function, which prevents a board from selecting or
+restoring the CLK_OUT function via pinctrl states without failing schema
+validation.
 
----
-Vincent Jardin (5):
-      dt-bindings: pinctrl: add the NXP LX2160A RCW pad mux
-      dt-bindings: soc: fsl: layerscape-dcfg: add the LX2160A pad-mux child
-      soc: fsl: guts: add the RCW override of any RCWSR
-      pinctrl: freescale: add the LX2160A RCW pad-mux driver
-      arm64: dts: lx2160a: describe the pad muxes as the DCFG RCW override
-
- .../bindings/pinctrl/fsl,lx2160a-rcw-pinmux.yaml   | 262 +++++++++++++++
- .../bindings/soc/fsl/fsl,layerscape-dcfg.yaml      |  18 +
- MAINTAINERS                                        |   7 +
- arch/arm64/boot/dts/freescale/fsl-lx216x.dtsi      | 373 +++++++++++----------
- drivers/pinctrl/freescale/Kconfig                  |  15 +
- drivers/pinctrl/freescale/Makefile                 |   1 +
- drivers/pinctrl/freescale/pinctrl-lx2160a.c        | 355 ++++++++++++++++++++
- drivers/soc/fsl/guts.c                             |  73 ++++
- include/linux/fsl/guts.h                           |   3 +
- 9 files changed, 932 insertions(+), 175 deletions(-)
----
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-change-id: 20261103-for-upstream-lx2160a-rcw-pinmux-v1-31f9ad97dc86
-
-Best regards,
--- 
-Vincent Jardin <vjardin@free.fr>
-
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103-for-upstre=
+am-lx2160a-rcw-pinmux-v1-v2-0-3aad0860b984@free.fr?part=3D1
