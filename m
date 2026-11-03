@@ -1,84 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793705708;
-	b=amtVUW85rSvzmSzIj+puJcmfXLWRvuNhlFLBjWXOrfJwvNIRucGJQ2Xta1pMbXzdZBe+
-	 nd88exaji5RSRkh+dPpb5kp52W06vOhzrvfkxr3yYtwFrR26ZEnz4dtKvLquqXUVXxV81
-	 gNNofanXPJ0K6MO6ooZTibGHy3g8opxtnoNUwVOEyP6AshMDugj9MTgzLta5IADLvoABd
-	 3Olq6yc8Ct/rp2TneZW5SojZMHlvwqOw4RL2s+sLMTIeAgAfKS7KQX1V+TIavs2HjxuNS
-	 zB+Hmp2IPLeGhfgJT38gb/dp/W1AWxyt/C3w6iG8FS9El5KbLolO4MCj4ilZTZ4q2Vg==
+	t=1793705895;
+	b=K3AeKgEmNnkr01I7YuAuLyDZZCG0gZag7A2lXZeZfqiImaxBEETuEnswPnT3ibSbvEKr
+	 THo7Tn2hZgg7FKI12FTbnP/yhtzMZbuSCyZJfS2eFecUWBsnSZccY+8USeEV4JPdbEzg3
+	 ShWOIGtIkvcMGoG3XjZJ2DjHUGqH/ylMngLEx/YVy54ylFFlJtNuiiulBG0UYdbT6/rRq
+	 Dzk47uH5eR7XUB3AIfP+oHsRRAfnegVnKKqwkHSmAoIYHyUHT+LpEW+zkc7JWr1aBmwiR
+	 jwlNDVl6aJyCymnHW5OG0h0KqEnwRiKWQpPEhs8lD2G9eUsZwTQjAlw4JRo9KJ8RoXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793705708;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793705895;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=c4JVriSqnhUXcVvzsLVWWTJSNNQ43arV+TIdoGKN4wc=;
-	b=0HgoXP5sWxsvya+3rc1O/tKM4wHzm3wyyetvbJo1FnkXCHDn0Yt4ucHJUzEnMx6icinI
-	 feVYEu1kWlYKBV+ojIVrMkP7/H9+xwCkN32vLVNKoo+szMjHCDUFLCxT+EJ6jIZZdZaYN
-	 G7IHP6A2pcfpMrHu9v9xf9tgYrrpOycn01NHvaV2J37nALtCz1VTLB6c6Q5SsuTh8V9OP
-	 Go/47+9CRIn7JrAZHd3wPMXQGqkFKDCOY9g8umtmVTbxApVR1A6OlCBD3QrfthmPwu/ND
-	 ia2tKvV4HBRIc1kUPt99fApXZKO3wLg9cKYlwWsI6o8gYg4SY9fVqY6z6oTjFrgCXSA==
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 Organization;
+	bh=SM+ZxwXvkDJiP/IazHDrslWlgbwPpcEIJLtAEnj1Euw=;
+	b=gpTOVchmAm4qBMscm3dp7FQZuVZ71dDBhZozx55O9DnDzFyEJnZIxRHEiIjRJRl/mi/N
+	 7QkJN1vM3gU2gXZFd3CYdbCxMMXeyLzJMiKAYisxGuuaI1MLr8D6fhl5Q2nuvCUO7Kv79
+	 jNvLOFI+0yNuytlGu1JntdTvTKon34XHnuFGuP1rv58nC2tKTabJro8GDa+joMlZPxZ68
+	 FFXS+UPvruqlRfHZRa/J8OUM6Qwgjg4H0AqddwSt/6AJdnLBNjMovZnphO3NPc3fC1Ow3
+	 aWnMZy48lIUrGgfvFcyZJXwBsd04gTuVXby3JlJC0SORWc6zrwop0a0cavY8Llh1ArQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="TCjQ2/+u";
-	arc=none smtp.remote-ip=198.175.65.16
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=XrDManDK;
+	arc=none smtp.remote-ip=198.175.65.9
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0167606A335;
-	Tue,  3 Nov 2026 11:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0167606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76C96085094;
+	Tue,  3 Nov 2026 11:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A76C96085094
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=TCjQ2/+u
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=XrDManDK
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793705707; x=1825241707;
+  t=1793705894; x=1825241894;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tOgvAIWfP2qhCgfnXFmqJFEJPtgyNY65FfFSjXCkrF0=;
-  b=TCjQ2/+u049wJbDb8DTu1nLMdwCkTynso2p4aDOStjizdvTHxp7NZRAq
-   5H1RxOVDeJbvwnvQM+QNliEwGvtoSkY6WtqvMr4D6XOCzO0e48zxDFBqI
-   7TH8iGnVCifRMbxJUIU09C7zP9zK5TC8DzjWzH7OSasXlskdwAO2806z6
-   LdA3/oN/Iy/3x5273rAhjQkACR4cZrF8/Ba4mJg5dGyHG87cdn4A393aC
-   LRBWp/KgwWLQ/1d0FGIKQeu/26YBv3RNJiiknRweYfx1E48NBhxzfSKr5
-   E/3ASdfkv/Ukj3By7jodGpbE+/8sSj/H9DauGN4MAVNsNonqo3vi9PilS
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=S8pdZwb2Y+CAAH6NyB1ZqP4ocDmydfr0MY9PK+DwCbE=;
+  b=XrDManDKoQrrooE0z2X7MosrX6WI+vA6qACq6IMhC77Se1uitptQvpaC
+   pguq9o0O5KD7tij2/+kel8AI4iarwuB1EZQo3qAJgI92R8WfvWXGoNQed
+   iOmbNduFPPX+lJ1e/WEu6ktHpszybCoq1YofhbTOFtTH1kiLrsIj53mFy
+   Q0KUL//a7j2r9OHRgDuzM1XCh2MIHVNj+F80Ox/3surT1NSRXmivvskFC
+   73cNtGzGqHe+NvRi/AJbEZGnBpBqG+YfH3ruHVoljLbFP5TDdMnGToS6L
+   qIWPwJHRtdSj78cMKTGXskF3YLHZ2VuU0brU/I8WcDuJ6RLinm+9flW35
    w==;
-X-CSE-ConnectionGUID: DW2bZ6pUSGGGfDgCMNJe5A==
-X-CSE-MsgGUID: k6kEylNHRe60U3xm20TH5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2419704"
+X-CSE-ConnectionGUID: xbJC0bcjRsyDS9LAcnkgGw==
+X-CSE-MsgGUID: cEd01hLmRsqGp2CgraoiOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2317221"
 X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="2419704"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:35:06 -0800
-X-CSE-ConnectionGUID: 1kyjFEKOSMKKVAo4bH7i9w==
-X-CSE-MsgGUID: G++Ps7n8TbyaAh1xolbZhg==
+   d="scan'208";a="2317221"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:38:14 -0800
+X-CSE-ConnectionGUID: Wxh6HDosTJaT+CYyJsuZ8g==
+X-CSE-MsgGUID: pIfaqHVkSvWewBwafQxGZQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="6231256"
+   d="scan'208";a="6735611"
 Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.108])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:35:05 -0800
-Date: Tue, 3 Nov 2026 13:35:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Kent Gibson <warthog618@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] gpiolib: let the character device free its IRQs
- first on chip removal
-Message-ID: <aunG5r3aKrJG-vJA@ashevche-desk.local>
-References: <20261103-gpiolib-chip-removal-v5-0-aambrozewicz@nvidia.com>
- <20261103-gpiolib-chip-removal-v5-7-aambrozewicz@nvidia.com>
- <aum82qe3S5W0FvK2@ashevche-desk.local>
- <20261103122634.6badd16e@bootlin.com>
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:38:11 -0800
+Date: Tue, 3 Nov 2026 13:38:09 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
+	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
+	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] pinctrl: scmi: report an off setting as not set
+Message-ID: <aunHoe9PfumHp0Gh@ashevche-desk.local>
+References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
+ <20261030-clegoffic-pinctrl-scmi-gpio-v1-4-52d92843ad97@baylibre.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -88,50 +86,35 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20261103122634.6badd16e@bootlin.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-4-52d92843ad97@baylibre.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Nov 03, 2026 at 12:26:34PM +0100, Herve Codina wrote:
-> On Tue, 3 Nov 2026 12:52:10 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Tue, Nov 03, 2026 at 12:32:40PM +0200, Adrian Ambrozewicz wrote:
+On Fri, Oct 30, 2026 at 04:58:35PM +0100, Clément Le Goffic wrote:
+> A get of a setting that is on or off, the flags and the pulls, returned
+> 0 as a value, so every one of them showed as set on every pin. Return
+> -EINVAL when the platform answers 0, which is how pinconf reports a
+> setting that is not active.
 
 ...
 
-> > > Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/
-> > 
-> > No. Either make it Closes tag (if appropriate) or add a reference like
-> > 
-> > Link: $URL [1]
-> > 
-> > and mention [1] in the text, otherwise it makes Linus T. grumpy. I think
-> > I already told that.
-> > 
-> 
-> IHMO, "Link:" instead of "Closes:" according to this reply in the series
-> pointed out [2].
-> 
-> [2]: https://lore.kernel.org/all/20240923150522.66b418d1@bootlin.com/
-> 
-> The history was:
->  - [1] (the link in this patch) proposed a fix
->  - It has been rejected and a improved one has been done [2]
->  - [2] has been accepted and led to the commit ec8b6f55b981 ("gpio: free irqs
->    that are still requested when the chip is being removed"). This commit
->    is already mentioned as 'Fixes:" in this patch.
-> 
-> So, IMHO, in this patch:
->   ...
->   takes (config_mutex, or a new mutex for v1 line events). Herve Codina
->   first proposed calling the notifier earlier [1].
->   ...
->   Link: https://lore.kernel.org/all/20240227113426.253232-1-herve.codina@bootlin.com/ [1]
->   Fixes: ec8b6f55b981 ("gpio: free irqs that are still requested when the chip is being removed")
+> +static int pinctrl_scmi_map_pinconf_arg_get(enum pin_config_param param,
+> +					    u32 *value)
 
-Thanks, WFM!
+I would dare to keep it on a single line.
+
+> +{
+> +	if (pinctrl_scmi_pinconf_inactive_flag(param, *value))
+> +		return -EINVAL;
+> +
+> +	if (param == PIN_CONFIG_DRIVE_STRENGTH)
+> +		*value /= MILLI;
+
+> +	return 0;
+>  }
 
 -- 
 With Best Regards,
