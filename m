@@ -1,83 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793706077;
-	b=MEgi1iIbNCXrc824UfvH7B1EtekkSRWG3SIT+M0aNhOTM6n6jaSwcsOojK0Znvf1VNil
-	 GyFvmnEsECxzIPzbkFAnBVQLSOV/9g6mptl8QI5nPC7TK36qU2vYf1p45N5GTyoSVjEW5
-	 NEosm3sJ5auMSVfuI0EcRPUIXSvs6byOs2D1Z+Qc0ImW2iEJFCgVel8WZySEk4eLslFO1
-	 ASANhostTDp4PeCdd7fgj4ZSZsQeLANeHJ4Hb0du7yN3yLbIMdFswXVs4Z+QnyBh/KrDC
-	 pjNFglLBRG+SyPnoFRhE7NoOyZg+VURy3knv6PSx0wkOwRDh+CZ+ec7O3Lkj84JAl5g==
+	t=1793706376;
+	b=ijxOCoGRcyhhi25yjKW7btCK7wq1KAp+PK2yoY16DIeE3BWeU7eYUcqbxHDcXc0FR5cM
+	 n0XXBXQYqkJwBPJGNEScwhXo7lUEaa/fg6xE4TEnr3BpXRYF6NA8RhQSW+0FaYH8DmfkF
+	 eGC4EzbfwEX2oYI5aBVcCeONW1l6gCIZbFQq4UDq3/oUatbnuTCZlkA6B3x6ZjEY4TRLv
+	 BwT2XkxeuDet2FLAn+WUsLEHy38xxGDPtSi/DB1UPfoB6wZXnwZmyC9KymFq6Jy8GgC4g
+	 x1+cP7mQo4wdPjZe7n/wGrHz8JuKoelV76+zRoY15yCKt3G2e+FaB5nec4C3XeP3f3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793706077;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=9rRrksSImQxjgaCoOlcavqaTwPlSKHx5ylc9VpIQuFM=;
-	b=u5+73NC2we4F61WNSyiaN6qzLnsWuDFRsCbnvEMgyHehnpTHXA1RPrjJgZl6xpQaORK/
-	 pMEWMMI9pcPlCegraEMfO2YDu/NjdQn3pasWjN2bVm17b/TAQgJvHYRug5mxyf2NlkkjY
-	 C01eZDoj9PvCfgUHYZewk0vvuC0HiqFASSVd9GvXWsWynBeYTdoI+DajwqpITunkHCNea
-	 T/cOrAGu5DsZVnDnO7OUecCrn62sGvHhQoJnuqNtUA5wOfunUwSUNbGyMqYhjrI7WBe7u
-	 FWA+tanQVzit4iRHputV68OU76mjb95r1YVXlRggsJFaJFxBk8risFXSPTiqS0whOOg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793706376;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=qQLHpmsRNMu4pGQ7TUF0TsUadlNWD5NyYDTXP525YNs=;
+	b=0LvBpSBryHpULMUBBNTbPkWivqHaDLj05qWET6LpKHNWZIxzMGNVmVEuTMdNXaPmUCg4
+	 pV3SpvT1CsBUaoo+P5A8/abzjaPrW0F4WYRbxlYE5r/Nk02W5KC7aZ/OkSn31gl2lJ4fD
+	 L+qDnI3G7lLdg3exCb5E/NyqNu2fEw/2SAsVghsVjMP/bIuVLpd775ugAcvSROaLr2ZDl
+	 vPJ8s1DbC45mAaY3IncQQ+wDU5C04gh4TKG/5AaGiwHQDlJcOvhnzRYfyrHNC5vn1pww4
+	 5P+9P9i81BBSBU0WyweIUpaLdVERAxYV8z05XPD/swYju2g6IAv/FPLh7nT+ZaHb5FQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mKtc8SeN;
-	arc=none smtp.remote-ip=198.175.65.13
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xkl1z5GF;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91755606D808;
-	Tue,  3 Nov 2026 11:41:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91755606D808
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE20606A326;
+	Tue,  3 Nov 2026 11:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mKtc8SeN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793706076; x=1825242076;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=IeFn5a9AdmVeg5IHSIJsjnU24bAycCXoaf0T4GZLG24=;
-  b=mKtc8SeN1kckuZ657maHu/eJWVsvvJfX1FhxKlJfGLhkjZLbIfyah4r1
-   FPWUzBt9mAStqZsXJrduLbvFEbH+xgvKo/aecDCfUUEdSnMN0bsHlVgaR
-   NXGPLTHMoGuhtjcF5kgr5aOX6ke3r6iNHGtv3WZxAPEjr53cftgWUJTve
-   KG6cxBJ8FJd/mStJYyawAIc1kpvG4hlgiSPo0aSCCbVsb0Ba2ymxF8mX1
-   jVPTkronchPr4rO7HXtDCRSnwJbeeb08EvjdLWTBJShwp5zPDEiV/qfLt
-   xi7EoFE/zIBSGu2mMlCoAG+6YlPeTzgUE/3XENjWRELVvrlDzfiX2R+uI
-   Q==;
-X-CSE-ConnectionGUID: 0O8WqsaGRheervORtvnxrw==
-X-CSE-MsgGUID: PYoJ5x+DSI23O/gDkMoUpQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2303563"
-X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="2303563"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:41:15 -0800
-X-CSE-ConnectionGUID: DnQ4jqYmSHq02PTVWlnnGg==
-X-CSE-MsgGUID: QMBqbzCZR0yjZh8s7mqmyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="6308191"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.108])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 03:41:11 -0800
-Date: Tue, 3 Nov 2026 13:41:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
-	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] pinctrl: scmi: select the GPIO function on GPIO
- requests
-Message-ID: <aunIVW4JeM_P2WOa@ashevche-desk.local>
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-11-52d92843ad97@baylibre.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xkl1z5GF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23891F00A1C;
+	Tue,  3 Nov 2026 11:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793706375;
+	bh=qQLHpmsRNMu4pGQ7TUF0TsUadlNWD5NyYDTXP525YNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Xkl1z5GFh4pKn1TYNw3OoNJiPltUB9eGDOMkZhcxVY/Zt2ToX2fVtIzc5Z63ZPr2q
+	 pVz1szeeWaRZdU3Gv4jb6TVgKHi+/STjG/II3sOkY0IL/ga2/NBiJrjvIDwWD6Tm8t
+	 4jtHeopZ+IEKKUB2yCzP5UNERZQQz/EhwHfsl7t3cu1Pk57nR6HNgdkfary79Higrv
+	 hkfzH6ilDVckEmmtQ9r/pHlHOX6sDO3NUDHrGKdXep2FnTJS4MLivH1Qcp4CcWeT8m
+	 x78qVOJCxw3wD4/FHB+W6xNMrWAK3/6jb3bVmSjv9Psix11grsGMpy93cJtP5zzDSd
+	 CthwY/XvYedMw==
+Date: Tue, 3 Nov 2026 12:46:12 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stefan Agner <stefan@agner.ch>, Dong Aisheng <aisheng.dong@nxp.com>, 
+	Jacky Bai <ping.bai@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 01/11] dt-bindings: gpio: vf610: fix clock
+ requirements per SoC
+Message-ID: <20261103-venomous-hyena-of-fortitude-063eae@quoll>
+References: <20261103-gpio-vf610-fixes-v2-0-7c71fb36e184@nxp.com>
+ <20261103-gpio-vf610-fixes-v2-1-7c71fb36e184@nxp.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -87,76 +65,70 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-11-52d92843ad97@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20261103-gpio-vf610-fixes-v2-1-7c71fb36e184@nxp.com>
 
-On Fri, Oct 30, 2026 at 04:58:42PM +0100, Clément Le Goffic wrote:
-> On a GPIO request, select the GPIO function of the pin, on the pin for a
-> pin-only function or on its single-pin group. Without a GPIO function the
-> mux is left as it is.
+On Tue, Nov 03, 2026 at 07:44:05AM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The i.MX7ULP GPIO controller needs both the GPIO and PORT clocks,
+> while the i.MX8ULP and its derivatives (i.MX93/94/95/952) only have
+> a single "gpio" clock. The VF610 controller has no gateable clocks,
+> so keep clocks optional there.
 
-...
+Same second comment.
 
-> +static int pinctrl_scmi_gpio_mux_set(struct scmi_pinctrl *pmx, unsigned int pin)
-> +{
-> +	const unsigned int *elems, *pins;
-> +	unsigned int nr_elems, nr_pins, i;
-> +	bool pin_only, gpio;
-> +	int nr_functions, func, ret;
-> +
-> +	nr_functions = pinctrl_ops->count_get(pmx->ph, FUNCTION_TYPE);
+> 
+> Describe the clock items with minItems/maxItems, require exactly two
+> clocks for i.MX7ULP, and require exactly one "gpio" clock for the
+> i.MX8ULP family.
 
-Is nr_functions signed for a purpose? Can it hold an error code?
+Drop sentence, redundant.
 
-> +	for (func = 0; func < nr_functions; func++) {
+> 
+> Fixes: c61d8b5791ab ("dt-bindings: gpio: gpio-vf610: Add imx8ulp compatible string")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-vf610.yaml       | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> index a31f64b6d40b..822fa11d18d9 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> @@ -57,11 +57,13 @@ properties:
+>      maxItems: 32
+>  
+>    clocks:
+> +    minItems: 1
+>      items:
+>        - description: SoC GPIO clock
+>        - description: SoC PORT clock
+>  
+>    clock-names:
+> +    minItems: 1
+>      items:
+>        - const: gpio
+>        - const: port
+> @@ -116,6 +118,36 @@ allOf:
+>          reg:
+>            items:
+>              - description: GPIO register base address
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,imx7ulp-gpio
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
 
-	for (int func = 0; func < nr_functions; func++) {
+So you ignore not only my feedback... Good to know, the more the
+merrier.
 
-> +		ret = pinctrl_ops->function_flags_get(pmx->ph, func, &pin_only,
-> +						      &gpio);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (!gpio)
-> +			continue;
-> +
-> +		ret = pinctrl_ops->function_groups_get(pmx->ph, func, &nr_elems,
-> +						       &elems);
-> +		if (ret)
-> +			return ret;
-
-> +		for (i = 0; i < nr_elems; i++) {
-
-		for (unsigned int i = 0; i < nr_elems; i++) {
-
-> +			if (pin_only) {
-> +				if (elems[i] != pin)
-> +					continue;
-> +
-> +				return pinctrl_ops->pin_mux_set(pmx->ph, func,
-> +								pin);
-> +			}
-> +
-> +			ret = pinctrl_ops->group_pins_get(pmx->ph, elems[i],
-> +							  &pins, &nr_pins);
-> +			if (ret)
-> +				return ret;
-> +
-> +			if (nr_pins == 1 && pins[0] == pin)
-> +				return pinctrl_ops->mux_set(pmx->ph, func,
-> +							    elems[i]);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+Krzysztof
 
