@@ -1,54 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793704228;
-	b=EGDJ//y1Zx1eRZS6x4TDChZnZui7uzObAGLlHDlFXWmsU8ufhFmFqpk5f0DX7Q/jKXhZ
-	 mvIAEeXouxfyN46BrCMmslrz0qfnCJVlCghu9jFb/Qz8/iHTA7Qodo3hfI8SHEhONPdPs
-	 S4T1LpssyAB+Qs/5RGiXNOUnSJopKSSuWB6tmad7v2zRUumW8YeZdggItA3JbrlldUDCH
-	 QxGWROCh9UNLUarPx/XAhVEh1Jn9LoZWCchM/MugKHqj1YmpNZPtT02PaBxVgcJ75/7xC
-	 yhis41GwdvgnziYR+2/PeXliQ7gL3JdxiD1skQOmy3vimCDZHOQxbeZEcSc5lH01dQg==
+	t=1793704282;
+	b=l/14+PJQ0cpp2Lk4q4Ol96XwytLMdb5Wi5biPIZRayFtTl79xIToCtGHLkus80u4OPPW
+	 3/d+NOP+BeJ95+t1/nwhmGRlj+qkiBJxgxLyiNN1btoLC89mFCAGQtAZS2gySbwrV60W4
+	 VBCkLrl7RjYW6Lk/LDHPIOPa7zBtokHsjYDguJbL3KIgs51BJN/xUA2l+M3UUqiwn/i44
+	 mt5hMsCwrXgdsNUxDw8MwNswWZrmgpYjj8LE2OsJEplhCLmy3aSPCG9y5UTUK9N5vc5MR
+	 j0T4lkzKcfnXGGo6NZMwDIx2a/3FowiG2tOXKnICLG0ACm86Kgh4E1qQ1NXRJ/YaDQQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793704228;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Eg5BCPoUEY1h1ZeGRosbdkm/MueH10ESc7FjY/jtN2g=;
-	b=1SHDOAaj+4YJPgGtmwYiGF2AcLPFbrujw1zxvLdeC4jl1P6dFUx5onBFE1nyOrvYNTnf
-	 0TxJfwBkhlqWMiD0I54xSt0daJJ4ied5D4TgC4BBOmZUcKEbAtWGjHp80jWBcd/uz5X5B
-	 nDsUsQG+lD763T5qHMMmc1LJJrD6c1JCXqm247xfz/J8C7G1Rx5efOIQgZycZoUHPvg0M
-	 i0Zr5m1C5fDjq1XVeUXNu/j6q/ou/DQQLBKpSkCGEj8WDs3Wnn+G+hza8lGITa5EMjNPc
-	 ApIvpH4kJDDQQyBmSh5w46QbRsMSWFt4MMvl00rt26NK9diFO7IOABr/yxmbXU/qELA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793704282;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:Date:
+	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Last-TLS-Session-Version;
+	bh=zsziOItZCdSqr6GfPwNxi2VUo0k/TNVIqc41ldRAkTY=;
+	b=InAKuBgx3C4ATljnfwLwdwgHxkTj+0wLfkte3lIBgMLOGfBvItocIEl9T+RP7R0BPcNY
+	 7f1bq7dObVc/YaO4hHiwnPXtU6btWhwxu3V7PI8pTrbTp7Jw3X0OdOicfRVl6Mpn1AjUO
+	 HM9Tuy9ZtNRivjcFj1fOHZ9tN3YrcNKYG4TlprO/fDmzpSF1SyhZwEGIWCM4sQpUiq9ma
+	 l/D34K2HlIvIOyOOTfpyUOuZ+Bl/24F6JfTV5RgVFl6reTEavN/kr0Z/GBWQu/aEwkgB6
+	 0l5CYw4srRUxP62xDLvV3CpMqJPPaUjqMp/YC24AJcNdVNUnCgZJFtuqbxwRwVideHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DtajaLg6;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=c6QbJhhB;
+	arc=none smtp.remote-ip=185.171.202.116
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2FC606C59A;
-	Tue,  3 Nov 2026 11:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFD560A6F76
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Nov 2026 11:11:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6EFD560A6F76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DtajaLg6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830CA1F000C1;
-	Tue,  3 Nov 2026 11:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793704227;
-	bh=Eg5BCPoUEY1h1ZeGRosbdkm/MueH10ESc7FjY/jtN2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DtajaLg6MxpaExN7h4KTy0DlAmC7uYw3sD7pvl2yfDaYG+/URx62mIjDmKhmtv0lO
-	 HHE39gN5w5wF3gBr7UhQMHRnJnsyiRsVh5e1F/+898TQ9bH1FJ3EJY5zY6wnRuHSnz
-	 2TXXbvqL7dYDivjByVEY4iyMHpDzLzR3MjvLu+aGiWBSw/+qFGiWULXCYlE5kW4dl7
-	 quYlw8d3WExHYdSCUj4a8cEYqjeiKBrzTCYvXsDSItYA6xQA5u84Ld7ZJ5Rhkgm2S7
-	 eBzkbXsV0gF44AwJa2CdVMOjcjHWPr4e9M/bJzg1zplgQnKoUpUHr0k33tNaLA8y1V
-	 JbeQKobt/h37w==
-Date: Tue, 3 Nov 2026 12:10:25 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Ray Jui <rjui@broadcom.com>, Linus Walleij <linusw@kernel.org>
-Subject: Re: [PATCH] pinctrl: bcm: release the NS2 pinmux controller on detach
-Message-ID: <20261103-colossal-snail-of-energy-3e55c9@quoll>
-References: <20261103104242.1373883-1-vulab@iscas.ac.cn>
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=c6QbJhhB
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D60FDC8F458;
+	Tue,  3 Nov 2026 11:12:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 45F946046C;
+	Tue,  3 Nov 2026 11:11:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1D5BD103291E2;
+	Tue,  3 Nov 2026 12:11:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793704272; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=zsziOItZCdSqr6GfPwNxi2VUo0k/TNVIqc41ldRAkTY=;
+	b=c6QbJhhB/17tzhguxUqsFLfsfw40KcAv6lH5rx6NQ2CQhwMBL8cubmbt11eaK5uGgj0AEm
+	7Qy7mqgujE50XjsiLMuVh4/Z6srFzzj4PZrrIZTsHzovhNPNXQMVqwH0UrBn+NqDlQMBG5
+	/HYfFg79zW07+iNKPS4+Htbq2kEJocaSJhXRkX9BkqQqMeudyohdnGKJlSvL6jINzX3BT9
+	/n/V9tOnpUgmDH030lxPWxrNe2NjCJ4rda0GYkrgXLiJovEzM0r/QnGbIKspPCbh+CuKgn
+	yz+Xtuntby1D5aOygkdnHYwGjKjfpPdXTkrjv1/DudQ8wtdvLYcOWB0PPI5SHg==
+From: "Miguel Gazquez (Schneider Electric)" <miguel.gazquez@bootlin.com>
+Date: Tue, 03 Nov 2026 12:10:57 +0100
+Subject: [PATCH 5.10.y v2] gpio: dwapb: mask/unmask IRQ when disable/enale
+ it
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,68 +63,122 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261103104242.1373883-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261103-dwapb-fix-v2-1-9bd3785d1365@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22NwQ6CMBAFf4Xs2ZK2pCV48j8MB1q2skYpaStKC
+ P9uwavHeZnMWyFiIIxwLlYIOFMkP2aQpwLs0I03ZNRnBsmlFoJXrH93k2GOPqwzqq61UrXTFrI
+ /Bczz0bqCKgUvF2h/e3yZO9q0h3ZzoJh8WI7TWRz+n/4smGC2qdBJJ7lu1MV4nx40ltY/od227
+ QvQFFGgvgAAAA==
+X-Change-ID: 20261103-dwapb-fix-ab5776557f6c
+To: stable@vger.kernel.org, Hoan Tran <hoan@os.amperecomputing.com>, 
+ Serge Semin <fancer.lancer@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Alan Tull <atull@altera.com>, Jamie Iles <jamie@jamieiles.com>
+Cc: Benjamin Robin <benjamin.robin@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Ralph Siemsen <ralph.siemsen@linaro.org>, 
+ xiongxin <xiongxin@kylinos.cn>, stable@kernel.org, 
+ Riwen Lu <luriwen@kylinos.cn>, Andy Shevchenko <andy@kernel.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Miguel Gazquez (Schneider Electric)" <miguel.gazquez@bootlin.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793704263; l=3409;
+ i=miguel.gazquez@bootlin.com; s=20250708; h=from:subject:message-id;
+ bh=IjodPtO+QNDMqV9Kndo+ZMbI8L2EGx8jZcDCaQ9m4nA=;
+ b=//LghERc+BKoG7dfzTpz8B3hwV0YVfJyUhLSSmUSNlUU7A4kIF3f6SttLSpQyhh6SrINhMUNt
+ dRoWjIxjxyxCAP25x5gC5DsMpGuq+0WQeNuDHudP3zrnBRC8JelGogu
+X-Developer-Key: i=miguel.gazquez@bootlin.com; a=ed25519;
+ pk=k/2KI9jkmayaF0ghZ8QYUH9Wm/kFHDhl8QoZ0RHbr4w=
+X-Last-TLS-Session-Version: TLSv1.3
 
+From: xiongxin <xiongxin@kylinos.cn>
 
-On Tue, 03 Nov 2026 10:42:42 +0000, Wentao Liang wrote:
-> ns2_pinmux_probe() registers the pin controller with pinctrl_register()
-> and stores the returned pinctrl_dev in the driver data, but the driver
-> has no remove callback and never calls pinctrl_unregister().  The
-> controller is therefore never unregistered and its memory is leaked
-> when the platform device is unbound.
-> 
-> Use devm_pinctrl_register() instead so that the controller is released
-> automatically when the device is detached.
-> 
-> Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
-> Cc: stable@vger.kernel.org
-> Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+commit 1cc3542c76acb5f59001e3e562eba672f1983355 upstream.
 
-Multiple things here:
-1. Your team ignored completely previous feedback. Multiple times.
+In the hardware implementation of the I2C HID driver based on DesignWare
+GPIO IRQ chip, when the user continues to use the I2C HID device in the
+suspend process, the I2C HID interrupt will be masked after the resume
+process is finished.
 
-2. You use multiple identities with this email address, thus I doubt that we
-   speak with an actual person.
+This is because the disable_irq()/enable_irq() of the DesignWare GPIO
+driver does not synchronize the IRQ mask register state. In normal use
+of the I2C HID procedure, the GPIO IRQ irq_mask()/irq_unmask() functions
+are called in pairs. In case of an exception, i2c_hid_core_suspend()
+calls disable_irq() to disable the GPIO IRQ. With low probability, this
+causes irq_unmask() to not be called, which causes the GPIO IRQ to be
+masked and not unmasked in enable_irq(), raising an exception.
 
-3. Your bot does not even bother running checkpatch, right?
+Add synchronization to the masked register state in the
+dwapb_irq_enable()/dwapb_irq_disable() function. mask the GPIO IRQ
+before disabling it. After enabling the GPIO IRQ, unmask the IRQ.
 
-4. Nothing of this was reproduced nor tested.
+Fixes: 7779b3455697 ("gpio: add a driver for the Synopsys DesignWare APB GPIO block")
+Cc: stable@kernel.org
+Co-developed-by: Riwen Lu <luriwen@kylinos.cn>
+Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
+Signed-off-by: xiongxin <xiongxin@kylinos.cn>
+Acked-by: Serge Semin <fancer.lancer@gmail.com>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Miguel Gazquez (Schneider Electric) <miguel.gazquez@bootlin.com>
+---
+Changes in v2:
+- Fix typo
+- Link to v1: https://patch.msgid.link/20261103-dwapb-fix-v1-1-c93ef2f20695@bootlin.com
+---
+ drivers/gpio/gpio-dwapb.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-5. Finally, the same feedback:
-You sent multiple independent patches, to multiple independent
-subsystems. The amount of these patches clearly suggest this was
-AI generated and most likely not tested.
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index d6240ae0f87ca..51bed3adafc1f 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -282,13 +282,15 @@ static void dwapb_irq_enable(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	unsigned long flags;
+ 	u32 val;
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+-	val = dwapb_read(gpio, GPIO_INTEN);
+-	val |= BIT(irqd_to_hwirq(d));
++	val = dwapb_read(gpio, GPIO_INTEN) | BIT(hwirq);
+ 	dwapb_write(gpio, GPIO_INTEN, val);
++	val = dwapb_read(gpio, GPIO_INTMASK) & ~BIT(hwirq);
++	dwapb_write(gpio, GPIO_INTMASK, val);
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+ }
+ 
+@@ -296,12 +298,14 @@ static void dwapb_irq_disable(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	unsigned long flags;
+ 	u32 val;
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+-	val = dwapb_read(gpio, GPIO_INTEN);
+-	val &= ~BIT(irqd_to_hwirq(d));
++	val = dwapb_read(gpio, GPIO_INTMASK) | BIT(hwirq);
++	dwapb_write(gpio, GPIO_INTMASK, val);
++	val = dwapb_read(gpio, GPIO_INTEN) & ~BIT(hwirq);
+ 	dwapb_write(gpio, GPIO_INTEN, val);
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+ }
 
-More importantly, you sent all this work without properly organizing
-relevant patches into patchsets. This makes reviewing difficult
-and might cause multiple reviewers to address the same issue.
-Replying to the entire set is impossible and requires handling each
-patch independently, instead of applying or discarding the set.
-Maintainers also won't see the bigger picture of your work. Quite
-worrying.
-
-This is on the verge of hostile patch: bomb us with so many
-contributions, we won't be able to handle them in efficient manner,
-like responding ONCE to ask you to slow down.  Considering all this
-is untested and LLM generated, I have even more doubts whether this
-should be considered for review.
-
-Please read kernel documentation BEFORE posting more work. It will
-explain you how to identify subsystems, how to organize your work per
-subsystem (so a patchset grouping multiple patches with a short cover
-letter), how to document the issue discovery method and what was
-or was not tested.
+---
+base-commit: f23b568f7597f98a241454018a34361ce2523c05
+change-id: 20261103-dwapb-fix-ab5776557f6c
 
 Best regards,
-Krzysztof
-
-
-
+--  
+Miguel Gazquez (Schneider Electric) <miguel.gazquez@bootlin.com>
 
