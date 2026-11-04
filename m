@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.28
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.130.55
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793792225;
-	b=KaztR9nwH0Y/ZkI1LFLOp6SfZv6UIp+qYvtOsd/snU7QoyNLfBW9fXS1VmbKqyNFBy0+
-	 Oh33+UcWRTH2pScPUTUg+98RxrkyMyRpm1JDOcLUecvfhMMO6/2xvVpz0UteKeORGQCtf
-	 4Afd7DP8Nx4x43biDmi4ZVVK+OyYawdeOnSIiFq1VIoAt0oKJqG19HaAiFBLiQIwigyTm
-	 h7BKd0k/EcNHatFNwIeb0T5I8EjyqtlMC/dWG08cMzTLI+gSOSMyXN/t3ESQBXtAYHqDj
-	 pE6EsaKN7NkADpgTMXBShqMCjBFlDZ+LYJFnB2OAVfd7ccdVBK/nsJtElQ8yscM6IHg==
+	t=1793792223;
+	b=03ubN/iZXYneSjUtKIPCP6JtUNSwJJf/ymyj5NEHSnSUkEkJwfUR3vDDD26AoSThl2Gp
+	 ybYBoQwrKR3kVxHY8xKksW/BEkvMOyYgcM/xkB/B/3UofaTcX+swSKKyMIvpxDNmtNchQ
+	 XJH80muzx3k8pRzYL0zpJU+qkcx5nFvxK+SQ3qh8py1H5Wd3DsoEyN9u6+Q6wp5M3GaOR
+	 vzOL02aAxxi0ByJiXmxgjiFXhNwKiOMs/mwSFgaPSmMbce5oVXcKAqHCGyGU7X2MyGUyj
+	 gSg6g6kpUcjMbO0ZkzwodNTxQFAtMC8qDZbZdKdAyuhh6WiYbettx5oSQNbUsCCEm7g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793792225;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793792223;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:Content-Transfer-Encoding:Content-Type:
 	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
@@ -24,68 +24,77 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=HGy7kCZf8CR6bcE2bE5uzpDbKBLfg9tC9TDiKKV58ww=;
-	b=kCj4ee8pf2KnPGDnRJJ5WAyDeaIo6JooJwBRVUSy9uVRe5RDyyc6THACO2o2GuPhUabf
-	 6gfuBTsZprmbv175o11NOHfVooPNpmDnOjuyg8EvuglVnYppf0hK4/J4d1YViORZWnwNc
-	 Of4mtHGf3aJyUfyxnbSR5wm8n08Elw9uJtnnvBHGXfPJsoFI/DHqxh71X2yodqwkRrCbd
-	 RKVPHGXQM+DWOC/6QhH/rQc5/vedy2y+oyyisd/+fO19gx35F5/gaUThDsQ3GpCLPm1UL
-	 DpVl7BwLZ/6Q/gwoh+E37/LCg8buYudEdtlbkSMzhIZYF8gie97ZwB3ynv1B46a9LMA==
+	bh=Wf8G+EDMbK3WbK1JwnnNbeYNXKsIZqc+8B3kYyKVZnM=;
+	b=fZdrUrZEbtVrjVPg0pMOJ5TdLUgvyujOnxC54iT8t2vm0M4iaPC3pSzAIYnVJetPh2oS
+	 ke0PvuEifYngINHgiG2xHmKo3em08xtX4egT4c3OE5dOCKd4nkSUPvx0Kfw7AnBDPbgML
+	 i5wJnv1EJ1L2+He157oevrPDsyISNUwA5xhp6R5+M3x96x/1Fb/9MHQTUTIcqGVWmo56R
+	 wE4MxJcLXWypCuPKiYHL1MhtGQexu+DDIhzj/OMgzWdUhinsauQR5jvPqTb70BzbT+HbV
+	 82AYEjwwpdgaEsScdKRDz8eamgGwcdOljJYQuQMYnXiA7uEa0+34Stu7t1wMn4ZQ0+w==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.nxp.com;
 	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b="gJ/dmxaE";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.28
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010028.outbound.protection.outlook.com [52.101.84.28])
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=mXm+XufE;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.130.55
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011055.outbound.protection.outlook.com [40.107.130.55])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB0C606A32C;
-	Wed,  4 Nov 2026 11:37:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECB0C606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E154606A32E;
+	Wed,  4 Nov 2026 11:37:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E154606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=gJ/dmxaE
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=mXm+XufE
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GzTXWOnFRHafjfupjI8efwOrQjHYBtX3oDzi9zJO6ihjyUZ0yyRZ1dDatWTVr/HCvbB7SRBir3EqqrW/eGJyK4b0jwl5pwLe6iiemNdKPIASu57K2Fscr82nCTfYDKBjsSNZRh3JpZc8+aTyX2K0bimidw8HjAtpMbpcWN4LluqG68iUlrQdm5e05hXVRaqBsgGK+v2PGMRK4ryTQqAaoX72fXRRowa7lW3c1RQs1804eErSpzLkOm78Bu69iSFCA/eh/tmQM+LJK8w95kB81ktmk6d8kS1flxJ3BpuOczGLSjnMsHE5NAolW5W5UsJHstQQX/rqC3gLAcwD7wfKIg==
+ b=xVp73mDtLVEYU+SBd16y0R2JmH0YkcbHaCbwTlcx3wV0kZm8X8B3X6oOFOwtdlB5XxokC87lq5ohH451em7YV8pgzAUaB278sEQPuThjvMI4/uNBeNa3g6b5QsosBhd4WYE20zS4HlO0tmzFRY+6nigigld5pmHE5XKRAN9SB8KuBSJ3w3h8CnWS9TXSwkQGnlGzYs6c7Wz24W6D62c6gAOXKIgTQeJkLzPTzpTHpOzpUTdsQaDMeJ6cPDKe5B7EDPKZR/3/6iSk1S3oFkmFVlES3jeSP+O0rIWwL7J4cPHQ2FyJUoHtqnPfWD/5V88pktKS18SkGa3dcZU9+4fFCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HGy7kCZf8CR6bcE2bE5uzpDbKBLfg9tC9TDiKKV58ww=;
- b=nvVWA5Q6Hz3Y4UjhPOAmREo3lMriSoIOMXRimcpDqL3Eul3Qm5rI7AYSFbiaBWg3/K1VWdAseqLLUa/N5iDS9zpzPeVbyibqjPCINqN19An6ZV0N9GNKEfqpveqC8kBHHOSiTeL1312uu8A7DppgJ6z1j4Ohz0QhewPSMaPe3KrFUdaDsOtnztOILd30d8VtDjMONXPc7wRS+0CY5Qf0kYeniPJm2b2PyEhMjnkb7n3L3Y9iX516e3aipzVQSWo+E3t2fK6eRA/jLd1mCwLq36EXVzJrILNKBKdskz0Wsun/VpI0VreBB0npgIZGIXActp/EVFqz+JNHMdaA69k3Dg==
+ bh=Wf8G+EDMbK3WbK1JwnnNbeYNXKsIZqc+8B3kYyKVZnM=;
+ b=dDlhWkSJ99VAZNFUv+2TSOiVD0nfAemlttZ4VZ3dq3k3mO6ixXyT2dcxx5vCzreeDOggOJm+kWzi9W6JWaRDFFYRtr3SZ/nbqS7MW5548R/aGumphqpf4cfsF4gui0iZnZ0bRb+1GyWBkWLrg1W4wgIRYchpvFSnHdV5KaaXsaVRctsCkJfcPqq7OaqZcBYgXa2xxW8OYIvbWHs8xJBwLcBGbhLk5bhi36oKZ1UedBDge8K9MGn3TcFjEhjX3ssOqE/YsRc/xsi1Tmhu4dkN1gJmqD/IkZzTXa1rhxeTfbjsuA7qM8X61bArkZQSoRcRN8aXwQlFf7Xen3GeO6jcBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HGy7kCZf8CR6bcE2bE5uzpDbKBLfg9tC9TDiKKV58ww=;
- b=gJ/dmxaE/LAdWnlFyPCcr2urGU4rlKvw28WHAaMrV4nehk0s8iGCuqZMhcOyymMCCpHTXwDZCjfQVpcp6Kx8mn4SpBKticN8sfmyzXF2+AvdRp4hH1DOQogs216gfAqiuw2ZncmcckmS4PyUpw0IHrH9r8Uqzf3UQUgcVGaRA/LavhKtOTY7G44wWPT018UJv/jL2pobQkEQTSsLWMToWpxhAQ13RH0k60Atnorib9L/EUvXSx0kmJ3wVoe7kXMvB9MzHqHiNYZ4MRZLQwxyjC+7hReHRYkrWX5fb40uVlaZT2K+azfihI9PIihaHt/UEyyuwNGcHt4okC6uDrlByQ==
+ bh=Wf8G+EDMbK3WbK1JwnnNbeYNXKsIZqc+8B3kYyKVZnM=;
+ b=mXm+XufEXUhcnTkE4nmaWkOvQwl3+sIDBOsbRJDM5E+Pf1b7ScvaNjl9C7CKYfYGNMifL2gMd8/O1v8RhL5RnuqraSD1MV0/jTHFD5eV5OHlZ2/KYSZXCOP8LAdHbcVLAmiyz0rHjWoAT47OEIRs35grVZnMRzZh/dkbrMsjrqgGLXmb91oKo70llMSxRg6S4GUl/J+O9CmENfOrwx919bDKlJ7pl0xDPcJbF/fdvLqu4uh+GF22qwaRjZqKpeJq7A0SoiUvpftrTAYAJd/zsbf2YEJ3QLhQj1+d3qjgCCgybTAM78fBGuRRli6kX6+CZKKHr9ofD3lJ7yDxRGGRbg==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
- by GV2PR04MB11828.eurprd04.prod.outlook.com (2603:10a6:150:2d0::12) with
+ by AS1PR04MB9264.eurprd04.prod.outlook.com (2603:10a6:20b:4c4::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Wed, 4 Nov
- 2026 11:37:01 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
+ 11:36:53 +0000
 Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
  ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
  ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
- 11:37:01 +0000
+ 11:36:53 +0000
 From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
+To: Adrian Ng <adrianhoyin.ng@altera.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>
 Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: intel: Convert to subsys_platform_driver()
-Date: Wed,  4 Nov 2026 19:33:43 +0800
-Message-ID: <20261104113343.1634218-1-peng.fan@oss.nxp.com>
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	patches@opensource.cirrus.com
+Subject: [PATCH] gpio: Convert to subsys_platform_driver()
+Date: Wed,  4 Nov 2026 19:33:09 +0800
+Message-ID: <20261104113309.1634121-1-peng.fan@oss.nxp.com>
 X-Mailer: git-send-email 2.51.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0020.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::6) To AM8PR04MB7874.eurprd04.prod.outlook.com
+X-ClientProxiedBy: SI2PR01CA0033.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::23) To AM8PR04MB7874.eurprd04.prod.outlook.com
  (2603:10a6:20b:24d::9)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -97,59 +106,59 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|GV2PR04MB11828:EE_
-X-MS-Office365-Filtering-Correlation-Id: 202ad966-803d-4c79-f06f-08df3a67f153
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|AS1PR04MB9264:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c41c0d4-b1ad-4659-0834-08df3a67dcfa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|23010399003|376014|1800799024|10067099003|261102123227099003|18002099003|11063799006|261022075727099003|261009223027099003|56012099006|261021121427099003|261021123027099003|261026135527099003;
+	BCL:0;ARA:13230040|366016|19092799006|7416014|1800799024|23010399003|376014|10067099003|18002099003|3023799007|56012099006|11063799006|261009223027099003|261022075727099003|261021123027099003|261021121427099003|261102123227099003;
 X-Microsoft-Antispam-Message-Info:
-	ia9ceiMfd+/mZpUukG6vZ6Kvt1l/mPsYpY7nDdTwlbBQtFOU/cUf9ZpazrjWMA9vJO6aM8FtE2qQNbES4esRqljok08eiHcQgwOexSSSocQUnFPJXXCE+reFHMOiT/7effKktOvc5Y5JIXhLD6hQ9UNAof0PUbH7vRnhQFkAN0StlCXPJC5lirIhbuqT0MeOvY0ICUZJNrmvcff0H+1jWDPYNtQ3lvw3Y+0asIoCVrt//4ukYi9kR7ZVWYIBn1+0C9PP0IKEia9i/RNcLT/CcYh8Hrgv+r4tK/RyNc3beThxNV/igaDP7XMfeyEQzOzzoMeDAO0Fgzr+Sih5gaHOeo3G6+z16dkkIUX3q2KTnbIvcxoYD8xHl4ZMOdO9YuO0+vXkxXqRb3zEP8rapaNEBBhYm49D63sZc0FRWcLuCuyKYSwHR9mGVbUw7+l7EWfA5SUbhqGFEoLXLtoHh6DuWL80pJMRWksV7GAGkUosz0zpQDv8+lIylrYXl0WX+pEGfx0POLWfLjek4KaR9x4Bt+T7askxoT2up958rYuKmm5HbWnWikmLrtRl91v8+co5aIiI2i1mLrbqGh75kEcyzf29xanAk6sB8G+ZhZ1WqIWimSQMgaHQo3g7zgLr4seFEa8Ebvj/DWxI37rOZc/zx5axq0D28nFjRK/WH1rqbkY=
+	vxbeefHIdVPcOdiNAS+m7mhVNwoNXr4sSKR1T34OtFsKQ1D1nhiAJiSXV9QH02H6rKl9b3JE7nMezZPE8czNzv3JayNIvZvDhONhXPbWWhJ9KQq7pogDkpVC22e7Emks6/MJBq7eFLUUhmCA87QQIym35oasIhloETI11UoCqZaukWzm7D0fsMrJNWiSon0yTmPOR0hdPb3EF7uYbXxYVO4oJY6IBPIt9mnD6ZYfZP//i25EQp3g4JRZFU7guPTHD1D4Sser5RyqoT6HmqwWGZMF7fkNgDH4z3jYGZtAXhnGwhZ/cDfQtyli6ZBxIOqBWGruP2aWEK2r5SuH8CaZs43GqXRAL1Cj87X3xI+PRy7Q7vz+AeYSzC/cEOkKoJ+tEc9VsOEV1pZC9I80H5fWFFH5mGpATTa+zKeW6jaAih3b7byraGaPjcT0hYc4j1C+uwMIl+nTcvgDJjDtI9Cwxcr4WOG5nH8n0JaYHGvQuc5/tmIMDwMO5i2cCrHTTUoOi2h0lrj9OFqAZxLtoukxbqPgIrVy+cIIdFbaiUccme79jfsLkQAyryH9hIPzkwjd/edDypOVGzpbb5OQguxgSJY3wZcImX4UUdfwe8onNeQSzYvl6R7NsTagI+DVUbnp5DrjOqZPi5viTl/5kWXnLVHwXa4iPfLq/2gDYSpRayU=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(23010399003)(376014)(1800799024)(10067099003)(261102123227099003)(18002099003)(11063799006)(261022075727099003)(261009223027099003)(56012099006)(261021121427099003)(261021123027099003)(261026135527099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(1800799024)(23010399003)(376014)(10067099003)(18002099003)(3023799007)(56012099006)(11063799006)(261009223027099003)(261022075727099003)(261021123027099003)(261021121427099003)(261102123227099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cfcWMcMqwTzvxV8af09z70NK+sGxaWGxgzCKZRzE4gGoirQzp66rB+OX3kQY?=
- =?us-ascii?Q?wZ6gAvVyFZ5vjfqZlkmH0yf1WFkFCVcxuPJNloVdE8eNf6GDYfZe5UlRYK59?=
- =?us-ascii?Q?hEznqzL+e7c2VjL2dkIjf3/P9vl8YTSG17bKR8lsBiu2fFtsFiyt1mNKU18F?=
- =?us-ascii?Q?iobMNEKJFbAH667UtOmTGL0QWoy+3n6XAIttF1Rs1gYPi3mVaAWGgXNNulQA?=
- =?us-ascii?Q?lwIXTt8orqm+6A/dICpvdVOaWQgYlrkmI9QPHNaFk+dUnMyG5OQWgcC9C2Fq?=
- =?us-ascii?Q?1SvcG+Mm9MZaehqcSFOk47rS72b6hHuYnXZspFkEJ0i3+WqbCW3m2iqI0Cxs?=
- =?us-ascii?Q?pZX3g63FBYrO/er3SfRXBI5DoY6a4qcU+1syZEXHmcdD0r2cr6UlW1ZfgHTx?=
- =?us-ascii?Q?7lZ0bBUyQZWjk2tsO7xA1mq4Xi+m0sK8t70TS1LO+bpg+CaPySV+Gi0tygR5?=
- =?us-ascii?Q?KsoDxufXltq/Z25u4QGzvPM0L3NTnfGNoh1+R7KYR/SXwcNbUy2xgZNX4iDz?=
- =?us-ascii?Q?KhKhDetd2EP3ofg8V+n0XOktY+so6NnxP9410isZbYZ3CuIfVPyFeKhsttnG?=
- =?us-ascii?Q?qM0VrZ7zH77PEjoHibWGS4rDeLAS49uKfx1E1WJsxmF7eg6nJ3B+jS8V+giw?=
- =?us-ascii?Q?BL27rkYSA1Yr3rEbT1wTJUeKgDe9TmKPMyK3mpxLbv/yf8/W8a2vyMOsVqrk?=
- =?us-ascii?Q?TnSlFG5SreJRj8HidPs4VnQ+Kh5cLnV0h0nU48br9mqC+XoCbczvZh8wxvG8?=
- =?us-ascii?Q?zKxVJ1uU9DuYMXe2mi+qGTYb/H4gyKCiPOPuNkWT/M1e3Z55OEBDEEMAk79G?=
- =?us-ascii?Q?PBNPsqmfjSzH0rKhg6HbopnIEjE42uQy/Is3gQXDIHKD/kSDEN4Jzs5B4leC?=
- =?us-ascii?Q?GvttrEJom1jMf9Ant3fNA+0BohLIvAq8+BTGuyx/VRXwKqip31Rv23HNSVrX?=
- =?us-ascii?Q?VRoIcqnf7hYFK824JHKVV6Wb+LTn2uBe/w5cvGuHGbk88GzprnDqjXlvu7U6?=
- =?us-ascii?Q?DorCWf28YTNcmZijvgepCrkU0rXcCI0eRzJFt8mFJC/sD60yEhicmg0I+qOF?=
- =?us-ascii?Q?7Z05yuABTkCfRdBW4/GOFbJGXLg8twIF5zdZxRVb2EKS6gB/OErbQ7oatVuT?=
- =?us-ascii?Q?aveunSwb194dw2svJqWKDcMsFO1m16vzPXY8AW62weLVmHjgJo7sUDCp59BT?=
- =?us-ascii?Q?K1bpHwAHjAWViAIX+mrPOQfaVapoixWaCAnUcn5yghsffNuO8DtegPJcRkmZ?=
- =?us-ascii?Q?wR3j11VxpXSqU9azkQkIxSJ7RRN9YSvQJjmfvigqPSSJBIP+qbJGoAfyqSUL?=
- =?us-ascii?Q?M5XC8vzGX+Ajdjt2D/hEWSBRWNTMzqlVsEuZxfVEDwiyqep5v6pssGSL9kco?=
- =?us-ascii?Q?VlVy6ILUG9aLsAietR9TdZNTTSFNux5xGpvajrnY9A7kT6ALOoTbj2qDKKtB?=
- =?us-ascii?Q?/U5PHbcsqDXcqFDk3XvWxJp/jqTu+5MI86mCrPHzX1jRyBch11wAvyoFTf8j?=
- =?us-ascii?Q?DiMYaGkAIKgb/JlAXAaWHZZKdoUkQwJ5k0kdcskHOu8y7VmfZxWaKgTQV+E8?=
- =?us-ascii?Q?nFieL4LYr2Q7JSQUQksmciJvJHC9Bu11S12UgvlEVlWkgVOjAiMaFBYtoO2i?=
- =?us-ascii?Q?41Zl5bsuH4T4wHfcWDAMo7QTeecfwedqqhC7FJc8s9XvKE9wv+C94JzlcAZt?=
- =?us-ascii?Q?g3Zgd7EIEWqfhw205mFTfDFPSYDmLF3/dfwssM6BG3phjFc+L36+VczWwNH+?=
- =?us-ascii?Q?l3JmsB87cklCFJyN89OOtpdwdUMFVw1aYGlA5NsofAjERaVuwIdx?=
+	=?us-ascii?Q?dHnTdGfwVexFPSa5Mpd2izRY2g/PcPktcjxqQt0fQHmXnqibfwc8iK0yOS+4?=
+ =?us-ascii?Q?uTT9Sxrhy7msMQ3utTC4VWnF95+h3lsAsIjgq7J5oSMESPAgnOAM29Sg5Vwx?=
+ =?us-ascii?Q?HrfwMlBxxgtqhzfmei3CHvzzUPGhDfrGoop4WPr2bF+qYUqHfuc1v4EsFhHh?=
+ =?us-ascii?Q?mXkyacz8k9YxMjImL2tE2uBlyQFSlIdY7WmSjY4TntMA24I+HWijbQijnFm7?=
+ =?us-ascii?Q?Y2KsjOi0y4avP3mqoEW0rVkf3H7QRDQ+yATltahNhgCI8710pSjja+1Sr6Ln?=
+ =?us-ascii?Q?kiwkXsHPlrfRHzlhN4ImCZtjj9ItDeFu6PggFf+WXgqRhSmAJw87wTNv6bWw?=
+ =?us-ascii?Q?T6OWiWffZFhkbiDHrNDF/G/9mFn81EI6xYP48/HMI0ngGPVDkcvzmUs5EY1M?=
+ =?us-ascii?Q?dtJRHoHeA62pLVRa5ZaGocY04/fTyabJzDuct/ZnEksuo+iItdapqVMbOf1t?=
+ =?us-ascii?Q?eorb7PVvOGLTNhCzToEsllc1ml5EfohTUd+YrDWj+apG5coNizM5+LdKqVF2?=
+ =?us-ascii?Q?5obuy7vbzSrYNVSSoPUbzWa7S3U2oXvOWIdBLGirfTiBwbDrHB6MISq0JqBM?=
+ =?us-ascii?Q?QIw6RatFye7Acmj98UFtCGHjckDschPo4HF2HW6/JLYHOqigsajLpJiCwNAh?=
+ =?us-ascii?Q?xSBXxPdhXtyRZxChkJArPZOHgErrWbzIveYJstAQuvQAG8fChbBagnH1XNmC?=
+ =?us-ascii?Q?qHJ2+sTHkNPpaMaqWeWNuHn6/ONzOcS4W+Gnem5T3K+mnoFZKvHGVh+sSqZG?=
+ =?us-ascii?Q?hBworlFFrO+PT4zCO0iUicPgEE/cIm3BmlGFzE8xGh3rs6FSXC+EKQX2pqUF?=
+ =?us-ascii?Q?Lzx5+nlVWxXyUDHaxi7ZVHDEMxbDELVCzgpP9rk1K2wyea2Qq86qBtOQq1NT?=
+ =?us-ascii?Q?J4uFJLfOhzzxfX2bMehOMCoba3grKQhIzZXEKCpu3oonVxWckybqtRyrY7p7?=
+ =?us-ascii?Q?06o9iv/Pa1B5EHKY2p3SOpQRkXTqPIh7K6KpCZqTAkWrGFVaaVRY9YGjnmQZ?=
+ =?us-ascii?Q?d5HfvlctVXAfJu/IOTaWsktSNDle+1SjPb9gHkMPFjeJphujOuOPm+iIC91a?=
+ =?us-ascii?Q?ZNs/RhetGsc88vVXPVZyrv54jxLbciuvsdF084TvK1vpE+pC7onKb/GQSjD6?=
+ =?us-ascii?Q?xzifCaNlS2EHm9JkVo7Em2IQV8SD96GWRzKTU1rnUmaq2/KN77VtrU1PnYtP?=
+ =?us-ascii?Q?Pt/LRiWUasyyts//fn75yv1EbuiLYII3B/q685wXd0H4QtYhwZpAL3svWA2F?=
+ =?us-ascii?Q?2SVYwBp/da6OkcHb56gb7a5n1eTWAaes48WKXm3JAVOvAAgl3obybzxYZawR?=
+ =?us-ascii?Q?R5mwQBNuBrGwtYJppBbHXMXmOXHAM5aZjHGlrcRh6phuDgFwM6r9d70ei9vn?=
+ =?us-ascii?Q?GVfoM1ijWeRoBBkVsMjn7jnI1HWFwo8atDtO84g0iDx2FA7IASLTpXWax6tx?=
+ =?us-ascii?Q?MQNH6fnHSlbK7r2h1oDUeOyyr5BE7wnn36LY4eYE65BwmUV8PLzmxcnPqN5D?=
+ =?us-ascii?Q?VSN26m618qxUVkt9pW8ZOrlSDH890Vrs1XjWYrq5n1aO/7FUnoqkCVhj3P9a?=
+ =?us-ascii?Q?5+PR2yZnrJX0pm+8MHclZQCEOteSE+b9xM6/wT5OdjgdDTKlzlPnpOz4haBN?=
+ =?us-ascii?Q?QbB5svHQgplMyR5AC9dosB65diJxpb/jM/q0A/iRJud/baXS+niwAcCcES6G?=
+ =?us-ascii?Q?9/z0p0U35Z/M53mIWKh00gK8qhpRTYyzjxMQBxyFU6FllQzdJdAnHv4M2jpA?=
+ =?us-ascii?Q?e8E6ysSBXlvXZHEaBBBsdRjufjuKdvx/BUg30hKP0Yd6J4qSlizx?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 202ad966-803d-4c79-f06f-08df3a67f153
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c41c0d4-b1ad-4659-0834-08df3a67dcfa
 X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:37:01.7559
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:36:27.5936
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YD6TPVYFuFlCn2jsyi+KppsaL+eU51TR8KUFjYR17lNX7/r+I16AUS96Tnxg/oZIAebGQhKzMZl0qkVlBMRgf37eAUd4enZbJBbrRxKEA8lpBrFUn3zT/im7JPHG6S3r
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11828
+X-MS-Exchange-CrossTenant-UserPrincipalName: VAebueKOD3zdG53xawOQSYPwWeQzex1ArFMcgCqkTb2KgTuNu/wqSgtUawc871FgVaEX9hireHLJMADPcqRQdfFOylPO83xHuzByFGXSJmRbdOeu0Tg5bVb75UVMNWIW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9264
 
 From: Peng Fan <peng.fan@nxp.com>
 
@@ -160,233 +169,255 @@ No functional change.
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/pinctrl/intel/pinctrl-broxton.c      | 13 +------------
- drivers/pinctrl/intel/pinctrl-cedarfork.c    | 13 +------------
- drivers/pinctrl/intel/pinctrl-cherryview.c   | 13 +------------
- drivers/pinctrl/intel/pinctrl-denverton.c    | 13 +------------
- drivers/pinctrl/intel/pinctrl-geminilake.c   | 13 +------------
- drivers/pinctrl/intel/pinctrl-lynxpoint.c    | 13 +------------
- drivers/pinctrl/intel/pinctrl-merrifield.c   | 13 +------------
- drivers/pinctrl/intel/pinctrl-moorefield.c   | 13 +------------
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 13 +------------
- 9 files changed, 9 insertions(+), 108 deletions(-)
+ drivers/gpio/gpio-altera.c    | 13 +------------
+ drivers/gpio/gpio-da9055.c    | 13 +------------
+ drivers/gpio/gpio-mm-lantiq.c | 13 +------------
+ drivers/gpio/gpio-palmas.c    | 13 +------------
+ drivers/gpio/gpio-stmpe.c     | 13 +------------
+ drivers/gpio/gpio-twl4030.c   | 13 +------------
+ drivers/gpio/gpio-wm831x.c    | 13 +------------
+ drivers/gpio/gpio-wm8350.c    | 13 +------------
+ drivers/gpio/gpio-wm8994.c    | 13 +------------
+ drivers/gpio/gpio-xilinx.c    | 13 +------------
+ 10 files changed, 10 insertions(+), 120 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
-index 269b8e25db84..b183ea645f3d 100644
---- a/drivers/pinctrl/intel/pinctrl-broxton.c
-+++ b/drivers/pinctrl/intel/pinctrl-broxton.c
-@@ -1009,18 +1009,7 @@ static struct platform_driver bxt_pinctrl_driver = {
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index a6ac9356229c..6c30608bff89 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -272,18 +272,7 @@ static struct platform_driver altera_gpio_driver = {
  	},
- 	.id_table = bxt_pinctrl_platform_ids,
+ 	.probe		= altera_gpio_probe,
  };
 -
--static int __init bxt_pinctrl_init(void)
+-static int __init altera_gpio_init(void)
 -{
--	return platform_driver_register(&bxt_pinctrl_driver);
+-	return platform_driver_register(&altera_gpio_driver);
 -}
--subsys_initcall(bxt_pinctrl_init);
+-subsys_initcall(altera_gpio_init);
 -
--static void __exit bxt_pinctrl_exit(void)
+-static void __exit altera_gpio_exit(void)
 -{
--	platform_driver_unregister(&bxt_pinctrl_driver);
+-	platform_driver_unregister(&altera_gpio_driver);
 -}
--module_exit(bxt_pinctrl_exit);
-+subsys_platform_driver(bxt_pinctrl_driver);
+-module_exit(altera_gpio_exit);
++subsys_platform_driver(altera_gpio_driver);
  
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Broxton SoC pinctrl/GPIO driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-cedarfork.c b/drivers/pinctrl/intel/pinctrl-cedarfork.c
-index 02fd1cc4fd1b..3365c868215d 100644
---- a/drivers/pinctrl/intel/pinctrl-cedarfork.c
-+++ b/drivers/pinctrl/intel/pinctrl-cedarfork.c
-@@ -326,18 +326,7 @@ static struct platform_driver cdf_pinctrl_driver = {
- 		.pm = pm_sleep_ptr(&intel_pinctrl_pm_ops),
- 	},
- };
--
--static int __init cdf_pinctrl_init(void)
--{
--	return platform_driver_register(&cdf_pinctrl_driver);
--}
--subsys_initcall(cdf_pinctrl_init);
--
--static void __exit cdf_pinctrl_exit(void)
--{
--	platform_driver_unregister(&cdf_pinctrl_driver);
--}
--module_exit(cdf_pinctrl_exit);
-+subsys_platform_driver(cdf_pinctrl_driver);
- 
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Cedar Fork PCH pinctrl/GPIO driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index a33eca5eafc4..00137cafd3d9 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1768,18 +1768,7 @@ static struct platform_driver chv_pinctrl_driver = {
- 		.acpi_match_table = chv_pinctrl_acpi_match,
+ MODULE_AUTHOR("Tien Hock Loh <thloh@altera.com>");
+ MODULE_DESCRIPTION("Altera GPIO driver");
+diff --git a/drivers/gpio/gpio-da9055.c b/drivers/gpio/gpio-da9055.c
+index 1949a6ea8ec6..f9ff2f83ffed 100644
+--- a/drivers/gpio/gpio-da9055.c
++++ b/drivers/gpio/gpio-da9055.c
+@@ -150,18 +150,7 @@ static struct platform_driver da9055_gpio_driver = {
+ 		.name	= "da9055-gpio",
  	},
  };
 -
--static int __init chv_pinctrl_init(void)
+-static int __init da9055_gpio_init(void)
 -{
--	return platform_driver_register(&chv_pinctrl_driver);
+-	return platform_driver_register(&da9055_gpio_driver);
 -}
--subsys_initcall(chv_pinctrl_init);
+-subsys_initcall(da9055_gpio_init);
 -
--static void __exit chv_pinctrl_exit(void)
+-static void __exit da9055_gpio_exit(void)
 -{
--	platform_driver_unregister(&chv_pinctrl_driver);
+-	platform_driver_unregister(&da9055_gpio_driver);
 -}
--module_exit(chv_pinctrl_exit);
-+subsys_platform_driver(chv_pinctrl_driver);
+-module_exit(da9055_gpio_exit);
++subsys_platform_driver(da9055_gpio_driver);
  
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Cherryview/Braswell pinctrl driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-denverton.c b/drivers/pinctrl/intel/pinctrl-denverton.c
-index 47636a9719ed..b662a7fa57bf 100644
---- a/drivers/pinctrl/intel/pinctrl-denverton.c
-+++ b/drivers/pinctrl/intel/pinctrl-denverton.c
-@@ -263,18 +263,7 @@ static struct platform_driver dnv_pinctrl_driver = {
- 	},
- 	.id_table = dnv_pinctrl_platform_ids,
- };
--
--static int __init dnv_pinctrl_init(void)
--{
--	return platform_driver_register(&dnv_pinctrl_driver);
--}
--subsys_initcall(dnv_pinctrl_init);
--
--static void __exit dnv_pinctrl_exit(void)
--{
--	platform_driver_unregister(&dnv_pinctrl_driver);
--}
--module_exit(dnv_pinctrl_exit);
-+subsys_platform_driver(dnv_pinctrl_driver);
- 
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Denverton SoC pinctrl/GPIO driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-geminilake.c b/drivers/pinctrl/intel/pinctrl-geminilake.c
-index 21d0d5051b04..898c4b0d105e 100644
---- a/drivers/pinctrl/intel/pinctrl-geminilake.c
-+++ b/drivers/pinctrl/intel/pinctrl-geminilake.c
-@@ -455,18 +455,7 @@ static struct platform_driver glk_pinctrl_driver = {
- 		.pm = pm_sleep_ptr(&intel_pinctrl_pm_ops),
+ MODULE_AUTHOR("David Dajun Chen <dchen@diasemi.com>");
+ MODULE_DESCRIPTION("DA9055 GPIO Device Driver");
+diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
+index 1bd98c50a459..2ddf63357127 100644
+--- a/drivers/gpio/gpio-mm-lantiq.c
++++ b/drivers/gpio/gpio-mm-lantiq.c
+@@ -146,15 +146,4 @@ static struct platform_driver ltq_mm_driver = {
  	},
  };
--
--static int __init glk_pinctrl_init(void)
--{
--	return platform_driver_register(&glk_pinctrl_driver);
--}
--subsys_initcall(glk_pinctrl_init);
--
--static void __exit glk_pinctrl_exit(void)
--{
--	platform_driver_unregister(&glk_pinctrl_driver);
--}
--module_exit(glk_pinctrl_exit);
-+subsys_platform_driver(glk_pinctrl_driver);
  
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Gemini Lake SoC pinctrl/GPIO driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index 299ee4f22bdc..55ff11af2038 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -833,18 +833,7 @@ static struct platform_driver lp_gpio_driver = {
- 		.acpi_match_table = lynxpoint_gpio_acpi_match,
- 	},
+-static int __init ltq_mm_init(void)
+-{
+-	return platform_driver_register(&ltq_mm_driver);
+-}
+-
+-subsys_initcall(ltq_mm_init);
+-
+-static void __exit ltq_mm_exit(void)
+-{
+-	platform_driver_unregister(&ltq_mm_driver);
+-}
+-module_exit(ltq_mm_exit);
++subsys_platform_driver(ltq_mm_driver);
+diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+index e64ee0487718..da699c419823 100644
+--- a/drivers/gpio/gpio-palmas.c
++++ b/drivers/gpio/gpio-palmas.c
+@@ -210,18 +210,7 @@ static struct platform_driver palmas_gpio_driver = {
+ 	.driver.of_match_table = of_palmas_gpio_match,
+ 	.probe		= palmas_gpio_probe,
  };
 -
--static int __init lp_gpio_init(void)
+-static int __init palmas_gpio_init(void)
 -{
--	return platform_driver_register(&lp_gpio_driver);
+-	return platform_driver_register(&palmas_gpio_driver);
 -}
--subsys_initcall(lp_gpio_init);
+-subsys_initcall(palmas_gpio_init);
 -
--static void __exit lp_gpio_exit(void)
+-static void __exit palmas_gpio_exit(void)
 -{
--	platform_driver_unregister(&lp_gpio_driver);
+-	platform_driver_unregister(&palmas_gpio_driver);
 -}
--module_exit(lp_gpio_exit);
-+subsys_platform_driver(lp_gpio_driver);
+-module_exit(palmas_gpio_exit);
++subsys_platform_driver(palmas_gpio_driver);
  
- MODULE_AUTHOR("Mathias Nyman (Intel)");
- MODULE_AUTHOR("Andy Shevchenko (Intel)");
-diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
-index 5cf54bc18f86..eb8c4c2ac022 100644
---- a/drivers/pinctrl/intel/pinctrl-merrifield.c
-+++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
-@@ -362,18 +362,7 @@ static struct platform_driver mrfld_pinctrl_driver = {
- 		.acpi_match_table = mrfld_acpi_table,
+ MODULE_DESCRIPTION("TI PALMAS series GPIO driver");
+ MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index ccdf13a741b7..12b1778c4be9 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -545,18 +545,7 @@ static struct platform_driver stmpe_gpio_driver = {
  	},
+ 	.probe		= stmpe_gpio_probe,
  };
 -
--static int __init mrfld_pinctrl_init(void)
+-static int __init stmpe_gpio_init(void)
 -{
--	return platform_driver_register(&mrfld_pinctrl_driver);
+-	return platform_driver_register(&stmpe_gpio_driver);
 -}
--subsys_initcall(mrfld_pinctrl_init);
+-subsys_initcall(stmpe_gpio_init);
 -
--static void __exit mrfld_pinctrl_exit(void)
+-static void __exit stmpe_gpio_exit(void)
 -{
--	platform_driver_unregister(&mrfld_pinctrl_driver);
+-	platform_driver_unregister(&stmpe_gpio_driver);
 -}
--module_exit(mrfld_pinctrl_exit);
-+subsys_platform_driver(mrfld_pinctrl_driver);
+-module_exit(stmpe_gpio_exit);
++subsys_platform_driver(stmpe_gpio_driver);
  
- MODULE_AUTHOR("Andy Shevchenko <andriy.shevchenko@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Merrifield SoC pinctrl driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-moorefield.c b/drivers/pinctrl/intel/pinctrl-moorefield.c
-index 59f46b0e2156..2d757d1f7b9d 100644
---- a/drivers/pinctrl/intel/pinctrl-moorefield.c
-+++ b/drivers/pinctrl/intel/pinctrl-moorefield.c
-@@ -323,18 +323,7 @@ static struct platform_driver mofld_pinctrl_driver = {
- 		.acpi_match_table = mofld_acpi_table,
+ MODULE_DESCRIPTION("STMPE expander GPIO");
+ MODULE_AUTHOR("Rabin Vincent <rabin.vincent@stericsson.com>");
+diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+index a851702befde..6ea0be23ae7e 100644
+--- a/drivers/gpio/gpio-twl4030.c
++++ b/drivers/gpio/gpio-twl4030.c
+@@ -619,18 +619,7 @@ static struct platform_driver gpio_twl4030_driver = {
  	},
+ 	.probe		= gpio_twl4030_probe,
  };
 -
--static int __init mofld_pinctrl_init(void)
+-static int __init gpio_twl4030_init(void)
 -{
--	return platform_driver_register(&mofld_pinctrl_driver);
+-	return platform_driver_register(&gpio_twl4030_driver);
 -}
--subsys_initcall(mofld_pinctrl_init);
+-subsys_initcall(gpio_twl4030_init);
 -
--static void __exit mofld_pinctrl_exit(void)
+-static void __exit gpio_twl4030_exit(void)
 -{
--	platform_driver_unregister(&mofld_pinctrl_driver);
+-	platform_driver_unregister(&gpio_twl4030_driver);
 -}
--module_exit(mofld_pinctrl_exit);
-+subsys_platform_driver(mofld_pinctrl_driver);
+-module_exit(gpio_twl4030_exit);
++subsys_platform_driver(gpio_twl4030_driver);
  
- MODULE_AUTHOR("Andy Shevchenko <andriy.shevchenko@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Moorefield SoC pinctrl driver");
-diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-index 77ac32ab9577..893f5aa15fa1 100644
---- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-@@ -579,18 +579,7 @@ static struct platform_driver spt_pinctrl_driver = {
- 		.pm = pm_sleep_ptr(&intel_pinctrl_pm_ops),
- 	},
+ MODULE_AUTHOR("Texas Instruments, Inc.");
+ MODULE_DESCRIPTION("GPIO interface for TWL4030");
+diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
+index 489479d6f32b..b16aabcef57b 100644
+--- a/drivers/gpio/gpio-wm831x.c
++++ b/drivers/gpio/gpio-wm831x.c
+@@ -288,18 +288,7 @@ static struct platform_driver wm831x_gpio_driver = {
+ 	.driver.name	= "wm831x-gpio",
+ 	.probe		= wm831x_gpio_probe,
  };
 -
--static int __init spt_pinctrl_init(void)
+-static int __init wm831x_gpio_init(void)
 -{
--	return platform_driver_register(&spt_pinctrl_driver);
+-	return platform_driver_register(&wm831x_gpio_driver);
 -}
--subsys_initcall(spt_pinctrl_init);
+-subsys_initcall(wm831x_gpio_init);
 -
--static void __exit spt_pinctrl_exit(void)
+-static void __exit wm831x_gpio_exit(void)
 -{
--	platform_driver_unregister(&spt_pinctrl_driver);
+-	platform_driver_unregister(&wm831x_gpio_driver);
 -}
--module_exit(spt_pinctrl_exit);
-+subsys_platform_driver(spt_pinctrl_driver);
+-module_exit(wm831x_gpio_exit);
++subsys_platform_driver(wm831x_gpio_driver);
  
- MODULE_AUTHOR("Mathias Nyman <mathias.nyman@linux.intel.com>");
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("GPIO interface for WM831x PMICs");
+diff --git a/drivers/gpio/gpio-wm8350.c b/drivers/gpio/gpio-wm8350.c
+index 46923b23a72e..30936ec32b05 100644
+--- a/drivers/gpio/gpio-wm8350.c
++++ b/drivers/gpio/gpio-wm8350.c
+@@ -125,18 +125,7 @@ static struct platform_driver wm8350_gpio_driver = {
+ 	.driver.name	= "wm8350-gpio",
+ 	.probe		= wm8350_gpio_probe,
+ };
+-
+-static int __init wm8350_gpio_init(void)
+-{
+-	return platform_driver_register(&wm8350_gpio_driver);
+-}
+-subsys_initcall(wm8350_gpio_init);
+-
+-static void __exit wm8350_gpio_exit(void)
+-{
+-	platform_driver_unregister(&wm8350_gpio_driver);
+-}
+-module_exit(wm8350_gpio_exit);
++subsys_platform_driver(wm8350_gpio_driver);
+ 
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("GPIO interface for WM8350 PMICs");
+diff --git a/drivers/gpio/gpio-wm8994.c b/drivers/gpio/gpio-wm8994.c
+index a0665cf3ff2f..d0c418bc6e03 100644
+--- a/drivers/gpio/gpio-wm8994.c
++++ b/drivers/gpio/gpio-wm8994.c
+@@ -288,18 +288,7 @@ static struct platform_driver wm8994_gpio_driver = {
+ 	.driver.name	= "wm8994-gpio",
+ 	.probe		= wm8994_gpio_probe,
+ };
+-
+-static int __init wm8994_gpio_init(void)
+-{
+-	return platform_driver_register(&wm8994_gpio_driver);
+-}
+-subsys_initcall(wm8994_gpio_init);
+-
+-static void __exit wm8994_gpio_exit(void)
+-{
+-	platform_driver_unregister(&wm8994_gpio_driver);
+-}
+-module_exit(wm8994_gpio_exit);
++subsys_platform_driver(wm8994_gpio_driver);
+ 
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("GPIO interface for WM8994");
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 9406ce85f933..e7c483f93d9d 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -676,18 +676,7 @@ static struct platform_driver xgpio_plat_driver = {
+ 	},
+ };
+ 
+-static int __init xgpio_init(void)
+-{
+-	return platform_driver_register(&xgpio_plat_driver);
+-}
+-
+-subsys_initcall(xgpio_init);
+-
+-static void __exit xgpio_exit(void)
+-{
+-	platform_driver_unregister(&xgpio_plat_driver);
+-}
+-module_exit(xgpio_exit);
++subsys_platform_driver(xgpio_plat_driver);
+ 
+ MODULE_AUTHOR("Xilinx, Inc.");
+ MODULE_DESCRIPTION("Xilinx GPIO driver");
 -- 
 2.51.0
 
