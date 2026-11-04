@@ -1,57 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793801559;
-	b=xP/5TBVayrkem9cvzPqPd5F9ls5W8KsM15JvMM6M+13UbQs29JQ22zTIoLasmn6W/8BA
-	 lG0B2UCUIRqHgWsSXaMbSvBcox2XLSNWh057HL/0/IPtP7G5bl6G/j9XCGQX8znICID+l
-	 x9Zol4meUWxeBOhyJW7YsqXGD4HqI0A/dqTjg9Kkj4Ep36VdCvtg+iOSxXjh8Df6a7zK7
-	 TNPCSZEV+ZdcEBcYD9C9z9uVwVHvXEpTxhIy5Th6UHSV+Y+FJLNT6ckEpw1QgVm0gzOKv
-	 6BCOUwm8/JpK5yZJ67iU9wCX45a1B/XY9P5d+n3ty+2yoJAzezXP0N2Qdy9BzZgnr6Q==
+	t=1793801560;
+	b=l0M3dfOOBNnjXlkQppd7vkBVa/PFtn4eYUmF3lM5m9ZnwA4txe8ks/I8yUCmN3gV5gy5
+	 Sx1zFORBusZF0Rk5Jy9CYx71+0G23xMq7P9ULJqaNk4W8qBKIyLi4/7Hdmw1CcRqBkwda
+	 IekO24YQ/+xbJ/6pupLx9ckcSHlOW6YAZpnm5P8TBay1kpptnFclx+v4Nq2pZUXVJr2Q7
+	 THTxY7dSPvHuz77f3p5bkg2euDE4SZb7drMSa7D2Yd5odgwnphbaK+ZJsUJ0ppRLMPTrq
+	 LdOm88Mt3TuNxXUYfrSx1hQksQg36KWKiaPb/K/AqgpPBgm4RHVXAIkBRg2TkOA0+6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793801559;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=R/qTYP1R+kSpV2jgLC+P4WluCtiADqd+MVp0Uzz5JAU=;
-	b=tL004/9um/0O6QBgozrl4XhLtPxHaMD8ldTjQ+xUgTdYfL1PHpr5BkokGgJ/aCYPR6OX
-	 2pribSN17NZmet22wzMISXZ3x5kGyawzF2kVKDyvoHZti8/Mz6tV2a83plH6XRhawyW67
-	 B5VYfsR8ymlinh1ezWrdeJ9exungAGt7NWZ9VSO5fZJxu2aJR91Of6SVQ3e2NzcQT3Tdr
-	 KGb7YCvvCtaFfuSi7N66Yjfnt8Yrvcz8Xxh1O5nb1rXXZwZLgH+rDT/c0dJ+2V6EuP6UG
-	 lpfIpWulxrj+xTB9bSGB+puNH9AsB3kQ8ARA/FfoC21vnEIjNqCEtFHAYAPiMXtH7QQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793801560;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=HTROKWbLtBdwvAccLPzBB3mIAmFWbuKi2E0W50i4Av8=;
+	b=hFaf62WDLiQbBmKu2//+SX+MoHsozUsdK3gIOBBqQjkAFj6VkxIS9h2waCCS1ivDwqFd
+	 4+4sRMSQcGI7SVvHeSuAhYc1KXiIhUBY1WiHePLP+Ne3HKwRVN8le14sHr0AHf19g32sw
+	 iS2VnjUiWO7Oo8SEfWYaoHCg5q+kDhGZVzKox4iRDGratG3wOodmcxRs8v5Mg5bH3V+EY
+	 dHP9hTF7enhxy1YJ3QPhT6Mwqkk1cenqaU9W1SLPu7lUSmr5NaCjWLGMxLlz+vrxmYpEI
+	 iULBdSG4ps/xwds/wbQG6ijeYOPbXI3Cm91/ritldKjkNkBZHRI3uVp4nzGh1gU5eNg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=STApIEX9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c04mG+z7;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914D606EE8C;
-	Wed,  4 Nov 2026 14:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 3118D606EE8C;
+	Wed,  4 Nov 2026 14:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=STApIEX9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEEA1F00A15;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c04mG+z7
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 20AB11F00A18;
 	Wed,  4 Nov 2026 14:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793801559;
-	bh=R/qTYP1R+kSpV2jgLC+P4WluCtiADqd+MVp0Uzz5JAU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=STApIEX9nhWevvJ6wRUnBX3jnDILex3BD3LdFeRTX6/RdPAkXLXVoSIGEfd3OKB5/
-	 vxyWyl6i9kMTVXeGodZMLN2goOB0Ez7AJiomYMt5AfMFgShTXxEm0MQoIiL4R3n+4l
-	 rlCS3YMbrRJDS+ijmK1uyTyAKyJkBPpi5YM86wVzlEuLUhYEeoNb+OsYRm6Dd5Yl/o
-	 IZRr+69k4xtytxKKTHTTm+s9tAMFkaUIUiix9OXWqz2tRNFM5BrKSBKEXOmv6Zg3xP
-	 ZHneNKDZzU1a3izn0YLssImEGrGg//pLmwqawEvOtS0w5Gq3h52huNpdrM2Vu5Dd2t
-	 BrVAqAMdlVpVg==
-Message-ID: <sashiko-outbox-197409@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 4/9] device property: provide
- fwnode_property_get_names()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 14:12:38 +0000
+	s=k20260515; t=1793801560;
+	bh=HTROKWbLtBdwvAccLPzBB3mIAmFWbuKi2E0W50i4Av8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=c04mG+z7Tvxwuog+3MwAz7NyM157MLbgxK6l3hP4aNOxO37ZtJxONtEa5g4WLW/D8
+	 mkJKc3mx8IdLcYlJQsZlkZhGwarMF/UVKt0ZHLiSQD/uycFGvvZczhfO/hKWTaw2q+
+	 U9pz9EB9xt9jIQyKMclc5cJcekeNiSakjKTMS4o0X5qhUYZvmlxFAnx7yPd48kTxZF
+	 1bX8ZDk6vw6oL120IIrQzcS//P6jxvS+N9Bz99YF83pivDsdgRO+4L3ZDdyyYYjwtr
+	 feXSXw4LCqX9WplGWCzrr9y0nupqiVg+v3zhsU/KShHt0kV68ye0ArYWcADFWwpvnS
+	 NOLaJNZbgkUkA==
+Date: Wed, 4 Nov 2026 15:12:35 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Walle <mwalle@kernel.org>, longzhao@ambarella.com, 
+	linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Mika Westerberg <westeri@kernel.org>, linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, 
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 08/13] gpio: regmap: remove gpiochip before tearing
+ down irqchip
+Message-ID: <awdvsfanqmvivihwhaik4atseyty3rwk2dytf4yihwvnbcj47l@ejipwyffq25k>
+References: <20261102-cv75-gpio-v13-0-4f93114ea204@ambarella.com>
+ <20261102-cv75-gpio-v13-8-4f93114ea204@ambarella.com>
+ <DMKL43ZCOSQ3.3TAJL8BRQ6ZTH@kernel.org>
+ <auoeysEHqGemmuhO@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,131 +63,41 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <auoeysEHqGemmuhO@ashevche-desk.local>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] device property: missing NULL check for props in fwnode_property=
-_get_names()
---
+On Tue, Nov 03, 2026 at 07:50:02PM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 02, 2026 at 09:33:20AM +0100, Michael Walle wrote:
+> > On Mon Nov 2, 2026 at 7:46 AM CET, Long Zhao via B4 Relay wrote:
+> > >
+> > > gpio_regmap_unregister() currently calls regmap_del_irq_chip() before
+> > > gpiochip_remove(). That disposes the mapped virtual IRQs and frees the
+> > > irq_domain while ACPI GPIO-signaled events may still be requested and
+> > > while gpiod_free_irqs() still needs gc->irq.domain.
+> > 
+> > Maybe Andy have an opinion here. But that deviated from the usual
+> > cleanup in the reverse order and at least deserves a comment in the
+> > code.
+> 
+> Yeah, this is unfortunate. I think to make it work as proposed the IRQ domain
+> handling in GPIOLIB should be revisited. So, at least a good comment is a must,
+> indeed.
+> 
+> > > Remove the gpio_chip first so ACPI teardown and USED_AS_IRQ cleanup run
+> > > against a live domain, then delete the regmap irqchip. Use the same
+> > > order on the registration error path, which previously leaked the
+> > > irqchip when gpiochip_irqchip_add_domain() failed after
+> > > regmap_add_irq_chip_fwnode().
+> > 
+> > This should be split into a seperate patch with a Fixes: tag.
+> 
+> Not sure if we need a separate change here as two are coupled.
+> I leave it to Bart to decide.
+>
 
-commit c6de0ca7eaa5586d9db8c473e272baa86e7c8e04
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Rule of thumb: can we have a smaller fix that can go in first and be
+backported? If so: Split. Otherwise let's leave it as is.
 
-device property: provide fwnode_property_get_names()
-
-This commit adds fwnode_property_get_names() to retrieve the list of all
-property names for a given firmware node, merging properties from both the
-primary and secondary firmware nodes.
-
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index a97575ff91990..7b0df3dfae53b 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-
-[ ... ]
-
-> @@ -542,6 +544,81 @@ int fwnode_property_match_string(const struct fwnode=
-_handle *fwnode,
->  }
->  EXPORT_SYMBOL_GPL(fwnode_property_match_string);
-> =20
-> +/**
-> + * fwnode_property_get_names - get the list of all properties of this fw=
-node
-> + * @fwnode: Firmware node to get the list of properties for
-> + * @props: Pointer to an array of strings. It will contain the address o=
-f the
-> + *	   string list containing the property names.
-> + *
-> + * Return: Number of property names written into *props. If > 0, the cal=
-ler must
-> + *	   free the array with kfree_strarray(). *props is only valid for
-> + *	   a positive return value.
-> + *	   %-EINVAL if arguments are not valid
-> + *	   %-ENXIO if no suitable firmware interface is present
-> + *	   %-ENOMEM if memory allocation failed
-> + *
-> + * The list also includes the properties of the secondary firmware node,=
- if
-> + * any. Properties present in both nodes are listed once.
-> + */
-> +int fwnode_property_get_names(const struct fwnode_handle *fwnode, char *=
-**props)
-> +{
-> +	int ret1, ret2 =3D -ENXIO, n1, n2, i, j, count;
-> +	char **prim =3D NULL, **sec =3D NULL, **merged;
-> +
-> +	if (IS_ERR_OR_NULL(fwnode))
-> +		return -EINVAL;
-> +
-> +	ret1 =3D fwnode_call_int_op(fwnode, property_get_names, &prim);
-> +	if (!IS_ERR_OR_NULL(fwnode->secondary))
-> +		ret2 =3D fwnode_call_int_op(fwnode->secondary, property_get_names, &se=
-c);
-> +
-> +	if (ret1 =3D=3D -ENXIO && ret2 =3D=3D -ENXIO)
-> +		return -ENXIO;
-> +
-> +	n1 =3D max(ret1, 0);
-> +	n2 =3D max(ret2, 0);
-> +
-> +	CLASS(strarray, prim_props)(prim, n1);
-> +	CLASS(strarray, sec_props)(sec, n2);
-> +
-> +	if (ret1 < 0 && ret1 !=3D -ENXIO)
-> +		return ret1;
-> +
-> +	if (ret2 < 0 && ret2 !=3D -ENXIO)
-> +		return ret2;
-> +
-> +	if (n1 =3D=3D 0 && n2 =3D=3D 0)
-> +		return 0;
-> +
-> +	merged =3D kcalloc(n1 + n2, sizeof(*merged), GFP_KERNEL);
-> +	if (!merged)
-> +		return -ENOMEM;
-> +
-> +	/* The strings are now owned by merged, only free the container. */
-> +	for (i =3D 0; i < n1; i++) {
-> +		merged[i] =3D prim_props.array[i];
-> +		prim_props.array[i] =3D NULL;
-> +	}
-> +	count =3D n1;
-> +
-> +	/* Properties from the primary node take precedence. */
-> +	for (i =3D 0; i < n2; i++) {
-> +		for (j =3D 0; j < n1; j++) {
-> +			if (!strcmp(merged[j], sec_props.array[i]))
-> +				break;
-> +		}
-> +
-> +		if (j >=3D n1) {
-> +			merged[count++] =3D sec_props.array[i];
-> +			sec_props.array[i] =3D NULL;
-> +		}
-> +	}
-> +
-> +	*props =3D merged;
-> +	return count;
-> +}
-
-[Severity: Medium]
-Should fwnode_property_get_names() in drivers/base/property.c also check
-!props at entry and return -EINVAL?
-
-The kernel-doc states that -EINVAL is returned if arguments are not valid,
-and unlike fwnode_property_read_string_array(), props is not optional.
-Because fwnode_property_get_names() passes &prim and &sec to the backend
-property_get_names callbacks rather than forwarding props, the backend
-callbacks never validate props either.
-
-If a caller passes NULL for props (for instance, expecting it to query the
-property count like fwnode_property_read_string_array()), it will return 0
-instead of -EINVAL when the node has no properties, or dereference a NULL
-props pointer at *props =3D merged and leak merged and all transferred prop=
-erty
-name strings when the node has at least one property.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-fwnode-for=
--each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com?part=3D4
+Bart
