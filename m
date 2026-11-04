@@ -1,62 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793836024;
-	b=M5bHUiw/9D8sMV4AI9Xgn5CjZf7T+gwQeGbIdk2ZVr94v5TzPn6G1ySwnMHl0qf3Z2A0
-	 84/2tixCAqhkU760vc2D2uGP3N3uBnpqQhUwRFcSoczmcOVuKq9TtIpj1SmkLXw3emyrg
-	 MqXttJ1mNjZtKKP1YpqrotpP5hKI5EEjUC2qdHVPu5oaoAtWZ/MmfEjpbAGJQwpl+HbaU
-	 5dwqWcqlyq2ZuZvb7lcdfNpiKlbRYltgpNBiD0SrhFfkl7r/74XL/Uv3yD+VSIHs6Cb/i
-	 3bwxVZR5D8fnnvV8kndP5mBNdf7QG5DWUlHx2ysUBl5AdKy1bEDU0I1X05dCcyV5Pzw==
+	t=1793836202;
+	b=xSg0NRE789IUAJhYtM4uO8mh2i86kH9+CzUpyCTox1iinEYYSoMy4sAWvLL3XlTH0L4M
+	 DGjuG0fY71riPfq0aRWAVXrL1kR1E5ZU7Usvpdwi9ahSkXW5838oQHGZirHwxpeOBBbXD
+	 2xE6J7azSYIVXbeWh1bZv1i+2ViEpI6vanPBPnVKkkw0HHCEYeSXdNrageS4WecIzTBW5
+	 b47ndExHb1DTWKMnMel41OLyHhN3u1u61HG9iade+n9U4eXzmWdXdBX0AUHl3HkxgNsyp
+	 oO0PtCOGHbgGN9SkSDk9jwVS2ANe1l0m9GBiFQxHokSXOBpmYixbPiCgybtbC+BsZBA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793836024;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793836202;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Ybn1U4ck4SXPPg0/2HE2JPN2c6fPoDZjnz2lKASv9Gw=;
-	b=ssuhS0iwNWhRpxH+oL4wBfnv/RvSTO/f6m3qCRntuKBE6n6NS1fTPyp5+NFg1mwIC9u5
-	 XKjqy+6KAVPurloKszcXAyqTKpBK/4OX+JE9bFk59OmHyzZfjPxZgdjlMebZoDmDAHcQk
-	 3gdeIEivnyUeZPAl4PV2KEJNy3L0H9y99T1bmv7c69G0RLnaEy1pvzO9Nx880L+zDpm5E
-	 JKHBPj2FjDS7D6IihJG5kVDAjIHZYzd6tkvnqP6WtJoMr6I9asHB16fVx7/mGOvSxKcq0
-	 iO9inTGkMqt8XH27SfLJbd+4uJt2gb/u9GEQcm2zCD8iGJm2USZQgflzUuZt0Wz282w==
+	bh=iDu3o6juv8Uod0hoihtHeFVep74g4tQbmc/uasmupfA=;
+	b=qHLOkricn2C95wQ/TrCiLRuHi6ieHvvflRTek/BzR++vmk1m62IUle2OM/NEr7FgQuil
+	 ynY4G+6aW39hdxkOD1u+3jtRd2d1L0og/EdYxK4Ol9VsdVT93AiZpepyfHep4bnC2g4gX
+	 7wE3oQsoGf312LMelQd6pR8fbeG531x79/DVtlTfbcoLHJzSJfqWLJKkDIM+RxZsCe8TV
+	 O6vB7xSP/wzHtRCZWb939W9fUTPDz4h1CCFytlJx9cY339L378jozyc44tLqS6btIWHEa
+	 1BabsiQugBmUq+wFbH8IQtgXVpPorD/SRlBNfTokU8voC1lLSpLnaI6I3lqop/k4BEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EjGtR966;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GMSlrRMb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F52606A31B;
-	Wed,  4 Nov 2026 23:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67CA606A32D;
+	Wed,  4 Nov 2026 23:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EjGtR966
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C5491F000C1;
-	Wed,  4 Nov 2026 23:47:01 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GMSlrRMb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6401F00919;
+	Wed,  4 Nov 2026 23:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793836024;
-	bh=Ybn1U4ck4SXPPg0/2HE2JPN2c6fPoDZjnz2lKASv9Gw=;
+	s=k20260515; t=1793836201;
+	bh=iDu3o6juv8Uod0hoihtHeFVep74g4tQbmc/uasmupfA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EjGtR9666Gthy0HNXpBo2D0K7UWgNef9bYb34g72ci+M06cNmWMdOE2ChuRb1iKws
-	 HIy7vWx/l2UPx9pF1IZY1FQLvuPt9uDT4Qqa1h4Bk74ozloxpije2J9rHVPOQjO5oe
-	 gUZdPJQHu6G+3RyKnekvxVfLqr8de5lYagpJobyEFvFM7oHI8qjJIQ202oFaHJaTsN
-	 yIh2bkuRCdvIYsglSpXJtxKqleS7doC7NVyMAGkz7vKVNR61+JYrtSKOqFSNQP9qLZ
-	 sIXaHrqwYfK3j7eTlSZtB40PVTazRJEsYMYSt5i+hXRagWVHc3LTDxxDtyDFBSZ85Y
-	 0snuA1PB5AOYQ==
-Date: Wed, 4 Nov 2026 23:46:59 +0000
+	b=GMSlrRMb8du0nBh3vRwOpVbv3pShKCI0Veuh8uYYhW1x7WiqEfvLBiloIYLrjvtnE
+	 MJWfzL/PVi3lLWOuX1mqKMFHG6TrVAgvieve8DaUN9y0nthxAPmgxF42+6cmyX7E5y
+	 7SIR1LPXoUvIyP5IIStffPeVNtAtlxljFM5rXCy1ncivAF/dfFiI9G/s2WBFLlmo4s
+	 PFoWj3X+NZueDAQx4faXggtSh2SsgHPQtuEcLwzlyz+cplCb2JNeo+1XWNWqt4hDwD
+	 i3UCfETNP4aGgMDbvAQadE1unjEgS51JrNmR2ONZxfAW/0qtNYUtYmqd83B86+aJOx
+	 yrEfG5fR1VDvA==
+Date: Wed, 4 Nov 2026 23:49:57 +0000
 From: Conor Dooley <conor@kernel.org>
 To: joseph@telaak.dev
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Chuanhong Guo <gch981213@gmail.com>,
-	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Siflower SF19A2890 GPIO
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Chuanhong Guo <gch981213@gmail.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: Add Siflower SF19A2890 pin
  controller
-Message-ID: <20261104-judiciary-fool-05c4157a7cc7@spud>
-References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
- <20261104-sf19a2890-gpio-v1-1-45e463c48728@telaak.dev>
+Message-ID: <20261104-enlighten-handling-a309345b229a@spud>
+References: <20261104-sf19a2890-pinctrl-v1-0-4bb83afdbacf@telaak.dev>
+ <20261104-sf19a2890-pinctrl-v1-1-4bb83afdbacf@telaak.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,140 +63,156 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8lCGnY4rd1pPxcek"
+	protocol="application/pgp-signature"; boundary="KgwtC2W00/4Cv3bY"
 Content-Disposition: inline
-In-Reply-To: <20261104-sf19a2890-gpio-v1-1-45e463c48728@telaak.dev>
+In-Reply-To: <20261104-sf19a2890-pinctrl-v1-1-4bb83afdbacf@telaak.dev>
 
---8lCGnY4rd1pPxcek
+--KgwtC2W00/4Cv3bY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 04, 2026 at 02:21:37AM -0500, Joseph Telaak via B4 Relay wrote:
-> From: Chuanhong Guo <gch981213@gmail.com>
+On Wed, Nov 04, 2026 at 02:21:17AM -0500, Joseph Telaak via B4 Relay wrote:
+> From: Joseph Telaak <joseph@telaak.dev>
 >=20
-> Document the GPIO controller found on the Siflower SF19A2890 and other
-> Siflower MIPS and RISC-V SoCs.
-
-FYI, these other devices need their own compatible strings when a dts
-for them is added.
-
+> The pin controller of the Siflower SF19A2890 selects the function of
+> each of its 49 pins and sets their bias, input enable, Schmitt trigger
+> and drive strength. Each pin has a register pair of its own, and each
+> pin state node holds subnodes that set some of its pins.
 >=20
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> [jt: from Chuanhong's siflower-7.1 branch; Joseph Telaak as the binding's
->  maintainer, GPL-2.0-only for the deprecated GPL-2.0 SPDX identifier,
->  example indented by four spaces, commit message, subject]
 > Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 > ---
->  .../bindings/gpio/siflower,sf19a2890-gpio.yaml     | 84 ++++++++++++++++=
+>  .../pinctrl/siflower,sf19a2890-pinctrl.yaml        | 113 +++++++++++++++=
 ++++++
->  1 file changed, 84 insertions(+)
+>  1 file changed, 113 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/gpio/siflower,sf19a2890-gp=
-io.yaml b/Documentation/devicetree/bindings/gpio/siflower,sf19a2890-gpio.ya=
-ml
+> diff --git a/Documentation/devicetree/bindings/pinctrl/siflower,sf19a2890=
+-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/siflower,sf19a289=
+0-pinctrl.yaml
 > new file mode 100644
-> index 000000000..6708d92fe
+> index 000000000..8b52d3175
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/siflower,sf19a2890-gpio.yaml
-> @@ -0,0 +1,84 @@
+> +++ b/Documentation/devicetree/bindings/pinctrl/siflower,sf19a2890-pinctr=
+l.yaml
+> @@ -0,0 +1,113 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/gpio/siflower,sf19a2890-gpio.yaml#
+> +$id: http://devicetree.org/schemas/pinctrl/siflower,sf19a2890-pinctrl.ya=
+ml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Siflower SF19A2890 GPIO controller
+> +title: Siflower SF19A2890 pin controller
 > +
 > +maintainers:
 > +  - Joseph Telaak <joseph@telaak.dev>
 > +
+> +description:
+> +  The pin controller of the Siflower SF19A2890 selects the function of
+> +  each of its 49 pins and sets their bias, input enable, Schmitt trigger
+> +  and drive strength. The GPIO function is selected through the GPIO
+> +  controller, which maps its lines onto these pins with gpio-ranges.
+> +
 > +properties:
 > +  compatible:
-> +    const: siflower,sf19a2890-gpio
-> +
-> +  gpio-controller: true
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-ranges: true
+> +    const: siflower,sf19a2890-pinctrl
 > +
 > +  reg:
 > +    maxItems: 1
-
-Move this below compatible.
-
 > +
-> +  interrupts:
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
 > +    description:
-> +      Interrupt mapping, one interrupt per 16 GPIOs.
-> +    minItems: 1
-> +    maxItems: 10
+> +      A pin state. Each subnode sets the function and configuration of
+> +      some of its pins.
 > +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  ngpios:
-> +    description:
-> +      The number of GPIOs available on the controller implementation.
-> +    minimum: 1
+> +    patternProperties:
+> +      '^pins(-[a-z0-9]+)*$':
+> +        type: object
 
-With no maximum?
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml#
+> +        allOf:
+> +          - $ref: /schemas/pinctrl/pinmux-node.yaml#
 
+Same format should be used for both of these.
+
+> +        properties:
+> +          pins:
+> +            items:
+> +              enum: [JTAG_TDO, JTAG_TDI, JTAG_TMS, JTAG_TCK, JTAG_RST,
+> +                     SPI_TXD, SPI_RXD, SPI_CLK, SPI_CSN, UART_TX, UART_R=
+X,
+> +                     I2C_DAT, I2C_CLK, RGMII_GTX_CLK, RGMII_TXCLK,
+> +                     RGMII_TXD0, RGMII_TXD1, RGMII_TXD2, RGMII_TXD3,
+> +                     RGMII_TXCTL, RGMII_RXCLK, RGMII_RXD0, RGMII_RXD1,
+> +                     RGMII_RXD2, RGMII_RXD3, RGMII_RXCTL, RGMII_COL,
+> +                     RGMII_CRS, RGMII_MDC, RGMII_MDIO, HB0_PA_EN,
+> +                     HB0_LNA_EN, HB0_SW_CTRL0, HB0_SW_CTRL1, HB1_PA_EN,
+> +                     HB1_LNA_EN, HB1_SW_CTRL0, HB1_SW_CTRL1, LB0_PA_EN,
+> +                     LB0_LNA_EN, LB0_SW_CTRL0, LB0_SW_CTRL1, LB1_PA_EN,
+> +                     LB1_LNA_EN, LB1_SW_CTRL0, LB1_SW_CTRL1, CLK_OUT,
+> +                     EXT_CLK_IN, DRVVBUS0]
+> +            minItems: 1
+> +            maxItems: 49
+> +
+> +          function:
+> +            enum: [i2c0, jtag, mdio, pwm0, pwm1, rgmii, spi, uart0, uart=
+1,
+> +                   uart2, wlan]
+> +
+> +          bias-disable: true
+> +
+> +          bias-pull-up: true
+> +
+> +          bias-pull-down: true
+> +
+> +          input-enable: true
+> +
+> +          input-schmitt-enable: true
+> +
+> +          input-schmitt-disable: true
+> +
+> +          drive-strength:
+> +            description: Output drive strength in mA.
+> +            enum: [6, 9, 12, 15, 18, 21, 24, 27]
+> +
+> +        required:
+> +          - pins
+> +
+> +        additionalProperties: false
+> +
+> +    additionalProperties: false
 > +
 > +required:
 > +  - compatible
-> +  - clocks
-> +  - gpio-controller
-> +  - gpio-ranges
-> +  - interrupt-controller
-> +  - interrupts
-> +  - ngpios
 > +  - reg
-> +  - resets
-> +  - "#gpio-cells"
-> +  - "#interrupt-cells"
-
-Please fix the ordering here too.
-
-pw-bot: changes-requested
-
-Thanks,
-Conor.
-
 > +
-> +additionalProperties: false
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +unevaluatedProperties: false
 > +
 > +examples:
 > +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/mips-gic.h>
+> +    pinctrl@19e3fc00 {
+> +        compatible =3D "siflower,sf19a2890-pinctrl";
+> +        reg =3D <0x19e3fc00 0x400>;
 > +
-> +    gpio@19d00000 {
-> +        compatible =3D "siflower,sf19a2890-gpio";
-> +        reg =3D <0x19d00000 0x100000>;
-> +        interrupts =3D <GIC_SHARED 246 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SHARED 247 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SHARED 248 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SHARED 249 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks =3D <&gpioclk 0>;
-> +        resets =3D <&gpiorst 0>;
+> +        uart0-pins {
+> +            pins-tx {
+> +                pins =3D "UART_TX";
+> +                function =3D "uart0";
+> +                bias-pull-up;
+> +            };
 > +
-> +        gpio-controller;
-> +        #gpio-cells =3D <2>;
-> +        ngpios =3D <49>;
-> +        gpio-ranges =3D <&pinctrl 0 0 49>;
-> +
-> +        interrupt-controller;
-> +        #interrupt-cells =3D <2>;
+> +            pins-rx {
+> +                pins =3D "UART_RX";
+> +                function =3D "uart0";
+> +                input-enable;
+> +                bias-pull-up;
+> +            };
+> +        };
 > +    };
 >=20
 > --=20
@@ -208,15 +220,15 @@ Conor.
 >=20
 >=20
 
---8lCGnY4rd1pPxcek
+--KgwtC2W00/4Cv3bY
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauvD8wAKCRB4tDGHoIJi
-0hmLAQDFn8AQyWFbVtBLNfA/Jk6Pl5eG57rfoCu+xDzAklKXIwD/T2QiMRx1gfAx
-FLiy0lgH2wbO+h+sOgGTGVqK4xS6Bwg=
-=VE47
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauvEpQAKCRB4tDGHoIJi
+0m3RAP4tSduLHcc635vQclYVe+5c6OHsdsBCcyeckcRxYRXQLAEAulIzFqe6YIT5
+1weZtglDmHFBdAYOuT+M6UQeOSUZkgs=
+=zMQ1
 -----END PGP SIGNATURE-----
 
---8lCGnY4rd1pPxcek--
+--KgwtC2W00/4Cv3bY--
