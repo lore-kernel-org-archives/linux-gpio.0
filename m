@@ -1,92 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793829608;
-	b=TWBSBug2mT2pTlpU9Atbxutv6dvNDcFZzV7pip5gnc0caylmkR7GkrWVW1jLxRmxrp0T
-	 TysrOycSFsMYzrpqAi1E/b2zsgf08YQtYkLe66d+nUBxoFwQviO/vzde/MwDbXUe8jQe5
-	 xEYuRi6I3srMWPStVXRUmECY1BxBBJR7sIGKJbMivuON8/SymviOuF280PPekvBY9zF+3
-	 KkDTHLzqqlg+jNApbc3GCYZZ6dV6MDgVvow8Esqno5GMeBusGaRYBofXnyK91jX2Pu05t
-	 JgErQTuoaHBAcZCHV/8W4sf7ZUVRbWsjmaIuO4d9QWtsJv3W+e3cgxynBlZWDyrACIw==
+	t=1793829611;
+	b=u5lgd5Z5Cvm3gJ9cfa+hB4h9+svsILQSCoWD1/xVJY4HMQqxbJ0BkT4UfQF+D6nd7Wd0
+	 RdDFwGboRx/N6/NZZD6zrZzJyUh98ZGz/65JGdjilulXPfdTDTDKTg36dmSi7VjDW4N5H
+	 BzmH2A+lto2iY0uuEhypjhA2l5X6LXNvwiJaZD4R8dZI6twPvnN6XEKfFHP8mkhRYt97L
+	 KvoDnaupV35C1y2wCsyPWanH0hpv5Zgtj8pUuxNJveQezO0zlAZt4mDQr1OZSw004xVC5
+	 AXz8bsCeJRgELlF5lZsLDbFTE7QUwTI8U2kvKbWid3M9v/pweDIZa19W7NSJz27Ts0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793829608;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793829611;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=HRAnyt134SHIgNN1UWRJhhprtsqiZv4ePN3n1Nko6jI=;
-	b=dMASTiHBiCymoYKcq88uL7ZjT16kZCiybkQ6ENCSvljbLK3nCmv8thXFlkTFBWK4wptv
-	 nDoPQ2xTr5rikx+M8okgTwX0Md0vnPAd+zCQ3x0qtS0Ujox94oBCP5PlO+ESyfopQ3hXO
-	 jYf9wxkYE5naJaL9ZBQH8H74/w7ELMYwWsRcCjLx5q2j+DpJBi67+LlmjRpKBaaTEVVMw
-	 mYiIYDZz0fiFOnzcC6E6Y1PDZwwTTHM+cyQtJ5skc3mABOsdRWW00LGqmfVxlsmMpSOiG
-	 Un6Y5nerUjlrVJrVOzHjp26CwHuSVqGwm9XoKc6n9RyNbrIhwthAjoFoKE/GhM5vs/A==
+	bh=m3fDn0doC3oHHYkxsfDaIpaSQ1k6unq+IZwq3OGecvU=;
+	b=jEmnjAH/1ExpWs8XathqeV727TIbCZsq6wQtx/hs8QlZRSW+Qsww9v1fjEEhXpPz6wav
+	 KbWmR0YLNH45veO+mS24D6n0r3Y34Ykzjebzi8G0YUxFpuEJ7zpb0z1/NQDtKojUfTcuU
+	 Hcabp5nqP4l+zOfPL+Xcswuv07BorypF6U+onZrqKu0+ZudFmT2G7r3PtAmIUA4AVCeqQ
+	 FuLyLHuY8FiF28Poq3MBce4Q5zSsPi+MTsf3EE3xWH9/0nS4y4Fmtn6Jgfyq1vvIOlIyp
+	 +usTOSCWCTT5X/vO2PiF6gBnPWsnrbnl2fsX068UqJ9DP6nBEXlNUyLsN8N7pVdX4vQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=VMVAvhSm;
-	arc=none smtp.remote-ip=209.85.214.173
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZeGScUN8;
+	arc=none smtp.remote-ip=209.85.214.180
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080D760877FA
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 22:00:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 080D760877FA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74C7608C98C
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 22:00:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C74C7608C98C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=VMVAvhSm
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2e940d5d2beso5145315ad.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 14:00:07 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZeGScUN8
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2e940d5d2beso5145405ad.0
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 14:00:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793829607; x=1794434407; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793829610; x=1794434410; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=HRAnyt134SHIgNN1UWRJhhprtsqiZv4ePN3n1Nko6jI=;
-        b=VMVAvhSmuoSNgg2N+X2SNsiVMqgp/vsB3tiywuyaV608ObFEYF/Sl5TxNCD0HbHC89
-         ABVWL69R5CVrrkU6IwCp/zTN0qjnpiH8lCc+NZM2UdF/+MIy1qYJ1Lk704pFRTJqaHvD
-         mRLUt4eGWRW+HKXmRcyEoB1P7n4b3IxGiXGBZxZ180lMD3TP2zVwL0WY1TSKJfPO3jnc
-         cTLtfcGbsIUSQw2o6Ojpoahph8FKbPewFF3W9dSS23dBA06MOlVpnAOS3O5fAIiQVk9x
-         8KMHFG169oTTYsas7RkNl2lJHH8LOKtaHiilHaL8l7gpvXF6IQw2RxQHbbeQrElvR9n5
-         6Biw==
+        bh=m3fDn0doC3oHHYkxsfDaIpaSQ1k6unq+IZwq3OGecvU=;
+        b=ZeGScUN80PuxzKBUlr8/JsvzQ4C1zpUcqA3TujEeuGhilC7DZmkCGRhiIkwXlbjB0c
+         4SLboKrFTnth7bDKO9THsZK+IvEwvdeWE1RB7hEy/t61k7Qi9xTeV8oKAzAP8TV7Kier
+         xvZzBgjkUMb/BN96hJeGdi4HHlrJemiA1EL6kPUEf0MkAXOXWTHcWbN+M/NV/q7Lwewi
+         7m51erbLtksTARPCtzVz8a1F8X5Xmon0r8J2azH3usspnLfxoU8DPf9FpoBiwZ1KNCjG
+         rsJWljlilE5ArqV7+BO8OaVFAKqKG7UQQSAo0II3iFIXdqW51rWXFgCjF956ZL9RY6mq
+         x23g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793829607; x=1794434407;
+        d=1e100.net; s=20260707; t=1793829610; x=1794434410;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=HRAnyt134SHIgNN1UWRJhhprtsqiZv4ePN3n1Nko6jI=;
-        b=PbmxUF2xNvbF2jAIp4sd0OlH0pfe0sMkTquYWA+UD4lmtNoi6bFJ0EP7dqDkRtph+z
-         1HJZhZ0BSe2SSuxBXgPQAOjWG+lrY3txoprYRyVSJQjiNAUFlPhKm1vEMzQO69Efjv8v
-         72UDIDiVKQFU97aTSZm6Vcpx/bRErBilq3biaA/qxe+n7ByogGYtXwzawBAHO9MHkyQu
-         pmMM0EdFiLNsFjzw+oxkauFr5jDSiUKcYW46e1HzpE8CsrToFKRk8K272f4e6B9p9mFB
-         GOTMBWPe+RG6l5gwNZPRu9xuxgfNBDVwb2kUOciYB2wH75pa8OspZZkpzvKuNbS5DmeA
-         29+g==
-X-Gm-Message-State: APuU4Z/aZS/8lMwlhwt6NmVnc48gI0ERs2RCW8nJqmCZx+MgseVGYL0w
-	rAW42RYtm4c4H4sUEiRorCDhe8b1LNYY6KPEurlSTEUbh3SCWtK2Ln1w6fx6OA==
-X-Gm-Gg: AYBFou10laa4nYyxUl2NdNBFypu0T3F9bs4G5KnsOV/qUkyZ/mDMWKwUvceT+XU4k5Y
-	dzBlTB9RNGEEPGfukY/AUnFPbAVzWLDpERLqpFLv2KFcg+fBFk5O/Fze3tZ5YM3hIinHIvDE4Qg
-	vmr98hNZAGpI8zEzrYR8v7wKG4OwklrihuNhVNEQKh9lppfuKP+MJCskf2q5QzzASY5Ns8aKFbZ
-	FSVf7GI5Eo8tPzcNYjF7+I3uCEJYJ8P4tN+ThLZi/B/+/184HVArUKeo6j6giK2UJXECfD21Mce
-	gtKxxC3wGo6lXPwyhaWvFVvbjzveUmfoM85NdSisyILL38BOxqrX9TRRt8LDH1p+pMa34EHKBIS
-	buZFCHloPnPkYZC7Yfsap3MD379t2ByPlFcziq4widQL0FBa7YtsN6gw3PPly5zvA3quRJ3y0YM
-	ravtoFkmJjIDZRcwIg3rAT3fE7Y/9QHl014TAanG4K/i2Qdzxp7oDkPwQzzwG566ucPCLZQJtzg
-	h+nMyjvj0NMF0ZHkY5zec+WZf01By8pXrCNj+E1NXcUkGV+Mvb+qGbt+GTtlAY//8WTPXsrCtk+
-	UIfoEMTvws68gPnRrJ5iI3aGONWnO6xIho1fGU6CSA0rNrH3XwqNqypBcdCSjT1RR+G1gQ1htR9
-	xF62AbXHpP11F8h0ExiA/1819pw4A9Mxr+wT3TSoVl23qlmcW0E0g4Vucy+jCbKjP3bSf/ZQw5O
-	hnWw==
-X-Received: by 2002:a17:903:3c6b:b0:2e9:7dda:7194 with SMTP id d9443c01a7336-2eb3642fea1mr148462125ad.11.1793829607379;
-        Wed, 04 Nov 2026 14:00:07 -0800 (PST)
+        bh=m3fDn0doC3oHHYkxsfDaIpaSQ1k6unq+IZwq3OGecvU=;
+        b=XA272kh4w/XwSHkPP8NiKEffhnqxkXXnkXxuLBH5UJIgvnnN0ITERSYT78fAdjTGIz
+         Zlx9+Zw/s1Og1QPf8MBoMWsziAzFoQ6MTCgqRXowN83OJ2YYarHyY6mfvJl9/iCsOFx1
+         ddA+TQ1A9xQVXquxq2yNT5SwqP8jT2bJ02hiJXViQ9ytOdHE6Kd2TSx7IjMG8Dh/Hq8P
+         Um+9OiymHaGoDTZsrjuBZ8TtaWtSWfqSuTFYWzL/+ykvrc5+S7kwTFUaDW8yD0WN9EXE
+         Q5cERjb6aN8dj95CjYbCz23czAdUCL24L5iCWhgI4HzP6PqTHwRsXg+L2ymhSYcK0T4X
+         xDbg==
+X-Gm-Message-State: APuU4Z8qZghgMDz5NuAYfoIL89gWBFcYTmCGOysX0XfwVzSC0FLisvUF
+	w46K+NDWP/0DfEzDTqypGBms9b3pRErN0DLcCJnEbEpf3nbkix+OrmrUkPuu6g==
+X-Gm-Gg: AYBFou09jLrVveQ7r2o/md9dV8W+x+2OqRNb6MfdgnAGfriLIllqQDdDER73tix1ixP
+	gp0famDJcK7rjs/mAap85hXDXu4ccKxpx3vDxl29TYJmalnWqYYmEt3tPxWwVGKF9dhvaZ2PCFM
+	yppVLT98jGEIBad5buMaiYbo4AfL3kRS1sty29hYSjev+9HV1Bd8T3ga5CbtYSd4R+Qc/fE+4i7
+	n7e1v+r273T8jGTq3BwgNVEIG7RFi+YYnn9wfsN0c7j9vENgwaCxkqy+Ma1T+LB8HmVdKby/kdZ
+	V+xaxp/9CrUnOj6UlGHoBYvF7oB0T2V7igBUxtXsPaS7m31ATyXQQpURJMrXRXtV9eDPfuS5Rxy
+	d6dVYzCFGws4rb96UN0HT2PpcSzhI/CbA+/Mso+UKD6y3zQmChxF6CUc5huVfp+nh9dWzNEoZvY
+	UgVDO6oP6cIQmGw9WlNhvA3OhPvwr3zAQvfTj903fAWQ2Rzg2x6Ms36aE5D7kyApqJS3k/YuYfh
+	Sm1vKdSxcTkitiO1Dk+BSPToEzcCMGXYJsdsEH2IIKLGS8XANOGFLz9arzMQNeLSJOa/oRDgu1x
+	FMnNxp4n3NlmYqlmjBT2xtgckF4sXtzolr2N1Ap635bYOK0L4n+4zkokcnRXB06b3qOqE13iWKj
+	tMGNgtHzwTElTT8mgIsfkdkZ129Mc+MScCWxAdjz/Y4SJoOazWzir4+N6fn3LT2yqMIdeQQwSjx
+	grUA==
+X-Received: by 2002:a17:902:d50e:b0:2e9:5059:4477 with SMTP id d9443c01a7336-2eb36430011mr137628485ad.23.1793829610082;
+        Wed, 04 Nov 2026 14:00:10 -0800 (PST)
 Received: from ryzen.lan ([2601:644:8000:37f::e34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ed08fe1e4dsm11237865ad.21.2026.11.04.14.00.05
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ed08fe1e4dsm11237865ad.21.2026.11.04.14.00.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 14:00:06 -0800 (PST)
+        Wed, 04 Nov 2026 14:00:08 -0800 (PST)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/5] gpio: ppc44x: fold __ppc44x_gpio_set() into ppc44x_gpio_dir_out()
-Date: Wed,  4 Nov 2026 13:59:57 -0800
-Message-ID: <20261104215959.24035-4-rosenp@gmail.com>
+Subject: [PATCH 4/5] gpio: ppc44x: use BIT() and GENMASK() for the pin masks
+Date: Wed,  4 Nov 2026 13:59:58 -0800
+Message-ID: <20261104215959.24035-5-rosenp@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261104215959.24035-1-rosenp@gmail.com>
 References: <20261104215959.24035-1-rosenp@gmail.com>
@@ -101,73 +101,42 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__ppc44x_gpio_set() has a single caller, and it looks up the driver
-data that the caller already has. Open-code it in the direction_output
-callback, with a comment explaining why gpio_generic_chip_set() can't
-be used there: the generic setter takes the chip lock, which is already
-held at that point.
+Express the per-pin masks with BIT() and GENMASK() rather than
+open-coded shifts of 0x80000000 and 0xc0000000. The pins are numbered
+from the MSB, matching the bit mapping gpio-mmio uses for
+GPIO_GENERIC_BIG_ENDIAN.
 
-While at it, drop the pr_debug(); gpiolib's tracepoints already report
-direction and value changes.
+No functional change; both forms yield the same mask for all 32 pins.
 
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/gpio/gpio-ppc44x.c | 28 ++++++++++------------------
- 1 file changed, 10 insertions(+), 18 deletions(-)
+ drivers/gpio/gpio-ppc44x.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-ppc44x.c b/drivers/gpio/gpio-ppc44x.c
-index b3cbc832cf24..20b3e9ce48e8 100644
+index 20b3e9ce48e8..8b9ea00f170c 100644
 --- a/drivers/gpio/gpio-ppc44x.c
 +++ b/drivers/gpio/gpio-ppc44x.c
-@@ -85,20 +85,6 @@ static void ppc44x_gpio_select_gpio(struct ppc44x_gpio __iomem *regs,
-  * There are a maximum of 32 gpios in each gpio controller.
+@@ -9,6 +9,7 @@
+  * Author: Steve Falco <sfalco@harris.com>
   */
  
--static inline void
--__ppc44x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
--{
--	struct ppc44x_gpio_chip *chip = gpiochip_get_data(gc);
--	struct gpio_generic_chip *gen_gc = &chip->chip;
--
--	if (val)
--		gen_gc->sdata |= GPIO_MASK(gpio);
--	else
--		gen_gc->sdata &= ~GPIO_MASK(gpio);
--
--	gpio_generic_write_reg(gen_gc, gen_gc->reg_set, gen_gc->sdata);
--}
--
- static int ppc44x_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct ppc44x_gpio_chip *chip = gpiochip_get_data(gc);
-@@ -128,8 +114,16 @@ ppc44x_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
++#include <linux/bits.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+@@ -18,8 +19,9 @@
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
  
- 	guard(gpio_generic_lock_irqsave)(gen_gc);
+-#define GPIO_MASK(gpio)		(0x80000000 >> (gpio))
+-#define GPIO_MASK2(gpio)	(0xc0000000 >> (((gpio) % 16) * 2))
++/* Pins are numbered from the MSB; the select registers use 2 bits per pin */
++#define GPIO_MASK(gpio)		BIT(31 - (gpio))
++#define GPIO_MASK2(gpio)	(GENMASK(1, 0) << (30 - ((gpio) % 16) * 2))
  
--	/* First set initial value */
--	__ppc44x_gpio_set(gc, gpio, val);
-+	/*
-+	 * First set the initial value. This can't use gpio_generic_chip_set()
-+	 * as the generic setter takes the chip lock, which is already held.
-+	 */
-+	if (val)
-+		gen_gc->sdata |= GPIO_MASK(gpio);
-+	else
-+		gen_gc->sdata &= ~GPIO_MASK(gpio);
-+
-+	gpio_generic_write_reg(gen_gc, gen_gc->reg_set, gen_gc->sdata);
- 
- 	/* Disable open-drain function */
- 	ppc44x_clrbits32(&regs->odr, GPIO_MASK(gpio));
-@@ -140,8 +134,6 @@ ppc44x_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- 	ppc44x_gpio_select_gpio(regs, gpio);
- 
--	pr_debug("%s: gpio: %d val: %d\n", __func__, gpio, val);
--
- 	return 0;
- }
- 
+ /* Physical GPIO register layout */
+ struct ppc44x_gpio {
 -- 
 2.56.0
 
