@@ -1,98 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.15
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793829115;
-	b=nDPyO9kDo5g82d4W4kFuWbYyMAIYZ34WiQ/qbAvUaDev4No0hHva0v14b+Oisgtge1pf
-	 JIcmP2Yt1ABoUzXJPROG4UJbXX2tEy+zXej1MMSXaJkCsuivzzMTD9DRWKR2chcmRfELT
-	 HviliV8sQ7XFSVlNjM/kvpa/1wyoYvJm7ac9Nx7uVRFP04qLE2mo9Wste5vVEh9t33eLH
-	 mqy+PqpjlSnRwjYFPcdP58aMZAksVmB3V8yGObpbjUnws5Vsc1UkHPaSxom0jBVfrVvMn
-	 8ij1c11n1gaqP9cdiCRSf38FAyjq8JMUwN0nv3NJD6jnhPVTtVABgnfualUuxslj+fg==
+	t=1793829341;
+	b=MNP90IjmutBjCd8qiuobX3qWVDKB8tqeBOGQp20/AY1eMfbkDlNk3i/UZdD31cNF7lE2
+	 Tshoz/uMpG9iyUcOspErBFgO3Sm0/E1vM+wqpOhjt70B9RoN1/R/D4+bfAhw+0rRuwtZC
+	 zdZM8x0P4968JMcbk3aJDZ+adlhvyZiUM/AU+7Sw/qGLvjE/DyA93PKQ6+OL+4Bjck/7L
+	 gfkfNgrwMoKB0euk/JzvGuldSumUSwSR7aeB1RpaD9jRKw71g/WvjSJUmHlYIR/NFejYl
+	 Hb1tzsGYdwb1hcr8ySS2crUc2raiS0f4pSwppnOcN2xDAPZfW23Q4qxNbMo4I+VlBWw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793829115;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Content-Disposition;
-	bh=zZRdp+Pnl1LNEQ8jQE4bngp2jSFFakeXxxoedfEkBQY=;
-	b=4XvpJnIJ5VK4hEscgWbLttxgKPrTT5L85u2telAArSXfGhv9zh8LV9Dc2RgJUgXrlaU3
-	 9oal6aqy1dcfUziaesN3+P8PhLFwyXr1MDaTOu2ux+5ZEwdrIlRkD7JCHynmVAjydgKBo
-	 SYm5Jsn8wZqtb+oUCrqQhJqsyeO9Xly6kVDxU+Gl5aOHLbfra9omFDxoqrWjD5xwZMxHA
-	 AlDl7M8yuVO98CCAFIloPRQ6mSkIp9p08O8aawaxaMcYWaPetL+6X7rohWlhFO0IeIg4u
-	 sk3kj035anzEuLsoHvN+rcy8faThNSyvMffodzbvO3e1uy+tdKhrStFRLEhAdrbrmDA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793829341;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=mNv4xjMMy7I5DQm+piFsVss84RDUYiAkm8TSEYtVupw=;
+	b=go46UjkzCvP1jpjUlfffGxgo3NwzaXghxXLOoNzRjsWRrfkO1KcN7aAFHqbjWXp3DqFB
+	 hmrdbB5HKovtUrpcC65KQiwUpddZIPniNysesr5gL5B6hNxXwA/SzbEfFREy5kwCC8vAF
+	 Ka2PMbQYIKWUOEK0Kw0Zgr8QPQGumbRjAfbISPJfVUPBhHUFHUPQs63feY7ZP4BTDlnh7
+	 IWOLCdGAmjdvzS7qF0hmjKyx/uZpF/1jv4WxvY40GzYeCn/hQ3FSj1DZZXvrMZxeWCoIR
+	 YMCv41d1H9nqtTW5WmEx1ovykJzZmqonFrHtQfnuC7Lpe/uq7ZVw+o3z5qf9O5wyk1A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gDOLe07a;
-	arc=none smtp.remote-ip=74.125.82.41
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=KRixRl9F;
+	arc=none smtp.remote-ip=198.175.65.15
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A506073513
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 21:51:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36A506073513
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F171C607491C;
+	Wed,  4 Nov 2026 21:55:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F171C607491C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gDOLe07a
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-1a2af4c8d00so2653850c88.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 13:51:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793829114; x=1794433914; darn=vger.kernel.org;
-        h=content-disposition:content-transfer-encoding:content-type
-         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zZRdp+Pnl1LNEQ8jQE4bngp2jSFFakeXxxoedfEkBQY=;
-        b=gDOLe07aeeSZo+hexjBhYUbSOKzXMNjSjUYplS9Gs2EAZf12Rozr8fHDc4iMibE+9B
-         agPXsS4u/taQA9jc0rHGDEismieEaAw2MzGgOfNqF0VEY6pg16kAqDaRqA5r3Kj5Kbad
-         BpAcp9jiBxrpqIZsaKHP1AKrYXaB5Mh9XW71/pdGWbBG59sjDD6NhyzUaBbKd2S98TS1
-         GHmN+9IYWvZELtc1Hq7eCI1bNvRC0oKCBOXvLhvlgNPNFR6w3+dmOKWNW9CE2j5UNcW6
-         NxSYVAsB16QglFwPq74tlWAdMdtqs6ogRLf6VG0qdtrUTCp/AQw/+y1M0gsbsm72iaWS
-         tA7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793829114; x=1794433914;
-        h=content-disposition:content-transfer-encoding:content-type
-         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=zZRdp+Pnl1LNEQ8jQE4bngp2jSFFakeXxxoedfEkBQY=;
-        b=ck+eTNMCirCytBwPJM7CTrsZx2IlxCeQI5fsaLA79jaZ+qLK2DP6aJBnL+pa6zBWeY
-         kECawmOJ/fU0nBR0wuqiB7bIac7zGKFpjOgH9Rz0SbaWLP2TSkdQACW+tBCVuYUAwP5Y
-         hoSI0KMfIG8WJOmJgjSZ3PZNw29B58HFP4CHRsftVb8h2Lw8/YssBSt+z2YZuOjSxm53
-         L4OP14oLuz9E/nYM9Y4DtEgFtJUIsVufEriwsnsQFfqw3gKotrMGntFWQip4Q2mtKJuP
-         PbSEWY6TtsBTqavFtm62t1CDRNpO5LrdD6N+2dNQta6Dbcw0/ak7v9F0x/lCKDnlB5N5
-         B2vw==
-X-Forwarded-Encrypted: i=1; AKwUvBz2OUe/Ngw8v/RARJ4DCrSW7GOwOzhfkC3OC9KEWwM26wOu5Rk9sU28EsCLLBgmaHBkxCtqQ6OnW7hd@vger.kernel.org
-X-Gm-Message-State: APuU4Z+lU0NKr8Lhzd/DgBlP/luRj+1tdbs3N9vHEUXc4NXymYVoW32c
-	h8GW6WdG7EysmxY7J9yBp8RRIwRibPYba5Et516SmXmZ1VF0l1krGXJleUgAFQ==
-X-Gm-Gg: AYBFou2bE+lHqsFaeko/LH2WbjWfAF3+Qguf3+Wlj6V1Ubg6VWHng0onAfh8s6ovVNV
-	AyC4sWGJoVpxx/4hc1Nmlx0DpLhtxFNy3IcKDcCTEqrvi9iRvO1iaa7AdVhjkLCTIxsx7loxbAC
-	zP+Bxg/HR5w6yT3BP0jVH/1yk/OoRJN6w2a1Kb0kMXspyU5EPHSQRO0vuAVwMEgYbXlBUmXR5Zk
-	gBLD9stUS+KXu4xPThipJ7XfKddADbTlszzzAN9Rp5uAoBE+m+fGgrHom5T783oQ/w+1TbFwuag
-	cAYfEf0g2R9njh7s0X68IlOv3BbAkUN3QAovFtw0Ni8iAlAz9CNG1XQ+RUpI9u8w7z0ZUUfhFqI
-	l0/7z1rAsrLRNYyu+Zk0pXCCrBjaC1rwppklKZd3ZmThfxnLQXor9BxUB9XMxg+ePArOIjfSWbK
-	I/PpAe3fS+Od7JKUX+yQbm+mqfX/wcYCM0S6T7xSmw8g4pfp64qIT0irSyU2Ox43z7Zb0UgEl4p
-	hxTazU/srh7Kz+l6wCsbqBpNZZ3x+rUVBD+UBnBZcFZQPoZ8+Q9h7fl5VPtWeLI8iXGjz76g2wo
-	3KDUp2Z+ftmpL8jKj/hZ6fvj9RDdLnR/LBDpx7NLOE4/lUrTwBxHH5iE/oDyI/1S/CX43C0=
-X-Received: by 2002:a05:701b:260c:b0:1ac:9ecb:acee with SMTP id a92af1059eb24-1ac9ecbb353mr21410890c88.39.1793829114147;
-        Wed, 04 Nov 2026 13:51:54 -0800 (PST)
-Received: from localhost ([2a00:79e0:2ebe:8:c8f4:b7d9:252f:4483])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c1c127sm10459946c88.6.2026.11.04.13.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 13:51:53 -0800 (PST)
-Date: Wed, 04 Nov 2026 13:51:52 -0800
-Message-ID: <73caedd26b375ae7671d24bcee115f05@gmail.com>
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=KRixRl9F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793829340; x=1825365340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dTKkmVA2sw1NSzd9GEd1jGm3jnMpihGVWC4Korlnq8k=;
+  b=KRixRl9F6R6ois8phQEPTCrmsGi+Bw2XxFI7vgE4FJweDEl6F2m6135W
+   cNHLsNlQALHNpYkNswmOBfUOJgJl40DGqeuUUIr/hs/cek0MyR6FpckM8
+   uQMArJG4f9gMxtA9QQkyol2Zua72yAKnCCXGrMY8yf4xngIgifbIjtWSk
+   1WO+VpOz+SGvdIYBtm9+3cMNXLOmL278qFSSvBgb7w8x08D9sXzYU9r4B
+   cZFgEMtmJNYEa+lgxrZfJsl8pWDYC8bdjai7VuIXSMXEDqUJ81ditsie7
+   dRsMfkedXUb7VfUdhICM4ukSUEFq5OfSGw2y25h/+aDni+looAp0rvKBl
+   g==;
+X-CSE-ConnectionGUID: hTbf9BYPR6u0e0lUoCRp6A==
+X-CSE-MsgGUID: LGxuMFe5RXmDsCe1QxkDHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2607141"
+X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
+   d="scan'208";a="2607141"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 13:55:39 -0800
+X-CSE-ConnectionGUID: 6E8Y/IVmRJ2LTESdn8bWGA==
+X-CSE-MsgGUID: wxIaTqaoRWCrl8aEME/UCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
+   d="scan'208";a="8609220"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 13:55:37 -0800
+Date: Wed, 4 Nov 2026 23:55:35 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] gpiolib: avoid krealloc() in gpiod_get_array()
-In-Reply-To: <auumQhqJwIl4XZDM@ashevche-desk.local>
-References: <20261103-b4-gpiolib-free-v2-0-ea46767c9cf8@gmail.com> <20261103-b4-gpiolib-free-v2-6-ea46767c9cf8@gmail.com> <ausjJSZkaGKNfykE@ashevche-desk.local> <4e7b28ae9ad5de3708c549d62a4bae68@gmail.com> <auumQhqJwIl4XZDM@ashevche-desk.local>
+	Kent Gibson <warthog618@gmail.com>,
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 5/5] gpio: cdev: don't overwrite the whole flags field
+ when configuring lines
+Message-ID: <auup1z79S7Rv6cMe@ashevche-desk.local>
+References: <20261104-gpio-desc-flags-atomic-v1-0-e23cedf619ba@oss.qualcomm.com>
+ <20261104-gpio-desc-flags-atomic-v1-5-e23cedf619ba@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,39 +85,51 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
+In-Reply-To: <20261104-gpio-desc-flags-atomic-v1-5-e23cedf619ba@oss.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 04, 2026 at 11:40:18PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 04, 2026 at 10:14:49AM -0800, Dmitry Torokhov wrote:
-> > On Wed, Nov 04, 2026 at 02:20:53PM +0200, Andy Shevchenko wrote:
-> > > On Tue, Nov 03, 2026 at 07:40:34PM -0800, Dmitry Torokhov wrote:
-> > > > +	bitmap_set(array_info->get_mask, 0, count);
-> > > > +	bitmap_set(array_info->set_mask, 0, count);
-> > >
-> > > You don't need these, as memory is nullified.
-> > > Also note that we have bitmap_clear() IIRC.
-> > 
-> > bitmap_set() sets bits 0 .. count - 1 to 1, not 0. Both get_mask and
-> > set_mask start with all count bits set (assuming all pins in the array
-> > are eligible for the fast path), and then gpio_descs_check_fastpath()
-> > clears individual bits for pins that do not qualify.
->
-> Ah, indeed, but we still have bitmap_fill().
+On Wed, Nov 04, 2026 at 04:37:00PM +0100, Bartosz Golaszewski wrote:
+> linehandle_flags_to_desc_flags() and
+> gpio_v2_line_config_flags_to_desc_flags() read the flags word with
+> READ_ONCE(), modify the local copy and write it back with WRITE_ONCE().
+> 
+> The per-request config_mutex does not exclude sysfs, the irq core or
+> drivers touching the same descriptor, so bits they set or clear
+> concurrently can be lost.
+> 
+> Build the mask of bits owned by the line configuration and their new
+> values locally and apply them with gpiod_update_flags(). The whole
+> group changes in a single atomic step.
 
-bitmap_fill(dst, count) fills whole unsigned long words with 0xff
-without masking the tail bits in the last word. Here get_mask and
-set_mask are sized to max(gdev->ngpio, count) bits and passed to
-gpio_chip_get_multiple() and gpiochip_set_multiple(), which iterate up
-to gc->ngpio bits.
+...
 
-When count < gdev->ngpio, bitmap_fill(mask, count) would leave bits
-count .. round_up(count, BITS_PER_LONG) - 1 set to 1, causing
-get_multiple/set_multiple to touch unrelated pins on the chip and access
-value_bitmap beyond count bits. So we really need bitmap_set(..., 0,
-count) here to set only the first count bits.
+> -	unsigned long flags = READ_ONCE(*flagsp);
 
-Thanks.
+> +	unsigned long val = 0;
+
+Why variable renaming?
+
+...
+
+> +{
+> +	const unsigned long mask = BIT(GPIOD_FLAG_ACTIVE_LOW) |
+> +				   BIT(GPIOD_FLAG_EDGE_RISING) |
+> +				   BIT(GPIOD_FLAG_EDGE_FALLING) |
+> +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
+> +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
+> +				   BIT(GPIOD_FLAG_PULL_UP) |
+> +				   BIT(GPIOD_FLAG_PULL_DOWN) |
+> +				   BIT(GPIOD_FLAG_BIAS_DISABLE) |
+> +				   BIT(GPIOD_FLAG_EVENT_CLOCK_REALTIME) |
+> +				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE);
+> +	unsigned long val = 0;
+
+Ditto.
 
 -- 
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
