@@ -1,104 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793749847;
-	b=SJhQLf97HhapvImO0gEFvRObKsQrH5wHywmPY5pd1hdmdlDhDpCkRv6EeaXWCw6K9Uct
-	 h0N9Q9aCHN7IIyMZbXIgqVsJezq7flhZIVRmwp1jkgr5TevXkBJosSHAPq4LJ/PV6cqM0
-	 0ElRQ3BJDNTrbgD29PgwwqWW5bMeU81x+bvBIrtEDIq5x30l1s516hlyzHY2wLnY9yhyE
-	 wXJTCmnNoMUBw3ihDEzquYQxG9qg2p9cCemz3H7cH+a0P1oMacy++SXbIC/B+Xgt5xrt3
-	 GuXHkxC2D6CeZnTTz25p0qkaVwZlKLDS7oGWwHkEzrUvtwaSrF/t71khOkDUry0a7ig==
+	t=1793750639;
+	b=pry8wATqayHV6KCV21agO/8O87mFzWfAIuGeYiYnGxBkZT/fq3bHG4WqW9MJnq/PkWWV
+	 dpco6lPRctcPDNFzQhDCQhw+S7WcevLTKSEHv5CwhD78CE7Rf8MlEoMbow9Z2qqvB5oP1
+	 D257t5n1tRXDXfPz00iMsc8ew6Qte29IvbGVdT2Diwy4UePJVTUT5ypjuQv+j8/UKgzzM
+	 i/WXf+zEjFGJT6DO1nPsu8OfhLOaopl2g3YtpwHPkbs9eVlY9Ijvr+Lq1hVlrRQCbYYF3
+	 g+76opDp1uGpzLSl4TMIdVuQ21s4hUs8E6hD+ADxvCyi5d/t0OTSu3co4PEqo8x64sQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793749847;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=0OloGj8iqKak18KyQuj2NIrdPY6e7xUKRD+nnxZZVqY=;
-	b=leIIO2zkba/RdyP7fOshpJHXuHz9zCTcG2gXxX/OBrU3UWpE8V+5sdLD0OgEvsVrhunM
-	 rPZnZQFBodcsTDSjCsDIO/owSOAfQM2jnWp07uYR3i0FUFaVj8aSobSaniHMnUXNc9jbI
-	 BKDP3GTU18sUIQgMwLf7978J4ad0mBJ68ctq+yYX6IXUYwnpe3uBPdMBZjRnHtCfZ+L7O
-	 fgPyhm6/AaV2KgBOry/eZT7/2vRR/Ywy3mk/PhPk0IPgOa5UtphTpnYOEJh3iF/OrZJTM
-	 TEepabgpo7bZi7Zae/hutFwG8p0j1kgilM4oC6fe3tcP38+F3eUxtFGdMMGxuaWXY9w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793750639;
+	h=Received:DKIM-Signature:Received:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=r3aZNOjnOM/RLfGwhrGPiT6hvhTdWlv8ilJgJsRefAM=;
+	b=gvR9DPrszw+7JrUojSoh3LneT3U77jfXMwdT1eb8uXdK7FwZlah02nRX+FOoobNayZ7E
+	 mjOP12fHw/xR/V3quymefjaSXHGn2dxKgd3/djBEUaZxXsvpiRYA/FyEPWSOv2Edv7iRE
+	 oVyNmT+hc194NINShhq0OaX+7754P93ByS/x0ZZej+sX3fPq1OI3wFzXD3aZmL41EPp9M
+	 tCYA47QD7xl2byxKZ6UTXuyPRwEU6V/J3WSHVrjuX6I1QhTKY7WvDNQcgYACIzfz/wMwX
+	 /CQALGzo9+xFpU8AU/zC8D5hGXZWTXPcLp3epBziNBs1YATFkYaQ4Xl3KVo2FssUJ5g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hkNOS+n3;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fZo2EQLi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236A1606A31B;
-	Tue,  3 Nov 2026 23:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF62606A326;
+	Wed,  4 Nov 2026 00:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hkNOS+n3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E34F1F000C1;
-	Tue,  3 Nov 2026 23:50:38 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fZo2EQLi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFF91F000C1;
+	Wed,  4 Nov 2026 00:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793749846;
-	bh=0OloGj8iqKak18KyQuj2NIrdPY6e7xUKRD+nnxZZVqY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=hkNOS+n3+2hTgtkaxcCoOXsqKeBibGisfXFzrpRmY7LplYQFpzrmZHBGX9uZamzEK
-	 YIjrgp0RlH3L8+ZTpIXFWcKBVnKnqnQLdTPPdLzDV2f2TL5snlf5WELDPs0PLY5OG7
-	 TJ0L5VSvgIIB3U7F4ngv+ca8WBjyPoT6ljkRm6uN1a2CYlSsDFabcGGmiXq5HGFsBz
-	 OpXtK8CVAXjDBAlE5bL/EVWbXtP2bGQ6onIxxcOpUJC2QjJZrwvP6b4+MvSwrGPSvD
-	 5RPka96oZUfza5XWX0mEM4pW6Pt4lJ0RaeSfVs/rEUjhY2vlB0o3KWGlXxzcntQ/XA
-	 MdrsFZKUgSmgA==
-Date: Tue, 3 Nov 2026 23:50:33 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Arkadiusz Kubalewski
- <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, Ivan
- Vecera <ivecera@redhat.com>, Benson Leung <bleung@chromium.org>, Guenter
- Roeck <groeck@chromium.org>, Linus Walleij <linusw@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Arnaud Pouliquen
- <arnaud.pouliquen@foss.st.com>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, Fabrice Gasnier
- <fabrice.gasnier@foss.st.com>, Lee Jones <lee@kernel.org>, Srinivas
- Kandagatla <srini@kernel.org>, Ekansh Gupta
- <ekansh.gupta@oss.qualcomm.com>, Ulf Hansson <ulfh@kernel.org>, Hans Ulli
- Kroll <ulli.kroll@googlemail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, Ray
- Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel
- Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin
- Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Shawn Guo
- <shawnguo@kernel.org>, Chanh Nguyen <chanh@os.amperecomputing.com>,
- Alistair Francis <alistair@alistair23.me>, Julius Werner
- <jwerner@chromium.org>, Paul Cercueil <paul@crapouillou.net>, Dmitry
- Osipenko <digetx@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>, Ray Jui <ray.jui@broadcom.com>,
- Scott Branden <scott.branden@broadcom.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, chrome-platform@lists.linux.dev,
- linux-gpio@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
- linux-tegra@vger.kernel.org, mfd@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
-Message-ID: <20261103235033.3e508f69@jic23-hlaptop>
-In-Reply-To: <20261102135330.2493332-1-robh@kernel.org>
-References: <20261102135330.2493332-1-robh@kernel.org>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	s=k20260515; t=1793750638;
+	bh=r3aZNOjnOM/RLfGwhrGPiT6hvhTdWlv8ilJgJsRefAM=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=fZo2EQLiQLmXsVQtfqJn9K0aJAup+2b64+8RxhRo9vunFWhP0f2LnKQHxQF+jsoq9
+	 skLL8QQNstbHbMWoAoL9jtJR987KfPk06f8u2NQhbZPbnhT4rUj3zzIb7aabqphgsw
+	 lEMUzEOvT+LK/YEK8eowLdX3grzTtZqtdNSUU7Lu7YbJSIU7FzCkB3qiqGMHyDCV3W
+	 fbWQVkRfPWV8yVphB40+rbhGeYIaf3pvhCVpOB6BWwIF84AcVsNXKIOq9JQE/qIEOg
+	 Nw7XAP/beq7POH1eHhlgLNYjc/PFxITfzJUhQEWxYx/1Jn/g4hxH0ypuMUEGfkUK+S
+	 sw0u7UOcFF4HQ==
+Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
+	by traversing.sirena.org.uk (Postfix) with ESMTP id 9671C25D853E;
+	Wed, 04 Nov 2026 00:03:56 +0000 (GMT)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -108,27 +52,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ASoC: pcm3168a: don't request the reset GPIO as
+ non-exclusive
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20261103-pcm3168a-non-exclusive-gpios-v1-1-5cfdcf36c915@oss.qualcomm.com>
+References: <20261103-pcm3168a-non-exclusive-gpios-v1-1-5cfdcf36c915@oss.qualcomm.com>
+Date: Wed, 04 Nov 2026 00:03:55 +0000
+Message-Id: <179375063580.2186205.641519776071903771.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=515; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=/+o8Fyciyj1JLUP/cU7r+cerXZbRxFpxR8o9GIEFfiY=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLJeleV8emy42vjhs06hf5cL5G69Djy7z0LnctSRykT5z
+ ysC28+86ShlYRDjYpAVU2SJy+J+WV/yeg3fwYVtMHNYmUCGMHBxCsBECp4y/Pc2KJ3q3NR2Wj11
+ Tut2zWscrV6CYScfTI6wsZR4b+oQ/ZHhr8T7Dwr75XdEpntemOgfqLU/VYJ9p6jAlMrz2fWrOX9
+ kMAAA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Mon,  2 Nov 2026 07:53:22 -0600
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
+> The GPIOD_FLAGS_BIT_NONEXCLUSIVE flag is deprecated and users should
+> rely on the GPIO shared proxy. All users of this codec driver are ARM64
+> and this architecture now enables automatically shared GPIOs for
+> everyone. The driver now longer has to care about the sharing so drop
+> the flag.
 
-> Unit-addresses by default (and most commonly) are hexadecimal. There's a
-> number of cases using decimal patterns. Fix all of them, limiting the
-> pattern to match the 'reg' limits if there are any.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/display/xylon,logicvc-display.yaml      |  2 +-
->  .../devicetree/bindings/dpll/dpll-device.yaml        |  2 +-
->  .../bindings/embedded-controller/google,cros-ec.yaml |  4 ++--
->  .../intel,ixp4xx-network-processing-engine.yaml      |  2 +-
->  Documentation/devicetree/bindings/gpio/gpio-mxs.yaml |  4 ++--
->  .../devicetree/bindings/hwmon/maxim,max31790.yaml    |  2 +-
->  .../devicetree/bindings/iio/adc/st,stm32-adc.yaml    |  2 +-
->  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml         |  6 +++---
+sound/soc/intel/avs/boards/pcm3168a.c would beg to differ about this
+being arm64 only, though that only has one CODEC and shouldn't share the
+GPIO so it should be fine.
 
-Acked-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-
->  .../bindings/input/touchscreen/cypress,tt21000.yaml  |  2 +
+-- 
+Mark Brown <broonie@kernel.org>
