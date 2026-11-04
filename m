@@ -1,93 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793783562;
-	b=xmu2okI5/6/AvdckRX4cvx0aaT+BJEKBNaOY6O3tZDZRsfwHwIktlmrvELQLVnhAwnHt
-	 F/FyEyjPk7PkZFKe57nRedvuRGSTOEg11ChBHdehxRJMhtbH+Ev8y3zb/yISP8q4zl9kr
-	 jSlSuyucSJbYfXUCAAlfW7mM1rMQ1zrZyWN0Nmjl56Na1gelK8gC+tRXv3xKJc1qaW66/
-	 VO/XzPZGkOZYnyuaSPzfUeLr9/Jp2WasorkEINFiAIcorsW0NbbB6W0gMxt4xf8WzzVpo
-	 GCqg3UbNe5No+Yjo1wx1bkj9ZVPPpPZQzZKcT0fEST4bhOFxQPxwZhrn8+6BPQbGFRQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793783562;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=2R1gNZLN1hJ4LSn6OOKlccVNHzTPuKUuY49NdzVSUgY=;
-	b=LN539rq59kYfHYD7b8oUwOv9TPTlxR/w3veIxNHwTulXLInaDHa3+f6j8lGxRmnUp+TH
-	 SIOeuYJOpsgK60dZn9jVKfr0UXcSKr3p8V6Nt+CMiCp0skC0DT3Nnzj+3SW4h4k9CGaIg
-	 a3LqBK7JBH6k0O9HIIxx29DLRGuMNTGXLhidgxzVbZ6MVEgJ7HnBfauSWKQGx8/UHSWoh
-	 PharpH/Wc3YwPhLqj2Ia/TqYemv0hUC/kTBrYAGNrn90tR1xSuCmUWqXMXjtIS47nwHVj
-	 FKq5Oecm0rjeFZtUxvBNLfKNwytUS8GBscBZXIJhPwNlQ8JwNjT2PCmwz+j04fMy8VQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=PygTu6EZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793784774;
+	b=WMcNtHKtm7vAZT5KlRBe2I2AstNdoNrF57bBi40JGuf0jUTGMur4v8lsq0QqmEVIvgYv
+	 D7fnjCZp/EW6ZUR3gdEj1Q+NcnCcnSORGG+igxSQM9XpxML7qBwk/JWonj2WcizEaXZ+M
+	 GkcyQon03vGs58xzymT+uYqngoUDNmzFZEuJPvW4DxpV0EpbQ7Axx9EXIDkWOsILsB8UX
+	 w6KDW6R90qhFaxE7oZbyi04FtHUGvZqaxc/vVLRkzwNjujWyYSY/a1Xh/KUv+g29om5QT
+	 GPGKikJpJrAkIyjmjjUFsSqmHwkqUoQbbqrK5BZmEMlrqzfHpxFHdUB4s076qu6BJSA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793784774;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=SkhmiTU3L0W+PtMKZoljzuVT2by2BnJf0VMN53m+45o=;
+	b=tpxU87Y/s1ilhprlfpAuu/0a3mlc8g/mzOHP3lUjX/9ba9flJpP2d3PAoYVnq0H9MXg9
+	 wQdlKIVTMe2HAbtudW6VEKnsUo9mKEpAb5H8BK0uiczyE/FNcqODg3QGK0zXIzl05Bltt
+	 XQPALC6scTqywEjZJuSHRZWdZd+wFIPj5ukoGE/kMZbj0X6KL4gnvL0N0Bomtmxd12mul
+	 lg08B6Y5QLpuvcZ75oSwwimUABcBH1ahYjRiGka8hiFbHMsWS6p6A5G8YVCDmKBIqnCx7
+	 NObXLA69t5wJU6ho9doh5AHP5VjX0rK9MynuU6ZLGkB/bRBF3BEtzL+78xy9b+ShHhA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="PQ3pDL/W";
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC3F606A31B;
-	Wed,  4 Nov 2026 09:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CAC3F606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E19A606A328
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 09:32:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6E19A606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=PygTu6EZ
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 934FE2008BB;
-	Wed, 04 Nov 2026 10:12:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793783557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2R1gNZLN1hJ4LSn6OOKlccVNHzTPuKUuY49NdzVSUgY=;
-	b=PygTu6EZx3iFJx/QNNaYQBb9JJn/lBHo15FEALOZTOoXoTURpjF9mElqTSdr53bRuHwSd8
-	NZUe/Oye8Y7oBr+p8+tTyLzE3aSKuaRNH5z3sOTqbDqjjWarGT3BlMb0yyOcyIwygicjna
-	jNKSGTtDjnOi1Ig4BMqHXcyUOZaG264CzzE3SzclfSsn1Wv7D6hK0TPTnt5FuuweIN7rOQ
-	McVzd0uPhV2uYAZCHFeNwktypkaP/OWMzWs0WzAuBtT8dVmEoESBbLwW+CMJs9GS+0mlEH
-	7eT5T5tQkYll/gvlDIyetT023EfHvVEv5g9ZbOrZOgQZpXtDAO9Xbwhlnkbabw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793783557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2R1gNZLN1hJ4LSn6OOKlccVNHzTPuKUuY49NdzVSUgY=;
-	b=EGdQKTN8bRNxKFWzFRfYy643yccWI3ajFIjdRa9ExlhJkDdrxDpT8QB7o7hMqVXd+PCPSp
-	rrQuvbQHZY2hZHid9B58DJTuWsKLgbfZJNvSmm6wPUR+GzmUvTr/mDHu96Oi3dYh4sgR+o
-	YVbesxDeGaZB3Hm34QwViVFj09Fx3RCrxGGKFU++b/ZZ6F0lBymtO1y3oS4xR7lc5ifsRs
-	dlWOSVSyxM6Le4klEYwTorMzwhm/e2hNMyYSrMXCr7554YdiMRCp7DGqVIvpiBMZkfE1Ly
-	51HKsELD1vnpSV2YJfg/dxt3S3C/02yGiZDxnz/0LKJQgRXM4jHDifx/A0o8wA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793783557; a=rsa-sha256;
-	cv=none;
-	b=TJp1fiSWScxi9NmfMwQ14hYdLzLfPA0uxwlLNzsS11PBCJ4NL0BilN7btNV7M6YoEBpnEp
-	PwQEYQZbzJXNb4vFIpLg+Eo9ag/qAHOfm9wxsGm46SrELqZ/D10aYTANDCgkTPF1vCaXR4
-	vzCZXefzOAEW4Y5Xk3ItUHLcHXcW/uihgzekUEYLkdtiGOj+PTwZGrYTxf2ktqoZ6V9BE6
-	snD7wei5xk9GsgFTgHZ8gEDTVPeVJ8c2H2Psyhv43s6NHH1XAQoA79EeTwDZL6pGFpIzCv
-	U3D2ImjCqhHzo9In9NQJs0NSazqT3LfDhjAx0YZ7lYHb0/Ye8lAz78Yom8+6GQ==
-Message-ID: <bd0d89d16c9effa60088131aa81b6d5786738c0c.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] gpio: Add Siflower GPIO controller driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: joseph@telaak.dev, Linus Walleij <linusw@kernel.org>, Bartosz
- Golaszewski	 <brgl@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Chuanhong Guo <gch981213@gmail.com>, Qingfang Deng <dqfext@gmail.com>, 
-	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Qingfang Deng
-	 <qingfang.deng@siflower.com.cn>
-Date: Wed, 04 Nov 2026 10:12:37 +0100
-In-Reply-To: <20261104-sf19a2890-gpio-v1-2-45e463c48728@telaak.dev>
-References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
-	 <20261104-sf19a2890-gpio-v1-2-45e463c48728@telaak.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=PQ3pDL/W
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so3822895e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 01:32:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793784772; x=1794389572; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=SkhmiTU3L0W+PtMKZoljzuVT2by2BnJf0VMN53m+45o=;
+        b=PQ3pDL/WaiOiomeexSMaOyFm+o2y1ATQPkbwmgNoTvH4LSLtI7Me6ph5fLKRtWMSRb
+         UlAosgGGwz10zXab1eVlWIchC//rHjxJcHyFJ1v6xN4RtHsy9iuww+3PoW5spuDekUxR
+         xBCn6aAOyX4c2QmznxlCnF2e1yAF1k2AQPtVD1gLIIdh++EJlC0P3HtUHd4oRoNX5/g5
+         O/E1dgHn0Age90xTge7TUTGIfst6vdEO67tz4JFAAvLGnCT/9m3Llj4o2eGop8BEreU6
+         FqabL6Jw2D/YHH6/ZgdXYWRkkqbJ0R4ALDaiYEAMYbfUTpRn8U+KPjM0j5RKMXcbXFc6
+         hDLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793784772; x=1794389572;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SkhmiTU3L0W+PtMKZoljzuVT2by2BnJf0VMN53m+45o=;
+        b=GONpRO53o4S7sH3SziomTd1bMafpf+y5q7kgC7xeniaOC4+IBsR7xNwdAR/OiC0NAT
+         Y75hyC+BpqMD+pRddNRMZXgGtCxwyb44IClXbK/1xmexSvv8/61tVrM4p6zuOhb5wTUX
+         bro/aBFpUki6chV/fTxMDm4rbaCjN+Umxq84dcbMX6w0zzNqGYJooBjoz6qQy5zk+H/n
+         ZgR2uRkryjAXJgJBxpE9Xe/Iqc81F6U1TPbWjAHpNq/35aM6v1jtFAv7MOSjz1kDYFht
+         sR9+aoAOlwvsNGX58kjcmLTi3yoAxViIOLZMjTg5Dk/IMi/vGoXRUsSR4xmL89rv2VoV
+         HAGA==
+X-Forwarded-Encrypted: i=1; AKwUvBz89diwVH+IAW6I8BMZ4U8YeybgNnXmKyXF5oUMgAVzxUuH92p9/19zS9FD5j2TiZG/MogTxXv/sUfP@vger.kernel.org
+X-Gm-Message-State: APuU4Z8czCqx1i+fhd4Wy2vEBg+K4l4BSHE86h4LEfsSCmNtTJCb4Zct
+	WWDY3mnRJIB/5XeUIEZjX7ohNAEYqFKmJp0Y5LWJd3mKhn5TtoOTGjOpKQDthj/K8as=
+X-Gm-Gg: AYBFou2OJu1ZCFV3P1V5+50LLXGCM9ARVyKgl0XhISHOxpRkr8V9DDlU2lLIXTCUdGr
+	ozG3P+KOd6J58BRmiR/MwuxpjxRjr7zPaC+97l0/gkh7BvPaJqnLG4kDF2Vq+1nmjdPp1fUmhfd
+	IFAoLiyisG206jq55MQiZoaCu+asXEmBTqhfxZn9jyWJiqtBredgulz/3ZhtZEnZzFiLlTQYk1+
+	6lKrDDHSHWdP9HlMMcqe36wsHgL5L8EPSCNNjQJs93pCM0DPHM+8/B4RaD0NlQF11i0hZjWonb5
+	za04AvXq1dLq/zaUk57wvH/B2/DWk8P3KGF2r7WyuZ5/S206c2XGzI9KZUAw8+fLkTqBuc6tv6m
+	6YEsARF/0ZQrxaJ3LfFT1iZpP+TcvXuFeVF0sPE6JD4rdELqwocuTqoZmwmQjSQgB2GYMWiRsHS
+	zMBcvCbog4nJM5AP3wdl3Ba9Ynsg2zyEXu83hnK3iC9LR4cWJKWeYvXeQe127fUdgNMJ86nyAkh
+	gDTTiUp2N+2lXXsLRkUMO0xScjaE7VmGSRdkzngKSmC9oD+ouyUF+vz/mexmggJeDB/HmXdhCyL
+	Aomz+RCgR5F+pLyOr+3RDz/O0M4+ITj2pwpL5fkIQmRI5Ws8g7cosAbXietx05gMRWrXJ7MXvJ9
+	zGQ==
+X-Received: by 2002:a05:600c:840e:b0:4a1:813f:2a60 with SMTP id 5b1f17b1804b1-4ac17d168b1mr393740865e9.11.1793784771558;
+        Wed, 04 Nov 2026 01:32:51 -0800 (PST)
+Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fedc09675sm2799433f8f.55.2026.11.04.01.32.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2026 01:32:51 -0800 (PST)
+Message-ID: <1995c873-084e-462c-83eb-5bc454882c18@baylibre.com>
+Date: Wed, 4 Nov 2026 10:32:50 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -97,112 +93,67 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] pinctrl: scmi: report an off setting as not set
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
+ Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
+ Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
+ <20261030-clegoffic-pinctrl-scmi-gpio-v1-4-52d92843ad97@baylibre.com>
+ <aunHoe9PfumHp0Gh@ashevche-desk.local>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
+Autocrypt: addr=clegoffic@baylibre.com; keydata=
+ xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
+ K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
+ BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
+ AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
+ B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
+ 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
+ LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
+ vLfPDQ==
+In-Reply-To: <aunHoe9PfumHp0Gh@ashevche-desk.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mi, 2026-11-04 at 02:21 -0500, Joseph Telaak via B4 Relay wrote:
-> From: Qingfang Deng <qingfang.deng@siflower.com.cn>
->=20
-> Add a driver for the GPIO controller on Siflower SoCs.
-> This controller is found on all current Siflower MIPS and RISC-V
-> chips including SF19A2890, SF21A6826 and SF21H8898.
->=20
-> Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> [jt: from Chuanhong's siflower-7.1 branch; depend on MACH_SIFLOWER_MIPS,
->  longer Kconfig help, assert the reset through a devm action instead of i=
-n
->  .remove, which ran before the GPIO chip was removed, drop .owner and the
->  unused drvdata, drop the irq_set_affinity callback, which reached the
->  parent through irq_to_desc() (not exported with SPARSE_IRQ), call
->  gpiochip_disable_irq() and gpiochip_enable_irq() from mask and unmask as
->  an immutable irqchip must, find the group by its parent IRQ instead of
->  assuming consecutive numbers, return 0 or 1 from .get, read ngpios with
->  device_property_read_u32(), linux/math64.h and sorted includes, "Siflowe=
-r"
->  spelling, subject]
-> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
-> ---
->  drivers/gpio/Kconfig         |  11 ++
->  drivers/gpio/Makefile        |   1 +
->  drivers/gpio/gpio-siflower.c | 325 +++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 337 insertions(+)
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 55e428002..6125a8452 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -721,6 +721,17 @@ config GPIO_SIFIVE
->  	help
->  	  Say yes here to support the GPIO device on SiFive SoCs.
-> =20
-> +config GPIO_SIFLOWER
-> +	tristate "Siflower GPIO support"
-> +	depends on OF_GPIO
-> +	depends on MACH_SIFLOWER_MIPS || COMPILE_TEST
-> +	select GPIOLIB_IRQCHIP
-> +	help
-> +	  GPIO controller driver for Siflower MIPS and RISC-V SoCs
-> +	  including SF19A2890, SF21A6826 and SF21H8898. Each line can be an
-> +	  input or an output and raise an interrupt on either edge or level,
-> +	  and inputs can be debounced in hardware.
-> +
->  config GPIO_SIOX
->  	tristate "SIOX GPIO support"
->  	depends on SIOX
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 88f748846..bde618108 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -171,6 +171,7 @@ obj-$(CONFIG_GPIO_SCH311X)		+=3D gpio-sch311x.o
->  obj-$(CONFIG_GPIO_SCH)			+=3D gpio-sch.o
->  obj-$(CONFIG_GPIO_SHARED_PROXY)		+=3D gpio-shared-proxy.o
->  obj-$(CONFIG_GPIO_SIFIVE)		+=3D gpio-sifive.o
-> +obj-$(CONFIG_GPIO_SIFLOWER)		+=3D gpio-siflower.o
->  obj-$(CONFIG_GPIO_SIM)			+=3D gpio-sim.o
->  obj-$(CONFIG_GPIO_SIOX)			+=3D gpio-siox.o
->  obj-$(CONFIG_GPIO_SL28CPLD)		+=3D gpio-sl28cpld.o
-> diff --git a/drivers/gpio/gpio-siflower.c b/drivers/gpio/gpio-siflower.c
-> new file mode 100644
-> index 000000000..6eb560da7
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-siflower.c
-> @@ -0,0 +1,325 @@
-[...]
-> +struct sf_gpio_priv {
-> +	struct gpio_chip gc;
-> +	void __iomem *base;
-> +	struct clk *clk;
-> +	struct reset_control *rstc;
+Hi Andy,
 
-rstc seems to be unused outside of the probe function.
+On 11/3/26 12:38 PM, Andy Shevchenko wrote:
+> On Fri, Oct 30, 2026 at 04:58:35PM +0100, Clément Le Goffic wrote:
+>> A get of a setting that is on or off, the flags and the pulls, returned
+>> 0 as a value, so every one of them showed as set on every pin. Return
+>> -EINVAL when the platform answers 0, which is how pinconf reports a
+>> setting that is not active.
+> 
+> ...
+> 
+>> +static int pinctrl_scmi_map_pinconf_arg_get(enum pin_config_param param,
+>> +					    u32 *value)
+> 
+> I would dare to keep it on a single line.
 
-[...]
-> +static void sf_gpio_reset_assert(void *data)
-> +{
-> +	reset_control_assert(data);
-> +}
-> +
-> +static int sf_gpio_probe(struct platform_device *pdev)
-> +{
-[...]
-> +	priv->rstc =3D devm_reset_control_get_optional(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->rstc))
-> +		return PTR_ERR(priv->rstc);
-> +
-> +	ret =3D reset_control_deassert(priv->rstc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D devm_add_action_or_reset(dev, sf_gpio_reset_assert, priv->rstc)=
-;
-> +	if (ret)
-> +		return ret;
+Alright, I'll do it here and wherever in the serie.
 
-Consider replacing this with
-devm_reset_control_get_optional_exclusive_deasserted().
-rstc can be a local variable then.
+> 
+>> +{
+>> +	if (pinctrl_scmi_pinconf_inactive_flag(param, *value))
+>> +		return -EINVAL;
+>> +
+>> +	if (param == PIN_CONFIG_DRIVE_STRENGTH)
+>> +		*value /= MILLI;
+> 
+>> +	return 0;
+>>  }
+> 
 
-Don't use devm_reset_control_get_optional().
+Thanks,
 
-regards
-Philipp
+Best regards,
+Clément
