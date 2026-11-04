@@ -1,56 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793807577;
-	b=sRcCSdji9eZeK5EYL6fiBasouBhZ4ojz/GTFO2vQDcHuyfUM6qk7T9Cbnoa+cl18jGxH
-	 62AakZ5tcVDZSLi/azjnkvvzPwOckqF6USYHM/ROcaT2ylIX7Z7JvTVXqNWo2rDGs6oHT
-	 yOrlx+/yrNVqxMfDBfgNj5Ff4uL47k8EyjBcOu7nFmqkxhTAq86lDNA84dczzyqXcdPrc
-	 RBIjFEMIY4VNFlnLJuhMteFujrOQpu4E79YeHkTI6eigCL7+7Wte7jViJwAyR2quIUqH4
-	 KhIHmOPNbdu6czCVrQfZKkaWZMogaUlwaq13VXKrQTw4lTB4cg+rdH2hO1FT7rhZx5A==
+	t=1793812422;
+	b=cbbcz0wjfSGnSX2WuEkDPlXiqsFYeils1vLcg1F0R+qGaKmkbv1xkdTIkGYXvIoqthRp
+	 gXsHN9tj5NfZLT/c/G9GQGBK0ELOUmAojRp32fov3vS3ciWY0GzRke3UVWkRAExk545gM
+	 1WMS/X1bQTf0fO7VuHNwjjuc99CFqyue+9JCI61Zvt27Atlm7yfxQCOgqsplKskmFyz0Q
+	 HF+F1Ze7m9j8jwSmXYfoJfJxcSziejJUV2CnrSGgDkFnFGLEaIDqTXtCiY73Bd5vlm1wz
+	 loOUzMlr7u0RpFhwTQ6cKsy2AIA2fESKxL/I558/VThsk2XW9OgOyXlf44k2cJPOqIg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793807577;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=stB1Zk65R6Z/tz5KjkCqXBrc9Cv2dpE0g7T06+yrmQI=;
-	b=1Gjg6y13SxUPDIogHKNLuAuuEdKDDZAiHbLqr5Htj0sHyaqCLF6HS2VlWnlxOjKXPEEU
-	 +KxSUS4q/Or4keOzk2iGfeKCNY8X1S7zNczU3o91mHfP8S7eUxu0zE29/CvU/tkSN5Smd
-	 9ER4ZAMTaAGnkS3iHE5HK2kIc59mkAhhgC3QgtnmCa6Ze7A3TC3b/AnrHfzZIXEyOtbyk
-	 +P97TY53PYR4ano4g+CbHuq3BQc4ydYSsbG5f3HYjNI5yVVUqNu4ukIiKIEfTSq2wJbDO
-	 ToJqMUBMzajBYVONPynNH/0kT80YD0s3Knji7XRGgjzAYSdDizu5jEgQllcr4IEdvGw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793812422;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=Mo6MQgSQwly5/Nd50C4GzzMt65d3gXpbq7S61K6m7jk=;
+	b=3Pz2x4wJI8LzNQg654nusZV4ozBrrGf4DdGG+Nc74WPAMpbZbY4zOeXWnoAdQBPGUTn6
+	 vT2z1noC+UQ0SMDr7Mi//X1SFAQGQOwvTBuTiJU8yEwWoEvXk7V27WI+rcWrqb+q1nxlm
+	 wtoaS0E82BYMT4AiwmyhK2X/9Xo8iB27VXBEDVACfAynkqEQKVK1xLpOSZAgu3ovxRZL7
+	 VUSIOJtnYmkenn3J4c+Tc63rH0u6lNE8bV4W+i1gWuM99Y1+34JsMoUDqWss0sVtLrBCz
+	 Eu4zWfS43MCB0dIZnuItVnkfj7ZMkdr3CcsbGwkxglMoRu8PxQqiX+LBzf6SOB+7n4Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RIzxcYMq;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lKWJY5Ne;
+	arc=none smtp.remote-ip=74.125.82.48
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EBD606A335
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 15:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399C7606A329
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 17:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 399C7606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RIzxcYMq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2581F00919;
-	Wed,  4 Nov 2026 15:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793807576;
-	bh=stB1Zk65R6Z/tz5KjkCqXBrc9Cv2dpE0g7T06+yrmQI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RIzxcYMqwbv9tDNjnCN+7vQfcgLf7x5ZT/4goZY2uRB7KtmItJiBefSRQeLvQvStt
-	 ffClYrB00LD+VElSrosWZTy4BOUJCiNrGiq0h/NtsJCougFsze2pMu+eUXYOo9iF5v
-	 GeMkkT49fiGaQe3YmOBPWl1RH7XjuSnKM7G0NlHzQaYqhSwi8JRZLphWLKuNnrQXlR
-	 EhkUq4RUoIUejT+slzprOuxN9BbjpPhX806rhEPoWlmSD6uPPZaO/gaJtKFSgNq6nk
-	 nlax6GhNsx1cxZG8n7/4oetyozPDCZlLygTd0qUQ2Gc8ffBBUt3zBav2aRSujx7cK9
-	 HLWQuyE34Pj7g==
-Message-ID: <sashiko-outbox-197549@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/5] gpiolib: provide gpiod_update_flags()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261104-gpio-desc-flags-atomic-v1-3-e23cedf619ba@oss.qualcomm.com>
-References: <20261104-gpio-desc-flags-atomic-v1-0-e23cedf619ba@oss.qualcomm.com>
- <20261104-gpio-desc-flags-atomic-v1-3-e23cedf619ba@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 15:52:56 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lKWJY5Ne
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-1b1ce85287aso864127c88.0
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 09:13:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793812421; x=1794417221; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Mo6MQgSQwly5/Nd50C4GzzMt65d3gXpbq7S61K6m7jk=;
+        b=lKWJY5Ne+YISueLkvjHTSkvPcct3R2zv2Ql9mqX8h3ez2vb34Q91XqDIm/+ioyss/Z
+         IJIw0atgdYPkjOHlJEHr67FwnGtFeoRPtfSOlQKbhLkujtcgc7qRCgkfGB4wbUHSiuPM
+         8vZZoM0nErBLav2TBhehR1t20wCmGvKLLqghBYRIzeEze9apMoTOKWbkuPGW2tXSzCLD
+         9qhfjXMoDvWS1B/cQ46HnDDxj1Nyi0zjD9grdEMXa+W1htAgQNV5EBA103CHDT5BaULK
+         SY7Q+NQ5+KoPqbVTOHed1UxOTNVHm+5W8OIj39G56HsqWGOk6FgCML50qHmYZPUTPBvl
+         5sqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793812421; x=1794417221;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Mo6MQgSQwly5/Nd50C4GzzMt65d3gXpbq7S61K6m7jk=;
+        b=rTdiu1OK80VygVfBsSEBPMn8IakSgbe1xECZWguYuxB5/tS6Khvd27GvO9xilwp5H0
+         OkjYwqpd38HnvyGdUWAwimJJWjp+pTX08KWh23FjWnoru3B19JyJCIvC6XfzVoPCQKH/
+         W2mlc4b6ZiBGVZR5shBSnH2BkWzWryZ/ROBC6SqhmJI43o5yb7JRJJqScayr1NyBV5c6
+         arYQQfGW3IYledDkYI+GajAyaDKbo9MsKdbVmbYHvv2P0TaaSiBNCZ1PwNEAz+nmyCFz
+         v2VHkUpxS4o0hitGRdI1+trV2aFmo1+DCrLUcDOGUR7wKkgi4w/Y81A2pr79qYPInnq5
+         eF7w==
+X-Forwarded-Encrypted: i=1; AKwUvBxspoXLFWTIhF+QuSVMsFgueHvh19oTawJeJWyFMxN0AMG//avowRAQWRzE0CzDQPoyakOB5qbF9Oji@vger.kernel.org
+X-Gm-Message-State: APuU4Z/AX7v1LljQCi5dl/xG2HFwDxPPdd+8exRqszHRdnXQeipHlQVh
+	0MVMzzRnXHk4r0+G5j10XhMESBWDYjQd8Nt4eaEZKr6wyKzuG4+A3udm0fWw8kU1
+X-Gm-Gg: AYBFou2ouzwvu01ARSWY/65XOAyBRfq7S4hy9eobMEy84Xob478J6PsByGmj4LE7jtb
+	T9li6VuwzOgxH6zp39oLFcj+BotIkm3IX7v0zjSeuhUvWPifgfgN/YOiG40dzPNEBHVvl3lqXz9
+	4Ky9tdVWRPejsVNQrrzT5m7x2Kpqf2PM8rmz4OxIAcqHH2kYNHnO+e9j3BogFheEfECfPZXUTrk
+	ntVwgCIdTmNINmn8z76EuJvmhSJq0Jbpm2vFVYe4AC5baRtBnjTVTLI8tU2BSYLVDlUHM/+t5dh
+	Guer0WLcngp1il98xil+ic46lfKnz1rgZwYpBImWFiDiJrXCfiQDqQX0c6wp+U2fAH191cbksY2
+	CPGpNY57X9socAFYzBgNDEDjDtxnLiBAX1A2ZxdcUf/0DV6r7Z/xynmGUagbRUD4OMYrFIIpCiK
+	64JdsOYfoxiSat7R/ANK2mcittEHnOIwbqFGwsgrcKg17I+4tJy/bSHyCrTXmK+SMnXb44bWuOk
+	KtFe8WTtO2RhSfoPqG0HjtvpDTpphZ4eQK+aj/JDnsViy8c6hQR1Kv9McdTPYi4shP16QutR0r+
+	NYMmN58bOfvU23mjy6vK5Mu17QDJsJ7LXIiQtjfOiGjwWlNReruxQVYtVTEqGEzxQ2Ws
+X-Received: by 2002:a05:7022:b05a:b0:19c:c396:37aa with SMTP id a92af1059eb24-1ac5d1d058amr24439664c88.22.1793812420949;
+        Wed, 04 Nov 2026 09:13:40 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:88b4:22ec:d621:c1b])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c1bcedsm9021788c88.7.2026.11.04.09.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 09:13:40 -0800 (PST)
+Date: Wed, 4 Nov 2026 09:13:37 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: sashiko-reviews@lists.linux.dev, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] gpiolib: avoid krealloc() in gpiod_get_array()
+Message-ID: <autm__StHhgBMcdd@google.com>
+References: <20261103-b4-gpiolib-free-v2-0-ea46767c9cf8@gmail.com>
+ <20261103-b4-gpiolib-free-v2-6-ea46767c9cf8@gmail.com>
+ <sashiko-outbox-196636@kernel.org>
+ <atiydn7hetz4pfgpgybjfcdcwugp3rnqqbovtm6h45kaeh5bov@tqkc4qqm5zbx>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,83 +97,77 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <atiydn7hetz4pfgpgybjfcdcwugp3rnqqbovtm6h45kaeh5bov@tqkc4qqm5zbx>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] gpiolib: gpiod_update_flags() open-codes set_mask_bits()
---
+On Wed, Nov 04, 2026 at 03:23:26PM +0100, Bartosz Golaszewski wrote:
+> On Wed, Nov 04, 2026 at 03:48:34AM +0000, sashiko-bot@kernel.org wrote:
+> > Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> > - [Low] gpiolib: delayed initialization of __free() variable in gpiod_get_array()
+> > --
+> > 
+> > commit ab11568406b8d4aa5255ce95e09509f3e6c86285
+> > Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > 
+> > gpiolib: avoid krealloc() in gpiod_get_array()
+> > 
+> > This commit defers allocating the gpio_descs structure in gpiod_get_array()
+> > until the first GPIO descriptor is retrieved so that it can be allocated in
+> > a single pass without needing krealloc(). It also factors descriptor
+> > allocation and fast-path checks into helper functions.
+> >
+> 
+> ...
+> 
+> > > +			descs = gpio_descs_alloc(count, desc);
+> > > +			if (!descs)
+> > >  				return ERR_PTR(-ENOMEM);
+> > > -
+> > > -			descs = array;
+> > > -
+> > > -			array_info = (void *)descs + descs_size;
+> > > -			array_info->get_mask = array_info->invert_mask +
+> > > -						  bitmap_size;
+> > > -			array_info->set_mask = array_info->get_mask +
+> > > -						  bitmap_size;
+> > > -
+> > > -			array_info->desc = descs->desc;
+> > > -			array_info->size = count;
+> > > -			array_info->gdev = gdev;
+> > > -			bitmap_set(array_info->get_mask, 0, count);
+> > > -			bitmap_set(array_info->set_mask, 0, count);
+> > > -			descs->info = array_info;
+> > >  		}
+> > 
+> > [Severity: Low]
+> > This isn't a bug, but in gpiod_get_array(), descs is declared at the top of
+> > the function with __free(gpiod_put_array) = NULL and then assigned later
+> > inside the loop when i == 0.
+> > 
+> > The cleanup.h conventions ask that __free() variables be defined and
+> > initialized in a single statement at the point of resource acquisition
+> > rather than initialized to NULL at the top of the function and assigned
+> > later. Could the first descriptor be fetched before the loop, or the
+> > allocation structured so that descs is defined and initialized in one
+> > statement?
+> >
+> 
+> Hi Dmitry, please follow the cleanup.h conventions here and in the
+> subsequent patch.
 
-commit ecaf66699b4205d02175949ed385d130f83c667e
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Hi Bart,
 
-gpiolib: provide gpiod_update_flags()
+The convention (combining declaration with allocation) will not work
+here because that would make the allocation have wrong scope.
 
-This commit adds gpiod_update_flags() in drivers/gpio/gpiolib.h to atomical=
-ly
-update a masked set of bits in desc->flags using a try_cmpxchg() loop so
-concurrent updates to other bits are not lost.
+If you want I can move declaration + NULL initialization just before the
+loop. The topic of pulling allocation out of the loop was discussed with
+Andy, it would result in duplicating the code and making the result much
+worse.
 
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index 650a702741dfb..10659ffcf2bae 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -9,6 +9,7 @@
->  #ifndef GPIOLIB_H
->  #define GPIOLIB_H
-> =20
-> +#include <linux/atomic.h>
->  #include <linux/cdev.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> @@ -223,6 +224,26 @@ struct gpio_desc {
->  #endif
->  };
-> =20
-> +/**
-> + * gpiod_update_flags() - Atomically update several descriptor flags at =
-once
-> + * @desc: GPIO descriptor to update.
-> + * @mask: Bits (not bit numbers) to modify.
-> + * @val: New values for the bits selected by @mask.
-> + *
-> + * Replace the bits in @mask with the corresponding bits of @val in a si=
-ngle
-> + * atomic step, so that no other context can observe a half-updated stat=
-e of
-> + * these bits. Bits outside of @mask are never rewritten with stale valu=
-es, so
-> + * concurrent atomic bit operations on them are preserved.
-> + */
-> +static inline void gpiod_update_flags(struct gpio_desc *desc,
-> +				      unsigned long mask, unsigned long val)
-> +{
-> +	unsigned long old =3D READ_ONCE(desc->flags);
-> +
-> +	while (!try_cmpxchg(&desc->flags, &old, (old & ~mask) | (val & mask)))
-> +		;
-> +}
+Thanks.
 
-[Severity: Low]
-This isn't a bug, but include/linux/bitops.h already provides set_mask_bits=
-():
-
-#define set_mask_bits(ptr, mask, bits)	\
-({								\
-	const typeof(*(ptr)) mask__ =3D (mask), bits__ =3D (bits);	\
-	typeof(*(ptr)) old__, new__;				\
-								\
-	old__ =3D READ_ONCE(*(ptr));				\
-	do {							\
-		new__ =3D (old__ & ~mask__) | bits__;		\
-	} while (!try_cmpxchg(ptr, &old__, new__));		\
-								\
-	old__;							\
-})
-
-Could gpiod_update_flags() call set_mask_bits(&desc->flags, mask, val & mas=
-k)
-instead of open-coding the READ_ONCE() and try_cmpxchg() loop?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-gpio-desc-=
-flags-atomic-v1-0-e23cedf619ba@oss.qualcomm.com?part=3D3
+-- 
+Dmitry
