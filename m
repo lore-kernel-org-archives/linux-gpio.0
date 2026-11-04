@@ -1,89 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793763651;
-	b=nORN77IisSM5Zn7zlBud3C7a5dExQ8moqa3naFhM/ehZQ5AmGwWzhS4oDCONQBp21AZg
-	 p1YvP+ZlnZr9CVxj9FIuyIzYM9xkusBGI7YtM6c9oYrKFG0JTg4FBVkvgROtHKuD7YScw
-	 Q2QI/X1SENU+k1sRMnmvnUCWxsqfQYWCI3plxO52hAkwsd0Sr1BjaTEK/ZM/bP6wclqas
-	 +68xSlTBGVTO8rmefgnSeA3O13YTNqfZ7SDD5Wje+PotCEfaBI5amyi+V072phD950VgW
-	 y18v6HLBoZDbChZ8T+gFIjbk8ksltn+haCJ+ANRscRvaqokwQaL5Fahio2npC6r3CvQ==
+	t=1793763652;
+	b=ATlQ6jUtEpxy695hR42k/yQ3NBgi8dOroSHlMG8tTyfLBrNp83yCHmxlek40sG7pLjJD
+	 +2NvH1RUqlZzlTIr2zsaoDXQbArGV5uMbWdvBK+ONcaj0udjQT/YlECe4sy3Tj/deQpFd
+	 IRZ/2Yy+A1yun4X7jbl/sWh8A0nrLWx8KU3kteWRpD0NrdTNArpFXDBE6n0VyBt3QHXK4
+	 pQwxI+L0652HqiQ8iKe97uIYWItStC09KoAzPvp+Igbaca71qd2B3es9WJqxBHw1Qg/qT
+	 8/5v6Cyj4CgcLqXa/JRBo23+fPbcw1FFFLsgtrjkyBGF42J5nqH9//wUpwMDTaaCiXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793763651;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793763652;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=7tLpRU/GEaCK+ENwOIrn/UUBZtS7oPSYWzO0iXkGUew=;
-	b=KJoURsV7bGZvwFZMeSh3IDKiFyKoE+09B+hwlWtxhFoI+rkihNxi/JY4J7CNeodtaWei
-	 U/et2tyT07SqwvzVttt7wGCrcO/oo5BT7fw5iHouLbNxHZs+Qk2K2kovDGyHbAElYxJzR
-	 eiQEUNOV4aPfXcvSILXaelOrFdifY1k3i/Nm9SrbPSvxVwPl3vZC176z/ueXL/nNYCL3M
-	 +LFY+fd7po4lroF9WmGEwH2EX5WPZQurjN5nKSIuDQwaeIGkR2qUm3pCI9PAQEIHZX6/W
-	 Wl46aEGw74t3+LBMhoHachTEkaAnf98lMal0X0/BpDt+Hjyr9JRUQgTWaA1mYdIaKxQ==
+	bh=CMahDvz56irRBx1gnxn2z3ZFzp7EgAuh+2+EepgNqPE=;
+	b=Kv7vcRZIAoQiF0iNZeUv3+BGbQaBNJbTgABg8eo6xi3ItMJioWbNBJxIXlggA2JZLFxV
+	 3tY3TVEPy0sSVk/A19u2dpzI0hE3MXLlEcmzUnfAVeWZ+KUmAIDNGp2MOf6oaokfCSQvC
+	 +d85ovx1ohxssPhdWxTn0J1nZUl4sXN4QdbHHtvdbLcx57m6cYneEw8XDQDIoxJX1u3BD
+	 HHzJQSy4XMOEi/4Ki+sJrQDQxlqOtImlIs4AzjJIkVJGBZ62rsfyJna2dpgDT/pRInYnQ
+	 yet524vbYa4kmZgMJy5HgXaqzXgq8QPY6RchE8fWwCt8OZIdKqopH4JnJCnswuHrDKw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TNShc140;
-	arc=none smtp.remote-ip=74.125.82.171
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AGC6OcUD;
+	arc=none smtp.remote-ip=74.125.82.177
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A79606A332
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 03:40:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7A79606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0495606A334
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 03:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0495606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TNShc140
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-35c76e9614aso304231eec.0
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Nov 2026 19:40:49 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AGC6OcUD
+Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-36a315ed211so201089eec.0
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Nov 2026 19:40:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793763649; x=1794368449; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793763651; x=1794368451; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=7tLpRU/GEaCK+ENwOIrn/UUBZtS7oPSYWzO0iXkGUew=;
-        b=TNShc140HF6GeM3l0UhgsC130gsMRbIFXc7y6L4MvnkM5SJtkw+yaI/Q5OyKn3JSK4
-         6MytQRnySFW1OOlWm1A2EuQ40Ybog/6Kywh0hMP4GHARZbQD5AtOau9Oi+OFUXmq0Zh+
-         GiOC/uaPmT6i15VzqLly7EDOLxW0tw9/BT3ZxcPHqNaiaceWZVi0Sz6LC2IBYb+6q9d2
-         DpXJ/WLrim0XE4oMFRFjsEWL/BMAbMqXqE3zMzs8Sz/tB0AyHEinTCdG44PtZsBgqrFi
-         Cl1QjE6awQ8D2bmYqNTH8Rlr6sZ4BhsHAyFGcwEIfrYDtlYflmrLcoPp8icIa3lGilgn
-         SrkA==
+        bh=CMahDvz56irRBx1gnxn2z3ZFzp7EgAuh+2+EepgNqPE=;
+        b=AGC6OcUDUNU/d/0qxUBE5zKJIlD5Hbam+t0uwA7i/sctLwDfcezjgl30K4oOI+Nr3b
+         x3Chnw51W7m+cCcydK4WAx+KukCA8IuOVy8zc0TxTXL1ohNbNrpRugrsq0gZ7swekkuJ
+         SOyU//kcJ3/F9euRhbvNFFWaUsmJM/6po2/CS4KeR4+ypuLO6olSkOuCYy91jeBu1YJE
+         mK1iEozmv5RBfnYOJcFFKs5M1ym7ZwuoiBJK5GDkLzTZF82qWtxMwAlGVjkfsH19DiQG
+         qxPVFHk+4f694UdznnS0VvSTuYjeK1UDCzOJNxdoR8Twr1hRksuYqxjcW6fo7d6y6dqS
+         2qKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793763649; x=1794368449;
+        d=1e100.net; s=20260707; t=1793763651; x=1794368451;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7tLpRU/GEaCK+ENwOIrn/UUBZtS7oPSYWzO0iXkGUew=;
-        b=EgPrEW99F5Q/nKLUclAXAN0Q5pOR9glyH6HMw6TEkHAa5TUMhv2GIoyVom5v6zpRmd
-         CglKS/7B+rrjXMxPTzgMtvSz3BiQRK2yQBfUB/AnGkaKiaoAg/cUVhVD/7Gwp6p0Q7ne
-         1s6RDk6RgKTvO5q6OdcC1/8/Ytkz1Q12vYnDr6QZ5B8qZdL5ovJ5/8W4viCyeQShBDNh
-         RTWTP2jjzhy2nyafJSB9OhELFE6QK5h0xbLnuXM338/lZ00E10TF8WgauUQqQbPywapZ
-         eZcdRRvkziun5ONmA/g0hBiyShgzRHNrpgw76/gtQ+JGujsn6gls/OnaSR5ZSoqgLgAc
-         SmPw==
-X-Forwarded-Encrypted: i=1; AKwUvByLBhkkDR2t326LC8wSEuPQasTL4rUNtCsaqJBMP8wA75JDVi4Iz2sihryo4LuJOJdAov+ZKlonOKSw@vger.kernel.org
-X-Gm-Message-State: APuU4Z+Z5RwCtxHSjwRNDrCHth2qQKopBQyAail47oPKmUuMuZVcZ6Qa
-	UTmiMyJu1erFdcuXPWBn2qsG/wZqrFMsDOWnW3gyoo5SyGBkMHBnZYdE
-X-Gm-Gg: AYBFou1GrJ4KY2XmsR/Xz0NNHw7HAKraxJng03ulMoSYprZL7x565Zhll51Im1wjoeD
-	wlwVUhIIjpweSBIB+XWQSMpdejQjsKyPEo7YvZ4R0JFY0pLLXJkuvVU7vSE9pjRIDUcjUnXePoR
-	ypj+R5RONMdrDqiuw6yHhTCA3cE9yzCACitt+KHT4U/1HDjmzguuq+ZM68hlDiL5sIRRfV6TWCo
-	3R3RQ0kwZExh8S9jGWJoAx0ndBvJDZb7DB5qmEe6Gz4XPdSaYzSZoZG50WdoSa4b4n5wxY8IImR
-	EQ3C2Xs0ZybD2aRyKyZxoNxye/oG7uwr5CjHdwaXc1EKaLyiOMQpgi7P4+uaNgrOU7/8hPwRUFd
-	WYcmSZfa+2J3olir8rxbUCFf2idVRa6FfI2eePsd2oS7UR5zATX9BCRG5Hqw0lzR1AhNsWRd8UV
-	yJO16FPnYC1NXegEQVKsCuekj9hpXi5IASAnfiea/9s9BtuCcIGi4WhOxDvg1VlGFDRNKE6WQ62
-	YtrY1lvOucilwleLVokvTPc5z82Qcr9BmGzZTtIl/LL4oQU2k5bjo6x0LYBzLLV/2FAN5IeuIDx
-	g6ORxE4C6pE/HT0/e/NqYCAwAyOUZw6kyeJSBlVwrstK6sOWbrEtkAfpNHTuRrU5wci9JGUvAwD
-	vpieiq1miAykRwy9j
-X-Received: by 2002:a05:693c:20c4:20b0:36a:75aa:33bc with SMTP id 5a478bee46e88-36a75aa36f2mr8196445eec.24.1793763648908;
-        Tue, 03 Nov 2026 19:40:48 -0800 (PST)
+        bh=CMahDvz56irRBx1gnxn2z3ZFzp7EgAuh+2+EepgNqPE=;
+        b=nEQMIenMqL085bTW1G1in1Mu0nJq0lyfp/LcvbmmMJmQFYhyP9h2kMSO+yJdcSytN/
+         JyPpXkNedVXEaWf78k8odM8dpijJwgbtth41kwEC4e4XnKrkZA/Mx5ngvbu05uCGnvQw
+         pGNaQhdQRO3Tw/uWq5VxIL1Ka4bzBTUB8y5wtZFOoU9hvsSq38KT4wlF1gdPhk7czcTN
+         qWgsTpzzJPho/YJiy+VPPmWamsXwGaGtrRLnAOGcKfvve9VibIZ8vmHyGVyJITwGzCZG
+         FvqkEZK4le5UBt/UdgAGXUdBj0WOJazVn+2VjnUobAZaTW80LZ4n4SA8hF6WW6PVh0hp
+         bEjA==
+X-Forwarded-Encrypted: i=1; AKwUvBwGTvetIcweRBSgQkLUAduPBSzDbiJCKlkZ6IGPfx9siMMaUC3Bain5YJMP84aUaf4pQsu2Cz/iJZNL@vger.kernel.org
+X-Gm-Message-State: APuU4Z8nKR1tqDdbeBoIhhKy/+NVOkBVV0JGhm2dCWPA4C3R7Kl9nomW
+	792uVi64lpbockGutPE4YWFUTgxv26Er4DxcHg9YECvTLudex4EpmtLv
+X-Gm-Gg: AYBFou0srfONJ8bJqQgUhpoI0FCffjGSUXHBbQEIeeI7Jfh6zX3pRy3fQSVvo6CPO2b
+	kY8KrwJybrYuE2xv6rJsov+/AvxpV8gK242GYzpuehe7rVKu4GW5hODcLMNpbNcLMgVoRHY53Db
+	IGOjOF+4Psykh7tySfL0EuPm/Dfrl6h538U3CwWzrlUJsv8fF8E6+dpOSwO847VN6h51DfoUeQI
+	23qL+S1siFC5cH8ORq/oajONxOg85eUd7oUETT6BQC6Nkq//nh30KiI1X2bCee+7z859Ch506UY
+	mUx/8G1pMcp+jCPGmRCoS2IdN5UxfVYSOQiRVp3FcWHgKvrhQJW9wPoTYLmqWacnkmNLAu6/V6H
+	QsrxrGJs5QHJJZMM0HXYdEAu8cec4F3VfASoKScQmDuLbXzRBNmDta7SETBrf+SSAuuZvwvH+A7
+	QDmw2seD9W0ku1P6FHNDgBR/r/Trm56k8Ozb94nU51mwNSF3MknCSoYmzojhfmoreYIWJFAM1mR
+	PrUIwfMjQ/MAqaHmVOsO3Rr0DXly8+l925gl03ARebkxq268WbJU4lLpAZwMnKyjJu2XkI59iXJ
+	AXl9AEPCtluV/BlFgoScVBL/YtexumdVogXqz2idkBL8fripDLFTzTHHqocYaa97HKMiLOdT+NP
+	wxwLXpf7gegi7GcvE
+X-Received: by 2002:a05:7301:2ab4:b0:36c:a26f:83c4 with SMTP id 5a478bee46e88-36ca26f863cmr1639630eec.13.1793763650582;
+        Tue, 03 Nov 2026 19:40:50 -0800 (PST)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:88b4:22ec:d621:c1b])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36ca3784f78sm3528508eec.2.2026.11.03.19.40.47
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36ca3784f78sm3528508eec.2.2026.11.03.19.40.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 19:40:48 -0800 (PST)
+        Tue, 03 Nov 2026 19:40:49 -0800 (PST)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 03 Nov 2026 19:40:31 -0800
-Subject: [PATCH v2 3/7] gpiolib: of: return -ENOENT from of_gpio_count()
- stub
+Date: Tue, 03 Nov 2026 19:40:32 -0800
+Subject: [PATCH v2 4/7] gpiolib: add support for scope-based management of
+ GPIO descriptors
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -95,7 +95,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261103-b4-gpiolib-free-v2-3-ea46767c9cf8@gmail.com>
+Message-Id: <20261103-b4-gpiolib-free-v2-4-ea46767c9cf8@gmail.com>
 References: <20261103-b4-gpiolib-free-v2-0-ea46767c9cf8@gmail.com>
 In-Reply-To: <20261103-b4-gpiolib-free-v2-0-ea46767c9cf8@gmail.com>
 To: Linus Walleij <linusw@kernel.org>, 
@@ -105,35 +105,39 @@ Cc: Andy Shevchenko <andy@kernel.org>,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.17-dev-e56a4
 
-gpiod_count() and its firmware backends are expected to return either a
-positive number of GPIOs or a negative error code (-ENOENT) when no
-GPIOs are assigned. However, the !CONFIG_OF_GPIO stub for
-of_gpio_count() returns 0 instead of -ENOENT. This causes gpiod_count()
-to skip the platform_gpio_count() fallback (which triggers when
-count < 0) and erroneously return 0 to callers.
+Add DEFINE_FREE() definitions for gpiod_put and gpiod_put_array to
+allow using __free(gpiod_put) and __free(gpiod_put_array) for automatic,
+scope-based cleanup of individual GPIO descriptors and descriptor
+arrays. Place these definitions after the CONFIG_GPIOLIB check so that
+they are available regardless of whether CONFIG_GPIOLIB is enabled.
 
-Change the stub to return -ENOENT to match the real of_gpio_count()
-implementation and the other error-returning stubs in gpiolib-of.h.
-
-Fixes: f626d6dfb709 ("gpio: of: Break out OF-only code")
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib-of.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/gpio/consumer.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
-index 218cfe5bc4ac..9ca540d93f93 100644
---- a/drivers/gpio/gpiolib-of.h
-+++ b/drivers/gpio/gpiolib-of.h
-@@ -46,7 +46,7 @@ static inline bool of_gpiochip_instance_match(struct gpio_chip *gc,
- static inline int of_gpio_count(const struct fwnode_handle *fwnode,
- 				const char *con_id)
- {
--	return 0;
-+	return -ENOENT;
- }
- static inline int of_gpiochip_get_lflags(struct gpio_chip *chip,
- 					 struct fwnode_reference_args *gpiospec,
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index fceeefd5f893..ee183a97575c 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -3,6 +3,7 @@
+ #define __LINUX_GPIO_CONSUMER_H
+ 
+ #include <linux/bits.h>
++#include <linux/cleanup.h>
+ #include <linux/err.h>
+ #include <linux/types.h>
+ 
+@@ -578,6 +579,9 @@ gpiod_is_equal(const struct gpio_desc *desc, const struct gpio_desc *other)
+ 
+ #endif /* CONFIG_GPIOLIB */
+ 
++DEFINE_FREE(gpiod_put, struct gpio_desc *, if (!IS_ERR_OR_NULL(_T)) gpiod_put(_T))
++DEFINE_FREE(gpiod_put_array, struct gpio_descs *, if (!IS_ERR_OR_NULL(_T)) gpiod_put_array(_T))
++
+ #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_HTE)
+ int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+ int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
 
 -- 
 2.56.0.385.gac671c819a-goog
