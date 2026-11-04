@@ -1,77 +1,146 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793823392;
-	b=2bgTGdw9j631R9r+ZZG0Bh93sh6QoM2wCTAzoiUXODPgLdz8Fe29zNxt32jYpuhGuTfk
-	 uqDTWNz4PBPPQogbpimkwsuIEG6NLzrJrezJpLrxW3jU23eSAMWnpbD5VJXGOXDqE6zFB
-	 2UKnj76rm9VGYl4w6ARtkCK/Bz5ZgzRlBOaj7jVba2/dIxI6sznzQKvo064KAnrJnudR7
-	 9sGe6qMvJ+56GXcchmoThbFWQM/wAp62Kj8JMI0KFLXq+MmT1Chd6VOWHvdlADyVGV2UG
-	 ImDFc/nEduONopvCaZhvSRjDnJLTrHd2uf3aJbOXRz5Lji3cuSPX8iTUkTzFUG7F1gQ==
+	t=1793824362;
+	b=sj1kAh2qDVRnOqBQ7wG3dx7JOSO/9XFoy3dIRsF780QBc8XTMyWAXaVeTWZtKizbM/nL
+	 6L+FM3g7614G94aYlro74Khc2ZhnTwLQUfpsdjQPJtyQvTgNdcnnEF184VKEUXhDp0sHx
+	 MQxh0I9FMGRheLjkx7oxcyCPIE9aOGxwltZ9wvOX6Fu6u13jvaclr7LngNSHMlV8EuQpx
+	 QSOxsUvcUqwojojp/xoM8atquu4OxFxoyx110wV4stBN2dENwtZ1u4OaVYmYNjqEeURA0
+	 o/UU+bVGfC/lFZ5iP3erXmRiA9jL74JRRFzKLY8Q7plv7Po1uj2DxesyrF2YTRJQtHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793823392;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=foLRpBa47s9ruCMxuyoA6DXIF2wwXVPMOzwICiq0ito=;
-	b=GoIipr5pR84WZAhxKcqgfPdJf9lrtCfK9XZ1f2F3MGTdhgZ0GD9STa7EzPNCBlDcHcmi
-	 PFJDqXCHkMZoU7UYtwJpKxogCLu5GSRZ0I4x6BRuwP3VejyrAFXqf2KqT6Ind6KEMjNZ1
-	 gePa1eUMH/2Y3tGDH5q/lc5CBpBFa/R+zhHfrqmK98HLjvm5XRW2cF/PQfHpulYh04WUd
-	 O/5Xixlo2/wEAL6ODIabxCMxKZ3V4M3HJpZR6+ZjzvGxeDxpjq9/lVgn2gOjHxva9Bq+Y
-	 ClE0McyRpw+cHHlMbj4B+8oI4lb8B0KFysHN1OIhwp/ixArbicCGb9ea+rtXGDxagkQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793824362;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=/lO0mL+cBkndSMWtbQjIRUpGnu/CrhJuhEAaumulM8U=;
+	b=YVC3Mn/VC7P76FJ15bd2We3Gd6k7YVGKx+NuVKS4Gf4LD01XwHJzBU7q9uZJc8FGkkKd
+	 mS8Ei/PgcbZyF4cIUaMnk3O4x90hZnpkH+5eD2Qhff4g8Q+qeoQiqpRgde5++csGj6dT3
+	 SVkbZMpqdf9sF/5FMqQgMQlssxTlrfd9dk90RtJi/T9k0X+24StqUhFgEQqLJ3DXvyK/e
+	 2HvNUwWSj1z3zzKGOsYZbSzEjBB1nenCTGNFJKyTcrNkzHgGk9ZWVxWfxdjTgDUT1ubaS
+	 NrylY7fDJiZpeCvET0m8GXzNhyfi82su0eRvAV1vaNqe1b04+y9FDog46ckuxMDI7Nw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=telaak.dev;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.216.46
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=azykdYLR;
+	arc=none smtp.remote-ip=192.198.163.13
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4B2606D810
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 20:16:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6A4B2606D810
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ac9f49b984so737810a91.1
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 12:16:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793823392; x=1794428192;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=foLRpBa47s9ruCMxuyoA6DXIF2wwXVPMOzwICiq0ito=;
-        b=hvPrPpNEA8aC9M7MtvYP28b+B+ug8X1AWBu555NdtNv96li4DIHVtYrh/HOEZ1RIUM
-         ZZdXhwj3TL5jwVu5fDf1Y18g1S701OKPxYPTkbzZ8vIhoruAPoGV9gEs/JfR+ADpMYLT
-         J9IPVjPkBwrlhfZ0TwNA4/uNaCHJnzb/H/y3CgPslOZ7851PS25qjGf9Q00WA78YuyXa
-         qzTzaVKuPx68+hahknAdPP3GoMoeG0hVsnX5ILphcWXIh0PGXUGOUpSV8Va7C6aPgrNx
-         AeVBT5uqxh9/p8HXB2vj+m9bU0qtUe0pGSn7tPEc1IC/uB82VLjK0a6zYCd6DjbLpk2R
-         YsUg==
-X-Forwarded-Encrypted: i=1; AKwUvBxmia0PaOVPvPups4/kPWpjESjEZHclb932Fqk5BtjUeZjwjz7d/zv3oPd+JkFGq7eLzk5EcOduVIwb@vger.kernel.org
-X-Gm-Message-State: APuU4Z8OO8h/0TIgTu0SQqfvRh7Szi31Qeitr8zE0UhGu/6CGsUUmsLx
-	6uNeDG5CpMh4w9goLipK9KXKTgXRID1Dq0ZQoVAMu4kPyob/5/YBAknCtIHQaO8B
-X-Gm-Gg: AYBFou2b+qk1W9SSDuikd8WvXGvHYCTSznd5M1f7elEm6j9nRrIBrSMOS+mu1ufbYid
-	p6FvJtUGuFrr3QB3kfkgyYKjal+LKPdKTnKpObJ+YQubo+afvGO5cdbu+HLjcHcnfme4wrr0huw
-	me/BveTc6ltdHTWC1Ci2299HANtxuQKMa4idcjVspLFMr/0HOOeSUwtHBIoJhYCd37rAYEJBBR7
-	WRYHRGJR9TxArP2l9+YuyRW7sp0mC3x7xH0z7P25IyeJBx6BtYN0QgL3XNieaOpGLv8GuMtl1zf
-	dvoVhx1NG/xq739wjtbH8oc7n0L+K+kNg2TFYW6oo0z6f1lRCYBXopvAiPbder2uiUY49IHocuZ
-	B2LmwcZuV6PUV79UHT5E7ljkKy/pnpqsKZ40j5IS06MxZ2t7N1JV/Zzj7ixVFXTvQL0AxbvXeOA
-	J+pdapJMU4JiJ2JYv9MjZG8hG5xBUzg/IPrfAYrto8uxV6RXAzgm7+2r/XiUZ/v6ogJCg7KUu6o
-	SYCBYiL1H5SEVgKCi4dkZdb9ejw7hLy+qM/e/ewaGS5Fdy3ofYqUeNiyURPp5rsVGcoZ39kshPE
-	sEJtHhnhQpjVKRug7qZ0+kMvJMxNUNdLE1IiBPQ6qoc5TCo78yvhC0ylqSQ+24Q/Xs7OiD9E9UR
-	YqsYfocRrXxO1pZLgMLdnGQq0lH48qHUMtpKrq+v5j5QkkQ==
-X-Received: by 2002:a17:90b:d09:b0:3a8:786a:cfed with SMTP id 98e67ed59e1d1-3b0afc81192mr253558a91.37.1793823391663;
-        Wed, 04 Nov 2026 12:16:31 -0800 (PST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com. [74.125.82.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0b31601b7sm415218a91.5.2026.11.04.12.16.31
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2026 12:16:31 -0800 (PST)
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-36a315ed211so1124010eec.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 12:16:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwybxGru5GcEDAU5/aEQv7YlpBTFGehNf74NUK6eKQyWQBScegLYweJVMhHunMa5VZfX6LT6J1VKtZf@vger.kernel.org
-X-Received: by 2002:a05:7300:dc10:b0:36c:a1bc:6102 with SMTP id
- 5a478bee46e88-36de0488bc8mr1203042eec.0.1793823390961; Wed, 04 Nov 2026
- 12:16:30 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE163606A84E;
+	Wed,  4 Nov 2026 20:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE163606A84E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=azykdYLR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793824362; x=1825360362;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6f8UgVjKpQ2wVNTwKjGWI3IG5kYob1To5ZXvPuHXznw=;
+  b=azykdYLRMV+Zru+0A7b/DkYuNubzZsIpW/0gDE9PhJBscjZ8sZlhtsj3
+   QSkQ+XOSIQbg7vjgJ+33BRRniLnHeWYLHEoaE9wACUvKv5NJPqvkTyM5p
+   Hc1yJrjIP5rHWLT6QrceUqs+NOdL9qk8Kn1EbVREctTyq4JUxn67nKSBx
+   rNmxngRxfJ7OdkgwXr+zXCORu11/VV/Id7JDlhO24Qo+fFg429CxtKopk
+   Elaww18k4nm/RtUKhNfWA8DNxc0Z32200kbc4EJ130OjwTOqiZPdTkhxI
+   02/j9tCw7B2WZjRk+uJWZihEgThCcz1IyHVLsEUz3qy/xM4WniYXhxzGF
+   A==;
+X-CSE-ConnectionGUID: rMJT0IByQKOFP/qWIL8mYA==
+X-CSE-MsgGUID: GDELmCUWSnGbypNy/YupbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2590678"
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="2590678"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 12:32:41 -0800
+X-CSE-ConnectionGUID: oeRVokCFTSG70c80N5OpXQ==
+X-CSE-MsgGUID: cq871yY0SA+tQsjaqT4Xmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="6690148"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 12:32:23 -0800
+Date: Wed, 4 Nov 2026 22:32:20 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Ivan Vecera <ivecera@redhat.com>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Chanh Nguyen <chanh@os.amperecomputing.com>,
+	Alistair Francis <alistair@alistair23.me>,
+	Julius Werner <jwerner@chromium.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Ray Jui <ray.jui@broadcom.com>,
+	Scott Branden <scott.branden@broadcom.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-tegra@vger.kernel.org, mfd@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
+Message-ID: <auuWVGsyb3RrOIfh@ashevche-desk.local>
+References: <20261102135330.2493332-1-robh@kernel.org>
+ <20261104-vigorous-flat-dingo-3e5bd2@quoll>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -81,29 +150,45 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
- <20261104-sf19a2890-gpio-v1-2-45e463c48728@telaak.dev> <bd0d89d16c9effa60088131aa81b6d5786738c0c.camel@pengutronix.de>
-In-Reply-To: <bd0d89d16c9effa60088131aa81b6d5786738c0c.camel@pengutronix.de>
-From: Joseph Telaak <joseph@telaak.dev>
-Date: Wed, 4 Nov 2026 15:16:19 -0500
-X-Gmail-Original-Message-ID: <CAPY4CJ76e+ij8zPg3kEi_1qNt1gqh2PuJRCTcvQghsAHr2Ft2A@mail.gmail.com>
-X-Gm-Features: AclHuK_OSxtEYlXiOHps7a-cMZJsR_Cw4vnjS7VT6Pg5ApAUwbgB-aNStGUXOis
-Message-ID: <CAPY4CJ76e+ij8zPg3kEi_1qNt1gqh2PuJRCTcvQghsAHr2Ft2A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Add Siflower GPIO controller driver
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chuanhong Guo <gch981213@gmail.com>, Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Qingfang Deng <qingfang.deng@siflower.com.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261104-vigorous-flat-dingo-3e5bd2@quoll>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-> Consider replacing this with
-> devm_reset_control_get_optional_exclusive_deasserted().
-> rstc can be a local variable then.
->
-> Don't use devm_reset_control_get_optional().
+On Wed, Nov 04, 2026 at 06:32:43PM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Nov 02, 2026 at 07:53:22AM -0600, Rob Herring (Arm) wrote:
+> > Unit-addresses by default (and most commonly) are hexadecimal. There's a
+> > number of cases using decimal patterns. Fix all of them, limiting the
+> > pattern to match the 'reg' limits if there are any.
 
-Thanks, v2 will do this. The binding makes resets required, so it will
-use devm_reset_control_get_exclusive_deasserted(), with rstc as a local
-in probe.
+...
+
+> > --- a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+> > +++ b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+> > @@ -123,7 +123,7 @@ properties:
+> >          const: 0
+> >  
+> >      patternProperties:
+> > -      "^layer@[0-9]+$":
+> > +      "^layer@[0-9a-f]+$":
+> 
+> These two lines are looking good.
+> 
+> Andy, it's okay if I give Rb tag?
+
+Yes, again a pointer to 34d1e754155b ("dt-bindings: iio: drop unneeded quotes").
+
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
+I expect to see
+
+ Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> # xylon
+
+or something that matches the piece you reviewed.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
