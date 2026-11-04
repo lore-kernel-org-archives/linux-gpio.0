@@ -1,54 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793795453;
-	b=23pyaEXduoUscCx3Ay6MKIzIbPl923XoW4aTT3Js5FXEjcfgrhJALkX9Lwg2mSDw4PTo
-	 LqPUcaUthL7KkAxp0qthlN3wMiu2WgXtSh6SIi2+W7uBboQCSJmsG68GyYwz8CFAdMrfA
-	 zhIzEdYNBAgOuKzZhN4HULjGllDHMRpu4BSdzArxg5VMkNpqVs7B3dvTV785iIUUoqiRx
-	 hxH6CuXI1tUG7avOYokVy52uBLF9LmyrBCpTv+DSbnPmZSjm0pJdT8x1RWLFCKn7JZZdl
-	 p4KElskT6knJhT1+B32QbkGd1S7dQuQ1+ujfXpjaSpgUbNxvg3ajRCR5zxduhGylmiw==
+	t=1793796882;
+	b=dqMopq5p3+9Xjk1MgaurWebuWfnG9ZEgZI8pJbwiGGfhvd7o9yW4yndU6aUJ3EM4tN5z
+	 AKqFdNPv3dxhS27LQlglZoPvzHgndoxXrMf76BUmd85LVQhF8iwiPH696U1yLAaOEcgPU
+	 WPjFqtxj9lmxhsx/NE9f7pN1R3jVBXy1qOnRXlYu9X8FkszFrx50yXRjDT+JbgPAjXQ7j
+	 ddUqKfuKXFr0hlwXColPkqWyRSBRGCiEPQ5fZ0bd72pFBFGzW9X1QwuKou4wrEM40FcSm
+	 9LjXdiSSZNamtezHvZzacJ0rDdE+MHqje1vjCbcO3WOTVat0lOhGichFJF4r1/RtJyg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793795453;
-	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:
-	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=nLTKrRV7zGj2+I2eiQhkslScmWRTzYP0lSx7u0c6KX0=;
-	b=2vVPuu5K+GzROH/+35dPj21MLzDrjxfywQaky99Td+MZgPdtkeFJ42hWUFomzVkrjEwK
-	 5qhnRXRpUUt4KrnJ2W9jTlx59kkoe86RHm7JgvzA/9Eu60F4q1fEqBocmishFvCc8Hit7
-	 WFv63vVWPnKcj25NdL9mpT59Ukhq12q4t/GREZVj89hIFfvwgXwfM2g39P7W7ROLvBlpi
-	 PNd0E8E9ELslJsN2BvdyUjNJ9IzpI5UddiDF0YepNkQ5O0xqmStwtDZwNvW/vVLU4pban
-	 PHj9coTKtR8ZPlIxhzacIvxH7bkbbkyMS3p97TyI3xpzmGNrA6EGDY2i2+sQwDwRYWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793796882;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=c8OLoXUADxmTIhb1ARQ3kSmrgr4mjHrNRuEWZTw6vgM=;
+	b=otLeMBhLdRPQ5YzRdxnhVlka2ea0XdxymamfGGu1+U3ps5kT7Qb2o7gDsrFAO/0VUPlU
+	 GJR4DDML1i+vmdIulO9n3Tsa54/f1kBioOfISrVmYBOhsCECQ4FGmdmSQ4E4Y3IBB2ynV
+	 74v/bzqP6cIxXv0yieFW1uO0wmcIwqwb9at2cndVDTIh8cha0MCH47h3kLzGjJCbpKf0O
+	 wuas2gFjxjKDlqJcvdzm1aYSYAeYRQ2H1lorh2aquIXU9Ix4uYSqma81CsbwbH6BLa73B
+	 YS+hu0HbEfsGjy4NoJPsNZnEcQRUg+3Hrz/FCLWXtFGJP4nrSV0HBWuIt4ZkKPwqc/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i+eOpIVC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mQtWwU57;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B784606A330
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 12:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6DC606A328
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 12:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i+eOpIVC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2228F1F00A1C
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 12:30:48 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mQtWwU57
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 217651F0093A
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Nov 2026 12:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793795448;
-	bh=nLTKrRV7zGj2+I2eiQhkslScmWRTzYP0lSx7u0c6KX0=;
+	s=k20260515; t=1793796882;
+	bh=c8OLoXUADxmTIhb1ARQ3kSmrgr4mjHrNRuEWZTw6vgM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=i+eOpIVCD6c9q3d8U7OaPRj1DAkcCbwKg0e0/FB4gvbWHhi53k/RkjVa0uRQXDCQ1
-	 zAvMD+YbSdnJSgGy25maWzemVTB7PwuC1McmSi1j6y2JieTGBPLJN1h2Z1OLzBVXPg
-	 j48YnItp8Vtjr5vRU1ggfwvm9WN+pdGbfrSw0o+XLh5yr3ygW4Gu+yKjE0BlN9XR5y
-	 uEjIJ0p/MAGSP2G908hwhZduD9zfnPlyPpCVzp4pdXsXiMWLorsj50bnoaX7EhOjjh
-	 Wu54b2wlES4jjZJ41wtWivS0w+8qvi5sNm7SSJtwrhbfe+SsghRpIg3Xir1PcIdSlC
-	 Pnt6va1saxJIQ==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5bcb440d1cbso392353e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 04:30:48 -0800 (PST)
-X-Gm-Message-State: APuU4Z/SCwuoqLwGz3VaIzVFCSgSqhpogY8iqbrkrKJvLiZ7K2KkBXL8
-	fMgalKvFrNkAlIyi4ZAMBMc6khczopjd/kmmdK7tsKh1zqHGzjqwO6cJqhM4+OxXVcnQA8JD9g+
-	cJHYGqEfocjP3QeCA/IOg+b1mc3H+p6o=
-X-Received: by 2002:a05:6512:a8c:b0:5bf:c97d:d170 with SMTP id
- 2adb3069b0e04-5bfd11f352bmr5131215e87.17.1793795446847; Wed, 04 Nov 2026
- 04:30:46 -0800 (PST)
+	b=mQtWwU570HRWwVBIJsn0PDSTB3JR5ujGhAe3RwRSf4gp7sIoS9iNOx3wVDA9Cjldw
+	 SEWFm76qn4Xwfw0gM2tG+GU07r6txv7NuVFVkSxAG1Bjms3/qV+lkaQIIhken3m41h
+	 pLpGhKUjsNY7Xkja+NvFM1x7ZGoBEo1QvJhq+6+39cNMABSLfWudR3ThE3X1LIM+EP
+	 FBkddQToQZr8ebcdnPk+9hfpC0LUy2rtgxh3B7i7mQNE2cD9dW5bIF42CvrV8B5J4f
+	 zG2pQzMvlFuBtEtyHGK109W6UZWlkYSNgi2i1CNBxXs2IXKIPD/F/20J+PHsWRd3fr
+	 xHvn4l9pQYs7g==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5be42ae8eadso438115e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 04:54:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBwxWSnPiRzLStYyGKVpy+trt8uPVlNXbwfBEKhCtBnpB0OwU/Yq0fidYKZ5fIWEYsqi5j4OzbJmznLo@vger.kernel.org
+X-Gm-Message-State: APuU4Z/BG2YpIB90IOrpXPM+9oe3YPv0RHqLHFPQx99kzZUmNSWx04ie
+	CiZWOdXUyUbQBQRBWbP+Mp3sgsNuu5tSTfW4GZQfk5Oh8qQJ2ERXivvrr7uPcp+nqzc198sZrXS
+	BIzf+7qygNH5rwWxfnGOIUhmRP1BqH98=
+X-Received: by 2002:a05:6512:3b0e:b0:5bf:b5a1:390d with SMTP id
+ 2adb3069b0e04-5bfd9569843mr5461686e87.27.1793796880916; Wed, 04 Nov 2026
+ 04:54:40 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,71 +59,60 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261001085217.1778645-1-alexander.sverdlin@siemens.com>
-In-Reply-To: <20261001085217.1778645-1-alexander.sverdlin@siemens.com>
+References: <20261019-b4-imx937-frdm-scmi-pinctrl-v1-1-0576fb20964b@oss.nxp.com>
+In-Reply-To: <20261019-b4-imx937-frdm-scmi-pinctrl-v1-1-0576fb20964b@oss.nxp.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 4 Nov 2026 13:30:34 +0100
-X-Gmail-Original-Message-ID: <CAD++jLn8yxh3LmUzbb2vZfJFJB=_mCZ+VeQhnZktfmuMiv5uEg@mail.gmail.com>
-X-Gm-Features: AclHuK_xh55IfYWDcMEadkkQPRWoFw-pLiRPci8jz0ty-rrKgkyopgwVmzEI3cA
-Message-ID: <CAD++jLn8yxh3LmUzbb2vZfJFJB=_mCZ+VeQhnZktfmuMiv5uEg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: fix group/function table leaks on consumer re-probe
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: linux-gpio@vger.kernel.org, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Lokesh Vutla <lokeshvutla@ti.com>, 
-	Nishanth Menon <nm@ti.com>, Rob Herring <robh@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 4 Nov 2026 13:54:28 +0100
+X-Gmail-Original-Message-ID: <CAD++jLno_ViL5X7+NLvpS5EQObXR9UpsphHH37iSKumDU76_SA@mail.gmail.com>
+X-Gm-Features: AclHuK9G2TThs1q916LoUpjeeYNp5qScvCLIPbgAZ1ECJyTzREIgJY25tvkfh9c
+Message-ID: <CAD++jLno_ViL5X7+NLvpS5EQObXR9UpsphHH37iSKumDU76_SA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: imx: Use of_device_id match table for per-SoC data
+To: joy.zou@oss.nxp.com
+Cc: Peng Fan <peng.fan@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+	Ye Li <ye.li@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Joy Zou <joy.zou@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 1, 2026 at 10:52=E2=80=AFAM A. Sverdlin
-<alexander.sverdlin@siemens.com> wrote:
+On Mon, Oct 19, 2026 at 1:05=E2=80=AFPM <joy.zou@oss.nxp.com> wrote:
 
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> From: Peng Fan <peng.fan@nxp.com>
 >
-> Pinctrl drivers that create their groups/functions lazily from the
-> consumer's device-tree node in .dt_node_to_map() leak the per-mapping
-> tables when the same node is mapped again. The core deduplicates
-> groups/functions by name and keeps the first instance for the controller'=
-s
-> lifetime, so it silently drops the copies built on every subsequent
-> mapping - e.g. on each re-probe of the consumer device. kmemleak does not
-> flag them because they stay reachable from the controller's devres list.
+> Replace the hardcoded of_machine_is_compatible() if-else chain and the
+> static string allowlist with a proper of_device_id match table carrying
+> per-SoC data via the .data field.
 >
-> Reproducer (patch 1, pinctrl-single) - any board where a device referenci=
-ng
-> a pinctrl-single state is repeatedly re-probed; here an I2C TPM whose nod=
-e
-> has a "default" pinctrl state:
+> This eliminates the static local variable anti-pattern for daisy_off
+> (lazy-initialized, shared across instances) and adopts the idiomatic
+> kernel of_machine_get_match_data() APIs.
 >
->   while modprobe tpm_tis_i2c; do rmmod tpm_tis_i2c; done
+> A new pinctrl_scmi_imx_data struct captures the daisy register offset
+> for future extensibility when new SoCs may not use register-offset based
+> daisy configuration.
 >
-> The tables land in a generic kmalloc-N cache (kmalloc-192 on arm64, where
-> ARCH_KMALLOC_MINALIGN pads every devres allocation; the bucket differs by
-> config), so watch it cache-independently by diffing /proc/slabinfo after
-> dropping the reclaimable slab:
+> No functional changes.
 >
->   sync; echo 3 > /proc/sys/vm/drop_caches
->   cat /proc/slabinfo | awk 'NR>2{print $1,$2}' | sort > /tmp/a
->   <run N cycles>
->   sync; echo 3 > /proc/sys/vm/drop_caches
->   cat /proc/slabinfo | awk 'NR>2{print $1,$2}' | sort > /tmp/b
->   join /tmp/a /tmp/b | awk '$3>$2{print $1,$3-$2}'
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+> ---
+> Replace the hardcoded of_machine_is_compatible() if-else chain and the
+> static string allowlist with an of_device_id match table that carries the
+> per-SoC daisy register offset in its .data field.
 >
-> Patch 1 (pinctrl-single) was found and fixed with the above test on real
-> hardware. Patch 2 (ti-iodelay) has the same bug pattern - plus a missing
-> .dt_free_map that leaks the mapping table as well - but was found by code
-> review only and is compile-tested only; I have no such hardware to
-> reproduce it.
+> This drops the lazily-initialized "static uint32_t daisy_off" local and
+> lets probe do the compatible match and per-SoC data lookup in one step
+> via of_machine_get_match_data().
 >
-> Alexander Sverdlin (2):
->   pinctrl: single: don't leak group/function tables on consumer re-probe
->   pinctrl: ti-iodelay: fix memory leaks on consumer re-probe
+> No functional change intended.
+>
+> Signed-off-by: Joy Zou <joy.zou@oss.nxp.com>
 
-I got exactly zero reviews on this patch set from the pinctrl-single
-maintainers, so I have now just applied it.
-
-Maybe the old maintainers have other things to do, have you considered
-signing up as co-maintainer? You seem to know what you are doing.
+I don't know if this is the latest version of the patch... if it is,
+look into Fabio's review comment, rebase on v7.4-rc1 and resend,
+thanks!
 
 Yours,
 Linus Walleij
