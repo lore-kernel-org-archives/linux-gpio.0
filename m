@@ -1,82 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793829938;
-	b=cptlZK7DDsdGYpWG73bh3rdXyYvCkWUfVzbLm9bSj8iDuHuZvgYxUlDKnJYp7hL4p8HI
-	 jTDhnfUpEkMItzvuC43805bSypaNNORmn82PmHPrXgE5p3kH4eeycY/Cv/K4/A3DT8BVT
-	 dfWnAcZjeVr709ETx/0D2HFxrdLykSDAj3jat8TfC44UBGEsoS1lD2UG3K0AjF0OmXN/h
-	 4yrVaIEsIvrZNEUvPE3DWDFruqhBr1hctcKhE79GncFQkOxs8gGOWXs5jbHO4oawRUE4D
-	 u8IfYkMjUrNrn28NaoGe5H2a21M9+1PGcLZR5yVEj8OYa1FldTrOrQ/81TRItbiCjJg==
+	t=1793836024;
+	b=M5bHUiw/9D8sMV4AI9Xgn5CjZf7T+gwQeGbIdk2ZVr94v5TzPn6G1ySwnMHl0qf3Z2A0
+	 84/2tixCAqhkU760vc2D2uGP3N3uBnpqQhUwRFcSoczmcOVuKq9TtIpj1SmkLXw3emyrg
+	 MqXttJ1mNjZtKKP1YpqrotpP5hKI5EEjUC2qdHVPu5oaoAtWZ/MmfEjpbAGJQwpl+HbaU
+	 5dwqWcqlyq2ZuZvb7lcdfNpiKlbRYltgpNBiD0SrhFfkl7r/74XL/Uv3yD+VSIHs6Cb/i
+	 3bwxVZR5D8fnnvV8kndP5mBNdf7QG5DWUlHx2ysUBl5AdKy1bEDU0I1X05dCcyV5Pzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793829938;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=2H7Qz1hbUFxeTortjCVtaN2LpttMmibW+PPG+dhuH5g=;
-	b=KgNsuEoaTqf1sTkWoBeKo4hOWiYc2oy16Y4KntHHbiQVQ43gXb9sIiqCzPE7sJqrv6rL
-	 6vLYjIjUiSZYu76VCX04CkxfIp9aFyZOGfd5ZTeMTMIa+tWY7snwnFpSrj8gz4nUsOBH1
-	 kMORzM5tc+SppAZamjtt3Esq2b22y4UWLBZ+kM76G4b8pMjqnvayrfb6qARRCviSpiDqa
-	 PbBNpIfYDfIoJkIMIZbyIkj9Y7ZsRgml6echpBGjZflxgvmDmwQ8vAuLT+PZvqP1+8Sb1
-	 01XLnp1K8zc2IvtTVjcpBI3p1Gwnn47yqLcwmUvoIsSfYbSuykrVW58FkdaD40XAb2A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793836024;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Ybn1U4ck4SXPPg0/2HE2JPN2c6fPoDZjnz2lKASv9Gw=;
+	b=ssuhS0iwNWhRpxH+oL4wBfnv/RvSTO/f6m3qCRntuKBE6n6NS1fTPyp5+NFg1mwIC9u5
+	 XKjqy+6KAVPurloKszcXAyqTKpBK/4OX+JE9bFk59OmHyzZfjPxZgdjlMebZoDmDAHcQk
+	 3gdeIEivnyUeZPAl4PV2KEJNy3L0H9y99T1bmv7c69G0RLnaEy1pvzO9Nx880L+zDpm5E
+	 JKHBPj2FjDS7D6IihJG5kVDAjIHZYzd6tkvnqP6WtJoMr6I9asHB16fVx7/mGOvSxKcq0
+	 iO9inTGkMqt8XH27SfLJbd+4uJt2gb/u9GEQcm2zCD8iGJm2USZQgflzUuZt0Wz282w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UzwEqeT0;
-	arc=none smtp.remote-ip=192.198.163.13
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EjGtR966;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394B1606C92D;
-	Wed,  4 Nov 2026 22:05:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 394B1606C92D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F52606A31B;
+	Wed,  4 Nov 2026 23:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UzwEqeT0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793829938; x=1825365938;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DkmTEcT4ie/Jd5AT/Y+y6b4Ri8lpkG0TIqlwf/w7344=;
-  b=UzwEqeT0Sxp7I+gR0qmVguMSG1THeRkEZ3EnHVeWuSi2zcGSiEhv7Kmd
-   S75hgSyr6xTcQoUxILGcTcnPiJn7I8pDhmbgunJDxLK/rNhcgJ0z1fFiM
-   nE5u1blEdfqb06/OZ8FtSic2oCa9Gil4CNso8PwsSwBrXxDeJy3r0AX/U
-   pRggWJuaWVtryCck4i2p9moDcKqAkkrWQVOSNaMb37FwgZeTQzUu5Vkim
-   rz+nHFAaiHtk6R7QMJ7Xj5DS4Gk4SrHrlR11ABBoWHQuiWKOw0nbgHHW8
-   ybKZrI97yELDxdT5Sf8L2J++yQsVNWm9GVRVXmiYOf/KmOZq2LjgkuFeP
-   g==;
-X-CSE-ConnectionGUID: lV7TYPTOQLSHGmz5zzPG6g==
-X-CSE-MsgGUID: DHgcniwzT7uKhE4hMfNViQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2597114"
-X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
-   d="scan'208";a="2597114"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 14:05:37 -0800
-X-CSE-ConnectionGUID: 0S13eHReSO+WCgdjIul1NA==
-X-CSE-MsgGUID: qraWBz+nRgu3V+Dmku3KKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
-   d="scan'208";a="7145512"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 14:05:34 -0800
-Date: Thu, 5 Nov 2026 00:05:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EjGtR966
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C5491F000C1;
+	Wed,  4 Nov 2026 23:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793836024;
+	bh=Ybn1U4ck4SXPPg0/2HE2JPN2c6fPoDZjnz2lKASv9Gw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EjGtR9666Gthy0HNXpBo2D0K7UWgNef9bYb34g72ci+M06cNmWMdOE2ChuRb1iKws
+	 HIy7vWx/l2UPx9pF1IZY1FQLvuPt9uDT4Qqa1h4Bk74ozloxpije2J9rHVPOQjO5oe
+	 gUZdPJQHu6G+3RyKnekvxVfLqr8de5lYagpJobyEFvFM7oHI8qjJIQ202oFaHJaTsN
+	 yIh2bkuRCdvIYsglSpXJtxKqleS7doC7NVyMAGkz7vKVNR61+JYrtSKOqFSNQP9qLZ
+	 sIXaHrqwYfK3j7eTlSZtB40PVTazRJEsYMYSt5i+hXRagWVHc3LTDxxDtyDFBSZ85Y
+	 0snuA1PB5AOYQ==
+Date: Wed, 4 Nov 2026 23:46:59 +0000
+From: Conor Dooley <conor@kernel.org>
+To: joseph@telaak.dev
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] gpiolib: avoid krealloc() in gpiod_get_array()
-Message-ID: <auusLNvkCmHs1buP@ashevche-desk.local>
-References: <20261103-b4-gpiolib-free-v2-0-ea46767c9cf8@gmail.com>
- <20261103-b4-gpiolib-free-v2-6-ea46767c9cf8@gmail.com>
- <ausjJSZkaGKNfykE@ashevche-desk.local>
- <4e7b28ae9ad5de3708c549d62a4bae68@gmail.com>
- <auumQhqJwIl4XZDM@ashevche-desk.local>
- <73caedd26b375ae7671d24bcee115f05@gmail.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Chuanhong Guo <gch981213@gmail.com>,
+	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Siflower SF19A2890 GPIO
+ controller
+Message-ID: <20261104-judiciary-fool-05c4157a7cc7@spud>
+References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
+ <20261104-sf19a2890-gpio-v1-1-45e463c48728@telaak.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -86,49 +66,157 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8lCGnY4rd1pPxcek"
+Content-Disposition: inline
+In-Reply-To: <20261104-sf19a2890-gpio-v1-1-45e463c48728@telaak.dev>
+
+--8lCGnY4rd1pPxcek
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <73caedd26b375ae7671d24bcee115f05@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 04, 2026 at 01:51:52PM -0800, Dmitry Torokhov wrote:
-> On Wed, Nov 04, 2026 at 11:40:18PM +0200, Andy Shevchenko wrote:
-> > On Wed, Nov 04, 2026 at 10:14:49AM -0800, Dmitry Torokhov wrote:
-> > > On Wed, Nov 04, 2026 at 02:20:53PM +0200, Andy Shevchenko wrote:
-> > > > On Tue, Nov 03, 2026 at 07:40:34PM -0800, Dmitry Torokhov wrote:
+On Wed, Nov 04, 2026 at 02:21:37AM -0500, Joseph Telaak via B4 Relay wrote:
+> From: Chuanhong Guo <gch981213@gmail.com>
+>=20
+> Document the GPIO controller found on the Siflower SF19A2890 and other
+> Siflower MIPS and RISC-V SoCs.
 
-...
+FYI, these other devices need their own compatible strings when a dts
+for them is added.
 
-> > > > > +	bitmap_set(array_info->get_mask, 0, count);
-> > > > > +	bitmap_set(array_info->set_mask, 0, count);
-> > > >
-> > > > You don't need these, as memory is nullified.
-> > > > Also note that we have bitmap_clear() IIRC.
-> > > 
-> > > bitmap_set() sets bits 0 .. count - 1 to 1, not 0. Both get_mask and
-> > > set_mask start with all count bits set (assuming all pins in the array
-> > > are eligible for the fast path), and then gpio_descs_check_fastpath()
-> > > clears individual bits for pins that do not qualify.
-> >
-> > Ah, indeed, but we still have bitmap_fill().
-> 
-> bitmap_fill(dst, count) fills whole unsigned long words with 0xff
-> without masking the tail bits in the last word. Here get_mask and
-> set_mask are sized to max(gdev->ngpio, count) bits and passed to
-> gpio_chip_get_multiple() and gpiochip_set_multiple(), which iterate up
-> to gc->ngpio bits.
-> 
-> When count < gdev->ngpio, bitmap_fill(mask, count) would leave bits
-> count .. round_up(count, BITS_PER_LONG) - 1 set to 1, causing
-> get_multiple/set_multiple to touch unrelated pins on the chip and access
-> value_bitmap beyond count bits. So we really need bitmap_set(..., 0,
-> count) here to set only the first count bits.
+>=20
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> [jt: from Chuanhong's siflower-7.1 branch; Joseph Telaak as the binding's
+>  maintainer, GPL-2.0-only for the deprecated GPL-2.0 SPDX identifier,
+>  example indented by four spaces, commit message, subject]
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+> ---
+>  .../bindings/gpio/siflower,sf19a2890-gpio.yaml     | 84 ++++++++++++++++=
+++++++
+>  1 file changed, 84 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/siflower,sf19a2890-gp=
+io.yaml b/Documentation/devicetree/bindings/gpio/siflower,sf19a2890-gpio.ya=
+ml
+> new file mode 100644
+> index 000000000..6708d92fe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/siflower,sf19a2890-gpio.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/siflower,sf19a2890-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Siflower SF19A2890 GPIO controller
+> +
+> +maintainers:
+> +  - Joseph Telaak <joseph@telaak.dev>
+> +
+> +properties:
+> +  compatible:
+> +    const: siflower,sf19a2890-gpio
+> +
+> +  gpio-controller: true
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-ranges: true
+> +
+> +  reg:
+> +    maxItems: 1
 
-I see the point, thanks for elaboration.
+Move this below compatible.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +
+> +  interrupts:
+> +    description:
+> +      Interrupt mapping, one interrupt per 16 GPIOs.
+> +    minItems: 1
+> +    maxItems: 10
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  ngpios:
+> +    description:
+> +      The number of GPIOs available on the controller implementation.
+> +    minimum: 1
 
+With no maximum?
 
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - gpio-controller
+> +  - gpio-ranges
+> +  - interrupt-controller
+> +  - interrupts
+> +  - ngpios
+> +  - reg
+> +  - resets
+> +  - "#gpio-cells"
+> +  - "#interrupt-cells"
+
+Please fix the ordering here too.
+
+pw-bot: changes-requested
+
+Thanks,
+Conor.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/interrupt-controller/mips-gic.h>
+> +
+> +    gpio@19d00000 {
+> +        compatible =3D "siflower,sf19a2890-gpio";
+> +        reg =3D <0x19d00000 0x100000>;
+> +        interrupts =3D <GIC_SHARED 246 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SHARED 247 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SHARED 248 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SHARED 249 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks =3D <&gpioclk 0>;
+> +        resets =3D <&gpiorst 0>;
+> +
+> +        gpio-controller;
+> +        #gpio-cells =3D <2>;
+> +        ngpios =3D <49>;
+> +        gpio-ranges =3D <&pinctrl 0 0 49>;
+> +
+> +        interrupt-controller;
+> +        #interrupt-cells =3D <2>;
+> +    };
+>=20
+> --=20
+> Git-155)
+>=20
+>=20
+
+--8lCGnY4rd1pPxcek
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauvD8wAKCRB4tDGHoIJi
+0hmLAQDFn8AQyWFbVtBLNfA/Jk6Pl5eG57rfoCu+xDzAklKXIwD/T2QiMRx1gfAx
+FLiy0lgH2wbO+h+sOgGTGVqK4xS6Bwg=
+=VE47
+-----END PGP SIGNATURE-----
+
+--8lCGnY4rd1pPxcek--
