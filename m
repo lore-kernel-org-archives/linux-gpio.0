@@ -1,76 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793793747;
-	b=rz71CN8fqXPTwsHciL7Ux1zgnmKcVtR26IQ/583gqqPQJmzyzvzrnz7I7OL49YGVh1FC
-	 X3Xz441mwogF68WHi8quPbyNqGwRa3EBoUnY6NqolezzurkNFKEqnZFWKYULx5U56K6tk
-	 +zZP+ANkb5QDiwQ2sHzaQqsKYWmJXQw7lGmDQLSHC1mwxvYtiEPyOOgxzKQMUlUXe+9Nt
-	 y7EQs995dUqoGN0NJA5kKGlPAZzJpuTnLRYKg9GqPrYkvDvsnXHMvTQdzQVw+Lf3AmYiq
-	 Zwmmh+QbSoofT9CDNJqLyEDu/0q8Y986d8L8fgqkUO96Ia0l+kcmKyukxFNEPclKD3A==
+	t=1793793981;
+	b=SwEpChFWx9ciUPsX2+Wv61utRHM+DblTyLYm3boYqyLhY+i0VjkrUtsM0YFEzurT1vlp
+	 jCr39XDY/U8KUhNNxxfdbdA5frZfTKjGMbx38AnOuPb7v2VUKoHlNrQUQO6C2Cn5NipGH
+	 sU1CODkOfDA5W11onXbfmkKio4RekBrpaMyXd+LZ2tQQLkGt6Se+M6NY0NhOWZbPOFbEc
+	 OBfgzm6+/ZNQnL5fisaLX8LvSwEx7UW4acqM4jf6fy+QANzaRgdsgSrJwYJ2C7nNNH0MF
+	 iaob83cDFkNBV5hFM6pt9Wb3Mjzz4y60OK6pU0P/Vh9UjnF9o/ZxRM0PGw7K0UmwH/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793793747;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793793981;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=J+MjPhMs965Lvmv06hvs8vPpLqQFloDOzO/EzKlNPK0=;
-	b=eFd4pb8iVHLRKB3PN1N9DV5pFNbIjoLE/2aiHPWbsE260WWVzXsa3OqFmDOdwfzLTC5s
-	 /gg3W/3mwAe7Qqten2nvoGO4zEpLhrj14GhVMRoG3v0oCEkpbYiy56CbTblcEa7G9+uEZ
-	 zfq7Q4ry0odxldVdxZJquVGwjkNOsxhlOW10lQHcb7X0uBi8CZKhxxYo0PPZM7BOwGQbs
-	 bmXttpVmViDSBJJPuEAzslibhF6Hz6pJh0dYXVh5+/fMUZE0kUruA0Ja+W6RAS1ouVqEj
-	 oaq8zXnP3buUmsObj/UyVucMYez3ot0gsj+C6DIguoWo8unlbQ9pqepEA/RGCEazc5w==
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=6Wg4h+26zD0H8SBSjDw8CYq4C5f5wU3THckb5NL78g8=;
+	b=bOvdDoPIjj4yqgMNYGfAv/JEjthwcmYYG5Zyfw6uVqaoCkyVglvFOHsI1QMbonWCiqcu
+	 OnlySR0ULSQPpmtARCJx6o1/7mzoVqaDjSK+Sx54XzbGHnGxnKXPPhtVzyrkieBiBdCET
+	 84b/RC98xkzPvWFnzLUjWWDigi6Aug/RbKLpXFuQ08MW2r2ZgfkcuPeSCklRbO3cs/N/y
+	 EyidnZV3wSw8sCA1v4JGWgle1h1Ig316HaTR6qy8zl5vYYbZChASyNk/XwEu3jKmCvwZc
+	 GUaR9BWW2V6pF8h7XO80yYEHz+do3fVMlTkGbHATbA7aVHj+8oOOpYgRqqn/yUjwHbg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Q2IyUzvs;
-	arc=none smtp.remote-ip=192.198.163.12
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kX53e90h;
+	arc=none smtp.remote-ip=198.175.65.11
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D6606A32F;
-	Wed,  4 Nov 2026 12:02:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E98D6606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0541606A326;
+	Wed,  4 Nov 2026 12:06:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0541606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Q2IyUzvs
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kX53e90h
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793793748; x=1825329748;
+  t=1793793981; x=1825329981;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=AOQIzKBPgyRFLmUKSraCjcRg3aJ/ODihlIgQ/rH1jPM=;
-  b=Q2IyUzvsc9+9/qzL+2qzDADW7JpMENSPcWy6UZrkbh/o+0svfuik5l9Z
-   8i1ZGznmI23j8mHCX5+MD1CSzIO4uEEcmZ2wCJULPsOmmTPrN7NDLwu6p
-   ANFcLuW2n0GLtcP1xqpwf+W4i6d++nUW30dQbVAQNh9cfiMFvG2kGjeGA
-   pqXIB+LqtjB1ALxhikhROfTgs3o2TXVZJtbEtzlM+k00gMqnypIgrlSB2
-   UwPsVWlNCcP6uFlg3V+H7gxYp8nMbCJm85INbdrtp5QMs0QXGfbTWDCuL
-   4mFAVr6SX53nJ8N1Rx6ndeA6u+eum+K/zRCoLAA2qtaRCHT/jp4r5chdF
-   g==;
-X-CSE-ConnectionGUID: HsSHFuU1RCq5siVMaEf8qQ==
-X-CSE-MsgGUID: oSCzClUmTtmeoTrSuuasKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2444160"
+  bh=48Lx4R/i6FRbzzi3byh+waVhNkw25E/trE4ShApiQkE=;
+  b=kX53e90hG45Dep/7+CFCLLlk3ji25W/cHNMqrvBiR8bXm4ChMEnhOEsY
+   plWG3S/oeYSnxgOm8isflWk6gL2shIlGfTGxE7VvuFCdoZhrPOfZxQMlL
+   aGCppY2vL5VPF7htjXs2mYB6FKuOxum30ZTFkpkEdrAWOKmsLitX+bRgE
+   bgOLD1gWSnKnBZr2931N992ggZZMlHdNJivzm2XPLenWdM8SKv/PK+rJt
+   1lZO2x4IEcNWGNsg140w3ox2iFdx7uh2WpQQlXWmPVcUa111oWkPB0Kkf
+   5OixtPMY9lSi/nu1maU0xJ4NcIudahCg75BM6ww8EgGYE4EwOPEeVTsQh
+   Q==;
+X-CSE-ConnectionGUID: XsILSY29Rg+t1COLeDylcg==
+X-CSE-MsgGUID: 3gRMqXRZQCC0ojr4ZTbdNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2423582"
 X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="2444160"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 04:02:27 -0800
-X-CSE-ConnectionGUID: uRLuiX7UT+ikjeRk1NGYgg==
-X-CSE-MsgGUID: on/50HxRSEiT+5nLE+Y3eg==
+   d="scan'208";a="2423582"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 04:06:07 -0800
+X-CSE-ConnectionGUID: JjTkiGi/TBmRJ9kmfKH6zw==
+X-CSE-MsgGUID: AQYBO+4fSaqP8r7YAOE0ug==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="6834853"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa005.fm.intel.com with ESMTP; 04 Nov 2026 04:02:18 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 0B1E099; Wed, 04 Nov 2026 13:02:17 +0100 (CET)
-Date: Wed, 4 Nov 2026 13:02:17 +0100
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
+   d="scan'208";a="6528902"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 04:06:04 -0800
+Date: Wed, 4 Nov 2026 14:06:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: intel: Convert to subsys_platform_driver()
-Message-ID: <20261104120217.GD176724@black.igk.intel.com>
-References: <20261104113343.1634218-1-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH v2 1/7] gpiolib: fix GPIO descriptor leak in
+ gpiod_get_array()
+Message-ID: <ausfql_F6N2tWRAl@ashevche-desk.local>
+References: <20261103-b4-gpiolib-free-v2-0-ea46767c9cf8@gmail.com>
+ <20261103-b4-gpiolib-free-v2-1-ea46767c9cf8@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -80,34 +83,43 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261104113343.1634218-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20261103-b4-gpiolib-free-v2-1-ea46767c9cf8@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
-
-On Wed, Nov 04, 2026 at 07:33:43PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Tue, Nov 03, 2026 at 07:40:29PM -0800, Dmitry Torokhov wrote:
+> In gpiod_get_array(), descs->ndescs is used as the loop induction
+> variable and is only incremented at the end of each iteration. When
+> krealloc() fails on the first iteration (when index is 0), descs->desc[0]
+> has already been acquired via gpiod_get_index(), but descs->ndescs is
+> still 0. Consequently, gpiod_put_array() frees descs without releasing
+> descs->desc[0], leaking the descriptor.
 > 
-> Replace the open-coded subsys_initcall()/module_exit() platform driver
-> registration with subsys_platform_driver().
-> 
-> No functional change.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-broxton.c      | 13 +------------
->  drivers/pinctrl/intel/pinctrl-cedarfork.c    | 13 +------------
->  drivers/pinctrl/intel/pinctrl-cherryview.c   | 13 +------------
->  drivers/pinctrl/intel/pinctrl-denverton.c    | 13 +------------
->  drivers/pinctrl/intel/pinctrl-geminilake.c   | 13 +------------
->  drivers/pinctrl/intel/pinctrl-lynxpoint.c    | 13 +------------
->  drivers/pinctrl/intel/pinctrl-merrifield.c   | 13 +------------
->  drivers/pinctrl/intel/pinctrl-moorefield.c   | 13 +------------
->  drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 13 +------------
->  9 files changed, 9 insertions(+), 108 deletions(-)
-                                     ^^^
+> Fix this by using a dedicated loop induction variable and incrementing
+> descs->ndescs immediately upon storing the retrieved descriptor.
+> Additionally, since the fast-path array_info setup only executes for
+> the first element (index 0), simplify the bitmap_set() calls to start at
+> bit 0 for count bits instead of calculating offsets from the loop index.
 
-This is awesome!
+...
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> -	int count, bitmap_size;
+> +	int i, count, bitmap_size;
+
+Why not define it inside the for-loop?
+
+...
+
+> -	for (descs->ndescs = 0; descs->ndescs < count; descs->ndescs++) {
+> -		desc = gpiod_get_index(dev, con_id, descs->ndescs, flags);
+> +	for (i = 0; i < count; i++) {
+
+	for (int i = 0; i < count; i++) {
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
