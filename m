@@ -1,55 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793870782;
-	b=DeCDnrjh5FWO/MWFOYIGL2R2QmPZGYnWtXEzoo2/cspRJ0IOJsopQg4g1hl8BX38fJqs
-	 mmFwxWNPAZ0zROxxjcHULpAhHquJzuO5VT7PS9tfhjtnfY99mbq1df0WEzA8AXdquPTl1
-	 xSwKDiv+VPcZkjIs5io2r3gXWb4gGhkj44tuWf5l5XKci4rVRohb46LbrWaCBEud1oBIb
-	 lJ8epMEeSX7ZAX98ZdKQ+PmUBMoAdnUEMRPqveJo8lv67OgJGG/LnuzbOzCmhQkouMlzW
-	 Vo7Ig/2kQ+Bm8oiXgInsGkl10qXCVq2WygX3hr7ljnbrXnPiP321arHFi/LplojuUHg==
+	t=1793870895;
+	b=AXzrO4dOAmMEMmdU1CoU+hy1w86FauRPmLVGby+lCGBrqe1ufg+Dok6YlSCl6LrvvA84
+	 HMOCSB5OsE8Ww80y0oQJHoT6DcvobTQWi+kOomxUCxXFZrs2WWp4LrZY0PG/+AcDo298V
+	 UGp42C6LktcoynvN330qAZSMnHxu78Tds+4w0aGEXreF3z3Js6czsJKTMb7b8HeCeaAMb
+	 sDvv6FJ/pQt369x6sEXi11vsSa2IOftFfKGWqaxFir+rvWlIWqKgKGv3gOieiWgAnIB+u
+	 de2WkEZ2xDA4KaHizn1IN58Z34e6MvqLEJvu4p9h3SgFpGoKg2ggmQq/6PRgNMwgFXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793870782;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=5weTVNfU4RUIXGu4AdbAlzA0cfDEQJq11kojXW+pkrY=;
-	b=t0PCpmloYppwT3AOPdP9q2K1sqwEDmgWWRRCtE7jBf2bykXkHUp9or+YjKKGD2nVyWk5
-	 KQqksPAe/GqWvujnykumjAh3PULvFgK6/me13yAyhLy/QxUMEWq2zorEeJ6IyEuhMddyF
-	 DpAO4s2BOb2CnADHbyxCPJjYfZP5KozwvKnmD65TytWOKwqVbSxn0G3j32MhyZT4R4VSn
-	 D1viCGyR0LXlR9BaEXJFYgU7Rbagz2O6xqhePPb91C9Newqau4X7n/mjhr4xgu0MYSwrT
-	 DBMTAZuUNyJ+VDJrJ6NmmignAGEc2qmOO1dFrPhexN8UQsy2CPDfRYDfhGKy4D1naeg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793870895;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 Organization;
+	bh=5IyfbQ5BFLW1FHQ7ZV9MM3s4H/J7fJhI3I+hcrob3aI=;
+	b=FJsD3tOdWIX4pisg3rjOXSW8HB0M0aOBrwRpfRLVip0XirEOwrV0rLglRYz1k3N/zFvn
+	 1Ev0dM4HILFPfmFOMIkvCD93cm8QRqtKN7CatBbf4F/dL5/KtufYTaEM8QUeEEGeMa9QD
+	 mkVeipryn7gEYZZpvQyQyHAEhbN1xtqmFu5UdS4W7DMLt/j31WYzSxBt/xERx7q9pJIzo
+	 oZ9tkaD+jFJBfjXcEH+phtrIjA+NTgfchBHGand70MIMR8Lhu62C2cHQJiVXyIewqCZsE
+	 /TaN2kASJc48sx56F7ArVlEjYuK/On52Qkx03Eee9OeEo5yse12qSMuSwiWTC0GUlOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZbG3gRvn;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="WQAmF/5R";
+	arc=none smtp.remote-ip=192.198.163.7
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8FD606A32E
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FCE606A31B;
+	Thu,  5 Nov 2026 09:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68FCE606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZbG3gRvn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 318B01F00A1F
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793870777;
-	bh=5weTVNfU4RUIXGu4AdbAlzA0cfDEQJq11kojXW+pkrY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ZbG3gRvnER6mcmNZ78al8p9Yy2sUU9nAr67z7Iu0pOZ0CbD6QzrYO0YAVZOxtEz6U
-	 OBYxMo4sEj9zh33od6kOmsZvuLCSVgR7j2oIdAXZNw0JkJ1Y66Dxlnuho5lLA0wGns
-	 ilLArm0Npn8kEe2gSbElNRJ6zx6U/KEW0orbBvOkXKjU5ru6yfZ36aYFrNCInS1uOw
-	 sOgA4lAfSpDqGbD2F+YIS32RslRYwvYzaQjaYyqEK37TkcIwUh1jZRw6zKyln2zhvC
-	 4QsYlRIiukxWDgmNxXpTfYbOnnqR+r7uK1pDgFAF9pAZjPLd/7ho2jD3SrFRqrYJav
-	 CvKGREnllCpkA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5be53e5fce1so1346683e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:26:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzYZrR1tzQTnmzAhjrw8q7eCxo/dj/ys6whF+flrKh+LNL0IJRj/XDL/eEIB3bQtCoX1OsqDwgz1g9Q@vger.kernel.org
-X-Gm-Message-State: APuU4Z8YnS5kQyltU5zKCl5Qmwhm2MRNZG3cd5hxJVzQfzRZFC9QYs0K
-	0lsP74ak6+8ffsPOobEFf0LocAebBA2DI2aU2WyeKtedbt6wmX+ccCQcT6HZDSnhc0JFq0sWBap
-	QxIsvKBBhrl1doMtf/POxztSkHlh1rSE=
-X-Received: by 2002:a05:6512:3da6:b0:5bc:f29b:1a5c with SMTP id
- 2adb3069b0e04-5bfd956517bmr6620245e87.23.1793870775961; Thu, 05 Nov 2026
- 01:26:15 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=WQAmF/5R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793870895; x=1825406895;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=aHuJD5n+OhqH6Ee1LwSwO+D8ibBpJcwkdGQ7MDHss4c=;
+  b=WQAmF/5RYYbDl2voDVlU7oAkNhVUeCzIjVHig0OKFEMMVxYFVAWqiHf4
+   inWeuZUvvcukY+IZpk4/5z+8jQlgRzGw8m+Im7IdasypVk9/mjxBuED6j
+   gg8iZgSUE1b1+WBKmKC/QCcyx+Czu15yDIjDS8PbctvHznSd7SZKLAXrN
+   8LICSp2dMyECnI2seruoJbz+h09cTaXAvJz/k8nu1TF6dLrbBk0pqu4/b
+   Wg0INDPzf1BanAkQIn15ZsFjHlaJ4YAV9sxkMOiEdPzG6oOAovVEOwgOL
+   RMt0BAVLD2IMGHBoDmjTcggCMU4UCQmtJx3j8PKsjRdnoiyEeQLUHT0/G
+   g==;
+X-CSE-ConnectionGUID: OLzLAI+cT6+6D5d+lDF0IQ==
+X-CSE-MsgGUID: AKngMQTzRjKL5DntE5A8Cw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2520489"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2520489"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:28:14 -0800
+X-CSE-ConnectionGUID: CFXn1peRTSCzVdVyfdRu+w==
+X-CSE-MsgGUID: 3H0ozDPASFqwhl/rH8NOGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7128653"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:28:12 -0800
+Date: Thu, 5 Nov 2026 11:28:10 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Areeb Ul Haq Mirza <auhmirza02@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH] pinctrl: keembay: make keembay_gpio_irqchip const
+Message-ID: <auxMKvFI9GCjPabA@ashevche-desk.local>
+References: <20261102212500.195783-1-auhmirza02@gmail.com>
+ <CAD++jLne9FgabDUWoirYejnnNfm4GD5zh-E-b_vUGoiwH=CgpQ@mail.gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,36 +80,47 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <CAKNLDZOndyGxLSWgBDrq0Vfbt88Pa5S2MDHVcnkHzAH3TQDpaQ@mail.gmail.com>
-In-Reply-To: <CAKNLDZOndyGxLSWgBDrq0Vfbt88Pa5S2MDHVcnkHzAH3TQDpaQ@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 10:26:03 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkgFOGT54_W6gOnz+aWG4_q3XHc7Cr5_=8mcdv8-aTcXA@mail.gmail.com>
-X-Gm-Features: AclHuK8CorVO8MUeqTFvv7Et7OujtWjRgY906_d19hm5pp_OhIMEqRRrkZlLLfw
-Message-ID: <CAD++jLkgFOGT54_W6gOnz+aWG4_q3XHc7Cr5_=8mcdv8-aTcXA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] reset: add support the GPIO provider with #gpio-cells=3
-To: Marc Taylor <marctaylor700@gmail.com>
-Cc: bigunclemax@gmail.com, p.zabel@pengutronix.de, brgl@kernel.org, 
-	krzk@kernel.org, andre.przywara@arm.com, martin.botka@somainline.org, 
-	dlan@kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD++jLne9FgabDUWoirYejnnNfm4GD5zh-E-b_vUGoiwH=CgpQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 4, 2026 at 4:57=E2=80=AFAM Marc Taylor <marctaylor700@gmail.com=
-> wrote:
+On Thu, Nov 05, 2026 at 10:14:07AM +0100, Linus Walleij wrote:
+> On Tue, Nov 3, 2026 at 8:50 PM Areeb Ul Haq Mirza <auhmirza02@gmail.com> wrote:
+> 
+> > gpiolib warns about mutable irq_chips at probe time:
+> > "not an immutable chip, please consider fixing it!"
+> >
+> > Make keembay_gpio_irqchip const, flag it as IRQCHIP_IMMUTABLE, add the
+> > GPIOCHIP_IRQ_RESOURCE_HELPERS and register it with
+> > gpio_irq_chip_set_chip().
+> >
+> > The chip only implements .irq_enable() and .irq_disable(), so call
+> > gpiochip_enable_irq() and gpiochip_disable_irq() from those callbacks,
+> > following commit 35d008679a5a ("pinctrl: plgpio: Convert to immutable
+> > irq_chip") [1] and commit 2993d2dd8ff4 ("gpio: timberdale: Make irq_chip
+> > immutable") [2]. gpiochip_enable_irq() is called once a free interrupt
+> > source and slot have been found, so a line is only marked enabled when
+> > it is actually routed. gpiochip_disable_irq() is called after the line
+> > has been cleared from the interrupt configuration register.
+> >
+> > Link: https://lore.kernel.org/r/20230414-immutable-irqchips-2-v1-3-6b59a5186b00@linaro.org [1]
+> > Link: https://lore.kernel.org/r/20250509-gpio-v1-8-639377c98288@nxp.com [2]
+> > Signed-off-by: Areeb Ul Haq Mirza <auhmirza02@gmail.com>
+> 
+> Driver is marked as orphan so I just applied the patch.
+> 
+> Cc to Andy if he wants to pick up maintenance for this one, but I doubt
+> it (not x86, right?)
 
-> Sorry, my mail client mangled the inline diff in my previous reply
-> (indentation stripped, and it turned "https://www.google.com/url?q=3Dhttp=
-://spec.np&source=3Dgmail&ust=3D1793850929317000&sa=3DE" into a link). The
-> attached reset-gpio-3cell-v7.2.15.patch is the correct version; it is
-> re-attached here so this message stands on its own.
+No, it's ARM. And IIRC (I may be mistaken) it was designed somewhere
+close to mobileye, for some automotive related use cases. So, if ask,
+try to ask mobileye people if they are willing to take it.
 
-Don't send attachments, inline patches only.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Check:
-https://docs.kernel.org/process/email-clients.html
 
-Yours,
-Linus Walleij
