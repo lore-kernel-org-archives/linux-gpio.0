@@ -1,64 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.61
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793881812;
-	b=GHlOg+s2qpGvu7fOgzNhwbVFnBAqtyIkJFwSvtRisuQmW3LjGjAW5HGQ358hzkzF7LlB
-	 v++9vqx3n7R4CjDjNN2Rd9sWoKdVGhRSE4aBIi9/+RaXDcS3nUl+stE05FdhTatXqhou3
-	 d10J6lDJxTWfBeYH6t+oXqArwYPh1zu0ooewRhDyYH0u1h3tR1HsTnN/o0czHReJ9fd23
-	 BcGN/rj4Eo036LByyxQSyw5TLYyfQjyHmkoje+dRnH1Q2IaWHWBB7HSPj0KWrXq5ckyiN
-	 1bQbXzClB5/d2ASD4m+L17tg2U+nIDuIyi4lLWVy8Em4/VSh+RyoeLROudG54cFYrsg==
+	t=1793881874;
+	b=zeFI0lVtNgBOWtPcISIcjo+5BJ6cNi81gRaokskqlmbjDrhO6HdK7siv/ioYMH1of2kE
+	 vKzP/+tdh7KCR8aWCxh2yQcpFxOnhncGTFWTGQvereEiFEnnDv+U0KiFbcSnn9Liqvt+s
+	 Qa3pR+TKltQfgZFDFYpNNVMc8NHFYQIC05pp96+f0+vh93jr2MBtWcBIZvaqvZ2mnn74A
+	 BcBONxwbDI1KnjvjddSmvxUk8fvrC+CdgERRn0KpeAkR/No+8rML1Lul/F640QEtMs+Hy
+	 QIzsy5xlN/4JHnKzspSF/BgKfgBy8hqkIMmj6DQRQlIzIS4PwjmMWjI6wseqNn1rq1A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793881812;
-	h=Received:DKIM-Signature:Date:From:To:List-Id:Cc:Subject:Message-ID:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793881874;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=cIWk54h6Vq4bsOr7750uEgxbFnfqnwYUM+V3ysYbmaU=;
-	b=Qqe+D/lt3M8684Yay+9LTK+yHW6AgwQIZ3g1yO0g21+7/dWZ0U7ZHcm1/gV/858c+Aqu
-	 YYCN51oiGY2aGWvTgCxl6Q3urfvGjdimK21Mxmwiz+4zQwK7hnO46hpcQRN5nuM8slp2P
-	 0uzlCbwAzvgJgOd9aDR44oKkU44/i/5YOWTmgNK9tPp5Nv4g9z/PwAUq+dsmJCwG8Z/r1
-	 jvqG0KtjhiVxRixnzfBypDmTpvT4rYn8py6SQOFVV8kKA6BA6JsAZTpW1lx9rvJb4lztv
-	 DGiFP8uhOEa5g+cJUC4KH09CsjBX396jZ6kcp8h6l31auKNDX4sKKjs/ZuVPrYduC3g==
+	bh=4/oRDqwhi3VDoXLgA5GrAWXdmPaS/aW4+VhU7F5t7uI=;
+	b=O3428yRptKJNM6rg7weeXSc+Ibu7uUEt2UAVYokuZfzZ0NtUgMDcGgv3grP+9ln89xg6
+	 lhoi2+jnuoWSHIqf4kTVzT48G8W1lwBaPODC2lFR554qGLpG6XucZozwCm8yboRqkXmjn
+	 dSgKOMo8qD3LJacBXhUpDRYrAENqQ7Vt5x5J6eJea5BVx86Y19hvqCvmo0BOsu9Bhja57
+	 J2TFaogeamdYllU7I1cO58m8Ro+S48XpyCXV1kCm1JqQEZRDcwulKKv/L5UFZ1z5/ylLg
+	 LGgLMYEVmP/1A/21pvRmtQZTbD7Gg05iQedMXL15GrdvQenwCcLEJFINQRGr+jKad5Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="K/GX2LJp";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=SJZBY15X;
+	arc=none smtp.remote-ip=91.218.175.61
+Received: from mta0.migadu.com (out-61.mta0.migadu.com [91.218.175.61])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 44CCA606A328;
-	Thu,  5 Nov 2026 12:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC98606A31B
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 12:31:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECC98606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K/GX2LJp
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A5AF11F00919;
-	Thu,  5 Nov 2026 12:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793881811;
-	bh=cIWk54h6Vq4bsOr7750uEgxbFnfqnwYUM+V3ysYbmaU=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To;
-	b=K/GX2LJpW2XXldwtDKRUXjgoB4hbdX5MSA8/4PscwxkFT5zrCO7k4J8ROPcK4yiTF
-	 fr9fk4NUxfKEMEwuRqeqHHT6KB0xfLHLyH6Dx1r0zafOnac2SEltgykvM8ZWOmBLSW
-	 axYhLu6o2RC/85RWVPZTNcvrd2YPqkaNxljC7yJ6jC0Q9fNiTOtZRwRySVMgY2n0Jk
-	 Zn8g9zCvTJkP/3+BIXj27F7px9h2fPU1YyxaPqQyO4TRdebIN3/cDSCL8G2szfsqqD
-	 N7iUHyV1shT41krE0gmLba9GkC/HmMTh07SsGy5o3x/ZxCILoiJJwFV1bQdrdyrYSu
-	 bwkqA0Bk4HlRQ==
-Date: Thu, 5 Nov 2026 13:30:08 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-hardening@vger.kernel.org, alx+linux-hardening@kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Add strprefix() and fix a bug with it
-Message-ID: <i6htkk2ggfh5fdgooihazeaqlnx25seyb3y77qyvldu2efj4ud@4dgvnv2xpbl2>
-References: <cover.1793876837.git.alx@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=SJZBY15X
+X-Envelope-To: linux-gpio@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=LNzXwPtAzajvtYxI6EotRBLZdeMB3u0+426q1DrZgGw=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1793881869; v=1; x=1794486669;
+ b=SJZBY15XH8s9rCV7Z4cE9+pIiP0zyWOrnxAYodoDIN+HDrugiIYKEnqbXzJddKHVEJNLtkng
+ 1Mak7BHk2elDIbLTO/HXOQPP9cf5ZBtLfJdfo+67CLQuJtRbiK/HIqsNdbIfg/R0v9G7+yb2Z5r
+ bGfxkK4QT98gGHPXBFWYImLU=
+X-Envelope-To: linux-gpio@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 63e722beeefc127e;
+	Thu, 05 Nov 2026 12:31:08 +0000
+X-Mizu-Trace-ID: 63e722beeefc127e
+X-Migadu-Flow: FLOW_OUT
+Date: Thu, 5 Nov 2026 20:30:56 +0800
+From: Peng Fan <peng.fan@linux.dev>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stefan Agner <stefan@agner.ch>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 01/11] dt-bindings: gpio: vf610: fix clock
+ requirements per SoC
+Message-ID: <aux3AIUFTEXUIbsN@fedora>
+References: <20261105-gpio-vf610-fixes-v3-0-504e19de5ad5@nxp.com>
+ <20261105-gpio-vf610-fixes-v3-1-504e19de5ad5@nxp.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -70,24 +78,105 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1793876837.git.alx@kernel.org>
+In-Reply-To: <20261105-gpio-vf610-fixes-v3-1-504e19de5ad5@nxp.com>
 
-On Thu, Nov 05, 2026 at 12:12:55PM +0100, Alejandro Colomar wrote:
-> Hi!
-> 
-> str_has_prefix() is based on sizes and lengths, which means it must
-> overload the valid length 0 to mean not found.  This is a typical
-> consequence of choosing to design an API around sizes and lengths, and
-> vanishes when moving to pointer-based similar APIs.
-> 
-> This patch set adds strprefix(), deprecates str_has_prefix(), and uses
-> strprefix() in one place to fix a bug reported by Bartosz.
-> 
-> We can later work on replacing the other uses of str_has_prefix(), which
-> might hide similar bugs.
+On Thu, Nov 05, 2026 at 11:52:59AM +0800, Peng Fan (OSS) wrote:
+>From: Peng Fan <peng.fan@nxp.com>
 >
+>The i.MX7ULP GPIO controller needs both the GPIO and PORT clocks,
+>while the i.MX8ULP and its derivatives (i.MX93/94/95/952) only have
+>a single "gpio" clock. The VF610 controller has no gateable clocks,
+>so force clocks and clock-names false.
 
-Thanks. As Andy said, we'd need kunit tests for that. I can also fold it
-into my series that actually triggered the problem if you like.
+Sashiko reported:
 
-Bart
+[Severity: Low]
+As reported by Sashiko on v2 [1], this isn't a bug, but in
+Documentation/devicetree/bindings/gpio/gpio-vf610.yaml, the fsl,imx8ulp-gpio
+family (including fsl,imx93-gpio, fsl,imx94-gpio, and fsl,imx95-gpio) does
+not share a compatible fallback with fsl,vf610-gpio or fsl,imx7ulp-gpio, and
+almost every hardware resource property now differs across the variants:
+
+
+I prefer to keep the patch as it is since it has a fixes tag. But anyway
+if this is not welcomed, I could separate fsl,imx8ulp-gpio into a new dt-binding
+file.
+
+Thanks
+Peng
+
+>
+>Fixes: c61d8b5791ab ("dt-bindings: gpio: gpio-vf610: Add imx8ulp compatible string")
+>Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>---
+> .../devicetree/bindings/gpio/gpio-vf610.yaml       | 41 ++++++++++++++++++++++
+> 1 file changed, 41 insertions(+)
+>
+>diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+>index a31f64b6d40b..d1d5315ee164 100644
+>--- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+>+++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+>@@ -57,11 +57,13 @@ properties:
+>     maxItems: 32
+> 
+>   clocks:
+>+    minItems: 1
+>     items:
+>       - description: SoC GPIO clock
+>       - description: SoC PORT clock
+> 
+>   clock-names:
+>+    minItems: 1
+>     items:
+>       - const: gpio
+>       - const: port
+>@@ -117,6 +119,45 @@ allOf:
+>           items:
+>             - description: GPIO register base address
+> 
+>+  - if:
+>+      properties:
+>+        compatible:
+>+          const: fsl,vf610-gpio
+>+    then:
+>+      properties:
+>+        clocks: false
+>+        clock-names: false
+>+
+>+  - if:
+>+      properties:
+>+        compatible:
+>+          contains:
+>+            const: fsl,imx7ulp-gpio
+>+    then:
+>+      properties:
+>+        clocks:
+>+          minItems: 2
+>+        clock-names:
+>+          minItems: 2
+>+      required:
+>+        - clocks
+>+        - clock-names
+>+
+>+  - if:
+>+      properties:
+>+        compatible:
+>+          contains:
+>+            const: fsl,imx8ulp-gpio
+>+    then:
+>+      properties:
+>+        clocks:
+>+          maxItems: 1
+>+        clock-names:
+>+          maxItems: 1
+>+      required:
+>+        - clocks
+>+        - clock-names
+>+
+> additionalProperties: false
+> 
+> examples:
+>
+>-- 
+>2.51.0
+>
