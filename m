@@ -1,95 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793890643;
-	b=qEPLR1d0+dq65003GwSvK7ivAZ5M9O2NeHP71yW4LAUkgbALqudhu6igDL7YbsUH1oL5
-	 jwh0frHzy0ZMDUUw1F/id3SyzkX39dDYWCqAlMVY+k9rihhCmTgpavj4Rwy1x+bmTYqnV
-	 ush1t//PKQc2zNUu4OjE1OtZt3QcN/2dzwYfeq/EQbj2O8SjTfRTsnJbTuAzixdNJryvi
-	 LOyTI2AKs5GXkZNWRS2175pSMX/vazjzVgCi2ppQnM1U2rbK56QivkgTyJ7JElnyAskCE
-	 t8Vw624eboGfWdPR581PlhLy0C6MshAUNkiGT7plrUjv1izDRBhCtH+laMcG2LWDsNQ==
+	t=1793890864;
+	b=e5Grbhq8BLDQj561krfI1EJ+0wBefiwjJtldhtbRMnW6ITy+qPB48sV5inEPVwWBmwBa
+	 f6fLJ67M7ZQGBlMccTdfOy171ER4rzYO++rTMEE6UKlb6YkyoB93V5JfPpcudyFivm29w
+	 LiK2FDHkZrWPDPEo83ufxay/G0Y2CcY59HJX4Ig71z2YRwDnVDUPcHf3u617nIkFKDFv0
+	 O95HnLbHepw7oE570lvbWmhaGvXNpN8Xmw1Hxh+A7CYO4AgQZ7guXKNZTRwgcXmaiEDuZ
+	 mYBZygSSr7WtVjpiWJSOk2qKgiBk+bj2lUk09P5vLL3vB/u3nZ62ipYlur7XuncAAXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793890643;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=LAh+fHBX5S66jM7YRVkD+ulSCs8XeJoMda5fYkmtiaE=;
-	b=NPsD0kxDCmhq02Y2StI983G79mxpqgfIy8a0RSz0yZOrCpl3m7UNw6BKaXALCdFVJgXa
-	 fWU3GEyzp/8RdtHD0rc2Sgo4hfI/N9SMu9pekH5hmV1V37c9wFXPwfFGntPTQQzYfBsWc
-	 W+XgoKl5GPFrNDJafuOelEubCXjvZSnKAbrpIAFlpjnW6/Xh7tT85PQs6jOb3ae8srM3z
-	 rTk5GljBTvP47XSMHdJHdfH2JXbftnVdR8diFNlTnhxsjDXZDBVvtd4a+WRNWSINzozC0
-	 jK9y3ihdz7wRHmQzr4mn/GvQlGY6tSL14hCCWiq7GOuplHr3x5BdtSYwS9MBpezroMw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793890864;
+	h=Received:DKIM-Signature:Date:From:List-Id:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=YikqpgDG8M78cXIlVxcKjaFkFjk+ChsNabRfS6Q9WEI=;
+	b=wpw6ruKXnHYjJgZQNOFkhER5MArRyzExmnoP1l4GOtLWhofyWpFs5jGOaJ2WHXhB/I5W
+	 PHDs0GWEhIz6LZDFthTT8y6zjFbUsGdh+ZAnAJrekKT0T7nRQzUWmTvqv+NENNn0x1uXP
+	 StPB5NAXFIquijZOwFs0x7SbW3Br6xvMLHt6zglqoreXhnpqIfFFVr+VBrosuOnJn6or/
+	 DOnLivvQ/cyy/B+kklZHjAbSDfo+Qy7VUrDEf9wJOtnXPNLx+Djrhf+eTmURhTzf/Euw7
+	 nnRTkDIcQrM127AMo4MpMhPE+gjtVGmjr4uqbcHrs+sd2tzLZqwwjDrW0qJZMbb1z4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=FFicVFFG;
-	arc=none smtp.remote-ip=74.125.82.177
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="hZBF9q6/";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73146606A328
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 14:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 73146606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 38D46606A33E;
+	Thu,  5 Nov 2026 15:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=FFicVFFG
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-36a1947498bso5594875eec.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 06:57:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793890642; x=1794495442; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LAh+fHBX5S66jM7YRVkD+ulSCs8XeJoMda5fYkmtiaE=;
-        b=FFicVFFG28O7DsFqcOvD49oFjNd+LS/7lAbf58ZGjBb/ARluIGEWnFD6Q2Y4X4frcq
-         oYLDDZWVdImMpDkRCoTa+Obj4Oda/YGU5FfIyOd97AbrxpvgysKXTsFZfyNhN5/dTsWN
-         bwsW70Zc8DDZh0BxIWQNyHuqk+3ihGVMCJ2AzXv+zzB7wHE2ir9g3VlcPAyYK4VNkOfo
-         7zfMXGKq7ruZuazM2bjmZatE+7Ya5JoJCZtUJ1p7/9arTLOjUOqlE5qw5ZZROIcnHj9u
-         XP+vba7vEW2rCDBgPYs65sFjmi3d+X6TW4yl/9VESaBUwFc1AGHWIXTXRTscx2OilQme
-         7s3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793890642; x=1794495442;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LAh+fHBX5S66jM7YRVkD+ulSCs8XeJoMda5fYkmtiaE=;
-        b=Akqu9J19EKtO5cuGN8J4mdJMj5emNcjzvB1ohXwB2f+13cGqsZSkgq7foBRPVyghNI
-         zdNHFoqzpop8Qfqv+NOGuzGrxtBE9FHPPXdqbi5ZuDrnmKRiqfsbsaFnRKXQpjP+TwcC
-         I13bBWm2y9xJKDP1ahKb4nSkDnIOU3bUkj7BcV1s7GZk1GQph3FZ8tkL8opplCBO0cZW
-         vITCmnHXAf5EbiqjMwUrpD8anE0IoekylApYbw5l+S61YI5JwPgz0MqbeXnlj4gcBaCG
-         1wpdqugZZcONKNRJeo2vVg6KpSatz32s/U6cJ8I3BlYiM9kItfsBG/09saR0hZqSej+o
-         d1sg==
-X-Forwarded-Encrypted: i=1; AKwUvByzryICOosjaNZBhgsVmuhlUQYOkIjHVTCpE0UW6zMdhi7WWpDMv5ODM69bvVBN2U0fyxvDCJ3EGw3w@vger.kernel.org
-X-Gm-Message-State: APuU4Z+DN+MVGw0dPTx826ejOWrj5nhMmvMnxelVdJajB6AP0YgXvbBD
-	Bl+k4zJlqQvrGiY/TV5AE0irjaeP/GVccZ4iPOyeg7FKuwdelWNHrBUD
-X-Gm-Gg: AYBFou1XLOuiY/doSkkSZSdvhGwJsfFz+UMxhDEpSEewz1MBEyH1/n5oD9C128JBSkP
-	KToED9A483IjY62C6br5MQicArA9xSSHTkkdk/76epexs8Uuf9aPZP/JzdaVIe/H7R5n6+XTLWp
-	PL6udPai9ZYzmpSR3kNc9n/et17DNfn1nJrnN0E7J56h8MuXbVS8KMGwAUdrmmOKNda1q7nWxXk
-	kYoxdAB4DFniiJ1NjaZoFkSyp3HINiqwy5KTwrGwiOliApiuQJfXTCyQMrSzU768528+CWVswTZ
-	hb0Wu7n3+p4qkNOJV1ZqEpUW6/E/tvnpXmAHubOWoLt3K9CcoGKJ1g3GGzpBRHk0Fz6wdPosfQS
-	SBlHCIpaVObpUetwRygBXHNdZ/niJm38W+BS1gQOWg2bIe6MTJmcojsrOLrb6vLQGAWvDoFWYTc
-	PAqjQ1XG5U7fBQ6ZJOymFAV9pbUgjl7b2E98YUHx1SdNhKKg/zl48J1vkeLFhSkYv3R7+nitfml
-	/AWVgyNlJ/wcD+eKc1UsF0XdGe8MrjmRxaHhsdNBwrrfGXflcjNzbcndUSTtNrH0koscXVLxzH2
-	MqF1vKyhjWjqKj4XKNMAX+AyZYDIL6DfN6xeogoIy5t1LPCt
-X-Received: by 2002:a05:693c:6393:20b0:369:f291:49da with SMTP id 5a478bee46e88-36a4243f71emr28876543eec.40.1793890642366;
-        Thu, 05 Nov 2026 06:57:22 -0800 (PST)
-Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36ca39b8eb3sm23369977eec.27.2026.11.05.06.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 06:57:21 -0800 (PST)
-Date: Thu, 5 Nov 2026 22:57:11 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] gpio: cdev: fix waitqueue deadlock on chip deregistration
-Message-ID: <20261105145711.GA92894@rigel>
-References: <20261105-gpio-cdev-srcu-deadlock-v1-1-6047117030ec@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hZBF9q6/
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 722A11F000C1;
+	Thu,  5 Nov 2026 15:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793890863;
+	bh=YikqpgDG8M78cXIlVxcKjaFkFjk+ChsNabRfS6Q9WEI=;
+	h=Date:From:List-Id:To:Cc:Subject:References:In-Reply-To;
+	b=hZBF9q6/VKSxXP5docH2Gj5fq9m37zdZV7Col4OBl5xGxhd0vJHg/W//wBvX4OxoQ
+	 vFzJSUrZ0K6ehrM8xJuFmqbzqSvk4sZQpEk9m+h6dvAfXJuLLf2OdmCRjLxA47tVB4
+	 +XZak2u0kk3O9e5MHsAAFeNrURL44Q7RSPYX/D07JYHxTSmLgG/Q0fui+C+rwVv5YW
+	 JgJytYfRHBQwemqWR6Sq3oyQ0wip0u9td+EDJmYtkoy9UfXy71ypjOWrK+jLHpY7/h
+	 ZEVXG8oIYdPhjuPAAoe8CoFgGe8fkUbgeVXQs77VXKNRx1WebooUyqLNkdUMsUVtzn
+	 Cbo8o2w1QEyjg==
+Date: Thu, 5 Nov 2026 16:00:59 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Alejandro Colomar <alx+linux-hardening@kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Add strprefix() and fix a bug with it
+Message-ID: <3lj2ivlwz6wpf66u3ifg5lxlmqbe5gulcr56rd7zxcgrhx2pj6@dxdqaxsp5hvu>
+References: <cover.1793876837.git.alx@kernel.org>
+ <cover.1793882260.git.alx@kernel.org>
+ <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
+ <auyOkL1Vb1iKicS9@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,39 +72,58 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261105-gpio-cdev-srcu-deadlock-v1-1-6047117030ec@oss.qualcomm.com>
+In-Reply-To: <auyOkL1Vb1iKicS9@devuan>
 
-On Thu, Nov 05, 2026 at 03:47:59PM +0100, Bartosz Golaszewski wrote:
-> The three calls to wait_event_interruptible_locked() sleep while holding
-> gdev->srcu. In gpiochip_remove(), synchronize_srcu() runs before
-> gcdev_unregister(). The latter fires the waitqueue wakeup events from
-> the notifier callbacks, so a reader blocked on an empty FIFO never leaves
-> its SRCU section and the removal will block forever in the former.
+On Thu, Nov 05, 2026 at 03:16:45PM +0100, Alejandro Colomar wrote:
+> Hi Bart,
 > 
-> Since rcu_access_pointer() is a plain READ_ONCE(), we don't really need
-> to take the SRCU read lock. We don't access the chip structure after
-> checking it. Remove the lock and instead make the waitqueue aware of the
-> possible chip deregistration. Keep the initial gdev->chip checks as
-> removing them may change the error codes visible to user-space, for
-> instance in cases of a non-blocking read on an empty fifo.
+> > Date: 2026-11-05 15:01:22+0100
+> > From: Bartosz Golaszewski <brgl@kernel.org>
+> >
+> [...]
+> > 
+> > I have no idea what causes it but I'm getting so many patches lately
+> > that are subsequent iterations of a series sent with In-Reply-To: header
+> > pointing to a previous thread.
 > 
-> Ideally, we'd factor out the common code into a dedicated helper but
-> there doesn't seem to exist a clean way of passing a kfifo as argument
-> so let's open-code the three call sites.
+> I don't know what others do, but in my case it's a conscious manual
+> action.  I use --in-reply-to in git-format-patch(1) to make all
+> revisions of patch sets be descendants of the cover letter of v1.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> ---
-> I've had it on my TODO list for a while. I vaguely remember someone
-> reporting it to me but can't find the reference anymore. Please feel
-> free to add a Reported-by: and Closes:.
+> We do this in the Linux man-pages, as it helps me keep track of all
+> revisions of a patch set easily in mutt(1), without having to follow
+> links or use more-complex tools like b4(1).
+> 
+> > Don't do this. Each new iteration must be a separate thread. Please use
+> > b4 to manage patch series.
+> 
+> I won't use b4(1); I like bare git-send-email(1) and git-format-patch(1).
+> But yeah, I can send them as separate threads, if that's the preference
+> here.
 > 
 
-Isn't this the same as patch 4/7 in Adrian's series[1]?
+Yes. It's also the preference mentioned in the kernel documentation for
+multi-patch series.
 
-Cheers,
-Kent.
+> Out of curiosity, what's the benefit of having separate threads?
+> (Or the converse question: what's the main problem of using a single
+>  thread?)
 
-[1] https://lore.kernel.org/linux-gpio/20261103-gpiolib-chip-removal-v5-4-aambrozewicz@nvidia.com/
+I may mark a thread in mutt as "done" for whatever reason and then all I
+see is a reply under something I've already processed so I may as well
+skip it. On the other hand: a new thread gets my full attention.
 
+Such sub-threads also can confuse tools like b4 that maintainer use to
+queue patches.
+
+> They're morally a continuation of the previous threads, which is why it
+> makes sense to me to have them as subthreads.
+> 
+
+That's what change-id is for in b4 tracking. That's also what the
+changelog should contain: links to previous versions. All this is
+already handled automatically by b4 which really is superior to manual
+git send-email in every regard.
+
+Thanks,
+Bartosz
