@@ -1,103 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793910721;
-	b=IPIGDHYcuEE/NRGyUFKW5wpJyup5+Ld9hEqkozuCG5TBRVZAq7q+B3OjLqB3NdKtAbaP
-	 s4ql6HhaTbcvOkp11r98mkkW7xz4L7beS+Mnp3QwUXDsw5HTFahrc/S7ZkBiVThfX0zwo
-	 /HArA/0e7boPkRC/2uxJcfbstJarXDrQwWirHgpzYwtBE9mL7NXUBP0YJ9d0CRS7AXK9x
-	 MhK6ZwWAw/anGf3zjJZGOKVhmWiy8t5ajAaZANNvl3/qP7OtxDVaDhgboRCyXGFlcOjy2
-	 t3wEE95x0SLGi/J5til3pPAnfuKLfEPM5aU0n7B2kfhycNxgj5M3axQTGbHaJpZUUTA==
+	t=1793910976;
+	b=mZtvC9VuNYS5UN3orsmzxofrf/4o9Vm5g8b7T9eyDts32/ujmjUnQJAa8ZcP7Os+SY/w
+	 uQEoR/C/12mvixnSTAQ+N9R8mT7ltgix2+tJJzQoPB/3djv3hnCmfi8r4h7w79tMM3Tpl
+	 FzUT98ptUwSwYGvMqy1UcRp16aFkR/Hmq8bd2CFENXkoEc+DIeJy+kmPxOzwA6TMzY3WE
+	 cyXSEuduI+zCcjn073AfMFjQDu4UVatfk35Z6e/YUrmA8XYYxTOObFDY1x3avXMqv+EHb
+	 y6Pl5ExsTZA80JzqGTPoddOnZVfFLSXlEG353aJaKzBqs1ARlAJgd16XgKRZy8a4dhw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793910721;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=naL9ZYlGHpjK154MUN/eO3m7g6+A6qo1lAhYSkBJyWI=;
-	b=bmzlhFCUcmo+VGeEekBoHjxaNmCLvCd4+irYFx8TgrS9E5c0oFJj50FxJ0ve+R2AeYTk
-	 xPaW6TF1meRsWo3tK8+UtL1LD+oofVQjTuAgS2EWaJPyJcqUp2A8zuGp/UvBSAgP/Bc80
-	 4JRAYO4HmMMawG1cG7HaO7xnoNbRcvem7YuRMy3KpX1e3c43r5W7xKVWOR8cpT0BxZHnG
-	 VrDOblrKf6jcfDbMD6IrrOUDxAxFUc7rQxipuDf4KxRgUhhWQmZ2K0zAHqXEnE3/otEy7
-	 UcXUG5mSky5PRwONm2I0omel6qyLnMV6YNsM7X7L935UzA5/Pk9rwn4zgslSOU6d7JQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793910976;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=QQl1ERSY4wmOR1OEbq5mx2PtZRC9i6q9Gw0tuk7z0Is=;
+	b=XsD70tkv8I2b4D6yK2BYqaXajAdH4mB5BzDzgEEZ2oz8QQ7Nf889RJzMgRwbnWyjnNbS
+	 zyP7eWT+qoP/W1zw0PFoivK0FdUZAAytnp4z+Oe2WgBuiYqoqYtVgJimMftdD0iHjWqWh
+	 ZfrXEaWAXJWzTIcTHQf8imrVtBrnIBKxI3xNjr7OOSb9cKdD0wIbIsEZUqSZfmU4JNEcE
+	 jVeWRLrRygGhoQaTHTO5zkNoohRDXT4O7dZY6HUEB7qe/bDtiJ+CnAYaHNzbbH6jr8aEH
+	 ZIxJhh12kHrYVgXEhCO7esE8K5x1agON2shrLB+tuX/puMonJQ+5Sl3M/oZmmSyYoVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rowland.harvard.edu;
-	spf=fail smtp.mailfrom=g.harvard.edu;
-	dkim=pass header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=QuEcehMG;
-	arc=none smtp.remote-ip=209.85.160.179
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dmarc=none header.from=telaak.dev;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.216.46
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5196606A32C
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 20:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C5196606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=QuEcehMG
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-535179e995bso23700941cf.0
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 12:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1793910720; x=1794515520; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=naL9ZYlGHpjK154MUN/eO3m7g6+A6qo1lAhYSkBJyWI=;
-        b=QuEcehMGpMoP1K0IVbN/jVj5FL16+s94k5t0K2g5d5AuYxTOCh6G4Jz8w3y0e27Ot2
-         zjBFLHRAzM/Ti0n2KRuJaKiZ6olZN9GtZRXeHTVndUylx9APp6ow0YwbN7xjTxyx10zJ
-         kdOYN2vLpWaJFVSHUEHHJ1hmP19gmsD7CISX8rluknE01JEHFdBxhDChOCXZKhEPxxPl
-         v87bQoOa90cvKjHG3/jJXdY7C5Zm7dx6vyByYMIw0erq7zDu+/jRkawvk1sbni8vxpQW
-         vi1jBCewTx7IZ0PNMjwxUuVSUuI553Yxr1C6eovL76hM822B3OBk+EWb0+m3HwoCP2UL
-         hVQQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B406606A32C
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 20:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B406606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3b0afe09854so806138a91.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 12:36:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793910720; x=1794515520;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=naL9ZYlGHpjK154MUN/eO3m7g6+A6qo1lAhYSkBJyWI=;
-        b=HKundCieDlKRz7wp5r5Rq36iIT+xf+yITFd1rMJb73sYXzDbW58duqTWt9buGE+g8R
-         yjCLubXU1PIao5XfIgPXSdnRV1z8S+eHP2cL+Fl42ani1OAw7EhWWZT42IOt0YLOkPIF
-         LffRlVq1RToskJeugMKonkvu0u+aO5APAP5pAnd8TBz0CKuTKMnkXXn1C4xvik/2DPnb
-         YhE/bVjpF32xnjM5K5UiX5KbnPlob/QRZRoPwrV6oGr5uN60adU79xsSiWkyDR+Sg6Q+
-         WAUIWPg1PbzdhEp9PyaGyC1f+0q/WRkTXX1kCBM2gy30vsyRaR+OXWtip4bMticHua1/
-         6FBA==
-X-Forwarded-Encrypted: i=1; AKwUvByvpfFMlASiOYCX0ZejBwaGAp1RV1OH/3y5GmqfP9o1PZWTb/o2b+HVCX09UMxn6ankQ1T1NuTOS5cJ@vger.kernel.org
-X-Gm-Message-State: APuU4Z+ASnHSsCstYBjEGJ6EQ0LqcQ9M5U4o6vCmjkybwly22OmACLqk
-	anEXbKepT15FnLmt7k6g5H0OTGNm8K+Oir1LGBu3vICfBLO0H/+kOvwqpepNP7Y+yg==
-X-Gm-Gg: AYBFou1ioXdVhNC6kvtxHa9dYHH0j+jbeoOjpGJ9GQyv54LfYA4vji5LcqAspANZjlc
-	/4vMbpiF5e+KGanRUvwo+qmGQDFmt+FbieRh260s0GsYk+mk6AXVjumjDRRSKHIwue5ZG+JVmSf
-	+uMe7xegEXdBO9Les3y8VYnds0zHUyErQ33cfcb54dJM+GAkIQDq5JtmbX3DCfs920fRgCqt8zg
-	JisQ8ifzotknJFOvJ8kat6ZnXVxZ29JjC48GWJkhg7jqA/lIMOoVvjmsV1eDb8J6Kz7F1W91o91
-	a2ce40qJc2OOPhLBROY7kFSyKt1+ugSI2mzyPFTD+XykKd1UuIdlLk0nWXL4P5Og2DlvaxPkmow
-	LlNeJL60ZSv6X10FCq9ISdaCln+xzuPd/uGjPs2OCMpgaDP3SvKoRd5bWW6cIni68PO1cEaXQ0i
-	hz7S0JdLqWOqvLIxT9FgI7A05NaZu3Mrd9+67v7VD34J2Jyjjh/vBpbgDumikk4qbBeYEnTpC9c
-	1KIzvz3+dt8CzFRCsf6J1dVEtbYo3tSO8MFYDkTmayvR9gfXU/2qyaYYdnA5LQQO/RIXPmZoPAy
-	SW+ooGmdqGReAzbQUM2FkQiXy7i3
-X-Received: by 2002:a05:622a:5a18:b0:535:85c0:fda2 with SMTP id d75a77b69052e-54e100e5826mr8821511cf.11.1793910719615;
-        Thu, 05 Nov 2026 12:31:59 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:d01:d210::66b0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ea6a870dcsm3921886d6.30.2026.11.05.12.31.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 12:31:58 -0800 (PST)
-Date: Thu, 5 Nov 2026 15:31:56 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: James Clark <jjc@jclark.com>
-Cc: sashiko-reviews@lists.linux.dev,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, Bastien Nocera <hadess@hadess.net>,
-	Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Robert Nelson <robertcnelson@gmail.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH v3 2/2] usb: core: add a pre_probe callback for device
- drivers that may defer
-Message-ID: <a0918852-57e6-42b3-9321-38d766a20025@rowland.harvard.edu>
-References: <cover.1793669297.git.jjc@jclark.com>
- <e96b91c85945237ca455869bf4d5a1e177358b54.1793669297.git.jjc@jclark.com>
- <sashiko-outbox-194542@kernel.org>
- <20261103053952.1138398-1-jjc@jclark.com>
+        d=1e100.net; s=20260707; t=1793910975; x=1794515775;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=QQl1ERSY4wmOR1OEbq5mx2PtZRC9i6q9Gw0tuk7z0Is=;
+        b=Nss6Qt+pdsSUlB1wsYlv4aKK2lhKbcYUxC9AlGD6DugRkeELHGY28jVUFfQtlA/DDZ
+         7uweNPGPZNOFYHZoGO8FRPrpk3aCeGmwZTBQcODRKfzpqraQui5iw7o9Jh8U3XdZkvup
+         CoqhfhLwfuw4+9qqt3Uuq1s7qOzdWmCjQIxk+zfvJRTih8xpkNXmqHIV4Y74uISS5g18
+         Mod+SQAM7g6E0MAha453owb9VQ/qWjew0Fv3VmTv2F5HR6xhE8kLni6wxeQQa/1wu6BD
+         SxtMSYiJMPMrOC4wmJP5ajVv9TXpACzXW9RfA65hFaEoBO6gFiH9OrlrWAKnz8hWC6O3
+         9npw==
+X-Forwarded-Encrypted: i=1; AKwUvBy29A/b9vB2sSSKUr/A+p7xazhlVQFM2UFoLOE0I5dXS0h2jr8mTkYNLf9dq7by72LeusxvmqvZ7waE@vger.kernel.org
+X-Gm-Message-State: APuU4Z+FvWEqzny/qG9qs/uuoOTYKmBOom4ePhQmeAIoiDcoXcdgC7ZZ
+	uVXfx8CIfi8GJl8+wIaTgK5OT+9Gf7ujKdKmD0AzfhHrGRDrZARhdaGFMXo33sxX
+X-Gm-Gg: AYBFou1D9nzaQFh5BKHTfEKO3U6crFrpbWKs+O2K3c5wioQEU75d3Teg0PACYN7JfKg
+	l8b0pI3mpbclRyHJ5xO4hixZqY8SpYhU4wyWQiWFHU1I1fKeiIiWBy0kI03UbhHX/Jn/fK/t4VQ
+	cUwTZJiErqb9Z+nGOUEZIkQEKueEc+amVrU7qfCUnmBQbi5ySR3qVWARdGcp7+sAmkLBWqcpMuM
+	Y5wzj5us4Xh59UutYaG8PT8V2N9hyyu/mPPxut5gz1BtSvCEFJtt3aoN103flofxn/8rhqe+z7d
+	Hg7Z3Uc4c0RUs+iRl8sTevScFkOKQnesFOqH6LqhCFEA8H07knrio9ZcoqOpmm4EG9VWi0LL+IY
+	X6LddGVyr5vU+doiehwSk3MCGZTsfEqdX6ev4nm5/64EANAnUQtqQKTdIyLEaCqOH8jfwpdn2ZP
+	vFwH/8zj0yAzFdlCMr9akr/7lf+TRJPWIDkNn8FFYvLeKXUzq4LacJCH1ctv3iGzK4PCAJ8+Nds
+	PHt+eNdBY58Te15pe4r7ozXKQOrLXuJQyFwvbrAmlcBxZoieZJF7+5V1pvSgmc+et/JBH4reNTp
+	Guox0vJHRE5z2q/ON084Rg+QCKgW1gNjzXReVYoCNi+V18TIgaTliOPooVfyQ+5L+ypp5rlFO3h
+	Ii963ylmJchw7V0MoJxSFzm/XdrP22bP3PsloSrfrIi2wQw==
+X-Received: by 2002:a17:90b:1b07:b0:3ac:9a5e:9ce9 with SMTP id 98e67ed59e1d1-3b0db6edffemr142219a91.29.1793910975375;
+        Thu, 05 Nov 2026 12:36:15 -0800 (PST)
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com. [74.125.82.173])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0d7ca4b03sm599909a91.14.2026.11.05.12.36.14
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2026 12:36:14 -0800 (PST)
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3514b90bb89so4479834eec.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 12:36:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBy0zJgbtKzmvKaRQt9ddtSj8kkFlybW92FEMjDWdZfGYGBnYhNW3v3DyKOGYjE9dzue/a9q9NI4zVEF@vger.kernel.org
+X-Received: by 2002:a05:693c:8008:b0:369:d486:457f with SMTP id
+ 5a478bee46e88-36f73e72d61mr409769eec.2.1793910973768; Thu, 05 Nov 2026
+ 12:36:13 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -107,70 +81,25 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261103053952.1138398-1-jjc@jclark.com>
+References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
+ <20261104-sf19a2890-gpio-v1-2-45e463c48728@telaak.dev> <CAD++jL=Bhbm3eNafdRTSKcnjyivhdmp0Mk1iHZ=HKN9sy_3Ozg@mail.gmail.com>
+In-Reply-To: <CAD++jL=Bhbm3eNafdRTSKcnjyivhdmp0Mk1iHZ=HKN9sy_3Ozg@mail.gmail.com>
+From: Joseph Telaak <joseph@telaak.dev>
+Date: Thu, 5 Nov 2026 15:36:01 -0500
+X-Gmail-Original-Message-ID: <CAPY4CJ4ExRTFJ+1q7GDw8ow=_ekk8urUqfC7ZtcYckwf1uO+vw@mail.gmail.com>
+X-Gm-Features: AclHuK_D3HUaJCQYumF5y8SooLOqbAC7H10kZ7apqTopxHnLZbvIW5XAq_-o6t4
+Message-ID: <CAPY4CJ4ExRTFJ+1q7GDw8ow=_ekk8urUqfC7ZtcYckwf1uO+vw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: Add Siflower GPIO controller driver
+To: Linus Walleij <linusw@kernel.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
+	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Qingfang Deng <qingfang.deng@siflower.com.cn>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 03, 2026 at 12:39:52PM +0700, James Clark wrote:
-> On Tue, 03 Nov 2026 03:51:41 +0000, sashiko-bot@kernel.org wrote:
-> > First, when udriver->pre_probe(udev) returns -ENODEV (for example from
-> > onboard_dev_usbdev_pre_probe() -> _find_onboard_dev()), usb_probe_device()
-> > still calls usb_autoresume_device(udev) and usb_generic_driver_probe(udev)
-> > to configure the device, bind all child interface drivers (triggering
-> > deferred probing), and emit USB_DEVICE_ADD, only to immediately tear them
-> > all down a few lines later in the error == -ENODEV block via
-> > usb_generic_driver_disconnect(udev) and usb_autosuspend_device(udev).
-> 
-> This is deliberate, and documented in the @pre_probe kerneldoc. An
-> error from pre_probe() other than -EPROBE_DEFER is handled as if
-> probe() had returned it, after the generic probe has run. This keeps
-> the -ENODEV fallback to the generic driver working as it does for
-> probe(). For onboard_usb_dev nothing changes: its -ENODEV used to come
-> from probe().
-> 
-> > Second, if udriver->pre_probe(udev) or udriver->probe(udev) fails with any
-> > other error (such as -EINVAL or -ENOMEM), usb_probe_device() jumps to
-> > err_pre_probe, which only calls udriver->disconnect(udev) and does not call
-> > usb_generic_driver_disconnect(udev) or usb_autosuspend_device(udev) to
-> > unwind the generic probe and runtime PM state. Because really_probe()
-> > clears udev->dev.driver to NULL when usb_probe_device() fails:
-> >
-> > - When udev is later unplugged, usb_disconnect() -> device_del() skips
-> >   usb_unbind_device() because udev->dev.driver is NULL, so
-> >   usb_notify_remove_device() (USB_DEVICE_REMOVE) is never sent. Subscribers
-> >   such as usbport_trig_notify() in drivers/usb/core/ledtrig-usbport.c never
-> >   remove the port entries added on USB_DEVICE_ADD, leaking struct
-> >   usbport_trig_port objects and sysfs attributes with a dangling port->hub
-> >   pointer to the freed struct usb_device, and usbdev_notify() in
-> >   drivers/usb/core/devio.c never runs usbdev_remove().
-> 
-> This was raised in Sashiko's review of v2. I missed that it can be fixed
-> when the device is unplugged. I will attempt to fix this in v4. I think
-> it can be fixed by recording in struct usb_device that USB_DEVICE_ADD
-> has been sent, and having usb_disconnect() send USB_DEVICE_REMOVE for a
-> device that has no driver.
-> 
-> > - For drivers with supports_autosuspend = 1 (such as
-> >   onboard_dev_usbdev_driver), usb_probe_device() does not take a runtime PM
-> >   reference, and hub_configure() enables autosuspend on hub devices; once
-> >   the device suspends, usb_resume_device() fails with -ENOTCONN because
-> >   udev->dev.driver is NULL.
-> 
-> This is a pre-existing bug that is new in this review.
-> usb_suspend_device() does a generic suspend for a device without a
-> driver, but usb_resume_device() refuses to resume one. I don't know
-> why resume is refused. If a generic resume is safe there, that would
-> fix it.
-> 
-> > Third, if udriver->pre_probe(udev) succeeds and udriver->probe(udev) then
-> > returns -ENODEV, the error == -ENODEV block runs
-> > usb_generic_driver_disconnect(udev) and usb_autosuspend_device(udev) before
-> > err_pre_probe calls udriver->disconnect(udev), reversing the teardown order
-> > used in usb_unbind_device():
-> 
-> I will fix this in v4.
+> Completely pointless indirection, drop these functions, just use
+> readl/writel directly in the code.
 
-This is all starting to sound very complicated and fragile.  Isn't there 
-any way to simplify it?
-
-Alan Stern
+Thanks, v2 will drop them and use readl() and writel() directly.
