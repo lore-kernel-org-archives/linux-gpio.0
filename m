@@ -1,59 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793892259;
-	b=zBtr3oASSfErxq6ef0LUxDa/Q6INNrjfq7A2Afo84uK4NOgQUAyquXXqX8QUh5AlJGTV
-	 5GdvfkLGfJcxIHf0E6UVH5S2GUIPY/1PhgyoFwtBCfSZGBJ3e25oyTgf3liXHP9hE3pRt
-	 wxs5wy3rO2E3ipt8weflWnV7H2pxAhuZQ7VYNbkMpVQavyQNY4v+MEJ7UjvJROn6FdZS1
-	 niPrSGRB87lLcSa0UI2zI22wSuzh8blWTFBaAiYvRJTvaZC5+l0hWDhnuZqX7u7Wj1tRJ
-	 ESoUf4wjmn1JrEHHynBHYBn+TIWc7+p3JirGeMz5t9IzA5406Oj3xJ40MM5ajLeOGmg==
+	t=1793892797;
+	b=UtUy4epRatXaECF9Nr0pAA30DbvBh16VtFPOHHgv6cHr0MowfaXmzcjTlOW6qjkknl3w
+	 SXeV5enOJxgP25JgDiqSlscqQf+r1y7drVaUGEm3XQLOCltXoxqy5MDAy9ESbI2JTNNZG
+	 d2jWBAeIEIAUdR++u2k7rzBMXmmbQ6N7PNx3QySfpX7KE/R0zsoVkuP4Oja9gdR19lTDh
+	 pVrq1I5hikkkbPIA9llIuDPsJdjBtB3xPgZ93mtMmjytQ3Jok1hxn8B8o4SLQI7hpuAfC
+	 m+w3wrNhS0sD0sbEz9PudFfyFpGPtLky0qeOEqencMAjajTzchV6nrHm++t+Hc8QCHA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793892259;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=J6+TRHT0fPj4a1Bf7OUNcK1tDs18NfRgn9ubKZdBdOU=;
-	b=haATiCiArCFYUriVyX2R6F39ze1uz8CfXUO37l5ODHBePWIdPDwKe96CS/TEwQ73QHth
-	 rDeNkE24vFE9kk3sLmiyKrRGFhEaxxlwrgPhzyjA4yIllFLWZ+Z6+B4EkJCUkfWYZD5LJ
-	 3fElT02ztEAQT5PMzOVa6eihl6TglqO65JwI0cdfbxkhzbV92j8qWJK6wlmViHvo4MnR4
-	 Mn6hmhkbWr25Irs6ltdfP19t/XDUNizJsrAhcXJTA2dLfkPnl4RBBTx+irn6iOv2vslBS
-	 UW+GKWQMSivZf0X/v+P6MJkvBxqBhx4TItovgfJaXqunxV70XmLSOQ0Ob4vjelfdtXA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793892797;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=isC2AL25To+MLCl3aYVMEMb2gGLkTpgCybZWqSbFh3I=;
+	b=2+tzxwAZdHRXUTgbhJNT2XWnY8IgmHjfAgRv9NTIY8vfJqa71dSfSIYKUIVkWNRVhS8l
+	 TOYswhf2a36n1e1gJjsWeJhn0gyeqHfVxlk7eOUqVw5dBYlN/ZOUVkftZ68FhJaP7FJa7
+	 BcevS1qQRhW3xBiOzhTQHg3ukZdwpruJSVYZhwBROplQ+dk/UCHvZb1zeuL1yi9msO7u1
+	 M5a+5m2rgfCChTztXRstKNCmKMTVSK4VkgGx4cX0L25Mwz9wGI6LXr/6/Pe7BdvR3SAAu
+	 NIgnlv7C3g/xE9a1H4lLUWddUCNuGBgizHctaARDDezJK3AELW4j7rLy45Ci4HsEd+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Rn0+o/u3";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OP+e3gCo;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F1D606A32D;
-	Thu,  5 Nov 2026 15:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7747E606A334
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 15:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Rn0+o/u3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82531F000C1;
-	Thu,  5 Nov 2026 15:24:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OP+e3gCo
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3AD1F00919;
+	Thu,  5 Nov 2026 15:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793892258;
-	bh=J6+TRHT0fPj4a1Bf7OUNcK1tDs18NfRgn9ubKZdBdOU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Rn0+o/u3wb7vjgps6rsQku1SIVGcwBW77XRmVlD/Pg3Zz9P7GJgl8tbCq57ueWInN
-	 qunl6YTKOzW+nqxJhs3XkYtHUDLqm5z46C/b69OE6Mu/c6vU9rBsB0VRhdbS9UyxnP
-	 opXTrGzP7L8ictun1rVh1AZw9HZHctnuxSzJGqHheg8FtByiuGxa9TFK8aMFvzb8QQ
-	 C58DV5hBa+AAGFQzzNjiKEvxLl7v714/vxNfvEtD/ZaCVxzdVZjD5q4U1vX+ogH9d+
-	 0d3IWyY6ShVBz68eNVQNa1XfGehE+jhX2pcF1KVDxggRLK3nyPQweixS6rvT8NysOr
-	 44RXew2NIxNJA==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Tomasz Figa <tomasz.figa@gmail.com>, Aiden Isik <aidenisik@member.fsf.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
-References: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
-Subject: Re: [PATCH v2 0/3] Introduce Exynos5515 pinctrl support
-Message-Id: <179389225540.696044.4640598390040264702.b4-ty@b4>
-Date: Thu, 05 Nov 2026 16:24:15 +0100
+	s=k20260515; t=1793892797;
+	bh=isC2AL25To+MLCl3aYVMEMb2gGLkTpgCybZWqSbFh3I=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=OP+e3gCoQ49TuhKNPOfMVs7lqB0x7C4BqOy0cZEOmoOp1bVfnudAm2wlT2Fm51EdQ
+	 fHI07uev9dasH70lzSTe3A0bYUy26gux1EIj0ZnRmid5DwIcOHwBbgd8l8NcuRqdkp
+	 MLyhpynf1mQ+EfHb7Lgxh0ZhyaCNEtb5DmsvgCGalyz81vh0X0OOCIJndqFm85qUu2
+	 MGrbQYOnEm/clJokwcSQNXJKQJJJUYZpoTh4AtpO7iIFkh6mqdQWUicK/x1lgeJzrP
+	 Uc7D8e6cGTBDK99Vqt8fUsxc79fj9cvAnKiFqg3sZ2GLUHaQ7oUjlQdhrcX3iubw6i
+	 T4smG40PTFggg==
+Message-ID: <sashiko-outbox-199315@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] pinctrl: aspeed: Hand over global GPIOP passthrough
+ to local mux controls
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Prasanth Kumar Padarthi" <prasanth.padarthi10@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261105152348.8567-1-prasanth.padarthi10@gmail.com>
+References: <20261022024314.48623-1-prasanth.padarthi10@gmail.com>
+ <20261105152348.8567-1-prasanth.padarthi10@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 05 Nov 2026 15:33:16 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,34 +60,93 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
 
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] pinctrl: aspeed: use-after-free on unbind in aspeed_g6_pinctrl_pro=
+be()
+--
 
-On Tue, 20 Oct 2026 01:02:33 +0100, Aiden Isik wrote:
-> This patchset introduces pinctrl support for the Exynos5515 SoC.
-> 
-> It is very similar to the other Exynos SoCs, therefore we reuse the driver
-> and for the most part the pinctrl bank macros. A couple
-> Exynos5515-specific macros are also added.
-> 
-> Kind regards,
-> - Aiden Isik
-> 
-> [...]
+commit 7926ad91b4f1741a83b80da360b9a845357a5376
+Author: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
 
-Applied, thanks!
+pinctrl: aspeed: Hand over global GPIOP passthrough to local mux controls
 
-[1/3] dt-bindings: pinctrl: samsung: Add compatible for Exynos5515
-      https://git.kernel.org/pinctrl/samsung/c/e0a07b3e54f762774a604c39275afe3575bf8352
-[2/3] dt-bindings: pinctrl: samsung: add exynos5515-wakeup-eint compatible
-      https://git.kernel.org/pinctrl/samsung/c/c5ec9b1c5f95b4af91811fbbd86c83d0f5f240ad
-[3/3] pinctrl: samsung: Add Exynos5515 pinctrl configuration
-      https://git.kernel.org/pinctrl/samsung/c/6bb1aa75bc2c85a89ee7856b9557b519fb7428cf
+This commit transfers global GPIOP0-P5 passthrough selections in SCU510 and
+SCU51C to per-pin mux controls in SCU4BC during probe, and blocks GPIO and
+mux requests on GPIOP0-P5 if the handover fails.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl=
+/aspeed/pinctrl-aspeed-g6.c
+> index 85d6640ff4c4e..be22a918420df 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+[ ... ]
+> @@ -2778,15 +2827,103 @@ static const struct pinctrl_desc aspeed_g6_pinct=
+rl_desc =3D {
+[ ... ]
+>  static int aspeed_g6_pinctrl_probe(struct platform_device *pdev)
+>  {
+> -	int i;
+> +	struct aspeed_g6_probe_data *g6;
+> +	struct regmap *scu;
+> +	int i, ret;
+> +
+> +	if (!pdev->dev.parent)
+> +		return -ENODEV;
+> +	scu =3D syscon_node_to_regmap(pdev->dev.parent->of_node);
+> +	if (IS_ERR(scu))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(scu),
+> +				     "No SCU regmap for THRU handover\n");
+> +
+> +	g6 =3D devm_kzalloc(&pdev->dev, sizeof(*g6), GFP_KERNEL);
+> +	if (!g6)
+> +		return -ENOMEM;
+> +	memcpy(&g6->pdata, &aspeed_g6_pinctrl_data, sizeof(g6->pdata));
+> +
+> +	ret =3D aspeed_g6_thru_handover(scu);
+> +	if (ret =3D=3D -EPROBE_DEFER)
+> +		return ret;
+> +	if (ret) {
+> +		g6->thru_error =3D ret;
+> +		dev_warn(&pdev->dev,
+> +			 "THRU handover failed (%d); GPIOP0-P5 mux requests blocked\n",
+> +			 ret);
+> +	}
+> =20
+>  	for (i =3D 0; i < ARRAY_SIZE(aspeed_g6_pins); i++)
+>  		aspeed_g6_pins[i].number =3D i;
+> =20
+>  	return aspeed_pinctrl_probe(pdev, &aspeed_g6_pinctrl_desc,
+> -			&aspeed_g6_pinctrl_data);
+> +			&g6->pdata);
 
+[Severity: High]
+Can this cause a use-after-free of g6 if the device is unbound?
+
+In aspeed_g6_pinctrl_probe(), g6 is allocated with devm_kzalloc() and
+&g6->pdata is passed to aspeed_pinctrl_probe(). However,
+drivers/pinctrl/aspeed/pinctrl-aspeed.c:aspeed_pinctrl_probe() registers the
+controller with the unmanaged pinctrl_register() helper:
+
+drivers/pinctrl/aspeed/pinctrl-aspeed.c:aspeed_pinctrl_probe() {
+	...
+	pctl =3D pinctrl_register(pdesc, &pdev->dev, pdata);
+	...
+}
+
+Previously, aspeed_g6_pinctrl_probe() passed the static
+aspeed_g6_pinctrl_data structure, which remained valid for the lifetime of
+the kernel. Because aspeed_g6_pinctrl_driver does not define a .remove
+callback to call pinctrl_unregister() and does not set .suppress_bind_attrs,
+unbinding the platform device via sysfs frees g6 via devres while the
+pinctrl_dev remains registered with driver_data pointing to &g6->pdata.
+
+Subsequent calls to aspeed_g6_set_mux(), aspeed_g6_gpio_request_enable(),
+other pinctrl callbacks, or pinctrl debugfs entries will then dereference t=
+he
+freed g6 structure.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105152348.8567=
+-1-prasanth.padarthi10@gmail.com?part=3D1
