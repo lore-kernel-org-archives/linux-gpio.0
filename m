@@ -1,44 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793869198;
-	b=tiaWgso1MqEKIik8AMNdIuWWJIIuY8/NCjCIYxw/H6kMBZDdoNjPwWuJRGKkyXmRhlQA
-	 pJkjfzIept9xAJknlmR0P3k1B8FYhDYyH2/5W930LFOnOJ3bvguAtTWb4pXN5ic+iWXO5
-	 hzO54zkkh6B1WLfMCT05OT4qKklIZw+Q8C0FD9n+reo7d18M8/Bk/B599txvq2OV5FhLg
-	 Gzs+YCHnCdNtMQFQBODZuxnQ2VGSosCX9y4nISahxz3I16ccOasYdPAiWNYJ2AOOv7bWt
-	 fQPkcE5vkYzCIW4Z1qSQ2M53xrRR7NLEDWNr2Sjyvt9ZP3+3GnmTXtqQlFgLAQRh+yQ==
+	t=1793869219;
+	b=MZqZIL7OdTSRPXnAfmJMrx6E6AXjZKbiQRlFw2mm+rh6P+1aG2u93CFuHHAxBDGAXK3F
+	 cJSHAKsiyplt00zFOpIfxZTZFU5UNvVSo1pdFaI5o6/iwWgnw9gq16cskjnPImK5LFXn3
+	 tC9SBtDddVt+/MpVsktFQqkhRESffQA8BAg9Q9xUoT0OThAlP6IPe9RrZO+b6I2kMTsAe
+	 S6Gdgg/97VhZnea7V2JGQLVvFY9pVylp6mbRntdmF0e1vKls53zc3DmJoviQvc0H1GBuK
+	 /pwWCnPPeWDL2mA2mZm03VNU1eVh3jHFIeomBu5n78J4Vh5pWY1RUVOoMbbf4zVpyAA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793869198;
-	h=Received:DKIM-Signature:Mime-Version:Content-Type:Date:Message-Id:To:
-	 Subject:Cc:From:X-Mailer:References:In-Reply-To;
-	bh=SF1FYYbYdlvQ/8ZL+wg7ATd7qcI5Z506u2KkklWC7xA=;
-	b=sc2NFH7qlJj32mbWvqWzWNKcrrD8YOSIJtzMIrySIE7eLLnzTdtfbjybBeqsbiVuBsV9
-	 PMptI1HItBTY02aCyGjizhJo3e4+cJRGytRvIM3yAwSh3AmylejKtmctuqRPeHXjlfTJS
-	 +Lyn2bR9bx8tq5to9p/QgUYwH0O1bKjTlHB2UkBV2y64QsSD/omhqJyY3CyAda4e1LgND
-	 DX+3BHPOzZuR++2369t9QpEtXB8pmnF3Tk9pjk0pTyh1eeYum2o1Nj+6ddKID4NbkZXE2
-	 axso5olvkuz34rIpklrPcjYiQy2tw0RZSQAqPbjlY4or6aJN7do6NRDWc68dxT6Tv0g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793869219;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=YqTURWp9PvTyxGu1fA7UPesF008QtJYvc2+tDpUslUA=;
+	b=gQFg8v7I+2VtsIouwWbL2ximkpd4Uc+vuKh9UxjxrzTdH6G9Db7+uZuY7FImPCRdqkGi
+	 gc5V5NTsnRqxv3v2CcO48VEGds9PTXwOOK/Fqx6XJ5p6fN88JSaSX4lRqnjDmgZt8NWk+
+	 kg8crolaDZFEBxMPIgetlsyYL6Ps6zn+XXAiyRwTWuFoKtaVk8gz3H3rw4O+I8V4mZHjX
+	 Ut2+4ULKKnRkf5lQSxwYY8aVbku4wJ8+CXrniaFOA1pesbwJBqW8QBVSDb18ynWLdEqM5
+	 k+BR1cP6NqUhptW5SoWY94N90PyWOdb2DDUP0x2w1MKKEmtTgwEPBaHzg+4jLf3BgPQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GYbqIswk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eFAX7Cmb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9CB6C606A31B
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E25606A329
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GYbqIswk
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id AB7641F000C1;
-	Thu,  5 Nov 2026 08:59:57 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eFAX7Cmb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EB31F00A15
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793869198;
-	bh=SF1FYYbYdlvQ/8ZL+wg7ATd7qcI5Z506u2KkklWC7xA=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To;
-	b=GYbqIswkR+riQAEwQ65ACb+ySj+AaM/AhWQqWwVqXYfm0UgXZauwHEvEc96vBIliZ
-	 FMzfhCeoK/gjgOIF28Fiwyhcg4LkN87+bBzvYy8W/oNLlvfChhGUWjZFjlPnNMOeVl
-	 MNKiOt+4QL9v3T7Z8JGlul9kRJf/pHPe7uRQZXCZqpwkIH8BYPDyxb+qlrQXzJ/jEm
-	 qSeVNRqdaVGTupOvZGnsqDM7S9OM32pM6hCT53YhC3cFDf8hSxRDT/XFXpSPqA6l5Y
-	 CtK+73SLkYr0sayra+dJ207FBfa7iqRlIB3f3b9I7edoOEfIU8V4oAAsYr3edbbFIy
-	 Ymjcbhxt4KK3Q==
+	s=k20260515; t=1793869218;
+	bh=YqTURWp9PvTyxGu1fA7UPesF008QtJYvc2+tDpUslUA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=eFAX7CmbVcJTCR7cmrQRUy27hNZRrDVMH3pzJmFViDG4/vWRHSa/6/NRAxeQJyJmn
+	 2Jz9WrRDM7jQCj/nKbAMP47Jrqw0T6uqJdLi8vHAms14y+iZ4BUSx+ZQv0gbwCzkV9
+	 vgJK9Sai2rvG+ASRoMokgAbVH9S77u084Jl5e/F4fMxNMWRivPezO+SrY+8ESkE048
+	 2/MqsLiUZg0iFdQY+TmHJDp1wNKiN+0YWxzYIOdqwJQ7L2UP3snyOjYfUsxYq95vTK
+	 qDsWxS1cmMBcQ06Ff4/bFInxMKTqaDreVNDP2aatjafPA4wbn0+Sb4QX4Hd1WnjKKt
+	 ek1pRkU6OTE6w==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5bb7c6980f1so1716705e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:00:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvByQSj8PwJJjSaHAjQ5yV16txB9GMD2+EeE+IJvgNLKLo668MxN7dbRVeUueA9nFgM3jYaA+Z6DDE1i2@vger.kernel.org
+X-Gm-Message-State: APuU4Z8k45oLfWl69oKd53b41J0D9H04Nz8PkcYT3PawPIF2st1vv9hE
+	vjjbd7lkSZ5FCrJW+zF528FWyn8FHvjGNL4YUUIwxsCOontpIKfcUBYzVFSQ1R2MzafTviCOqvq
+	EGz7wu+/cSfuU+8wsSa4fNC3zd1gXb9M=
+X-Received: by 2002:a05:6512:1051:b0:5bf:ce1f:674d with SMTP id
+ 2adb3069b0e04-5bfd9560871mr6447073e87.15.1793869217354; Thu, 05 Nov 2026
+ 01:00:17 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -47,53 +58,41 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=a7562d964d4a3c0af2a2603ee7971fdab95b262a32aa85f42ffc4345f1cd;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 05 Nov 2026 09:59:54 +0100
-Message-Id: <DMN5K39I2UG8.2QDS8KH2GH6RS@kernel.org>
-To: <longzhao@ambarella.com>, "Bartosz Golaszewski" <brgl@kernel.org>
-Subject: Re: [PATCH] gpio: regmap: free the irqchip if adding the irq domain
- fails
-Cc: "Linus Walleij" <linusw@kernel.org>, <linux-gpio@vger.kernel.org>, "Long
- Zhao" <zl020895@163.com>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20261103-gpio-regmap-irqchip-leak-v1-1-d038a20840f7@ambarella.com>
-In-Reply-To: <20261103-gpio-regmap-irqchip-leak-v1-1-d038a20840f7@ambarella.com>
-
---a7562d964d4a3c0af2a2603ee7971fdab95b262a32aa85f42ffc4345f1cd
+MIME-Version: 1.0
+References: <20261103-gpioctl-v2-0-1660aa3dbe5b@oss.qualcomm.com>
+In-Reply-To: <20261103-gpioctl-v2-0-1660aa3dbe5b@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 5 Nov 2026 10:00:05 +0100
+X-Gmail-Original-Message-ID: <CAD++jLm2-jXDruk+odqM3qz+VgpSo9ECptCiX6_7q6xaVgu=mA@mail.gmail.com>
+X-Gm-Features: AclHuK9Ew4bVhX9kBBvAur5XsQGaUYYntyqvGBWsbE9bPaSgjq-0z-BYT3JEdMg
+Message-ID: <CAD++jLm2-jXDruk+odqM3qz+VgpSo9ECptCiX6_7q6xaVgu=mA@mail.gmail.com>
+Subject: Re: [PATCH libgpiod v2 0/4] tools: new tool - gpioctl
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	Vincent Fazio <vfazio@xes-inc.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-gpio@vger.kernel.org, brgl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Tue Nov 3, 2026 at 5:47 AM CET, Long Zhao via B4 Relay wrote:
-> From: Long Zhao <longzhao@ambarella.com>
+On Tue, Nov 3, 2026 at 3:17=E2=80=AFPM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
+
+> Provide gpioctl, a new command-line tool for persistent GPIO line control=
+.
+> Unlike gpioget and gpioset which release lines on exit, gpioctl holds
+> requested lines in a background daemon so their state survives across
+> multiple client invocations.
 >
-> gpio_regmap_register() creates a regmap irqchip and then calls
-> gpiochip_irqchip_add_domain(). If that call fails, the error path
-> only removes the gpiochip, so the irqchip and its domain leak.
+> Before adding the new program: move some code we'll reuse out of gpioset
+> and gpiomon and into tools-common.
 >
-> Free the irqchip there when this function allocated it. An external
-> irq domain is not affected: irq_chip_data stays NULL and the caller
-> owns that domain.
+> This is a v2 of the RFC I sent before. It's been quite heavily reworked,
+> the details are in the changelog below.
 >
-> Fixes: 553b75d4bfe9 ("gpio: regmap: Allow to allocate regmap-irq device")
-> Cc: Michael Walle <mwalle@kernel.org>
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Reviewed-by: Michael Walle <mwalle@kernel.org>
+The series:
+Acked-by: Linus Walleij <linusw@kernel.org>
 
---a7562d964d4a3c0af2a2603ee7971fdab95b262a32aa85f42ffc4345f1cd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCauxFihIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jCPwF/dK+8s/zJj13wAWtVw6vHwr0pymH6tMSW
-kr7Ctx85Ahmp+IiPtjiunA8TiZdVzxmXAX0baK69g5XOg+MVBR7fAqyrhsXETkPB
-vkFvLExKdCwPEgn1fLg7IZqqmvEfee9C4ZI=
-=Bh+E
------END PGP SIGNATURE-----
-
---a7562d964d4a3c0af2a2603ee7971fdab95b262a32aa85f42ffc4345f1cd--
+Yours,
+Linus Walleij
