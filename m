@@ -1,111 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793894987;
-	b=xKrXM+CfjT6IMTOcW3pF4PnZs/UTSYxH5R6evovNykYR4LJJkXcnEHg1k47t5ZqhpovV
-	 cjlBXf8ESW3dg/KULOzCZ+suSWWrn2Jre8fuBVEksBl7ykdHHRULMmWW/mMUAhZKQaMM+
-	 a38mRdOLg8m9qoxWJoWf4XFRV3Zk7b2h9dpnc9f2J4hlYu+NNi0VFGfaOuv+9FCyqw1xB
-	 92qn+WlKzP6gwbKp9knh8l56+I5g72GMOoQNNnJG/Fa8QVQehboBcukxrV86t+25geHGQ
-	 8EUNP2LSXuHmyS51HelJuMZ5HWYCGZEe5O6JwGIIw/56CB2mzpHyx59EmM4hwFrSjYg==
+	t=1793895275;
+	b=wUkIsQV/78nkfaK07DePGb9fpUHBshIWQA/HRu/Rb4GXzwgaWswj6gAmJ7bst46c8FKK
+	 nZybFEvHQsPP2Bq2mOuoNylgrTLO+LVE1P3bujToads1/n34JiUW/YJMocRH++h0yW744
+	 9MsqJOqvdan3RBvccNUtfnKhIdhBcc3M243LHgRuRhTFk3PnF9ckqZeM0OE/a8JjWa2eY
+	 iz/UE4Ej0ImWbGOrcVeuTabigRbEDCYi5Oj+YyPUMT/t/1Tuzro4iK0U6xBjWRvrIDwcS
+	 qW10LKpbmzmcFsDIZ5G7NNE7PbSU9Wg+a4J5kCeyG6cG2wv4iIrJrLovjaMUBeyduhg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793894987;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
-	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=alDDpQVgxqZH6sAU2C4QynFmWrx1vOIuscSzlyYUj28=;
-	b=c28oPJt9F9+jRq11Cil1OQGrHkzKbpnzyxaJCVKQGBZZmN+FWFm7DCMR7G8Z84R42C+k
-	 PtkBmAPEEyyHIQ9+ICEuxomIM2nj6kD+Flk7J++WbChhI5OUJioeDuqGsjzVEfitozCs4
-	 I0Jrgv2STAAVFb9UOPtZN3TEAkLxohiRG91FUBgP6jklSge1SYDqco1DYe3vwNJrQQf8o
-	 FQmJBTJVdsspe+X06+M4Xrg4+cVSth8O3Nj9zMSCc4BL3iVOoYkd7xNWdt0utueJZ/+tL
-	 msj0xaObVM/xsfGZWq1uu41zixKixFAeQKjp1PP1hDUoI8EhjrVdeFZA7i0npIMOv+Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793895275;
+	h=DMARC-Filter:Received:Received:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Rspamd-Server:X-Rspamd-Queue-Id:
+	 X-Stat-Signature:X-Spam-Status:X-Session-Marker:X-Session-ID:
+	 DKIM-Signature:X-HE-Tag:X-HE-Meta;
+	bh=TlUJgWbu4oWGG2rIsrlDGpx3BkgzAGEHnQrvA+cmu/I=;
+	b=2uMyG39qqpPGxADUjzePLcPVlm2X7gADiJvMwLePaRFDv2ajNChzwnFwtAbUPTssokFu
+	 SuIwbeTgjmiYh+E1DpPM7W21XyOexmlzsI0w2Qgx2deCADrPGFuRElI31uvwVcGy/rc6U
+	 RIYTQ+sYNnWmEfzIRETPPlmyLdXEM1Cv5IIXyVtMebf/5R6+4VnRLPCpnAzacRC9T2REt
+	 SGe2KT0q/q1L4cgvQmdT1/QnYhwJVj8ZbO+sqPk4s3thfgMoBi/x/jM0x8zAfi0jBMX97
+	 4pNIawIrz8stbzz0OsaPYi7mym1Mfrdsg4iivtf+pMkN5a1Yp5Cdoc58eEoRqaBDMOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="Icvg/cUz";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ON59czEi;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dmarc=pass header.from=goodmis.org;
+	spf=pass smtp.mailfrom=goodmis.org;
+	dkim=pass header.d=goodmis.org header.i=@goodmis.org header.a=rsa-sha256 header.s=dkim1 header.b=Nrt87YtL;
+	arc=none smtp.remote-ip=216.40.44.11
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A538606BEB8
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 16:09:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A538606BEB8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C0B606A32C;
+	Thu,  5 Nov 2026 16:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B6C0B606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Icvg/cUz;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ON59czEi
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A5EQDO93644493
-	for <linux-gpio@vger.kernel.org>; Thu, 5 Nov 2026 16:09:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=alDDpQVgxqZH6sAU2C4Qyn
-	FmWrx1vOIuscSzlyYUj28=; b=Icvg/cUzAMONGdEoCfCXVwlJIDqhcVqL/FHewk
-	zwe4kW/LEI+pMv2ojoRWSziyT2UPNw/iUJtAv+Ntx0J9Let7Sh4LA0DyQ5QOtrci
-	0fuuAO0w8rxnhK3Zmq7U1tyhbAuqx8O+iM5esu8N75RPBI6bdhe7U7GcsZsLCFiv
-	0LKjnW/Fs7RcZQ0/qHZaQ3OPBqlcrDHTArHh4E/P+CcCUj2BmTIP/PEHRP5Tu2mD
-	B3QPMVTUfVqkKKrJ/Tz0NBh6lqFeNb4JLc7vBbWzkukJQudtXyerSTndZpaW8esE
-	Fyd1BEbAGFNOUgUYjwhxr11umlYP4DlOH1JJqVXdSseLIb1Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hrrkdsaqp-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 16:09:46 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93cb93c874bso162863485a.0
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 08:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793894985; x=1794499785; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=alDDpQVgxqZH6sAU2C4QynFmWrx1vOIuscSzlyYUj28=;
-        b=ON59czEi+26AjtMRJicE4aswrG53lpeb7P65JYZ0nO0yGJYPx2z60F0ZWGWaMSZAU6
-         u6CsaVGJsmanqXQZICmpFr/vQCbR81qFBkyImHEtaykOEaf63XjqgqpHCBJX/Exda7wU
-         FwjK/BuOv7TZj9/0mrpJiZmzeQnto845dQBDNhm4Qcb4whhIgZwYmWxIj6qszj7SoOrE
-         gw9AmaRJ9fLUKcHT6JS0ESLVehJHqm+Nwko6FBorJu6mcoMRamzScuH0CEOVEkM12p4t
-         6o+oL3iuXSCuCTZMoFjcF8dEeRJW3QoT5p2R7tuny+eH1VnzStxr0VzP3tViqn6CX7V8
-         lfbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793894985; x=1794499785;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=alDDpQVgxqZH6sAU2C4QynFmWrx1vOIuscSzlyYUj28=;
-        b=Dfpju+SQwZxqczpMY+NQhb/b6mfbpApFjJA56+WsRtimcLPBmYjN8CmjLFHHvGqpvy
-         qayMHgh5ielQk13Bs+ytZwbdN2+kRxbwvZ4kRbwtXx/CeA+LiqFv/cFE/5QtZ5W4sab+
-         x5VBsmsXRbdOQDjQ2NvuC68yegVcIPLYRm2rG17gsX+3ak36wJ7CzmjEEe7n2/3DnG96
-         ixfUKDSBjkXY2/Q25mOTVJzZTEBTp++sNguRUd6BhSvq9+BmOWYZfCaE4Wk+bR6RL4BW
-         LyXpReaVpTt1/dAyMvfq6UbuSSVN+z75WuD+d5/JwrMQi6bXi46hDl4/WqUD4+fFP9DD
-         hWpQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxLM/EHZaptmUGZxkgZ8YRGueS4Nq6zcjXQH2oLxfyvgTBt+YowiPNeEC76JTA5JpR/o+Mk5/DDPYlv@vger.kernel.org
-X-Gm-Message-State: APuU4Z/ZOcMuwRm2FpwecZbxYeJ90MCztp1pW0cLWSJGsRz5NmTrLA85
-	R8h7HLl1dKmi4cCyPnrJExTyd2NruB1hrBXgt4TYzgEEJhzreP42Nu6i2bxUqJPgsiTLe7pKsJH
-	KS2ytClwU2ve4xQh+hTfiOIIoAOBm2YLbv91fGy0WW+zlmZkhMiyb2xJrHlqFw0nx
-X-Gm-Gg: AYBFou2yShhTJon1OKM07egxCoAXAbX6vSQR1+b5lIOxN0NIIcYJd1CcFqsyxZ0vmnY
-	2OMFKfEf+UjH3bK2YHK8kh+KgEg/+6MllICpHnVPoQD9jHpytyQqFyz3OgCAMicYRbFryUPD7pj
-	W4xCCs0i5S57NJSJKwZYonQEa7fKPcdn1yr8HjePbmgxUDcRt5RVUyPFqoA6cRv4zLyV0dSlgdr
-	lPLoTW3Gd0GPwBSdC9GYa7R0YqY3S9X8EMeqjcjp/z3mn33AJYy3fFv0s9RZUeQyroldN0UzdxZ
-	PU7nHTpiO9p1QlF9dn8yo/4wBK7erAqdWFxxx3Db+73qvbphQ7Pp/OfPRKKjjJAjpcfLLFTAzHa
-	MnqU6c+EHUfKf1hyoy7Y7AG9ddFlSafMNewNvoB7Vv5XYf4qpkRNa2Ie/lvpCd//PMx4FUFcZ3Z
-	pF6A==
-X-Received: by 2002:a05:620a:1722:b0:93f:3193:ac09 with SMTP id af79cd13be357-945e16aa58fmr492346185a.15.1793894985051;
-        Thu, 05 Nov 2026 08:09:45 -0800 (PST)
-X-Received: by 2002:a05:620a:1722:b0:93f:3193:ac09 with SMTP id af79cd13be357-945e16aa58fmr492339085a.15.1793894984465;
-        Thu, 05 Nov 2026 08:09:44 -0800 (PST)
-Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b4527fed5bsm194448535e9.3.2026.11.05.08.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 08:09:43 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Thu, 05 Nov 2026 17:09:40 +0100
-Subject: [PATCH] pinctrl: qcom: fix a use-after-free bug in system shutdown
- path
+	dkim=pass (1024-bit key, unprotected) header.d=goodmis.org header.i=@goodmis.org header.a=rsa-sha256 header.s=dkim1 header.b=Nrt87YtL
+Received: from omf16.hostedemail.com (lb01a-stub [10.200.18.249])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id EB70B120A7D;
+	Thu,  5 Nov 2026 16:14:30 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id D50E92001C;
+	Thu,  5 Nov 2026 16:14:24 +0000 (UTC)
+Date: Thu, 5 Nov 2026 11:14:23 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-hardening@vger.kernel.org, alx+linux-hardening@kernel.org, Bartosz
+ Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab
+ <schwab@linux-m68k.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches
+ <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook
+ <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Len Brown <lenb@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>,
+ linux-acpi@vger.kernel.org, driver-core@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <20261105111423.360f4ba8@gandalf.local.home>
+In-Reply-To: <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+References: <cover.1793876837.git.alx@kernel.org>
+	<9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -115,127 +77,87 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261105-pinctrl-qcom-uaf-v1-1-c9cbc0a93161@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAEOq7GoC/x3MQQqAIBBA0avErBtwDF10lWghNtVAaWlFEN09a
- fkW/z+QOQlnaKsHEl+SJYYCqivwswsTowzFoJW2RMrgJsEfacHdxxVPN6JRisgYapzVULIt8Sj
- 3v+z69/0ABpqrAmIAAAA=
-X-Change-ID: 20261105-pinctrl-qcom-uaf-500115513a62
-To: Bartosz Golaszewski <brgl@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2187;
- i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=A2DQoDWn/29YKhLa6YBv0jqvd6fM7wxpGCmvsaeLJwg=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq7KpG9QAU6OFUWdNpvOc2kZpsAWHV4lAkH50U9
- P8gwnFMxv6JAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCauyqRgAKCRAFnS7L/zaE
- w2jID/96DvDk+mEoE6LJQx2NH26Z+k432RMQwT97PDX54Hr5cxLPxJh2nJYLAVqTYtj4rVeOn4s
- L2RtSGc+zCIyxwE7Ywk53LaH6kwssR1qihIIYaHDF6c4T1W/QM/NUOp3qseMmCekAbrxkkzdr7P
- kNm24MYsowwbrXlG4q1Sfw+U3BKTjBG5uW+k4cN/wpRvpznOJZ4I61Ip5ziuWc1BYH89I3AnJet
- yw9vXhFgwQipnCLc/SfP/SgR4DcqPN+WQGIrKu2yfibck/jNjIuhOS/W/EAYfCV4JVZ2HArsjjz
- XeLxmG7ursPRDj1LZb6L6XZeFoTI/LQxVWpikna6HKYHFPxeR54mdJCSjybKnFXCcptVuv5D5PT
- ZNYK47+6bfDwo2fvXvFvyk4C5NQV4DLATt+L7haNTTYjLWWTebq2etASWxelRWwTpUphFyZRsHm
- vBp6WtbY8uMEWl4fKV8EE1BURVwvJgkzsZYriqiNUtBEBXKfswj8n0M7LrnV1BpYCSnsD/UHzJp
- vJRQtfmL0U9/6ez1YHbDZgg74NYfLKepFObxFVPBqLp1dg6kim6uKwQJ9Pl5nDGHSQGfxY495tq
- gzmq6OaEIWhYoNaCSYKw6Hgp6fZtTiU/AGAawF435aXNGsC4tiTWIs91qq8WC2U8nV5xz68PsYn
- 6V+oveQHzYFl3IQ==
-X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Authority-Analysis: v=2.4 cv=Xd4cX455 c=1 sm=1 tr=0 ts=6aecaa4a cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=c92rfblmAAAA:8
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=4h6XKkIfv3rSTLBNyJgA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=GvGzcOZaWPEFPQC_NcjD:22
-X-Proofpoint-ORIG-GUID: ySejr35onT0AGIJmo2O3FU7cm_Iqo2He
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA1MDA2NCBTYWx0ZWRfX8zpqQUHYDrwE
- TLFIGCUdyns/9HVU2yYUjbElZtkX42KgS6OrlHU/rGZfqHs3BLNvqTLdGVf8FkG13twYSz/XjRj
- +G+/nr4cW3+TwlAZhV5AOgTeSH9z0lk=
-X-Proofpoint-GUID: ySejr35onT0AGIJmo2O3FU7cm_Iqo2He
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA1MDA2NCBTYWx0ZWRfX9WGNdxC6S383
- wdaB46g/BVzPuN8IIJC2Ywy75OMnTvaLVRuGi27/rjoWFbW/pkHKpiLXEtn6cEvPijSISoJwXi/
- r06PiA9Xhg59WeKCk5AjyiWcN+rL9nFwp67OHoVM9fDX2PZ3BO8+ul7WGUaL9PuYMSlPY1bG9+X
- BXfwhsLVq4P3qLpNmmQSpXCIQyDikEmncWn/mbMF63rgL2b9Ic30jG4VGYKIVHIdwoIe/L/S2tb
- 4vC97KxmkxSJ6V/2xTHCj+BNfPG7nUOy9E+zAqi9i5ikO2f8A+a82jwV9bSrR1dPwyvLwgl9uGo
- UbugVL84S6nvTSvcnNkcZkmFELpSlJhNYa+xMCM3gqmwa3LJMGOQHRl8Jd6X7C0fbe+/htOSwNm
- WahoVu226ZA9jYq9q/IR4n3CvXaQu+db4UZu7HO7clNRaqRxvSdvTqstmqC/LZtfgYdNzcmVToJ
- sljFwD9BUqa4OztIT7g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-05_04,2026-11-04_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 malwarescore=0 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611050064
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: D50E92001C
+X-Stat-Signature: re8d5pkjrgf4w6oyde7458ed8r8qxghn
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX180OMWVvz7pZZGYzhX+zu43VxGyggjBmUw=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=goodmis.org; h=date:from:to:cc:subject:message-id:in-reply-to:references:mime-version:content-type:content-transfer-encoding; s=dkim1; bh=TlUJgWbu4oWGG2rIsrlDGpx3BkgzAGEHnQrvA+cmu/I=; b=Nrt87YtLalkWkst5vwjAiRvM24+Ip9K7Q0HUKV2DGTKMQUiy7WgDwuuBYuCpd/0j2YF79k4RIZfBxZ0ajTmC4QvrtMR85cJ07ejGEpIrNs7u36+hESqobejHExonFkIUVIwnKekabxqGfkq61A/Cf1AQv4puRi0igIKLqRLlqbI=
+X-HE-Tag: 1793895264-672208
+X-HE-Meta: U2FsdGVkX1+vyVPZLQAZdLNS2wyT3JFId0OxXMm7K3LLPGSNyXEiNc0thgtN3v3LejPo/orfLtSJgneGWrAQWhq6JsVJ15veWMPwEVD3iQCpVEXA2MSVChPtf628ymAh2CtwttILHqREF05f7aEZTnW+NHNMSYhrbnFYZv9WbIqnaMC/vVDEZKHuzI/0li2WHWRC8VY/F8P3XtLBn9LsKD8hIuTBDMdrPd7VWQfSHDzNb+oM9iz27j1TazkkcbfpyskgcXy9G+JGQDHWbLBhXJaefWGPkUp0e0321tBVV3Cu/DjOBatTtfTn4TsKiR0R2ZYrJKN9V/tgrCtDf4myomhGQ3wRJRrw0x6vY/VS4PausVqHJ43w8g==
 
-msm_pinctrl_probe() allocates the pctrl structure via devm_kzalloc() and
-unconditionally populates the global variables poweroff_pctrl and
-pm_power_off.
+On Thu, 5 Nov 2026 12:13:03 +0100
+Alejandro Colomar <alx@kernel.org> wrote:
 
-If msm_pinctrl_probe() subsequently fails, devres resources - including
-the memory allocated for pctrl - are automatically freed. However, the
-global pointers are never cleared, resulting in a use-after-free during
-kernel_power_off().
+> As Bartosz reported, str_has_prefix() has a bug: it can't differentiate
+> between an empty prefix matching an empty string from a non-matching
+> prefix.  This is a fundamental design flaw in this API, and not
+> something that can be fixed.
+> 
+> As always, this is a consequence of choosing sizes instead of pointers.
+> Sizes are often the wrong choice.  In this specific case, pointers are
+> more capable of differentiating these cases, as NULL is a special
+> sentinel value that doesn't need to overload a valid value.
+> 
+> Let's implement strprefix(), a function that returns a pointer
+> right after the prefix if found, and a null pointer if not found.
+> 
+> We'll slowly migrate existing code from str_has_prefix() to strprefix().
+> 
+> Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Schedule a devres action clearing the global pointers that runs before
-the pctrl memory is freed.
+Is there a link to the report? Please add that.
 
-Cc: stable@vger.kernel.org
-Closes: https://sashiko.dev/#/bug/linux-0c3a18a4-3de8-489b-abc9-e9e3a8641ed2
-Fixes: ad64498762dd ("pinctrl: qcom: Hook pm_power_down for shutdown support")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+>  
+> +/**
+> + * strprefix - string prefix
+> + * @s: The string to be tested
+> + * @prefix: The string to see if @s starts with
+> + *
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 32aa7b919e24a0e614078ddc70a248c746e4813b..6ddbec7c27664b5b137ae1bdf668dd88a0f5e224 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1561,9 +1561,15 @@ static void msm_ps_hold_poweroff(void)
- 	msm_ps_hold_restart(&data);
- }
- 
-+static void msm_pinctrl_clear_poweroff(void *data)
-+{
-+	poweroff_pctrl = NULL;
-+	pm_power_off = NULL;
-+}
-+
- static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- {
--	int i;
-+	int i, ret;
- 	const struct pinfunction *func = pctrl->soc->functions;
- 
- 	for (i = 0; i < pctrl->soc->nfunctions; i++)
-@@ -1577,6 +1583,13 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- 					"failed to setup restart handler.\n");
- 			poweroff_pctrl = pctrl;
- 			pm_power_off = msm_ps_hold_poweroff;
-+
-+			ret = devm_add_action_or_reset(pctrl->dev,
-+					msm_pinctrl_clear_poweroff, NULL);
-+			if (ret)
-+				dev_err(pctrl->dev,
-+					"Failed to register the poweroff cleanup action.\n");
-+
- 			break;
- 		}
- }
+Needs a better description. Feel free to use the one for str_has_prefix().
 
----
-base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
-change-id: 20261105-pinctrl-qcom-uaf-500115513a62
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> + * Returns:
+> + * *  @s+strlen(@prefix) if @s starts with @prefix
+> + * *  NULL if @s does not start with @prefix
+> + */
+> +static __always_inline char *strprefix(const char *s, const char *prefix)
+> +{
+> +	size_t len = strlen(prefix);
+> +	return strncmp(s, prefix, len) == 0 ? (char *) s + len : NULL;
+> +}
+> +
+>  /**
+>   * str_has_prefix - Test if a string has a given prefix
+>   * @str: The string to test
+>   * @prefix: The string to see if @str starts with
+>   *
+> + * DEPRECATED: Use strprefix()
+
+No, it is still useful. Converting trace_event_filter() to strprefix()
+would be very painful, and likely error prone.
+
+> + *
+>   * A common way to test a prefix of a string is to do:
+>   *  strncmp(str, prefix, sizeof(prefix) - 1)
+>   *
+>   * But this can lead to bugs due to typos, or if prefix is a pointer
+> - * and not a constant. Instead use str_has_prefix().
+> + * and not a constant. Instead use strprefix().
+
+The above can be replaced with:
+
+ * This is useful for testing for a prefix and returning the length.
+ * If you only need to test the prefix and perhaps get the pointer to the
+ * position of the string after the prefix, then use strprefix().
+
+-- Steve
+
+
+>   *
+>   * Returns:
+>   * * strlen(@prefix) if @str starts with @prefix
 
