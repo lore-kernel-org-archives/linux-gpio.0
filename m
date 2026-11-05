@@ -1,59 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793837564;
-	b=yvlg4NTtcNPtKlXDctWGqSlo94CSh8XdytMO8xngUy4rvrG150T86sJRcEgMWz+wNQg5
-	 t37R3F3UBN7EET/MwEdouBUwN97Uf3yQ3ok2M6cGGhbpPPgStyiO9uzvGo8ynhkoWl1DC
-	 aD4H8kKLC1KStahHhw2mJ7JKPCalXwnr7Vgx70ogz+yMIYdpsu6PdlDEIV41WtCLAlL/F
-	 GWbvv+7iLW/f8dKdfI/Bgy7BMzR32l9GEL7yLQLIT30YILez6wGIr3IYk0PtjPHh2CXMb
-	 iHcOIs771D7RMnHvd3o1BLzM0sP+7nlAbqx+VQgxVKDdMzF2R6xHp5UI9dKthIQNZuA==
+	t=1793839373;
+	b=AmaJ+0eYsdg3Jd1zq3aILbJ5UzF9QxSel6pl8Ym/6M/qd1Bfkfg2Nlea1h9VigboaPgj
+	 X7sug6zgLrdceUodMs5gba9ovBcNvDgAW2EU1mEEGCPHxCc4AWXOz5SqlORCeEQEOqHte
+	 GPXhCZqUWApl8JFzqnQVjoqICwCTQV39l1zzCIhiZ+U2l68FI+aLv5tPPgguRBPeMKcca
+	 kwEu06+25DXAQdpCDf4GlEviwb8HvRbo+clSfdYKHiDzXAf2L4OnhE6I5/Z9sXJv+h0rM
+	 JHgTbHX6tOnZXSzmlIxpe1APB5vZlmDEIZ2NryeuYphpHWDQ1GJT3lbYu9CmwhzzPEw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793837564;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=TefUB/dw7a0/nIm3W17NuqE4FHbU+QJb3Vs/l2deZwE=;
-	b=bdijWgaLJ7h1Wh3rdjNeikX+7z7xbwVcww+HkU5liXPol0hrNy92uZAwOvbDENcigtnQ
-	 Mxrpr1RqJSape7g0Ec3ZBXI19zKyiFFcIFzycK9QMFHA9G/Ne7V6c8yYo1tp5y1zz+w9A
-	 3C07n/nbOOP9+vsaMu0sdq+O91sB66dOni/zMxFz8+dpBFFvuNKoGGB7QsGwNo6jWcRrz
-	 OufUdncubTyhY+ByOBKx1OsG/pD7uoD/Z0c8jkJB0XhQYA1eY1qpOSewHIJH6VFQqR9Ms
-	 moDcABX8CRkdbukibhEDRDQFjWC3ZFscNHA5y9tT3ILRuIg0CocLC6OtJwrg/PDCJWg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793839373;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=dlcvkUVMW/9VrLP4zZpdDbI5u+zIZh6oyaHuXCV8ZD4=;
+	b=rwglNJ4vAc3tGIpB6qk7cQs2WcUaFy5i9c3piquiMFI4Q3avTE6d/XSfg8Wp5m04Rs54
+	 55TFPHzn5vkMU84MhQ7EOhjIZi44nyQh7jm55HgEQaKdLzA4Fv/T5u7ASg7YWvg1y5rbL
+	 oKLdiZKyahj0DA0xLYZ8l6wWf1abxD/W2d8a0y/gx+8reCgEL6WRb3n4j/vMmrx3ZCKQq
+	 Mrw0TwZpHlwVklgSf1FrWwXVobYXQQWh439DBVSWg4yYp/jF/oxT3AKooxu6KSi1ejIcK
+	 CVKkkYiTWyZ4CZ44y1tWTlMvtZbzQ5WPdWvGct/cy/OTQYgNxaRCgcm3wJk6jCPbBXg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BR3E9IIj;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=telaak.dev;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.215.182
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3607606A329;
-	Thu,  5 Nov 2026 00:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BR3E9IIj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30651F000C1;
-	Thu,  5 Nov 2026 00:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793837563;
-	bh=TefUB/dw7a0/nIm3W17NuqE4FHbU+QJb3Vs/l2deZwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BR3E9IIj+1S3U66dWvWvsSnONIxuLBf9sEfEo39FDcJl9jWiKCyrSB7WEXmSrhU5g
-	 6OHoFoWImjT1XONxrMlgs1chkQ7OslHd79d1FxjE2xKS11NIudZUSUJzKZFG/eDo/z
-	 n9Y/yXSzIbsRsVi5UmqHtSlTvQBGTNiyfnRbT4S1esOLucsAF0rNcCmbNO22qksu4Q
-	 sx64EEJ4gfCQRqstacsSCBsCyqC1UqlM+PqsfdQMSRelLOcEWqvgnsKvBMFyhe0eQs
-	 2yClIsR+y9Uz1eHCA5LsJZrMA5ydabQ5FH7F/90vRd40XN4gCA6J1Wrw/WWC+A9M8r
-	 D1+Vk4jVb6+Fw==
-Date: Thu, 5 Nov 2026 00:12:39 +0000
-From: Conor Dooley <conor@kernel.org>
-To: "Torreno, Alexis Czezar" <alexisczezar.torreno@analog.com>
-Cc: "sashiko-reviews@lists.linux.dev" <sashiko-reviews@lists.linux.dev>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: hwmon: ltc4283: add ltc4284
-Message-ID: <20261105-glitzy-uneatable-0eebf04012ec@spud>
-References: <20261104-staging-ltc4284-v1-0-49fce67ebc48@analog.com>
- <20261104-staging-ltc4284-v1-1-49fce67ebc48@analog.com>
- <sashiko-outbox-196618@kernel.org>
- <PH0PR03MB63510EDCF229B247474764C8F1682@PH0PR03MB6351.namprd03.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB43606A328
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 00:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFB43606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-cd6a7b62ce8so565026a12.0
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 16:42:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793839372; x=1794444172;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=dlcvkUVMW/9VrLP4zZpdDbI5u+zIZh6oyaHuXCV8ZD4=;
+        b=TAnzLM7STaA68wZjfcRCT32sHCpkvW/M06pyvB6VvGRxTXvLQFo8zlii+cPDl8DMTQ
+         iVl2zWQDGrBXWGNAAVN5Ij3bXxa65psDTGoC9LzXkESnlS7MUr0357uOwBCknGAObLzc
+         Q6RTZ8wMNOYPaQoEJeCWq/llM0fyxhT0T7Z3Y6af9h2dS9nOke5aS2GGTSS3k3jeNd2f
+         1Lnx4nl6owt1wAsmnSBPLtl0aDbFuzvHP0g4+nU9/d3YIRmmIIjIje6XTszWrX53Sg15
+         o+gHemIeGxM6oCAZ8E0XURja0PeOkJncjQUSU3BVClraanovgawKAEMp+ywZaXbgRzis
+         RM/A==
+X-Forwarded-Encrypted: i=1; AKwUvBxVdpSVYKU96PzFhdGe5cWETD7/Vk/nfg1UYpF4FHcsV9UXFznPlgSmfZg255OA9f3QeKadtTaBtDuM@vger.kernel.org
+X-Gm-Message-State: APuU4Z/tvZi9sl0YTgHLPBvJ2W6gHs4DYZODqwmoUVQKz8RfX4l+0ppC
+	y5N8+d5m856u+9J1aZzFzH/NVgqnW6x/0v0O5HhwENPgkG6B+Ok+N2qS4fE2GmJW
+X-Gm-Gg: AYBFou225YNRdTaS9YDo5X/yExxdBKEbGxFykn3aAu8J9TuGb3NV8Po9vU6cu5dDzYq
+	likZPrh3avzuIEhLkN9drqjVEf//ff8KEkZdte/lUf8wSYNs+WW5bH0ffdMx9wyKgtITkOcVTIx
+	LtF0fDQHI4HpJV9Vl5efoyydWlJ4KY7JMPBmUkjzr8d90aXuuvgLEKNohp+y55aQomVu1/cpdkC
+	51o4gzmigONBD8gnqFy43yKKPuLl3Lwx2gsu6SM3IRJgOqD4xDvLwttFo0KaHWvry6u/+CHOWH9
+	xti9TFVAcGtMD6OwUasL55QbCVazX5XmqMd4onkeN16ID3Vf8gWT5au15u8QoAa3AbTb8eo6HlW
+	ANoCuctp+ANc0sHNGn9MHVsI4N6qUZWAro2UGn5U67qPoNRBPG1HJpIXAsVxGf4yjPfiDEW6R5+
+	5JMiUQ6p0tt5rqIByeFmDDRgrxmi80I/yPugzB0vLjK0m+mZjToCuzqZOGXJKRuqaGXVNzOQhfW
+	W8t9+uExd+uLbRNqw4rYdVqBrCUJ4z26XNAR9WCnxJ4bcVfBveuh0kawzkpJly5H/r0YOwQD8T5
+	9GtVORmOouyNTbngMvsCoz3vbu45MhYW3Ef4B5DvKZWccfQLQlp6CZSg5C4YCfHUERFKmXMpbwe
+	8NglhXOW5G8UJzqBVQEoO1i1zKYBQIU4ZlZt5ePddqrYu8qlOMnrc+vdjhaEJCDAW
+X-Received: by 2002:a17:90b:2dc5:b0:3ab:c80:9365 with SMTP id 98e67ed59e1d1-3ae897a5be6mr13675845a91.42.1793839372185;
+        Wed, 04 Nov 2026 16:42:52 -0800 (PST)
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com. [74.125.82.176])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b096b6116bsm2892926a91.4.2026.11.04.16.42.51
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2026 16:42:51 -0800 (PST)
+Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-35b2c599f43so782640eec.0
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 16:42:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzDMtckqLhJtNFy+jVcfTVM+tsiz3xthluVNWWk/O9D2cIFHiRnGrG3nmS11odpo62Q8sBzK3RHRR2z@vger.kernel.org
+X-Received: by 2002:a05:693c:6092:b0:369:1084:8ee3 with SMTP id
+ 5a478bee46e88-36a423e52c8mr30753485eec.23.1793839370626; Wed, 04 Nov 2026
+ 16:42:50 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,148 +81,47 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xwUMzqhiGVB1cFn8"
-Content-Disposition: inline
-In-Reply-To: <PH0PR03MB63510EDCF229B247474764C8F1682@PH0PR03MB6351.namprd03.prod.outlook.com>
+References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
+ <20261104-sf19a2890-gpio-v1-1-45e463c48728@telaak.dev> <20261104-judiciary-fool-05c4157a7cc7@spud>
+In-Reply-To: <20261104-judiciary-fool-05c4157a7cc7@spud>
+From: Joseph Telaak <joseph@telaak.dev>
+Date: Wed, 4 Nov 2026 19:42:39 -0500
+X-Gmail-Original-Message-ID: <CAPY4CJ7SZAqNm55Wz6yC0_HP_DCVeDbr8b76+p73c484t7q8ug@mail.gmail.com>
+X-Gm-Features: AclHuK9UIWS9fpedIq3oDi0GN4EX_Euc3hJiZbuLEwPXjtpIZ-TUvM_M3RT-lRw
+Message-ID: <CAPY4CJ7SZAqNm55Wz6yC0_HP_DCVeDbr8b76+p73c484t7q8ug@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Siflower SF19A2890 GPIO controller
+To: Conor Dooley <conor@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
+	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---xwUMzqhiGVB1cFn8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> FYI, these other devices need their own compatible strings when a dts
+> for them is added.
 
-On Wed, Nov 04, 2026 at 04:06:13AM +0000, Torreno, Alexis Czezar wrote:
-> > [External]
-> >=20
-> > Thank you for your contribution! Sashiko AI review found 2 potential is=
-sue(s) to
-> > consider:
-> > - [Medium] dt-bindings: hwmon: ltc4283: requiring rsense2 breaks single=
--driver
-> > mode
-> > - [Low] dt-bindings: hwmon: ltc4283: ltc4284 example sense resistors be=
-low min
-> > 50000
-> > --
-> >=20
-> > commit 9676b294cf2ad1168e5ce0d8de5c0cd58e68d9ed
-> > Author: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-> >=20
-> > dt-bindings: hwmon: ltc4283: add ltc4284
-> >=20
-> > This commit adds device tree binding support for the Analog Devices LTC=
-4284
-> > negative voltage hot swap controller to the adi,ltc4283 schema, includi=
-ng new
-> > properties for its second sense resistor and ADC resistance.
-> >=20
->=20
-> ...
->=20
-> > > +
-> > > +  adi,rsense2-nano-ohms:
-> > > +    description:
-> > > +      Value of the SENSE2 current sense resistor. This resistor is c=
-onnected
-> > > +      between SENSE2+ and SENSE2- pins.
-> > > +
->=20
-> ...
->=20
-> > >  allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: adi,ltc4284
-> > > +    then:
-> > > +      required:
-> > > +        - adi,rsense2-nano-ohms
-> > > +        - adi,radc-nano-ohms
-> > > +    else:
-> > > +      properties:
-> > > +        adi,rsense2-nano-ohms: false
-> > > +        adi,radc-nano-ohms: false
-> >=20
-> > [Severity: Medium]
-> > As noted in the binding description above, the LTC4284 supports four ha=
-rdware
-> > operating modes configured via the MODE pin, including single driver mo=
-de.
-> >=20
-> > In single driver mode, only the first MOSFET path (GATE1 and SENSE1+/SE=
-NSE1-
-> > ) is used, and no second sense resistor is populated between SENSE2+ and
-> > SENSE2-.
-> >=20
-> > If adi,rsense2-nano-ohms is unconditionally required in the allOf block=
- for
-> > adi,ltc4284, wouldn't boards wired in single driver mode fail schema va=
-lidation
-> > unless they specify a nonexistent adi,rsense2-nano-ohms property?
-> >=20
->=20
-> I suppose I can make rsense2 optional (+ corresponding driver code change=
-)?
-> Or can it be kept as is?
+Understood. v2 describes only the SF19A2890, and support for the others
+will come with compatibles of their own.
 
-If it's actually optional, the dt should reflect that.
+> > +  reg:
+> > +    maxItems: 1
+>
+> Move this below compatible.
 
->=20
-> > > @@ -269,4 +303,19 @@ examples:
-> > >              #gpio-cells =3D <2>;
-> > >          };
-> > >      };
-> > > +
-> > > +  - |
-> > > +    i2c {
-> > > +        #address-cells =3D <1>;
-> > > +        #size-cells =3D <0>;
-> > > +
-> > > +        swap-controller@20 {
-> > > +            compatible =3D "adi,ltc4284";
-> > > +            reg =3D <0x20>;
-> > > +
-> > > +            adi,rsense-nano-ohms =3D <1000>;
-> > > +            adi,rsense2-nano-ohms =3D <1000>;
-> > > +            adi,radc-nano-ohms =3D <500>;
-> > > +        };
-> >=20
-> > [Severity: Low]
-> > In drivers/hwmon/ltc4283.c, ltc4283_setup() validates the sense resistor
-> > properties against [LTC4283_MIN_RSENSE, LTC4283_MAX_RSENSE], where
-> > LTC4283_MIN_RSENSE is 50000 nano-ohms (50 micro-ohms) and
-> > LTC4283_MAX_RSENSE is 1677721599 nano-ohms:
-> >=20
-> >     if (st->rsense < LTC4283_MIN_RSENSE || st->rsense > LTC4283_MAX_RSE=
-NSE)
-> >         return dev_err_probe(dev, -EINVAL,
-> >                              "adi,rsense-nano-ohms(%u) too small or too=
- large [%u %u]\n",
-> >                              st->rsense, LTC4283_MIN_RSENSE, LTC4283_MA=
-X_RSENSE);
-> >=20
-> > The example above sets adi,rsense-nano-ohms =3D <1000>, adi,rsense2-nan=
-o-
-> > ohms =3D <1000>, and adi,radc-nano-ohms =3D <500> (1 micro-ohm and 0.5 =
-micro-
-> > ohm), which will cause ltc4283_setup() to fail probe with -EINVAL.
-> >=20
->=20
-> This was just random numbers to show the example. I can change the values
-> to a more realistic sample if preferred.=20
+Will do.
 
-Random numbers are fine.
+> > +  ngpios:
+> > +    description:
+> > +      The number of GPIOs available on the controller implementation.
+> > +    minimum: 1
+>
+> With no maximum?
 
---xwUMzqhiGVB1cFn8
-Content-Type: application/pgp-signature; name=signature.asc
+v2 drops ngpios instead, since the compatible implies it: the driver
+will take the 49 lines from its match data, and the binding will take
+exactly four interrupts, one per 16 lines.
 
------BEGIN PGP SIGNATURE-----
+> Please fix the ordering here too.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauvJ9wAKCRB4tDGHoIJi
-0tMmAP40U52XsS0rSG5meVAlWbRzsQkzTi9gD88VJHEfciEy/AEAp7ernegeW6Mi
-NRY9g/At1UxQvbgvBBOai4Lt63Rx0Qw=
-=bWUS
------END PGP SIGNATURE-----
-
---xwUMzqhiGVB1cFn8--
+Will do, in the same order as the properties.
