@@ -1,65 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793889664;
-	b=oeSi3IhqL/93XqiE/o90xuv5Lx69m6IIXVL3vfou8UqHz4CB2irDGXYFIP0yR7quuZlu
-	 v1c2cyPnQJzOy7JL7FhQgLmrlxhOEZUkwBGd4UvxUCI7ORdS14XZG0E5YAxOLw1p86JnV
-	 RoXc0xPoe7cgtytwsF1khyiD3fH+doaGYOh7RNAhFz+5joaIMNpDYaSFihcaOonLkHlp9
-	 oJskMoFRLv1LEORfG6ynFvoQXk1f06sZU+4/tHpkAS1iFNQLefQNEdrD4qd7gUvrU/Lzz
-	 qCmHfY4Ng2vcMSuV8eJ+pJnvsBKTSt0wUOUhMqOS2fv1r004JLG7HoQcVPl3h4vjeQA==
+	t=1793889774;
+	b=v18IACOw+FzfYBu41UkfYh+hpSqGTp1pPIm76ijVi2gGitEFu7LGEKOksZ3AUdmqkPZr
+	 mEla1rhw93R/o5I3h8fv0aB18H6ztfETjUUs6hVGkoLqKhF9x6pjVRYVkzjJbR8cZVzlj
+	 KnFda5kDS1PKCct6zJ8TNNGxVgMQfXK2nlNs09Yp7J8vOQ5Nt/Foz0ZO0ImMs4/pFeinZ
+	 6DjUUqhhwUl/915+8DNfpH9u/WFdclwxqYm312ceQfmocGyjQF/rryGCnprbvh/HVX16m
+	 0b/DbgK7lkUJPDcFfjaQfOrty5q6FmnKE/5BDb7fv3GZvw5Ltp4JOlTfAyzsTYi7EtQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793889664;
-	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
-	 Subject:Message-Id:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=ASfPtIf4/g4D0b8rceRY+jLO7SJuXGW96/DCbiFkD1Y=;
-	b=NyltMaYQRmLFbPQlXjAgH6M8gFVpQWM9PRb0l59jZJnIEFdOvrnLcZvQVqRV0SE6kGiq
-	 p6cERG3lbCBXjMUP92SgDbseeMY/M8IsJ4XgNR/oc2zWQnFosDlYVbkJh4LMAi3nSMaOE
-	 qKzgnvfmQYygGQb4qplmDpE7nNK61UQEuC5oV8MuwsdCAaGFjGl83EGbnsuMP0T2YieOf
-	 576xuFuY+BI9U9yklO0JVe0ooaJBKZSio3B+3tJDSgh4J2XjKEIR4pKer0QKugG8AoWGS
-	 +brYLw+cOs7GCxXNKF1PgVZfYr0yErLBobIa+pHSPihc+d1FXZczsfyYhLtSjlnzVEA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793889774;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=c9Qf0MhLQySpDb0sxxGf8i7JyLqINcuxDoFglNVjBEk=;
+	b=zdlj7OyU062fGJSfO0V8gzJfP67uVmre8Z9MnnBNjivrzY9uhw1lTlLsdUGoWOxOK9xa
+	 5pIRsuVXiVPJ01pB5iS5tXmb8sVtyE2OyXR+8cb36QfgJMESbgM6BnmCNp0CmuN6PCjKB
+	 OgE0AI8wr31J3t7TC24GCKxTIsEuArtpD2gGzTmQ8ydLqgJLa62L1trhgFeZrHI8elo/s
+	 k1t0BA1k/Fj9+le06cj+FiRv6TjXdI6uhQpF7MKCi1Ey5SReXERb27n5eLnfzisAIeF0s
+	 p062mINFsqH6XjDImlgV70TBP1vVKCjc9tGFw0ZaIIhVHbIwkrCy1J6xuaqz4zEMblA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eMsbcMyw;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=TtNHb+cv;
+	arc=none smtp.remote-ip=198.175.65.18
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBC0606A31B;
-	Thu,  5 Nov 2026 14:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A21606A333;
+	Thu,  5 Nov 2026 14:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9A21606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eMsbcMyw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73441F000C1;
-	Thu,  5 Nov 2026 14:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793889663;
-	bh=ASfPtIf4/g4D0b8rceRY+jLO7SJuXGW96/DCbiFkD1Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=eMsbcMywTtrtPVt3U9oDmsABsUda1G/gcuPItqYS7fo12yc2V/R/mkiwCNCa3lPiP
-	 YFXxCVZMq9ZRq5FZQgTYFF0s/Wf1+1GSOZj56zQo8lizu/2KTYZ/bjawVicVVGbfpG
-	 OBZbsky/ycsdCiNHlvff+5JyTlxLxmiUwl+rV/87b+WETwDNYfHrotdrShCElOFJHE
-	 OGAvyVXHCHfhlr20xA0l+KTKXmG12SgW7yVb0h+dh6zx5P4qM5IH8Cxo2rhPys/dK7
-	 /88gpb8o9DW9Vgoe0POBQtgy4DmwnAqkpLrQcZynDvZXSBdP4fLZTs8MYNrIbD7MUb
-	 3AoH3eg4l6STw==
-Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
-	by traversing.sirena.org.uk (Postfix) with ESMTP id AA82A2795DC8;
-	Thu, 05 Nov 2026 14:41:01 +0000 (GMT)
-From: Mark Brown <broonie@kernel.org>
-To: Cezary Rojewski <cezary.rojewski@intel.com>, 
- Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20261105-pcm3168a-non-exclusive-gpios-v2-1-982577248ed6@oss.qualcomm.com>
-References: <20261105-pcm3168a-non-exclusive-gpios-v2-1-982577248ed6@oss.qualcomm.com>
-Subject: Re: [PATCH v2] ASoC: codecs: pcm3168a: do not request the reset
- GPIO as non-exclusive
-Message-Id: <179388122036.2912885.4833618934923117964.b4-ty@b4>
-Date: Thu, 05 Nov 2026 12:20:20 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=TtNHb+cv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793889772; x=1825425772;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q1Pf8PUf4xOcPF8BGZqTYGEzo2UCfvkkF5uSVw81asg=;
+  b=TtNHb+cvhkcf/bVYIY15eH9A49MHzcUPcV/CG/mzmgOwuRNiKipn3HPP
+   PUl2UPivlxtiknv2RVaYaidHiu58t2fKZQzCrKNTkHstzXEUGjR5+gtZc
+   +c5SXdp3FJN6GU49DrItOIdXjRxiUfqinpc1DlZVuY8PPuIRScDAk7TGa
+   Zp56oAeLBa7HkB0WlGKL72y49PE7rf4Z11DhWtJX1QQLnjIm3j/7s5cOQ
+   a7s4/kL0SHQIu5THeyY5t5+Wrw/EZI5Utxv/irZ9FKw/9V4swY9xUjRky
+   jRx2EFVhSOzeTEpQuu76yjkJ23EQsJnIPzStihoCbGtlLPdk0yguuYu4i
+   A==;
+X-CSE-ConnectionGUID: ImdYJx8TQV+AxUY4FRqxgA==
+X-CSE-MsgGUID: 5+oK8vNwTCe4J04yZbcFcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2698340"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2698340"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:42:52 -0800
+X-CSE-ConnectionGUID: XAthWtFQSBCLu97ShSJCOg==
+X-CSE-MsgGUID: DhogsxNKSDyJ0JhxnZuhSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7198542"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:42:45 -0800
+Date: Thu, 5 Nov 2026 16:42:43 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Alejandro Colomar <alx+linux-hardening@kernel.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org,
+	Andreas Schwab <schwab@linux-m68k.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Len Brown <lenb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org,
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Add strprefix() and fix a bug with it
+Message-ID: <auyV47xUCr1EJ7A3@ashevche-desk.local>
+References: <cover.1793876837.git.alx@kernel.org>
+ <cover.1793882260.git.alx@kernel.org>
+ <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
+ <auyOkL1Vb1iKicS9@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -69,46 +103,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1165; i=broonie@kernel.org;
- h=from:subject:message-id; bh=9Tm1jLby67bY2odbMbQsQv1Sc6WvT9/fWpx2cuUKMBE=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLLeTK2175ljzBR9ZtGf/5E7OpdrJZ2+lsggNNmyd2nct
- DnOXZJrOkpZGMS4GGTFFFnisrhf1pe8XsN3cGEbzBxWJpAhDFycAjCRngKG/zkHHu8pdjQOTHjz
- 02niltOlkvesJz24xnfZckXdrflKGvkMf3jFbYw/FuskXspUrS3Ue79EJv2grXs/78SC0lB2r4P
- +HAA=
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <auyOkL1Vb1iKicS9@devuan>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 05 Nov 2026 09:42:25 +0100, Bartosz Golaszewski wrote:
-> ASoC: codecs: pcm3168a: do not request the reset GPIO as non-exclusive
+On Thu, Nov 05, 2026 at 03:16:45PM +0100, Alejandro Colomar wrote:
+> > Date: 2026-11-05 15:01:22+0100
+> > From: Bartosz Golaszewski <brgl@kernel.org>
 
-Applied to
+[...]
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
+> > I have no idea what causes it but I'm getting so many patches lately
+> > that are subsequent iterations of a series sent with In-Reply-To: header
+> > pointing to a previous thread.
+> 
+> I don't know what others do, but in my case it's a conscious manual
+> action.  I use --in-reply-to in git-format-patch(1) to make all
+> revisions of patch sets be descendants of the cover letter of v1.
+> 
+> We do this in the Linux man-pages, as it helps me keep track of all
+> revisions of a patch set easily in mutt(1), without having to follow
+> links or use more-complex tools like b4(1).
 
-Thanks!
+Exactly the same reason on my side to *not* put everything into a single
+thread!
 
-[1/1] ASoC: codecs: pcm3168a: do not request the reset GPIO as non-exclusive
-      https://git.kernel.org/broonie/sound/c/d51f9833022b
+> > Don't do this. Each new iteration must be a separate thread. Please use
+> > b4 to manage patch series.
+> 
+> I won't use b4(1); I like bare git-send-email(1) and git-format-patch(1).
+> But yeah, I can send them as separate threads, if that's the preference
+> here.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Yes, in Linux kernel majority of the maintainers (a bit of speculation,
+I haven't counted, but it feels like this to me) do want separate threads.
+IIO with a huge traffic is one of them, tty/serial IIRC also does because
+it's how Greg's workflow is set up.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> Out of curiosity, what's the benefit of having separate threads?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+^^^ See above.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> (Or the converse question: what's the main problem of using a single
+>  thread?)
 
-Thanks,
-Mark
+In mutt for tracking I often delete the old email threads when they are
+considered closed to me (or archive, if you wish), I don't want a blast
+from the past for this. It's like starting fresh on each Monday :-)
+
+> They're morally a continuation of the previous threads, which is why it
+> makes sense to me to have them as subthreads.
+
+The email thread with big patch-series and discussions looks awful
+in such a setup (my opinion).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
