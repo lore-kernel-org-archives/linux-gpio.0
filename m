@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793870543;
-	b=O6Nk4eyM2Dk1HHyWKqiBAdE5i2UaeRxhyqVKgMn9yKLPgvI1IBmCxcQNJ6EoX2fi41Ye
-	 FlPaC4yoSw8wRtP5HUOmPsj9BXeKBLAgQWHZLbHrXwVqLKGsJnOcCjx/5x1ika8LiHMK7
-	 k806iZng1vshqxHaYckXRqaV2opdWnugHXKgAsCje+YcfH/dsIO4zjNlIit5ZsSoV65pS
-	 oaW/vQuJymQFvV2sGWHjWR9Qo/52JguszgCPK7ttDASvNZ6jWCCqUk+MsYUQOY8AlYaDe
-	 bTAVXDzXGAFAAIuUQgjgdQfkn+qEux0e7jQOT0kMHZ74d8go8N0xtsmtlX4zyXwdmYA==
+	t=1793870617;
+	b=POyw1+VncP/JKS5Fmp5ELihqUrDIjZqeAtvOrwmgB/WTr4Hn1QwSuxf3ey4pMK38sj+t
+	 CAE/G4/7FzEaKqTyrBmOc48ner8jUL5HMrdJtq5gfWgsbTcaMySzyuKyjBTVaFxBj7ODU
+	 JydyCby0NHleq/amB/rcT1A+2apMEQYqViTwVLYETPfeabYDYzknHYoFUVak8C+Rz4CZV
+	 QUOC4A3ZY30ucT69Gk/lp4kwAT/V6wTj4WxZd9LE71R/seUnUSX+QOfJmjHuGeMsiD966
+	 xXx1LQGLwBJrD5q+3OrW+VFdlyaat5TH28Eolaa6kdGtXJyLj3CR/kFegm595KDXluQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793870543;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793870617;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=38nZMeNznVKeupiqH5IxVPd4xUnhI8fUvfCaQKWMg2A=;
-	b=BPrZWODETqi1OY9swGbAdKjcvtyIVjuSsJ/Lr1DAe/v2ivrfBFxWRdqAvVjbA+OamhbX
-	 TCSxcrK9xT1ogsSaA0F+kB2Co9yh+Ij/uXtTj8KiEpWrM9blHeF6Vp0WbXkorYNW1+M/7
-	 mVK3vnw3FQw4Zylg9NfZlmlPrOmJ21Js5ewLgzkGZ2hOlb3uQ3fBjW5WGrLkVzE6pftWi
-	 Y5AXerwXlUFg3LLn1l2Pf9hw1XbNYt2s6ZxACwPc+HLbeKPyYIqI67FaWVf9T6z7KEW02
-	 wupGicaaW6RYLuGz/aTHnHyfBUIT5CI2bOwVKwl9dtRGJJ9K8Kr9F8fa0O/keisc/YA==
+	bh=CaE2mbFJFf4TOWhow4uSx7nxUZ40EeB+lDQEpmH/lWU=;
+	b=YTGC+oHGF1+bbsIvDR5+f5SC4YRidczk9Jv7QmkMVfjk8DcU21XBG0SWVawiRokpe3X9
+	 SqGKDMNsJ7eLC4XPu6rU/O541qXcb5d/xhciIIQuS0jnDBzhgaerdjjSPryMAX7vXBi5t
+	 oMNi+lkioc3jGgv24xOt8UY4H63xD5Q8jkFJ6vfeZ2F4PC8gkLswVaFI9HwGDZD4c0O5a
+	 5muSy+H3fb9bvfSz0u8ET6oif5WLAGoC0b47td9Ky21ll/qQiHtKSjJFKy5T62iL0VsAY
+	 6FELBFgM3QYRndH0S3s/hLVzLeAtiKxlZGDJ85DPk+E4b2+x7FF1eNSjp2CMeJJaXTg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H6rcAFKo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QoPNTswb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B588606A329
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D66C606A329
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H6rcAFKo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2AB91F00A17
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:22:22 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QoPNTswb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EB71F00A02
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793870542;
-	bh=38nZMeNznVKeupiqH5IxVPd4xUnhI8fUvfCaQKWMg2A=;
+	s=k20260515; t=1793870616;
+	bh=CaE2mbFJFf4TOWhow4uSx7nxUZ40EeB+lDQEpmH/lWU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=H6rcAFKo+4gqVyPOhTaEkldRgXH0ytPgPp3wFiSJavm8fKl7xBo2iNAPeIKCvjvUB
-	 cvbq8/s4ee1bfehZxxSs4jCYqpIsRvRRtUhMyAZcqEANoHHC9/t299bmfA7vYPj5sG
-	 xJXZZUkQ8C/JSBDTj1c12SeE8708LYkyctwZOFUEriY/G40pGeni2VhYrq2TK0KTgl
-	 kTY2zoALYSnXskb3xcya7NaHInRQWoQsIg7glYviBojQbtR0hSRT2HmrGhpt7KGDDH
-	 wH7P3RZfXZh7GRyrE2CyLJxxdetwEt6HlmHRAEdajeWUixKxzlbMQkZS39nwC9zbEd
-	 FHUfFPLMF7cTg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5bccecba199so1437177e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:22:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwB8KxHuyc+2p7VsY8WZwosDuKPCvKEH0vXyBfHU3BeaCR4jGodlcMuYd7+kFPBixxosipnvHegCsQH@vger.kernel.org
-X-Gm-Message-State: APuU4Z9O9tJ7UrOsWmrFkzgbl5l/3o4G1k3Z3tK2ihjxVA8SltTHZ/OL
-	olf4Ipvsvk8BxsqVTQrxJvv+sm8LFv6hRNEO0AuOIM38i7wCXiMywk+ij10wZd65lnwKcNe0+cK
-	IbRK29yqU0QD3KVi1p3dRQ5+sCv5MIEw=
-X-Received: by 2002:a05:6512:33d3:b0:5bf:b144:fd05 with SMTP id
- 2adb3069b0e04-5bfd957ec46mr6771787e87.54.1793870541701; Thu, 05 Nov 2026
- 01:22:21 -0800 (PST)
+	b=QoPNTswbHPNPpf4zeVgFUvtTHoQEKatEp/uqswizvYnP0CXc3ernxUdwm5dzS9oh7
+	 UKKn3CE3YDjRjNcXffvCfJMD/8p86nUrbO+Wrk5QdJrWT4u7t213s0pv5Iad7QedZY
+	 lGsPfOcLS7d3H5Dn8C9wD6/2yx45/sND3bAtOxbFWfREXtdx6UNxKQxUNvfkpEO0AX
+	 1tzw8fHsl3br38ekbwPhQnHVYuskaccJcKVHZGDcowXd1rscGSlwg4DI6EJ2noOq7C
+	 3f7v5jn7xkSA3p1avYdYOb/UY4/nJp38MZ2q9wYWyUqM1EE0AU1YP0HP25DHobaaXS
+	 RdkMlklfVZXqQ==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5ba328513b9so1366487e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:23:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBxrBrf9sfFqyTLpQgomGkdQbuYoCLSkQk+eBlwjOlcdmILbP0rmZ312GPEVyXhYgRzMhecWMfaw3oti@vger.kernel.org
+X-Gm-Message-State: APuU4Z8Xdc06cceC857cvqtdqI0ZBI1Tmx/2BZ/INISi5ZipipVRJpXx
+	XDrjN4IE+TTRILz9r/VkdjsQw9VT5oVRRRs4OXi7W2rKo6idGb+2tljhFbSDT+h28NGEFhiT0+v
+	+24yGWZ+s1TKEaEMCyyB4hfv6uZ482OM=
+X-Received: by 2002:a05:6512:1318:b0:5be:516e:5728 with SMTP id
+ 2adb3069b0e04-5bfd958027fmr6146113e87.32.1793870615446; Thu, 05 Nov 2026
+ 01:23:35 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,15 +59,14 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261103213002.1673560-1-lee@kernel.org> <20261103213002.1673560-8-lee@kernel.org>
-In-Reply-To: <20261103213002.1673560-8-lee@kernel.org>
+References: <20261103213002.1673560-1-lee@kernel.org> <20261103213002.1673560-6-lee@kernel.org>
+In-Reply-To: <20261103213002.1673560-6-lee@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 10:22:09 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmF0U6ehFSuauqKDQiZRkuUnqpbZd--v2aqF2YZQF=HwA@mail.gmail.com>
-X-Gm-Features: AclHuK_usnBCJ7KUuM8edZVtpiEIeTbj7Pj1_drbEmXyfoNip4o1DLtzy4-1lMQ
-Message-ID: <CAD++jLmF0U6ehFSuauqKDQiZRkuUnqpbZd--v2aqF2YZQF=HwA@mail.gmail.com>
-Subject: Re: [PATCH 07/10] pinctrl: realtek: Initialise omitted offset fields
- to NA in config macros
+Date: Thu, 5 Nov 2026 10:23:23 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmC9k6hpkZtcRUgJRj6rk_knjAQ9cOHitRDBn1FbAgZPQ@mail.gmail.com>
+X-Gm-Features: AclHuK89aMeIOVygFGusGSM_QZnZVjoeLN0D3bDiQpEYrRyvGRiPkF-dM-Czu94
+Message-ID: <CAD++jLmC9k6hpkZtcRUgJRj6rk_knjAQ9cOHitRDBn1FbAgZPQ@mail.gmail.com>
+Subject: Re: [PATCH 05/10] pinctrl: realtek: Prevent out-of-bounds access in rtd_pinctrl_find_config()
 To: Lee Jones <lee@kernel.org>
 Cc: James Tai <james.tai@realtek.com>, Yu-Chun Lin <eleanor.lin@realtek.com>, 
 	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.com>, 
@@ -77,29 +76,29 @@ Cc: James Tai <james.tai@realtek.com>, Yu-Chun Lin <eleanor.lin@realtek.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 3, 2026 at 10:31=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+On Tue, Nov 3, 2026 at 10:30=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
 
-> The Realtek pinctrl driver uses NA (0xffffffff) as the sentinel for
-> unsupported pin configuration features.  However, RTK_PIN_CONFIG omits
-> input_volt_offset, slew_rate_offset, and hvil_offset, and
-> RTK_PIN_CONFIG_V2 omits slew_rate_offset and hvil_offset.  Because C99
-> designated initialisers zero-initialise omitted members, those fields
-> default to 0 instead of NA, causing rtd_pconf_parse_conf() to treat
-> unsupported features as valid at bit offset base_bit + 0 and corrupt
-> adjacent register bits.
+> Several Realtek SoC pin configuration tables (such as rtd1319d_iso_config=
+s,
+> rtd1619b_iso_configs, and the rtd1625 config tables) omit trailing pins
+> that do not support pin configuration, making data->info->num_configs
+> smaller than data->info->num_pins.  Because rtd_pinctrl_find_config()
+> indexes data->info->configs[pin] without checking data->info->num_configs=
+,
+> requesting pin configuration on a trailing pin reads out-of-bounds memory=
+.
 >
-> Explicitly initialise the omitted offset fields to NA in RTK_PIN_CONFIG
-> and RTK_PIN_CONFIG_V2.
+> Check that pin is less than data->info->num_configs before indexing
+> data->info->configs[].
 >
-> Fixes: dcc9334435b0 ("pinctrl: realtek: add support for slew rate, input =
-voltage and high VIL")
-> Fixes: e309dbd523b8 ("pinctrl: realtek: add rtd1625 pinctrl driver")
-> Closes: https://sashiko.dev/#/bug/linux-fbd0bf54-6dba-4652-9418-270b11fb6=
-d8b
+> Fixes: e99ce78030db ("pinctrl: realtek: Add common pinctrl driver for Rea=
+ltek DHC RTD SoCs")
+> Closes: https://sashiko.dev/#/bug/linux-60e13761-fd9e-4fd3-826a-47344f36d=
+4fa
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Lee Jones <lee@kernel.org>
 
-This patch 7/10 applied to the pinctrl tree for fixes.
+This patch 5/10 applied for fixes.
 
 Yours,
 Linus Walleij
