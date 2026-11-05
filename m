@@ -1,77 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793910976;
-	b=mZtvC9VuNYS5UN3orsmzxofrf/4o9Vm5g8b7T9eyDts32/ujmjUnQJAa8ZcP7Os+SY/w
-	 uQEoR/C/12mvixnSTAQ+N9R8mT7ltgix2+tJJzQoPB/3djv3hnCmfi8r4h7w79tMM3Tpl
-	 FzUT98ptUwSwYGvMqy1UcRp16aFkR/Hmq8bd2CFENXkoEc+DIeJy+kmPxOzwA6TMzY3WE
-	 cyXSEuduI+zCcjn073AfMFjQDu4UVatfk35Z6e/YUrmA8XYYxTOObFDY1x3avXMqv+EHb
-	 y6Pl5ExsTZA80JzqGTPoddOnZVfFLSXlEG353aJaKzBqs1ARlAJgd16XgKRZy8a4dhw==
+	t=1793913855;
+	b=tUa99nzE9QU9ynbodx7GayVs8SItia7M7NmC9RN5Vdescq3CceTALvc2ZUn0zHIRgb3T
+	 vZtipEq+D0eRiZrHs95B8D4zwmqccpSRKNhFWtUnwsx8ZGLOoE1t/XemL5ZXlCDZmy09f
+	 9okDcQZjlwQNzUgygaM22+kiVQxUkkavmKUkz+CcIKtVWSnfL30x/FJYpzsZdrurNGVRF
+	 9i/qrRJ80DGCEma8BcCmg29oA8CImjlwhlC8DY+cdYS3NzXdUQzKzazhNk1Oh93vdBav6
+	 YWw0SyrrUWrw398x472DPYxutcfTTvvxIj+ayj/Pd1Ehu29TtvWqhNU0n8KB4AHB5pw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793910976;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=QQl1ERSY4wmOR1OEbq5mx2PtZRC9i6q9Gw0tuk7z0Is=;
-	b=XsD70tkv8I2b4D6yK2BYqaXajAdH4mB5BzDzgEEZ2oz8QQ7Nf889RJzMgRwbnWyjnNbS
-	 zyP7eWT+qoP/W1zw0PFoivK0FdUZAAytnp4z+Oe2WgBuiYqoqYtVgJimMftdD0iHjWqWh
-	 ZfrXEaWAXJWzTIcTHQf8imrVtBrnIBKxI3xNjr7OOSb9cKdD0wIbIsEZUqSZfmU4JNEcE
-	 jVeWRLrRygGhoQaTHTO5zkNoohRDXT4O7dZY6HUEB7qe/bDtiJ+CnAYaHNzbbH6jr8aEH
-	 ZIxJhh12kHrYVgXEhCO7esE8K5x1agON2shrLB+tuX/puMonJQ+5Sl3M/oZmmSyYoVA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793913855;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=RL5BhiqJaN/kv+lpAW+VL6m3SxBczrfzmnRexU7rIck=;
+	b=jw8MPSG46GMNemrSIt2DOgEJJnIOyYkaJJSZOjjzZZIdlgIbnjiNjgwitgSYkcAmM4b3
+	 4p+Bno2wM3+9o8pSHPPr/E3rJncbZBdLkrvK4xOBIAuVy+BbI9g7sh7Zax/dyHE1YNim4
+	 WjdHilj8rO9Hz3x3gHkiXXVlLnOYTwgveHsUu3zu5CFWXVZwQjU0DFaY7wLrzgREAmxyn
+	 0fDC80CzlZR3Ad2yYoNDChWcPQBn9t2L8QgAo0FUqEp6v/YVLZczSVjqFC+9U3CYiQJ0f
+	 YWzl3J6RLD0Mn0TMhpJTOnCNmKqbVq0x67MEDekPr61hTqHRI9CF/HruzCQv2N0/sdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=telaak.dev;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.216.46
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gbsA1GaX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B406606A32C
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 20:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B406606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3b0afe09854so806138a91.3
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 12:36:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793910975; x=1794515775;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=QQl1ERSY4wmOR1OEbq5mx2PtZRC9i6q9Gw0tuk7z0Is=;
-        b=Nss6Qt+pdsSUlB1wsYlv4aKK2lhKbcYUxC9AlGD6DugRkeELHGY28jVUFfQtlA/DDZ
-         7uweNPGPZNOFYHZoGO8FRPrpk3aCeGmwZTBQcODRKfzpqraQui5iw7o9Jh8U3XdZkvup
-         CoqhfhLwfuw4+9qqt3Uuq1s7qOzdWmCjQIxk+zfvJRTih8xpkNXmqHIV4Y74uISS5g18
-         Mod+SQAM7g6E0MAha453owb9VQ/qWjew0Fv3VmTv2F5HR6xhE8kLni6wxeQQa/1wu6BD
-         SxtMSYiJMPMrOC4wmJP5ajVv9TXpACzXW9RfA65hFaEoBO6gFiH9OrlrWAKnz8hWC6O3
-         9npw==
-X-Forwarded-Encrypted: i=1; AKwUvBy29A/b9vB2sSSKUr/A+p7xazhlVQFM2UFoLOE0I5dXS0h2jr8mTkYNLf9dq7by72LeusxvmqvZ7waE@vger.kernel.org
-X-Gm-Message-State: APuU4Z+FvWEqzny/qG9qs/uuoOTYKmBOom4ePhQmeAIoiDcoXcdgC7ZZ
-	uVXfx8CIfi8GJl8+wIaTgK5OT+9Gf7ujKdKmD0AzfhHrGRDrZARhdaGFMXo33sxX
-X-Gm-Gg: AYBFou1D9nzaQFh5BKHTfEKO3U6crFrpbWKs+O2K3c5wioQEU75d3Teg0PACYN7JfKg
-	l8b0pI3mpbclRyHJ5xO4hixZqY8SpYhU4wyWQiWFHU1I1fKeiIiWBy0kI03UbhHX/Jn/fK/t4VQ
-	cUwTZJiErqb9Z+nGOUEZIkQEKueEc+amVrU7qfCUnmBQbi5ySR3qVWARdGcp7+sAmkLBWqcpMuM
-	Y5wzj5us4Xh59UutYaG8PT8V2N9hyyu/mPPxut5gz1BtSvCEFJtt3aoN103flofxn/8rhqe+z7d
-	Hg7Z3Uc4c0RUs+iRl8sTevScFkOKQnesFOqH6LqhCFEA8H07knrio9ZcoqOpmm4EG9VWi0LL+IY
-	X6LddGVyr5vU+doiehwSk3MCGZTsfEqdX6ev4nm5/64EANAnUQtqQKTdIyLEaCqOH8jfwpdn2ZP
-	vFwH/8zj0yAzFdlCMr9akr/7lf+TRJPWIDkNn8FFYvLeKXUzq4LacJCH1ctv3iGzK4PCAJ8+Nds
-	PHt+eNdBY58Te15pe4r7ozXKQOrLXuJQyFwvbrAmlcBxZoieZJF7+5V1pvSgmc+et/JBH4reNTp
-	Guox0vJHRE5z2q/ON084Rg+QCKgW1gNjzXReVYoCNi+V18TIgaTliOPooVfyQ+5L+ypp5rlFO3h
-	Ii963ylmJchw7V0MoJxSFzm/XdrP22bP3PsloSrfrIi2wQw==
-X-Received: by 2002:a17:90b:1b07:b0:3ac:9a5e:9ce9 with SMTP id 98e67ed59e1d1-3b0db6edffemr142219a91.29.1793910975375;
-        Thu, 05 Nov 2026 12:36:15 -0800 (PST)
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com. [74.125.82.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0d7ca4b03sm599909a91.14.2026.11.05.12.36.14
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2026 12:36:14 -0800 (PST)
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3514b90bb89so4479834eec.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 12:36:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBy0zJgbtKzmvKaRQt9ddtSj8kkFlybW92FEMjDWdZfGYGBnYhNW3v3DyKOGYjE9dzue/a9q9NI4zVEF@vger.kernel.org
-X-Received: by 2002:a05:693c:8008:b0:369:d486:457f with SMTP id
- 5a478bee46e88-36f73e72d61mr409769eec.2.1793910973768; Thu, 05 Nov 2026
- 12:36:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8103606A31B;
+	Thu,  5 Nov 2026 21:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gbsA1GaX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E52121F0089F;
+	Thu,  5 Nov 2026 21:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793913854;
+	bh=RL5BhiqJaN/kv+lpAW+VL6m3SxBczrfzmnRexU7rIck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=gbsA1GaXPI4QnttpwObOJr6cz6NiyjV4gcFXP4+DlrAX21vVmLOwHoUY34gJ1eBiD
+	 lDCjiaD5XNdUK6sslw7T/y+IsTWrf+XXg+RT+XqQ4FvmnInd6GhmqjFxwwrAIe505T
+	 taveJhHFkKCknGncsIH2+Zt/xTD7nTwtOUWP3ds07tEz6fDYCkA/UbnXjdt7yjykkd
+	 a0E5SE/Ly92P2mgvV8IRxG0WA7QGSkscPWWMBb7/4Y1gSlAKnMPyNfR1CHuZgbhIHo
+	 CJOsXZCbj3PrR60qpdWkvaayVoQ/5EMbY4X0JPtz76slazQ+0HSfyhV7XGyk7qG5jN
+	 wbT9FSJVPA7JQ==
+Date: Thu, 5 Nov 2026 22:24:06 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <auzxXyAU6zyHtMtn@devuan>
+References: <cover.1793876837.git.alx@kernel.org>
+ <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+ <20261105111423.360f4ba8@gandalf.local.home>
+ <auyuINXEJKc1KoG7@devuan>
+ <20261105115019.2fe7c91b@gandalf.local.home>
+ <auy0O467UqOzqYub@devuan>
+ <auzGMV1YbO9DodBq@ashevche-desk.local>
+ <auzHFRzd86iV4-RA@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -81,25 +76,210 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104-sf19a2890-gpio-v1-0-45e463c48728@telaak.dev>
- <20261104-sf19a2890-gpio-v1-2-45e463c48728@telaak.dev> <CAD++jL=Bhbm3eNafdRTSKcnjyivhdmp0Mk1iHZ=HKN9sy_3Ozg@mail.gmail.com>
-In-Reply-To: <CAD++jL=Bhbm3eNafdRTSKcnjyivhdmp0Mk1iHZ=HKN9sy_3Ozg@mail.gmail.com>
-From: Joseph Telaak <joseph@telaak.dev>
-Date: Thu, 5 Nov 2026 15:36:01 -0500
-X-Gmail-Original-Message-ID: <CAPY4CJ4ExRTFJ+1q7GDw8ow=_ekk8urUqfC7ZtcYckwf1uO+vw@mail.gmail.com>
-X-Gm-Features: AclHuK_D3HUaJCQYumF5y8SooLOqbAC7H10kZ7apqTopxHnLZbvIW5XAq_-o6t4
-Message-ID: <CAPY4CJ4ExRTFJ+1q7GDw8ow=_ekk8urUqfC7ZtcYckwf1uO+vw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Add Siflower GPIO controller driver
-To: Linus Walleij <linusw@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
-	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Qingfang Deng <qingfang.deng@siflower.com.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2jm3oxexb27di5hk"
+Content-Disposition: inline
+In-Reply-To: <auzHFRzd86iV4-RA@ashevche-desk.local>
 
-> Completely pointless indirection, drop these functions, just use
-> readl/writel directly in the code.
 
-Thanks, v2 will drop them and use readl() and writel() directly.
+--2jm3oxexb27di5hk
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <auzxXyAU6zyHtMtn@devuan>
+References: <cover.1793876837.git.alx@kernel.org>
+ <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+ <20261105111423.360f4ba8@gandalf.local.home>
+ <auyuINXEJKc1KoG7@devuan>
+ <20261105115019.2fe7c91b@gandalf.local.home>
+ <auy0O467UqOzqYub@devuan>
+ <auzGMV1YbO9DodBq@ashevche-desk.local>
+ <auzHFRzd86iV4-RA@ashevche-desk.local>
+MIME-Version: 1.0
+In-Reply-To: <auzHFRzd86iV4-RA@ashevche-desk.local>
+
+Hi Andy,
+
+> Date: 2026-11-05 20:12:37+0200
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> On Thu, Nov 05, 2026 at 08:08:57PM +0200, Andy Shevchenko wrote:
+> > On Thu, Nov 05, 2026 at 06:46:18PM +0100, Alejandro Colomar wrote:
+> > > > Date: 2026-11-05 11:50:19-0500
+> > > > From: Steven Rostedt <rostedt@goodmis.org>
+>=20
+> [...]
+>=20
+> > > > Oops, typo, I meant trace_event_filter.c
+> > >=20
+> > > Still not found.
+> > >=20
+> > > 	alx@devuan:~/src/linux/linux/master$ find | grep trace_event_filter.c
+> > > 	alx@devuan:~/src/linux/linux/master$ find | grep trace.event.filter
+> > > 	alx@devuan:~/src/linux/linux/master$=20
+>=20
+> Besides that the above is yet another "Useless use of grep".
+
+See below (spoiler: not so useless).
+
+> > Oh, you are an oldschool guy :-)
+
+In this sense, yep.  :-)
+
+> >=20
+> > I can't believe people with Git index available are using `find`
+> > and not `git ls-files`. `find` is too slow...
+>=20
+> $ time find . -name trace_events_filter.c
+> ./kernel/trace/trace_events_filter.c
+>=20
+> real    0m0.081s
+> user    0m0.028s
+> sys     0m0.053s
+>=20
+> $ time git ls-files \*trace_events_filter.c
+> kernel/trace/trace_events_filter.c
+>=20
+> real    0m0.014s
+> user    0m0.010s
+> sys     0m0.005s
+>=20
+> $ time git ls-files \*trace_events_filter.c
+> kernel/trace/trace_events_filter.c
+>=20
+> real    0m0.014s
+> user    0m0.004s
+> sys     0m0.010s
+>=20
+> $ time find . -name trace_events_filter.c
+> ./kernel/trace/trace_events_filter.c
+>=20
+> real    0m0.083s
+> user    0m0.021s
+> sys     0m0.063s
+>=20
+> (with IPC to `grep` it will be even slower)
+
+Actually, IPC to grep(1) makes it faster, not slower.  :)
+Not only that, but I get to use a regex, which is more comfortable than
+a glob for finding stuff.
+
+Even if only for the regex, I find it already worth it, but the better
+performance makes it even better.
+
+	$ time find . -name trace_events_filter.c
+	./kernel/trace/trace_events_filter.c
+
+	real	0m0.064s
+	user	0m0.025s
+	sys	0m0.040s
+	$ time find . | grep trace_events_filter.c
+	./kernel/trace/trace_events_filter.c
+
+	real	0m0.059s
+	user	0m0.023s
+	sys	0m0.043s
+	$ time find . | grep trace_events_filter.c
+	./kernel/trace/trace_events_filter.c
+
+	real	0m0.058s
+	user	0m0.033s
+	sys	0m0.032s
+	$ time find . -name trace_events_filter.c
+	./kernel/trace/trace_events_filter.c
+
+	real	0m0.070s
+	user	0m0.020s
+	sys	0m0.050s
+
+About why, I'm not sure if find(1) is slow at filtering, or if having
+a separate CPU working on the filtering makes it more powerful (perhaps
+both).
+
+I think it might indeed be that find(1) is slow at filtering, because
+using git-ls-files(1) is faster without piping to grep(1):
+
+	$ time git ls-files | grep trace_events_filter.c
+	kernel/trace/trace_events_filter.c
+
+	real	0m0.023s
+	user	0m0.018s
+	sys	0m0.010s
+	$ time git ls-files \*trace_events_filter.c
+	kernel/trace/trace_events_filter.c
+
+	real	0m0.016s
+	user	0m0.012s
+	sys	0m0.004s
+	$ time git ls-files \*trace_events_filter.c
+	kernel/trace/trace_events_filter.c
+
+	real	0m0.011s
+	user	0m0.011s
+	sys	0m0.000s
+	$ time git ls-files | grep trace_events_filter.c
+	kernel/trace/trace_events_filter.c
+
+	real	0m0.023s
+	user	0m0.017s
+	sys	0m0.012s
+
+Still, the fact that grep(1) is easier to remember than git-ls-files(1)
+means that it's worth it for me to pipe to grep(1).  But indeed, using
+git-ls-files(1) in this pipeline to replace find(1) might be reasonable.
+After all, I don't want to search in temporary files.
+
+BTW, on top of all this, the interface of find(1) is so badly designed
+that I can never remember how to use it properly.  Compare that to
+piping to grep(1), which everyone knows how to do with eyes closed.
+
+Necessary link when discussing about find(1):
+<https://doc.cat-v.org/unix/find-history>
+(it's quite fun; recommended read!)
+
+
+Have a lovely night!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--2jm3oxexb27di5hk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrs8+4ACgkQ64mZXMKQ
+wqkiFhAAqFKamchoNDNeTetmiCh3yJp6GUbHyaX2RrrE5EdmqnhkEX4NQk0+JaXn
+1ImkNyzgBAAOwyJaDxo7nnveXmK9DzPk8aIMt7ciqhb5d2O5sZJ3PLxNMl4Fzuoe
+lGjop+rtjDb69AMcqOuPdlDqxwh8uiinyVeCqP0hqwN7OmOjajGSlQr11buRLI+d
+pgMJZGiws5vKtInNzV1/weIgBQtgM6fqpWiS40XQlgyALWl/h2d+5wT7veje8quA
+VtCLbm+Wgv/WUyAEcVd88h8U/M/8B7YGq3tD8LXinuDvXf02/crJn6eHn4bWBnPS
+XRQunxLUeSL0xmiFZHYYOzIaVbJHr4Gc3c3mzqiGPJlXFvmyPMwKjJza1Ix7WKij
+I06KwMkQSj9rSFi69ppg5TJ4KgAg99lGEV8eJH4M5Itxcvd6LmTkYktnBfWTrVDm
+btA8iOPm94SE3RGW+LLQS6Ozz/lvGsIytydiwnMJ+8c66x70PNHSkIaWJ1wj38HR
+uXdg1EhLTpAzVvJ+nSzx4Bz7o3HxsYkc/XdwKdlzCriAj2rPHc26AYhCv6ES9XCw
+yY3UO8+D56tuq/bM5SBi51bIFpch6ATnPpo2FuYVvNqoD/e/DR2G1ruK3iRkEtlD
+mpz+6bnkWoaknK3xeyJXiS5YuoSfFWeM8sE+gfUmjTZ7Ett3iRA=
+=oZOp
+-----END PGP SIGNATURE-----
+
+--2jm3oxexb27di5hk--
