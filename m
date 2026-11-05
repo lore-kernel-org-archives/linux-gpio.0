@@ -1,67 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793877199;
-	b=yruialJUXPynFWs1ca9RZ4xUbYtG1krEV53tTsrNRUgyI0mgpsU2bXvUDf//EosKCiOB
-	 AiI4sGw/XyON1ITqPoE6RusVuZS4jE0gmNgf7BueChQ+8aVtT1JaN3UQLtn6diJtLTyd0
-	 Yyjmpr94xsmZwnb5ZZk2FVzQ4szakxSwkKGO4wkuMZuucxekiD4Q4XtGgcP9ofkuSLGQF
-	 x/OQpOfqrNWFGfEyHDTJP4jYKr4SJJYPit7gHEwp/tgnT/EG1F/nz5gbDJhFuLRy+iQsV
-	 J9EnDYdbnvPtSZVy3BQ/2vDn9F6gCmqAnwC1YoBPnipe7coFtlifAt8luvCFGxTD3lw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793877199;
-	h=Received:DKIM-Signature:Date:From:To:List-Id:Cc:Subject:Message-ID:
-	 X-Mailer:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=b8L7yNYxmDPOZvbm9sCH0n0Iy9Uvz/rRZd1QCuz9T6s=;
-	b=xY1r5ICwPu+pynE/j2fvbC5rrHmw7BdmOj8kKFQRbrGEcj2zPDBISTL7xKbqI9R1qJ+3
-	 r+379blIFkYhP+kxTKOXQgyPWsLfdmV27w/zgAkPzRdmPEAc5CdSGZKQXpZOhyA7w4qa/
-	 arUw/kukZicwBCy49DAJ6ha7I89r1pDitrdm1vZDwhiDVHMMvruO0al9b27/4LKBz//23
-	 SEiTLMPaPYOVCV2lPXXU/6YbDeCs0GEa2ozqnZ5MrrUz16bB9Btcf36dTbjHxdATXJJUi
-	 3A3Y/qkipEDmP4hkwcnoalaGtGLYFzD/MsQqKazGaiewgaaj/k/e1WMHEctQnbNAZsA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZXtKcJgt;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.218.54
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1793877896;
+	b=ixhi5BbecvuId82V1z3cuRFISo1XSWTpged56j2pRFqIE+MxkdawrP90O2oHIoC4QaI0
+	 g7FX3vTA+UBRYj54Q0BoykcRO1ptvfzrH0QObw27sv91az/EkG+AfFCIrSg6RvD8U9RZ8
+	 ZRp/EiKUmClgqs26yP/5bOlr9RbIBjN5oeSKl2z3Ww/oZWev7ghg0QlR6kDZVdA7aMrMR
+	 pqgb73cpiUpkxkFmyydwTy3sI50U2soWzQpKZyaGW4suWeqFFxzYil0warTIsus9SOnMF
+	 M77hAk4WbFgseseCxunBmtMMIeTVJTeaU8AfvmqMnkDWUmtsuAsWT2Iv/lEASCBKhyw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793877896;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
+	b=yG5bT41pRV4JGM/nVUuWZEwdwS2GgasyP97GvEK4Tjd+gNm9mQaubKCWNLJYFJJ14tub
+	 3FfPfkXNhkNZ6fA0i3mFQq7fzTX+nRiDjFG0110oOnFteLElcIQRh1HZ5EXYSbsmD0x52
+	 xjwJXevGHD2vebYTuZVsmD7t3d3Rz5yRBaQ/4Rn3ZtVTiYCPXrRECHKtV1PJtbFD/hcR9
+	 UUPh4qFLxI22rJSC0VdmdBKsMCTDhACh5RBFtNqGeE1tbSnY1BBVxbfgF5ARfQZTX5C0e
+	 ONGyOQm+632ZF2b8MIY0f2h+Wjs5VhEHrphrkDzi5OSZHlhXTT23APPko9pXZsXCYVw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CCyRuxf0;
+	arc=fail smtp.remote-ip=209.85.218.54
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D983606A330;
-	Thu,  5 Nov 2026 11:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA8606A328
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 11:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3CAA8606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZXtKcJgt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C1851F00A1E;
-	Thu,  5 Nov 2026 11:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793877199;
-	bh=b8L7yNYxmDPOZvbm9sCH0n0Iy9Uvz/rRZd1QCuz9T6s=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To;
-	b=ZXtKcJgtxenqTKY+WsqizmV7bbNVbRK13i70ZEiGtzLLejW5L0Z/UZfwqaijkOoNG
-	 Mn/64tO2B0FvaGvlehz8YKrc2I5HT7NZoTJF8X7YTFTbPkX9jj79BqrPLcFNxR7L8u
-	 CkjMYl8h/OwMfGpXATJ23D5qmk3yLbiT6VUE3W6OTL27v96Cm43B0TZnYwRyY+o2pN
-	 YIN/nu0swhkhQhRQa/eEBjOH1VLksjKlclT0NrhgSxHXJPjWAjS17zRQK91LsH7493
-	 4H0pmNF8ZCgc1+MJEsj8tcb39yss/MMKJTSr0V2k2w3TESZj/3+VocWQoJ8jKAAJoL
-	 Vt4OR8sgegOsQ==
-Date: Thu, 5 Nov 2026 12:13:11 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-hardening@vger.kernel.org
-Cc: alx+linux-hardening@kernel.org, Alejandro Colomar <alx@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: [PATCH v1 2/2] device property: Fix fwnode_name_eq() for empty node
- names
-Message-ID: <37eafcd682b03391f0b0034915079eaca434eb90.1793876837.git.alx@kernel.org>
-X-Mailer: git-send-email 2.55.0
-References: <cover.1793876837.git.alx@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CCyRuxf0
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c4301e334ceso142790566b.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 03:24:56 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793877895; cv=none;
+        d=google.com; s=arc-20260327;
+        b=JAcjtg3TvIMnCrq/D+EMZY/9uEmLmsew20dXA8od7Tpd54mF7V5FZSaBwT01Mx1fwQ
+         MZUirk/e0Ug3ZA38PmFJQuJx6mymm4vdxJXX28cq4tSd81jZwMuS1j0tjuwoNn2cccYA
+         h5dGkYjlYqPiUaQg10hXHuxI7iKiESPoRuMAQTIdCBl80fzmsuI9jXgqdyLJrBr2uF1D
+         6a/YmqUkD1vt+XJpY+B9dy+DfqQIxnuRhUikLKwSz3onL3bTES93BJmCArBJ/DNOdreQ
+         hxw06XWBzm0BLwbf5m0y0K3N+ck8sCfeKttb3NRnoDZE38ESEaqgMUKnFEjUvWWIwhre
+         w5Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
+        fh=+vOEKIPUSb0wJTSKfvKzoxn/POZDogvwKnE+hUP8H0U=;
+        b=anaiva3x3s7S1UwZ4ZgXYibvmCjTR5MQkCfjdXB/WwWhYZ8h87k+512AeLGSpa5VlX
+         GOIP/w+8KWobyiLg81sZc5QE/fTMZ/51tkFXvyCUHVszvKKCH2wytXMtwRexkOgVGxjh
+         zlw0lZYwd33bYs2Ir7XzYzOJ9EZXHOHcCL2/bwm1qxjIW5RWlp82ai6UjTvgRJxo+n5n
+         Wjq9hfVjpZug7xDRCMxKjdpx6sG96RQCCAEuDHXDfyS6iRXFhkhkisrAFC64OdZ9sHZB
+         rCGq23X+nvOVI3aP0MC40qnFU4SXjnLGgo1QX0wO0DzDbjA8xp82tC7HZp+KrcBkHkca
+         DMhg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793877895; x=1794482695; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
+        b=CCyRuxf0P6J6k8bWApFVRzmmmQ4a3nezFhlH23PgLEzGEftofIdTYht54rkMPSxqZ2
+         /N6dWyeLvZ3t5ckDi74aRNo2yvUplMuzeF87p+SrRLFswIheQK11EAMfgONQoUmsEnEe
+         ak3lTmUJPNYDs7n+W3y+FrnQqNLfaVlgsCS7/AoEJSXFGJS/uoo6dTu0piEUOcSwoNXy
+         qSQc4qOwI5/lBCfCziXhsnKcQriiZn1/LpLXFBVGVCBa5Nm1lMvs3nCLwfOv1t+ObDwv
+         66A1hJWg9khNx60mm6v/I6sK000uQTULOFdYaXulbZrAc/k9t8/TzBP4LYJIO4G33uyO
+         snLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793877895; x=1794482695;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
+        b=qqtVsNMmg1ieQMCOA1Htdo0Hsvp2NoNo5CGj1Xi13rqfll4fviqLGTMZ5zhdzDoDJd
+         3BNLfVWF8+0y3X6qTFGBLyDc9T2FR6Te8KuD6IKZWVUoNXmTXDUAVMnxNsV87RPn5TWU
+         t1Ij5fjZGcR9nG+gMLVIfeTHiCwFsUKLPgN3+K2DbByFWS2UiDwCRTiKmHKoBjmjXTAi
+         mKUahbj6mcJ7GD6MX6OUp0sw5+Rqv/lqoZmj3LOv/abj41EeKWTQKSi8QRFAb9iyUhzX
+         FjrTzNBneS3GhYK4PA0pnP/pOsLjDj+mqXM6tw4sCIwwXY6kO53A7SyeNfmgjG4NimVQ
+         fl8w==
+X-Forwarded-Encrypted: i=1; AKwUvBwA/FKRDsVmgFH4DrGLIAR4SCqFZ9SPp6nGNqXKpcGBu7/OGbuP9/0gnsrSaa3fzStBMlyynyky1xPy@vger.kernel.org
+X-Gm-Message-State: APuU4Z8nQRDa8v3ZRaXxCQMih3dqBApXElSmcBSy2xjke3E7IxxQVkkq
+	LebGLRfoB+HVjO4bMqk90jEg+XeVRo+22P2FJY9pKUdgevi3Gyf3WtZb2kc8g5LkY24wJHzP9+A
+	3zOgDboIgXXn+bEeibR6DEi9QcKXFgmY=
+X-Gm-Gg: AYBFou0GPc63V9U+dThTUJ/X/lcLLtPKBS74hit/a/eRUrj8pD4q48/VjuKTxXulA/q
+	J6Gw8BtiaFOMmPn3oSt6qFSTZm+cBNJ8YqAPx1k4LpXVBNOJWDmI+M3v4FtwInwnx02GiIaL1fE
+	zol4YDhk7uKI3s7lTclz/WLduN12Gd8jciKD5LRDOqkzAauKvXSfTa7bckYhHhe0POFLISWeL7R
+	V6+u60SO2Y7UbloQgcJzpYXv9wQqCybSVQ3hW4oEB8bWmSma4abU54uWWnN0PG+N3TGpYP75pDC
+	N6hTU4AkPgMNk9Sv2RC4JXCqVNz5PpXunru60zfc2rc80VCvfNofifneS0GGa09f50jgU5WIXQq
+	7LNFUBBI/7K2UdCwsgpHmVZ7uaqD0oCA95hzxgFWEHZndMq1/hocb4paTsdz4sfjTgiE4praMqd
+	8RHc4FR1MY5TydlHxinf4QCw4/Ox1LCVuM3kPhMxdqHAt5hi+sm36eisAJzb/hBCgUqC6t0bT3l
+	ZtdLQdafEbFxM4dhzhFhPMzGMGpLpqjAYvgo7t8D5gitWsS2HaNljXRIItVYQ==
+X-Received: by 2002:a17:907:6d20:b0:c46:75e7:25af with SMTP id
+ a640c23a62f3a-c4ca7a0dcb0mr1704269766b.11.1793877894389; Thu, 05 Nov 2026
+ 03:24:54 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,130 +106,56 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zxqj3abnbtcygkqj"
-Content-Disposition: inline
+References: <cover.1793876837.git.alx@kernel.org>
 In-Reply-To: <cover.1793876837.git.alx@kernel.org>
-
-
---zxqj3abnbtcygkqj
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-hardening@vger.kernel.org
-List-Id: <linux-hardening.lore.kernel.org>
-Cc: alx+linux-hardening@kernel.org, Alejandro Colomar <alx@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 5 Nov 2026 13:24:18 +0200
+X-Gm-Features: AclHuK8KWMbqNnaK7YSgn2BAcqklpjMSStieDr0-B_LC0DeuPxzb2lhrGJOckGM
+Message-ID: <CAHp75VdFH146fNhw1ysUbgCPbpv+K++kWvbyZxU=V7tDh0T88Q@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add strprefix() and fix a bug with it
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-hardening@vger.kernel.org, alx+linux-hardening@kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
 	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, 
+	Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: [PATCH v1 2/2] device property: Fix fwnode_name_eq() for empty node
- names
-Message-ID: <37eafcd682b03391f0b0034915079eaca434eb90.1793876837.git.alx@kernel.org>
-References: <cover.1793876837.git.alx@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <cover.1793876837.git.alx@kernel.org>
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-str_has_prefix() returns the prefix length on match and 0 on mismatch,
-so the mistmatch case can't be told from "empty prefix matched an empty
-string".
+On Thu, Nov 5, 2026 at 1:13=E2=80=AFPM Alejandro Colomar <alx@kernel.org> w=
+rote:
+>
+> str_has_prefix() is based on sizes and lengths, which means it must
+> overload the valid length 0 to mean not found.  This is a typical
+> consequence of choosing to design an API around sizes and lengths, and
+> vanishes when moving to pointer-based similar APIs.
+>
+> This patch set adds strprefix(), deprecates str_has_prefix(), and uses
+> strprefix() in one place to fix a bug reported by Bartosz.
+>
+> We can later work on replacing the other uses of str_has_prefix(), which
+> might hide similar bugs.
+>
+> Testing
+> ~~~~~~~
+>
+> I've built this patch set with 'allmodconfig'.  I've not run the
+> resulting kernel, though.
 
-For instance: the OF root node's name as returned by
-fwnode_get_name() is "" and will return 0 for any name matched against
-it and since len is 0 too, fwnode_name_eq() will return true.
+No, all lib/ new code should be accompanied with new (Kunit) test
+cases. Update the respective lib/tests/* for that or if not yet
+converted to Kunit something in lib/*test*.c
 
-Let's use strprefix() instead, which also makes this function simpler.
-
-Fixes: a9c8c738066b7 ("device property: Add fwnode_name_eq()")
-Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Andreas Schwab <schwab@linux-m68k.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andy Shevchenko <andy@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Daniel Scally <djrscally@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linusw@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Saravana Kannan <saravanak@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Tom Zanussi <zanussi@kernel.org
-Cc: linux-acpi@vger.kernel.org
-Cc: driver-core@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-hardening@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- drivers/base/property.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 51109794d727..7728116e2968 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -692,15 +692,12 @@ const char *fwnode_get_name_prefix(const struct fwnod=
-e_handle *fwnode)
- bool fwnode_name_eq(const struct fwnode_handle *fwnode, const char *name)
- {
- 	const char *node_name;
--	ptrdiff_t len;
-=20
- 	node_name =3D fwnode_get_name(fwnode);
- 	if (!node_name)
- 		return false;
-=20
--	len =3D strchrnul(node_name, '@') - node_name;
--
--	return str_has_prefix(node_name, name) =3D=3D len;
-+	return strprefix(node_name, name) =3D=3D strchrnul(node_name, '@');
- }
- EXPORT_SYMBOL_GPL(fwnode_name_eq);
-=20
 --=20
-2.55.0
-
-
---zxqj3abnbtcygkqj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrsZMcACgkQ64mZXMKQ
-wqn6CBAAlONJdAvgnHp4RC4rYHe8LXiiN9VvcYWeimVf2lPVYC2gyZQnMWrRM7fl
-spDdqDQXhdm+DRKaRADXyM9+coUA8/ZvXNUu8B7Ny8yck01rBA/USKGj05HJXiZA
-dolw2WaZ9ORF+CN8iT64ZaNf3JAO9Aun7iSX+pRZ9AFfx6BVSgZBoybbKz6fP3M8
-yicPIp3x9+W1aKo+uUXeZo3bA8yJYV0DdhXJIcE+eifChWREsVhjshmYA3Md7aDl
-HwFS0xZw65BYfJ0HBnecYVyfpZwtgOlGlBNX2OIx0gUe3Lso7aXbMFUCgopciGof
-HD1vl6q+69mIn0eYccf41scfOEKRU0xhqujqyk2nFW74K3kwKytbqcnp3fl0r8QR
-Y0xqbZRAMQagRihLV5UgPd6cC4e8WgXbmAO179w8b21FFT6S7HWiJ5rsL/D/RTss
-kxBCpr0UmHlpgkoIw5D+iNpQKemRcTgXAt1ZPGwy3Nfz8bPUM9H4S1HSp+oYFYZl
-7CFRIkXuzIwIo4r4d3mg+NL3z02G+v6fy1adYf2681Ur71ewWC8t3CcVTopR+t2H
-TtLy5MLFB7FJt6HPb5yzfod75RjN2Pa2fCFleCsKVZAV9ANrPK3wI2sZqhm3aj94
-VaLt8UuhVUeJO/Yp1I744vaE2a28hTd9UucKJah9YDhiWZCEBkQ=
-=bNkK
------END PGP SIGNATURE-----
-
---zxqj3abnbtcygkqj--
+With Best Regards,
+Andy Shevchenko
