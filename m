@@ -1,94 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793864114;
-	b=wrpkggXx/RwXKVixhtIGnoNUQUTxQX8fet54nzMjOtSQ9Ft2kedxkTzsN62HEGbBSB87
-	 x7tEbQXPSxaS8D/DgAUQlEgl7Sveq3A7C0VGruVHpqiaZbtZ/EMqtHg1aH9UVjRkecEj2
-	 sGUkIbBgC4MrV8+X0LXVTMsibHyKuXy0D8MAIU3K4egEksw3C6DTNxmK+joD4jP2tIFKr
-	 snh6tzB7AhUSHct4xqW4vX14r+wcTh0SOH4RlXhiWY4k71FlFma/jZqg2db0LUgV161x/
-	 QeBqPB1JNgbGVr1cZ9YXd+EwoqRp7amLVt1udLOWy7yzxV8vdYr4nzKwfPfryyeLhhw==
+	t=1793866172;
+	b=0FMa/TzsIr9Zwv/vEpK1IQUUkIvDVIlSPam/RQE4z6JjiOMwUtkSildUTii+Gi9bE8pC
+	 eUoNMkfh6cLAkMcNmPr4WyuuG8vK4cJ5z8I6ukyMSmubavZ9IwFscTKn7x/Chm28Oi51u
+	 c6EefZ2gTeCNv77E6ZvRT+mO6EzCb8i3ftiqTnmxgu4W1W1Ge4Ihrt/98HKkkdQDTl6W7
+	 5gqlYtYMCnGmvDCxzOHt4cc+hMWf76pmItcPKHty3x3UocZysT3+YE9il5+EyAXFTzdUV
+	 MB1fahQXb9NNXpm7RNHpKC8Ki8av7bolerqpdG9sFOlCLEoVVbq3IoIeVhnjOC4JNaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793864114;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=fJrSMcznO+jXm0R/Gb4sVutzbYoC421vKFMchCji1M8=;
-	b=nOMjhQG7+Xl53SlePzTUsHgirbUX2lrMSEdnD8N+VFmfDGTxKvcyn24meoOKbMBnuUfk
-	 N0DFtwTv33vKk8RBjp/JpxUKdBJ5G2Bo6wNVrzidCxanjVZH7jvwsEHVTgTX3U3fJF9RS
-	 zAyurmhyCNmYpFYnzjuzO7UVggkMQht3L7ppsTlDwzk1W6ew+aIl1Lr+m/5fDMiOgrTTF
-	 1NrBmUVOKO7OBG6XJuLaE5uH08saYg97oNik5idrF5f6lQN9HaY/r7TfldB49/2rlM2lY
-	 Zt68f/IqeiSqV1W4VwLvsKHRAEBzDuCmvlxiblbtkVSP9MbCZ/oa9ArAeY13V+zjLHg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793866172;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=R2dfgUSfGvKDjLQlx0gUL2MoOwECt6lNi/6KeCAWzMY=;
+	b=ceeAQWUjRpYO+5H8EzHKKGFzuPD8wlsuq3+yWiAgytG3IrzEcOhVZvQAWo7xJAn4GkA9
+	 KD/OU5zOJe12SBanAo6ScBWwSnvAqb+oRk8gOAbjQakJPnZOeQLjKZakgDWpCtYpnHyFC
+	 QUMXTha2BBRrZ+TzDuE6U2j9Dm5V1jhT9Q/AZPdnnaaJ7P2pGyg0/2RZrACCzr5OC+udQ
+	 2ylb+G/KHSnNiKn431ey2kq+Ir+biPk7kIa6n9nnhSX6Yiq4ulbxxm0wODk2GDHn6nK+g
+	 OQLuoId7Mox8U9/qNGavp0J4GjKNENJpmrs+knSgAWlz/Gwr/LWRgeURjBzl6GB5RUw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mMdqqgJ1;
-	arc=none smtp.remote-ip=198.175.65.20
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OUol7Wth;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C20B606A31B;
-	Thu,  5 Nov 2026 07:35:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4C20B606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD370606A339;
+	Thu,  5 Nov 2026 08:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mMdqqgJ1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793864114; x=1825400114;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/FfPBMUOPLe/QDkESDBHjFZFt+ydwEnQtH3CnagBhAQ=;
-  b=mMdqqgJ17Hm4OBGhcDS3oX0BE+t49VRKfRoSoxzEcrCj2+ipynCXUZP3
-   RqAvVn/RGtMCEd8PqEY3k0DsqJECn1V1XBKAStUiqgOLPHxVLEIfgnIaq
-   NQILUriG4m6tvyORDaLf4VLirbUV97TZqLgWsAYH9vxqkjDSV1r23fouW
-   rIhwSTptTaryYC/pOQ/r+NSQq0koQLYdl0VsswLAz1b5iu74V9aY6+wSN
-   tZ6XqEfN3CYBQZMDAZYhgnO+77WRl1kSuiXVZwo5UaldqWiRthERRzs/m
-   gQb9BEZa9D6EERHXB1ikRvmMGd74QdRMD/ud8jJlao7NduurDoPAKIRm1
-   g==;
-X-CSE-ConnectionGUID: A+V4Cj2fRFetiQEJHa9wuw==
-X-CSE-MsgGUID: MfjE4yDySxuYxO7KnmX/3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2676547"
-X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
-   d="scan'208";a="2676547"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 23:35:13 -0800
-X-CSE-ConnectionGUID: tLiMaRPcTziaRantES99tA==
-X-CSE-MsgGUID: o10u2ZxSSZmlxdEUbRPtDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
-   d="scan'208";a="7099548"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Nov 2026 23:35:06 -0800
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xOs00-00000000lrT-0h1L;
-	Thu, 05 Nov 2026 07:35:04 +0000
-Date: Thu, 5 Nov 2026 15:34:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kees Cook <kees@kernel.org>, Len Brown <lenb@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-acpi@vger.kernel.org,
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 9/9] gpio: shared: generalize most code to firmware nodes
-Message-ID: <202611051523.HtiYeAbK-lkp@intel.com>
-References: <20261104-fwnode-for-each-prop-v1-9-6e28fe1c72c4@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OUol7Wth
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CBB1F00919;
+	Thu,  5 Nov 2026 08:09:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793866171;
+	bh=R2dfgUSfGvKDjLQlx0gUL2MoOwECt6lNi/6KeCAWzMY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=OUol7Wth9XsYmxV8LxuJKOhicul9055AZbLBcAIvPqKqrf1MdlRygxx2jokqLhPUq
+	 LX97q8X0DOdhJaBw/ZJ72Kj2fE28BCn9xOmhu6hcUDL2VuPjMyN7YhaPkgckyrkIuJ
+	 p65X7UFLUFldmk17xlijqYcbrEh8H2nvDB30BybBtVQLY/e0SAKFT4q36P0l8aryPZ
+	 En2khHQcTEjHtHNRhf15snwgmmZJxiDkqzx+Z5wE862yzxAuc3OYTJmkwS/jTj0MOs
+	 mc3m4YaUVqXzqNbV8li9zXtIOzhCMBH3IQqQtwPG26HwXBOpk3v84DxK8v01kia4hu
+	 BG+hhEqTceHfg==
+Message-ID: <e390de9a-b7ac-4fb9-8a0d-f6a4935dd665@kernel.org>
+Date: Thu, 5 Nov 2026 09:09:00 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -98,63 +51,142 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261104-fwnode-for-each-prop-v1-9-6e28fe1c72c4@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Ivan Vecera <ivecera@redhat.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Lee Jones <lee@kernel.org>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, Ulf Hansson <ulfh@kernel.org>,
+ Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Shawn Guo <shawnguo@kernel.org>, Chanh Nguyen
+ <chanh@os.amperecomputing.com>, Alistair Francis <alistair@alistair23.me>,
+ Julius Werner <jwerner@chromium.org>, Paul Cercueil <paul@crapouillou.net>,
+ Dmitry Osipenko <digetx@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Ray Jui <ray.jui@broadcom.com>,
+ Scott Branden <scott.branden@broadcom.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, chrome-platform@lists.linux.dev,
+ linux-gpio@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-tegra@vger.kernel.org, mfd@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
+References: <20261102135330.2493332-1-robh@kernel.org>
+ <20261104-vigorous-flat-dingo-3e5bd2@quoll>
+ <auuWVGsyb3RrOIfh@ashevche-desk.local>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <auuWVGsyb3RrOIfh@ashevche-desk.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Bartosz,
+On 04/11/2026 21:32, Andy Shevchenko wrote:
+>>>      patternProperties:
+>>> -      "^layer@[0-9]+$":
+>>> +      "^layer@[0-9a-f]+$":
+>>
+>> These two lines are looking good.
+>>
+>> Andy, it's okay if I give Rb tag?
+> 
+> Yes, again a pointer to 34d1e754155b ("dt-bindings: iio: drop unneeded quotes").
+> 
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> 
+> I expect to see
+> 
+>  Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> # xylon
+> 
+> or something that matches the piece you reviewed.
 
-kernel test robot noticed the following build warnings:
+As pointed out in other thread (the SPI), only a few people use that
+syntax. Also look here:
 
-[auto build test WARNING on 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/device-property-fix-fwnode_name_eq-for-empty-node-names/20261104-150343
-base:   6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-patch link:    https://lore.kernel.org/r/20261104-fwnode-for-each-prop-v1-9-6e28fe1c72c4%40oss.qualcomm.com
-patch subject: [PATCH 9/9] gpio: shared: generalize most code to firmware nodes
-config: sh-randconfig-1001-20261105 (https://download.01.org/0day-ci/archive/20261105/202611051523.HtiYeAbK-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 16.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261105/202611051523.HtiYeAbK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611051523.HtiYeAbK-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/gpio/gpiolib-shared.c:300:12: warning: 'gpio_shared_fwnode_traverse' defined but not used [-Wunused-function]
-     300 | static int gpio_shared_fwnode_traverse(struct fwnode_handle *curr)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   Assembler messages:
-   {standard input}:165: Error: offset to unaligned destination
-   {standard input}:477: Error: offset to unaligned destination
+https://lore.kernel.org/all/CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com/
 
 
-vim +/gpio_shared_fwnode_traverse +300 drivers/gpio/gpiolib-shared.c
-
-   299	
- > 300	static int gpio_shared_fwnode_traverse(struct fwnode_handle *curr)
-   301	{
-   302		int ret;
-   303	
-   304		if (gpio_shared_fwnode_ignore(curr))
-   305			return 0;
-   306	
-   307		ret = gpio_shared_fwnode_scan_properties(curr);
-   308		if (ret)
-   309			return ret;
-   310	
-   311		fwnode_for_each_child_node_scoped(curr, child) {
-   312			ret = gpio_shared_fwnode_traverse(child);
-   313			if (ret)
-   314				return ret;
-   315		}
-   316	
-   317		return 0;
-   318	}
-   319	
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
