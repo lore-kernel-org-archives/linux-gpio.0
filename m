@@ -1,148 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793870017;
-	b=b/crtCc+FoCP4aTzfoZEtghaMSjd4VRAOJOuJBo9c0fwWlr1UMyFZLjBG7TTrQ4pOm6k
-	 2J1IxvTb6m75hItnbF9vs143Uudww3wiJCP1p1g/ijZSqY3KA1p7YcBH3Ate5kCzavuOk
-	 lfh+JHulDAWUPcsXQRwgWQDi3ySN4hEl0qHqbV6Sk9pmrEgb+EY8Bq2nJ+XY+BaIhPmnn
-	 qaeKuFPcqrB+BxJ4RBayExTc2m9fOSktQLyIS0IHanTzs1vPDoD6vxU326Jj4+aNiWN7/
-	 fDM8+EAL1vmx4BkSlNanZIdN8YXqVPkIy21bddInDPFJviipmEfH+97KAQ/vHlfjxbw==
+	t=1793870060;
+	b=DuG289oEVQEaZRP0BEL//stnLZroo5ikvW7ooLgpGp4oXZa1CqrG79700fD3aJYTbaTv
+	 MPqE7oA8ItYqS3Aqc+GqHzClIg7taL3P14KVOSsSxl9XO0ksLY1ztH/OCq2Y8tFbi0NGD
+	 5vFDXiemmPV4b3DZqiAor3Ewe5LHuL9rWdyVmWSM1hG9AfspNwt6V6sbdmdWceXkOuf+1
+	 mrFNXzLB9s6FWgmBDqyCzCWcaqELwb3jgIjbpeP66TZnGOsRDWE8uJp84Zb4K5Aw4icBb
+	 zMIwJPWJUdi8noXbyH1dzJgrlesj66SNG4qg4+wPChHJy2WfgIOgMCpzt1r7mqTZQKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793870017;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=0dcn9KBmcJzqAJpqRsW5Hqpu3HAEMph5/rktghtkFts=;
-	b=KUeUFT0EYH5ok6h3SilnjlqGz9DNEcqlOhk88czBAFF61W7eNzAl1HPVUA6OxPZBn1zS
-	 9MTgsh7vDBRoxf/Ke5OQSm8+WGph9z4fmNFmtrcJqOejjKXY0ONLGa8YmyE5TSZEt/b26
-	 +VcCUwi965wTZjdbfZu87CXVLDaKZgpRR6KEO3+EdCP3Tu89DMhRIf0qRORFLGFA5J2iA
-	 gWXiMSQoaDEyYt+Tja9rstDjnk8Q7J6uAy1ObHaVu6gNjxJszUAEEZHfMxCcQZZg6DKiD
-	 eN2Q93IicOYY7zcg+lpp9WT511OLQmIqJaeCmdvn4R/TKnBgq5WEhRCBMfVAQ69vTrg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793870060;
+	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:
+	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=1ZiKnEgfHfPpMJ1mCuEff7XYe7UmVMKemG/M0rSuRDc=;
+	b=NwnDQyi1zz4/B88TXwMHKo9K5vUNUnzdwntpexZtJS/n+suMOITFTynud6P7Qu+kgQ/B
+	 F/ltmGFNupU9GsJ2hs7mbBLX4ivc8eMxx1fCyRQMFJnUA2/dkt/jKLZKcCqH3xaoEWiTB
+	 hJLqBfeTs3wURQbmNMa6hDiV6G6qHci5WWuQR+/GF+iQ+eqX9CpSO15sWTac6tmd2SEpl
+	 vdI085qcE+nLqcS6mj3l7SJ8wBZHSZlsPYIYQHnlJVMqTRDx8sr2X8pPheTpZx0C6bZPU
+	 JLDwJINB1aB0Z+3oY6Vq8Kgq7UvbiibG9pWyaji39rKVI3+ISTuF+2S/maI3r/tEbiw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lxtG33HQ;
-	arc=none smtp.remote-ip=192.198.163.15
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k6ashVfP;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D5B606A326;
-	Thu,  5 Nov 2026 09:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27D5B606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6687A606A326
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lxtG33HQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793870018; x=1825406018;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2W6MRtupdrj020Uh4UEb5zyJkRA2+AjPQ8ugIRouE4A=;
-  b=lxtG33HQrgNuuQe0k8D4J2vK5NAhwyNjAcnfGaXuOiDz8EoPZvRkfbIs
-   QlPNP+dlydhxC3bM/WsURI9SKVMGBoF4LU6tebFMgY9jQFroWZcC1nPTY
-   oarnc9WrLwVkEfZoKXto2QWMdXP9qMrOEidUkAgobnaMXWpAzZvOKgqTn
-   cSlcxo4Fu4Aot8lFM4QF+WQmKvirkD8+IdXqweC66N8f8CSajAFZHqBPq
-   JmzxWMjSnFWDAok8c3W3lK9c67evGqaEWK1B567laWGSbw0atxaEuXhYk
-   1UKftSPK9DcKb5QHEhQr7PRjxza/CyUi9vPKO/0Q41CsNvclhAjMajrea
-   g==;
-X-CSE-ConnectionGUID: e9N8yMDQSeGfg2uI3uaBYw==
-X-CSE-MsgGUID: nO29XHZyRQO8bPGsNCscGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2643775"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2643775"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:13:36 -0800
-X-CSE-ConnectionGUID: WHi44R+6TY6k/cxMKjfsGQ==
-X-CSE-MsgGUID: sZYNWWPRQpShUCMMaIX5GQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7295989"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:13:18 -0800
-Date: Thu, 5 Nov 2026 11:13:16 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Ivan Vecera <ivecera@redhat.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Chanh Nguyen <chanh@os.amperecomputing.com>,
-	Alistair Francis <alistair@alistair23.me>,
-	Julius Werner <jwerner@chromium.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Ray Jui <ray.jui@broadcom.com>,
-	Scott Branden <scott.branden@broadcom.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org, mfd@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
-Message-ID: <auxIrJ0q9kxEI6-U@ashevche-desk.local>
-References: <20261102135330.2493332-1-robh@kernel.org>
- <20261104-vigorous-flat-dingo-3e5bd2@quoll>
- <auuWVGsyb3RrOIfh@ashevche-desk.local>
- <e390de9a-b7ac-4fb9-8a0d-f6a4935dd665@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k6ashVfP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 092051F0093A
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:14:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793870060;
+	bh=1ZiKnEgfHfPpMJ1mCuEff7XYe7UmVMKemG/M0rSuRDc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=k6ashVfPPFI0i6JKfuV1tiBVeT337nYK/eyq7g90RY3/xKQXb5aEwiZaQ4HbXDMQ2
+	 0nXRBPt3exslF9DSfIVlkcu/4JXwMOLoVmsd3/vpvrDXE6X0gCf/xklWdyo9Mx69S9
+	 jpbQomZGjYd5q1nKQLAKPjknNS91L46P6758v3jdxlsEl8KCPiVgyPJZdrUurgAwbB
+	 cJNYjDrVDfOqVuH1oGrWCgXGgRgxsZlt0DgXjVydy3wkknAGnUqe2NE1SwFhwgx7nF
+	 8+zgWy7+lF1BWSsvfIAOeMnd5N4I316En+etl3dvjER42S72I9WDluay4wNNaeJnP5
+	 a3OpRkRum0FJQ==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3ab30b3212aso12224151fa.0
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:14:19 -0800 (PST)
+X-Gm-Message-State: APuU4Z/Jbf8wpGiDbWW0yf6Lm+0zTrAIah9gVwhYwTB/DoU2wIREOSAu
+	YIxTeuKLbgzYH+Ut9NCetPgX9W7qiqHV2zh/TdE5Csk2dqXxWaZ4n3U0z7//kzKpTogqrVglsyJ
+	ZwYNfK4H/uJ7cKymFeLF8DV8agiZZBgs=
+X-Received: by 2002:a05:6512:3f04:b0:5bc:dd8e:df73 with SMTP id
+ 2adb3069b0e04-5bfd9580e90mr6517186e87.62.1793870058769; Thu, 05 Nov 2026
+ 01:14:18 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -152,44 +58,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e390de9a-b7ac-4fb9-8a0d-f6a4935dd665@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20261102212500.195783-1-auhmirza02@gmail.com>
+In-Reply-To: <20261102212500.195783-1-auhmirza02@gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 5 Nov 2026 10:14:07 +0100
+X-Gmail-Original-Message-ID: <CAD++jLne9FgabDUWoirYejnnNfm4GD5zh-E-b_vUGoiwH=CgpQ@mail.gmail.com>
+X-Gm-Features: AclHuK8F0VIEDKLYMK9m3DAXX4pxugopcZU_-apdZs3yndIet0l3l8rwt1ou_-c
+Message-ID: <CAD++jLne9FgabDUWoirYejnnNfm4GD5zh-E-b_vUGoiwH=CgpQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: keembay: make keembay_gpio_irqchip const
+To: Areeb Ul Haq Mirza <auhmirza02@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 05, 2026 at 09:09:00AM +0100, Krzysztof Kozlowski wrote:
-> On 04/11/2026 21:32, Andy Shevchenko wrote:
-> >>>      patternProperties:
-> >>> -      "^layer@[0-9]+$":
-> >>> +      "^layer@[0-9a-f]+$":
-> >>
-> >> These two lines are looking good.
-> >>
-> >> Andy, it's okay if I give Rb tag?
-> > 
-> > Yes, again a pointer to 34d1e754155b ("dt-bindings: iio: drop unneeded quotes").
-> > 
-> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> > 
-> > I expect to see
-> > 
-> >  Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> # xylon
-> > 
-> > or something that matches the piece you reviewed.
-> 
-> As pointed out in other thread (the SPI), only a few people use that
-> syntax.
+On Tue, Nov 3, 2026 at 8:50=E2=80=AFPM Areeb Ul Haq Mirza <auhmirza02@gmail=
+.com> wrote:
 
-So we need to teach them.
+> gpiolib warns about mutable irq_chips at probe time:
+> "not an immutable chip, please consider fixing it!"
+>
+> Make keembay_gpio_irqchip const, flag it as IRQCHIP_IMMUTABLE, add the
+> GPIOCHIP_IRQ_RESOURCE_HELPERS and register it with
+> gpio_irq_chip_set_chip().
+>
+> The chip only implements .irq_enable() and .irq_disable(), so call
+> gpiochip_enable_irq() and gpiochip_disable_irq() from those callbacks,
+> following commit 35d008679a5a ("pinctrl: plgpio: Convert to immutable
+> irq_chip") [1] and commit 2993d2dd8ff4 ("gpio: timberdale: Make irq_chip
+> immutable") [2]. gpiochip_enable_irq() is called once a free interrupt
+> source and slot have been found, so a line is only marked enabled when
+> it is actually routed. gpiochip_disable_irq() is called after the line
+> has been cleared from the interrupt configuration register.
+>
+> Link: https://lore.kernel.org/r/20230414-immutable-irqchips-2-v1-3-6b59a5=
+186b00@linaro.org [1]
+> Link: https://lore.kernel.org/r/20250509-gpio-v1-8-639377c98288@nxp.com [=
+2]
+> Signed-off-by: Areeb Ul Haq Mirza <auhmirza02@gmail.com>
 
-> Also look here:
-> https://lore.kernel.org/all/CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com/
+Driver is marked as orphan so I just applied the patch.
 
-Yeah, I answered there.
+Cc to Andy if he wants to pick up maintenance for this one, but I doubt
+it (not x86, right?)
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
