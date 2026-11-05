@@ -1,100 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.128.174
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1793849781;
-	b=l+J0pVx677PclM12yhk8eqlHHKD0bogk5CSiJL9urTPb/KoY+RADXkCbAK2xczD2+lXh
-	 3j/tjTJePPgTv2WIcAl9PFQnm7gC9mMmj4rVkzZl7LPj6RAp5TSXGEpXl4t3+C53pNEcJ
-	 ezBduIfwR88kV6KyQTjjhZC8F95PHzvM6vN9AUMZwGd8ReVFCPPfYYJunKOL1RIOFLTcY
-	 QQo7vLcCtLyMjY4V18hnRuAkN2wD6sAsjs5wy/EYRAZ+QkayQJb3dP2oqCYxlq3m/MZZG
-	 AmIY2Q9UEEQO0/hhHu6zcnOCb+1EtcqErwFo9FEXxjuqRVd0C7Gc1ok4rOn4w81tVsA==
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.69.64
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793850985;
+	b=s/wcD+Ce8944i0Zp+io5uZa1UOLDCljXACd0KO3cbNRPKwZVX13tcbyFMz44FA3GOoMq
+	 P7xXuy+10Z2wM7Jc9zFvcRfZ0F4r+B5l6Mq5Nn+VG1b63t0+oSRcXEtd/kM9CdQsN2OWw
+	 l0qnre8MmU/dZPpt1IjTusze8D+2fphR7F6Zqpm2BmSzEZiYXv6U+OwxHeUBetxXA7fCX
+	 ZebcTqA3L4pU1KwVJIj3X3DClA30HbE9a+Hwf73sWbvYMDDJXbXL/UdmAaf8sNGIo1/2/
+	 tCwW8P0at1jtfwsRJxmUIRwjvjr/OjXMTf1sohELbaQtrTluW0tnRnrk31TvxBewUmg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793849781;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=5B9lX6DZI5S1tAfFM57GnAbiozq6dSyTVBcFVL3BszE=;
-	b=5jvZOdu67OJU32X8m1ypTiMBDXm15v1O7DBsh4ikZ4HOVowwdKVEHXLDvBW6Cxk5VrKv
-	 /63pHMmfOQarOu5MsZ02dUKztvyfnsUQTH3FjbNy9qbpIxlVngxMpS2V6TBSUpqrNeISY
-	 G/S6YSGGKo21BMJ+QTIKDhRr5UJPg/W78qwL7ahWEOTCXgC4WLeGJ5NKfgUj1gwQpfJFh
-	 RWKufMmD97tJIisgueL2q/GVDt7AV5DUjZZHIVN8gj3Fzsw68qOoMPyM142FIxQO3e5dn
-	 4lDn21N/w+fOlD3IgsQEMP/taiUahrrZH61YKrf7HyqYOGiQCiMMnavI2Vl+zWYiFVw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793850985;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Subject:Date:
+	 Message-Id:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=CLxfxTwIHjGeAMTfZGQXsxSDb6lo0Jy8D8B58Cesj9o=;
+	b=dwTpspckadwuif9KLispmNMSG36RJboQtMm2su0IlqyRcaRM2zbLMIHYdB+x1YMwYWdk
+	 G3q3GDYzn44P6IC7Iil8bsxr6DRDeMBc7vWwIZrYXAYse4+quqmxNlfxijofJFVzKVJA6
+	 mXzf1WxJ6CNbuHlHTiU65OdX2bwVMh04UKXYLBys5XFC2HDlD+52QLRIzmMrqPk9HMcuT
+	 MnS+m/H9kL6HSWgcK8c1HgCUNTTh0ANpVLME2BoLdfs9IBmjBc4CU/8C8x6sDpP1+lCLT
+	 Ke5Pe3edOS9COPR7sy/9RlfTQk+GEZ5USz7M5MwI0x5k3VgihcHHa+W5KJxDUDpbUNg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="PWydMd0/";
-	arc=fail smtp.remote-ip=209.85.128.174
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=gw3ve7K5;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.69.64
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010064.outbound.protection.outlook.com [52.101.69.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D86606A326
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 03:36:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60D86606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE2B606A328;
+	Thu,  5 Nov 2026 03:56:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECE2B606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PWydMd0/
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-8b31448caccso11973117b3.1
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Nov 2026 19:36:21 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793849780; cv=none;
-        d=google.com; s=arc-20260327;
-        b=JlvXzoIw5HcSw+Um3CZWCCXJcq36p/M8P3cPY8ZlCOmDW4yFMVbZHdOlQMgAxS8Nvp
-         nYlBUyB/NorxznnQAFiVDny4L8VAOIb22p6wVU0t+cvM75p58ltXh3CTRW+kTEYMSfQG
-         bZl2ynkUyxw3BORdWxXfQUkppL3GTQIn3bCmjJEpM8T42ZnAGsZwns40S4Fz3JrUQbp8
-         RHfkDEcVE+kav+H6lsWKojznNwcqmOkZgCoyW72D/V0ULmnF+qGOD9S45tu0vZj+fIwl
-         uCYc8KhMWii1nDutAH0sdqCyE4nJxVzo4qjPt3x+I8lQVXue3SgQ1tdNN5Px51d9zmaN
-         jmfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5B9lX6DZI5S1tAfFM57GnAbiozq6dSyTVBcFVL3BszE=;
-        fh=FwyXWVmo8pwoI0HGQs0FpBWHcLdO32bJhT+5qNhkb+I=;
-        b=JvflGETArK+Psqhvdqpg91PP84GhJ/VSPT+6/OGFLSsbXF0OuIhnWxORdrp6sfTPk1
-         B9mPv1H8B47yAjxhoEr4VqsqxrTDKTtJRLnF7TTjv+CP9rdzCyt5RXp56Mmay8XrCSb/
-         YJbq7Np7dnWExucyvBpL55ue35nPaYx6oszu0fN54n5Fr2nEo1mJNuVTP4vWsf/sftyn
-         D5mCcnXrNzYJXX9fCFk+UVyMV3zYGqX5+qqLry48pUpKEOKX7F1bKYH3u0nth5aPJ8ws
-         uZqrwWS8Be+XZmFwtq6sKvcw0/6jZSggIv3pOM8ByQtFnymbU08G79Ex1H2bsOHotKBG
-         VqTg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793849780; x=1794454580; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=5B9lX6DZI5S1tAfFM57GnAbiozq6dSyTVBcFVL3BszE=;
-        b=PWydMd0/qHcw0ikwrmSLutinb/TW255AUxRRc/NxN4adzVLE9mG09+m6xR2ygnk09P
-         zSM1850uxbDu5Ok9yQHvkfFKavi0OSwVvy7p5f+q46KmVYpjletiDK6X+SK8dwv2v0Ub
-         kZtrZMZ1ohCWRB4k/KvZMXd7Gc/i3UKtnXgcQAKJTfqPSDEJvsgil3zgSfCX+24k80yM
-         3OfvtTErDkLCi08pLhAE6wkadoOWJVlO5rKhcpVLUyZxBw0Jn7t6ildYctYMl9r2Wzuw
-         vOiD6mtm2wlPPDgNiIT7H0E4BwhFPxWgKDznb/lekU63GSIznpIbzT4iUzk737Lfbm2c
-         m7Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793849780; x=1794454580;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5B9lX6DZI5S1tAfFM57GnAbiozq6dSyTVBcFVL3BszE=;
-        b=d22GYE9JOYpIB3DuR2XJFQQYuARARk4zaYelrYcxrngLhfpH2fN61rRjA2Wusy/Ljg
-         XFBx2M7qNbCoiL8TzAqttcjg4rviWBDELq+yB7hXFnD3zeW+O4gvA+fgmSYTqw2QT+le
-         lcAAV/Ms1QJfk/XWoVvDuIezvzGJ/DzVWxSg70vv93gOG/MA0oo2dWQdmnMl9u++KDj+
-         /vVDCiBjfHhndslQeCwvsCfkUCbr0fW5jbGgPyRv5K1LY4EsD7eKgL93p2azuIN5mqgh
-         8+sFdo9c8p4w/wh+Ct4FQcZCwaAZObFxJQzD2W6u/nekD93yEZYIB38TztTg+YNXLiRR
-         kgUg==
-X-Forwarded-Encrypted: i=1; AKwUvByTsGRsxnyU/IifHMdBLs7dbvekeeptAkyReo6Jj7+j7chn46zOTnUYvKZ3Zm7L6hzjAl1e8CKDi4if@vger.kernel.org
-X-Gm-Message-State: APuU4Z/NZYWPFyox2C7bjP4YuwGlIJsbzzgZgoMLnHXMayoCHZoaOzzE
-	+/pmTVxFo1c9wwkdrJTKY0x29On71u8b8qDgG3GOf/yQIy0yQ7m88yEvlqTJ2dnIpGJuiUhyenU
-	Fd46hVdEDq9vnkQGxN9oNWnsMnfwd/nc=
-X-Gm-Gg: AYBFou0JBA3WwPQb6c1FlWsmfJ91f2Ns6XAnc1pobIESWSIdp1T/LZIo/oInPWNG/6s
-	hkIaYL9LE9nSNoedIbkfCQdwJG8ALOZ7p3adZH5o2r+ugKh+TxSpnl9KKXPucOKfe4pLJVEv1bz
-	yC24cBz1FxYp70qVLpwXdvXXclbAULKIwiVnQHs7SMOnYMh+7DW3HntahHPy9Bg9SXyw9AOQixZ
-	jS+zAYZNvrdUPRORcF7iIPlO97Fse2ThIgN+gWNExMBZKeQ63eacZ+mG/CBbO2YcXgIk+1K7KTe
-	yqwgyCohqQf5C3UlezbDsLfChl7KBZj9AVVHBipeg1pEtzd0la1drZ8sazOP6mRZR4wIxuQFcJX
-	MjWJ4pEkOS+2Ll3kTKT6smSvg++HA4t2Ridgacg==
-X-Received: by 2002:a05:690c:e3cb:b0:8b0:e385:edc3 with SMTP id
- 00721157ae682-8b2b6719311mr132765087b3.33.1793849779988; Wed, 04 Nov 2026
- 19:36:19 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=gw3ve7K5
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ag9uN210KQcy27uHgZa1bJO8N/scBh633YYqrYb3tHLlvye1Xvf31PfrqMCIJXbYA4ZgzOib50YfbrOr5uKHKFEVyMLrhGrLoiSyOf6dbNbLgZg3BBzYotf45gUeQCJh0qVgxpDWWlGQj6F2fUhSFTvZ7s+138ImUX7AXLCTh6PLX6qBj4YOj1wl6ST3025vJh7Yr6nT+9CXUrFDzKgL+aIIWLuTpniHj4cd4e05KUPkta+YpAeTLikP+qn+/M4I5Iz2KQNXUWsmHKVZeXfWgWEpAekqb/sFh0RkzLEteWsdTr4oBYZXGsRwoeaTVmZuFli6O/DRRpwpbFjk0XASuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CLxfxTwIHjGeAMTfZGQXsxSDb6lo0Jy8D8B58Cesj9o=;
+ b=ttZNJvG833XMbRyi1fTxHdIbSlnomkPjl1J2yjIDzgZPTkURFyLriu826SWCRFl/sRWbFeVlCXX0dA9PclvmU4HNzkP2qjdqm2FRTD1o1r1KDfLORZUAH6hUP8vg3nJ8MG5LCEirsSZ0dLZNmoXRRBZUXGAvuZVquRtvFPXEvUaisbEkx/XXIQIlLDX2h5EHAL1d/x/RptBmDHhtgAtxgN3F1siv6P33lEnW5YeFmDXsIsFzlLqR1AyYkCPHJZUYMzBiHB9fYV3NtgZiU5Ie68TVyEewR67p+VrEEF342OMSyQr8oI7tV81j5lP/2SZGB7Dj+T1yW4MDDr5jKs1ZpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CLxfxTwIHjGeAMTfZGQXsxSDb6lo0Jy8D8B58Cesj9o=;
+ b=gw3ve7K5gFoWrNHEupp5FCPhExU6zCHlUaH0E4i+LP3TnTSbesYekj7UdyBadrLE8zUnP13xbN1gFrWMzJkvN6ZzvLpe7sNwWjxvCUHjsMAcjDLw7gaAe9rEo9jyLlinERKEdYTZVJ/jWVWISl19B/Lvv5a68NcDwiQzOH8IpwuJVqI6S0g/Y7MySHhCQN3Um2AZpnwivcwhJmLidzhXhLcgEdOF0lmVbIy3kisIKCkdycNIZ+1GqpB5ybe++YWrTgZMF6WcX05a484+XUJgafheQidP1Byjli7To7PAj9KgAI4LN1WPkhbSaoIijMUa+3zLO1yBayowKsjyVsZ+kQ==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by DB8PR04MB6922.eurprd04.prod.outlook.com (2603:10a6:10:11f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Thu, 5 Nov 2026
+ 03:56:21 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0592.009; Thu, 5 Nov 2026
+ 03:56:20 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v3 00/11] gpio: vf610: fix clocks and misc cleanup
+Date: Thu, 05 Nov 2026 11:52:58 +0800
+Message-Id: <20261105-gpio-vf610-fixes-v3-0-504e19de5ad5@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJr962oC/32NOw7CMBAFrxJtjZF/+UDFPRAFdtaJkYgjO1hBU
+ e6OHQooEOVo38wuENBbDHAsFvAYbbBuSCB2Bej+OnRIbJsYOOUVo/xAutE6Ek0CYuyMgeiykuJ
+ QN6XRLSRt9LgdknW+vDk81A31lDt50dswOf/cfkaWd3/ykRFKZKlkI5XUUsjTMI977e6Q45F/d
+ EbFD50nvdY1M0pUyJovfV3XFwgeS5n/AAAA
+X-Change-ID: 20261029-gpio-vf610-fixes-c56439785fcd
+To: Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stefan Agner <stefan@agner.ch>, 
+ Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+X-Mailer: b4 0.16.0
+X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::22) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -104,132 +108,126 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261015035118.9495-1-prasanth.padarthi10@gmail.com> <CAD++jLkx4oQ2ZuUSUQE1Qtrk-1XSMdnDjfLG0rrOm=gt9VD3VA@mail.gmail.com>
-In-Reply-To: <CAD++jLkx4oQ2ZuUSUQE1Qtrk-1XSMdnDjfLG0rrOm=gt9VD3VA@mail.gmail.com>
-From: Prasanth <prasanth.padarthi10@gmail.com>
-Date: Thu, 5 Nov 2026 09:06:09 +0530
-X-Gm-Features: AclHuK9YMOK-xz_gxOFW3IfSoWRvHeDrckSu5fgcWiOJM4mFO9QGiU-P0B7A4RY
-Message-ID: <CAMFFDGhD4K6PN8G+c-hQAL6RG9sVkjo6SXHB5===bYswHh0aTQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] pinctrl: aspeed: Handle GPIOZ6 pass-through strap on
- GPIO requests
-To: Linus Walleij <linusw@kernel.org>
-Cc: andrew@codeconstruct.com.au, joel@jms.id.au, brgl@kernel.org, 
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DB8PR04MB6922:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d59e785-e6bc-4489-2a7e-08df3af0c062
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|23010399003|376014|1800799024|366016|19092799006|921020|261028144727099003|11063799006|56012099006|261021123027099003|261021121427099003|261009223027099003|261022105027099003|261026140227099003|261102123227099003|18002099003|6133799003|10067099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	YaGSjsSNyODsfeCdHkoXDUh0ER3tHIoYHm7FUHSlL71SXuZUsC5+02+c/7o1ZCGVurySNMFRZLdNlgSb68P0uL7UroZMEDQVLz1tVSy5wlFtI+hh5xBBNcqo2Eb9Bo6L9gcV6Dr/CFeK05eAjHjnJVf6J8TLVvDRHhuh/+FrjM2PfIpLvQXTfr+gmoGNlZRSzcZcCJa2dsQlT3jJH14yNjz6p+bSXltwCgfdee6KW6D3ddg0FBwHR9W8ly6vdx/YxUWhXzJgj+FXFsWJcj/T47svbeMi1Ev8a9cik+S7TxLAwKbfsX4ApPTAmWbw8SpWUDbOQhDbQzCSOTN+qfkgL8AzxkhZhfW9LCkECD97TfRrv9xQpO66ibXLcs6NThvSZFPb9CBm3SIDtZtX/6mdjRx13xJlOS4N4fg+U4mkM/5Tvr3LI3kzt3RTCu45I/+ZIpOu6araX+GP42UXh6Iwy6gizDsJZY09ZxLH6lnfypr2RBjSus84dQvE2Zgrivoa3NF3pTyIOeAyAeMaZLEb2OuY1N4Ul+BVkt0fL8SZn1kWxaifZ9GbeePNvKJiiSGJwRRNaqVTraeMQSZICGTyDtiTFIteWj65z3HacBjvea3Kbn6rMPL/xTfl5piBNfT95AFUNJZTzBjaEKYb5gl5BlBxvGJl12xtX5FcHMqe89c=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(1800799024)(366016)(19092799006)(921020)(261028144727099003)(11063799006)(56012099006)(261021123027099003)(261021121427099003)(261009223027099003)(261022105027099003)(261026140227099003)(261102123227099003)(18002099003)(6133799003)(10067099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MldxMVR5b0FxQ21IcUZjY3NnNGVISGRuTDNlOXVMSWd5eThxWlVXeWI0M1Ux?=
+ =?utf-8?B?dVFPMjIyTFk4Ti9HTTNWNWtsanJzdjVvYTlMbU5ZUlNXTkhFbmlnNGZld3oz?=
+ =?utf-8?B?YWJpSCsrNnhZVDduYm45aTluY1FBQTQwblQ3ckNVRml5U2lkcThnVXZKZzFz?=
+ =?utf-8?B?ZU5UeTRUQjMvODRUblVBQ29aSy9LZTlEeUFSYW9IWExlMThGc2xmbXcvS1VQ?=
+ =?utf-8?B?d1JkK2NYYzZxRHdGd3U1emE2K1JnbGk0WWo0b3lzVXQrQXM4ZG52RzU4UzRI?=
+ =?utf-8?B?ZmhqMVpOeDY3UzQ4ZVBvMVUwSG9hb09jR3NhQ21pdFJsZWl5TGlEc09uRWZU?=
+ =?utf-8?B?bjRtcVVJaUVPRWFERS9aMzBmUGk5R0wxYkJVcXZkSUVoVFBtRHNZNHd1Rlpw?=
+ =?utf-8?B?alVaU1diRlpFODVIaVYrdWlMbFRhM1FTa2RtbFVlTysrMm1NWVRwOHN4cGRI?=
+ =?utf-8?B?NEVNaUlDdlNHaDNzRUMzazRyajV0QnhzOVl0N3BGOWhiakE4aG12WTdMZHcx?=
+ =?utf-8?B?dExjN1hNQXZoWXEzRXpIeldGTStIZi9xT0RlcDNEZWVMekcwTWRFeHMxcklK?=
+ =?utf-8?B?L0doRWpDdHpVSEFjazk4TklqU1lUWXNkRDFCeHArOGJJQUNuSVlDcXZNMWVh?=
+ =?utf-8?B?OWVDUUJVRFJtS2NySFU5bGZnS3Y4ZEd1WlI5dldudFAzbmlWeFRVOTdZdDNV?=
+ =?utf-8?B?YWlGc0FEeWpiV3o1NlBsdnRXb1lXVGlBM1I5bllaZnJlUzh2NC9heVUzL0RT?=
+ =?utf-8?B?MHNmM0RNS1ZBR3RPT3lhOHlNSEJlRkhBcVd1TjZIM1Jrb2tGZmlndGY4NTFq?=
+ =?utf-8?B?QWNVbFUzSXozLzE5Rjh5SEVNb0lpS1FvVVdRQ3MzaHlLa0hkSG5qNFEydVl1?=
+ =?utf-8?B?dGpNa3FkbVZvK203S3ZJR2VUQ3lCNEtaY0NCS0I0cUZmejBwc1o4eXB5c053?=
+ =?utf-8?B?dGdqMDdYaG1DcDUvOUd6cjEwMFR6VGpCVzhreDE0LzQxQXhUb2R6WXZPQktu?=
+ =?utf-8?B?OUNTUGxRYlJzcndSMzU5LzlncEJtK3hQdWZMOHZqWE44NDV6akEvbHExV1l2?=
+ =?utf-8?B?b1dNcHFMT2JuQmQreERFSGdZdEw4UUQ5WTByZGRXTlpVRTRwWDZ6b3RCZWs0?=
+ =?utf-8?B?Q25TaGllK050dlNsSlVUYU9mSnoyM1pwVEM1d2Z1bHNWRUpzUitKcGdYSFBW?=
+ =?utf-8?B?UGJ0Z2k2RDd1bUJKWUFQRG00SVdyems0Wmh1dWdZaUdMTHNzQ2Z3M2hBOTd4?=
+ =?utf-8?B?blcrS2hjUGp5ZUFCYWJyL2tmZTdhYmZCZ3Jka01VQkFDMUl1RjR3bFhBMmFi?=
+ =?utf-8?B?ZUhGTE54K1FaeGxHUjlkdmtzSmxyczQyL2dKMnphYytoUWdnMkxwL2dmU0hX?=
+ =?utf-8?B?UUU1ckZpUnVmMWIyVGZ6RkFsY3hKOTk2Z2YxUXpJK0t1bVZ6dnlYZjFrWXYw?=
+ =?utf-8?B?WGxJbzFZOVZsVzN0SHhJVm1DUnhNT3FxN0N3bDVNdEZGYm9Ld1EzZFlEUWlr?=
+ =?utf-8?B?YW9UUnBpbjAxTFZRUU1hM1ZGUUdZQjR5Q2hGLzN4RkVpb1BJVWhLcEhiVERp?=
+ =?utf-8?B?d012by93NEZ5UGFaczVXbnpVcGh3V2VhQi9sNnZUdzlvNkM2VG5GNVhmVDI1?=
+ =?utf-8?B?RXBYWnVBOExRM3B4YUcxMHpoeThMMm03UFMwT1J1aGhQOVNEMlc1Ui9pdWtO?=
+ =?utf-8?B?YTBad0NEUjJ1VE5mamJBdEEvSk1ESTFEdUlYUlVTdm90RGhObHd2aWVFZFN3?=
+ =?utf-8?B?eTNtM1VkVDZxOTN0YWliNlhMUWpza2w4MUtUVkFCSFlQWEZ1VXRpOUFKMWJV?=
+ =?utf-8?B?YWc1VGU0MFZZeWNSeFdqN3J4ZWJSK3J3Ukp6YU5UeW93R2NSblBxaTRKbG01?=
+ =?utf-8?B?L0E2citOTC9LVkE4OHJBNVoyaUpJV29obUp6TXBEV2VuaUFmNGtFN3djT04y?=
+ =?utf-8?B?c0FjenB4cEhIZVhPMEdWTnBFWXlNZ0ZiVVFlQkN5MDJ0K1hIMGJsc3p2dmk2?=
+ =?utf-8?B?cWlvRm9ZNndHTy8yd21GcXR6K05HcHBZRzc4WDdSMXBNRU1TV3RSaWQxOVlD?=
+ =?utf-8?B?UzJRRkVyVXdyTGlqaEtWYTlmU3N1YWE3UnBFNVBkc1BYdWpqZTNyQUxHZ25z?=
+ =?utf-8?B?eUp4ZXBTL2RVcGk4clFLNzBrd1psRXI2ZFVSNmh4YUJKazU4WEduK0dma3BB?=
+ =?utf-8?B?V083b2gzQjFXLzFrMnp0U1h5c2pjY25nazRBTXA4NVpnSWY3Zkp2cWFqWSt3?=
+ =?utf-8?B?bnh1L2FrU2t0dHN5Z3NMY0R4L3dCaWlKVjFYR29pZU9ydlBHcXhSWFVJL2Ew?=
+ =?utf-8?B?T25rS2RBdFJDQ1kxcmdWSWhib2dNaWtQTVV4Zkl4UHIrdWhTZG5ReFdMbjRR?=
+ =?utf-8?Q?PnWykaNPta0xqSnASllvy0N7JtmIGj2hgUdsH?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d59e785-e6bc-4489-2a7e-08df3af0c062
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 03:56:20.7348
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZWcGqetz8+YTCA5ImxXu2zYLdxX5C9uBlo3IRmSNInlo7nzGvvZsOnyzY4sSnpPIXet1ItKmPwFxtdCgKsd4jas/AeMXGf21l1Ukn0El4AM+I0W0n2zzgLFJUadcFVVt
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6922
 
-Hi Linus,
+Per i.MX8ULP/93/95 and etc reference mannual, there is only one
+clock for a GPIO controller, so drop the 2nd 'port' clock.
+And for i.MX8ULP, the 'port' clock is for digital filter for iomuxc
+PAD, not for gpio controller. If we need to support digital filter,
+we need to add the support in pinctrl driver.
 
-Thanks for following up. This work is still active.
+With binding fixed, to avoid dt-schema failure, correct gpio node for
+i.MX8ULP/93/95/94/952.
 
-The October 15 GPIO-request callback was superseded by RFC v2,
-submitted on October 22:
+While at here, a few misc gpio driver cleanup patches are also
+included, more info could be found in each commit log.
 
-[RFC PATCH v2 0/1] AST2600 global GPIOP passthrough handover experiment
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v3:
+- patch 1: update dt-binding to include vf610 clocks rules, update commit
+- patch 6: update commit and subject for MAINTAINER update.
+- patch 2, 3: Add () for functions in subject
+- Link to v2: https://patch.msgid.link/20261103-gpio-vf610-fixes-v2-0-7c71fb36e184@nxp.com
 
-October 22 RFC v2 cover letter:
-https://lore.kernel.org/r/20261022024314.48623-1-prasanth.padarthi10@gmail.=
-com
+Changes in v2:
+- Drop patch 2 "gpio: vf610: propagate return value to callers"
+- Add R-b
+- Minor subject/commit style change per Frank and Krzysztof.
+- Rebase to linux-next/master
+- Link to v1: https://patch.msgid.link/20261029-gpio-vf610-fixes-v1-0-45b484b4c434@nxp.com
 
-V2 transfers the global pass-through selection to per-pin SCU4BC
-controls before pinctrl registration. It also handles SCU510[28]
-through SCU514 and restricts affected requests if handover fails.
+---
+Peng Fan (11):
+      dt-bindings: gpio: vf610: fix clock requirements per SoC
+      gpio: vf610: simplify with irq_set_irq_wake()
+      gpio: vf610: use devm_clk_get_optional_enabled() for clock handling
+      gpio: vf610: drop unneeded header
+      gpio: vf610: drop unnecessary wrappers
+      MAINTAINERS: Add VF610 GPIO driver support
+      arm64: dts: imx8ulp: fix gpio clocks
+      arm64: dts: imx93: fix gpio clocks
+      arm64: dts: imx95: fix gpio clocks
+      arm64: dts: imx952: fix gpio clocks
+      arm64: dts: imx94: add clocks for gpio controller
 
-I have retested this implementation on B650D4U with a newly built
-image and GPIO-only x86-power-control. Remote power-on, remote
-graceful power-off and physical-button power-on passed, with
-power-good transitions recorded in the journal.
+ .../devicetree/bindings/gpio/gpio-vf610.yaml       | 41 ++++++++++++
+ MAINTAINERS                                        |  2 +
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi         | 15 ++---
+ arch/arm64/boot/dts/freescale/imx91_93_common.dtsi | 20 +++---
+ arch/arm64/boot/dts/freescale/imx94.dtsi           | 12 ++++
+ arch/arm64/boot/dts/freescale/imx95.dtsi           | 25 +++----
+ arch/arm64/boot/dts/freescale/imx952.dtsi          | 25 +++----
+ drivers/gpio/gpio-vf610.c                          | 78 +++++-----------------
+ 8 files changed, 107 insertions(+), 111 deletions(-)
+---
+base-commit: 8b7179210b22f8e48a82c5ceacb9d56a9c4cfec4
+change-id: 20261029-gpio-vf610-fixes-c56439785fcd
 
-SCU4BC remained 0x30000000 and SCU51C remained 0x1c80 across the
-remote power-on/off tests. Electrical continuity, mixed-pair
-forwarding and fault-path behavior remain unvalidated.
+Best regards,
+--  
+Peng Fan <peng.fan@nxp.com>
 
-I will verify the requested base, rebase the October 22 version
-and resend it as RFC v3 for renewed review.
-
-Regards,
-Prasanth
-
-On Wed, Nov 4, 2026 at 5:49=E2=80=AFPM Linus Walleij <linusw@kernel.org> wr=
-ote:
->
-> Hi Prasanth,
->
-> On Thu, Oct 15, 2026 at 5:51=E2=80=AFAM Prasanth Kumar Padarthi
-> <prasanth.padarthi10@gmail.com> wrote:
->
-> > On the ASRock Rack B650D4U, requesting GPIOP3 through gpiolib does
-> > not provide working host power control when the GPIOZ6 pass-through
-> > strap in SCU51C[9] is set.
-> >
-> > With the existing GPIO request path, SCU4BC reads zero, but a host
-> > power-on request through x86-power-control times out waiting for
-> > power-good:
-> >
-> >   SCU4BC =3D 0x00000000
-> >   SCU510 =3D 0x00000000
-> >   SCU51C =3D 0x00001e80
-> >
-> > The AST2600 A3 datasheet describes SCU51C[9] as an additional
-> > pass-through enable for GPIOP0/P1, GPIOP2/P3 and GPIOP4/P5 when
-> > SCU510[30] is clear.
-> >
-> > A diagnostic experiment that cleared only SCU51C[9], preserving all
-> > other bits, allowed the same GPIO-only power-control implementation
-> > to power on the host:
-> >
-> >   SCU51C: 0x00001e80 -> 0x00001c80
-> >
-> > SCU4BC and SCU510 remained zero. No per-operation THRU1 switching
-> > or additional userspace delay was required.
-> >
-> > Add an AST2600-specific GPIO request callback that performs the
-> > existing GPIO mux configuration and clears SCU51C[9] for GPIOP0-P5
-> > when SCU510[30] is clear. Check register access errors and verify
-> > that the strap bit cleared. Other GPIOs retain the existing path.
-> >
-> > This RFC handles only the GPIOZ6 strap source. It leaves SCU51C
-> > unchanged when SCU510[30] is set and returns -EOPNOTSUPP for
-> > GPIOP0-P5 requests when SCU510[28] is set.
-> >
-> > Hardware testing on B650D4U with this pinctrl candidate confirmed:
-> >
-> >   - Remote power-on: power-good asserted.
-> >   - Remote graceful power-off: power-good deasserted.
-> >   - Physical power-button power-on.
-> >   - Physical power-button shutdown.
-> >
-> > These tests used x86-power-control with software button forwarding.
-> > The earlier board-specific SoC driver, its DT node, custom sysfs
-> > interface and diagnostic boot parameter were not used.
-> >
-> > This replaces the approach explored in the withdrawn B650D4U
-> > power-passthrough RFC. The new proposal changes the existing pinctrl
-> > driver and introduces no DT binding or userspace interface.
-> >
-> > Feedback is requested on two unresolved issues:
-> >
-> >   1. SCU51C[9] is shared by all three GPIOP pass-through pairs.
-> >      Clearing it for one GPIO request may affect forwarding on
-> >      another pair. How should that shared control be represented
-> >      and coordinated with existing mux ownership?
-> >
-> >   2. The SCU510[28] enable path has not been validated. Returning
-> >      -EOPNOTSUPP is a limitation of this candidate, not a proposed
-> >      complete solution for every AST2600 configuration.
-> >
-> > Is the GPIO request callback the appropriate place to handle this
-> > strap interaction, or should it be modeled through the existing
-> > signal-expression mechanism?
-> >
-> >
-> > Signed-off-by: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
->
-> I don't quite understand the status of this patch, if it is still up for
-> grabs, please rebase it on v7.4-rc1 and resend so we can restart
-> the review.
->
-> Yours,
-> Linus Walleij
