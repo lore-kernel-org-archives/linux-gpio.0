@@ -1,69 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793883123;
-	b=bYCtQWVDn3ktjbTmMoMNK4sStBThrRtld+Uzusgfiu37PXaZQTGsMUdbWCRxqnDHIg08
-	 n75GC2kLdAL0bpu0QAwbWjPqTsYfnTnssV6ZvTdRnJs048jR2kNW4HAudVEI2j1wlxM9T
-	 maq6oN3U1Bs5IXRNF6DzQOsYagqHUaPm6GskeOi8GQkGWKEdGCcSgljbEC1RDrA8Spdal
-	 u6T5g5lYvkenlfT+4tofUmc0IxRTuK+kUauwCgXsxLRtNF5fvY0HAJub/yMUJePdnnptO
-	 Z+joM8zlAeTwJw77UmiJJi9Wxq4Vz2RVAAxk71EG4QW0kX2418fzeZubhQMDNRc0G7w==
+	t=1793883263;
+	b=G1QwsdjVIrim8490wCSua9V/WFaqnBrml63m/a7b1emFTI6BJO+YGcexfUGX9qlrDgBo
+	 aVxPjBv3gGG3YVw7w0wOa+A7e5kYD8gtSCv0x8ysmtZYyJsY2T4+CfzvaHMnP+Iasog5v
+	 UQeEaWQfu1xQKBnPooqRE4LuFCCNDzh1h341i5JalYUmeRyVbLDRsWcj7DUjzeJ8Qa7pV
+	 WF4wGDjcz2L0QF/fQf7XuAqjS4r4DvIgrenTLV8uQYxij+v3ddSnhQiZW+ak+TxaaxgwI
+	 udgcaHxfZsQW6wHmVo5nj4XbwidxGd0bMASKBrTQhmNk0zWFcsT3igWDQ2Z4wMYwz2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793883123;
-	h=Received:From:To:List-Id:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=fLAksqUutuMmZ393ZwmJo+qovjnv36EAtEGhBHrix14=;
-	b=TnKm2oTtGUmrlSIfZ+hRC7Q9mh/VZiFA/CNhtMignA6oCiVHH6uF0fKm8s73yyqZEzr1
-	 hRoCnlCVIBvzsgZyb9g5yMvpiVF3xbBvk0QizBZM8W+xuOxTD8SRVp9BUXPf4Pnf9sNpS
-	 BqutCGQbkyUeRJu+0IDpx6agYeRWNIjdDOsJDr8qf26xrEX9fZAeYT5C/sjO4AoFPxDFf
-	 PJxNt05WbavT7tY/P+kIE+64wuhVQS8iTw28R4cATivCbhyU6eGnT7SVyLBrE4uzOrmFL
-	 xKBaMXRcMquXdkMzDBawmw2zQitc2zw0W9EpmZwK5mTz5bbVwFHhbJJTy00xvUt9pWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793883263;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=lkBo5zyUxUnl8iyvBAURQ5rw5tEWapFQyBQ/5hCa8Iw=;
+	b=oqsXKJclG5voAAdAtUQnG7IX4Y3es3ORXY20iGAe3UAsVoOnwAu2hEEg+zKe0wBSDliK
+	 LlbQFceuMlcxAIKcGkGea8ouAYmvhuifCFd4kM+nUTZ6sjZ6nVPnpp4nuYNavrHPYioIR
+	 vfFj2QJU8OGvswJ7jEEK6b7CcQv3kPlQ2gNjkX9DSOqXRZRr4UEQ39vUW26SqNy8lt6Yl
+	 /HcxPqPOwO8ZSvMbRXdKsOrDLGY6GY2GosmNmKwsNd+ewIAuLPyvX9puoLFhHmSbtWTvP
+	 IHMWWG6+iHfRN3Zy9rkakGlUFBvEzjodphufrTdNbpUQ+l8y+2yzHCeU1eQGLDC1auw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F7P2oSMW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E4B606D810;
-	Thu,  5 Nov 2026 12:52:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268F41F00919;
-	Thu,  5 Nov 2026 12:51:55 +0000 (UTC)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: alx@kernel.org
-Cc: alx+linux-hardening@kernel.org,
-	andy@kernel.org,
-	bartosz.golaszewski@oss.qualcomm.com,
-	brgl@kernel.org,
-	dakr@kernel.org,
-	devicetree@vger.kernel.org,
-	djrscally@gmail.com,
-	driver-core@lists.linux.dev,
-	gregkh@linuxfoundation.org,
-	heikki.krogerus@linux.intel.com,
-	hverkuil-cisco@xs4all.nl,
-	joe@perches.com,
-	johan@kernel.org,
-	kees@kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	lenb@kernel.org,
-	linusw@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	namhyung@kernel.org,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rostedt@goodmis.org,
-	sakari.ailus@linux.intel.com,
-	saravanak@kernel.org,
-	schwab@linux-m68k.org,
-	torvalds@linux-foundation.org,
-	zanussi@kernel.org
-Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate str_has_prefix()
-Date: Thu,  5 Nov 2026 13:51:54 +0100
-Message-ID: <20261105125154.83478-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
-References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C6606D80C
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 12:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F7P2oSMW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70651F00919;
+	Thu,  5 Nov 2026 12:54:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793883263;
+	bh=lkBo5zyUxUnl8iyvBAURQ5rw5tEWapFQyBQ/5hCa8Iw=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=F7P2oSMWfoAtXGsgEuij2ip/PRRs+9ouCBGtkYWRAioXi/Fmfp5ne8JIMrz4pJulT
+	 cK0jQyCbZQCMMGrXxyuQh/j75kUw5Qv57QYiNTYqervCM/s+d1swcFfaVXrzEGmhGp
+	 te20EbUcUwnTf6vnim1rswFYKLGWgV08Q+0uXR+wZKldTKGwN5afl8avmIW7Rf6n5K
+	 hZV0KQvDP3CaflSDxxGndjtB/3gtEQtI27q1N2ajMpq46UV9NPwttJpUr/S6csZERR
+	 Sleti7KXjcb2XQY2y5iKFZUhRGvH7EDlGCbTDsr5NvQTN9X2sdmCI4miKoIiT+k4pF
+	 ZOqzyNClq/ybQ==
+Message-ID: <sashiko-outbox-199076@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] gpio: mvebu: fix sleeping-while-atomic in
+ mvebu_gpio_level_irq_mask()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261105-gpio-mvebu-sleeping-while-atomic-v1-1-3ad7bb1c9e36@oss.qualcomm.com>
+References: <20261105-gpio-mvebu-sleeping-while-atomic-v1-1-3ad7bb1c9e36@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 05 Nov 2026 12:54:22 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,91 +59,73 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-	Hi Alejandro,
-
-On Thu, 5 Nov 2026 13:46:29, Alejandro Colomar wrote:
-> As Bartosz reported, str_has_prefix() has a bug: it can't differentiate
-> between an empty prefix matching an empty string from a non-matching
-> prefix.  This is a fundamental design flaw in this API, and not
-> something that can be fixed.
-> 
-> As always, this is a consequence of choosing sizes instead of pointers.
-> Sizes are often the wrong choice.  In this specific case, pointers are
-> more capable of differentiating these cases, as NULL is a special
-> sentinel value that doesn't need to overload a valid value.
-> 
-> Let's implement strprefix(), a function that returns a pointer
-> right after the prefix if found, and a null pointer if not found.
-> 
-> We'll slowly migrate existing code from str_has_prefix() to strprefix().
-> 
-> Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> Cc: Andy Shevchenko <andy@kernel.org>
-> Signed-off-by: Alejandro Colomar <alx@kernel.org>
-
-Thanks for your patch!
-
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -545,16 +545,33 @@ void memcpy_and_pad(void *dest, size_t dest_len, const void *src, size_t count,
->  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
->  })
->  
-> +/**
-> + * strprefix - string prefix
-
-Naive me assumes this function must return the prefix of the string,
-so IMO is it named badly.
-
-> + * @s: The string to be tested
-> + * @prefix: The string to see if @s starts with
-> + *
-> + * Returns:
-> + * *  @s+strlen(@prefix) if @s starts with @prefix
-> + * *  NULL if @s does not start with @prefix
-> + */
-> +static __always_inline char *strprefix(const char *s, const char *prefix)
-
-This returns a non-const substring of the original const parameter, thus
-allowing the caller to modify the original even when it is const.
-
-While this is not uncommon behavior for existing standard string
-helpers, I think it would be good to make new functions safer, by not
-allowing to drop constness.  Using _Generic() can be used to support
-both const and non-const strings in a safe way.
-
-> +{
-> +	size_t len = strlen(prefix);
-> +	return strncmp(s, prefix, len) == 0 ? (char *) s + len : NULL;
-> +}
-> +
->  /**
->   * str_has_prefix - Test if a string has a given prefix
->   * @str: The string to test
->   * @prefix: The string to see if @str starts with
->   *
-> + * DEPRECATED: Use strprefix()
-> + *
->   * A common way to test a prefix of a string is to do:
->   *  strncmp(str, prefix, sizeof(prefix) - 1)
->   *
->   * But this can lead to bugs due to typos, or if prefix is a pointer
-> - * and not a constant. Instead use str_has_prefix().
-> + * and not a constant. Instead use strprefix().
->   *
->   * Returns:
->   * * strlen(@prefix) if @str starts with @prefix
-
-Gr{oetje,eeting}s,
-
-						Geert
-
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] gpio: mvebu: missing use_raw_spinlock in mvebu_gpio_percpu_regmap_=
+config
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+commit 7ad64e668b066c72ed4810dd8de43859b3810544
+Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+
+gpio: mvebu: fix sleeping-while-atomic in mvebu_gpio_level_irq_mask()
+
+This commit sets use_raw_spinlock on mvebu_gpio_regmap_config to avoid
+taking a sleepable spinlock_t on PREEMPT_RT kernels when accessing GPIO
+registers while holding a raw_spinlock_t in the IRQ callbacks.
+
+> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+> index 267e6d5bacd0d..02d9ae5869d75 100644
+> --- a/drivers/gpio/gpio-mvebu.c
+> +++ b/drivers/gpio/gpio-mvebu.c
+> @@ -603,6 +603,7 @@ static const struct regmap_config mvebu_gpio_regmap_c=
+onfig =3D {
+>  	.reg_bits =3D 32,
+>  	.reg_stride =3D 4,
+>  	.val_bits =3D 32,
+> +	.use_raw_spinlock =3D true,
+>  };
+> =20
+>  static const struct regmap_config mvebu_gpio_percpu_regmap_config =3D {
+
+[Severity: High]
+Should mvebu_gpio_percpu_regmap_config also set .use_raw_spinlock =3D true?
+
+In mvebu_gpio_probe_raw(), mvchip->percpu_regs is initialized with
+mvebu_gpio_percpu_regmap_config:
+
+	mvchip->percpu_regs =3D
+		devm_regmap_init_mmio(&pdev->dev, base,
+				      &mvebu_gpio_percpu_regmap_config);
+
+When mvchip->soc_variant is MVEBU_GPIO_SOC_VARIANT_ARMADAXP,
+mvebu_gpioreg_level_mask(), mvebu_gpioreg_edge_mask(), and
+mvebu_gpioreg_edge_cause() select mvchip->percpu_regs instead of
+mvchip->regs:
+
+	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+		cpu =3D smp_processor_id();
+		*map =3D mvchip->percpu_regs;
+		*offset =3D GPIO_LEVEL_MASK_ARMADAXP_OFF(cpu);
+		break;
+
+The irq_chip callbacks mvebu_gpio_level_irq_mask(),
+mvebu_gpio_level_irq_unmask(), mvebu_gpio_edge_irq_mask(),
+mvebu_gpio_edge_irq_unmask(), and mvebu_gpio_irq_ack() acquire the raw
+spinlock gc->lock before calling mvebu_gpio_write_level_mask(),
+mvebu_gpio_write_edge_mask(), or mvebu_gpio_write_edge_cause(), and
+mvebu_gpio_irq_handler() reads these registers in hardirq context. Without
+use_raw_spinlock on mvebu_gpio_percpu_regmap_config, won't Armada XP
+systems still hit the same sleeping-while-atomic issue on PREEMPT_RT?
+
+Also, the IRQ callbacks were converted to regmap in commit 2233bf7a92e7
+("gpio: mvebu: convert to regmap") and mvebu_gpio_percpu_regmap_config was
+split out in commit 4d305c227312 ("gpio: mvebu: name regmaps"), whereas
+commit 48f32a835373 ("gpio: mvebu: switch pwm duration registers to
+regmap") only moved mvebu_gpio_regmap_config earlier in the file. Should
+the Fixes tag reference those commits instead?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105-gpio-mvebu=
+-sleeping-while-atomic-v1-1-3ad7bb1c9e36@oss.qualcomm.com?part=3D1
