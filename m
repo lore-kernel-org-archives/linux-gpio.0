@@ -1,88 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793883528;
-	b=5UU8qdUGeqZ2Q2YwR8uQQHU16NmPrb+C937JPaVruqV/T1lx4QUZ8+LqVOlaYzMAOS3y
-	 9wRrKSyNLceAV7EhGeABPFoWvZ6SN4vL3zNxoqTYE1v9BarPtIVhMHXYHp7UVXzwrVaXi
-	 v9A2ywnarWrFvvXuCwso6+0G6Rbc64umZxzbbsEADqsZmp0ZE8ilIF1qY49zmqkJ8+AEQ
-	 zmDfwCrp5yCItdTDyNK+pRYfDhRnUquXeoheigK2IEAH5y5XM2vv1ppYXoq26E/udvCIv
-	 i63D5E+quIKX4JBT0nXDzGk55szcO7uLQ3ytXu48i0M3ldwK6MEbTbsRZtNd5pCEpzA==
+	t=1793883610;
+	b=UGXxTdy99TFoAUdrERE5sOtiXkkilSZkLNyHMoFuLj6B0UZhtBJk2VEW0WXZK9VdzaDC
+	 fLD15pQTJL4Q4MojUPYD+QKJ5H4Nff1JgGC2d/zdGKSeBhQh0tDT7HF7VoU4n29BLxi+7
+	 E3vVpNfBCnHmqfy/S+weX9uRJKmk9Pvgb+9nqTAgz/z3kW4JKCSYlsVzfBFWSfix+/BV6
+	 2BS7nRpImQ0MD+ULI/M6z7mmgzwhFcEybBTSGBN35I4euZCBHTHKGWipEji3l2QIMaNBd
+	 r9JsQLjE2JryzXpkJf+jRspEQfebR8nUUuj6s8O93h6NbAhvU4Bdo8rTyMwX60OnEDQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793883528;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=30cvqab0GneMjzQY9b3Yhah4cXyfQoNJoQir3EuyP94=;
-	b=3IWpSNaAK/CoyK1fXr6G66dji0iJCzOzX3Rw68LhnW+Jr3Te6S9RUT1eh7gmq7a53M3V
-	 EfHqhbLasbXclfxSJFmmu7GiK1tVRlvEVvoUmtlSvvBG81w7r/zXI8SQ1ye6vqVAJ3+EY
-	 9pGbxuH5jt+cmKDaJdWoaQmkABdUDf0Dejh0x4gme2sK5eiGt7JaiB+lXP+y/NSCHMZXJ
-	 GOn0wXg1sPCnoCS08jUiaUUuEdYQOLyZCixk040IoF+tWolKu18h/bsi2A3q2xFtwAIaN
-	 uaWGt9LrIfzDvWQCVhg3kwuwA+L04DzNmSbZHUMn1c2WACrRIyNF+b9Biclz5GrKZag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793883610;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=5pTLy1DMRoDwj8lZJ0UbFJoGofnphf79x0x39goZpc4=;
+	b=AhqdhwjvGxhE3MhPJbHauwHdiOyZuKm08BBQCTmIh3BO7zYUZeOonMOvhP9VFUg8t6d7
+	 oJ/+DFh+ZzjC9FsaX3pTjQXs30SpWUJ6xSA/zh606+JYwvZmhA2sCQnaBb2PF0+QtsHMd
+	 ZG+ZphN6EwlK2z6J8xRHSACN3sHOcG904RgsnfUsJyxMDb15UkAy3uEXyC3gVUMGQy4TN
+	 5CphMwgzeC4rHUXRZ/AyygS/7vZNmwBGCKYHlbvhi5Lfu/UDhcke3qI0PEdP5zvJQXc2t
+	 7FeQbC4n6nPPl03InNttJUie/mPmPKrX3vw6wiW9kd2Zcg60V3eAfjnDkUxbnGYIBeQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="L/wD4a/y";
-	arc=none smtp.remote-ip=209.85.128.49
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GFzIdAqn;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63B606A32D
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 12:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A63B606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15419606A329
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 13:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=L/wD4a/y
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a2167bd087so15767545e9.3
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 04:58:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793883525; x=1794488325; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=30cvqab0GneMjzQY9b3Yhah4cXyfQoNJoQir3EuyP94=;
-        b=L/wD4a/ylJXV0XF6/0PTSkMyL+0qSb6ZlhBosU4BX5Pj7KjRTFLwMBonjApHISxwI/
-         qFX7A4EodJjv05cV1+Pvp5a9CnM4jSs7QUtlDgey5lt5MO/bWOIyVehVkIb+rUQiO7nD
-         wKsQKIq2EEO0D6T13iNaiR4S2XmKG1xswSwlgamKifo8fMU5iRG2ESLyWyyF8njfzBKP
-         hDhjc74qZsFhiomidhtIFh7xPrwvp3uZEhfh88UPF81e9sb+yoKFGmm0d63HpJuTTThK
-         TwVr+c0za+UngVjYzur+ILK68hcWgncUpdmnjBRY0klqXtSxfQ7I1LRYEppK3SZNw9sl
-         qNWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793883525; x=1794488325;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=30cvqab0GneMjzQY9b3Yhah4cXyfQoNJoQir3EuyP94=;
-        b=g1To0iovi4hbr8Q4/5c+177c1YzKryYlhIfyVJzbU4Iwb81z8sOhurE3ICAx/EDaHI
-         I8d97So2QILP7cc4lnrotH5JdavGcN1IfAbFxip+SYxrgAZnZ06K/mxEr2l8LaPfvcWd
-         EP3CwdL0z5pIr3w/VNjsvabR8JEUNzdQzw99VX/8wsIRUp9Pkcv+eVryEa9AH9Y5d5R4
-         vWlPU9+0y/WD5uxMnkc1BkmpVchghiMw1DrtO2EkwlSo7zPicCLZ4C8shDE/R/ssXYh1
-         nOAa39AylGHDKhgXlOozCB6zsVEK+DbhNJOXBH5VTytBPS6c0TgzKGKTVEgUhpNUSWdy
-         /drg==
-X-Forwarded-Encrypted: i=1; AKwUvBxFiLckSlUPEh6gRyzzuagyvIa66nP0jhMWt5Tegqxr+j+jz6VHW+uRBrRI+S7u41nBV/mC8GnMBmYU@vger.kernel.org
-X-Gm-Message-State: APuU4Z8E+RTt8JKyt/xeHxCzxptMsn3F4a6UFFWi6COqXqx8pPKuBBkW
-	YUnq0IKu0dYVkTJdiOgdi3DCLN5tRVql65YheFTh1b6rWLI1uevefTW1HzTRqKn/YxQ=
-X-Gm-Gg: AYBFou2MANl2OAAnZ0DgzoA048/PtmHU9okqUGBpuM4rM8ZIj/uOQH1miGdZpeAro6S
-	ODFvtjwefo7/CSWOzSOeHrXiU2axkqZazgyUhOkhG9q0CXeGObqTN6X4n8aykn/crqiWqoSk78d
-	+cURFk8b0mmrsygI0ZpBPVt4Z6ufl5IMCa/SwDE1pwkBksP7R5DF/Vg1OPlnhvd5nr8qzMXb+uI
-	lkZSr7ctGFRiMEoQzeTUsrNVzmjSmS+ddjBnVo4724qhSino5ga0gvXeVZE1rHznUgFu2V93Hp0
-	+px5cb0MBBQqomNAVouzLGslpipbLB+XQsn5Tskoa8nKrTvpqP0yB25Q+JNGl8FT0jWKtRpg8yD
-	sJ+aUdIpkej1+PVcGS+K+g387hf6+F0gpaNt4Lho0yubjgooj3dOxlU0Pciog0+qmdV6zW9wnqh
-	GPqJGO8rBlIhVjTlgMuCx0snM/1hZNdJv+vE4PhKRl8o3OhoJ9EJtFFuPWOixyuhkyl763HGjgZ
-	v81HBuuGDV2Xu5gPQWBk2FXily6yUxrmGl7mtBELNLqrXoGd7EqjFX1Hb2FHZPPXNxl+IXRR7LO
-	4f+2NHwVsvxnEKEnV/zn3xFprp0fcLs9wl8DqC7emGjMKTyO7rfh/Zb2
-X-Received: by 2002:a05:600c:6212:b0:4a4:de70:2ad4 with SMTP id 5b1f17b1804b1-4ac17ffa395mr401888755e9.22.1793883525271;
-        Thu, 05 Nov 2026 04:58:45 -0800 (PST)
-Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b63863d490sm27861675e9.2.2026.11.05.04.58.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2026 04:58:44 -0800 (PST)
-Message-ID: <56932f47-2e35-4152-afc6-6cd41c8393cf@baylibre.com>
-Date: Thu, 5 Nov 2026 13:58:44 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GFzIdAqn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 959FE1F000C1
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 13:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793883609;
+	bh=5pTLy1DMRoDwj8lZJ0UbFJoGofnphf79x0x39goZpc4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=GFzIdAqnSGNDH2hk/s5EizIbO8Md9Uk7qUBGRcMk6YOCRtjRuTx8aF8JnVY0p1sRK
+	 MKSsgJABo1VqsX6zMSpQqS2OMdEg57Lr5d2l3JfS+58d5TD2WCqomoFgZfqKXXxQ3w
+	 ULUnwoabhVQusvErOpRBpYbXRzV9aPrXrahoXdgoABDjQE5k5Ecq7MO+IlY1D1GVze
+	 YBboLDhn9/d4l2YECxVMbAVjDuPKoNUkedy3h3pc/adMBOZ09Sn8oYLyNgUwNTHyjm
+	 LgGWKKv3AYkmC7u+Hq73zNqrWqUSj0m6ay+5OJpLHDQvihtdgZEAy2PZBvwYnRqWzI
+	 vsqcQHY1737Uw==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5bb7c6980f1so1925225e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 05:00:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBy8rlG6/QDQhUF2gPgQuc0tOfDHSIKRFkJ/ckN0/ZMFZ6mdKPWw2b3dpcCcTQAepnGJKtxy/Aw99TMH@vger.kernel.org
+X-Gm-Message-State: APuU4Z8rBC/p0TennxKIj1xSB4zqk9WxuXkzx58Yw8LqgogxUSsGsuwj
+	2hyZThHdwl3+L5hzkfETW4qV9heiq1al4Pjz5BinFqsmQaw6lcYrs6vdRKx0QfEiwO9UfI0eohg
+	dJ+zdybkgwHJLoM7zv4qdIh0ybDdhe2M=
+X-Received: by 2002:a05:6512:23a0:b0:5bf:e25f:d59c with SMTP id
+ 2adb3069b0e04-5bfe25fd6dbmr5769231e87.38.1793883607153; Thu, 05 Nov 2026
+ 05:00:07 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -92,62 +59,41 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] pinctrl: scmi: select the GPIO function on GPIO
- requests
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>,
- Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
- Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
- Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-11-52d92843ad97@baylibre.com>
- <aunIVW4JeM_P2WOa@ashevche-desk.local>
- <73888927-18ec-44b1-bb14-72e72860bfc2@baylibre.com>
- <ausPFWOj-usp084X@ashevche-desk.local>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Autocrypt: addr=clegoffic@baylibre.com; keydata=
- xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
- K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
- BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
- AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
- B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
- 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
- LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
- vLfPDQ==
-In-Reply-To: <ausPFWOj-usp084X@ashevche-desk.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20261104-gpio-desc-flags-atomic-v1-0-e23cedf619ba@oss.qualcomm.com>
+ <20261104-gpio-desc-flags-atomic-v1-3-e23cedf619ba@oss.qualcomm.com>
+In-Reply-To: <20261104-gpio-desc-flags-atomic-v1-3-e23cedf619ba@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 5 Nov 2026 13:59:54 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=HfJX=M7Lvzx1-sb_9Zr0qYMWJccmgiD2yFQAEodkQbg@mail.gmail.com>
+X-Gm-Features: AclHuK-4nqAaIXoMz8aCJ7rRxx6dK31OAuFQuXb16P8OOZK5p4ht6ZH_vYzr3MM
+Message-ID: <CAD++jL=HfJX=M7Lvzx1-sb_9Zr0qYMWJccmgiD2yFQAEodkQbg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] gpiolib: provide gpiod_update_flags()
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Kent Gibson <warthog618@gmail.com>, Adrian Ambrozewicz <aambrozewicz@nvidia.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/4/26 11:55 AM, Andy Shevchenko wrote:
-> On Wed, Nov 04, 2026 at 10:38:11AM +0100, Clément Le Goffic wrote:
->> On 11/3/26 12:41 PM, Andy Shevchenko wrote:
->>> On Fri, Oct 30, 2026 at 04:58:42PM +0100, Clément Le Goffic wrote:
-> 
-> ...
-> 
->>>> +	int nr_functions, func, ret;
->>>> +
->>>> +	nr_functions = pinctrl_ops->count_get(pmx->ph, FUNCTION_TYPE);
->>>
->>> Is nr_functions signed for a purpose? Can it hold an error code?
->>
->> No indeed, will fix in v2.
-> 
->>>> +	for (func = 0; func < nr_functions; func++) {
->>>
->>> 	for (int func = 0; func < nr_functions; func++) {
-> 
-> With the above in mind, the type of func has to be adjusted accordingly.
-> 
+On Wed, Nov 4, 2026 at 4:37=E2=80=AFPM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
 
-Yes will do
+> We have several places in GPIO core where we copy the desc->flags field,
+> change several bits in the copy and write back the whole word with
+> WRITE_ONCE(). Concurrent updates of flags that modify other bits are
+> lost.
+>
+> Add gpiod_update_flags() - it replaces a masked set of bits with
+> try_cmpxchg() loop. All bits are updated in one atomic step so no other
+> thread can observe it half-done. Unmasked bits are not rewritten with
+> stale values.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Best regards,
-Clément
+Sashiko has a good suggestion for this patch :)
+
+With that addressed:
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+
+Yours,
+Linus Walleij
