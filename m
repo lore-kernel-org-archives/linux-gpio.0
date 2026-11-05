@@ -1,65 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793888214;
-	b=SqNI0pL2NEej77ZOvXl+JxQowHJxVnXQ1RvvVggY5Bo84S/Qh7vmtd2s1FHyL1ZcvIkB
-	 W87QXK4Zz/qwuhiJFyPR1KgBf6ksQHq1Mu6e7ip/jeRiI5N/mo4HYlfLCLkm11wiSR0hy
-	 SdZLrpo0EfCFTOkjwqYyXGxwNYePkz8q95174qcXVbBo1S7KkqBN3L+xa7hrR5sYnTe5V
-	 kCnujOND3QmLG8R7o0Dzk/F4oxAKfyJBCWw+tDqDKMb0dHh26YJTz+ziH27svnuYVYHOA
-	 HEfUfBBA6Vbf/YIgEblqVY3627rRVkwMoaulddfXz/JkxW+dKBHARaUMuYp9dI3Vwfw==
+	t=1793888573;
+	b=s8ehPvglDAlw32V7cVo926AzzJWEfClHiVuhMY4mWRudh2EEAoSar52qhtEfp25HxIzU
+	 SQMKUpPmIsPJq+hF5xk8n2SdhVLT62lCj6+5pU360lTDPftxcQdiQgT7Z1oGcwAceNS2j
+	 Q3RxdXVlcH2J6Rdn7dkQaGb2Oke5KBlipZOUfnujPRUMs4lCAyUj17DDee0+jgAAD4GK1
+	 Aqp9wiOHEfI9RDBgtwOVwUT2He+/4mqcM4cy6wGidoFRoJ5Kf0IGYAV/pOCcCqqUfwFE4
+	 xYghfgbzugfkzFaFNpMqu9lL+WuCqO6IK7wxkI+/D3yF1dvDKVzCqOvc1wNBK1IkgKg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793888214;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Jo1r7Eqpd5Kwul0AOD+n/BJ1YPC7hEey4ChbCDP8t4Y=;
-	b=YJLaJ4SEtzFiSaFJZtA0gggWsNcPXfKiKrNzDGCKpjzMHuoLus60mnhYdVRJJxO6LvsJ
-	 vFo2Al4+naOTjyMqAORD6XWGTBitsObIBs4YjWAcx0jN3N943qEqesoJNgrNHyEzgUUAk
-	 gDOCVeEeDqT9Puj2Rfd3ob9xDT9HvRbqVUVKeNe2+z2umpj6PGtm1zylPSHiO+ha4LQue
-	 mZWcoNARFNJNyGuwsKZkAB22oMpzeYqyEV2boPnRw4Dxn5a6ea8V1ZcpGQSseJetUIGR+
-	 VSdMnWKKD1AEJiTi8fv/VPQgQNQwUTUmPmtfZ4cQYUY90C/mKn3/O7omDLLR1JHk1Iw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793888573;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=XjrY8UgRoVN4jYQCQ78HAcD/mxdonyUgWpg8s0a/R9E=;
+	b=jBA14KYGz79fGHZ62SxpTNApWkiZwYd8JwzTLSaNbae2Nq/CQ3qTHIENOrOOJw0XOFPC
+	 0Vw27aQjJLc3aP1Hj4SiGVQ564iNv47liprvl3V5RpSd7mpG31ufMNsIjGbC9dECvuPeA
+	 SVL3abujiqId+ImhgnfEe+1K3PEv1azQemz3eLukiG4isBeJJtUjazfJ7l6vL4SzJbvzi
+	 3z1mdC/dYvMXuGTclSW3ACN+O6/ahxaLXeQJuPWsgXL5srDxoWVh5kEFHzrA2c7ZYXO6N
+	 yn/4z3dzs7BMKL4HPTZmQzMkaAOm2Q7EHRjvCTvYLYmMjL3NsfJ0RadU0y69VR3rR5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZoKDw4ug;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gjggjMSz;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA279606A329;
-	Thu,  5 Nov 2026 14:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27045606A332
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 14:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZoKDw4ug
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E371F000C1;
-	Thu,  5 Nov 2026 14:16:47 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gjggjMSz
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8A61F00919;
+	Thu,  5 Nov 2026 14:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793888213;
-	bh=Jo1r7Eqpd5Kwul0AOD+n/BJ1YPC7hEey4ChbCDP8t4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZoKDw4ugUs1vqT8KwUAFE22r38SFUo+5Kl1uRGyN1HnMz8m5Cx8cbaRxUBW9tukjf
-	 pfRfbBQ7vIr/s526utqwnRQ6vk2y2lOMLblQ1212FvZpZ1BI2XoGocuLC9nbUSSe/a
-	 2dXQf+lEKU3Oo91fIaA/QYKw+C30UBnr39JkfgTnNSIVKXxiw+fX1O2cB8ypomyVpk
-	 aB/rmLvKtxIjYQxiJhoCfCxAT1pMUoX+WyBlN7Qy5nKzBPLHAIem4nMZa2mznOYdOu
-	 E3V1FxDTksYsAIHY6DdxE1taJ5HY3zyRGUoOl2KnYFhCvgJMRI/ou3asr4DC8TXWzo
-	 1fsCZ4HsI6iag==
-Date: Thu, 5 Nov 2026 15:16:45 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Add strprefix() and fix a bug with it
-Message-ID: <auyOkL1Vb1iKicS9@devuan>
-References: <cover.1793876837.git.alx@kernel.org>
- <cover.1793882260.git.alx@kernel.org>
- <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
+	s=k20260515; t=1793888572;
+	bh=XjrY8UgRoVN4jYQCQ78HAcD/mxdonyUgWpg8s0a/R9E=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=gjggjMSzFXFC+Nz6Tupdco/I51JZM1iLktg9TNAPmu385TxPP5Wh5fzZd7j0dwEco
+	 ZHVuAo2n5Corp160ipF01g5O/pNIZ3FEpP/iHLRWX44Wa16M7hfXdUvOf2VNGAQlVP
+	 /GgkwxA4eqYpLJq24FpzOQZq5D0t5695rmWFIL5Hxm8Wxb2WNlA6Py3q8/Ss37G7Mt
+	 mz0TaV7iO7SB2XyN3tpjx2loKtpci+CV1VuGaJvbDsbhpaVWWkuedMDwzhci8NxBaZ
+	 0y1kDYnoBQ6ZioelAhSlkTg5r4h7Cg23lwauNmwJc5r3Y0iZtxMgLQj3L22FFLFBC4
+	 QZzGQu6rStsrQ==
+Message-ID: <sashiko-outbox-199237@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] pinctrl: nxp: s32g2: Enable by default on ARCH_S32
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Khristine Andreea Barbulescu" <khristineandreea.barbulescu@oss.nxp.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261105141347.488850-1-khristineandreea.barbulescu@oss.nxp.com>
+References: <20261105141347.488850-1-khristineandreea.barbulescu@oss.nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 05 Nov 2026 14:22:50 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,100 +58,75 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lbomulgyy7xwzfvd"
-Content-Disposition: inline
-In-Reply-To: <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
 
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] pinctrl: nxp: s32g2: broken COMPILE_TEST prompt with strict ARCH=
+_S32 dependency
+--
 
---lbomulgyy7xwzfvd
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Add strprefix() and fix a bug with it
-Message-ID: <auyOkL1Vb1iKicS9@devuan>
-References: <cover.1793876837.git.alx@kernel.org>
- <cover.1793882260.git.alx@kernel.org>
- <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
-MIME-Version: 1.0
-In-Reply-To: <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
+commit 065380d0c7f62b7d0370fd1bcacf175935178d8a
+Author: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.c=
+om>
 
-Hi Bart,
+pinctrl: nxp: s32g2: Enable by default on ARCH_S32
 
-> Date: 2026-11-05 15:01:22+0100
-> From: Bartosz Golaszewski <brgl@kernel.org>
->
-[...]
->=20
-> I have no idea what causes it but I'm getting so many patches lately
-> that are subsequent iterations of a series sent with In-Reply-To: header
-> pointing to a previous thread.
+This commit enables PINCTRL_S32G2 by default on ARCH_S32 and restricts its
+Kconfig prompt to COMPILE_TEST so that S32G boards have the SIUL2 pin
+controller driver built in by default.
 
-I don't know what others do, but in my case it's a conscious manual
-action.  I use --in-reply-to in git-format-patch(1) to make all
-revisions of patch sets be descendants of the cover letter of v1.
+> diff --git a/drivers/pinctrl/nxp/Kconfig b/drivers/pinctrl/nxp/Kconfig
+> index abca7ef97003d..d6d97c944b94e 100644
+> --- a/drivers/pinctrl/nxp/Kconfig
+> +++ b/drivers/pinctrl/nxp/Kconfig
+> @@ -8,8 +8,14 @@ config PINCTRL_S32CC
+>  	select REGMAP_MMIO
+> =20
+>  config PINCTRL_S32G2
+> +	bool "NXP S32G2 pinctrl driver" if COMPILE_TEST
+>  	depends on ARCH_S32 && OF
+> -	bool "NXP S32G2 pinctrl driver"
+> +	default ARCH_S32
+>  	select PINCTRL_S32CC
 
-We do this in the Linux man-pages, as it helps me keep track of all
-revisions of a patch set easily in mutt(1), without having to follow
-links or use more-complex tools like b4(1).
+[Severity: Medium]
+As reported by Sashiko on v2 [1], does gating the PINCTRL_S32G2 prompt on
+COMPILE_TEST work as intended when both PINCTRL_S32G2 and PINCTRL_S32CC keep
+a strict dependency on ARCH_S32 && OF?
 
-> Don't do this. Each new iteration must be a separate thread. Please use
-> b4 to manage patch series.
+In drivers/pinctrl/nxp/Kconfig, PINCTRL_S32CC also requires ARCH_S32:
 
-I won't use b4(1); I like bare git-send-email(1) and git-format-patch(1).
-But yeah, I can send them as separate threads, if that's the preference
-here.
+config PINCTRL_S32CC
+	bool
+	depends on ARCH_S32 && OF
 
-Out of curiosity, what's the benefit of having separate threads?
-(Or the converse question: what's the main problem of using a single
- thread?)
-They're morally a continuation of the previous threads, which is why it
-makes sense to me to have them as subthreads.
+Because a symbol's depends on expression bounds its prompt visibility, the
+prompt and help text for PINCTRL_S32G2 are only reachable when ARCH_S32, OF,
+and COMPILE_TEST are all enabled simultaneously.
 
+When ARCH_S32=3Dn and COMPILE_TEST=3Dy, depends on ARCH_S32 && OF evaluates=
+ to n
+on both PINCTRL_S32G2 and PINCTRL_S32CC, preventing the driver from being
+enabled for compile-testing on non-ARCH_S32 builds.
 
-Cheers,
-Alex
+Conversely, when ARCH_S32=3Dy and COMPILE_TEST=3Dn, the prompt is hidden and
+PINCTRL_S32G2 is forced to y with no way to disable it, even when building
+for non-S32G platforms in the ARCH_S32 family found in
+arch/arm64/boot/dts/freescale/Makefile:
 
->=20
-> Bart
+dtb-$(CONFIG_ARCH_S32) +=3D s32g274a-evb.dtb
+dtb-$(CONFIG_ARCH_S32) +=3D s32g274a-rdb2.dtb
+dtb-$(CONFIG_ARCH_S32) +=3D s32g399a-rdb3.dtb
+dtb-$(CONFIG_ARCH_S32) +=3D s32n79-rdb.dtb
+dtb-$(CONFIG_ARCH_S32) +=3D s32v234-evb.dtb
+
+Should both PINCTRL_S32G2 and PINCTRL_S32CC instead use depends on
+(ARCH_S32 || COMPILE_TEST) && OF (or keep the prompt visible so non-S32G
+ARCH_S32 builds can disable PINCTRL_S32G2)?
+
+[1] https://lore.kernel.org/r/20261104113905.96582-1-khristineandreea.barbu=
+lescu@oss.nxp.com
 
 --=20
-<https://www.alejandro-colomar.es>
-
---lbomulgyy7xwzfvd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrsj8gACgkQ64mZXMKQ
-wqmoMQ//TtGWqCjfcnXsWY/oa7xvsHVefRAzug6vGgPHtltQxL2N+ABWVUEnj08P
-DCpNPQ2e9Mv7M5ABKIaSYajzjRXovNQ0ooTFjhsYaIVXK7yTl2K8Faj8FDNpDLdO
-hAg3B9y6uy7O2IK8Vl//8oDO+YfzPVH8vLp6QSvy5OvuXAcL/cHu5nUd12XewLVj
-t6AHllKmnjmuc4HjpvyPX/73CW02iBj++erXy2SF8PBTDvZeeX00a3lVPKQnIq9O
-VdNTfoWyqpmbaXB3y4hkltNXePY+BY/WFLVYf3zJQKsfoK5FRLs5Fr4lrwEmjcbG
-4x5ZcNK/Tc/K8+mpt2Mq9tEU1ocQlpF6RJXIOOtJs0uaD4QowMTBtLL+daCCECgN
-KVmOYGqoEEmxXcLMZKWf2Nza034nWPHQKONPUeM01gILFVJILBEfI36zI9W7bVlE
-yyO5SF1Rx2KzBxnGZikRTrWQdM8fCWDn5aiFuTlOB24yvGFACZfKNd/tVfZQQ/BP
-mHMZr1lZwJwveUzdn0qDWv3Bvw+Dp5sSbwYLCx/nwU+A3dqrCMa/wLJPdHrH4S6Y
-uff3mbFO6kxGqCbv3Y89dEogwr3mqxgoYZaFsNlg5HSujG4/cV+0SWphRuhg9I4S
-rREyduC6a5jqzyHPqzDCP1Q0/gMEtQgiJNdffQr1B3q/uiNVqPU=
-=7MyL
------END PGP SIGNATURE-----
-
---lbomulgyy7xwzfvd--
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105141347.4888=
+50-1-khristineandreea.barbulescu@oss.nxp.com?part=3D1
