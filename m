@@ -1,55 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793886988;
-	b=y2zAOSll+OPQQ5EfAupcVrjJFPOHh7f+6Quww46fxXtHdzKI4BSKI2k0oFmAj6LQseMm
-	 tfERXpB5NQjtV1CLRautVbaoEPsnjxxkOiSFfG1INCoAsMVw+lECF6T3Ct0Pp8YKWOJZh
-	 ipGpIjHEDLRAUlYtskdKYGT6A052M1N/RHs1xZOBoGHon192+IcDQQNh5rplTGqW2ulHt
-	 /oEKN9ZQLw56LGUVWnu0AeG6NNQWoUdQZcHznhkjKLdkcOa0+uZqHfa5PnmIE6U0dXsEW
-	 95sQkx5hy307Ief8MEgbZMXxAR7Ve5v5eoBnFuWmbSJt0381/h6wchC4w0C6wc42/zA==
+	t=1793887291;
+	b=2vGzIVcQmW4I5sZDxNV0NdjlApieNGttcLRZwgqqW5QcDsDkOtYLz1qHKmWL1roA6UfY
+	 EYlqZL1lBZMgEFxA/+rT5tRl3hSdQCQ0sBjuxslQJMzPcl8Pb6YAGkCzSL5Oggi6vGCED
+	 F//v85jGBQRp9qctaTO3ZC4oSK7nbld/OeMP0Z3ng+YFlwM8I7IURksFY/tr2/WFZdxTl
+	 Zbop6gdOZxWYZXB8eIuOCqYItW/Yfy9MgF3DinkNKPun3QL9b98/Uq6mr90c/bvomPw3O
+	 77ueqbrFs5DxTzfGvBb/WLMVVKwVI5HA2JHebt16iiOEOQm6vsgtCC7sNs/gx0gPRYA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793886988;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=DgaNB918DvS/9e6kGL7HQ5e3QKA2xYrp9dfDsZ8DbFk=;
-	b=KMstG+l1n6YL74FgdtQiSTt9aMaFQLCNp+LhjTjbKpaji4yUz3bOwr9CO6Em+GG/bjIY
-	 U/FzrmIrzxJlJdmwLZw7aoObSsQ50xZqJyxM5QDbAr+2EYgdtxhPIFxpE0JqM8Tyrb95a
-	 9xZT7S17hvFglBOb1EYK5tRM+BMJp5c5nuYZ48PBmgn4L4VhWo6t4rlLGtVAm67GSHlQh
-	 HzZ/2MieVSlzlUdxAFkwMMzzKLWy7+dJdOhICVmlqrsZ3XZPt/+xguOLUDN+iu7Qbdd9x
-	 EW/nCXqK5fpBv/oLoxssXdSBC566wvsKxw5qBY397D9F3EFZvnVn9sDQfrczHe1NhQw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793887291;
+	h=Received:DKIM-Signature:Date:From:To:List-Id:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=8DY4TUzp8evO7EYLufNjnQuf0+aROvdRw1EKq47FB+I=;
+	b=gqczCKvRpSlqaaSxwIcvlE3QCYOoUKupTbsPE8VcWt2GIG8+nr/vPJNPQDsHMysWYxNR
+	 W3XMnClD4GAAmK4UnlBsGKknw2wgfJ3m6omo1yohTlOgDXRPdLVKIGAK3fcBkqZRZe7UQ
+	 1JpTuwt/KeqkRIzO9aZObqsn2lLKhZxdBvVW38AL6wvDgMgfa/a2RnHPj6565qTuy4eCa
+	 zx3Ph6Vq7Yrd/lLejcOVZO0c088ga/6u8rXgak4hLUt6YoBv2kd64vNYmsmp/7I1/IgHe
+	 yx2ju8aoYA34uunN7wRJQByEEAHdJSoSyMsL2OAvmIS/NQ5yFk7nCHAfekg1WYNABwA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PwdO0XoI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JGPrdc1W;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DC1606A32C
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 13:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id AB8C1606A31B;
+	Thu,  5 Nov 2026 14:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PwdO0XoI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0731F00A16
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 13:56:27 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JGPrdc1W
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0C5D61F0093A;
+	Thu,  5 Nov 2026 14:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793886987;
-	bh=DgaNB918DvS/9e6kGL7HQ5e3QKA2xYrp9dfDsZ8DbFk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=PwdO0XoI+xCqt9JcXnjbffFCF88c8/RWnV9n8+Sb6snUovYGGZ9rR6l6vuMQN4Wcq
-	 5sUf5w8H/5y25/kIR3ABjhT1hu8CuB9VXtgs4RKQwJ7cBeNvtnUlbCp/OKlSvA94kI
-	 +ujcDjZMuHcIEtc92k8W5JnUrzM7T2gDpB1Db7B6Iy51Cmqyef0PtVpi7GcsCeUCdB
-	 dfhxJr/q6CCYUddat/EaQwOAoYMSnQnh2h2bQq4zMRqBc6O+Lt3PbcSJYFE5a7J+XN
-	 ARISxm3Fwj+Q+EqG13Jgf3p4Kbk0Xh1edfbQsQDSklrWF23RM/osXQgDN17+GTmamf
-	 wTuuT/yAGePmA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5ba328513b9so1574286e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 05:56:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBxfKSN/vXiTL9lVkXlBCl0TXxf6I6Y13qn1zqhpSKIHhhAqlJaOibpCbMgkAKtLfNgjzaM7S2KcDhzL@vger.kernel.org
-X-Gm-Message-State: APuU4Z+4rCygguX5eqILDgcAGDvwXEywkj/iyEAFNx7vBSMZPueUb6MA
-	kirYIgEZR/kahhlaRMTk0WjdO7FHaZXbT9CTCjrSj1hb5Nq9b5eTVDkHY2UNOn1zfMv8hnTfoE0
-	IOx57SvOlDP/UIAq7TII/qqAAO6LGO6s=
-X-Received: by 2002:a05:6512:10cf:b0:5be:5394:162d with SMTP id
- 2adb3069b0e04-5bfd954b775mr5824256e87.3.1793886986138; Thu, 05 Nov 2026
- 05:56:26 -0800 (PST)
+	s=k20260515; t=1793887290;
+	bh=8DY4TUzp8evO7EYLufNjnQuf0+aROvdRw1EKq47FB+I=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To;
+	b=JGPrdc1WTvMbqA0T4cByajspeoIyncKLUDZ5AcTWZvTXcu1W1E5XUaOgcKHrTtzFG
+	 drk9VKaH4SRjmwdoeRDLBGQJDQEPaT66XFi91Cjs7jLgTjPGHeb1DtzA7KnopSvzr5
+	 H1WudlrX1WmyeQOP80DgpoALbTvrC7TLrW0zSEKt7P2lKy5Wor7kwzOgKQNjd7y3W3
+	 z998Am3t77vTy7bnPVby2gqw8YMCasZhopSfP0GZgDLh/yFURRWApmUIZBz5F2eVuI
+	 kCA+bnVxDuluxi8jpOrq9lsVW+t926uCPpY4vGHt+dxMmci2+YxMN2hWkOEZkt/vmh
+	 z/NbHbC9HVLHA==
+Date: Thu, 5 Nov 2026 15:01:22 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-hardening@vger.kernel.org, alx+linux-hardening@kernel.org, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Add strprefix() and fix a bug with it
+Message-ID: <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
+References: <cover.1793876837.git.alx@kernel.org>
+ <cover.1793882260.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,40 +68,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261105-gpio-sodaville-use-after-free-v1-1-f572f40feedd@oss.qualcomm.com>
-In-Reply-To: <20261105-gpio-sodaville-use-after-free-v1-1-f572f40feedd@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 14:56:12 +0100
-X-Gmail-Original-Message-ID: <CAD++jLk1_uAS4spZLg0pJuxd6KxQdLkXpxFe-DeUy4E-5sHp6Q@mail.gmail.com>
-X-Gm-Features: AclHuK_gydN3uFHqfkkpDZEjIzl9q_s993fpDvscnpCYeIU9fTXTp3QVFVyy_To
-Message-ID: <CAD++jLk1_uAS4spZLg0pJuxd6KxQdLkXpxFe-DeUy4E-5sHp6Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sodaville: fix use-after-free bug when registering
- the irqchip
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1793882260.git.alx@kernel.org>
 
-On Thu, Nov 5, 2026 at 2:14=E2=80=AFPM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
+On Thu, Nov 05, 2026 at 01:46:20PM +0100, Alejandro Colomar wrote:
+> Hi!
+> 
+> str_has_prefix() is based on sizes and lengths, which means it must
+> overload the valid length 0 to mean not found.  This is a typical
+> consequence of choosing to design an API around sizes and lengths, and
+> vanishes when moving to pointer-based similar APIs.
+> 
+> This patch set adds strprefix(), deprecates str_has_prefix(), and uses
+> strprefix() in one place to fix a bug reported by Bartosz.
+> 
+> We can later work on replacing the other uses of str_has_prefix(), which
+> might hide similar bugs.
+> 
 
-> In sdv_register_irqsupport(), if irq_domain_create_legacy() fails during
-> device probing, a generic IRQ chip is left registered in the global gc_li=
-st
-> while its underlying memory is freed, leading to a use-after-free. Use
-> the managed variant of irq_setup_generic_chip() to ensure that the chip
-> gets unregistered before the memory it uses is freed.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 9381fc5d655d ("gpio: sodaville: Convert to use managed functions p=
-cim_* and devm_*")
-> Closes: https://sashiko.dev/#/bug/linux-2f7ac8b6-5034-4ff1-9afa-5700ff44e=
-3e9
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+I have no idea what causes it but I'm getting so many patches lately
+that are subsequent iterations of a series sent with In-Reply-To: header
+pointing to a previous thread.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Don't do this. Each new iteration must be a separate thread. Please use
+b4 to manage patch series.
 
-Yours,
-Linus Walleij
+Bart
