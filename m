@@ -1,55 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793867646;
-	b=QytMlBdKrGZgao1SwhyoFZYbqqxLDd2r7naU3opze+nvjxJWoiZ9v8T0VCWCbgCRzMz4
-	 RY1w8Ql95vde0RCFSy735qg04vd3wEu7PHcd5HkfH10slQ/633pPX0I46Te1hpOG5oc3p
-	 b2xZFKF6NSyUhC5cVEBA5+2qOmv6IyeUOpTPSZbWGaKHa+KTCv6pLOqaXCxhxgOL6l3Oh
-	 9rAT+XDMkGAVyhnmeLX3KkQ7v1fcYAGrjN42vfkC9Jxgo7kF72zoLFoVFl94+EvOMM6Dt
-	 YlcDXP87KNNhJJPaQ6UuYbZf9o5i3TA/LchcHgiKbdE0VC+nMlegadJj41rg00uoNJQ==
+	t=1793867706;
+	b=fNokCDko/9XeoE/Ic7ogMcDTX6ZV8KSqw59groyGxtW8eNRNZwb5zmRfHbFedioSKZKH
+	 XP02k2LXqgiLEZQRBKyncA5vgBrRWyr8Mo9dG4PqCrrWP1bLIy5jPojwipmc4O87ZCJOm
+	 i58ORUmYfcop9SsRskh/iBy9UgMJUVJpgmJ7BC84g/0FTrGmVXgRzR8neq4anrZbGFp0x
+	 aCDAzRSjpotASfP1nuhQbIpgnzyf25zdfbKQ8NLDXTjbRR7Mol3DppdUuTV0MAGOmH9Pu
+	 3/ZtEGYzFYEsoxznI2j28E/Hbg5VQDEpKaGBa5r6raiyRJ9hI6czRMh9zT8kWE+hIGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793867646;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=WxzGpf08LrKpKuRsmQ6LKWumhJfgKnAt6y8cqHphZJc=;
-	b=aRcem2ehckdrpDFgdnMc2L+A7zBKFwaj8D2J/q4F9eaW6shiXgnWQ7+YuGUESeLId3e3
-	 WsW4eVZsq0ORNXLr6JUKfJiKx6/dOebjxsPvWTfYTR2Oj+VTCUYKbCCOXJZADyffKL29H
-	 ppHWdYgcKxWzaJkBlawAI0RhHXh324Y0JCG+9gGo6RQiRNuy0h9U4eUmeSPm5T9Ks7PjY
-	 bhxzTQWu5D1iimU81v+FaCw3Y9qbAJbIXVd+rgyA/i+7axIyHes9WEBUDx0jN9oalasBU
-	 6b/1Vwh5pX38Y1ENnhwaqbqf+7CKBGIKBrMRXg9JD2b3tjGXurA1B4cmnMt3XacjgKQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793867706;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=v0+BrrivRfnkIQASeKgDrnesCksNDWwtoNYk5A34Ewo=;
+	b=yUmmB/VG3sifwp5RPM7EF6VcwHbTE2kRNfWUCdD16lqw4GukiBnon2d5YGell0rMgXg3
+	 prd9yQTteiDCd2mi5iJvrmetF7ZgfUnZFR4vtXsrrXJu/dTdg6rcx9IJm0RXNQlCJ90Gw
+	 9gM0kdmbnF9K4sZ5uYmglupNYQ/WIvdDXtuSprzOMKVvbgoE1zSlqQdj7wzFEh9C2P6F1
+	 frb3Fq6lBL9U5Qm4zMt5WW+LpU5mKV8nLuoGWzlRDLWEplvGswrvJGuC0kbJ8rUDoo5O2
+	 e8z1bVCxMK9LhA2+UA2mIlo1kjwDT+jZWlH2OvFdVBWOy4d+ylq8o4+3ilHMGW187Vw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JG5KPvPk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HYLHAZO9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C51606A32E
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 57421606A326;
+	Thu,  5 Nov 2026 08:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JG5KPvPk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E735B1F00919
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:34:05 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HYLHAZO9
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 17A251F000C1;
+	Thu,  5 Nov 2026 08:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793867645;
-	bh=WxzGpf08LrKpKuRsmQ6LKWumhJfgKnAt6y8cqHphZJc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=JG5KPvPkng42jHkqMKVIBRVkFVqKE2AMjohnp1beRk6vX4Un6r/HuIQoeguswBTmB
-	 iNzTNSS8Uxb/JxWPJEuZGDQaAsSim91IVg3XEkRfogrvLVT1eEFGBx2yVPFKMbr3Fi
-	 OC3AQpTc+gkRJpXFkmKxFUjhGEDKBU/lIhHaz4tspPMfad6RJAvcCfyjvvqo48O4ym
-	 w8Oeos4oNw/FIPS80b0KEr+oG7ogMRPbeu/D6fABJJjgWP7s/LdG3ARdQlGP7+mYS+
-	 rceOhIE4MXHy9sHF08vyqIM+82Ds9SEqt9E2UbDOzxXzCPDg1sVI6LijdHP+4CIV8y
-	 GM0z3YFddb/Eg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5bfc9154ceaso1248197e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 00:34:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzFaag2aADrPg/QmWxWX2Ev0Hc79Ga5Co0rQthHYwskjsTp0Xm5o4pnitxNqkHgfqemtbsjaTjhjiv6@vger.kernel.org
-X-Gm-Message-State: APuU4Z/2vRiYYrBeh7bfUfUfNImuWSVL53FJzOcmtp5bIU6OptZp12Of
-	Q6ZBS+nMuZH4hOWzn0RE9RL1ojAaZkrlJwMrpf0iHBVOw/48BCPR/IXMf7FFWWrEPDuQTbE7qok
-	5z7KY7hcDyIi3pTq/qC5/Lr6NR5/DCoE=
-X-Received: by 2002:a05:6512:12cf:b0:5b8:f81b:dfea with SMTP id
- 2adb3069b0e04-5bfd95892f8mr5387682e87.62.1793867644786; Thu, 05 Nov 2026
- 00:34:04 -0800 (PST)
+	s=k20260515; t=1793867706;
+	bh=v0+BrrivRfnkIQASeKgDrnesCksNDWwtoNYk5A34Ewo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HYLHAZO917vgMApNDZmXdmOtgDBz5oOUwvtkA3LiE8EBYg9W5svxN7297d075vrBn
+	 FmBIMWfxGjX/ZI2sjkWWS+OmaApQqeyN3rNPTrFYvbP3G6jJoRRUunaWgZ3Z4VapqH
+	 h26yVKOPZyN10fRoIjEiq69dA3L+Z1T1z44PATiyg5Ws8ti9izEj+d5LmJKcY9sj+5
+	 lKv+1pBsrjYudjh80MQrdVzNUu/XtFHkhhwS1NvmnuFrxVLQeJSdCCuggYEtFceJfW
+	 Zv31pdmdm4k7zoOrjmgTsigu0C7QGZ6nptnPDrFrW7hZRp/P2yFvQ0WbGK59cD7jZK
+	 JkQPgr02gma9w==
+Date: Thu, 5 Nov 2026 09:35:02 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	linux-sunxi@lists.linux.dev, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/3] ARM: sunxi: select HAVE_SHARED_GPIOS
+Message-ID: <dbrddaburmupwyobtrliqf32pzowjp2t5bkpzcyslj74uslmhx@ny22if7wgmxb>
+References: <20261103-panel-mipi-non-exclusive-gpios-v1-0-aa862c1d71e3@oss.qualcomm.com>
+ <20261103-panel-mipi-non-exclusive-gpios-v1-2-aa862c1d71e3@oss.qualcomm.com>
+ <sashiko-outbox-195389@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,40 +58,44 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261101100030.15744-1-surajsonawane0215@gmail.com>
-In-Reply-To: <20261101100030.15744-1-surajsonawane0215@gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 09:33:51 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkyETpvCxbvcvSSZ4_ZF6vt20VrLfkVsskibZ3QpceMuQ@mail.gmail.com>
-X-Gm-Features: AclHuK9s22LU3ZgfcLC37072WMp1FnHaL0iX5l5vecmBSPJ2_rBODkzGQKAE7xo
-Message-ID: <CAD++jLkyETpvCxbvcvSSZ4_ZF6vt20VrLfkVsskibZ3QpceMuQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: sc7280-lpass-lpi: add ext_mclk1_c function
-To: Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <sashiko-outbox-195389@kernel.org>
 
-On Sun, Nov 1, 2026 at 11:04=E2=80=AFAM Suraj Sonawane
-<surajsonawane0215@gmail.com> wrote:
+On Tue, Nov 03, 2026 at 01:43:13PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [Medium] ARM: sunxi: HAVE_SHARED_GPIOS ignores 3-cell sunxi SoC GPIO bindings
+> --
+> 
+> commit 08b8c5df755142dacaed1d91af688663b9db7e82
+> Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> 
+> ARM: sunxi: select HAVE_SHARED_GPIOS
+> 
+> This commit selects HAVE_SHARED_GPIOS for ARCH_SUNXI to enable automated
+> management of shared GPIOs via the GPIO shared proxy module on sunxi
+> platforms.
+> 
+> > diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> > index e015f2497111a..b62e8518e2704 100644
+> > --- a/arch/arm/mach-sunxi/Kconfig
+> > +++ b/arch/arm/mach-sunxi/Kconfig
+> > @@ -5,6 +5,7 @@ menuconfig ARCH_SUNXI
+> >  	select ARCH_HAS_RESET_CONTROLLER
+> >  	select CLKSRC_MMIO
+> >  	select GPIOLIB
+> > +	select HAVE_SHARED_GPIOS
+> 
+> [Severity: Medium]
+> Does selecting HAVE_SHARED_GPIOS here actually work for Allwinner sunxi SoC
+> GPIO controllers?
+> 
+> Allwinner sunxi pinctrl/GPIO controllers (&pio and &r_pio) use 3-cell GPIO
+> specifiers (#gpio-cells = <3>: bank, pin, flags), as translated in
+> drivers/pinctrl/sunxi/pinctrl-sunxi.c:sunxi_pinctrl_gpio_of_xlate():
+>
 
-> LPASS LPI gpio5 can mux EXT_MCLK1_C, but that function slot is left
-> unnamed, so a device tree cannot select it. SC8280XP already names the
-> same slot ext_mclk1_c.
->
-> Name the slot on SC7280 and assign it to gpio5. The third slot stays
-> empty; on SC8280XP it is qua_mi2s_data.
->
-> This file also provides the SM8350 LPASS LPI driver, which uses the
-> same pin table, so the function becomes available on SM8350 as well.
->
-> Tested on the Vicharak Axon Mini (QCS6490): selecting this mux slot
-> drives the codec master clock, and ES8388 playback and headset capture
-> work. Not tested on SM8350.
->
-> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+Right, shared GPIOs need support for 3-cell bindings first. Let's drop
+this for now.
 
-I'll wait for a v2 which comes with a DT binding patch.
-
-Yours,
-Linus Walleij
+Bart
