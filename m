@@ -1,95 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793900035;
-	b=HkC2IhinvRW5Yj84INfelLUQyAVrjD5OTGvKKyjkfUxseLacy/HOyqd6/6ldqCNM7l9J
-	 AAg13G9iDyZc0yP00YleTq/TTc3hIVDDi8JY67kC+JPU6Lv50II2AikF+CVqnqOFZtzxt
-	 2YWewt4FE0qLgLIZfNyQyqBZq68xeuDiy+y4ZmeOvyv92s5wdTjf2bnxwsy4669m0QxIh
-	 dcY9lToPBWJXKBz1oI5RF/WVZ/PGCx8Mhc4ERsJBV3biql2M/trZoMqzsdjP11QS2uITS
-	 kQKq2/AEP7ygsFNcVFHG3WB1d42FeXQt35tGhduTETPoxyP/HdRIc2tk0YJVyUJXZxQ==
+	t=1793900788;
+	b=2jOR/kMLguvdUjnEzXJziUhPGLa8BrI6PJB3q8zDzdLf9IgtUbajrrmp/MXOA52Borw0
+	 XQod6dGR5pkprxaLNGGvMc8NYSDfMk5fW6G+lhifya+77Zst0koAGcaDmOLeNwLn6UpvP
+	 feXQUPWK2BAmg202B11yMzW/rneC+FS02xtbrvB60FHB6xkIYqnF7sbvh1dpoq4ei46G7
+	 YVIYFP9nzoPAFerz+XDZzB/1US5Ozbbh/2Dhws/ufktYoBHUtByaF7L6rhaHdyA1yIAMg
+	 GEeuAPvWhiWSSMD86yd8aSBkb7Z8DHroaVm7lMHhiWF9UdZ7yuKbltLmb1v5mp6HK2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793900035;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=txE0NqAVE4GnjCwwk4oto1phoERpL/8EZaIMIn89g98=;
-	b=0fItoWLSD3lC/C/xCM3Kj4eB0zOU/41B4gd4ABf9rcMbQS7eogIZiy3yuqZihlp1E6g7
-	 +Xi/GMai/R+B597vu96nKeGbvCW+40pXkQNTt7fJJTweUYCGq3oeKY54iLlXkEcGlgMdH
-	 elFtP0elbk1+GHbSneikfC12jTAt9OOPrnZupR+vGudhCxb+MUi/KlDGou7gR98jGl7lE
-	 EnNwmqgRKMtUd6Kn9eVuxhixwylQUltUaks40wOTfu6WbJnauigMPejepjDaNDNmq/F8h
-	 wIvmcfqyKtA1JMxf1LmVqD+Ly+t4pBvnKdFqQTVpBtkIcy3w2SYUwShle5bA3QvFQNg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793900788;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=1HgftRwAwLnhfiLR/85kVsbaRZr/mPYOvCEPHArlrQI=;
+	b=vp6/n1egxVNoPUJit9TeSCh0t+4M6I67D9NIX+OX1IZ75ZphtFgei5QML/m18hLaBbqs
+	 cwu9cl+oD7O1rOOLQIZ06I7oIuQe99hAr8doj7jZCSt3rLItIdLWN6F498QA14YPMUkpH
+	 uojusx8/Qnc8MrMBcBdi6LXFsog2wibEQdxf+mJ2PpSw+fCDxB1FsPpxur0pvvEqzYN56
+	 HlB6ieKy3uvHWrElH9sgZC7Z8igVts2bfBQGG+OuDAzR6QQbyGB9OlBtapdTD1pOsVyO9
+	 lqrq7EYg+PffP70IgLdWNRw9y8MbiSFO/7v/6szOQUMJroQIZsJvH1+kZDHMOv5veqw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CSqi1VF+;
-	arc=none smtp.remote-ip=198.175.65.17
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U1AnpClJ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1784E606A31B;
-	Thu,  5 Nov 2026 17:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1784E606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0144606A31B;
+	Thu,  5 Nov 2026 17:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CSqi1VF+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793900035; x=1825436035;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=DJhn81Zphg4t0gNU/PzOflNMenC2xx9cmWC8YHMmS4k=;
-  b=CSqi1VF+naMtWBNHxz0GvJX0XWk7B9Bwj94j5Y3FjJOi1+XZnf6PbsxX
-   w9q15dAUbrsyRb/aPE5v4/h8Gp8SMQFSUgY3BTM5fOWdm3QBLAhz6jN0P
-   0BhYsQqPY3YjeyRR7dofrBz5W+oIqVpaFaJBcQBbWa71GsVaJl11SQR8j
-   dwTr1cO+tZvoIJ/joTweI5E+R2xcyl8tgSxnw3lrvhvbocWU6kZot9NC2
-   I3M8wHMaBsqk5N/h1EhiBEbRU95koNvkuPIxV2lhdtXbYdkq4EdoTr6oN
-   9vIsiRx230Ttxn1+0vP0NlbF44QUSQ7vtxMOj1p3cjDLJ7juOgbaeoI2g
-   w==;
-X-CSE-ConnectionGUID: ovVBMrj8TH62esNxh1BA6g==
-X-CSE-MsgGUID: mY/qSzkvSJGYKUBLrYyliQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2725643"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2725643"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 09:33:54 -0800
-X-CSE-ConnectionGUID: ubKcXfV2T7ynYh0a64Nkkg==
-X-CSE-MsgGUID: 034hYj82R92RRvNl4nU7jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7061547"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 09:33:48 -0800
-Date: Thu, 5 Nov 2026 19:33:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Raag Jadav <raag.jadav@intel.com>,
-	Junjie Cao <junjie.cao@linux.dev>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>,
-	Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Peter Tyser <ptyser@xes-inc.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Hans de Goede <hansg@kernel.org>, Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v1 0/5] gpio: Move most of the Intel GPIO to the
- dedicated folder
-Message-ID: <auy9-ToSFN9BQDsf@ashevche-desk.local>
-References: <20260925160913.1648565-1-andriy.shevchenko@linux.intel.com>
- <gxfngcnnkgkk5zrmsyrmqam6bk2ti2aflipwsutvce3dtgc7tv@nu3mmjfrt75u>
- <CAHp75Vdocfk5b7GkL21z4nKv4mNcGMF4Y_aZP_sPPeL16FrsdA@mail.gmail.com>
- <auyUFrrAYLobE_cy@ashevche-desk.local>
- <y5aamdx67etg7dgzwbjorb65qikacw2zsnjomkkklty63dya7f@iapehkxib3gs>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U1AnpClJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47271F000C1;
+	Thu,  5 Nov 2026 17:46:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793900787;
+	bh=1HgftRwAwLnhfiLR/85kVsbaRZr/mPYOvCEPHArlrQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=U1AnpClJtiEffs7LOpHK4RJoy2lTUfDrjwyq231gCUp3ByZmkRyE6+Paul9LB90OX
+	 TyUiX0r3yI1J5SV+vAgJny0EWrDPDgQn7PGX4KjisK1QJyFVuTc+KjwHxoa+ek4ZiZ
+	 uZI2dc1CyqPimq2cLXRgdsvUFiNpSX9GCc0rUDY2HAWoq2eDh0oL+Kk0Rke+A6fcg3
+	 H3BOUHV1bY0fVWemVVdJxjmTpG3tuhTKvIXtKxQ3tLgVChSO/bUXvBJKpQeG6nVGvq
+	 ev9zXEChRksm7WvlZ3VA2SQU9LATOu2U3QGqzEhFnBho8bg/XwYnhTz5/tEpbDMFZE
+	 LbOJzLaOBjuWQ==
+Date: Thu, 5 Nov 2026 18:46:18 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Saravana Kannan <saravanak@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <auy0O467UqOzqYub@devuan>
+References: <cover.1793876837.git.alx@kernel.org>
+ <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+ <20261105111423.360f4ba8@gandalf.local.home>
+ <auyuINXEJKc1KoG7@devuan>
+ <20261105115019.2fe7c91b@gandalf.local.home>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,57 +72,410 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kholroagynivwo7h"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <y5aamdx67etg7dgzwbjorb65qikacw2zsnjomkkklty63dya7f@iapehkxib3gs>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Thu, Nov 05, 2026 at 03:45:13PM +0100, Bartosz Golaszewski wrote:
-> On Thu, Nov 05, 2026 at 04:35:02PM +0200, Andy Shevchenko wrote:
-> > On Mon, Nov 02, 2026 at 10:48:42PM +0200, Andy Shevchenko wrote:
-> > > On Mon, Nov 2, 2026 at 5:33 PM Bartosz Golaszewski <brgl@kernel.org> wrote:
-> > > > On Fri, Sep 25, 2026 at 05:57:02PM +0200, Andy Shevchenko wrote:
-> > > > > For the easier maintenance and future development move most of Intel GPIO
-> > > > > drivers to the dedicated 'intel' folder. For now it only covers the drivers
-> > > > > I maintain (as per record in the MAINTAINERS).
-> > > >
-> > > > I wanted to apply this in order to see how the menuconfig looks like
-> > > > with it but it doesn't apply neither to next/master nor v7.4-rc1.
-> > > 
-> > > I will check this as soon as I can (currently I have something else to
-> > > address which is more urgent and it's not related to Linux at all).
-> > 
-> > Actually I can't do it right now as it will be a race with the incoming
-> > patches (for example, I see gpio-sodaville change in the mailing list).
-> > Can you tell me when it will be the time that
-> > 
-> > 1) your for-current is present in for-next (so no merging conflicts)
-> > 2) your for-next is closed for new patches for a few days?
-> > 
-> > Only with that I can achieve some good result, otherwise you will always
-> > tell me to rebase/resend and while I do this, there will be a chance of
-> > a new contribution that continues the loop.
-> > 
-> > TL;DR: I truly believe that the best timing for such a series is just
-> > after the -rc1 as a first batch against for-current *and* for-next
-> > (same piece assumed to go to -rc2). But of course, we may resolve
-> > the potential conflicts.
-> >
-> 
-> Can we do it during the next merge window? After I send my initial PR,
-> you rebase, resend, I queue it and send it to Linus in a subsequent PR?
-
-Sure.
-
-> Do you have a public branch in the meantime that I could play with?
-
-Not at the moment, but I can resurrect my public GitLab repo.
-I will provide details later on.
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20261105115019.2fe7c91b@gandalf.local.home>
 
 
+--kholroagynivwo7h
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Saravana Kannan <saravanak@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <auy0O467UqOzqYub@devuan>
+References: <cover.1793876837.git.alx@kernel.org>
+ <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+ <20261105111423.360f4ba8@gandalf.local.home>
+ <auyuINXEJKc1KoG7@devuan>
+ <20261105115019.2fe7c91b@gandalf.local.home>
+MIME-Version: 1.0
+In-Reply-To: <20261105115019.2fe7c91b@gandalf.local.home>
+
+Hi Steve,
+
+> Date: 2026-11-05 11:50:19-0500
+> From: Steven Rostedt <rostedt@goodmis.org>
+>
+[...]
+> > > > Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.=
+com> =20
+> > >=20
+> > > Is there a link to the report? Please add that. =20
+> >=20
+> > Message-Id: <20261104-fwnode-for-each-prop-v1-1-6e28fe1c72c4@oss.qualco=
+mm.com>
+> >=20
+> > or in link format,
+> >=20
+> > Link: <https://lore.kernel.org/linux-hardening/20261104-fwnode-for-each=
+-prop-v1-1-6e28fe1c72c4@oss.qualcomm.com/>
+> >=20
+> > Which one do you prefer?
+>=20
+> The correct method is:
+>=20
+>  Link: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-each-p=
+rop-v1-1-6e28fe1c72c4@oss.qualcomm.com/
+
+Ok; done.
+
+[...]
+> > > > + * DEPRECATED: Use strprefix() =20
+> > >=20
+> > > No, it is still useful. Converting trace_event_filter() to strprefix()
+> > > would be very painful, and likely error prone. =20
+> >=20
+> > What is trace_event_filter()?
+>=20
+> Oops, typo, I meant trace_event_filter.c
+
+Still not found.
+
+	alx@devuan:~/src/linux/linux/master$ find | grep trace_event_filter.c
+	alx@devuan:~/src/linux/linux/master$ find | grep trace.event.filter
+	alx@devuan:~/src/linux/linux/master$=20
+
+Oh, now I see:
+
+	$ grep -rl str_has_prefix | grep trace.event
+	kernel/trace/trace_events_user.c
+	kernel/trace/trace_events.c
+	kernel/trace/trace_events_synth.c
+	kernel/trace/trace_events_filter.c
+	kernel/trace/trace_events_hist.c
+
+<trace_events_filter.c>, then.  I've been having a look at that file,
+out of curiosity, and it'd be simpler (more robust) with pointers:
+
+	diff --git i/kernel/trace/trace_events_filter.c w/kernel/trace/trace_event=
+s_filter.c
+	index c10951bcfc5f..44594a41d2d6 100644
+	--- i/kernel/trace/trace_events_filter.c
+	+++ w/kernel/trace/trace_events_filter.c
+	@@ -1674 +1674 @@ static int parse_pred(const char *str, void *data,
+	-       int s;
+	+       char *s;
+	@@ -1675,0 +1676,9 @@ static int parse_pred(const char *str, void *data,
+	+       char *p;
+	+
+	+#define CTYPE_LOWER_C     "abcdefghijklmnopqrstuvwxyz"
+	+#define CTYPE_UPPER_C     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	+#define CTYPE_DIGIT_C     "0123456789"
+	+#define CTYPE_BLANK_C     " \t"
+	+#define CTYPE_SPACE_C     CTYPE_BLANK_C "\n\v\f\r"
+	+#define CTYPE_ALPHA_C     CTYPE_LOWER_C CTYPE_UPPER_C
+	+#define CTYPE_ALNUM_C     CTYPE_ALPHA_C CTYPE_DIGIT_C
+	@@ -1678,3 +1687,2 @@ static int parse_pred(const char *str, void *data,
+	-       while (isspace(str[i]))
+	-               i++;
+	-       s =3D i;
+	+       s =3D str;
+	+       s =3D stpspn(s, CTYPE_SPACE_C);
+	@@ -1682,6 +1690,3 @@ static int parse_pred(const char *str, void *data,
+	-       while (isalnum(str[i]) || str[i] =3D=3D '_')
+	-               i++;
+	-
+	-       len =3D i - s;
+	-
+	-       if (!len)
+	+       p =3D s;
+	+       p =3D stpspn(p, CTYPE_ALNUM_C "_");
+	+       if (p =3D=3D s)
+	@@ -1690 +1695 @@ static int parse_pred(const char *str, void *data,
+	-       field_name =3D kmemdup_nul(str + s, len, GFP_KERNEL);
+	+       field_name =3D kmemdup_nul(s, p - s, GFP_KERNEL);
+	@@ -1704 +1709 @@ static int parse_pred(const char *str, void *data,
+	-       if ((len =3D str_has_prefix(str + i, ".ustring"))) {
+	+       if (char *p_ =3D strprefix(p, ".ustring")) {
+	@@ -1706 +1711 @@ static int parse_pred(const char *str, void *data,
+	-               i +=3D len;
+	+               p =3D p_;
+	@@ -1710 +1715 @@ static int parse_pred(const char *str, void *data,
+	-       if ((len =3D str_has_prefix(str + i, ".function"))) {
+	+       if (char *p_ =3D strprefix(p, ".function")) {
+	@@ -1712 +1717 @@ static int parse_pred(const char *str, void *data,
+	-               i +=3D len;
+	+               p =3D p_;
+	@@ -1715,2 +1720 @@ static int parse_pred(const char *str, void *data,
+	-       while (isspace(str[i]))
+	-               i++;
+	+       p =3D stpspn(p, CTYPE_SPACE_C);
+	@@ -1721 +1725 @@ static int parse_pred(const char *str, void *data,
+	-               if (strncmp(str + i, ops[op], strlen(ops[op])) =3D=3D 0)
+	+               if (strprefix(p, ops[op]))
+	@@ -1726 +1730 @@ static int parse_pred(const char *str, void *data,
+	-               parse_error(pe, FILT_ERR_INVALID_OP, pos + i);
+	+               parse_error(pe, FILT_ERR_INVALID_OP, pos + (p - str));
+	@@ -1730,6 +1734,3 @@ static int parse_pred(const char *str, void *data,
+	-       i +=3D strlen(ops[op]);
+	-
+	-       while (isspace(str[i]))
+	-               i++;
+	-
+	-       s =3D i;
+	+       p +=3D strlen(ops[op]);
+	+       p =3D stpspn(p, CTYPE_SPACE_C);
+	+       s =3D p;
+	@@ -1748 +1749 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_ILLEGAL_FIELD_OP, pos + i=
+);
+	+                       parse_error(pe, FILT_ERR_ILLEGAL_FIELD_OP, pos + (=
+p - str));
+	@@ -1758 +1759 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_INVALID_OP, pos + i);
+	+                       parse_error(pe, FILT_ERR_INVALID_OP, pos + (p - st=
+r));
+	@@ -1762 +1763 @@ static int parse_pred(const char *str, void *data,
+	-               if (isdigit(str[i])) {
+	+               if (isdigit(*p)) {
+	@@ -1764,2 +1765 @@ static int parse_pred(const char *str, void *data,
+	-                       while (isalnum(str[i]))
+	-                               i++;
+	+                       p =3D stpspn(p, CTYPE_ALNUM_C);
+	@@ -1767 +1766,0 @@ static int parse_pred(const char *str, void *data,
+	-                       len =3D i - s;
+	@@ -1769,2 +1768,3 @@ static int parse_pred(const char *str, void *data,
+	-                       if (len >=3D sizeof(num_buf)) {
+	-                               parse_error(pe, FILT_ERR_OPERAND_TOO_LONG,=
+ pos + i);
+	+                       len =3D p - s;
+	+                       if (len >=3D ARRAY_SIZE(num_buf)) {
+	+                               parse_error(pe, FILT_ERR_OPERAND_TOO_LONG,=
+ pos + (p - str));
+	@@ -1774,2 +1774 @@ static int parse_pred(const char *str, void *data,
+	-                       memcpy(num_buf, str + s, len);
+	-                       num_buf[len] =3D 0;
+	+                       strcpy(mempcpy(num_buf, s, len), "");
+	@@ -1779 +1778 @@ static int parse_pred(const char *str, void *data,
+	-                               parse_error(pe, FILT_ERR_INVALID_VALUE, po=
+s + i);
+	+                               parse_error(pe, FILT_ERR_INVALID_VALUE, po=
+s + (p - str));
+	@@ -1783,3 +1782,2 @@ static int parse_pred(const char *str, void *data,
+	-                       s =3D i;
+	-                       for (; str[i] && !isspace(str[i]); i++)
+	-                               ;
+	+                       s =3D p;  // XXX: Dead code?  (line 1734+2)
+	+                       p =3D stpcspn(p, CTYPE_SPACE_C);
+	@@ -1787,2 +1785,2 @@ static int parse_pred(const char *str, void *data,
+	-                       len =3D i - s;
+	-                       name =3D kmemdup_nul(str + s, len, GFP_KERNEL);
+	+                       len =3D p - s;
+	+                       name =3D kmemdup_nul(s, len, GFP_KERNEL);
+	@@ -1794 +1792 @@ static int parse_pred(const char *str, void *data,
+	-                               parse_error(pe, FILT_ERR_NO_FUNCTION, pos =
++ i);
+	+                               parse_error(pe, FILT_ERR_NO_FUNCTION, pos =
++ (p - str));
+	@@ -1801 +1799 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_NO_FUNCTION, pos + i);
+	+                       parse_error(pe, FILT_ERR_NO_FUNCTION, pos + (p - s=
+tr));
+	@@ -1818 +1816 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_IP_FIELD_ONLY, pos + i);
+	+                       parse_error(pe, FILT_ERR_IP_FIELD_ONLY, pos + (p -=
+ str));
+	@@ -1827,2 +1825,4 @@ static int parse_pred(const char *str, void *data,
+	-               if (str[i] =3D=3D '\'' || str[i] =3D=3D '"')
+	-                       q =3D str[i];
+	+               if (strspn(p, "'"))
+	+                       q =3D "'";
+	+               else if (strspn(p, "\""))
+	+                       q =3D "\"";
+	@@ -1830 +1830 @@ static int parse_pred(const char *str, void *data,
+	-                       q =3D 0;
+	+                       q =3D NULL;
+	@@ -1832,2 +1832,2 @@ static int parse_pred(const char *str, void *data,
+	-               for (i++; str[i]; i++) {
+	-                       if (q && str[i] =3D=3D q)
+	+               for (p++; !streq(p, ""); p++) {
+	+                       if (q && strspn(p, q))
+	@@ -1835,2 +1835 @@ static int parse_pred(const char *str, void *data,
+	-                       if (!q && (str[i] =3D=3D ')' || str[i] =3D=3D '&' =
+||
+	-                                  str[i] =3D=3D '|'))
+	+                       if (!q && strspn(p, ")&|"))
+	@@ -1842 +1841 @@ static int parse_pred(const char *str, void *data,
+	-               len =3D i - s;
+	+               len =3D p - s;
+	@@ -1844 +1843 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_OPERAND_TOO_LONG, pos + i=
+);
+	+                       parse_error(pe, FILT_ERR_OPERAND_TOO_LONG, pos + (=
+p - str));
+	@@ -1852,2 +1851 @@ static int parse_pred(const char *str, void *data,
+	-               memcpy(pred->regex->pattern, str + s, len);
+	-               pred->regex->pattern[len] =3D 0;
+	+               strcpy(memcpy(pred->regex->pattern, s, len), "");
+	@@ -1855 +1853 @@ static int parse_pred(const char *str, void *data,
+	-       } else if (!strncmp(str + i, "CPUS", 4)) {
+	+       } else if (strprefix(p, "CPUS")) {
+	@@ -1866 +1864 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_ILLEGAL_FIELD_OP, pos + i=
+);
+	+                       parse_error(pe, FILT_ERR_ILLEGAL_FIELD_OP, pos + (=
+p - str));
+	@@ -1876 +1874 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_ILLEGAL_FIELD_OP, pos + i=
+);
+	+                       parse_error(pe, FILT_ERR_ILLEGAL_FIELD_OP, pos + (=
+p - str));
+	@@ -1880,4 +1878,3 @@ static int parse_pred(const char *str, void *data,
+	-               /* Skip CPUS */
+	-               i +=3D 4;
+	-               if (str[i++] !=3D '{') {
+	-                       parse_error(pe, FILT_ERR_MISSING_BRACE_OPEN, pos +=
+ i);
+	+               p =3D strprefix(p, "CPUS");
+	+               if (!strspn(p, "{")) {
+	+                       parse_error(pe, FILT_ERR_MISSING_BRACE_OPEN, pos +=
+ (p - str));
+	@@ -1886 +1883 @@ static int parse_pred(const char *str, void *data,
+	-               maskstart =3D i;
+	+               maskstart =3D p;
+	@@ -1889,5 +1886,3 @@ static int parse_pred(const char *str, void *data,
+	-               for (; str[i] && str[i] !=3D '}'; i++)
+	-                       ;
+	-
+	-               if (str[i] !=3D '}') {
+	-                       parse_error(pe, FILT_ERR_MISSING_BRACE_CLOSE, pos =
++ i);
+	+               p =3D stpcspn(p, "}");
+	+               if (streq(p, "")) {
+	+                       parse_error(pe, FILT_ERR_MISSING_BRACE_CLOSE, pos =
++ (p - str));
+	@@ -1897,2 +1892,2 @@ static int parse_pred(const char *str, void *data,
+	-               if (maskstart =3D=3D i) {
+	-                       parse_error(pe, FILT_ERR_INVALID_CPULIST, pos + i);
+	+               if (maskstart =3D=3D p) {
+	+                       parse_error(pe, FILT_ERR_INVALID_CPULIST, pos + (p=
+ - str));
+	@@ -1903 +1898 @@ static int parse_pred(const char *str, void *data,
+	-               tmp =3D kmalloc((i - maskstart) + 1, GFP_KERNEL);
+	+               tmp =3D kmalloc((p - maskstart) + 1, GFP_KERNEL);
+	@@ -1907 +1902 @@ static int parse_pred(const char *str, void *data,
+	-               strscpy(tmp, str + maskstart, (i - maskstart) + 1);
+	+               strcpy(mempcpy(tmp, maskstart, p - maskstart), "");
+	@@ -1917 +1912 @@ static int parse_pred(const char *str, void *data,
+	-                       parse_error(pe, FILT_ERR_INVALID_CPULIST, pos + i);
+	+                       parse_error(pe, FILT_ERR_INVALID_CPULIST, pos + (p=
+ - str));
+	@@ -1923 +1918 @@ static int parse_pred(const char *str, void *data,
+	-               i++;
+	+               p =3D strprefix(p, "}");
+
+BTW, I've included there a comment in a line of code that I think might
+be dead code (I didn't verify thoroughly, but at first glance, it seems
+to be).  grep 'XXX' above.
+
+> > 	alx@devuan:~/src/linux/linux/master$ grep -rn '\<trace_event_filter\>'
+> > 	alx@devuan:~/src/linux/linux/master$ grepc trace_event_filter .
+> > 	alx@devuan:~/src/linux/linux/master$ grep -rn trace_event_filter
+> > 	kernel/trace/trace_events.c:2833:static const struct file_operations f=
+trace_event_filter_fops =3D {
+> > 	kernel/trace/trace_events.c:3222:			*fops =3D &ftrace_event_filter_fop=
+s;
+> >=20
+> > If you point me to a specific line of code, I can attempt a rewrite.
+>=20
+> I rather not touch that code.
+
+Yeah, I don't intend to touch that code seriously; it was just to show
+that it can be done, and it doesn't make it worse.  If the code was
+written from scratch, I'd certainly write it with strprefix().  The only
+reason to keep str_has_prefix() in it is to not touch old code that
+works, but not because it's more appropriate.
+
+So, I'd like to mark str_has_prefix() as deprecated.
+
+> > > > + *
+> > > >   * A common way to test a prefix of a string is to do:
+> > > >   *  strncmp(str, prefix, sizeof(prefix) - 1)
+> > > >   *
+> > > >   * But this can lead to bugs due to typos, or if prefix is a point=
+er
+> > > > - * and not a constant. Instead use str_has_prefix().
+> > > > + * and not a constant. Instead use strprefix(). =20
+> > >=20
+> > > The above can be replaced with:
+> > >=20
+> > >  * This is useful for testing for a prefix and returning the length.
+> > >  * If you only need to test the prefix and perhaps get the pointer to=
+ the
+> > >  * position of the string after the prefix, then use strprefix(). =20
+> >=20
+> > Ok, conditional to being convinced that str_has_prefix() is
+> > actually useful in some case.
+>=20
+> Note, the only "bug" is that it can't handle an empty prefix case, which
+> was never what it was designed to do. The place that the above fixes, was=
+ a
+> helper function that used this inappropriately.
+>=20
+> Hence, the use of str_has_prefix() was never meant for an empty string. I
+> should have added (and can still add)
+>=20
+> 	/* Empty prefix is undefined */
+> 	WARN_ON_ONCE(!prefix[0]);
+
+Why make it not work for a valid string unnecessarily?  We can do better
+by returning a pointer, which doesn't need to have this limitation at
+all.  It's the "good taste" design of
+<https://www.youtube.com/watch?v=3D78Y17hAo96I>.
+
+> The fwnode_name_eq() could have done:
+>=20
+> 	/* Empty prefix always matches */
+> 	return name[0] || str_has_prefix(node_name, name) =3D=3D len;
+
+Yes, you can.  But why would you do it, if you can avoid it?
+
+> Instead.
+>=20
+> -- Steve
+
+
+Have a lovely night!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--kholroagynivwo7h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrswOQACgkQ64mZXMKQ
+wql6Lg//YVBu5quwKa48IYsK3MUvtjfek+VRm3sBMvw34uqQQbD4VrJpvigFfuv7
+K5iFoOA3kh6Qpf+mXS/ZrbN4wEm9g+ck7ho4UsZFZZrAsPxgE9YKG+F8tO262GTj
+nzfG7tVh2fpW+dTuiia3LYH+BIauc5oOb0FiXWXHHjqtYWtHJAvClBuhDHsW3vdL
+adS4QqkAC+TB2YEgQJf4VtiaGoTevtZ33/hoBuo1gBAPtc+ykQPtxl+6Q+2gImFv
+ZZmYdkFHxQ4VinCfqgOj9N7YiQZMUam+E/ocLRNffcPH0R95bMvsmM8POqMEKwoT
+p4ui9Sr3iYMuGqBBtMo228LpRSV+73Ol557412C5JjY3YH43pz4WW6dzzyYyOlAC
+dd+WVLOVnIhSbqxg1H0zc675GzNqtBQ0TaRVIiRj06hLnfcNTKV8K9yjVB8TUvQZ
+UrLm3q6dDesvixkSdZqDfjTKB4XUZTZOZwYX+9bpOOO80W1G0j9guJ9IY0EVOFwt
+Dbh5ssqDErIvObM6SMeg3mRcGZeldt7uPyouOKqOPy3Wnx1SllfHVagH1rDaCjxW
+wItWsGJMZ8VrCgBeZS9PgBZOiUyvNJ96Y+f7dPdTyt+k6sJjfm8NxJ9AVL2OMxvY
+daJtFOlWr9xB7qqRWa9i5rVmh7Qtbyugex6B/9x/p1uZaIaUPs8=
+=Ik32
+-----END PGP SIGNATURE-----
+
+--kholroagynivwo7h--
