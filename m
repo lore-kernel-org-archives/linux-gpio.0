@@ -1,146 +1,124 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793869959;
-	b=KPBRdp+YjHgEVVQlGgJyLBMrwt6/cNYLjJgEk4le5qziRDwhfdRQl+IIX1jh0hUWPH5+
-	 YSizgYbaQ3nQGmiaVeb1Y3snst4y26pyH7xq1Y93c4+BpoCI8DgW2Wrk6OFU88HttLK5Z
-	 6Q/jPR0F3UKhyXILoNgdecFssFz5VWw+7YJrcCFx+XCa3GVB3LhE2yBXiPDHJRdGa6zSD
-	 u6r4Xqvh76rvnGQye1fW7iLBzJjPObatg7q6RRwjbVwy35uB9Xr1G27xMsh3j5465j0cr
-	 t+XjEop9JyANrE8RpUwfDbE+TEUsisEmBXW9wum2PVRYHBjx8UEO3g4tyrmJMNVk4xg==
+	t=1793869994;
+	b=5ZlFiY+bIkIdErpebqIZ7zXj3sYPXCu4BQwJVcnVF965j5Q3FVknQ8Qb7Cgvt+75uOS5
+	 q3obDoXr2zQ/TdoCNZGC96vDZ1T9ks9z8nYD6hNahJgWE4LbfZl8aRYKKcIUTLPtUePvW
+	 gYnANAf7cHxHAfn6i/vchxswareyRK6Ye/vOwIAZRscBnKhWfpvYnPMeLSQC5Q7eRFlTm
+	 6w383VW6TS92CPMTnGvWy+hgkBokrc4miLLoK6/GOmNUutFWp8iHM0KXT4XxWsWAojo1p
+	 TIWR+wM6Ww+IPym97j/wMayh7T4m5Lwu1sX1mxdiapp4LPtq/a/xtjOs9K5rdFp/2Ig==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793869959;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=90ShHs1UBpoe+W48ldmcLOPXtu87EtyXaSj0QmGFSfY=;
-	b=3YKMNEh62eZjRqhcM/PENilclPavP9/BkFmR7IlPJ0M/8CJDQP/OVbzrwzJkBMOfoO6s
-	 qepMPvCM8u00KfQowDVhs4+r9J0p+qMPVwdvsiN/LcFDZgmmVGbI3/35JYUmJoieli/Sm
-	 minZdOxM5DpMoD2CQLjLccHp/7rVMslbKTOLIy8N3JvluATGS42k33tVHRnAFf+VkBcqL
-	 RVb0hDH5lwAcfLf/ycVPBCtGB/RLCyu7svrskG0LpiSub6E02FvPYSNLLH7+Fm80G0clP
-	 qEVh1l0LNN/JB1tcDs+TTX2RKZ8/LXXyqgxGWEdZDSMPe7L06JTLSqNTBAc5Mm5q9/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793869994;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=q9yfY+/I3R7K6u83bmbStsO2lPmehAVb28U13aAr0q4=;
+	b=ldH7hbMbNwCODXwPf9PcGatO7wyh0LxayMVghLE3lCYYTm/JuTqH6n2oMCYhKGXounup
+	 fqk45FLwvC0QQPGSQm3n08/iLPnwMtkP3CNG9ObO9Bwxr9jxhohmXSqvP1Wz5Q9CbR6p8
+	 EUjmtwzzEGkkF9dPbP6NMXQjMw21ml/kXmDTyHuAJOBmvuGgIVEoIeEs/nJOFWOMPjXLK
+	 pUOMGXqL8Nkyuaaj4W0bTR+L2zpm695FsZVFjZiIoA9EZmrEMNzx4IoEexLdqpD7t/qdk
+	 ToAWI+AIi/A0YsWCIgGW+Vg+seX18ROO/5G0kL3AjNSuz7FoQszkc4TacP7PSrmz4uw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=L61cYoga;
-	arc=none smtp.remote-ip=198.175.65.9
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=VQY9vFS+;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Y1SkfBGp;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739C7606A32F;
-	Thu,  5 Nov 2026 09:12:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 739C7606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C29606A326
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:13:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 64C29606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=L61cYoga
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793869959; x=1825405959;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dz++69HapeENA57zHJBnq0oJ2fOfutZ9NHoiO/H6u9w=;
-  b=L61cYogaRBCqW6JsudCWRsfJL2K3EA2eal08XWtETkl2MOuIByhgzI6F
-   FICIy5UJJzOeLCUOBgNS86CWVfvWs7hN81mGTRhpBvCu++fjWC6fYPYwp
-   CH5v1ucJToptDJk4tqDEVfiNVeGwqAbfqcKqI/mdfqrdu9IEUh+swhlmd
-   M/0MvbOdE0Ce/Q2wA68JQknbJKHFehGAC9Zt5ta8hO1bmZKvqU7jdJayb
-   6HZliQHikfYbPt0pRTceSnrwvVyxGmh7Df37PhZhgXEtCukOpvnriC+k/
-   K9UDh7v+46805hdkP+N5tyUBtcujiFAAhZRy2xsno8VdyOfPY1dSxUJtl
-   w==;
-X-CSE-ConnectionGUID: BlDV9IZPRdeq25QMniSSTA==
-X-CSE-MsgGUID: 839hhwR2THyBco2kofCNHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2549131"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2549131"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:12:38 -0800
-X-CSE-ConnectionGUID: lR6z4GXfReGlu3/EPN36EQ==
-X-CSE-MsgGUID: lPmvdfNRReaL7TajpI3RKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7123499"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:12:20 -0800
-Date: Thu, 5 Nov 2026 11:12:18 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Chunyan Zhang <chunyan.zhang@linux.spacemit.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Ivan Vecera <ivecera@redhat.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Chanh Nguyen <chanh@os.amperecomputing.com>,
-	Alistair Francis <alistair@alistair23.me>,
-	Julius Werner <jwerner@chromium.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Ray Jui <ray.jui@broadcom.com>,
-	Scott Branden <scott.branden@broadcom.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org, mfd@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
-Message-ID: <auxIcruDKIYb9I33@ashevche-desk.local>
-References: <20261102135330.2493332-1-robh@kernel.org>
- <CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=VQY9vFS+;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Y1SkfBGp
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A56UC1l3819755
+	for <linux-gpio@vger.kernel.org>; Thu, 5 Nov 2026 09:13:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	q9yfY+/I3R7K6u83bmbStsO2lPmehAVb28U13aAr0q4=; b=VQY9vFS+f916fsBm
+	rX3P5iE9IbgB/XThZDvdwekJ7uK6K5qkEEV/GOdy++Ybca0QLidKN3svnWQjIFuL
+	e/sz8tVl5tbtUIEcZ4UNlG9au0DU5Kmq5aXsfIGhSmnn1vDPZ9rHxjUgt7uxhmGz
+	vpJnyA3qo4Cv5bY+cZ0xVctvGrEbRZqgPWkyC0hVrK8MJ+Q+r+zejMh5GdfyPxCm
+	g65/vC6yBgHSZByj+mjuZNByeCLUy49DmrLweKGzv2YsfzeLxooAvVsa/GMa7s7m
+	zZfgkrDd1yaAEHWh+P2wJ+7/VkdCuHDoQx/CT0BKuBKe3D0mnR+aXtr3FqAi7tsx
+	i5WkEQ==
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hra5tk4uu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 09:13:13 +0000 (GMT)
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-7bf3a6cf1c8so1296175137.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:13:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793869992; x=1794474792; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=q9yfY+/I3R7K6u83bmbStsO2lPmehAVb28U13aAr0q4=;
+        b=Y1SkfBGpVwIMsH5vGDMeMLMNceqWWnCtDiTEny1XVCCdTAZoVtOyk04LAD6aJiJ/3a
+         XaCOKjPhO62jZpUe9kd0kp+CweUBMZ7sMqijoOpeteTG3U++Sfk8hsQLumaUCeDNJZCA
+         GITNfWKZgLnyiyvgav8rgwhJ/FyKHqtqVyesXQRQy/mn+TXN3HmBNSTJR5sCntmMOwNf
+         zOPdiPgZRFmGGWQRC4qN0YIEMe9icI9IeJzM1qr/uwG6LyrySbvv9tqwmXKCPZB6U0hJ
+         0UXp5oV1ChZYGKdVvpgQZhPnyfU/RDxeJZjheLeVcndLzxL8j+17WyUlEMDAFyMW/usy
+         gOjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793869993; x=1794474793;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=q9yfY+/I3R7K6u83bmbStsO2lPmehAVb28U13aAr0q4=;
+        b=MamWvEq8Dt8BSieZ6tB1+o0uA0suDhK4FYQYN0dzbhiDI0JOQTxzV+bQBqMZvtU+c5
+         stB4WtRRvvb8vASDuLcFEAiVQNIN0Wcz1+AP9yS+F/iW8lWLlMEthIITIv2m58MsmVaa
+         bhg4UXgABOvmdoFMQw2MdZPq+T+zCeDAYjg4ZxDK/IotjoHt3NKeEi+lFoosbjoCe9Tb
+         Tv0OjxDB9Zo66VcLzRKUDBiPQ47VdrvWBNDaQBr3wG6+ZWUDc7K2LJzpHaFFLFt5u8Cl
+         VjhUQtLrSMHKo0RznrrV4TGRUouinsqN3Nh+Gnd+QavcTg1JoadaLvKm16dXfWzezDFN
+         hCxQ==
+X-Forwarded-Encrypted: i=1; AKwUvByR+BHX1Iaoh4yCvl8nRe5WKdD162qYpBSDoYpGGVlVVB/+Ep05QqATNrZAx2jPhqWeRkD5SF4iznbq@vger.kernel.org
+X-Gm-Message-State: APuU4Z+Ph288qE/y12MbNOT4euvCDHtm7owbewQjZKvFRiNAjyd4b53V
+	S2r84mbC/HuIMTyh5sJ29/EexfCLT3F7E3XPB3S/Dg6iT2b1WmJChBOCHa7OOpsNHH4etgRHFkW
+	STq4UPfvTrHUpcvZJC81pjXesJGjh9H3SaedmWbNQkimlz+X73o+/CxKAfZ/4acvX
+X-Gm-Gg: AYBFou0D9wiHTvbUqA5qzrbdPingxBVXTZYQQglT/1hHFO2gQ4uz91jjRT4rbHGaRWK
+	NA9xSPTjSAULv7N1CADP9Qv/tJCIDPF1EnrLnOAa3samA2yJyM3TqvjoxHTMp9HLVC6wFknyLW/
+	dKY4w23ofxN7ezdjzJQ7K5vLLVBfpS0egF3J6OIIdQIYrhHk+DxlC+/d5KbIka3OZtjkKPALgjy
+	hwuX4VsuKLMfQJQAz/0Ip4UAQo2gHJdVYhanp//oJYCPrmXQj97LA2LTYmqeT31i95zx2YYFSfu
+	GdhGNQAEPKc6D5smhCU1OtdRo/cZuBopfnNxyAmfHrxvXl1l2zfrVAf0pE8OofjAEmQzDlcznYd
+	vxad636m/rb6fD1DJ1aNDwWF8L4Iq3AQKXKtWkV2ZkUBjFqwUTmZ41ufwm7gT+EkMMcZxLeOZao
+	Mw
+X-Received: by 2002:a05:6102:5243:b0:7cc:115:ddf4 with SMTP id ada2fe7eead31-7d072cafbdamr8260497137.25.1793869992590;
+        Thu, 05 Nov 2026 01:13:12 -0800 (PST)
+X-Received: by 2002:a05:6102:5243:b0:7cc:115:ddf4 with SMTP id ada2fe7eead31-7d072cafbdamr8260470137.25.1793869992117;
+        Thu, 05 Nov 2026 01:13:12 -0800 (PST)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fea18175bsm8523052f8f.7.2026.11.05.01.13.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 01:13:11 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Aaron Antone <aae@amazon.com>
+Subject: Re: [PATCH 0/2] gpio: aspeed: Fix lost interrupts from write-1-to-clear status bits
+Date: Thu,  5 Nov 2026 10:13:09 +0100
+Message-ID: <179386998646.14190.12898260042958043905.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261104-gpio-aspeed-irq-status-v1-0-9805645f856d@aspeedtech.com>
+References: <20261104-gpio-aspeed-irq-status-v1-0-9805645f856d@aspeedtech.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -150,37 +128,59 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA1MDAzNiBTYWx0ZWRfX1CR/kMI6VfrB
+ 5BvfDy38pCNGEROvUgxxTE18WBtO8GtgNeo2z7d5jmg1upuw4yADUDA6wNxtFUGsjU7v/T9xyj+
+ W1+HjJx11tpUTlFF7+dxelmol5FCakM=
+X-Proofpoint-ORIG-GUID: XEhEGjU-UXz4nQ_Q013abyvDOcs_zNf1
+X-Authority-Analysis: v=2.4 cv=P/6vFSAu c=1 sm=1 tr=0 ts=6aec48a9 cx=c_pps
+ a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=voHqOY2aTaljLMbC2lEA:9 a=QEXdDO2ut3YA:10
+ a=-aSRE8QhW-JAV6biHavz:22
+X-Proofpoint-GUID: XEhEGjU-UXz4nQ_Q013abyvDOcs_zNf1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA1MDAzNiBTYWx0ZWRfX3Tk+wd944P/3
+ B5BQRDdf3cwRDxxxiVEbFznDqYmgNauEErj4lsLLg8UGZwr24AXdZxmqtq7MZjAscUBQjJb6RBj
+ Zrxk3ZZAQMzgU6NCXVsstXEQ5/VipSo2W9H7odvZOCn7YP3R+WKlwXzEJOgjO7seuVkIRxa5/pY
+ HNqVDbGUCKfylutoZFFQrSKsEO9Gu5b/3UslCmAjedU4c0A7FJOs5sDEJRyv6IR2TKMPNbtkLIk
+ i9yatWhcd85AGAA+1LvrYN5G2xnvCHNbavxS2ACpkP4m1l4lBw8Ny/IVQPRnnuWdu/7suP2KE5k
+ vKSQ5ZofiLvRvjUCVRvc+q0tOmEA/V+kqcrH934DDiu0I363OPuRIMKk1PO6xEDNDdOCIyVeaFP
+ zThOsBCwhQ51haEk7fI1Szyqtu1ntvUZ2rms0Gwe4t7q2jTi1CILeTPZNLOWaCQxd8upKTl5Tg5
+ B6qmVsq7ZPkvSoUYYBQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-05_02,2026-11-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
+ definitions=main-2611050036
 
-On Thu, Nov 05, 2026 at 10:39:06AM +0800, Chunyan Zhang wrote:
-> On Mon, 2 Nov 2026 at 21:53, Rob Herring (Arm) <robh@kernel.org> wrote:
-> >
-> > Unit-addresses by default (and most commonly) are hexadecimal. There's a
-> > number of cases using decimal patterns. Fix all of them, limiting the
-> > pattern to match the 'reg' limits if there are any.
 
-[snip]
-
-> > --- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-> > +++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-> > @@ -47,7 +47,7 @@ properties:
-> >      const: 0
-> >
-> >  patternProperties:
-> > -  "^([a-z]*-)?sensor(-section)?@[0-9]+$":
-> > +  "^([a-z]*-)?sensor(-section)?@[0-9a-f]+$":
+On Wed, 04 Nov 2026 11:58:34 +0800, Billy Tsai wrote:
+> The Aspeed GPIO interrupt status bits are write-1-to-clear on every
+> generation, but the driver updates them with read-modify-write helpers
+> that write a pending status bit back as 1. Each write therefore clears
+> interrupts that have not been handled yet.
 > 
-> Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
+> Patch 1 fixes G4 (AST2400/AST2500/AST2600), where the status register
+> covers a 32-line bank. Acking one line clears every interrupt pending
+> in the bank, and an edge that latches after the handler has read the
+> status register is lost. This was observed on an AST2600 BMC with two
+> lines of the same bank toggling together at host power-off.
+> 
+> [...]
 
-Yes, I agree with Krzysztof that this tag is ambiguous. Please, mark precisely
-what have been reviewed.
+Applied, thanks!
 
+[1/2] gpio: aspeed: Clear only the acked line's G4 interrupt status
+      https://git.kernel.org/brgl/c/5d362564bd2982def7e80d7f1e756a97440c7adb
+[2/2] gpio: aspeed: Preserve the pending G7 interrupt status on control writes
+      https://git.kernel.org/brgl/c/18cc1d1ad94df8a6760fff2617d3d6923550cba0
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
