@@ -1,55 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793888573;
-	b=s8ehPvglDAlw32V7cVo926AzzJWEfClHiVuhMY4mWRudh2EEAoSar52qhtEfp25HxIzU
-	 SQMKUpPmIsPJq+hF5xk8n2SdhVLT62lCj6+5pU360lTDPftxcQdiQgT7Z1oGcwAceNS2j
-	 Q3RxdXVlcH2J6Rdn7dkQaGb2Oke5KBlipZOUfnujPRUMs4lCAyUj17DDee0+jgAAD4GK1
-	 Aqp9wiOHEfI9RDBgtwOVwUT2He+/4mqcM4cy6wGidoFRoJ5Kf0IGYAV/pOCcCqqUfwFE4
-	 xYghfgbzugfkzFaFNpMqu9lL+WuCqO6IK7wxkI+/D3yF1dvDKVzCqOvc1wNBK1IkgKg==
+	t=1793888580;
+	b=s8+ZRCvWDxp+KKLYKlrDMQDJh2LCJtyewGt2vQEeKP23F3MF15SKoKJsU7ZXoIF9NIIV
+	 8ZUqmKevQV7j07wCE+PXpFCDtAxFswjovZucVsRfm74p+OzJ2n+TqCbepb4KJrhfVCVUX
+	 ap/nlhVcyKDGV3ywrQas4Igy2s8RMa3Q/E+l96H8FAdsT2Rv0Z2owltCrphJIP4trFsBU
+	 MpeJq7Z+hOwK1PPwdxVEViJ8a6qKcl0vnk75s4r7hfmjDaT4hsl9q0p8FmhQ+WUEdJpN9
+	 2YF4pX1Hw5zgqU1RCSG6Z35p7qNcraj/moIg7uZgF7pqIClwjsf59YNEn+88WzI1C2g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793888573;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=XjrY8UgRoVN4jYQCQ78HAcD/mxdonyUgWpg8s0a/R9E=;
-	b=jBA14KYGz79fGHZ62SxpTNApWkiZwYd8JwzTLSaNbae2Nq/CQ3qTHIENOrOOJw0XOFPC
-	 0Vw27aQjJLc3aP1Hj4SiGVQ564iNv47liprvl3V5RpSd7mpG31ufMNsIjGbC9dECvuPeA
-	 SVL3abujiqId+ImhgnfEe+1K3PEv1azQemz3eLukiG4isBeJJtUjazfJ7l6vL4SzJbvzi
-	 3z1mdC/dYvMXuGTclSW3ACN+O6/ahxaLXeQJuPWsgXL5srDxoWVh5kEFHzrA2c7ZYXO6N
-	 yn/4z3dzs7BMKL4HPTZmQzMkaAOm2Q7EHRjvCTvYLYmMjL3NsfJ0RadU0y69VR3rR5A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793888580;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 Organization;
+	bh=fr/sToHFkpF9BPihxA953uG8doO1fE0lFSHPRxWhDoE=;
+	b=U7Dh5zbJaSE4+k8E3AAl7dpNXC+IqrGNusY7aXFwOLic5YlfeCYwpH/fJAQNEiwfcims
+	 Mhwo/uYdR48Anp3oqCgUfIQ/YpcSHP3pGNAc9rSYOya8NjZKi/pCkCQ3f57ivDGQzr4Ab
+	 RiyZqq2287FUKRD0lboHVBk4lTlmwOg3elQesYxsNPc0tfadcb3Djtj6i3a/InDPZQVeg
+	 BzLfPP/cQgOJv1NPlirf6m1erZZrKiZTafImpiYsle1PHSNfQcjWd8ZGGkgE8Z8pTSDZu
+	 HOnmYN+ZghZFfa6Xp7fRhWigDsO6idZBBgSvGES/7IasXIHNQ5/Da6+962OOoZXmvOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gjggjMSz;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kqUQNpzO;
+	arc=none smtp.remote-ip=198.175.65.17
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27045606A332
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 14:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C548606A326;
+	Thu,  5 Nov 2026 14:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C548606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gjggjMSz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8A61F00919;
-	Thu,  5 Nov 2026 14:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793888572;
-	bh=XjrY8UgRoVN4jYQCQ78HAcD/mxdonyUgWpg8s0a/R9E=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gjggjMSzFXFC+Nz6Tupdco/I51JZM1iLktg9TNAPmu385TxPP5Wh5fzZd7j0dwEco
-	 ZHVuAo2n5Corp160ipF01g5O/pNIZ3FEpP/iHLRWX44Wa16M7hfXdUvOf2VNGAQlVP
-	 /GgkwxA4eqYpLJq24FpzOQZq5D0t5695rmWFIL5Hxm8Wxb2WNlA6Py3q8/Ss37G7Mt
-	 mz0TaV7iO7SB2XyN3tpjx2loKtpci+CV1VuGaJvbDsbhpaVWWkuedMDwzhci8NxBaZ
-	 0y1kDYnoBQ6ZioelAhSlkTg5r4h7Cg23lwauNmwJc5r3Y0iZtxMgLQj3L22FFLFBC4
-	 QZzGQu6rStsrQ==
-Message-ID: <sashiko-outbox-199237@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3] pinctrl: nxp: s32g2: Enable by default on ARCH_S32
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Khristine Andreea Barbulescu" <khristineandreea.barbulescu@oss.nxp.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261105141347.488850-1-khristineandreea.barbulescu@oss.nxp.com>
-References: <20261105141347.488850-1-khristineandreea.barbulescu@oss.nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 14:22:50 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kqUQNpzO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793888580; x=1825424580;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=8aE99+VJcMQQ2lFtFNMEVuo+WAHaGpOaIlVw0wUkjj8=;
+  b=kqUQNpzOAFCaYDSHcp8Wj4WmpoX3nJS4a+Kgf73h8jtx535iIXYYaWOe
+   K0Ea57swpZPo5j8bLuVT7bTDYB4F+f0tuwUQH4ZC99CXKTnfsFDX5TXY/
+   i6xUcn5URrVaHkYLilXDyz909mDABgqMSPSqwyt9RxltWwqH0JvaREGZX
+   Ofz5IGRm296N/vS+3rBNBIhX/rQ4IfGN4Uy7pR6YI8GSgrLaksPFXeES8
+   KU9Dr+YOg76ZZmPaFzwIFGav1dnKbeabAUU7RzNkIgXYEpEPxT85n/Ebe
+   bct31QF/JCTlCuG/1Mod9N6tbDgiVUZCYJf6T/+vjf7AaH8uVllOkmbT5
+   g==;
+X-CSE-ConnectionGUID: 1l10Jx00QbyIWqho+oNmdA==
+X-CSE-MsgGUID: dc6UTu26R/qspd0UlFgWQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2703073"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2703073"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:22:59 -0800
+X-CSE-ConnectionGUID: /K275MsMS2iu65atWdhLvw==
+X-CSE-MsgGUID: RsKg5am+RfCPmB5pvRDPCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7192371"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:22:47 -0800
+Date: Thu, 5 Nov 2026 16:22:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Imre Kaloz <kaloz@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-hwmon@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>, virtualization@lists.linux.dev,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>, linux-aspeed@lists.ozlabs.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-unisoc@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Michael Buesch <m@bues.ch>, William Breathitt Gray <wbg@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 00/23] gpio: Improvements around device-id arrays
+Message-ID: <auyRNagFOmxf_3nW@ashevche-desk.local>
+References: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
+ <2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe>
+ <auxh9PxpJScFO3i2@monoceros>
+ <le5gbua6s2mhhv32di4j77qr2we5z5ngzyzmiemhodmblvjiji@q4wf5tdgrbtv>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,75 +121,31 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <le5gbua6s2mhhv32di4j77qr2we5z5ngzyzmiemhodmblvjiji@q4wf5tdgrbtv>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] pinctrl: nxp: s32g2: broken COMPILE_TEST prompt with strict ARCH=
-_S32 dependency
---
+On Thu, Nov 05, 2026 at 01:25:34PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Nov 05, 2026 at 12:06:33PM +0100, Uwe Kleine-König (The Capable Hub) wrote:
+> > 
+> > Maybe you just need to add `-3` to your workflow? ISTR this should be
+> > the default for b4, but it seems if failed to mention the -3 in the git
+> > am cmdline.
+> > 
+> > Should I still resend?
+> 
+> No, it's alright. I would have preferred a clean b4 shazam but that
+> works too, thanks.
 
-commit 065380d0c7f62b7d0370fd1bcacf175935178d8a
-Author: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.c=
-om>
+To make that one should really have a unbiased base with the gpio/for-next,
+say v7.4-rc1. Then with --base present `b4 shazam` should follow that.
 
-pinctrl: nxp: s32g2: Enable by default on ARCH_S32
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This commit enables PINCTRL_S32G2 by default on ARCH_S32 and restricts its
-Kconfig prompt to COMPILE_TEST so that S32G boards have the SIUL2 pin
-controller driver built in by default.
 
-> diff --git a/drivers/pinctrl/nxp/Kconfig b/drivers/pinctrl/nxp/Kconfig
-> index abca7ef97003d..d6d97c944b94e 100644
-> --- a/drivers/pinctrl/nxp/Kconfig
-> +++ b/drivers/pinctrl/nxp/Kconfig
-> @@ -8,8 +8,14 @@ config PINCTRL_S32CC
->  	select REGMAP_MMIO
-> =20
->  config PINCTRL_S32G2
-> +	bool "NXP S32G2 pinctrl driver" if COMPILE_TEST
->  	depends on ARCH_S32 && OF
-> -	bool "NXP S32G2 pinctrl driver"
-> +	default ARCH_S32
->  	select PINCTRL_S32CC
-
-[Severity: Medium]
-As reported by Sashiko on v2 [1], does gating the PINCTRL_S32G2 prompt on
-COMPILE_TEST work as intended when both PINCTRL_S32G2 and PINCTRL_S32CC keep
-a strict dependency on ARCH_S32 && OF?
-
-In drivers/pinctrl/nxp/Kconfig, PINCTRL_S32CC also requires ARCH_S32:
-
-config PINCTRL_S32CC
-	bool
-	depends on ARCH_S32 && OF
-
-Because a symbol's depends on expression bounds its prompt visibility, the
-prompt and help text for PINCTRL_S32G2 are only reachable when ARCH_S32, OF,
-and COMPILE_TEST are all enabled simultaneously.
-
-When ARCH_S32=3Dn and COMPILE_TEST=3Dy, depends on ARCH_S32 && OF evaluates=
- to n
-on both PINCTRL_S32G2 and PINCTRL_S32CC, preventing the driver from being
-enabled for compile-testing on non-ARCH_S32 builds.
-
-Conversely, when ARCH_S32=3Dy and COMPILE_TEST=3Dn, the prompt is hidden and
-PINCTRL_S32G2 is forced to y with no way to disable it, even when building
-for non-S32G platforms in the ARCH_S32 family found in
-arch/arm64/boot/dts/freescale/Makefile:
-
-dtb-$(CONFIG_ARCH_S32) +=3D s32g274a-evb.dtb
-dtb-$(CONFIG_ARCH_S32) +=3D s32g274a-rdb2.dtb
-dtb-$(CONFIG_ARCH_S32) +=3D s32g399a-rdb3.dtb
-dtb-$(CONFIG_ARCH_S32) +=3D s32n79-rdb.dtb
-dtb-$(CONFIG_ARCH_S32) +=3D s32v234-evb.dtb
-
-Should both PINCTRL_S32G2 and PINCTRL_S32CC instead use depends on
-(ARCH_S32 || COMPILE_TEST) && OF (or keep the prompt visible so non-S32G
-ARCH_S32 builds can disable PINCTRL_S32G2)?
-
-[1] https://lore.kernel.org/r/20261104113905.96582-1-khristineandreea.barbu=
-lescu@oss.nxp.com
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105141347.4888=
-50-1-khristineandreea.barbulescu@oss.nxp.com?part=3D1
