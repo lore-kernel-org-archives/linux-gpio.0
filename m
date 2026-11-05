@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793866700;
-	b=n8WR1+iSzb3ioR+qgS0kpCn65yPgc/00iGycqXIuEd+lDWMR1iu5+LORIYUl7MAYXzk8
-	 60CQgtQGuJnrX2Ip+QgLd4eT0gKJgXN5Pz7BaH+vXlzlAEZvyBYXCsDtjQy7fvIicbYXW
-	 qiqRXm7vgCAgu+8xieM5TX/+GZErw1AEkuo7eWHNJfeZOZ8U8rssHsTjkcrIRDUPA/B4H
-	 tETVX3A0gCZaeRsFk287jvk2taSrteHAQoexAUlW2psoXCBZHqLlS4+TJL/grYyDjEGDn
-	 IyFueL9m1AdfU34EfGMttylibcTo2na96sXFjzqV8vFs4lsgQYW3MSkIL5Knq4A/B9A==
+	t=1793866755;
+	b=5qSO9AC3qjzeUp/XcYIs5r7ee8unZhaNBk3DFwcxfUmDqLgTuwe4FP/XLOhHjg+PkPug
+	 fRS4rvEKn6QLAkb3iPWhjVkzivG5XF1PmJNCriKAFqK3dt3PHxqQFfT3c5BkfOAe1GOxu
+	 /ybVLbiuHXtYJG5PWdIubWevUb/+KyfT+wRfU8gGiFQOBXPDOYzwnSGf/hHvAM6tuvw1s
+	 173tBaoYhfqxPVUV2FXBaazvooB0VL9QaFKKkjmoaWQpFCXcK8KjFzo6C4AAdNzJGkEUu
+	 5lfkmptbqWkF1NECq9jbscNfDeygYYYRn569w0T9UAUishtDJzdTa+yFGQcr5B2ORRw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793866700;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793866755;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=GpvzrD7F7jCcCoPYNwHv5Dd4S0jtahNQZKslWEbQ0P8=;
-	b=ywDTvmLRRbSAMyAhUP2V9yOfSoJFXbkFtxDfFFUmhsjmvpPkx+FwJcyWL27M6HFdcTNS
-	 k5uB4URFTkskgC2NvW9uJcxULfl0diApcEDouEO1n8Ita/ppgEuYsFSYeCM4jd27J4F+a
-	 /XMODfnhd//Png3K48jCGBHCst8qVYMwFCpoI9J/myP0qIekGMHl59epZcnPb5mBhJU6Q
-	 HN4GKUnjdWXju7T+SmbtZ1dQBD2R6k23AmzxbAyJal5btJVBLd7rKtMEAMR0qnDI4yz29
-	 LCqcMZwngrk24w7SVtIBKPg3bKNCpLEAvpQVHcNYJd3S8gSx3wKKEULWukdXNrMMmhw==
+	bh=ib4GITzjYi7Kk431BobfzMOoYY06Hiby9a689p2pAyw=;
+	b=l43ZJdX1nlx1/al9g5wVObZjEVuSMpBVtGvcGW9EXlbzoWmvQDDAfZpZRo5uqI6psqwe
+	 dw7LLKtSVBQvNIY95kCPFGmn2yDAqBMjG9ke7Zepog7RUTsIEoO9T5qSmQ02Z0bpBimsy
+	 tVT5wPjxQNiKBpiAkUIfuW/GVYnaDPCYgiv9jdyNYW5zS6BgyaKZiMNouaPlwrYnpOlbA
+	 54C+N3Ev1tgDnm3qVV3UgQmrDOeN89qCDhmQaUWrtm1kY9QFiN+eaNBbHpSI4Qu2OTgl9
+	 GVLFZFnx+NV0/yWXQFpe9Js3PDNKisukm9SumnblXvM6knh4roAeTBn6e00zhYeC4Zg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ccwPl9nR;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X92nUbgA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066DA606A326
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BEE606A32C
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ccwPl9nR
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC6711F00919
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:18:19 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X92nUbgA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FF71F00A02
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 08:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793866699;
-	bh=GpvzrD7F7jCcCoPYNwHv5Dd4S0jtahNQZKslWEbQ0P8=;
+	s=k20260515; t=1793866754;
+	bh=ib4GITzjYi7Kk431BobfzMOoYY06Hiby9a689p2pAyw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ccwPl9nRkf2ZOFBjnTxVK9cOOfKgAS0ppaY9JPoljHKTeCyNa9xXaim+rywFlFRCv
-	 G1napga9Rx4UzdL4Mn1Sq9z+JsNwcl9oW9zUqAXhva1vSdaNMeCCAAfxJmSJKAUaZZ
-	 Mcn9FCcz+TohZC4yZX/l6pC3C/hqfNiTc3bXH6JGk/q+OalieFL1x35auKhG7XM1rC
-	 OH5vu/nlTcDJK3ge53Zgd4guj+0q2ER5BubCx0Z0myIfLLinvggLVQeFgphzgrK/SX
-	 gKHp+NvCf1wNGVnMNCYNuZf4i1hlEXUvOvO0t48DPi/qG26tR5szmrOylkGikaJGyM
-	 pAHNDJS3mjmDw==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5bfa7c09c9eso1127415e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 00:18:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvByI20TdkLHWFawnO4lmQY9G2ZZkRvjhoKWviXV1qa42weOAXeQsQ9eaUvm2qle7qfCGzK9a9GGxbgMb@vger.kernel.org
-X-Gm-Message-State: APuU4Z9zAgELEoXfnYeQHdlKFuFSSGvJbz/HwuseIRgD3fkYCZS+W1zZ
-	9AtpMfT92Xf072RQq071jeT8vjvIyxXcjbTyhKxhRsUBWvyF4w53zoiDNf8JLr2XvqL9y2FA42a
-	l2FOwxEvfa/dfKBpdXW2jrBrEdgnlo4Q=
-X-Received: by 2002:a05:6512:33d2:b0:5bf:d072:fa3f with SMTP id
- 2adb3069b0e04-5bfd957dd98mr6086669e87.54.1793866698495; Thu, 05 Nov 2026
- 00:18:18 -0800 (PST)
+	b=X92nUbgAyE6EP3txRRGVfK5+KP0HXjJeJSylgu24H9x8r1P0iVkXPSvvTehI8JimP
+	 rgIy+ci7KRBOKMkeFdW5Zgs0/cJHbOtk2GMVDA9R/+vWFpgw+748hc7iEkq+gkttVK
+	 3uuHbO+bH879PRREvI2H/tEMoZuA1SkKfrv9X9at0Hye/FeQJ7Rgy/dNu9GE45wiyp
+	 vuwGYvArItK/m5WCtI/j4AdYWxpth+2Hoj6q+tUiYxlMJYLHficvSCNZywXBVhAkYz
+	 3lvFU6xo0oJCLcyYWd60V4HljZfnInY9tHnjwv69VdC2IwsPRNt8DR0kxxRDXFFWEu
+	 lDqvUiJeXPk/A==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3ab3dd9681fso16062691fa.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 00:19:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBxd/DYD0MSLSXxTDl4zW+Bjk9bYG1RcrpueoUYO1+uyuSwi5NOd4SW2pRhQLUGLkmTiWK3bKTnp5xYP@vger.kernel.org
+X-Gm-Message-State: APuU4Z/KdEGbwurVgP2Munt89SX1/a5Lr1e1fZv5OrFmDkc63rj4lMyD
+	/rsWwmZoBFuy7hBdUFidcS/AW7rbi47aHJW29E51oPTR/vdxkxTVoNE0oj6/CnjLyCkIrYmqd2l
+	NJK6CEDFTdtuw7Rlit/kvskr4HIgw7Zg=
+X-Received: by 2002:ac2:4e0f:0:b0:5bf:ce85:4d55 with SMTP id
+ 2adb3069b0e04-5bfd956bbc7mr5837021e87.33.1793866753657; Thu, 05 Nov 2026
+ 00:19:13 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,52 +59,45 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261030195025.5153-1-muniquefeitoz4@gmail.com>
-In-Reply-To: <20261030195025.5153-1-muniquefeitoz4@gmail.com>
+References: <20261030195025.5153-1-muniquefeitoz4@gmail.com> <20261030200827.24648-1-muniquefeitoz4@gmail.com>
+In-Reply-To: <20261030200827.24648-1-muniquefeitoz4@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 09:18:06 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
-X-Gm-Features: AclHuK9XBSPBxmFe5Hgt9gaUyZoB-LuyN9Cx81zQH1wuYsj1bWqxtM_WPhjaH9k
-Message-ID: <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: amd: Clear interrupt enable on spurious IRQ and
- skip unhandled EOI
+Date: Thu, 5 Nov 2026 09:19:01 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkYC2Fjwy_LFEP1=uUioGX0QGJz3pXrZrqzuq=oT_5EDQ@mail.gmail.com>
+X-Gm-Features: AclHuK_Ml_OL847AN20qFhPaU3w6DGrMl3QakVm76l9q0Nj3vlc94VmLs_pDZp0
+Message-ID: <CAD++jLkYC2Fjwy_LFEP1=uUioGX0QGJz3pXrZrqzuq=oT_5EDQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: amd: Clear interrupt enable bit on spurious
+ GPIO IRQ
 To: Munique Feitoza <muniquefeitoz4@gmail.com>, Mario Limonciello <mario.limonciello@amd.com>, 
 	"Mario Limonciello (AMD)" <superm1@kernel.org>
 Cc: Basavaraj Natikar <Basavaraj.Natikar@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sashiko-bot@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 30, 2026 at 8:50=E2=80=AFPM Munique Feitoza
+On Fri, Oct 30, 2026 at 9:08=E2=80=AFPM Munique Feitoza
 <muniquefeitoz4@gmail.com> wrote:
 
 > When do_amd_gpio_irq_handler() detects a spurious interrupt on a pin
 > that is not configured as an IRQ line (!gpiochip_line_is_irq()), it
 > currently only clears BIT(INTERRUPT_MASK_OFF) while leaving
 > BIT(INTERRUPT_ENABLE_OFF) set. Unlike amd_gpio_irq_disable(), leaving
-> INTERRUPT_ENABLE_OFF enabled allows the pin status bit to keep
-> re-asserting in WAKE_INT_STATUS_REG0/1. Clear both INTERRUPT_MASK_OFF
-> and INTERRUPT_ENABLE_OFF when disabling a spurious GPIO IRQ on both
-> main and RGPIO banks.
+> INTERRUPT_ENABLE_OFF enabled allows the pin interrupt status bit to
+> keep asserting in WAKE_INT_STATUS_REG0/1.
 >
-> Additionally, if no GPIO interrupt was handled (ret =3D=3D false), return
-> early before acquiring gpio_dev->lock and writing EOI_MASK to
-> WAKE_INT_MASTER_REG. This avoids unnecessary MMIO accesses and spinlock
-> contention when the IRQ line is shared or asserted by an unhandled
-> spurious interrupt storm.
+> Clear both INTERRUPT_MASK_OFF and INTERRUPT_ENABLE_OFF when disabling
+> a spurious GPIO IRQ on both the main and RGPIO banks.
 >
 > Signed-off-by: Munique Feitoza <muniquefeitoz4@gmail.com>
+> ---
+> Changes in v2:
+> - Drop the early return on !ret before writing EOI_MASK to
+>   WAKE_INT_MASTER_REG so that spurious GPIO interrupts disabled in the
+>   !gpiochip_line_is_irq() path still receive an EOI signal on the
+>   controller.
 
-Sashiko comments aside, we really need to put Mario on CC for
-AMD patches, Mario what about adding yourself to this MAINTAINERS
-entry:
-
-PIN CONTROLLER - AMD
-M:      Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-M:      Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-S:      Maintained
-F:      drivers/pinctrl/pinctrl-amd.c
-
+Loop in Mario on v2
 
 Yours,
 Linus Walleij
