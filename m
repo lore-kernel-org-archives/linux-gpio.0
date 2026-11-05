@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793869764;
-	b=bUcUXbVvv7dgVdJcNLcln8KXh2PNfmfoyOLG9OklqS/F5GZQg3kaj9QC34Ol/xLH+ci+
-	 WX2TW7TWcxePcbMtQdOA9/wy+yo3jEhCCaEOCTPIEJij8qUXZqoAxOu6oyN/IZ3SKH96h
-	 pdvM4lSJSJkuMXMZaxVsi1JJvlYddyosEd69KExB7O4MFa8AVWt0kzepAsAifNbVL70DZ
-	 jIlTnf1wG1S0cG2LBUV9AkVvog2zie0CY9lmsRYbbaVvyfg/bmjJLrFN20z+GscWvnZDb
-	 9KnAPQbEa8HfikY9LblIS94+JNoCjXYHR+O0/NtmJjtzSldOWh+Xj4vFORaHeepaG5A==
+	t=1793869831;
+	b=P7eoQlH1zaO41g3Xb/qLCTsfdqrwQ9RKvab4wzqlIRRYa+svTAN28fpigHBuylrhdpky
+	 d8crLH/jWJf7/W1X/bX+fnoU8ByXD4RUtB611sHr9cPuZYttzR2/jChh1dASR2n4XrfuQ
+	 wFkz+rT9yRZI8pkO3bJVaZfDDJBF0whEMxaJb1OI8Lxq8HTF7jsomxjT2eqciII48bKYL
+	 onz/6athSZPwi8AGplhOx47Bx8g42Lxx20CjrLmxfKBRl5ZeGDEns6ooeswIpPbxYDq+n
+	 a5rYOJeoYuNKPHqVnX7BlOF+FgMjuu1M/mTB2v5fosRIRyLZ0lqh4UaUiH2lqSuUqQA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793869764;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793869831;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=XPRzF8D20vLGlolnD97rznjy/PyLkjp3WUP5Ugc731I=;
-	b=KQFbUKle0gZgkLdAvZhc/L80uFr0IOSeqeLriXREn5YiFWLNi95b5A1lg8jpdKeo/6J0
-	 lZ5CEJoj6euvsjKI2svEyaIZmOpfYdJ/DTfdUeusPFhA0xWefGTEytiKrlfyf8PmLDNDH
-	 rQuVViqH82PeZJpERtLyBzG9A/9NgzbF7HYjAFTieZnqBQeNSS7xxFVNvz9Nv5SSxRVqo
-	 ZH9RmKJGybRi5Gd+ZitRTFW4Crnkm4RAlhWrmnUIa5Ro59gwj7g5qZYEKg6s4S1HKd2NH
-	 dR2zI9BkR6bPyCoplPp5bWYLRKD5wINcPF1jxKjxHJrw+JTWqmUvpoUclzxu8FyZRKA==
+	bh=l8FVoARO3j3t6Swl/r4USV4n/IIP1DJGnmzvtDWkxwE=;
+	b=nuaJcB3X6ulbDqm+kXeHuP2e+tXVWygxqzQOuNXZ3fx+T2um7up8pUWLXwaINyU/iQtC
+	 kiyE7a25hEoXCRKZhIc4E1bgNkPjtWCMtvoB2Jrm5P9b0yp+g1P76ZvD2WJ685od5D/ii
+	 TP/88lujljdUJf3zpB69oj/f5xzwS0NNMbfrPMn+5GczS6aGc5I4KCN9WxGL5qBC/XiF0
+	 nmm1wB0AbpmUs5nNXODikD5qOebx/IgTyB3G3oZMH3DUwLSvjyKNHsCjLtCeD/WoR92V4
+	 kQFhiSbgzXuTTJr/jKwYblxFLC3ZlLynyzvXWFRImzreUMNOZ0SUtdYxYWyX5NHB6lQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j0YBO9Tg;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DAR24fhg;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F329606A31B
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4383606A333
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j0YBO9Tg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF9C1F00A18
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:09:22 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DAR24fhg
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BE01F00A15
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793869762;
-	bh=XPRzF8D20vLGlolnD97rznjy/PyLkjp3WUP5Ugc731I=;
+	s=k20260515; t=1793869830;
+	bh=l8FVoARO3j3t6Swl/r4USV4n/IIP1DJGnmzvtDWkxwE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=j0YBO9TgqzMAtvAuSX2lrPFPyFd3f4S5azEeXlG0JX/KfBjdZbp/ITajY4PVdkKaQ
-	 bDXhtthgDlDLbQpxRUazncbOeJnay3/hs4HDv8HsEj0VpKSfGKd2uf3LkVxiyI7vN+
-	 +hyI4ZLXG6a88naS6Wc7g2EPDDoSGU+Yy/bYpPYU3ILhrXiDmPNLf13spSi2BhQcCo
-	 sUNw25Vsci/ODn8tA3mgkTanWMSmEfEwWjIHjNK5Gjt4PwKVU7TDXC4xWJ0Y2slK+W
-	 vk2m202zueGQiShMxhHYerAVjgTIFXvrfilAugoxVofi3gmnqtFfXO5m4O9p1Kdadm
-	 ANysnK53Iky8A==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5be3ed646a5so2051177e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:09:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwkddHc5lq2YrS89euI0AhHJfpXjIj4fKAyGucnPwr//dX51MRBTFkJbyc4EeTr/XfcULwxwmOZfxFG@vger.kernel.org
-X-Gm-Message-State: APuU4Z/p6VDvukHAmEuw2k8ldbPykV6Uf0Yr666vco+kLDYVY2huOn6T
-	0+DahvMcQ1bhoW89zKEPm9zdrrWVGgDln1OlkMu2lRo6zwnzmocBzi4pYpTKywirMDZSs+onHEz
-	9fxzYT6AvsejNZ1Dr10gD2L6GRxJZeRo=
-X-Received: by 2002:a05:6512:1188:b0:5bf:d238:6af6 with SMTP id
- 2adb3069b0e04-5bfd95803fbmr6074827e87.45.1793869761546; Thu, 05 Nov 2026
- 01:09:21 -0800 (PST)
+	b=DAR24fhg1o12QPYF8w+7b8HIwsxRutsHpEf4cTFEyfIe1ri9nazYsDIocFwx5ISJP
+	 /3zIPoK5gQ2uI+H1WEkOK0X8GhFfj+9hv4l19yz1q/DPecQzQz2d5wbU1n2ejd3hHg
+	 /zhtdfWlMuzov1tVk4nMgIA2qtMOnpO+yRJas9gvpgUs9txLGJr7ilihbpns5ihEDF
+	 4/2yV2xRNhSNdsLoCt6rVfexZqo5PI+2bh5Zb6srEz7QL1UDMhOmHpUYxCXABSTIqt
+	 wtkhqxb8Tr9xqccUmW68LmRoovBaE4sFySPUjEpNYZPRH5NW5iNUtVbG0K+6xqcnIW
+	 aiNZNsoA0p13Q==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5be416e603cso1088761e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:10:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvByI53FEemI3oH+zInM6GB7CC+HKgOwEJQnXshX+mLv2Q/7x44LpdjqE13uSmP5YW0xrDCfk3HL8rssz@vger.kernel.org
+X-Gm-Message-State: APuU4Z/Yd1bI0NrB1JomvpIJN6F9PgzvgqYqgDrIdakRchYlZrxNWOKq
+	AFK9JElmt6cmQ9EpqUcWWyvaIeuze7nrKk+Ot2JArS64tofTedQLnTQSaZn39PtbyQ7NEiW7frS
+	CfB8rf9YNcTg3zopGjxmSIeG/hE6x8y8=
+X-Received: by 2002:a05:6512:31ce:b0:5bf:be3c:6599 with SMTP id
+ 2adb3069b0e04-5bfd957cf17mr5726763e87.67.1793869829164; Thu, 05 Nov 2026
+ 01:10:29 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,108 +59,54 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261028084531.6237-1-Chloe_Chen@asmedia.com.tw>
-In-Reply-To: <20261028084531.6237-1-Chloe_Chen@asmedia.com.tw>
+References: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-0-3aad0860b984@free.fr>
+ <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-4-3aad0860b984@free.fr>
+In-Reply-To: <20261103-for-upstream-lx2160a-rcw-pinmux-v1-v2-4-3aad0860b984@free.fr>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 10:09:08 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=AX542N3nvuGO2g-_935i21oLKn5zgWPicZHONAQojbg@mail.gmail.com>
-X-Gm-Features: AclHuK8WT5jEsKVLzn0_U4Qj8gkHXwp5ZvLQA1T9S3Oj-ES5esPBMeo2lsB5KPY
-Message-ID: <CAD++jL=AX542N3nvuGO2g-_935i21oLKn5zgWPicZHONAQojbg@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
-To: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-Cc: Markus.Elfring@web.de, brgl@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Yd_Tseng@asmedia.com.tw, 
-	Jesse1_Chang@asmedia.com.tw, Richard_Hsu@asmedia.com.tw
+Date: Thu, 5 Nov 2026 10:10:16 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=Np+_+wTkuLCiqjNY5EBqn5qq8zKTJB6F-=1G0R+7=Ww@mail.gmail.com>
+X-Gm-Features: AclHuK_7g7nY-8H8wprNfNKV8lgILSoOexV2IGLiXfskv9qSmIolBJEeTn_Fqx4
+Message-ID: <CAD++jL=Np+_+wTkuLCiqjNY5EBqn5qq8zKTJB6F-=1G0R+7=Ww@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] pinctrl: freescale: add the LX2160A RCW pad-mux driver
+To: vjardin@free.fr
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, Vladimir Oltean <vladimir.oltean@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Szuying,
+On Tue, Nov 3, 2026 at 7:12=E2=80=AFPM Vincent Jardin via B4 Relay
+<devnull+vjardin.free.fr@kernel.org> wrote:
 
-thanks for your patch!
-
-On Wed, Oct 28, 2026 at 9:46=E2=80=AFAM Szuying Chen <Chloe_Chen@asmedia.co=
-m.tw> wrote:
-
-> The GPIO controller on AMD PT PCI platforms currently has no in-tree
-> driver, so its pins cannot be used from Linux.
+> From: Vincent Jardin <vjardin@free.fr>
 >
-> The existing gpio-amdpt driver cannot be reused. Setting aside ACPI
-> vs. PCI probing, the hardware differs significantly:
+> The LX2160A muxes its IIC, XSPI, SDHC, UART, IRQ and EVT pads from
+> fields of the RCW, read-only in RCWSR12..14 of DCFG and changed at
+> runtime through the same fields of the override registers in its DCSR
+> view, which read 0 until written.
 >
->  - Register semantics conflict: offset 0x0C controls the clock rate
->    in gpio-amdpt but enables interrupts in this controller.
->  - Interrupt controller: gpio-amdpt has no interrupt support, while
->    this controller has its own INT_LVL, INT_STAT and INT_MASK
->    registers that require a full irq_chip implementation.
->  - Wakeup: this controller can wake the system from GPIO interrupts,
->    which gpio-amdpt does not support.
+> Since commit 8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c
+> gpio to support bus recovery") Linux drives them with pinctrl-single on
+> the override registers, so its first pin state clears every other field
+> of the word: a board whose RCW programs a non-zero pad mux loses those
+> pads at the first I2C probe.
 >
-> Only the basic data registers are common, and they are handled
-> through gpio-generic, so little code is left to share.
+> Add a driver for the pad mux as a child of the DCFG node: the fields
+> of RCWSR12..14 and their encoding.
+> Then pin states select them with the generic function and groups
+> properties, and every change goes through the RCW override
+> of fsl-guts, which reads the status register, writes the override and
+> waits for the status register to follow.
 >
-> Add the gpio-amdptpci driver to support the GPIO functionality on
-> AMD PT PCI platforms.
->
-> Co-developed-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
-> Signed-off-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
-> Signed-off-by: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+> Signed-off-by: Vincent Jardin <vjardin@free.fr>
 
-(...)
-
-> +#include <linux/bits.h>
-> +#include <linux/compiler.h>
-
-Why this include?? Add a comment next to it why it is included
-if this is really necessary.
-
-> +#include <linux/kernel.h>
-
-I think this generic include should not be used in new code, use
-specific includes.
-
-> +static int pt27_irq_reqres(struct irq_data *d)
-> +{
-> +       struct gpio_chip *gc   =3D irq_data_get_irq_chip_data(d);
-> +       irq_hw_number_t   hwirq =3D irqd_to_hwirq(d);
-> +       int ret;
-> +
-> +       ret =3D gpiochip_reqres_irq(gc, hwirq);
-> +       return ret;
-> +}
-> +
-> +static void pt27_irq_relres(struct irq_data *d)
-> +{
-> +       struct gpio_chip *gc   =3D irq_data_get_irq_chip_data(d);
-> +       irq_hw_number_t   hwirq =3D irqd_to_hwirq(d);
-> +
-> +       gpiochip_relres_irq(gc, hwirq);
-> +}
-
-These are reimplementations of gpiochip_irq_reqres()
-and gpiochip_irq_relres() so use these instead?
-
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> This email and any attachments to it contain confidential information and=
- are intended solely for the use of the individual to whom it
-> is addressed.If you are not the intended recipient or receive it accident=
-ally, please immediately notify the sender by e-mail and delete
-> the message and any attachments from your computer system, and destroy al=
-l hard copies. If any, please be advised that any unauthorized
-> disclosure, copying, distribution or any action taken or omitted in relia=
-nce on this, is illegal and prohibited. Furthermore, any views
-> or opinions expressed are solely those of the author and do not represent=
- those of ASMedia Technology Inc. Thank you for your cooperation.
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Eh? Get rid of this horrid footer.
+Can this be applied separately once reviewed?
 
 Yours,
 Linus Walleij
