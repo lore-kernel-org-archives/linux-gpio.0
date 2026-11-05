@@ -1,102 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.218.54
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1793877896;
-	b=ixhi5BbecvuId82V1z3cuRFISo1XSWTpged56j2pRFqIE+MxkdawrP90O2oHIoC4QaI0
-	 g7FX3vTA+UBRYj54Q0BoykcRO1ptvfzrH0QObw27sv91az/EkG+AfFCIrSg6RvD8U9RZ8
-	 ZRp/EiKUmClgqs26yP/5bOlr9RbIBjN5oeSKl2z3Ww/oZWev7ghg0QlR6kDZVdA7aMrMR
-	 pqgb73cpiUpkxkFmyydwTy3sI50U2soWzQpKZyaGW4suWeqFFxzYil0warTIsus9SOnMF
-	 M77hAk4WbFgseseCxunBmtMMIeTVJTeaU8AfvmqMnkDWUmtsuAsWT2Iv/lEASCBKhyw==
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.53
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793878075;
+	b=RgvA9H6rnsLdFiZW4NiFomLMNhXu36HfZgED8Veq48kGj+RA5bjXtaP2djQXqvLQn9KR
+	 6VDx6qNFaqagEqrI0uD6At4GgR9ViPz9641/4dCKlfqEVrhkQZIbGKeyuGezqlKIjh+/L
+	 /ZkfjH/UZdtLHHod7om/kUMcI6X13S2yY42lBqgV13pSQuvSDpn1TIQEQbtX6R+dBdi7S
+	 Rgc3avT8XZhK+W+HFzpo5mAr0grkU+l0X6JEZbP4aeMqXMQFw911Xl+f8bKUD0Baxi+SZ
+	 8UFzJ5qyL6OiyQz/OElMrSWL4iHClU0aXfQefSfWusxoQP6+S9Hw/UBFlxKtgITKexA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793877896;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793878075;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
-	b=yG5bT41pRV4JGM/nVUuWZEwdwS2GgasyP97GvEK4Tjd+gNm9mQaubKCWNLJYFJJ14tub
-	 3FfPfkXNhkNZ6fA0i3mFQq7fzTX+nRiDjFG0110oOnFteLElcIQRh1HZ5EXYSbsmD0x52
-	 xjwJXevGHD2vebYTuZVsmD7t3d3Rz5yRBaQ/4Rn3ZtVTiYCPXrRECHKtV1PJtbFD/hcR9
-	 UUPh4qFLxI22rJSC0VdmdBKsMCTDhACh5RBFtNqGeE1tbSnY1BBVxbfgF5ARfQZTX5C0e
-	 ONGyOQm+632ZF2b8MIY0f2h+Wjs5VhEHrphrkDzi5OSZHlhXTT23APPko9pXZsXCYVw==
+	bh=UgymWUGDvRFV30kELqGcA8Yq/kp5tSw6vqhDEg+/UkU=;
+	b=Y9FCdCq812i4y5PxDczFo2P8DDZygyWAYw/Epy2nfJ1jp3KrZ6anzy8a/fIt5RJ00HgQ
+	 p/FE1QK3TqLQR12w/lGIrc1g+dgpwA2nz5RbYmuWFmb/3VEAKVQJvxp+ql12OutmyJY3O
+	 oZLz8j4AmscB0/BYA97/69cjguIU+oO/g7daA5d8VatNY3soJPKeWOGqnFA+JbgHD4oqB
+	 96WDmIEtfqzejvsHbLPmWPdwXeYaUJh4Stn7su1bgZpVut8PO4MmWbX8YJKCtqg7MAMFY
+	 F6Ed5zzWnG4fO+i2OTb4Kky6/MmF/5zSol05ge6L7Qe0VVZLnmmjmiWRxLWH78hu+qQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CCyRuxf0;
-	arc=fail smtp.remote-ip=209.85.218.54
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=skgm5fm6;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.53
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA8606A328
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 11:24:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3CAA8606A328
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2A7606A329
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 11:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C2A7606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CCyRuxf0
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c4301e334ceso142790566b.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 03:24:56 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793877895; cv=none;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=skgm5fm6
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c4ceb15dfd7so232852066b.2
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 03:27:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793878073; cv=none;
         d=google.com; s=arc-20260327;
-        b=JAcjtg3TvIMnCrq/D+EMZY/9uEmLmsew20dXA8od7Tpd54mF7V5FZSaBwT01Mx1fwQ
-         MZUirk/e0Ug3ZA38PmFJQuJx6mymm4vdxJXX28cq4tSd81jZwMuS1j0tjuwoNn2cccYA
-         h5dGkYjlYqPiUaQg10hXHuxI7iKiESPoRuMAQTIdCBl80fzmsuI9jXgqdyLJrBr2uF1D
-         6a/YmqUkD1vt+XJpY+B9dy+DfqQIxnuRhUikLKwSz3onL3bTES93BJmCArBJ/DNOdreQ
-         hxw06XWBzm0BLwbf5m0y0K3N+ck8sCfeKttb3NRnoDZE38ESEaqgMUKnFEjUvWWIwhre
-         w5Pg==
+        b=ZN6SFmai9gnkDxHhIAutN7o8N2x0VveNsvRZvJRAWKLQ1eSmr4E57ORnMgZqlmqqr7
+         knMTqNhZX1tEMdIXD8tPy42icGbXrMQxc+ANxYFxkkGMKuTeVtWO47DgBMh+38sj3Bvd
+         0iBtUkPDXt0CIsJpXCMKJW6WQFx6N0Pfc5yVDcRAy9ScWbcMJiwnNKdWIWkm8E3kbB9I
+         MuUm/7wBR96Pi2x7+qqRncMnhckLJXMPguYuC6jliZtY5qKc4lbxhNc312zHfY0ri/kO
+         aer19hdH8bJvomzNZNI1i2hOtnkZyeqrQ8N/X6ssIRhzEjHOGW79B0DhBjqxtyR3Mrak
+         r2bg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
-        fh=+vOEKIPUSb0wJTSKfvKzoxn/POZDogvwKnE+hUP8H0U=;
-        b=anaiva3x3s7S1UwZ4ZgXYibvmCjTR5MQkCfjdXB/WwWhYZ8h87k+512AeLGSpa5VlX
-         GOIP/w+8KWobyiLg81sZc5QE/fTMZ/51tkFXvyCUHVszvKKCH2wytXMtwRexkOgVGxjh
-         zlw0lZYwd33bYs2Ir7XzYzOJ9EZXHOHcCL2/bwm1qxjIW5RWlp82ai6UjTvgRJxo+n5n
-         Wjq9hfVjpZug7xDRCMxKjdpx6sG96RQCCAEuDHXDfyS6iRXFhkhkisrAFC64OdZ9sHZB
-         rCGq23X+nvOVI3aP0MC40qnFU4SXjnLGgo1QX0wO0DzDbjA8xp82tC7HZp+KrcBkHkca
-         DMhg==;
+        bh=UgymWUGDvRFV30kELqGcA8Yq/kp5tSw6vqhDEg+/UkU=;
+        fh=tGx8sctfJvaNsevZHPG/EDBhyz4fG1b05doymbMGjsA=;
+        b=cwJLFPSCC3bVXHVoqp5E2ovF0wpVyJQatZ/yIZf4OaT4zvMCeY+JX6deB7EczGPb1G
+         kD7xrMCjV01oKNxACGUiG9d5zPAzPPciCRX072PM5NlI+qYhY+GRN54M9ZZ/UjYz+RWV
+         qNdoSOHYOZ7p5NlZinh5xhR6PSGTqBnICuPb2evfoAQ0r/6Iaqft+690WHGFgjw2niRe
+         BJljX9fO6aOIsHdCSFLTtFSVjZK3cmHGfrIsBYC0aUE6dfkZhJMV9+2Uog/LY/rvQ3Br
+         wxUhBwaH1GQqlt79LpxHNUsTXLxPkymNRNfjfQCo0WEcIG/Yjg9794XrnSOQcU2yqwxK
+         Qkyw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793877895; x=1794482695; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793878073; x=1794482873; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
-        b=CCyRuxf0P6J6k8bWApFVRzmmmQ4a3nezFhlH23PgLEzGEftofIdTYht54rkMPSxqZ2
-         /N6dWyeLvZ3t5ckDi74aRNo2yvUplMuzeF87p+SrRLFswIheQK11EAMfgONQoUmsEnEe
-         ak3lTmUJPNYDs7n+W3y+FrnQqNLfaVlgsCS7/AoEJSXFGJS/uoo6dTu0piEUOcSwoNXy
-         qSQc4qOwI5/lBCfCziXhsnKcQriiZn1/LpLXFBVGVCBa5Nm1lMvs3nCLwfOv1t+ObDwv
-         66A1hJWg9khNx60mm6v/I6sK000uQTULOFdYaXulbZrAc/k9t8/TzBP4LYJIO4G33uyO
-         snLw==
+        bh=UgymWUGDvRFV30kELqGcA8Yq/kp5tSw6vqhDEg+/UkU=;
+        b=skgm5fm6oAWAgv/QVCq1EFm/mHk6ogMQEriq5kNbbrdxCpxscJsl+DVbnoxhuFlxLd
+         vpOEAXk4t8Us8lYbydo4Lkh/rrArrqli9+hvlvKBU8YfaDLyI9GZGKoooB/b0vdPaMYV
+         JuKkZi4KuhaladOnnC30rn5+5auFXjI7odgfwe3bCKV6tngTAW6ACSoUfVCWKJqsXKIX
+         jxEtLNpajovzg1ZAn6mqM9CQndl7qv0vcjhh+A3vKBUj/zkiqZVv5xWyOSeziy9qx4zd
+         Srk8GDlwmg/wA20VyrcEYyztNba9JvovUh1RMB2E2C1KTO6V0On70HG6wXIEyNfWKBLP
+         SN9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793877895; x=1794482695;
+        d=1e100.net; s=20260707; t=1793878073; x=1794482873;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=HjqOLsC9Wph7UCiYV9mqAnewJ39Cf8CLpFtU3LV33mU=;
-        b=qqtVsNMmg1ieQMCOA1Htdo0Hsvp2NoNo5CGj1Xi13rqfll4fviqLGTMZ5zhdzDoDJd
-         3BNLfVWF8+0y3X6qTFGBLyDc9T2FR6Te8KuD6IKZWVUoNXmTXDUAVMnxNsV87RPn5TWU
-         t1Ij5fjZGcR9nG+gMLVIfeTHiCwFsUKLPgN3+K2DbByFWS2UiDwCRTiKmHKoBjmjXTAi
-         mKUahbj6mcJ7GD6MX6OUp0sw5+Rqv/lqoZmj3LOv/abj41EeKWTQKSi8QRFAb9iyUhzX
-         FjrTzNBneS3GhYK4PA0pnP/pOsLjDj+mqXM6tw4sCIwwXY6kO53A7SyeNfmgjG4NimVQ
-         fl8w==
-X-Forwarded-Encrypted: i=1; AKwUvBwA/FKRDsVmgFH4DrGLIAR4SCqFZ9SPp6nGNqXKpcGBu7/OGbuP9/0gnsrSaa3fzStBMlyynyky1xPy@vger.kernel.org
-X-Gm-Message-State: APuU4Z8nQRDa8v3ZRaXxCQMih3dqBApXElSmcBSy2xjke3E7IxxQVkkq
-	LebGLRfoB+HVjO4bMqk90jEg+XeVRo+22P2FJY9pKUdgevi3Gyf3WtZb2kc8g5LkY24wJHzP9+A
-	3zOgDboIgXXn+bEeibR6DEi9QcKXFgmY=
-X-Gm-Gg: AYBFou0GPc63V9U+dThTUJ/X/lcLLtPKBS74hit/a/eRUrj8pD4q48/VjuKTxXulA/q
-	J6Gw8BtiaFOMmPn3oSt6qFSTZm+cBNJ8YqAPx1k4LpXVBNOJWDmI+M3v4FtwInwnx02GiIaL1fE
-	zol4YDhk7uKI3s7lTclz/WLduN12Gd8jciKD5LRDOqkzAauKvXSfTa7bckYhHhe0POFLISWeL7R
-	V6+u60SO2Y7UbloQgcJzpYXv9wQqCybSVQ3hW4oEB8bWmSma4abU54uWWnN0PG+N3TGpYP75pDC
-	N6hTU4AkPgMNk9Sv2RC4JXCqVNz5PpXunru60zfc2rc80VCvfNofifneS0GGa09f50jgU5WIXQq
-	7LNFUBBI/7K2UdCwsgpHmVZ7uaqD0oCA95hzxgFWEHZndMq1/hocb4paTsdz4sfjTgiE4praMqd
-	8RHc4FR1MY5TydlHxinf4QCw4/Ox1LCVuM3kPhMxdqHAt5hi+sm36eisAJzb/hBCgUqC6t0bT3l
-	ZtdLQdafEbFxM4dhzhFhPMzGMGpLpqjAYvgo7t8D5gitWsS2HaNljXRIItVYQ==
-X-Received: by 2002:a17:907:6d20:b0:c46:75e7:25af with SMTP id
- a640c23a62f3a-c4ca7a0dcb0mr1704269766b.11.1793877894389; Thu, 05 Nov 2026
- 03:24:54 -0800 (PST)
+        bh=UgymWUGDvRFV30kELqGcA8Yq/kp5tSw6vqhDEg+/UkU=;
+        b=X9uAVMkk9tpFehxEuYxSuPf4hrlAU23BGbc1M7hZvkOJrahZQe9dG4PqjgdnhfRaQn
+         kamEHAumv1kKz+QrGFn+DkY582+u2dLL8EMflWUXf/tebG+UmwwcrRdNiCwWZSz+sm4S
+         5cCqS3NxiJiH2VcgzRWZSSXNEAcT8/qajBRNulx9arM1ACzDwwt3VH90WZ+rVe7fh6+v
+         4X0SdiCDJnnWl9ui7kdxS1XIWqe5QwlPQhpvuoq5Jn9ZvWatEOejwqjA9ZMhM3g2jW2C
+         3NFaq5CxsWmPzUStZBwfwuFdqtAL/TfgIxt0yHNwhT8Ix91JEr6D2wO9P6TqlkpJHgG2
+         yT4Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxACSGGy8igQ8hKLIAxFv6AXLZjn2ITZ5VOH3QNMi8u1rNaRzwqm9DfoIZZUxMsUdT6xTHwTOIQH468@vger.kernel.org
+X-Gm-Message-State: APuU4Z/6VqZQZlIPf59YIMo91xCOyaioCxnA60AI2BDq6bTEYUo4parx
+	uvFHQKh+3MnLBbTBfwcKAQTbjiwdq7eLVzwSu7ivNAkTRgH9+7H+rewpUodi2FkfiGRoh+v1Hkd
+	KhXQ8Sax1715HHCJNEMupdfCOE20BDKk=
+X-Gm-Gg: AYBFou2V1AuybOB5WaYOQnXeT6x7bhJz/XBfRk1qneucZ7xGu9eE9lENRucGjJdwO7q
+	48tIUiLpsYyWEw/nAodY5avdbaYsbiFyasZE/f/BG1pzagTqEwHGaLdI4UTBxYSoImAXx1gTgaH
+	+gvBRWMmkvGuYcSu/gktgmRq756wxrrQDtIsvWdLkejxMRAf06O7Wl6K4mhAbVYyeUGHkFRdmSY
+	xpEGN1SO+KsFbctALeMcO2BljAINm4Wlus6cReMSzOIG2YFLiEQzlV9pFfxFbmGGlhQTraBJwRN
+	EW4bKEud+EacC7DdqIhMpC3mQjCG5i0QeqQFkvzobUHV0JEA0KokRym+OdK/mE95kcfOO1Ofz0/
+	cthcDOIhkKROI+IT8Ptx/3hRze7GYuJVcpAcGfq3ExSQ+P9X6kijTFpHPo8lQYKGB44u401jsfg
+	wQDO1DXkSnqd8jRxut4UsQaWzX3sSK6qws4TeVc7syenvM/5DG1IimA3l4wV1v8hfIDDvdB69uw
+	tts+xwDvu3rvRcoYoGH5z7sgmTd+JYTlktdlEguAK4xQofWkrKmEvUTFzfe6g==
+X-Received: by 2002:a17:907:2d8e:b0:c42:102f:15df with SMTP id
+ a640c23a62f3a-c4ca7a0dc8cmr1782618666b.8.1793878072888; Thu, 05 Nov 2026
+ 03:27:52 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -106,13 +106,13 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1793876837.git.alx@kernel.org>
-In-Reply-To: <cover.1793876837.git.alx@kernel.org>
+References: <cover.1793876837.git.alx@kernel.org> <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+In-Reply-To: <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 5 Nov 2026 13:24:18 +0200
-X-Gm-Features: AclHuK8KWMbqNnaK7YSgn2BAcqklpjMSStieDr0-B_LC0DeuPxzb2lhrGJOckGM
-Message-ID: <CAHp75VdFH146fNhw1ysUbgCPbpv+K++kWvbyZxU=V7tDh0T88Q@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add strprefix() and fix a bug with it
+Date: Thu, 5 Nov 2026 13:27:15 +0200
+X-Gm-Features: AclHuK9RJR52OSPl8iPokfz3apA8SScdKPa_SxHmGln1p0LZpPbZ_VJGI1ROrO0
+Message-ID: <CAHp75Veb=TsXJcjqQeD3ciNGRvLebGr8t8TnZju6FX5ANeVNTA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate str_has_prefix()
 To: Alejandro Colomar <alx@kernel.org>
 Cc: linux-hardening@vger.kernel.org, alx+linux-hardening@kernel.org, 
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
@@ -126,7 +126,7 @@ Cc: linux-hardening@vger.kernel.org, alx+linux-hardening@kernel.org,
 	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
 	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-acpi@vger.kernel.org, 
 	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -135,26 +135,59 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Nov 5, 2026 at 1:13=E2=80=AFPM Alejandro Colomar <alx@kernel.org> w=
 rote:
 >
-> str_has_prefix() is based on sizes and lengths, which means it must
-> overload the valid length 0 to mean not found.  This is a typical
-> consequence of choosing to design an API around sizes and lengths, and
-> vanishes when moving to pointer-based similar APIs.
+> As Bartosz reported, str_has_prefix() has a bug: it can't differentiate
+> between an empty prefix matching an empty string from a non-matching
+> prefix.  This is a fundamental design flaw in this API, and not
+> something that can be fixed.
 >
-> This patch set adds strprefix(), deprecates str_has_prefix(), and uses
-> strprefix() in one place to fix a bug reported by Bartosz.
+> As always, this is a consequence of choosing sizes instead of pointers.
+> Sizes are often the wrong choice.  In this specific case, pointers are
+> more capable of differentiating these cases, as NULL is a special
+> sentinel value that doesn't need to overload a valid value.
 >
-> We can later work on replacing the other uses of str_has_prefix(), which
-> might hide similar bugs.
+> Let's implement strprefix(), a function that returns a pointer
+> right after the prefix if found, and a null pointer if not found.
 >
-> Testing
-> ~~~~~~~
+> We'll slowly migrate existing code from str_has_prefix() to strprefix().
 >
-> I've built this patch set with 'allmodconfig'.  I've not run the
-> resulting kernel, though.
+> Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-No, all lib/ new code should be accompanied with new (Kunit) test
-cases. Update the respective lib/tests/* for that or if not yet
-converted to Kunit something in lib/*test*.c
+Ouch!
+
+> Cc: Andreas Schwab <schwab@linux-m68k.org>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Bartosz Golaszewski <brgl@kernel.org>
+> Cc: Daniel Scally <djrscally@gmail.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Linus Walleij <linusw@kernel.org>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Saravana Kannan <saravanak@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Tom Zanussi <zanussi@kernel.org
+> Cc: linux-acpi@vger.kernel.org
+> Cc: driver-core@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+
+This list is twice as long as the commit message! That's why I highly
+recommend moving it under the '---' line below. The email headers will
+get all the listed Cc and git history will be clean from this rather
+noisy list.
 
 --=20
 With Best Regards,
