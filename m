@@ -1,47 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793892075;
-	b=HlXJf6AIxv2YmSvwTWT/gpiNggj6nEah/XVJ0dgYArkf/EIa9jQOaZ1fPlW9n9meAI/y
-	 vdEJ55+1g7TQIW1OXB0PSCaw3rrx75QH6mToNgQ/Tue7BIzF/p29CBa70QP3cbDqh9aW1
-	 5PcYANuBeT8MqnML4hyWW6gD+V62YCDxzPuwYwE9DE5N3mRrT3Gqr9CVK+YzhaZFzN40S
-	 EQtHoCnIfQEkNs9qDUABc8ZSUsgTzm/tmOXY/9Q+YxAOEwqhTRAlSrRNlASsM57Hce+Q0
-	 CLr+Pc9MXUkHICyM13VZ3PJbI0Tf5spw0uWObhVz3SmzJsGn8YVx4Bt3ggYJ6eYMx7g==
+	t=1793892240;
+	b=M1XYq1QWRtD1UPGS5VkzW7MEddHS6Hz441jS4BqornPm60Q0I4sEVXPyCbbe4Yyhnb5w
+	 G/udBR+tdh1qT5ct6QWljLd1O52Im3MFLQ+6s+yvJ5i3PUifLSpGYlEleuKHp61A1rj8z
+	 9+Yf/1OXCD7C9vTQVANW6PsrZZag9qGeEuf9h6sEsJxA0icX4gZiDgRuTsbgFeOJW5zkX
+	 bIuO0BvbaEh2OuiizbhmLYzd6G2cyACjnGLqr9FeVDpHn1hGMSPt2AyiV0WkzrY2dhldI
+	 jT9+nFbueIRAH2z+pHBSqINddCbFz6Zx9lQPzOsd9P2WA3ONrvvHrk95kBdCpe8CG+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793892075;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:List-Id:To:Cc:References:From:Content-Language:Autocrypt:
-	 In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=NzjDcogdjGLC/Z3rU4KyBTyFDp1K6wM2WbeYqpBBZB8=;
-	b=LvfpEQgBT1SwxkieSxgQcFETyu5c+ndWw9d6gCFyXOmEQLK91DilWvUyOg0o1EA9AtQ4
-	 K01aoyaoFdQlJGSnuEskFtCSZXCGCLdiIyQt2qePllMw7I0QKdTuyRS/zE3UaB0UuBFAO
-	 lQLf71wRTbZtqn7cSMfI/r2Gbze6zvClI/wauKlBdP/BHvLgpJ1hswG5YZSntCmUGY3P3
-	 t5bWgVG9nwuP1If3tVjypNwjkr2ptl0y40F3h61l4yNqyReuzX30VDx3CXZ/NbPR+lgeV
-	 btcvnR4jhuk65TdekTqOOMB4UZtzgNqy2OahQE0yI9n+u1vL/GomXl9QFZTzlOFO3vw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793892240;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=sNeCcAcnq+kq7Knv2crVqvIQp/nQfPFY9SZmNDJttrk=;
+	b=hslUR5XCReyZVbwVbB/bGSJ5oQiqDPPSQh5qrH1DcFs6mMDlOtLPAH/fwr0VfUQ+0egq
+	 UudERQJRZ6sxMRlsm2G/0yfpPtcB906UvKGPcArQMsPqigtO5mHBODXa9d0JWHwD1eu3E
+	 ijqb5u3+efEU6c8yauw8pQmxMYcvS9DUQfzbIsIrVT30RlqJ5X8ujtlLG7+0zqpiQN81g
+	 h1o9H3sOBYmsf1LSPhjAqUQe0vqIRmMxKQF9SHQPkD75PpsjT5HqqwPr1OguqA32c7y9b
+	 DDmoj0fVh03Sd0H6J+LHsifChTm56XBgULeFYuifubcFALZ+tiMnC9HbX5+RCOS/vrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gPtiiDW7;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gba+nzdQ;
+	arc=none smtp.remote-ip=74.125.82.51
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7597606A32D;
-	Thu,  5 Nov 2026 15:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991BC606A333
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 15:23:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 991BC606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gPtiiDW7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8BA1F000C1;
-	Thu,  5 Nov 2026 15:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793892074;
-	bh=NzjDcogdjGLC/Z3rU4KyBTyFDp1K6wM2WbeYqpBBZB8=;
-	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To;
-	b=gPtiiDW7VtcwOZuPjL74NRmVyBGWaOGiWCF3GFXluwlU0ZxlvNe+cQJokH6UkM7tA
-	 3qDv2ZKXsX+7KWH/6JY+NDNNht/+GEjiUinSV2dYzxUzsHYE05Vz0+YfMsGu+LZ9pv
-	 I6SwbzEc4tJSGd+Gu4v73xaU+3hCQ12Oey1rYlZhLCwAJcDBwfr8IobWu62rMt261t
-	 X8lkbvN2XIooPjgUCA/W1j2wL+CCU0D9Wmu4DDAvCWUeXiRwv+qjKbIOwdU4WyhYFF
-	 bjQoLlzYSg3gb+rEh7JGgMZJID6QbmAg1XYlDMu0SDOhed5UtIPWg1OvWMGqiYyn7m
-	 gmgLFOu+PzFUA==
-Message-ID: <5001d8c2-2334-48bd-bc95-6b33e3922a46@kernel.org>
-Date: Thu, 5 Nov 2026 16:21:02 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gba+nzdQ
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-15ea896ddc8so3375190c88.0
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 07:23:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793892239; x=1794497039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sNeCcAcnq+kq7Knv2crVqvIQp/nQfPFY9SZmNDJttrk=;
+        b=Gba+nzdQHGBvFjCoCbsAwcHyr8hLjYByQcMINR4Ay4Y6elfwFUyrwZGSiMM7qK5hws
+         z6szCkiN7iCTSfdnZOx6A/ilhnZCkmccj8qdMtniW0nMa4ewwFJhY/BsFgZD5n9sP9KX
+         yP/fI8DHgR7fT+v9AFqwQJICjISpAzOcIMwFoodasxIF2og6ZmtuoqpNyHVysMlXfUUA
+         swL9gBNXIkuUF0jah7B6AcUEvXMNy61Du2twV2bwHiZJmQjnV97yYWsiyCosXYhIuoqs
+         N7xvi+qA4XW4LkvkpfQJoFZyGX7+sHJOL6W9ShhnuWDxov3zsTQ6Ee8NzFVwl1Yzy3Q7
+         TkFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793892239; x=1794497039;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sNeCcAcnq+kq7Knv2crVqvIQp/nQfPFY9SZmNDJttrk=;
+        b=ZB+RVmJbk/8NhyLILkuM0T4K2iMpgZBeYr3rvacjxV4C3ppgbyzPQZdzzXb5i7opLB
+         wt3c6czW8SHotM8IQGhxAErRt/BVMvFMo/170qo+A414pDvPmOilE5lvFcP/TT7ZVlxi
+         GRvakVSszh2guQdwxSSbHzUs1/SFyx4uuQ9KmpsDs9NFhN8A0mVAg0WntZeKfao4j2sH
+         9q4Ukk2ZtIugv6PZUV0mkLxUom2lGHb5ZV/sTpwtqX/Al6AoMG7v2e22JnYpH7tsOnmm
+         H5gifOTnPvZmsE45l8BXaXqZyvknqLZQHcRe66aAFWHsio7mu0oscEk4uCOTZe703onW
+         3rgQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx/elUmoyMBWnk41B5McLy9DDDbsKaknUgzJkgU/rvxdE0hpzxATaEB/UQYiSRlOBiN2YIGFXYS8sLU@vger.kernel.org
+X-Gm-Message-State: APuU4Z+OvfnfxJkqNrrvVEDrJjG6zKOATCV3RuQg5j+n6wBlhGwdjwa0
+	3gsojVNNUCzklRJSYYIBNzb8JatAiD8q8l48QMiosWKCFgehK5BlnSmp
+X-Gm-Gg: AYBFou1bqVUV7mikSoyIb3SMM3ARd5AskXEAtnJ6jDMXeR644Y9DY3hpU1K163Y4dYQ
+	Og9OBjMRtBYngCppWu9YvTYckXJo9yzT2xKWbeLcp+KeWCuPao/PNqfF2c1+5mBhXuboIhdYXQM
+	U8WbsZyU475TyGLQfdprdl7xp1+WcCVEeczxYxSR4Qy2k1NoLSj8IwpO8WzFKVbfSZImuX9twuO
+	74M7unlHfa6EC9bdLxYpyPtJm0LlMuz6okcbVtCsLI2Y32011RicNxt3i08KpcVduzxMbHZVsP3
+	XaQwD1myyBpuo3dHSWiyI2RMcy3dHjEN4ChO2VBg7no4VFpGJyW+aLu7HDPvrX9Tc07fWdd3n5v
+	9DkWlBparjjq+pSNBuIVMw3vfYBzOyr1BCEX3q37SKsKYXt0KjebOLnGfQTWRVqouFH2GIl1v4L
+	dTYPJ8t6+errmW+gdGJ/APsbsLhJs1Ic3d19U+R6qJSCEn7YcrRGt8Jaml9y2YBvKbZqTDw9+Oy
+	1C1b2kCIZHEPV0YTy3I3XlkabGy5syxSgZ4FDqCSmosV1iVvfD9cvkYXixvHCVlGXcPNQiF2X7j
+	V//Ya70wRO71ljCWvpJZp2rkdd0Jpvn2kt9IVP0QyDIjEQ==
+X-Received: by 2002:a05:7022:f108:b0:150:c9c5:1ce4 with SMTP id a92af1059eb24-1ac55960a70mr24069179c88.6.1793892236997;
+        Thu, 05 Nov 2026 07:23:56 -0800 (PST)
+Received: from debian.prasanth ([103.183.205.43])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245ac2f44sm17862752c88.0.2026.11.05.07.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 07:23:56 -0800 (PST)
+From: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+To: linusw@kernel.org
+Cc: andrew@codeconstruct.com.au,
+	joel@jms.id.au,
+	brgl@kernel.org,
+	tan.siewert@9elements.com,
+	billy_tsai@aspeedtech.com,
+	linux-aspeed@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+Subject: [PATCH v3] pinctrl: aspeed: Hand over global GPIOP passthrough to local mux controls
+Date: Thu,  5 Nov 2026 20:53:47 +0530
+Message-ID: <20261105152348.8567-1-prasanth.padarthi10@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261022024314.48623-1-prasanth.padarthi10@gmail.com>
+References: <20261022024314.48623-1-prasanth.padarthi10@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -51,131 +106,230 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Add strprefix() and fix a bug with it
-To: Alejandro Colomar <alx+linux-hardening@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org,
- Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>,
- Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>,
- Kees Cook <kees@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
- Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Saravana Kannan <saravanak@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>,
- linux-acpi@vger.kernel.org, driver-core@lists.linux.dev,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <cover.1793876837.git.alx@kernel.org>
- <cover.1793882260.git.alx@kernel.org>
- <qwpovcqznx6eltou4inmj3v62qhh6ouvihqnze7bobnd7lmcbw@rcri4e623icb>
- <auyOkL1Vb1iKicS9@devuan>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <auyOkL1Vb1iKicS9@devuan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/11/2026 15:16, Alejandro Colomar wrote:
-> Hi Bart,
-> 
->> Date: 2026-11-05 15:01:22+0100
->> From: Bartosz Golaszewski <brgl@kernel.org>
->>
-> [...]
->>
->> I have no idea what causes it but I'm getting so many patches lately
->> that are subsequent iterations of a series sent with In-Reply-To: header
->> pointing to a previous thread.
-> 
-> I don't know what others do, but in my case it's a conscious manual
-> action.  I use --in-reply-to in git-format-patch(1) to make all
-> revisions of patch sets be descendants of the cover letter of v1.
-> 
-> We do this in the Linux man-pages, as it helps me keep track of all
-> revisions of a patch set easily in mutt(1), without having to follow
-> links or use more-complex tools like b4(1).
+On B650D4U, GPIO-only host power control fails when SCU51C[9]
+enables GPIOP passthrough, even after the normal GPIO request path
+clears the individual SCU4BC selections.
 
-My mailbox gets 200-300 patches per day (not counting replies), so I
-have no idea how that could be manageable if all versions of some series
-were threaded to itself. Some old thread popping up to the top,
-half-read, deeply nested like 20-deep indentation?
+Transfer globally selected GPIOP0-P5 THRU roles to SCU4BC[29:24]
+before registering the controller, then clear the active shared
+sources. Leave PWM selection and the strap-source selector unchanged.
+Clear SCU510[28] through SCU514 and verify the shared enables cleared.
 
-But even in second workflow, reviewing individual patches via b4 or mutt
-after shazaming (my main workflow of DT) not via inbox, would get huge
-irrelevant thread of past discussions requiring me to look for stuff
-actually for the review. How to find actual patch to review in this huge
-thread? I tried many times, takes much more time than reviewing simply
-current version.
+If handover fails, retain an instance-local error and reject affected
+GPIO and mux requests before changing their mux state. Check every
+pin in a mux group before calling the shared helper. Retain prepared
+local selections after partial failure rather than blindly restoring
+a shared enable.
 
-b4 is not so more complex, honestly it's just new interface and after
-learning a few new commands is straightforward and easy. And solves
-successfully, without creating noise or problems to others, all problems
-which you might be trying to solve: referencing earlier versions, easy
-comparing between any version, collecting trailers, sending nice
-thank-you letters with commit and tree references etc.
+Probe-time normalization policy, concurrent SCU writers and
+post-handover registration failure remain open design questions.
+Electrical continuity, mixed-pair forwarding, protected-write paths,
+PWM coexistence and SCU510[28] hardware handling remain unvalidated.
 
-I believe there should be no excuse for modern maintainer to not use b4
-in the workflow. The same BTW for submitters of anything bigger than
-3-patch series.
+The implementation passed remote power-on, remote graceful power-off
+and physical-button power-on tests on B650D4U with an OpenBMC Linux
+6.18.24-based kernel. The rebased version was ARM compile-tested on
+v7.4-rc1 using aspeed_g5_defconfig with AST2600 pinctrl enabled.
+The rebased kernel has not been tested on hardware.
 
-And for maintainers, along with `b4 review tui` above statement will
-only grow.
+Signed-off-by: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+---
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 145 ++++++++++++++++++++-
+ 1 file changed, 141 insertions(+), 4 deletions(-)
 
-Final note, you will receive template-nags from several maintainers if
-you keep send them series threaded to past versions, but of course there
-are also folks who are fine with that.
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+index 85d6640ff..be22a9184 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+@@ -4,7 +4,10 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/string.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/types.h>
+@@ -36,6 +39,8 @@
+ #define SCU4D8		0x4D8 /* Multi-function Pin Control #23 */
+ #define SCU500		0x500 /* Hardware Strap 1 */
+ #define SCU510		0x510 /* Hardware Strap 2 */
++#define SCU514		0x514 /* Hardware Strap 2 Clear */
++#define SCU51C		0x51c /* Hardware Strap 3 */
+ #define SCU610		0x610 /* Disable GPIO Internal Pull-Down #0 */
+ #define SCU614		0x614 /* Disable GPIO Internal Pull-Down #1 */
+ #define SCU618		0x618 /* Disable GPIO Internal Pull-Down #2 */
+@@ -2743,12 +2748,56 @@ static struct aspeed_pinctrl_data aspeed_g6_pinctrl_data = {
+ 	.nconfmaps = ARRAY_SIZE(aspeed_g6_pin_config_map),
+ };
+ 
++struct aspeed_g6_probe_data {
++	struct aspeed_pinctrl_data pdata;
++	int thru_error;
++};
++
++static bool aspeed_g6_is_thru_pin(unsigned int pin)
++{
++	return pin >= AB22 && pin <= AB23;
++}
++
++static int aspeed_g6_gpio_request_enable(struct pinctrl_dev *pctldev,
++					 struct pinctrl_gpio_range *range,
++					 unsigned int offset)
++{
++	struct aspeed_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++	struct aspeed_g6_probe_data *g6 =
++		container_of(pdata, struct aspeed_g6_probe_data, pdata);
++
++	if (g6->thru_error && aspeed_g6_is_thru_pin(offset))
++		return g6->thru_error;
++
++	return aspeed_gpio_request_enable(pctldev, range, offset);
++}
++
++static int aspeed_g6_set_mux(struct pinctrl_dev *pctldev,
++			     unsigned int function, unsigned int group)
++{
++	struct aspeed_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
++	struct aspeed_g6_probe_data *g6 =
++		container_of(pdata, struct aspeed_g6_probe_data, pdata);
++	const struct aspeed_pin_group *pgroup = &pdata->pinmux.groups[group];
++	unsigned int i;
++
++	/* Check the entire group before the shared helper changes any pin. */
++	if (g6->thru_error) {
++		for (i = 0; i < pgroup->npins; i++) {
++			if (aspeed_g6_is_thru_pin(pgroup->pins[i]))
++				return g6->thru_error;
++		}
++	}
++
++	return aspeed_pinmux_set_mux(pctldev, function, group);
++}
++
+ static const struct pinmux_ops aspeed_g6_pinmux_ops = {
+ 	.get_functions_count = aspeed_pinmux_get_fn_count,
+ 	.get_function_name = aspeed_pinmux_get_fn_name,
+ 	.get_function_groups = aspeed_pinmux_get_fn_groups,
+-	.set_mux = aspeed_pinmux_set_mux,
+-	.gpio_request_enable = aspeed_gpio_request_enable,
++	.set_mux = aspeed_g6_set_mux,
++	.gpio_request_enable = aspeed_g6_gpio_request_enable,
+ 	.strict = true,
+ };
+ 
+@@ -2778,15 +2827,103 @@ static const struct pinctrl_desc aspeed_g6_pinctrl_desc = {
+ 	.confops = &aspeed_g6_conf_ops,
+ };
+ 
++/*
++ * Experimental: transfer the global GPIOP0-P5 THRU selection to the
++ * individual mux controls before registering any pinctrl consumers.
++ * PWM selection is higher priority and is deliberately left unchanged.
++ *
++ * Do not undo the local selections on error: a shared enable may already
++ * have cleared. Keeping the equivalent local selections preserves routing
++ * while rejecting affected requests, rather than granting an unsafe GPIO.
++ * Signal continuity during this transfer still needs hardware validation.
++ */
++static int aspeed_g6_thru_handover(struct regmap *scu)
++{
++	const u32 local_mask = GENMASK(29, 24);
++	unsigned int strap2, strap3, local;
++	int ret;
++
++	ret = regmap_read(scu, SCU510, &strap2);
++	if (ret)
++		return ret;
++	ret = regmap_read(scu, SCU51C, &strap3);
++	if (ret)
++		return ret;
++
++	if (!(strap2 & BIT(28)) &&
++	    ((strap2 & BIT(30)) || !(strap3 & BIT(9))))
++		return 0;
++
++	/* Preserve every globally selected role, including under PWM. */
++	ret = regmap_update_bits(scu, SCU4BC, local_mask, local_mask);
++	if (ret)
++		return ret;
++	ret = regmap_read(scu, SCU4BC, &local);
++	if (ret)
++		return ret;
++	if ((local & local_mask) != local_mask)
++		return -EPERM;
++
++	/* Leave the inactive GPIOZ6 source alone in dedicated-strap mode. */
++	if (!(strap2 & BIT(30)) && (strap3 & BIT(9))) {
++		ret = regmap_update_bits(scu, SCU51C, BIT(9), 0);
++		if (ret)
++			return ret;
++	}
++
++	if (strap2 & BIT(28)) {
++		/* SCU510 is write-one-set; do not use an ordinary RW clear. */
++		ret = regmap_write(scu, SCU514, BIT(28));
++		if (ret)
++			return ret;
++	}
++
++	ret = regmap_read(scu, SCU510, &strap2);
++	if (ret)
++		return ret;
++	ret = regmap_read(scu, SCU51C, &strap3);
++	if (ret)
++		return ret;
++	if ((strap2 & BIT(28)) ||
++	    (!(strap2 & BIT(30)) && (strap3 & BIT(9))))
++		return -EPERM;
++
++	return 0;
++}
++
+ static int aspeed_g6_pinctrl_probe(struct platform_device *pdev)
+ {
+-	int i;
++	struct aspeed_g6_probe_data *g6;
++	struct regmap *scu;
++	int i, ret;
++
++	if (!pdev->dev.parent)
++		return -ENODEV;
++	scu = syscon_node_to_regmap(pdev->dev.parent->of_node);
++	if (IS_ERR(scu))
++		return dev_err_probe(&pdev->dev, PTR_ERR(scu),
++				     "No SCU regmap for THRU handover\n");
++
++	g6 = devm_kzalloc(&pdev->dev, sizeof(*g6), GFP_KERNEL);
++	if (!g6)
++		return -ENOMEM;
++	memcpy(&g6->pdata, &aspeed_g6_pinctrl_data, sizeof(g6->pdata));
++
++	ret = aspeed_g6_thru_handover(scu);
++	if (ret == -EPROBE_DEFER)
++		return ret;
++	if (ret) {
++		g6->thru_error = ret;
++		dev_warn(&pdev->dev,
++			 "THRU handover failed (%d); GPIOP0-P5 mux requests blocked\n",
++			 ret);
++	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(aspeed_g6_pins); i++)
+ 		aspeed_g6_pins[i].number = i;
+ 
+ 	return aspeed_pinctrl_probe(pdev, &aspeed_g6_pinctrl_desc,
+-			&aspeed_g6_pinctrl_data);
++			&g6->pdata);
+ }
+ 
+ static const struct of_device_id aspeed_g6_pinctrl_of_match[] = {
 
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+-- 
+2.47.3
 
-Best regards,
-Krzysztof
