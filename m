@@ -1,49 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793871571;
-	b=1WtCcG5Feocr1zgwJWBNdWbSs6B5Y2IYYysWeSSZp15s3JhsOjvsCKvMgAufhCDttGxF
-	 hCS/gBU2uJ3RqLHLscuyuzRXyHhTw5f9gViwXOlTKIcV9q1/Aqrubea7KWWrOVs/py2Ww
-	 odV9t174bhJbc/EIQdtWQb5KHxz1K5j8VVJhzU2tZhqE/8G4KOHNgqvJVcdDjxGigTbeY
-	 JLgG7Lf66zKmE0YL4spIytI7PbMcgdwOrDXaijnYfrEsEn4rMQvbfnjBHIMr/ufYF32XP
-	 ZO/2hv+KUXSrsf3JGpC9lq0YqleAHM0D/2wYAjebGBjrnXmLsNjEoY5QzmfA+qZMpXQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793871571;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=tvox01c/LdtBVnbijieWNltU+WV/o1xordbJtEhjTKQ=;
-	b=uN75IHcd1TAdOS89a23HH1HYU6JLf1cgH91kTUIXSGOR5fMBd+tVXo+qKvhe9ChG0V3c
-	 6iTikE29m6/vzeUrMfPqcNT5yruDaQitFdXPI9vfpKkf419Bnw85whXqLWOmbo3qyST/R
-	 PJl4TooaH4PJG6GxMCbpoc9drcVoOgNNiMAluYfbXn+k17fnp8GD80gxShbHH1PdUqwqy
-	 TUhfcjtgOd9BHix5BPX0uWOfvInL5XnKqAM92evx3w+OmweXuaJJHVmoBZhV4TXhcq6zM
-	 izDbMYBDSx8FHfxsVIEHrA7Fc6InRjXlDa/tngjUDLGJUnH56LAQGe3t0lI9nfqYpWA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=cQBVG3Ux;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D4E606A32D;
-	Thu,  5 Nov 2026 09:39:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36D4E606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793871768;
+	b=OJ8LYAAqcO05hW7dUVNwJVDPoevNG6OlP07Cbpli1sQXrnGz1hlB0QWZABIqe1Ex4dOV
+	 DzL3zW8D6djWD35sGcci2cznkNBKg1XsWbzZt6gknCXvMeeHa/vbP/bNWGDsGyNndT+9W
+	 TXZ5tMsjcrnASOJ9B7yRm3rdHJD4ai5UC2w5y5epFaqNRJnBfdmsc7tajJDa5Ahh6kuW/
+	 fcCgdRSdEflzAT4lOLGFDqFxNuCA7OEAfRqhY2xJlnNI8JUD6dI7a4UUPKwp++eE6MDE5
+	 uj38nT1y7u48ZvN5qWfjYbHzPQxylWHziWrNpRA1kM4nuj4uZysOSDz7XKFdoXaCg9A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793871768;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=9KVyqZjLxhSDOn37BJsTtiq5i2CumiInDbFkl3r3JTg=;
+	b=xMTZZI63t3rbLfSC6ue3BpVmxXJ8Tx1HQJlBWfwUwCGFgwraiCzt6gtYFbiBaX5kI1n6
+	 kAZdaEeWTfJsLIx6t2gdRbLl9Ke0Y9p0bIe4t/MjYJDY4pqSDm9Iyuw4NDXIxF8VT0cgh
+	 EmbM9/DbWaCs5GwctMRgjDwaYlefn33GC7IEoyFQG5NE81Ynf8oLB0aO69KyP98hpq9G2
+	 fLkwmC8UiTlreRLVIoz5xIxD/FPcs0NOXO/iWUNZvbVhoUdpIFWCb4ChZlfVMlXD+AoQs
+	 kGJW7n8w5vyDCqMQzHbd0k3vHFIgsd9Jl+KoIJoHpGnsIWG0nNBDm9lpxa09l72UccQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lBCZOVag;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A089606A328
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Nov 2026 09:42:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A089606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=cQBVG3Ux
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 341C319F6;
-	Thu,  5 Nov 2026 01:39:26 -0800 (PST)
-Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B15363F628;
-	Thu,  5 Nov 2026 01:39:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1793871569; bh=jLw5x/FRptMVvMRjQnGefDSs408NvBXTJ8hj0KuIrAA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cQBVG3UxH6xAs18O2apuMOrY9rPW8MkbyKg874xfoia2zPmzC0dS+S9O76+BnGm1/
-	 K+5CnP3u9SRoE3WB1kb8dWR2aolZAoO8+kctuUuLRrRWCaFu38nviCqJ36+TVTXQuE
-	 Kapu0jldllBYIlNs7XXD6BpQEVwZB/Fb0VSERY0s=
-Message-ID: <e7cd2bf6-f9db-4a90-b11a-665f8219f7ce@arm.com>
-Date: Thu, 5 Nov 2026 10:39:26 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lBCZOVag
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6b47c1a3c74so2127974a12.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 01:42:47 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793871766; cv=none;
+        d=google.com; s=arc-20260327;
+        b=qEiGvjuk8nqHWkKm+zzu+l5fbm2kcxZgHcGdk44Uh9Ri7uM4kMmM8R9FTuw4JNRozV
+         w2Ji4YWfXmLXHT2SPHzRRNtfTek2REBLdWQNEzNjwLTHg1Y9iGBspE2LUdS9kL9Q+KF/
+         D3sJQgL298xvvcrF3dfDDTIu76wpHHwSQnovYeASbNAjsN70vDG4r88d+jZe0AgTujj0
+         t9LZABJ/MaSErtIOi85H8jfyweQfUgNlAdjSHAxLBJ9Evk2zi1s0MuTdbQRyERnb02B4
+         aQRSz6qCAifEI26nbHixBwKjxJwG0apv6qQAMbfEfaJshaL1ox2y3evLDEEVl2DQjDtY
+         zBTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=9KVyqZjLxhSDOn37BJsTtiq5i2CumiInDbFkl3r3JTg=;
+        fh=35g8V0xOpJ+xbKDZ7abbVR7tkigcqi/F/OazcKs4qUw=;
+        b=BviuZ8knPhzaNv0usu7lAbNejkh3T7NR1rpGwNCPX3/kDHsesj9F/jROC2VldaVtVi
+         3dBw2gePmIUkE3iYTMp6AgC4l1tQTa6ShcS6ZrZWehymdDKqBs0ipIa5QipovsJhu5BY
+         +ipLekO9U1hAR/LLDZGItU1ckNxT+KMaAicN0AMxzUI26ToJpnzfOLq/O/ioPNpwnV3V
+         OS10/V0fDnI8QTzPIR5b4kHies5gXZfSJlWLjcUw7cbQ2g9WhWzym30cRJqOdwtx4l7f
+         khoVKE7jElEdXlVb4Sl7hPRWrcVuQRr5O2wBeIdT161uKi6T1y1CVWfzt6k5dLSRQKcS
+         7Y3w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793871766; x=1794476566; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9KVyqZjLxhSDOn37BJsTtiq5i2CumiInDbFkl3r3JTg=;
+        b=lBCZOVagTQVLd9KXSuiTDMdDSUssX6sHOvFz6jllJYqirrCE9hPUTo49xM4gJtulHD
+         mbB90BoJR+kAHY5NgspfzKWw2JtqDRvz3eqaznwFv3AmMzGIX8fp8vhmJSQ0mwgwjguK
+         pT2aWtLj5fBJ9jcZbx+nC1NK4eQOvNHWxie867CTF/vf5DFavxvesOEdTQSHjvJofvqW
+         wGHKGvjhrHgi62Vy+rz7cAxQP1+FsgnMIG5U7uhcDf9ppFWsbDTtAU5ysfnZYVzCix4q
+         cw5IbWu3uYh8SbdQ59hSYfZqX6k7oxzo6nXPyNkUXO15cChw3EeKoUbntDa2K+ueweim
+         kH1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793871766; x=1794476566;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=9KVyqZjLxhSDOn37BJsTtiq5i2CumiInDbFkl3r3JTg=;
+        b=diOrNcXowHZZW+w+97Gw/Sc1iQdHVLA7u4818gxCnk0rNpJV61FtINHwv3M9zqy6qq
+         YVEgtGALTgworluHbo+NxNKoQBAzqOMdU9d7W+It535N+77o2y1yK65+RLq9TaSUNm2/
+         cWH8sZADoPR/osFME5i+MA6iyR/+hhAdak8BNVYu36P+i79ZXpP5QitwZgwMU0lscKnN
+         UHsSSJZ/WciWgiqj4raS2jFy01wb0bFL36FRgKy/T8JeXhaasF3gVFVgldaeV7JnkDeR
+         l8intvwKMpvO70Vix3ffk6ZfMlb+P53kwynzTBIwtnY2gy3ceewswV1QAU5iHYcmQRup
+         YTyA==
+X-Forwarded-Encrypted: i=1; AKwUvByDO4efMAPxwGd1rH+QVeP1fxyoZRM/JkYMFVvjPdXBjlM8VmT1n1jxyHba8eAYHGmoZqE8BdVn+xpE@vger.kernel.org
+X-Gm-Message-State: APuU4Z+aenhnuTpzMd714hmohSXfa3JUGAcTHgvAsrRA0LdYYpm38Fb3
+	q0bjpXB3KZlY6AAs6xxwoKnC+Pi9bWJyz9TK6eyJG1qGKrTpA/9BfZxpw58D0VXKdC5bL5Z5h0e
+	ZAruGjw/ap46joZbOhSXnGes56SCk8UE=
+X-Gm-Gg: AYBFou2XtmyH5t0RZMP6b+ba4R1cjWumRB/7Ho4PdLwaf87DiQ69lmzWbgKlmeZcZJT
+	DwB9Mq/55W7vBEp5aYypi4kVIR69hmDCm6fLxGHZkAAzG4K1AK2smko8hZJEJJ9csPVfWIG6NEv
+	zknfbHZyhVgCs6a21PbVbOGEPdMocuG8VADa9uBIwTmjrCM9UZ5X2qFFpqN4TQIJP0IFAsqnxmH
+	VrTNxMZTINBG1MZs3DFfgX+Gqg4WxOxrakCLyp6xeE1XGORDcsmZ4Brte0x+bAdMGmqrubcScwN
+	y03p8TFdlHcHqTbUAOYNPpzd5MTvFI9l2j6Emj2YJ9TGPYLl1VuXlVNvi5k2e+pufZQbg3cBIWh
+	X0CwHHHfMa8cADps5nUU0B74RMfjU0S62aCw=
+X-Received: by 2002:aa7:c2c9:0:b0:6aa:a33a:2762 with SMTP id
+ 4fb4d7f45d1cf-6b4d3377817mr10254827a12.2.1793871766289; Thu, 05 Nov 2026
+ 01:42:46 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -53,96 +103,38 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] pinctrl: sunxi: Fix out-of-bounds irq_bank index
- when first bank has no IRQs
-To: Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20261103213002.1673560-1-lee@kernel.org>
- <20261103213002.1673560-2-lee@kernel.org>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261103213002.1673560-2-lee@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20261021105109.199886-1-l.scorcia@gmail.com> <20261021105109.199886-5-l.scorcia@gmail.com>
+ <179310028255.2808517.13933580516140278450@kernel.org>
+In-Reply-To: <179310028255.2808517.13933580516140278450@kernel.org>
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Date: Thu, 5 Nov 2026 10:42:35 +0100
+X-Gm-Features: AclHuK8keS0URREeVHi2bDcMrIMTrg9GDE11ruNkJWdKZdjkdmjRgehGKxzojT4
+Message-ID: <CAORyz2Lv9fBrKZOQ7kFBE+u-nJ-dFpRm_3G0JTS=bHtEL6n_GQ@mail.gmail.com>
+Subject: Re: [PATCH v11 4/9] mfd: mt6397: Use MFD_CELL_* to describe sub-devices
+To: Lee Jones <lee@kernel.org>
+Cc: linux-mediatek@lists.infradead.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>, Val Packett <val@packett.cool>, 
+	Fabien Parent <parent.f@gmail.com>, Akari Tsuyukusa <akkun11.open@gmail.com>, 
+	Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, mfd@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Lee,
+> > +     MFD_CELL_OF("mt6323-pwrc", mt6323_pwrc_resources, NULL, 0, 0,
+>
+> Nit: This is non-blocking, but if you have to respin, please use the
+> 100-char limit to keep these on single lines where possible. Same for
+> all the others below.
 
-On 11/3/26 22:29, Lee Jones wrote:
-> In prepare_function_table(), irq_bank and last_bank are initialised to 0
-> and last_bank is updated on every bank regardless of whether it supports
-> interrupts.  On SoCs where bank 0 (PA) has no pins or does not support
-> interrupts (such as Allwinner A523 and A733), the first IRQ-capable bank
-> has bank > 0, which causes irq_bank to be incremented to 1 instead of
-> starting at 0.  As a result, the final IRQ bank receives irq_bank equal
-> to desc->irq_banks and writes out-of-bounds past pctl->irq_array during
-> sunxi_pinctrl_build_state().
-> 
-> Initialise irq_bank and last_bank to -1 and only update last_bank when
-> processing an IRQ-capable bank so that irq_bank always starts at 0 and
-> increments sequentially across IRQ-capable banks.
-
-Can we please hold back this patch for now? There are more issues around 
-the IRQ bank usage on recent Allwinner SoCs, patches for which [1] are 
-on the list. They should solve the out-of-bounds access, I think, though 
-we might want to add explicit checks, maybe.
-
-But taking just this patch here would torpedo the efforts in fixing the 
-correctness issues that we see.
-
-Cheers,
-Andre
-
-[1]
-https://lore.kernel.org/linux-gpio/20261025142412.112216-1-pmazzini@gmail.com/
-
-> 
-> Fixes: f5e2cd34b12f ("pinctrl: sunxi: allow reading mux values from DT")
-> Closes: https://sashiko.dev/#/bug/linux-9c4dd832-02d4-4096-9e91-a03c1d4d85b3
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> ---
->   drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 11 +++++------
->   1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> index 8bcd566593ae..79ca1a7c4837 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> @@ -208,8 +208,8 @@ static int prepare_function_table(struct device *dev, struct device_node *pnode,
->   	 * Assign the function's memory and fill in GPIOs, IRQ and a sentinel.
->   	 * The extra functions will be filled in later.
->   	 */
-> -	irq_bank = 0;
-> -	last_bank = 0;
-> +	irq_bank = -1;
-> +	last_bank = -1;
->   	for (i = 0; i < npins; i++) {
->   		struct sunxi_desc_pin *pin = &pins[i];
->   		int bank = (pin->pin.number - pin_base) / PINS_PER_BANK;
-> @@ -222,17 +222,16 @@ static int prepare_function_table(struct device *dev, struct device_node *pnode,
->   		func[1].muxval = 1;
->   
->   		if (irq_mux) {
-> -			if (bank > last_bank)
-> +			if (bank > last_bank) {
->   				irq_bank++;
-> +				last_bank = bank;
-> +			}
->   			func[lastfunc].muxval = irq_mux;
->   			func[lastfunc].irqbank = irq_bank;
->   			func[lastfunc].irqnum = pin->pin.number % PINS_PER_BANK;
->   			func[lastfunc].name = "irq";
->   		}
->   
-> -		if (bank > last_bank)
-> -			last_bank = bank;
-> -
->   		pin->functions = func;
->   
->   		/* Skip over the other needed functions and the sentinel. */
-
+Ack. I will rebase this patch over current 7.4-rc1, adjust the line
+width and send it independently of the addition of mt6392.
+Thank you
+-- 
+Luca Leonardo Scorcia
+l.scorcia@gmail.com
