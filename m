@@ -1,93 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793889311;
-	b=ljjOmA0XRkvlJkpOY/3Jl0oJZiYE1XIyA337MIaoGRUmNjaKaaFKE5JOGaz4Ss+1QFEw
-	 tqvz7IuLNUAMRH+Bz5opEWvR4nv5/le+BPrYvPWCFMjoAl9Fxd1GEQPBdYQBuhwlPrpMa
-	 Yu1zF+aeKuoD0SSgZ6yOSKlmVK9/8U338ZRG/6ScgtwSFcOM7MxWd7qUbPg32jBmifyvL
-	 BRSPA+p15c19GRrCj3Rs53vQbqlb0VteiO8aIGgIqiP8BkQBMK58+9hDa28NhS69od7jK
-	 347xv1lPbLZrLpry/a6knir6q5rn1KNcpLd2ijp1HryajTFqKDDVNKHU1VF8zNFt1jA==
+	t=1793889664;
+	b=oeSi3IhqL/93XqiE/o90xuv5Lx69m6IIXVL3vfou8UqHz4CB2irDGXYFIP0yR7quuZlu
+	 v1c2cyPnQJzOy7JL7FhQgLmrlxhOEZUkwBGd4UvxUCI7ORdS14XZG0E5YAxOLw1p86JnV
+	 RoXc0xPoe7cgtytwsF1khyiD3fH+doaGYOh7RNAhFz+5joaIMNpDYaSFihcaOonLkHlp9
+	 oJskMoFRLv1LEORfG6ynFvoQXk1f06sZU+4/tHpkAS1iFNQLefQNEdrD4qd7gUvrU/Lzz
+	 qCmHfY4Ng2vcMSuV8eJ+pJnvsBKTSt0wUOUhMqOS2fv1r004JLG7HoQcVPl3h4vjeQA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793889311;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=xZ6T3yAREIItW/bwTXHIxKkqe7d5KDdF5/q0orT3gmE=;
-	b=T0PP5rCOJ6D9QgrFQab+KKiZdH5dolAU7oFORx4qzV00sTcx0MG8r2oH78ffgK/5xXkJ
-	 1ZxsJeRhmjRPKMJu+s+bXIMLGeAEnV6Z/e8JGv2An8gkHMlEi+Ughz1SCuA+M/q+1TWB5
-	 CNfRObKHagxDpCdBmJbGPS6odH8BNHZDGnipKMWyEtgcG/pmJ9jfra3JZMDxBfNqZc3Q3
-	 mBZ1ZpE03k3qGWHO43MLfJlLPS4Kkj7AcN0KUN5QUDsUpH4RpzT0gCCAfaAxX2cMQB8VB
-	 ni8LsciJk2ej8F6RKQBxkiETnvOB1uSsSzIoSJPD6TLRJiiYJ5dk70ZMJSHhA3ZZc5Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793889664;
+	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
+	 Subject:Message-Id:Date:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=ASfPtIf4/g4D0b8rceRY+jLO7SJuXGW96/DCbiFkD1Y=;
+	b=NyltMaYQRmLFbPQlXjAgH6M8gFVpQWM9PRb0l59jZJnIEFdOvrnLcZvQVqRV0SE6kGiq
+	 p6cERG3lbCBXjMUP92SgDbseeMY/M8IsJ4XgNR/oc2zWQnFosDlYVbkJh4LMAi3nSMaOE
+	 qKzgnvfmQYygGQb4qplmDpE7nNK61UQEuC5oV8MuwsdCAaGFjGl83EGbnsuMP0T2YieOf
+	 576xuFuY+BI9U9yklO0JVe0ooaJBKZSio3B+3tJDSgh4J2XjKEIR4pKer0QKugG8AoWGS
+	 +brYLw+cOs7GCxXNKF1PgVZfYr0yErLBobIa+pHSPihc+d1FXZczsfyYhLtSjlnzVEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="BcaWpAx/";
-	arc=none smtp.remote-ip=198.175.65.11
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eMsbcMyw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30609606A326;
-	Thu,  5 Nov 2026 14:35:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30609606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBC0606A31B;
+	Thu,  5 Nov 2026 14:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=BcaWpAx/
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793889310; x=1825425310;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vHqNRWEYuZGjg6yuqfqM5YBUd51sOvP0Z86/uH+jqiM=;
-  b=BcaWpAx/JYLCntm8XSNQgrrLSJszz4zVy68goEE9a+aUuR5SUOH10cyg
-   T+vc9pYb9/2ezuKwBnDo+8NlLz36S0M45o5pinyaFqboCn1C6gb2Q9WII
-   ozXlszwWbp++EY6zGT4QrOIoHpdjYbCGqY4hvpbJ9liAFO91Wx12sAKEi
-   5hv6Al9BHvO34f1HdRGFJuxJQssBlvTa80YCa7sOObXCFzPrLavd3pJXD
-   VZQNlOba1Mft2wq9Ayww3mGmhkerV41otcLXOVrfhfwODJfFFjkXWvUv1
-   jkPZTuyFHX0IdeCUvnBkFHgO/M6OmiPaqHlUDs33QutUPhN2myotAFxbJ
-   g==;
-X-CSE-ConnectionGUID: npg7ws/lRK+dDUNkZcL64w==
-X-CSE-MsgGUID: OF2Aq0zYQ6CQpmQWeO3Vow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2567093"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2567093"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:35:09 -0800
-X-CSE-ConnectionGUID: YBqyl/1kTbaNqfFgCeeMvg==
-X-CSE-MsgGUID: s/azyhZAQJ+hDf20Qt0zIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7365899"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:35:05 -0800
-Date: Thu, 5 Nov 2026 16:35:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Raag Jadav <raag.jadav@intel.com>,
-	Junjie Cao <junjie.cao@linux.dev>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>,
-	Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Peter Tyser <ptyser@xes-inc.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Hans de Goede <hansg@kernel.org>, Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v1 0/5] gpio: Move most of the Intel GPIO to the
- dedicated folder
-Message-ID: <auyUFrrAYLobE_cy@ashevche-desk.local>
-References: <20260925160913.1648565-1-andriy.shevchenko@linux.intel.com>
- <gxfngcnnkgkk5zrmsyrmqam6bk2ti2aflipwsutvce3dtgc7tv@nu3mmjfrt75u>
- <CAHp75Vdocfk5b7GkL21z4nKv4mNcGMF4Y_aZP_sPPeL16FrsdA@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eMsbcMyw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73441F000C1;
+	Thu,  5 Nov 2026 14:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793889663;
+	bh=ASfPtIf4/g4D0b8rceRY+jLO7SJuXGW96/DCbiFkD1Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=eMsbcMywTtrtPVt3U9oDmsABsUda1G/gcuPItqYS7fo12yc2V/R/mkiwCNCa3lPiP
+	 YFXxCVZMq9ZRq5FZQgTYFF0s/Wf1+1GSOZj56zQo8lizu/2KTYZ/bjawVicVVGbfpG
+	 OBZbsky/ycsdCiNHlvff+5JyTlxLxmiUwl+rV/87b+WETwDNYfHrotdrShCElOFJHE
+	 OGAvyVXHCHfhlr20xA0l+KTKXmG12SgW7yVb0h+dh6zx5P4qM5IH8Cxo2rhPys/dK7
+	 /88gpb8o9DW9Vgoe0POBQtgy4DmwnAqkpLrQcZynDvZXSBdP4fLZTs8MYNrIbD7MUb
+	 3AoH3eg4l6STw==
+Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
+	by traversing.sirena.org.uk (Postfix) with ESMTP id AA82A2795DC8;
+	Thu, 05 Nov 2026 14:41:01 +0000 (GMT)
+From: Mark Brown <broonie@kernel.org>
+To: Cezary Rojewski <cezary.rojewski@intel.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20261105-pcm3168a-non-exclusive-gpios-v2-1-982577248ed6@oss.qualcomm.com>
+References: <20261105-pcm3168a-non-exclusive-gpios-v2-1-982577248ed6@oss.qualcomm.com>
+Subject: Re: [PATCH v2] ASoC: codecs: pcm3168a: do not request the reset
+ GPIO as non-exclusive
+Message-Id: <179388122036.2912885.4833618934923117964.b4-ty@b4>
+Date: Thu, 05 Nov 2026 12:20:20 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -97,46 +69,46 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Vdocfk5b7GkL21z4nKv4mNcGMF4Y_aZP_sPPeL16FrsdA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1165; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=9Tm1jLby67bY2odbMbQsQv1Sc6WvT9/fWpx2cuUKMBE=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLLeTK2175ljzBR9ZtGf/5E7OpdrJZ2+lsggNNmyd2nct
+ DnOXZJrOkpZGMS4GGTFFFnisrhf1pe8XsN3cGEbzBxWJpAhDFycAjCRngKG/zkHHu8pdjQOTHjz
+ 02niltOlkvesJz24xnfZckXdrflKGvkMf3jFbYw/FuskXspUrS3Ue79EJv2grXs/78SC0lB2r4P
+ +HAA=
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Mon, Nov 02, 2026 at 10:48:42PM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 2, 2026 at 5:33 PM Bartosz Golaszewski <brgl@kernel.org> wrote:
-> > On Fri, Sep 25, 2026 at 05:57:02PM +0200, Andy Shevchenko wrote:
-> > > For the easier maintenance and future development move most of Intel GPIO
-> > > drivers to the dedicated 'intel' folder. For now it only covers the drivers
-> > > I maintain (as per record in the MAINTAINERS).
-> >
-> > I wanted to apply this in order to see how the menuconfig looks like
-> > with it but it doesn't apply neither to next/master nor v7.4-rc1.
-> 
-> I will check this as soon as I can (currently I have something else to
-> address which is more urgent and it's not related to Linux at all).
+On Thu, 05 Nov 2026 09:42:25 +0100, Bartosz Golaszewski wrote:
+> ASoC: codecs: pcm3168a: do not request the reset GPIO as non-exclusive
 
-Actually I can't do it right now as it will be a race with the incoming
-patches (for example, I see gpio-sodaville change in the mailing list).
-Can you tell me when it will be the time that
+Applied to
 
-1) your for-current is present in for-next (so no merging conflicts)
-2) your for-next is closed for new patches for a few days?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
 
-Only with that I can achieve some good result, otherwise you will always
-tell me to rebase/resend and while I do this, there will be a chance of
-a new contribution that continues the loop.
+Thanks!
 
-TL;DR: I truly believe that the best timing for such a series is just
-after the -rc1 as a first batch against for-current *and* for-next
-(same piece assumed to go to -rc2). But of course, we may resolve
-the potential conflicts.
+[1/1] ASoC: codecs: pcm3168a: do not request the reset GPIO as non-exclusive
+      https://git.kernel.org/broonie/sound/c/d51f9833022b
 
-So, what do you think?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
--- 
-With Best Regards,
-Andy Shevchenko
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
