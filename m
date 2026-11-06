@@ -1,73 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793923286;
-	b=ULdh+mjaydENvlkLetUGtbYq85jswCgJz6lLgSu0qVsW1eIEbOY+7EHKZ/oTdEzeYAib
-	 DTLxikHrRQRVGpdOO76T47N/q5xo9oLPkHb/FHt4RS6nSqR5YTsNSdSV/LaDtcM9Vkzl7
-	 tu9wqre4gEVSWttGdmK+O29QdIhNJRchMCwyx6GBCLHiWQJyyNpMmPQ8S2NrY+LI9eW+M
-	 TRW6PKN2HjvG+sOHfpE1mPiMaMxuEEvZRxQpyF3icjuqhfMqXxfUXI5U6pjNndG8jQ449
-	 PDbG2FNmSLKEKHYA6uT+1WokXCE9kaAuL/b5ipOjIquYxlTVK1b9UbdzJm1dZBl2zwQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793923286;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=IbgAues4A/QbzQGKTApxwzLkqZnWANPJllUF/xvoERw=;
-	b=D7Ljju7E8JffkcDMh6yNkZdjMincaxGtVKXgEqxy7F4jVpi1DgVT9jBlEdDYFNpM0WyJ
-	 FkQV87NWL1smZw5PEs1IomnzSvqxsIO7BoqEOj3qBM1a8VVDQhymyqyfLnXxdf5eLeGKu
-	 8p4UcPQs6qF1Nm5sc+2LqudbpwqvygVU/qkj694EJcQe0fki3UK4Q3Njqdckwfh5UUBKF
-	 KaJgihmLCObtX3Q87CLRjZHAh7zoAIfADFVPYl0nWEu7AxFDKdYQPnUxeC29VMYvtr/aX
-	 ZcK+o+gwcxHjBNpOIEg6L7bLmiU0v9ExRExJMrsZsMaF/qG3BoPJ48GOxP/Zh/CwGyw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QPi48CP8;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.180
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793924861;
+	b=i0vCWzBLtd3QRbFIhq+bkKXiXhcTNrNKJxlPnJQFyraCRf0KsHMubyo+QbJG0XBUzx6H
+	 GGuMrBBhukF/jh9ORjd+L49fXDEbJoQRiG2EX2BbBrURtVj60swcmCN0Rt+kTDgtArIGU
+	 s+DqtJxGzSccIende92mpAML6w+gAaJNH2o0+CqiuKQ+3pXzMLszKRP68Yjqlc3ux8YIH
+	 PHkV0pCR5w+HlGUgDWOfxVTHhflDvtJvZRg+oA0fRS1ys2woAQ4GrD0+cmXdvecCwJrhA
+	 OutGCEnKtiS5fZ7qKdqw6U/qOB3qUy/9VLnxVm5vXU7t3D9pgw91VgELJFDbekncXQA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793924861;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
+	b=pSb8jaT2IF7Y9SLAlxc8P6MGX8f6P9GRmtpCX42+eEncs4antN7WirwTpJ8g7A/dTy0L
+	 5OR2+gwnhlcHB9d9AQN+hc8ITmEHB0gS7caOY0CNXcxfZSfXFdMwodO8gcXuEWwJbVHtG
+	 7ht0CSvzmbjv8L0OG3kk0VSfyKe/vquyR6g7OEb/4+NRXSb8FH8qT0YyTqhQPTaetzXG9
+	 kWBbf1WEfcUUWTW+dEsMrQtP2YGK/UvOzRbiADJcSKWYy08o+ueoT8qtRFwBfJbLRj9Sd
+	 RxWbOO9L5tpUqcIMJtJfNO13SLl6NmqjS992I8Yqbx0e8QAsyqRL+yYaG79rbEtERmQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=B8aotozh;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.180
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75927606A31B;
-	Fri,  6 Nov 2026 00:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6F5606A326
+	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 00:27:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4F6F5606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QPi48CP8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 805361F008A1;
-	Fri,  6 Nov 2026 00:01:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793923286;
-	bh=IbgAues4A/QbzQGKTApxwzLkqZnWANPJllUF/xvoERw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QPi48CP8AL7eUFFoZqnL0GvfCOdEYfMRfwp24DBiVe4FNQNex4z8zK+n8EbJ8uvWn
-	 7fDB0E1pKBbsIqeEjYsQ4xnM5ljXaaqDD/Ze/8oXVWYFwMOhjzwYXCU9C0fQ7FS4gG
-	 fRrvgz0su4f0Y6yEdPAA9Djx5doENKCkWmkWBABXcXd9nX69KprUu/nCrFVeeYcPAf
-	 rhXFmUAkL1QfdetUusYdNkkjVj0J9bWiLty7w07trB1c8tWUl+xHXh5K8ffO4XKvgl
-	 MapWckKuefQ2uoi10f3jlOLgLe+PFtigCv7jQb3mUqEosual0CNyRr5vfC0Jz13RtM
-	 ujOUzWwpftMwg==
-Date: Fri, 6 Nov 2026 01:01:18 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-hardening@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <au0XuGWZ1rXdHyPn@devuan>
-References: <20261105111423.360f4ba8@gandalf.local.home>
- <auyuINXEJKc1KoG7@devuan>
- <20261105115019.2fe7c91b@gandalf.local.home>
- <auy0O467UqOzqYub@devuan>
- <auzGMV1YbO9DodBq@ashevche-desk.local>
- <auzHFRzd86iV4-RA@ashevche-desk.local>
- <auzxXyAU6zyHtMtn@devuan>
- <CAHk-=wjD-fQvBvozu7+TjXa4=arAFgVzyixw4W_A=14Y8rhSLA@mail.gmail.com>
- <auz79Izf6Q5qOQPi@devuan>
- <CAHk-=wgGLZRQj_a9r9i2ZdhGZKKVxG+-mAj=pb=pRYyJaHAquw@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=B8aotozh
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-8a60f90a924so16033b3a.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 16:27:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793924860; cv=none;
+        d=google.com; s=arc-20260327;
+        b=IGMq4AR7+cnLFoocg1hQJkx4ngn+m2EPnQYG0t2shZAKxxZLTcHD3UMNWTKvpYKoB/
+         RJk+7OnaBsttQ1IdwAq+9zkObAkvCuecrg7sFp9z3QNRaeNUB7hyg9CgOHdEnh26fbqO
+         fEMKe30H1SBU76DWw/JXYDfT+P+P4jG6ONT1Qw667mmfWAr1AzI9ufKQwHdBY/upAnN4
+         CO155+sBkhp6dkR4xPRDpRaPIjbzmBGzR/XCbntKzY+EHDWss92dHzLHgH6/S842saRS
+         KfImKWmrBvvTi6TX3vNeH21jawVl0DekR3eCy8NyPn1Rl19AqZnpPmAsDVp4nOv8u6Ic
+         G5dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
+        fh=gnwpm0fszpCKOrcr/Io8Rz/EmkVeMOXKAXUbvVIs85Q=;
+        b=BfcFnimnFhk9N+/EeClFeFa4W1Y/i+El7/I+mU17gkxOfWWxzpDuzm4ZdVKKFFOasI
+         CUqp6j+MS3Ta9ZIjUypUlP32YGAIrrcMDyVFiF7Vf6eQ2ifORmdlFaYjmnWTiloK8CCK
+         oE/bIaO/BG9tbFkq5ofvRGfPVIA/yfVSgdZxNLI/LGIzLBOxFw1raDugZDxwsB3pe53d
+         3shsbD5kX2YNDKwwOWGIpt61UhCvfCqaDC4QBsYeBthEFzuYHIizvBd/Svx9oT1udZBC
+         cRVT5UCKV5H9Q80bjHN+yM11QnCGTG0q9PCfc+1YbQF+4ybG8eLH16MAnJMWCeAQDCt2
+         3SAA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793924860; x=1794529660; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
+        b=B8aotozh3RbL/dFwkTi4TMSy2nLYpJUYRWEYI3cy5AUlsnNovNsF/611X62qwIKAnT
+         Q2Se8RO/zDE3KstqARhy3XiKYDXNDYRU68XBMd1brohkfCDrMN856R/hzeBiGFtfaTmr
+         ipylV6gZcwXVF5im89jT0tXa3Te9VZGxBZ4irnxv8ORH4ncezZX44sd03ZY1oIiIfJ96
+         +boVPu9To0OpNQ1SueOHPC82BfqVSmXy4OfuDIXN2BFSf4B5UroMtl0Q6f+VqQmTYmc2
+         1/8XjFBSNQu7BymnVB+h5n22omGDmFgpDri9FMZ80i5EeuLLXYRDlq5mGN4OWeYkyZCy
+         IMAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793924860; x=1794529660;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
+        b=KANwpaY/ubIVrzdpNDgINyCvH+2VLaw2rSAPNJGAdGja6XBo9sAGxz11J+cftLMfn8
+         9MguKNaMEicSVDXz5jqRsvMXqH2ZtZV2ieCxpwmpQ37TsWjurUqTmynYEQqVQILyTo4T
+         9aypKwQ/GEo6DH5TccHtU2MZ7xyyGHdQ4Qu+YfBQT9eJdpS4kL2O6bQoqS24zp7svpCR
+         5fKV3PgZVZXjEuzSBVrTNQQ4M7PTOv2DMIFOUUurP8+xgUmtAmeD6o1qm4gOb8+GFNOv
+         IDz/b0nwOn+I/EysmcDjH7McTqRqShxB0UreGyDUpIMgEomc4xw3sG3rmUIWNWqsIX7t
+         VOFQ==
+X-Forwarded-Encrypted: i=1; AKwUvByXOecbnNvYfytlbvCQQgC2gTNHG7E+EmbxTJahx7dtSBOWwrv7eSGjARN0Q8Ic1OCow4D1OPNSR3ot@vger.kernel.org
+X-Gm-Message-State: APuU4Z/M3Benx9d13N8iWAYu6gjY3vIkwBTQ0KuPp9z0CHjsT0SJi+wO
+	nA/1tzOl9wuMJs8sgpGFV0y7453J/s0hmLKpANvPCzV6s/2sjd6Hx3QBC6jxvGAcnccBHwtgnt0
+	XtT500FtA0eO/vQAOE2OrFPwPcN/rxzU=
+X-Gm-Gg: AYBFou3bo8APeW53ef7f2dPTz1tTAsotSz8Dxb4bUfpWPwtPXVLSBfeNWb7VaAEdd+W
+	GLMjXQR9Yn1PMKtonSqeN2pJeFvrekOW4eYiUE+rU7fz6cdmLknbKXZngZYy1b3hDZ/G6WBCh2I
+	tzaBeSx2rUw0ujA9MwCWhuPbC91SeECt9XLh78e8AfKvpia8sY/0bqnsPoYtS9oc7krQ90kHW+M
+	CnJHX/RSDK7oU6+1SeWmJ1S4/wOZ1xnwKIlkjwPC3rlWjzaBbhbeCtARBJWitKwFQGY7oEK2bk7
+	4j6U6QW+QF3AvqPxj65Yt61Dwj6pgheQb5qbwOLOYUCR+jowfy9V0ZykxG6eCyzehS7qiDOoaIm
+	IBNBhrj/zyhlTg8yGE4vdqM4VTOw+fYdSzJPhN+5h7PvoCUW+TVVyBMBnN/uIMqQ4+6uF/7KUov
+	yNLOxa3ihj+KDHwM7+
+X-Received: by 2002:a05:6300:67c8:b0:3e2:83d5:191b with SMTP id
+ adf61e73a8af0-3ebb2aa4cd3mr1017226637.63.1793924860049; Thu, 05 Nov 2026
+ 16:27:40 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -77,159 +105,97 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jyov6e2ogi6jfrb6"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgGLZRQj_a9r9i2ZdhGZKKVxG+-mAj=pb=pRYyJaHAquw@mail.gmail.com>
-
-
---jyov6e2ogi6jfrb6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20261030195025.5153-1-muniquefeitoz4@gmail.com> <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
+In-Reply-To: <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
+From: Munique Feitoza <muniquefeitoz4@gmail.com>
+Date: Thu, 5 Nov 2026 21:27:27 -0300
+X-Gm-Features: AclHuK9Mf-gcoGvhdirtuFilPtygvQ33RIDVt4CdaQjJgJvOHKAoPNhtTi8dHeA
+Message-ID: <CANA1Db=sBQFR99pw0YUSS9sUcHtHVn-SoUyj3p6Vxa+LLJF_Ug@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: amd: Clear interrupt enable on spurious IRQ and
+ skip unhandled EOI
+To: Linus Walleij <linusw@kernel.org>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+	"Mario Limonciello (AMD)" <superm1@kernel.org>, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-hardening@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <au0XuGWZ1rXdHyPn@devuan>
-References: <20261105111423.360f4ba8@gandalf.local.home>
- <auyuINXEJKc1KoG7@devuan>
- <20261105115019.2fe7c91b@gandalf.local.home>
- <auy0O467UqOzqYub@devuan>
- <auzGMV1YbO9DodBq@ashevche-desk.local>
- <auzHFRzd86iV4-RA@ashevche-desk.local>
- <auzxXyAU6zyHtMtn@devuan>
- <CAHk-=wjD-fQvBvozu7+TjXa4=arAFgVzyixw4W_A=14Y8rhSLA@mail.gmail.com>
- <auz79Izf6Q5qOQPi@devuan>
- <CAHk-=wgGLZRQj_a9r9i2ZdhGZKKVxG+-mAj=pb=pRYyJaHAquw@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgGLZRQj_a9r9i2ZdhGZKKVxG+-mAj=pb=pRYyJaHAquw@mail.gmail.com>
 
-Hi Linus,
+Hi Mario,
 
-> Date: 2026-11-05 15:21:35-0800
-> From: Linus Torvalds <torvalds@linux-foundation.org>
+This is a real issue observed on my desktop system during boot:
+
+CPU: AMD Ryzen 5 5500
+Motherboard: HA0QING A520 (BIOS 5.17)
+
+During boot, the system experiences an interrupt storm on the AMD GPIO
+controller (IRQ 7), eventually triggering irq 7: nobody cared and
+leading the kernel to disable the IRQ line entirely:
+
+=C2=B4=C2=B4=C2=B4
+irq 7: nobody cared (try booting with the "irqpoll" option)
+CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 7.2.14-arch1-1 #1 PREEMPT(=
+full)
+Hardware name: HA0QING A520/A520, BIOS 5.17 04/02/2026
+Call Trace:
+ <IRQ>
+ dump_stack_lvl+0x5d/0x80
+ __report_bad_irq+0x35/0xaa
+ note_interrupt.cold+0x1a/0x58
+ handle_irq_event+0x72/0x90
+ handle_fasteoi_irq+0xb6/0x1f0
+ ...
+handlers:
+[<00000000d546c9c3>] amd_gpio_irq_handler
+Disabling IRQ #7
+=C2=B4=C2=B4=C2=B4
+
+Checking /proc/interrupts shows IRQ 7 (pinctrl_amd) accumulating
+around 200,000 unhandled interrupts on core 5 before being disabled.
+
+When looking into do_amd_gpio_irq_handler(), pins that trigger an
+interrupt but are not registered as IRQ lines
+(!gpiochip_line_is_irq()) only have BIT(INTERRUPT_MASK_OFF) cleared
+while BIT(INTERRUPT_ENABLE_OFF) remains set. Clearing both bits stops
+the spurious interrupt status from re-asserting.
+
+Best regards,
+Munique Feitoza
+
+On Thu, Nov 5, 2026 at 5:18=E2=80=AFAM Linus Walleij <linusw@kernel.org> wr=
+ote:
 >
-> On Thu, 5 Nov 2026 at 14:25, Alejandro Colomar <alx@kernel.org> wrote:
+> On Fri, Oct 30, 2026 at 8:50=E2=80=AFPM Munique Feitoza
+> <muniquefeitoz4@gmail.com> wrote:
+>
+> > When do_amd_gpio_irq_handler() detects a spurious interrupt on a pin
+> > that is not configured as an IRQ line (!gpiochip_line_is_irq()), it
+> > currently only clears BIT(INTERRUPT_MASK_OFF) while leaving
+> > BIT(INTERRUPT_ENABLE_OFF) set. Unlike amd_gpio_irq_disable(), leaving
+> > INTERRUPT_ENABLE_OFF enabled allows the pin status bit to keep
+> > re-asserting in WAKE_INT_STATUS_REG0/1. Clear both INTERRUPT_MASK_OFF
+> > and INTERRUPT_ENABLE_OFF when disabling a spurious GPIO IRQ on both
+> > main and RGPIO banks.
 > >
-> > I'm not a fan of git-grep(1), because it's easier to remember grep(1),
-> > as I already need to remember it for other stuff.
->=20
-> Why?
-
-Perhaps it's fear of the unknown.  'find | xargs grep' has always worked
-just fine.
-
-> "git grep" is *literally* the exact same thing as "git ls-files |
-> xargs grep" that you apparently find so natural. It takes all the same
-> arguments as "grep" does.
-
-Hmmmm, if it's literally exactly the same thing, I guess I'll give it
-a try.  I was probably worried that it might have subtle issues, but
-being morally the same, it's comforting.
-
-> Except "git grep" is way more capable if you ever go "Oh, but I'd like
-> to go back to an older version".
->=20
-> That makes no sense.
->=20
-> > I'm finding some issues with git-ls-files(1), though: it's listing
-> > symlinks, which grep(1) complains about.  I wish I could discard those
-> > with something like '-type f'.
->=20
-> Christ.
->=20
-> "Doctor, doctor, it hurts when I hit myself in the face with a spiky obje=
-ct".
-
-:-)
-
->=20
-> Stop doing that. You're just being silly for no reason.
->=20
-> >         $ time git ls-files | xargs grep ARRAY_SIZE | wc -l
->=20
-> Just do the sane thing. Look:
->=20
->    git grep ARRAY_SIZE | wc -l
->=20
-> Trust me. Just learn to write "git grep". After five minutes of doing
-> that, you'll realize that you should always have done it, and you were
-> silly thinking anything else.
-
-I'll trust you; I'll give it a try.  :)
-
->=20
-> And it's faster too:
->=20
->   $ time git ls-files | xargs grep ARRAY_SIZE 2&>1 > /dev/null
->=20
->   real 0m0.636s
->   user 0m0.367s
->   sys 0m0.307s
->=20
->   $ time git grep ARRAY_SIZE > /dev/null
->=20
->   real 0m0.519s
->   user 0m1.837s
->   sys 0m1.719s
->=20
-> (I used that "2&>1" to obviously remove the errors from the stupid
-> mis-used of xargs).
->=20
-> And it's *safer* too, because if you have filenames with spaces, "git
-> grep" does the right thing. Your xargs thing now needs to start using
-> "-z" to git ls-files and "-0" to grep to actually be safe.
-
-Yup, I don't have file names with spaces, because of this (and many
-other scripts).
-
-> So just embrace "git grep". I can pretty much guarantee that if you
-> use it a while you'll never go back.
-
-Ok.  Thanks!  I'll try it.  :)
-
-
-Cheers,
-Alex
-
->=20
->             Linus
-
---=20
-<https://www.alejandro-colomar.es>
-
---jyov6e2ogi6jfrb6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrtGMgACgkQ64mZXMKQ
-wqlHTBAAkeO8EUiUVJqbN7wxMyXZWajcWJyKquy7/sT9JEjo6HR71jK52w+BZuLY
-GG8PGG/ke8LlSYookslax2M//Dc2QNVFXD/lVTnAV51afd+g416fAwqI3ylTTmyM
-13fqGtB3OUKgJTwhquHRFh+6WsJ8mdD6gXumRXW1lb8W4YBqMZT3pUYVrVwNeQ6C
-ZGcl/sWokhOabWHUbgI2poUA2MIIsm9wtCCIs5ezzkGsE/UHnLzaNYTKqZcfRZSE
-rNFvSw1X1wBfG/dxfurwLASeSX8Y1QWiLjkwR62Fl20mWSJ0d8oVWdMFBp2mWh7F
-9R9eXz4l9ZoOAFvXbjXbXnpmOTIRrPZ0Q2rjOOYwyQqjvSZSFZ1lkzRapW/Hetp6
-Gjm8Kz+6Ab51ru13JFEHevVwidXXfQMLdQukZXodQ20d8jxLmyD0T9tePSanvYw0
-cVGKfo9KClItuDhzdSbvN2I6AW3U19Tgjht2jsNL8N4pdfqoW0nHJ5ECC6wariOu
-LzKHKQj+HxwvWfOsT/62ZRFixvY80lBnjaZ2AT9236Ob/by2f8k/24/89doXIFLo
-W4XP9hEdNdCEZY1Po+lhIkjYasccbwAYQG1fF6IXZKsHFewZLK4bavdtWyixMSpd
-5zB74hAW706rDo8Pqx+32Skr0xgixuixEQyuEtdeEfK8mzaUHx0=
-=KRnV
------END PGP SIGNATURE-----
-
---jyov6e2ogi6jfrb6--
+> > Additionally, if no GPIO interrupt was handled (ret =3D=3D false), retu=
+rn
+> > early before acquiring gpio_dev->lock and writing EOI_MASK to
+> > WAKE_INT_MASTER_REG. This avoids unnecessary MMIO accesses and spinlock
+> > contention when the IRQ line is shared or asserted by an unhandled
+> > spurious interrupt storm.
+> >
+> > Signed-off-by: Munique Feitoza <muniquefeitoz4@gmail.com>
+>
+> Sashiko comments aside, we really need to put Mario on CC for
+> AMD patches, Mario what about adding yourself to this MAINTAINERS
+> entry:
+>
+> PIN CONTROLLER - AMD
+> M:      Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+> M:      Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> S:      Maintained
+> F:      drivers/pinctrl/pinctrl-amd.c
+>
+>
+> Yours,
+> Linus Walleij
