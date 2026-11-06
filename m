@@ -1,101 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.44
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793984550;
-	b=NJAURoApeJxgJxXQfQx3r+ELNe/Nf1ocz5LIB+e9XQRZFt0xvpLU1EYFUeKH1yeOZhB9
-	 9iq6fJ6UXYu6rhZOhKK6WYHdMgvBZtLd9D+ssXyKzOpWbnsGI93dzMgqpSp7a84tOsXvu
-	 5zmnYhH2qRbRZ1/7Qc7Xe1pgUXz70XE+V23QC6n67NWNdYLegecQ/gyr49Ztyse40yqw6
-	 qSrZok9BV8Al4N7PkqHW5IasZZHo5yWJ+Iax/kmkOXHx3ICGP33XFVpV6cziLOI39cC8j
-	 LImg/xtLM2j9oeKdRtEgacDhI9BG1TsNYVPIPcv13tc0vByml4g0hvkgoIdOYe+VGgQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793984550;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.173
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793987313;
+	b=GAkfLmB4d8YWRNJy+XOrPc8tg0SCHzg0idfJSXsSltwc21Zarg7ns9CIEhjco5/P2ICu
+	 UpL7QhiQH/E3o0Qu/Dt+WXw+wrXQnq6ZW05DPCVOpO/6Jxqz5R0+PnxWfyTOtSWR4cYLB
+	 YzRue/TaRMYEAL6gQE0WUyAnJ1SPlKcKGDEuwePlZMvdol5CCyfmKtsM2ZYuh+zhe2Kzi
+	 i/XMCMfRx+bNSK0fKX7RwgEjdqrX7xTJ2DRSDguQ9aa+esrJSHu9Qt7/GaGcjIyXWD5Co
+	 Z5aAkZeEwA8DESRZje8tB6bedfEK3TwTH4ehs0Pv1xPqdsMx6Ly7YYpsIReW6B3UorQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793987313;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=/qZTKeMtYLlan9SFU3DlCAiu7yexd3IDtiotPT8o4LQ=;
-	b=2rlmU24DQ7cAeN2Q5HOPQ4E+G3CWdRyKv/sKZT7sy3iWIx/SfTyLZDwi8/NGR1ohrhhJ
-	 xZfcSKGRkGMSCvbyzNyVUwq9gQ4/B2cgditRLcC4uDCFMtyr/BQvxOhIykb5FKqAEdD51
-	 pXERdXszIoE+kTGo3p/URf+yXtAnaYnRI2c1+Mm6qAcHRcUi+XfvK2kdr3/LvzbWLUlcZ
-	 /FOFAwS/RWjLQQbHWexqmhKJoWujVHbvWkwR5Ow6eUnIBYbZ00DPmVcds8C6iTBjR73T0
-	 lmrNLKiKCXsUhNaOwjktwhe7you4ES0f5yrTmkRGFN6hnpxio9WjrxUNcAtqC9St1Pw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rowland.harvard.edu;
-	spf=fail smtp.mailfrom=g.harvard.edu;
-	dkim=pass header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=la2KYYkN;
-	arc=none smtp.remote-ip=209.85.219.44
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=wW8vMELsSAVnBK6VCjyzxOTijbmPZLXMkWBj11p0mqM=;
+	b=MODQYInL10E1itGJpqyBzTCLInLQT4RGnbJq3WSLJbpX1sW5sLjrnYwAxqRRipM2emAf
+	 99X/ur00+bhFdJRNZ6Ptdv64wrzjbjem69Y3ijsSzDOmBLk3ijNp3gm7oJLH+q5bx1NAj
+	 /tavI6JIOYuVAhjE07a/sC3KP5dbc2HjCehir7+5I42St+7lMkzFohr+vcYb63JU70rAZ
+	 BWg6awL2rE2Ev2C0I73OXGeakjLNB08AAWlx3Z4ZHZU7nSj70bshV/DZll9u3Vfdi1MdX
+	 vMNmesbxULf+BaFksmexsJKJql9DbMXWzr9u88Ds7icPOyXKa4nZE2ibcaPVGuiLXDQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yixKFmpR;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.173
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E82A606A335
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 17:02:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2E82A606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF30606A329
+	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 17:48:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BDF30606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.a=rsa-sha256 header.s=google header.b=la2KYYkN
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-91e7fc8265aso11651256d6.0
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 09:02:30 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yixKFmpR
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2ea138a3497so5455785ad.2
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 09:48:32 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793987312; cv=none;
+        d=google.com; s=arc-20260327;
+        b=PHULmglgvUUO5IAMW+xG8SvCepdsReQZjJ52Ol1kDts68Fj03mtZbtw/qE1rhPUvLk
+         fguwWBThOBYYv5bPPtxON6dqOv2FfN29SgdK/A848ilBKE+R/q9axDFKG4IWQwZnLnea
+         9GktzItQdgb2ASeBAvOOvNjA6+MfGNZbAxi1ElbVtJ9ckqP5kGlzJKtv6QNCR1yU4xXU
+         8A2OFPfq7XXxGmIdxFEsuWTjmwp850cRbdLcMK/uG5v5QQePcFaqubNDZ91n9lGkL+a2
+         lVqVTZfKfw/O/bSsTTpQqD6tOLCtbujMgsChLCoHa8AAatlnj37QAEqEhPqsBdK8zU+A
+         h42Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wW8vMELsSAVnBK6VCjyzxOTijbmPZLXMkWBj11p0mqM=;
+        fh=QW1sItX3mmWB1cyTKbEaRRoS3Ms+qQFcMqr6zODPCN8=;
+        b=BHgtDh51H94+jXl8RlRdQo0IPxDf7Rr6/u83vkyWLalohYR02OovnSHli02Z7jvrPR
+         gbaYwC12tC/ofWrmDL8NPGRqOWntmG+utJ/7iVJV2TFM4FOi3pFeb+VA+uN94whTVmJ4
+         CthvBWRlacPc1lKJiThUusHw9f94z7/BiWJDs6prUlSvcNGJCNTgZFguFnvBruKf/kFG
+         9DvHBfZ4bnkYRuS7nPw5oIQIQtFOiVcByxh6NNAjuROHQ3QlQyhQ9Hf5OaqxJsWFtPyM
+         fyPd/jzaNVx0ZQScjPsg2rHzFDHgTNRNvwkOUBjufu3XOrb8KDM5GnHRwfzV0Ow2wIhr
+         TDeA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1793984549; x=1794589349; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1793987312; x=1794592112; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=/qZTKeMtYLlan9SFU3DlCAiu7yexd3IDtiotPT8o4LQ=;
-        b=la2KYYkNdIoMoc6wEeIb+LbDPl6uyQUQpIfVl89pwSwtrSGbFTunXRL/lFB0HHbGhI
-         X376hmYEScQTcKJwZUtZ+vdZ6Pgc1ld83KsGwkwClcMPZDjj0fvJqCldasPof/eBi7Bm
-         uwEP/FyxQb4B/rn/PbVrDW4ujFfjzM0lVu8BohuxO92lUqF2l2AE4LyG+ZlcCEmUCNZx
-         3K99FJipn354A0jE7JlMSh7Cyn7axTGVKg1/J1Y9kw3oHDr+IWgH//MoxGF2e8ZscCod
-         nk37zD8oIoHkQV1sCfMDQSOolbvj6V20gRh0gyETflKTVOMZWIbzQqGB565HVcjZ/fyR
-         z1jQ==
+        bh=wW8vMELsSAVnBK6VCjyzxOTijbmPZLXMkWBj11p0mqM=;
+        b=yixKFmpRcBMF//X09M50mh2S5/EOg7hKShzsAngsCyLSF3KfFWa8hzZktyl5UoeMwE
+         dHf9H6unilL1dutvIOd4XLxHP+ujF6ttvCOLXHVg00az7TlBfsDGLa8WFmbJMu5XNF2w
+         RulIdnjeLfsiZRK9200ts/dMIR9qfn7fxELYEx3/yWqrAOi4Lx86kq/q0aK7rKfSKz97
+         zwcDjC6YxqEbsXiz1snrUvC3xeUqS5JDEj9WAImw8WOOhkrNicLI8UTywSkk7ovGHrKf
+         Z1hnGVAuhJVDCYhGkQJl7JlFs/70kGbIGeOrqKoq2ql55JFPRQTlnnk7XtgIgygBETqJ
+         HzBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793984549; x=1794589349;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1793987312; x=1794592112;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/qZTKeMtYLlan9SFU3DlCAiu7yexd3IDtiotPT8o4LQ=;
-        b=2QyBpsoYcXjyxlu9l7aAGDwbXbABTmFW9wDvUmRAGWEzfA1/j0g/t0RiZxOwM5443w
-         XA7YyZeHaWmINQN5bKpFWR5DtcXfRAaeIaYAIJrxrq58RXF+xkKdxPUbQQ9V2Ulz7LSQ
-         N3wpvP8RwvJUJSrmBgiTqHBVjjSGDrRF4GSvVHbPG4L9vr9kHVH28EI9VM4mGqbMxwuZ
-         IL7LjYoA2rMyRv6fdjA7fPmhWaZe8a0u8dyvjZsaSEyWAJjxmS9k11nE5oWF5Z+bdf+l
-         qLwCt1boCNK0aZeyjsTdLecXkx439uRZzztU6x5O+dQOQiVgz3P2/O3FOP1kwbj+1ke+
-         Zi4Q==
-X-Forwarded-Encrypted: i=1; AL+hErF0GjsuQwItf4weTtyz1L6VVypz1IsaN00HBIxf3OeTrnn8RJdufjxlTYoOwdOGYdDlXlOqqgNrvW1N@vger.kernel.org
-X-Gm-Message-State: APuU4Z+I/vX6U+lnuhQQB28ZELLdr7F4SwcWohbhdXmff6Vbotx2wZZa
-	IGiQ+mT0EG0DpukFnwbPbzKlSZlOnKm6Q1W0TIYe73Wn0xnrOYZrHDCKPwXORfOjrAo3Q0nM08/
-	JPb54BbiP
-X-Gm-Gg: AYBFou3JinC691zYXZYYlgtTEbXrjC701vgWqhL1HyC2khntz0tUOSUzevrkBBFDaR5
-	hmDhPaSOelUyt9F3WviYVsem+Skq0rm13taWeeGOBJgpwHM8qclpWD02CuQeJO0tYkCpNk/rH2u
-	QpBQ3b1y3hh6JavYDFPRqnQo6Cr50WZJYvSXOomwA8q7H3VQvglGIuXOastCA/G3QCkqfoG+hxm
-	Eww8eaqElsFv4C6//v6oYRSrtETweOIKI9QZthglF/Mp5n9rUwpM+ubfLMoQN8t64PaEkjYZqzg
-	NGFhQbOKekbK3GMuPgk3ltPbScXKO8d4B2f6hPfWNeh7mqscQ/g1qPXxk/bt/qnH94F0gQGEPwP
-	/xVr18QvHolYHGaViR7G+1FZgyjAe6a6f5K+++9Qljh1+e3BvQLo76UbHtLYoBQPDZjxkZ6e6Pf
-	seIkjTqDOqshDGI7P7nK8V8gwMMjLa1Yzq3AMJFpf7rOSb43FUsX0N5sKVYToPvIQ4ernd33VkO
-	kiNAeylqBPT/8GdL3M8Yy4xFwnRPqtvQe5oEvwVm3Ej5ofYPLLafgRvAuuB+arTbl22rSkaQmmw
-	Z4lHj2FQhJqwdzxtAdGyvyDLJXv0
-X-Received: by 2002:ad4:5dc8:0:b0:91e:9463:7194 with SMTP id 6a1803df08f44-91ea96643b4mr48110016d6.24.1793984548922;
-        Fri, 06 Nov 2026 09:02:28 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:d01:d210::66b0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ea6aa7a97sm24230156d6.35.2026.11.06.09.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 09:02:28 -0800 (PST)
-Date: Fri, 6 Nov 2026 12:02:25 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: James Clark <jjc@jclark.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, Bastien Nocera <hadess@hadess.net>,
-	Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Robert Nelson <robertcnelson@gmail.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH v4 1/2] usb: core: export the generic device driver's
- operations
-Message-ID: <c267f8af-78eb-43b5-b6f8-98af6749db22@rowland.harvard.edu>
-References: <cover.1793941292.git.jjc@jclark.com>
- <c1fdf2ed4c508b08734c7a9de002336f60d3b865.1793941292.git.jjc@jclark.com>
+        bh=wW8vMELsSAVnBK6VCjyzxOTijbmPZLXMkWBj11p0mqM=;
+        b=Jd9SPz93B9dBr6vmbaaT0K3P95ZS6P4qQWDT5vTKEO0gudB5Dox1ZwmoZuQub9t29u
+         gH7pTYUB1+9yHrxkc7H35eyAZ7DhwReiKHKAe5oO+VYf04RgbqP0iwUQ6fxDnbikMNgV
+         PdExAMHaDW0tnREciyYZhWFmFJbb7EpuABdyiPedCI9S93iE+Knhs2bc0fM2v3PNHmYB
+         mZNbmFsm4+nFx3OVZ0o/8s/g/96+WYz2WLyFle+89nwnMk1lV9B7Y7L0nJv/S81Pw8l6
+         kG9EA4usEqHtC86TLXrByS91G0pp9EzYOeXZbTsQxoS7Aj/a8SvU34aT535fLUoVWdTg
+         Z4tg==
+X-Forwarded-Encrypted: i=1; AL+hErFSCYO32Q7txSEmgVc7bFUgqlAw5mnD2p6e7X6VPFiPYddvpwK61mhgF3n0j8dV585LF9ubTTG+7kRY@vger.kernel.org
+X-Gm-Message-State: APuU4Z8Z8T036b0oqiL4p2EGRc2WGnjyqMvq7gxTy9udGqkqo7TkRWMT
+	Qf1WIYGJJEfbmknEgZhrWK0Rx6AnuW1hObnky2b5i6kUbEQu2+vp1h0YAJH1G6JlNQCRR2BGQqI
+	pYmUpVhAF/1HFo78bLqkQOL7dl0APjus=
+X-Gm-Gg: AYBFou0+84dWigZ8FWPKxUhmSa7l4SvQW2vu7XAsAPAIfz7g62rOspTLEv/+p0QmkEL
+	P4VHcwUvzBF1DRt5551PZGpgfB8Rvfuomg5wQ97kqDOjx7JNXH+mkFM46J3EMrlaxgkYy2vFvtP
+	gVqNy+xu/J1PiR0Lwoo+sYm3Tk18S149MkZbOwgPoeC8tRUgOfdgCKf3ZO7ptc88WKn1WSSztA7
+	HGayVl1xEGjBs6zJkIrt6WRogmFwBUsQYRYQSyJqKM0uYL8Ooho65XILSoECjMElhdG1QezUAUL
+	zVOunAXxJsDKKGDiBrAR+8+mRq1yAkwqYmxCHA8Akk7xoakBKA+fvrYs7N+F5lVrBER403cfjLQ
+	xs5JmMnfN4kvfcbhVbS6CYa58VQSIzGpnfUxp3oRoZa4d2MByibtCVQydaGw=
+X-Received: by 2002:a17:902:ce8d:b0:2df:9057:8bf4 with SMTP id
+ d9443c01a7336-2ed40c7730fmr38292825ad.43.1793987311883; Fri, 06 Nov 2026
+ 09:48:31 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -105,31 +104,129 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1fdf2ed4c508b08734c7a9de002336f60d3b865.1793941292.git.jjc@jclark.com>
+References: <20261030195025.5153-1-muniquefeitoz4@gmail.com>
+ <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
+ <CANA1Db=sBQFR99pw0YUSS9sUcHtHVn-SoUyj3p6Vxa+LLJF_Ug@mail.gmail.com> <a7668081-54cc-4f8a-9d9b-376365b90dc8@amd.com>
+In-Reply-To: <a7668081-54cc-4f8a-9d9b-376365b90dc8@amd.com>
+From: Munique Feitoza <muniquefeitoz4@gmail.com>
+Date: Fri, 6 Nov 2026 14:48:20 -0300
+X-Gm-Features: AclHuK--dc6lBKAHReoOoB6g9IcoALLNd05TNw0fRkqc3CU2ssJv_1d6fR8uNF8
+Message-ID: <CANA1Db=d9=Suwh0V8Zu_G_BGq8YX=dsXKU+1DF1hy_NhYU4aWA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: amd: Clear interrupt enable on spurious IRQ and
+ skip unhandled EOI
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Linus Walleij <linusw@kernel.org>, "Mario Limonciello (AMD)" <superm1@kernel.org>, 
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 06, 2026 at 01:12:50PM +0700, James Clark wrote:
-> Export usb_generic_driver_probe(), usb_generic_driver_disconnect(),
-> usb_generic_driver_suspend() and usb_generic_driver_resume(), and move
-> their declarations to include/linux/usb.h. This lets a driver whose
-> probe may return -EPROBE_DEFER leave generic_subclass unset and call
-> them itself, so that it can defer before the device is configured.
-> 
-> Say in the generic_subclass kerneldoc not to set it in that case.
-> 
-> Signed-off-by: James Clark <jjc@jclark.com>
-> ---
+Hi Mario,
 
-It's ironic that the generic_subclass thing was added to support 
-onboard_usb_dev, after some debate about whether it would be better just 
-to export the generic callbacks.  Now you're going to implement the 
-alternative solution for onboard_usb_dev, while other drivers continue 
-to use generic_subclass.
+Thanks! I've created Bugzilla ticket 222242 and attached the requested
+files: https://bugzilla.kernel.org/show_bug.cgi?id=3D222242
 
-Oh well, I guess there's nothing wrong with having two ways to do it.
+Please let me know if you need any additional information or further debugg=
+ing.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Best regards,
+Munique
 
-Alan Stern
 
+On Thu, Nov 5, 2026 at 11:49=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+>
+>
+> On 11/5/26 18:27, Munique Feitoza wrote:
+> > Hi Mario,
+> >
+> > This is a real issue observed on my desktop system during boot:
+> >
+> > CPU: AMD Ryzen 5 5500
+> > Motherboard: HA0QING A520 (BIOS 5.17)
+> >
+> > During boot, the system experiences an interrupt storm on the AMD GPIO
+> > controller (IRQ 7), eventually triggering irq 7: nobody cared and
+> > leading the kernel to disable the IRQ line entirely:
+> >
+> > =C2=B4=C2=B4=C2=B4
+> > irq 7: nobody cared (try booting with the "irqpoll" option)
+> > CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 7.2.14-arch1-1 #1 PREE=
+MPT(full)
+> > Hardware name: HA0QING A520/A520, BIOS 5.17 04/02/2026
+> > Call Trace:
+> >   <IRQ>
+> >   dump_stack_lvl+0x5d/0x80
+> >   __report_bad_irq+0x35/0xaa
+> >   note_interrupt.cold+0x1a/0x58
+> >   handle_irq_event+0x72/0x90
+> >   handle_fasteoi_irq+0xb6/0x1f0
+> >   ...
+> > handlers:
+> > [<00000000d546c9c3>] amd_gpio_irq_handler
+> > Disabling IRQ #7
+> > =C2=B4=C2=B4=C2=B4
+> >
+> > Checking /proc/interrupts shows IRQ 7 (pinctrl_amd) accumulating
+> > around 200,000 unhandled interrupts on core 5 before being disabled.
+> >
+> > When looking into do_amd_gpio_irq_handler(), pins that trigger an
+> > interrupt but are not registered as IRQ lines
+> > (!gpiochip_line_is_irq()) only have BIT(INTERRUPT_MASK_OFF) cleared
+> > while BIT(INTERRUPT_ENABLE_OFF) remains set. Clearing both bits stops
+> > the spurious interrupt status from re-asserting.
+> >
+> > Best regards,
+> > Munique Feitoza
+> Hi,
+>
+> Thanks for confirming.  Can you please share:
+> 1) your full kernel log
+> 2) an acpidump
+> 3) /sys/kernel/debug/gpio
+>
+> On a kernel bugzilla?  I'd like to look at a few things.
+>
+> At least this sure *sounds* like a floating GPIO.
+>
+> Thanks,>
+> > On Thu, Nov 5, 2026 at 5:18=E2=80=AFAM Linus Walleij <linusw@kernel.org=
+> wrote:
+> >>
+> >> On Fri, Oct 30, 2026 at 8:50=E2=80=AFPM Munique Feitoza
+> >> <muniquefeitoz4@gmail.com> wrote:
+> >>
+> >>> When do_amd_gpio_irq_handler() detects a spurious interrupt on a pin
+> >>> that is not configured as an IRQ line (!gpiochip_line_is_irq()), it
+> >>> currently only clears BIT(INTERRUPT_MASK_OFF) while leaving
+> >>> BIT(INTERRUPT_ENABLE_OFF) set. Unlike amd_gpio_irq_disable(), leaving
+> >>> INTERRUPT_ENABLE_OFF enabled allows the pin status bit to keep
+> >>> re-asserting in WAKE_INT_STATUS_REG0/1. Clear both INTERRUPT_MASK_OFF
+> >>> and INTERRUPT_ENABLE_OFF when disabling a spurious GPIO IRQ on both
+> >>> main and RGPIO banks.
+> >>>
+> >>> Additionally, if no GPIO interrupt was handled (ret =3D=3D false), re=
+turn
+> >>> early before acquiring gpio_dev->lock and writing EOI_MASK to
+> >>> WAKE_INT_MASTER_REG. This avoids unnecessary MMIO accesses and spinlo=
+ck
+> >>> contention when the IRQ line is shared or asserted by an unhandled
+> >>> spurious interrupt storm.
+> >>>
+> >>> Signed-off-by: Munique Feitoza <muniquefeitoz4@gmail.com>
+> >>
+> >> Sashiko comments aside, we really need to put Mario on CC for
+> >> AMD patches, Mario what about adding yourself to this MAINTAINERS
+> >> entry:
+> >>
+> >> PIN CONTROLLER - AMD
+> >> M:      Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+> >> M:      Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> >> S:      Maintained
+> >> F:      drivers/pinctrl/pinctrl-amd.c
+> >>
+> >>
+> >> Yours,
+> >> Linus Walleij
+>
