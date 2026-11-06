@@ -1,101 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.180
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793924861;
-	b=i0vCWzBLtd3QRbFIhq+bkKXiXhcTNrNKJxlPnJQFyraCRf0KsHMubyo+QbJG0XBUzx6H
-	 GGuMrBBhukF/jh9ORjd+L49fXDEbJoQRiG2EX2BbBrURtVj60swcmCN0Rt+kTDgtArIGU
-	 s+DqtJxGzSccIende92mpAML6w+gAaJNH2o0+CqiuKQ+3pXzMLszKRP68Yjqlc3ux8YIH
-	 PHkV0pCR5w+HlGUgDWOfxVTHhflDvtJvZRg+oA0fRS1ys2woAQ4GrD0+cmXdvecCwJrhA
-	 OutGCEnKtiS5fZ7qKdqw6U/qOB3qUy/9VLnxVm5vXU7t3D9pgw91VgELJFDbekncXQA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793924861;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793932126;
+	b=laXQOeSW6Wh04QkDAiMpEpODj3+dHL2siX3AJCwS5E2IkQJ0Ti+LbPpVRh8Ch0CKv81L
+	 ti5manBLURwhSztWbM6xez5XnTIbPWxt7q1USvMuPKPWk4kJs7BYp8to0DfDpxhTlZyb1
+	 /ICJ7RtldrCToed5bVW5LrtnVkJXm95++eHf9gPTQprteet3CECWRK5VXNwA6NW9bcvWM
+	 Qjks+hw/JJE4iNarIfjKysN4i8yuakwDty7boQlqNX+wOc2G1Y99EYNfv0tV3Z8B6MTV7
+	 NnJ3FpBSv2mbCViwM14AUAXnbA7v14u2Bf/N0Q2oT8BE+DHezTGQ07OfUW7oNsQip9Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793932126;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
-	b=pSb8jaT2IF7Y9SLAlxc8P6MGX8f6P9GRmtpCX42+eEncs4antN7WirwTpJ8g7A/dTy0L
-	 5OR2+gwnhlcHB9d9AQN+hc8ITmEHB0gS7caOY0CNXcxfZSfXFdMwodO8gcXuEWwJbVHtG
-	 7ht0CSvzmbjv8L0OG3kk0VSfyKe/vquyR6g7OEb/4+NRXSb8FH8qT0YyTqhQPTaetzXG9
-	 kWBbf1WEfcUUWTW+dEsMrQtP2YGK/UvOzRbiADJcSKWYy08o+ueoT8qtRFwBfJbLRj9Sd
-	 RxWbOO9L5tpUqcIMJtJfNO13SLl6NmqjS992I8Yqbx0e8QAsyqRL+yYaG79rbEtERmQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=mVFhMdPaOpZaZhoFk4x/27qwSHFs/IDKrnB1S7WQ5Wo=;
+	b=PydzcHXtlcLuZA8M5cDgO6DedMvxYxx59rz68G8vA6k6FZ48/VKe00grvVWetqA5a1Bm
+	 4ZVcX2PbiJ6BokS8LTw8A9uFxIjCEuieNe8JdGoy27fqsqdRyAlsAHueUG5a2+H1vLnFN
+	 jKp3ihKAAUfAMLJY6XY4CSWfxI4eeeJeLy6Ul1BreAcifL3mArsdBOIqx3rwEdM0oPZjO
+	 /EI+P7U5V9H51tAqYYfBuYTV7d5JHCnKge7KUL1iW7Di40S2qa4oR2y5UJa67dqxOBWjy
+	 CKJ06zHjCbuYCbQ2IQPfSw+uqX3yMbeJfdPyPNhlRGY9E6hZvmTJS0M8IICcWBl67AQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=B8aotozh;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.180
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=V4uaPxWj;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6F5606A326
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 00:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4F6F5606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C8E606A31B
+	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 02:28:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5C8E606A31B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=B8aotozh
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-8a60f90a924so16033b3a.3
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 16:27:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793924860; cv=none;
-        d=google.com; s=arc-20260327;
-        b=IGMq4AR7+cnLFoocg1hQJkx4ngn+m2EPnQYG0t2shZAKxxZLTcHD3UMNWTKvpYKoB/
-         RJk+7OnaBsttQ1IdwAq+9zkObAkvCuecrg7sFp9z3QNRaeNUB7hyg9CgOHdEnh26fbqO
-         fEMKe30H1SBU76DWw/JXYDfT+P+P4jG6ONT1Qw667mmfWAr1AzI9ufKQwHdBY/upAnN4
-         CO155+sBkhp6dkR4xPRDpRaPIjbzmBGzR/XCbntKzY+EHDWss92dHzLHgH6/S842saRS
-         KfImKWmrBvvTi6TX3vNeH21jawVl0DekR3eCy8NyPn1Rl19AqZnpPmAsDVp4nOv8u6Ic
-         G5dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
-        fh=gnwpm0fszpCKOrcr/Io8Rz/EmkVeMOXKAXUbvVIs85Q=;
-        b=BfcFnimnFhk9N+/EeClFeFa4W1Y/i+El7/I+mU17gkxOfWWxzpDuzm4ZdVKKFFOasI
-         CUqp6j+MS3Ta9ZIjUypUlP32YGAIrrcMDyVFiF7Vf6eQ2ifORmdlFaYjmnWTiloK8CCK
-         oE/bIaO/BG9tbFkq5ofvRGfPVIA/yfVSgdZxNLI/LGIzLBOxFw1raDugZDxwsB3pe53d
-         3shsbD5kX2YNDKwwOWGIpt61UhCvfCqaDC4QBsYeBthEFzuYHIizvBd/Svx9oT1udZBC
-         cRVT5UCKV5H9Q80bjHN+yM11QnCGTG0q9PCfc+1YbQF+4ybG8eLH16MAnJMWCeAQDCt2
-         3SAA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=V4uaPxWj
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-36e99cf7bb3so279847eec.0
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2026 18:28:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793924860; x=1794529660; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
-        b=B8aotozh3RbL/dFwkTi4TMSy2nLYpJUYRWEYI3cy5AUlsnNovNsF/611X62qwIKAnT
-         Q2Se8RO/zDE3KstqARhy3XiKYDXNDYRU68XBMd1brohkfCDrMN856R/hzeBiGFtfaTmr
-         ipylV6gZcwXVF5im89jT0tXa3Te9VZGxBZ4irnxv8ORH4ncezZX44sd03ZY1oIiIfJ96
-         +boVPu9To0OpNQ1SueOHPC82BfqVSmXy4OfuDIXN2BFSf4B5UroMtl0Q6f+VqQmTYmc2
-         1/8XjFBSNQu7BymnVB+h5n22omGDmFgpDri9FMZ80i5EeuLLXYRDlq5mGN4OWeYkyZCy
-         IMAg==
+        d=gmail.com; s=20260707; t=1793932125; x=1794536925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=mVFhMdPaOpZaZhoFk4x/27qwSHFs/IDKrnB1S7WQ5Wo=;
+        b=V4uaPxWjkVoous4zrIsNkoyKhInuO7jZxNmIUliG6mOWkHMnHdRmXNxB/t6yC843BU
+         FIBulfB70A6G++DwfHF+3dAkfdszEW60CSWhgm/hHygI8CgdbQdLTpj5QJ8y2WQWAOpF
+         OUiytJMUSD+8SffcvsGK3MeV6Shjslmxa0v5Z0Um3cH+EncLu/YQNPKaf3h4sgIVkgqW
+         LUXfFkvrmVMropFNSDHAHkSjaGUv6XHqvhRsyRD9SOjdjgqyMJxpWIIo1jV4Y2n0NlTM
+         cYbagB4SkDHdGqBxqbj8/20WZQ8tzitgAojQZHDSaw5CYkMHSL+VU42l68aAPZITxrIv
+         4ufA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793924860; x=1794529660;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lQxfqQqFBFzOVfTUhrZDisLoJMIcujAgL0jSoxPWA2g=;
-        b=KANwpaY/ubIVrzdpNDgINyCvH+2VLaw2rSAPNJGAdGja6XBo9sAGxz11J+cftLMfn8
-         9MguKNaMEicSVDXz5jqRsvMXqH2ZtZV2ieCxpwmpQ37TsWjurUqTmynYEQqVQILyTo4T
-         9aypKwQ/GEo6DH5TccHtU2MZ7xyyGHdQ4Qu+YfBQT9eJdpS4kL2O6bQoqS24zp7svpCR
-         5fKV3PgZVZXjEuzSBVrTNQQ4M7PTOv2DMIFOUUurP8+xgUmtAmeD6o1qm4gOb8+GFNOv
-         IDz/b0nwOn+I/EysmcDjH7McTqRqShxB0UreGyDUpIMgEomc4xw3sG3rmUIWNWqsIX7t
-         VOFQ==
-X-Forwarded-Encrypted: i=1; AKwUvByXOecbnNvYfytlbvCQQgC2gTNHG7E+EmbxTJahx7dtSBOWwrv7eSGjARN0Q8Ic1OCow4D1OPNSR3ot@vger.kernel.org
-X-Gm-Message-State: APuU4Z/M3Benx9d13N8iWAYu6gjY3vIkwBTQ0KuPp9z0CHjsT0SJi+wO
-	nA/1tzOl9wuMJs8sgpGFV0y7453J/s0hmLKpANvPCzV6s/2sjd6Hx3QBC6jxvGAcnccBHwtgnt0
-	XtT500FtA0eO/vQAOE2OrFPwPcN/rxzU=
-X-Gm-Gg: AYBFou3bo8APeW53ef7f2dPTz1tTAsotSz8Dxb4bUfpWPwtPXVLSBfeNWb7VaAEdd+W
-	GLMjXQR9Yn1PMKtonSqeN2pJeFvrekOW4eYiUE+rU7fz6cdmLknbKXZngZYy1b3hDZ/G6WBCh2I
-	tzaBeSx2rUw0ujA9MwCWhuPbC91SeECt9XLh78e8AfKvpia8sY/0bqnsPoYtS9oc7krQ90kHW+M
-	CnJHX/RSDK7oU6+1SeWmJ1S4/wOZ1xnwKIlkjwPC3rlWjzaBbhbeCtARBJWitKwFQGY7oEK2bk7
-	4j6U6QW+QF3AvqPxj65Yt61Dwj6pgheQb5qbwOLOYUCR+jowfy9V0ZykxG6eCyzehS7qiDOoaIm
-	IBNBhrj/zyhlTg8yGE4vdqM4VTOw+fYdSzJPhN+5h7PvoCUW+TVVyBMBnN/uIMqQ4+6uF/7KUov
-	yNLOxa3ihj+KDHwM7+
-X-Received: by 2002:a05:6300:67c8:b0:3e2:83d5:191b with SMTP id
- adf61e73a8af0-3ebb2aa4cd3mr1017226637.63.1793924860049; Thu, 05 Nov 2026
- 16:27:40 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793932125; x=1794536925;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=mVFhMdPaOpZaZhoFk4x/27qwSHFs/IDKrnB1S7WQ5Wo=;
+        b=qyw+kzhM9BRQJN3x2fGjmYO3KELbqYJyG214gUY5FlEALaDRX/J7dUJF6aL5ojo7K9
+         6u1uJOacCfV7zdDKZXNnA1Q6PufuMhx8vE4j9Gzqi4BQVLBPFaciLDEQCJBowtU4yzNb
+         tgnR6BwBj9Ic3fBGPpMdDlrkX6FVp6h+yQ4Va0XfG1gCtQeOvwAc88cTBst0agY7xCe3
+         AEdbsnHQqbAe4d1eXabyEpcc7wJqF4iap5G48PIWDJQ9FZU0iYsu7RvFZj7O31sJX9QF
+         MyDSt09oG3qFq1z1c297AAgV/CNt1fDta7uezFMR6FXjq5rbFu0e3a5Bk74gbjt0af0d
+         OYBg==
+X-Forwarded-Encrypted: i=1; AKwUvBw0lXFxdAbRsZnERNXhfdx8mk+r1Jo8eg3UbffpbdKhdG6zNMmuBFJGE0mdqI2XlyM/jf0Do0aS73+O@vger.kernel.org
+X-Gm-Message-State: APuU4Z+yaPLRKXOwcP4pF41HO6d9Fp4V704/aN+oerYF9JQmMrebab3e
+	lcc6HwYyE87zZC5h27vBw0y1AzKmldI4Tp5Rl8dB19MidfHR0tnWkA7w
+X-Gm-Gg: AYBFou3VeQBvUVTLPqNf3V6hW4eWjrKn/HBHim5LjKzK0o92NCdH/kDu5uxfsP3aq5V
+	SKRo4caNXARMqCiA+uAAD03tF+vf525tkX8zlh0n87MV2BMJJsAbXcUM7Z0UBq0h0xlLqe1nT/Y
+	of+UawYclYL8Ek66eA7Ypm50zgCnvGTPBk3Qev5W19U58uM3QAoE7GhbEWlq9znrGXDo01gBt90
+	HQujmi7QlszHlyt+EGcqGmLrl2qoOHsYsCNUjB6ay/XXentzt0H5S6kmO3VcQVyQKtdVum3skrD
+	1D86UFrFwz1KUpVl43MvgOEk9faUQmTM06pwSMuGXyRdKulL2xcKXKs5o00lg5eFUwov45wZL/N
+	9a2AnyKI0a0fuxg8LIEuBgfe/7pG22bra+/agr2cPvD3hh+5Z0aZMVQ1eKjng5CctZP1ZltwLLH
+	EL8LCaJudUxad0Waodi8n2KxbgSIHU82OM060x0GM7z5kBJu/S4JlzoKbVCiFd/AGiD+CdXKQoY
+	RB4qAxVp9+cuknvnC80vQaTDlEJPfrXocssQBi6V2tJykwgfQmWAXRhiHpJRoAZLBrGTqt2KdAW
+	ZDSoAVKe4RsPeCDJEUj671Ug5ub9Q8UsCnXYuxO6RS1+mA==
+X-Received: by 2002:a05:7301:929:b0:369:ef63:ea95 with SMTP id 5a478bee46e88-36f76814c3bmr1285854eec.6.1793932124917;
+        Thu, 05 Nov 2026 18:28:44 -0800 (PST)
+Received: from debian.prasanth ([103.183.205.43])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36fa8e3a47esm1697186eec.6.2026.11.05.18.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 18:28:44 -0800 (PST)
+From: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+To: linusw@kernel.org
+Cc: andrew@codeconstruct.com.au,
+	joel@jms.id.au,
+	ryan_chen@aspeedtech.com,
+	billy_tsai@aspeedtech.com,
+	brgl@kernel.org,
+	tan.siewert@9elements.com,
+	linux-aspeed@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
+Subject: [PATCH v4 0/2] Aspeed GPIOP handover with managed controller lifetime
+Date: Fri,  6 Nov 2026 07:58:33 +0530
+Message-ID: <20261106022835.10709-1-prasanth.padarthi10@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261105152348.8567-1-prasanth.padarthi10@gmail.com>
+References: <20261105152348.8567-1-prasanth.padarthi10@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -105,97 +107,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261030195025.5153-1-muniquefeitoz4@gmail.com> <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
-In-Reply-To: <CAD++jLkRYb1Pn2G=cP2yGkSFbuHhzRQ-fDbTygmpxbCsm-02gw@mail.gmail.com>
-From: Munique Feitoza <muniquefeitoz4@gmail.com>
-Date: Thu, 5 Nov 2026 21:27:27 -0300
-X-Gm-Features: AclHuK9Mf-gcoGvhdirtuFilPtygvQ33RIDVt4CdaQjJgJvOHKAoPNhtTi8dHeA
-Message-ID: <CANA1Db=sBQFR99pw0YUSS9sUcHtHVn-SoUyj3p6Vxa+LLJF_Ug@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: amd: Clear interrupt enable on spurious IRQ and
- skip unhandled EOI
-To: Linus Walleij <linusw@kernel.org>
-Cc: Mario Limonciello <mario.limonciello@amd.com>, 
-	"Mario Limonciello (AMD)" <superm1@kernel.org>, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Mario,
+This series continues the AST2600 global-to-local GPIOP passthrough
+handover work, rebased on v7.4-rc1. It adds a shared pinctrl lifetime
+fix before the G6 handover change.
 
-This is a real issue observed on my desktop system during boot:
+The registration lifetime issue was identified by automated review:
+the G6 callback data is devm-allocated, while the shared helper used
+unmanaged pinctrl registration. Patch 1 switches registration to
+devm_pinctrl_register(), ensuring unregister runs before earlier
+devres allocations are freed. Patch 2 retains the v3 handover logic.
 
-CPU: AMD Ryzen 5 5500
-Motherboard: HA0QING A520 (BIOS 5.17)
+Changes since v3:
+- Add managed registration as a separate prerequisite patch.
+- Keep the handover implementation unchanged.
+- Add KASAN lifecycle testing in QEMU and on B650D4U hardware.
+- Update validation statements to distinguish lifecycle and power tests.
 
-During boot, the system experiences an interrupt storm on the AMD GPIO
-controller (IRQ 7), eventually triggering irq 7: nobody cared and
-leading the kernel to disable the IRQ line entirely:
+Validation:
+- Shared helper and G4/G5/G6 objects compile-tested with W=1 on ARM.
+- G7 SOC0 object compile-tested using ARM COMPILE_TEST; this was not
+  an ARM64 build or G7 runtime test.
+- Generic KASAN boot and one unbind/rebind cycle passed in AST2600
+  QEMU and on physical B650D4U hardware. Controller entries disappeared
+  on unbind and returned on rebind; a subsequent debugfs pins read
+  succeeded. No KASAN reports were observed in the captured tests.
+- The final v4 source tree matches the tested v3 tree plus the
+  managed-registration change; only commit order and messages differ.
+- Earlier remote power-on/off and physical-button power-on testing
+  used an OpenBMC 6.18.24-based kernel, not this v7.4-rc1 test kernel.
 
-=C2=B4=C2=B4=C2=B4
-irq 7: nobody cared (try booting with the "irqpoll" option)
-CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 7.2.14-arch1-1 #1 PREEMPT(=
-full)
-Hardware name: HA0QING A520/A520, BIOS 5.17 04/02/2026
-Call Trace:
- <IRQ>
- dump_stack_lvl+0x5d/0x80
- __report_bad_irq+0x35/0xaa
- note_interrupt.cold+0x1a/0x58
- handle_irq_event+0x72/0x90
- handle_fasteoi_irq+0xb6/0x1f0
- ...
-handlers:
-[<00000000d546c9c3>] amd_gpio_irq_handler
-Disabling IRQ #7
-=C2=B4=C2=B4=C2=B4
+The unfixed runtime comparison has not been performed. Concurrent
+readers, probe-failure injection, mixed-pair forwarding, protected
+writes and SCU510[28] hardware handling remain unvalidated. Existing
+questions about probe-time normalization policy and concurrent SCU
+writers also remain open. Electrical measurements are outside the
+scope of this lifecycle test.
 
-Checking /proc/interrupts shows IRQ 7 (pinctrl_amd) accumulating
-around 200,000 unhandled interrupts on core 5 before being disabled.
+Supplementary procedure, exact source/config and logs:
+https://github.com/prasanthp20/asrock-b650d4u-bmc-support/tree/64eaccfde9ac4ec35646c0b7a8663486775b5d3b/docs/experiments/03-pinctrl-lifecycle-kasan
 
-When looking into do_amd_gpio_irq_handler(), pins that trigger an
-interrupt but are not registered as IRQ lines
-(!gpiochip_line_is_irq()) only have BIT(INTERRUPT_MASK_OFF) cleared
-while BIT(INTERRUPT_ENABLE_OFF) remains set. Clearing both bits stops
-the spurious interrupt status from re-asserting.
+Previous version:
+https://lore.kernel.org/r/20261105152348.8567-1-prasanth.padarthi10@gmail.com
 
-Best regards,
-Munique Feitoza
+Please review the shared lifetime fix and the GPIOP handover policy.
 
-On Thu, Nov 5, 2026 at 5:18=E2=80=AFAM Linus Walleij <linusw@kernel.org> wr=
-ote:
->
-> On Fri, Oct 30, 2026 at 8:50=E2=80=AFPM Munique Feitoza
-> <muniquefeitoz4@gmail.com> wrote:
->
-> > When do_amd_gpio_irq_handler() detects a spurious interrupt on a pin
-> > that is not configured as an IRQ line (!gpiochip_line_is_irq()), it
-> > currently only clears BIT(INTERRUPT_MASK_OFF) while leaving
-> > BIT(INTERRUPT_ENABLE_OFF) set. Unlike amd_gpio_irq_disable(), leaving
-> > INTERRUPT_ENABLE_OFF enabled allows the pin status bit to keep
-> > re-asserting in WAKE_INT_STATUS_REG0/1. Clear both INTERRUPT_MASK_OFF
-> > and INTERRUPT_ENABLE_OFF when disabling a spurious GPIO IRQ on both
-> > main and RGPIO banks.
-> >
-> > Additionally, if no GPIO interrupt was handled (ret =3D=3D false), retu=
-rn
-> > early before acquiring gpio_dev->lock and writing EOI_MASK to
-> > WAKE_INT_MASTER_REG. This avoids unnecessary MMIO accesses and spinlock
-> > contention when the IRQ line is shared or asserted by an unhandled
-> > spurious interrupt storm.
-> >
-> > Signed-off-by: Munique Feitoza <muniquefeitoz4@gmail.com>
->
-> Sashiko comments aside, we really need to put Mario on CC for
-> AMD patches, Mario what about adding yourself to this MAINTAINERS
-> entry:
->
-> PIN CONTROLLER - AMD
-> M:      Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-> M:      Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> S:      Maintained
-> F:      drivers/pinctrl/pinctrl-amd.c
->
->
-> Yours,
-> Linus Walleij
+
+Prasanth Kumar Padarthi (2):
+  pinctrl: aspeed: Use managed pinctrl registration
+  pinctrl: aspeed: Hand over global GPIOP passthrough to local mux
+    controls
+
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 145 ++++++++++++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c    |   3 +-
+ 2 files changed, 143 insertions(+), 5 deletions(-)
+
+
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+-- 
+2.47.3
+
