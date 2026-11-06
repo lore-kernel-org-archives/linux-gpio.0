@@ -1,82 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=79.135.106.31
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793987716;
-	b=hHkN4UUgI4Ntt7u8pWYR3mTRXEG86zhHhjkZNNj6b8Ypgvcx0+grckRs3TPRSUXQ3QTT
-	 m/lzjrUKvqgLOM38VBrBLWVdkuy/6JMYs5i/yqxGnglf0vTuvhgR2tY9QmXY/+/M63xNP
-	 T3PAvUgAKBjpFMwiEx7vjBOMSMdfuW0kKqZzdRtPemEbFmdFRpMd1bgQ94Ju0jvSSf3Rz
-	 t/qwgMKNgEe93A8dT8suGYCbGZZf6wHatUi1kB8VXAooHJQfIofW0lcwrmC0sgO8PdZlF
-	 dCsfvKamOw9c0VPUyDesk1DO31hxcy/FulcUCTmLHrpkkB1uyeXIrUH9GfGuC3d9PDw==
+	t=1793989661;
+	b=WreYZIYwUcyUAeo+VyK7HLuwz2uY0ZjKP/3TeG8hwl73lCjf/gLIwCqXXw1um0YoOsfa
+	 OZzIZpGchdKOyx2CUs/FY3a2q02TeLghHbPjuum7LGxz6N1XzWiznGmPb1YI5YOqFR9jW
+	 m0LhYwfoEyVbLJhot8GjamBAO99cDA4F2SlT9nyJ6+RiJPrBTSuG6N0JAvYP/IksqdVu0
+	 DYjkRdKT7ux/8r8jCoV3lfNzGV4QQnQXfyQcnT79d+YHPx5kzl+DRs2gVVwdJ46C4F7Bf
+	 fSUXe/rczz/eX++/7ab/w/O+fBLIiyKGo95SYcemFW8oq1SWEvzBKTsyAhrZPZE1O5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793987716;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Slw7IzCaqPRYPs5qP8w8RJF2WXLJYullyRST6UZQnck=;
-	b=fmDszjLN7kjwgGyGd3aAo1u/KUDEQwf6bt3mAFLCqKfaKkrujdpTfEmn8vvLids3ev5G
-	 7wjOwmlWu3xZcsatrBLvbRGDUs3uRnFRSWLItFZEBVB0M/kKPuNXrcIUUmTRM7hnSiYy3
-	 jX1pJx+RMUppqQYze/pOn2TxBPHs7KrD18uOADtP0sZQpYI9kSs2dums83RNl5/qNjO/W
-	 8jQ99DvG76KlXKM9ucNQexaXCylYGSLpbXOOGLVr7OxpR731Psx7/ILoI5tD5kGiQGmJB
-	 4OjqDXJ7BF/xMByI6+zEeZYDuJ/JxOB6oA2d9DKM8myAsSzYDtceO/poyvgzdNnEl7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793989661;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=WlCEZESfOmb1UfVHdqxtpBorzwyZKIs/pd0KVUd31AM=;
+	b=xIOFkIWsl+1TIX8RJ8zIW7AfyyPrxJlpG/+7wptHSUm/1wRp6S2Ylz8x84NzdD9bOiyU
+	 ZBy/mKyaJ7pK40zWnfW7z9SLSD92hq8QeP1M3KNLWEn+tc2sw10V5jxYHsd7JtWGtgSvh
+	 HEvcCqQB39+tCF7eFPJMy3dHHSLlNHeYy4CqN0sjglNLQAokw+SZ1msE5NSLzx29EV6EC
+	 6NHUTMOqBr8gAWVx+4qh/mit95GGIsj0NXNNtOkqcJMsus0nBXHvLiyMnt9d6QpchbQ2Q
+	 AjZBPZ6VIGq1QiNPoq7RuuaK69iXKflpNz9vANGC2aC4irViEoDfXp74CrGgpayilEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d2haV1jf;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=pm.me;
+	spf=pass smtp.mailfrom=pm.me;
+	dkim=pass header.d=pm.me header.i=@pm.me header.a=rsa-sha256 header.s=protonmail3 header.b=E9qNzqww;
+	arc=none smtp.remote-ip=79.135.106.31
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0659606A326;
-	Fri,  6 Nov 2026 17:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DC2606A326;
+	Fri,  6 Nov 2026 18:27:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A2DC2606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d2haV1jf
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27191F0089F;
-	Fri,  6 Nov 2026 17:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793987715;
-	bh=Slw7IzCaqPRYPs5qP8w8RJF2WXLJYullyRST6UZQnck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=d2haV1jfgqlnTB4aD+TrBInUFDaA6U7aLIycswQOy7Lb+8zKDUvBJoACRr2teqFoT
-	 q0WSvqwcD7aNLSd7Hr4T7k1ZCA+liji7NGYjfFCsu3bmh67LnpXiIe/++epPs9Eok7
-	 VPgvJn/Zri3XwYgI0quDILWRiyCkSaIgZH2HJ+qKmgoJHvFxiHRmCP9S6EVlgEETbD
-	 Z1bEFtMMXxeHJGezK6yNwIPvpPHbn7FmCvYu3uvZ9txCDCkKI0XhxHoh171kYtrFnk
-	 ZWgly+CyYxfVEiUNABjpm5DW6YrcU813UvNROm6VVH4Uily+CxJA4WG6/qGc0u9Ywi
-	 x72KsIaWH7+pQ==
-Date: Fri, 6 Nov 2026 17:55:05 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: gaohan@iscas.ac.cn, Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>
-Subject: Re: [PATCH RFC v3 06/17] dt-bindings: pinctrl: add Zhihe A210 pin
- controller
-Message-ID: <20261106-either-smudge-c1b21b4a81cb@spud>
-References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
- <20261103-a210-scmi-v3-6-ee6b31580808@iscas.ac.cn>
- <CAD++jL=5SypKyjwb71hT2pzTZ3s9qi62JG_EevyjTjGgTZiE8w@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=pm.me header.i=@pm.me header.a=rsa-sha256 header.s=protonmail3 header.b=E9qNzqww
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1793989657; x=1794248857;
+	bh=WlCEZESfOmb1UfVHdqxtpBorzwyZKIs/pd0KVUd31AM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=E9qNzqwwcOgulpKnm8UeZTapr25+17D4M0OrhVFDD9j3tHAReSmVCqXse2fl+FYRZ
+	 J/cFTZ5BYxkZ5bFAWhlLzWzoM3QDuIG6ChC45tsSbYgngi0EzV46icCs1zCzLOnsOX
+	 sfnBhu4xEROtX7Kd4SMG/LuHhsi4TFZ7hchLQTdWK7LJ3c7tjoeWBadGVvyfglSvUA
+	 AexL7vsYkFkAQHFHNS4hnwqXm2pylPMdhbAxA3tp6CHRKLDMWi4fCjuaRDwVrV4WEA
+	 HO4xk2I6aU4Y0UacfLTrlm122o87rAmLlViiiAv/SEdKSquC0QVMlQsnP/3DPifauq
+	 LzHaaP9kBEnYg==
+Date: Fri, 06 Nov 2026 18:27:32 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>
+From: Alexander Koskovich <akoskovich@pm.me>
+Cc: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: pinctrl: qcom,tlmm-common: Add wakeup-enable
+Message-ID: <0orir54c0rbF6-ZvpZq9hVVwLOMN02Et6AtRxRh3DU_DbJ_dwkDo3PFVFftKlaDI2IGdFsZdH-olYFZHn_5AA4U03M0-uV_e5UUtnXQIHg4=@pm.me>
+In-Reply-To: <20261020-delicate-serval-of-fruition-fe0cb8@quoll>
+References: <20261015-tlmm_wakeup_gpio_support-v1-0-c6d6f37a7e51@oss.qualcomm.com> <20261015-tlmm_wakeup_gpio_support-v1-1-c6d6f37a7e51@oss.qualcomm.com> <20261020-delicate-serval-of-fruition-fe0cb8@quoll>
+Feedback-ID: 37836894:user:proton
+X-Pm-Message-ID: a845e39c3a4ac81e44bf1ebf3626e10ae16b1ca9
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -86,50 +64,70 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3tpStlpzQjO9g692"
-Content-Disposition: inline
-In-Reply-To: <CAD++jL=5SypKyjwb71hT2pzTZ3s9qi62JG_EevyjTjGgTZiE8w@mail.gmail.com>
-
---3tpStlpzQjO9g692
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 04, 2026 at 02:14:27PM +0100, Linus Walleij wrote:
-> On Mon, Nov 2, 2026 at 8:45=E2=80=AFPM Han Gao via B4 Relay
-> <devnull+gaohan.iscas.ac.cn@kernel.org> wrote:
->=20
-> > From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+On Tuesday, October 20th, 2026 at 2:19 AM, Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+
+> On Thu, Oct 15, 2026 at 07:52:59PM +0530, Mohammad Rafi Shaik wrote:
+> > The TLMM can gate whether a toggle of a pad is transferred to the wake =
+up
+> > controller (PDC/MPM) while the system is in a low power mode. The pinct=
+rl
+> > driver arms this for pins it requests as GPIO interrupts, but that path
+> > takes over the pin mux, so it cannot be used for a pin that has to stay
+> > muxed to a peripheral function.
 > >
-> > Add a binding for the AON, PERI1 and PERI2 pad controllers of the Zhihe
-> > A210. Every pad is muxed and configured on its own. Functions of the sa=
-me
-> > kind share one name unless a pad can select more than one instance of
-> > them, as with the UARTs.
+> > Such a pin exists on boards with a SoundWire codec: while the bus is cl=
+ock
+> > stopped the codec requests a wake up by toggling the SoundWire data lin=
+e,
+> > which is muxed to the SoundWire function and not to GPIO. Unless the pa=
+d is
+> > armed, the toggle never reaches the wake up controller, the controller =
+is
+> > never resumed and the event - a headset insertion, for instance - is lo=
+st
+> > until something else happens to wake the bus.
 > >
-> > Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
-> > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+> > Add a pin configuration property so such a pin can be armed from its ow=
+n
+> > pin configuration, without being turned into a GPIO.
+> >
+> > Assisted-by: Claude Opus 5
+> > Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.co=
+m>
+> > ---
+> >  .../devicetree/bindings/pinctrl/qcom,tlmm-common.yaml        | 12 ++++=
+++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common=
+.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+> > index aec72e8c0..95f539611 100644
+> > --- a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+> > @@ -87,6 +87,18 @@ $defs:
+> >        output-high: true
+> >        output-low: true
+> >
+> > +      wakeup-enable:
 >=20
-> This LGTM, just waiting for a non-RFC version and DT bindings review.
+> As Sashiko points, there is no such generic property.
+>=20
+> Anyway, the wekeup is per device rather. Arming a pin would be different
+> sleep function, no?
 
-This version seems okay, but I am also waiting for a non-RFC version to
-ack.
-I think stuff like pinctrl, that has no dependency on whether or not
-SCMI is used, should be split off into standalone series.
+Heads up this also appears to be needed outside of sleep, was looking at NF=
+C
+enablement on the Nothing Phone (3a) and left out clock from DT since MGPI
+is meant to handle CLK_REQ and enable relevant clock, but MGPI does not
+work unless the wakeup_enable bit is set on the pin.
 
-Cheers,
-Conor.
-
---3tpStlpzQjO9g692
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCau4UeQAKCRB4tDGHoIJi
-0nGqAQD4uPonsKu1Nn5d2AXZzXklvHVCALSr5hp97wCKf60/IwD9FQ/JcPhJXo+G
-8lVmOiMQ/Gmo0P47KaBRYh3sfdQOqgY=
-=9UUN
------END PGP SIGNATURE-----
-
---3tpStlpzQjO9g692--
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> 
