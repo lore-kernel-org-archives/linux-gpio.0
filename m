@@ -1,119 +1,125 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793958062;
-	b=to4ws+mdAfvO8znuJQ2TyBTzhSB4FSrnd7zDRoSNayDu2jI8EsgVLW64LsHHGIYJ0eI+
-	 a37QpnSLK181GnKMieMxSRxSlaVBiZfNRbUWxtgbB5CCLa2zBzOEEOmd/VoRnyyuA4Ycs
-	 +mk5EZjYuir6MAq4Tlpl8ZcEMSnhZM2ROWOvoNEGHCreQpW+NSSscSq8UgjGZn88Gnsrw
-	 7jhX9INbfXT+cFwImvJ62srL0PzPMhQguZ+mzWiIPFZy9z4EmCVn65axywfkSbmjw3Z9H
-	 tpv4cqlDgp/9i+fQP1RRn4bq3aBaDqyX1UXxRUawOObZCNm9KHSoqRib3IdpHZj4PCw==
+	t=1793958213;
+	b=Siuj+erl0y6vc2IvABAFXkBc+Htqeyy/HlKpHeYeA12/bjcN0oLtT9RrsO02HWW3BI22
+	 30TUtvTJOf2GQB2RDG7J1EhCUDg/LuJVbSDSAibZs9n+6chzTP69q8q051YgtTELXqFfW
+	 dpLNrvgFjdbMXjSFvIbhHvxAfA75toKnW1Ihy4ws+peoDCJTEyigxn2fPcLAIwYLT/p9a
+	 reeXGr+odDmWyXpJxQaTgycCouShGX/oNLHLCarj63FxrsNFWOP8UQxz0c7vClhAQzJxM
+	 oNb+P6ivf2n4yG7xv4C9gwLQ2QBfdR195F0ZQ/9a8fXFNHC58hXPGR245bZgH/Etufw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793958062;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793958213;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
 	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 Content-Type:Content-Transfer-Encoding:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=W9dTCoyuf+cbHEk20Y1bEv5Tbx9Cur32vNeHXn7deF8=;
-	b=LnV34faDpMrm2FgAexizSmKQ5wT4RscwoKhc+JZ3kmR+Eckh3MCkNX5ABGNxjw9S//Cx
-	 clXOFgc6/6y8wm6n4LIy3YkAaytCoZt5cDVsU0uZAPxJeNl4j1/jIdDJvgWGakGWlJ7lh
-	 2ZvSkqDon5peBapWbttVYwY4EltMxsBLVrCYweQ7OGyX2pRv+b7mcxitzXfz7a4U8AfOo
-	 zp3i1c9BpdxrkJzG5MUOf/AsKAj61gfeUQoHAxl/kM4QZcgWpq0qsEZUgOiHYqxWwZ/JN
-	 U0pCNJw2rQn/hgR46z3ncqP5SQ0PjvzS4qaEWLZX+cLwuJgesvQcf6BUrqoZihoXVNA==
+	bh=fZXYuUJlq0DIs/ZhnbnzwAKYCaaO0O+UtNup8mIm1co=;
+	b=pEXfYQYGB1Mh/4MDfMEP8gYxI1Elp2rbgPnh/0UeUdciB6ffLhXIbzThOEISOihOyZAt
+	 PJfR8phicDNHJkc2nWCvQNj+u2O+HmM4scFrNQjrniqAQbBIyWHS8gHiufS+cO6Hmkoyf
+	 y17Gb2JYd0qPfEWP/tymjEkWbWt8OQgEH9Rng9+86VLML0F8O0s14jBO9gbugNn4a3vF7
+	 69M06veGP+Nq4eCmfVqATzzj8A4sh//bRGQtgFVGuH8jic3ls7q4IG3nnmuqAdY2SQySI
+	 D4ay+CfPmALXMgvA6XvDr7fjhx9wo8qujUYyDnN+V+Y+2QmzWm3NBIe47VLhQMoMF1A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=mGVIw2vE;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LDCBX9ah;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="Djh+AL/+";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=OhvJ4FX7;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E147606A32F
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 09:41:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9E147606A32F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E26606D806
+	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 09:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2E26606D806
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=mGVIw2vE;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LDCBX9ah
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A67RkEd3883418
-	for <linux-gpio@vger.kernel.org>; Fri, 6 Nov 2026 09:41:00 GMT
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Djh+AL/+;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=OhvJ4FX7
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A67R6213243860
+	for <linux-gpio@vger.kernel.org>; Fri, 6 Nov 2026 09:43:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W9dTCoyuf+cbHEk20Y1bEv5Tbx9Cur32vNeHXn7deF8=; b=mGVIw2vEHbHnj8Nr
-	C4jQWes/IJydGigPk5p/vhP2L2s54OdDvDoXa4/ygnHaO3i7Jewe3oiOxexEgyo9
-	HgAG9nbsR04WAqFkaXL2z08GaY7pGb0FyxUvwkHfVWosbq+8v0uhnjVO9JVtUV2Z
-	ASHgT/cHEr89WVrZnKoTrfER2E7s/m6kmNMsp3ZNC7BhZVsjX0VfBmqz+cQqblbC
-	SnWZFaXGh7Y16nTzwcGvMvC7rAUnGmn5wgleCDXSQVFfJqv8u69mpB2q2zq9jWZq
-	X1PNkqe+ZsBEq3MR/sc6UF5sAhUtgZDZCKP4ofmNV6t2bOIsk0nhzDSgq0H0tZnZ
-	uiZPkg==
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hs3pb26b6-1
+	fZXYuUJlq0DIs/ZhnbnzwAKYCaaO0O+UtNup8mIm1co=; b=Djh+AL/+2B4ZApp5
+	yOwfqn6TlwAScj+d/ugY0FXMbUgR5g1+1rMHR6RvMAOf+hJ+Pttm/UrErNDHFHDR
+	qOtM8Wz7A3XlGzghzTJzQMqdWfDHxkwp1WDVthuV7/Ff75La540KRE0FciQU3lfZ
+	sTZT5grtLChD1vzby7iSkYInHjgOzAtG5NBGUR+C8DXmcTHDy/nVbLUhgF//OwnZ
+	DXl4YjsCjlQKErrNql4OQs28tb3jGUiWLi+LQPxREIGjHMPr/0rS7CeWlJwyRHnk
+	JpHcanVHutOof1g8hfUqKFfehC87yP2NNbKrc+dH/ObaL86I0deabSRSmD/jeG5U
+	NC1P+A==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hs3pa250t-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 09:41:00 +0000 (GMT)
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-7cc3a482af7so425988137.3
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 01:41:00 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 09:43:32 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93cb7f9bb86so104069185a.2
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 01:43:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793958060; x=1794562860; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1793958211; x=1794563011; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=W9dTCoyuf+cbHEk20Y1bEv5Tbx9Cur32vNeHXn7deF8=;
-        b=LDCBX9ahQFfOsM0vJa8w/bLQ8K1OST7FKqmhuJfvgNH/PrGljA9zo3r8fnL28i7Dto
-         lM1WFh+hv8ukax09FLixgYzRtWxiE/A8v2P8FQ04jIQsOjzEbvoLTKNwthi4GNvHAJiW
-         6g3lW1f9OloyCX70brBfC1hciKw8zPtP7jg/jqF/vyYiP2Q3nnTvY/uXtHm27rbWog/D
-         JH+5x1O+G6212P0vqtsBoIh+kOUu2VWPoxA3JzK/K0G6pjmT7y1vmrUBe+0gxHhQOBAh
-         df9S1xXu0JsP8GxFRuP+yPuUx437YNpSKhQPhXKEv6mhbOsn4y90QcSh+IisdoyoBNBA
-         FDgQ==
+        bh=fZXYuUJlq0DIs/ZhnbnzwAKYCaaO0O+UtNup8mIm1co=;
+        b=OhvJ4FX7LG+WpvGluyN2NDNGy6p/RL8XW7NM13JYzS9+8MEvgAZyuA8kPovD6e88/Q
+         RzUAWFG05nR2I569LzBZPcYZCYFD09f+N7JyZH3VrMCbapWfF+fl1b2I7p6HBuQPqmkl
+         Mz0YTIU/q9hwRa1P0jg3yGT6A76mzyRlerO9Ex/Xr+Ruy4xOHrVYg6W3ZCRfuiKyoozQ
+         /zMxtNgA1Qrgz7hWcjT5EDmZAKATMBnv35Uc50ktpPUyVuwsmpEfAt6tlbry3G+GdjZg
+         rlU+R7fWsVi5usvcjPRZT5ytwI6b8Z5CYHambiWBax1LwKBXjVQQClKEc9mf8wToqsb+
+         MPUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793958060; x=1794562860;
+        d=1e100.net; s=20260707; t=1793958211; x=1794563011;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=W9dTCoyuf+cbHEk20Y1bEv5Tbx9Cur32vNeHXn7deF8=;
-        b=oIAd0R7B2boL82ivb1E1G3aYABMQAvI1KPKIRdtIe89tGSAHYzmmD60sx+VaOvUMZI
-         sHCzjoqU/jJPXFDr84AZ583G08eVx7fUmMx5k/R7OMJ5EVr9IIJ6NZoYFQebzLJYtP4O
-         0lGU046Ij2K8PWuFifETy75gcuXFp/afaQnpS1Laps+DCnjPzA2UkzADliPb2HPrspZY
-         QYjZwH0nVQPzpZZuP8oyfiev6UPfmpGsruwU7OEbdaxAC/GDl/Zry65EoyY95kvzaw62
-         o+gJedUHZPVGzQIl77Q+SjJvg8PybReqowBECSrskqOdbwDMqayzM3HddVAk1noi7ggv
-         wfdw==
-X-Forwarded-Encrypted: i=1; AKwUvBxGINpiE9FvQbAReqmcQ26o3Enro31wVkKATXNI4zgqBChDdZEIX0hZsW7EWlijEq+pmUPCes6GNc/1@vger.kernel.org
-X-Gm-Message-State: APuU4Z8eYKFtXjE7XbtTkRreq8n/ACp7npkUpDf0g0ywbLMeDew33g3T
-	fSZGyURsfVz3f4SHqxMhuuZvaM549nBzVk0GXOTlm3SJrRezGjQIND/q8WoqQ3PI5v1WPbsv+VU
-	0vDsto/XBxGGioqggEZe6bQhqJn9XlkncnVTgS3DvcR+Xt6v3IWSPTYivYvgnpwFa
-X-Gm-Gg: AYBFou2JXMy3oU0p6krCFnZ9P7s2DtChuWMbcddS9Dlw2blFFOwgiF3ekrpbXdPyuHS
-	vbEsY3P5bHX7SKZSyEc6I3hmhbjKd0fZuG8u9lta4yPn6+zQIqdVe3amj9RyJL4N2K+lGpGnGjX
-	+zHwri+5MtZTxaU11idGr0k6TgLKKnyVh/2YucuKz32JTu+o4uWSSBtmGH0lscBn18xLwNi4qcc
-	/cCiaBdJJTIkG2A1a6w8om9vcQvC+DACgU31N2Mi6b8wXCJCcyN1z2Ft7qwYGJtbyUFvVw0/9IZ
-	d4GDwW1lrBA8eE543Uq8pdH4F+/CmfMSU0AtEOeYpG/ThQB33BvRsKg8pzCqISZ0FvHJExFBjlW
-	ReLFKT15SeR3eP5O5X51/upjyIlDW5qB5oMNIFD9qb7HSyl1JKRNxFaEH2OmY5/5PDbgPY2XQo1
-	y7
-X-Received: by 2002:a05:6102:160c:b0:7cc:3eb0:6ef5 with SMTP id ada2fe7eead31-7d2a15428d1mr1177065137.11.1793958059978;
-        Fri, 06 Nov 2026 01:40:59 -0800 (PST)
-X-Received: by 2002:a05:6102:160c:b0:7cc:3eb0:6ef5 with SMTP id ada2fe7eead31-7d2a15428d1mr1177057137.11.1793958059464;
-        Fri, 06 Nov 2026 01:40:59 -0800 (PST)
+        bh=fZXYuUJlq0DIs/ZhnbnzwAKYCaaO0O+UtNup8mIm1co=;
+        b=Umy81od/plOIxWTYCi7prtD471omyLbIioaMxtFL363bxf8mKWuhTNne7D1/YrA2Pa
+         iYfie1/hRMm5YPs3Iy9djX3/yey3C4yZ8tSgM5EWqje1Tuk2z2xtX1Ckr4Si+lh785rh
+         5CnpmHhah2L/65bkLO2TgUy99ldpN2afPZV54N13TFQaxI/JddJORT01V0XJ5SaAzhx6
+         qqUjz0rtCZ9QbF3rXWyjfmbW/GBJ4auYsmvf1ldpwlaWwyl+XqZZzK0kirfD8o3nLNLe
+         SDCeCUR9zGyJtvTkKFuv/EjjRzpGCzKcrF2K578b7Hw50FVIT4EHsg1yhZyDofzBZ9qA
+         HnZg==
+X-Forwarded-Encrypted: i=1; AKwUvBy7A70/pF5pZ52uwMKIXSyPcCDPD+nZVfVmsAYbYoyfuFX7D0nOwXoYrqNYq3ahpiG8yWh1kQaJoDFr@vger.kernel.org
+X-Gm-Message-State: APuU4Z/GXqscenzbvKZv3F+P2LyrukUeEeGlhBjV+3d1aY54WnGenrTh
+	1Zkm6wAnO4G+VP3OZxlxnIdqlvBZyPkvSbRu1pPRR8RNcjsFUqTyUOkYV+GPnQdtFjowwgKZ6kH
+	z44F9oKxMhNsvh2XEz94AvgjQ+e21PVZoiE79UpBSOh+w3oWkcilENUSdf3WgvEUO
+X-Gm-Gg: AYBFou12YSzbAYecmUrG+wwRpp9Qv6HVhWVpHFwU5shlDujKNmXihkLRMwIJIRlE2Sb
+	f+NqEApmebZcjxB5NULfUgwkQ5R4638XBn/ZflreN4ktX3beWNKgwoinYu4RwMSYYT9bQcYW/o4
+	PBLpxbUtL9HInSCUysmmlWrFVo6ZfxtvEVuqSAzDWbLwFICsSIm7OibFy4wR+2nCHDRjDwZlKil
+	OWdAVZ/AP0C2NcAZqNnJns5FnmrQKmJCdpQQjCO53rtHtfpNV9f/ioN3chkp8T3CnRGK+80Aa//
+	bu5a8ScDYs1tr+65EnGtu5Pn+ijDKn3VSQrpP8j+e614mr/fcPyp6GEc/8C1snGk8Zqavysz0oq
+	vizUEun19qvQWpne1ZbHYYUb36f8+FvM3nguiS4otliAHvz1ezsb0+/FEycJlbsnYJEBNtoL9rv
+	uf
+X-Received: by 2002:a05:620a:1794:b0:93e:e1fd:b87f with SMTP id af79cd13be357-945f368b0e7mr244268285a.83.1793958211191;
+        Fri, 06 Nov 2026 01:43:31 -0800 (PST)
+X-Received: by 2002:a05:620a:1794:b0:93e:e1fd:b87f with SMTP id af79cd13be357-945f368b0e7mr244266685a.83.1793958210720;
+        Fri, 06 Nov 2026 01:43:30 -0800 (PST)
 Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d7232832sm2628214f8f.25.2026.11.06.01.40.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b6ed5b8159sm41299075e9.2.2026.11.06.01.43.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 01:40:58 -0800 (PST)
+        Fri, 06 Nov 2026 01:43:29 -0800 (PST)
 From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Wentao Liang <vulab@iscas.ac.cn>
+To: Conor Dooley <conor.dooley@microchip.com>,
+        Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Isaac Adjei <code@isaacadjei.me>
 Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: keep the chip reference when deferred setup fails
-Date: Fri,  6 Nov 2026 10:40:56 +0100
-Message-ID: <179395802621.6519.3548535615880624966.b4-ty@oss.qualcomm.com>
+        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Dan Carpenter <error27@gmail.com>
+Subject: Re: [PATCH] gpio: mpfs: reject unsupported interrupt types
+Date: Fri,  6 Nov 2026 10:43:28 +0100
+Message-ID: <179395820571.6762.15630695302653081248.b4-ty@oss.qualcomm.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261104025345.1527526-1-vulab@iscas.ac.cn>
-References: <20261104025345.1527526-1-vulab@iscas.ac.cn>
+In-Reply-To: <20261105-gpio-mpfs-irq-type-v1-1-cbb2b0b2a807@isaacadjei.me>
+References: <20261105-gpio-mpfs-irq-type-v1-1-cbb2b0b2a807@isaacadjei.me>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -125,58 +131,50 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: UKlLwQGvfWhOpMGN0K0pXf6tCEr8cgZ7
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA2MDAzOCBTYWx0ZWRfX8Ce0BgCBonmm
- XC2OzgTIugM/wzNcVv8uJCPP9QeHSaRbU3w+cx26h5WCE0TZGZiIlaiK2t5OPJbYkWdOQfLPOLe
- M0FXDzBIYV8q1K39lBdwRfN6D1EGda0=
-X-Authority-Analysis: v=2.4 cv=LIrz05W9 c=1 sm=1 tr=0 ts=6aeda0ac cx=c_pps
- a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Authority-Analysis: v=2.4 cv=PLeaavqC c=1 sm=1 tr=0 ts=6aeda144 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=m509mD-o-6PLSkqzvUEA:9 a=QEXdDO2ut3YA:10
- a=-aSRE8QhW-JAV6biHavz:22
-X-Proofpoint-ORIG-GUID: UKlLwQGvfWhOpMGN0K0pXf6tCEr8cgZ7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA2MDAzOCBTYWx0ZWRfX5ufvALVouWAr
- N2UkmcRU7V9IRg87QMCgTRmS8yhLb1YQZ0BYWuP6MRtEltqYPA9Sk+MEqd3qSuQXQlTrwN4TNsm
- 5J6wQPIpUwZQiD/l/eChB3xInRn0BJjpU+FQGxnNYVGEuCvWarTwFv69kIo182tjjUfQxbYZO4R
- B7ol2VaF0EMHYf73/NLxGBiUx/xNgYusE81dkeew4um4EE8ckfKpI/YkZdT3zIk+15R2Iwn6O2+
- Wc0BulbVMwHptTG7+XsGOUg24C0Q3EQ6LQhlHqPKP6cEfwc6eOyVmaQLgFI1V2Vg3AOFdRy0Myk
- 9/DTaObRvL7mrJ14Lj9jx6P+YvY4rcwrY59gg3gi79iCCo8wWGi1rDKOxfMyyocYK5hcMaXjgdA
- ixd8JYnT2QmMkjuNsxIhG/kP7QMAOccbjhSGYxrDpDkKelMY6DT8XvadOtG08ysnNJdrriuJqTg
- AxRQuzOLOl2o9WRMYkA==
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=kmRQxf5D32N2tAlX4cYA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA2MDAzOCBTYWx0ZWRfX1I60r8PHlKeA
+ ykSfTYJR1W21WvBBgrI8496m518x4sNMyguH8+MIP7R4L9WqqQxxLzHILfl8A2R3h4NrejqtyN/
+ PaAKrIigSdQnFpk7OOrp8ZkaC2PqVXc=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA2MDAzOCBTYWx0ZWRfX9N0Q0eRzsqls
+ swiFkg7HOZIaUq+SD2nfolsgq4TT+y99egBcU7x1WqWgOJ12G1Z+EaW+xSKJj3Nq6JR+KHLXv8v
+ dgUyQ8CaAC3IPvIKFK1Weur6ab+WPJXHPt9UiI9YFTre1abdzQk8mDAe4v/4hsZChrx3kDWTEtH
+ gTYm6xHvqa3+4XZgv18WDPOhGBm9V93ZRTLAo8s1GdXYkkovHT1jqheZGj7BS4tUEw7UhMCiDQl
+ +M4O90FxIuBp9FpCWLb5oXm29VKXqyaHWvOpdp83MYVW/+CYRQ3xE/2zj6cMIhn4rZU/3BTT/vf
+ 6dooIPX2fux4J/yFD1VppWUYfxk9SaYAsk4nTvZnNYqJAvrnlUAFdI+vnJFNM0HDKeYuo88UG4w
+ cCiyiqmcBDUzEbBqGER5JQvbqs5RYMTjvSpAcxQFcSYMKKzFe83hYGTSN5riZU/ChKtYx8lrQw1
+ u7vwpLfVV/Jyu/KVipA==
+X-Proofpoint-GUID: m8NXTwPD67VxdL48gwvEDXUjTypsjmAP
+X-Proofpoint-ORIG-GUID: m8NXTwPD67VxdL48gwvEDXUjTypsjmAP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-06_02,2026-11-04_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611060038
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611060038
 
 
-On Wed, 04 Nov 2026 02:53:45 +0000, Wentao Liang wrote:
-> gpiochip_setup_devs() runs once gpiolib has been initialized and
-> finishes the registration of the chips that were added before that.
-> When the registration of such a chip fails, the function drops the
-> reference taken in gpiochip_add_data_with_key() with
-> gpio_device_put(), and only then logs the error through &gdev->dev.
+On Thu, 05 Nov 2026 08:16:51 +0000, Isaac Adjei wrote:
+> The switch statement in mpfs_gpio_irq_set_type() does not handle
+> unsupported interrupt types. For example, IRQ_TYPE_NONE is not listed.
 > 
-> For these chips that reference is the last one, so gpiodev_release()
-> frees gdev: the dev_err() dereferences freed memory, and the chip is
-> still linked in gpio_devices, so the next lookup walks into the freed
-> object as well.  Here the registration cannot be undone the way
-> gpiochip_add_data_with_key() does it, as the driver already got success
-> from gpiochip_add_data() and will call gpiochip_remove(), which unlinks
-> the chip and drops the reference.
+> When an unsupported type is passed, interrupt_type remains
+> uninitialised. Its undefined value is then written to the GPIO control
+> register. The function still returns 0, making the caller believe the
+> operation succeeded.
 > 
 > [...]
 
-I understand Krzysztof's concerns about the bug is real and the fix is correct,
-so I'm queueing it for fixes.
+Applied, thanks!
 
-[1/1] gpio: keep the chip reference when deferred setup fails
-      https://git.kernel.org/brgl/c/7e899fe007d2ffc753e6aa5bc8f2ae0a802b9e07
+[1/1] gpio: mpfs: reject unsupported interrupt types
+      https://git.kernel.org/brgl/c/cfbd01eddaf5bfdd4f53560013fe830571a186e9
 
 Best regards,
 -- 
