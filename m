@@ -1,60 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793989661;
-	b=WreYZIYwUcyUAeo+VyK7HLuwz2uY0ZjKP/3TeG8hwl73lCjf/gLIwCqXXw1um0YoOsfa
-	 OZzIZpGchdKOyx2CUs/FY3a2q02TeLghHbPjuum7LGxz6N1XzWiznGmPb1YI5YOqFR9jW
-	 m0LhYwfoEyVbLJhot8GjamBAO99cDA4F2SlT9nyJ6+RiJPrBTSuG6N0JAvYP/IksqdVu0
-	 DYjkRdKT7ux/8r8jCoV3lfNzGV4QQnQXfyQcnT79d+YHPx5kzl+DRs2gVVwdJ46C4F7Bf
-	 fSUXe/rczz/eX++/7ab/w/O+fBLIiyKGo95SYcemFW8oq1SWEvzBKTsyAhrZPZE1O5g==
+	t=1793990221;
+	b=SktosXE9mr08XV8ZxTf5zSx8LZXPBrSee0MQ17qo+6FaN7rGQ2Ml6cKgPVfbxpWiNSlj
+	 XR4ZQ8zCVAMu/8RSobXhE3kGXMSKmhiccOhNZys9nPXLePIr1vSoft4fKrHyBhU0kGj2p
+	 8TwpgpUykmtMmb+TCrd3vJHrB22YcG4xc/s0BzEjx8dVT4Sl6NNkQaid5AFmtegxz4bAw
+	 Q/HFdFXHCZKQ5HZ5RY41jzzTtV9X2+3MJk9Q+zkykzVKHdkP0dDSTuhwOSBYMZo2C89mZ
+	 dzvIxTyjOyiBEbNR5lSUbpH4H5geJKHJfSuTuej9gFKVxtT5lsD6jqXg36B+EwUS9IQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793989661;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=WlCEZESfOmb1UfVHdqxtpBorzwyZKIs/pd0KVUd31AM=;
-	b=xIOFkIWsl+1TIX8RJ8zIW7AfyyPrxJlpG/+7wptHSUm/1wRp6S2Ylz8x84NzdD9bOiyU
-	 ZBy/mKyaJ7pK40zWnfW7z9SLSD92hq8QeP1M3KNLWEn+tc2sw10V5jxYHsd7JtWGtgSvh
-	 HEvcCqQB39+tCF7eFPJMy3dHHSLlNHeYy4CqN0sjglNLQAokw+SZ1msE5NSLzx29EV6EC
-	 6NHUTMOqBr8gAWVx+4qh/mit95GGIsj0NXNNtOkqcJMsus0nBXHvLiyMnt9d6QpchbQ2Q
-	 AjZBPZ6VIGq1QiNPoq7RuuaK69iXKflpNz9vANGC2aC4irViEoDfXp74CrGgpayilEA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793990221;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=XXD9tIfIeyyf1tgZA9qRzZVpi+ZbPumJ8KIZL1TcJBo=;
+	b=Y/0XjQ408TW0A1C1hQYYt1we6ONRCjOf3Zh/icRXl9V91h/1G6CvJGEHCDXm2ei6q5lh
+	 6Q4hVxIkqPSpQx4vD3CArrF8TBaKdWiJavUunuEhZyTIv5a0HPl0emneZtYawzNh6tfyn
+	 BG7qT0iEb8f07CPwcvu1cAA92v+puxWMAP7UDW1+txpwEHKnL6w0o8xBiUbsE0+MWMY9u
+	 yqh4Mpn0pZv6af3zSIk3j/iTYvzKlmPP5SPMTziTQe7BCycy788sxSiAZAQmBbZvMZVpK
+	 t9PSN7mb3QwoqDIJF8/DQWaUiJyHX3EQjRB2AQuUnFAjPZEhGL4gYyvh5QJFwx4Rsug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=pm.me;
-	spf=pass smtp.mailfrom=pm.me;
-	dkim=pass header.d=pm.me header.i=@pm.me header.a=rsa-sha256 header.s=protonmail3 header.b=E9qNzqww;
-	arc=none smtp.remote-ip=79.135.106.31
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JP6yeHxm;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DC2606A326;
-	Fri,  6 Nov 2026 18:27:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A2DC2606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 18AF0606A326;
+	Fri,  6 Nov 2026 18:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=pm.me header.i=@pm.me header.a=rsa-sha256 header.s=protonmail3 header.b=E9qNzqww
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1793989657; x=1794248857;
-	bh=WlCEZESfOmb1UfVHdqxtpBorzwyZKIs/pd0KVUd31AM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=E9qNzqwwcOgulpKnm8UeZTapr25+17D4M0OrhVFDD9j3tHAReSmVCqXse2fl+FYRZ
-	 J/cFTZ5BYxkZ5bFAWhlLzWzoM3QDuIG6ChC45tsSbYgngi0EzV46icCs1zCzLOnsOX
-	 sfnBhu4xEROtX7Kd4SMG/LuHhsi4TFZ7hchLQTdWK7LJ3c7tjoeWBadGVvyfglSvUA
-	 AexL7vsYkFkAQHFHNS4hnwqXm2pylPMdhbAxA3tp6CHRKLDMWi4fCjuaRDwVrV4WEA
-	 HO4xk2I6aU4Y0UacfLTrlm122o87rAmLlViiiAv/SEdKSquC0QVMlQsnP/3DPifauq
-	 LzHaaP9kBEnYg==
-Date: Fri, 06 Nov 2026 18:27:32 +0000
-To: Krzysztof Kozlowski <krzk@kernel.org>
-From: Alexander Koskovich <akoskovich@pm.me>
-Cc: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: pinctrl: qcom,tlmm-common: Add wakeup-enable
-Message-ID: <0orir54c0rbF6-ZvpZq9hVVwLOMN02Et6AtRxRh3DU_DbJ_dwkDo3PFVFftKlaDI2IGdFsZdH-olYFZHn_5AA4U03M0-uV_e5UUtnXQIHg4=@pm.me>
-In-Reply-To: <20261020-delicate-serval-of-fruition-fe0cb8@quoll>
-References: <20261015-tlmm_wakeup_gpio_support-v1-0-c6d6f37a7e51@oss.qualcomm.com> <20261015-tlmm_wakeup_gpio_support-v1-1-c6d6f37a7e51@oss.qualcomm.com> <20261020-delicate-serval-of-fruition-fe0cb8@quoll>
-Feedback-ID: 37836894:user:proton
-X-Pm-Message-ID: a845e39c3a4ac81e44bf1ebf3626e10ae16b1ca9
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JP6yeHxm
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A888B1F00904;
+	Fri,  6 Nov 2026 18:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793990220;
+	bh=XXD9tIfIeyyf1tgZA9qRzZVpi+ZbPumJ8KIZL1TcJBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JP6yeHxmQzRl5hfaLX5+I2lT3SyYTBGhNYkoVJ3v7G8tYwAX5YnJz4/yR2RLzU6p5
+	 dyY+S9mRtfq3RtXpFzlRtNxJIQODDnmiIvrqTvMZBUyddA4H+AoMT7HIE9PjZ1n5Gh
+	 kpPk7c8qekKzTxRGBdZgcniYKpIiNah6X3+S8+6NvTiFw6wP25AwjWIV1AKKzURFjn
+	 PMFAdKiFHETWQEPItd/Xpy41tEJkfjvBp9XuIhI7b+vCTQh3hPXaDh4xcs+1kk53Eu
+	 +ATMDnWpC4Qs7IaKVqlay7SJbrE6J18NQXtYwMh5FtAqf2hDbRahmX7p6c2VT5//dD
+	 2nZa/uyHZxolQ==
+Date: Fri, 6 Nov 2026 19:36:57 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Yureka Lilian <yureka@cyberchaos.dev>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Neal Gompa <neal@gompa.dev>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, Sasha Finkelstein <k@chaosmail.tech>, 
+	Linus Walleij <linusw@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v2 5/9] dt-bindings: pwm: apple,s5l-fpwm: Add t8142
+ compatible
+Message-ID: <au4eDk3-bAQ-EjlD@monoceros>
+References: <20261104-apple-m5-initial-devicetrees-v2-0-fd727a82d380@cyberchaos.dev>
+ <20261104-apple-m5-initial-devicetrees-v2-5-fd727a82d380@cyberchaos.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,70 +66,48 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cpcwbv7z5gtj3ayx"
+Content-Disposition: inline
+In-Reply-To: <20261104-apple-m5-initial-devicetrees-v2-5-fd727a82d380@cyberchaos.dev>
+
+
+--cpcwbv7z5gtj3ayx
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 5/9] dt-bindings: pwm: apple,s5l-fpwm: Add t8142
+ compatible
+MIME-Version: 1.0
 
-On Tuesday, October 20th, 2026 at 2:19 AM, Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
+On Wed, Nov 04, 2026 at 06:24:18PM +0100, Yureka Lilian wrote:
+> The PWM controller on the Apple silicon t8142 (M5) SoC is compatible
+> with t8103. Add "apple,t8142-fpwm" as SoC specific compatible under
+> "apple,s5l-fpwm".
+>=20
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
 
-> On Thu, Oct 15, 2026 at 07:52:59PM +0530, Mohammad Rafi Shaik wrote:
-> > The TLMM can gate whether a toggle of a pad is transferred to the wake =
-up
-> > controller (PDC/MPM) while the system is in a low power mode. The pinct=
-rl
-> > driver arms this for pins it requests as GPIO interrupts, but that path
-> > takes over the pin mux, so it cannot be used for a pin that has to stay
-> > muxed to a peripheral function.
-> >
-> > Such a pin exists on boards with a SoundWire codec: while the bus is cl=
-ock
-> > stopped the codec requests a wake up by toggling the SoundWire data lin=
-e,
-> > which is muxed to the SoundWire function and not to GPIO. Unless the pa=
-d is
-> > armed, the toggle never reaches the wake up controller, the controller =
-is
-> > never resumed and the event - a headset insertion, for instance - is lo=
-st
-> > until something else happens to wake the bus.
-> >
-> > Add a pin configuration property so such a pin can be armed from its ow=
-n
-> > pin configuration, without being turned into a GPIO.
-> >
-> > Assisted-by: Claude Opus 5
-> > Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.co=
-m>
-> > ---
-> >  .../devicetree/bindings/pinctrl/qcom,tlmm-common.yaml        | 12 ++++=
-++++++++
-> >  1 file changed, 12 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common=
-.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
-> > index aec72e8c0..95f539611 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
-> > +++ b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
-> > @@ -87,6 +87,18 @@ $defs:
-> >        output-high: true
-> >        output-low: true
-> >
-> > +      wakeup-enable:
->=20
-> As Sashiko points, there is no such generic property.
->=20
-> Anyway, the wekeup is per device rather. Arming a pin would be different
-> sleep function, no?
+Fine for me to let this go through apple-soc.
 
-Heads up this also appears to be needed outside of sleep, was looking at NF=
-C
-enablement on the Nothing Phone (3a) and left out clock from DT since MGPI
-is meant to handle CLK_REQ and enable relevant clock, but MGPI does not
-work unless the wakeup_enable bit is set on the pin.
+Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
 
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> 
+Best regards
+Uwe
+
+--cpcwbv7z5gtj3ayx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmruHkcACgkQj4D7WH0S
+/k6/Mgf+MNkIvT5Osv2p9FD0hPlNyAR3xgH22Qg5GmwtX8sdRXqeW/pfzrRa0gxC
+7KfnB3QUi973Kv/P/KotlgUNMyclAouMDla3PK9/qB154h/I2mAyYaxkMFxA6hiM
+BcmpD9nehcFqa11ZbSyK7woPht/jT/p0lGV/zwWtF8e9xauuKUJACSdOC0ZqCQ7s
+MEKrMqfFW1X0vkX7u1pIgM1/xOou1cM7QcCa7c5R3iH6Pikl0yNUE4orNB/C5DXm
+0zNp2ZaGX9KJY6GdRk0Lmx/01kAcUXUPo3qed3VVwfvZBI24n3tXoq2j1k3LmMQf
+OfVVqtR4am7GiKEOUkgkxdfS+ZLHxQ==
+=jNQA
+-----END PGP SIGNATURE-----
+
+--cpcwbv7z5gtj3ayx--
