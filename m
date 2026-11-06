@@ -1,55 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793981269;
-	b=SOHNcRHOHlu83SeUhJejiMGPw0H3nWX8f41YRydVq8sPdAfAPDsmxHPeLj4MJ/fnByTO
-	 YWBONbB7w5jAodaTviH+6CvgVJMpCUEixYN4UY4Kx8aC0gddQz/mRaXANqkJGuVkli9Xo
-	 skOMBpu9pzVfxhnDizZNgAHa8BKyzC9V/3y+QGv9IIXMGXAjoE3LZvAbKOa2U5xd+ZuGe
-	 1QNUakTxHzvifayXv+e3cz9ImIQOXNCHGLdEQ8tCCtqLeR0Bp4otEnR3uebm4zFe1q2jS
-	 mtZd5nugl5w7tjWd6+5PBUytH147yssaQ/RvD9TvI8QOoeaQAf2yC/nlWK0xiPO2+fg==
+	t=1793982459;
+	b=DnEWan8+Y7i2b6SWshZVatJ/01/GkFPV8zqGWMXmBevC3fFHo0pnfpPhoosZId46qK9p
+	 Diy39CKPsNZFd9EGmC26jhKhN+D6unTbqS416wc0hNcU3CM2a7wNlhfCKCGxxrj7BRQLc
+	 HY4hi5d7lI0FICZ9TfU9vCv5iHYBJzD39X/DSPwxyZMrcJ/VEq7dPCSz1dygldu6BUCiv
+	 Xim2IjHuEFX5IeU/f0HPiWUTkpkQ0hbm120e+iG4Zloq0tZwqJr2WxEDT8YHda4RuFcyL
+	 Gr2Br7xrfqPsj8tumoHGMpdkiFoEEfjZKfG7Jov2ED4zGqsbdbQfEsC5pGbc1oRjF8A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793981269;
-	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
-	 Message-ID:In-Reply-To:References:Date:Mime-Version:From:To:Cc:
-	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
-	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=+3nGazd3fxtqrZKDRm9/9owaBnfQNvNHAKAoLZ4kLhw=;
-	b=WgYxFqFibVS5ntH2zLT3fSiDyZSx+jPV7uELSaMncmbP6LHjcJ5p5JeJlDkh5/LslRzZ
-	 Q+olOtQwS+Gy+B6qESEXj5KbugG6xfoEPORyLXd6+SN4LVQyT5SQ68yMXl9j+6MOdr1RJ
-	 6FIbalJXMiWJAgRGxZynLMEFLQgVoCR2siFCAmYASOBUcej7PjBEScN11NGlvMUN9AyXg
-	 LhbpP8G4G9n7C1N5sHGHHM0KfSPErKxo5it17ZCfPNemhvhgKaDW8G32azcsH6mUwzvs7
-	 wOIZtFjPVaeVXEmZ1XwqK/LvpJl/s0j/kx/Vez+miGtbTilhMdu1Rbfi2vdWsyZz/3Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793982459;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=rHA92cDMiNd2/5+UcoBgOSleIB2v6yBUpxJhlvD9jwc=;
+	b=CtoRI5VzNihnnOLhRzWwdgpw5XM2EXQxDGEOiXFWm29dJODXwhJocfx5whIDrMtIKUlF
+	 tXqq10TODH0FYbmKalXLd4AhZpxigzX/vy6Xc1ZvhC7isAuwND0d9btj1FK1jEFYZy6uL
+	 lXJx+kd670R6yaw3VeHBrUrMXfo3YKvwTttSleTsc3ka8FGX4fCMdCKYdIiNDS/8iLXAM
+	 yv13dBK7mWOxQeeLjdjUPz1uEZcAUvRVeEfbW/zXJYu8UVqRT8oqNDp6t7XzH7MsbRv3R
+	 owwH3xQL2QI7J0J0bbNBvZUZRbf20LUt0zvBaTPfiIatedr3Vi83208fYVb5R1BE7Pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	arc=none smtp.remote-ip=160.30.148.34
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="hX1/Kfbe";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E51606A333;
-	Fri,  6 Nov 2026 16:07:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07E51606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jLkbl3NfVz57DCg;
-	Sat, 07 Nov 2026 00:07:47 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 6A6G7WP1074980;
-	Sat, 7 Nov 2026 00:07:32 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sat, 7 Nov 2026 00:07:35 +0800 (CST)
-X-Zmail-TransId: 2afa6aedfb47007-b9f7a
-X-Mailer: Zmail v1.0
-Message-ID: <202611070007358971CKnkEMJJVl0_NxsRtm--@zte.com.cn>
-In-Reply-To: <20261107000724697MsR-XmE4V-ADPPMr3wGom@zte.com.cn>
-References: 20261107000724697MsR-XmE4V-ADPPMr3wGom@zte.com.cn
-Date: Sat, 7 Nov 2026 00:07:35 +0800 (CST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96424606A326
+	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hX1/Kfbe
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3161F0089F;
+	Fri,  6 Nov 2026 16:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793982459;
+	bh=rHA92cDMiNd2/5+UcoBgOSleIB2v6yBUpxJhlvD9jwc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=hX1/Kfbe1PWjPfSR5/nSehRh6YGe6p+efZn7DFYxW44DfQxFm/4L9ZQCig/huQ1Le
+	 J1ZeSXb5YmPX3jEwPbIQw8scDXyw7l04kHGE5HUVBVQC38tmenSPhfSokXbj1ShVTm
+	 h6sHnZ5KY9x2CHEZWIPh11MaU4E/A5ylp/8PVWvAXMZbK6Ie32FiZBL98uvQQI3lmQ
+	 RTEPVqwERucdmAheNmcmcc0YikIZvrmM1FnZWkvc6+UVWvdxeCfM1/frHMD3KDXG15
+	 PEn82fsO8wQwdlaZbo0wYvirpwIDUz0vbMkwN5vkvEBgFRgXhD189ZxL3fKUpJPX63
+	 GLVIo1jpsjkFw==
+Message-ID: <sashiko-outbox-201810@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/5] pwm: adp5585: Clamp on/off counters to the 16 bit
+ register range
+Reply-To: sashiko-reviews@lists.linux.dev
+To: shao.mingyin@zte.com.cn
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261107000733118AdMi1NdZNf834PvT-O3bC@zte.com.cn>
+References: <20261107000724697MsR-XmE4V-ADPPMr3wGom@zte.com.cn>
+ <20261107000733118AdMi1NdZNf834PvT-O3bC@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 06 Nov 2026 16:27:38 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,64 +60,61 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <ukleinek@kernel.org>, <linux-pwm@vger.kernel.org>
-Cc: <laurent.pinchart@ideasonboard.com>, <heiko@sntech.de>,
-        <ben.dooks@codethink.co.uk>, <benjamin.larsson@genexis.eu>,
-        <nuno.sa@analog.com>, <xiaoning.wang@nxp.com>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>
-Subject: =?UTF-8?B?W1BBVENIIDUvNV0gcHdtOiByb2NrY2hpcDogRml4IHBjbGsgbGVhayBpbiBnZXRfc3RhdGUgZXJyb3IgcGF0aA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 6A6G7WP1074980
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 00:07:47 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEDFB53.000/4jLkbl3NfVz57DCg
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] pwm: adp5585: clamp on before computing off in
+  pwm_adp5585_apply()
+--
 
-rockchip_pwm_get_state() enables pc->pclk and then pc->clk.  If
-clk_enable(pc->clk) fails the function returns immediately, leaving
-pc->pclk enabled.  The clock therefore stays on after a failed readback,
-and its enable count grows with every retry; unbinding the driver then
-hits "Unpreparing enabled" in the clock core.
+commit 636e863f3fd6ed7ec6fcc05f5eed5bd16bc080a9
+Author: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-Disable pc->pclk on the error path.
+pwm: adp5585: Clamp on/off counters to the 16 bit register range
 
-Fixes: 11be938ae003 ("pwm: rockchip: Enable clock before calling clk_get_rate()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
+This commit clamps the on and off counter values in pwm_adp5585_apply() to
+0xffff before writing them to the 16-bit hardware registers.
 
-diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index 050ca8aad0ca..17cf1e28a3c8 100644
---- a/drivers/pwm/pwm-rockchip.c
-+++ b/drivers/pwm/pwm-rockchip.c
-@@ -76,7 +76,7 @@ static int rockchip_pwm_get_state(struct pwm_chip *chip,
- 
- 	ret = clk_enable(pc->clk);
- 	if (ret)
--		return ret;
-+		goto err_clk;
- 
- 	clk_rate = clk_get_rate(pc->clk);
- 
-@@ -100,6 +100,10 @@ static int rockchip_pwm_get_state(struct pwm_chip *chip,
- 	clk_disable(pc->pclk);
- 
- 	return 0;
-+
-+err_clk:
-+	clk_disable(pc->pclk);
-+	return ret;
- }
- 
- static void rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
--- 
-2.47.0
+> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> index 9a1dbba75bc14..da83fcd35e1d7 100644
+> --- a/drivers/pwm/pwm-adp5585.c
+> +++ b/drivers/pwm/pwm-adp5585.c
+> @@ -96,6 +96,13 @@ static int pwm_adp5585_apply(struct pwm_chip *chip,
+>  	on =3D div_u64(duty_cycle, NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
+>  	off =3D div_u64(period, NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on;
+> =20
+> +	/*
+> +	 * The on/off registers are 16 bits wide, clamp the counter values so
+> +	 * that cpu_to_le16() below can't silently truncate them.
+> +	 */
+> +	on =3D min_t(u32, on, 0xffff);
+> +	off =3D min_t(u32, off, 0xffff);
+> +
+>  	val =3D cpu_to_le16(off);
+>  	ret =3D regmap_bulk_write(regmap, info->pwm_offt_low, &val, 2);
+>  	if (ret)
+
+[Severity: Medium]
+Should on be clamped to 0xffff before subtracting it to compute off?
+
+The hardware PWM period is the sum of the on and off counters:
+
+drivers/pwm/pwm-adp5585.c:pwm_adp5585_get_state() {
+	...
+	state->duty_cycle =3D on * (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
+	state->period =3D (on + off) * (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
+	...
+}
+
+When duty_cycle exceeds 0xffff oscillator ticks (65,535,000 ns), subtracting
+the unclamped on value from the period ticks and then clamping on to 0xffff
+drops (unclamped_on - 0xffff) ticks from the total programmed period (and
+triggers a warning in pwm_apply_debug() under CONFIG_PWM_DEBUG if the same
+period was previously configured with a smaller duty_cycle).  Because period
+is already clamped to 2 * 0xffff ticks, clamping on before computing off
+preserves the requested period and guarantees off <=3D 0xffff whenever on is
+saturated.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107000724697Ms=
+R-XmE4V-ADPPMr3wGom@zte.com.cn?part=3D3
