@@ -1,78 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793948940;
-	b=h6t4HobbS9xY0O5LqdYeq85T72sbRhTZVXTtEG8jqSK2VNRhQe429xvZKazkaWzJ0xB3
-	 RnO7/eh7qmweKZodNhVi06AdJyB3qxxz/eTLOigKaLii0duoOnC3ju6Y6kpMY/US2/PyI
-	 vKIiHwPbXH6aA54pon4T9vpdBoNvLxxpDqWdjIXcYzmi5xImsPW3m8n03jFZBqkMM9Oi8
-	 kdXeB72hwBt4bZa15fa74JIu/kUjOsEckigkz2zbIxeqq2Xa8aXHlenf3sbz7HAH1rXxZ
-	 tyYR4b6DorJO7Z0bsPKWUO7BXNyD5eFOsKWIACXJ54YN1+aLg7DzLdjAWOihs7NC2Pg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793948940;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=sssGzgp6hfraRTjPaOuoMz/ydvUjxyv6U8CNhrczgQc=;
-	b=rpR1X7BHBXegb3TafTzRSlei0Iwm4yTeBImnBP1KGZOQvPJG/VJ5m2z2RTTgIZbXaBNZ
-	 prBsyYpMFM2sjxX3XIjP4RY9zZMePo8Nse2i6ip/gEpZ7Z0KKtgM8Pj6VoBHykywDmLXj
-	 G/cvnjl2oP1//ZXV6SnGxtEyE9zHE58I8XO5bfBITnNfqKfsM4EU9zubsy1AHxsX56JGC
-	 DFIK6etOYnGeUWBKea+0keB4fLa60vLSXGUWPDvKF69827XT/cLqOY3eJNHPofmhw/M07
-	 w1OmmIQSp6Z6BS76otD5/J+pvIpaf1lJv0Ulun0zTqF9UOSLNLWsM/1Jqd0u/rEZraA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmTgMEiC;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793949372;
+	b=hg4IGMDVZdvukJ8grliab3b1mBKVNAyH3AvpLzmvxW0jXZ4OrkOXULj2C6UdESbq8Dsu
+	 0BAXJsOZVZRO1N9nx6nFmHiORAJiZ3rhpPXXMiYFz6lX4GSfFciGgRFJ0xvazD06D7qOG
+	 oPX+w736aC0UQxMzZv+xqiEuFKlH74KrxcBbRhta2kPFdFBafr2wgbWaoR/eBi8Dn6ULA
+	 qf2qIXYDlpnY83sn0FJS4DovNavogdPz7MCtzVDoT5Z77ynamo5AjFyehaz3wnl9vbCFD
+	 2trFJduw58G0wss95sbAobAPllmuoSi7t9jByJxGXC1xD4CVqq1mDqbFzySDTtYAUjQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793949372;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:List-Id:To:Cc:References:From:Content-Language:Autocrypt:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=bxyhLGFli38ds0TGUbKdVWpQ1ZVJ1vM6lFd2Hmh0ka4=;
+	b=k87bHuUD+vdrZUIWTrKraDJNY40U+t1M3WUGPoTfLM7XRumWQwf9RHSm0ax6qEtgXD0S
+	 v6gGLaBT7076SSHfTNTDSKfSA4LDzDzPMOqbDbVqLelco1N4XFiLgZN4CpuzCRMMgS4N4
+	 CoTv+4YZHbmzrCDThvBrOyNpPlJhfdDHkPm4mQ1ogHMrzIwE7oNi+mHuR9wToQBQMBjYh
+	 cub1wDEnPombQWjeGb/DCdJdd9jgY/vzz6l5i8Nk6fzltrdTWz+2V/wOEy5QoeLcabNtY
+	 OIys9/p8Y/0/oYqAfyNb+dwsvjO/lccs5yZfUrvGxlSCv5wUt9e2HqrJqN5FLUGfmnA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NnmTzAuS;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21089606A326;
-	Fri,  6 Nov 2026 07:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0E8606A32C;
+	Fri,  6 Nov 2026 07:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmTgMEiC
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793948939;
-	b=zbWAaEPUHHoS10iRxwlAfYnVZEY400FBLMBedLqwiiRsCl6M9CAuRCrdrbTZWyh/Lp7z
-	 xlKb/ydJTbl66WnQBGecGc7EgCknhldhy78MqS2/1jz3XerfE7nNzek6ZQJEKf9LyRCGk
-	 MYVZLyRxqI3L6ZBd9xeQJEnpa1weJqtiMrb8zEa7846I31LOdanAct/FjAAHRy/5tkXyq
-	 SfsfK2XrZ52dKarefSaJ04019h9SEKwMpBQQrLQXVKz+cI2S2j5YR1yiyH3N8HUE5cbnM
-	 f0vSQsMCneD0qAj1JEhTTg9KJtPete8ccWB8ylLBHai8h9MK8OMKolJihRSy5OOScdg==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793948939;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=sssGzgp6hfraRTjPaOuoMz/ydvUjxyv6U8CNhrczgQc=;
-	b=U/JE4jcRGwUJ0lMX4i4CgZJg50O11vt6uHoQD6T8gO2348U8Snd/qUfglIZJVHtlGxMF
-	 BWgAeY82qEbJkEuDKm3Y0kms+JItm4icEFrZMMjblaQ/IV8N2GYjySaNcy+CvU5niMX+L
-	 8756IRzIdSrwQuEiwYKK99F8d+2X5Z6phBOsAACqGiXsgKsadx3UxN//jVz43oJH0rbMh
-	 eulOlubwgUGtTBsdFd1F8WFh9EpLU4z0sFBb3trRwTzTknaFSV9jCLRacVSeaP9gzvYCb
-	 57rZ/POhU2V6jrXMFRhbJ1F9zsGg4kQuXm9j/8jvqxFHng9Eesfi6Eplm4tC3d3MchQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id F2A7F1F0089F;
-	Fri,  6 Nov 2026 07:08:58 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NnmTzAuS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392061F0089F;
+	Fri,  6 Nov 2026 07:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793948939;
-	bh=sssGzgp6hfraRTjPaOuoMz/ydvUjxyv6U8CNhrczgQc=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=EmTgMEiCAR2x4GSZadNau2v3DnOTeD3OA/JvNiQgw96aHXlTPIeALuWaCT/br2GZq
-	 UQGflvH6Eo8o7j80G+MQcL8d50PhMKkRIu3PG7BZXLyczM40yXjATzdzlhK2pME5tg
-	 t/m5yzUi+W/1t72VorLv4DTz2ZY3V4GkNOsJ3drzzhMrIVuaSBwrFdMgxslUqvEjcq
-	 e1S5inj3LqrYrs4huiA1fGQnaYwsgHJDkL6mPuS4hEro3uTPnwO7p9ZfPV2pxOoEVz
-	 21w/zD5QuoWUdFYM7un2YwSocNlcAvsL35wTMKyrfNfjlTFCD5txca8exvkDRxompa
-	 I+fi/r3B1x2fw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 4BF9C45C1E;
-	Fri,  6 Nov 2026 07:08:58 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 06 Nov 2026 07:08:46 +0000
-Subject: [PATCH] pinctrl: amlogic: a4: Allow functions without groups
+	s=k20260515; t=1793949371;
+	bh=bxyhLGFli38ds0TGUbKdVWpQ1ZVJ1vM6lFd2Hmh0ka4=;
+	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To;
+	b=NnmTzAuS3u3p3vuTqR4A2aqgMSLmxTKrTLQZgKuqWKEHlzJH8GDhFnjshmUKBY76h
+	 Tkj4/e+ou9dXfwlpfYpBDZ/2mi5iFsdj4EJ9TqaNapNtP2xsz033O9lHgyN58UHKLd
+	 9c+EHBk21/mZNyAHj+43KpTSZqQlooCKAVvlPfC5mIb+h+a9fszlIh/ZuNFX9OZN2O
+	 oxRCX9B2CCVJ4u8NtsWFJUltrcY4iOt07xDvOznYSW7mNH+Tnco38wUN2Opi4PYIpF
+	 lvWPWG04a+d+dYLMuqjonN5bXTwo4jSdKfHROJePeGHMnGZBM/Ov4445rAMCvtsdz3
+	 nHikKEUYQJ4jA==
+Message-ID: <2ed0ae18-8e64-4725-bcb4-4ca45cb59fda@kernel.org>
+Date: Fri, 6 Nov 2026 08:15:58 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -82,120 +51,111 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261106-debug-info-v1-1-067c5c554f91@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAP187WoC/x2MQQqAIBAAvyJ7bkGNFPpKdMhcbS8aShGEf086z
- sDMC5UKU4VZvFDo5so5dVCDgP3YUiRk3xm01EYpadCTuyJyChmdm7qj0VhloQdnocDPP1vW1j7
- 7Vr3yXAAAAA==
-X-Change-ID: 20261106-debug-info-bb5611e36717
-To: Linus Walleij <linusw@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793948933; l=2986;
- i=xianwei.zhao@amlogic.com; s=20251216; h=from:subject:message-id;
- bh=38GizBhLDTW4i/GAT4DbimPes3s2Ei64bmXiM44p6dM=;
- b=Zp2hrVUInW3tmySD+qP23c2GiuMu7cuWGPE7KpTaGQtXN3rnWgNGaDXPPlqLObAPZOi7+XzRa
- Me9xUYBVdZ5BwnG79tTvNzKV6JE2Az0cijnFmwxSoHYLJFkY+nj7+s7
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=dWwxtWCxC6FHRurOmxEtr34SuBYU+WJowV/ZmRJ7H+k=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20251216 with
- auth_id=578
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Alejandro Colomar <alx+linux-hardening@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Alejandro Colomar <alx@kernel.org>,
+ linux-hardening@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>,
+ Kees Cook <kees@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Saravana Kannan <saravanak@kernel.org>, linux-acpi@vger.kernel.org,
+ driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <cover.1793876837.git.alx@kernel.org>
+ <9c81f6f62fd0e908e683c4c08b09a1f95bc2ec9c.1793876837.git.alx@kernel.org>
+ <20261105111423.360f4ba8@gandalf.local.home> <auyuINXEJKc1KoG7@devuan>
+ <20261105115019.2fe7c91b@gandalf.local.home> <auy0O467UqOzqYub@devuan>
+ <auzGMV1YbO9DodBq@ashevche-desk.local>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <auzGMV1YbO9DodBq@ashevche-desk.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 05/11/2026 19:08, Andy Shevchenko wrote:
+> On Thu, Nov 05, 2026 at 06:46:18PM +0100, Alejandro Colomar wrote:
+>>> Date: 2026-11-05 11:50:19-0500
+>>> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> [...]
+> 
+>>> Oops, typo, I meant trace_event_filter.c
+>>
+>> Still not found.
+>>
+>> 	alx@devuan:~/src/linux/linux/master$ find | grep trace_event_filter.c
+>> 	alx@devuan:~/src/linux/linux/master$ find | grep trace.event.filter
+>> 	alx@devuan:~/src/linux/linux/master$ 
+> 
+> Oh, you are an oldschool guy :-)
+> 
+> I can't believe people with Git index available are using `find`
+> and not `git ls-files`. `find` is too slow...
 
-Allow function nodes without child groups during device tree
-parsing instead of returning an error.
+You all are oldschool! When I need to find a file in Git repo, I ask
+Claude to write me a simple Rust application searching for given
+filename, store it somewhere and then execute it, giving me the result
+output.
 
-Only count and parse nodes with the "func-" prefix as pinctrl
-functions, ignoring other non-GPIO child nodes.
-
-Also handle zero-sized allocations when no groups are defined
-by checking for ZERO_SIZE_PTR in addition to NULL.
-
-This allows the driver to support function nodes without
-groups and avoid treating unrelated device tree nodes as
-pinctrl functions.
-
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
-Add debugging information for error dts and Error pinctrl config not affect normal pin work.
----
- drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-index 39eb8cc7fc0d..d0e3cec3ead0 100644
---- a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-+++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-@@ -821,8 +821,10 @@ static int aml_pctl_parse_functions(struct device_node *np,
- 	func = &info->functions[index];
- 	func->name = np->name;
- 	func->ngroups = of_get_child_count(np);
--	if (func->ngroups == 0)
--		return dev_err_probe(dev, -EINVAL, "No groups defined\n");
-+	if (func->ngroups == 0) {
-+		dev_dbg(dev, "func %s No groups defined\n", func->name);
-+		return  0;
-+	}
- 
- 	func->groups = devm_kcalloc(dev, func->ngroups, sizeof(*func->groups), GFP_KERNEL);
- 	if (!func->groups)
-@@ -899,8 +901,12 @@ static void aml_pctl_dt_child_count(struct aml_pinctrl *info,
- 		if (of_property_read_bool(child, "gpio-controller")) {
- 			info->nbanks++;
- 		} else {
--			info->nfunctions++;
--			info->ngroups += of_get_child_count(child);
-+			if (!strncmp(child->name, "func-", 5)) {
-+				info->nfunctions++;
-+				info->ngroups += of_get_child_count(child);
-+			} else {
-+				dev_dbg(info->dev, "func node defined err %s\n", child->name);
-+			}
- 		}
- 	}
- }
-@@ -1128,7 +1134,8 @@ static int aml_pctl_probe_dt(struct platform_device *pdev,
- 
- 	info->banks = devm_kcalloc(dev, info->nbanks, sizeof(*info->banks), GFP_KERNEL);
- 
--	if (!info->functions || !info->groups || !info->banks)
-+	if (IS_ERR_OR_NULL(info->functions) || IS_ERR_OR_NULL(info->groups) ||
-+	    IS_ERR_OR_NULL(info->banks))
- 		return -ENOMEM;
- 
- 	info->data = (struct aml_pctl_data *)of_device_get_match_data(dev);
-@@ -1166,10 +1173,11 @@ static int aml_pctl_probe_dt(struct platform_device *pdev,
- 			}
- 			bank++;
- 		} else {
--			ret = aml_pctl_parse_functions(child, info,
--						       i++, &grp_index);
--			if (ret)
--				return ret;
-+			if (!strncmp(child->name, "func-", 5)) {
-+				ret = aml_pctl_parse_functions(child, info, i++, &grp_index);
-+				if (ret)
-+					return ret;
-+			}
- 		}
- 	}
- 
-
----
-base-commit: 89edcad9f23925f5706b7555b02165d1990444d5
-change-id: 20261106-debug-info-bb5611e36717
+Thanks to this I already have 25 apps to find specific files, so I can
+even re-use them later. Ha, think about that, how optimal is that!
 
 Best regards,
--- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
-
-
+Krzysztof
