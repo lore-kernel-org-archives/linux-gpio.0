@@ -1,55 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.35
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793979786;
-	b=ZnVDSNVGzf7bhKgOKjwoZsSKRqqPKmL5USa9KaKxTYYmXTiAV5b/Yyc015baiHsf7amr
-	 r42vrlr5fZAv7ArAy8oM/si4/M26MGnn6WUyistHat/QC7tRAgcbUyAjMpJtApLfeRHqV
-	 bhVdy0VxNoVcxj2V2ZvlNne5rA2OUbwYffz1HSsSW4v/CXdD81C5WN/R6nFSlr+8ukFlv
-	 2ICxbGaUcsvfzW88CGUZk4T7Tinz0FVduv4umQjkc6vPxYrNKO8ILQ1HnNGalKKtbfvTr
-	 fT8af6Bhv9DLlJi+Wa/A0isHM94LXbd5XNU8wsbZ2yRrKHDTtvArwJ61DaqV3MsQH2w==
+	t=1793981254;
+	b=3jW25oQvHgfubDUBEwXWKiXDT3HE0nAEab+lnWA0cTiR+YEdyAGyadYK6sBQp21jvRJ6
+	 L5vPI0VYjTD92i8yhymBDoihKoi2NgIgXLC+C/bxjKRAoh68Yzr/0ugjBLoCppZcK3A6t
+	 YT2dJapzOID+uQp3qlGxscDjXPjjfJFWZcNjLVAIRP9Nq0OVkYmuAL5tsnjfnD4EubsbM
+	 gp1ET2ssI7Dd2jdQ+7naSt5dm62rVEHqi5LRkkhw90o7/vulBHrEdqmxqzbj3gJrQeyD3
+	 uFmJg+f6/eznS0Hj9TvRNG1sol8DRN5QlRI9h+cSji4AifQ65NqgjepVe+D2ogm51sg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793979786;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=6v6OG17OSUIEG4f2H+HmgTBTNuiAezrgxQWfO+HRqMk=;
-	b=nP9KTaX3ot8A5eRLWzXbdHHHX8WIp1JZmTnX/J7+wFm/Q+E65JCArS37gaVG0hcUSvM0
-	 gnPFZWMoOmLmZDbF+W2biAHQZKvefzgDeIPxbzNvkdvTAoeaGoLUUdiRm+s5KYpVGnpZm
-	 trc7JYoYimqixeyD/vERMgTvhUP8P98VnQ8DUgK5pIyrDFPh4KrG891qMg8oRrRp+LeU1
-	 5ne4Eo/z11SujdmBItE6MpS8tv3mUFETOhtZJEvoqy/JjeZ4Mp87wMQg7HjD5iO8rZ8jF
-	 qEVIpfOKPjFoshC4/m/j282uHuiUmy64rk4Pf2ZHQc1NEgHwhw4UoPxtdG02AuBLl1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793981254;
+	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
+	 Message-ID:Date:Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:
+	 X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:
+	 X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
+	bh=s81Qxk279B3OZvT8HyIcxZsvmqYvi7yEZFqL8sa0/fc=;
+	b=jRADENuSmugdd2uzEcDbQs+PjZWszPLXQDWIIohctjMPEawgi1wsk1Jajx6XQWnr9Q61
+	 tD61CQ6WKnKZE0XQVb/xTNsIasaUbDHGq3mCLuHss59KqmtrlRea7LsSK3kH/9gXiyksL
+	 HAr564Hf+3qqV7TwLyrCazKfb3H+JOa4uv+dSYDHcxFcT0zW/Q4Z0+jjh0S3iDCamFdo0
+	 pdQ1kDwifu9L7BgTA/oSgIin8X1usRX0nVWy5UQhzi6TktF4I+gLrnq2UIOLQrTkczGbI
+	 9A11T5m4IOwZvthH/gHMTocE9QstCOnammHZyeSkDl4MGdtjBXJJa3UHTHu4awroDmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L8dDjXhe;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=zte.com.cn;
+	spf=pass smtp.mailfrom=zte.com.cn;
+	arc=none smtp.remote-ip=160.30.148.35
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E70606A326
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 15:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L8dDjXhe
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5841F008A1;
-	Fri,  6 Nov 2026 15:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793979786;
-	bh=6v6OG17OSUIEG4f2H+HmgTBTNuiAezrgxQWfO+HRqMk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=L8dDjXheGkZEnNyEvxsBoAqR1tfYa2sCEe4EouRlPxaZy999K92BEVL7rhFqiPKqB
-	 gSOT8LoBqZH3ewDGNSzBneqzOxxPr6Iya6L0j9IIly7FYacogp8zkyFNZ3c3mVquBY
-	 vI9+UqhoyUcZ5/Nj2A9byU/5uWgibjtpeiv7zeCCCkfr5IFSTq0FlIiZ0fZA7ZqitU
-	 K/Kd+qS5P1FcAGK2EJkpIkOsTfSXcU7Fpg+qf+KoIjmtR3+kMDo9P4g0l2GFZOJPeJ
-	 OsZSAShX/xVfzEHKwazS3fu1AN956FAY8mIAgOhZLwd7M++VXYG+ya42rHdrV/19qg
-	 SQX+qmnFdRS4w==
-Message-ID: <sashiko-outbox-201721@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] gpio: virtuser: fix interrupt leak and UAF
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261106-gpio-virtuser-irq-uaf-leak-v1-1-ce9772d8ad0d@oss.qualcomm.com>
-References: <20261106-gpio-virtuser-irq-uaf-leak-v1-1-ce9772d8ad0d@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 06 Nov 2026 15:43:05 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4066606A326;
+	Fri,  6 Nov 2026 16:07:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4066606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jLkbR68lnz8Xrrd;
+	Sat, 07 Nov 2026 00:07:31 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 6A6G7LSP074678;
+	Sat, 7 Nov 2026 00:07:21 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 7 Nov 2026 00:07:24 +0800 (CST)
+X-Zmail-TransId: 2af96aedfb3c6af-a8634
+X-Mailer: Zmail v1.0
+Message-ID: <20261107000724697MsR-XmE4V-ADPPMr3wGom@zte.com.cn>
+Date: Sat, 7 Nov 2026 00:07:24 +0800 (CST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,81 +56,56 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <ukleinek@kernel.org>, <linux-pwm@vger.kernel.org>
+Cc: <laurent.pinchart@ideasonboard.com>, <heiko@sntech.de>,
+        <ben.dooks@codethink.co.uk>, <benjamin.larsson@genexis.eu>,
+        <nuno.sa@analog.com>, <xiaoning.wang@nxp.com>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>
+Subject: =?UTF-8?B?W1BBVENIIDAvNV0gcHdtOiBmaXggb3ZlcmZsb3csIHRydW5jYXRpb24gYW5kIGVycm9yLXBhdGggcmVmZXJlbmNlIGxlYWtz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 6A6G7LSP074678
+X-TLS: YES
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 00:07:31 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6AEDFB43.004/4jLkbR68lnz8Xrrd
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [Critical] gpiolib: race condition and double free in desc_set_label()
-  [1]
---
+Five independent defects in four PWM drivers, found while reviewing
+linux-next next-20261030.  Two are 32-bit overflows that make the
+hardware readback report a wrong period or duty cycle, one is a 16-bit
+truncation of the on/off counters, and two are missing clock or
+runtime-PM cleanups on error paths.  All are reachable from the PWM
+sysfs interface or from the hardware readback path.
 
-commit 4879168b8f1f80dbe315c00e833ecc347918f4e3
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+The series is ordered by impact and is independent patch-by-patch; each
+patch applies on its own and taking a subset is fine.  Patches 1 and 4
+both touch pwm-dwc-core.c but different callbacks (dwc_pwm_get_state()
+and dwc_pwm_apply()), so they can be applied separately.
 
-gpio: virtuser: fix interrupt leak and UAF
+  1/5 pwm: dwc: Fix 32 bit overflow when computing duty/period in get_state
+  2/5 pwm: airoha: Fix 32 bit overflow when converting duty ticks to ns
+  3/5 pwm: adp5585: Clamp on/off counters to the 16 bit register range
+  4/5 pwm: dwc: Balance the runtime PM reference when configuring fails
+  5/5 pwm: rockchip: Fix pclk leak in get_state error path
 
-This commit serializes access to the virtual user interrupt state using the
-per-line mutex, prevents duplicate IRQ requests, and registers a devm action
-to free the interrupt on device unbind.
+Shao Mingyin (5):
+  pwm: dwc: Fix 32 bit overflow when computing duty/period in get_state
+  pwm: airoha: Fix 32 bit overflow when converting duty ticks to ns
+  pwm: adp5585: Clamp on/off counters to the 16 bit register range
+  pwm: dwc: Balance the runtime PM reference when configuring fails
+  pwm: rockchip: Fix pclk leak in get_state error path
 
-> diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
-> index 185c1be39b277..21b4bc64d4d34 100644
-> --- a/drivers/gpio/gpio-virtuser.c
-> +++ b/drivers/gpio/gpio-virtuser.c
+ drivers/pwm/pwm-adp5585.c  |  7 +++++++
+ drivers/pwm/pwm-airoha.c   |  8 ++++----
+ drivers/pwm/pwm-dwc-core.c | 12 ++++++++----
+ drivers/pwm/pwm-rockchip.c |  6 +++++-
+ 4 files changed, 24 insertions(+), 9 deletions(-)
 
-[ ... ]
-
-> @@ -635,7 +635,7 @@ static ssize_t gpio_virtuser_consumer_write(struct fi=
-le *file,
->  	if (ret)
->  		return ret;
-> =20
-> -	scoped_guard(mutex, &data->consumer_lock)
-> +	scoped_guard(mutex, &data->lock)
->  		strscpy(data->consumer, buf, sizeof(data->consumer));
-> =20
->  	return count;
-
-[Severity: Critical]
-This problem wasn't introduced by this patch, but can concurrent writes in
-gpio_virtuser_consumer_write() race in desc_set_label() [1] and double
-enqueue old->rh via call_srcu()?
-
-Just above this hunk, gpio_virtuser_consumer_write() calls
-gpiod_set_consumer_name() -> desc_set_label() without holding data->lock, a=
-nd
-desc_set_label() replaces desc->label without any update-side lock:
-
-drivers/gpio/gpiolib.c:desc_set_label() {
-	...
-	old =3D rcu_replace_pointer(desc->label, new, 1);
-	if (old)
-		call_srcu(&desc->gdev->desc_srcu, &old->rh, desc_free_label);
-
-	return 0;
-}
-
-Because rcu_replace_pointer() is just a load followed by a store, two
-concurrent callers can read the same old pointer:
-
-CPU0                                CPU1
-gpio_virtuser_consumer_write()      gpio_virtuser_consumer_write()
-  gpiod_set_consumer_name()           gpiod_set_consumer_name()
-    desc_set_label()                    desc_set_label()
-      old =3D rcu_dereference(...)
-                                          old =3D rcu_dereference(...)
-      rcu_assign_pointer(..., new0)
-                                          rcu_assign_pointer(..., new1)
-      call_srcu(..., &old->rh, ...)
-                                          call_srcu(..., &old->rh, ...)
-                                            <-- double call_srcu() / double=
- free
-
-Queuing the same rcu_head twice corrupts the SRCU callback list and double
-frees old after the grace period, while leaking new0.
-
-[1] https://sashiko.dev/#/bug/linux-8fa6e742-7945-4de7-8786-8ad6e6c6ea4e
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106-gpio-virtu=
-ser-irq-uaf-leak-v1-1-ce9772d8ad0d@oss.qualcomm.com?part=3D1
+---
+base-commit: 7649ba73f9e7e1e04d0b46213e39c79ae09dd55c
