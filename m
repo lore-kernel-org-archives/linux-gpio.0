@@ -1,107 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793969632;
-	b=tkCTDkV9/iSwnY9dIFiyCAeRYs/Vs3Y0fIQ/LclrjiADL8NgGUX/yEg/SPkzCkqPa6uS
-	 BB+k/h2TLhMAuTWz9Ci54zGeeXznYyVuBy+4ik4rSJqn1M3NxhelbP8IByUi0+q3AOVgw
-	 eFfKauwul+91cwv71zvhlT+9+26KaiyYs9tlJXyybwgpXU44VyQawVOVDBR6H4ood6Z4u
-	 XoU21dijjiJiIqX7359b4S+QqtqF6ereTEqCv1BPNAjA0hf6tgk7PQm9YSBp0xtMfGh6p
-	 gaYVTHgGof9+VV8Y+F4BGv/FpcQwX2wFRxVC36C405z331wu2QW4GmN/Rjh2bvqp5RQ==
+	t=1793970246;
+	b=5DFJt0rFaZ7761f1DOPyTHgdjOOrDfNd+UWNOUqZgfp/AzR24DiRUBJxF73cGw85WsJh
+	 Py8T5qGnGdcEfg9tI2/YjPkURcKAowhs7MWPtO0r7u0DtOPChI6UJnCNW61Vgd5kLAAZ3
+	 KQtHBMKTFmPfjTkisZEqHSXOIqsWew88R7cCGWunuuzNXsL5zgWVS42qSZZV6giTPYd5V
+	 eBbQaGekFmIigCtdXv8Z/wBW38OcBBt59AlBJZ5mGVAldZMDqy2A9LKWl/7DE69cJxu3q
+	 62Fxs2GYkCjWyPcgmCcDcV6Eh0vRD0b9mkSsB2EDIsAvu3srQXpYFWAyukYrVoSjXVQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793969632;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=oTHjiyDX2guT5VBDXE9scu6NOC96wb99UsVWoSwnSP0=;
-	b=ornlZrgxKIO1ukraYeSNSy+fTOf+vgHd+cqfov+z4bHsUyDzNNWGbFRJMhD7mKlz/+if
-	 GQZbqXRqXOeOkr+1c4ikDCaEr37mGC1eqFcMaARrxy3oKkDabEUfASJ4a+rLaS4MA5YB3
-	 YuG+B860nbr4Y6jY4sKj0IGM4QmnB+k8uxis3i54u5NgVMN7dTNG3yQxZzVvU2TlxxtKH
-	 h1EjixPQnYnLSjESVMl/XWwa6hqCwNyjczMxaU8Q6L0yu9YRFGdzcgfnNisMYGPnAMPFr
-	 Pg1FyjM53RCwZf8H7d5dOUdQaXlbZuWkIEx0YMn6T+ZPu/zW/za5GlwVKaJBGm+vPrg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793970246;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=UCKBeOZ2ggoGewJRZ/nGZX9hVpqu5lT56pUi5B+/g3U=;
+	b=XknBW2rw974C49shKurE8VQKyBrleV1Xhf5MPoyCQfIdSjnkXgLnG5qAknYJLD8mOaq1
+	 UQme5E8gcu9f1pvKWqW7jAoQC7urKRttwgtqex4yqAhsz/PQcA55vpg3PxLEL6+U4P5eG
+	 dUAavskKNNpHDO/Ij5jzqd66/8pzUIzRNfCy5HctxhD9/ybSaH+L2z0KBsOJC0bB94NDN
+	 kivz0CgUh/PJgaO7MHyRT3qtgja8hk0gobKmslhSesZHebEwZq4mHyDb4shyQ1WhT8dVW
+	 v2i/SzWlIbsvZmlM28V4MUws3SZg3i7FDr/tA6I0dqKemEP//7UiMFxRdl/1ac2dm3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RTQOMoxi;
-	arc=none smtp.remote-ip=209.85.128.44
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b10CHmSn;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521B3606A32D
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Nov 2026 12:53:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 521B3606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34918606A326;
+	Fri,  6 Nov 2026 13:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RTQOMoxi
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a20a37703bso4153395e9.1
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 04:53:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793969631; x=1794574431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=oTHjiyDX2guT5VBDXE9scu6NOC96wb99UsVWoSwnSP0=;
-        b=RTQOMoxix56I3khgiwxSLlG6MqNj4SnKFN0SBhox6cEqvgnl7JGomA1wRtDOmcDzLn
-         SMJbxP2clNS4vp9IEQIfNqOTQieTPb/o/DkCapHlrMzsPu6UpPko7DR4mpB3S63dhpsA
-         yQIBpXjJ5HgVWdunVyqSVTnmQDD07f5uSMGGmNBys+TeI0//Lgvjg03DukZF8YSSjcXa
-         6iBj+12ApuubwP4ZWxCaiBMjqjQQa1joZPEi92XjrxUdybrBwYF7+rkj8D7F62pL697Z
-         Dm7VhyarpKwTU6Om6ty0AEYYTNZ8YrIxmj2NZuNBefTI3ypgkCjCScMTGyRuYCr0YEb0
-         v0YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793969631; x=1794574431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=oTHjiyDX2guT5VBDXE9scu6NOC96wb99UsVWoSwnSP0=;
-        b=c3/j2U21GJfNyfClmXcb8cJC7W1M5FNVNsp2bTx6tELLNSDrXFARVP//rvddvpEVDZ
-         NYp6o1rMxWRYBpUVssi/eTNYCVAfo3PUZ2rWbWHstmTci4GxafOdLZ2HivjKsQquxj6A
-         ZW89rZwMAoN2i9fFXs5ruDTZTug+8KL99WFfd9JB0FWx9qB5Efj8M+KniMT0559mApgf
-         PZt0JsJP9tjs/2LriEKR7gQ3M0OchFMfZ+PocAzzg6qBk8iHA4V2DUuTFauFhn6LvqCT
-         EAtWfbX52/40MDiIWRzxvR/mG+aVoGGxB5LgiQdw6hxkc/KtU2BFjOeXaBTnDIfI7uve
-         cahQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwNLsliI91+S/5rDv4dbDFd7YPqa2HXcWyi3eYmCJ6jaPeFX3/vjTf0F2CmhJX4hrTC1LLZlBDNVmVs@vger.kernel.org
-X-Gm-Message-State: APuU4Z+m8XDdz1yPvZKOlgttTfucrnq5zIWafXfz2/2NdTY9UtmBn4xj
-	bKDWaxYU4t+TTsK/BHHa5+sVZQGtOZxyhWCvMQp15stAEYosP5KkTiMc
-X-Gm-Gg: AYBFou2Gj58/JRLrzfLNt8jtZ6WCoHhxiMx1EI53rqCtJ+9+P7qvkJWdfoPGlqG0a92
-	wDv5M5hDIij2x2DPonMpjCZkK/1AkZ1aybUrZlwXxhIsBZfYkBzwV2xCc1Hf0C4M0GHtcNSiUid
-	qnOEqq0rLHhcEcSPjARzR2YmoP0/BbaeN8BXdtTJ76PGVPtZ14FnhprJWPgNF8Jc77WjQZ3WdLh
-	EimpvHt1uNiYrVH6wQOzxWHB7rAJtvrzhZJPpn2+9pksiMm0RfUXC9OoX6DTSSdo/YcQiYxjC/2
-	e+LK1QXLOIroQYM/dyuAw/OAYZHnNvm4TXyHompZFF55xF3XPrs39K04kCy0di5SDnl9RiCzAWu
-	SC4y024m2ZMkJscEKQ4kAwR4xbs3vrokRqR3wxVa8N36mz2i857c8nyEwhugG4JafOIal0qIvgV
-	lHQVzp+b5GAtHFemredHddmYRg0wTuLLXuw6Y0dVRlONxh5V2ZQSPiG3NVmUq8ly4phaJmHuRZv
-	8cjwiREqv0hgh+kZqExrxoqt13L6usSRVEvvv+yKG+tbuGfS3pzwlpC4PNo9W96Z9FgViscmkcf
-	eWuzerZVPJ+GbwF/KCBwew8EC1rg
-X-Received: by 2002:a05:600c:1913:b0:4a2:1398:dd05 with SMTP id 5b1f17b1804b1-4b6de0ce791mr41196125e9.16.1793969630568;
-        Fri, 06 Nov 2026 04:53:50 -0800 (PST)
-Received: from m2.. ([37.142.148.124])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4b6e1b5d676sm58687815e9.7.2026.11.06.04.53.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 04:53:49 -0800 (PST)
-From: Michael Zaidman <michael.zaidman@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Raman Varabets <kernel-linux-20260610-80b7ab08@raman.v1.sg>,
-	Germain Hebert <germain.hebert@ca.abb.com>,
-	Christina Quast <contact@christina-quast.de>,
-	Rio Liu <rio@r26.me>,
-	Bruno Giacomazzi <brunoceg1@gmail.com>,
-	linux-input@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Zaidman <michael.zaidman@gmail.com>
-Subject: Re: [PATCH v2 03/15] HID: ft260: add GPIO support
-Date: Fri,  6 Nov 2026 14:53:40 +0200
-Message-ID: <20261106125340.18483-1-michael.zaidman@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <7a3kc2tj2mh62aklablkma5teiinm6b6z2rlvrfwk76xcnd2rb@xwsgziioxz6u>
-References: <7a3kc2tj2mh62aklablkma5teiinm6b6z2rlvrfwk76xcnd2rb@xwsgziioxz6u>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b10CHmSn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4F51F0089F;
+	Fri,  6 Nov 2026 13:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793970246;
+	bh=UCKBeOZ2ggoGewJRZ/nGZX9hVpqu5lT56pUi5B+/g3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=b10CHmSni3p1IQx+zj+Oxy9biEFFjGn4dFG1hcgJD4XJStyJvTSYsoAqotVFpjzEW
+	 wfR11z4t8IuTXMH7g5iH7ZHlAAquWOstgwVODu3ayQVRUqpkqnQbvVCbjEj8shp3AW
+	 FzRnKBCy8981CTK6EW6K7zQ3i8qKjcMfe+CFNjnYT96i1TiUxK69/5JOayqmTv7G1X
+	 bK1QJcUVY+oqu48+J4/EN+fmzcwMZiRyOHZr2euEGiCvMTIotUmw/Tah5Wjlp5hENR
+	 yXH17jV5Bp1Z6MUmbntpGD0ldNQjzwIeL5a1ImZM9l5mYDU5Km8RvZKB7gNHkn2SLP
+	 7QwUhEFQxW80A==
+Date: Fri, 6 Nov 2026 14:04:02 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	Sander Vanheule <sander@svanheule.net>, Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] gpio: realtek-otto: Add RTL9311B support
+Message-ID: <20261106-glossy-tarantula-of-finesse-f9d724@quoll>
+References: <20261103215316.1544492-1-joshua.scott@alliedtelesis.co.nz>
+ <20261103215316.1544492-3-joshua.scott@alliedtelesis.co.nz>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -111,73 +59,57 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261103215316.1544492-3-joshua.scott@alliedtelesis.co.nz>
 
-On Tue, Nov 03, 2026 at 01:53:26PM +0100, Bartosz Golaszewski wrote:
-> There's a lot of sashiko comments to address but a few additional nits
-> below.
+On Wed, Nov 04, 2026 at 10:53:16AM +1300, Joshua Scott wrote:
+> The Arm-based RTL9311B switch SoC has the same GPIO controller as the
+> RTL9310, with port A in the most significant byte of each register and
+> the same IMR layout. Add its compatible and allow the driver to be
+> built for ARCH_REALTEK.
+> 
+> Signed-off-by: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+> ---
+>  drivers/gpio/Kconfig             | 5 +++--
+>  drivers/gpio/gpio-realtek-otto.c | 3 +++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 55e4280029d8..bc584da1abbb 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -645,14 +645,15 @@ config GPIO_RDA
+>  
+>  config GPIO_REALTEK_OTTO
+>  	tristate "Realtek Otto GPIO support"
+> -	depends on MACH_REALTEK_RTL || COMPILE_TEST
+> +	depends on MACH_REALTEK_RTL || ARCH_REALTEK || COMPILE_TEST
+>  	default MACH_REALTEK_RTL
+>  	select GPIO_GENERIC
+>  	select GPIOLIB_IRQCHIP
+>  	help
+>  	  The GPIO controller on the Otto MIPS platform supports up to two
+>  	  banks of 32 GPIOs, with edge triggered interrupts. The 32 GPIOs
+> -	  are grouped in four 8-bit wide ports.
+> +	  are grouped in four 8-bit wide ports. The Arm-based RTL9311B has
+> +	  the same controller.
+>  
+>  	  When built as a module, the module will be called realtek_otto_gpio.
+>  
+> diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
+> index 5d98ad597d9e..a4f010a0d2cf 100644
+> --- a/drivers/gpio/gpio-realtek-otto.c
+> +++ b/drivers/gpio/gpio-realtek-otto.c
+> @@ -352,6 +352,9 @@ static const struct of_device_id realtek_gpio_of_match[] = {
+>  	{
+>  		.compatible = "realtek,rtl9310-gpio",
+>  	},
+> +	{
+> +		.compatible = "realtek,rtl9311b-gpio",
 
-Thank you for the review. I am working through the Sashiko findings
-for v3. Below is what I plan for each of your points.
+Why do you need to add it if it is fully compatible?
 
->> +	mutex_lock(&dev->lock);
->
-> Use lock guards from linux/cleanup.h.
+Best regards,
+Krzysztof
 
-[...]
-
->> +exit:
->> +	mutex_unlock(&dev->lock);
->
-> That way you'll avoid this label. Same elsewhere.
-
-I plan to do this as one new patch at the end of v3, which converts
-the whole driver to guard(), and to remove these labels there.
-
-The reason is that I also maintain an out-of-tree version of this
-driver for kernels older than 6.5, which do not have linux/cleanup.h.
-With the conversion as the last patch, the code before it becomes the
-base for that version. It builds on older kernels with small changes,
-and I can simply leave the last patch out there.
-
->> +	dev->gc = devm_kzalloc(&hdev->dev, sizeof(*dev->gc), GFP_KERNEL);
->> +	if (!dev->gc)
->> +		return -ENOMEM;
->
-> Why is this dynamically allocated? Make it part of ft260_device.
-
-Will do in v3.
-
->> +	if (!label) {
->> +		ret = -ENOMEM;
->> +		goto exit;
->
-> Just return here? Why the label?
-
-Right, it will return directly.
-
->> +	snprintf(label, label_sz, "%s%s", prefix, dev_name(&hdev->dev));
->
-> devm_kasprintf()?
-
-Yes, v3 uses devm_kasprintf().
-
->> +	hid_info(hdev, "initialize gpio chip on %s\n", label);
->
-> Drop logs like this, they add nothing except useless noise. Same
-> elsewhere.
-
-Agreed. In v3 I drop both "initialize gpio chip" messages.
-
-The "enabled GPIOs" message moves from info to debug verbosity. It is
-off by default. I would like to keep it there, because my hardware
-tests read the GPIO mask from it.
-
-Two messages stay at info level. "registering device /dev/ttyFT%d" is
-the only one that tells which tty belongs to which device, like
-"converter now attached to ttyUSB%d" in the USB serial core.
-"chip code" was in the driver before this series, and it is the only
-place that prints the chip version.
-
-Thanks,
-Michael
