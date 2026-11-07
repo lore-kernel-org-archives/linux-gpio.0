@@ -1,55 +1,48 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794039180;
-	b=yxcCXtoOvpI9CAnfHmWH8qvEPts7W3PcHmRzCi7wRPu0M8vHAQ+6RxzUp7UTg1/+XGED
-	 4iE18XPt8fbnZ8iSSan4aWxfjycHw5OntNQTg7t3KBYtKHMdbDMjL1NYQus50cckp7MJD
-	 BW5+C+QRXDj6+iIBirqCUZMKc93+53OK4BzJG7WuFZ+yhXN0LSZdYefHjryYJT2JAUdCC
-	 1uoaAKeNJ1ewhCtt/ARnthUsDwrpE1gGZ0b/4IefirsqE/C+3lyNBpLj+sAPE/rz9LJFn
-	 +EZRzGTO6d95nFXa6zwpUvMYrEJwTSFoXip883nSMJo3lrthejrM8r+oSt9L4reHe4g==
+	t=1794040505;
+	b=0V9XAr0oTzvRpmbazX/06lRfZViX1QjdWKRWl//IrDka3AgDbTdqp4a0ZOBRaqW5EFtn
+	 H/j8QSebpdW5wQasOKspudz19cfpuGpUcJyCNqc7xJKB/aZjxBTkm29xMnu7YQMzCPQqv
+	 7veOIT59hJuk+/Ru4o1qSEc3uccEoARUAP0cre1tp7RuSAM3bhAlK4b2vfUe3HoxbQAAP
+	 /d9NoneXy7FSi50TN2bwXdnvRk6Vz15gFRwz1Ks1WMaRWeCY4mG8fSHeCIeKZ8j8Kig1w
+	 953P1vi/ZlO0ErK1cYgnlQigRCwG7UtlEEH7Is7OufUjXWnpWc1VfStzvRtCD3OycOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794039180;
-	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
-	 Message-ID:In-Reply-To:References:Date:Mime-Version:From:To:Cc:
-	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
-	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=0dMcGIrClBRXSilC9u6sG/X2FPAj9hcjI/15dI3yqZ4=;
-	b=w39N7i4lxveXbREy8bgXCXMcLpruERRf5GRg3ajrR0oPWywEFYDnBiZsgrf7PX4OMmoX
-	 4y/CAbkvLDC28qK4GLD8ei+lUzmw/5LgVRQJLQvkAY7TVGoclTus3DyeU304ja41elJIi
-	 lse3KXm2T1u0D9GAtL5WxlJ86aieK1DPzaAXeiZEKd71PtdZ4/zTFroZ29WjCM5x99lzR
-	 dpfrNU5r2KwziOHReG6NILXrJ/2aGNKBMLnJLPxpca1R9HVBIKtCHhll4Y1r6v8QivcqL
-	 kzFZ5r1kBebtOU3y3v4DPuuLW5355FTokcVA1WtPineCXB4YPdMyAczXs5Qx64ki1Ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794040505;
+	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
+	 X-Mailer;
+	bh=aXXbFIqeuNqZ+gcGb1wBjBrEJR2db0REnn66oJVi+ng=;
+	b=q8CVZmraNbRO7bTnxsHidWTiTb0VULrWJ55yZtLIkNW9q/IuzmAUxEmjAYj0M5oZQZty
+	 LIiHRmeRmqkkozGAVwI6hRDt+6/6FrLYwWK5ZBOTfTTE8L2ErRLHB9791Af+CkfkXr7Kh
+	 1k30IuJiv0g3n7G1AtqV69zfrqjm421UHqQDO2RjCCxRZM6YgTkjUWF1paGA+oqNpIJnC
+	 jYwwYZpO1ccP77cSQsF7WozFMEQELSfGqygANCp1z720Qk2ZuW6HplkAvW2OvNMh+eNVd
+	 maxfgZgTQY3IgxCSIMuITFS6JQZZeJrrsYw+WbOONUVbFSWw8DkxOeHulhtRrhqr2iw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	arc=none smtp.remote-ip=183.62.165.209
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VCI53vjs;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A75F606A334;
-	Sat,  7 Nov 2026 08:13:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A75F606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jM81L59HLz57HS0;
-	Sat, 07 Nov 2026 16:12:54 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 6A78CoH8098737;
-	Sat, 7 Nov 2026 16:12:50 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sat, 7 Nov 2026 16:12:52 +0800 (CST)
-X-Zmail-TransId: 2af96aeedd84159-86d03
-X-Mailer: Zmail v1.0
-Message-ID: <20261107161252647FthWsffiqzpLz7zrKd2ux@zte.com.cn>
-In-Reply-To: <202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn>
-References: 202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn
-Date: Sat, 7 Nov 2026 16:12:52 +0800 (CST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB8C606A333;
+	Sat,  7 Nov 2026 08:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VCI53vjs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F6781F008A1;
+	Sat,  7 Nov 2026 08:35:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794040504;
+	bh=aXXbFIqeuNqZ+gcGb1wBjBrEJR2db0REnn66oJVi+ng=;
+	h=From:Date:Subject:To:Cc;
+	b=VCI53vjsIrd/IEA1+mmAlrhkEdAWLeO1Y1vTyyKnIjdU7PePP5OL4Ij1JlCMWPquh
+	 DwrTJaPxlasnH1jw9Wf+QmlyTB2L+ghysBxD/tXOKc/1FvPHe7B78YlWkHX+TcyMoD
+	 Td3CHvLBb3b09dMtdeD+Je+00vvnXzK9pqIufQNFv+Q/G7EbfCA321vGIZmFUjt32z
+	 1ReI177KkjwRj3c28vdf1dkk6t2wuo8+R9yIREMO4J0+8Oy9gLN3K7u1mWGqy1gJmp
+	 4mj0mDb3tzUF9A4ojsVJCp/y9yNFFlh3sM9d8gauy6Ozis7RYtE+zMKsw4Adk8qyUS
+	 iRq0OaLvv23tQ==
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 07 Nov 2026 09:35:00 +0100
+Subject: [PATCH] dt-bindings: gpio: nomadik: Describe DB8500 and GPIO hogs
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,52 +51,82 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <linusw@kernel.org>, <brgl@kernel.org>, <linux-gpio@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <geert+renesas@glider.be>,
-        <andrew@codeconstruct.com.au>, <wbg@kernel.org>, <opendmb@gmail.com>,
-        <florian.fainelli@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <jelonek.jonas@gmail.com>
-Subject: =?UTF-8?B?W1BBVENIIDEvNV0gZ3BpbzogcmNhcjogZG9uJ3QgY2xvYmJlciBJTlRNU0sgd2hlbiBkaXNhYmxpbmcgYSBzaW5nbGUgbGluZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 6A78CoH8098737
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 16:12:54 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEEDD86.000/4jM81L59HLz57HS0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261107-ux500-gpio-hogs-v1-1-123fb308fe90@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAA/x3MwQmAMAwF0FXCPxtIBRW7inhQG2suVloUQdxd8
+ A3wHhTNpgWeHmS9rFja4clVhGWb9qhsAZ5QS906Jx2fdyPC8bDEW4qFewlrE2SeWnGoCEfW1e5
+ /HMb3/QDJZ74vYQAAAA==
+X-Change-ID: 20261107-ux500-gpio-hogs-90df5d0ba601
+To: devicetree@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.16.0
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+The DB8500 boards use a specific compatible with the Nomadik fallback,
+line names and GPIO hogs. Describe these existing uses without changing
+the GPIO register or interrupt constraints. Found with CHECK_DTBS=1.
 
-gpio_rcar_irq_disable() writes ~BIT(hwirq) to the whole INTMSK register,
-which clears the bit of the line being disabled but sets every other bit
-in the bank to 1.  Since a set bit in INTMSK means "interrupt enabled"
-(gpio_rcar_irq_handler() only handles lines whose INTMSK bit is set),
-this disables one GPIO interrupt while collateral-enabling all the
-other GPIO interrupts of the bank, which can cause a storm of spurious
-cascaded interrupts on level-triggered lines.
-
-Do a read-modify-write to clear only the line being disabled.
-
-Fixes: 119f5e448d32 ("gpio: Renesas R-Car GPIO driver V3")
-Cc: stable@vger.kernel.org
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: Linus Walleij <linusw@kernel.org>
 ---
- drivers/gpio/gpio-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Describe the existing DB8500 compatible, GPIO line names and GPIO hogs.
+---
+ .../devicetree/bindings/gpio/st,nomadik-gpio.yaml     | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 1192e1f1c6..239d78a2ae 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -129,7 +129,7 @@
- 	struct gpio_rcar_priv *p = gpiochip_get_data(gc);
- 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+diff --git a/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml b/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml
+index e871149c520f..e70f3b5ce7a6 100644
+--- a/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml
+@@ -19,9 +19,13 @@ properties:
+     pattern: "^gpio@[0-9a-f]+$"
  
--	gpio_rcar_write(p, INTMSK, ~BIT(hwirq));
-+	gpio_rcar_write(p, INTMSK, gpio_rcar_read(p, INTMSK) & ~BIT(hwirq));
- 	gpiochip_disable_irq(gc, hwirq);
- }
+   compatible:
+-    enum:
+-      - st,nomadik-gpio
+-      - mobileye,eyeq5-gpio
++    oneOf:
++      - enum:
++          - st,nomadik-gpio
++          - mobileye,eyeq5-gpio
++      - items:
++          - const: stericsson,db8500-gpio
++          - const: st,nomadik-gpio
+ 
+   reg:
+     maxItems: 1
+@@ -34,6 +38,10 @@ properties:
+ 
+   gpio-controller: true
+ 
++  gpio-line-names:
++    minItems: 1
++    maxItems: 32
++
+   interrupt-controller: true
+ 
+   "#interrupt-cells":
+@@ -60,6 +68,11 @@ properties:
+   resets:
+     maxItems: 1
+ 
++patternProperties:
++  "-hog$":
++    type: object
++    $ref: /schemas/gpio/gpio-hog.yaml#
++
+ required:
+   - compatible
+   - reg
+
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261107-ux500-gpio-hogs-90df5d0ba601
+
+Best regards,
+--  
+Linus Walleij <linusw@kernel.org>
+
