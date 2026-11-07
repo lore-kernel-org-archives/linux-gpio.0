@@ -1,56 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794031754;
-	b=nZHCmReJSL4QYz+DUF17ehRkQc71MRA4tqypt/EuGB9vcgMV+PNk/K/EBZBh4+l6BvsY
-	 Q808KVNndx+3fDk2cZXjYqrE4zEfx/qb8B1AWmtjFXUR1G75o9wPUs5RnUEckFbr6uwgX
-	 KOgjTlieR0CyFcF3lN2/6SL691KnOQEtK+fHBc/vMBqG3ZMTANCINy7UVpwIa7HrFelW1
-	 58Pz0Pp81KyTPtHeSMJwQuOM9PqIUQsYo1yNxr98zKN0OddgIYx1ExHoH2F+/O2ze18s0
-	 3el2Z9ZTivh8Ej9VMvAkJrpv/T6zzo+aLS5lHRZ9j/OrbmGzvMP4C/+mEQAT+e7boFQ==
+	t=1794036805;
+	b=jDPqb3Y2LuB4XOnCtpoG5ahaJy33YbE0iimu1bdW+69Iy593PzGrzMiqWdb2xvY8NmDE
+	 PT1IlSGFFQUF1I9D5siuw+NxBPOkMiFAIvT452xsy4+lgU9Jty8Yoxo7VzuYo50FbLEHu
+	 Mw8V52S1jfYKaxfn7WqMSkeemtBXKMBXNiAW0nbax83+6S+25lgVa7bMoCigZbFB33GDt
+	 U5NYo0NJTnLgWYmPmhB9bJTXzWuDdK0s+v/MRtelNZeDztrvs+fn/jIMPL3jfpYbjYDtm
+	 ksAxQLf7WQhmssndl7ScO8fsJjVzYINlzRHIpsTFuVRFKd0lcwtxH06gaGZuodNPt5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794031754;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=t/xqax8exAxlylKTX8nYluFZwojZSBm+/GXhP+SEiZo=;
-	b=ux0W4goHJI36dY5S/W+OtvYpl7z6vW6vvvEAGMX/xkn9peZLOqPrfu4uvPf2wASfDspR
-	 xPGCkQhv7f1mriYoZA5Hfs4p1Rzgbxt4bN0GFF8Hr1IopWdgua5HCPTTqnf1odD5qivPF
-	 jqZMV/yc8Umc9kxGClHKGxoar2GLnasbC7faj5NBEb4/ZC/7HxP+PP2VuGsaX4aNXQ15i
-	 W4vqygkCMUBX5qoD9C7OXOTbcDmSHNS1fl38hypA39YVYdozmhaw+/9hKKxQ7bJgb/JrG
-	 rx+RdNymTFQnAnaRr1ZEsaQvnyrlbuDBdTKKPugmPa3smpPQY3dZB0p7Lv0FfEF9e3Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794036805;
+	h=Received:DKIM-Signature:Date:From:To:List-Id:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=RqcMsUowjiasOdRKT6/n1tz64a/KAgMWOjxLOv2ccbk=;
+	b=vR0K1tJ1sn+egcFsudbNalcMzqWt/R5q9o6RCg+X3QisWCFf7s/LqfYL2CIY1HSFWg+N
+	 SrkvIcHoTFm/MS1iYfxV4d4sZ9e79W4Grj7VLuXLdlsPTQ1Ara+1CDzCHeiIOxG/lcAmt
+	 S8DTK6fdmlc0t8n81pfLmiKj9ShBTsZY6vDqxqxIyC/T8GfYEcHkhNl09pFXQsEeSIk/c
+	 DC5EOw72ye3aMKLjRDkaUx/Aia+bqm9QLgEw50IPQH+W6Y1taHuJ6mRXNUEjC2cqx8DRU
+	 PP6PEREplYCMFOoUI/80DsZDnT68kuQukAkPgmDyPRUbKTDCLcGmQVvj1YvyYCDAf7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="G6DoZ/VD";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M7BMVbPW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126B8606A326
-	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 06:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A862606A326;
+	Sat,  7 Nov 2026 07:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G6DoZ/VD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A811F0089F;
-	Sat,  7 Nov 2026 06:09:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M7BMVbPW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C3E61F0089F;
+	Sat,  7 Nov 2026 07:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794031753;
-	bh=t/xqax8exAxlylKTX8nYluFZwojZSBm+/GXhP+SEiZo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=G6DoZ/VDjEkm+YdQQP6U257Aqf2YeqcA0y53e0PyYgri97P+VREC1/LUm3c/HCJwI
-	 CSGW52ZJ9NEq5AXKLUSBLZEY5Ww64g5m+XnyWgu5NJabtL4qdbGRxgLs8T2hSMDB+M
-	 3N6PS7RwBsW64Emx5VFI9oitWEXXCCgqhZJySZlUlKCZidxac5Be0w5uJYz4SauQWz
-	 nzpV/H8KOxap4M9CLrBGoEv3ODiFCNXZ4RPpGmKrUMuDpeyfpQ5lLEjXd1bs03luh7
-	 k+/AYMufYiASXN662aMHr1W4HXr3Hkb0TXnUBnaUgt3D6CG3ugN4lLCAU1rrc1I6F3
-	 WxkB/0orp+Y7w==
-Message-ID: <sashiko-outbox-202652@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] gpio: rockchip: restore interrupt settings after
- hibernation
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Igor Velkov" <iav@iav.lv>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261107-b4-gpio-rockchip-hib-v1-1-19f4d163a55e@iav.lv>
-References: <20261107-b4-gpio-rockchip-hib-v1-1-19f4d163a55e@iav.lv>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Nov 2026 06:09:13 +0000
+	s=k20260515; t=1794036804;
+	bh=RqcMsUowjiasOdRKT6/n1tz64a/KAgMWOjxLOv2ccbk=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To;
+	b=M7BMVbPW6X5rsGfsZmA9wkvAxPkJ5ypVXRYiBkJWHdWmkli06NP3bw2Zt+tSzIKSl
+	 /m357etyPyHcmOOTB8rak7PiWr+yzbxx+nJH+eJ2zckRSl92wDXxSiNVuSsTTr9/6d
+	 9i5pyNR/97/pebPXbVIVmDeFacFlroNjc0B2ipUelgGEBYJ1xu14hFo8CswvcRXaDf
+	 TFtcE2cfRziRWhlNDXqctpvRV4b1NcOlOFlrkZJLQAxS9BzWx50R5ExIrUvdq1rAfv
+	 bU7lICdRpvm5BAvVeOppiXjSLwNxqFxlpzVdTfuA3SwiNMhH25cmCLywdcT9CjxHgu
+	 MPGP+4aKDsOFQ==
+Date: Sat, 7 Nov 2026 08:33:02 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Alejandro Colomar <alx+linux-hardening@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, bartosz.golaszewski@oss.qualcomm.com, 
+	brgl@kernel.org, dakr@kernel.org, devicetree@vger.kernel.org, djrscally@gmail.com, 
+	driver-core@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, johan@kernel.org, 
+	kees@kernel.org, laurent.pinchart@ideasonboard.com, lenb@kernel.org, 
+	linusw@kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org, 
+	rafael@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
+	sakari.ailus@linux.intel.com, saravanak@kernel.org, schwab@linux-m68k.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
+Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <au7TvMP0YhW2e_oM@debian>
+References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
+ <20261105125154.83478-1-geert@linux-m68k.org>
+ <aux8LYQkGSNjCGHv@devuan>
+ <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,78 +68,104 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dul5zpskzyut57vy"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] gpio: rockchip: lost edge interrupts in rockchip_irq_resume()
-  on GPIO v1
---
 
-commit ee188794739447af06471d0bb656d9e9f704358d
-Author: Igor Velkov <iav@iav.lv>
+--dul5zpskzyut57vy
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+List-Id: <linux-hardening.lore.kernel.org>
+Cc: Alejandro Colomar <alx+linux-hardening@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, bartosz.golaszewski@oss.qualcomm.com, 
+	brgl@kernel.org, dakr@kernel.org, devicetree@vger.kernel.org, djrscally@gmail.com, 
+	driver-core@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, johan@kernel.org, 
+	kees@kernel.org, laurent.pinchart@ideasonboard.com, lenb@kernel.org, 
+	linusw@kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org, 
+	rafael@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
+	sakari.ailus@linux.intel.com, saravanak@kernel.org, schwab@linux-m68k.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
+Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <au7TvMP0YhW2e_oM@debian>
+References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
+ <20261105125154.83478-1-geert@linux-m68k.org>
+ <aux8LYQkGSNjCGHv@devuan>
+ <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
 
-gpio: rockchip: restore interrupt settings after hibernation
+Hi Maciej,
 
-This commit saves the GPIO interrupt enable, type, polarity, and both-edge
-registers on suspend and restores them on resume so interrupt configuration
-is preserved across hibernation.
+> Date: 2026-11-07 02:44:23+0000
+> From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+>
+> On Thu, 5 Nov 2026, Alejandro Colomar wrote:
+>=20
+> > Do you think strafterprefix() would be better?  Do you have any other
+> > suggestions?
+>=20
+>  FWIW strsuffix() seems an obvious choice to me.  After all what the API=
+=20
+> does is request the string's suffix beyond the specified leading part.
 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 0f46ff095a248..83a5cc8f3fe68 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -489,6 +489,11 @@ static void rockchip_irq_suspend(struct irq_data *d)
->  	struct rockchip_pin_bank *bank =3D gc->private;
-> =20
->  	bank->saved_masks =3D irq_reg_readl(gc, bank->gpio_regs->int_mask);
-> +	bank->saved_en =3D rockchip_gpio_readl(bank, bank->gpio_regs->int_en);
-> +	bank->saved_type =3D rockchip_gpio_readl(bank, bank->gpio_regs->int_typ=
-e);
-> +	bank->saved_polarity =3D rockchip_gpio_readl(bank, bank->gpio_regs->int=
-_polarity);
-> +	if (bank->gpio_type =3D=3D GPIO_TYPE_V2)
-> +		bank->saved_bothedge =3D rockchip_gpio_readl(bank, bank->gpio_regs->in=
-t_bothedge);
->  	irq_reg_writel(gc, ~gc->wake_active, bank->gpio_regs->int_mask);
->  }
-> =20
-> @@ -496,7 +501,23 @@ static void rockchip_irq_resume(struct irq_data *d)
->  {
->  	struct irq_chip_generic *gc =3D irq_data_get_irq_chip_data(d);
->  	struct rockchip_pin_bank *bank =3D gc->private;
-> +	u32 polarity =3D bank->saved_polarity;
-> +
-> +	/*
-> +	 * Restore from hibernation follows a cold boot: write the enables and
-> +	 * the trigger back before we unmask.
-> +	 */
-> +	if (bank->toggle_edge_mode) {
-> +		u32 data =3D readl(bank->reg_base + bank->gpio_regs->ext_port);
-> =20
-> +		polarity &=3D ~bank->toggle_edge_mode;
-> +		polarity |=3D ~data & bank->toggle_edge_mode;
-> +	}
-> +	rockchip_gpio_writel(bank, bank->saved_en, bank->gpio_regs->int_en);
-> +	rockchip_gpio_writel(bank, bank->saved_type, bank->gpio_regs->int_type);
-> +	rockchip_gpio_writel(bank, polarity, bank->gpio_regs->int_polarity);
+Actually, strsuffix() is something else:
 
-[Severity: High]
-Does recomputing polarity from ext_port here clear pending toggle_edge_mode
-interrupts on GPIO_TYPE_V1 before rockchip_irq_demux() can handle them?
+	char *
+	strsuffix_(const char *str, const char *suffix)
+	{
+		ptrdiff_t  off;
 
-On GPIO_TYPE_V1, rockchip_irq_set_type() emulates IRQ_TYPE_EDGE_BOTH by
-configuring a level-sensitive trigger in int_type and arming int_polarity to
-the inverse of ext_port.  When the pin changes state, int_status remains
-asserted only while int_polarity matches the new pin level, until
-rockchip_irq_demux() flips int_polarity and dispatches the IRQ.
+		off =3D strlen(str) - strlen(suffix);
+		if (off < 0)
+			return NULL;
 
-Because rockchip_irq_resume() runs via syscore_resume() while CPU interrupts
-are still disabled, overwriting bank->saved_polarity with ~data when a pin
-transitioned during suspend or hibernation flips int_polarity away from the
-active level and drops the pending wakeup or edge event.  Restoring
-bank->saved_polarity directly preserves the pending level condition for
-rockchip_irq_demux() to flip and dispatch once interrupts are re-enabled.
+		if (!streq(str + off, suffix))
+			return NULL;
+
+		return str + off;
+	}
+
+It finds the start of a suffix in a string.  That is:
+
+	strcmp(strsuffix("foobar", "bar"), "bar") =3D=3D 0;
+
+
+Have a lovely day!
+Alex
+
+>=20
+>   Maciej
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107-b4-gpio-ro=
-ckchip-hib-v1-1-19f4d163a55e@iav.lv?part=3D1
+<https://www.alejandro-colomar.es>
+
+--dul5zpskzyut57vy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmru1C4ACgkQ64mZXMKQ
+wqm7rA//SurddKJhcpcYSVF08Ab2FAhfNpH0ioW7Yb/l+oX0VEpkWj3qqra1tx55
+Z1UFA8Zc2S23a2zgGIVgckruLAScw3TgH56+01s0K2rHCab1CAG6jhPnj2SrdRDd
+3r1e/bTSwdBBaL3YjGLE8QJ6Ovr4k4QIfx4hrJDEoc1Bd8d/kX4hP5ck/UvUQRps
+uxgukH/uuh069/6RuDrbqyZNTYaII3QF5In16FORibSjdYhJ3zk6jSHglRU2c2RK
+rdB3UhGgvmRwioMK6O8uvjAvh+8Uh25hUkodhUwK5zrL/R7KD6hcJ4Qzgs5f3UC/
+eFCzJpR+vV4VgOfmxBzJ5B6iZiXbMgXPuYmIw6MtXddrQMKZYV6pmSy8EEUODC/G
+PGynmMkcNOcSxnAy4LX7my5c1ilQ6eVlnQ5mdPR6QUIzKIhC7QL0V9B8UUFGgJ+C
+CX19+pefdS4MdHB5A0NTMPdp/kzdw8LbHsPz5EcumrjxvhFl+m6xfo9wYmkRD+2m
+VJF6uwqVpJ9rP8zJNT2qonLoTk6sbT5Kc8SRSOCsfOOXVkci1C7Y6ZC8ynE4Xyrf
+/G3gpTejPyd+cYuZkOBrRv9NGBaDx/Ioh6ZExvc2hoVh+LaIctAwYoLhxLaU7neV
+ElYN26nlmyCnrZ82m7JphVIFX5IQerK6gzXdIOg4PEXNRNs8l5o=
+=gJHo
+-----END PGP SIGNATURE-----
+
+--dul5zpskzyut57vy--
