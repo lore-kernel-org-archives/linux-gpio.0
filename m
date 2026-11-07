@@ -1,64 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794082779;
-	b=CjHW0Ua5ogsF0aP9BOc7PuoY7oumTYznvihBH5I9jXohNGathesduxhFtZ2KSnXeJVtx
-	 VTVJ4djUXGFdU04kVkP1S14hegeE0lY1XotZJvMT4u1gPXTAyMLeYNGKOshhZAHM6VqIC
-	 Kmw70Rr2yikEPTefsqx+jS9eiMNWnrbjdkXTqydZ8tctbVP1UPwKnKnkU0GzrLD2Kb45r
-	 QWJ0X4hNIIEFnxOFDSTRa8vJEAYkfi3ZHpilGGUFnTxUYWHZEgJneclDVVf5w86a0KsA8
-	 ZiX5PCBI3KWos4Acnof1JHGTL6aHoUNbzUfbjxoUD4MMbfhDwvblfr0Iq5cpwiPEMxQ==
+	t=1794091728;
+	b=gvsO6JCOLAVPyJJzXRklljvcPEM+yjEf/I97ViQzLUqbjuD6QB5P5NjYt1TcwjlxN0Zs
+	 8jdxzZ7XOO9L6RAaBIkceC2orKGDWMU+kEHzaltzeNwJ3uFaD8NaxK1700d6FkAdYPf/M
+	 eaPwjDNKWJNkHKlO7fZGm6y/FQfahOs1tyOOjmwZmppFypB+EcB/XT3OkEnytH3JCY1Q+
+	 16T/HtC5CdBesE9p2R+5NdhuY4HENrPqP4i+1VWzGIRh+iLnq6iimIvFbFqbClxIzmaEI
+	 jg9cHYPfOrwUGCPhIlKj4El1VsQlGKESfwX/bymUUPKxazbB2bQt8QeM/aIt3snkvSg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794082779;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:X-Developer-Signature:
-	 X-Developer-Key:Content-Transfer-Encoding;
-	bh=g/QILAHardkuFuxTC3XF586hCYVEuecrYiA7fYdJbpk=;
-	b=zQ7NXUpNpaS9cKoJSe9Zk97ixxzuR0pc7mBXwDunE9mP41k2O3QqCoyvqiqOR5TzUnIM
-	 60kgs4gqc0/5uF/JTA3vuR3LxXG4iDZuX0K4lkGyLqkDrD7Bq3H6jf50f9Yjdwmho4OyK
-	 1rHPIdPGiNXoprlNw0la7c2+ou6UssPczgwN2dfwJASDDIqWf1I9LKkulsgaeQMcsPiT+
-	 FWaItrjPJLRiZWz31ajjcoY6wLbybdK2Qy7TEoFOkVhLhojwvBCRUKvr/ACg/qXq3ag8Q
-	 JC5MtTUxV9yQYhCS0aV2qcOOADpPHRci6GMmoiVS83e9WD9IdpOWH+Gc82VpdjNU+Eg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794091728;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=QuLhFEvmmpbdFe5TBed4DD8fUH5b/6o6JMrvceQqWs0=;
+	b=IS1BMlMr+zY7cw8TFxeIJR4qj8Qn9hwvjSi33lA8t78RC52jtW72wkeZlps78cNX11f4
+	 9eTJRBG/0oVnSJh0JAFTzLYW5uLIOb+X+NedqH/qcPSIQRPOvGViTfESaEVbNs92yhA9R
+	 JXOBYbmzW7sroTGwjD++9CaBCFF0TpjaoHVk7gHmIIdQXBquNZux9dG3Vo7un/KsYvoZc
+	 8B12JifEqzY+o4LeBepQ0WiSd5qXoxTBO8K0j6NsTMddJfxt2KNHoWrFsl+AcEZnbAo8D
+	 /b+HhhBieMbB8xNREBJyYZL5QuoynRC5h9z0R3oNsTSI/vDj/evcGrczCu4EQD9l3vQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=njRbfbTZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iHJdESOf;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E468606A331;
-	Sat,  7 Nov 2026 20:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5424606A32D
+	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 22:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=njRbfbTZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E7C21F0089F;
-	Sat,  7 Nov 2026 20:19:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iHJdESOf
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664C41F008A1
+	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 22:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794082778;
-	bh=g/QILAHardkuFuxTC3XF586hCYVEuecrYiA7fYdJbpk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=njRbfbTZNMSIk/ax55AGM6ZF4XptiK3yoC1xJuRlNGy9OvBF7Zw+SObdqNIDnFFTU
-	 QVEKXkyMTENfbWPBsWbEFGwPHQM/tmL4ZWn2LgkPCZMDyTyPFLrsPVPXqVMiHnFfGY
-	 ADy59urmjwe/vCKLI35K6XuCZHROQ2jWz1QIwxqBQ+PqiGbjOWo9k/Ii4FQtR/9Jhs
-	 Jbveo1nBe8l6VUqPv/gMRViXGhSIZy5mt04QDeEgTHFa2LWCDcQHXh+72S6P04q4dJ
-	 7bYdpoktEHuuRNCS4hO6sBU0gxVFvPFS5DRPbm9Ti8JTmxUIrx0pXmc+hHPpigv0OI
-	 YN/0uRUFT3GAg==
-From: William Breathitt Gray <wbg@kernel.org>
-To: shao.mingyin@zte.com.cn
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	linusw@kernel.org,
-	brgl@kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	geert+renesas@glider.be,
-	andrew@codeconstruct.com.au,
-	opendmb@gmail.com,
-	florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	jelonek.jonas@gmail.com
-Subject: Re: [PATCH 3/5] gpio: 104-idi-48: fix max_register blocking the IRQ register
-Date: Sat,  7 Nov 2026 15:19:31 -0500
-Message-ID: <20261107201932.4159230-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261107161255426IYcq8bz4WVHRTuqOH1BUA@zte.com.cn>
-References: <20261107161255426IYcq8bz4WVHRTuqOH1BUA@zte.com.cn>
+	s=k20260515; t=1794091727;
+	bh=QuLhFEvmmpbdFe5TBed4DD8fUH5b/6o6JMrvceQqWs0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=iHJdESOfGkXUhxi+nej8FX8ZZVq7o3gGEAX9jKFPXoGubpeHyJqqMooG0NG+yeqO0
+	 KJTkGkUDnh3MrkPRD2JWUAzHOz6hLip8FKVeA/SxiDtn6RLkYs9mFYygIOSJQWEJDv
+	 ahKpcMy92jx8GhxTuoKVy0vsyHToqnZoDkCBYoXyowaJ9KNJfFscbClVLq9SNadxzz
+	 YISPSKjQdhbC5c525MeY8zTRB1PHxQiUpIOGtvVPJ7cB2crSiFYXuHnI71acuPTeh6
+	 IeC7IVxDxBf1iiMtnvibfpH3azhzoUvB65/uTkfKAa3CA4znN/rvHDaFAo5J3wzOfJ
+	 qn7yCHXQ2zCWA==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5be3ea5a7adso56063e87.2
+        for <linux-gpio@vger.kernel.org>; Sat, 07 Nov 2026 14:48:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFFfgnJ+w3Id6mwVPknnp7zpTka9Wcs4cBa86Y7jZX5C2laF6c7FqaIiwuD/mZf7aDs5yGSnaB74xOj@vger.kernel.org
+X-Gm-Message-State: APuU4Z+xQCgxUV/h0bVM2nnWeejohlQMnqdv+e2qOPXXmZylvTzFRmjU
+	s9Fgty3qg7b4sJ5mHb0YQO+p6MdF2D0Su52ZxtGL+nI8KIw5tNyqcFkUBjbXNtfQKLm/xs4tcjU
+	n5mo5IfiMgD8w26tYjWJXls5eIc4igZc=
+X-Received: by 2002:a05:6512:1048:b0:5bf:cabe:23b6 with SMTP id
+ 2adb3069b0e04-5c003a9c26emr1737966e87.33.1794091726181; Sat, 07 Nov 2026
+ 14:48:46 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,25 +59,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=909; i=wbg@kernel.org; h=from:subject; bh=xR8tJq+hCRn4xscrzTvmOAfByBzYqw+SWQEGfsStx7Y=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDFnv24/tfvCCKc/0aaiVm3lKjUmU9Lkkn61xz7tyNf8Xl t2+GLe+o5SFQYyLQVZMkaXX/OzdB5dUNX68mL8NZg4rE8gQBi5OAZjI2t8M/+y2KLetnnC2wnH1 LWvZWMbV2wKj5I4ZXXf87P96Ko9MkxAjw4xpdxt2XH6+eM4ZqZPfpr5PihVcs5rlZ514cPUS9ba IfgYA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+References: <20261105-gpiolib-of-hog-uninitialized-v1-1-fcaeaccefab6@oss.qualcomm.com>
+In-Reply-To: <20261105-gpiolib-of-hog-uninitialized-v1-1-fcaeaccefab6@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 7 Nov 2026 23:48:34 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=xWDA=JsD+JmX+1i6fs3dRXztUk13mcTvKcnO9Lq7tqg@mail.gmail.com>
+X-Gm-Features: AclHuK-twRwCMVL7cQuNhWiRM9_Y2ubKODxjVoSRNRTWzU9h1XAiKR4cV_MVtR8
+Message-ID: <CAD++jL=xWDA=JsD+JmX+1i6fs3dRXztUk13mcTvKcnO9Lq7tqg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: of: fix potential misconfiguration of hogged lines
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 07, 2026 at 04:12:55PM +0800, shao.mingyin@zte.com.cn wrote:
-> From: Shao Mingyin <shao.mingyin@zte.com.cn>
-> 
-> The regmap config declares max_register = 0x6, but the device's IRQ
-> status/enable register lives at offset 0x7 (IDI48_IRQ_STATUS /
-> IDI48_IRQ_ENABLE, also listed in the readable/precious ranges and used
-> as status_base/unmask_base by the regmap-irq chip).  regmap_readable()
-> and regmap_writeable() both return false for any register above
-> max_register, so regmap_read() of the status register fails with -EIO
-> inside regmap_irq_thread() and no GPIO interrupt is ever delivered.
-> 
-> Raise max_register to 0x7 so the IRQ register is accessible.
-> 
-> Fixes: e28432a77365 ("gpio: 104-idi-48: Migrate to the regmap-irq API")
+On Thu, Nov 5, 2026 at 2:37=E2=80=AFPM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
+
+> In of_gpiochip_get_lflags() the local variable xlate_flags is declared
+> without being initialized before its address is passed to
+> of_xlate_and_get_gpiod_flags() when processing a devicetree gpio-hog
+> child node. If a driver uses an of_xlate() callback that doesn't update
+> the flags argument (like gpiochip_fwd_delay_of_xlate()) we'll end up
+> passing that uninitialized value to of_convert_gpio_flags(), potentially
+> misconfiguring the hogged GPIO.
+>
+> Initialize xlate_flags to 0.
+>
 > Cc: stable@vger.kernel.org
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+> Fixes: d1d564ec4992 ("gpio: move hogs into GPIO core")
+> Closes: https://sashiko.dev/#/bug/linux-2bb44847-fd6e-406c-878d-9739da2cb=
+8b5
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Acked-by: William Breathitt Gray <wbg@kernel.org>
+Right! Good catch from Sashiko there.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+
+Yours,
+Linus Walleij
