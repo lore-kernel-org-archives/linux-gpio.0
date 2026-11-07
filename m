@@ -1,53 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.35
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794039174;
-	b=vqeRsXuRZwSh3UCoqaGcC8MANfo7LbLNitTQxkXbAyFIlIiQATrTBquBDwOVz1PfY4Yt
-	 2dfpy0hu74mziNfsbvGfhmX3TLEkKHgbLqChMjKBUGAWzTVXLZMxt4lzHwvDIraz39g+4
-	 KbjFxzudZaHP0Kbd/5GT1YKYFGjdrnGo3rgBJCCGc7T38RY1Ge59bWDl9jRb3JDbJntNi
-	 w9W4MHtkya2eVTvQkmvKd3PRvZKFm97/Pmyen6QeB9z8TOy7IcxqSB4IffsWlGKUkct4y
-	 r4lQWLo0Y+ier4BtvnwFDIzXeWzQ/SiZpzwrLsZSFlHDASU3IKjYjAnCBU3HVbkzl8Q==
+	t=1794039180;
+	b=EcS4+4vlVfikh5U+LGiAyuGZ7H3F+ywOGCz8IrGXcHINiuAQVAVMZcQGeR5ko2xfx5im
+	 GDZxf4/xFaiOTQUbnbtYjIZGAARzEl2/gm6mNIPPaXFsEGQWUhEv9MLPCnnLv7FaCWe4w
+	 qdwGzBxpx2KYvvQDtysdDJdW8ROZHppZS57LGRG7n4ewaC+TzTmnGKyf8k9LLFOJQWrOg
+	 G0/auR8vHQeypn0xlf6evK6bRiqlvTKTItxOOE/i2c7LwEnLAQdiJ9vmJdIpmwQjPsESp
+	 yzoPvghYYVjW3a9n7mozpiIDKCzmOel2a+lZHRxxYjR9rrR/J/fOgmjx4FK/hHFsEAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794039174;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794039180;
 	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
-	 Message-ID:Date:Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:
-	 X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:
-	 X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=WpvuV2PrO86PTBgbhjGq5F23h01FEdz6D48Cuk2TlKc=;
-	b=TZHFtlSdWhEcLJ0Om604JD1m3WhJlXUh3juTi+BosSy2tzR6Xse70t32BfyENvgq4Haj
-	 Wz4M9/iAzjv/pCK0c2qI6OwIc71gtZwjjAVpCEGIQOr6XQtuQL0GsQ/LF7sddvGs4yW7A
-	 2uXfKXaYC99tZsYsLLTgPudu76arlMffCQ5e0dwJlQla+JNHfJvkx27X0GjufTJ2a2rZl
-	 Ajpjsq03zGLH7K00JoDyGkcDRInUG4JfqOLBHpowrVm3WsGDolSprShXcUxDTRbXRV3Ch
-	 OMLzz07UWCMEAMgCrC6sDApS8zCUH+gJsy63Tuok7r+p5vMNYy1vkrp4GSq90GvNAew==
+	 Message-ID:In-Reply-To:References:Date:Mime-Version:From:To:Cc:
+	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
+	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
+	bh=FUQxplniV3XqQbTU1x3njSsIKxJzZ2Kl6zaiv8H9iYQ=;
+	b=Tki0wHabAWimv2AIcyLjC2VknjmB3g3TvG4+Z2+NA1ufPDi6UDXhrqSjhG4bP6bN1KAR
+	 c1VQc9qD9cjFIxk++pwqK6j97sDLCDkP4Sz43sivh+UaGCfbnMEr37aRjOk0Q963yfm/y
+	 gC8VJTPv8YnaDRWTU1ve/JYIKA1QgZ6e8F1+lyrVXwRvJvZFW9lRdrIXTa2uSXNyWadBi
+	 tPjIUlVBeUbAVEoo8be3sw8gmMitZrtJLlG+5UcaB9L/KS4YiSDqZ0BYyQl4R0SLBNlYt
+	 NquFiXtVGeWZOcpn6jqZisme6287yyjCNlTy3vgeLeqApxP3foNENDBoeusCE6NnPYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=zte.com.cn;
 	spf=pass smtp.mailfrom=zte.com.cn;
-	arc=none smtp.remote-ip=160.30.148.34
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	arc=none smtp.remote-ip=160.30.148.35
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B663606A32F;
-	Sat,  7 Nov 2026 08:12:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6B663606A32F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A6F606A330;
+	Sat,  7 Nov 2026 08:12:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7A6F606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jM81H45lXz5BNS0;
-	Sat, 07 Nov 2026 16:12:51 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 6A78CiBf025360;
-	Sat, 7 Nov 2026 16:12:44 +0800 (+08)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jM81Q30Bbz8XrrX;
+	Sat, 07 Nov 2026 16:12:58 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 6A78Cr5c098744;
+	Sat, 7 Nov 2026 16:12:53 +0800 (+08)
 	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
+Received: from mapi (xaxapp02[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Sat, 7 Nov 2026 16:12:47 +0800 (CST)
-X-Zmail-TransId: 2afb6aeedd7fce0-8a887
+	Sat, 7 Nov 2026 16:12:54 +0800 (CST)
+X-Zmail-TransId: 2afa6aeedd86ea4-98a3d
 X-Mailer: Zmail v1.0
-Message-ID: <202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn>
-Date: Sat, 7 Nov 2026 16:12:47 +0800 (CST)
+Message-ID: <20261107161254042rp3ZKRkQGz2jfH-FBrmtg@zte.com.cn>
+In-Reply-To: <202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn>
+References: 202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn
+Date: Sat, 7 Nov 2026 16:12:54 +0800 (CST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,55 +65,48 @@ Cc: <linux-kernel@vger.kernel.org>, <geert+renesas@glider.be>,
         <andrew@codeconstruct.com.au>, <wbg@kernel.org>, <opendmb@gmail.com>,
         <florian.fainelli@broadcom.com>,
         <bcm-kernel-feedback-list@broadcom.com>, <jelonek.jonas@gmail.com>
-Subject: =?UTF-8?B?W1BBVENIIDAvNV0gZ3BpbzogZml4IElSUSBoYW5kbGluZyBhbmQgcHJvYmUgZXJyb3IgcGF0aHMgaW4gZml2ZSBkcml2ZXJz?=
+Subject: =?UTF-8?B?W1BBVENIIDIvNV0gZ3BpbzogYXNwZWVkLXNncGlvOiBwcm9wYWdhdGUgSVJRIHNldHVwIGVycm9yIGluIHByb2Jl?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 6A78CiBf025360
+X-MAIL:mse-fl2.zte.com.cn 6A78Cr5c098744
 X-TLS: YES
 X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Sat, 07 Nov 2026 16:12:51 +0800
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 16:12:58 +0800
 X-CLEAN: YES
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEEDD83.000/4jM81H45lXz5BNS0
+X-Fangmail-MID-QID: 6AEEDD8A.001/4jM81Q30Bbz8XrrX
 
-Five independent fixes in drivers/gpio/.  One stops an IRQ mask write
-from enabling every other line in the bank, two stop probe from
-swallowing -EPROBE_DEFER so that the controller is retried once its
-parent interrupt controller is ready, one makes the 104-IDI-48 IRQ
-status register accessible again, and one keeps a missing device
-property from being mistaken for a multi-gigabyte allocation.
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-The patches touch five separate drivers and have no shared dependency;
-they are ordered by severity and can be reviewed, applied and taken
-individually:
+aspeed_sgpio_probe() ignores the return value of
+aspeed_sgpio_setup_irqs().  That function returns the result of
+platform_get_irq(), so on failure - in particular -EPROBE_DEFER while
+the parent interrupt controller is still probing - the driver carries on
+and registers the gpiochip with no interrupt support, and the deferred
+probe is never retried, leaving GPIO interrupts permanently broken.
 
-  1/5 gpio: rcar: don't clobber INTMSK when disabling a single line
-  2/5 gpio: aspeed-sgpio: propagate IRQ setup error in probe
-  3/5 gpio: 104-idi-48: fix max_register blocking the IRQ register
-  4/5 gpio: brcmstb: don't turn platform_get_irq errors into -ENOENT
-  5/5 gpio: line-mux: fix unsigned truncation of property count error
+The "interrupts" property is mandatory for this device, so propagate the
+error from probe.
 
-1/5 is a one-line read-modify-write in the R-Car mask path; 2/5 and 4/5
-return the original platform_get_irq() error, including -EPROBE_DEFER;
-3/5 raises max_register by one to cover the IRQ status/enable register;
-5/5 makes the property count signed and rejects non-positive values.
-
-All five are single-file changes under drivers/gpio/ and pass git apply
-and checkpatch.  All go through the GPIO tree.
-
-Shao Mingyin (5):
-  gpio: rcar: don't clobber INTMSK when disabling a single line
-  gpio: aspeed-sgpio: propagate IRQ setup error in probe
-  gpio: 104-idi-48: fix max_register blocking the IRQ register
-  gpio: brcmstb: don't turn platform_get_irq errors into -ENOENT
-  gpio: line-mux: fix unsigned truncation of property count error
-
- drivers/gpio/gpio-104-idi-48.c   | 2 +-
- drivers/gpio/gpio-aspeed-sgpio.c | 4 +++-
- drivers/gpio/gpio-brcmstb.c      | 4 ++--
- drivers/gpio/gpio-line-mux.c     | 4 ++--
- drivers/gpio/gpio-rcar.c         | 2 +-
- 5 files changed, 9 insertions(+), 7 deletions(-)
-
+Fixes: 7db47faae79b ("gpio: aspeed: Add SGPIO driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
-base-commit: 7649ba73f9e7e1e04d0b46213e39c79ae09dd55c
+ drivers/gpio/gpio-aspeed-sgpio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
+index 4225261f61..9df0082270 100644
+--- a/drivers/gpio/gpio-aspeed-sgpio.c
++++ b/drivers/gpio/gpio-aspeed-sgpio.c
+@@ -686,7 +686,9 @@
+ 	gpio->chip.label = dev_name(&pdev->dev);
+ 	gpio->chip.base = -1;
+ 
+-	aspeed_sgpio_setup_irqs(gpio, pdev);
++	rc = aspeed_sgpio_setup_irqs(gpio, pdev);
++	if (rc)
++		return rc;
+ 
+ 	rc = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
+ 	if (rc < 0)
