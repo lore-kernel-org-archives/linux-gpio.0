@@ -1,98 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794014682;
-	b=hn3q0EApjNsZ6ccOqoCRonE70RYyhk4gAWALSzURdBgmvej+VmCrr9nlH1fTSf9R6SNP
-	 hOG/EOBTMiOhBW/xvBt7wR9NLJVeeYNRyE9jEROXQjl5vDAYYzl8l/jNSfw4bayEO4G/y
-	 y8bKXaruM+ujld9Yy/llmqWh2hEb+qPxEudrd4syFAS0I1Ef3wH5YDkiJhfijLyFEFY9e
-	 JOyx3DqAhhjdlLz1wxkoRR/lsCO0X0miBzpo2QdkcwSa90gatFEwetHeTmtc1QQsUlODX
-	 sE03V+ayFV31F0gaw2iUU9M5W03jkMhBKbKk3zqsy+v+6weK/sRk+fCkCpYpwOUt9kQ==
+	t=1794014942;
+	b=3k529clRu0x5uzA0uPY3EtRGAumWDKg4lVWYDweHpQ325hw9HGesLsamdraSiZZ/Bgsx
+	 jiWW8MLD7WMsPZP7V8r/XzavYR5eBdVvNd45J7M+YWBZrR4DBNpxVo2lrfh3QjQP6GEQy
+	 H1bovpcnoymZGn60dffJJBMDIbxRVnHvHIh0bxSj6S8TaQ+tDRXYb7f2ZVjgcB0+JldTa
+	 WRpL5Qj1kXF2o0VhS9IiuKM5ikYxvYxFyFsIANtxpBPS/KAna9Vc7+qwEdq1Fax8EtX+i
+	 oLtTdLMks8PchL/3x6haMTSPUutkPi/OMRgPjS9hRnnvqcPfEuSwOuaH5zm1wxrKNMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794014682;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=Le2Yx3zcrP74iTf6eGB+z3D+FEYMTB52lqn+/VIHlMY=;
-	b=a+N4PJJVW8iKEC9/z8e+/TuBwsZ+v090hwn40acw9DfBFqCcRihitREKv6UGsl9IYHhb
-	 BsXKPON8g6I0D6yFYzdbaMLBKzpbqtl+YYK4qzcmu9JE+rQCSd5j6HnUXffRAU4PgxoI5
-	 XXVfFj1l1PyFcxYxBEwrzzV+XRiTrhNuDJgGjorg1rY+V4GSMq8qBJuDyVAt/cgHLqPK+
-	 f2mECHX684RR6peKjGKbwm7pt9L0ZSNW5eSo9HIzjae6Wq1/C0H2w3Pfmp1N5HHNUn5TV
-	 YIqiwNIdsjbAGSgkf6xGXdxWtpa8CdKwUiihmt1cOq0v7GsKeKVghztGjiHASrbQzKg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794014942;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=LqzUxtWOrdzZxrUJYNetSToKibFknyQJufxyAd0/9L8=;
+	b=G/XoSHep2RWZ563bIom06REotT/UZyyZcxNFBShupCkKhj6ZNtVEP4K6B3Xzx708wKHL
+	 o1vuxK9i2t6rOg88q55xKmdRXwvNgBrSAG6EAZOwEzdm63CvFlekYY84vQuE0X2jpe4iz
+	 uQPoarqNPhGQeUq1WvoAs1XS7RWQQRf2imxHQ8I7RsltFVrYHLWjD93G6smb/UgtX43oG
+	 bH+bNui3eUeW/gixrhYs18xBncmEPoqTAQA0E6FFVW2oot5HOKfZuGp7Smuj07BjaT0vI
+	 oRC0J08y4p77IoqjCkEOYw0BO6Sn8XWgucwKHlkMlmHQiFbC4qhMzzFvXABpITb268g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LGCymFRs;
-	arc=none smtp.remote-ip=74.125.82.48
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X3wsXo5C;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448B0606A32C
-	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 01:24:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 448B0606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC5A606A32D
+	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 01:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LGCymFRs
-Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-170135e43c7so2143226c88.0
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 17:24:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794014680; x=1794619480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Le2Yx3zcrP74iTf6eGB+z3D+FEYMTB52lqn+/VIHlMY=;
-        b=LGCymFRsmUou8HaXfCPzZUJ6tcfErn7lktszwsc7Wfdbx+ihr0WVTsd01ajvVMOxEZ
-         Y6knqyRdu4rH/SSeVdFY5QXjskmiT8B+ScQV/WUmzgK7ZZHa6cmMCZelHdJH9ncxU3qn
-         bQvRTCM6GDY16VYomUINKuC2XE3jISOAxshuAwJoHIobj2Ll5hIZNAltqaW8qzUw3RoI
-         yeB6Im4E33csG0k1yl9Z5FfMjRkHzc2z4EW0ySZP19ECszwHHf3wUfi3b+2OlM7kIHbZ
-         9MiZOJvD3em/g+724thhV//Rs50M+f7Jr9lgBu3P0fKoHpBz5Cf3MnN1aziuZ+anc0C8
-         vA8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794014680; x=1794619480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Le2Yx3zcrP74iTf6eGB+z3D+FEYMTB52lqn+/VIHlMY=;
-        b=eK7HDxJ/wYNT+KgyGfrv9KEcsHAOaMwobHJVqvPt7GrIa2HKxJmeWdvh05/FxEN5MO
-         zY2hxvBKqpL+PrkY9r8e3CSv6RiuwW0wpnG4Zb2Jvz455oh9nxr8xoDdFQD36RdwBvor
-         3x+3XueRgH0MdFfXdGbTAuv+8iMIGjMZ0oqfP0ITmPgDNnffSf/dwiWiY15Cg80DbPdW
-         vfyN9/MIIcfC7ADxJJZhD5yzMXPBlHS55KAafPf7mZDxhx0r2uC3MXH3NnI8Ap8rgAbO
-         2y14L/4sZk05sGbBOS5HMJteKy6lFMBrZdXsd9JedH5Hu2P4r5yvxdkC5jY4UknFRSdC
-         oHiQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwbUgw4vOvUZBn4CGJbaRunysk6SG0rBs2Ni6ut24RPLbKek1OIR96cPox/ExapqZm85OlRRANsyjc6@vger.kernel.org
-X-Gm-Message-State: APuU4Z9/buSVus4PZGkxNSjqh9PhienYa6Epqnv4Lbq9kjHNnz3M2LOV
-	7BDKbKY/2ZcqfBSnZx9MZNQjftdu9o6DFwAtU7vh5EJH+k1LV0h0cK27
-X-Gm-Gg: AYBFou17sz0z4XyEEYRQSdkWKuLqyDLqtRFO+o5zif2hUZOwce5DLVdqrWEMn1gKdWD
-	l9Io5B3W4IgKaODyRH6AdOUEIiqcF0XqveLNcfZ8Nd2zDKc5JP3khseynGg4tyBxg1v/yCol2wv
-	8XuYicbD2LO1eoo/mAoAsI7LOWvgADineWZd3t7lfEj4QYFnRZTp9bVNvtztT6M4mIwkn8EsVR5
-	B3z1VT/neWph2ZNzMjvef57vU8DBJaBTcNnC0P/Naqm2jUXg1YmxaMRPlNLvwOuAfyrRn/9Cvlf
-	GLb9lKIP/VNBMcyfJ1F6H/UN7PcIFxxfjZoFqu+hpZ1Zuw8xOJij8hsCbU1y15O7f+odel5OMoE
-	O6ecJZgf/QIztd6CW5w1mgHQ1CymEp1gIIIaOcFrkMzsnBmp+aaICSFze/DVDbT7T1v7y6QT25M
-	WNvFK5ReUXVwPJVqIJjVT+zxtrdXolaoPrC+JkQUgKEyunZ/oxgG7a46IYbfUQACWkEcqZoURcf
-	Rzu4YoJGCGgX07tlRqnN8WbIFtaPZDEiippyuGImg9/a6ZeHySCXiZ1lKw99yfbnXM2qHHWdRVH
-	LmlcgeRJCeybuQ6SdkToRdI37zcx3h3SUfxhBm5fBkz94w==
-X-Received: by 2002:a05:701b:2905:b0:16d:1e24:5cc3 with SMTP id a92af1059eb24-1b25d3190eemr4699302c88.19.1794014680193;
-        Fri, 06 Nov 2026 17:24:40 -0800 (PST)
-Received: from debian.prasanth ([103.183.205.43])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b25e4880dasm8436986c88.8.2026.11.06.17.24.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 17:24:39 -0800 (PST)
-From: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
-To: andrew@codeconstruct.com.au,
-	linusw@kernel.org
-Cc: joel@jms.id.au,
-	ryan_chen@aspeedtech.com,
-	billy_tsai@aspeedtech.com,
-	linux-aspeed@lists.ozlabs.org,
-	openbmc@lists.ozlabs.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
-Subject: [PATCH] pinctrl: aspeed: Use managed pinctrl registration
-Date: Sat,  7 Nov 2026 06:52:36 +0530
-Message-ID: <20261107012236.28069-1-prasanth.padarthi10@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X3wsXo5C
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1DE1F008A1;
+	Sat,  7 Nov 2026 01:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794014942;
+	bh=LqzUxtWOrdzZxrUJYNetSToKibFknyQJufxyAd0/9L8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=X3wsXo5CHbH99n0geuMjN8jWMWcYSXhnjiRdDCxm18GwGzBl3iIX14yp5EtyfoocR
+	 YOR6oCYEhicZQhPQHW0FI5NxLuhOGy+dzVOAHIrfvQxCGLH7PIB7LddzwKCs+D9k3T
+	 ALX3L1OSLLl735HU0WhZEWYjSZMSsqImLQ7lLaClVcNotmhV+c+Q2KZAf9ECk0bXM6
+	 dnkKccIZhU8tf+IGkoQxxtXHope6WDrjaBtfl4Z7H1b1iVmdc/dETORY507VzJvqJL
+	 iqzqu3xveCQ+AXStQFjwUcKpQJxQRi3Da0axSLirsD8bECaolPl78szJZjdz6crWxd
+	 y0KboGc8csgtA==
+Message-ID: <sashiko-outbox-202465@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] pinctrl: aspeed: Use managed pinctrl registration
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Prasanth Kumar Padarthi" <prasanth.padarthi10@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261107012236.28069-1-prasanth.padarthi10@gmail.com>
+References: <20261107012236.28069-1-prasanth.padarthi10@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 07 Nov 2026 01:29:01 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,34 +58,33 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The shared Aspeed probe helper registers its controller with
-pinctrl_register(), but does not unregister it on device unbind.
-The registration can therefore outlive device-managed data.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] pinctrl: aspeed: missing Fixes trailer for unmanaged
+  pinctrl_register() leak
+--
 
-Use devm_pinctrl_register() to ensure the controller is unregistered
-during device teardown.
+commit 31a2821a3adb8fc70b45a6dcb2edc40ec8684675
+Author: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
 
-Signed-off-by: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> pinctrl: aspeed: Use managed pinctrl registration
+>
+> The shared Aspeed probe helper registers its controller with
+> pinctrl_register(), but does not unregister it on device unbind.
+> The registration can therefore outlive device-managed data.
+>
+> Use devm_pinctrl_register() to ensure the controller is unregistered
+> during device teardown.
+>
+> Signed-off-by: Prasanth Kumar Padarthi <prasanth.padarthi10@gmail.com>
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-index 7e0ebf11af16..eb5f404af8c2 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-@@ -461,7 +461,7 @@ int aspeed_pinctrl_probe(struct platform_device *pdev,
- 
- 	pdata->pinmux.maps[ASPEED_IP_SCU] = pdata->scu;
- 
--	pctl = pinctrl_register(pdesc, &pdev->dev, pdata);
-+	pctl = devm_pinctrl_register(&pdev->dev, pdesc, pdata);
- 
- 	if (IS_ERR(pctl)) {
- 		dev_err(&pdev->dev, "Failed to register pinctrl\n");
--- 
-2.47.3
+[Severity: Low]
+Should this include a Fixes tag for the commit that introduced the
+unmanaged pinctrl_register() call in aspeed_pinctrl_probe()?
 
+  Fixes: 4d3d0e4272d8 ("pinctrl: Add core support for Aspeed SoCs")
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107012236.2806=
+9-1-prasanth.padarthi10@gmail.com?part=3D1
