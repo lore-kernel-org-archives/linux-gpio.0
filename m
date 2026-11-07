@@ -1,65 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.34
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794036805;
-	b=jDPqb3Y2LuB4XOnCtpoG5ahaJy33YbE0iimu1bdW+69Iy593PzGrzMiqWdb2xvY8NmDE
-	 PT1IlSGFFQUF1I9D5siuw+NxBPOkMiFAIvT452xsy4+lgU9Jty8Yoxo7VzuYo50FbLEHu
-	 Mw8V52S1jfYKaxfn7WqMSkeemtBXKMBXNiAW0nbax83+6S+25lgVa7bMoCigZbFB33GDt
-	 U5NYo0NJTnLgWYmPmhB9bJTXzWuDdK0s+v/MRtelNZeDztrvs+fn/jIMPL3jfpYbjYDtm
-	 ksAxQLf7WQhmssndl7ScO8fsJjVzYINlzRHIpsTFuVRFKd0lcwtxH06gaGZuodNPt5Q==
+	t=1794039174;
+	b=vqeRsXuRZwSh3UCoqaGcC8MANfo7LbLNitTQxkXbAyFIlIiQATrTBquBDwOVz1PfY4Yt
+	 2dfpy0hu74mziNfsbvGfhmX3TLEkKHgbLqChMjKBUGAWzTVXLZMxt4lzHwvDIraz39g+4
+	 KbjFxzudZaHP0Kbd/5GT1YKYFGjdrnGo3rgBJCCGc7T38RY1Ge59bWDl9jRb3JDbJntNi
+	 w9W4MHtkya2eVTvQkmvKd3PRvZKFm97/Pmyen6QeB9z8TOy7IcxqSB4IffsWlGKUkct4y
+	 r4lQWLo0Y+ier4BtvnwFDIzXeWzQ/SiZpzwrLsZSFlHDASU3IKjYjAnCBU3HVbkzl8Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794036805;
-	h=Received:DKIM-Signature:Date:From:To:List-Id:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=RqcMsUowjiasOdRKT6/n1tz64a/KAgMWOjxLOv2ccbk=;
-	b=vR0K1tJ1sn+egcFsudbNalcMzqWt/R5q9o6RCg+X3QisWCFf7s/LqfYL2CIY1HSFWg+N
-	 SrkvIcHoTFm/MS1iYfxV4d4sZ9e79W4Grj7VLuXLdlsPTQ1Ara+1CDzCHeiIOxG/lcAmt
-	 S8DTK6fdmlc0t8n81pfLmiKj9ShBTsZY6vDqxqxIyC/T8GfYEcHkhNl09pFXQsEeSIk/c
-	 DC5EOw72ye3aMKLjRDkaUx/Aia+bqm9QLgEw50IPQH+W6Y1taHuJ6mRXNUEjC2cqx8DRU
-	 PP6PEREplYCMFOoUI/80DsZDnT68kuQukAkPgmDyPRUbKTDCLcGmQVvj1YvyYCDAf7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794039174;
+	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
+	 Message-ID:Date:Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:
+	 X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:
+	 X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
+	bh=WpvuV2PrO86PTBgbhjGq5F23h01FEdz6D48Cuk2TlKc=;
+	b=TZHFtlSdWhEcLJ0Om604JD1m3WhJlXUh3juTi+BosSy2tzR6Xse70t32BfyENvgq4Haj
+	 Wz4M9/iAzjv/pCK0c2qI6OwIc71gtZwjjAVpCEGIQOr6XQtuQL0GsQ/LF7sddvGs4yW7A
+	 2uXfKXaYC99tZsYsLLTgPudu76arlMffCQ5e0dwJlQla+JNHfJvkx27X0GjufTJ2a2rZl
+	 Ajpjsq03zGLH7K00JoDyGkcDRInUG4JfqOLBHpowrVm3WsGDolSprShXcUxDTRbXRV3Ch
+	 OMLzz07UWCMEAMgCrC6sDApS8zCUH+gJsy63Tuok7r+p5vMNYy1vkrp4GSq90GvNAew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M7BMVbPW;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=zte.com.cn;
+	spf=pass smtp.mailfrom=zte.com.cn;
+	arc=none smtp.remote-ip=160.30.148.34
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A862606A326;
-	Sat,  7 Nov 2026 07:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M7BMVbPW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C3E61F0089F;
-	Sat,  7 Nov 2026 07:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794036804;
-	bh=RqcMsUowjiasOdRKT6/n1tz64a/KAgMWOjxLOv2ccbk=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To;
-	b=M7BMVbPW6X5rsGfsZmA9wkvAxPkJ5ypVXRYiBkJWHdWmkli06NP3bw2Zt+tSzIKSl
-	 /m357etyPyHcmOOTB8rak7PiWr+yzbxx+nJH+eJ2zckRSl92wDXxSiNVuSsTTr9/6d
-	 9i5pyNR/97/pebPXbVIVmDeFacFlroNjc0B2ipUelgGEBYJ1xu14hFo8CswvcRXaDf
-	 TFtcE2cfRziRWhlNDXqctpvRV4b1NcOlOFlrkZJLQAxS9BzWx50R5ExIrUvdq1rAfv
-	 bU7lICdRpvm5BAvVeOppiXjSLwNxqFxlpzVdTfuA3SwiNMhH25cmCLywdcT9CjxHgu
-	 MPGP+4aKDsOFQ==
-Date: Sat, 7 Nov 2026 08:33:02 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Alejandro Colomar <alx+linux-hardening@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, bartosz.golaszewski@oss.qualcomm.com, 
-	brgl@kernel.org, dakr@kernel.org, devicetree@vger.kernel.org, djrscally@gmail.com, 
-	driver-core@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, johan@kernel.org, 
-	kees@kernel.org, laurent.pinchart@ideasonboard.com, lenb@kernel.org, 
-	linusw@kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org, 
-	rafael@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
-	sakari.ailus@linux.intel.com, saravanak@kernel.org, schwab@linux-m68k.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
-Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <au7TvMP0YhW2e_oM@debian>
-References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
- <20261105125154.83478-1-geert@linux-m68k.org>
- <aux8LYQkGSNjCGHv@devuan>
- <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B663606A32F;
+	Sat,  7 Nov 2026 08:12:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6B663606A32F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jM81H45lXz5BNS0;
+	Sat, 07 Nov 2026 16:12:51 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 6A78CiBf025360;
+	Sat, 7 Nov 2026 16:12:44 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 7 Nov 2026 16:12:47 +0800 (CST)
+X-Zmail-TransId: 2afb6aeedd7fce0-8a887
+X-Mailer: Zmail v1.0
+Message-ID: <202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn>
+Date: Sat, 7 Nov 2026 16:12:47 +0800 (CST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,104 +56,62 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dul5zpskzyut57vy"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <linux-gpio@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <geert+renesas@glider.be>,
+        <andrew@codeconstruct.com.au>, <wbg@kernel.org>, <opendmb@gmail.com>,
+        <florian.fainelli@broadcom.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <jelonek.jonas@gmail.com>
+Subject: =?UTF-8?B?W1BBVENIIDAvNV0gZ3BpbzogZml4IElSUSBoYW5kbGluZyBhbmQgcHJvYmUgZXJyb3IgcGF0aHMgaW4gZml2ZSBkcml2ZXJz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 6A78CiBf025360
+X-TLS: YES
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SOURCE-IP: 10.5.228.132 unknown Sat, 07 Nov 2026 16:12:51 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6AEEDD83.000/4jM81H45lXz5BNS0
 
+Five independent fixes in drivers/gpio/.  One stops an IRQ mask write
+from enabling every other line in the bank, two stop probe from
+swallowing -EPROBE_DEFER so that the controller is retried once its
+parent interrupt controller is ready, one makes the 104-IDI-48 IRQ
+status register accessible again, and one keeps a missing device
+property from being mistaken for a multi-gigabyte allocation.
 
---dul5zpskzyut57vy
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-List-Id: <linux-hardening.lore.kernel.org>
-Cc: Alejandro Colomar <alx+linux-hardening@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, bartosz.golaszewski@oss.qualcomm.com, 
-	brgl@kernel.org, dakr@kernel.org, devicetree@vger.kernel.org, djrscally@gmail.com, 
-	driver-core@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, johan@kernel.org, 
-	kees@kernel.org, laurent.pinchart@ideasonboard.com, lenb@kernel.org, 
-	linusw@kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org, 
-	rafael@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
-	sakari.ailus@linux.intel.com, saravanak@kernel.org, schwab@linux-m68k.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
-Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <au7TvMP0YhW2e_oM@debian>
-References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
- <20261105125154.83478-1-geert@linux-m68k.org>
- <aux8LYQkGSNjCGHv@devuan>
- <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
+The patches touch five separate drivers and have no shared dependency;
+they are ordered by severity and can be reviewed, applied and taken
+individually:
 
-Hi Maciej,
+  1/5 gpio: rcar: don't clobber INTMSK when disabling a single line
+  2/5 gpio: aspeed-sgpio: propagate IRQ setup error in probe
+  3/5 gpio: 104-idi-48: fix max_register blocking the IRQ register
+  4/5 gpio: brcmstb: don't turn platform_get_irq errors into -ENOENT
+  5/5 gpio: line-mux: fix unsigned truncation of property count error
 
-> Date: 2026-11-07 02:44:23+0000
-> From: "Maciej W. Rozycki" <macro@orcam.me.uk>
->
-> On Thu, 5 Nov 2026, Alejandro Colomar wrote:
->=20
-> > Do you think strafterprefix() would be better?  Do you have any other
-> > suggestions?
->=20
->  FWIW strsuffix() seems an obvious choice to me.  After all what the API=
-=20
-> does is request the string's suffix beyond the specified leading part.
+1/5 is a one-line read-modify-write in the R-Car mask path; 2/5 and 4/5
+return the original platform_get_irq() error, including -EPROBE_DEFER;
+3/5 raises max_register by one to cover the IRQ status/enable register;
+5/5 makes the property count signed and rejects non-positive values.
 
-Actually, strsuffix() is something else:
+All five are single-file changes under drivers/gpio/ and pass git apply
+and checkpatch.  All go through the GPIO tree.
 
-	char *
-	strsuffix_(const char *str, const char *suffix)
-	{
-		ptrdiff_t  off;
+Shao Mingyin (5):
+  gpio: rcar: don't clobber INTMSK when disabling a single line
+  gpio: aspeed-sgpio: propagate IRQ setup error in probe
+  gpio: 104-idi-48: fix max_register blocking the IRQ register
+  gpio: brcmstb: don't turn platform_get_irq errors into -ENOENT
+  gpio: line-mux: fix unsigned truncation of property count error
 
-		off =3D strlen(str) - strlen(suffix);
-		if (off < 0)
-			return NULL;
+ drivers/gpio/gpio-104-idi-48.c   | 2 +-
+ drivers/gpio/gpio-aspeed-sgpio.c | 4 +++-
+ drivers/gpio/gpio-brcmstb.c      | 4 ++--
+ drivers/gpio/gpio-line-mux.c     | 4 ++--
+ drivers/gpio/gpio-rcar.c         | 2 +-
+ 5 files changed, 9 insertions(+), 7 deletions(-)
 
-		if (!streq(str + off, suffix))
-			return NULL;
-
-		return str + off;
-	}
-
-It finds the start of a suffix in a string.  That is:
-
-	strcmp(strsuffix("foobar", "bar"), "bar") =3D=3D 0;
-
-
-Have a lovely day!
-Alex
-
->=20
->   Maciej
-
---=20
-<https://www.alejandro-colomar.es>
-
---dul5zpskzyut57vy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmru1C4ACgkQ64mZXMKQ
-wqm7rA//SurddKJhcpcYSVF08Ab2FAhfNpH0ioW7Yb/l+oX0VEpkWj3qqra1tx55
-Z1UFA8Zc2S23a2zgGIVgckruLAScw3TgH56+01s0K2rHCab1CAG6jhPnj2SrdRDd
-3r1e/bTSwdBBaL3YjGLE8QJ6Ovr4k4QIfx4hrJDEoc1Bd8d/kX4hP5ck/UvUQRps
-uxgukH/uuh069/6RuDrbqyZNTYaII3QF5In16FORibSjdYhJ3zk6jSHglRU2c2RK
-rdB3UhGgvmRwioMK6O8uvjAvh+8Uh25hUkodhUwK5zrL/R7KD6hcJ4Qzgs5f3UC/
-eFCzJpR+vV4VgOfmxBzJ5B6iZiXbMgXPuYmIw6MtXddrQMKZYV6pmSy8EEUODC/G
-PGynmMkcNOcSxnAy4LX7my5c1ilQ6eVlnQ5mdPR6QUIzKIhC7QL0V9B8UUFGgJ+C
-CX19+pefdS4MdHB5A0NTMPdp/kzdw8LbHsPz5EcumrjxvhFl+m6xfo9wYmkRD+2m
-VJF6uwqVpJ9rP8zJNT2qonLoTk6sbT5Kc8SRSOCsfOOXVkci1C7Y6ZC8ynE4Xyrf
-/G3gpTejPyd+cYuZkOBrRv9NGBaDx/Ioh6ZExvc2hoVh+LaIctAwYoLhxLaU7neV
-ElYN26nlmyCnrZ82m7JphVIFX5IQerK6gzXdIOg4PEXNRNs8l5o=
-=gJHo
------END PGP SIGNATURE-----
-
---dul5zpskzyut57vy--
+---
+base-commit: 7649ba73f9e7e1e04d0b46213e39c79ae09dd55c
