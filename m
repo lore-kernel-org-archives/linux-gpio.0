@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794019011;
-	b=YLDgC82f/aa/rp6UNbn49o5CPwERT+jC6/kRQUr5qnHU7DXk1dWAtX2Lz0JoO6hEduZ/
-	 xR9fFU47D9Hjv1rlYCVJyBsi0ZWypr2cH7BCWdq1GZ3dDvAPsoSSlQpjzGQmyYldyAaTU
-	 RW0dXrM0Je0Cx6Q8TVaMGs5qn4RzujRltsfYB6bmAuMy8oteu8rf72aQxni7q9znVMubK
-	 POaNOYvtA4ESG6FvVwHyj+uomwEHMN7jklGNKZ+/Yi2nJT2NJkhlaQUmySk5OWTesUmdx
-	 8pMccrWl/RdOnKlQ1sRIWnHATsMwJCQrsAsGcGF7smdIgasCitqIVAFQdOQQtWQGnAQ==
+	t=1794019015;
+	b=eUxlAD0V+LF+2efNR0w8T6KzrIOxPnCfdyDmiW1Frn3wpddp+/DwTtgD8qg+VOB3Cz2r
+	 WzKkTvU4GgZd+Z3HoLgOfxGxa3NNYrWpyWWepmlO1EcJrBIHYQltWP3TjygFSJHGfMZUV
+	 OrueLJE3vyWtMQaWg4rIyOtaSakg0hxyPa6LcotGK0FJn028Tb3XfPXHa9W1xV8zXhBjR
+	 EaI50mQmffl+o89EIOF42BJRsXMLUV0D2XGTI+grvYVvVzPZTiyu4ol8AbSa5NuoAA4sY
+	 fglQ+Iy7MB9MNcJ4KXOH8LJGy6zkCf9l4yRwsEj4FjhodaXn3hHeLJmOcv/wzNFGP5w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794019011;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794019015;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=rBjP8dw6vCoVwFwaCraoNpMLiLX/JUJlo0UcGjx5GL8=;
-	b=qfBM8751t4r3+4xkTV7fnJlZEuKBx5joVt2sn4vKxRHS+p/9BBi4lmvOqhKWY5E2v0Av
-	 NGYHdkAoBco7bxfC+1PM74QaVhM5Z/MuUONwDm/ZvaK0fxXR0f6RByaCZTJagBeebfqud
-	 rW7P26LVUiK5XZCmt2oguG8wYVTFlRdbDEfvfUkvr/owl9OXIJDDrMx+FD5nGEvXo152B
-	 H7x0NVo4RpxQ3nRLYUA5UGjAgyb5EY1TO7xIp65hSity8qHS912hIBOKDQetA7LyKmfHY
-	 pitikH/Um+bnAYT/LcUx/Ib9pD1oejhBXgOhICk1zCZINCL3pVn6oiyKz/UoypPNewg==
+	bh=Dn3AqjSXpF37B635ypQSZqFBFcyclLjzRAmOQAMpPOk=;
+	b=RQSIFs9QPcI8k43mWwXnBAsgmifWuVM+w+QXZVRzJd0NVE/oZ7B7ibtlwBBxk1fTSsBs
+	 6SR0suvyqc4A8q7CLpzaa16XfRzBnQO3DEH+c3ESWJtNonATOPzVVvV8IiXZCrpwPaYh6
+	 uslOB8EwY2mf+5mJ36VWRNxBkGQcP/CJpMdmI965PiRmFytxfyeI7FJgNDTnnzeceGlCH
+	 sFH0FAXy8dVtXw3YDerUBJdHnSjncbvcZfEV4AFyIt3p4ABSmVM3sXNnrHdoFODjZ30SX
+	 j1H69ORAqvav9IiqZ6D47qz8b+/nZTmdcFlzdRY/TUa8tffnJnus1JeDEeaVNGO2DIA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=jclark.com;
 	spf=pass smtp.mailfrom=jclark.com;
-	dkim=pass header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=geuXp3uq;
-	arc=none smtp.remote-ip=74.125.82.169
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	dkim=pass header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=X2ZOw9fw;
+	arc=none smtp.remote-ip=74.125.82.173
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58C6606A32D
-	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 02:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C58C6606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36ADC606A32D
+	for <linux-gpio@vger.kernel.org>; Sat,  7 Nov 2026 02:36:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36ADC606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jclark.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jclark.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=geuXp3uq
-Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-36dbde64409so1725836eec.0
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 18:36:50 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=X2ZOw9fw
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-35829219da8so282899eec.0
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2026 18:36:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1794019010; x=1794623810; darn=vger.kernel.org;
+        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1794019014; x=1794623814; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=rBjP8dw6vCoVwFwaCraoNpMLiLX/JUJlo0UcGjx5GL8=;
-        b=geuXp3uqDwn0lB26RWUvZV4w9kfr37d5egVQg2ozIefcODEpsVY7+6EkpbRPV8UHfm
-         PPRgU5whQ1VL5Ts5LRnsguQ3IzZlSIF+PxkSV7vKfE7I6Dd0JF07HWn7KuLdMn3C3rMB
-         xpHjXOl2zFiu7xMiMNzz4SkiqxGWVJ9V/YBqLNMpWELNRC6bnt5Cw3m6jrz49H86dNt4
-         5UeR/xVbXY0kgvJRTarwlrn0YKcYR+CtBkUFcpZaBIGglOErJ+p9Gf3/HECGCxNtsa4U
-         q5iH9N2OfmPC/Sn27fwlUz5K9XgSXEb0Sm4FOGiXgqjYJ3N1nTsoHbg9I76P331NM8Z4
-         uOGw==
+        bh=Dn3AqjSXpF37B635ypQSZqFBFcyclLjzRAmOQAMpPOk=;
+        b=X2ZOw9fwHFA67uVlTAvdTMcF+/zT+VJIax05tROfyWOSitFsIK+FsOQw4b6faKCN6V
+         ztW8RE2vLYPdcvL36TJCsKOqAcsuUkOCje3DVJ+WqvkJeqqkM5Un1lzqpyO95ydJbTDi
+         Jmc3iuRofw20g0sv3UYRTx+lZw9OwDWn4U3+Q3LYp9kHBhSNZl31pyqrYGlz51BPy1gt
+         ll+guHl71pSg3Ov0jP587mEjwTmtipAJiqt+AVImZxAR85f0XYcFAqqkTrBDGtDeWQyh
+         4dXSujgANu7bGp63e3cvSU8BCI0BjNUqECQaVJ4Nd+ouo69htu+9O9T16C0e9z1rJjm2
+         pgCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794019010; x=1794623810;
+        d=1e100.net; s=20260707; t=1794019014; x=1794623814;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=rBjP8dw6vCoVwFwaCraoNpMLiLX/JUJlo0UcGjx5GL8=;
-        b=llYReg+u9iwvwv5I71Y5tbZDKgjK5f7R7ArhLvzIWrex4TqLh+auPJhoXhTWQidBh8
-         6v+KaVOYnzPVrAV+0yjL4OSH8zDDXPI8YDt/cI4Tw7qivx6qgxlA3xFZ/NLh0djdTgKz
-         iBVyJhDfk8joziAes5QxjaBBXJ+l+2BSjCqoAR2mLNJsN+Rtx4NK+PFCIQG+bfr5oz9m
-         IRl4Ea/5XDrhpUz6L2UEnxmWGyYzdDAa+FaaCpch8sF7MMAx2f4J+iu+yAU1z8jtydap
-         sZiaN1CmHW0LMIFLYjEFO2y9iacDP5I6yCly6y74Rtlxy0LaHp6twEU1AYGBrfvG9gdp
-         bIRw==
-X-Forwarded-Encrypted: i=1; AKwUvBx7xtXVDZvDoprAE3K4QP1h7DEtE958R9friKQkx7LFxp9FrH9oGTt+UWsYZWTVzAHGhlLJeYUoTVqN@vger.kernel.org
-X-Gm-Message-State: APuU4Z/c7PDJMWNYTb1wKy12rmrtYvKHSczAE7ti9+sPT18h6EQgMTFo
-	8vIrHrM9x4URXz4bkZXXxKJ6ExSMBPsFGVSBssEA5nJinijmyE7322BUbhoSEurU/w==
-X-Gm-Gg: AYBFou0Yq33ZZjbLq7SBdn36d/AT5s0tkwzZ5QEBo2N5q2/X0yzyP4FrBz67Abm1z30
-	O33ZIiaWq3sT1/zhOBiYz/dw1zsSPEkTlH6RyyLKwYNPNTBmAxymXW05BImQKs+GTe//9F3zOJq
-	ajfV6dqIcbzrKnxvfXyeG/6LaQPkkhdFjhgWtWQoV5bT9A/oXZvbMVbJQu//Sv1+HGWX07mYq3j
-	e+M4rS3dpIUUv4Me35lC0Jir1wJTu4PqW1nrnDW5wAa4NTApLQDS+Ezo20Tbi6v/AblT68oLji3
-	HqikI3DhVDL8NQXrH0pN/3wUtloKhqgw8giazEcaBDL+e8D+NO5hzw/1RI2eCr/xEn3V7LJGoLV
-	1f3yWhZsv8NJ5MZw5CAvOEtwFvXCDD+AlZClMera4c+MBGiZFR3UKLcPx5uKeEd0alWwZk/yP3A
-	0E3hNoCHzAZQkMuHIgbOT0zHWCWqo5yszEu2LIo5x6WMaqyJjTSF4exirGzXyKrmFGIz3s53Wc9
-	Lm4kToThB6TIHALbPtZK+znMVg5Y4tb/Cn80CJ/+xeZcaojGcrO3qooaNJNA7AtRTXnVg3XdqXu
-	PKGUqgumq+GNp+dtdc2ThXXZNT2huyHdlhakVZaLRJkztA9NFj5A1nnPpA2qWMczWHS4ACifFWK
-	YfkHSRQE43aVa5JOG/A==
-X-Received: by 2002:a05:7301:fc81:b0:35e:f4ac:5f8e with SMTP id 5a478bee46e88-36f6f2aa43amr5289981eec.0.1794019009707;
-        Fri, 06 Nov 2026 18:36:49 -0800 (PST)
+        bh=Dn3AqjSXpF37B635ypQSZqFBFcyclLjzRAmOQAMpPOk=;
+        b=Ed+5R7geFnZGLTtMTaX35/9Bl10De3NU6dq3s8s6wGLdlDIn4TKxmDVjPRBY2LRR/n
+         T5YhtoCZYAb8zZM5hqYNHokdraZv4TdTbO8ZRXnPKkk6yK35jXHvSjdDHE9zA5UFBOFp
+         Bu+rnity+pzH1GeVJQr660DR9myutnMdyDsIJCVA7nfdB1TaZYHIXsu+nj5TQJTSvGve
+         pelIjcTEaaDQ73Syw6dLoYkIVAxxu42sn3TVmB8dcaqcGwcYupI8+oRRlzQPiIrw9MZF
+         YsWRh/nuTCyowMWKa1bMu4WKY353KYxEcT52nE2LVcVn3r4LBt5kXZ7L5EQzANnnIAlY
+         vphw==
+X-Forwarded-Encrypted: i=1; AL+hErGH986YTv5FxLS/49FWV7ZbiSBOwDSgdWaAykHFm7wmGPPPdaLkA6zGQinALqYVqdO6IDJB0vtUvUZT@vger.kernel.org
+X-Gm-Message-State: APuU4Z+/M4KyyMMlKJzRc5lwzVJtmkNyVadE83IiU2WjV6ezq5KjeoR/
+	uFQZ1YebuXfwYIqHsatVk3OY6REWTntmNx7gGXBjFFY/MUFuNyomLurV3FoxN6BBgw==
+X-Gm-Gg: AYBFou1eKkV2s3diE2ZkJIjqDqnkJP4uaV1XGthAZ0MHU44kbxlBvbWBwo3euz8eOim
+	0JTCPOg+4PvVHv1BQXIuuseR5R9ZqYwVxxJq6Wn56WBgI2xRJt1pPjr9UTaCe0CdZKJxokEBe/L
+	JIkRWzgTRvInsBB1FdlYIeaoUnPXV03umIwI1lmjdo7e4Zvgy73nOc/aZqDWzlWXNXrOqLdErgO
+	c/buYWQlJn2Csk248UGG76T4mArNek4fltD45ewgczY4DidmarjJvM0/vUg3q+viWv5wx5u8cp1
+	pbOok1gOZzFSy7DUyvZVsABUDjsv9KxDGuR6//qahcHPw9lTK6cnJYrsB7TL2POXjJRHQm6vZTK
+	sdfvdM5OMfsn+P2EhePVQbhTM4ja1igLN9T3337twGfZEeF0TixvB29NgDPckSIJPVPwOs0PRgj
+	rh4voZ12NcwlNI5UqPUYqe3TnEhZL7+D9pf8hP0qk2imzKgVK4HJF05iUfU6l3p61HBFc1uglDG
+	2kkliHmTM3k6y+wZY+LoBby6wpyCLV/NLt5wf0NcmLr+645/pXyofrevNS/yd9jcdtVYWIiuoG4
+	fP19TxbKwbzJu9nmGeJKAgH5PdfdZE6ivSmltsjjqVjlAEWiG86a0/Qm2jS76ZtjJV06vbXVTHM
+	xOAodvP7ltKm2HDIdjg==
+X-Received: by 2002:a05:693c:69c8:b0:35e:af84:bf1e with SMTP id 5a478bee46e88-370f4c6234bmr1091383eec.7.1794019014061;
+        Fri, 06 Nov 2026 18:36:54 -0800 (PST)
 Received: from cantal.lan ([58.136.77.237])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36faa4b4680sm10421618eec.20.2026.11.06.18.36.45
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36faa4b4680sm10421618eec.20.2026.11.06.18.36.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 18:36:48 -0800 (PST)
+        Fri, 06 Nov 2026 18:36:53 -0800 (PST)
 From: James Clark <jjc@jclark.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Alan Stern <stern@rowland.harvard.edu>,
@@ -93,9 +93,9 @@ Cc: Johan Hovold <johan@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	regressions@lists.linux.dev
-Subject: [PATCH v5 1/2] usb: core: export the generic device driver's operations
-Date: Sat,  7 Nov 2026 09:36:37 +0700
-Message-ID: <50db3bea8dd8bbc09bd8a9c3b38f44d6523442eb.1794018128.git.jjc@jclark.com>
+Subject: [PATCH v5 2/2] usb: misc: onboard_usb_dev: don't defer probing after the device is configured
+Date: Sat,  7 Nov 2026 09:36:38 +0700
+Message-ID: <e0e60a57c500ffbdb6addc268d41b7dcc4cf6c4a.1794018128.git.jjc@jclark.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1794018128.git.jjc@jclark.com>
 References: <cover.1794018128.git.jjc@jclark.com>
@@ -110,109 +110,164 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Export usb_generic_driver_probe(), usb_generic_driver_disconnect(),
-usb_generic_driver_suspend() and usb_generic_driver_resume(), and move
-their declarations to include/linux/usb.h. This lets a driver whose
-probe may return -EPROBE_DEFER leave generic_subclass unset and call
-them itself, so that it can defer before the device is configured.
+onboard_usb_dev breaks the rule that a driver must not return
+-EPROBE_DEFER from its probe after it has registered child devices (see
+commit fbc35b45f9f6 ("Add documentation on meaning of -EPROBE_DEFER")).
+Its USB device driver sets generic_subclass, so the generic probe runs
+first and registers the device's interfaces. onboard_dev_usbdev_probe()
+then returns -EPROBE_DEFER until the platform device for the onboard
+device has probed. On the BeagleY-AI, this results in a probe loop,
+which has broken booting since commit f918e3804498 ("arm64: enable
+HAVE_SHARED_GPIOS for all ARM64 platforms").
 
-Say in the generic_subclass kerneldoc not to set it in that case.
+Call the generic driver's operations from the driver itself instead of
+relying on generic_subclass, so that the probe is deferred before the
+device is configured. The device now stays unconfigured while the probe
+is deferred, including when the platform device never probes. Before, it
+was configured and unconfigured repeatedly until the platform device
+probed.
 
+Make onboard_dev_usbdev_match() not match a device when neither its
+node nor its peer hub's node has a platform device, so that the generic
+driver binds it instead. If the platform device goes away between match
+and probe, return -ENODEV instead of -EINVAL, so that usb_probe_device()
+falls back to the generic driver.
+
+Fixes: 8bc063641ceb ("usb: misc: Add onboard_usb_hub driver")
+Suggested-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: James Clark <jjc@jclark.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
 ---
 Changes in v5:
-- Added Alan's Acked-by
+- Stopped matching a device when neither its node nor its peer hub's
+  node has a platform device, so that the generic driver binds it
+  (Sashiko)
+- Split the platform device lookup out of _find_onboard_dev() into
+  onboard_dev_find_pdev(), and dropped the "failed to find device node
+  for peer hub" error
+- Commit message: explained the -ENODEV
 
 Changes in v4:
-- New patch
+- Switched to calling the generic driver's operations instead of
+  setting generic_subclass, replacing pre_probe in the USB core
 
- drivers/usb/core/generic.c |  4 ++++
- drivers/usb/core/usb.h     |  6 ------
- include/linux/usb.h        | 10 +++++++++-
- 3 files changed, 13 insertions(+), 7 deletions(-)
+ drivers/usb/misc/onboard_usb_dev.c | 67 +++++++++++++++++++++---------
+ 1 file changed, 48 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
-index a48994e11ef3..53675d9fdb03 100644
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -261,6 +261,7 @@ int usb_generic_driver_probe(struct usb_device *udev)
+diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+index c60406240416..299e39b55e73 100644
+--- a/drivers/usb/misc/onboard_usb_dev.c
++++ b/drivers/usb/misc/onboard_usb_dev.c
+@@ -576,6 +576,25 @@ static struct platform_driver onboard_dev_driver = {
+ #define VENDOR_ID_VIA		0x2109
+ #define VENDOR_ID_XMOS		0x20B1
  
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(usb_generic_driver_probe);
- 
- void usb_generic_driver_disconnect(struct usb_device *udev)
- {
-@@ -271,6 +272,7 @@ void usb_generic_driver_disconnect(struct usb_device *udev)
- 	if (udev->actconfig)
- 		usb_set_configuration(udev, -1);
- }
-+EXPORT_SYMBOL_GPL(usb_generic_driver_disconnect);
- 
- #ifdef	CONFIG_PM
- 
-@@ -301,6 +303,7 @@ int usb_generic_driver_suspend(struct usb_device *udev, pm_message_t msg)
- 		usbfs_notify_suspend(udev);
- 	return rc;
- }
-+EXPORT_SYMBOL_GPL(usb_generic_driver_suspend);
- 
- int usb_generic_driver_resume(struct usb_device *udev, pm_message_t msg)
- {
-@@ -320,6 +323,7 @@ int usb_generic_driver_resume(struct usb_device *udev, pm_message_t msg)
- 		usbfs_notify_resume(udev);
- 	return rc;
- }
-+EXPORT_SYMBOL_GPL(usb_generic_driver_resume);
- 
- #endif	/* CONFIG_PM */
- 
-diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
-index a9b37aeb515b..9f1e4d197695 100644
---- a/drivers/usb/core/usb.h
-+++ b/drivers/usb/core/usb.h
-@@ -50,12 +50,6 @@ extern int usb_get_bos_descriptor(struct usb_device *dev);
- extern void usb_release_bos_descriptor(struct usb_device *dev);
- extern int usb_set_configuration(struct usb_device *dev, int configuration);
- extern int usb_choose_configuration(struct usb_device *udev);
--extern int usb_generic_driver_probe(struct usb_device *udev);
--extern void usb_generic_driver_disconnect(struct usb_device *udev);
--extern int usb_generic_driver_suspend(struct usb_device *udev,
--		pm_message_t msg);
--extern int usb_generic_driver_resume(struct usb_device *udev,
--		pm_message_t msg);
- 
- static inline unsigned usb_get_max_power(struct usb_device *udev,
- 		struct usb_host_config *c)
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index 825f03b29067..4844f53e2fa8 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -1301,7 +1301,8 @@ struct usb_driver {
-  *	for devices bound to this driver.
-  * @generic_subclass: if set to 1, the generic USB driver's probe, disconnect,
-  *	resume and suspend functions will be called in addition to the driver's
-- *	own, so this part of the setup does not need to be replicated.
-+ *	own, so this part of the setup does not need to be replicated. Do not set
-+ *	this if @probe may return -EPROBE_DEFER.
-  *
-  * USB device drivers must provide a name, other driver fields are optional.
-  */
-@@ -1375,6 +1376,13 @@ extern int __usb_register_device_driver(struct usb_device_driver *,
- 			struct module *, const char *);
- extern void usb_deregister_device_driver(struct usb_device_driver *);
- 
-+extern int usb_generic_driver_probe(struct usb_device *udev);
-+extern void usb_generic_driver_disconnect(struct usb_device *udev);
-+extern int usb_generic_driver_suspend(struct usb_device *udev,
-+		pm_message_t msg);
-+extern int usb_generic_driver_resume(struct usb_device *udev,
-+		pm_message_t msg);
++static struct platform_device *onboard_dev_find_pdev(struct device *dev)
++{
++	struct platform_device *pdev;
++	struct device_node *np;
 +
- extern int usb_register_dev(struct usb_interface *intf,
- 			    struct usb_class_driver *class_driver);
- extern void usb_deregister_dev(struct usb_interface *intf,
++	pdev = of_find_device_by_node(dev->of_node);
++	if (pdev)
++		return pdev;
++
++	np = of_parse_phandle(dev->of_node, "peer-hub", 0);
++	if (!np)
++		return NULL;
++
++	pdev = of_find_device_by_node(np);
++	of_node_put(np);
++
++	return pdev;
++}
++
+ /*
+  * Returns the onboard_dev platform device that is associated with the USB
+  * device passed as parameter.
+@@ -583,23 +602,11 @@ static struct platform_driver onboard_dev_driver = {
+ static struct onboard_dev *_find_onboard_dev(struct device *dev)
+ {
+ 	struct platform_device *pdev;
+-	struct device_node *np;
+ 	struct onboard_dev *onboard_dev;
+ 
+-	pdev = of_find_device_by_node(dev->of_node);
+-	if (!pdev) {
+-		np = of_parse_phandle(dev->of_node, "peer-hub", 0);
+-		if (!np) {
+-			dev_err(dev, "failed to find device node for peer hub\n");
+-			return ERR_PTR(-EINVAL);
+-		}
+-
+-		pdev = of_find_device_by_node(np);
+-		of_node_put(np);
+-
+-		if (!pdev)
+-			return ERR_PTR(-ENODEV);
+-	}
++	pdev = onboard_dev_find_pdev(dev);
++	if (!pdev)
++		return ERR_PTR(-ENODEV);
+ 
+ 	onboard_dev = dev_get_drvdata(&pdev->dev);
+ 	put_device(&pdev->dev);
+@@ -619,8 +626,22 @@ static struct onboard_dev *_find_onboard_dev(struct device *dev)
+ 
+ static bool onboard_dev_usbdev_match(struct usb_device *udev)
+ {
+-	/* Onboard devices using this driver must have a device tree node */
+-	return !!udev->dev.of_node;
++	struct platform_device *pdev;
++
++	/*
++	 * Onboard devices using this driver must have a device tree node with
++	 * a platform device, its own or its peer hub's. Leave any other device
++	 * to the generic driver.
++	 */
++	if (!udev->dev.of_node)
++		return false;
++
++	pdev = onboard_dev_find_pdev(&udev->dev);
++	if (!pdev)
++		return false;
++
++	put_device(&pdev->dev);
++	return true;
+ }
+ 
+ static int onboard_dev_usbdev_probe(struct usb_device *udev)
+@@ -639,7 +660,11 @@ static int onboard_dev_usbdev_probe(struct usb_device *udev)
+ 	if (err)
+ 		return err;
+ 
+-	return 0;
++	err = usb_generic_driver_probe(udev);
++	if (err)
++		onboard_dev_remove_usbdev(onboard_dev, udev);
++
++	return err;
+ }
+ 
+ static void onboard_dev_usbdev_disconnect(struct usb_device *udev)
+@@ -647,6 +672,7 @@ static void onboard_dev_usbdev_disconnect(struct usb_device *udev)
+ 	struct onboard_dev *onboard_dev = dev_get_drvdata(&udev->dev);
+ 
+ 	onboard_dev_remove_usbdev(onboard_dev, udev);
++	usb_generic_driver_disconnect(udev);
+ }
+ 
+ static const struct usb_device_id onboard_dev_id_table[] = {
+@@ -697,7 +723,10 @@ static struct usb_device_driver onboard_dev_usbdev_driver = {
+ 	.match = onboard_dev_usbdev_match,
+ 	.probe = onboard_dev_usbdev_probe,
+ 	.disconnect = onboard_dev_usbdev_disconnect,
+-	.generic_subclass = 1,
++#ifdef CONFIG_PM
++	.suspend = usb_generic_driver_suspend,
++	.resume = usb_generic_driver_resume,
++#endif
+ 	.supports_autosuspend =	1,
+ 	.id_table = onboard_dev_id_table,
+ };
 -- 
 2.56.0
 
