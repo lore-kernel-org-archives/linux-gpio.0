@@ -1,62 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794139897;
-	b=dilR7BXl6jFCkNNrts0HTd95MpbnGnK+2Ew3+8jvEHrazFICp3mKWcqilCex4FK6i2cD
-	 n+8+N+v1IQYS218RjW35PwVFxcHBeh7029qp9akJkbfYoi5+96xsx/4Mex9MRSegx1+Sr
-	 hb2eG+rFYlPrWKZJmVz+Os2IbtIaeC3HuCeZLRfUWXEJdEyPQ0/Z2fd9OemZal6MLJQ1G
-	 aHxR/0VpnCsbeiFvFKuUWPO86XPn9MxWA7pRjkIyBxQdPnCB8bk6mlIbb1xVyid38juYK
-	 dybpdB9VRRErpNaWmf0wbYmeZCrY66CQI8+4n/0uX8XOTCtQw+nYuYvxSscx2ot48FA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794139897;
-	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
-	 In-Reply-To:References:X-sashiko-severity:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version;
-	bh=S53t+YVv3ElnijbCvjTcj9y1Ev0v2nk/Dmj5oB/Gyio=;
-	b=AniSZKZ+5FdolvprXdKCZcnT70wFlYULuWO4BFNwnA1KztDdtZ1llJGkmYmfvsp3IXZu
-	 SWcvrgQuETVu8ct3HxjBJG9iTY4BY/ASqwG2KbZ4UJZFaeYRYmT9/bFh3fMfIJG5WdYOk
-	 SZLYFWXvn9ZfhgseLkXtT57YccX4oBwd8IR5RicO2c/OuoOrViHYUErXNNuLP6Rvre35H
-	 29Nhwt6aA+eaHLDZ14LtpkZnBQYUAwyWOG6kUMlffz12x22txDBstHIfq07IV0nyOouzi
-	 lFuzUdwh1aJy0bd0h/aDmV0piIF7y/n675qmcYXr0Ys93Jh/J6qlscNjdDDYfFGDgeg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nR5kpjUT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.180
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794145267;
+	b=kEbLN8exO7TVu1eVrEmCkm2NJLg8CeJGJhB4TEyBtpDIuyFQUvlIdLUILSgcOgT/d72o
+	 jkP/hWWRMqiWOpA6m9ImJZk+T4eqnmX2FkoCsaRw8ffB2vqIepJIyF+VLjihPBB6NWF8j
+	 HdbhRA5o6Svbm91dyhsM3OD7jyaOfrQGuWmIdhalj6d7jh9SVkmybyhv96iAE61G37d78
+	 FO1yuUTT6yN8h/9IX0Yc2AEpaxIR3sbDH1RDBFtHPidEmHiQPkqD/gqMWOY605CtdjdWy
+	 o3p8ec6yRHFJcEA9BXz8Eu7SiqTQFwnCcxpKx98QI/zypImyvrag/OXvPfDeDgmodVw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794145267;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=LCOeMKTokO+IsyFo/KH4xhEDHzKKObBmSarGf98ko18=;
+	b=zHdK/3ZZ1PoqFZlFTMIxl/t9c6VLyUcjtRRGGBgfYJ1OBrmlVwgfzwY+bCH78ej6L55D
+	 FSz5Y7j0IF6J1+g4w3KkOvWd6BCzKfbbv2KYw6wFtGbE6Yf5UnYIPkA6WlGgTEPiEBlT9
+	 0/nKIeHPKkW1sXmJEIRyJ99pAdfpYJz+YGTQKEeJiaDlZ1vZ4NQtv7dVfNR7n0cvqNNpf
+	 p8EV302kJpqIo4urHrROOrGrNI0M7PqdqmuMuQ2OD+rxdpwawpIk4T/GxnIxKKQL9Z2zc
+	 44kitaXtXzyZ0kw8ltEF7GzHd7i/mMwjzn+UMx2XbBZr+8Y4FFi2SDe3cY9d9l+5RLQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=gS4IyV05;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.180
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0E6606A31C;
-	Sun,  8 Nov 2026 12:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E259606A31C
+	for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2026 13:41:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E259606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nR5kpjUT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB93E1F0089F;
-	Sun,  8 Nov 2026 12:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794139897;
-	bh=S53t+YVv3ElnijbCvjTcj9y1Ev0v2nk/Dmj5oB/Gyio=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=nR5kpjUT4Wz2G43xQ1mhvZSmnOy/blyN/ZgcgtUTv0fvfpnkeB9l1bihpYRrBnqIN
-	 USRotrf/P2EZ3gn3upJextTqLcr4Wgen45hlWDHi9gqqQfRX6TqZUwR68EofUTEupk
-	 X1+mJMyXXU3+sB5szdefkIEjWMK8Fsxa3AA+3oA6lPAdo0/iEfedMfoBQgPiTZdN+o
-	 RNnVsvYw24rZWP0Rh59U2g/LuiT7umvllk0MVqLqC5JIGwPS9Qedi30L4hhTYdXT5U
-	 9AA/kiYT3LrD7CYre4bv9aB/M0WsYYWnWY8wvUzS9k+uxXRmHTktzYpKQiRyp4yjhH
-	 8wl9nRbpc1WiQ==
-Subject: Re: [PATCH 5/5] ARM: mxs: add EVAchargeSE board support
-From: netdev-bot+sashiko@kernel.org
-To: wahrenst@gmx.net
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linusw@kernel.org, brgl@kernel.org, Frank.Li@nxp.com, vkoul@kernel.org,
- mkl@pengutronix.de, neil.armstrong@linaro.org, mailhol@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- mani@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-can@vger.kernel.org, linux-phy@lists.infradead.org, kuba@kernel.org
-Date: Sun, 08 Nov 2026 12:11:35 +0000
-Message-ID: <179413989528.488853.11075194967877927671@kernel.org>
-In-Reply-To: <20261106230746.21954-6-wahrenst@gmx.net>
-References: <20261106230746.21954-6-wahrenst@gmx.net>
-X-sashiko-severity: Medium
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=gS4IyV05
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5ec20398b05so51919e0c.1
+        for <linux-gpio@vger.kernel.org>; Sun, 08 Nov 2026 05:41:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794145266; cv=none;
+        d=google.com; s=arc-20260327;
+        b=YAN6ptL52EwaF6A+8GO1y6/fVZ+Qeo5aFeNsQkLstcsoKrhVjlVSif4HhDEwGh6966
+         IfDrPWBOv51k78Zy80d8n6oXnlpDNsOFnaYP6s6lXrKSFXU/+EQth9OQLMRL2FghBqMx
+         CBIFhEuLGSePQIB4rlXv9/06R72FhCVDd2iqV+gixCawmhuylgrt36uF0zJ2BrQw29y8
+         xPULOmpAgtN3+AilLfp2HVPQT736nHPabmktqlsOgH0TRa+WAb7FEoJrLej2oxuqqO77
+         IHGK5pwHGNDEuWASn0zwci7Wij1BVpoEgK+9u4IOcDWapmLUyHp/qGMCzU7qpm77At4d
+         LhRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LCOeMKTokO+IsyFo/KH4xhEDHzKKObBmSarGf98ko18=;
+        fh=axeIY0P9xy/+iESOmzqNtrwVEyZyTZBofAC1SV8ue9w=;
+        b=jd61Ji7dsZPjjWeKV5AYi3flYP8l25bWKcDjbEKKHYTHX+tFMqpvqqXoqzenZ64D22
+         FdbYN9UmkP9jxb7H/9buzRtty2nxP5kovKSzbhQx4EXb04Wg2yEDCRkyFq5qAAXf8TxL
+         +5gsFZTfbNzE75XJTQL286LqaWDVy8TS9p5eRmAs64WzjUN+/rvfFNOyGrb4ruMk082u
+         B4bcY8vCUHwB9iV5iVFL2UFD4P1oocNJA9lBUQK4V27Zf75hovmFxU19pTvZ6IMTIOfE
+         CFH27C2h1VA/TCuu/o49iAiO7sRSEtHPu38CiKSWXztOuLxro8c8kBe1CoHRAOW+Tpa9
+         H5+A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1794145266; x=1794750066; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=LCOeMKTokO+IsyFo/KH4xhEDHzKKObBmSarGf98ko18=;
+        b=gS4IyV05VkDQCzcaj0cH60rzqPOTwC6Ek9YTcFN0sKygzYdNCgqvPCQ+PjGLj+iaOf
+         Q49i8VsT53KXbBrEVbHw8jqpLi6ICZGlAi40SrXglC2l0oHF9f7r7Sh40F5tmhr5L0Kp
+         TvoLYWozlenwobuTVNR00Mwp41dmm0+/wMs4HJnAIiNhX09lW/0VOL5l7Zzc+pUeBuCB
+         gc4bkxR2Xli2wgfF7vqkseoE3XpxzWbNuNOEUCFyVz6YYj+nfoD5DHiRq1I8sIcLfHz9
+         XGYsSx4bxvnSz49ljaRWXMOW7wkrHsGJmqpO8QWi/QqUGroAV0QTVRQUlt1v7yzVBofZ
+         3RYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794145266; x=1794750066;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=LCOeMKTokO+IsyFo/KH4xhEDHzKKObBmSarGf98ko18=;
+        b=aJ1jYthTPBaHRfbf8NGSPg1zwHCnGbNXA7eqDzzBZzaUpx+uq0WxMixrOVQ8G1XpTh
+         SoX2UNwcEPFp561hORdtdHw+TGabwVxs0aq+StKKeUu6rHvi08sJ7E3vocj6GM/EMWr/
+         wisB6Hmx3eyhO77ItdRZgYtb9AweIVVtoaKr24DSxFodHkjq9LHmWrt55YYgr/Uls4jZ
+         wvE8MRUzYoQjeh3JCBiTujHP8yfH5uh9fdA5KJXcRZeRcmz92Wp+OqHUHXUUUq/pHvmC
+         xPndZQQ79an5GtZTBnsRh2ZNaOUMUwUC+rsefF0EZgSNF6kW1utEbO854t+Yt8MSE3eT
+         ctMw==
+X-Forwarded-Encrypted: i=1; AL+hErGimCpwwr+eEuHHafZBKjhnvyNfMi5e3darsgUQoEiMG96kxX4SvZeIMk6m6JbctOcOXVzgGgIBKOxs@vger.kernel.org
+X-Gm-Message-State: APuU4Z/m9owDwLxug66gOwr0IZ/gI1LmEj0UKUQBuBsEO+jh7wBVxqQT
+	S6MEHSmvZ67q4TjuwJ3iyWr1Onuv21mGmbdHWKmhlAkRAw0aHhl5fWmGojShhCBa9/z2CaYt10p
+	GobPvb5cYddyGQ7sfRz73GGYI7YzNJ5vitvY5ddE=
+X-Gm-Gg: AYBFou2e4cl0sHsXQK4Svv2j/kDQOEYnZuyCLnflGGY8KpPQbmtGUTYrAfD54PmQIxZ
+	K4oBmBfARiQD2PBjn79xWd4/mM9HAqqyXLDZKkQBcAcjbTXudynSBzDw1p9ZgccNb8vQLVfWZLH
+	x9Jq1x80MHX0F78Gj0yg5d+vpuO9o1L6D2eFk5f6YNaoF/tG7JK5Iz2Zf3kqIAv0MNqEcXm4WJk
+	aDdh0m6uouGvb9nw3ZJKOo+rEjFNZTfRLrWHXIH7zPG/GQD99PD7/dy8/xUc6oy8f/tOhT1omVM
+	1fOEkKjazZZ4lDFhNxAB7QIDMKvAHJmg1eFnouU9fzIqP29XQ08ok1uyR6Mkv1/qHWTTnQu5VJp
+	9BLb6aNeDBYHP7sWp/714paLLCT0OcQeCJFP1M2RFI7NXDEYJR/WWr9JSOpUXGQiPy5Y22lUGhr
+	LCpA==
+X-Received: by 2002:a05:6122:e22f:b0:5ea:9843:fc3e with SMTP id
+ 71dfb90a1353d-5ece73577e2mr520167e0c.19.1794145265452; Sun, 08 Nov 2026
+ 05:41:05 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,154 +105,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+References: <20260928063824.1386524-1-morbo@google.com> <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
+ <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com>
+ <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
+ <asNuMzqz3G-gmIiD@google.com> <CAGG=3QV1eLy-eAfi3Q49qwMw_Yw-BJ1tmd3J=SLJB_qWrx4bNg@mail.gmail.com>
+ <CAD++jLmR3hmEYN+-YCAcNq_0Zk0=PijS9jhGaMppkNhvbs90JQ@mail.gmail.com> <CAGG=3QXRPh=3rYyEHT0kTzDZ4omeHOjmN3OZGy=5hupday7jyg@mail.gmail.com>
+In-Reply-To: <CAGG=3QXRPh=3rYyEHT0kTzDZ4omeHOjmN3OZGy=5hupday7jyg@mail.gmail.com>
+From: Bill Wendling <morbo@google.com>
+Date: Sun, 8 Nov 2026 05:40:48 -0800
+X-Gm-Features: AclHuK99orI-zbieegQi11J3FkK91V4jpIniTiB-SkdXEhfbglSkI_1dZl_-EBU
+Message-ID: <CAGG=3QVi4ZrxRPT=9T6jHms3q6n+nTECPn4ybiy3CU7Js_U-Fw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
+To: Linus Walleij <linusw@kernel.org>
+Cc: Justin Stitt <justinstitt@google.com>, Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	codemender-patching+linux@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issue(s) to consider.
+On Thu, Oct 8, 2026 at 1:18=E2=80=AFPM Bill Wendling <morbo@google.com> wro=
+te:
+>
+> On Wed, Oct 7, 2026 at 4:19=E2=80=AFAM Linus Walleij <linusw@kernel.org> =
+wrote:
+> >
+> > On Mon, Oct 5, 2026 at 12:26=E2=80=AFPM Bill Wendling <morbo@google.com=
+> wrote:
+> >
+> > > I sent a patch to add `__NO_COUNTED_BY` AND `__NO_COUNTED_BY_PTR`
+> > > macros to prevent this. They're similar to `__NO_FORTIFY`.
+> > >
+> > > https://lore.kernel.org/all/20261005102518.2400984-1-morbo@google.com=
+/
+> >
+> > I see you are hashing this out with the right people, thanks for
+> > going the extra mile and fixing this properly!
+> >
+> Always! :-)
+>
+> I'll ping this thread once we get the problem solved.
+>
+Hi Linus,
 
-Critical: 0 · High: 0 · Medium: 1 · Low: 1
+Kees' patch made it in and the original patch now builds. PTAL.
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
-
-- [Medium] The ethernet-phy@0 node in
-  arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts (an SMSC LAN87xx-class…
-- [Low] The patch only adds
-  arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts and a dtb entry in…
-
---
-
-ARM: mxs: add EVAchargeSE board support
-
-This adds a devicetree for the chargebyte EVAcharge SE. It is an i.MX28
-based ISO 15118 controller for EV charging stations. The DTS enables eMMC,
-the debug UART, Ethernet, USB host, QCA7000 powerline over SPI, CAN and the
-board LEDs.
-
-Link: https://chargebyte.com/products/controllers-modules/evse-controllers/evacharge-se
-
-> ARM: mxs: add EVAchargeSE board support
-
-[Severity: Low]
-This isn't a bug, but the patch only touches arch/arm/boot/dts/nxp/mxs/.
-Should the subject use the dts prefix, for example "ARM: dts: mxs: Add
-chargebyte EVAcharge SE board"? The previous patch in this series, "ARM:
-dts: imx28: add alternative pinmux for CAN1", already uses that form.
-
-The product name is also spelled three different ways:
-
-  subject:    "EVAchargeSE"
-  body:       "EVACharge SE is a ISO 15118 compliant controller ..."
-  DTS model:  model = "chargebyte EVAcharge SE";
-
-The dt-bindings patch "dt-bindings: arm: fsl: support chargebyte EVAcharge
-SE" uses "EVAcharge SE". Could the spelling be the same everywhere?
-
-> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts b/arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts
-> new file mode 100644
-> index 0000000000000..75ddde2264936
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts
-> @@ -0,0 +1,294 @@
-
-[ ... ]
-
-> +&mac0 {
-> +	phy-handle = <&ethphy>;
-> +	phy-mode = "rmii";
-> +	phy-supply = <&reg_3p3v>;
-> +	pinctrl-0 = <&mac0_pins_a &mac0_phy_reset_pin>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ethphy: ethernet-phy@0 {
-> +			compatible = "ethernet-phy-ieee802.3-c22";
-> +			reg = <0>;
-> +			clocks = <&clks 64>; /* enet_out */
-> +			interrupt-parent = <&gpio4>;
-> +			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +			max-speed = <100>;
-> +			pinctrl-0 = <&mac0_phy_int_pin>;
-> +			pinctrl-names = "default";
-> +			reset-assert-us = <500>;
-> +			reset-deassert-us = <500>;
-> +			reset-gpios = <&gpio4 13 GPIO_ACTIVE_LOW>;
-> +			smsc,disable-energy-detect;
-
-[Severity: Medium]
-Can the PHY ID be read here while the PHY is still held in reset?
-
-This node only has the generic c22 compatible, with no
-ethernet-phy-idXXXX.XXXX entry. So fwnode_mdiobus_register_phy() reads the
-ID over MDIO before phylib has requested the reset GPIO:
-
-drivers/net/mdio/fwnode_mdio.c:fwnode_mdiobus_register_phy() {
-    ...
-	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
-		phy = get_phy_device(bus, addr, is_c45);
-	else
-		phy = phy_device_create(bus, addr, phy_id, 0, NULL);
-    ...
-}
-
-The reset-gpios line is requested only after that, through this path:
-
-phy_device_register()
-  mdiobus_register_device()
-    mdio_device_register_reset()
-
-The reset is deasserted later still, in phy_probe().
-
-If nRST is low during the scan, the ID reads as all ones and
-get_phy_device() returns -ENODEV. __of_mdiobus_parse_phys() then just
-prints "MDIO device at address 0 is missing". The phy-handle in mac0 points
-at a PHY that was never registered, so Ethernet doesn't come up.
-
-One way to hit this is to unbind and rebind the FEC driver, or to reload a
-modular fec. On removal, phy_remove() and phy_device_remove() assert the
-reset before the GPIO is released:
-
-drivers/net/phy/phy_device.c:phy_device_remove() {
-    ...
-	/* Assert the reset signal */
-	phy_device_reset(phydev, 1);
-
-	mdiobus_unregister_device(&phydev->mdio);
-    ...
-}
-
-mdio_device_unregister_reset() then calls gpiod_put(), but the pin keeps
-driving low. The next scan finds the PHY still in reset.
-
-The same failure could happen at first boot if the bootloader leaves
-GPIO4_13 low. This DTS muxes that pad as GPIO with MXS_PULL_DISABLE.
-
-Documentation/devicetree/bindings/net/ethernet-phy.yaml covers this case.
-It says that if a PHY needs a particular reset sequence before its ID
-registers can be read, the compatible list "must contain an entry with the
-correct PHY ID".
-
-imx28-btt3.dtsi also has a LAN8720 with reset-gpios, and it does this:
-
-	/* LAN8720Ai - PHY ID */
-	compatible = "ethernet-phy-id0007.c0f0","ethernet-phy-ieee802.3-c22";
-
-Could this node get an explicit ethernet-phy-id compatible too? The
-smsc,disable-energy-detect property suggests an SMSC PHY, and the ID would
-need to match the part fitted on this board.
-
-> +		};
-> +	};
-> +};
-
-[ ... ]
-
--- 
-Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261106230746.21954-1-wahrenst%40gmx.net
+-bw
