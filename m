@@ -1,57 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=78.133.224.34
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794132935;
-	b=szQQKaPBhB1Q40442p8s+gDAw06SYCc7Qmjl7yc77gzytDmYJGckQ8Ang0NNHLCeYzHH
-	 4/KWyR+AITbJ3KpFDz8Igu+Isc7GAPzweTLmAvp/5qb6FZsOG9ywDpm8cdyDRm16nSv2y
-	 zR5kSZIiv9PN6mvDHniCVbqN7M/xXzr4jIaCqbHlGVgusQxaLJlaQuH6Pfr3Yf23s60yK
-	 bng5NCNS3oDpFGMsnCxKwqp3D4IdQkpn1y1mdbow7X5lmbK1Xp7ushTcTNxih4NB8yRIz
-	 A9kPqO2xDIr1eLHy4dugoCMW/O56IYJHVBLXnLMPFDGk/OG+PJ8kphnmk1khBIWm94g==
+	t=1794135955;
+	b=FNLKzjtJfU0OwB+y3P6zSGH8CkKHAPRUYlUxsW7Fku9tgZ1EK8QRO4bNb7VrvBRbr1MO
+	 SR7xJjxfObFEa+cGcXGkudA3bxS7xFEfw/fJzuI7lEzD6v8hfOp7uB3FCy0bqoabhuQeN
+	 8yzpHsK14+6w433UOzFrZ8XcM2USvQJWSekS2TMJGJlSL+WRxUm+R2ukzdvQu6byuWOfX
+	 6D/lZFm4UuDPrAF1j7C/QK4S9Zlsf4v0qWF/4QDKBWKg4FzAmW1tNl8MI1VgOxqkQORm0
+	 EUbDxXVevd0/yS1OmtUPNhA+ef+J7U3d9JUQaSE2tKuwZ0xTyrHseAuW+Mk5xUUNyVw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794132935;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=YFCzt/Vwe6pZRI0k5Xr+pQiYfwueTGjDA0wz5bCB6U8=;
-	b=shzL4rQlfQYEUJ9yscRpbyw5ZXdzJ6xg1jjCza41RRrGwC3YQ9SDdXRIP9WaUOegBV7V
-	 9kfK9wYq8vqdVZHV/IIwnFicjLi8ku72PKd9wTPc561Gf87sUgfhvlslPDp4YO0Iph2lR
-	 uK6W2qBgd9JdHxWJDfbsJjeqjzQBfx9Bp+FQzTY3T4KZDCVrjK1FLwucaq3BErSDa029k
-	 6vuzJVdC/pfpvveliHakEaG5C/biWAu1cE3Lt6xRojcs2XEbZTp9oYyA4zW6yVT5Fdj4o
-	 F8o9k+XKsz2GtjuP0G9n196eiH6C0w71mrxtzxS8VWjQXWFyCR/gQie+h8SQvwQYJNg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794135955;
+	h=DMARC-Filter:Received:Received:Date:From:To:cc:Subject:In-Reply-To:
+	 Message-ID:References:User-Agent:MIME-Version:Content-Type;
+	bh=3DMCEU9uJLN9UYqXvXMsQsanZjfeIlMfMgFvG1PBcwc=;
+	b=aUVv7ptWxPLo/R2ZOzvHydb/WHfQ7HDdnp2hBsuuMTJMGq6Y7Upo2KNzZ8htHpcVBfpd
+	 lYmIfEUpWTGO/U+ops3Y9ALHVeQAwZCXM8avMFSHrt6+u5gK4gBEGYUOZ9Wmju78Q8kp/
+	 jGI0OovpnHswk1CN0Yy27Ybru473BH13x74nDNOi76mCZrJ04Alxq6B+Ev33uD8hCGKmK
+	 UtOQ8fKtLEYtLmhfewSNdiW4VxU5UDrHV3RGnmzPVDfpWDbGlWnqKOXHdo9jPKhBH1t5n
+	 wUer8dGhWxISq5d8Ep0e9dyhZ+ehbi0/8pIr8hTFTZSjnjfgRjc8yPZ0+EvYeFNAqmg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T7FmlKTE;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B74E606A31C;
-	Sun,  8 Nov 2026 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T7FmlKTE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12601F0089F;
-	Sun,  8 Nov 2026 10:15:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794132935;
-	bh=YFCzt/Vwe6pZRI0k5Xr+pQiYfwueTGjDA0wz5bCB6U8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=T7FmlKTEtQK21eV24yodsMn18pm37NTEsMUf9Cp2Y3Gz0WuZUOVRM8ObTu4wJc5vk
-	 9ojiQVHnWxECO2hZLJZYbx5fF6OYrU5ogCa7r8Emn+jmdkLdMRZxxNvIQbisRfvVoM
-	 k3+T/Nao7GmID7Z0yXW8zgVVB5ADdIi6uId/U/goCNk9E+gDPZgdpXuMkKBMI0CLBk
-	 gocsGI5DqJ3Ybg2LbIyktyelJekS+8JmpJAyyYQ2o1ozJg/zyb5HDlbH+jf5TOwsBY
-	 VHJ4gh1JqfN+hrzbH8ma5FQHeypPYSUcGurVknyjuAqlRKDG4vsvAALnXNIvLtISm2
-	 f4af4ZE8AazSA==
-Message-ID: <sashiko-outbox-203680@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 5/5] arm64: dts: lx2160a: describe the pad muxes as
- the DCFG RCW override
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Vincent Jardin" <vjardin@free.fr>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org, Frank.Li@kernel.org
-In-Reply-To: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-5-5a0063f1da9e@free.fr>
-References: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-0-5a0063f1da9e@free.fr>
- <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-5-5a0063f1da9e@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 10:15:34 +0000
+	dmarc=none header.from=orcam.me.uk;
+	spf=none smtp.mailfrom=orcam.me.uk;
+	arc=none smtp.remote-ip=78.133.224.34
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB21606A31C;
+	Sun,  8 Nov 2026 11:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3FB21606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 7A12C92009E; Sun,  8 Nov 2026 12:05:51 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 73FC692009C;
+	Sun,  8 Nov 2026 11:05:51 +0000 (GMT)
+Date: Sun, 8 Nov 2026 11:05:51 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Alejandro Colomar <alx@kernel.org>
+cc: Alejandro Colomar <alx+linux-hardening@kernel.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, 
+    bartosz.golaszewski@oss.qualcomm.com, brgl@kernel.org, dakr@kernel.org, 
+    devicetree@vger.kernel.org, djrscally@gmail.com, 
+    driver-core@lists.linux.dev, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, 
+    johan@kernel.org, kees@kernel.org, laurent.pinchart@ideasonboard.com, 
+    lenb@kernel.org, linusw@kernel.org, linux-acpi@vger.kernel.org, 
+    linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, namhyung@kernel.org, rafael@kernel.org, 
+    robh@kernel.org, rostedt@goodmis.org, sakari.ailus@linux.intel.com, 
+    saravanak@kernel.org, schwab@linux-m68k.org, 
+    Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
+Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
+ str_has_prefix()
+In-Reply-To: <au7TvMP0YhW2e_oM@debian>
+Message-ID: <alpine.DEB.2.21.2611071115110.17804@angie.orcam.me.uk>
+References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org> <20261105125154.83478-1-geert@linux-m68k.org> <aux8LYQkGSNjCGHv@devuan> <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk> <au7TvMP0YhW2e_oM@debian>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,44 +62,49 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] arm64: dts: lx2160a: missing Fixes trailer for commit
-  8a1365c7bbc1
---
+On Sat, 7 Nov 2026, Alejandro Colomar wrote:
 
-commit 3777e1216f9485c20e69631bad60b9ee0a491582
-Author: Vincent Jardin <vjardin@free.fr>
+> Hi Maciej,
+> 
+> > Date: 2026-11-07 02:44:23+0000
+> > From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+> >
+> > On Thu, 5 Nov 2026, Alejandro Colomar wrote:
+> > 
+> > > Do you think strafterprefix() would be better?  Do you have any other
+> > > suggestions?
+> > 
+> >  FWIW strsuffix() seems an obvious choice to me.  After all what the API 
+> > does is request the string's suffix beyond the specified leading part.
+> 
+> Actually, strsuffix() is something else:
+> 
+> 	char *
+> 	strsuffix_(const char *str, const char *suffix)
+> 	{
+> 		ptrdiff_t  off;
+> 
+> 		off = strlen(str) - strlen(suffix);
+> 		if (off < 0)
+> 			return NULL;
+> 
+> 		if (!streq(str + off, suffix))
+> 			return NULL;
+> 
+> 		return str + off;
+> 	}
+> 
+> It finds the start of a suffix in a string.  That is:
+> 
+> 	strcmp(strsuffix("foobar", "bar"), "bar") == 0;
 
-> arm64: dts: lx2160a: describe the pad muxes as the DCFG RCW override
->
-> The pad muxes are fields of the RCW: read-only in RCWSR12..14, changed
-> at runtime through the override registers in the DCSR view of DCFG,
-> which read 0 until written.
->
-> pinctrl-single on those registers, since commit 8a1365c7bbc1
-> ("arm64: dts: lx2160a: add pinmux and i2c gpio to support bus recovery"),
-> clears every other field of the word with its first pin state:
-> a board whose RCW programs a non-zero pad mux loses those pads at the
-> first I2C probe.
->
-> Describe the pad mux as a child of the dcfg node, which gains its DCSR
-> view and, as on the LS1028A, the addressing of its children:
-> the child is at its RCWSR12 to RCWSR14 window, one group per RCW field,
-> one function per encoding, driven by fsl,lx2160a-rcw-pinmux using
-> fsl-guts. Labels and pin node names stay, so no consumer changes.
-> The pinctrl-single node goes.
->
-> Signed-off-by: Vincent Jardin <vjardin@free.fr>
+ Hmm, I'd have called that strskipto().  If that's not possible for some 
+reason (I can't see it used in Linux), then strskip() or strskipover() 
+could be used for this API.
 
-[Severity: Low]
-Since this fixes the pad mux clearing issue introduced by the
-pinctrl-single description, should this include a Fixes: trailer?
+ FWIW,
 
-  Fixes: 8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c gpio to sup=
-port bus recovery")
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261108-for-upstre=
-am-lx2160a-rcw-pinmux-v1-v3-0-5a0063f1da9e@free.fr?part=3D5
+  Maciej
