@@ -1,98 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794165948;
-	b=UJSi2N2q0bMAhekmaxtiO2fRFZzVDgEOOoUXpWdk6IEGQ/ntVnNrW9IqRgOpQUoVuj1h
-	 DpKNG4le2wc5+I9XXNpJyfA1l6eBhcYIbSPJ1S/63immuh91/N4Uy2U4Bv7wQwV6yswa+
-	 fVeR/dF+rrxaEFIao+M/gYpDEqaefYbfDDIxUHSiKFQcGCdPinA9OQTKluT9E5oHKbJV8
-	 PtNHzlOV82tA4kgrTGeSUXurYVoRPkpJ6LBm6Ie2MeNLFL0+lJ3M1FX1XmaI4ZJWEeL7n
-	 JDcMVOgAYu2PDNQGdNaiT6OvQ0/eP9/jCzBiGyRluDj9PyIH/YKFoXg5N1diDFTBtQg==
+	t=1794175678;
+	b=3VjR5HEhrNTl/MYbjcukd5R5kjZunOVoxIWtG0jYFmuNTrxw2l7k6GJiAnRowXo7bgJQ
+	 vwl41qQswBAgEYYgI6TU+iVpU1jOP/Djl5ebTIR1hGD/LAhTmvZcki/OM3mnnKVgIok/w
+	 UnqMYPS+A5mCkYoWOFsib3C2CCvNFa/ScK82BhE32VQGt2QD735hP6sZ20NRuYzQk8Wbf
+	 z373OEc6+m/FgBxHFuhj/QfdoDWghIno92jnpaK26eE68Xp2W3ibTvpGl2DF9syBiKK7U
+	 +saJuWhVGO2vbYQnEMBhAM+Lh3YoQYdmZkDskbLm1VYcOFOzgjKIDqjjO6czES+A+fg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794165948;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Content-Type:Date:Message-Id:To:Cc:Subject:From:Mime-Version:
-	 Content-Transfer-Encoding:X-Mailer:References:In-Reply-To;
-	bh=9TFlHze0xZHVHECFNAToGkMpUA7NwrSzUebXukclDxc=;
-	b=4b+f0OG24hLItHLDtNzbhJttDx5EVwfVy3WTeax/3HQHb3SwSS7fp4nNIZ6F4+b0UZ1K
-	 duBpBGN5fHqzsa8zabguNxYoGfRWtMqP+SgivmcHiUuE17rxFjnL68ZjvRSq3BhR4tDGh
-	 dE2V9jXx/6dHklWnvIf64NArw03S/9JkAsHuGibGS4diz540nrz7kkqy2zYBWEmIP8JxF
-	 0x7rJRipCnbELu1pz0U/zEvvOnW44DfDeZc8TbpJGrbFzUIQxhHDcRQ9o5MziGaFDMZJY
-	 UPzw78ADUBnqwlo/6rZ4owlQqYKlSfq0uDPF0xmkmk749klz8wqYuctGcmTa6NFjOtA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794175678;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=v0eejaiBFkeUZP6gkE2+qDOnCeE0Ygw6Yg4Ofv8gSs0=;
+	b=jRyFVl3jxStU7GiD+YV/dSnMfKnHYh5GKBB3QVS/vujC6AcQ3cRyQEDOXfo/D1qC0lA/
+	 Dqs03xbfm6Ztxz4P7BxqHoXz7ZuksbPnzwYKj0FbbUNWZic6kfESYdTqE5CTzzTRlzstc
+	 R6ITfHnLqCp1cRaTBjzEhi0sc2DsOx2wSnKrE8EbHbiaWXctKcquGdr1RBCfcZzujfPR2
+	 5OjFRaRIPT9z7X7KPCZsEf5yXa+WdbuP/1wm1JYyuvie7d7sgXB+1uS5jP3JCgDKgDuN2
+	 mKC/AGZUN0dzHUzLwZSEOHIMZ1HSmy0GuhLT5QrcFaDSd+5rjks9znD7oUrvDm6J2JQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
+	dmarc=none header.from=telaak.dev;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WSiv4TuA;
-	arc=none smtp.remote-ip=209.85.218.43
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	arc=none smtp.remote-ip=209.85.210.173
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B68606A322
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2026 19:25:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0B68606A322
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01121606A331
+	for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2026 22:07:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01121606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WSiv4TuA
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c49b431f022so38721766b.1
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Nov 2026 11:25:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794165946; x=1794770746; darn=vger.kernel.org;
-        h=in-reply-to:references:content-transfer-encoding:mime-version:from
-         :subject:cc:to:message-id:date:content-type:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=9TFlHze0xZHVHECFNAToGkMpUA7NwrSzUebXukclDxc=;
-        b=WSiv4TuApj5w4HZ50fhfgNst1yV6yzNn/XhgbsQuSgTm0D/HVCH4udeCvKUww6E+U0
-         D3N6gs7Usyy2COHjh1RqeQGWpr2skW+hn7epsen7I7xrqYqFTEdbosd+1UWyeCKmRshx
-         8JPu6ci7480u9eMj2XPPDmzzJcdd5rsQR33Z5a8L0no+54MDf6arQnvG6cwRzKOyQ/wf
-         8VnQG0sN7CnI5yvoG67OJ7bwbiRqH/j7Kqt3StBXm6UkhPd7HulEHPLx40qWowz+IA7y
-         Yj9eB5wyBSFmMzhXc2iYzgYS4Qh0XzHhq7n9ToLj7gD0BpKOWW80IVuoX8DQebPToFGZ
-         mPNg==
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8b5efadd183so113050b3a.1
+        for <linux-gpio@vger.kernel.org>; Sun, 08 Nov 2026 14:07:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794165946; x=1794770746;
-        h=in-reply-to:references:content-transfer-encoding:mime-version:from
-         :subject:cc:to:message-id:date:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9TFlHze0xZHVHECFNAToGkMpUA7NwrSzUebXukclDxc=;
-        b=qSVpH77sl5BwTz9f/7bKA7ApXiA3wCkok3CGjR79EvWOzdbJEYtWvN7e73idDvMHk7
-         1oaHH9uxg5eSyhywH48klM1e4iMsndJIzDzVN4+bg+j2yUlWRaNIESGUCmEdWp5zrFmg
-         S78ccxdxKW5l/HWZe+NOKKceD+i+bvtsRaCepHyl/dTQ0J1vO0LClec5Fgh1h/TXVYPu
-         9RvVpT8MKKoDSNaToLQipSoeRlyzobU6wpY0pdny+2dgTE5EE8+gPTnSzqJ7eS6a+B52
-         7oSj+e2+gO5Z6speWvMiIXzplpWJLEIqH4CkqrYGAwFITV3CCjwGd5Zfp7DhipqgLgWh
-         891w==
-X-Forwarded-Encrypted: i=1; AL+hErFrqc39nwCBk73Rby5VYPlxb0m/0iwVq3zipGe7+J3Q4XG9Quf92V3er+T2AgYv5MfZHsahVg/VoyeY@vger.kernel.org
-X-Gm-Message-State: APuU4Z+qZiEAeBbb2xU6iWbAVXv2IvVPnRxSY+gZrJFPqeVm+4p1WAwA
-	HSE0YVPBRufg8HrR6/ME4QA4FENQUDyzTUdCErbU7gzUj2akHWMEwFm3
-X-Gm-Gg: AYBFou0wBKentuKoLmuBWXXlzppe9Rz7A0gfcZHcYqWGPnb1V4WnHyU+4soXfJdtVwu
-	9eCoZRU2doJOC8hH5qHVjiEwdRXsNtXQcQPwPJt/fGZtQtpV8/Qen9vUqzw/pcq4uSH+SErm+JJ
-	jCoQa6DQBsySlddNrpNNQuBCtdfXp1LX3hXpRQQp1oYUCdkm2zoN/783fYh9X2GXtQil89o1wab
-	N8RzuxOmd62HsYybcqKFyb87244rVV7EN7ufXpBJHibkT+n8OMdMA++R9IUtcOZlsFxJ/a5au/+
-	BV/JSsFqM9ShUS9CxsuA6HT1UhT/1SF7edBzYdv32o59GYYqiZNOuFNzdXhoTq9rwM7eKfnVsGu
-	CWBBoTiuu00go01nr9zK+B8xDL/nCGzLb2AdBvMQLWumaN9YfKC/q0TK3agtcbmTX3vr1ujdqnD
-	yYk2Qpgw6GBV8PDUGQQ8jThc00h0j2DA1FlLQJ1ZZnoOAnbmszKqRwyYGzlHPqWsagM0Nl9Wkml
-	el0hcyj8BNUBEQ+108vxnAIDHvCkYTeO4p3LIJYoUXb4p3lf+C85w3ERsWmtQ5A8BKh4bDMzpTc
-	IyQ/GPe0J6HG+uQSXQfLe/Rxse5dlYkdyIbfd/FaUu5xFEoZqxuk0xpt
-X-Received: by 2002:a17:906:794f:b0:c34:83c0:b92b with SMTP id a640c23a62f3a-c4d6d522af9mr142299866b.23.1794165946088;
-        Sun, 08 Nov 2026 11:25:46 -0800 (PST)
-Received: from localhost ([163.245.50.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d6a998a5asm81036666b.72.2026.11.08.11.25.42
+        d=1e100.net; s=20260707; t=1794175677; x=1794780477;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=v0eejaiBFkeUZP6gkE2+qDOnCeE0Ygw6Yg4Ofv8gSs0=;
+        b=EQ58DX1soNEmllMdRBsdL7VlbUO2WgPv4kAsYkW3gJH1MXZzc82sNM6PnJ0WdBFwz7
+         uq2QDiLcSxrSwelImj0j4N2rg5HX17CLcm/oZfOylywFL/ooQrtI+kuGWpZheuJKYlOe
+         ss9/rwV4iQaXqaXYLK1UK4Fgqaxyk0rSquziSKzbN90Z3LxyosSCO/CiSu9epkW7Dclv
+         CYvZycZsHsMbkiM0zrAAMGF2Y7r0pyc+pMDgU/myT+wrYIHB0wZhpnki/qm+lFlOEZqm
+         yIBDUXLL3omhCYduGTB+MmEsmp+iTXmocQgnDID2HrX6596EY01oLX2/Xx1x/Yjhfhx6
+         XGOQ==
+X-Forwarded-Encrypted: i=1; AL+hErEBVhCwo2hGzptpJMYQMQDq9smyo3VVMBkGOoujgNsaNRx7SNUt2LfSUBResA94axRLJY/Anczfa1Tk@vger.kernel.org
+X-Gm-Message-State: APuU4Z+whDiLNodJTs1goc17tIn7E9j/JDqeha6iNsTz1uiqEFWXHB1N
+	2T3HHqIeKSu88p5MtOVOWvqbsLp4GfMyqLLzI7s5LmfCIT2oaGTNcWqG1b0m3AU1
+X-Gm-Gg: AYBFou22O3KevMOzMVyFyqDclO03Ps4DA8azjaiIIlSguH+FY0qU/v2Mgt2XdTSVUSS
+	gfX8Ge0NzDUmYVBG5Gw4lEGi374y8CI3BQh+Sgz/+j0ZE2nEZoDlHb1/tp7j2YxBLJFzuqjrjR4
+	a85x2l2DEf08NkHLMeJhi6281bV/rNlGHFwNJGoOl2iNhe41pp6MteO9FKitnSrDVGsIqH3I2Yd
+	tkb5oKm71Q40F5YQXifzxJh57sNnGhyqdqbBCXtfWk4hU88tMiDmsqEyAOq6CBqHCTxUeaC7u1/
+	4tfAE+hmctTT5QCpfnHPKQvkhmSy298n28SnQ+DInxAfFFWcByhP9pWPr8kO+NSkjvjBdGPGDXz
+	UaEq7tJwXbUpTOSP6Ma+/82OOFAhs6T5LkdhgJoETI3QtJmJznvswtRuOxXS8DdFGHRK2wXg+an
+	8MtvHn4p2iZdBg/UK9ZR76OEAbOdYlHM1J8iEN4FhLU9iv/jk+XQDU8jIIMaJiLSAmBNhAAxOJE
+	8OkIjxsjTkJgOZWwVPM8IcXfvTnEKR3cWDdZh3kNnX9qxLcnl+YZvr5+KbPWZXp0gsqzaKlnLju
+	ljYndggupfMP8/XPxTiZL2KvogXMvq3a6UdxJACM6+hV62zxluU1R9ZeDt28TNQUvNeqlYqJKSo
+	qvMzvVVADw+xrrEIm7ifJ3A4V2NRHV/LINKzm+1CjNGA=
+X-Received: by 2002:a05:6a21:7786:b0:3dd:a196:ffdb with SMTP id adf61e73a8af0-3eed3c5aaa4mr1517238637.43.1794175677343;
+        Sun, 08 Nov 2026 14:07:57 -0800 (PST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com. [74.125.82.174])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8b64a2e7b94sm700233b3a.57.2026.11.08.14.07.55
+        for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Nov 2026 11:25:45 -0800 (PST)
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 08 Nov 2026 22:25:41 +0300
-Message-Id: <DMQ2QUT58NN6.10MAQ6P7FML2K@gmail.com>
-To: <sashiko-reviews@lists.linux.dev>
-Cc: "Linus Walleij" <linusw@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Sean Wang" <sean.wang@kernel.org>, <linux-gpio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Add support for MT6895 pinctrl
-From: "Alexander Letuchiy" <asalde.le1@gmail.com>
+        Sun, 08 Nov 2026 14:07:56 -0800 (PST)
+Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-36a315ed211so320726eec.0
+        for <linux-gpio@vger.kernel.org>; Sun, 08 Nov 2026 14:07:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErH3CQvF1L/bJUs726kDCpWBnRlpkTD44g0VfW1Bb+ITzjz0QIidwJA7nyN8GE/MlnZzTxq0lkCWYzn4@vger.kernel.org
+X-Received: by 2002:a05:7301:1630:b0:36c:a1bc:6102 with SMTP id
+ 5a478bee46e88-37250ee43c8mr3901672eec.0.1794175675139; Sun, 08 Nov 2026
+ 14:07:55 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,19 +80,27 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
-References: <20261108-pinctrl-mt6895-v1-0-f704c443b31a@gmail.com>
- <20261108-pinctrl-mt6895-v1-2-f704c443b31a@gmail.com>
- <sashiko-outbox-203909@kernel.org>
-In-Reply-To: <sashiko-outbox-203909@kernel.org>
+MIME-Version: 1.0
+References: <20261104-sf19a2890-pinctrl-v1-0-4bb83afdbacf@telaak.dev>
+ <20261104-sf19a2890-pinctrl-v1-2-4bb83afdbacf@telaak.dev> <au4HsW2aMYKyMspF@monoceros>
+In-Reply-To: <au4HsW2aMYKyMspF@monoceros>
+From: Joseph Telaak <joseph@telaak.dev>
+Date: Sun, 8 Nov 2026 17:07:43 -0500
+X-Gmail-Original-Message-ID: <CAPY4CJ4O=_44w52Ci94wjmbgZfFKp15U1o3t5rodC2C6YB7CnA@mail.gmail.com>
+X-Gm-Features: AclHuK-O2KZKYumWb4i3a2AuPWKubDs7etlgwM1RvUJeTI6jva3RbnRyGORGlNc
+Message-ID: <CAPY4CJ4O=_44w52Ci94wjmbgZfFKp15U1o3t5rodC2C6YB7CnA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: Add Siflower SF19A2890 pin controller driver
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Chuanhong Guo <gch981213@gmail.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun Nov 8, 2026 at 9:39 PM MSK, sashiko-bot wrote:
-> [Severity: Medium]
-> Can mtk_pinconf_bias_get_combo() and mtk_pinconf_bias_set_combo() read
-> past the end of mt6895_pull_type[]?
+> Please don't use <linux/mod_devicetable.h>. <linux/platform_device.h> is
+> good enough to provide of_device_id already. If you insist on full iwyu,
+> please use <linux/device-id/of.h> instead.
 
-Right, mtk_pinconf_get() reaches pull_type[] for the virtual EINT pins
-227-246 via debugfs pinconf-pins. I will pad mt6895_pull_type[] with
-zero entries in v2.
+v2 will include <linux/device-id/of.h> instead.
+
+Thanks for the review.
