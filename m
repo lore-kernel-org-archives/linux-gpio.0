@@ -1,74 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.27.42.1
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794158654;
-	b=m+UBDCqwCor6Hh2WCv92qHp2O/ZAzlnVAHRrZdcyruxzG7O1RtApAEjLEas/TFqi71Ci
-	 9zAN3X1U3V8FI7jzrbnZBIn9r5BPWdlUL6mwuFfsQmg3gKEzkC0u4lCBfwzZC/f+4WZxJ
-	 ggcnlZOuP7Pa+iIfr7XZgtU07pJ08U4w2oBHssp9WKGG1aVBfYoWcSYN481Pxl3doVIQh
-	 WtFXuwf1twVNSbqSYU1VhkffyarwTqdfk7eAZ4b2wFl+IjOk7AYR/ywBaSrEqp0uYRsAB
-	 bjADzYcZ/Ijtbe8QchNIzEpwi21av8AM11qonYjWx4+Mh5SbOPtZMckubuScWZzXbVw==
+	t=1794161451;
+	b=emkK6oaTyHaG48UT+lrg0ZMuDs/jZT1RYowWnwuuC9yo2tFbKuveMRit5nU4/1OnaKRd
+	 LZ+Io9baWskdrQ1k74BmipLl5luD/yTjO5MTHPfpBawF6E8/YdWdim6Y8wWyuQRqyHNRc
+	 O6QnhQ6syzC3v+8Rg/xsl/L6Paj7U6M5Qw1dRN8ziXmOdMf7kR3UcMbwKZMmUDTAnmofw
+	 eXtWaU6hltifUmyOFky0WBfS3eyo8hoscrxEfma6L7FJP7zhH28D2rE5onp4Pf4ih0dLc
+	 SwmwakBE4jtjyrkXEEEgPXzJLgDqxc0iFA00MgMT/kcsOIhb5f4sRKhdZbbGwuqVqCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794158654;
-	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
-	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:In-Reply-To:References:
-	 Date:X-OQ-MSGID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=HbNpAbrZVEZQTlmCEV2LYqZfmhBEuxDyUHjVFrUu/Dw=;
-	b=ZfALoIpSRVAuyuHIiRprGByb19LKEC1FmNWD0hkyRNmOTDyRfzeU6ROp/4CFL1OFP9ya
-	 YNkAkUX6/Daal8jBGsK7FFaxyP3tOr/YIu9U9pJE60zh6UwtQHHUVxI1q7C4gz6i0svRk
-	 djGoAZfZQ1BzUbPMKy+SsavupYyVHi8lTHggA2hUyPdZcjmu+qBZRe214yZANuwvJ5sAM
-	 dPyoftbTidJNM/Gw/GNhUOXgSn9C3L7kL4yqhFCkUUGaQpIhsNei87owbNmDRvKLl4d50
-	 BFVF+K9qCkh3HFYbJuclKsOUzAvHSsN4ZIfA3s5SIa+7/+B5Ix8/6T7GrYoeh6LYTvg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794161451;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=9kpeqjW6Rq5T6EuMnyBvBxaIaXXg4raX5/17KI7MqmE=;
+	b=KNa/PV5ye2rUxcby2OGES0E7XD2/0vxlI1txj4aJI23KtAApXe//z0ldoPgckyUBKKMl
+	 tHXNMD4nYBRJmpakc92fBzRhZ8x34o72mgHAgmOre1JhfUTtkXQWcK02KPrl5FsgrMDLb
+	 1I5JnrkOcFOoHnyYB7pqM3O3XNDne4rTEHdxYVuj6G2wG0ff42wuoTtMNlotBqz0tRboD
+	 p5MOlrRrS9sUEP5+bHUW8UNWws+P+A3gS5XfN834sUrYb8d3nz45kRl4ZqRMQZ//qxg4/
+	 aX35H6USgqS1+sRAMNIbc+7Ver7sPsU4qDPHtm0ZAyJAyyqE7ZM6Dbqt0WiYE90HMcQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=MR9U6oZx;
-	arc=none smtp.remote-ip=203.205.221.190
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=free.fr;
+	spf=pass smtp.mailfrom=free.fr;
+	dkim=pass header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=VUrGsfpx;
+	arc=none smtp.remote-ip=212.27.42.1
+Received: from smtp1-g21.free.fr (smtp1-g21.free.fr [212.27.42.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEADD606A33E;
-	Sun,  8 Nov 2026 17:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEADD606A33E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81596606A31C;
+	Sun,  8 Nov 2026 18:10:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 81596606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=MR9U6oZx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1794158645; bh=HbNpAbrZVEZQTlmCEV2LYqZfmhBEuxDyUHjVFrUu/Dw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=MR9U6oZx6DgD50LJX+pBj+h2vxoP4KD6JyvS48TlLtKqYMyEQnieoTzhy6Dfpf6RY
-	 oe+OIqLytOOmkqO8KmVuqMzYce58iHCn6A8jh0emO3skA+Y5tNFYz9+U3HcGO/IOFV
-	 ZYIqRGWgbKBLT2vG37EN3paHTCQmocNk6SgBIXOQ=
-Received: from [127.0.1.1] ([5.195.0.150])
-	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
-	id 5F906C5D; Mon, 09 Nov 2026 01:23:57 +0800
-X-QQ-mid: xmsmtpt1794158641tzukiaruw
-Message-ID: <tencent_A1BF4495D1F5E54524907BBA2A4ED480FC08@qq.com>
-X-QQ-XMAILINFO: NQJsl5QovJ//diN/Mrg6brYvtP6sEdsD1yFOwDkqqSRL/drc/dnK8D7SLPoCcc
-	 2/QWI5q1buzhzfLlCn9m90dyi5SBT5N7Ws1U8tCwG8XKZJ1amKZprNexE1TTvvyl1jR0cflLc6nf
-	 7gj4432lrkVFkjTXfSdxvoC5yrYuHXW0JvUWs813mUoBodgk6a33cvmNeGJrHS/EwE347tTKlXSi
-	 27fXEQ2tCwCLSq9mEO/H2LQmxCwBGJ0RSd8mqOadHc5neu6VeIFm0MLqVCUkyPvbQxWK5J7WuEnM
-	 nvBQvWCyQNj2vgxuyIvhjz7dev6Muwj+aa8ZMJaAJ9uI2QyaDvEe8dKxk7xJjroDphqK3io/Nr+r
-	 k0jD8bN7Qv3yVOgmQt6zBgDmCFevr77tiSYTzimWTaxI8wnFoG06dr7nKHhy7iNTLOhVkQvudDz/
-	 hLUwbbavm6BRzdYUaDMhb6KVZzV5EQGaW1WxuqyCy5p7ZswPvHjH7Scv40qL2xThO3ND7aQmd+N+
-	 J6ais06FoCePQOpbQ92v9LpwHstJAnOh6MbWzH2aA/Kepp7X3oSjSXC7V/3YlkqJlWY3MvIQbbWU
-	 NgYjLi3fDfr0UUUpZHeDmYbi/mmVVp5XbLqhKrqvrIrS9M8SKj7sA74aPzdV2R5ximA+M0tPjl6n
-	 jHCozvAAEoijsWwdVzfk5QaxK8sPier0nczUGA49UEaDiAPh59qTxeiA9ct1+gz5jU7TXiUQOnDi
-	 hIZwGIQ9NTu7FlyIUZQAVerLWAQOo/ZERADw+rkw6o1/iH+CnuuyVaQTvCsjPVVVosuLHo9uaPI2
-	 0vUCtdcfbSmQDu7JT5UIa6aR9AqDu2xtGtheKnMcnOxLX5SKHQ2EERc0A8tGP6nnaGEcAYLCOJr5
-	 /QUQIO6tzBiFQy9rDYKCeWZSO8qg4tjdYA2c68S7y1WpxEf1vxtGk3mEGtxPsyJAOOktiUErJaSZ
-	 Zk3CFeuvEnhqDk49wYG/E3ihW9F51idglGPvdXO4mPqzR0eCvdtpJX+uUBeHM040mFsIfmREotxe
-	 QLEU+9jVhzGtckxvE+n2qmjFdgL5CQcsVN78RlRMcl2AxDVGntNENdLvqVW8k=
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
-From: Jiawen Liu <1298662399@qq.com>
-To: Andreas Kemnade <andreas@kemnade.info>, Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
-In-Reply-To: <20260820154323.0a7c7929@kemnade.info>
-References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com> <20260820154323.0a7c7929@kemnade.info>
-Date: Sun, 08 Nov 2026 21:22:12 +0400
-X-OQ-MSGID: <179415853265.5.12140574398809517213@qq.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=VUrGsfpx
+Received: from L30177.local (unknown [IPv6:2a01:e0a:ac2:22b0:41ba:50da:6236:7eea])
+	(Authenticated sender: vjardin@free.fr)
+	by smtp1-g21.free.fr (Postfix) with ESMTPSA id 64BFDB0053D;
+	Sun,  8 Nov 2026 19:10:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
+	s=smtp-20201208; t=1794161441;
+	bh=K2BtXWkziekFSvI6P/+ngyBc85GfadAb6SoVxmYMKR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VUrGsfpxubS68UUI94ZjHtq6oxoURSYR2WEbuBDjXXS8selYUAOAAnFDreFv//djV
+	 TexaJ9Af2Bx+w6732lgKV0Vk7rfs4HLXdsEe9J3NN0a8BxuPgYrmuSbx4ocFtJKxW1
+	 sEH7xboATxifc6o4010ZHj6Xqrt0+ZcHpqY7gCx+uFk+8qecBEXuwGJqpy9rqiRbAx
+	 3g9XCltJrgSBCPhth1Dtt4iYV9w1SRAoAvPbTJeeYlgGvS5cRVCgW93zPpDR4ej9QQ
+	 /arTIReb2WgSzKrcEFg/Z8dLsvFOBOiEZe+tj0U2+l96IkfpANyX6gA13vCR6UgNoW
+	 QpeRRKAkAeGlw==
+Date: Sun, 8 Nov 2026 19:10:31 +0100
+From: Vincent Jardin <vjardin@free.fr>
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org,
+	Frank.Li@kernel.org
+Subject: Re: [PATCH v3 5/5] arm64: dts: lx2160a: describe the pad muxes as
+ the DCFG RCW override
+Message-ID: <avC7Fz2UstYb5r24@L30177.local>
+References: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-5-5a0063f1da9e@free.fr>
+ <sashiko-outbox-203680@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -78,17 +67,22 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <sashiko-outbox-203680@kernel.org>
 
-Hi Andreas, Markus,
+Hi M. Bot,
 
-Thanks for looking into this. I don't have evidence that the debounce clock
-in an existing configuration has a prepare operation that can fail, so my
-original description should not imply an observed failure.
+> [Severity: Low]
+> Since this fixes the pad mux clearing issue introduced by the
+> pinctrl-single description, should this include a Fixes: trailer?
+>
+>   Fixes: 8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c gpio to support bus recovery")
 
-I'll check the clock providers and the devm_clk_get_prepared() option before
-deciding whether an update is warranted, including whether a stable tag
-would be appropriate.
+No, it is on purpose.
+
+This patch is not standalone: it needs the binding, the fsl-guts
+override and the pad-mux driver of 1 to 4. 
 
 Thanks,
-Jiawen
-
+  Vincent
