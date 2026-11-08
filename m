@@ -1,55 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.190
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794153200;
-	b=mxlvYltJGHZDQYinT9d0wrpc3HrZ33GKptJ6czv6fSSP0feqv+XSVPoHvhW0V45LDd5F
-	 nRB5jaIUODx6sRUwCuaL7F6601LjVVrz/zBw3LTypj7OpfwUiPcsT/vmU93pNt+uAJOkw
-	 Re9kT81p6rvtm1o4PgpaDot8OeTDUvHKD2HQ/C6UJRd41dmUbTyYm3is0Xzsnmcdnht9G
-	 55wL/B5jCTp8bdVwiwadW0rFNL6C2kUXUoVzw5DBxbCv9Fw5k2lXhr3D6bvyaZ/VPVxYE
-	 9fE5+CPKBhA79pu6LWrkZTmGq88rJAkM8tuJ2+ShrV7gqcy/PXnLinJc7wfasS+UsQQ==
+	t=1794158654;
+	b=m+UBDCqwCor6Hh2WCv92qHp2O/ZAzlnVAHRrZdcyruxzG7O1RtApAEjLEas/TFqi71Ci
+	 9zAN3X1U3V8FI7jzrbnZBIn9r5BPWdlUL6mwuFfsQmg3gKEzkC0u4lCBfwzZC/f+4WZxJ
+	 ggcnlZOuP7Pa+iIfr7XZgtU07pJ08U4w2oBHssp9WKGG1aVBfYoWcSYN481Pxl3doVIQh
+	 WtFXuwf1twVNSbqSYU1VhkffyarwTqdfk7eAZ4b2wFl+IjOk7AYR/ywBaSrEqp0uYRsAB
+	 bjADzYcZ/Ijtbe8QchNIzEpwi21av8AM11qonYjWx4+Mh5SbOPtZMckubuScWZzXbVw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794153200;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=/S9XJ5Sf+ha4mJ4om/24R0+J7GuBzOrBmWjf2t5Bxd8=;
-	b=NtL9/1QeBR1y3Ku7R0CM5Hc7NSVBpTX6/L4i0j65V/rVPFWfWTrABIgILdR5sZmQau9I
-	 vTglRpFlB6VFN6MHLVnWor7NHooO0x3KUocR+qQPwrYiqpVnIRSt/YQBHy+tAj3mL0bmq
-	 HJwWfWaoffIOfv7Fh0pLHNVqrc8wEk8mljaddumYTUSoAQ4Lixo3usT8AwH6Y0lFsqbW+
-	 2/zUb4jSJWQjZK2AKuDI0Idr1Qmbxhjbor3I4pak2ZBifFHXL6MMxDw6QH3WKrnOqfio9
-	 2adf1erGwgSOc+Ct+P/3WZjRftXz3ESBq7JrsikwakF146DFje3ipoElPeQxR6p4D9g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794158654;
+	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
+	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:In-Reply-To:References:
+	 Date:X-OQ-MSGID:Content-Type:Content-Transfer-Encoding:MIME-Version;
+	bh=HbNpAbrZVEZQTlmCEV2LYqZfmhBEuxDyUHjVFrUu/Dw=;
+	b=ZfALoIpSRVAuyuHIiRprGByb19LKEC1FmNWD0hkyRNmOTDyRfzeU6ROp/4CFL1OFP9ya
+	 YNkAkUX6/Daal8jBGsK7FFaxyP3tOr/YIu9U9pJE60zh6UwtQHHUVxI1q7C4gz6i0svRk
+	 djGoAZfZQ1BzUbPMKy+SsavupYyVHi8lTHggA2hUyPdZcjmu+qBZRe214yZANuwvJ5sAM
+	 dPyoftbTidJNM/Gw/GNhUOXgSn9C3L7kL4yqhFCkUUGaQpIhsNei87owbNmDRvKLl4d50
+	 BFVF+K9qCkh3HFYbJuclKsOUzAvHSsN4ZIfA3s5SIa+7/+B5Ix8/6T7GrYoeh6LYTvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cFJVzurq;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=MR9U6oZx;
+	arc=none smtp.remote-ip=203.205.221.190
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6D6606A322
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2026 15:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEADD606A33E;
+	Sun,  8 Nov 2026 17:24:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEADD606A33E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cFJVzurq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0A51F008BF
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2026 15:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794153200;
-	bh=/S9XJ5Sf+ha4mJ4om/24R0+J7GuBzOrBmWjf2t5Bxd8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=cFJVzurq9HbKbqEWGxr01b1RQqds6QMtBC1E7K90XsZMRtQnK9HSjS+nFUW7T7IsP
-	 1XCemhABaTppK7yZQGG/tAkmTDOtTiq0yPwAV66Cc5PQxt/PxinItvHkqIDsSgKzGb
-	 NaIHxPjkAoglzLoYp9V7yVVDLWYfRHZtS3BpRQUhwXHoRB0Q0ZEZFIZx6wiIPQ49uJ
-	 aaLuW0CDkXvmDBYbhqDT46xbhfycfXg6rGn2sOBzT1r+m4tTApb26Q2Hrnx20etEdl
-	 9PdohjnYg224/l+HXjePyqzQvx+azdRrtWzz77DZrjauVgsRBfdLndiQkNy6f2rJwG
-	 /nPBWtWszVooQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5be4fea434bso188616e87.1
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Nov 2026 07:53:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFY+vsNdOXEVlgkAUqgnLM2V+qW5PqUjj6uStUoUc3lUw2eREquLSljax+NKPzLVQ0OocQy6QdC2/gY@vger.kernel.org
-X-Gm-Message-State: APuU4Z8k7HT3QohgbAcjIG2By4FQoCFYXILW/pD17KZ0PnBWbaFBJPZG
-	g5pBfgnlhRykslEoD/Vi+O/voB5G6WlLrbxb8URT1oVOKLFmAWWm2S9sBI6bk5K7bVTV3n7wczd
-	MPE/R+qjmvYcBGunXMATeOp9e1oewd90=
-X-Received: by 2002:a05:6512:250d:b0:5c1:4f4a:68f4 with SMTP id
- 2adb3069b0e04-5c14f4a6a11mr46761e87.32.1794153198892; Sun, 08 Nov 2026
- 07:53:18 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=MR9U6oZx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1794158645; bh=HbNpAbrZVEZQTlmCEV2LYqZfmhBEuxDyUHjVFrUu/Dw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=MR9U6oZx6DgD50LJX+pBj+h2vxoP4KD6JyvS48TlLtKqYMyEQnieoTzhy6Dfpf6RY
+	 oe+OIqLytOOmkqO8KmVuqMzYce58iHCn6A8jh0emO3skA+Y5tNFYz9+U3HcGO/IOFV
+	 ZYIqRGWgbKBLT2vG37EN3paHTCQmocNk6SgBIXOQ=
+Received: from [127.0.1.1] ([5.195.0.150])
+	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
+	id 5F906C5D; Mon, 09 Nov 2026 01:23:57 +0800
+X-QQ-mid: xmsmtpt1794158641tzukiaruw
+Message-ID: <tencent_A1BF4495D1F5E54524907BBA2A4ED480FC08@qq.com>
+X-QQ-XMAILINFO: NQJsl5QovJ//diN/Mrg6brYvtP6sEdsD1yFOwDkqqSRL/drc/dnK8D7SLPoCcc
+	 2/QWI5q1buzhzfLlCn9m90dyi5SBT5N7Ws1U8tCwG8XKZJ1amKZprNexE1TTvvyl1jR0cflLc6nf
+	 7gj4432lrkVFkjTXfSdxvoC5yrYuHXW0JvUWs813mUoBodgk6a33cvmNeGJrHS/EwE347tTKlXSi
+	 27fXEQ2tCwCLSq9mEO/H2LQmxCwBGJ0RSd8mqOadHc5neu6VeIFm0MLqVCUkyPvbQxWK5J7WuEnM
+	 nvBQvWCyQNj2vgxuyIvhjz7dev6Muwj+aa8ZMJaAJ9uI2QyaDvEe8dKxk7xJjroDphqK3io/Nr+r
+	 k0jD8bN7Qv3yVOgmQt6zBgDmCFevr77tiSYTzimWTaxI8wnFoG06dr7nKHhy7iNTLOhVkQvudDz/
+	 hLUwbbavm6BRzdYUaDMhb6KVZzV5EQGaW1WxuqyCy5p7ZswPvHjH7Scv40qL2xThO3ND7aQmd+N+
+	 J6ais06FoCePQOpbQ92v9LpwHstJAnOh6MbWzH2aA/Kepp7X3oSjSXC7V/3YlkqJlWY3MvIQbbWU
+	 NgYjLi3fDfr0UUUpZHeDmYbi/mmVVp5XbLqhKrqvrIrS9M8SKj7sA74aPzdV2R5ximA+M0tPjl6n
+	 jHCozvAAEoijsWwdVzfk5QaxK8sPier0nczUGA49UEaDiAPh59qTxeiA9ct1+gz5jU7TXiUQOnDi
+	 hIZwGIQ9NTu7FlyIUZQAVerLWAQOo/ZERADw+rkw6o1/iH+CnuuyVaQTvCsjPVVVosuLHo9uaPI2
+	 0vUCtdcfbSmQDu7JT5UIa6aR9AqDu2xtGtheKnMcnOxLX5SKHQ2EERc0A8tGP6nnaGEcAYLCOJr5
+	 /QUQIO6tzBiFQy9rDYKCeWZSO8qg4tjdYA2c68S7y1WpxEf1vxtGk3mEGtxPsyJAOOktiUErJaSZ
+	 Zk3CFeuvEnhqDk49wYG/E3ihW9F51idglGPvdXO4mPqzR0eCvdtpJX+uUBeHM040mFsIfmREotxe
+	 QLEU+9jVhzGtckxvE+n2qmjFdgL5CQcsVN78RlRMcl2AxDVGntNENdLvqVW8k=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+From: Jiawen Liu <1298662399@qq.com>
+To: Andreas Kemnade <andreas@kemnade.info>, Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
+In-Reply-To: <20260820154323.0a7c7929@kemnade.info>
+References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com> <20260820154323.0a7c7929@kemnade.info>
+Date: Sun, 08 Nov 2026 21:22:12 +0400
+X-OQ-MSGID: <179415853265.5.12140574398809517213@qq.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,44 +78,17 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20260928063824.1386524-1-morbo@google.com>
-In-Reply-To: <20260928063824.1386524-1-morbo@google.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 8 Nov 2026 16:53:06 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkm-S_0oDt9K1xn5kOVp7f6KwG7y7nCNE2asD5K69M=PQ@mail.gmail.com>
-X-Gm-Features: AclHuK9CiXVomc9vdDMRXSjLJTZjnIEg_krpNQUFLmn-Tbw0yt_ODEgP0qy0xbA
-Message-ID: <CAD++jLkm-S_0oDt9K1xn5kOVp7f6KwG7y7nCNE2asD5K69M=PQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
-To: Bill Wendling <morbo@google.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	codemender-patching+linux@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 28, 2026 at 8:38=E2=80=AFAM Bill Wendling <morbo@google.com> wr=
-ote:
+Hi Andreas, Markus,
 
-> The 'data' pointer field in 'struct acpi_gpio_mapping' is associated
-> with the 'size' field, which represents the number of elements of
-> type 'struct acpi_gpio_params' allocated for 'data'.
->
-> To improve bounds checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted_by_ptr
-> attribute.
->
-> Analysis of allocation, assignment, and access points shows that the
-> pointer is never accessed before the count is set, which guarantees that
-> this annotation is safe and will not cause runtime panics or
-> false-positive bounds checks.
->
-> Cc: codemender-patching+linux@google.com
-> Assisted-by: LLM
-> Signed-off-by: Bill Wendling <morbo@google.com>
+Thanks for looking into this. I don't have evidence that the debounce clock
+in an existing configuration has a prepare operation that can fail, so my
+original description should not imply an observed failure.
 
-Prerequisites handled in EFI so:
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+I'll check the clock providers and the devm_clk_get_prepared() option before
+deciding whether an update is warranted, including whether a stable tag
+would be appropriate.
 
-Yours,
-Linus Walleij
+Thanks,
+Jiawen
+
