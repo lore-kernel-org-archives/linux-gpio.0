@@ -1,68 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794138896;
-	b=RUa6UIZZXJXYUsq8t4IvV9zaacHSx5no1jsyGl7IVVgy3ezhWbeIgN9CtQSBujR+ouHh
-	 /ZUCmgwej2sqw9ln7fdGST/rJoQskwF96N8FrzwgxKeWgLm6APJ3UE/3Q2LDF65/zRfzk
-	 PQ1Mk2fxNxQKtC1ytRC3MOUwPJRwund7uqq6aYS6Sfx1Tydf2C3EAtFIk56ENTdKIKkQ3
-	 SZXY+IvN3U55A2IZoBBtvSgssZwe1LVgE1gFaM/z9pmwVq0MXeZObl1ujpn1DAyS1UddL
-	 CIYghjnesQ0HY9awJEBn0d25CMxnZpGEBHCOzITu2ffWvFnOLKmiwF0BMPOXmiwyeZg==
+	t=1794139897;
+	b=dilR7BXl6jFCkNNrts0HTd95MpbnGnK+2Ew3+8jvEHrazFICp3mKWcqilCex4FK6i2cD
+	 n+8+N+v1IQYS218RjW35PwVFxcHBeh7029qp9akJkbfYoi5+96xsx/4Mex9MRSegx1+Sr
+	 hb2eG+rFYlPrWKZJmVz+Os2IbtIaeC3HuCeZLRfUWXEJdEyPQ0/Z2fd9OemZal6MLJQ1G
+	 aHxR/0VpnCsbeiFvFKuUWPO86XPn9MxWA7pRjkIyBxQdPnCB8bk6mlIbb1xVyid38juYK
+	 dybpdB9VRRErpNaWmf0wbYmeZCrY66CQI8+4n/0uX8XOTCtQw+nYuYvxSscx2ot48FA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794138896;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=BHVUQx1P4ANp37N/y+cseBVegL9EZWxWZ+7QojdeYnQ=;
-	b=KhNPaWV5qsUQ977bxH6RPdDdA9F7gPq/wyLCbv4Vc/euCk2dMeGec5JBWvDktYNr2gdR
-	 nIa5Ixv+zDfe651ELU+d+rK/GWNtKX+v0HFrD2AmhR2tMQnmWtZMM7992g5M8+71blmg4
-	 IZlsUR4WvbkYgW+1n88ovaBSVJxmCy2n1o1PGniJue0E6pMZ97rtkAbW9mDS9/NG7ffXi
-	 9125MA4DgaoreubqYgp3pIl7R/QHOet8DpsEviHf/0Doc91rXXIT10TyDfiUBWWMnCbpp
-	 c4rhqDbBSi3pLnVole9TQ46iWV8CcYp9U+ah1r7AweyrZfMzheBoeKlNDsHmt8EsZdQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794139897;
+	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
+	 In-Reply-To:References:X-sashiko-severity:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	bh=S53t+YVv3ElnijbCvjTcj9y1Ev0v2nk/Dmj5oB/Gyio=;
+	b=AniSZKZ+5FdolvprXdKCZcnT70wFlYULuWO4BFNwnA1KztDdtZ1llJGkmYmfvsp3IXZu
+	 SWcvrgQuETVu8ct3HxjBJG9iTY4BY/ASqwG2KbZ4UJZFaeYRYmT9/bFh3fMfIJG5WdYOk
+	 SZLYFWXvn9ZfhgseLkXtT57YccX4oBwd8IR5RicO2c/OuoOrViHYUErXNNuLP6Rvre35H
+	 29Nhwt6aA+eaHLDZ14LtpkZnBQYUAwyWOG6kUMlffz12x22txDBstHIfq07IV0nyOouzi
+	 lFuzUdwh1aJy0bd0h/aDmV0piIF7y/n675qmcYXr0Ys93Jh/J6qlscNjdDDYfFGDgeg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NRmer0kb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nR5kpjUT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E40A606A31C;
-	Sun,  8 Nov 2026 11:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0E6606A31C;
+	Sun,  8 Nov 2026 12:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NRmer0kb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83BF41F0089F;
-	Sun,  8 Nov 2026 11:54:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nR5kpjUT
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB93E1F0089F;
+	Sun,  8 Nov 2026 12:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794138895;
-	bh=BHVUQx1P4ANp37N/y+cseBVegL9EZWxWZ+7QojdeYnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NRmer0kbeW5B6STgfperEMCztCA8C1eXyYu5SPaggrJzyVxMju+AEJE3D5Mh5ap2m
-	 UeRATlnCLYQCXhwHuherqkeT1onfsqcTveIIPkGPdk5TL2Qi3sUaBBSypboA9pkCRy
-	 YMwnHpP/dNz7obras9Q1ZuqI5LQrhHYvi8CGLyrSvtsG6exkK7wbuE5q9NI49YCLVW
-	 LnoXF2lRqilrVylImSjSVBSGTbR3edGrI0WybEfk2szZfi9Pt/Kj/kX/lNykMlzhBK
-	 L8e4s0ECglJREOZYbJzLa5oJo8yxZjfzNDTZ6EF8ZPoXNHn93yImHR/sOKkEz3/aMP
-	 brG5oCZCJr90w==
-Date: Sun, 8 Nov 2026 12:54:33 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, bartosz.golaszewski@oss.qualcomm.com, 
-	brgl@kernel.org, dakr@kernel.org, devicetree@vger.kernel.org, djrscally@gmail.com, 
-	driver-core@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, johan@kernel.org, 
-	kees@kernel.org, laurent.pinchart@ideasonboard.com, lenb@kernel.org, 
-	linusw@kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org, 
-	rafael@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
-	sakari.ailus@linux.intel.com, saravanak@kernel.org, schwab@linux-m68k.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
-Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <avBikocxPXRos_GF@debian>
-References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
- <20261105125154.83478-1-geert@linux-m68k.org>
- <aux8LYQkGSNjCGHv@devuan>
- <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
- <au7TvMP0YhW2e_oM@debian>
- <alpine.DEB.2.21.2611071115110.17804@angie.orcam.me.uk>
- <avBglVuXPjbKnWwl@debian>
+	s=k20260515; t=1794139897;
+	bh=S53t+YVv3ElnijbCvjTcj9y1Ev0v2nk/Dmj5oB/Gyio=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=nR5kpjUT4Wz2G43xQ1mhvZSmnOy/blyN/ZgcgtUTv0fvfpnkeB9l1bihpYRrBnqIN
+	 USRotrf/P2EZ3gn3upJextTqLcr4Wgen45hlWDHi9gqqQfRX6TqZUwR68EofUTEupk
+	 X1+mJMyXXU3+sB5szdefkIEjWMK8Fsxa3AA+3oA6lPAdo0/iEfedMfoBQgPiTZdN+o
+	 RNnVsvYw24rZWP0Rh59U2g/LuiT7umvllk0MVqLqC5JIGwPS9Qedi30L4hhTYdXT5U
+	 9AA/kiYT3LrD7CYre4bv9aB/M0WsYYWnWY8wvUzS9k+uxXRmHTktzYpKQiRyp4yjhH
+	 8wl9nRbpc1WiQ==
+Subject: Re: [PATCH 5/5] ARM: mxs: add EVAchargeSE board support
+From: netdev-bot+sashiko@kernel.org
+To: wahrenst@gmx.net
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linusw@kernel.org, brgl@kernel.org, Frank.Li@nxp.com, vkoul@kernel.org,
+ mkl@pengutronix.de, neil.armstrong@linaro.org, mailhol@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ mani@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-can@vger.kernel.org, linux-phy@lists.infradead.org, kuba@kernel.org
+Date: Sun, 08 Nov 2026 12:11:35 +0000
+Message-ID: <179413989528.488853.11075194967877927671@kernel.org>
+In-Reply-To: <20261106230746.21954-6-wahrenst@gmx.net>
+References: <20261106230746.21954-6-wahrenst@gmx.net>
+X-sashiko-severity: Medium
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,158 +66,154 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z7wg63skqeylt2ym"
-Content-Disposition: inline
-In-Reply-To: <avBglVuXPjbKnWwl@debian>
 
+Thank you for your contribution! Sashiko AI review found 2 potential
+issue(s) to consider.
 
---z7wg63skqeylt2ym
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, andy@kernel.org, bartosz.golaszewski@oss.qualcomm.com, 
-	brgl@kernel.org, dakr@kernel.org, devicetree@vger.kernel.org, djrscally@gmail.com, 
-	driver-core@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	heikki.krogerus@linux.intel.com, hverkuil-cisco@xs4all.nl, joe@perches.com, johan@kernel.org, 
-	kees@kernel.org, laurent.pinchart@ideasonboard.com, lenb@kernel.org, 
-	linusw@kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org, 
-	rafael@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
-	sakari.ailus@linux.intel.com, saravanak@kernel.org, schwab@linux-m68k.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, zanussi@kernel.org
-Subject: Re: [PATCH v2 1/2] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <avBikocxPXRos_GF@debian>
-References: <d3b325ecefd1d991ca25a4de2a859353f3ad7cfb.1793882260.git.alx@kernel.org>
- <20261105125154.83478-1-geert@linux-m68k.org>
- <aux8LYQkGSNjCGHv@devuan>
- <alpine.DEB.2.21.2611070223510.17804@angie.orcam.me.uk>
- <au7TvMP0YhW2e_oM@debian>
- <alpine.DEB.2.21.2611071115110.17804@angie.orcam.me.uk>
- <avBglVuXPjbKnWwl@debian>
-MIME-Version: 1.0
-In-Reply-To: <avBglVuXPjbKnWwl@debian>
+Critical: 0 · High: 0 · Medium: 1 · Low: 1
 
-> Date: 2026-11-08 12:49:08+0100
-> From: Alejandro Colomar <alx@kernel.org>
->
-> Hi Maciej,
->=20
-> > Date: 2026-11-08 11:05:51+0000
-> > From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-> >
-> > On Sat, 7 Nov 2026, Alejandro Colomar wrote:
-> >=20
-> > > Hi Maciej,
-> > >=20
-> > > > Date: 2026-11-07 02:44:23+0000
-> > > > From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-> > > >
-> > > > On Thu, 5 Nov 2026, Alejandro Colomar wrote:
-> > > >=20
-> > > > > Do you think strafterprefix() would be better?  Do you have any o=
-ther
-> > > > > suggestions?
-> > > >=20
-> > > >  FWIW strsuffix() seems an obvious choice to me.  After all what th=
-e API=20
-> > > > does is request the string's suffix beyond the specified leading pa=
-rt.
-> > >=20
-> > > Actually, strsuffix() is something else:
-> > >=20
-> > > 	char *
-> > > 	strsuffix_(const char *str, const char *suffix)
-> > > 	{
-> > > 		ptrdiff_t  off;
-> > >=20
-> > > 		off =3D strlen(str) - strlen(suffix);
-> > > 		if (off < 0)
-> > > 			return NULL;
-> > >=20
-> > > 		if (!streq(str + off, suffix))
-> > > 			return NULL;
-> > >=20
-> > > 		return str + off;
-> > > 	}
-> > >=20
-> > > It finds the start of a suffix in a string.  That is:
-> > >=20
-> > > 	strcmp(strsuffix("foobar", "bar"), "bar") =3D=3D 0;
-> >=20
-> >  Hmm, I'd have called that strskipto().  If that's not possible for som=
-e=20
-> > reason (I can't see it used in Linux), then strskip() or strskipover()=
-=20
-> > could be used for this API.
+If you believe none of the issues are legitimate, please reply to each
+issue of Medium severity or higher and explain why the AI is wrong.
+If any of them are legitimate and you plan to respin, please let patchwork
+know by including "pw-bot: cr" as a separate line at the end of your reply
+(one such reply per series is enough).
 
-Another issue with the name strskipto() is that the name doesn't make it
-clear whether the second argument is a string, or a list of characters.
+- [Medium] The ethernet-phy@0 node in
+  arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts (an SMSC LAN87xx-class…
+- [Low] The patch only adds
+  arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts and a dtb entry in…
 
-That is, would strskipto() something similar to strpbrk(3)?
-It's not clear from the name.  From strprefix() and strsuffix(), the
-meaning of the second argument is clear from the function name.
+--
 
+ARM: mxs: add EVAchargeSE board support
 
-Cheers,
-Alex
+This adds a devicetree for the chargebyte EVAcharge SE. It is an i.MX28
+based ISO 15118 controller for EV charging stations. The DTS enables eMMC,
+the debug UART, Ethernet, USB host, QCA7000 powerline over SPI, CAN and the
+board LEDs.
 
->=20
-> strsuffix() exists in many projects, and in all of them it seems to have
-> these semantics (or very similar ones).
->=20
-> Just look at a Debian code search of those names.
->=20
-> The strprefix() and strsuffix() pair of functions are widely
-> implemented, and while the exact details of the return value differ
-> slightly (some return just a boolean, others return a pointer that can
-> be used as a boolean too), the overall semantics of them are quite
-> consistent.  strsuffix() has less drift than strprefix().
->=20
-> If we added strsuffix() here with the semantics commonly attributed to
-> strprefix(), and then had strskipto() with the semantics commonly
-> attributed to strsuffix(), I'd expect programmers to eventually get
-> confused and use the wrong one.=20
->=20
->=20
-> Have a lovely day!
-> Alex
->=20
-> >=20
-> >  FWIW,
-> >=20
-> >   Maciej
->=20
-> --=20
-> <https://www.alejandro-colomar.es>
+Link: https://chargebyte.com/products/controllers-modules/evse-controllers/evacharge-se
 
+> ARM: mxs: add EVAchargeSE board support
 
+[Severity: Low]
+This isn't a bug, but the patch only touches arch/arm/boot/dts/nxp/mxs/.
+Should the subject use the dts prefix, for example "ARM: dts: mxs: Add
+chargebyte EVAcharge SE board"? The previous patch in this series, "ARM:
+dts: imx28: add alternative pinmux for CAN1", already uses that form.
 
---=20
-<https://www.alejandro-colomar.es>
+The product name is also spelled three different ways:
 
---z7wg63skqeylt2ym
-Content-Type: application/pgp-signature; name="signature.asc"
+  subject:    "EVAchargeSE"
+  body:       "EVACharge SE is a ISO 15118 compliant controller ..."
+  DTS model:  model = "chargebyte EVAcharge SE";
 
------BEGIN PGP SIGNATURE-----
+The dt-bindings patch "dt-bindings: arm: fsl: support chargebyte EVAcharge
+SE" uses "EVAcharge SE". Could the spelling be the same everywhere?
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrwYvkACgkQ64mZXMKQ
-wqkx6BAAlb7cMjGl5jTUSPTQsPNzOhKUBvaTO4Y15M+n+/XhKFuxB6LuZ//e8tqm
-Cw78YmBH0aqOPJFdgp+n6wQq8hEO8uF9/e/tw842SQps9qSCoPzKRVSmb2l3KjvO
-6aIUau9u7I2t6Hc1nLyR5bIRvpRBN5SLCOGAJJOpEqgXamBS3hJtzpLQpHlVL/k4
-RaDfQh9HeQsuVFMh2NxNsBEAao+Ooj0X+LklJCQI3Oddz9+sxUGQWt556jYS0LHT
-h2i2EckYB3WwbjZqUZA3aSAUeQp5n3JfS4UcLl2j+S30lB3StB7iVVNPd9198SyZ
-RzcKtU0ecxnBkLE0wKJGkZ2iuqSXR5rUxTOQb+S1hwbsORhNQVsyd7t67GTFX2oM
-86gXv/0pH3LJfbnMgTjgn2FPfqRVLrH4CQQouvsxInL/j/mLcdOFi40GqVzyUw/P
-2t8E2bE21ZCIdL8/vrOJhPxcLdrRZQbOHACb5CWp0Z4wnSOoRoVi+UA+wTW6V7Lf
-NfsBe92am3aFory4pzqiBScjkPux01+LOOouj3rTnD/AzOEHDNS7yDsCc5aNvDUC
-LlSxy7b3BuJRnsAeMnOMNZ+MXlP6HDL0UmaXumT97Sb1HlMf6BAqoMVzr0D4CyJ+
-I0HHWr5h/yKJl2GcovzTcmXIcMNBUsKnM8bJTvmbLRbsN1t9628=
-=TmP3
------END PGP SIGNATURE-----
+> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts b/arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts
+> new file mode 100644
+> index 0000000000000..75ddde2264936
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-evachargese.dts
+> @@ -0,0 +1,294 @@
 
---z7wg63skqeylt2ym--
+[ ... ]
+
+> +&mac0 {
+> +	phy-handle = <&ethphy>;
+> +	phy-mode = "rmii";
+> +	phy-supply = <&reg_3p3v>;
+> +	pinctrl-0 = <&mac0_pins_a &mac0_phy_reset_pin>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethphy: ethernet-phy@0 {
+> +			compatible = "ethernet-phy-ieee802.3-c22";
+> +			reg = <0>;
+> +			clocks = <&clks 64>; /* enet_out */
+> +			interrupt-parent = <&gpio4>;
+> +			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+> +			max-speed = <100>;
+> +			pinctrl-0 = <&mac0_phy_int_pin>;
+> +			pinctrl-names = "default";
+> +			reset-assert-us = <500>;
+> +			reset-deassert-us = <500>;
+> +			reset-gpios = <&gpio4 13 GPIO_ACTIVE_LOW>;
+> +			smsc,disable-energy-detect;
+
+[Severity: Medium]
+Can the PHY ID be read here while the PHY is still held in reset?
+
+This node only has the generic c22 compatible, with no
+ethernet-phy-idXXXX.XXXX entry. So fwnode_mdiobus_register_phy() reads the
+ID over MDIO before phylib has requested the reset GPIO:
+
+drivers/net/mdio/fwnode_mdio.c:fwnode_mdiobus_register_phy() {
+    ...
+	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
+		phy = get_phy_device(bus, addr, is_c45);
+	else
+		phy = phy_device_create(bus, addr, phy_id, 0, NULL);
+    ...
+}
+
+The reset-gpios line is requested only after that, through this path:
+
+phy_device_register()
+  mdiobus_register_device()
+    mdio_device_register_reset()
+
+The reset is deasserted later still, in phy_probe().
+
+If nRST is low during the scan, the ID reads as all ones and
+get_phy_device() returns -ENODEV. __of_mdiobus_parse_phys() then just
+prints "MDIO device at address 0 is missing". The phy-handle in mac0 points
+at a PHY that was never registered, so Ethernet doesn't come up.
+
+One way to hit this is to unbind and rebind the FEC driver, or to reload a
+modular fec. On removal, phy_remove() and phy_device_remove() assert the
+reset before the GPIO is released:
+
+drivers/net/phy/phy_device.c:phy_device_remove() {
+    ...
+	/* Assert the reset signal */
+	phy_device_reset(phydev, 1);
+
+	mdiobus_unregister_device(&phydev->mdio);
+    ...
+}
+
+mdio_device_unregister_reset() then calls gpiod_put(), but the pin keeps
+driving low. The next scan finds the PHY still in reset.
+
+The same failure could happen at first boot if the bootloader leaves
+GPIO4_13 low. This DTS muxes that pad as GPIO with MXS_PULL_DISABLE.
+
+Documentation/devicetree/bindings/net/ethernet-phy.yaml covers this case.
+It says that if a PHY needs a particular reset sequence before its ID
+registers can be read, the compatible list "must contain an entry with the
+correct PHY ID".
+
+imx28-btt3.dtsi also has a LAN8720 with reset-gpios, and it does this:
+
+	/* LAN8720Ai - PHY ID */
+	compatible = "ethernet-phy-id0007.c0f0","ethernet-phy-ieee802.3-c22";
+
+Could this node get an explicit ethernet-phy-id compatible too? The
+smsc,disable-energy-detect property suggests an SMSC PHY, and the ID would
+need to match the part fitted on this board.
+
+> +		};
+> +	};
+> +};
+
+[ ... ]
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261106230746.21954-1-wahrenst%40gmx.net
