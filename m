@@ -1,74 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794101744;
-	b=Z9oCirWcdUWGJnL8SkE02iI7nHr4EBJjvB1Ox2L0If0KoNFMnJzbg90fqubn6sJQG5hq
-	 PgRZ77aRNbUHAycguDBtec/3kfnkl23Focb5DaWHZhD1CjIc5n17iHTAg6SCQWgnkRkl9
-	 Hc/Ay/b6zb8G5gjDLjxTcXFKQVlEn9RLmXY8vqPx8gOyOktXGeWkG6eIFfcwmYLD9g5VF
-	 21lwPKlJWcMPntd6T+B6+8YEk0CYJ/QnbhL5Rj/ooS7cniF/8E131TafpO9y+1KW1bDBq
-	 9GJaqcVyuwrOgM3HOl/6bxO9CCLeKeXlut8R0BBG0bYoxxScs0YDngv83P/nDFqHk2Q==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794101744;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794115708;
+	b=FcECsO7cIvYChUSOPLAfIxdNDjxvS988U833rAjAFYg8ILS21VucloYbCPwEBlqfkULl
+	 NqEsnFwHzNhwCHZC4w5NSkMMgC2AGHeynE/ZvRsnTNgE8Z0l9PVavs+jKHifqE3LjGd19
+	 iAZD4BM+jOi+hTSZ6O1udElpGnjvyBGtUDz93DTxJnS5udYTj2h2TQidMepFngRWQjllS
+	 AHIrDWaDzGgkJo/VHtZEB2agV2KYGiLUuFL1Syvsvq5yUNFZcFtjGu1Y2lpAvOfV0g1Zj
+	 Yhmrjxh9GXosHmaKtpDIZ9qeIr/5nCeVlyQpuoPaNbBTLzpsB0cLcCAzREdPXDVtYHQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794115708;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=1jjWt3b9VOCOhPOBER5bc1d0BDO1F3j/SxlqU5kxk0M=;
-	b=aBxNK2eMAykggAsrjTZYQHwJooM64QTQ1UVl9OeeXuspQbDcDBJQAFq8n5BGss7kJGHM
-	 LtFRRrc31oKmwveFo5BZLYfgZQIrw7EWrgwpLmGot5zrrd+o5XdAedKXen3oVjzqetMnz
-	 lIeScwlkpvfp+38w2jtgbLdF4kkvM1KUd6oo/ho7t4sN+KIezMCHGiSSKiNeFz9iYE3aF
-	 ZQcoORs+uwXO0zXXmbJWzmhYvSLrArRTbNgCHQ2nx1+p1lRvK+1MmupcsmbegZZ8JzDyJ
-	 MzGFuHkV06gVUV2xqCT8uf9L2K+cTIxfsyEaKSPgMz3S0uXN89j3temGyQXMrNiM44Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n22PmfRL;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	bh=jGfSOo4/qi2MGnClnBBICNQN29SKcOZpaXj2n0mUyuc=;
+	b=pU1cH2jW9Xf4m1tKEFtGwwDPZKsFbiZ+NgpOu6fOS31EG5QolzwIJXdDKfcHsu2G8pdd
+	 Oqm4wSQVIrBiuWEYtykuAEg2qziSAPOhvbtNljUbDb2humTXJtS2IK7E44Zn1rMW/eI3z
+	 pXjVstEIXZo1G0Yt9swx+cLRz3bjhVGx16E/kAWq6fTdfnULQC/euGmAcbJuFnR8M9QS7
+	 kCPE0Ds3o1Y619VF4G5XELmgunAibpJbnRivNN+Shz+4EXokTkCLPyh80cMqVxZ/lKrOU
+	 QA9on6RJEpD0tQvFJd9cR1KWyQq8AC4aME2nZuNxs+Zkp5TahFg46Bhmk7V/wKyE0Sg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=iav.lv;
+	spf=pass smtp.mailfrom=iav.lv;
+	dkim=pass header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=LTSKy4jf;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
+Received: from sender-op-o15.zoho.eu (sender-op-o15.zoho.eu [136.143.169.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E41F606A326;
-	Sun,  8 Nov 2026 01:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12CA606A31A;
+	Sun,  8 Nov 2026 05:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E12CA606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iav.lv
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n22PmfRL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1A21F0089F;
-	Sun,  8 Nov 2026 01:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794101743;
-	bh=1jjWt3b9VOCOhPOBER5bc1d0BDO1F3j/SxlqU5kxk0M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=n22PmfRLwH9vCJiaf/Tt+q5Pj/mzwVjj35Dl5p8BHBpV+snYXVGYXUXIVhWCH+vZ5
-	 9iRoDhG4eAaL7n/LbL3EmdB5i19krST80SmH+RfJbi7mpm1MJMLpk6GW5GhPEjxoA0
-	 K1z2XWKVorZ+W5HfxdjPYkrxe5kMOA/HLrMZIaZn0Hs6/5GQyVAFBoV0NwsdimITOW
-	 rXF9485T/wduzPWB4ZH1hf3+Uc7dHxDmQ7j9mrS8KQaDEHfB+R7TOrBKb0RHR5Vodq
-	 XttgD1WjScEcDNv+bq3zPpto7nTtuz7OA2fL8FBNfbv3e/uwy5AYOwNBsHipIlyzwB
-	 2+1uX8N0AWvqw==
-Date: Sun, 8 Nov 2026 01:35:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Cc: alexandre.belloni@bootlin.com, andy@kernel.org, asahi@lists.linux.dev,
- bhelgaas@google.com, bp@alien8.de, brgl@kernel.org,
- dave.hansen@linux.intel.com, dlechner@baylibre.com,
- dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, griffin@kroah.com,
- hansg@kernel.org, hpa@zytor.com, ilpo.jarvinen@linux.intel.com,
- j@jannau.net, jarkko@kernel.org, jmorris@namei.org,
- keyrings@vger.kernel.org, lee@kernel.org, lenb@kernel.org,
- linusw@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux@roeck-us.net, mfd@lists.linux.dev, mingo@redhat.com, neal@gompa.dev,
- nuno.sa@analog.com, paul@paul-moore.com, pavel@kernel.org,
- platform-driver-x86@vger.kernel.org, rafael@kernel.org,
- roberto.sassu@huawei.com, serge@hallyn.com, sre@kernel.org,
- sven@kernel.org, tglx@kernel.org, wim@linux-watchdog.org, x86@kernel.org,
- zohar@linux.ibm.com
-Subject: Re: [RFC PATCH 14/14] mfd/macsmc: add ioctl to access smc keys
-Message-ID: <20261108013526.1ce3b9b2@jic23-hlaptop>
-In-Reply-To: <20261104195317.8284-1-atharvatiwarilinuxdev@gmail.com>
-References: <20261101013817.22d67ea7@jic23-hlaptop>
-	<20261104195317.8284-1-atharvatiwarilinuxdev@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=LTSKy4jf
+ARC-Seal: i=1; a=rsa-sha256; t=1794115674; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=XaDun2aI3VXKS8HtZd+yySF0ZLe3CF5r3ExAuLuPKKx0JPHbs0rTF+Ln4jKACVMfd3reZ0IYPK35VZSugyhKmQWCjzXRh+wi5Gyw8lePYkxmv8W1NnxYnKcbbv9KHogN1VvyarP70xjYDa4Ir/GQyAuGIfe4Z35CsUJHYe0Q8W4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1794115674; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jGfSOo4/qi2MGnClnBBICNQN29SKcOZpaXj2n0mUyuc=; 
+	b=ijKjBOhklnUbfI/HrWdXM411YhCL5/tHCAGJj/SaUHjxwrIxxsDCSQjjCWmNWyGBYwGTXQKg82pZe8Kb6e37h9mcULfHleof7sEqRs++6eMId7d7//j5ffogbtQpXNgyy9d2f3AgLHQtw1vu/yRIEioQlxxyGRHrH9SimmbpW20=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=iav.lv;
+	spf=pass  smtp.mailfrom=iav@iav.lv;
+	dmarc=pass header.from=<iav@iav.lv>
+DKIM-Signature: a=rsa-sha256; b=LTSKy4jfnYXdYo5kn8T4282HmTTFRwKWUeXdGV5PjsEDWR/48r9Fz7lrQ4RSowu+ST8yPOEU5MeHHN3b3BGMxOj0pB+zdcv2D3moehXbfNkJ19XCNZR5KIXMGTa6+vvv0D4wldWwoPKzmiADT4fTuFJELS6raoZvLwBVecAAM40=; c=relaxed/relaxed; s=zoho; d=iav.lv; v=1; bh=jGfSOo4/qi2MGnClnBBICNQN29SKcOZpaXj2n0mUyuc=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zoho.eu with SMTPS id 17941156724621020.6302714073776;
+	Sun, 8 Nov 2026 06:27:52 +0100 (CET)
+Date: Sun, 08 Nov 2026 07:27:51 +0200
+From: Igor Velkov <iav@iav.lv>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Jianqun Xu <jay.xu@rock-chips.com>, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Igor Velkov <iav@iav.lv>
+Subject: Re: [PATCH] gpio: rockchip: restore interrupt settings after hibernation
+Message-ID: <20261108-re-heiko-gpio-rockchip-hib-1@iav.lv>
+In-Reply-To: <9970336.2WqB4rESCP@phil>
+References: <20261107-b4-gpio-rockchip-hib-v1-1-19f4d163a55e@iav.lv>
+ <9970336.2WqB4rESCP@phil>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -78,37 +69,24 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed,  4 Nov 2026 14:53:17 -0500
-Atharva Tiwari <atharvatiwarilinuxdev@gmail.com> wrote:
+Heiko Stuebner wrote:
+> This looks sensible in general, but I wonder what happens with the other
+> registers of the gpio-controller here after hibernation?
+>
+> Like does the direction + output value, debounce get restored from
+> some other means?
 
-> > If this isn't matching some legacy interface, then we need more
-> > on what these do.  Maybe they are suited to some other kernel
-> > interface? In particular they might need the various controls
-> > on how destructive they are that something like fwctl brings.
-> > 
-> > Generally an arbitrary opaque path to firmware isn't a good idea...
-> > 
-> > Jonathan  
-> 
-> Here its required, if we write CPU/GPU Pstates and PPT to
-> some keys (MSTS MSPC HE0N), we can reduce the temp by 10C
-> And We can fix the dreaded PROCHOT signals on macs, Giving
-> Same temps as macOS.
+Hi Heiko,
 
-Being able to control them is good, but ideally we'd map
-these to appropriate subsystems rather than having a magic
-interface for them.  There might of course be some gaps
-that need plugging, but custom ioctl is rarely the way to go
-(except maybe due to legacy userspace we don't want to touch!)
+No, the driver restores nothing else: after a power loss the bank comes
+back as the boot kernel left it. Debounce requested on a line was lost on
+both ODROID-M1 (GPIO v2) and ROCK Pi 4A (GPIO v1); direction and output
+matched only because the boot kernel sets them the same way.
 
-Jonathan
+v2 will save and restore the output, direction and debounce registers
+too, as gpio-dwapb does.
 
-
-> 
-> But you and Sasha are right, that exposing all keys is a
-> bad idea, so i have restricted writing to some keys only.
-> 
-
+Igor
