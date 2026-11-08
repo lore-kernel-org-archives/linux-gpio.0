@@ -1,59 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794165624;
-	b=IBLXx8aLkW30vbW/qpF/ZyNslKdZAIucmmRf+LVYbanCgzUL4tpKNL3+pKrMu4PLcOTQ
-	 41my5qutgT67gwZvFjypf9FSIqkmyGTYw7ehKzF+SBMR8HL3gIm+rYo4FKff9ebbtkG8J
-	 L3XF2rhDKt5scRuq30uab6RpFt/nSj/Fq4a77hZ3122hBZcuUBHbasLrj80hCUEz4ePlg
-	 6cCZtbrPJVO0fp5tA1fKBH6yv60e6ciwTDLB7TZQxUlmnz8DAi4X29kMZXxiLlrvg03r/
-	 r0TXNhsN9GIJqc8sI2r+/fLBixvGBSqhTyloLKc9bqfRfJsPQySF2x/k/qRL7eTJzRg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794165624;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:In-Reply-To:References;
-	bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=;
-	b=CQwxA0hjywlG00j8riM5BRsy1J33lPV++1XmUOHSXauS/797Bb5tGpNboudwhx6zhRiu
-	 c3Y5GwyEHNq15Kszil8zLFUxCuf7U15jdxpfkmGsOercubeZW2NUcofYnnJV+eGPal9Gd
-	 YaZRMf/Y2ZU2wrx96PbRw4Z0RXOZpkjKfSZuYyW0ZHfb0qLwVbRyIc/6RVmCX9Lc8D1D/
-	 xVSd1jYNledflwk3nuwIdgH0PvffBdDqFpzrpqJdvox/cNXErj033VS+M5YIfdzh/6/8g
-	 j4WPwhK/tjYSpmhPVHG9ZqZ/6JuyVMtisxKX1GRAq6asc9G/Hr+egB6ihn2v7Gh6n6A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iav.lv;
-	spf=pass smtp.mailfrom=iav.lv;
-	dkim=pass header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=AQvmD1Yz;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
-Received: from sender-op-o15.zoho.eu (sender-op-o15.zoho.eu [136.143.169.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794165948;
+	b=UJSi2N2q0bMAhekmaxtiO2fRFZzVDgEOOoUXpWdk6IEGQ/ntVnNrW9IqRgOpQUoVuj1h
+	 DpKNG4le2wc5+I9XXNpJyfA1l6eBhcYIbSPJ1S/63immuh91/N4Uy2U4Bv7wQwV6yswa+
+	 fVeR/dF+rrxaEFIao+M/gYpDEqaefYbfDDIxUHSiKFQcGCdPinA9OQTKluT9E5oHKbJV8
+	 PtNHzlOV82tA4kgrTGeSUXurYVoRPkpJ6LBm6Ie2MeNLFL0+lJ3M1FX1XmaI4ZJWEeL7n
+	 JDcMVOgAYu2PDNQGdNaiT6OvQ0/eP9/jCzBiGyRluDj9PyIH/YKFoXg5N1diDFTBtQg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794165948;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Content-Type:Date:Message-Id:To:Cc:Subject:From:Mime-Version:
+	 Content-Transfer-Encoding:X-Mailer:References:In-Reply-To;
+	bh=9TFlHze0xZHVHECFNAToGkMpUA7NwrSzUebXukclDxc=;
+	b=4b+f0OG24hLItHLDtNzbhJttDx5EVwfVy3WTeax/3HQHb3SwSS7fp4nNIZ6F4+b0UZ1K
+	 duBpBGN5fHqzsa8zabguNxYoGfRWtMqP+SgivmcHiUuE17rxFjnL68ZjvRSq3BhR4tDGh
+	 dE2V9jXx/6dHklWnvIf64NArw03S/9JkAsHuGibGS4diz540nrz7kkqy2zYBWEmIP8JxF
+	 0x7rJRipCnbELu1pz0U/zEvvOnW44DfDeZc8TbpJGrbFzUIQxhHDcRQ9o5MziGaFDMZJY
+	 UPzw78ADUBnqwlo/6rZ4owlQqYKlSfq0uDPF0xmkmk749klz8wqYuctGcmTa6NFjOtA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WSiv4TuA;
+	arc=none smtp.remote-ip=209.85.218.43
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE127606A321;
-	Sun,  8 Nov 2026 19:20:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE127606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iav.lv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B68606A322
+	for <linux-gpio@vger.kernel.org>; Sun,  8 Nov 2026 19:25:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0B68606A322
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=AQvmD1Yz
-ARC-Seal: i=1; a=rsa-sha256; t=1794165599; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=H1luY180cpXtbO29I367UMSNTK6y0KyF55ZvVdEna/3s7vvoWRNa7gHyBt/xypqZZMGVuk/EmUAtcvUHPvvAWQR/1veMMrR6PWvpshYeipulwQ+jpW//C7+R5QwUlYj3RD0wLQISLwxIHf96zyiqGdkZJ0JXcdkCXADBJR872f0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1794165599; h=Cc:Cc:Date:Date:From:From:In-Reply-To:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=; 
-	b=au8oB9kOxtxGgufNSqVsCnUYGolNFTIKo4ZiWBNef9t72FTe4VNMUnBb+pIBI3iQhhAQSFyokmTJELFAp2MAF1HgtJUdAzV2q7zJJNMtUl4ZowfcpI3tKDblRcs3NxoYfLPPyRPdC+1CkkYyniDyRUC/Nep1cL4TUAw8kii+zOw=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=iav.lv;
-	spf=pass  smtp.mailfrom=iav@iav.lv;
-	dmarc=pass header.from=<iav@iav.lv>
-DKIM-Signature: a=rsa-sha256; b=AQvmD1YzyKqMNB5XrsP9jMBdwMKIHBOezeGPp3sqpeiPnayjypwvDzH7sur3GtV1X6v7SR5FPmrMmzjnMigJuSpl6Pgh8B08Fvjq/VZh31AShvhBxrkeWGdkoM2lS/w3nbUwkJBv32S1IY4AQU8omKjuSlNVa/qo7yl4iSylw3U=; c=relaxed/relaxed; s=zoho; d=iav.lv; v=1; bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zoho.eu with SMTPS id 1794165597779665.0347627600589;
-	Sun, 8 Nov 2026 20:19:57 +0100 (CET)
-Date: Sun, 08 Nov 2026 21:19:56 +0200
-From: Igor Velkov <iav@iav.lv>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: iav@iav.lv, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jianqun Xu <jay.xu@rock-chips.com>, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: rockchip: restore the bank registers after hibernation
-Message-ID: <20261108-re-v2-gpio-rockchip-hib-dbclk@iav.lv>
-In-Reply-To: <20261108-b4-gpio-rockchip-hib-v2-1-27d3d510cb73@iav.lv>
-References: <20261108-b4-gpio-rockchip-hib-v2-1-27d3d510cb73@iav.lv>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WSiv4TuA
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c49b431f022so38721766b.1
+        for <linux-gpio@vger.kernel.org>; Sun, 08 Nov 2026 11:25:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794165946; x=1794770746; darn=vger.kernel.org;
+        h=in-reply-to:references:content-transfer-encoding:mime-version:from
+         :subject:cc:to:message-id:date:content-type:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9TFlHze0xZHVHECFNAToGkMpUA7NwrSzUebXukclDxc=;
+        b=WSiv4TuApj5w4HZ50fhfgNst1yV6yzNn/XhgbsQuSgTm0D/HVCH4udeCvKUww6E+U0
+         D3N6gs7Usyy2COHjh1RqeQGWpr2skW+hn7epsen7I7xrqYqFTEdbosd+1UWyeCKmRshx
+         8JPu6ci7480u9eMj2XPPDmzzJcdd5rsQR33Z5a8L0no+54MDf6arQnvG6cwRzKOyQ/wf
+         8VnQG0sN7CnI5yvoG67OJ7bwbiRqH/j7Kqt3StBXm6UkhPd7HulEHPLx40qWowz+IA7y
+         Yj9eB5wyBSFmMzhXc2iYzgYS4Qh0XzHhq7n9ToLj7gD0BpKOWW80IVuoX8DQebPToFGZ
+         mPNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794165946; x=1794770746;
+        h=in-reply-to:references:content-transfer-encoding:mime-version:from
+         :subject:cc:to:message-id:date:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9TFlHze0xZHVHECFNAToGkMpUA7NwrSzUebXukclDxc=;
+        b=qSVpH77sl5BwTz9f/7bKA7ApXiA3wCkok3CGjR79EvWOzdbJEYtWvN7e73idDvMHk7
+         1oaHH9uxg5eSyhywH48klM1e4iMsndJIzDzVN4+bg+j2yUlWRaNIESGUCmEdWp5zrFmg
+         S78ccxdxKW5l/HWZe+NOKKceD+i+bvtsRaCepHyl/dTQ0J1vO0LClec5Fgh1h/TXVYPu
+         9RvVpT8MKKoDSNaToLQipSoeRlyzobU6wpY0pdny+2dgTE5EE8+gPTnSzqJ7eS6a+B52
+         7oSj+e2+gO5Z6speWvMiIXzplpWJLEIqH4CkqrYGAwFITV3CCjwGd5Zfp7DhipqgLgWh
+         891w==
+X-Forwarded-Encrypted: i=1; AL+hErFrqc39nwCBk73Rby5VYPlxb0m/0iwVq3zipGe7+J3Q4XG9Quf92V3er+T2AgYv5MfZHsahVg/VoyeY@vger.kernel.org
+X-Gm-Message-State: APuU4Z+qZiEAeBbb2xU6iWbAVXv2IvVPnRxSY+gZrJFPqeVm+4p1WAwA
+	HSE0YVPBRufg8HrR6/ME4QA4FENQUDyzTUdCErbU7gzUj2akHWMEwFm3
+X-Gm-Gg: AYBFou0wBKentuKoLmuBWXXlzppe9Rz7A0gfcZHcYqWGPnb1V4WnHyU+4soXfJdtVwu
+	9eCoZRU2doJOC8hH5qHVjiEwdRXsNtXQcQPwPJt/fGZtQtpV8/Qen9vUqzw/pcq4uSH+SErm+JJ
+	jCoQa6DQBsySlddNrpNNQuBCtdfXp1LX3hXpRQQp1oYUCdkm2zoN/783fYh9X2GXtQil89o1wab
+	N8RzuxOmd62HsYybcqKFyb87244rVV7EN7ufXpBJHibkT+n8OMdMA++R9IUtcOZlsFxJ/a5au/+
+	BV/JSsFqM9ShUS9CxsuA6HT1UhT/1SF7edBzYdv32o59GYYqiZNOuFNzdXhoTq9rwM7eKfnVsGu
+	CWBBoTiuu00go01nr9zK+B8xDL/nCGzLb2AdBvMQLWumaN9YfKC/q0TK3agtcbmTX3vr1ujdqnD
+	yYk2Qpgw6GBV8PDUGQQ8jThc00h0j2DA1FlLQJ1ZZnoOAnbmszKqRwyYGzlHPqWsagM0Nl9Wkml
+	el0hcyj8BNUBEQ+108vxnAIDHvCkYTeO4p3LIJYoUXb4p3lf+C85w3ERsWmtQ5A8BKh4bDMzpTc
+	IyQ/GPe0J6HG+uQSXQfLe/Rxse5dlYkdyIbfd/FaUu5xFEoZqxuk0xpt
+X-Received: by 2002:a17:906:794f:b0:c34:83c0:b92b with SMTP id a640c23a62f3a-c4d6d522af9mr142299866b.23.1794165946088;
+        Sun, 08 Nov 2026 11:25:46 -0800 (PST)
+Received: from localhost ([163.245.50.16])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d6a998a5asm81036666b.72.2026.11.08.11.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Nov 2026 11:25:45 -0800 (PST)
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 08 Nov 2026 22:25:41 +0300
+Message-Id: <DMQ2QUT58NN6.10MAQ6P7FML2K@gmail.com>
+To: <sashiko-reviews@lists.linux.dev>
+Cc: "Linus Walleij" <linusw@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Sean Wang" <sean.wang@kernel.org>, <linux-gpio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: Add support for MT6895 pinctrl
+From: "Alexander Letuchiy" <asalde.le1@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,21 +101,19 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
+References: <20261108-pinctrl-mt6895-v1-0-f704c443b31a@gmail.com>
+ <20261108-pinctrl-mt6895-v1-2-f704c443b31a@gmail.com>
+ <sashiko-outbox-203909@kernel.org>
+In-Reply-To: <sashiko-outbox-203909@kernel.org>
 
-Hi Heiko,
+On Sun Nov 8, 2026 at 9:39 PM MSK, sashiko-bot wrote:
+> [Severity: Medium]
+> Can mtk_pinconf_bias_get_combo() and mtk_pinconf_bias_set_combo() read
+> past the end of mt6895_pull_type[]?
 
-Please hold v2: Sashiko is right about the debounce clock. On ODROID-M1,
-after hybrid sleep with a power cut, a line with debounce saw 0/8 edges
-and a control line without debounce 8/8 (one run). dbclk_gpio3 and its
-parent dbclk_gpio read enable count 1 with the hardware gate closed;
-opening both by hand gave 8/8.
-
-With WoL on, aclk_gmac0 and pclk_gmac0 come back the same way and the
-network stays down after restore. So this looks wider than GPIO, and
-fixing it per driver looks like the wrong level.
-
-Should the Rockchip clock driver write its gates back after restore, as
-at91, tegra210 and ti do through clk_restore_context()? I find no
-restore_context in drivers/clk/rockchip.
-
-Igor
+Right, mtk_pinconf_get() reaches pull_type[] for the virtual EINT pins
+227-246 via debugfs pinconf-pins. I will pad mt6895_pull_type[] with
+zero entries in v2.
