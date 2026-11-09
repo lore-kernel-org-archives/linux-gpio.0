@@ -1,58 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794215283;
-	b=y0qu2eQobQi8AshrzgenS8tx/IvVTLGsW8R25pXAz0o3v7WBUptfeMt1Vou2XclMOmMm
-	 oB4xxofxKVlq9NH/hqZ6/7Znt2/wbVG70CDJBS3EdLdBTqjrPZBrnHBRvp6nQMXt+yGra
-	 hAUks0dQgR1CA1vgkQKdAuAIRikOeKq4ZCCSYGFHgiG7klX6O0DAsufJfFFFSCuoCl3ni
-	 YfcDqZq5Pb1q1J1gb00Th8jrkVD6Ryitv7pYq04iTMsA7xdYFMkFOUEiTWi/xazEhQyxb
-	 vjDosagF4k9w6Zo6CyYdKYnkDG+N0BTkq5Q8tE+nZq4R7HTerrErtGj9fjBZTzeVwnA==
+	t=1794215526;
+	b=jqwDP2dd9eln/NuDV4EbvXUvVxQQhbJGEhkOTWNgESYYBMkCZ90NzJQ9M/CoKBzAHsHc
+	 pkSFRhueGSET87AfOEWIeAFRdnkkvA5CiV3ywlW64ohM2Mms9RK9stQRC/YC6uFaBBGxe
+	 eCvtvW/AzibTpySYVxZZPVbyrjhAtm8vuQQrRbcgI+vcJW+q078GbrK3hLSbTBGB1CGGj
+	 xi2L30tHFqifgxEGFQSPbPU/7nESgOgCA9pLWUzPVkpsRP02ZcwxOCw8sh/kxLTzgR1IC
+	 k98UYYO7x8ZAHdHBVfmm3Bg8JU6ooRQi+CIeyjC0fjhGkEYhmHWsJAphAgULFWDwpRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794215283;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794215526;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=gGH5WQC7n7vzUXd0nfa+o5hb82329Xqqb8HkiaIbfeg=;
-	b=UmZBwx0dX6kw4dslt5gSRazbwepjekwenj8jirkhDaW6CjI+pRUhchrT9QciuSuBi0s3
-	 d8Bh6EBVu2PzpY5oQRFpn4s02ffPqKqlk6UgS/+ijLBBDgXKvGW9eaaHAYvbouDjXPpxt
-	 RH4O2chYHu0Xul3BizQyLA4O+oaubyEIm4i6uySCPpqJeLFi86b2TRq4fQJ5ejj3SOJ4E
-	 e1EXJHh+GtkJUltcfs4Vv/q1bWfod5yV0dXHa3VSrdJR8c4pP6uvxLQcVYJ3pViF1MicJ
-	 ZD8SMdLxXNzO+JEFC6D6SPo1wHBi/IQ/5NCn/1KFp38CHAtHCUHl23ST+9IijUFxr8A==
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=zBPWhDnaDeGMYRci6A1TaJ3pR5WRujzO+eZr4MALPHg=;
+	b=aaYgDF6HfkLi8Zmn9F/LiloCadixHNdVboW7TFvolIkjSeX5/6w6WrXLXReW4Tmms1iT
+	 12ufPZTjTmsOTHiOUi5/dMCTYggpCfm5Mi6KipiiZFJfVRhoZGjEtrcOhGEA8omm0GILi
+	 DxxGHABQO/d6bGtWDAsqkICcGD1VRiVo0NwYrFEvlfnSqOxDmqrk0iUrgd6f+OO2gS7Ga
+	 jB7dWz2B8p3QXZCxvIjIQnmRWIAxTUOuDT8AwNbjyTXvCFv1VYkSyS1GUoNYIx7JaVPZO
+	 3Gq9oZQDOPD2TQfEKMO3cnr7CjGbhkO7AZaRFj6+QVEqnT1KI+l/w8HFrNt1GmBeAyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YDjrwnhm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vkufifu6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A98DD606A31C;
-	Mon,  9 Nov 2026 09:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 13BDD606A326;
+	Mon,  9 Nov 2026 09:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YDjrwnhm
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id ABF381F008A4;
-	Mon,  9 Nov 2026 09:08:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vkufifu6
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BC31F1F008A1;
+	Mon,  9 Nov 2026 09:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794215283;
-	bh=gGH5WQC7n7vzUXd0nfa+o5hb82329Xqqb8HkiaIbfeg=;
+	s=k20260515; t=1794215525;
+	bh=zBPWhDnaDeGMYRci6A1TaJ3pR5WRujzO+eZr4MALPHg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YDjrwnhmbacmI5fskK6AS3ZEpwjytE3KXrchjoeaDbZE+sOZQAilUs5pBxcCa8YjH
-	 rJ9ksUtWme5yLQqrnBZbENKvj/3hl2fCf2Qayd9GicQObgrjZXTIVS9Xkzbb3TUGTL
-	 3lJAB6e7r7uI1JryroKSteSDvabFEjE7wmb3PVi+d7foBw/XyIG3gMd0v5UYn7Wu19
-	 jUrYate4BoPlQhuCoMe42av71fNcY1tA3Vem8/oSE4CnYHXtsRt1NotJCwAkPIVOXM
-	 8JCaCzBQhWCCONDCNy0FhDK++gFkJfBJHIDbMB3kDJZ7I8+6VgteiLUMT0HfpnH0mR
-	 zw3b1TPaUJavg==
-Date: Mon, 9 Nov 2026 10:08:00 +0100
+	b=Vkufifu60WwY3l83DEMFqhiUHcT+Oc1F81Q7S/bW9MluBjHGqxmgXfIwkrl7Duxha
+	 qZXHKMyB31tbzH+BHrJOFvucY/p37rrFyPIVrQkj5JliH4Rb+Pg2A6cE5m9AlEUV4z
+	 TiWOHLc28EbhvY93scGIG5JKvaLL2VX4R3qrmLDcsGEZZBd/wTYCsv6Nks32umlLPX
+	 Ypug72Xixz1idf9H35Vc/8QMzmyK1UilazA5+txGWME6OdCrrrgRgP+30pneEI5QBq
+	 Ra7jYsaXq4PQ10iZ9MfRiRzmuHnA6OQ2ctSgXTFM4yABDqeu645fgeHLBi6YrJ4pv1
+	 eMmEKBgBHsTXw==
+Date: Mon, 9 Nov 2026 10:12:01 +0100
 From: Bartosz Golaszewski <brgl@kernel.org>
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jiawen Liu <1298662399@qq.com>, Andreas Kemnade <andreas@kemnade.info>, 
-	Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, 
-	Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Kevin Hilman <khilman@kernel.org>, Linus Walleij <linusw@kernel.org>, linux-omap@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
-Message-ID: <7bv2kqb4accxf54nma2hm766tlk3cwocpi3rypgwfaqpe33274@ibz3poncjkqj>
-References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
- <20260820154323.0a7c7929@kemnade.info>
- <tencent_A1BF4495D1F5E54524907BBA2A4ED480FC08@qq.com>
- <avFeZWgJgID5XA43@stanley.mountain>
+To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+Cc: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] gpio: gpio-ltc4283: Add support for the LTC4284
+ Swap Controller
+Message-ID: <gwgt3gujrjko74b72kwb7ywtpc4ffphx4bimkzmwx6nz3gbvis@4zsojuype6mv>
+References: <20261109-staging-ltc4284-v2-0-14a270a38f7b@analog.com>
+ <20261109-staging-ltc4284-v2-3-14a270a38f7b@analog.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,20 +64,20 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <avFeZWgJgID5XA43@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261109-staging-ltc4284-v2-3-14a270a38f7b@analog.com>
 
-On Mon, Nov 09, 2026 at 08:47:17AM +0300, Dan Carpenter wrote:
-> Andreas is the expert in this context, not Markus.  His suggestion to
-> use devm_clk_get_prepared() was a good idea.  Add a Fixes tag but a
-> CC to stable is not required.
->
+On Mon, Nov 09, 2026 at 08:56:19AM +0800, Alexis Czezar Torreno wrote:
+> LTC4284 shares the same GPIO hardware as LTC4283 — same pin count, names,
+> and registers. It is already handled by the existing gpio-ltc4283 driver.
+> Updates Kconfig description to reflect this.
+> 
+> Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+> ---
 
-Yes. Please don't spend time discussing with Markus, he's well known for
-nonsensensical comments and you're wasting your time.
+The commit subject is still wrong. This does not "add support" for
+anything. Say: "update Kconfig description" or something similar.
 
-Add the Fixes: tag as it is - after all - a fix.
-
-Thanks,
-Bartosz
+Bart
