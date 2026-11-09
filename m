@@ -1,56 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.20
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794227296;
-	b=lj5ZdTTkfKJajy86Z050R5OHp+lzI/lIBYpVysLeKRXHiMLE2XvD8iGSUHdBWAlmcNpD
-	 meFjFSh0FAgKbogIyNOvLjBsvkeugZY7/2ddO5M8V32Bwqkuh/WMBhLnGCucqF58NXeKB
-	 YqdEKe2AqPbANCxI55EMOE98QEq3Ct/xIxB0/bqLeFGYK3dHcpDQoEh0LnoeE/pedlpKS
-	 9IbuTcuzxxx2BXQ6iZ4XliacUGm9ilMReomDSK5LwZfDcxNMAysy4zd19rKubHAA+SjOA
-	 uJAb/qtMYWAeU/fvBI/fgH1WKz3e/0uRvhHvbUHPYNN+MXO7daplU0RjiVKLlPLSunA==
+	t=1794227406;
+	b=vxFISQ0U0PclbmtxY4vb1D+Clto7kNnetQtMD5jb7or+2+V56BCKVlA0onySTjbFRQt9
+	 si5q3zobhxlOsHc/5Ojsh+L/vt7xSiMoaifzLb8axFqM5Mt7R/zIfdjsEzvGo+GdKE7Jg
+	 5YUOeUaoN12Hc93mj+ezNZgQRFXJqXJsC3aGz62YGx63eHW4ARZR/k6WBSJ2ScbGclhm5
+	 6JGbYp9whQqaXd9JdGcw6NyolWn9wtOGiDdU50jIHQcvpfLWDUPbnkalB3+eZ8IrmQsvW
+	 00k7TYdgHlqXOrMwX64l2rBq4gipQByLaqkc42xH4Gu2ArLNUKlvKx0kl29TUp+vC5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794227296;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer;
-	bh=iS8GiYS6BEKZKYojShCn/PzarfE6Hwuxq2fwUTCgOqc=;
-	b=dGt84tqLkOLxHw8vHQAk+E9o0Mq5L8rJW5q/TogLlf/dVUCZw4aXZHQwbXJ6PXgq71d7
-	 8iUDd5+uM8lurdz8AdcjFG3ExpVrRA8ImQwJ8FL4FkJNcMXUc8pM8UpBVKd1PPnvTRVmK
-	 g8OBj0OYQ5Tvtm4XtyaiW234UtLSZkn5I7ENJL9dBOXro99WhYw3hISFeyU9DEEraVmyt
-	 B5zUsMzLoCz1sA2N3gg2YNsfbpSZNATwFmjeBmzBtPP7/99CVJgBLum3autDKteLjcJKD
-	 G8tCb4d1yecfb0IEFth+6ji0Wrvj6CjojYUiZQKgiIzPCM8IzNJAe75vyxASZeRt1FQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794227406;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=L8Rs7Er1w4HoT0SPorGcBhaQuHjxNAjYlYU8oAyOoRc=;
+	b=aCSpCs3hkxI3Jduzb7W8lTcf5mB+tk9Qqlu7JqdxbbBjjMF0hjpoSHNb5DuIY8FSWpzf
+	 NUyuPvHzQi2v7lFQe1PPnjW/KXcXaE2a0c9hU9lAa4CbE9q4O2WNn5fAKJzgmTMGpEqDl
+	 SUmxQ8ib0bCIyJRhVEfTw2qHa2typavEDCTOiT0JP/KrucHuyZ3SFxOKKpvTeCKF1bomN
+	 Qe7haa6yRn9uV7JnFndSVM00Oep8mxteezEQM45DQXQv3zUDBmSvqCWTSDdm/mFfTIFOD
+	 P7E6GvykidH4WoPqPaBHSLLR85VxbbrCYSgnIUukWq08pMjzJiS1us8LPheIHcgiuLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.dev;
-	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=GZnzTybZ;
-	arc=none smtp.remote-ip=95.215.58.20
-Received: from mta1.migadu.com (out-20.mta1.migadu.com [95.215.58.20])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y3uQ6Ax+;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3222606A323
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 12:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E3222606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEC8606A322;
+	Mon,  9 Nov 2026 12:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=GZnzTybZ
-X-Envelope-To: linux-gpio@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=bqVtQ6P0h3fZuMSz5KkI6pN2g1Enr0aSOZ5UYfB26Bo=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794227292; v=1; x=1794832092;
- b=GZnzTybZAk36XLwLOZUCgUBKQNqi0dynVG15SJqCDyXUf03m3H6jFEiXgjKSNXYmXwpqCswp
- 59CKDDhBrk+D0PdbUj8WuvpGrIIUQf7kHOj2roieiDTs414HJagMP/CqEWe/KnBYp0l021gpjPK
- KxEZLDsToCLYkmglJ8wxclY4=
-X-Envelope-To: linux-gpio@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id d1122df8eed1b4de;
-	Mon, 09 Nov 2026 12:28:12 +0000
-X-Mizu-Trace-ID: d1122df8eed1b4de
-X-Migadu-Flow: FLOW_OUT
-From: Peng Fan <peng.fan@linux.dev>
-Date: Mon, 09 Nov 2026 20:27:55 +0800
-Subject: [PATCH] pinctrl: pinconf-generic: widen the packed config argument
- to unsigned long
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y3uQ6Ax+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D681F0089F;
+	Mon,  9 Nov 2026 12:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794227406;
+	bh=L8Rs7Er1w4HoT0SPorGcBhaQuHjxNAjYlYU8oAyOoRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Y3uQ6Ax+FiR0R7buGb6YAx01uzdXvJh50W5B6ThswE0+i5zUkxKQJgaqhYeO8ckMJ
+	 mtmb6MPHIiIeOEOoMLJ8JGCJobVZY/yTNXd0d2W6dNx1jXllpkIXouU+N7deW5Hqo8
+	 qSvFPXm02uBQg738k1kfHzPPnzlkiaGwYc58H6GNX+mCFg5htYjCcey5FzHCtOIOkv
+	 7K+94cpvD4a0KTCiimlerJTw5Hj6e+4mT5L1qmYM6nZJkSQK1fsQYaMhFb80qWgxrH
+	 Yv5ta9d35Oa9nHM7Zq5qcBnF+bWut9SW38wepTWqrr080SDj5xD2lEKgY/QLCb9DI+
+	 xhsVNwVVbW8GQ==
+Date: Mon, 9 Nov 2026 13:29:58 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 4/9] device property: provide fwnode_property_get_names()
+Message-ID: <avG8MITPLRuFcZdO@devuan>
+References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
+ <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
+ <auug8QoQ62ETGg1D@ashevche-desk.local>
+ <lmib6742yptkwh7mzduw5xqid6h6rsqchs6aot3usjkcocmxqs@cvcpkwqag6nz>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,142 +68,99 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261109-pinconf-widen-v1-1-469726456c84@nxp.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avErBMcA8uuEi3ExprNJAoVhHdPW
- r7F/y8UykwF5u6FTBcXPqUB+w7C4WUnxVszGG0sonYqsYRTorp5I1F6nHCwbgjGR2hNyhT5+X/
- LWusHvh3KQl8AAAA=
-X-Change-ID: 20261109-pinconf-widen-07813693c2af
-To: Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xdcinei5k7d2f32b"
+Content-Disposition: inline
+In-Reply-To: <lmib6742yptkwh7mzduw5xqid6h6rsqchs6aot3usjkcocmxqs@cvcpkwqag6nz>
 
-From: Peng Fan <peng.fan@nxp.com>
 
-The packed pin configuration stores the parameter in the lower 8 bits and
-the argument in the remaining bits of an unsigned long. However, the
-argument was limited to 24 bits: pinconf_to_config_argument() masked it
-with 0xffffff, and pinconf_to_config_packed() took a u32 argument, so even
-on 64-bit systems the left shift in PIN_CONF_PACKED() discarded the upper
-bits. For example, the pad configuration value 0x1080000 used by a new
-i.MX SoC was packed as 0x08000000 and read back as 0x80000.
+--xdcinei5k7d2f32b
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 4/9] device property: provide fwnode_property_get_names()
+Message-ID: <avG8MITPLRuFcZdO@devuan>
+References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
+ <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
+ <auug8QoQ62ETGg1D@ashevche-desk.local>
+ <lmib6742yptkwh7mzduw5xqid6h6rsqchs6aot3usjkcocmxqs@cvcpkwqag6nz>
+MIME-Version: 1.0
+In-Reply-To: <lmib6742yptkwh7mzduw5xqid6h6rsqchs6aot3usjkcocmxqs@cvcpkwqag6nz>
 
-Allow the argument to use the full width of unsigned long so that such
-values survive the pack/unpack round trip. Cast the argument in
-PIN_CONF_PACKED() to unsigned long to keep direct users of the macro
-consistent with pinconf_to_config_packed(), and print the full argument
-in the debugfs dumps.
+Hi Bartosz,
 
-The packed argument only has BITS_PER_LONG - 8 bits available, so on
-32-bit systems values above 0xffffff still cannot be represented. Reject
-such firmware properties instead of silently truncating them.
+> Date: 2026-11-09 12:16:56+0100
+> From: Bartosz Golaszewski <brgl@kernel.org>
+>
+> On Wed, Nov 04, 2026 at 11:17:37PM +0200, Andy Shevchenko wrote:
+> > On Wed, Nov 04, 2026 at 03:03:46PM +0100, Bartosz Golaszewski wrote:
+> >=20
+> > > + */
+> > > +int fwnode_property_get_names(const struct fwnode_handle *fwnode, ch=
+ar ***props)
+> >=20
+> > Triple indirection is rare. Do we really need it?
+> >=20
+>=20
+> I don't have a better alternative. Having two functions: one for
+> counting the names and another for retrieving them into a
+> caller-provided array is IMO the worse alternative, so I'd keep it.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/pinctrl/pinconf-generic.c       | 16 +++++++++++-----
- include/linux/pinctrl/pinconf-generic.h | 13 ++++++++-----
- 2 files changed, 19 insertions(+), 10 deletions(-)
+Would it be possible to return the pointer, and then pass the count as
+a parameter?
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 36845517984e..0876015a6575 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -95,12 +95,12 @@ static void pinconf_generic_dump_one(struct pinctrl_dev *pctldev,
- 		seq_puts(s, item->display);
- 		/* Print unit if available */
- 		if (item->has_arg) {
--			u32 val = pinconf_to_config_argument(config);
-+			unsigned long val = pinconf_to_config_argument(config);
- 
- 			if (item->format)
--				seq_printf(s, " (%u %s)", val, item->format);
-+				seq_printf(s, " (%lu %s)", val, item->format);
- 			else
--				seq_printf(s, " (0x%x)", val);
-+				seq_printf(s, " (0x%lx)", val);
- 
- 			if (item->values && item->num_values) {
- 				if (val < item->num_values)
-@@ -152,7 +152,7 @@ void pinconf_generic_dump_config(struct pinctrl_dev *pctldev,
- 	for (i = 0; i < ARRAY_SIZE(conf_items); i++) {
- 		if (pinconf_to_config_param(config) != conf_items[i].param)
- 			continue;
--		seq_printf(s, "%s: 0x%x", conf_items[i].display,
-+		seq_printf(s, "%s: 0x%lx", conf_items[i].display,
- 			   pinconf_to_config_argument(config));
- 	}
- 
-@@ -164,7 +164,7 @@ void pinconf_generic_dump_config(struct pinctrl_dev *pctldev,
- 		if (pinconf_to_config_param(config) !=
- 		    pctldev->desc->custom_conf_items[i].param)
- 			continue;
--		seq_printf(s, "%s: 0x%x",
-+		seq_printf(s, "%s: 0x%lx",
- 				pctldev->desc->custom_conf_items[i].display,
- 				pinconf_to_config_argument(config));
- 	}
-@@ -268,6 +268,12 @@ static int parse_fw_cfg(struct fwnode_handle *fwnode,
- 			}
- 		}
- 
-+		if (val & ~PIN_CONF_ARG_MASK) {
-+			pr_err("%pfw: value %#x for %s does not fit in the pinconf argument\n",
-+			       fwnode, val, par->property);
-+			return -EINVAL;
-+		}
-+
- 		pr_debug("found %s with value %u\n", par->property, val);
- 		cfg[*ncfg] = pinconf_to_config_packed(par->param, val);
- 		(*ncfg)++;
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 1df63c732b99..9d28d4de1415 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -172,27 +172,30 @@ enum pin_config_param {
- /*
-  * Helpful configuration macro to be used in tables etc.
-  */
--#define PIN_CONF_PACKED(p, a) ((a << 8) | ((unsigned long) p & 0xffUL))
-+#define PIN_CONF_PACKED(p, a) \
-+	(((unsigned long) a << 8) | ((unsigned long) p & 0xffUL))
- 
- /*
-  * The following inlines stuffs a configuration parameter and data value
-  * into and out of an unsigned long argument, as used by the generic pin config
-  * system. We put the parameter in the lower 8 bits and the argument in the
-- * upper 24 bits.
-+ * upper BITS_PER_LONG - 8 bits.
-  */
- 
-+#define PIN_CONF_ARG_MASK	(~0UL >> 8)
-+
- static inline enum pin_config_param pinconf_to_config_param(unsigned long config)
- {
- 	return (enum pin_config_param) (config & 0xffUL);
- }
- 
--static inline u32 pinconf_to_config_argument(unsigned long config)
-+static inline unsigned long pinconf_to_config_argument(unsigned long config)
- {
--	return (u32) ((config >> 8) & 0xffffffUL);
-+	return (config >> 8) & PIN_CONF_ARG_MASK;
- }
- 
- static inline unsigned long pinconf_to_config_packed(enum pin_config_param param,
--						     u32 argument)
-+						     unsigned long argument)
- {
- 	return PIN_CONF_PACKED(param, argument);
- }
 
----
-base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
-change-id: 20261109-pinconf-widen-07813693c2af
+Have a lovely day!
+Alex
 
-Best regards,
--- 
-Peng Fan <peng.fan@nxp.com>
+>=20
+> >=20
+> > > +	merged =3D kcalloc(n1 + n2, sizeof(*merged), GFP_KERNEL);
+> >=20
+> > Shouldn't here be something from overflow.h?
+> >
+>=20
+> I guess size_add() would fit.
+>=20
+> Ok for other comments.
+>=20
+> Bart
+>=20
 
+--=20
+<https://www.alejandro-colomar.es>
+
+--xdcinei5k7d2f32b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrxvL8ACgkQ64mZXMKQ
+wqn37hAAtjuzjC77MoGzeovCVZHOkf27aePC3mBRrFB4n67PxKxAhnDteTJ0evAk
+XClW2pWcMHOYbUgvdJVlbAC5L8ShfrR7UN3Qbh+BMt0ji+0l3q267SU+eAmf24TL
+9MoAsrplaMPkwHdK0HajkcIy8fpPIC2QM8PkIpAk3JhZvfmmANA/p/KqYgSp3YiT
+u/HJP55J0A7I4f1CK2ym2RZ4NK2NpmlEsTEaa+M2+zhDmS2ztHq3fqu7EmOgksEz
+Vq6Rw7iVX6nzAiMnOWoQTMEs2pR/eVU2tjzBael3J+2h/uarnGWJEVfgsCymJ9FY
+EU0yg2ebM5mEEaH2uihxVdKnxnUrrjX2JVgaz7jiHBDe9CyHxH9ZHrijOr2QN9wf
+CUNMzvq2EN235hyg/aKVrxMvgSM3Sbk480HcjlarM2DotX+6HFMkbEr0bB7ORiMA
+TS6+mITone1URnbqAQvqKstDzGDPIsqyZcX9b2dUba91sxDiYbw9DMggeenvLIwS
+TCASeoWrO+ggD2sRpHdtkibM8uP9t6knNWEWKFcyFyxgLZFdGrfFldcaUNFaWH33
+I9DgDlRL3/DgZwF+qwdzAWNjwiajdAc/B9WowFRyZ97LUcdIWQudD/y/RftA/e6e
+5OGdtYkXSeANEuBfQGygAY/RUsnLvSTPE5biq5xmBLCkTvZgK84=
+=35DC
+-----END PGP SIGNATURE-----
+
+--xdcinei5k7d2f32b--
