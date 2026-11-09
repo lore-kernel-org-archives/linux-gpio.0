@@ -1,69 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794219715;
-	b=2Pz7yj1kS7mbxjB9QLGofyj4W12WzxmGnYkh+J6SOcw4gOeT8no1Z1OTl/X1GeNPotlH
-	 O4ds2T0VjqLdejmzcIoc/pZWVxWICdO4JY2zWrG/diNQzGUOzIseZnzzE7FCKGOV4Yn+d
-	 jWN1y7JwoVLmixoYP7ajg0ZrcGvdHULPg/Dp6UYSWltkKi+vvd6bRptOxESZROMz3QpaY
-	 la7N09L7THZIklZKd+9JxnylLzabqKBpZqqW8MklKr+YT0Pj9MwdULBCzAsg5F7NpW9rf
-	 oWuObp5iJw6XSaIw58Ts8llOE4i78Ckn3LaJuQKVUrKsY6dolwnzfmUqQLR1oLJ7/vQ==
+	t=1794219924;
+	b=5JVJT0Hm4ljyhYTnmC5nszq4qQcsCU6mDSHdr/WToqt6FpEwSNVi91n7u3dj9PPhW094
+	 WKMvPUlf44cbXwv+wG9o6Kpca8ddK0s7Jf9p5zhfKdT8DqW+C8jp1+u/Xe7emRAUPkvbY
+	 AEgGjGCiXAKrXKe6KILG7GYCOXFCQprF+WqieFtoWhkHMTghC0E7utjZcfui1DbA21plB
+	 T+8dV9lfodexwWlWeAOT5QvMFR3PVyeDcLwzFyAGj3rA1vwvMA3vlXvEekBYE2XHroyDK
+	 mkz3o2O+6A56wE9adwT6fJuHisVmG/n+c+pU8eubOoqVTDPJTUoZBzd6pL33zzjYXtA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794219715;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 X-Zmail-TransId:X-Mailer:Message-ID:In-Reply-To:References:Date:
-	 Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:X-TLS:
-	 X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:X-Fangmail-Anti-Spam-Filtered:
-	 X-Fangmail-MID-QID;
-	bh=8g43I7Cgnwx1eonFXL7K93eWn2TK/exzsb3fDJyMmvY=;
-	b=HqUGr0iw+CpbMmwoF+7Ou2gUEdVL1w8JH3/nB3aKZEqSajxnnLzOkOZLTdYuVCHE9XSm
-	 OSpl4ZtaKPB0nB4UhUkn5mS7F1LBoLcjTzX4jJ/IaDGdjH2ZPk63v79pbSYnvHxWeFvxn
-	 82rawt9ARJMVkL4muO3JVe0IEax/d8eUP7bg7d4V+/bkRgbBuxFjecX2Wk2HzEwbxTWQx
-	 iAUm2GIUShNXhL/0Z4L4URG3OEaBKb9BQ9d0TAAkYNlsgBaqJMN+GCdD4MHSp1XM5UNhw
-	 CDVklJVkewHbK4ywpGQif/5Qztr9fLQk3S1Qv79wFQB3ld48GekDA6WyCBydZsX9m7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794219924;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=NnxLFtUcr1hlHxfUEIUQKoQuNxQA85JbYbu4R9dHHgA=;
+	b=mLRnUiab2rcFFAwU/5nwrB5Nw22e+/WU7ofMriI7P3yGl8f+x3TRyBdhKCjjfvZdcUrT
+	 BiCAVI/8VQrZgbn7W1lr3h4QMqpdWY7yKFHq+XCTOEE9FpOAo/6X89gU5upcLEKXxqU/t
+	 /X09d4EKVsejs4qNZD/i4Sd9WMxHgFj3gxdUgUs9pyNFPGPmc6wxmXcqPqL2aEgDm9gIp
+	 rq3cE8PZdPqu2SzsvlNDNj4v89b5UCwMxme59zFduj8tW+MW0DEcTiks+ucn/VOON7qJI
+	 QEFUMWdvKhKNh284VFfC5Y6ebAO0HOq9JSDLoRpeormhIa9N+4um6D4S8bVRCXsfREQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	dkim=pass header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=WCBIPYmm;
-	arc=none smtp.remote-ip=183.62.165.209
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="cy1D/HDe";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E6606A31C;
-	Mon,  9 Nov 2026 10:21:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D62E6606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 87D94606A326;
+	Mon,  9 Nov 2026 10:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=WCBIPYmm
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jNQn74RCHz5B13Z;
-	Mon, 09 Nov 2026 18:21:47 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
-	s=z202610; t=1794219707;
-	bh=fqAiLI6U4FPrPRNJ1BhImKvufSq1G9itncyFGqt+m/4=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject;
-	b=WCBIPYmmjByDuxMD32Iv8u16zdxODlUz4V0M/+HjJ1wVdBXcC/2zmLN7RrllO6HAu
-	 EWfv/maadwFtgNv9cLtsEGO0omZQxTcjh89Cmk4yNA8E3MsDRTO01DHr7nB3qF/gS/
-	 Xpe8LExQuXpuCsTga7CaEkr/kcHdnUtM84ARiSgfs8Zn3zUMN9lat4qrmWEkZdFa2X
-	 l+sW5p5pPXTWVYqpafOb3rVOpofOVknVB/fS5Pw/bYtIF512J4eRvjlUT84LzOfZyW
-	 Xl5Ub4DVcwMagPTUAhVmf3XpnId+P0znAoJSuVJiQIHRaAna8UyVrgkPzG0hQ/ATd7
-	 KlSrmKjj8mZ8Q==
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 6A9ALidJ091273;
-	Mon, 9 Nov 2026 18:21:44 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 9 Nov 2026 18:21:47 +0800 (CST)
-X-Zmail-TransId: 2afa6af19ebbd80-03cba
-X-Mailer: Zmail v1.0
-Message-ID: <20261109182147347ZmJrB3jgSM0GHweaMxJm7@zte.com.cn>
-In-Reply-To: <c9e116f6-ce3c-4cda-83dc-4e96c7d58aa8@gmail.com>
-References: 20261107161258203oCy-Pa4_0rNe65TqrzFWD@zte.com.cn,c9e116f6-ce3c-4cda-83dc-4e96c7d58aa8@gmail.com
-Date: Mon, 9 Nov 2026 18:21:47 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cy1D/HDe
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4D69C1F0089F;
+	Mon,  9 Nov 2026 10:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794219924;
+	bh=NnxLFtUcr1hlHxfUEIUQKoQuNxQA85JbYbu4R9dHHgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cy1D/HDetXh3Ypi8kDoIHRLUbsWxZFzJULtLsxoDQziX368400p7igNdIw/PVJNwE
+	 dzBLXrcKNf0c9aeRCatKTH9NpYMPVv8mbgewlKc5yKBQKI3QHtlHMfC97A31fB/PjK
+	 pCuIdpN0xnqtCzgZmvPkGx49IFhUFyF1g87nmGojD5vyG8wMUMEjN7kilfL5r/s3vf
+	 ObNlO/abkp/E8PjYdBax8U6bNZw1ZiBdDX+Z8nSHnHU8TgANMxhySejJxy2A1BZUww
+	 YfYKg0BZhAP1G1m0/PwSnsxgwFTZ/7KklfaHSfnlA6ffrt4MU0C2xyoTNkcT9S6gTF
+	 S5jJ6fjKmsopQ==
+Date: Mon, 9 Nov 2026 11:25:20 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 5/5] gpio: cdev: don't overwrite the whole flags field
+ when configuring lines
+Message-ID: <g22agtopvkez4jqeh37uylm4xl4orqaymhcnqmdouhsgkzb4sf@i577mr5xqugv>
+References: <20261104-gpio-desc-flags-atomic-v1-0-e23cedf619ba@oss.qualcomm.com>
+ <20261104-gpio-desc-flags-atomic-v1-5-e23cedf619ba@oss.qualcomm.com>
+ <20261105042345.GA8436@rigel>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,52 +60,31 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <jelonek.jonas@gmail.com>
-Cc: <linusw@kernel.org>, <brgl@kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <geert+renesas@glider.be>,
-        <andrew@codeconstruct.com.au>, <wbg@kernel.org>, <opendmb@gmail.com>,
-        <florian.fainelli@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCA1LzVdIGdwaW86IGxpbmUtbXV4OiBmaXggdW5zaWduZWQgdHJ1bmNhdGlvbiBvZiBwcm9wZXJ0eSBjb3VudCBlcnJvcg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 6A9ALidJ091273
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Mon, 09 Nov 2026 18:21:47 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AF19EBB.002/4jNQn74RCHz5B13Z
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261105042345.GA8436@rigel>
 
-On Mon, 2026-11-09 at 09:29 +0100, Jonas Jelonek wrote:
-> Nit: Please adjust to keep reverse christmas tree. I think 'int ret' and
-> 'int ngpio' can be merged too.
+On Thu, Nov 05, 2026 at 12:23:45PM +0800, Kent Gibson wrote:
+> On Wed, Nov 04, 2026 at 04:37:00PM +0100, Bartosz Golaszewski wrote:
+> 
+> A couple of things not covered in these patches, but related to flag
+> consistency:
+> 
+> GPIOD_FLAG_USED_AS_IRQ is used as a lock over GPIOD_FLAG_IRQ_IS_ENABLED.
+> e.g. gpiochip_enable_irq() and gpiochip_disable_irq() both warn and drop
+> thru if it is not set.
+> Yet gpiochip_lock_as_irq() does not check if it is already set, even just to
+> raise a warning.  Why not?
+> Does the updating of those two flags by gpiochip_lock_as_irq() and 
+> gpiochip_unlock_as_irq() need to be atomic?  Not individually atomic but
+> as a pair, else they race with gpiochip_enable_irq() and
+> gpiochip_disable_irq()?
+> Similarly, don't gpiochip_enable_irq() and gpiochip_disable_irq() need
+> to perform an atomic test (of GPIOD_FLAG_USED_AS_IRQ) and set
+> (of GPIOD_FLAG_IRQ_IS_ENABLED) so as not to race with the lock/unlock?
+>
 
-Right — shrinking "unsigned int ngpio" to "int ngpio" put that line
-before "size_t size" and broke the reverse christmas tree ordering.
-I'll merge the two ints and keep the longest-first order:
+Thanks, I'm adding these to my TODO list. :)
 
-	struct device *dev = &pdev->dev;
-	struct gpio_lmux *glm;
-	size_t size;
-	int ngpio, ret;
-
-> Maybe return the error if < 0, instead of -EINVAL for all?
-
-Agreed. device_property_count_u32() can also return -ENODATA, -EPROTO,
--EOVERFLOW or -ENXIO, and folding them all into -EINVAL would hide which
-one failed. I'll propagate the errno and only map a zero count to
--EINVAL:
-
-	ngpio = device_property_count_u32(dev, "gpio-line-mux-states");
-	if (ngpio < 0)
-		return ngpio;
-	if (!ngpio)
-		return -EINVAL;
-
-I'll repost as v2 with your Reviewed-by.
-
-Best,
-Shao Mingyin
+Bart
