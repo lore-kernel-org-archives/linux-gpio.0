@@ -1,82 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794253707;
-	b=OZ9vvoBePxzPam9DL8vnKrdKOydxYdg7fhnPD3QeKxtn3fRmhglnqcJnON8dRYan8OGl
-	 wIPs2nHsPZHID6PjuT/T0IzjhJNoZpzB2kdA4TK1KYgk6ciaUDssrAkYb2gmIr83ZK9Gd
-	 pvWIraPic3CKSt/3VfUY5qAtxjjfWW77GkIkSsVWWS6GXaQjkyezSiXFhR8nWr2jSE3Up
-	 OAtp87TnRKH0oK0hli5bGUnTz1KXaVXggS+VKyRJ7l6Phqz0j0sn8nfe+ppzJBOTXWem/
-	 Km7DqG5kDvxVodVi6tQ5MUYo/xRDyA4VYY3XXWZtp6Mj4aKdnXeFhl1t3D5fJBQa2OQ==
+	t=1794253711;
+	b=QzMdGyt2X1emhp6mMFa1/ojevTyuhRlSSvpC1R/FDH0m1Om2dtJwlTYj71umvVQUlgZB
+	 GtAzyKTHyoOnxObXQXrLfbbxo3keoyHVg17PoLxA+oMB+zXOImgvI2cKP7BWPdd78FEUS
+	 kpsmU+ba5SJobgz7PBmArOVHQe81Uuoi4zxYc0pbd+ZqRGbm6qah8vvCgpffxCyWnRqlj
+	 4DErTle7r/tOyU/fk+NxWzAOq6amHBlR1JZlvDc3JbG2NLGIA04qiy9SvO468gWvOa9rt
+	 +ywy4SyPyKrVgtXJI7PZXxEux15tvIbzXhtb0EbfecWny0/gKUNq0sbIqMdysLhYkZw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794253707;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794253711;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=zIOHG13Qku7I3M4LMmNicqKWCM5oJcm1CTDilGVoAb8=;
-	b=1bj3urmKScumaG3FmBOVGLpAyRssV4yzK+bL6b0b8JY4nxLCkF3/zZv8WjX1S0BMVHey
-	 YRAnFSKfsmxzlw6GfuM6q4LAolH7Q/a6/wFz0xBsjv9gH0VRzWncko/zeSOuM1+1Wk9r/
-	 pDiCN0+NNepf+UewoNSxVP8XJdGQM0I/x5/TQW8PwTwKCwjdeqv1gaVwllwAydo20QTEb
-	 rpQDDuouasrlwjjnza0jTAcNRMkBmfKUyyBtyXfThanzi8XyQVup/RoXDknzBc2qydyYT
-	 2zcCct2Jf35w34QpyYTSGLVi5biOuV5wGvJnFO50hLKQnyG8RrIMA2kDyAb6aqUoA3Q==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=SaR5dI4b3/Avv5qRMJv+1R+v76FBZqVUZp4EUUEM99Y=;
+	b=VSiKafamRE/nf0uw4iMUGiQM9d5RpS11rRnbzZk58K74u+wPLZiTnHDyQnE9cauADytK
+	 Mh8hbCW0xfD8gW1PAdlZY1mq+yERmHTfINwED+SVbDOaQD+P0fFGT/bypbyfEWyKVBeIY
+	 lSoq/KF4ih4/4IZwFHNL7JON38FjyqrUpoeWD7s1p4Zk2TasP8tEiK0iT0hzqejRDZWei
+	 5n+ro/f07cHhdC1UqtsVQ0r3Jw5OHq/aVyhPuBqDnF9k8aBFEcP7jHR6KW5nsyKHb2f+0
+	 ZONNowafKZ8U4B87ua2qSb2OOhBWBGIDnFeg4RwZjGTFwmR/iqB3EIOgBDi1FbgBcGg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="F/Da1BX3";
-	arc=none smtp.remote-ip=74.125.82.179
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IKIbML9Q;
+	arc=none smtp.remote-ip=74.125.82.180
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C49606A31C
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 19:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23C49606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922B360A2604
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 19:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 922B360A2604
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=F/Da1BX3
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso1716039eec.0
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 11:48:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IKIbML9Q
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-33fb4680717so2700271eec.1
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 11:48:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794253706; x=1794858506; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zIOHG13Qku7I3M4LMmNicqKWCM5oJcm1CTDilGVoAb8=;
-        b=F/Da1BX3Z0rwbH9MUtbdPn7lpC9PbdpfMPFkuyApexhhk8QWdw974+ql+KeOlJZ3WJ
-         A756Fh23CxaNDENfaqcfleQo92rz0Ja5bg3wBVp/lYyngVBHuPIO1vS/RJKQkVkQ1cWa
-         bmgd+NIxs5xzoDR0Rpme9PVbYlvMw40s1xX+R7i+CY2G6zviG/JLRJvh1OTIHzsmWjbS
-         MkSlRfNT7O0nVWhqMFC8/sSAGXN28AB6jIlXO1WGgBD2SpbjcELrd/WqBDiMRsBhQAe1
-         5bQKG6/eQIDZyI3f1ny4FWl6UHckO+cSMv9DqEmtGK/EAjUzX0cI56NyCSnWWkcOoWz4
-         hXVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794253706; x=1794858506;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20260707; t=1794253710; x=1794858510; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=zIOHG13Qku7I3M4LMmNicqKWCM5oJcm1CTDilGVoAb8=;
-        b=p2ijp2KYdZzwAQLQKlALTxu+c+qeIb8CJGlQmm1WgPO8v+RpQ2puSASaff6wwCQT+0
-         QizG4iZwQ39PdPakzOFBA6uMwr5sPMXL4038PEHwR57Zg8X/tByR/xCtmFKaWEcPKpgS
-         C+0X/zWEVN+QAi6ApS5zuh9gf9qy0YQvtGeQzXNhb2Gb89sPPsiSs9B9yNW+yqzfGsYo
-         dMQ5hBB8uVIzCNtT01xopqUcRsfa1gp3KSEqe5y4MdXCcd+uWjeO+CPTVg/9Y0fOyrSo
-         Xfb5TbV53bxrvelnIaYLw9A4wDZ+IlqqFlZRXKitazSXg7TRuxmPERdeLfaV+SpPpqMT
-         zFzQ==
-X-Forwarded-Encrypted: i=1; AL+hErEP0sxIsVS8v4iNLs2Sy//CkpGWTnUMXv/f5nI72OeC1ZSPPzkjhIqtQGntnPEOLftaYCoCUZMIF6qx@vger.kernel.org
-X-Gm-Message-State: APuU4Z/2gGI5DgewAg27ICA0tyC7MQsC963x0MUPnFneSZEeBhvxhR7W
-	CzxqNk6FkUN1Kkaij8N/I4zBQIYv+byIhBOdwboPikymCmka7Q/liZR0
-X-Gm-Gg: AYBFou0wU3n99+7YU61EUhXaSBtrij+Cbf1O2SH7b9xxXWNWSsU1g0eJbOelk7iTdWI
-	xIF2qsuYQK9fcrThRH7pXP+WLdSmg2bDNuv5dbk62Hy8FtUOQo0i45bDtsc7+d36kWJG59IcMtd
-	UvzRAMvadkU97CSzcUV74zL8Gv4g/Enb6pVzAZSKBPRBrcwyRo5r2tluVa4pgG97XZ+csKkPXQk
-	9YTM9saVN1yP0hDGn7+zPyK/4a1CaFoTjtSDDjfKV1L5snDrR/STMZSz99/oPCB3McxvSKnNNh1
-	NT6ZpLA+gDpidXMFJ0z0O8ADbtHpm8ikVqf+6B50sY1VwUSj5DYdBLT/BhQasUG9zVNlY5m5+2V
-	EzBgzeJAV97podiuxTU5rDXFWxBJl+MewwvlyPeIIjAheuD8F+heTqesWagqIeAH4+/m8dY4uYz
-	Fx/IANrL8j3ybanMvvVz77Kw0ZSR2lW9/FBgxgsLGj8t0jVzHYryiLMPSA1G7OYyYBLJqo9W4oF
-	EjYlytEK63u/x8qjlOyFtlR5QiCTl291tFJpCecOgMB6X1+bIZAY2r9zALh4LHk8x9+NreBnBpm
-	ftA+kTw1iTrIP4VYU+5bmfYCaPT2UePsP7eqNcBek2/CBMylG2N2kSdhh3r0nMaY
-X-Received: by 2002:a05:7301:d184:b0:36d:a465:b38e with SMTP id 5a478bee46e88-3751c53689emr407134eec.5.1794253706090;
-        Mon, 09 Nov 2026 11:48:26 -0800 (PST)
+        bh=SaR5dI4b3/Avv5qRMJv+1R+v76FBZqVUZp4EUUEM99Y=;
+        b=IKIbML9QoVHmXbOCw/sLvnmHHB9xNCpflfz3IKRPm9CrVGrDaaapS+GzvxDU4si6R9
+         rVlO3a6ygJCfJqrzxX/LnDR4AJ7QN9NqpbwoKKZHoMBekbqk3xen/j7PLANsSJBknu66
+         N0uZfJy4Rv0FxqKvbeAUUZmsHAgyBEotNmb1XHluj4Zu8hKKW40R2+Ge71Fb2d49BsNk
+         LMhj/7NMN5VDJLmZl/mLHT/ST3bH3L875JRxNjBUN8droi5WbLmGM6Myf/jhxmNeHxQD
+         EWwoRFwJYEdtIZTd5khSGNC2jNobEFbxMp2dvZEU4JZm4VSDcOjrUg3XlITqNkppEQ3m
+         +y1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794253710; x=1794858510;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SaR5dI4b3/Avv5qRMJv+1R+v76FBZqVUZp4EUUEM99Y=;
+        b=1fVUpM3QKmZdaFFPlU4K2ZmlTi3mtBpiYltHnUS9L8Zj96TDatZN7FB8f//LmVNC3r
+         P1h7tNVumi5eF7ZhReLl4NnzdyM4gU+D9DR0PSp9MYlA4vgVAL8TFWli/GjtZbFqiCKr
+         VYPpob6pnJYPi29Q47eY0M9g4Xk7TcLVkx88LXCmAxMB8fXWyNgZtiEFhpLtYsQqNKd2
+         7M2hWoHpANuxFF9umjzvlsuG6OpI7hs9jY5v3PuoW94RySz7uZgNQIjD8iPWGw/ejGtx
+         Gl6RUKCvaFFsR7IGmK9Vgvz8VVy/XbWgCPc9iTxjtosHZuNoWFVr8XMKb+BLD517ZO7V
+         iSHg==
+X-Forwarded-Encrypted: i=1; AL+hErFAEaCtOBH61aH2lGkDmWGA7QZfuIYhcWPOvehmF92FEqYtVwWKtPl6HK1h5xemCjDzsAF+yeaTzsd4@vger.kernel.org
+X-Gm-Message-State: APuU4Z8x+nnFquXLDc3QZ7YLjZxjbU3dYDwbxI9WfMpGXjBJaMa/51r1
+	4/2reQiswnzh77kpdyA9WMrchW1JIOZzxG1mQ1dUTd7BUpNNofg1VFXZ
+X-Gm-Gg: AYBFou0n7cxkgUfzI0uvBnJ8PYchYTKKvxEuxlxGklAe+XumaVBymVvmG0nCs6U0LsY
+	Pz7QBXO66VucRmru7uMVPnuWrqq5OZKN4rnLq5GU7r+TryCj2Vup4AVW4LVfYn2HXBn4U7ana00
+	+mvp/fmca58Z9JXq9i5DN02tgYYY+fcmhcO9Uwp51f/Pbn9xsoiijlE3D9w47EOSxU68j93R5wn
+	XBz55k9Lr6lY19cLlwOORnPaK/2HG/lIVmy9EoF07WnUR7ae7pGxhuoepwUjbB9zMT16d9xCQ5I
+	hnWVULCaurBVQoJ0NTWDTBZzVBrigRn5QenoMtmxiajBSLSYnLMUK2EZ8lHPGALOFDL03wIqP0y
+	SW6L3L8PH431+VHLMKLzU/dI2mSCG/0aWaSJeojhyq78ZIcr5z3NuC5iOQfbmK9fzDDxlnGTfHy
+	brvvZgZIwe2fUYO3R1Iy+Zc3/wTM17AuNoetjFCeqouiqSZiCYMUsZ60qoRGUwVh+2aLPhJ3yRB
+	agrduY+m7/DVzjwH5eQYSdgQ1x5n6j+lM9+tWqx3ejpDGG51SbH7q2jJ4xTP0R9BcEUpH9SoDzF
+	pWMGk5YNETT2FJ483xl8W5ruA1DNAH/KSx1xe+Lfig62raqrJZTFGK3uFI1NdHW+
+X-Received: by 2002:a05:7301:5081:b0:36d:d0f2:7c83 with SMTP id 5a478bee46e88-3751fc35fa5mr358653eec.32.1794253709662;
+        Mon, 09 Nov 2026 11:48:29 -0800 (PST)
 Received: from obadmin-Precision-3680.atlascopco.group ([167.103.3.1])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3751fe32276sm530164eec.8.2026.11.09.11.48.22
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3751fe32276sm530164eec.8.2026.11.09.11.48.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 11:48:25 -0800 (PST)
+        Mon, 09 Nov 2026 11:48:29 -0800 (PST)
 From: Sahaj Chaudhari <sahaj123.sc@gmail.com>
 To: linusw@kernel.org,
 	brgl@kernel.org
@@ -88,10 +89,12 @@ Cc: Sahaj Chaudhari <sahaj123.sc@gmail.com>,
 	sujithkv@ti.com,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] gpio: davinci: fix probe-time IRQ setup
-Date: Tue, 10 Nov 2026 01:19:08 +0530
-Message-ID: <20261109194910.2282454-1-sahaj123.sc@gmail.com>
+Subject: [PATCH 1/2] gpio: davinci: use controller-specific MMIO for BINTEN
+Date: Tue, 10 Nov 2026 01:19:09 +0530
+Message-ID: <20261109194910.2282454-2-sahaj123.sc@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261109194910.2282454-1-sahaj123.sc@gmail.com>
+References: <20261109194910.2282454-1-sahaj123.sc@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,46 +106,48 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series fixes two independent probe-time bugs in the DaVinci GPIO
-driver:
+The file-global gpio_base can be overwritten when probes for multiple
+DaVinci GPIO controllers overlap. The later IRQ setup can then write the
+BINTEN register of a different controller.
 
-1. A file-global MMIO base can be overwritten by overlapping controller
-   probes, causing BINTEN setup to target the wrong controller.
-2. Per-bank IRQ data is allocated as chained handlers are installed. A
-   later allocation failure can leave handlers pointing to devm-managed
-   data freed during probe unwind.
+Derive the BINTEN address from the current controller's mapped bank
+instead of shared global state.
 
-The first patch derives BINTEN from the current controller's mapped bank.
-The second allocates all IRQ data before installing any handlers.
-
+Fixes: 118150f22d6b ("gpio: davinci: move to platform device")
+Signed-off-by: Sahaj Chaudhari <sahaj123.sc@gmail.com>
 ---
-Testing:
-- ARM64 W=1 Image builds passed for both patches.
-- On AM642, a forced asynchronous-probe interleave made the baseline
-  compute the wrong BINTEN target. The test redirected the unsafe baseline
-  write before it reached hardware; the fixed path selected the expected
-  target and verified readback 0x3f.
-- With targeted probe allocation failure, the baseline left one chained
-  handler installed; it was detached safely before devm cleanup. The fixed
-  path left no handlers installed and reprobed normally.
+ drivers/gpio/gpio-davinci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The private baseline and fixed kernels showed unexplained
-TAINT_MACHINE_CHECK bit 16. No BUG/Oops/WARNING/call trace/SError was
-captured; the cause remains unknown, so this is not a clean hardware-health
-claim.
-
-GitHub Copilot CLI assisted with investigating the bugs and drafting the
-fixes. The submitter reviewed the code and personally ran both board tests.
-
-Sahaj Chaudhari (2):
-  gpio: davinci: use controller-specific MMIO for BINTEN
-  gpio: davinci: allocate bank IRQ data before installing handlers
-
- drivers/gpio/gpio-davinci.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
-
-base-commit: 4fc2c9ab68f4324bea62cb5a43e93392225f1d11
-
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index f7c3b644e0e3..caeecfc3df20 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -43,7 +43,6 @@ typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
+ 
+ #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
+ 
+-static void __iomem *gpio_base;
+ static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
+ 
+ struct davinci_gpio_irq_data {
+@@ -168,6 +167,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	unsigned int ngpio, nbank, nirq, gpio_unbanked;
+ 	struct davinci_gpio_controller *chips;
+ 	struct device *dev = &pdev->dev;
++	void __iomem *gpio_base;
+ 
+ 	/*
+ 	 * The gpio banks conceptually expose a segmented bitmap,
+@@ -588,7 +588,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	 * BINTEN -- per-bank interrupt enable. genirq would also let these
+ 	 * bits be set/cleared dynamically.
+ 	 */
+-	writel_relaxed(binten, gpio_base + BINTEN);
++	writel_relaxed(binten, chips->regs[0] - offset_array[0] + BINTEN);
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
