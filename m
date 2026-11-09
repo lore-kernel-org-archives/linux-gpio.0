@@ -1,93 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794185848;
-	b=y9CloeB6ImrPdoBBbR3isW+TwqbrF5wBqSDtLqxoZIhFRhcxyCyJd8NrcGYSmzeBMFHG
-	 WUyHA3LtmAs+OxlofzoQw8jtHoPd1e9buWT3IOn9qFtnOLE4coF3bGrjWWoxT879na6X/
-	 9QTcLdYi8yQ2OK72U3x9VvO482i6AYhOWOGpZAtSNx3Kj0F0Yu6iyCy3BbGA2+9eCf7m4
-	 HBXTfRrxHP+nzfuuN41ooFFkTOrNHsi/XQSq47wjAXkf0LOyw6gDazUZTNujWuvJFSpk9
-	 gjY4NlYfQccU0aLC5r+NMuJq/3JpwKrFvVBRxkm8cwcfj1cHzKtso0AvFvPF+fmTATQ==
+	t=1794186384;
+	b=0Ftro9vDcnwBO33g7/xVDXVTqEd8ed9erzwc0SubJv03GuuECRPcEtUN0yH/EgoHV3/V
+	 YBzYDkBZUa336Awp6u2l2dhhxDCoCxkZTZuyqXAP4mBdIFfLlZYiVoeP69CQGBEFLYDIw
+	 KJ8rJAXLp9qpzKmI+mzP9P+TqtP3srLuv5INpk1Foho2LdnA/Q72NkoeCMoI2iAiEDUMc
+	 3NiLMlW/RfOCcxBEXspfz9kq9d/d8ldlx+xU6UiuIK0qet0PpxvC19IWa5qEp87+6Wo1U
+	 ze0oLsihOhJJgmpJ3An68IOjJuULnEq/w1caRBP9s461Rv0HlODUR0nind8mCpsKuHQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794185848;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:Received:
-	 Received:Received:Received:Received:Received:From:Date:Subject:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-ID:
-	 References:In-Reply-To:To:CC:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key:X-ADIRuleOP-NewSCL:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=uivMuJZoe2S/0CQvYgZGebbq60EIzw0/WQEXTk9GKmI=;
-	b=huUqayBNjceJsXiMNW/MNxIewjc/CaAIRDd1/+qmFKgfCfJyhh9htohQgSe7ofd8wrRm
-	 HbZjqv/SBTU/DiEBzxD75Pk7RGBopDvAv1f9fr48j0NYcEluXIrShrZ1oaR5P+k3HGalL
-	 l6QHoILQbyKu7n77lRcStmwbilu4cFdJy8YNeZqfQc4e2yOLoIvhEex2almjwbqsQC97A
-	 f3uEd8r14c2l4STvJ2fXGnwGjK6e8BMSyAfM8X687uVQ8CLUCACYIAnKlQEfvyXB6/X7T
-	 8uQ7UBk6UmomB75Jd4Z2y9pJJ1VAzmAsatZqHK/HNjk3XDk/EfIdsdWq36uoVnOrV/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794186384;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=0ccSxYjxGzAtaHzkcwmwCf630xLQpL/NmFnj7j12J9Q=;
+	b=kJLUmAtal8J4wbkH7M+4UknFCiomCAwAnxR9oJ/BnfyYPEfzQ5k59QUcHe2FL63s0zOC
+	 PwxzdNIPE09bMWUkwCprPJ3WKtHZOnIYePsI9TFeBpoEqrKSCrDhy/wLkO0M0CBLWkUms
+	 J1h8kjJHwgmEv6NkubXBgQXiWiJ/JV3oGdqRhYUg8dczM1vXZZeUtmUj0IZlAmsIAz/3x
+	 H8pel+y2oqENylqEF/Erq7MZZS5cYM2g+MW664OzK9FEdW3djNKQUpm0z7M6JefFLlcme
+	 1+LMFde1dW28Ab20kPzdWBD3T3bpccu34fyoSYQyTPZQPD9UNuftgDQX1sePZxrxoLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=analog.com;
-	spf=pass smtp.mailfrom=analog.com;
-	dkim=pass header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=bejh6Pqq;
-	dkim=pass header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=dhBG7T3L;
-	arc=none smtp.remote-ip=148.163.135.77
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RvOHLJpr;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D28E606A332;
-	Mon,  9 Nov 2026 00:57:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D28E606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41CD606A31C;
+	Mon,  9 Nov 2026 01:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=bejh6Pqq;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=dhBG7T3L
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A90Gc2O1672255;
-	Sun, 8 Nov 2026 19:56:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vtelectron.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	DKIM; bh=uivMuJZoe2S/0CQvYgZGebbq60EIzw0/WQEXTk9GKmI=; b=bejh6Pq
-	qLBtToG58kApNgM4JlYldZWDZcQsziO8GrkR3WH/T4RF0eoQ66VxPY8SNO1QEWlB
-	Hk1vP7J3ivZDgv6Vb4EqKlUqpmPzfPuXpbp8FWVeLrCtnrkurjRdB+5LbbzooNkz
-	zRYBXGx6WYOBkNCoEBX8RCenUyg7+rLSZysLr4lN0ROXqNClbE3BwH7o4B6NSWPC
-	52iGYNLFhbSKy6mUIjnNv3irijRl04guaU7rTUyIPY910/OmCLvynWUorWQb6OFA
-	QzBiKziFXNWZEQgJVDCPvsdP5QDGJtH7Bmo9pdxzmvnGGNn35j3jJDv+4rh3E7Wq
-	L6AcsREdlUFhqjw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=uivMu
-	JZoe2S/0CQvYgZGebbq60EIzw0/WQEXTk9GKmI=; b=dhBG7T3LhzKmRyNDSpf78
-	csQW+K8pHB7BiAMMUiyk3c50ZkkqstQ4KoBHr6gmAUHdl7T0LsoF24U+TxrDgucI
-	i1POLLh/I1/tTddegC3Z0oUv0lbTPZtD4ZXP8wKIiBrsx36PNHFBWR/ibDDN/11c
-	RONeOlvw6E3g+DKVWe1AHKKBh+DyfFomfeG58dyAPOQ0qw8C6a+2vlNkfIJ5TO+V
-	J/rMjDXOaIAwyetEY814Qba+pwDYwX4Lj6dMhwKXPt2u0gt2gRjN7leA2aKlrR2F
-	xZWeE/9SnqK8QqcKBID7ZEKbSZKXHpdHfkzDzZDBZFXMuBNEcTz1m4Dx8lFLTI9y
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 4htk6jbx5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 08 Nov 2026 19:56:49 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 6A90umkM017380
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 8 Nov 2026 19:56:48 -0500
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Sun, 8 Nov 2026 19:56:48 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Sun, 8 Nov 2026 19:56:48 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Sun, 8 Nov 2026 19:56:48 -0500
-Received: from ATORRENO-L02.ad.analog.com ([10.66.6.193])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 6A90uNDn028853;
-	Sun, 8 Nov 2026 19:56:38 -0500
-From: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Date: Mon, 9 Nov 2026 08:56:17 +0800
-Subject: [PATCH v2 1/3] dt-bindings: hwmon: ltc4283: add ltc4284
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RvOHLJpr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5435A1F0089F;
+	Mon,  9 Nov 2026 01:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794186383;
+	bh=0ccSxYjxGzAtaHzkcwmwCf630xLQpL/NmFnj7j12J9Q=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=RvOHLJpreStcLHwPG1Apj8qYNLgt2617Q3dKPvODU1JDDgNnxMDRd+YYEMcR0dKrG
+	 H7cHnPj48xbU3tC0tS5uNYGt8zR5vwPRaALUWAg+0zVZErkmQiIWJthtPZ3yZKbnaU
+	 HbijEEViBqHo4Yo2QBR4cDF5jbkf+I6c3zQOlzGeWrEg6g/7C+OlHk3VzBF4wR+emo
+	 N6VrqFEKyJ2SjfhfV4n6LIFzgTDmnF1ELEFvonDXnEaBFeCkpJPlXoDNW3iXyQgUl7
+	 Gn2xZmzJBEYH8Ga20ILrxfvgHQGPKieEGXeOcDRvwngA+6i6fIXpcloaKDpW/UTMNh
+	 QcbTk7sdryg1g==
+Message-ID: <sashiko-outbox-204280@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 2/3] hwmon: ltc4283: Add support for the LTC4284 swap
+ controller
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Alexis Czezar Torreno" <alexisczezar.torreno@analog.com>
+Cc: linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261109-staging-ltc4284-v2-2-14a270a38f7b@analog.com>
+References: <20261109-staging-ltc4284-v2-0-14a270a38f7b@analog.com>
+ <20261109-staging-ltc4284-v2-2-14a270a38f7b@analog.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Nov 2026 01:06:22 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -96,172 +60,109 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20261109-staging-ltc4284-v2-1-14a270a38f7b@analog.com>
-References: <20261109-staging-ltc4284-v2-0-14a270a38f7b@analog.com>
-In-Reply-To: <20261109-staging-ltc4284-v2-0-14a270a38f7b@analog.com>
-To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Randy Dunlap
-	<rdunlap@infradead.org>,
-        Linus Walleij <linusw@kernel.org>,
-        "Bartosz
- Golaszewski" <brgl@kernel.org>
-CC: <linux-gpio@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>,
-        Alexis Czezar Torreno
-	<alexisczezar.torreno@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794185784; l=3512;
- i=alexisczezar.torreno@analog.com; s=20250213; h=from:subject:message-id;
- bh=hNTQVnQ97p9HrzNo4KRtFvaC8bGXblkMbJn2E7CYo24=;
- b=giLT2mcSmaZZQI+MJpROxzmkJDGOvubDlKydFqkNSa7/7qPY+VhzA+MQPpk3c6WkMVtgAWGQe
- BPSD7R7m6u1CqFy5Cl7UWhV7Mx3Q5aK/IRMvvFT0C3RKvEnmLWRSM5p
-X-Developer-Key: i=alexisczezar.torreno@analog.com; a=ed25519;
- pk=XpXmJnRjnsKdDil6YpOlj9+44S+XYXVFnxvkbmaZ+10=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: nAm1AXU2iWxGvF1JkyvbuaPTZ9D6T5BE
-X-Proofpoint-GUID: nAm1AXU2iWxGvF1JkyvbuaPTZ9D6T5BE
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA5MDAwMyBTYWx0ZWRfX9ToWJxRLm61c
- ftDy48QUBNCUKUQhJ/tsVYK3MbQ2IEQKC1v2p/WxhLPNhjl3d2INIyl7XxtBTaWhQaHbSzIQPMD
- u58zXfnXjwqUKgHMJ5dpU+b1ortWa8F6ftMHNtUbqNZU6R/NWF9E
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA5MDAwMyBTYWx0ZWRfX4X6q/86a33Pd
- TMV/AfzFRfniMMNA4iqYCaoesUiSOutasEwx25BFv+N+1YvyyAlAzim6U3tvbcbzAr2o9i5Jhbx
- jUELyLVXkn2GaKg2AGLlMmPGkr0s20Cw5Jo5w8RTcKYEKXfBVXdghor+531zniEP1bCRDuJaNfE
- ncq+3/KFjjAOgwUoh95e39xPx3N/lYx3PaM0D9jOF1n9J+spmaCDgEcP3Bn6ryUI0Bt1B6Yt1Pu
- 4MsT2N+H8uziI1+foeZrx3FMmHc2OVKdSBJ3wbQ0xO11wm3BMS7E/UyDSV0APb0kA+BZbiajL1F
- fSIBRUnSLuqEkgVn3Mzjih4vFXlWM9kHGZPepQB9KMdShSpvvJKfyLa0qdqPbLNwSuBow1wSvgU
- eCUWPoMmfmp4ELWpznCAohfcgX4Oqo4nznWwmS0M4+KaTRkctsEe5313uZTWB5ZpvhiJNofMFrJ
- qTcea22dnyncq4NZopQ==
-X-Authority-Analysis: v=2.4 cv=O7+sLx9W c=1 sm=1 tr=0 ts=6af11a52 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=0sLvza09kfJOxVLZPwjg:22 a=N--XFCr6TIEc_64PeIT2:22 a=gAnH3GRIAAAA:8
- a=Mr05Dj8HPuIH2qX4H8UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-09_01,2026-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 malwarescore=0
- suspectscore=0 phishscore=0 clxscore=1015 impostorscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611090003
 
-The LTC4284 is a negative voltage hot swap controller that drives an
-external N-channel MOSFET to allow a board to be safely inserted and
-removed from a live backplane.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] hwmon: ltc4283: missing default radc fallback in ltc4283_setup()
+--
 
-Note that this device has a MODE pin that is determined by differing
-voltage levels (VEE, VIN, INTVCC, or left open) and cannot be
-controlled via software or GPIO.
+commit c323a5fb63d971c9df83e57980902ef0c39f7d96
+Author: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
 
-Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
----
- .../devicetree/bindings/hwmon/adi,ltc4283.yaml     | 56 ++++++++++++++++++++--
- 1 file changed, 52 insertions(+), 4 deletions(-)
+hwmon: ltc4283: Add support for the LTC4284 swap controller
 
-diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
-index 05e2132ad4d8621ab76ee89aa166c131fed08e85..ca62e76f23f1e32df157f138298a4650493b3f08 100644
---- a/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
-@@ -10,22 +10,42 @@ maintainers:
-   - Nuno Sá <nuno.sa@analog.com>
- 
- description: |
--  The LTC4283 negative voltage hot swap controller drives an external N-channel
--  MOSFET to allow a board to be safely inserted and removed from a live
--  backplane.
-+  The LTC4283 and LTC4284 are negative voltage hot swap controllers that drive
-+  external N-channel MOSFETs to allow a board to be safely inserted and removed
-+  from a live backplane.
-+
-+  The LTC4284 features dual-gate drivers with four operating modes (single
-+  driver, parallel, high stress staged start, and low stress staged start)
-+  configured via the hardware MODE pin. The MODE pin must be connected to the
-+  appropriate voltage level (VEE, VIN, INTVCC, or left open) and cannot be
-+  controlled via software or GPIO.
- 
-   https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4283.pdf
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4284.pdf
- 
- properties:
-   compatible:
-     enum:
-       - adi,ltc4283
-+      - adi,ltc4284
- 
-   reg:
-     maxItems: 1
- 
-   adi,rsense-nano-ohms:
--    description: Value of the sense resistor.
-+    description:
-+      Value of the sense resistor. For LTC4283, this is the resistor connected
-+      between SENSE+/SENSE- pins. For LTC4284, this is the resistor connected
-+      between SENSE1+/SENSE1- pins.
-+
-+  adi,rsense2-nano-ohms:
-+    description:
-+      Value of the SENSE2 current sense resistor. This resistor is connected
-+      between SENSE2+ and SENSE2- pins.
-+
-+  adi,radc-nano-ohms:
-+    description:
-+      Value of the effective resistance seen by the ADC+/ADC- pins.
- 
-   adi,current-limit-sense-microvolt:
-     description:
-@@ -195,6 +215,19 @@ required:
-   - adi,rsense-nano-ohms
- 
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: adi,ltc4284
-+    then:
-+      required:
-+        - adi,radc-nano-ohms
-+    else:
-+      properties:
-+        adi,rsense2-nano-ohms: false
-+        adi,radc-nano-ohms: false
-+
-   - if:
-       properties:
-         adi,pgio1-func:
-@@ -269,4 +302,19 @@ examples:
-             #gpio-cells = <2>;
-         };
-     };
-+
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        swap-controller@20 {
-+            compatible = "adi,ltc4284";
-+            reg = <0x20>;
-+
-+            adi,rsense-nano-ohms = <2000000>;
-+            adi,rsense2-nano-ohms = <2000000>;
-+            adi,radc-nano-ohms = <1000000>;
-+        };
-+    };
- ...
+This commit adds support for the LTC4284 hot swap controller to the ltc4283
+hwmon driver, handling its dual current sense channels and dedicated ADC
+power sense resistor.
 
--- 
-2.34.1
+> diff --git a/drivers/hwmon/ltc4283.c b/drivers/hwmon/ltc4283.c
+> index 9ec409bc26482..a8587beed853a 100644
+> --- a/drivers/hwmon/ltc4283.c
+> +++ b/drivers/hwmon/ltc4283.c
+[ ... ]
+> @@ -1240,6 +1335,27 @@ static const u32 ltc4283_fet_bad_delay[] =3D {
+>  	256, 512, 1002, 2005
+>  };
+> =20
+> +static int ltc4283_read_resistor(struct device *dev, const char *prop,
+> +				 u32 *val, bool optional)
+> +{
+> +	int ret;
+> +
+> +	ret =3D device_property_read_u32(dev, prop, val);
+> +	if (ret) {
+> +		if (optional)
+> +			return 0;
+> +		return dev_err_probe(dev, ret, "Failed to read %s\n", prop);
+> +	}
+> +
+> +	if (*val < LTC4283_MIN_RSENSE || *val > LTC4283_MAX_RSENSE)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "%s(%u) too small or too large [%u %u]\n",
+> +				     prop, *val, LTC4283_MIN_RSENSE,
+> +				     LTC4283_MAX_RSENSE);
+> +	*val /=3D CENTI;
+> +	return 0;
+> +}
+> +
+>  static int ltc4283_setup(struct ltc4283_hwmon *st, struct device *dev)
+>  {
+>  	u32 val;
+> @@ -1252,24 +1368,38 @@ static int ltc4283_setup(struct ltc4283_hwmon *st=
+, struct device *dev)
+> =20
+>  	/*
+>  	 * Default to LTC4283_MIN_RSENSE so we can probe without FW properties.
+> -	 */
+> -	st->rsense =3D LTC4283_MIN_RSENSE;
+> -	ret =3D device_property_read_u32(dev, "adi,rsense-nano-ohms",
+> -				       &st->rsense);
+> -	if (!ret) {
+> -		if (st->rsense < LTC4283_MIN_RSENSE || st->rsense > LTC4283_MAX_RSENSE)
+> -			return dev_err_probe(dev, -EINVAL,
+> -					     "adi,rsense-nano-ohms(%u) too small or too large [%u %u]\n",
+> -					     st->rsense, LTC4283_MIN_RSENSE, LTC4283_MAX_RSENSE);
+> -	}
+> -
+> -	/*
+>  	 * The resolution for rsense is tenths of micro (eg: 62.5 uOhm) which
+>  	 * means we need nano in the bindings. However, to make things easier to
+>  	 * handle (with respect to overflows) we divide it by 100 as we don't
+>  	 * really need the last two digits.
+>  	 */
+> -	st->rsense /=3D CENTI;
+> +	st->rsense =3D LTC4283_MIN_RSENSE / CENTI;
+> +	ret =3D ltc4283_read_resistor(dev, "adi,rsense-nano-ohms", &st->rsense,=
+ true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * For LTC4284, rsense is for SENSE1, rsense2 for SENSE2, and radc is
+> +	 * the effective sense resistance for ADC+- pin.
+> +	 */
+> +	if (st->info->id =3D=3D ID_LTC4284) {
+> +		ret =3D ltc4283_read_resistor(dev, "adi,rsense2-nano-ohms",
+> +					    &st->rsense2, true);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret =3D ltc4283_read_resistor(dev, "adi,radc-nano-ohms",
+> +					    &st->radc, false);
+> +		if (ret)
+> +			return ret;
 
+[Severity: Low]
+Should st->radc also default to LTC4283_MIN_RSENSE / CENTI and treat
+"adi,radc-nano-ohms" as optional?
+
+Unlike st->rsense, passing optional =3D false here causes an LTC4284 device
+instantiated via ltc4283_i2c_id without firmware properties to fail probe
+in ltc4283_setup().  Defaulting st->radc to LTC4283_MIN_RSENSE / CENTI
+would allow LTC4284 to probe without firmware properties just like LTC4283
+and would also make the optional parameter to ltc4283_read_resistor()
+unnecessary.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109-staging-lt=
+c4284-v2-0-14a270a38f7b@analog.com?part=3D2
