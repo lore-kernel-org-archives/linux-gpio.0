@@ -1,56 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794234881;
-	b=xIHFNF6tBdzokfQR8nBTDwrq+gonRbHwG8lsq2m6trcGRhHkFPvOgpJZ04xMU/ly2ETI
-	 4/VN1LoKxT2rC0eOZTYxznEXJPPwWZSxLnB8WLj7AVtRt6L9Eeb4+UHXpLPxUeBdZR9Ib
-	 8IL2+lXqxyuiiv4oEpmYW3fjCYrLFhhlsNk1LfbNQXvaA2lMxJ3v/FFhm8hsBtZgYdqW+
-	 9wwj4mI1XI2GlDcNoOihvLZiAfDn91Mb+Z1RJyCWNEYyWC8I+ffxn69/UDDzdg61NBzTN
-	 49Q1H74Z7TxqbZOFZZpb4JOLkeieBirvHOy7HdAGk7vPdqb5YyRITXId7Mpxgdf812A==
+	t=1794235255;
+	b=iBO4N3ZEAWlKMqLneYc4akaDMP1/VTIq3XkyAsaP7jl+txiDVsoKNND8a5ZTV1DCTbdD
+	 RiXrcqE50FB15qEw+c5JNGWuHEVSAr94kU8bpWeW6+hxGUV16dN3lCbVuIcenEqeB1BgC
+	 JasOYRApJW9hg0NohV7WCjj0NOT6m+jjUwDcNTOn9ZPQt1K5KpLmSMlsjgZD+3+gml13g
+	 kKsfaSBYyYNzbvJCxEbLQbnSUoUZkTOBSD9U069nFlNZPSRQnS1CzAIJh37mun/bRxyf6
+	 gh2hGEO3YK/GgfFCeABnOmBJrPEbrmsFQxkfC6r/S6xuRetk2qspvF1GTI9Z5vpO0wA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794234881;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Vo8rbuaeB0r9G7cEwH/mj66KH2pm8hQyOPB1Jv5nSyg=;
-	b=ujn0/dujBmoHOs9BZ4rKG7qe0cajWoMk04KtYsUWlMbSsXRPEeSSVLAHX0bKJg+H9GnW
-	 cD+BS76gzd8rjY5w0Rq8tfjSetctafG0k+MQnCHomOSzM5T8BP8OuI+XdzZFWMFN4Knx2
-	 9RSF5iNLN54yOvvmZf1Rl+R1N30HR+Ff3kqg5PgCWo0Nmlre6Ln/woENdvHY/I82Ni7f7
-	 KkT3fANTFeFxCPlZju0On7/x1bjSo1ACWtW7mM2MpiALuJ5MkjlAbA26NRFukQfy+dvfk
-	 nDfFjHRj5tcxnA8/mB4ptXUOAoF3M7mLdr++vDYcw7DSoHB1E7BmIkd/wdoBkw+cNwQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794235255;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=cy50rfmz2U8Wenr7PayVcuqxUEa3jPtDbT+8qtBvWBI=;
+	b=YPbBTDzgAnphVFTBhOu8aipGNqEu4feFgCNlXYm8FKb7wwgoodFQiuDs94Li33NgW5Dx
+	 06vaMRZE8ctn1Y5ENcisx/Jt1BS1Apdp+W8m9QGR9XQYLl11IWeiNqgCIU4NO4pN/I4l+
+	 3dHIlEWx8S16OtdNPbc0rh1NUHGPqj5HwccV8BigmfM95XMu4JL9ZPHknV13YrwDya9UX
+	 ak3BmJGIpL5XBBXN7UyXZlbSuUIavymPJLciSul2eSYeq6B7H3l5CrVjUAkEggrlCAQwE
+	 IQOrzNKJf1eAybXJCA0RgxfGXT6HJTY1UvDvXjx+2e9mRgs2nEazXJDAHb8r+6e5dRg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JcGS1fAU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.221.171
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734AC606A31C
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 14:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JcGS1fAU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347251F008A1;
-	Mon,  9 Nov 2026 14:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794234881;
-	bh=Vo8rbuaeB0r9G7cEwH/mj66KH2pm8hQyOPB1Jv5nSyg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JcGS1fAUqxvXyKvuPvVq30O1bcgPaP2LpFiPMS8HsPS3FzNWm9gmuar0E4qNnCJJ4
-	 k7l1AYzQX6LKF5wbCWsWIkMlsJivwBLheUel3s22ubJ4zAahCuhuqZNUKPmp1yI6pV
-	 vaybqVrhIc8A8RIewbZPQoclbqhIAlIQnPGQqHLWacMU0RYe21J4yftpY1hslD3Jlw
-	 6t9g6/2MdgU82l2Dm/BY8bBPBzzO0UCEBN7dcmPIjxtPnosaHmVI2pKbsIdh7SJvd+
-	 9UW9cFXBaMDhKyF2dVPvKg7YM1ZXSwvhEGsaXISo5M2W8fuhgyOhxMfNPDrGY1IYrS
-	 r8hjxuEubUx2g==
-Message-ID: <sashiko-outbox-205116@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] gpiolib: keep the line state workqueue alive until
- device release
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261109-gpio-line-state-wq-uaf-v1-1-2e126ca3427d@oss.qualcomm.com>
-References: <20261109-gpio-line-state-wq-uaf-v1-1-2e126ca3427d@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 09 Nov 2026 14:34:40 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D04606A323
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 14:40:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96D04606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5eae1276409so345542e0c.3
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 06:40:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794235253; x=1794840053;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cy50rfmz2U8Wenr7PayVcuqxUEa3jPtDbT+8qtBvWBI=;
+        b=VI7icMg1vWNKUQ+2v9KaAFSwcMv7vIOpmGhcZh/1I4J15oqgg1OUF975odhkodO7MN
+         vjDvmYpH9NzWkBmGdmhTFno+yqk/caG1tdSZh4KOhvzWaOLThGjTY93L/UW3n8BNPI0f
+         ZMf/Tn56CPxW+WcBUvZjfvmdZp8+Ro3tbI+UbP3U+lRRE2ZXnh85sgtJKpzXn9DKIlLO
+         MeDtlFqvXNnMHz7l02KHJNts7LwN/PRBtQnFWS6/o9C3EQXe72LBGniNSEENUhaCkNl2
+         Kaf79TXSIrywk+BiZqeixjx1+zStWo62CU94so7cYzHP5f7m4JG1rpjMdSy9FJXjzHJ2
+         aQ2g==
+X-Forwarded-Encrypted: i=1; AL+hErGyX+E77CEqvg8vo/IkhclZxSXiLFKTerVjilswGvPZk3GAPn1mdPSfOHRwGBfelw2Jj6YvPL4j0W87@vger.kernel.org
+X-Gm-Message-State: APuU4Z9PKkgQ1rEXNZk5cD0D6qGgLucGc6RxSYvjuxuLY0/91AoL+Tyj
+	YKxLLhw+DYL951mvmQJDRDDjG72VnjxPxjh+nA17wFemrZ1XcITkMxbrLPVMpi0bu34=
+X-Gm-Gg: AYBFou18AVYtVqJgQ9yYhQQnWXz2jtuUaJUGGsgVMBuTTGni60Z69aRErW/40cW02VM
+	CLWvC6TIwPo3dJ2aIhgf9vJR3UETwH5uPeyn9M9OM4gu1be4xbMNdaxmZbC7x08pstSxGMw/EVh
+	5qVKmidlEx2Q/dsdh+nJcVlOYIDMVq7QNM062E7dstzzb/qmIVr4W/s59rsXXRHSbpJ7kvc7fyO
+	x+iYCYl3wOqqvnC3NdcuolpWdz2GY9qnYHIjsNooB2AoBqbs2WXGXd022Jf3YQlukXyKsb7awyd
+	/cyba3A5ytL2li8ROa++L9a5yA+pcVrPzeb20M7l8rxUvNohwcbMJy2JAeqaMVHurmaeR4hV/WB
+	MYJwVxVA9HcZhkjN0yCwxFewXEWIfN5xO4vvslOqiXQ91f9MdDWlq4iLXj/uDooaGUXFfZQcQIG
+	ohyYzp7b3ZY0b8hIi/fp0/gKgZk+hb2k07JFac4XQs+ALg2+9SdU9rrqqz0HCqEtc3XtcxshRlf
+	GYo2f1rgOlzuBnPRPcWEk5+rYxUIX1sCEdZIbfPugl+U13XXj1pRV7xrH5MuM3BrRaGL1ibwYpe
+	hDWhD6XVX4evlJX5GEVCFVBA7ua5C/5Pi8+AhWPvjQ5QceaU2K+/+5TaiuIAnq3ppA==
+X-Received: by 2002:a05:6122:e448:b0:5ec:d5e1:ee2b with SMTP id 71dfb90a1353d-5ece7377c59mr1225459e0c.23.1794235253411;
+        Mon, 09 Nov 2026 06:40:53 -0800 (PST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ece606d02esm4504277e0c.4.2026.11.09.06.40.50
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Nov 2026 06:40:50 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-745497ac8fcso290329137.0
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 06:40:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEPvWnnpVreNOJJCGAj7nEWsCEyf/HzeBTk6YFuYqiLGiDTtTZMyUmXjvCOEfOoSOIGcBftg0T/TCXg@vger.kernel.org
+X-Received: by 2002:a05:6102:5693:b0:7c1:8aa5:36d6 with SMTP id
+ ada2fe7eead31-7d2db05a3b9mr1026612137.11.1794235249748; Mon, 09 Nov 2026
+ 06:40:49 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,56 +79,80 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <202611071612471583hApcIRmqJX9mMWQtxmcN@zte.com.cn> <20261107161252647FthWsffiqzpLz7zrKd2ux@zte.com.cn>
+In-Reply-To: <20261107161252647FthWsffiqzpLz7zrKd2ux@zte.com.cn>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Nov 2026 15:40:36 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXHSU3QLanoVyAr3a5akukwDbCHWYoGiLT8HfuCGvHmog@mail.gmail.com>
+X-Gm-Features: AclHuK8ggxFfIk6ZpEhrNh6YRrumZjRHb3TbORQZdwxVU1wvicBkSXZ49z_E2iM
+Message-ID: <CAMuHMdXHSU3QLanoVyAr3a5akukwDbCHWYoGiLT8HfuCGvHmog@mail.gmail.com>
+Subject: Re: [PATCH 1/5] gpio: rcar: don't clobber INTMSK when disabling a
+ single line
+To: shao.mingyin@zte.com.cn
+Cc: linusw@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, andrew@codeconstruct.com.au, wbg@kernel.org, 
+	opendmb@gmail.com, florian.fainelli@broadcom.com, 
+	bcm-kernel-feedback-list@broadcom.com, jelonek.jonas@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] gpiolib: double destroy_workqueue() in gpiodev_release() on
-  cdev add error
+Hi Shao,
+
+On Sat, 7 Nov 2026 at 09:13, <shao.mingyin@zte.com.cn> wrote:
+> gpio_rcar_irq_disable() writes ~BIT(hwirq) to the whole INTMSK register,
+> which clears the bit of the line being disabled but sets every other bit
+> in the bank to 1.  Since a set bit in INTMSK means "interrupt enabled"
+> (gpio_rcar_irq_handler() only handles lines whose INTMSK bit is set),
+> this disables one GPIO interrupt while collateral-enabling all the
+> other GPIO interrupts of the bank, which can cause a storm of spurious
+> cascaded interrupts on level-triggered lines.
+>
+> Do a read-modify-write to clear only the line being disabled.
+>
+> Fixes: 119f5e448d32 ("gpio: Renesas R-Car GPIO driver V3")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+
+Thanks for your patch!
+
+The GPIO interrupt masking operation procedure is indeed a bit uncommon:
+  - Interrupts are disabled (masked) by writing 0 to bits in INTMSK,
+  - Interrupts are enabled (unmasked) by writing 1 to bits in INTMSKCLR.
+
+Section 10.2.7 ("Interrupt Mask Register n (INTMSK0 to INTMSKn)")
+in the main PDF file in [1] states:
+
+    "Only writing 0 to this register is effective."
+
+Section 10.2.8 ("Interrupt Mask Clear Register n (MSKCLR0 to MSKCLRn)"):
+
+    "Only writing 1 to MSKCLR is effective".
+
+Hence setting extra bits in the INTMSK register does not enable all
+other GPIO interrupts.
+
+NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -129,7 +129,7 @@
+>         struct gpio_rcar_priv *p = gpiochip_get_data(gc);
+>         irq_hw_number_t hwirq = irqd_to_hwirq(d);
+>
+> -       gpio_rcar_write(p, INTMSK, ~BIT(hwirq));
+> +       gpio_rcar_write(p, INTMSK, gpio_rcar_read(p, INTMSK) & ~BIT(hwirq));
+>         gpiochip_disable_irq(gc, hwirq);
+>  }
+
+[1] https://www.renesas.com/en/document/mah/rzg-series-2nd-generation-users-manual-hardware?r=1054546
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-commit f0714550a8f7080c7dd00f07240622c9dd77f912
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-
-gpiolib: keep the line state workqueue alive until device release
-
-This commit moves the destruction of gdev->line_state_wq from
-gpiolib_cdev_unregister() to gpiodev_release() to avoid a use-after-free
-race with concurrent gpiod_line_state_notify() calls during chip removal.
-
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index fbdeda2f27871..c954c7eec2bee 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-
-[ ... ]
-
-> @@ -898,6 +899,9 @@ static void gpiodev_release(struct device *dev)
->  	synchronize_srcu(&gdev->desc_srcu);
->  	cleanup_srcu_struct(&gdev->desc_srcu);
-> =20
-> +	if (gdev->line_state_wq)
-> +		destroy_workqueue(gdev->line_state_wq);
-
-[Severity: Medium]
-Can this call destroy_workqueue() a second time on gdev->line_state_wq if
-cdev_device_add() fails in gpiolib_cdev_register()?
-
-drivers/gpio/gpiolib-cdev.c:gpiolib_cdev_register() {
-	...
-	ret =3D cdev_device_add(&gdev->chrdev, &gdev->dev);
-	if (ret) {
-		destroy_workqueue(gdev->line_state_wq);
-		return ret;
-	}
-	...
-}
-
-When gpiolib_cdev_register() fails here, it destroys gdev->line_state_wq
-without clearing the pointer.  The caller then unwinds via
-gpio_device_put(gdev) -> gpiodev_release(), which sees the non-NULL
-dangling pointer and calls destroy_workqueue() again, causing a
-use-after-free.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109-gpio-line-=
-state-wq-uaf-v1-1-2e126ca3427d@oss.qualcomm.com?part=3D1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
