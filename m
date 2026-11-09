@@ -1,87 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=68.232.153.233
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794231741;
-	b=eUaCaHKu0pMBZ5X3IIWRsPRV49WfRUKjht67gtqk26TP0cRX9K+bLdiNUv35Tbp4S5be
-	 9PSJ11UfB7VEJqweKxMA4sVBjblkI2JgR3mnDG1dGIOwY5AvBMKGmW/oznsZfzcfqREf9
-	 rxREDXwastDsSOv5lNcUd+rcY8YpZJKi6bJsu8VQfKdKoQmemwrP8dx0Zm/ro18hsP24F
-	 CVMpln6FCcMnFrJKLPx9m7m0u07ni90PrshWHdr36yvRVxOA4G6YKbziEShf+z4zTW/8k
-	 8oEanameere7frzG2h+mcr5PCi46t1VbB0R8bp3sULkn5k924cYvnFhttrSMpj50dGg==
+	t=1794232248;
+	b=Jxxeg+kqbFN8mLt5GJ0eyCmkr8issSxM/SLTgdz8Whq1m/iesJaCbBIgHYbVbkWvrxU9
+	 MiUnRsm7tYmHWLxy+2cQugVEDXcbgfAuIGRedn7BwPNwsPQ4ZPTBjmXsa/pKBAW7bIMnu
+	 3YdobKH6jUrPyTzy4MXBCw6PEQXnkhlReGO4eywzKzvkqarF6TfceGNCV96YInVdiD0Un
+	 StLGss3CGEJ9g7zfcIAWLlxeREk5WCVPye5JdactwZEPxr1S3Q5nH564S4VD0YpWi5J40
+	 fQFnLklbn2ztQlzUQUyX0t2PRh9whms73LKVx4zs8qQ/8nUwgxH2NVm7mDcMx+r/Acg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794231741;
-	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
-	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=6phmPy2H01NAYhb3b/eLkioYVIAsUw/1Hbadvh+hcTs=;
-	b=PFGYRUXkcAMqgwCfyhJVLlsF00khfkxefP1lR8/JznrocY9j4b1V2BZVmWMAK5oEYRnJ
-	 rJOPC+V6hslan7krLTq/g324kqQQYuS8T+S+Tvq0Jcyqxj5TmyKHCUOwZChQuX13rJRfJ
-	 NAEd0ppBA7LsvE2aGEw8+/eXyEQVxDL3pIPB4wVhzoXaCEZzy0STwuiEhfTj5NZbT03Ia
-	 gkHSi3oYfLp//1Pk4+KV6y81Qmgbt2wd8p0himPz2d9AHvNmsHBSPn2GK3TwEBfnOLcBq
-	 3GUpq9nJtDG8Vut7sxSaqtEUxj1fR5G+i7/aAosMTrBoxgmAOf14NgopXnIxgMpI1Lg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794232248;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-Amp-Result:Received:Received:Received:From:Subject:
+	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-B4-Tracking:To:CC:X-Mailer;
+	bh=TSgT6T7A4AJYeCodDAhTvoJ93exX30UmjslAxvNT8Gs=;
+	b=rcnJ2x/2ILVU64dg46eGmFL+2A+Ccpxzio1UHYuNZ9+McGVsHLZvlOc/Nr8nmEuTY21M
+	 YSRecUvO2aVkuaw353rnLqOBQk184QAN5rvR+/PtDJtim8ymUUMdFQmgJlbZRkRrw270I
+	 DEf8U+goKJEK2A+uqottdMPCOiWENH/49cjo3VSxU0YmPvvnrvt3KYV2gLjE3baWYbmas
+	 HsAuqmX2UfzgZCZYjZ21k7FmggS4ZmmWm1Ah/TYjTY1pyDvG/XN9jzreIk+56PPxs9ups
+	 B64Gqa0R1yBaxlXhcLnGnTOYzdQFTJlJe4o0rnFFX6nNl8+PGBeA+qlV+AyI/Mugpgw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=iNcSm4+s;
-	arc=none smtp.remote-ip=203.205.221.153
-Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=microchip.com;
+	spf=pass smtp.mailfrom=microchip.com;
+	dkim=pass header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=lZhFXo+y;
+	arc=none smtp.remote-ip=68.232.153.233
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CBE606A321;
-	Mon,  9 Nov 2026 13:42:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 90CBE606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868A1606A321;
+	Mon,  9 Nov 2026 13:50:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 868A1606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=iNcSm4+s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1794231730; bh=6phmPy2H01NAYhb3b/eLkioYVIAsUw/1Hbadvh+hcTs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iNcSm4+sTfMocQ7xCp7xvf3R21N0a5dDU00w8eiV2tqDRN2t6fBbCWnF+EtjybQDz
-	 HuKl0u6CiihHthURon2de62IcvN0AjiWP9fMM1IQZQThX19QIdAe8IQvVljkAxg31M
-	 zASNmMWBWQk50EvVgPFqtzy4LNa7/YDPULbtTrIM=
-Received: from ws006419.mbzu.ae ([5.195.0.150])
-	by newxmesmtplogicsvrszb51-1.qq.com (NewEsmtp) with SMTP
-	id A853DE44; Mon, 09 Nov 2026 21:42:05 +0800
-X-QQ-mid: xmsmtpt1794231725tjlhvo5oq
-Message-ID: <tencent_D8A4B6EE90931660EB6F586543FD58110E06@qq.com>
-X-QQ-XMAILINFO: NmRjDopJZVxOJnbfz4QUXrvG0eDdAQuvE5D4lCij5ZdC0bzR12Gg8CyXRQhg3M
-	 wR9W6D3N+uwnDAQfoA3tvl5+3NJawpyvsXzl/79zfn0m/dozThPPakjLbib+4RFTkW7S0F9JHbNN
-	 iscj/4zjRoIMUPtl97nO83y+XOoNymZJmjny/opBSKHKOHXSRv7FGWVa49nf700CDTtL1dyn8sdf
-	 a6GfddiGsaWOLK+KR9FcEs/9PrMhyZlBWf51Ef+Q+1ju5vPm7NpPdGZ6FxaAYRSoYthy3YyqzGm5
-	 xTahxRtMv2YYewaX/Xa4MsRYJikD1iq/20Ck94DmWC+tx61/YkLHPwE47+i5aX95VKdRym9QQlaz
-	 iSIOWnWQjO/lSWM/tgnhFBOZTtRoRgQw1iy6AlYP4LN3N4f1Ffl3jMaYZEyTg1uXaCdiaYYD2Nyy
-	 +ublPmTXGoo7OB5nYiJxgi5+7xzKYTyVFpOzRJhkFsi6w36X3Ov8vGrG515nwun+VnI3ezvrE5W4
-	 I103PVx2LfnIq9CK99XHAoZiceygHKcohrVKiU632zoeZt9iIdA54DuyH3EECyAo2zFZlrubRM0j
-	 u5SX5SGbOdPlV09uuFkwqgQfLBxeIgn+Rw3bbJhzMt5fG+EEPyG7fEPeddmRrZKgbj8fGcvCxBG0
-	 v6bj5wN0XNZIAUbPZQxXDvwrRqFzue6AWadlzrSzNyMT/tl9FOzLKuVSWsbd5WbztZDC5Qx9CWjJ
-	 GJ3AFIZ+VSr79nr3vnXz1TdH8YDMW8bx5e23HD/EIO8ljldGpexO2g4SUGeSN+NbYF6MibCCy+ZE
-	 EFKZqbMY0yWvIl6VGdX+VBqzbXX4RkXCEBGayKrJRGZjcIOJw/h/e9V+bDbhRv7y5hxM2lsjf6Tx
-	 EVgcQo1BzDzPW0D9t7+brToj12XUa5I95iPlQBlRwYqJilw1r1WTrBfO00EBF8sYPwLgQPelVg+R
-	 JQG0iMOQys/u8Bk6yo1JOI1CkWp4WUvgJ5iWnLsWwNG+uLvXBPY3I3WeqKzGODU816bgI/7ccqz6
-	 T/R0ZYwu4V+Mdf6/zIcx+XH3SeRIlYIamrwe8zZxl7iwB+eyDcgBxsB4NCSu8/1e1ybzHtCw==
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
-From: Jiawen Liu <1298662399@qq.com>
-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Dan Carpenter <error27@gmail.com>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	kernel-janitors@vger.kernel.org,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jiawen Liu <1298662399@qq.com>
-Subject: [PATCH v2] gpio: omap: handle debounce clock preparation failure
-Date: Mon,  9 Nov 2026 17:42:04 +0400
-X-OQ-MSGID: <20261109134204.2087852-1-1298662399@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
-References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=lZhFXo+y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1794232255; x=1825768255;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=dlQEmgJ8iyz+elWQzgRIaC0oM/qYC6YLbKkqyuV9Q28=;
+  b=lZhFXo+ydgl69I7884D6XJBQAd6qbhkb48bfiDVO1CKi5Mex2EaOCUaJ
+   iwt9C4cf205yvmZqZmPY0XCreQ4uhSNsxibIRMB77Xqd4qtylhaL/eqFD
+   DG7u3n7DSIKUxiz/SAsioaxu/5eOCIoHHHE8XQlbS/JIegFh0/Q+sfotW
+   a92pGI1od17RwZtevKB1bIUczLum4o+0d1mBctPgK5bjlLcLkJAfrbRPz
+   dvQRG5tDHPn44uRY1wmB4IhfcMC1maJvIiZjpXUSNupJg6Pl9geZs/HDY
+   ct7Fu9l4TSKeRspXdZhX76Al4YNZZ72MTNx0a2RLs19PHExJQenrPIr9A
+   w==;
+X-CSE-ConnectionGUID: eBwMAOiVQaqHo3RiXecYPA==
+X-CSE-MsgGUID: leRv61FUTguDGOA4i/uiOg==
+X-IronPort-AV: E=Sophos;i="6.27,203,1787036400"; 
+   d="scan'208";a="297652651"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Nov 2026 06:50:54 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 9 Nov 2026 06:50:46 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
+ Transport; Mon, 9 Nov 2026 06:50:43 -0700
+From: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+Subject: [PATCH 0/2] pinctrl: ocelot: fix the GPIO irqchip context handling
+Date: Mon, 9 Nov 2026 14:50:40 +0100
+Message-ID: <20261109-ocelot-pinctrl-irqchip-fixes-v1-0-9d2d8fcd58f5@microchip.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,81 +76,54 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALDP8WoC/x3MQQqDMBBG4avIrDtggsTaq5QuJP7RAUnSiYgQv
+ HtDlx8PXqUCFRR6dZUUpxRJscE8OvLbHFewLM1ke+uM6SdOHns6OEv0h+4s+vWbZA5yofA4ILh
+ lsnDhSW2RFf/QDu/Pff8ASPTrNm4AAAA=
+To: Linus Walleij <linusw@kernel.org>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, "Steven
+ Rostedt" <rostedt@goodmis.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>, Colin Foster <colin.foster@in-advantage.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Lee Jones <lee@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-rt-devel@lists.linux.dev>,
+	=?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+X-Mailer: b4 0.15-dev
 
-omap_gpio_probe() ignores the return value of clk_prepare() for the
-debounce clock. If preparation fails, the driver still treats debounce as
-available and may use or unprepare a clock that was not prepared.
+Two fixes for the GPIO irqchip of pinctrl-ocelot, where the irq_chip
+callbacks take locks that are not allowed in the calling context.
 
-Use devm_clk_get_prepared() and disable debounce if the clock cannot be
-obtained or prepared. This keeps the existing behavior for clock lookup
-failures. Remove both manual clk_unprepare() calls because the managed
-clock is released on probe failure and device removal.
+The first makes the GPIO regmap use a raw spinlock. The callbacks run
+with the raw spinlock irq_desc::lock held, where the spinlock_t of the
+MMIO regmap is not allowed on PREEMPT_RT and is reported by
+CONFIG_PROVE_RAW_LOCK_NESTING.
 
-An earlier managed-clock conversion was dropped after a reported boot
-failure. A follow-up removing the two manual unprepare calls was reported
-to restore boot. This change also removes those calls.
-Built gpio-omap.o with ARM multi_v7_defconfig and Clang 19; the current
-patch has not been tested on OMAP hardware.
+The second covers the regmap on a bus that can sleep, as for VSC7512
+and lan9645x attached over SPI: the gpiochip is marked as sleeping and
+the chained irqchip, whose callbacks run in atomic context, is no longer
+registered.
 
-The original report was generated using BMC-Agent; source review and
-maintainer feedback informed this revision.
+The two patches are independent of each other. Both issues were
+reproduced and the fixes tested on a lan9668 board (pcb8385), the
+second with a lan9645x attached over SPI.
 
-Fixes: 5d9452e7c52a ("gpio: omap: fix clk_prepare/unprepare usage")
-Suggested-by: Andreas Kemnade <andreas@kemnade.info>
-Link: https://lore.kernel.org/r/tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com
-Link: https://lkml.rescloud.iu.edu/hypermail/linux/kernel/2412.2/00414.html
-Signed-off-by: Jiawen Liu <1298662399@qq.com>
+Signed-off-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
 ---
-Changes in v2:
-- Use devm_clk_get_prepared() and remove both manual unprepare calls.
-- Disable debounce on prepare failure, retaining clock-get failure behavior.
-- Add the Fixes tag and describe the earlier managed-clock attempt.
+Jens Emil Schulz Østergaard (2):
+      pinctrl: ocelot: use a raw spinlock for the GPIO regmap
+      pinctrl: ocelot: do not use the chained irqchip behind a sleeping bus
 
-Built with ARCH=arm, LLVM=-19, multi_v7_defconfig, W=1 and
-CONFIG_GPIO_OMAP=y. No OMAP hardware test or current reproducer is available.
+ drivers/pinctrl/pinctrl-ocelot.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+---
+base-commit: ff00e5c03e7efe88f7a50a8673b14e8f0d4b45bb
+change-id: 20261109-ocelot-pinctrl-irqchip-fixes-74ef6d92e6f8
 
- drivers/gpio/gpio-omap.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index a9734b2a1..314bbb48e 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1446,13 +1446,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	if (bank->dbck_flag) {
--		bank->dbck = devm_clk_get(dev, "dbclk");
-+		bank->dbck = devm_clk_get_prepared(dev, "dbclk");
- 		if (IS_ERR(bank->dbck)) {
- 			dev_err(dev,
--				"Could not get gpio dbck. Disable debounce\n");
-+				"Could not get or prepare gpio dbck. Disable debounce\n");
- 			bank->dbck_flag = false;
--		} else {
--			clk_prepare(bank->dbck);
- 		}
- 	}
- 
-@@ -1470,8 +1468,6 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	if (ret) {
- 		pm_runtime_put_sync(dev);
- 		pm_runtime_disable(dev);
--		if (bank->dbck_flag)
--			clk_unprepare(bank->dbck);
- 		return ret;
- 	}
- 
-@@ -1492,8 +1488,6 @@ static void omap_gpio_remove(struct platform_device *pdev)
- 	cpu_pm_unregister_notifier(&bank->nb);
- 	gpiochip_remove(&bank->chip);
- 	pm_runtime_disable(&pdev->dev);
--	if (bank->dbck_flag)
--		clk_unprepare(bank->dbck);
- }
- 
- static int omap_gpio_runtime_suspend(struct device *dev)
+Best regards,
 -- 
-2.34.1
+Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
 
