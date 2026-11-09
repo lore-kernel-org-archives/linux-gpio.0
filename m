@@ -1,62 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794223190;
-	b=jpESuOJLPQNKPPdkRr9cgKkrtLXdCPWtwNIo4xx0tPOw4WUraeTEiv8DBCer2TrLy3CZ
-	 bE7EGl15byEaLvKhUvgSvTHQd+UBqgIOr8ju49SbXJ+5PxZsqu9pHFbWBoC7yGAXgY4NC
-	 v07G3zAG/OGuIbIm9D61gapxmsF0WAjHt2dO8deFBKTrnFLDLWgcI43M8Y45BniwTLMIF
-	 8G7uMZtdh85OCAzaFD+nwvkoSS0+QfgGx/e2fc/ekvT2/cmdMtsa/i/7Rn22Fjd5UM6iE
-	 gRI//3gdBrlxPy/8gW3obiJkGYRSLPAusuflCk0aAfOyrnQB7PeNNbdLWCnlMES24gQ==
+	t=1794223813;
+	b=Dv/FoxpWFNnW8bJN8PNYGxv8SInWAVVBgTtlUPutrJd1LLyUO5dhbAeYMfUM1iG9Vd6X
+	 kvWR78cvFoBDTxGn31OXJZvEA7THQoiUwJQLYn1YxVUeBu9Hcl4oTXXjE06ijZXxia+Xb
+	 6yaWu5WNt5RTvrndmHEGWfkTqs3SUkfEbpMz88a4F9H6N40Ch9ITB4r6KNWOLoW7vdlfH
+	 FVGVogKoBY86CkGfe9kpA/LZXvoGzdOtMA1s4h6JE4lG3dnc5mEJ6FkcvtzfcS392SWcW
+	 BR16+89SKeqSgPvIWk99yP+I6pTzToHt2Mys1yfFbpoV3yieuvrhKJ5SSWebeFZCW/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794223190;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=lY6O5vQk9+JczPENJHYrp1HUtZoEwLFGCDuEEIYM8M0=;
-	b=JnYW5zMfSeuDCxSDSfuebHE/fJn+g8Fs0NrwjVFmrGWTfHY/0BAvNKokbYegO1Iun0H0
-	 SF91FqPtXY1ZYF+foYc/6x1W6Drx3PA58Btv7FtKdhVEbaJBLaeYlcR78/w3aB4SCzygl
-	 p30T3LJ4TqyjsUnPF1Z59s1TF/1q1x5h8V3s+ItjfWLCLyuY0v0sZvK1UvVWRJDCFWFpm
-	 /4tbmHLuKmw4wJo0AiV6VGe9DFWfIzI/EJNh0gIAnmDEmhlvpkv2k28ido92qZ6ze760x
-	 KoUTdWE4dTAieZB9Li6LWnUWJpLIIkxCqK9kl15xftWAHFVC8OzSQ/tA+6twVVg/Zhg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794223813;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type;
+	bh=NS2SIbxhDO8ZQNKC6bcwrhTZ6qJAvFtsO8rW3FPBlJg=;
+	b=qKTlWILJ/9QDRdINoS2Pxa3RvG83uYIP80KBvItx8oerw/ir4u1RYE9u3uGIwbUpLVvV
+	 lNKv6W3Yk0WOrwZic2FSHLlWNZgAqCmn4K5Lv5l2TsD5Jk9ikO26pEaJTHH66aiwdvqhE
+	 wJCTVSOeddWbRqFv4fQwPca7RaICSF9Xpdt9QPyIQ79Sq2PMpIdu0OH2vCGrS8SFJ3iey
+	 fY5lC950BSiexHCPykJs9+oFyjo94VcIfKCZ+D5okcEA5TPdmnNf5D2KV546AgeP2QkBo
+	 9nCr16LMIkXB81QnHf+jr3j5LGnwlBaxYEE1sbjNsaoqPjSbwn1S9EfZ3eBbc9ZRwbA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CCWQBaPf;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VRaPHDMh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 704F2606A322;
-	Mon,  9 Nov 2026 11:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CEE606A325;
+	Mon,  9 Nov 2026 11:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CCWQBaPf
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 33EFB1F008A5;
-	Mon,  9 Nov 2026 11:19:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VRaPHDMh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88901F0089F;
+	Mon,  9 Nov 2026 11:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794223190;
-	bh=lY6O5vQk9+JczPENJHYrp1HUtZoEwLFGCDuEEIYM8M0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CCWQBaPfZi1MG+dTcJAQyHkuMP7MyNLJMrJYZUyrhewaBgyMdCYBipTYs9Zmy48BB
-	 AM+96bBxOxsNmO9fPkVPjLtj+JTUPBJseLz8jJV+1vwMKiR39WxFtM6SEZqhPfjZLT
-	 ePAMSZQ05MJl3ma34ufuX12k7NuQl5T4yRzQUxKTFDmTei12X+7VXWCr4JkVEoEzyw
-	 /8abAvup8mBBdjFQpgaa5QXumRFng7IOFSSGVZox99SR38XaHB6N5ZbkZCKHO89m8T
-	 paGW8xiKSEDQJjfAzna0nx1XvRx4ZwAjKz0kRhs+VqcCvrKCCwNerlKl/5cfxxiJ4S
-	 FMRvMQjfxmvPQ==
-Date: Mon, 9 Nov 2026 12:19:46 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Len Brown <lenb@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/9] device property: provide fwnode_property_get_names()
-Message-ID: <eymdomw4dby2zwlfio2l2wdyp2m7hblb2xwks2masnc26jb2xn@jkwf2v4heamc>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
- <auug8QoQ62ETGg1D@ashevche-desk.local>
+	s=k20260515; t=1794223812;
+	bh=NS2SIbxhDO8ZQNKC6bcwrhTZ6qJAvFtsO8rW3FPBlJg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=VRaPHDMh6gCIKI3irhdM3HmzHAqDu2XKLgKpTNJOJzAjL8M1SUpEAw+zSzYb0kFM0
+	 i0kqvBZ1XJnUd2wXS7QUePvm9+TJaLv46yKW4JYT55oN22IhgrjjxmQcYBRaTWWCLG
+	 XAkYXUPk+FCklS1R/BpfWNmhknabQhGs7VX0ed4Iy9YQ59Yr9EwO/bUxts6qTZb+Hj
+	 gBQPu8Y3SX4+UMMTPy4rgN7yVBUZ2xPZaaYAOoxFTKdhQ+mjARtTx0LQeJQG4mJNNB
+	 CvdheQoSSVb5UaJh26+K6JBmNALxd1jadhgTykVM98BiDReURDrjsFfUZESbyrU4ST
+	 af//p60qYBg7w==
+Message-ID: <2d9d1da9-0d2e-461b-9c9a-eaf3dc512035@kernel.org>
+Date: Mon, 9 Nov 2026 12:30:06 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,47 +51,82 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <auug8QoQ62ETGg1D@ashevche-desk.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
+To: Bartosz Golaszewski <brgl@kernel.org>, Rosen Penev <rosenp@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20261104215959.24035-1-rosenp@gmail.com>
+ <20261104215959.24035-6-rosenp@gmail.com>
+ <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+In-Reply-To: <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------4gqc21xnnrPyxBe8xfFyJ7mD"
 
-On Wed, Nov 04, 2026 at 11:17:37PM +0200, Andy Shevchenko wrote:
-> 
-> > +{
-> > +	int ret1, ret2 = -ENXIO, n1, n2, i, j, count;
-> > +	char **prim = NULL, **sec = NULL, **merged;
-> > +
-> > +	if (IS_ERR_OR_NULL(fwnode))
-> > +		return -EINVAL;
-> > +
-> > +	ret1 = fwnode_call_int_op(fwnode, property_get_names, &prim);
-> > +	if (!IS_ERR_OR_NULL(fwnode->secondary))
-> > +		ret2 = fwnode_call_int_op(fwnode->secondary, property_get_names, &sec);
-> > +
-> > +	if (ret1 == -ENXIO && ret2 == -ENXIO)
-> > +		return -ENXIO;
-> > +
-> > +	n1 = max(ret1, 0);
-> > +	n2 = max(ret2, 0);
-> > +
-> > +	CLASS(strarray, prim_props)(prim, n1);
-> > +	CLASS(strarray, sec_props)(sec, n2);
-> > +
-> > +	if (ret1 < 0 && ret1 != -ENXIO)
-> > +		return ret1;
-> > +
-> > +	if (ret2 < 0 && ret2 != -ENXIO)
-> > +		return ret2;
-> 
-> > +	if (n1 == 0 && n2 == 0)
-> > +		return 0;
-> 
-> Shouldn't these checks be before any CLASS()? Otherwise seems strange to me.
-> 
- 
-Actually, not ok for this: we create these classes in order to
-automatically free the string arrays when returning so we must create
-them before the checks. The above check for double -ENXIO doesn't need
-it because no string array could have been created.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------4gqc21xnnrPyxBe8xfFyJ7mD
+Content-Type: multipart/mixed; boundary="------------OxD0RAdXY0oat7PgffFRo5hz";
+ protected-headers="v1"; hp="clear"
+Message-ID: <2d9d1da9-0d2e-461b-9c9a-eaf3dc512035@kernel.org>
+Date: Mon, 9 Nov 2026 12:30:06 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
+To: Bartosz Golaszewski <brgl@kernel.org>, Rosen Penev <rosenp@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20261104215959.24035-1-rosenp@gmail.com>
+ <20261104215959.24035-6-rosenp@gmail.com>
+ <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+In-Reply-To: <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4>
 
-Bart
+--------------OxD0RAdXY0oat7PgffFRo5hz
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hello Bart,
+
+On 2026-11-09 10:01, Bartosz Golaszewski wrote:
+>>  static const struct of_device_id ppc44x_gpio_match[] =3D {
+>> -	{
+>> -		.compatible =3D "ibm,ppc4xx-gpio",
+>> -	},
+>> +	{ .compatible =3D "ibm,ppc4xx-gpio" },
+>>  	{},
+>=20
+> Uwe: is this in line with your recent cleanups?
+The change is fine, I'd appreciate to also do
+
+-	{},
++	{ }
+
+at the same time.
+
+Best regards
+Uwe
+
+--------------OxD0RAdXY0oat7PgffFRo5hz--
+
+--------------4gqc21xnnrPyxBe8xfFyJ7mD
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrxrr8ACgkQj4D7WH0S
+/k5CkAgAhdoKe3erNvOVhVxv4sSIBhLVc9ZX7XxQ29dvyfavfOYBkh7gobXeuRb2
+1o58H0apPhMcnk6I3bbXbBYVA0v0zqqRr1nW0wmSe3gLJZBH0oP5MGSs+uRMfXZu
+t4k+qyqEZkrLUHmKr6H/vEzf9pcuAVfxyl8WzOkRCQfh1kzE1Fb4iwbX9unI/4wL
+tCrxPSjVgO9Kh2P2PQzJtJxDXfve4cV/XjW42szf2B6krr6gmgNESatocqXg+q/j
+NfRjSESARWj4oTftJ6Vqzkan0SEah09czSMarKiXrKgWabsdQ760kJ1R+Drj1P/L
+fM0GKwlbx4SEHij//3NKOuZ0VJ+Xmw==
+=yBUB
+-----END PGP SIGNATURE-----
+
+--------------4gqc21xnnrPyxBe8xfFyJ7mD--
