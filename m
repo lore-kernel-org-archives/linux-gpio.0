@@ -1,102 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.208.47
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1794257187;
-	b=mSHpH7si0REILnSenUyb4lvCiQyDJ/gwexpeo6/rkZhAJr7YkR6BixeDRw9TKUG4ejs8
-	 j41V+dGvpX2A3fij23bPIrm8w2YnLJa8vHqPdhLX/g4FrPGR3EjY2E3kttgpGFCklH1+q
-	 2x2MaXAKi/HfYHJ2pUr73erwXAWm2eY0BBM8mD4d2u+t2LCZ/C5wH/QkobYAOBFgxX7ee
-	 z+cwp5qFwM+g5m67ERGhqmSWwbzTOkLA3egGoYK4USbfVLT40UYT4YU0oKyv8dkQ8SxXB
-	 LTgVrbhTtTMYpyTJc+UDh3PiX7QjqDkHBnVBAwwQMQ+rwQdRoORFiq3N4Z2a1NR0XGg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794257187;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=PO36dFoBW7yl7SqTzC8Yly7dBYk4JKpR4W6jyTZ5PPA=;
-	b=j8nbbXEhNur2h7Kh/ZaE5DP0vYzy+mOPoYya8jybgKHQP3WUrjehxSxhGSuVyh0DUEs8
-	 R19HPZf2wxHomJtElrvre84d3H/BAthghHA2/S4dyE8Hs6Mmg6WtFePlDExXHRAAx6weI
-	 gKykgwyVWutx/UWKtay2yZGnRqecMkrrlerTD5TWWmuPbGNSDjG880e63Wmt1sLWZ0/06
-	 A8uohl2cQIRLDMFn51qurpUnPOaCyI4HHsURjzCbRUz1xk6XaNbu9HsuKijQaz/J8IKfV
-	 5V3TevihcdpGGySLZyrU258jPX5BldoJCC7NIAJuIuJoK1rcMvLo9ByB6WEzFYwYmbg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NCq+Izyi;
-	arc=fail smtp.remote-ip=209.85.208.47
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.14
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794261189;
+	b=QCysn2AZQoySkEFze/d+gGHwtxKe9HcS88A+VRlEP46g72zemxpVTIaAZDLDMVplWLr3
+	 07mRQy40iZ7Ve61rhteuh5HAiOBSC3NidOGF8X3uLgg168bYNRWr7aGHUBGiStPEAXvJe
+	 v4jMZlZL5lshDUw/J9MH6UH0+2WJ9IZlZnhS2JHFx/51hcHu7mQBb9McGqIFXVWeJf+PR
+	 kpv04hI1hBpg19R2z0zJaAkeN1OOeG3xiwQB4kNiKY3EBbzZT6n7l5rpGQOL/InoQKxHo
+	 8MYOd8JU/oJKp9ZBVuBH4pr7ZKn/2gm7eLWNc7zAua+lIJdgwnDL3M4xJqPOqqKTGPg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794261189;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=cWrTHrhjMJkdIpxHpr48X/5dTj1ezXP2AOnHxHCAkkU=;
+	b=v4s7OoR5HaU8QW/o0kMDh4wo3wf/ju0R0qIEWJ/94QxmQMMnsIEkpWBj2vhlLLflUH92
+	 0IJLGTL3p/c/QAY38yG4f+LUpJ0r9Inlc3tMJTIGbdB1rSVCJcPrEn2OkiG4HU4pznjc+
+	 Lt8MOL0L7Wf33Jm3Tx2x7OaUYxBz1Vkg/So0kJ6g0ZrWoC2z5r+4isxqABYGJj1hJdpZv
+	 WdFGyXAv/rk8Jfc6g5aFHlCyb2it+pOlrn09jls0qSTt+FhpbOLiHrj/ovk9+IZpYJMv/
+	 KO8oqxHAv2CMoFGZv8SKSmSxuE/A5ByXVj3AOGqBiCQ2Hl/XxSjhjoCYVf6OAG8rnAA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Bj2Pu2bV;
+	arc=none smtp.remote-ip=198.175.65.14
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D667A606A326
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 20:46:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D667A606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF47F606A31C;
+	Mon,  9 Nov 2026 21:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BF47F606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NCq+Izyi
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6b5669a5100so1796744a12.1
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 12:46:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794257185; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ZquCDnaQahneLogihv0ZGTi9xmhac/PRZUbKN9s/PQEJ9kdYor4/O9AMK8myFBHXku
-         3XHGYOTXfbm0yFGnl41Tdafbgb744cYEPrvktEinuCjINgOrHcxks4RE1dS9XiX4ch5L
-         vtKkSvl01IvZ1DJn02LOrL5Hot4quAVSdRur4HZpGmTojjElNc+ugSkgf0aEcNyxpDkZ
-         gIg45W4ugH20/7AGhElMcaFpzZJOHSVNaLL0lYdVz0oEfhdJw0KiVmQGUhvRGQyOdnX3
-         /lL+9EKNeAIqPtc+rIAxSXHTmSkQLtg4dB/6gf1b7Uwoxla31z7DHKuD+SkvmhW2/MSx
-         m3Tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=PO36dFoBW7yl7SqTzC8Yly7dBYk4JKpR4W6jyTZ5PPA=;
-        fh=e3bmYH/PCw9NC7kD51BsA9pszBqQzdjz6kGZ+Fouyz4=;
-        b=j7CFNFJxPoUst86ixMWyIE+adFBfCCmhPygGH6/Rc3cXtUcjbKQ/bqfXW0DzYeq5mf
-         ZkwyW8o9Ho+zKscKIc3a3VM3CBzaCbU2zPd1xXYWkcUY6urCgnfVyx2jVPg7jGMxqPWY
-         nx937lXt7KlHBnZ0E/umP6WpU7I3g8YlukYUJmePR0xRq7Zl4tIPUdxyOipiLmiW/C37
-         OFCbYbZQO3T7DqRkhM2CdkPFUAhyO0Qa6KVGSik8m07kat0indjkJRH9wuTp5Xx0iXaA
-         QeVSB4r0dWBgPazdrEZs8xkKqaTE4K5E1roJRzNKLTFDIP4DaVd4fwrGmSsxg3U5exfU
-         5PMQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794257185; x=1794861985; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=PO36dFoBW7yl7SqTzC8Yly7dBYk4JKpR4W6jyTZ5PPA=;
-        b=NCq+IzyiFJIoXBvrfXgpN4m1NTtx6utKbDHhw0CDtvmkxZpIDkhkEAu17BXroc1qQ3
-         Dwo2/g9HufKpEVE7+pcuHvSObjnHu2gvVQfvbqEfpf0QbDwr9WYZsiAJWIol4RENYkP6
-         l9wjFAnwSfddP5bn2BpxODAComGPKHSdo/Hq5IVSJ6KLBKJi1WQXUndr3ynxhKQQnmiv
-         Qqn5geCSciIz1JNiRPz0EcnEdxwU+bcDbVfxU9fBtbymrUn0sOmyrFqRFELOXUYDOKEG
-         TIr4fo4nliYGOT5MEF3xuUI2aExKR5p35lcTfFPPWdN5BfOU60BLKdjrDhxK8wSsSC3A
-         ZDzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794257185; x=1794861985;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PO36dFoBW7yl7SqTzC8Yly7dBYk4JKpR4W6jyTZ5PPA=;
-        b=Xv+Esv5W+umnicJithc0eqjh9SdOFy/ozLp1zvklYAQyrMcAK479jh5hOZ595RnIeX
-         fef5PgXlbrM7Y4qgHgAFXc9zaeo4CMqPnOBQYf/qZAP3vuzR6PDUHhOBDGiEsY/1DT2G
-         Ih9AF9Fe24yfjX3yrcelSh8WpnoiXfww4QiqGqMmZ86GoVI8S343yqxHLy6QAJXDRQ+0
-         +RHNBq7E6ZDE2NI+I+2KJYBvl8GTFzoxkn8035/OhW4COUt1qd5MKmCtJigofrpZf0mS
-         ESSZYx9NfG/gU9cI7L6A4a3VsLzlpzzt4iobyf++iRWaJolPLi0s37AQW+5DoHm3W/ta
-         pNSQ==
-X-Forwarded-Encrypted: i=1; AL+hErHb/XD5SZUjQKm386CB9TKuJ56WA8Y4aDkxcD0UypdOLfAKHeaAPCRxEvOFSfPYX03CjiLJ8DHVHQVM@vger.kernel.org
-X-Gm-Message-State: APuU4Z/wYYgw2E30W/Fq22x0YOIWOttxPTYQCvJUXzog20u8QXxIhLk3
-	UDvvrKPzF/s2F4jKkxytvynG1vJGaV7cybYMk3Szsn8EwixcTepc/iDdVeTT5rhpcj27cYlYJBC
-	aTImqIqXq9bZwb85EeDs8ht1sFpI/6lE=
-X-Gm-Gg: AYBFou0mPPtQLYDVIqzs3dGkVZ9tAClWhA3ZoqyPa7I8Ct2CcV5aP6XZX55Ro9sTnZR
-	wzGKOivtSKMolCE5l55aYMZh62y62F3aWdBVzevBtTu0VhM1C8molVk8TZSnaPQ5mDN17wM5j09
-	gQINGKkbLNo+qCPw1g1dUB4shfmHrV4d5MBxzvPGZYAqn+OXuLaKNOMvktlQC7GduVNklMPOAVH
-	6/blyyqi7PuqFoHWc5RYFQBm5YYNbQtx1Gsnk5j+Gmjk7s+4EIy6uhRWOi96anN8/KNZf63spGP
-	ZWVly2uVFTMEzSIda/5SlpshNLHgRpQa8hfH1QrSaWSULzjEX56iVUNqfeOr9zasadYXMNH3b/W
-	LajXPWJv7TVh1xO5NuwCxNaKQ05a2GHc2JQ3rzEft92dML9LP+KbgkVMTxp8XXtrfCcYhjzcQ4W
-	91+EM/fbPUfPCj+SFqlEB26lgw8e84g/JPQWcDSzr9W9XhhVFrmWLpkqgsW9SbypRDEYH+XK7Q2
-	k+bwQJgpDeRc2gxLmmo36fZoRVnT1nOGomi5qnvH90lNADb1g==
-X-Received: by 2002:a05:6402:13ca:b0:6b7:164a:7228 with SMTP id
- 4fb4d7f45d1cf-6b756b0fab9mr580476a12.41.1794257185052; Mon, 09 Nov 2026
- 12:46:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Bj2Pu2bV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794261188; x=1825797188;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=47rl7GHP11GZJhI4/OCDmLMOusvHUXAz+Mz7a8yPdho=;
+  b=Bj2Pu2bVDrNi5K1K35r74TC5k7BH2eiOkA3LEa4PDH8FG1cA4F0tG5eG
+   n/i0ZXK9UByTRtL5g9M7og4RuLdXrsOvFr/Mn7/VvTD1SvprYewCnbBwi
+   bJytEW2nWd0j8Xxaz0D0O2yQV5teJE/TQ4WD+78+EhyhpgM/qfNcDDLNl
+   GrsebD9fyExUkZkkeEUp/3BzxrRJPK20Iuh/6Lq4smt2wmx1NGE+K7aYV
+   brP/muLB3w6fkAEfs/aAwaRg4fd/MnyqdDQmjwgbmjqMFUJHL5sczO9ei
+   3lEkgcfTCvFShqBaKUlnLPwanF+vKkAz8s1Zuy4GyvZdeSclDHXxXTk1t
+   g==;
+X-CSE-ConnectionGUID: HvQyrFVyQ2GveMDreeqANA==
+X-CSE-MsgGUID: 9IKCUEZeTZOpGfd8VhCbQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2889617"
+X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
+   d="scan'208";a="2889617"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 13:53:07 -0800
+X-CSE-ConnectionGUID: XtKZoMU+RKyLbhKNbasT5w==
+X-CSE-MsgGUID: kq1ZhVbmR4yjLX71MfSJUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
+   d="scan'208";a="7990591"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 13:53:05 -0800
+Date: Mon, 9 Nov 2026 23:53:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field
+ in gpiod_free_commit()
+Message-ID: <avJAv_3ACjvyc9VU@ashevche-desk.local>
+References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
+ <20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -106,41 +84,48 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104215959.24035-1-rosenp@gmail.com> <20261104215959.24035-6-rosenp@gmail.com>
- <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4> <2d9d1da9-0d2e-461b-9c9a-eaf3dc512035@kernel.org>
-In-Reply-To: <2d9d1da9-0d2e-461b-9c9a-eaf3dc512035@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 9 Nov 2026 12:46:13 -0800
-X-Gm-Features: AclHuK8yAS4r-QfhKzcFNAvzQn_YgnIQjLvWa2Szkx8dOWqMjuJua69E1x63B8k
-Message-ID: <CAKxU2N-oA_EQ-nC4y6E+Y1XCaai_QNmicobvJZ03mRRDikZ5RA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 9, 2026 at 3:30=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@kern=
-el.org> wrote:
->
-> Hello Bart,
->
-> On 2026-11-09 10:01, Bartosz Golaszewski wrote:
-> >>  static const struct of_device_id ppc44x_gpio_match[] =3D {
-> >> -    {
-> >> -            .compatible =3D "ibm,ppc4xx-gpio",
-> >> -    },
-> >> +    { .compatible =3D "ibm,ppc4xx-gpio" },
-> >>      {},
-> >
-> > Uwe: is this in line with your recent cleanups?
-> The change is fine, I'd appreciate to also do
->
-> -       {},
-> +       { }
->
-> at the same time.
-{} was done by clang-format IIRC.
->
-> Best regards
-> Uwe
+On Mon, Nov 09, 2026 at 11:27:08AM +0100, Bartosz Golaszewski wrote:
+> Use gpiod_update_flags() to clear all request-related flags in one go
+> instead of risking racing with concurrent users and overwriting any
+> changes they could have done between READ_ONCE() and WRITE_ONCE().
+
+...
+
+>  #include <linux/acpi.h>
+>  #include <linux/array_size.h>
+>  #include <linux/bitmap.h>
+> +#include <linux/bitops.h>
+>  #include <linux/cleanup.h>
+>  #include <linux/compat.h>
+>  #include <linux/debugfs.h>
+
+No need, bitmap API implies all bitops.
+
+> +		set_mask_bits(&desc->flags,
+> +				   BIT(GPIOD_FLAG_ACTIVE_LOW) |
+> +				   BIT(GPIOD_FLAG_REQUESTED) |
+> +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
+> +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
+> +				   BIT(GPIOD_FLAG_PULL_UP) |
+> +				   BIT(GPIOD_FLAG_PULL_DOWN) |
+> +				   BIT(GPIOD_FLAG_BIAS_DISABLE) |
+> +				   BIT(GPIOD_FLAG_EDGE_RISING) |
+> +				   BIT(GPIOD_FLAG_EDGE_FALLING) |
+> +				   BIT(GPIOD_FLAG_EVENT_CLOCK_REALTIME) |
+> +				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE) |
+> +				   BIT(GPIOD_FLAG_IS_HOGGED), 0);
+
+Indentation is broken (and it has spaces, which makes me totally confused what
+the point of those spaces in the first place?).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
