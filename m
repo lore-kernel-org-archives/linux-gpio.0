@@ -1,111 +1,111 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794220039;
-	b=IJU1fAMDaDqTTS/WJ4YegvGB33f3YOastzhJY88c2R/TGfS9UvWOelh0kKw/5Z/UDP3S
-	 spRVs7ZGS7iyhuI8KYhfQz7envhvmEAypr5UB4/Sw7Jgl5/iTyAWe+4xOATPAsMQgRfgy
-	 85tmFEilFCMyDkL0OfOCKQ3uru3uASp5YsYuSeERPiyywh46k8aXZ8WwtwTCs6dQnISUz
-	 hig+XACWNhYK8yvZuDZOzjBSn05+SZ4LSgVsCdz5tEiWFe9ivGfriUHkgC9ULI7YEJmM3
-	 BBTjR15Jz1vIQZxOlA5W/WUM4KXLh6uUaOjgK/sGKmuI1LEPyj1AgQq7Mz3ixRA5Aeg==
+	t=1794220041;
+	b=g6MArCJl4wLqt9kkNtg/XxgzT1I/df+oVRHxxrg6WffRiaRHvGktfO3J4Y2jxaVkbFXh
+	 5Wwuwd4kvAvcgZ3ZoLMmVYsC3wTv4H66Y21rC6LJs2ncfBMxMUktpZdAsFXuo/YABGqY7
+	 L9q1xTdvkvPOm2jgLdX2AJQ0FmqNzxUbDRA9bCG/ERWYaX9xn4B/6nNQQ9w/xTEogvzu3
+	 nZYAEuRaTF1iyi+jAeonQqMI3rhweGfo/KEIlRE5Fw6jdKBQc7rJeNSIf6G7mUa7FDWdt
+	 dejbzH20dGrGiLwrePQvelQkOPlu5vsljmEkLFAGHvs6brCBPIelNNnZcvGj6wi0+6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794220039;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794220041;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
 	 X-Received:X-Received:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
 	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=vxIqLlqHQBIFPLmScv9Sxb0MBD7maGPGOlcFyAlmpvE=;
-	b=1az4KTbJoc+YAP7gAMGYrrch/MBqfLugHR+jRRQm1ssoHwGt5bgyPwNsb8SBPLG3R8nS
-	 5aAfNBsgP3SrZqiT1KskFTyfEfx4CTIM4pcvw1ZOE82PS4qcA3oWaxQHkWxNdDcJR7/K7
-	 ZzMmimMUs2cmekehC7DE4cuKGfvp6+KqY2shjtlrjerh9JKrlAzpF4uRsxBjZTNzLeJGJ
-	 aMpP7LIIUfQC/Wkk5ccpi/w4uqCi6jYz4wjQYl7TjncuqaagSKevVAyRp9oHZVm6EmGSD
-	 q1JnWLuAtQAEydtKCHyGAtDg/suF9hYQw77wl1l+ByCzRjI39IztqTiZNVouMfhz6qQ==
+	bh=jc0wRqvlZzje/aseVvtvfLBJ6kcDSv4zDujObU0BrpY=;
+	b=CTXLkZ9U0LG7QsP0Ca9SkkQRcACQWWi+dl+xusO/G8GbaCpY/NbeOD2N6JVdBzS0J0xc
+	 j+JDIfT4NIZW7bxA1B2YVnXYfSF/o9/3FVs5JGw5gCxGSoUXWAnI+XVszBzEd1QTIR1qS
+	 I1zUnA/wL9Iub3qMWJOtAireoFgwvQMh+CmBFUF1Sf+/AieI7JejJWgVNqJtzBwTWMkle
+	 bEDqyKDHVGSuwq8pNr8A+kpKDNStS5bvjM3qtV0iEL098P+59clZz4kEK0Ar+6hTaHyQc
+	 3ajV63xV/5l4XM50lQJVGFfAtF8ttAhZcssCt2fpOZkf077i+SLXljkKLP5KmwYb4rg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=m171uR2c;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LHdODxl9;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=GjyQV3Zp;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b="Y/56Fp9Y";
 	arc=none smtp.remote-ip=205.220.180.131
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8E0606D837
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 10:27:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DC8E0606D837
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57FD606EE8F
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 10:27:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D57FD606EE8F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=m171uR2c;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LHdODxl9
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A99uuuk3792014
-	for <linux-gpio@vger.kernel.org>; Mon, 9 Nov 2026 10:27:18 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=GjyQV3Zp;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Y/56Fp9Y
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A99usrB550755
+	for <linux-gpio@vger.kernel.org>; Mon, 9 Nov 2026 10:27:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vxIqLlqHQBIFPLmScv9Sxb0MBD7maGPGOlcFyAlmpvE=; b=m171uR2ca1CIs4SN
-	xcafXoyqukjRLI6SD/NAZ/g8zvLKvXx2YIXg6KBDXSyGHedk5OigdW/BtH/lvO4i
-	KxxJxMGZc8cgLajkZOfGVbIDSct68GMXK8W/5e8qTROsFX2gBlYbHGsDhK7CfDFO
-	85j3xeA8B6VF4z3jJCQZ9FI0OMfZP9j5nQRuM3qXdreisx+ffb8EjEsRqQWFudH7
-	6YfWxqPLn8GQw88D0HUVsBKV5sxm9yOiV4NG8+lk+OMHg5el9G9bi9aEeTv/Abrz
-	6g2VYI6u5V0A8ZrkfQi7+ayvlbCdX2roANFc/CwWJUT5Bp2kbZxkCdU6EJdveXrj
-	mTKK/Q==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hsuagwy6w-1
+	jc0wRqvlZzje/aseVvtvfLBJ6kcDSv4zDujObU0BrpY=; b=GjyQV3Zp/PN2uSrF
+	d0X5Zos1q8cTXCom6yje3kcUbAFxd8p8AhO2ozmx1ZWJDsbYdax1VAi3NO7ALDWh
+	HKRbhV52SVNLznFVXAHUVj8tqcXXE0Qeuqqd2TKmqyTy381i7qcwINh3Q18B+hb2
+	8itr0T3X8t8lp6/v70uRitGczt8QGWwaIYqlt/5BWzzKx6ZpMuyZW2GklBulm85c
+	bDLzUMjj1ApRJ6fc/oMUNlJ0e4aliZWfg5oYRIyGTWGPxyD+HDkCr3T8vuFThJC8
+	QMHhQDdBluiK+ZsNwnHtfN7fMq6fkZEazHpL7b9zOMytTxv5/GJJAeNyTMsSmEcn
+	yYOG5A==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4htuqm2q9p-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 10:27:17 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-934963b2bc0so136232685a.3
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 02:27:17 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 10:27:19 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5363763b556so14016461cf.3
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2026 02:27:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794220037; x=1794824837; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1794220039; x=1794824839; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=vxIqLlqHQBIFPLmScv9Sxb0MBD7maGPGOlcFyAlmpvE=;
-        b=LHdODxl9qIq3IXvYNQuJFNj8bJwlgEJW384iEea7qw2+16wrPLlJZnV94hrNWFwdPD
-         gYBHI9FQ0A0vOt2kpzrFcdE7rZ/li+BAToxmtSJoff+AMY58xYDTGeU85Voe4zxAYkRU
-         B8o/NyJM9u914NCKnwOlCvdkDwaTHYh6BtLV9AUqr1Fp6RGjFtXpgYN3kd3AQj+aVHRC
-         4mQWZysWGoCtboACuTYG1B/J/AMz241o/eoP6lrMbhR5YfeujkNWcVZUhmuXj8zI/v4O
-         L6Dk1OM4GY4k/J+ZTZ7xbsUiFFdoLudKdjrqwKzKI0Mb1og7e67tWPTZeL3vuXfysinL
-         T3Sg==
+        bh=jc0wRqvlZzje/aseVvtvfLBJ6kcDSv4zDujObU0BrpY=;
+        b=Y/56Fp9Y/Yz0FDx3q0JfU1FLdFkBf9fkO4KznYTsmwfQNGivVyGFM9vUK2tNc1Srp5
+         F2byidFoxrCeaenKc+HJ2xJs5UgvI7E1ZrIqepYHODnvIQDn43lKmrwOm+hDgFagZ+57
+         a3E9xSU3yCa225aBK6RyhV6ArXlz6q8lOsIEuDXtH4/tztwRMLaaWSMpYNGUYONnmyPh
+         1PI1WdjQFEnc+L65NrKIVDmdRTqpSJUowlEZXiWlf0favvAhYuWNr4zZ1Xe1VypTypFt
+         6cDQEYNIxXRB+RvOouU7sf4dryG/h3F7TR3nUgz/SZe8JQEUygEuUY+67IhiO3Eus22Q
+         ho2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794220037; x=1794824837;
+        d=1e100.net; s=20260707; t=1794220039; x=1794824839;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=vxIqLlqHQBIFPLmScv9Sxb0MBD7maGPGOlcFyAlmpvE=;
-        b=PKLT79j9pPC4z8hE4HBAwXC1hZFkKtipn4aLmKs6z7/+3Dsianp45gEAgwidwc/y/u
-         NeBBZI0U6tPLWN46PVZsJJXWNcE3+avYc9krDf3Ndv0srN9QE3Q0uPG2JRr3SAyWEsd9
-         NrtIseRcgmFm0Ly8fInNh/vB5ifd4Rom1Qxl6zHvghlmObyGysHpKau/c24tjLMNNdQ6
-         dqG1reVMNd9TI4aOqD7HSewe4ggThsZGjtKMu44YILiTcrukjHcOE2obj/oCWIIl0aoc
-         UFEk64LDVqD7NCXtUX8SRABk5Opo9vPa8y25U7z0zkky3OaVZzF7asGuazlZ6huYDrHZ
-         w73w==
-X-Gm-Message-State: APuU4Z/ulHFv9FeVuSeIhOwSScNlRHpe7vpqbmIpg4xQ7HY+wMQHjyy/
-	U7KbC1FuoVrG4Rw3v/QY2oUNHyXavR0AR0cTnkCscvjDHQnpyi27yICD4Gh5R/SrBtv9iNoUmZF
-	6iUvFZfVoJKLgCnAwC0XmO41MxUGKdeUG8Qr1h3mDTm67wCCQ7+HPdPDRjJhNYuWY
-X-Gm-Gg: AYBFou3jPkgUN+1PK5f4Z9AgLNsyoayaLxx73Ut0p/tQiy3357U32xF5rcJHPnpPk5s
-	TQ3d3dx5FOWxORsePmLOIKz6SgtGoq1tytepgVC1sK/5t9cuEvt81JE8rtXvVEEiB1kROr1IR/P
-	KZ1De/Ek6wiMR5oiC6mr8MpozMZnqOFlVHt0rXG4A25ZWcLvfZpET2DGRxlppTS/kzrQVnrG2l1
-	qhvv+AgkCWYeSZ9sKTkJB+sT7BhpDcHL/uTEfTTEaEg3/BTUNddydCHdPbCfEi/QdtAjjjMDa4Z
-	Or/ggsTm37Mb/ZP/if0uBDNVGTBDWqOvZQczAYTDAswVRdCAwItFqEstCfXs7ZekCAYimnh9u5s
-	uYFsVhbK2OdJr6YuKp3TR7rP2pABLpLg2QhmBeubh28BLBGd03lOvpvIFEfN9m61UY8F8HoRpJ6
-	8HXaajA6/U4x/pppp35aQ4E4GWLHcooBoaA2foLHOs1miQ4raXjEOSDq5X/2nuKQI=
-X-Received: by 2002:a05:620a:2b46:b0:93f:e52:40ec with SMTP id af79cd13be357-94784916c8emr463471285a.81.1794220037366;
-        Mon, 09 Nov 2026 02:27:17 -0800 (PST)
-X-Received: by 2002:a05:620a:2b46:b0:93f:e52:40ec with SMTP id af79cd13be357-94784916c8emr463468785a.81.1794220036886;
-        Mon, 09 Nov 2026 02:27:16 -0800 (PST)
+        bh=jc0wRqvlZzje/aseVvtvfLBJ6kcDSv4zDujObU0BrpY=;
+        b=rvzcQnMxWcjDpBopzrb+K+s70DixKWuIoitWPQabNsHUuaxgUnIu7R0nU8MahtLcuf
+         ebIEPpAdlcWJxwuihGGN+m4fKDaf13V6I0302amhNdHpZ8R45L6dyxqKAroKvFCxwSdV
+         jmLjVlV0z5TLzns0518n+UjDUGCfst//nX1xPzMo4zqybELsdKYrF+F9Tifgte67ot8Q
+         BzNB9hjTH7tzycimoDw70mtJb7dcxAGFdW8VGukepJEIfVgI2UPRKRY82J6WTeLeV+/T
+         n1uqfcHytPj8DjT2ASuyvuPbFE7vCobjgT6vnmfI5eV7EjIMqIp8U619doa2CH918V2a
+         Mw/w==
+X-Gm-Message-State: APuU4Z+N5SkUc+VFOhp/nc4KBbJJpE3X4LMRH7vd92u9ujswvA9aLv9a
+	VM2vneBDX30PCTkrdj4uXnw+bDAfiDGY5zGEBqIwtDoLk6i/KEH7wxSHCF+ap7UbsvevyuUag6J
+	FFTB/Y0jJ3xruGLdYxjLuXf6TDh261iSu/K0xRfjmF+NZkMfZTxOWmJGminTnklqK
+X-Gm-Gg: AYBFou0R3GdDFa3bBwd2jnkxshuzDgVMEu2iCBCexRlyZdg0LY5PklbZlNbgQ2He8Yj
+	9vCgmGeTjoInTBJfWDe/Y8Ycm5eudmyvYBNZpQlsWez3DIzfiu4chjRb091Q9xuyZyVmvwMO1R9
+	37x1E98OpZZmm4RUTZoYHonQMOIiU4NFFoecHxANz39o1TgyS56HB4fPNSins3bN6AqCoO+rqsk
+	LZiGMfkae536eMZIwdcRwZRXIatYPxUzwSQHsXgbmPzBrrIRn1yksaNtJoJY3IlIy7I5CImLPI8
+	z4HIvgECB85rmhBu1iu9fseL20VbSiVAn/XwpjD9JQTato7BK6+FrNwOfk1W45gSDYLw4E9sqee
+	yLGmg1E9bv6J5vmJuEJ8iJqLPTDiBjQO9io0XfTwpXBXmWbUfgzl0DoJHKWKamgwJJEyv1lFeqD
+	YNWvlA36Af10MX833xsHh7yer2ljAmnOTEJ1Yb6TY6euZtf4QE2B07xzcXmh5A0yE=
+X-Received: by 2002:ac8:5ad4:0:b0:533:7a4c:d8ec with SMTP id d75a77b69052e-552a50ab7c8mr54500461cf.43.1794220039157;
+        Mon, 09 Nov 2026 02:27:19 -0800 (PST)
+X-Received: by 2002:ac8:5ad4:0:b0:533:7a4c:d8ec with SMTP id d75a77b69052e-552a50ab7c8mr54500141cf.43.1794220038696;
+        Mon, 09 Nov 2026 02:27:18 -0800 (PST)
 Received: from brgl-qcom.local (2a01cb1d00dc7e0089167b9b97a26c96.ipv6.abo.wanadoo.fr. [2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad4d1sm237381545e9.5.2026.11.09.02.27.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e32ad4d1sm237381545e9.5.2026.11.09.02.27.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 02:27:15 -0800 (PST)
+        Mon, 09 Nov 2026 02:27:17 -0800 (PST)
 From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Mon, 09 Nov 2026 11:27:08 +0100
-Subject: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field in
- gpiod_free_commit()
+Date: Mon, 09 Nov 2026 11:27:09 +0100
+Subject: [PATCH v2 5/5] gpio: cdev: don't overwrite the whole flags field
+ when configuring lines
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -117,7 +117,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
+Message-Id: <20261109-gpio-desc-flags-atomic-v2-5-c4c54b476628@oss.qualcomm.com>
 References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
 In-Reply-To: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
 To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
@@ -128,112 +128,249 @@ Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
         stable@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2370;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8034;
  i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=eW7d6lPWl7JriaxL+uhRZPNurMSB5KL7r6fnnNoTZzc=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq8Z/7NZwQ0eloe0hUFedBEHfBkhMOZQUx7lAkp
- NvmON+qYaOJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCavGf+wAKCRAFnS7L/zaE
- wxR0D/47Vd+uhH4UtFj31MSdEIBL4QW9yNIK28Urt611VYkzrDhSvWvWheZ5dw0Vw5Useug87DE
- GeWTeqrPu0mUnCvYbfwe/LEsQP25WY7ADS4t6GggvUxfB03MEhzzN6+RFBQnsPJbVeUcCDSCeRV
- MtICCjMme08661JY70THwjgTHkquCXJH3wBFaZrRsQyh2YkTXck0OijP58PmZcXvicdWfAquFFG
- 7Hpt3swV8EcbP/bQgRGo5/ZufyzA9rsbIv7pK1Qhln0VwXXHlu8YZtqPuf0a0h8BRSuLRom4Dkx
- DQDzqf0yQWdTN1gQWaofFGLHt3YUTrKOZoZe8A5clxkz4BqLNNxS/RWd707rX2N3aQl0vkuka5z
- KFnF7iEXbEcgDUJawtS9jurDP7eKXGNri65arJ0zi+6si4BTLOWJWM9Jz0oCyUMK6ln0zqeuDp5
- KLD/Sikzb5uJ6s2R35q3GSveTyI4r7kvn97edFOFyc8kSnzXdKkaeTOum28lQ/mPckn6odDrdY9
- 4AMBvu8YPZnGK2oLdapMOQ7/mtHMhjZfeQUXUD6Z1JVw8KtGepQCMT5V84xL71MfskIwDNjEJSl
- rBnYLtijSxQ0guZlVKt1gYvvFNv4teZRs+ge/VjaXDIsPOODEtEnh/Vl+YuzI5NNudaSO1l4uqm
- No+4QwkmGC2uv2Q==
+ bh=fVhmjZYt0e+VV07UFHqrVusazPl54UkYh4sJD9+7jGI=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq8Z/7wPZRBDYNmLOGXhhvjPAYkPfLE2szCBNct
+ NREjp6NcJ+JAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCavGf+wAKCRAFnS7L/zaE
+ wwiVEACoQ4czedNhkQyaceY6VcGY+uONsKxeHAkQiBqz7dqTJsiqcYWQiJd11JwfO4BRuqGvgXg
+ D/ouDPeDnEvQsEm49z+O9Iahi7SgT6QcPmYx4FRz4/oKZFYfce/C/WVcdzrLjCwBDRWXnNx7vo2
+ TUDKODhiBx0eOrfBXkOFTpbz64k3QnGkIhm7ZK5P1liJ3gzo3dXIE101jCRbmvYe+5v38kyq90v
+ GYU6cc456G3KmgPMF57Ym175tx+k3eez9QEWPgUvdKcLL9wzAqtEqpa02/XQxKtWf09XPtk32LT
+ nmE5OSvn0fegiq6D3z8AmnhZ6FYK75ydPnVtt6L37QOag8w/N4+IvVJNpyhkNeyu22B7G1UQ9mA
+ qEdD37Fu8qpTMjFg61IxYBXkFGCuiRRyp2pcJ+1HJSK1VgDYOxWUTIRlS/kr1fqoJ3e5vbBlrbW
+ aZ8VxMN6DSUsrZDwADaq25K5Iy45XCfMRRKcYzHlEOJ2cdyX9VFtHOU/RK7CpL5B0NEZhy88vtP
+ x1gDeR5o3UAlBDAmEQYSf3OpXzS66RXbOwLrMxZIwe9FHlIR2LoCrgr6pHCYvpuiyta5as7XfQW
+ Jfnv6RhSumIEO9qwTD26gPcrrque6Debm/HGsnZJuhM05OrW2Y54nS+AxpYRk4QbJiKs+CUMNAI
+ 0SZ+KfPrPfTwyLA==
 X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA5MDA0MSBTYWx0ZWRfX4F/kXkRnixrs
- ulL69/lsnOjH4Ue22BnnpkxLy3fkMf8BH5PB1bXPNpSUdzRg37pXBJS5a9sQTDA9zRMU41fNht5
- p4oRfZ0xKv8wBVgNMI6vvjVHQoVvAYatCGw5QbV4t7aly/zhiUOmFCj47/TmgJwvxduMRtWfL4K
- KdM9zI9mqR+smQobqRjCEoxlBzfkA0pqfTmtwujRvdV02kVvO+w+DuuuWMDGtBlMVHwBaW4Vk31
- bPDopGZHhE5LqMx1tH1DCmEDOWr9t4KRTQx16Ya/JEuMUshLyC1qx9jEfI7cv7yklrzhJ0ewnAa
- JujGYPOi+m8aj8AR3j7hVBmtngFjoO7yyezT1zH7BHhmp012+S3L9MRpLWxw6eyxAQkopXjHgTB
- 1zwnp0BPMYrVJkmUDQbdPUV5MtIzmcaLB9SgJQf5/KoPvqWxobJdjMyY1tSDiGLFHt0qUbPNKri
- /hG2AaFTSgnYIZFEdhQ==
-X-Proofpoint-ORIG-GUID: rYsWXpSvBnSJ4dhUJRInn1hD5WleVJoq
-X-Proofpoint-GUID: rYsWXpSvBnSJ4dhUJRInn1hD5WleVJoq
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA5MDA0MSBTYWx0ZWRfX5JCsin2QLkhh
- dTrVXAx4pfhKG8HveaL53kFvu7SgVnVo8Zc0S1WXskGFOmcIw1OUYHdKaWumhxxmSeAAqVwyqa+
- n+LBDrNJoTJ8yevY3H80m2qj0xir9cM=
-X-Authority-Analysis: v=2.4 cv=V8LoQuni c=1 sm=1 tr=0 ts=6af1a005 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA5MDA0MSBTYWx0ZWRfX3Z93nwIwlDa5
+ KZp6V8ktWwYAAK6AhLAlQic0/FIQ046ELf58dGlE0jkTpKjAZqcSlFjSSvhc4l0i9WjRFO4Uf7u
+ A4O6iyswK7+mCRwXHkj8SaznGjZltQ0=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA5MDA0MSBTYWx0ZWRfX1RsDJ7sdiC3G
+ efio2nyYWHNSIURNfEfatNXLn7gkcr64KR39MuVvPaOkx9emnQB0xuC6TYWD+2rrQ3bEYrFAnfv
+ 1up/UkVMi//zridFWrg4clsLHVLxcHqEQ54zsM2nziln4D8RI5AkZCjgqtsKknzCFlBEXXExpso
+ Tm9vpDX12ureBMWhzOyUMXAPj6tyjMsPGbk5qFyk4ezKRumkH0S6jPhnBHR6lu58arZNnWiV9WD
+ pDLR7L6KceixMDQ0NtfoZGuYe7Dussr1payx5vTYIyMc0dEmlik3g7/lkiy3vfYRhHe21ztV6v7
+ nq2oSb8EUNt/ntbjdsojeYloRPFWPgMpXE60RhE0GyXA9RDt1Ib0xGSuwlvQr9LlSXQ+yBJAdSc
+ fdQGz1xzh8Ja/xbGM5GRBTh/WdqEg/DpXWDYcbwVHw/DuL92uQIsnOHdGrwjiLvfRDbMErRhois
+ /ck28CMxUzfvBrXgWTw==
+X-Authority-Analysis: v=2.4 cv=JLquIMKb c=1 sm=1 tr=0 ts=6af1a007 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=obTuVQ2JAUH4m0gggDsA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=FxeHtzAkRt4RPYSLnXUA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: sx-Sv-b1UNRT85wkjBJDVocC8QfJwm2J
+X-Proofpoint-ORIG-GUID: sx-Sv-b1UNRT85wkjBJDVocC8QfJwm2J
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-09_04,2026-11-06_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 malwarescore=0 bulkscore=0 impostorscore=0
- phishscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611090041
 
-Use gpiod_update_flags() to clear all request-related flags in one go
-instead of risking racing with concurrent users and overwriting any
-changes they could have done between READ_ONCE() and WRITE_ONCE().
+linehandle_flags_to_desc_flags() and
+gpio_v2_line_config_flags_to_desc_flags() read the flags word with
+READ_ONCE(), modify the local copy and write it back with WRITE_ONCE().
+
+The per-request config_mutex does not exclude sysfs, the irq core or
+drivers touching the same descriptor, so bits they set or clear
+concurrently can be lost.
+
+Build the mask of bits owned by the line configuration and their new
+values locally and apply them with gpiod_update_flags(). The whole
+group changes in a single atomic step.
+
+While at it: rename the functions whose semantics changed from
+"conversion" to "flags update" accordingly.
 
 Cc: stable@vger.kernel.org
-Fixes: 35b545332b80 ("gpio: remove gpio_lock")
+Fixes: b7adfb6076ff ("gpio: cdev: update flags at once when reconfiguring from user-space")
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 ---
- drivers/gpio/gpiolib.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpio/gpiolib-cdev.c | 111 +++++++++++++++++++++++++-------------------
+ 1 file changed, 62 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index af2d67d977f4925558ab77c34b37c3c29bd12a6f..4c9c524389ca13e422bca8c217b7f47477cc0dd4 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index f68e33cbd7d4cd5153e82ad77768cf52a90601d6..50baee455283c3aeb25ed92f3936c5f6a5b215bf 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
 @@ -3,6 +3,7 @@
- #include <linux/acpi.h>
- #include <linux/array_size.h>
+ #include <linux/anon_inodes.h>
+ #include <linux/atomic.h>
  #include <linux/bitmap.h>
 +#include <linux/bitops.h>
+ #include <linux/build_bug.h>
+ #include <linux/cdev.h>
  #include <linux/cleanup.h>
- #include <linux/compat.h>
- #include <linux/debugfs.h>
-@@ -2696,24 +2697,23 @@ void gpiod_free_commit(struct gpio_desc *desc)
- #ifdef CONFIG_GPIO_CDEV
- 		WRITE_ONCE(desc->debounce_period_us, 0);
- #endif
+@@ -140,24 +141,30 @@ static int linehandle_validate_flags(u32 flags)
+ 	return 0;
+ }
+ 
+-static void linehandle_flags_to_desc_flags(u32 lflags, unsigned long *flagsp)
++static void linehandle_update_desc_flags(u32 lflags, struct gpio_desc *desc)
+ {
+-	unsigned long flags = READ_ONCE(*flagsp);
++	const unsigned long mask = BIT(GPIOD_FLAG_ACTIVE_LOW) |
++				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
++				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
++				   BIT(GPIOD_FLAG_PULL_UP) |
++				   BIT(GPIOD_FLAG_PULL_DOWN) |
++				   BIT(GPIOD_FLAG_BIAS_DISABLE);
++	unsigned long flags = 0;
+ 
+-	assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
+-		   lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW);
+-	assign_bit(GPIOD_FLAG_OPEN_DRAIN, &flags,
+-		   lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN);
+-	assign_bit(GPIOD_FLAG_OPEN_SOURCE, &flags,
+-		   lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE);
+-	assign_bit(GPIOD_FLAG_PULL_UP, &flags,
+-		   lflags & GPIOHANDLE_REQUEST_BIAS_PULL_UP);
+-	assign_bit(GPIOD_FLAG_PULL_DOWN, &flags,
+-		   lflags & GPIOHANDLE_REQUEST_BIAS_PULL_DOWN);
+-	assign_bit(GPIOD_FLAG_BIAS_DISABLE, &flags,
+-		   lflags & GPIOHANDLE_REQUEST_BIAS_DISABLE);
++	__assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
++		     lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW);
++	__assign_bit(GPIOD_FLAG_OPEN_DRAIN, &flags,
++		     lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN);
++	__assign_bit(GPIOD_FLAG_OPEN_SOURCE, &flags,
++		     lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE);
++	__assign_bit(GPIOD_FLAG_PULL_UP, &flags,
++		     lflags & GPIOHANDLE_REQUEST_BIAS_PULL_UP);
++	__assign_bit(GPIOD_FLAG_PULL_DOWN, &flags,
++		     lflags & GPIOHANDLE_REQUEST_BIAS_PULL_DOWN);
++	__assign_bit(GPIOD_FLAG_BIAS_DISABLE, &flags,
++		     lflags & GPIOHANDLE_REQUEST_BIAS_DISABLE);
+ 
+-	WRITE_ONCE(*flagsp, flags);
++	set_mask_bits(&desc->flags, mask, flags);
+ }
+ 
+ static long linehandle_set_config(struct linehandle_state *lh,
+@@ -182,7 +189,7 @@ static long linehandle_set_config(struct linehandle_state *lh,
+ 
+ 	for (i = 0; i < lh->num_descs; i++) {
+ 		desc = lh->descs[i];
+-		linehandle_flags_to_desc_flags(lflags, &desc->flags);
++		linehandle_update_desc_flags(lflags, desc);
+ 
+ 		if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
+ 			int val = !!gcnf.default_values[i];
+@@ -339,7 +346,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 		if (ret)
+ 			return ret;
+ 		lh->descs[i] = desc;
+-		linehandle_flags_to_desc_flags(handlereq.flags, &desc->flags);
++		linehandle_update_desc_flags(handlereq.flags, desc);
+ 
+ 		ret = gpiod_set_transitory(desc, false);
+ 		if (ret < 0)
+@@ -1216,37 +1223,43 @@ static int gpio_v2_line_config_validate(struct gpio_v2_line_config *lc,
+ 	return 0;
+ }
+ 
+-static void gpio_v2_line_config_flags_to_desc_flags(u64 lflags,
+-						    unsigned long *flagsp)
++static void linereq_update_desc_flags(u64 lflags,
++						    struct gpio_desc *desc)
+ {
+-	unsigned long flags = READ_ONCE(*flagsp);
 -
--		clear_bit(GPIOD_FLAG_ACTIVE_LOW, &flags);
--		clear_bit(GPIOD_FLAG_REQUESTED, &flags);
--		clear_bit(GPIOD_FLAG_OPEN_DRAIN, &flags);
--		clear_bit(GPIOD_FLAG_OPEN_SOURCE, &flags);
--		clear_bit(GPIOD_FLAG_PULL_UP, &flags);
--		clear_bit(GPIOD_FLAG_PULL_DOWN, &flags);
--		clear_bit(GPIOD_FLAG_BIAS_DISABLE, &flags);
--		clear_bit(GPIOD_FLAG_EDGE_RISING, &flags);
--		clear_bit(GPIOD_FLAG_EDGE_FALLING, &flags);
--		clear_bit(GPIOD_FLAG_EVENT_CLOCK_REALTIME, &flags);
--		clear_bit(GPIOD_FLAG_EVENT_CLOCK_HTE, &flags);
--		clear_bit(GPIOD_FLAG_IS_HOGGED, &flags);
- #ifdef CONFIG_OF_DYNAMIC
- 		WRITE_ONCE(desc->hog, NULL);
- #endif
- 		desc_set_label(desc, NULL);
--		WRITE_ONCE(desc->flags, flags);
-+		set_mask_bits(&desc->flags,
-+				   BIT(GPIOD_FLAG_ACTIVE_LOW) |
-+				   BIT(GPIOD_FLAG_REQUESTED) |
+-	assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_ACTIVE_LOW);
+-
+-	assign_bit(GPIOD_FLAG_EDGE_RISING, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_EDGE_RISING);
+-	assign_bit(GPIOD_FLAG_EDGE_FALLING, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_EDGE_FALLING);
+-
+-	assign_bit(GPIOD_FLAG_OPEN_DRAIN, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_OPEN_DRAIN);
+-	assign_bit(GPIOD_FLAG_OPEN_SOURCE, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_OPEN_SOURCE);
+-
+-	assign_bit(GPIOD_FLAG_PULL_UP, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_BIAS_PULL_UP);
+-	assign_bit(GPIOD_FLAG_PULL_DOWN, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN);
+-	assign_bit(GPIOD_FLAG_BIAS_DISABLE, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_BIAS_DISABLED);
+-
+-	assign_bit(GPIOD_FLAG_EVENT_CLOCK_REALTIME, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME);
+-	assign_bit(GPIOD_FLAG_EVENT_CLOCK_HTE, &flags,
+-		   lflags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE);
++	const unsigned long mask = BIT(GPIOD_FLAG_ACTIVE_LOW) |
++				   BIT(GPIOD_FLAG_EDGE_RISING) |
++				   BIT(GPIOD_FLAG_EDGE_FALLING) |
 +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
 +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
 +				   BIT(GPIOD_FLAG_PULL_UP) |
 +				   BIT(GPIOD_FLAG_PULL_DOWN) |
 +				   BIT(GPIOD_FLAG_BIAS_DISABLE) |
-+				   BIT(GPIOD_FLAG_EDGE_RISING) |
-+				   BIT(GPIOD_FLAG_EDGE_FALLING) |
 +				   BIT(GPIOD_FLAG_EVENT_CLOCK_REALTIME) |
-+				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE) |
-+				   BIT(GPIOD_FLAG_IS_HOGGED), 0);
- 		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_RELEASED);
- 	}
++				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE);
++	unsigned long flags = 0;
+ 
+-	WRITE_ONCE(*flagsp, flags);
++	__assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_ACTIVE_LOW);
++	__assign_bit(GPIOD_FLAG_EDGE_RISING, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_EDGE_RISING);
++	__assign_bit(GPIOD_FLAG_EDGE_FALLING, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_EDGE_FALLING);
++	__assign_bit(GPIOD_FLAG_OPEN_DRAIN, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_OPEN_DRAIN);
++	__assign_bit(GPIOD_FLAG_OPEN_SOURCE, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_OPEN_SOURCE);
++	__assign_bit(GPIOD_FLAG_PULL_UP, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_BIAS_PULL_UP);
++	__assign_bit(GPIOD_FLAG_PULL_DOWN, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN);
++	__assign_bit(GPIOD_FLAG_BIAS_DISABLE, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_BIAS_DISABLED);
++	__assign_bit(GPIOD_FLAG_EVENT_CLOCK_REALTIME, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME);
++	__assign_bit(GPIOD_FLAG_EVENT_CLOCK_HTE, &flags,
++		     lflags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE);
++
++	set_mask_bits(&desc->flags, mask, flags);
  }
+ 
+ static long linereq_get_values(struct linereq *lr, void __user *ip)
+@@ -1404,7 +1417,7 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+ 		 */
+ 		if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
+ 			continue;
+-		gpio_v2_line_config_flags_to_desc_flags(flags, &desc->flags);
++		linereq_update_desc_flags(flags, desc);
+ 		edflags = flags & GPIO_V2_LINE_EDGE_DETECTOR_FLAGS;
+ 		if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
+ 			int val = gpio_v2_line_config_output_value(&lc, i);
+@@ -1660,7 +1673,7 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
+ 
+ 		lr->lines[i].desc = desc;
+ 		flags = gpio_v2_line_config_flags(lc, i);
+-		gpio_v2_line_config_flags_to_desc_flags(flags, &desc->flags);
++		linereq_update_desc_flags(flags, desc);
+ 
+ 		ret = gpiod_set_transitory(desc, false);
+ 		if (ret < 0)
+@@ -2055,7 +2068,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+ 	le->desc = desc;
+ 	le->eflags = eflags;
+ 
+-	linehandle_flags_to_desc_flags(lflags, &desc->flags);
++	linehandle_update_desc_flags(lflags, desc);
+ 
+ 	ret = gpiod_direction_input(desc);
+ 	if (ret)
 
 -- 
 2.47.3
