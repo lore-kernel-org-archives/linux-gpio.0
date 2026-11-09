@@ -1,66 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794234617;
-	b=BMdH02GdenKh+231GB9RO8iUnYljA7J50OlUXq5KCCC+PmWPZJocbwH5I0tpNYq2JGPK
-	 b5pku9xoDhCebl6AJjp6zZdx2Iy8QtsxTpuZZQV/IyYC6DC7Q3dZZ1SsgoyQl//Z+lCT8
-	 bg8m41NWmS5rwGCgtfqPnTDfhslXZO6ScdICtPlEd5a5LBd8IG9GXfHkFzP0WRMS3uwGa
-	 pcWvxiXSHjKrRUncHGd62n6cca2d7N4q59TGhhMryQSXmGUk/dDA+C8fbQG5sicA2+Rku
-	 UNBz0AycFunkrJyxvdtUB/DmV//j7MC3EQ+iIkMfyC6AuyoB61Yj91fWEO1LMbTFJOA==
+	t=1794234881;
+	b=xIHFNF6tBdzokfQR8nBTDwrq+gonRbHwG8lsq2m6trcGRhHkFPvOgpJZ04xMU/ly2ETI
+	 4/VN1LoKxT2rC0eOZTYxznEXJPPwWZSxLnB8WLj7AVtRt6L9Eeb4+UHXpLPxUeBdZR9Ib
+	 8IL2+lXqxyuiiv4oEpmYW3fjCYrLFhhlsNk1LfbNQXvaA2lMxJ3v/FFhm8hsBtZgYdqW+
+	 9wwj4mI1XI2GlDcNoOihvLZiAfDn91Mb+Z1RJyCWNEYyWC8I+ffxn69/UDDzdg61NBzTN
+	 49Q1H74Z7TxqbZOFZZpb4JOLkeieBirvHOy7HdAGk7vPdqb5YyRITXId7Mpxgdf812A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794234617;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=BEl+L8NJ9Qmwwtf8B/hCyQX7FAPLXL9PcfseCEpgh+g=;
-	b=waktSlhNTfZEJTfjtePCRbs1yzLSASzAnMocysiBT5Jgnm83HwVYRLGgtgPVEEV3JS93
-	 +V0dNoJJejnWHvzaRDWKarIMUp0TBTLgZvdhqFMMw65W0n+6jyWnfn8RRBjaIPR7mzHj7
-	 EsZkrixhivrioz0IN73BixejRJz2xfwZW+GjW7shr4T/KXcSwjOAHzIp1u/4gtfKtqtDM
-	 SD/AJEVzfMtscp874fziAlplFRLKCe7MlvLvaniF/CecxjPgPukDsc5oGXPxgo6D26RMb
-	 4gvr0iuMhXTbq7OdEn7W1FhWFqtmdUVbV9psqWBuhRV3CnC6GZpp4BYQdHgGHHtp/4Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794234881;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Vo8rbuaeB0r9G7cEwH/mj66KH2pm8hQyOPB1Jv5nSyg=;
+	b=ujn0/dujBmoHOs9BZ4rKG7qe0cajWoMk04KtYsUWlMbSsXRPEeSSVLAHX0bKJg+H9GnW
+	 cD+BS76gzd8rjY5w0Rq8tfjSetctafG0k+MQnCHomOSzM5T8BP8OuI+XdzZFWMFN4Knx2
+	 9RSF5iNLN54yOvvmZf1Rl+R1N30HR+Ff3kqg5PgCWo0Nmlre6Ln/woENdvHY/I82Ni7f7
+	 KkT3fANTFeFxCPlZju0On7/x1bjSo1ACWtW7mM2MpiALuJ5MkjlAbA26NRFukQfy+dvfk
+	 nDfFjHRj5tcxnA8/mB4ptXUOAoF3M7mLdr++vDYcw7DSoHB1E7BmIkd/wdoBkw+cNwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QG6kwPnH;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JcGS1fAU;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9D4606A339;
-	Mon,  9 Nov 2026 14:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734AC606A31C
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Nov 2026 14:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QG6kwPnH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5074C1F008A1;
-	Mon,  9 Nov 2026 14:30:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JcGS1fAU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347251F008A1;
+	Mon,  9 Nov 2026 14:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794234616;
-	bh=BEl+L8NJ9Qmwwtf8B/hCyQX7FAPLXL9PcfseCEpgh+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QG6kwPnHCV1z2vqbHuc2U+61eVdTqvDY8AXDs96jZUvvDvUF/tygYDemhRQWgZGPm
-	 4RgjsPVWczQp5Yd8/dHb4xW4s31q2SuYI2pquhTSyr5wpCkpaBOs7vdS/oQ95Dypkg
-	 WhoA53HH+BwFHv/QwJ1c3xJssvZeEeWtHXr43uFAxEOXtSPJ86JYbLVr2fLpcdE97j
-	 3Ai8EJjqYW5VJg/37mOQUsLYEmqEDNrKLeDIp6SE7sE3sDYuOp3mQ9M5JUKVYRzOMm
-	 Wzfuk9/cpo1gTHRTxkLgp1dFiggSIFtZfERr/4bN3IRSEn+kNR7bIxv0QdmCVksmhm
-	 4zLDvoqgUK7lQ==
-Date: Mon, 9 Nov 2026 15:30:08 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/9] device property: provide fwnode_property_get_names()
-Message-ID: <avHXwL53ClRQptIh@devuan>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
- <auug8QoQ62ETGg1D@ashevche-desk.local>
- <lmib6742yptkwh7mzduw5xqid6h6rsqchs6aot3usjkcocmxqs@cvcpkwqag6nz>
- <avG8MITPLRuFcZdO@devuan>
- <6b7uxzbhrce55f5bgkvmg2r2h4ax4xg7le6vxkhzezbsef23gq@ojm3wm33v3xn>
+	s=k20260515; t=1794234881;
+	bh=Vo8rbuaeB0r9G7cEwH/mj66KH2pm8hQyOPB1Jv5nSyg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=JcGS1fAUqxvXyKvuPvVq30O1bcgPaP2LpFiPMS8HsPS3FzNWm9gmuar0E4qNnCJJ4
+	 k7l1AYzQX6LKF5wbCWsWIkMlsJivwBLheUel3s22ubJ4zAahCuhuqZNUKPmp1yI6pV
+	 vaybqVrhIc8A8RIewbZPQoclbqhIAlIQnPGQqHLWacMU0RYe21J4yftpY1hslD3Jlw
+	 6t9g6/2MdgU82l2Dm/BY8bBPBzzO0UCEBN7dcmPIjxtPnosaHmVI2pKbsIdh7SJvd+
+	 9UW9cFXBaMDhKyF2dVPvKg7YM1ZXSwvhEGsaXISo5M2W8fuhgyOhxMfNPDrGY1IYrS
+	 r8hjxuEubUx2g==
+Message-ID: <sashiko-outbox-205116@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] gpiolib: keep the line state workqueue alive until
+ device release
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261109-gpio-line-state-wq-uaf-v1-1-2e126ca3427d@oss.qualcomm.com>
+References: <20261109-gpio-line-state-wq-uaf-v1-1-2e126ca3427d@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Nov 2026 14:34:40 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -69,98 +59,56 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="em4352y5go3jlcfe"
-Content-Disposition: inline
-In-Reply-To: <6b7uxzbhrce55f5bgkvmg2r2h4ax4xg7le6vxkhzezbsef23gq@ojm3wm33v3xn>
 
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] gpiolib: double destroy_workqueue() in gpiodev_release() on
+  cdev add error
+--
 
---em4352y5go3jlcfe
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/9] device property: provide fwnode_property_get_names()
-Message-ID: <avHXwL53ClRQptIh@devuan>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-4-6e28fe1c72c4@oss.qualcomm.com>
- <auug8QoQ62ETGg1D@ashevche-desk.local>
- <lmib6742yptkwh7mzduw5xqid6h6rsqchs6aot3usjkcocmxqs@cvcpkwqag6nz>
- <avG8MITPLRuFcZdO@devuan>
- <6b7uxzbhrce55f5bgkvmg2r2h4ax4xg7le6vxkhzezbsef23gq@ojm3wm33v3xn>
-MIME-Version: 1.0
-In-Reply-To: <6b7uxzbhrce55f5bgkvmg2r2h4ax4xg7le6vxkhzezbsef23gq@ojm3wm33v3xn>
+commit f0714550a8f7080c7dd00f07240622c9dd77f912
+Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Hi Bartosz,
+gpiolib: keep the line state workqueue alive until device release
 
-> Date: 2026-11-09 13:59:05+0100
-> From: Bartosz Golaszewski <brgl@kernel.org>
->
-[...]
-> > > > > +int fwnode_property_get_names(const struct fwnode_handle *fwnode=
-, char ***props)
-> > > >=20
-> > > > Triple indirection is rare. Do we really need it?
-> > > >=20
-> > >=20
-> > > I don't have a better alternative. Having two functions: one for
-> > > counting the names and another for retrieving them into a
-> > > caller-provided array is IMO the worse alternative, so I'd keep it.
-> >=20
-> > Would it be possible to return the pointer, and then pass the count as
-> > a parameter?
-> >=20
->=20
-> Is this really better? I think it's less intuitive than just passing a
-> pointer to an array of strings.
+This commit moves the destruction of gdev->line_state_wq from
+gpiolib_cdev_unregister() to gpiodev_release() to avoid a use-after-free
+race with concurrent gpiod_line_state_notify() calls during chip removal.
 
-Returning allocated pointers has a benefit for static analysis: the
-function could be marked with __attribute__((__malloc__(deallocator))).
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index fbdeda2f27871..c954c7eec2bee 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
 
+[ ... ]
 
-Cheers,
-Alex
+> @@ -898,6 +899,9 @@ static void gpiodev_release(struct device *dev)
+>  	synchronize_srcu(&gdev->desc_srcu);
+>  	cleanup_srcu_struct(&gdev->desc_srcu);
+> =20
+> +	if (gdev->line_state_wq)
+> +		destroy_workqueue(gdev->line_state_wq);
 
->=20
-> My personal preference is what I did in v1. Unless there are strong
-> objections, I'd prefer to keep it this way.
->=20
-> Bart
+[Severity: Medium]
+Can this call destroy_workqueue() a second time on gdev->line_state_wq if
+cdev_device_add() fails in gpiolib_cdev_register()?
+
+drivers/gpio/gpiolib-cdev.c:gpiolib_cdev_register() {
+	...
+	ret =3D cdev_device_add(&gdev->chrdev, &gdev->dev);
+	if (ret) {
+		destroy_workqueue(gdev->line_state_wq);
+		return ret;
+	}
+	...
+}
+
+When gpiolib_cdev_register() fails here, it destroys gdev->line_state_wq
+without clearing the pointer.  The caller then unwinds via
+gpio_device_put(gdev) -> gpiodev_release(), which sees the non-NULL
+dangling pointer and calls destroy_workqueue() again, causing a
+use-after-free.
 
 --=20
-<https://www.alejandro-colomar.es>
-
---em4352y5go3jlcfe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrx2OoACgkQ64mZXMKQ
-wqnTHhAAq9lr9inrO5+sbViAOboiBTG49DapuOkHoOD6fa3GmZzqB6t050vFMegQ
-ip6ErIBH1WtYWiuJbOWJ2x3oThL37chjBeuAFBqVQz+74+YmDCdL/bTgS6akJGuz
-mUtyEyT9FEFl1/vL6Fwh1FTl0rkwQyKth5yDY9AYltGEIk0/qeWxwcI45UZaCj9X
-08g6t9oMseT06Z5AvYrYvm541WFNMqU+VMGKdjePlMvzl9thd61OCqLAjxUaCfBy
-a8H+5468dmxXYLIgOodscuPVfEBV5+3EJlsUsPWMkOxXnuJmM7OOwaJWNcJbKLSW
-stG5oG9x6No9YXTiu6Wnk06lzxHVunq42vMcMysrmHti43+ANa/5I5bHuo/k+m6i
-/h+6U0tz6ovdlD4P3T8K8OrgAlKYdfdM4Hw1FGC5OiGmH/WwtTw8IWw0jKk1QG1q
-fXFBQlX3PKLpohfC1n9kC82USb4VoDsyL7XRQExyufCcEFf4UQvKj91hwaj7hLK5
-JE3OkG2r8ieMvAOGQJy/oLZAVzirk0afGqca/wQhKIbxM/84+Sk4lBx6tU0vI0+G
-DqCoqWzete1HHh4djkwghdvr8dS2S+YZCmNRWnaSZtFz6qS7ue5Uq/lEWmLGCnmq
-xoLhW7oizyJZ4TFC52wBvtvxIQ8zP4RpHbCLBQp2K6kVsZqrQ9E=
-=HZPM
------END PGP SIGNATURE-----
-
---em4352y5go3jlcfe--
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109-gpio-line-=
+state-wq-uaf-v1-1-2e126ca3427d@oss.qualcomm.com?part=3D1
