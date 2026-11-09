@@ -1,80 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794261527;
-	b=lK4ly8DvrWmLcs1kNwHwGSXHgVutoMMhIUxLN7zQN6BBy5e9QDAuvP3NdKmU5TyxuSVI
-	 FJTKzYu/j744Nh8S7dqYpsPLU8OsH7Mnyq0ZLjMOUqqJnv4yT8g/ICs9ttg8BlZmsnCmj
-	 z2TVCoGJbAEE2JzjdEM6ek5LQ+s4/ycyIxeSRsdLX4LMesb1HhqHEtvSty6XjVSoZKUDI
-	 EQGLKLyJpXCZLEPMRlXFDXSshCiBVpQR5N6Q7wIo6bOCJrms813btYDx/qII+sJLz0glX
-	 co6dd0S19Ghny4zm26Im8DYAJfO6qucRBmM7gISQTs2T4HjCL1JuXFtzO77BAeZQL4A==
+	t=1794261818;
+	b=yAHy9n0zMDSwPxHyPtjoa6n3ZlF0pWj+58ZE03V+MH7jJCc2a8ZamYOl7Y11fo86cefs
+	 QXlnjpV0TLN7aPwzTEVQ4+mVyioQyV10K9Ego/kgLBRQ6govcj2B6PVlLNCiIfr1NXjuw
+	 R9zD1dSBGWpimHtenQ4dFDplW0Jee5mEeZfWYS7EOrw5RHVBislG1lWwUL+jRzHxSkdG5
+	 agqjTpUBkPmplihhOhsjRdkpODxTVvTDjYFPKxd2XVg2f2EsIT0Cjd9jwcR49xPMo2e5H
+	 ytO+ukDLmj5QjS/27n6//dt/qvqmrdlvL2sGltx9QuCOWZALl9CyfZd69xMStALCQCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794261527;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=uuKGJFIAQTv+RlaHpzDx+37smg+UIdatunDm/wqv+7s=;
-	b=APdNqsmiWrlBOs0GqoHBRgRN0BSmrICsdl3OIt48TdR9J7qTxQSTW+F5Sze2qH9waXTc
-	 slL7HRvfxvcE2VPbuHulYbfUposm0rDjUnEzFzlx5Mv+xuKFFy8jPkuA+rNX5DYAKeENV
-	 iZwAbuUAFau0yKMIsbPCJNlfrhEjzAm2bk5JORj5qcTTzOU+W/YG6b/yRvlL7a7IymoLS
-	 UhAqQm27yq4CPrERz//mlATaOPZbRB+P+x9qGb6xcn30cwcfBmXU9vHwIyXkEgGCpEdTi
-	 YtGUtvi/UUAel+7puq56PoOxdF34FiURjVMLj5hAaVAkhLVAZYh2Yf1nfOpMVOM3bYg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794261818;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=nRSiRqipA6WKqaUGKmrlZimwoxY98VaIdzrqCOGXgiQ=;
+	b=5McXwl+wQciqmw7jg3HB2zZvQpWpfHqR3hoWGyJIZOp/fjPs2tqXyYhftJWuKSS1TEng
+	 mqUWcb3vOAy5XK+HEFeWjgpavBurfzKGHT5dQH7NWmI9JKFAKT2nT2kcUI8X/7A9R2NVP
+	 eGsRe5MeUAoUzYKPjh2HnZBrUWhYKmK1v0wVgC25MYP4BQg65UVsL4NX4OuXuIi7Z1MDp
+	 RaI/4pZL3TH3HuazF+URWbemYS+q4tNlIh7oH1HFgQldTTfkS9nZekcPLFckF9FpkXduC
+	 x06BVSQRkoNsh4oBN2FSG3G9W8RmYV11C/g1ym77Qw7goi//tExR/BYoHJp4ZuT043Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YSue7FtR;
-	arc=none smtp.remote-ip=198.175.65.12
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ok2hSGK+;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C92606A31C;
-	Mon,  9 Nov 2026 21:58:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E8C92606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6469E606A31C;
+	Mon,  9 Nov 2026 22:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YSue7FtR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794261526; x=1825797526;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gNtUecHaPmKuaL6tSyYP7NTuJUMVrc+ZsiUj1ZvKFIw=;
-  b=YSue7FtRSlLeXM6/8ztZy4eOVt6VeaOTQC6NdAfCdGFsdWr8qmhKAUGD
-   EaAHUHxqdEUEESydCw9DTPZix24qnKCjNKR9+Q8gPAU4YsCAAlcleJfje
-   f4s28co8Sjapa6KbBgu6rbWlTMDy95Ij8B9NfPqpJBmNX6XGCWs0iBTCZ
-   kqLw0T4BSujzzq6scROH7q3iUprgvPb7AeTrl2Gg0UoSY4g358/olGXPv
-   USARbTtVoMZQcUJZM3wbEf+4Z+Iz1gVw+R5GY4kYS9+M8gYvOmS2rt877
-   320pdf6aSi7SLOc0EnG8sYfIax1/SdxrUbjbW00EZUf5FUSPGfiS9BnTV
-   A==;
-X-CSE-ConnectionGUID: dUx6eaANReSXdngUr1ASNg==
-X-CSE-MsgGUID: Qv3R1GUBTeyQvQEoay+byw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2875380"
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="2875380"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 13:58:45 -0800
-X-CSE-ConnectionGUID: C84YxAV5Q3OA++szL5UfqA==
-X-CSE-MsgGUID: gtpJKZIjSgK2DJb4/V6/DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="9723857"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 13:58:44 -0800
-Date: Mon, 9 Nov 2026 23:58:41 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Kent Gibson <warthog618@gmail.com>,
-	Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] gpio: cdev: don't overwrite the whole flags field
- when configuring lines
-Message-ID: <avJCETUZidpmICKR@ashevche-desk.local>
-References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
- <20261109-gpio-desc-flags-atomic-v2-5-c4c54b476628@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ok2hSGK+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07171F0089F;
+	Mon,  9 Nov 2026 22:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794261818;
+	bh=nRSiRqipA6WKqaUGKmrlZimwoxY98VaIdzrqCOGXgiQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Ok2hSGK+2/MfGMzY8JxRpJtQF7R0bSeXynlaJCEzXwrapsBORwu5/wUR6Ez2wYcFZ
+	 fNekSh39KPcEpjnrma8zmcgiF8TSdIM9DsLHYsATg9hwuKY0vxNfFwYepqtNU+vN88
+	 jav1RhV5TateBiJ9bv+uUi9WcBHz5gpQBnfW3dPVNQp3X5qDH2yQx8n3Tdg0xWfG8g
+	 jhMrEXPa0nReACoxPDWXwvzb9Dikz1TW6IJGEF5RUkYGriijmieUhKtMmOhPEKbgMy
+	 X+02QOr3wwP3wQ6jdYxl26F9Tap6CldFz2ulKXpvY6ziWPCQvKIGefH62+9NrRlVy2
+	 BdBpDMHOQW2iQ==
+Message-ID: <a93ffdfd-c745-42d4-bef3-70b991adcca6@kernel.org>
+Date: Mon, 9 Nov 2026 23:03:31 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,117 +51,96 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261109-gpio-desc-flags-atomic-v2-5-c4c54b476628@oss.qualcomm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: pinctrl: qcom: add missing tlmm labels in
+ examples
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>, Bartosz Golaszewski
+ <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Melody Olvera <quic_molvera@quicinc.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Richard Acayan <mailingradian@gmail.com>,
+ Martin Botka <martin.botka@somainline.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261109-qcom-tlmm-ex-phandle-v1-1-b77b09e6ec9b@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261109-qcom-tlmm-ex-phandle-v1-1-b77b09e6ec9b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 09, 2026 at 11:27:09AM +0100, Bartosz Golaszewski wrote:
-> linehandle_flags_to_desc_flags() and
-> gpio_v2_line_config_flags_to_desc_flags() read the flags word with
-> READ_ONCE(), modify the local copy and write it back with WRITE_ONCE().
+On 09/11/2026 16:57, Bartosz Golaszewski wrote:
+> Several DT binding documents for Qualcomm TLMM pin controllers define
+> the gpio-ranges property in the example node that references the tlmm
+> node except that the label is missing. It's harmless as we ignore
+> non-existent phandles but for correctness and consistency - add missing
+> labels.
 > 
-> The per-request config_mutex does not exclude sysfs, the irq core or
-> drivers touching the same descriptor, so bits they set or clear
-> concurrently can be lost.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml   | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml   | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sar2130p-tlmm.yaml  | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-tlmm.yaml   | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sc8280xp-tlmm.yaml  | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sdm670-tlmm.yaml    | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.yaml | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml    | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml    | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml    | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml    | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml    | 2 +-
+>  13 files changed, 13 insertions(+), 13 deletions(-)
 > 
-> Build the mask of bits owned by the line configuration and their new
-> values locally and apply them with gpiod_update_flags(). The whole
-> group changes in a single atomic step.
-> 
-> While at it: rename the functions whose semantics changed from
-> "conversion" to "flags update" accordingly.
 
-...
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-> @@ -3,6 +3,7 @@
->  #include <linux/anon_inodes.h>
->  #include <linux/atomic.h>
->  #include <linux/bitmap.h>
-> +#include <linux/bitops.h>
->  #include <linux/build_bug.h>
->  #include <linux/cdev.h>
->  #include <linux/cleanup.h>
-
-Unneeded hunk as explained in the previous reply.
-
-...
-
-> -static void linehandle_flags_to_desc_flags(u32 lflags, unsigned long *flagsp)
-> +static void linehandle_update_desc_flags(u32 lflags, struct gpio_desc *desc)
->  {
-> -	unsigned long flags = READ_ONCE(*flagsp);
-> +	const unsigned long mask = BIT(GPIOD_FLAG_ACTIVE_LOW) |
-> +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
-> +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
-> +				   BIT(GPIOD_FLAG_PULL_UP) |
-> +				   BIT(GPIOD_FLAG_PULL_DOWN) |
-> +				   BIT(GPIOD_FLAG_BIAS_DISABLE);
-
-Usually we don't do such an assignments in the definition blocks.
-I believe the split will look better.
-
-> +	unsigned long flags = 0;
->  
-
-	mask = ...;
-
-(and with longer line you may combine close bits, like OD/OS or PD,PU, and
- DISABLE).
-
-> -	assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
-> -		   lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW);
-> -	assign_bit(GPIOD_FLAG_OPEN_DRAIN, &flags,
-> -		   lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN);
-> -	assign_bit(GPIOD_FLAG_OPEN_SOURCE, &flags,
-> -		   lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE);
-> -	assign_bit(GPIOD_FLAG_PULL_UP, &flags,
-> -		   lflags & GPIOHANDLE_REQUEST_BIAS_PULL_UP);
-> -	assign_bit(GPIOD_FLAG_PULL_DOWN, &flags,
-> -		   lflags & GPIOHANDLE_REQUEST_BIAS_PULL_DOWN);
-> -	assign_bit(GPIOD_FLAG_BIAS_DISABLE, &flags,
-> -		   lflags & GPIOHANDLE_REQUEST_BIAS_DISABLE);
-> +	__assign_bit(GPIOD_FLAG_ACTIVE_LOW, &flags,
-> +		     lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW);
-> +	__assign_bit(GPIOD_FLAG_OPEN_DRAIN, &flags,
-> +		     lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN);
-> +	__assign_bit(GPIOD_FLAG_OPEN_SOURCE, &flags,
-> +		     lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE);
-> +	__assign_bit(GPIOD_FLAG_PULL_UP, &flags,
-> +		     lflags & GPIOHANDLE_REQUEST_BIAS_PULL_UP);
-> +	__assign_bit(GPIOD_FLAG_PULL_DOWN, &flags,
-> +		     lflags & GPIOHANDLE_REQUEST_BIAS_PULL_DOWN);
-> +	__assign_bit(GPIOD_FLAG_BIAS_DISABLE, &flags,
-> +		     lflags & GPIOHANDLE_REQUEST_BIAS_DISABLE);
-
-...
-
-> +static void linereq_update_desc_flags(u64 lflags,
-> +						    struct gpio_desc *desc)
-
-This is ugliest part of this patch in my opinion. Just make it a single line.
-`clang-format` is in use I assume?
-
-...
-
-> +	const unsigned long mask = BIT(GPIOD_FLAG_ACTIVE_LOW) |
-> +				   BIT(GPIOD_FLAG_EDGE_RISING) |
-> +				   BIT(GPIOD_FLAG_EDGE_FALLING) |
-> +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
-> +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
-> +				   BIT(GPIOD_FLAG_PULL_UP) |
-> +				   BIT(GPIOD_FLAG_PULL_DOWN) |
-> +				   BIT(GPIOD_FLAG_BIAS_DISABLE) |
-> +				   BIT(GPIOD_FLAG_EVENT_CLOCK_REALTIME) |
-> +				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE);
-
-Same comment as before.
-
-> +	unsigned long flags = 0;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Krzysztof
