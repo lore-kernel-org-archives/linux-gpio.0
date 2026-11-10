@@ -1,63 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794316855;
-	b=WHN3hrhmMu6UMQYzPrPfrv8OwHayrsQL/lFQx+dtUFUZrdFgYYLrufJ52OSUTF/rS4yd
-	 t9qg5TLDsF/PecesYeRPsV2M5ZEJvUcvTiib3KZAeGhPRiJBB/WZ19XYEiNRf1uLwaJL6
-	 UoaDP0HXQRaizrWf59ZwTrphFTq9UETdVvs50oN2Cb+oE1tTgEUymsWX23eKFQch/cHKH
-	 LFRntN9s5stxkSi8KIlzYajancZxKfeDTcLzi/nKuFbyyjLxsoVQ4ESGB5tST/lJx+a4A
-	 7o+yBHz754K8DaRGqcH5gJKb2bCq1FIFxZC83xS+v32q1Amd7+1M4jeiRcNOwultHWg==
+	t=1794316881;
+	b=yQkLfPYZ/Mk+3o3DqlAGSoscs2i1pY3ngufX66ATS0Kxaqeyoc9FLJVeEEVzFAa408LJ
+	 BORyfnBMYPwBR3+lp3KTQCbRz7I5xRnhvUXnQq23Ljpybs+0/4LA/b6GlwtKZYLd0fzSv
+	 jRaIdqNg5C7gWHV86Mh1j16OrbgxjfNOv3yfeivlvI2IJQpniCavXoywXPTZ58XRIGPXW
+	 ZjFtBzsEaHoMsnxDga7wkFYS4FaSXHCiK0kHjy0zzAtbX/3Aq9byzrQmcHCx8Qnk6Egn0
+	 xezcr9KtNvjoc/vB/BHGkoeZL85U/ulpAcqhgdx3G5UHF/1bvcFpfextc1GV5eZFg0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794316855;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=frrN9eP5VKX7iihEaJrF6vLJxtmPHDqRPsxohmOYZu8=;
-	b=x1H4140snUEEJwPqqpn0orCSzujRoBVg8/YjH90ckMj/QMCzghAKajmvqSJShw6ZoVQn
-	 y819HU5R1VDuTKpOOIU1foBzsk6o4aunte+f1aCnu+T6YypeBBX7MW14TPCRzjJoG0iN+
-	 18UQO+D3n2/IFml2rr9/zFv3lIHoImeyFZSkx9y9uBwXB4eRwpTfeSjtL+KYX5ZbHjQBC
-	 zmJY4VMQIvTFW/26Yo0ZLeADuDuQa3JxREA488FsGMxLTfe0qR6i/5R2wUwW2AJ2m1RvW
-	 LjZg8H8aFi8i4efluv3H1/4/DsvLoMmGS9I+QqumVZZ4L5FbsDuHapB1nCnEiS8g+7g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794316881;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=MdLlX+Rnx7zcplFi3lvqRjMJrUi+pmU8yE0nWBOJajQ=;
+	b=o/MV8CUzn0RHxZP0PDWXb9HgMMhesVEJXubD4Lm2JO9tvztrgJnQ2QTBxGpvccoRn+7/
+	 Iz/TSVRk0tDp7lNt+P3U0YXJrIH5YNMl/K19qi1jxl3yCwKPNcBwRcCR421IPvWryKQb3
+	 MfpK8Pw64RvTI6KJZQ1+cbGfXQeIRMZOtoG+WyLClKngY/gqty6GlcwA2Ub/h9m6jkOWj
+	 FckA/0a9i8wd3Y7OL77x83l083vDDFHEtzcm6NAl9i85KSOwAiMtr/IFt3L/eu+O2JCxx
+	 WXXzaOfKKoiN4EYzuAjWGKoerxHSjtKD15H5+9V81bFfSCOB7w7qJTKUnzwKH0TvGJQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=YlrRRqxJ;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5B0607B10E;
-	Tue, 10 Nov 2026 13:20:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F5B0607B10E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EwJeQsfk;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C4C606B191;
+	Tue, 10 Nov 2026 13:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=YlrRRqxJ
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3005143D;
-	Tue, 10 Nov 2026 05:20:50 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42B2C3F632;
-	Tue, 10 Nov 2026 05:20:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794316853; bh=8xoLOeJ5D5iFRiilyKCfOmsSoEqiyL5IFmDWa/z/4zI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YlrRRqxJ8JhiltC5XonPWyDKEAZUX9aNRSAVZjMvqQiTyKGuXTb+idFqYGPuwaIag
-	 nQ+encbFYzyVaX9z3KOlVt0FSRaLwHkhbY92gqU8sUcKEGir3sgzFj6iCvV90X+KAl
-	 weOqY7W88IHI2Z7x31ynnQQgVOS0SOZ+NkZbPO4M=
-Date: Tue, 10 Nov 2026 13:20:49 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
-	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] firmware: arm_scmi: add an operation to set the
- function of a single pin
-Message-ID: <avMaMftPv6MTM6Qx@pluto>
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-10-52d92843ad97@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EwJeQsfk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3450A1F0089F;
+	Tue, 10 Nov 2026 13:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794316880;
+	bh=MdLlX+Rnx7zcplFi3lvqRjMJrUi+pmU8yE0nWBOJajQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=EwJeQsfkplTrN+KaYC69OJJMBTRuRZab4p+l11mIS5AwDONYHdtZBuAWr6fV4GNvi
+	 cloFWFOepu6pd2+DyHeeFoMAjkCHdH53i4o/Y/KHC/aizSnlA5r1XvnZbX7W3sjxSF
+	 DrlKFQRn75XiDPq1MuYRQWTFfBY0k12nghBuGQpQ4CtI3ezK39Te+mjC9Xw6ulFAjC
+	 vYYn2IvIPXjj6724LKHYdpQkg2IZIoUc013bjqDqSc5XqzpPhhn4KJuMWmUKKfoxN+
+	 busM2CJBLoD/+G3dRpSAA+woZt66x8UTDwnp7xfTPfTQ3+X9v1l9zLswYLT/YwRoc2
+	 BxTUGppRExp9A==
+Message-ID: <sashiko-outbox-207115@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] pinctrl: sunxi: a733: do not switch the mux to read IRQ
+ lines
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Vinicius Pedrosa" <vinicius.eduardo.pedrosa@gmail.com>, linux-gpio@vger.kernel.org
+Cc: linux-sunxi@lists.linux.dev
+In-Reply-To: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
+References: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 10 Nov 2026 13:21:19 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,27 +59,66 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-10-52d92843ad97@baylibre.com>
 
-On Fri, Oct 30, 2026 at 04:58:41PM +0100, Clément Le Goffic wrote:
-> Add pin_mux_set, which selects a function on a single pin. mux_set only
-> works on groups.
-> 
-> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
-> ---
->  drivers/firmware/arm_scmi/pinctrl.c | 7 +++++++
->  include/linux/scmi_protocol.h       | 3 +++
->  2 files changed, 10 insertions(+)
-> 
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [High] pinctrl: sunxi: wrong A733 IRQ bank offset calculation in
+  sunxi_irq_base_reg() [1]
+--
 
-LGTM.
+commit e0da3dde27e4a3b5c2c95273c0b30e65e89fd5f3
+Author: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+pinctrl: sunxi: a733: do not switch the mux to read IRQ lines
 
-Thanks,
-Cristian
+This commit removes irq_read_needs_mux from a733_pinctrl_data so that readi=
+ng
+an interrupt line does not switch the pin mux to function 6 instead of keep=
+ing
+A733's interrupt function 14.
 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctr=
+l/sunxi/pinctrl-sun60i-a733.c
+> index ca82f08a3a65b..456d9170c2a27 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+> @@ -23,7 +23,6 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_B=
+ANKS] =3D
+> =20
+>  static struct sunxi_pinctrl_desc a733_pinctrl_data =3D {
+>  	.irq_banks =3D 10,
+> -	.irq_read_needs_mux =3D true,
+>  	.io_bias_cfg_variant =3D BIAS_VOLTAGE_PIO_POW_MODE_SEL,
+>  };
+
+[Severity: High]
+This problem wasn't introduced by this patch, but does sunxi_irq_base_reg()
+calculate the wrong IRQ bank MMIO offset for a733_pinctrl_data [1]?
+
+drivers/pinctrl/sunxi/pinctrl-sunxi.h:sunxi_irq_base_reg() {
+	if (pctl->flags & SUNXI_PINCTRL_NCAT3_REG_LAYOUT)
+		return pctl->bank_offset + bank * pctl->bank_mem_size +
+		       A733_IRQ_REGS_OFFSET;
+
+	return IRQ_REGS_OFFSET +
+	       sunxi_irq_hw_bank_num(pctl->desc, bank) * IRQ_MEM_SIZE;
+}
+
+Because A733 implements no PA pins (a733_nr_bank_pins[0] =3D=3D 0),
+sunxi_pinctrl_dt_table_init() assigns logical IRQ banks 0..9 to ports PB..P=
+K,
+whose hardware banks are 1..10.  However, a733_pinctrl_data omits
+irq_bank_map, and the SUNXI_PINCTRL_NCAT3_REG_LAYOUT branch in
+sunxi_irq_base_reg() multiplies the logical bank index directly by
+pctl->bank_mem_size without calling sunxi_irq_hw_bank_num().
+
+As a result, IRQ register accesses target hardware banks 0..9 (PA..PJ)
+instead of 1..10 (PB..PK), shifting every port's interrupt registers by one
+bank and leaving port PK interrupts unmasked and uncleared at probe.
+
+[1] https://sashiko.dev/#/bug/linux-213c0bba-8e71-4432-952e-9f5e320fd4b7
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110130157.1121=
+55-1-vinicius.eduardo.pedrosa@gmail.com?part=3D1
