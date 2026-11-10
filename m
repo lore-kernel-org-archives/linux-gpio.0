@@ -1,68 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794310522;
-	b=HbowaCFyvZMO6frs1W7AdIar5Iu9icl8fwXOOZI7XUOv2wsMQohfls+KOzCyNv+nryxX
-	 Y36NsMJjiLsyCKcTgBDrJ0Ebz1OC41BXDh0OinOdwxTO3P+5tHhPkbZ6vgSeEohvcX/IA
-	 Uu82uVjfqYC2EB5SQ3xcdZhOVxVDNtMs3iVXoUBASARnBbGBVuHZCbvi1mEjTf+lZGFYS
-	 Bo3j6fp2e+wVo+dLf4rhxZ69FDVxaPzkjF1+a9OFkq8pSauZg/M8yhUCJR8zm4xBZXBDV
-	 mrPxJXNfwOhngFK+MgYf4Sk9Jqhf7uydxPyIPU5BgJciXogRhQxzykfbwgvDhDx6VVA==
+	t=1794311053;
+	b=UC34AJZYF0I3d3tPF3Pj8TRJFfTo7LfgoqYpchixAKnDgNHHiUvJF0ohm10oT56rjXE8
+	 Wm4XV7WDKRTqpZiHze/bvPGjT1f7ODRWAhu2JrstAQnFd8/zVI1um2mdw6It3NO9ReADW
+	 CFq3skbSiurvnCfl6sfLzTPdpazkuHd2kEenbJRDwBazTNkfu1xMIgmYX0o1t9nW53uXk
+	 KKFyt1FvOEGzTcOonXcofiADYDikFuojX8Kj6v7wQV4mMnOV4DuY+NdlxapL5KmR9quKt
+	 PvoxkFZO8wr8NzwlBhUSgl5ocf3tsUTRDozQarq10OF2ODSE4apIjUvBRFv3P4i/XZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794310522;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794311053;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=BbpERa55+bAqGoKd07R6gWLaZO/6XQcmtI/WmnBnKK0=;
-	b=omzX3QaZu4BJTbKWqASAKatBZlrx2UDvzFIrIGtXu7frByFC5+67Sc9JIMA59T2gKbuv
-	 jPeIhDjvYQ2w1S6HoUbqaUfgK2vPdtYvSVBP2nxN0a1AcWnmt29Je31lmxzcZMrb/u4W5
-	 sw+BWjriz29ptVoGt4PYeXv9R+zBCY6jpln7+hAq38f5xtUdH6T4aFFGnXIhQMJV6uOS+
-	 Sx1mXRHytj0Oa+65CcUe8+4PwMCgo7th8ZNxuI+BlKpfqoUNiKX1Udz4UfcXpBem6bW0u
-	 MZq2aqfraVCkV3mcxC3wJUymIrraE1wZi7gSxaqq07G3aWP9jIgv+Gu9n7PGKPMcFYg==
+	bh=IN60gOhiFLXTiUujpua2k2lDg3kIk++JqhLJJqH7/6g=;
+	b=i6GL+ckyDSdC5qrQ3oPW7/DYda5mI35boFbKzey7Pk0NF4bPwRdJwYj3kUr6/3J9lE4Z
+	 CyKdTYBeSD7fdwdBHO2IBfdJkxfn0jvWIVIg7fDJbJ6yhHicHT4BwjQatLE6PfMy3OKwQ
+	 APw3d0LweNX68uJ5KBhhWDzpHfAoBz4+zFAehWegAOQZBCJS+o9Lcv94jcIzNOoiHPYC4
+	 T6hRfI0dRKfroJD7XLWKAZqJuD7/7dvni9cS0ZFAOausE2/Y8AvL93zf8xwEXY35LLdfE
+	 tlzmhGUgY9zry8tcGyfqs3FE1u+8+sx9/tenNdjY4DheVcq/Arntm53xYwkQrnCjtVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="HQJT/BMO";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H3JG0qKZ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59566606A325;
-	Tue, 10 Nov 2026 11:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871F0606A31C;
+	Tue, 10 Nov 2026 11:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HQJT/BMO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8388E1F0089F;
-	Tue, 10 Nov 2026 11:35:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H3JG0qKZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250591F008A1;
+	Tue, 10 Nov 2026 11:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794310522;
-	bh=BbpERa55+bAqGoKd07R6gWLaZO/6XQcmtI/WmnBnKK0=;
+	s=k20260515; t=1794311053;
+	bh=IN60gOhiFLXTiUujpua2k2lDg3kIk++JqhLJJqH7/6g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HQJT/BMOysNk2pBuRiNkoHZMo5RU/FWxxT7T64FMMsKnYjIpK9fnEphlbftVYkezl
-	 U6W1DegmBEpaTiFZVdAQSNMC92VHMUWvj+PPtWUBHq8VbkTNETA6ugEMhpSIIudyhC
-	 qV2aA7Bw07ex9Cc50hyTOLKk7O+OgKwR7KFjPPdp6cqXqa3Pv6rCMCTpdn4SUS6ehh
-	 yYHCTnVtKETDRWPYDryI7fvVqAM2Ry6qDc+mguJbP1tiR/SaA2kCvdLMaIEDBPFNTQ
-	 7mFkpp+as+jal0yDw7xqEkbG2R5PxJUYNy2W8UiZ/eyyyj8TBhLbGQ4kYyqgt1nft5
-	 2H7bulKQqSbEw==
-Date: Tue, 10 Nov 2026 12:35:15 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
- fwnode operation
-Message-ID: <avMBNUEL9_V7WnK-@devuan>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
- <auuhy40x1BMoW96-@ashevche-desk.local>
- <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
- <avICwdxyi-W1Y3PD@ashevche-desk.local>
- <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
- <avL4LoCz2wc164zo@devuan>
+	b=H3JG0qKZ9niYs6YjHIufI/k3dsoPl13q0IBWxSMbWj6z3Dx2ASXFeABv7ljz/tTVJ
+	 w5+1n3xgQbW2VYc598nFr0vwNccC60tWXoMpvdxfexmeBxp8zOvTZStBAXo3Pe6ZQa
+	 iPgiHa9k6AL4ZgYoXbRQ6ZafZzjX+6cce1adWMZ0OBsosqLDjMb+JFBgSxvxbYzEWM
+	 IFkN+1zfqCBOuLHEVYkwaJlb5NBaB/B2WMxUNbaTIPpiY15/oNnsPpF3diKV7dsa1x
+	 E/tpcYtBHBMXmjmxbrcF2UkoOuELMKXQIGxVUyRHC1VVbwyRNj2MQajuO0OYAaW/rv
+	 hQ47pcUWS0qVQ==
+Date: Tue, 10 Nov 2026 12:44:09 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	Sander Vanheule <sander@svanheule.net>, Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: realtek-otto: Add RTL9311B
+Message-ID: <20261110-classy-normal-zebra-0a0d7c@quoll>
+References: <20261109052808.3035449-1-joshua.scott@alliedtelesis.co.nz>
+ <20261109052808.3035449-2-joshua.scott@alliedtelesis.co.nz>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,177 +59,27 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4kcwff6zv5lgihta"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <avL4LoCz2wc164zo@devuan>
+In-Reply-To: <20261109052808.3035449-2-joshua.scott@alliedtelesis.co.nz>
 
+On Mon, Nov 09, 2026 at 06:28:07PM +1300, Joshua Scott wrote:
+> The Realtek RTL9311B is a network switch with integrated ARMv8 CPU. It
+> has the same GPIO controller as the RTL9310, with one bank of 20 GPIOs.
+> Add a compatible for it, with the RTL9310 compatible as a fallback.
+> 
+> Signed-off-by: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+> ---
+> Changes in v2:
+> - Add the RTL9311B as its own compatible list, with "realtek,rtl9310-gpio"
+>   as a fallback, instead of adding it to the enum used with
+>   "realtek,otto-gpio" alone
+> 
+>  .../bindings/gpio/realtek,otto-gpio.yaml      | 22 ++++++++++++-------
+>  1 file changed, 14 insertions(+), 8 deletions(-)
 
---4kcwff6zv5lgihta
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
- fwnode operation
-Message-ID: <avMBNUEL9_V7WnK-@devuan>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
- <auuhy40x1BMoW96-@ashevche-desk.local>
- <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
- <avICwdxyi-W1Y3PD@ashevche-desk.local>
- <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
- <avL4LoCz2wc164zo@devuan>
-MIME-Version: 1.0
-In-Reply-To: <avL4LoCz2wc164zo@devuan>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-> Date: 2026-11-10 12:10:57+0100
-> From: Alejandro Colomar <alx+linux-hardening@kernel.org>
->
-> Hi Bart,
->=20
-> > Date: 2026-11-10 10:00:42+0100
-> > From: Bartosz Golaszewski <brgl@kernel.org>
-> >
-> [...]
-> > > > > > +		names[i] =3D kstrdup(prop->name, GFP_KERNEL);
-> > > > >=20
-> > > > > Can property be statically defined somewhere? We might want to al=
-so optimize
-> > > > > these duplications with const variant (here or elsewhere, for fwn=
-ode generic
-> > > > > path, I believe).
-> > > >=20
-> > > > Please rephrase because I'm not quite following what you're saying.
-> > >=20
-> > > Can prop->name come from something that is declared as
-> > >=20
-> > > static const ... foo =3D {
-> > > 	... .name =3D "bar";
-> > > };
-> > >
-> >=20
-> > You can't know it for every instance of struct fwnode_handle, so the
-> > answer is: no.
-> >=20
-> > PS: is there a way of using match_string() with non-const data?
->=20
-> Given the definition here:
->=20
-> 	$ grepc match_string .
-> 	./include/linux/string.h:int match_string(const char * const *array, siz=
-e_t n, const char *string);
-> 	./lib/string_helpers.c:int match_string(const char * const *array, size_=
-t n, const char *string)
-> 	{
-> 		int index;
-> 		const char *item;
->=20
-> 		for (index =3D 0; index < n; index++) {
-> 			item =3D array[index];
-> 			if (!item)
-> 				break;
-> 			if (!strcmp(item, string))
-> 				return index;
-> 		}
->=20
-> 		return -EINVAL;
-> 	}
->=20
-> You should be able to call it with a cast.  It's dangerous, but
-> technically it works.  I'm not encouraging it, though.  :)
->=20
-> 	char **strings;
->=20
-> 	...
->=20
-> 	i =3D match_string((const char *const *) strings, n, "foo");
->=20
-> This is a historic problem in C, which was solved in C++.
+Best regards,
+Krzysztof
 
-BTW, self-correction:  it is solved for char *const *, but char** is not
-convertible to const char *const *, neither in C++ nor in future C.
-
-
-Cheers,
-Alex
-
->  I have
-> a proposal paper for the C Committee for solving it as in C++:
-> <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3987.htm>
->=20
-> This paper will be discussed (and probably voted in) in the next meeting
-> of the committee (which happens next week), so there's a chance that
-> this will be solved for C2y, and thus the cast will no longer be
-> necessary.
->=20
-> The history of why this is not allowed in C but is in C++ is, as far as
-> I've been told, the following:
->=20
-> Back before C and C++ were standardized, C++ invented const, with rules
-> slightly more allowing than what they are now.  This was going to be
-> standardized first in C89.  But very close to the release of C89, they
-> realized about the danger of converting a const char** to a char**
-> implicitly.  They were so close to the release, that they opted for the
-> safest approach: disallow any non-trivial conversions.
->=20
-> Later, while standardizing C++98, they realized we could allow a few
-> more conversions safely, and so they did.
->=20
-> C could have taken advantage of that, and pick C++ rules in C99 or C11,
-> but for some reason, nobody proposed that.  I'm proposing it now.  :)
->=20
-> We've already discussed this proposal informally within the committee
-> for some a year and a half, and there seems to be consensus that we want
-> it.  We're only being careful about the specific language.  But I think
-> I finally got it, and it will go in next week.
->=20
->=20
-> Have a lovely day!
-> Alex
->=20
-> >=20
-> > Bart
-> >=20
->=20
-> --=20
-> <https://www.alejandro-colomar.es>
-
-
-
---=20
-<https://www.alejandro-colomar.es>
-
---4kcwff6zv5lgihta
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzAXMACgkQ64mZXMKQ
-wqn4jA/+Nrjt3oAo7ab82L0PwByaKld2tiUanIh5j9GnTXUIvFhJ1Fzha4b1DL1/
-F31kpq3MdXc3dB+R5Q+MkyYGvGOysxAmn9LzyJ0yJ+L8AkIHKBgogLdkcINvw2+1
-AOVVJLFEffs07j2zedSkQYDwQWMi8p60Mfo+qL6ZE3TxoTGv8I8vYeYMEgY1lTai
-c46jn3KHvn8xZdV9rU5097tSPg6jhikn68+IK2mL51Im93fceRJ41jpkKA17Qrwx
-bJm0psSpancqH6pLWveNR+3iuyJ966tU7nP5sDlOIBB0/vbsYUuuYwg4q1YCakOZ
-duPcdG9L3JYLfqdg+v2pHcrCSWsw2ae+tUivZVd/g+pYf0jzd6m8Yujp+HzhIC7S
-uazeu8telgKmOlvy3ETLSb2tdMy4/6Gze7qVTO4PVSAoGPLyPLk+XwRb0nvzxIeF
-sBShqOUMxlnVbAOIxWPp5h+ks8Deakq6W4qdDhdlW8dzvUyHovoSZDThED9mrKw2
-tn1b4AZ93P39gIAR+oFBKx/wMQW/i0hCMyAhd6zdnMTj1wmFyOdWjdNu7lkGObhM
-hJ/Lg8856jNfMaGtT59Uq/1MDbxy4IAMNyfXty5JFRWeU2ZR8zdDEQ4El0kOKdmU
-cBe9ucoZvZrH4TJt39ztQZhRFQbos3mNe1SIlUjE6S64GC3SIcE=
-=HIIa
------END PGP SIGNATURE-----
-
---4kcwff6zv5lgihta--
