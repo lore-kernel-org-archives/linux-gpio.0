@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794300651;
-	b=Cf6UfDRSYG1X3ijDkx8tZgmxPhP4vWXQx5wg4eksjYYpPCFJsmgePM3WS6HwJGMpXuSw
-	 dlHiqcgNsL2GWNC8twwg3oT8PJVbeyWh3ZXZ8j7GL5J9iMXqS0BbNg2r3lal+D4WPLHbB
-	 UkamouHA5GYc9AXbygbR+bNeFEvKwZLi+NUxDJWcdvEqyH/l96ysKuhuEndTsBYkZC+Su
-	 c7IYp067XXLv+DYv5bjZ83y0aSvzU7Ob8HvCL4uwAotIt0WwfElc0Gi1PBCL9+NoIIbXF
-	 PqQT0n7wZpPEq9ejNSf+uWiQ0hjAZt86t23lopmUMVMnrklFC9G3Wkom54WnpGQ3ZHw==
+	t=1794300860;
+	b=iaZiJx99ltdixwx8mPGGfLSWOGnwmZheNPXc5Ddc/iXhVEM3gFZnHFky2qu2D3+Pi70+
+	 aRNZ3njGEzqeQrCWuonT1LveIWwrHiBbpkeOY5tJP747ic0JCvDVCP/wzfznKEx2H2gtx
+	 y5USfdJ67kWXur9DujnU7gnYVYhksYSQQ43t753ixr3a3r70b/XQGuutx4rLSsK8LkV61
+	 VuZussz3RN4IdGvIWKEaNNuu8Grw3LE5Ch3memZ+3pXWc6AiRkevkw2KMuohor+TF1wO0
+	 zYhpMs9WExWJPK5wKiS/C2JJEgH830cmDK6K0CPPz+FkcZL/A2lcrM1yyMQk3RYYAaw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794300651;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794300860;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=o3VdPSRK9H0HuvqvVAIiSd+1PkVCf5x+okbObysvyMQ=;
-	b=aJPjDKHix5qN79nCUbf+SaSf62//vQ4iW/ZRbNkGO+DeHpxGDQtMWcLJ39xjof7rIjA5
-	 H99BQfOAOAbCuqELH7hfKjA8lqN+nDrQIF5oc3DXb/hZAiHwRLa5fJLZaIU8q0h28MbXO
-	 QOEpr5mWDniNJ9hQ0CGCuHFyaunE0ujf7BhF/Qa8b5qxx8iPcXZr3i9yE0EfPVtyU4AyS
-	 rNwp+mKg/VdNhMaYBpVXMHEFa7PatMzeGAToBDhWHCWnWWO5fs4LEHEfMF68I9J/4eWVJ
-	 JMSo5922s6rJjYoxSonC/Z0+bIp8nRBMhcCD5m77xSfegfXFIQxJITEx2KQNAsUzvYg==
+	bh=ggNk5U9ggfmA3f998rJ3qvt5tEr1LMQJ1Vt5cQlunjk=;
+	b=UH34kIWFwaz41vlW5qwx8dANbzCoFvrdmIs7apMM4PjlkkYbYwqy+pDKf2+BkqnpVK+/
+	 fGtrmK+OO20Hdodb+FmZeNWu0Xj3ZvT1OKc3h+C8HVBpyqUQlUVTSuYjJve0cHr9Tm7t0
+	 pXUurt68T/sMhJd+upTR0ilv8gfNG4k92thhcfEAboiIRVJ1Q8oDbq8b6ENuNZMQaPLq5
+	 8Jvcl99spiGKdhZ4lnabUQX0J+dR/qejr1MFXaphlzUCynlGJCACj+5KpVv0uypAaxL9M
+	 h0jsSvZXF6OFHzho38iIxi2gjHEYaf89/gArphpAE4Hq90ZN2PiY2RJBs+iREG6rVvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U+weE6s5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FGLPB3eP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 52D29606A321;
-	Tue, 10 Nov 2026 08:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 57870606A31C;
+	Tue, 10 Nov 2026 08:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U+weE6s5
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 46E381F0089F;
-	Tue, 10 Nov 2026 08:50:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FGLPB3eP
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B38F21F0089F;
+	Tue, 10 Nov 2026 08:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794300650;
-	bh=o3VdPSRK9H0HuvqvVAIiSd+1PkVCf5x+okbObysvyMQ=;
+	s=k20260515; t=1794300859;
+	bh=ggNk5U9ggfmA3f998rJ3qvt5tEr1LMQJ1Vt5cQlunjk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=U+weE6s5MD/8387GBJImcLeu74R630SpRdsqVYTBfryEGucgGQ7K1EiUWw7LeqzxM
-	 +E+Pna221n3af+qRE+0hRsugcutMutEM2c85ArD3MBlnFAgoPxWo7VI9L446NuduSs
-	 mZahv+mW2Q0QB8G20UldXUGA1bkPDy+GtLHTq9ym1/D6mFH2/PAh2ptOxaC+N0HbGq
-	 cnnF8gcCTnyihRD5CGAZe1hEjpFH4tEZH76pN8tGWwE8fb6AdVSwxyk0fFBa8g0Ype
-	 yaWyIxI+aH8wlz3d8pbp5yfwGuStiCAxEfjcDyehJEH1bBqg9xiOIVWi+ZR7o5WJYd
-	 jgvmIsCNiOKHQ==
-Date: Tue, 10 Nov 2026 09:50:47 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
-Message-ID: <avLZsjdbASMaYN1L@monoceros>
-References: <20261104215959.24035-1-rosenp@gmail.com>
- <20261104215959.24035-6-rosenp@gmail.com>
- <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4>
- <2d9d1da9-0d2e-461b-9c9a-eaf3dc512035@kernel.org>
- <CAKxU2N-oA_EQ-nC4y6E+Y1XCaai_QNmicobvJZ03mRRDikZ5RA@mail.gmail.com>
+	b=FGLPB3ePZ5J3tTWm+3ArMy/T20VTut0oj/NYSEZwJm0RoBXcknY9aKiNcYwkx6KUw
+	 eM2YT0yUEhLILXHkZIo9KqVD4P9uFS1GvOxsA+fz5ByeNW30o3dAU7Zbi9pifE7j6K
+	 0kYTyAkE2KKbRU61stIsWaoVM3WF3CojI48VgwB15/70c/nIkuY1LDCjrFwyTrE3/D
+	 SUR7w/slvklK5dxm0LaUl9XVQG3G3ctw4PBaZWvumMG6PmEOfdJfVXJtnymg+bewX5
+	 L4C6Ck/vFC2rzwZu1Cq5hTLF1YXBJepDsII8kLkuud8oRmuJmHSJt1WF962C9Kc/j7
+	 U4KH+Dd0aZ1Zg==
+Date: Tue, 10 Nov 2026 09:54:11 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Linus Walleij <linusw@kernel.org>, Kent Gibson <warthog618@gmail.com>, 
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field
+ in gpiod_free_commit()
+Message-ID: <gw26q2blrbmmxwzv7vfjxwc5bzqzfgt57zs7bvt2kdx7x6a6qk@6i5z3a3crqft>
+References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
+ <20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
+ <avJAv_3ACjvyc9VU@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,69 +61,52 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hu5qy6ejaulp5gcl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKxU2N-oA_EQ-nC4y6E+Y1XCaai_QNmicobvJZ03mRRDikZ5RA@mail.gmail.com>
+In-Reply-To: <avJAv_3ACjvyc9VU@ashevche-desk.local>
 
+On Mon, Nov 09, 2026 at 11:53:03PM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 09, 2026 at 11:27:08AM +0100, Bartosz Golaszewski wrote:
+> > Use gpiod_update_flags() to clear all request-related flags in one go
+> > instead of risking racing with concurrent users and overwriting any
+> > changes they could have done between READ_ONCE() and WRITE_ONCE().
+> 
+> ...
+> 
+> >  #include <linux/acpi.h>
+> >  #include <linux/array_size.h>
+> >  #include <linux/bitmap.h>
+> > +#include <linux/bitops.h>
+> >  #include <linux/cleanup.h>
+> >  #include <linux/compat.h>
+> >  #include <linux/debugfs.h>
+> 
+> No need, bitmap API implies all bitops.
+>
 
---hu5qy6ejaulp5gcl
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
-MIME-Version: 1.0
+I honestly have no idea what the policy is on "proxy" headers. In some
+cases people advise against them, in others they say to include them.
 
-On Mon, Nov 09, 2026 at 12:46:13PM -0800, Rosen Penev wrote:
-> On Mon, Nov 9, 2026 at 3:30=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@ke=
-rnel.org> wrote:
-> >
-> > Hello Bart,
-> >
-> > On 2026-11-09 10:01, Bartosz Golaszewski wrote:
-> > >>  static const struct of_device_id ppc44x_gpio_match[] =3D {
-> > >> -    {
-> > >> -            .compatible =3D "ibm,ppc4xx-gpio",
-> > >> -    },
-> > >> +    { .compatible =3D "ibm,ppc4xx-gpio" },
-> > >>      {},
-> > >
-> > > Uwe: is this in line with your recent cleanups?
-> > The change is fine, I'd appreciate to also do
-> >
-> > -       {},
-> > +       { }
-> >
-> > at the same time.
-> {} was done by clang-format IIRC.
+Is this documented anywhere?
 
-I saw that already, too. I'd argue that clang-format is wrong here, with
-non-empty initializers we want a space after the opening brance and
-before the closing one.
+> > +		set_mask_bits(&desc->flags,
+> > +				   BIT(GPIOD_FLAG_ACTIVE_LOW) |
+> > +				   BIT(GPIOD_FLAG_REQUESTED) |
+> > +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
+> > +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
+> > +				   BIT(GPIOD_FLAG_PULL_UP) |
+> > +				   BIT(GPIOD_FLAG_PULL_DOWN) |
+> > +				   BIT(GPIOD_FLAG_BIAS_DISABLE) |
+> > +				   BIT(GPIOD_FLAG_EDGE_RISING) |
+> > +				   BIT(GPIOD_FLAG_EDGE_FALLING) |
+> > +				   BIT(GPIOD_FLAG_EVENT_CLOCK_REALTIME) |
+> > +				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE) |
+> > +				   BIT(GPIOD_FLAG_IS_HOGGED), 0);
+> 
+> Indentation is broken (and it has spaces, which makes me totally confused what
+> the point of those spaces in the first place?).
+>
 
-Last time I looked (and IIRC), the kernel intended to still work with an
-old version of clang-format and that doesn't distinguish between a space
-between { } and ( ). For the latter we don't want a space, so there is
-no way to configure clang-format to do the right thing. That's better
-with newer clang-format versions, but I didn't find a way to specify { }
-and () without breaking older clang-format.
+Yep, and sashiko has some nits too. I'll need a v3.
 
-Best regards
-Uwe
-
---hu5qy6ejaulp5gcl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmry2uUACgkQj4D7WH0S
-/k6Z3Af/Ukihvr6an8xoXI2ftoIc2p51BSO0igI0VAtExDpb6IR+1D+Krj+nA4fE
-SzlUgDZPNUXkXm/RLhOi2UY4Ax8spKGumwiVTFzHE/yu12N9Jt6ze5gu6vubTsrm
-YqNd0Lv7WSNiJNeivLBKdSa1UkoDLGnF0XjPkemgosVdbB767BsTQ5xSdGl+wy2H
-GuysSB9aZdHU51P9mTP63HvNZRS47lK/pdVNE8z3Xzv3ajsShn4P7Yplv7csj6m4
-ChjCjHTfXOllzT83T/sqn42TiRCioWrbvt9SqlnKXqQCboy9fjwd8BPZNA5lbHZf
-ziuUR23Q9F5kG8ECYpRieF6SwRGzFQ==
-=uXlP
------END PGP SIGNATURE-----
-
---hu5qy6ejaulp5gcl--
+Bart
