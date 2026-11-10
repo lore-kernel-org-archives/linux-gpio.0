@@ -1,47 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794313533;
-	b=myf9LpHz78mn06VUM9GfX++RTHklBJALeY+7/sTq/6p4lS3Q957p9hoLDycQUr9tc2m9
-	 LbVFytoxvhVvSfKTEdui8X7bjSh/TrEAqXzGeve6OB4L5R8SAGi8ghyYZJfFuL/PxuT0F
-	 5gv3+LgPKA2zibZ4ckqt4Ehjv9diNc4Uxm+UhMMidZHibgP5ilTOIPQESCtdW6+27q3kE
-	 7VEpRQBeA7+DzZj/ThtSgpJZhWv2TR0Gj7fH3I9NLBchdi/W1yin8YUmrRMqOSWnb9Xc4
-	 RWedDtYIf/NzkwtLwaFoNk6+u5bgvstQOQuk7qg1oAl4Y9ZP5faZ3ByoiW7OJjcsKBQ==
+	t=1794315744;
+	b=s7bP5dO1xgdu2VnyG/kMCKHaF7AnOWY4v4LPsTeYj9rxzHIvE1RZ6j5d+MCJEef8pz3J
+	 topg+c2/KnwfRR+tQQDW0ueRrYJzkxrRkWvx2e3jGcAqTXzgyVKnJ/FVvCI0En/yLt6j0
+	 g93pc9T2StVfOKWriSK587t9r4h/jdxPam2KzyYYuTWKuRJno7YHUR5FlK6z0T5jUn+y7
+	 O2IHZqRBuIWsOyu4itPMx0oCBzi0FND9xHujkc1mZyr+ZGZqnbYNuwHJkjHsojoM7sF3W
+	 OhDdFjR59dDpH8ieiKfunP48ptz+lNFwv7k5W+MIkdM+4/FpfyAzR/jzSfzQDW5dLTQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794313533;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:From:
-	 Subject:To:Cc:References:Content-Language:In-Reply-To:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794315744;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=o8vOqPjQp+qIgT4SjBM1vuuP9NkLzsqzq4almCwh0ns=;
-	b=oFQ1RvRXS406PJsCj+QZ3nmxN4FQMJSwNxDmPp6y0MI4P1A5rNsJpOXT7zMx1yhYn1aW
-	 Ci3fTwyfSCCcjN+Ib0ST0u4abDM9kFBhWClJP9SipalzSk5A4awWWuN7lSY3tKe0M7lR0
-	 lCmQCCHc1ZiijrSbRRx8ph3E/tCsQd9NTnKuIuqMZ/rJifKpCus2ssalM55pkKz2k5pfZ
-	 uZFaEt4ZE3VcWZP/K76qrRY1b5QDNC90wsSWaMCo4F5Tr5q+ymQQ+aI6waPkb+wOeHxaJ
-	 Hte7eSR3a3y/++xAGCiYdTr2mYxDhyRQh6JRw8xK3vw6YIGSfCDJG2cCI2AJVW/+29A==
+	bh=SG1KLhu9vbPJolKGXXaQV+o4pMWgdOPqb2txYeFOXq4=;
+	b=flUvRJF4epc2NU+cdWFULUTAb1Ftrp/PBwryldNGJELh74VRBB3nw37yWFRwIClqgPui
+	 j6akRvJLjuXtNQOMnhi5Nf2QLCkzaIQY4+NP0ujy6SMXycgHgW8xJIDXCJytXiqmgzH6f
+	 Nssywih9OjCXbSyJBD63fSzOQF3XKyF3tUuTeG2KHAXEYwMsyOa031LJlJDKjupjE7NVI
+	 zmK2b1K+4gT0HqzhE6HpXbY9od+LFNlD1p3Qr3F0AapVIpLgDZ3thY2etKo5OBNR23KbV
+	 K1Of4vYkY4098lXPzjEwOTelvqpzPIC4VSm6TUoJPCsG0Twhn1Y1t8gLRVDV4qHuHgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gr5nohgX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=elVHPU9I;
+	arc=none smtp.remote-ip=209.85.221.179
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9AC606A32A;
-	Tue, 10 Nov 2026 12:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF2F606BFC5
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 13:02:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CCF2F606BFC5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gr5nohgX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A651F008A2;
-	Tue, 10 Nov 2026 12:25:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794313532;
-	bh=o8vOqPjQp+qIgT4SjBM1vuuP9NkLzsqzq4almCwh0ns=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=Gr5nohgXHm1YYyj6tvLEZ2lSM8AwTngl7Y9YhcAEKBH+Qk95txebAZ9NtKzrDhbMu
-	 /kcVhI4wBuCa61a001FzAROnBPqNtiO/ytzlzOWo7XJ5chQlrrTZ0jAur7hkGa2Dea
-	 9e8VcncC+5ovHWHZPm9Udas/YhDeQJz+/Hw/DgiFOKQphYC3tCbIwtuUfnQDwnkr0A
-	 NlkNf0d03csKo9TcHJmIS39u4zkv/CzH2xeQIMrUlC8N+o3OuHRReJJo3cYKVKlsnW
-	 Ok7Bxat5Tx0PnCcbiQSm1rkYigOOsx53IhuLC4CVONUmhMnelBCuvRRROviPHPq5B4
-	 hzmGl2iyPjB0A==
-Message-ID: <69a3552e-1fca-49e9-a9c0-66963319d2a9@kernel.org>
-Date: Tue, 10 Nov 2026 13:25:23 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=elVHPU9I
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5eae1276409so777938e0c.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 05:02:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794315742; x=1794920542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SG1KLhu9vbPJolKGXXaQV+o4pMWgdOPqb2txYeFOXq4=;
+        b=elVHPU9Io++NPcOBFloFPWdH0CUhI+gqD+0MkGOfK4iZ79H5g3ImG4HwEZpdo+6mkK
+         eeVdpjNPCukdYOBcSOILVco2mQdWO1QbROKVK0/vC+tO0tJxnlWy+9YZAk6KsYZHaiL8
+         UEsRECCSPgdzBSlm0TvJVeBiz3KMR0pAk2kWNp2OuN7wgMBMH5txfnzZATcC4bVelvKX
+         LyO6/VwGGD8Nw+nXCuU+8ro4SxS6C9XBM6BAgkNCBnQwGcXsc599faxqKvh1wtJ/s1ll
+         hY/xcct+27ogIh0UZkkeZ0MZywicNmIgda/vdCREzvQXD/oZ/XK8b+J+SowXzy2XVl5R
+         EoXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794315742; x=1794920542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SG1KLhu9vbPJolKGXXaQV+o4pMWgdOPqb2txYeFOXq4=;
+        b=hPHvig/0r4hZBREdt4eXbyENW64/0+fDA6DjXj4oHKLveSgOquVYCJcjF0ljI1X/GX
+         lnI6P0tROmPZMCcYEIdbdXCihJLkihWWCbrUBfHK/LBbhZyih3mckafUwPJuX2mcSClY
+         hw7yscTd6bUOOTHX3JmTL7qSuRpW76WI5hIWRzidqXyr9hlUIPCmSmpP11GpArhJIS5g
+         KmDs2TMLVWVQ+WV4LXvHkUUXlWHVWZeuMmg2zKcWIWWqBSnEJyusMUiQB4gZ5UJUyWu9
+         3mGlF+Dn7oRNbyatWR+sRNd9blSb7mwEDNv05GB5J/hheiIKYM9ym5BEj8ckIIIXA9+a
+         UmVg==
+X-Forwarded-Encrypted: i=1; AL+hErEncUu72ats/BHNO6nznN3cqLL1TJxcAf4xYS8iEBvKYEZC9cANafBlVj8+HBSIybuwfzQoq4doCFl6@vger.kernel.org
+X-Gm-Message-State: APuU4Z9FIEvzyYEKs81Eo6mSYdHFgq6Nlf3qsfm91KUIZp95pmPLbGPp
+	S9OawbxQJBcFR0HCorkHrwkRzgpcm7J7KVM3Pv/wPewsdKMXXg+CkbIa
+X-Gm-Gg: AYBFou3V0zT9OYlec82Cl/I++MaMa0QijJA4ZXPg28bEI/vOYD9WFzmEMRss7yK6bPs
+	YRGTnU1Liz3aHuinWzNBaE22QIkHLVp8mOUJ2hf2AnFIr1yaYPfkFkZnMjEkCF2IiQ/afMS45nm
+	+1wk2VwaJlGriOHNGxihtgQlOHNU2qrnG73szTdobYFx/L3V2jMfTDKLzp7xjH9w9pnOcuxI7+K
+	HEF1Dw8UIsTc0GymNRiWND70AUHEO9fRpe8ra9Rb3sZ9jH+1gsB/6i6PT0eg1MzOMEIhHyUDbdn
+	7BUum/rF1JOYStNO+Jxw+okzK8Jj4cMzs0CqHCKcVLd5u7X5QVQBDrGCz95XQWT5r5ysnCodarx
+	oYZWmnkCK1yPMIY4S9EFp0mGeWR4672/q2iKYuTMNAsmdPzr0AWDbcOB0d14GyiLwwc6NGywdkc
+	KXGlwBOpBMao1Zlfu46+H4LHC57Va4CYGHEHEa9IZWKui9i2DbTAnpCXGFwaH8W/+Sw+ZOKQ4wB
+	oSTu8FwqIsVfFaBW1sXAUbIOkJInLekBZNmITIsS08feU0RpTTrQFal5PAZFBGMlnUXcOBqGQEH
+	MtCnUgMF8QwNC68TloNbVD8kszYhR5fqiYg43vxJXmYvcqeAvGAbP0lm337RwVVE2YSQ5qlZvom
+	lmmHlm75IvHagK9iZhdOI0cMTGK2RhrLrFXpHveIbLK3fa2hvOxfR6JeirQ5rtOQ8mf4EbB4w9Z
+	Y=
+X-Received: by 2002:a05:6122:1d01:b0:5ec:c3ed:7d99 with SMTP id 71dfb90a1353d-5ee0d0a5264mr742890e0c.6.1794315734491;
+        Tue, 10 Nov 2026 05:02:14 -0800 (PST)
+Received: from MaquinaLab.. (189.27.147.77.dynamic.adsl.gvt.net.br. [189.27.147.77])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee0c5fd00esm1573509e0c.16.2026.11.10.05.02.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Nov 2026 05:02:12 -0800 (PST)
+From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	linux-gpio@vger.kernel.org
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Enzo Adriano <enzo.adriano.code@gmail.com>,
+	Pablo Mazzini <pmazzini@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: sunxi: a733: do not switch the mux to read IRQ lines
+Date: Tue, 10 Nov 2026 10:01:57 -0300
+Message-ID: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -51,89 +105,45 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 03/14] mfd: remove unused si476x driver
-To: Arnd Bergmann <arnd@kernel.org>, Lee Jones <lee@kernel.org>,
- mfd@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek
- <pavel@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>,
- Support Opensource <support.opensource@diasemi.com>,
- Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
- linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
- patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev
-References: <20260909132153.1596191-1-arnd@kernel.org>
- <20260909132153.1596191-4-arnd@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20260909132153.1596191-4-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2026 15:21, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The si476x driver was added in linux-3.9 without devicetree
-> support, and has always failed the probe function in the
-> absence of a si476x_platform_data definition.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The A733 description sets irq_read_needs_mux. When a GPIO used as an
+interrupt is read, sunxi_pinctrl_gpio_get() then switches the pin to
+input and back to SUN4I_FUNC_IRQ, which is function 6. The A733
+interrupt function is 14, so after the first read the pin is left on
+function 6 and its interrupt no longer fires.
 
-For drivers/media/radio, include/media/drv-intf/si476x.h,
-Documentation/admin-guide/media and include/uapi/linux/v4l2-controls.h:
+On my board this breaks microSD card detection: the PF6
+card-detect line is read at probe, and after that neither removal nor
+insertion of the card is noticed.
 
-Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+The A733 data register reports the pin level while the pin is muxed
+to the interrupt function, so the switch is not needed. The A523 and
+D1 descriptions do not set this flag either. Drop it.
 
-Regards,
+Fixes: 0535bfbfa97b ("pinctrl: sunxi: add support for the Allwinner A733")
+Signed-off-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+---
+Tested on a Cubie A7Z with the pending A733 clock, PMIC and DT series
+applied: before this change PF6 read back function 6 and card removal
+and insertion were not seen; with it PF6 stays on function 14 and one
+removal/insertion cycle was detected.
 
-	Hans
+ drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> ---
->  .../admin-guide/media/radio-cardlist.rst      |    1 -
->  Documentation/admin-guide/media/si476x.rst    |  160 --
->  .../admin-guide/media/v4l-drivers.rst         |    1 -
->  drivers/media/radio/Kconfig                   |   17 -
->  drivers/media/radio/Makefile                  |    1 -
->  drivers/media/radio/radio-si476x.c            | 1523 ----------------
->  drivers/mfd/Kconfig                           |   13 -
->  drivers/mfd/Makefile                          |    3 -
->  drivers/mfd/si476x-cmd.c                      | 1543 -----------------
->  drivers/mfd/si476x-i2c.c                      |  861 ---------
->  drivers/mfd/si476x-prop.c                     |  233 ---
->  include/linux/mfd/si476x-core.h               |  532 ------
->  include/linux/mfd/si476x-platform.h           |  256 ---
->  include/linux/mfd/si476x-reports.h            |  154 --
->  include/media/drv-intf/si476x.h               |   28 -
->  include/uapi/linux/v4l2-controls.h            |    4 +-
->  sound/soc/codecs/Kconfig                      |    5 -
->  sound/soc/codecs/Makefile                     |    2 -
->  sound/soc/codecs/si476x.c                     |  263 ---
->  sound/soc/fsl/fsl-asoc-card.c                 |    8 -
->  20 files changed, 2 insertions(+), 5606 deletions(-)
->  delete mode 100644 Documentation/admin-guide/media/si476x.rst
->  delete mode 100644 drivers/media/radio/radio-si476x.c
->  delete mode 100644 drivers/mfd/si476x-cmd.c
->  delete mode 100644 drivers/mfd/si476x-i2c.c
->  delete mode 100644 drivers/mfd/si476x-prop.c
->  delete mode 100644 include/linux/mfd/si476x-core.h
->  delete mode 100644 include/linux/mfd/si476x-platform.h
->  delete mode 100644 include/linux/mfd/si476x-reports.h
->  delete mode 100644 include/media/drv-intf/si476x.h
->  delete mode 100644 sound/soc/codecs/si476x.c
-> 
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+index ca82f08a3a65..456d9170c2a2 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+@@ -23,7 +23,6 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
+ 
+ static struct sunxi_pinctrl_desc a733_pinctrl_data = {
+ 	.irq_banks = 10,
+-	.irq_read_needs_mux = true,
+ 	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
+ };
+ 
+-- 
+2.43.0
+
