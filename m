@@ -1,88 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794321854;
-	b=ZKpspDeCCYdwIBa5G/6GrXoK0bBlCYS6Ewx9KGte1eb+Al0MNUacBr9ZpTDxz9dqdHeC
-	 FjLaTRkh5f5FqCprgi7iE/ZjZ3dRm3+VjxkYXblgZgDXl96w6M/5cwFwP2FoqcpYSHjC6
-	 K//cSYF8Rk0xcMCIeBYx5ur9Vnt1llAMrCM+YWHpcw6urBXdl8jBUviJaa8im0xtrmOkC
-	 Tqs45RRT7N7+jtVq5cUDxX7Pmo8iL5P/fuRkgz569YBb5Pz2jwOIDZHIYp5jzFpRJHyWO
-	 bXukEGSHZ3np3lUiP0IrnrCRTgsszeZFBKqGzmNUqFXnjLyWYYPn/31ptN3P5JhWztg==
+	t=1794321948;
+	b=zPZxrx8Fdff4IojUbWj7tQcxQ7EcITQHp/lLGCevHaLxBg5XbyHzYSQaLnSqImzKJihS
+	 RlwUlVCREjDdFyzqZ4habHSDqkmhRlWR/+egFyDxINaSikS448Fcowq7my6HZqgbdF0QH
+	 Lz+yP3Vcz7rUoOC1nLsJ5m3TAYfdpBuQ0Wp1VTwLKynnWjA03MvM083jarNavdBDpk4TP
+	 Eka+X87TaJXOWzzLsu4DlbjavriwJZQQIwszvf2wSf/2GkyW4jwlWM1WnQXYhyyca7tgb
+	 1qbgyT12GQMchUxLORWJw0wb/iNwd0oRQ+8Kx8W99iJuf7/1mvtEBvpWJyJS0xLth+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794321854;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794321948;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=Vbv4D0/LEv4X185FkFGCxxtMC7jQyoiuqvpgmuYpp78=;
-	b=KHVqhLLCanEmeMzqA1fApU8lem+cpBRRTLGbERO8LCHK0HBJeoJYPOiD84aSc6SksOU+
-	 vg2cK/lrEhM1yzxPZDy1sCr1eBGIeLGw/AEUXPmlsEhJCFeWtt2gx16TdnDTntK2CtvyZ
-	 Ds72r6U9kW8iafeU3htuGfRhztHMw4aZYaRXJUv+kgM+5Pe7Ze8cwfWe0BBwsKqo5rYqu
-	 OyglqeOTYFSDw/Va99X7EULU6n1FyE6dmgD5LTjRLtID9nESmai+1vncrxdKQNgBgJnCO
-	 6p3ulsPVPUzR5AMqK1IHSZxi+BZSbszcGQjUGohf/5jO2WwZ3YXA3Ob8PeRPQUVXFnA==
+	bh=L9jyp2wuPUVlelOs6NqY1BezFPyW+K5DLWLSt8XZey4=;
+	b=zVSoc8daEr7avcacy72Jnmz3mMDomyKDst2MJad8DXIrlaUhESqwDK++42w7Vq4bzlWm
+	 ZGAfcU5A9DvOB/wbRZyx9yFmIfjvy3BWXdY7gtGpKohbc27jOGZMcSo2vFLldnZowPdY7
+	 xDxz6qp7AseW67ZkceCxrzilp+zWHm0UQaBbVMXu+qHw7ZFQyPtPS35d85S3pzKE72xht
+	 u1nybIzkZDrnVxutuneTsgtfTSayPVKHBXZ2x6CO2YA2CSaPxLqmgTSRVp1OjiWYW6nYn
+	 IkWuqDmjfusKjuLIA53NeNF+85W5XHiZq9N9zWwrMfd7gyxIfLCFvslLHcvNteyCrmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=jAI7mkNN;
-	arc=none smtp.remote-ip=209.85.221.48
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=A4QYkVdj;
+	arc=none smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF4060A2621
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 14:44:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FF4060A2621
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A660A380F
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 14:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 191A660A380F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=jAI7mkNN
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48dfc0421d9so1797526f8f.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 06:44:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=A4QYkVdj
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4918c2d727fso1133011f8f.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 06:45:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794321851; x=1794926651; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1794321946; x=1794926746; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Vbv4D0/LEv4X185FkFGCxxtMC7jQyoiuqvpgmuYpp78=;
-        b=jAI7mkNNr3iGaogAXzgrzjFkpz6l4rkoR3itlaI/74DFCZEcL5V2zkRp0eKdFTBB0r
-         vapPeQc5/P7TWQtnIbfBrymA7FrbIjYezy/k4K4aYmYKzuRzIpIZUaqOB9dWWbZGzoox
-         0blKviPrOQCw3QV9zwY7GQd6LPWWV4ajvakJ/OxOXMW5uhO9jVpliRNueGSPErXUbJRP
-         pWO+TYp/YvWHfz4vvQze567g5lHubu3WVu0y8+58Edcb1XxoWUl0w0jVuSoXsQsbxp59
-         DTFBTdu0IjtqrdThak1Yc/QWZmx4vOl/2f3ZvrP1BnGPZ5LwZG+8aj19zZnx7sIOQ/lD
-         TUhg==
+        bh=L9jyp2wuPUVlelOs6NqY1BezFPyW+K5DLWLSt8XZey4=;
+        b=A4QYkVdj6QsIg6y/7whUfEp3RADSoFj6acoAjkv5/Rv/06V5aFl8cgx+A4lxCYl3zC
+         nyQ+EygbyNm5Eke+OqXnuDHC/AebKcULAHM7a29PxkGKhrYyr3y+7FrGAFjrdZUkIwEB
+         CbrdWO0TgYxHeLr7cNb7OryBNKlFKV3Mq+vRH2thgFjhI2DdA0CBxEx2JfwNIWVhAPpS
+         9dvpAEvJM7IP9rPNQEfQj0YLGr6H9LRSOG2o3dPmfkPWDu7+2GtB0wmmF0nOJmZ6hd4L
+         Sn6HbGEKqL6LIa9xhb56o6znkK58IY4F+YYdlUelrlUNY6px5YaKBLTwclLm3h62fV5m
+         Grxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794321851; x=1794926651;
+        d=1e100.net; s=20260707; t=1794321946; x=1794926746;
         h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Vbv4D0/LEv4X185FkFGCxxtMC7jQyoiuqvpgmuYpp78=;
-        b=2QpTGMZB3ke0ZFcuFRqQ6AO38ARmOt/piY1SwuolKmtk1ONDRWCSYlmIjAcZdI4ZfV
-         iga3C/wkiHg0xgVSDiP5FBsdRY5daqE9QgpzTUMXopvwUwH12Ot7DajLf9Wx+fp+mmEA
-         bMPbcxA9eB5JktFQigP9UR7ZxaXNNARmiHgfc2HtStv7P1rKj3LA6ER81QPwmLaTTikJ
-         Rf4Tcih55ntfjNS9mLDxkmOJmWiznFSUPiBLDwTSIDxh00+F+Kf/Q5X8fsfaEi+LXte3
-         OfhqRpWOhiy4sktIF3dZLxD6xjt2Cjgsw3TT4tfraY1pdT+Iruh1kGjeBcSo9b3M3QvV
-         1Ehg==
-X-Forwarded-Encrypted: i=1; AL+hErGjLI2CeGavcK2++tFBxQA/hbC/ARXhPlj+NiJN7xcCUaZ22T2xoJI6wGJP3KYw3D/+WYGNEfvn2APK@vger.kernel.org
-X-Gm-Message-State: APuU4Z989t9/fLZoCa/CbnwsGrjmsor9HoBlQvL4biQqqMD6E7kTeILp
-	vIv7V1aAklsawBICVRzuGdBk6DAd+mFgnGJKKFfUIkqesI0Z+UTJR9M6HmHZW4edwe4=
-X-Gm-Gg: AYBFou1pTnHIeXf1jtxqDCrIAEkAq7PGBifvE1EDcbnVAhuqN4X3kv8cHodm1ObUyNY
-	A7NfUfDvCMF4TRp81Hq72gMYkKe7RzYA17MpnN3VeOQ6aSFoqPnPZDd8heukR1Q+lDSGuLEAAgw
-	gHbZlxHLkUokTDZ9NohFkEDYoPADpez9m/tP/GMXrxuA6Krq5zfqv3LONbBO4gqgiv3OthP2B5j
-	4hQjSiebkJSIvfVC4zl3pkcPRZavSou2w1D99N6fDygYsAUCMCkfFNJoFasYzxXvWatILXr+oxX
-	445MXAyOHo+lGwrh0PgddlQnMB+7y7j2cRd9HOrwZCVxqdy9q4IFyaTnrVyU1ddcWnpyPzvO3bJ
-	hLFsZnA2R78DXdhwUFBbA+VrMJcx3oWyuN/ZowI79tKTQX/rRh+wZWvT9GzyBcFVQg+zaSHTOCL
-	6AFjH/bAh4Tvssc3fgcn/g2/fjMMlo4ayui7/f3mnxEfB2criw7uFG+4s8/d5yJwbUZ3JpODruS
-	W5aZhc8LOC74oc2SiyzlxuC1eHm/fMcaOGXcrbCimkVyJOPnTg3dUStiF9o6ewOGvvkb/qglnLj
-	/FEquzdCJDBWh5XwIXaLJ3qd91NsMFKqDiIMoG/qSY+1t/iGpNAMKkC77Q==
-X-Received: by 2002:a05:6000:46da:b0:48b:e50:714e with SMTP id ffacd0b85a97d-498308b95a4mr3820299f8f.36.1794321851164;
-        Tue, 10 Nov 2026 06:44:11 -0800 (PST)
+        bh=L9jyp2wuPUVlelOs6NqY1BezFPyW+K5DLWLSt8XZey4=;
+        b=SmpCSI/ioA8rcZkN5G8mMOUS1A+wfrOis4MLZr9UR2+7KqhEXvy3etTtmL+6uYoGyr
+         80nhbOtHzt9L8oJ9DL/zFniSzlfZevgXdG9EwHvxGidvNgq5MvP8dgF4iAkyJcoalI7k
+         hLn+hMAyJOCJNc31axVToafeelUSPxKSanBjiSd/RhwVdsf7uoMBvJv7fCKmqXxuBQe0
+         eknF3EWpZDLL2JLNKRML76qQyZHkMMozcCVObYt3Cl7McyLZyKjuP34qAQEhHwebV8FI
+         boy+xKjqNTzl9r/TyjIsbN16q9w3YNpkmfBibDdEtRgi+KxG6LvdSMZ5ZYSL+9Rp8au6
+         CBqQ==
+X-Forwarded-Encrypted: i=1; AL+hErG9KL7nnoJ9VL56P6XizSkiRviJAu2tSjzmWA9y2NH2inTdgtrqNVKe5oDBQlVOoKx1vW9JKICuNhMO@vger.kernel.org
+X-Gm-Message-State: APuU4Z/6qJ6xMqK88feqjp//kF1Ehp3Cjw8dJbjTobXjlsrNOen2MbKQ
+	6L7cBVXOw9FUOsNarAugZsjM8CdVSwmHQV8ZvGHWgDhrkXElpj7bFULEBenW9bNnllM=
+X-Gm-Gg: AYBFou3fPKeIgmS52ESPq8dj1ix/z+Zzvjl6uueRERp71jgVWNEg7AvBP81ur8+Mz9w
+	v5DUIXMwsCBvbUin68bpLdNOQT/AiXg4tdCzv5oJ749i5lIftQI9HMSIZvAV66VjxWrtkrNlB+5
+	2wDiEptQH01twRkXKgjYUDhmzpAS3q15hwacyAZIwGEEuM+ApjgnelCblc8mrEDF52aOh0RTwZR
+	7c9rDxxkC2yg8pF8QOEeM47wYwFZSC+B2Kp9iRdDClpFVdB9OSHwIcCIQuuBM12V40ag3mWjvYC
+	Fj6J19RMUk4nlJ/l1YCRzVH1uQCn7kk8pEACFEv3pJL50uuahfDCRaTy+ETr3zQciZ7Vify2q+T
+	JsZzGFupID2eVY05F9ptgKSuXvz0aIBvWxZnJeMHvbEPmo8ltZFjEooC46M3WeYdL+KsBT8TrkR
+	nssxxbUb28LBsvLPf/5zTYTYPwVCThKyVtXjJTIKq0ki4rrNqMZtQVw3X0IktV+lOSTQXahYQ6l
+	VTK2OAs73VivJx8Ldw5zMp3IDWpePVVW+v7vBExpRzQ8KPae4gne34p2eCliU3cfwrBHYYGOo9T
+	ovqVBeLsy68wlUrFr3qVagBOFtSG+xJMBrMcYNaW8R44ULnSwg/5xjkfY32yATVNZJ25cWv8K6+
+	4Tu8=
+X-Received: by 2002:a05:6000:46c6:b0:48e:68d5:818d with SMTP id ffacd0b85a97d-4982e82c2d8mr3373380f8f.16.1794321946400;
+        Tue, 10 Nov 2026 06:45:46 -0800 (PST)
 Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49835d2c027sm5439242f8f.24.2026.11.10.06.44.10
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4988f5b1ce3sm3848234f8f.14.2026.11.10.06.45.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 06:44:10 -0800 (PST)
-Message-ID: <9ab69228-a9f7-442b-9a2a-2e012f37668e@baylibre.com>
-Date: Tue, 10 Nov 2026 15:44:10 +0100
+        Tue, 10 Nov 2026 06:45:45 -0800 (PST)
+Message-ID: <1300fdd4-b4b3-4a89-a37b-ea0d18e3c055@baylibre.com>
+Date: Tue, 10 Nov 2026 15:45:45 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -93,9 +94,10 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] firmware: arm_scmi: stop reading past
- PINCTRL_LIST_ASSOCIATIONS replies
-To: Cristian Marussi <cristian.marussi@arm.com>
+Subject: Re: [PATCH 11/11] pinctrl: scmi: select the GPIO function on GPIO
+ requests
+To: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Cristian Marussi <cristian.marussi@arm.com>
 Cc: Sudeep Holla <sudeep.holla@kernel.org>, Linus Walleij
  <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
@@ -104,8 +106,8 @@ Cc: Sudeep Holla <sudeep.holla@kernel.org>, Linus Walleij
  linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-5-52d92843ad97@baylibre.com>
- <avLxpUd6cXuqUCbd@pluto>
+ <20261030-clegoffic-pinctrl-scmi-gpio-v1-11-52d92843ad97@baylibre.com>
+ <avMg5XmU8uSzPR4s@pluto> <avMlrXeemXOSR3ng@ashevche-desk.local>
 Content-Language: en-US, fr
 From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
 Autocrypt: addr=clegoffic@baylibre.com; keydata=
@@ -118,99 +120,35 @@ Autocrypt: addr=clegoffic@baylibre.com; keydata=
  4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
  LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
  vLfPDQ==
-In-Reply-To: <avLxpUd6cXuqUCbd@pluto>
+In-Reply-To: <avMlrXeemXOSR3ng@ashevche-desk.local>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Cristian,
+Hi Andy,
 
-On 11/10/26 11:27 AM, Cristian Marussi wrote:
-> On Fri, Oct 30, 2026 at 04:58:36PM +0100, Clément Le Goffic wrote:
->> The transport cuts a reply larger than the receive buffer, but the iterator
->> still reads every identifier the reply announces. Use only the identifiers
->> that were copied and ask again for the others.
+On 11/10/26 3:09 PM, Andy Shevchenko wrote:
+> On Tue, Nov 10, 2026 at 01:49:25PM +0000, Cristian Marussi wrote:
+>> On Fri, Oct 30, 2026 at 04:58:42PM +0100, Clément Le Goffic wrote:
 > 
-> Hi Clement,
+> ...
 > 
-> thanks for these fixes...I'll start from this since it really intersects
-> my current work....
+>>> +static int pinctrl_scmi_gpio_mux_set(struct scmi_pinctrl *pmx, unsigned int pin)
+>>> +{
+>>> +	const unsigned int *elems, *pins;
+>>> +	unsigned int nr_elems, nr_pins, i;
+>>> +	bool pin_only, gpio;
+>>> +	int nr_functions, func, ret;
 > 
->>
->> Fixes: 2145af01b9cb ("firmware: arm_scmi: Add basic support for SCMI v3.2 pincontrol protocol")
->> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
->> ---
->>  drivers/firmware/arm_scmi/pinctrl.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/drivers/firmware/arm_scmi/pinctrl.c b/drivers/firmware/arm_scmi/pinctrl.c
->> index 42cb1aef1fe1..69645ce73d9d 100644
->> --- a/drivers/firmware/arm_scmi/pinctrl.c
->> +++ b/drivers/firmware/arm_scmi/pinctrl.c
->> @@ -261,10 +261,22 @@ static int iter_pinctrl_assoc_update_state(struct scmi_iterator_state *st,
->>  					   const void *response, void *priv)
->>  {
->>  	const struct scmi_resp_pinctrl_list_assoc *r = response;
->> +	unsigned int nr_fit = 0;
->>  
->>  	st->num_returned = RETURNED(r->flags);
->>  	st->num_remaining = REMAINING(r->flags);
->>  
->> +	if (st->rx_len > sizeof(*r))
->> +		nr_fit = (st->rx_len - sizeof(*r)) / sizeof(r->array[0]);
+>> Beside nr_functions, cannot all of these variable definitions be moved
+>> inside the scope in which they are exclusively used, i.e. down inside
+>> the for-loop ?
 > 
-> As Sashiko kindly pointed out to me a few other zillion times O_o in my
-> Telemetry series, there were a couple of missing sanity checks in the
-> iterators core so in my last series there is upfront a generic fix
-> 
-> https://lore.kernel.org/arm-scmi/avLTkAtQQSzpgu2A@pluto/T/#me258191dd55db99d53b570be7c51901c31bc70cf
-> 
-> ...so we could at least avoid to check here and everywhere else in SCMI
-> iterators that you have at least a minimum size messages to work on.
-> 
->> +
->> +	if (st->num_returned > nr_fit) {
->> +		if (!nr_fit)
->> +			return -EPROTO;
-> 
-> My core fix above will discard the iteration upfront in an equivalent way
-> to this check togateher with the rx_len check above If I get this wrong...BUT..
+> While it can be done, it's not most recommended style. Is it already in use in
+> this driver elsewhere? If not, don't do it in a single function. Same if it's
+> used in like one or two out of dozens of cases. TL;DR: be consistent in the
+> first place.
 
-Right, v2 keeps only your check below
-
-> 
->> +
->> +		st->num_remaining += st->num_returned - nr_fit;
->> +		st->num_returned = nr_fit;
-> 
-> ...why are you fixing and carry on ?
-> I dont feel that you can safely proceed at this point by just fixing the
-> returned and the remaining...
-
-Each request carries the index to restart from, so it stays in sync but it hides the DT misconfiguration
-
-> 
-> ...the check is of course needed, but it should be an hard check
-> 
-> 	if (st->rx_len < (sizeof(*r) + sizeof(r->array[0]) * st->num_returned))
->                 return -EINVAL;
-> 
-> ...because something is clearly wrong...indeed, learning from my current
-> telemetry madness the above scenario could be due not only to a buggy FW
-> BUT more easily to a misconfigured transport...if the transport size is
-> misconfigured (as it is mostly NOT negotiated, simply configured) any
-> message long enough will be silently truncated, so the fact especially
-> that you guess remaining it can happen to be completely out of sync with
-> the platform side...
-
-I've seen your serie but didn't check such details. I'll use this hard check in the v2.
-
-> 
-> Are you fixing an existent known FW bug here ? in that case I would opt
-> for a quirk...
-
-No firmware bug, just the DT that had no arm,max-msg-size. Linux was using its default value that was not sync with my SCMI server value.
-Setting it fixed it, no quirk needed.
+I'll try to be consistent in the v2
 
 Best regards,
 Clément
-
