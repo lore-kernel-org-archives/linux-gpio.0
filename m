@@ -1,90 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794308815;
-	b=tZxF3yMtRviD5eVx8UOacXdnERcVkeQd9ubJxzHYYeFP7FF8pQkqAj6jJbyWexV1bPCp
-	 v8l1uopWxfsmJH2rkiC22VNE3SPUpBl1lBRnN4bUBu3pgO8Kpo7qJ51PsTeRwYvHc9fDZ
-	 goaJMHY9sanIVYt5MGgmak2BYK+9tinsbz1qOEvwwyvGFvdpfITYHK/SK3G5dqMo6IE5z
-	 gl8JziQ5lv4Ov37HJK7rnZk6Mct8TOmCQ0BP5vuDtLak2eM/BMQnRAX9thwdNMn3nUIC/
-	 NMkZ+raJKEOzkRzWplo4UchZje3hX5ImIT1CuTsf3t6EH5i/M9XCB32PL3etgIzQfNw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794308815;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794309058;
+	b=K7kbxmFualncdNNsddAhEgRu/9BOLMXwDPWCbo41CbZq0QV2lB2NvhLZPZzeTf0njqw/
+	 SpbCZ5bUrETri4AAMGaYr8p4ykEEJP7CUUwYyyiO0EB+iXWbX0At9EzwewKXW9kojtT2w
+	 jd4QiGapSnWH/lLwJixwme3s1oUC7SQ5ispj8cK6SZgK6/5j1P2IIGgHQAalIyk2Aosvp
+	 DGaaWnQPnZ3btV2wVQ8fM+HuT/y5q8bgRDkv6/+QaM1/mnbbyI84F6nx7Us0pE75CIhZT
+	 +O8gWGt/Mi449umTSJhE0n1yiqDme5uEGx3tls/EoEo/ggy+W9XnFzbc7KMB2J2jyVA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794309058;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=hdfqSP6O2bu/ZFVTKJWa+3T77fQJrSmp1zvbC/sdJsg=;
-	b=06Cs9asP/56ykRlzm8/kIbqM1HNeRzDXk6iD/sDpc/c3z3uuYubKdC/CZNAnZoLl6Hah
-	 LdpVjyaIuDcRNm2mzE9hgGsfugWo8SpHMLA3T/3RRRVq1cevOtU/s/pS3ItLm8Fj57GI2
-	 CqoAYn0bp+HEHYorG01qhtOlTkQAw1tkeTl1eBOS7oJ58/nZUipg7rxI5SuaYye4ZgELs
-	 87R0C0vs5NPGTBDqWtaCmc6sm7M/eSkqD5aewxOOOwKI9ZdmJshzM9TO6llgWo3kLV5Ct
-	 OBEozGczW2AdnmXpVOE6sihRlpvow8pl70nR4mwPaZhBhC7AxSXaEapgt86YMq5gp+w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RaPBbqvl;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=wRhstAJRC5xiQsYu+JzyOCa4Dl4h2pV6bk94Dt2C34o=;
+	b=VMNZzZjTe2o5eL/6gIKgiqCjQax6EzLYghFpu6Ou/HGWphPXVH0M0/naEjldXX0/MFPx
+	 FrnE3T5jj0HSAK3LehLjIyMV9b9mI80M6K6RFmJL35R0dHg4njV+Ap0pRTqsbQMMZ3tnF
+	 yeDxW96WHIFc0ZQ4OwHm4Yi8elXSGBuKJBZHxwmf/sqNjGw8pmivd+suiw+weZypd45X8
+	 jKuImpSmLioyYl/4K2znI9jEIeULWKGoAgtaPtlU+TtT94SB3UAG+OVYoDYitG+2my5v0
+	 pVHQSigV4NqyJRuLsM64vY4576CjfKi/TynrroKErnygp8+420nplXyf2A1bdFDlr7A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A8ATUDKg;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C25E606A31C;
-	Tue, 10 Nov 2026 11:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8D7606A325;
+	Tue, 10 Nov 2026 11:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RaPBbqvl
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=90.182.112.124
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794308814;
-	b=qBJLc17Q7AOmTHytvjpSbQ13wIHAzClNZMgnl3gYLm6zfRgcPGOK7F+lU5OvD0Jxm6+r
-	 fzH1CZcdA/17ArRTikgmX58JfXuZmXXhDBPBSgqWz/FvB1Zg+iC/4d4ue4Dp/z5gHBVGP
-	 OouJvLJfKVKjfu8xReQJvCv8CdcVouZMUFM8jaEdjrkCZstpz+FFBvh/4ocoupfrlP4rY
-	 42GBb4xIsNt4FT3Yi3cs8UbZ8YLEsi58yYJJetEmXFb2TS9Y4uCZtAXcImFanv8n/rxQa
-	 2uOI2iEdLjhFU82hwmTiJNgtbDkmov61xMo37FiYpvnRCt4r6rWEP3uBj+SFNoE0+MQ==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794308814;
-	h=DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=hdfqSP6O2bu/ZFVTKJWa+3T77fQJrSmp1zvbC/sdJsg=;
-	b=Fu9lH5duE0dAjhVRHopV78/mJ4jrdI/l7GCvXhWqcgiVA3Z25D1d1xzqsBm2wOKGa9Ye
-	 h4horm25fcrx965fPp0IWermd+LBPDrGKFee+VOkwOsiQJXMawdFQHdNyHEoclLq0LiPU
-	 3aV8Z37R6Ehpt7/yRpVYh/O63D8t4DH+h2d8CnKM3fvfbo67vMlBAJbHzaHXlgVDEbV8F
-	 Nlqf3vu7xYKrBwgnV5WQyRM9XOnvBNiqniX+IQhdsEcNRpnH+PWmP5VOUV1E9NRh0smRM
-	 3NnYCwItepYj8k5UyJzZgeUbf4q8Rh3/VsAJMPHFkinyIrrdK1s+QALn+XLEcl9YHDw==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=90.182.112.124
-Received: from localhost (90-182-112-124.rcp.o2.cz [90.182.112.124])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPSA id 045631F0089F;
-	Tue, 10 Nov 2026 11:06:51 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A8ATUDKg
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E141F0089F;
+	Tue, 10 Nov 2026 11:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794308814;
-	bh=hdfqSP6O2bu/ZFVTKJWa+3T77fQJrSmp1zvbC/sdJsg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=RaPBbqvlwtiHrmdrreMYMiTezWh0LAMERjSnC3LHDkR0kOrzYWksC0GHw7x19pRID
-	 obvFrOrDhPOi8mMH9DNZ3rZHkvHzSYsWCVnw0OKhz2XTLXbl312+ExqSerbzhfDfCu
-	 R+Ijxc4Lna125A86FyOW0ATZM6gRsM4T6r5biY/5Zw8GvXA3JUvinwnXy0840ofCtH
-	 V5CYgIzBODgHrguyJLEIzj7/yYPrB4f+P8pxW33DTpI68vqIhSyivEeC8hV8Gza8ov
-	 tSxoWJeRuDFOqfY7phUC2n09w+xTwJTcReJJr/uGf5HXCMlnE1eaEEGcAzgcGhGlFS
-	 2Lk7vUUe98EnA==
-Date: Tue, 10 Nov 2026 12:05:28 +0100
-From: Joshua Crofts <crofts@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron
- <jonathan.cameron@oss.qualcomm.com>, Joshua Crofts
- <joshua.crofts1@gmail.com>, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>,
- Kent Gibson <warthog618@gmail.com>, Adrian Ambrozewicz
- <aambrozewicz@nvidia.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field
- in gpiod_free_commit()
-Message-ID: <20261110120522.000057f9@kernel.org>
-In-Reply-To: <avLsrOqdXSFSH6WM@ashevche-desk.local>
-References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
-	<20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
-	<avJAv_3ACjvyc9VU@ashevche-desk.local>
-	<gw26q2blrbmmxwzv7vfjxwc5bzqzfgt57zs7bvt2kdx7x6a6qk@6i5z3a3crqft>
-	<avLsrOqdXSFSH6WM@ashevche-desk.local>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
+	s=k20260515; t=1794309057;
+	bh=wRhstAJRC5xiQsYu+JzyOCa4Dl4h2pV6bk94Dt2C34o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=A8ATUDKgImRjziRxEUdGfa5kpbI1iH73VaS8PDukLfx9Q0rxYXwUVQ3tKA1rdmSDj
+	 3Ro+gsTb4g44q/JK8UCxo48n2Ruda48fe+syHxkAbOPfb4yL7oQPfa7S2RGap6kEsh
+	 /EbCxOSEjlPq4wQZkPJsdDjzDveSdPcHgA7TG7F2NHuqUc7pVcSRkucNSMnKEUOrVi
+	 PikhC+ae7M972Bfbvv+kQeaiW5LMNf3q9vfvCEHWYQrxZ8iHNkkPw4ww+7mBJdRlQC
+	 fOPqQkfx2IQveAo+a+dTJYbtq4obh/DOEJ52dBFx1+7SL1JNzRbM3pxMGIaUPRkHgO
+	 BCaOyou6gwoEA==
+Date: Tue, 10 Nov 2026 12:10:50 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
+ fwnode operation
+Message-ID: <avL4LoCz2wc164zo@devuan>
+References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
+ <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
+ <auuhy40x1BMoW96-@ashevche-desk.local>
+ <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
+ <avICwdxyi-W1Y3PD@ashevche-desk.local>
+ <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -94,64 +71,159 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wx2y6hldnr44vqml"
+Content-Disposition: inline
+In-Reply-To: <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
 
-On Tue, 10 Nov 2026 12:06:36 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> On Tue, Nov 10, 2026 at 09:54:11AM +0100, Bartosz Golaszewski wrote:
-> > On Mon, Nov 09, 2026 at 11:53:03PM +0200, Andy Shevchenko wrote:  
-> > > On Mon, Nov 09, 2026 at 11:27:08AM +0100, Bartosz Golaszewski wrote:  
-> 
-> ...
-> 
-> > > >  #include <linux/acpi.h>
-> > > >  #include <linux/array_size.h>
-> > > >  #include <linux/bitmap.h>
-> > > > +#include <linux/bitops.h>
-> > > >  #include <linux/cleanup.h>
-> > > >  #include <linux/compat.h>
-> > > >  #include <linux/debugfs.h>  
-> > > 
-> > > No need, bitmap API implies all bitops.  
-> > 
-> > I honestly have no idea what the policy is on "proxy" headers. In some
-> > cases people advise against them, in others they say to include them.
+--wx2y6hldnr44vqml
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
+ fwnode operation
+Message-ID: <avL4LoCz2wc164zo@devuan>
+References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
+ <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
+ <auuhy40x1BMoW96-@ashevche-desk.local>
+ <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
+ <avICwdxyi-W1Y3PD@ashevche-desk.local>
+ <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
+MIME-Version: 1.0
+In-Reply-To: <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
 
-The main proxy header one should beware when adding new drivers or tweaking
-is kernel.h, better to just use the iwyu principle.
+Hi Bart,
 
-There are a few loose exceptions (i.e. not fully iwyu but good enough), e.g.
+> Date: 2026-11-10 10:00:42+0100
+> From: Bartosz Golaszewski <brgl@kernel.org>
+>
+[...]
+> > > > > +		names[i] =3D kstrdup(prop->name, GFP_KERNEL);
+> > > >=20
+> > > > Can property be statically defined somewhere? We might want to also=
+ optimize
+> > > > these duplications with const variant (here or elsewhere, for fwnod=
+e generic
+> > > > path, I believe).
+> > >=20
+> > > Please rephrase because I'm not quite following what you're saying.
+> >=20
+> > Can prop->name come from something that is declared as
+> >=20
+> > static const ... foo =3D {
+> > 	... .name =3D "bar";
+> > };
+> >
+>=20
+> You can't know it for every instance of struct fwnode_handle, so the
+> answer is: no.
+>=20
+> PS: is there a way of using match_string() with non-const data?
 
-- bitops.h implies bits.h
-- bitmap.h implies bitops.h
-- acpi.h, i2c.h, spi.h etc. imply the corresponding linux/device_id/* header
-- if you have an opaque pointer (like struct device * but don't use any
-  functions from device.h) you can just skip the header entirely.
+Given the definition here:
 
-This can be also "automated" using iwyu-tool (which requires LLVM). I have
-a mapping file tailored for IIO but surely you can swap the iio headers for
-gpio ones.
+	$ grepc match_string .
+	./include/linux/string.h:int match_string(const char * const *array, size_=
+t n, const char *string);
+	./lib/string_helpers.c:int match_string(const char * const *array, size_t =
+n, const char *string)
+	{
+		int index;
+		const char *item;
 
-https://lore.kernel.org/all/20260512073505.1310-1-joshua.crofts1@gmail.com/
+		for (index =3D 0; index < n; index++) {
+			item =3D array[index];
+			if (!item)
+				break;
+			if (!strcmp(item, string))
+				return index;
+		}
 
-> > Is this documented anywhere?  
-> 
-> No, but feel free to start such a documentation. In IIO we did a huge work
-> to enforce IWYU principle, and there we have some tribe knowledge about
-> the dependencies and guarantees. (Cc'ed some people.) In this case the
-> bitops.h inclusion is guaranteed by bitmap.h. If it stops doing like this
-> it will be a flag day.
+		return -EINVAL;
+	}
 
-Would be great if someone documented this in detail, at least people who read
-the docs and LLMs would learn it :P
+You should be able to call it with a cast.  It's dangerous, but
+technically it works.  I'm not encouraging it, though.  :)
 
-Javier Carrasco Cruz wrote a blog post on iwyu-tool where he links to my
-mapping file:
+	char **strings;
 
-https://hackerbikepacker.com/iwyu
+	...
 
--- 
-Kind regards,
-Joshua Crofts
+	i =3D match_string((const char *const *) strings, n, "foo");
+
+This is a historic problem in C, which was solved in C++.  I have
+a proposal paper for the C Committee for solving it as in C++:
+<https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3987.htm>
+
+This paper will be discussed (and probably voted in) in the next meeting
+of the committee (which happens next week), so there's a chance that
+this will be solved for C2y, and thus the cast will no longer be
+necessary.
+
+The history of why this is not allowed in C but is in C++ is, as far as
+I've been told, the following:
+
+Back before C and C++ were standardized, C++ invented const, with rules
+slightly more allowing than what they are now.  This was going to be
+standardized first in C89.  But very close to the release of C89, they
+realized about the danger of converting a const char** to a char**
+implicitly.  They were so close to the release, that they opted for the
+safest approach: disallow any non-trivial conversions.
+
+Later, while standardizing C++98, they realized we could allow a few
+more conversions safely, and so they did.
+
+C could have taken advantage of that, and pick C++ rules in C99 or C11,
+but for some reason, nobody proposed that.  I'm proposing it now.  :)
+
+We've already discussed this proposal informally within the committee
+for some a year and a half, and there seems to be consensus that we want
+it.  We're only being careful about the specific language.  But I think
+I finally got it, and it will go in next week.
+
+
+Have a lovely day!
+Alex
+
+>=20
+> Bart
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--wx2y6hldnr44vqml
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmry+7MACgkQ64mZXMKQ
+wqmmXg/+JeY9H4QAyqVc4xKon1zkJm4/P+50FgURTEMAfhalUbXNOhgyHq3QtwPo
+RoaqS8aCxAiVqZ3Qqf/qecOpkYoqQqtg8OUV4Np+DNTd6dSuIxlm4nk2frFFLPRR
+Bux4w0usdq0kR9M9f4R051z++FzMPV0wX2IhrGaHVArt6igqkoIITR6gh/i+TxBv
+8ylPyg6kvREx2OnxliD/mQfrr/3rkyFNhNKJhDsFScjWPYGsyGXLn2GLs8jPhhB4
+PbB+r6j/QFkqx/RfrWvLc6XqZhUsdXvAcKo1Ti5Ar7EFBWXzMi9VaDlMWNNtz7dh
+CXyErp4TiTRW4w54ZgponS1C0tLN9CFfKEVMbD/J+zYzwJ8yqAoidlCYAfN5ZASY
+dam6rZj2W6MjFQx/8dC1+DdWTW6ihy7q6cHUJt2YI4uowd5wquSBdC8EetoU0MlB
+o6q4ye5rK94anbe9ydQd7Nkyp4sKjUlZHpzMRB0az3fL8rT0FsiXSz0jIPRQzk7v
+qdcaDXnBtUuDgkblQCedfJySBDm9N9Gmh3NJdQtOGk57KQ586yeNPExs3o0SivF5
+cJ3ckUERShrT9/bAGrSpjZKGR3yG6S4oNQMY4arUXntsR34sZfKeoGmA7kHSBljk
+F0nB+Ypd308lrNHlK4GRc1TrMn+/FxXew2+9N8X4xdTHleGKHLw=
+=qslH
+-----END PGP SIGNATURE-----
+
+--wx2y6hldnr44vqml--
