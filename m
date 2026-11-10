@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794317054;
-	b=kJUmICTL8td5AshnCvxOiulAGyVR8tHGViWl5VrgtSaPtqgY0FvxJhOjvzS0F4u8ul4a
-	 WnmYlnbPJEpSzOo+h8A9h5M9Y6P7zgpNqZBgZBi10j3r+mr92jtFI4nTuT3B0T8BpEKC4
-	 3dca5uQyYOKZNqWSsq/PP9dacm6FWSlnnB6XVKVQGRsg1XNMBvkkndCaZEqqgoautLl2M
-	 jrlrqDrasHCSwdp8+TuvdrV7WvKEBqQLbsN2WxEtsr38fxT5SCXq2/TeWceKRci3oYLDB
-	 ZYHlLe2EOdmjhaH7I/AGLRXLdOrukogB2WZYVN96BWr+ROXVMuxyjSpiZoDyTsdWdIw==
+	t=1794317322;
+	b=iSypuaSCrLC2V9X2UCkp0QCVqcJY1crPvuwcXqVnfkMCcIXQd+3SdrKyF8D4GFxtv8ce
+	 MJhskmxBH1TyrfzlcL9KkWHGdFhNtVTDet6Kgn9dnUsho4GBbhYKNXciMQJ8vmv7lOypO
+	 rQDd0MtA0aj98DkGKFD1GaLsTpmfc7tYb9Cu3bDBqIYdX67tpVuHIaGhbCbnmwO5/BX/X
+	 F2e8lIZRTxIlrSPdADJpHMh8p9TBN43wFfZx93S0quhRNpI+tSlcsDJIlXTER4SXpjyH3
+	 coeK9YGbGI/MaQW7LrUjL6YAgCOzU4fT4783VKPl7t9QPbGgpnFiknNgkwPowmFkFoQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794317054;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794317322;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=gLbu+QmOwl55JJoKnVaiXzCJO4FEEFP748REBSTuBYI=;
-	b=iNYNA6GRS/XB45nf+l9nva+3DswFlsLDRC8q5C4E57ungABEvUVGJPeekBne0UNHOz8O
-	 keiWJ9FHpHvNDeIiRTkzYLD0FzhRD955Jx8/wqvmI0iae1AEPwafcor0sKUjVcISO4YpO
-	 Suxx07pPjzAnyrpAxlc4I6K7/42UgwJPetn9iVUieAvzcOx9yCJN7W3AMajvK4ldNdgR6
-	 hYMBCEB3y1PbVsowWDssv+vU9suMA30Q5DodswEKDz+gCNP0x6fH+Xt7tCh9faMiiq+RD
-	 j+9JtOMF5n/8617sZj/uuAp4/5R3IcYtfQIJACheC2p1+8rhH6DjULOJ0D902JQUfAQ==
+	bh=9eKl7b8wHlyQNjxuLHQg1pgl93UvcYeRIZp5vfnXBA4=;
+	b=mh2ttkZK23eO+gTpmpakmpmiOqU55K2G7vAlIPOlW214QEtSdEDb9DuQ2wyf0KUrl2qv
+	 KvhcO7wH2j/8ctUPkl8uxpqZEWDLVmw7kCIDDzdK3Z5idAHRTS67oNt/LaEpXmEQ4ExMM
+	 wBzj/33gPSok2HsEwDjhyHeYeINm9lvBaHf10h0kajjkit6Vl+bPmImAPvD/qqiWoNVJB
+	 Feu+Qv97HsHaW5eEFCD2Uri9C37jL+iJUCH9W+C8P0BBO3oKYT+K3eYnLAxCA/B9k9bc7
+	 bqEsLEww33LIovOH2mA5TdQFgBBtpEnYaEejOzbpuvmF36jmt6aE1TuaYkOy6as6MWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BMel5y4I;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DhVbHuz5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44634606B2E6;
-	Tue, 10 Nov 2026 13:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D1760798B1;
+	Tue, 10 Nov 2026 13:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BMel5y4I
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF861F008A1;
-	Tue, 10 Nov 2026 13:24:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DhVbHuz5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4F61F008A3;
+	Tue, 10 Nov 2026 13:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794317053;
-	bh=gLbu+QmOwl55JJoKnVaiXzCJO4FEEFP748REBSTuBYI=;
+	s=k20260515; t=1794317321;
+	bh=9eKl7b8wHlyQNjxuLHQg1pgl93UvcYeRIZp5vfnXBA4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BMel5y4IpY6KSXoDb6VVesQT6DeL5FnncCKYIWdP1DVhsWlQnNwUBDd8tJlcNiiiC
-	 xFP5szs1/hZb73pQ4fBH0kATTvIT+WEAEoFI0ZiVtPXdqoVCyMysA1AEpjocNXiFbB
-	 PL+TK29ndBzAi0T/XcurANYr+rWgp0MRyeoMR9CqL6rjT+CU/+efdiNSL8pMTfEX1K
-	 tPTnMaNwZexeUvY6ISFhWnmOI8LF58fjc4WqmhJVpOOQiQmBoiHvhrCLK43fZoOosA
-	 S9ur8BsV9arNwXL3GbW9Zw0VTZrZ3n0kNDyFMfYAhWVCdcKKM685KxHtqxPWcjwb1X
-	 WiNcjW2g1I3uA==
-Date: Tue, 10 Nov 2026 14:24:09 +0100
+	b=DhVbHuz5pM73OJkt8de/TR7VboJXCLI3GHavDoVbf6/c+CUMVET06DBtqOBFRDZpB
+	 Sj0fz1g3JdaApgrdj5eLrxj1PL0TF+BchBmufMWx0kgbv0AYTd8z3Qs5kVHZjuY6G7
+	 DQGF8O26yPMZIewQF3Rovi2oUIFEXBjmt6gtaghphzYAuhSkqkqE8XyA0KQs784Bl3
+	 v/edUA5grLLJvrvQLLVLOL/9UhQxg/0Yrpuu/vD9JxmtMXqLJ1bssQvFLRU+pzRlEl
+	 B4uQL+KvACXup14SKlPR2wWN2ArP6uYnvN62nJav8KBAdHZD3sQeD1IEXp4Pmlljrk
+	 QbbVLRaWg/S6w==
+Date: Tue, 10 Nov 2026 14:28:38 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Joseph Telaak <joseph@telaak.dev>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
-	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: Add Siflower SF19A2890 GPIO
- controller
-Message-ID: <20261110-pearl-peacock-of-brotherhood-f9daf1@quoll>
-References: <20261109-sf19a2890-gpio-v2-0-b885fbd84c4c@telaak.dev>
- <20261109-sf19a2890-gpio-v2-1-b885fbd84c4c@telaak.dev>
+	Prasad Sodagudi <quic_psodagud@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add qcom,remote-owned
+ for ownership update
+Message-ID: <20261110-modest-significant-ostrich-8dd408@quoll>
+References: <20261106-egpio_fix-v1-0-569d220a4748@oss.qualcomm.com>
+ <20261106-egpio_fix-v1-1-569d220a4748@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,32 +64,22 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261109-sf19a2890-gpio-v2-1-b885fbd84c4c@telaak.dev>
+In-Reply-To: <20261106-egpio_fix-v1-1-569d220a4748@oss.qualcomm.com>
 
-On Mon, Nov 09, 2026 at 03:09:31PM -0500, Joseph Telaak wrote:
-> From: Chuanhong Guo <gch981213@gmail.com>
+On Fri, Nov 06, 2026 at 01:29:41PM +0530, Pankaj Patil wrote:
+> Add "qcom,remote-owned" boolean flag for egpio capable pins since they can
+> be owned by remote island io independently of the selected mux function
+> even if function is non-egpio.
 > 
-> Document the GPIO controller of the Siflower SF19A2890. Siflower's SF21
-> RISC-V SoCs have the same controller, and will get compatibles of their
-> own with their device trees.
-> 
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> [Joseph Telaak:
->   - take it from Chuanhong's siflower-7.1 branch
->   - list myself as the binding's maintainer
->   - use GPL-2.0-only instead of the deprecated GPL-2.0 SPDX
->     identifier
->   - indent the example by four spaces
->   - drop the ngpios property, which the compatible implies, take
->     exactly four interrupts, and order the properties as in required
->   - commit message and subject]
-> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
-> ---
->  .../bindings/gpio/siflower,sf19a2890-gpio.yaml     | 76 ++++++++++++++++++++++
->  MAINTAINERS                                        |  6 ++
->  2 files changed, 82 insertions(+)
+> Presently egpio is treated as a mux function level decision where as
+> hardware programming guide(hpg) specifies it as pin conf level decision
+> i.e setting egpio bit is independent of selected mux function, the
+> driver/apps claims the ownership of the pin if it's egpio capable in
+> case of mux function being specified as anything other than egpio.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+I don't understand this. If the pin is not owned by Linux, then simply
+do not list it. What is the point of listing a pin configuration which
+should be skipped?
 
 Best regards,
 Krzysztof
