@@ -1,49 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=60.244.123.138
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794303839;
-	b=MtxGwv61N0gacLH4JzaUhr31ySvYSxeuSmT4p4ua+1ZSrIU4/7pyz8GLk1cqs+OgA3+b
-	 nDYYMmnbmnGz9xR/OFJ/Gk5nuI/3xOvwkAm0G82U6HxxIgCkbjTOETWUGAVtCoDgQGFAa
-	 J9aK/UHaZN5HwI8XFJ6RYZHXCmDoQrke1Mvy9JrK4cGGo5+QmtnGkDO3/0zBV5M6phjPD
-	 Q/TfVcNHQnTaNvSMp9nmywBp2rPKU53HMTxCsoqkgIMynw5nmArjtrmnplVT3xG+wME0q
-	 F6n01axsWWFoaOr+lBYyshOae73UO2Onv7K6qAM6rm7+ruGXk997DT+WwuWUm2u/OmA==
+	t=1794303840;
+	b=k8jfZawhvMif4uzoQCMwF+28bv7I+7npYpKLT28AnMslqGQfSWQmEeh+OCM/HzA5eZim
+	 VT5v5heqwb5pO6rYyFrokYhgZ7wBG91ZPLVA4KqOBoZNUMNYueuWQHGrwiXt27bfx8wgY
+	 tx8yOmcsPMhpuyPnMUuVsXdDF1Js/e5ro9Lc7MyUxI2Bx0jMzuT+S2+NTUioVnWdSpdRM
+	 MO1ywDZnOl18PHnEnErg4Ydlxj5TLRKNOV5HJOV6NOtw8/02MgZwZ93pe6cu2JKkY83EM
+	 UMTBYgpxK1uGX6ATctdYt5DerdKeIQWLLExbvEmfBxDkTywmu60ojtrOY1m1P5YxgpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794303839;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794303840;
 	h=DMARC-Filter:X-UUID:DKIM-Signature:X-CID-P-RULE:X-CID-O-INFO:
 	 X-CID-META:X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:Received:
 	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 Content-Type:X-MTK;
-	bh=4cTSx5pv0UpD0DLBTCxpFSzDIVrFp4lpwAxj5RMYc90=;
-	b=NeXzrGbMZW0SlFNHJZM0T+ZAOcxjirLq73TKAePUD7X9C1j8QeG98Igh9ew6AptCJmBH
-	 4/nCNKdxIlzFLJSumo8NKvQcI19CJUfmMzAROGRI4PnGQOPhlUif1zeGVdJC/O9qpb8oj
-	 qu3IBJLNCir2xnbt2DNrOapDI9wDvmJNzElLBH04CVAhrkq9qcu4mOW3780dr7b/w5JVO
-	 CXPD0Tutd4g5W65yRuro9wuLExfzTST0bZlzdHmPfEg8HPIyMWaSOYkzaN/z8paeAa1xe
-	 pDgrwFDS3CrI50sfvgcL3gwBAycmSEeq5OoV4DDF7YUdV9w0MGNqThU3l2TlQ0j/DSQ==
+	bh=hbmn7hKLMXrocivXVlyaHukCB3sGYGhuEEFr1F0i+6M=;
+	b=jttRSn7RV2Euh/RPznCIBSBVT1BXB7ygvAMBiaNrHP5xFeFqnz0eBSiXUy9K1gD9A7W+
+	 qDMWNGoLdWXKKJR9VjWzHhmGgptbra69Y9Qy8ubWD2YX8jjluYzKttAhC5F5wn9UipnLX
+	 U4+64q2SAtBJsKIZsvKTkjrGDaGW0RzEpakhIAml70++4Hoi+dUGikAIBsHxMTRYnmNVg
+	 StiqyazMvAwsqVooDdYwpB+JErnBVoKvr+uWl2dJmx0bCauceoriCRpkxO2GIhgqpyjXd
+	 e6aIZol478KOQ3CbrbXevV3lMXZ1AppgiftmG97rXYR+mfHexFbrIOIHRbbNHca0Dkg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=airoha.com;
 	spf=pass smtp.mailfrom=airoha.com;
-	dkim=pass header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=MnBzb3EP;
-	arc=none smtp.remote-ip=210.61.82.184
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=RWb5eDUV;
+	arc=none smtp.remote-ip=60.244.123.138
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8AE606BF19;
-	Tue, 10 Nov 2026 09:43:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A8AE606BF19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EA5606C653;
+	Tue, 10 Nov 2026 09:43:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 63EA5606C653
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=airoha.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airoha.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=MnBzb3EP
-X-UUID: 3c0c3df0dceb11f18dc8c9802ae25ab1-20261110
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=RWb5eDUV
+X-UUID: 3c91e900dceb11f1b1788b6acf885367-20261110
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=4cTSx5pv0UpD0DLBTCxpFSzDIVrFp4lpwAxj5RMYc90=;
-	b=MnBzb3EPyQkckQlurwmGVsDSD3FdI191QFVrt71l3vGKBT9pDDQ9yP4OojObjC94NwEAvjjBB3OKu3mGQ5Jt9DvTwVOJZ/UPqkPZykWm6DvBVA4WeRyzmUglFb78l+zVXkhpAyBbrYw5/qa/EWFyyIg0anF+bRJKMko2xTebEeg=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=hbmn7hKLMXrocivXVlyaHukCB3sGYGhuEEFr1F0i+6M=;
+	b=RWb5eDUVfErKCztbwc2mi/oZfxsAUDn6ufDUPvWX6XD1/CVaI62DJddxgRil8p6n6vqjzjdtktHAnuG2PN6U+0VrjIDaoJsnOrsVPEfJzn1wol0YxlD+49Ouhy/RJyT20OGRzO9+vbwXiuM1HD5yAG7MAsuWne9tGqFdbDOYAfU=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.21,REQID:56994f7f-c58a-4fa4-a8f9-328b37bb84ad,IP:0,U
+X-CID-O-INFO: VERSION:1.3.21,REQID:6052c3b9-6e8a-40e5-96dd-f3efe9e507ec,IP:0,U
 	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
 	N:release,TS:-25
-X-CID-META: VersionHash:b0318ac,CLOUDID:6ae61766-4b51-4c95-bb1b-80ac6aad9c96,B
+X-CID-META: VersionHash:b0318ac,CLOUDID:1b7d1357-a87d-42b7-8ffd-9e23ca174329,B
 	ulkID:nil,BulkQuantity:0,SF:81|82|102|136|836|865|888|898,TC:-5,Content:0|
 	15|50|99,EDM:-3|-100,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,CO
 	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
@@ -51,18 +51,18 @@ X-CID-BVR: 2,SSN|SDN
 X-CID-BAS: 2,SSN|SDN,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
 X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 3c0c3df0dceb11f18dc8c9802ae25ab1-20261110
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+X-UUID: 3c91e900dceb11f1b1788b6acf885367-20261110
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
 	(envelope-from <zhengping.zhang@airoha.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 155873408; Tue, 10 Nov 2026 17:43:50 +0800
+	with ESMTP id 835175819; Tue, 10 Nov 2026 17:43:51 +0800
 Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Tue, 10 Nov 2026 17:43:49 +0800
+ 15.2.2562.29; Tue, 10 Nov 2026 17:43:50 +0800
 Received: from mediatek.com (172.18.153.129) by mtkmbs13n1.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.2.2562.29 via Frontend
- Transport; Tue, 10 Nov 2026 17:43:49 +0800
+ Transport; Tue, 10 Nov 2026 17:43:50 +0800
 From: Zhengping Zhang <zhengping.zhang@airoha.com>
 To: <linusw@kernel.org>, <lorenzo@kernel.org>
 CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
@@ -71,9 +71,9 @@ CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-mediatek@lists.infradead.org>, <lei.dong@airoha.com>,
 	<ansuelsmth@gmail.com>, Zhengping Zhang <zhengping.zhang@airoha.com>
-Subject: [PATCH 05/12] pinctrl: airoha: an7581: select force GPIO mode on GPIO requests
-Date: Tue, 10 Nov 2026 17:43:32 +0800
-Message-ID: <20261110094339.749110-6-zhengping.zhang@airoha.com>
+Subject: [PATCH 11/12] pinctrl: airoha: en7523: use force GPIO mode for GPIO requests
+Date: Tue, 10 Nov 2026 17:43:38 +0800
+Message-ID: <20261110094339.749110-12-zhengping.zhang@airoha.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261110094339.749110-1-zhengping.zhang@airoha.com>
 References: <20261110094339.749110-1-zhengping.zhang@airoha.com>
@@ -90,72 +90,103 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-MTK: N
 
-Configuring GPIO direction and output data does not select the GPIO
-function at the pad. If the bootloader leaves a shared pad configured
-for an alternate function, a GPIO request can succeed while the pad
-remains controlled by that function. GPIO outputs may then fail to
-drive the pin, and input readings may not reflect the external signal,
-making GPIO behavior depend on the bootloader configuration.
+GPIO requests can leave pads controlled by alternate functions selected
+by the bootloader. Extend the GPIO mux groups to GPIO0-29 and enable
+the shared GPIO request handling and mux conflict checks. GPIO consumers
+and explicit GPIO pinctrl states then use the same configuration tables.
 
-The AN7581 driver currently exposes explicit GPIO mux groups only for
-GPIO47-49 and does not enable the shared GPIO request handling. Extend
-the GPIO groups to GPIO0-49, mark the function as a GPIO-category
-function and enable GPIO request handling and shared mux conflict
-checks through the SoC match data. GPIO consumers can then select the
-pad function without requiring an explicit GPIO pinctrl state in DTS.
-Explicit GPIO states use the same configuration tables.
+Use per-pad force GPIO overrides without disabling shared peripheral
+modes on other pads. Select GPIO mode using the following SCU register
+bits, where n is the GPIO number:
 
-Use the per-pad force GPIO overrides instead of disabling shared
-alternate-function modes globally. This allows a GPIO request to
-override its own pad without changing the mux settings of other pads
-controlled by the same peripheral mode bits. Select GPIO mode using
-the following SCU register bits, where n is the GPIO number:
+  - GPIO0-29: set bit n in register 0x224
+    (GPIO0 -> bit 0, ..., GPIO29 -> bit 29).
+  - GPIO28: also set the PCIe reset0 GPIO selector at register
+    0x218, bit 9.
+  - GPIO29: also set the PCIe reset1 GPIO selector at register
+    0x218, bit 10.
 
-  - GPIO1-31: set bit n in register 0x228
-    (GPIO1 -> bit 1, ..., GPIO31 -> bit 31).
-  - GPIO32-46: set bit (n - 32) in register 0x22c
-    (GPIO32 -> bit 0, ..., GPIO46 -> bit 14).
-  - GPIO47-49: set the PCIe reset GPIO selector bits in register
-    0x21c (GPIO47 -> bit 9, GPIO48 -> bit 10, GPIO49 -> bit 12).
-  - GPIO0: clear its PWM selection only; no usable force GPIO bit
-    is documented.
+Unlike AN7581 and AN7583, EN7523 provides a force GPIO bit for GPIO0.
+Clear the requested pad's PWM selection when selecting GPIO.
 
-Clear the requested pad's PWM selection when selecting GPIO. For
-GPIO1/2, also disable the I2C and MDIO routing. The existing MDIO
-configuration sets force GPIO bits 1/2 as part of its routing sequence,
-so setting these bits alone is insufficient to switch the pads from
-MDIO to GPIO.
+When selecting a peripheral function, clear the corresponding force
+GPIO overrides so an earlier GPIO configuration does not prevent
+peripheral operation. Enable the overrides when selecting PWM output.
 
-When selecting a peripheral function, clear the force GPIO overrides
-for the pads in its group while retaining the existing mux and LED
-mapping writes. Otherwise, a force bit left by the bootloader or an
-earlier GPIO configuration could keep the pad in GPIO mode even after
-the peripheral mux has been configured. Keep the existing register
-configuration for selecting MDIO and PWM functions unchanged.
+Exclude the software-controlled TX_DIS/RX_DIS pads (GPIO16/21) from the
+hardware PON mux group. These signals serve the PON interface but are
+intended to be requested as GPIOs by the PON PHY driver and controlled
+through the GPIO API rather than driven by the PON hardware. This
+avoids ownership conflicts between PON mux selection and GPIO requests.
 
-Enable the shared conflict checks to reject configurations requiring
-incompatible values for shared mux bits rather than silently changing
-the configuration of an owned group.
+Correct the 128-pin PCM SPI CS2 group to use GPIO29 (pinctrl pin 41)
+instead of GPIO27. The share-pin table assigns GPIO29 to CS2 in the
+128-pin package and GPIO27 to CS2 in the 156-pin package. Keep the
+156-pin group unchanged, and clear GPIO29's PCIe GPIO selector when
+selecting its PCM SPI CS2 function.
 
 Signed-off-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 ---
- drivers/pinctrl/airoha/pinctrl-an7581.c | 549 ++++++++++++++++++++----
- 1 file changed, 476 insertions(+), 73 deletions(-)
+ drivers/pinctrl/airoha/pinctrl-en7523.c | 579 +++++++++++++++++++-----
+ 1 file changed, 473 insertions(+), 106 deletions(-)
 
-diff --git a/drivers/pinctrl/airoha/pinctrl-an7581.c b/drivers/pinctrl/airoha/pinctrl-an7581.c
-index 3cbdfc31e97e5..b266cc8bc65f4 100644
---- a/drivers/pinctrl/airoha/pinctrl-an7581.c
-+++ b/drivers/pinctrl/airoha/pinctrl-an7581.c
-@@ -64,6 +64,7 @@
- #define JTAG_DFD_EN_MASK			BIT(3)
+diff --git a/drivers/pinctrl/airoha/pinctrl-en7523.c b/drivers/pinctrl/airoha/pinctrl-en7523.c
+index b0c5e60f0aeb9..041536790fd8b 100644
+--- a/drivers/pinctrl/airoha/pinctrl-en7523.c
++++ b/drivers/pinctrl/airoha/pinctrl-en7523.c
+@@ -211,7 +211,7 @@
+ 	}
  
- #define REG_FORCE_GPIO_EN			0x0228
-+#define REG_FORCE_GPIO32_EN			0x022c
- #define FORCE_GPIO_EN(n)			BIT(n)
+ /* PWM */
+-#define AIROHA_PINCTRL_PWM(gpio, mux_val)			\
++#define AIROHA_PINCTRL_PWM(gpio, mux_val, force_reg, force_mask) \
+ 	{							\
+ 		.name = (gpio),					\
+ 		.regmap[0] = {					\
+@@ -220,10 +220,14 @@
+ 			(mux_val),				\
+ 			(mux_val)				\
+ 		},						\
+-		.regmap_size = 1,				\
++		.regmap[1] = {					\
++			AIROHA_FUNC_MUX, (force_reg),		\
++			(force_mask), (force_mask)			\
++		},						\
++		.regmap_size = 2,				\
+ 	}
  
- /* LED MAP */
-@@ -280,7 +281,7 @@
- 		.regmap_size = 2,				\
+-#define AIROHA_PINCTRL_PWM_EXT(gpio, mux_val)			\
++#define AIROHA_PINCTRL_PWM_EXT(gpio, mux_val, force_reg, force_mask) \
+ 	{							\
+ 		.name = (gpio),					\
+ 		.regmap[0] = {					\
+@@ -232,10 +236,14 @@
+ 			(mux_val),				\
+ 			(mux_val)				\
+ 		},						\
+-		.regmap_size = 1,				\
++		.regmap[1] = {					\
++			AIROHA_FUNC_MUX, (force_reg),		\
++			(force_mask), (force_mask)			\
++		},						\
++		.regmap_size = 2,				\
+ 	}
+ 
+-#define AIROHA_PINCTRL_PWM_EXT_SEC(gpio, mux_val, smux_val)	\
++#define AIROHA_PINCTRL_PWM_EXT_SEC(gpio, mux_val, smux_val, force_reg, force_mask) \
+ 	{							\
+ 		.name = (gpio),					\
+ 		.regmap[0] = {					\
+@@ -250,10 +258,14 @@
+ 			(smux_val),				\
+ 			(smux_val)				\
+ 		},						\
+-		.regmap_size = 2,				\
++		.regmap[2] = {					\
++			AIROHA_FUNC_MUX, (force_reg),		\
++			(force_mask), (force_mask)			\
++		},						\
++		.regmap_size = 3,				\
  	}
  
 -#define AIROHA_PINCTRL_PHY_LED0(gpio, mux_val, map_mask, map_val)	\
@@ -163,15 +194,15 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	{								\
  		.name = (gpio),						\
  		.regmap[0] = {						\
-@@ -295,10 +296,14 @@
+@@ -268,10 +280,14 @@
  			(map_mask),					\
  			(map_val),					\
  		},							\
 -		.regmap_size = 2,					\
-+		.regmap[2] = {						\
-+			AIROHA_FUNC_MUX, (force_reg),			\
-+			(force_mask), 0					\
-+		},							\
++		.regmap[2] = {					\
++			AIROHA_FUNC_MUX, (force_reg),		\
++			(force_mask), 0			\
++		},						\
 +		.regmap_size = 3,					\
  	}
  
@@ -180,50 +211,142 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	{								\
  		.name = (gpio),						\
  		.regmap[0] = {						\
-@@ -313,7 +318,11 @@
+@@ -286,7 +302,11 @@
  			(map_mask),					\
  			(map_val),					\
  		},							\
 -		.regmap_size = 2,					\
-+		.regmap[2] = {						\
-+			AIROHA_FUNC_MUX, (force_reg),			\
-+			(force_mask), 0					\
-+		},							\
++		.regmap[2] = {					\
++			AIROHA_FUNC_MUX, (force_reg),		\
++			(force_mask), 0			\
++		},						\
 +		.regmap_size = 3,					\
  	}
  
  static struct pinctrl_pin_desc pinctrl_pins[] = {
-@@ -579,7 +588,17 @@ static const char *const pcm_spi_groups[] = {
+@@ -330,7 +350,8 @@ static struct pinctrl_pin_desc pinctrl_pins[] = {
+ 	PINCTRL_PIN(41, "pcie_reset1"),
+ };
+ 
+-static const int pon_pins[] = { 28, 29, 30, 31, 32, 33 };
++/* TX_DIS (GPIO16) and RX_DIS (GPIO21) are software GPIOs. */
++static const int pon_pins[] = { 29, 30, 31, 32 };
+ static const int pon_tod_1pps_pins[] = { 21 };
+ static const int gsw_tod_1pps_pins[] = { 21 };
+ static const int sipo_pins[] = { 13, 38 };
+@@ -352,7 +373,7 @@ static const int pcm_spi_pins[] = { 16, 17, 18, 19, 24, 25, 26, 27 };
+ static const int pcm_spi_int_pins[] = { 15 };
+ static const int pcm_spi_rst_pins[] = { 14 };
+ static const int pcm_spi_cs1_pins[] = { 22 };
+-static const int pcm_spi_cs2_p128_pins[] = { 39 };
++static const int pcm_spi_cs2_p128_pins[] = { 41 };
+ static const int pcm_spi_cs2_p156_pins[] = { 39 };
+ static const int pcm_spi_cs3_pins[] = { 20 };
+ static const int pcm_spi_cs4_pins[] = { 23 };
+@@ -466,7 +487,13 @@ static const char *const pcm_spi_groups[] = {
+ 	"pcm_spi_cs2_p156", "pcm_spi_cs2_p128", "pcm_spi_cs3", "pcm_spi_cs4"
+ };
  static const char *const i2s_groups[] = { "i2s" };
- static const char *const emmc_groups[] = { "emmc" };
- static const char *const pnand_groups[] = { "pnand" };
--static const char *const gpio_groups[] = { "gpio47", "gpio48", "gpio49" };
+-static const char *const gpio_groups[] = { "gpio28", "gpio29" };
 +static const char *const gpio_groups[] = {
 +	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5",
 +	"gpio6", "gpio7", "gpio8", "gpio9", "gpio10", "gpio11",
 +	"gpio12", "gpio13", "gpio14", "gpio15", "gpio16", "gpio17",
 +	"gpio18", "gpio19", "gpio20", "gpio21", "gpio22", "gpio23",
 +	"gpio24", "gpio25", "gpio26", "gpio27", "gpio28", "gpio29",
-+	"gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35",
-+	"gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41",
-+	"gpio42", "gpio43", "gpio44", "gpio45", "gpio46", "gpio47",
-+	"gpio48", "gpio49",
 +};
  static const char *const pcie_reset_groups[] = {
- 	"pcie_reset0", "pcie_reset1", "pcie_reset2"
+ 	"pcie_reset0", "pcie_reset1"
  };
-@@ -627,7 +646,18 @@ static const struct airoha_pinctrl_func_group pon_func_group[] = {
+@@ -511,7 +538,16 @@ static const struct airoha_pinctrl_func_group pon_func_group[] = {
  			GPIO_PON_MODE_MASK,
  			GPIO_PON_MODE_MASK
  		},
 -		.regmap_size = 1,
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO32_EN,
-+			BIT(4) |
-+			BIT(5) |
-+			BIT(6) |
-+			BIT(7) |
++			REG_FORCE_GPIO_EN,
++			BIT(17) |
++			BIT(18) |
++			BIT(19) |
++			BIT(20),
++			0
++		},
++		.regmap_size = 2,
+ 	},
+ };
+ 
+@@ -524,7 +560,13 @@ static const struct airoha_pinctrl_func_group tod_1pps_func_group[] = {
+ 			PON_TOD_1PPS_MODE_MASK,
+ 			PON_TOD_1PPS_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(9),
++			0
++		},
++		.regmap_size = 2,
+ 	}, {
+ 		.name = "gsw_tod_1pps",
+ 		.regmap[0] = {
+@@ -533,7 +575,13 @@ static const struct airoha_pinctrl_func_group tod_1pps_func_group[] = {
+ 			GSW_TOD_1PPS_MODE_MASK,
+ 			GSW_TOD_1PPS_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(9),
++			0
++		},
++		.regmap_size = 2,
+ 	},
+ };
+ 
+@@ -546,7 +594,14 @@ static const struct airoha_pinctrl_func_group sipo_func_group[] = {
+ 			GPIO_SIPO_MODE_MASK | SIPO_RCLK_MODE_MASK,
+ 			GPIO_SIPO_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(1) |
++			BIT(26),
++			0
++		},
++		.regmap_size = 2,
+ 	}, {
+ 		.name = "sipo_rclk",
+ 		.regmap[0] = {
+@@ -555,7 +610,15 @@ static const struct airoha_pinctrl_func_group sipo_func_group[] = {
+ 			GPIO_SIPO_MODE_MASK | SIPO_RCLK_MODE_MASK,
+ 			GPIO_SIPO_MODE_MASK | SIPO_RCLK_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(1) |
++			BIT(18) |
++			BIT(26),
++			0
++		},
++		.regmap_size = 2,
+ 	},
+ };
+ 
+@@ -568,7 +631,14 @@ static const struct airoha_pinctrl_func_group mdio_func_group[] = {
+ 			GPIO_SGMII_MDIO_MODE_MASK,
+ 			GPIO_SGMII_MDIO_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
 +			BIT(8) |
 +			BIT(9),
 +			0
@@ -232,182 +355,55 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	},
  };
  
-@@ -640,7 +670,13 @@ static const struct airoha_pinctrl_func_group tod_1pps_func_group[] = {
- 			PON_TOD_1PPS_MODE_MASK,
- 			PON_TOD_1PPS_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO32_EN,
-+			BIT(1),
-+			0
-+		},
-+		.regmap_size = 2,
- 	}, {
- 		.name = "gsw_tod_1pps",
- 		.regmap[0] = {
-@@ -649,7 +685,13 @@ static const struct airoha_pinctrl_func_group tod_1pps_func_group[] = {
- 			GSW_TOD_1PPS_MODE_MASK,
- 			GSW_TOD_1PPS_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO32_EN,
-+			BIT(1),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- };
- 
-@@ -662,7 +704,14 @@ static const struct airoha_pinctrl_func_group sipo_func_group[] = {
- 			GPIO_SIPO_MODE_MASK | SIPO_RCLK_MODE_MASK,
- 			GPIO_SIPO_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(3) |
-+			BIT(4),
-+			0
-+		},
-+		.regmap_size = 2,
- 	}, {
- 		.name = "sipo_rclk",
- 		.regmap[0] = {
-@@ -671,7 +720,15 @@ static const struct airoha_pinctrl_func_group sipo_func_group[] = {
- 			GPIO_SIPO_MODE_MASK | SIPO_RCLK_MODE_MASK,
- 			GPIO_SIPO_MODE_MASK | SIPO_RCLK_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(3) |
-+			BIT(4) |
-+			BIT(30),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- };
- 
-@@ -703,7 +760,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
+@@ -581,7 +651,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
  			GPIO_UART2_MODE_MASK,
  			GPIO_UART2_MODE_MASK
  		},
 -		.regmap_size = 1,
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO32_EN,
-+			BIT(3) |
-+			BIT(10),
++			REG_FORCE_GPIO_EN,
++			BIT(8) |
++			BIT(9),
 +			0
 +		},
 +		.regmap_size = 2,
  	}, {
- 		.name = "uart2_cts_rts",
+ 		.name = "npu_uart",
  		.regmap[0] = {
-@@ -712,7 +776,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
- 			GPIO_UART2_MODE_MASK | GPIO_UART2_CTS_RTS_MODE_MASK,
- 			GPIO_UART2_MODE_MASK | GPIO_UART2_CTS_RTS_MODE_MASK
+@@ -590,7 +667,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
+ 			NPU_UART_EN_MASK,
+ 			NPU_UART_EN_MASK
  		},
 -		.regmap_size = 1,
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO32_EN,
++			REG_FORCE_GPIO_EN,
 +			BIT(1) |
-+			BIT(2),
-+			0
-+		},
-+		.regmap_size = 2,
- 	}, {
- 		.name = "hsuart",
- 		.regmap[0] = {
-@@ -721,7 +792,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
- 			GPIO_HSUART_MODE_MASK | GPIO_HSUART_CTS_RTS_MODE_MASK,
- 			GPIO_HSUART_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(15) |
-+			BIT(16),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- 	{
- 		.name = "hsuart_cts_rts",
-@@ -731,7 +809,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
- 			GPIO_HSUART_MODE_MASK | GPIO_HSUART_CTS_RTS_MODE_MASK,
- 			GPIO_HSUART_MODE_MASK | GPIO_HSUART_CTS_RTS_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(13) |
-+			BIT(14),
-+			0
-+		},
-+		.regmap_size = 2,
- 	}, {
- 		.name = "uart4",
- 		.regmap[0] = {
-@@ -740,7 +825,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
- 			GPIO_UART4_MODE_MASK,
- 			GPIO_UART4_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(25) |
 +			BIT(26),
 +			0
 +		},
 +		.regmap_size = 2,
- 	}, {
- 		.name = "uart5",
- 		.regmap[0] = {
-@@ -749,7 +841,14 @@ static const struct airoha_pinctrl_func_group uart_func_group[] = {
- 			GPIO_UART5_MODE_MASK,
- 			GPIO_UART5_MODE_MASK
+ 	}
+ };
+ 
+@@ -603,7 +687,14 @@ static const struct airoha_pinctrl_func_group i2c_func_group[] = {
+ 			GPIO_2ND_I2C_MODE_MASK,
+ 			GPIO_2ND_I2C_MODE_MASK
  		},
 -		.regmap_size = 1,
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(5) |
-+			BIT(6),
++			BIT(2) |
++			BIT(3),
 +			0
 +		},
 +		.regmap_size = 2,
  	},
  };
  
-@@ -762,7 +861,14 @@ static const struct airoha_pinctrl_func_group i2c_func_group[] = {
- 			GPIO_2ND_I2C_MODE_MASK | GPIO_I2C_MASTER_MODE_MODE,
- 			GPIO_2ND_I2C_MODE_MASK | GPIO_I2C_MASTER_MODE_MODE
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(1) |
-+			BIT(2),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- };
- 
-@@ -775,7 +881,17 @@ static const struct airoha_pinctrl_func_group jtag_func_group[] = {
+@@ -616,7 +707,17 @@ static const struct airoha_pinctrl_func_group jtag_func_group[] = {
  			JTAG_UDI_EN_MASK,
  			JTAG_UDI_EN_MASK
  		},
@@ -415,18 +411,18 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(3) |
-+			BIT(4) |
-+			BIT(5) |
-+			BIT(6) |
-+			BIT(7),
++			BIT(22) |
++			BIT(23) |
++			BIT(24) |
++			BIT(25) |
++			BIT(26),
 +			0
 +		},
 +		.regmap_size = 2,
  	}, {
  		.name = "jtag_dfd",
  		.regmap[0] = {
-@@ -784,7 +900,17 @@ static const struct airoha_pinctrl_func_group jtag_func_group[] = {
+@@ -625,7 +726,17 @@ static const struct airoha_pinctrl_func_group jtag_func_group[] = {
  			JTAG_DFD_EN_MASK,
  			JTAG_DFD_EN_MASK
  		},
@@ -434,7 +430,43 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(3) |
++			BIT(22) |
++			BIT(23) |
++			BIT(24) |
++			BIT(25) |
++			BIT(26),
++			0
++		},
++		.regmap_size = 2,
+ 	},
+ };
+ 
+@@ -638,7 +749,16 @@ static const struct airoha_pinctrl_func_group pcm_func_group[] = {
+ 			GPIO_PCM1_MODE_MASK,
+ 			GPIO_PCM1_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(12) |
++			BIT(13) |
++			BIT(14) |
++			BIT(15),
++			0
++		},
++		.regmap_size = 2,
+ 	}, {
+ 		.name = "pcm2",
+ 		.regmap[0] = {
+@@ -647,7 +767,16 @@ static const struct airoha_pinctrl_func_group pcm_func_group[] = {
+ 			GPIO_PCM2_MODE_MASK,
+ 			GPIO_PCM2_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
 +			BIT(4) |
 +			BIT(5) |
 +			BIT(6) |
@@ -445,43 +477,7 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	},
  };
  
-@@ -797,7 +923,16 @@ static const struct airoha_pinctrl_func_group pcm_func_group[] = {
- 			GPIO_PCM1_MODE_MASK,
- 			GPIO_PCM1_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(9) |
-+			BIT(10) |
-+			BIT(11) |
-+			BIT(12),
-+			0
-+		},
-+		.regmap_size = 2,
- 	}, {
- 		.name = "pcm2",
- 		.regmap[0] = {
-@@ -806,7 +941,16 @@ static const struct airoha_pinctrl_func_group pcm_func_group[] = {
- 			GPIO_PCM2_MODE_MASK,
- 			GPIO_PCM2_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(5) |
-+			BIT(6) |
-+			BIT(7) |
-+			BIT(8),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- };
- 
-@@ -819,7 +963,14 @@ static const struct airoha_pinctrl_func_group spi_func_group[] = {
+@@ -660,7 +789,14 @@ static const struct airoha_pinctrl_func_group spi_func_group[] = {
  			GPIO_SPI_QUAD_MODE_MASK,
  			GPIO_SPI_QUAD_MODE_MASK
  		},
@@ -489,15 +485,15 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(19) |
-+			BIT(20),
++			BIT(2) |
++			BIT(3),
 +			0
 +		},
 +		.regmap_size = 2,
  	}, {
  		.name = "spi_cs1",
  		.regmap[0] = {
-@@ -828,7 +979,13 @@ static const struct airoha_pinctrl_func_group spi_func_group[] = {
+@@ -669,7 +805,13 @@ static const struct airoha_pinctrl_func_group spi_func_group[] = {
  			GPIO_SPI_CS1_MODE_MASK,
  			GPIO_SPI_CS1_MODE_MASK
  		},
@@ -505,14 +501,14 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(21),
++			BIT(9),
 +			0
 +		},
 +		.regmap_size = 2,
- 	}, {
- 		.name = "spi_cs2",
- 		.regmap[0] = {
-@@ -868,7 +1025,20 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+ 	},
+ };
+ 
+@@ -682,7 +824,20 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_SPI_MODE_MASK,
  			GPIO_PCM_SPI_MODE_MASK
  		},
@@ -520,21 +516,21 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
++			BIT(4) |
 +			BIT(5) |
 +			BIT(6) |
 +			BIT(7) |
-+			BIT(8) |
-+			BIT(9) |
-+			BIT(10) |
-+			BIT(11) |
-+			BIT(12),
++			BIT(12) |
++			BIT(13) |
++			BIT(14) |
++			BIT(15),
 +			0
 +		},
 +		.regmap_size = 2,
  	}, {
  		.name = "pcm_spi_int",
  		.regmap[0] = {
-@@ -877,7 +1047,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+@@ -691,7 +846,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_INT_MODE_MASK,
  			GPIO_PCM_INT_MODE_MASK
  		},
@@ -542,14 +538,14 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(1),
++			BIT(3),
 +			0
 +		},
 +		.regmap_size = 2,
  	}, {
  		.name = "pcm_spi_rst",
  		.regmap[0] = {
-@@ -886,7 +1062,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+@@ -700,7 +861,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_RESET_MODE_MASK,
  			GPIO_PCM_RESET_MODE_MASK
  		},
@@ -564,7 +560,7 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	}, {
  		.name = "pcm_spi_cs1",
  		.regmap[0] = {
-@@ -895,7 +1077,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+@@ -709,7 +876,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_SPI_CS1_MODE_MASK,
  			GPIO_PCM_SPI_CS1_MODE_MASK
  		},
@@ -572,14 +568,14 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(30),
++			BIT(10),
 +			0
 +		},
 +		.regmap_size = 2,
  	}, {
  		.name = "pcm_spi_cs2_p128",
  		.regmap[0] = {
-@@ -904,7 +1092,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+@@ -718,7 +891,19 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_SPI_CS2_MODE_P128_MASK,
  			GPIO_PCM_SPI_CS2_MODE_P128_MASK
  		},
@@ -587,14 +583,20 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		.regmap[1] = {
 +			AIROHA_FUNC_MUX,
 +			REG_FORCE_GPIO_EN,
-+			BIT(27),
++			BIT(29),
 +			0
 +		},
-+		.regmap_size = 2,
++		.regmap[2] = {
++			AIROHA_FUNC_MUX,
++			REG_GPIO_PON_MODE,
++			GPIO_PCIE_RESET1_MASK,
++			0
++		},
++		.regmap_size = 3,
  	}, {
  		.name = "pcm_spi_cs2_p156",
  		.regmap[0] = {
-@@ -913,7 +1107,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+@@ -727,7 +912,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_SPI_CS2_MODE_P156_MASK,
  			GPIO_PCM_SPI_CS2_MODE_P156_MASK
  		},
@@ -609,9 +611,149 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	}, {
  		.name = "pcm_spi_cs3",
  		.regmap[0] = {
-@@ -922,7 +1122,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+@@ -736,7 +927,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
  			GPIO_PCM_SPI_CS3_MODE_MASK,
  			GPIO_PCM_SPI_CS3_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(8),
++			0
++		},
++		.regmap_size = 2,
+ 	}, {
+ 		.name = "pcm_spi_cs4",
+ 		.regmap[0] = {
+@@ -745,7 +942,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
+ 			GPIO_PCM_SPI_CS4_MODE_MASK,
+ 			GPIO_PCM_SPI_CS4_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(11),
++			0
++		},
++		.regmap_size = 2,
+ 	},
+ };
+ 
+@@ -758,15 +961,104 @@ static const struct airoha_pinctrl_func_group i2s_func_group[] = {
+ 			GPIO_I2S_MODE_MASK,
+ 			GPIO_I2S_MODE_MASK
+ 		},
+-		.regmap_size = 1,
++		.regmap[1] = {
++			AIROHA_FUNC_MUX,
++			REG_FORCE_GPIO_EN,
++			BIT(4) |
++			BIT(5) |
++			BIT(6) |
++			BIT(7),
++			0
++		},
++		.regmap_size = 2,
+ 	},
+ };
+ 
++/* Force overrides select individual pads without disabling shared buses. */
++#define EN7523_GPIO_GROUP(n, pwm_mask, force_reg, force_mask)	\
++	{								\
++		.name = "gpio" #n,					\
++		.regmap[0] = {						\
++			AIROHA_FUNC_PWM_MUX,				\
++			(n) < 16 ? REG_GPIO_FLASH_MODE_CFG :		\
++			REG_GPIO_FLASH_MODE_CFG_EXT,			\
++			(pwm_mask), 0					\
++		},							\
++		.regmap[1] = {						\
++			AIROHA_FUNC_MUX, (force_reg),			\
++			(force_mask), (force_mask)			\
++		},							\
++		.regmap[2] = {						\
++			AIROHA_FUNC_MUX, REG_GPIO_PON_MODE,		\
++			(n) == 28 ? GPIO_PCIE_RESET0_MASK :		\
++			(n) == 29 ? GPIO_PCIE_RESET1_MASK : 0,		\
++			(n) == 28 ? GPIO_PCIE_RESET0_MASK :		\
++			(n) == 29 ? GPIO_PCIE_RESET1_MASK : 0		\
++		},							\
++		.regmap_size = 3,					\
++	}
++
+ static const struct airoha_pinctrl_func_group gpio_func_group[] = {
+-	AIROHA_PINCTRL_GPIO_EXT("gpio28", GPIO28_FLASH_MODE_CFG,
+-				GPIO_PCIE_RESET0_MASK),
+-	AIROHA_PINCTRL_GPIO_EXT("gpio29", GPIO29_FLASH_MODE_CFG,
+-				GPIO_PCIE_RESET1_MASK),
++	EN7523_GPIO_GROUP(0, GPIO0_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(0)),
++	EN7523_GPIO_GROUP(1, GPIO1_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(1)),
++	EN7523_GPIO_GROUP(2, GPIO2_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(2)),
++	EN7523_GPIO_GROUP(3, GPIO3_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(3)),
++	EN7523_GPIO_GROUP(4, GPIO4_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(4)),
++	EN7523_GPIO_GROUP(5, GPIO5_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(5)),
++	EN7523_GPIO_GROUP(6, GPIO6_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(6)),
++	EN7523_GPIO_GROUP(7, GPIO7_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(7)),
++	EN7523_GPIO_GROUP(8, GPIO8_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(8)),
++	EN7523_GPIO_GROUP(9, GPIO9_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(9)),
++	EN7523_GPIO_GROUP(10, GPIO10_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(10)),
++	EN7523_GPIO_GROUP(11, GPIO11_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(11)),
++	EN7523_GPIO_GROUP(12, GPIO12_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(12)),
++	EN7523_GPIO_GROUP(13, GPIO13_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(13)),
++	EN7523_GPIO_GROUP(14, GPIO14_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(14)),
++	EN7523_GPIO_GROUP(15, GPIO15_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(15)),
++	EN7523_GPIO_GROUP(16, GPIO16_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(16)),
++	EN7523_GPIO_GROUP(17, GPIO17_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(17)),
++	EN7523_GPIO_GROUP(18, GPIO18_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(18)),
++	EN7523_GPIO_GROUP(19, GPIO19_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(19)),
++	EN7523_GPIO_GROUP(20, GPIO20_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(20)),
++	EN7523_GPIO_GROUP(21, GPIO21_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(21)),
++	EN7523_GPIO_GROUP(22, GPIO22_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(22)),
++	EN7523_GPIO_GROUP(23, GPIO23_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(23)),
++	EN7523_GPIO_GROUP(24, GPIO24_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(24)),
++	EN7523_GPIO_GROUP(25, GPIO25_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(25)),
++	EN7523_GPIO_GROUP(26, GPIO26_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(26)),
++	EN7523_GPIO_GROUP(27, GPIO27_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(27)),
++	EN7523_GPIO_GROUP(28, GPIO28_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(28)),
++	EN7523_GPIO_GROUP(29, GPIO29_FLASH_MODE_CFG,
++			    REG_FORCE_GPIO_EN, BIT(29)),
+ };
+ 
+ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
+@@ -778,7 +1070,13 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
+ 			GPIO_PCIE_RESET0_MASK,
+ 			0
  		},
 -		.regmap_size = 1,
 +		.regmap[1] = {
@@ -622,11 +764,11 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
 +		},
 +		.regmap_size = 2,
  	}, {
- 		.name = "pcm_spi_cs4",
+ 		.name = "pcie_reset1",
  		.regmap[0] = {
-@@ -931,7 +1137,13 @@ static const struct airoha_pinctrl_func_group pcm_spi_func_group[] = {
- 			GPIO_PCM_SPI_CS4_MODE_MASK,
- 			GPIO_PCM_SPI_CS4_MODE_MASK
+@@ -787,131 +1085,199 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
+ 			GPIO_PCIE_RESET1_MASK,
+ 			0
  		},
 -		.regmap_size = 1,
 +		.regmap[1] = {
@@ -639,377 +781,269 @@ index 3cbdfc31e97e5..b266cc8bc65f4 100644
  	},
  };
  
-@@ -944,7 +1156,16 @@ static const struct airoha_pinctrl_func_group i2s_func_group[] = {
- 			GPIO_I2S_MODE_MASK,
- 			GPIO_I2S_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(13) |
-+			BIT(14) |
-+			BIT(15) |
-+			BIT(16),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
+ static const struct airoha_pinctrl_func_group pwm_func_group[] = {
+-	AIROHA_PINCTRL_PWM("gpio0", GPIO0_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio1", GPIO1_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio2", GPIO2_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio3", GPIO3_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio4", GPIO4_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio5", GPIO5_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio6", GPIO6_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio7", GPIO7_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio8", GPIO8_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio9", GPIO9_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio10", GPIO10_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio11", GPIO11_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio12", GPIO12_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio13", GPIO13_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio14", GPIO14_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM("gpio15", GPIO15_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio16", GPIO16_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio17", GPIO17_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio18", GPIO18_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio19", GPIO19_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio20", GPIO20_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio21", GPIO21_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio22", GPIO22_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio23", GPIO23_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio24", GPIO24_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio25", GPIO25_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio26", GPIO26_FLASH_MODE_CFG),
+-	AIROHA_PINCTRL_PWM_EXT("gpio27", GPIO27_FLASH_MODE_CFG),
++	AIROHA_PINCTRL_PWM("gpio0", GPIO0_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(0)),
++	AIROHA_PINCTRL_PWM("gpio1", GPIO1_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(1)),
++	AIROHA_PINCTRL_PWM("gpio2", GPIO2_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(2)),
++	AIROHA_PINCTRL_PWM("gpio3", GPIO3_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(3)),
++	AIROHA_PINCTRL_PWM("gpio4", GPIO4_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(4)),
++	AIROHA_PINCTRL_PWM("gpio5", GPIO5_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(5)),
++	AIROHA_PINCTRL_PWM("gpio6", GPIO6_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(6)),
++	AIROHA_PINCTRL_PWM("gpio7", GPIO7_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(7)),
++	AIROHA_PINCTRL_PWM("gpio8", GPIO8_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(8)),
++	AIROHA_PINCTRL_PWM("gpio9", GPIO9_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(9)),
++	AIROHA_PINCTRL_PWM("gpio10", GPIO10_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(10)),
++	AIROHA_PINCTRL_PWM("gpio11", GPIO11_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(11)),
++	AIROHA_PINCTRL_PWM("gpio12", GPIO12_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(12)),
++	AIROHA_PINCTRL_PWM("gpio13", GPIO13_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(13)),
++	AIROHA_PINCTRL_PWM("gpio14", GPIO14_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(14)),
++	AIROHA_PINCTRL_PWM("gpio15", GPIO15_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(15)),
++	AIROHA_PINCTRL_PWM_EXT("gpio16", GPIO16_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(16)),
++	AIROHA_PINCTRL_PWM_EXT("gpio17", GPIO17_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(17)),
++	AIROHA_PINCTRL_PWM_EXT("gpio18", GPIO18_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(18)),
++	AIROHA_PINCTRL_PWM_EXT("gpio19", GPIO19_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(19)),
++	AIROHA_PINCTRL_PWM_EXT("gpio20", GPIO20_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(20)),
++	AIROHA_PINCTRL_PWM_EXT("gpio21", GPIO21_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(21)),
++	AIROHA_PINCTRL_PWM_EXT("gpio22", GPIO22_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(22)),
++	AIROHA_PINCTRL_PWM_EXT("gpio23", GPIO23_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(23)),
++	AIROHA_PINCTRL_PWM_EXT("gpio24", GPIO24_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(24)),
++	AIROHA_PINCTRL_PWM_EXT("gpio25", GPIO25_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(25)),
++	AIROHA_PINCTRL_PWM_EXT("gpio26", GPIO26_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(26)),
++	AIROHA_PINCTRL_PWM_EXT("gpio27", GPIO27_FLASH_MODE_CFG,
++				REG_FORCE_GPIO_EN, BIT(27)),
+ 	AIROHA_PINCTRL_PWM_EXT_SEC("gpio28", GPIO28_FLASH_MODE_CFG,
+-				   GPIO_PCIE_RESET0_MASK),
++				   GPIO_PCIE_RESET0_MASK,
++				REG_FORCE_GPIO_EN, BIT(28)),
+ 	AIROHA_PINCTRL_PWM_EXT_SEC("gpio29", GPIO29_FLASH_MODE_CFG,
+-				   GPIO_PCIE_RESET1_MASK),
++				   GPIO_PCIE_RESET1_MASK,
++				REG_FORCE_GPIO_EN, BIT(29)),
  };
- 
-@@ -957,7 +1178,20 @@ static const struct airoha_pinctrl_func_group emmc_func_group[] = {
- 			GPIO_EMMC_MODE_MASK,
- 			GPIO_EMMC_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(17) |
-+			BIT(18) |
-+			BIT(19) |
-+			BIT(20) |
-+			BIT(21) |
-+			BIT(22) |
-+			BIT(23) |
-+			BIT(24),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- };
- 
-@@ -970,17 +1204,153 @@ static const struct airoha_pinctrl_func_group pnand_func_group[] = {
- 			GPIO_PARALLEL_NAND_MODE_MASK,
- 			GPIO_PARALLEL_NAND_MODE_MASK
- 		},
--		.regmap_size = 1,
-+		.regmap[1] = {
-+			AIROHA_FUNC_MUX,
-+			REG_FORCE_GPIO_EN,
-+			BIT(17) |
-+			BIT(18) |
-+			BIT(19) |
-+			BIT(20) |
-+			BIT(21) |
-+			BIT(22) |
-+			BIT(23) |
-+			BIT(24) |
-+			BIT(25) |
-+			BIT(26) |
-+			BIT(27) |
-+			BIT(28) |
-+			BIT(29),
-+			0
-+		},
-+		.regmap_size = 2,
- 	},
- };
- 
-+/* GPIO0 has no force bit. GPIO47-49 retain their native PCIe selectors. */
-+#define AN7581_GPIO_GROUP(n, pwm_mask, force_reg, force_mask)	\
-+	{	\
-+		.name = "gpio" #n,	\
-+		.regmap[0] = {	\
-+			AIROHA_FUNC_PWM_MUX,	\
-+			(n) < 16 ? REG_GPIO_FLASH_MODE_CFG :	\
-+			REG_GPIO_FLASH_MODE_CFG_EXT,	\
-+			(pwm_mask), 0	\
-+		},	\
-+		.regmap[1] = {	\
-+			AIROHA_FUNC_MUX, REG_GPIO_2ND_I2C_MODE,	\
-+			(n) == 1 || (n) == 2 ?	\
-+			GPIO_2ND_I2C_MODE_MASK |	\
-+			GPIO_I2C_MASTER_MODE_MODE |	\
-+			GPIO_MDC_IO_MASTER_MODE_MASK : 0, 0	\
-+		},	\
-+		.regmap[2] = {	\
-+			AIROHA_FUNC_MUX, (force_reg),	\
-+			(force_mask), (force_mask)	\
-+		},	\
-+		.regmap_size = 3,	\
-+	}
-+
- static const struct airoha_pinctrl_func_group gpio_func_group[] = {
--	AIROHA_PINCTRL_GPIO_EXT("gpio47", GPIO47_FLASH_MODE_CFG,
--				GPIO_PCIE_RESET0_MASK),
--	AIROHA_PINCTRL_GPIO_EXT("gpio48", GPIO48_FLASH_MODE_CFG,
--				GPIO_PCIE_RESET1_MASK),
--	AIROHA_PINCTRL_GPIO_EXT("gpio49", GPIO49_FLASH_MODE_CFG,
--				GPIO_PCIE_RESET2_MASK),
-+	AN7581_GPIO_GROUP(0, GPIO0_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, 0),
-+	AN7581_GPIO_GROUP(1, GPIO1_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(1)),
-+	AN7581_GPIO_GROUP(2, GPIO2_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(2)),
-+	AN7581_GPIO_GROUP(3, GPIO3_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(3)),
-+	AN7581_GPIO_GROUP(4, GPIO4_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(4)),
-+	AN7581_GPIO_GROUP(5, GPIO5_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(5)),
-+	AN7581_GPIO_GROUP(6, GPIO6_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(6)),
-+	AN7581_GPIO_GROUP(7, GPIO7_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(7)),
-+	AN7581_GPIO_GROUP(8, GPIO8_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(8)),
-+	AN7581_GPIO_GROUP(9, GPIO9_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(9)),
-+	AN7581_GPIO_GROUP(10, GPIO10_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(10)),
-+	AN7581_GPIO_GROUP(11, GPIO11_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(11)),
-+	AN7581_GPIO_GROUP(12, GPIO12_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(12)),
-+	AN7581_GPIO_GROUP(13, GPIO13_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(13)),
-+	AN7581_GPIO_GROUP(14, GPIO14_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(14)),
-+	AN7581_GPIO_GROUP(15, GPIO15_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(15)),
-+	AN7581_GPIO_GROUP(16, GPIO16_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(16)),
-+	AN7581_GPIO_GROUP(17, GPIO17_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(17)),
-+	AN7581_GPIO_GROUP(18, GPIO18_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(18)),
-+	AN7581_GPIO_GROUP(19, GPIO19_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(19)),
-+	AN7581_GPIO_GROUP(20, GPIO20_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(20)),
-+	AN7581_GPIO_GROUP(21, GPIO21_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(21)),
-+	AN7581_GPIO_GROUP(22, GPIO22_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(22)),
-+	AN7581_GPIO_GROUP(23, GPIO23_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(23)),
-+	AN7581_GPIO_GROUP(24, GPIO24_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(24)),
-+	AN7581_GPIO_GROUP(25, GPIO25_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(25)),
-+	AN7581_GPIO_GROUP(26, GPIO26_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(26)),
-+	AN7581_GPIO_GROUP(27, GPIO27_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(27)),
-+	AN7581_GPIO_GROUP(28, GPIO28_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(28)),
-+	AN7581_GPIO_GROUP(29, GPIO29_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(29)),
-+	AN7581_GPIO_GROUP(30, GPIO30_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(30)),
-+	AN7581_GPIO_GROUP(31, GPIO31_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO_EN, BIT(31)),
-+	AN7581_GPIO_GROUP(32, 0,
-+			    REG_FORCE_GPIO32_EN, BIT(0)),
-+	AN7581_GPIO_GROUP(33, 0,
-+			    REG_FORCE_GPIO32_EN, BIT(1)),
-+	AN7581_GPIO_GROUP(34, 0,
-+			    REG_FORCE_GPIO32_EN, BIT(2)),
-+	AN7581_GPIO_GROUP(35, 0,
-+			    REG_FORCE_GPIO32_EN, BIT(3)),
-+	AN7581_GPIO_GROUP(36, GPIO36_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(4)),
-+	AN7581_GPIO_GROUP(37, GPIO37_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(5)),
-+	AN7581_GPIO_GROUP(38, GPIO38_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(6)),
-+	AN7581_GPIO_GROUP(39, GPIO39_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(7)),
-+	AN7581_GPIO_GROUP(40, GPIO40_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(8)),
-+	AN7581_GPIO_GROUP(41, GPIO41_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(9)),
-+	AN7581_GPIO_GROUP(42, GPIO42_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(10)),
-+	AN7581_GPIO_GROUP(43, GPIO43_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(11)),
-+	AN7581_GPIO_GROUP(44, GPIO44_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(12)),
-+	AN7581_GPIO_GROUP(45, GPIO45_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(13)),
-+	AN7581_GPIO_GROUP(46, GPIO46_FLASH_MODE_CFG,
-+			    REG_FORCE_GPIO32_EN, BIT(14)),
-+	AN7581_GPIO_GROUP(47, GPIO47_FLASH_MODE_CFG,
-+			    REG_GPIO_PON_MODE, GPIO_PCIE_RESET0_MASK),
-+	AN7581_GPIO_GROUP(48, GPIO48_FLASH_MODE_CFG,
-+			    REG_GPIO_PON_MODE, GPIO_PCIE_RESET1_MASK),
-+	AN7581_GPIO_GROUP(49, GPIO49_FLASH_MODE_CFG,
-+			    REG_GPIO_PON_MODE, GPIO_PCIE_RESET2_MASK),
- };
- 
- static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
-@@ -1068,90 +1438,122 @@ static const struct airoha_pinctrl_func_group pwm_func_group[] = {
  
  static const struct airoha_pinctrl_func_group phy1_led0_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED0("gpio43", GPIO_LAN0_LED0_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED0("gpio22", GPIO_LAN0_LED0_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(0)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(11)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio44", GPIO_LAN1_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(22)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio23", GPIO_LAN1_LED0_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(0)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(12)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio45", GPIO_LAN2_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(23)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio24", GPIO_LAN2_LED0_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(0)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(13)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio46", GPIO_LAN3_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(24)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio25", GPIO_LAN3_LED0_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(0)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(14)),
++				REG_FORCE_GPIO_EN, BIT(25)),
  };
  
  static const struct airoha_pinctrl_func_group phy2_led0_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED0("gpio43", GPIO_LAN0_LED0_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED0("gpio22", GPIO_LAN0_LED0_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(1)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(11)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio44", GPIO_LAN1_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(22)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio23", GPIO_LAN1_LED0_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(1)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(12)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio45", GPIO_LAN2_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(23)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio24", GPIO_LAN2_LED0_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(1)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(13)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio46", GPIO_LAN3_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(24)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio25", GPIO_LAN3_LED0_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(1)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(14)),
++				REG_FORCE_GPIO_EN, BIT(25)),
  };
  
  static const struct airoha_pinctrl_func_group phy3_led0_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED0("gpio43", GPIO_LAN0_LED0_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED0("gpio22", GPIO_LAN0_LED0_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(2)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(11)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio44", GPIO_LAN1_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(22)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio23", GPIO_LAN1_LED0_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(2)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(12)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio45", GPIO_LAN2_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(23)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio24", GPIO_LAN2_LED0_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(2)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(13)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio46", GPIO_LAN3_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(24)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio25", GPIO_LAN3_LED0_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(2)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(14)),
++				REG_FORCE_GPIO_EN, BIT(25)),
  };
  
  static const struct airoha_pinctrl_func_group phy4_led0_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED0("gpio43", GPIO_LAN0_LED0_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED0("gpio22", GPIO_LAN0_LED0_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(3)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(11)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio44", GPIO_LAN1_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(22)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio23", GPIO_LAN1_LED0_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(3)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(12)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio45", GPIO_LAN2_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(23)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio24", GPIO_LAN2_LED0_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(3)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(13)),
- 	AIROHA_PINCTRL_PHY_LED0("gpio46", GPIO_LAN3_LED0_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(24)),
+ 	AIROHA_PINCTRL_PHY_LED0("gpio25", GPIO_LAN3_LED0_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(3)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(14)),
++				REG_FORCE_GPIO_EN, BIT(25)),
  };
  
  static const struct airoha_pinctrl_func_group phy1_led1_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED1("gpio33", GPIO_LAN0_LED1_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED1("gpio7", GPIO_LAN0_LED1_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(0)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(1)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio34", GPIO_LAN1_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(7)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio6", GPIO_LAN1_LED1_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(0)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(2)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio35", GPIO_LAN2_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(6)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio5", GPIO_LAN2_LED1_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(0)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(3)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio42", GPIO_LAN3_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(5)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio4", GPIO_LAN3_LED1_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(0)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(0),
-+				REG_FORCE_GPIO32_EN, BIT(10)),
++				REG_FORCE_GPIO_EN, BIT(4)),
  };
  
  static const struct airoha_pinctrl_func_group phy2_led1_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED1("gpio33", GPIO_LAN0_LED1_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED1("gpio7", GPIO_LAN0_LED1_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(1)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(1)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio34", GPIO_LAN1_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(7)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio6", GPIO_LAN1_LED1_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(1)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(2)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio35", GPIO_LAN2_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(6)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio5", GPIO_LAN2_LED1_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(1)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(3)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio42", GPIO_LAN3_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(5)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio4", GPIO_LAN3_LED1_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(1)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(1),
-+				REG_FORCE_GPIO32_EN, BIT(10)),
++				REG_FORCE_GPIO_EN, BIT(4)),
  };
  
  static const struct airoha_pinctrl_func_group phy3_led1_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED1("gpio33", GPIO_LAN0_LED1_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED1("gpio7", GPIO_LAN0_LED1_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(2)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(1)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio34", GPIO_LAN1_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(7)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio6", GPIO_LAN1_LED1_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(2)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(2)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio35", GPIO_LAN2_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(6)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio5", GPIO_LAN2_LED1_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(2)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(3)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio42", GPIO_LAN3_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(5)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio4", GPIO_LAN3_LED1_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(2)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(2),
-+				REG_FORCE_GPIO32_EN, BIT(10)),
++				REG_FORCE_GPIO_EN, BIT(4)),
  };
  
  static const struct airoha_pinctrl_func_group phy4_led1_func_group[] = {
- 	AIROHA_PINCTRL_PHY_LED1("gpio33", GPIO_LAN0_LED1_MODE_MASK,
+ 	AIROHA_PINCTRL_PHY_LED1("gpio7", GPIO_LAN0_LED1_MODE_MASK,
 -				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(3)),
 +				LAN0_LED_MAPPING_MASK, LAN0_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(1)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio34", GPIO_LAN1_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(7)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio6", GPIO_LAN1_LED1_MODE_MASK,
 -				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(3)),
 +				LAN1_LED_MAPPING_MASK, LAN1_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(2)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio35", GPIO_LAN2_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(6)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio5", GPIO_LAN2_LED1_MODE_MASK,
 -				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(3)),
 +				LAN2_LED_MAPPING_MASK, LAN2_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(3)),
- 	AIROHA_PINCTRL_PHY_LED1("gpio42", GPIO_LAN3_LED1_MODE_MASK,
++				REG_FORCE_GPIO_EN, BIT(5)),
+ 	AIROHA_PINCTRL_PHY_LED1("gpio4", GPIO_LAN3_LED1_MODE_MASK,
 -				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(3)),
 +				LAN3_LED_MAPPING_MASK, LAN3_PHY_LED_MAP(3),
-+				REG_FORCE_GPIO32_EN, BIT(10)),
++				REG_FORCE_GPIO_EN, BIT(4)),
  };
  
  static const struct airoha_pinctrl_func pinctrl_funcs[] = {
-@@ -1168,7 +1570,7 @@ static const struct airoha_pinctrl_func pinctrl_funcs[] = {
+@@ -926,7 +1292,7 @@ static const struct airoha_pinctrl_func pinctrl_funcs[] = {
+ 	PINCTRL_FUNC_DESC("spi", spi),
+ 	PINCTRL_FUNC_DESC("pcm_spi", pcm_spi),
  	PINCTRL_FUNC_DESC("i2s", i2s),
- 	PINCTRL_FUNC_DESC("emmc", emmc),
- 	PINCTRL_FUNC_DESC("pnand", pnand),
 -	PINCTRL_FUNC_DESC("gpio", gpio),
 +	PINCTRL_GPIO_FUNC_DESC("gpio", gpio),
  	PINCTRL_FUNC_DESC("pcie_reset", pcie_reset),
  	PINCTRL_FUNC_DESC("pwm", pwm),
  	PINCTRL_FUNC_DESC("phy1_led0", phy1_led0),
-@@ -1432,6 +1834,7 @@ static const struct airoha_pinctrl_conf pinctrl_pcie_rst_od_conf[] = {
+@@ -1104,6 +1470,7 @@ static const struct airoha_pinctrl_conf pinctrl_drive_e4_conf[] = {
  };
  
  static const struct airoha_pinctrl_match_data pinctrl_match_data = {
 +	.check_mux_conflicts = true,
- 	.chip_scu_compatible = "airoha,en7581-chip-scu",
+ 	.chip_scu_compatible = "airoha,en7523-chip-scu",
  	.pinctrl_name = KBUILD_MODNAME,
  	.pinctrl_owner = THIS_MODULE,
 -- 
