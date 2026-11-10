@@ -1,69 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794304257;
-	b=tItLN0e/g6YMXGMGLhv6hIfLLufMWUXbod+F76w+T9LJNQzyaxo/360b3g63C0T68fg8
-	 i1kcvrmAN5EZUfWNaXPFnJ7d7SM26QrEWps0mmUDbY5j6P3tj+9iUh9ERZYCuKZeuC4KS
-	 IofHeGJUu5cyR0KjaAzQUwRSKysrpJcdSUJzX2scPk/lbhCZAprr6dw9z3dUjSYDON6t8
-	 Ji4EsFAmpD+rzdJKSeMM6Mba31W0OuHN5S/x/8+mYXRX6hV6qEKGvapewBdCpvwxmT86n
-	 SHf903YAlQx/Ge3jRxOv7uctC0AKjirgMFPpeauKzZgY3F6DoMMz/qmQ0TzrrDN/5Hw==
+	t=1794304382;
+	b=z7eS8dYVz1mUH+YYflfVghKazg5Uthn9KmVQ4afu8XzmF20jv1XG6aT7divjO87arEZk
+	 T5ymYL/JavQBFvbWPA8PntBMwA3ibFmxUPOCkhOzFEx0zQ74WSs/auSSCJEPTM+CQY6PM
+	 JOSdNiBlG0aLOPKqT7Wwp0yZWga3cfTrZTw74Mi1syqk7QtOQHBz6JbnoeTjkutSUH8h0
+	 8ZRT/VWeBPdSAPlRriTWl5SBAopiAJWYCo9JYb8PVIlB+jjqKU0DIan0nhzb6yYJRLwPU
+	 G0V1uJN1AjroynJwUE4f8t0NXKa6OyxmuTyEgPLq4f7w4Ha/oBbQInJY+Pa2gxZ/l0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794304257;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=e3//m6z05CCr++yJ8pEIRKHvzyBVaUWMryM2WqTqQJs=;
-	b=e5zncX4kvOERDBgVSJwQjqOcJQnMph2UrYsCeq+2vy5nXA6mEJ2cO2rdil21avnNEckW
-	 8PFSvDqK0/KGmVpghaMOzh8MfsEAvoY3GvmhI0erC19mMkWZmXN7FZdo1oCddPfWJhLW6
-	 Yaycqu1/KRMacnNlpdaB/rfxULTQqMzo7nds05Ng8p53GHUeglNrpzpPmGD2IpHUyDmHE
-	 guSArupINd8F6GUBWYYMirURl61pQibEfJS5c8/W21ZJKEAldOdqaYzUPsGOzZa8Q3aXe
-	 4X5pu9kCij8LKd3p/OSQ+gCWuU59+xGuXFrlYdG+vGiN0gasOh5jYcDhiXtPb6Fedyg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794304382;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=fT31XLKUQuRmxzdqIKu0tH+kJNHQhLTcjslw879wGR8=;
+	b=gEGhP0SWVYrtjn8b3UE8NNME4cu4S4ACHCovbblHOK2t6YbeNyEE2WNmN1nB1x6C1Hkl
+	 flbOZbVrxtCyJQUdKOF8LbEUT6lcPJlIzD/BWpRL+n5/eQkJSwbAF+Rz83LuG7eBQbOtC
+	 R11art4/ipnfjWnEfAZPTkz1N1ZKH+ZeYHnOC44AkatEkTbY5MW8SevvJSQ6PThQjEkv+
+	 6Ls+xTWXy57nGFHUg4vI2o7dY0zOeKpUKho409W7RU75z0n0H7BXGGnBc5RgTz4ol5NfE
+	 nL18CTNATj/Bt+YLD1mDNriZUKKlYz2JNv//Q+1QUT/CXZKtGznM9gotGgBfBUUoYog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N70KADS+;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TQKlb41l;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 84D53606BF07;
-	Tue, 10 Nov 2026 09:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D215606B159;
+	Tue, 10 Nov 2026 09:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N70KADS+
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A5B851F008A3;
-	Tue, 10 Nov 2026 09:50:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TQKlb41l
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753C81F0089F;
+	Tue, 10 Nov 2026 09:53:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794304257;
-	bh=e3//m6z05CCr++yJ8pEIRKHvzyBVaUWMryM2WqTqQJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=N70KADS+ISsQ/NyHQkqIdHNIS4xgAvB+H6oPlzBasLeGPdixmDRbQb7KeWAIoe9Lk
-	 kRYG5YOAEhhWJX2sNCu3Pl7lonBwby+ZinIhXmEVJnL7Ahy4k858wH5kVGZkrgCu6j
-	 cP+B0aTnXONg0wJLIkW6H15r/gPjegA9ItVuhv2pQcuMkOX9N7Xpkl+eC91lLS5+7l
-	 wwHWocYvbB9wrTQfJy15fVIxT/htEEAzVJHQREUniV+3bvxHSXPd/bcOo18glzhX00
-	 wF5Sboa1ktHhMPhaTL4wQZYA4psu7VYQthoawI/ejYlQrdgM+DIxpcltAR7QTnXQtC
-	 uUWH3gBEmHlxQ==
-Date: Tue, 10 Nov 2026 10:50:53 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
- fwnode operation
-Message-ID: <l7ppjeoqvc6hblk52a6upei4ee2caahe2ltiur4gwig3ez7d3c@dmzzy22ixvlc>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
- <auuhy40x1BMoW96-@ashevche-desk.local>
- <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
- <avICwdxyi-W1Y3PD@ashevche-desk.local>
- <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
- <CAHp75VcwiGHB73ny8iSvXeFdjbTKUpnXZPS5iD7NwaMcJ6q-7A@mail.gmail.com>
+	s=k20260515; t=1794304381;
+	bh=fT31XLKUQuRmxzdqIKu0tH+kJNHQhLTcjslw879wGR8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=TQKlb41lI4RDKQ8tDImElNGyAfW0fMdyvLQCvPeNqgQ07ZXRedM6ti2wVjopsmh7F
+	 /YZC6s2AL+k0eU8XHT8YZIrJaTA14iTrFkhm2D84xolMnT1s54MkfFjznVjqzHnUta
+	 sjJsNO3nJzjicFgYF9GtpjIibVjtyQLm3HPGJFtgXaoMN/0gJj6zy12EKa1fEZ5cWK
+	 /PDVwh65kO/V0SzLqupPGitAmatpeNSwpLtgFIloA5QlFJpbTvlOthDVDIn9w1BPOM
+	 CZgVYNEncBsgcpa2ziTtwmpD8z0ttwZMx0f0yURuCRtFkeLvdcN816I49HwbVVCcXt
+	 9QmwPxxnZBQbg==
+Message-ID: <sashiko-outbox-206812@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 01/12] pinctrl: airoha: fix setting of GPIO direction
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Zhengping Zhang" <zhengping.zhang@airoha.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261110094339.749110-2-zhengping.zhang@airoha.com>
+References: <20261110094339.749110-1-zhengping.zhang@airoha.com>
+ <20261110094339.749110-2-zhengping.zhang@airoha.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 10 Nov 2026 09:53:01 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,110 +59,40 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VcwiGHB73ny8iSvXeFdjbTKUpnXZPS5iD7NwaMcJ6q-7A@mail.gmail.com>
 
-On Tue, Nov 10, 2026 at 11:12:02AM +0200, Andy Shevchenko wrote:
-> On Tue, Nov 10, 2026 at 11:00 AM Bartosz Golaszewski <brgl@kernel.org> wrote:
-> > On Mon, Nov 09, 2026 at 07:28:33PM +0200, Andy Shevchenko wrote:
-> > > On Mon, Nov 09, 2026 at 02:07:46PM +0100, Bartosz Golaszewski wrote:
-> > > > On Wed, Nov 04, 2026 at 11:21:15PM +0200, Andy Shevchenko wrote:
-> > > > > On Wed, Nov 04, 2026 at 03:03:47PM +0100, Bartosz Golaszewski wrote:
-> 
-> ...
-> 
-> > > > > > +               names[i] = kstrdup(prop->name, GFP_KERNEL);
-> > > > >
-> > > > > Can property be statically defined somewhere? We might want to also optimize
-> > > > > these duplications with const variant (here or elsewhere, for fwnode generic
-> > > > > path, I believe).
-> > > >
-> > > > Please rephrase because I'm not quite following what you're saying.
-> > >
-> > > Can prop->name come from something that is declared as
-> > >
-> > > static const ... foo = {
-> > >       ... .name = "bar";
-> > > };
-> >
-> > You can't know it for every instance of struct fwnode_handle, so the
-> > answer is: no.
-> 
-> I believe I misput my question. If there is any potential that *some*
-> of fwnodes use statically defined string literals for the property
-> name? If so, kstrdup_const() and friends may be a better choice here
-> to save some memory (which is getting more and more expensive these
-> days :-).
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] pinctrl: airoha: missing Fixes: trailer on GPIO direction fix
+--
+
+commit 6dcec8340cfdb81d9b7f8c972e7a3451fe15d376
+Author: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
+
+> pinctrl: airoha: fix setting of GPIO direction
 >
-
-Ah, that makes more sense. I'll look into it.
-
-> > PS: is there a way of using match_string() with non-const data?
-> 
-> Why? It's an input parameter, it returns an index. Whatever you
-> provide will be not modified.
+> The GPIO_CTRL registers have two bits per GPIO where the values 0x2 and
+> 0x3 are reserved. It can happen that both bits in GPIO_CTRL of a GPIO
+> are set when the pinctrl driver is probed (e.g. modified by bootloader),
+> but the current code just clears the LSB. Thus when switching a certain
+> GPIO to output, the updated GPIO_CTRL register can contain the reserved
+> value 0x2 for that GPIO. This can result in not driving the GPIO pin at
+> all.
 >
+> Always clear both bits per GPIO and just set the LSB when the GPIO is
+> configured for output.
+>
+> Signed-off-by: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
+> Signed-off-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 
-What I mean is that the following change
+[Severity: Low]
+Since this fixes the single-bit GPIO_CTRL mask introduced in
+1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC") and later
+moved into airoha_gpio_set_direction() by 62b1dd7eeaca ("pinctrl: airoha:
+add set_direction() helper for gpio_chip"), should it include a Fixes:
+tag?
 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 40fbf01a9faa..1c43fd2c8d57 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -563,7 +563,7 @@ EXPORT_SYMBOL_GPL(fwnode_property_match_string);
-  */
- int fwnode_property_get_names(const struct fwnode_handle *fwnode, char ***props)
- {
--	int ret1, ret2 = -ENXIO, n1, n2, i, j, count;
-+	int ret, ret1, ret2 = -ENXIO, n1, n2, i, count;
- 	char **prim = NULL, **sec = NULL, **merged;
+  Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
 
- 	if (IS_ERR_OR_NULL(fwnode) || !props)
-@@ -604,12 +604,9 @@ int fwnode_property_get_names(const struct fwnode_handle *fwnode, char ***props)
-
- 	/* Properties from the primary node take precedence. */
- 	for (i = 0; i < n2; i++) {
--		for (j = 0; j < n1; j++) {
--			if (!strcmp(merged[j], sec_props.array[i]))
--				break;
--		}
-+		ret = match_string(merged, n1, sec_props.array[i]);
-
--		if (j >= n1) {
-+		if (ret >= n1) {
- 			merged[count++] = sec_props.array[i];
- 			sec_props.array[i] = NULL;
- 		}
-
-Results in:
-
-  CC      drivers/base/property.o
-drivers/base/property.c: In function ‘fwnode_property_get_names’:
-drivers/base/property.c:607:36: error: passing argument 1 of ‘match_string’ from incompatible pointer type [-Wincompatible-pointer-types]
-  607 |                 ret = match_string(merged, n1, sec_props.array[i]);
-      |                                    ^~~~~~
-      |                                    |
-      |                                    char **
-In file included from ./arch/arm64/include/asm/processor.h:34,
-                 from ./include/linux/sched.h:13,
-                 from ./include/linux/ratelimit.h:6,
-                 from ./include/linux/dev_printk.h:16,
-                 from ./include/linux/device.h:15,
-                 from drivers/base/property.c:11:
-./include/linux/string.h:336:38: note: expected ‘const char * const*’ but argument is of type ‘char **’
-  336 | int match_string(const char * const *array, size_t n, const char *string);
-      |                  ~~~~~~~~~~~~~~~~~~~~^~~~~
-make[4]: *** [scripts/Makefile.build:321: drivers/base/property.o] Error 1
-make[3]: *** [scripts/Makefile.build:603: drivers/base] Error 2
-make[2]: *** [scripts/Makefile.build:603: drivers] Error 2
-
-And I don't see a good way of working around it without doing:
-
-	match_string((const char *const)merged, n1, sec_props.array[i]));
-
-which is ugly.
-
-Bart
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110094339.7491=
+10-1-zhengping.zhang@airoha.com?part=3D1
