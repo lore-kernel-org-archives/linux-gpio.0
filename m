@@ -1,102 +1,119 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.170
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794302292;
-	b=20a3wFh4DVxklgUCMNuiEdEwwviMU1QQ3noZD5GZdG99zFCDEwVtTdDAtyUpe+otr8FP
-	 fDukXatl8FqYI/w/vD2M1VuVpy0DNbG+vYrJ/mWh6RPxywtVyfl4ZIEyPmswPLYfLO78L
-	 BYqGdk0W29xxm21EG2jM8QbbYw5pmzH+L22X3AhKVDfy62+/navZPxjAXTUQImDMh/yNo
-	 jOyoH5UIKH7R/urPqg0rDA46mc5RgGGkGWjE/bsq6u5H83oV/vUOSe78467DM145QiAaZ
-	 5dvoX+2/6afkLKed8LgCd6kxD4CzUS469Ji7Jz0CRnCR8U1NoQ0s+Z0KgoOLTT3Alrw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794302292;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=tIES/1ZtUVQWW9RQ9o/3BCRLnyN+/ueCJUQ4SJ2LWzc=;
-	b=LD52uzo3VTktkYagkt6cyjEctgbYNNQhsdMOIFBiIu8tgMo+qw9ZuU3U4sc3/HbSFRQ4
-	 u4MFP+iA3AuacGeqnyvNJmVfyGChTrJuR6bLWhLwld71dGrxmCv9scbeEyw6qMvtDmgAy
-	 ObJmp7GQtQ6If2dPYTbDc4SOco4rYjMFhdOPDf5DFMwNiYRY6aKvpTbP7sQ/3S+8Ddxnu
-	 CDNgzkE2kbhQCPediYQJNhXmrrIDCl/KxC8nPxiXx8iQxwUZXpYXOk5pytx2kZM48oGV7
-	 XGggXAFRErYcqaBKnPhId2gTfF+DKnpfUN0hklR7dREeaoG21fLhxDfPKAmKIw/lBOQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YDsa4LgU;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.170
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794302344;
+	b=GaIZ1aBXQENV/yDbZ8z9yglNfpyc+44wvs8a7f1a2vE+Nv6YuNHCRyrsKkatgwc8R9f+
+	 hWMPgLVC4LF2bhzeiMFEZ6EkQa9xNqsRxXCYU8jIvSf2G4+tWXhqZxfjeu6aFCxM/mcWn
+	 /t8CrGa9wFKgGQjv5bYQnumyOFhOA4JzCjtaZQRIfCT3PPeDBR1/45zuOD8yK2ZvgGZMJ
+	 shMU8Y8DruRvBV5bQUPmWxzttgZx6OjBVqWwK4Kr0HRfWiQLKQj52JVJB+9fRch71hGf+
+	 8y+lnOQmuwjfRYp8e2pHIHtWjDRrx6xJjdsgjuP7qFzOKd5zMuIdbybDio/xIBg7IZg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794302344;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
+	 X-Received:X-Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-GUID:X-Authority-Analysis:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=RrfbhJhpWyjn5vAaoJoaKtZ+zVmxKxTyBXnZ3krPL+Q=;
+	b=BW7gx8BnGTJzzM186w4zfUVsJjYhX9vMBx/Bb7aNr1nTGGcSmJxFMse9hxofShi65Yeu
+	 5q0eXb5iE9nYjpsNp/evAAIOt/LHyPzbK0QURFhoNhPYHkqKDkXh7DD2OzNras1zpZ1Es
+	 orOJ0b3PN6stDH0ZhurDEePNDyaT7F21XvdvxYtLT6TvPmn2satJiOcL4wE5fKMbVHvQy
+	 +NxuL0RU8L4BzQ/1wwsRv4i0Z+3mRUsx9hFyQkkbWCIfqoNrwvd/0cMYqUCUtofsPV4oF
+	 cT1RB7+IIf+mbP/gHHu8ym+WnAhBALYuI4CdSAeAjmVVNlIlAAZcSEEZFexvYUVJhhA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=lGdQVQDw;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=SDqUyk+n;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA6A6072649
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:18:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CAA6A6072649
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF4B6076136
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:19:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4DF4B6076136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YDsa4LgU
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-8b308fca7c3so16627247b3.2
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 01:18:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794302290; cv=none;
-        d=google.com; s=arc-20260327;
-        b=f3uO2gdXVvrdTx8GRFmfAmgVDBFqRJ/Ft/o34hlufRommmJinozpd0e+uVPZZGACed
-         M7hwg53kbcsPbcveUqH/sOJt+qmOon0ZzEpwV2+xtNn0n6YGjqqs3gIhYy84RL4X5JDl
-         e5lf9ugUP5E1bZUdAJM7qIt4CpGkvrSFaC98PT1JKZtAzRwGWb66Ju/FVj2+W928eXid
-         krJH6qIedXsl05pDovR2S/ZAP30B1OdRmP1hDCshmz27JqJQZFLsVOo6lyqR1C4tsNvs
-         HRICFgunKOviQa0ipkvSaNGPnGsU/pzleExq1/pTENFLd/T2oKZo/Bfsp+Z+f3bonH0R
-         m16g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=tIES/1ZtUVQWW9RQ9o/3BCRLnyN+/ueCJUQ4SJ2LWzc=;
-        fh=Lf8v4cAjf31BFJsmdzCCz+ufoOPcZoSBJ0R2ddd+ag0=;
-        b=jk0ZU0DJJgsoKznXRrU0oMe5gCiq0ucXuEtAYGFigQejR3vVWY0mqNfyEQP2GwJCUf
-         XIM7T0Kgg2QT1uQD13SdB0uEH+AUZx5POc0oHZZRRcfDaCjgFvLIHOQzgAZTnk+My8qy
-         Xn8VRvcwNIC9csKLtSkWY1bEFaLABXtohJVte8hPxXDAddGLXnSX2e7hxUX7DAxb13OK
-         43c2wPpzgz3bCxKS1y+uHIuA2PAYMYzAKjpAfzcIM9+THVQlACmL57AutIEWAuuqXFcx
-         E4Zb1MZWxumGinDE7AXBqmwG1AuAY0oXhgH2SVgX/1EDsjvMLzZZ9kxGfnA5tggcbbBD
-         6cTg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=lGdQVQDw;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=SDqUyk+n
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AA8W4f22833660
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:19:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RrfbhJhpWyjn5vAaoJoaKtZ+zVmxKxTyBXnZ3krPL+Q=; b=lGdQVQDw79Sh9JG1
+	8t+u/9SE1w9T/GDpMW3jqAX6AqQHlngxI3rIix8AENJ8NV/bocMLECKXVkTVsXt9
+	HXa3CMR2BcGNT28XH5HhLRl7rEFy4Wfp0YtPiJ9iGgHNXn+RbzCenwWA3csg7/DB
+	s7P9Ezc/8AlMmofHYtop9siWG4WM391uMEda3DhZkWDi7VF7n0Oz4uhqywfU9dT+
+	gcclxyMxa8U9lUH2HWAq7laq5FWoWKrnVMsoeYaTUYSo7MsejR3gKSUtFXjruPre
+	Wdg2TLtNGyxodwHNkfWr927hc9gwlUTpjvxpoBzVFQ19Yhod1d9pjMABT9tXXXXI
+	sdAt8w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4huyufr6b2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:19:03 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93f3969a2a7so301451685a.2
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 01:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794302290; x=1794907090; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=oss.qualcomm.com; s=google; t=1794302343; x=1794907143; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=tIES/1ZtUVQWW9RQ9o/3BCRLnyN+/ueCJUQ4SJ2LWzc=;
-        b=YDsa4LgUv5n0lWCUEIfmMCWjIYt6ygKSrwZsVZ+QjGAEdhc8q2QeEvjCPA1Z/6u537
-         WkjwNa1Il5/wGDPX9MiFyr1CTUOScTcunw8/VFBx6wd+llOK8aFQ2hvAUZiWBy8FRwZ0
-         KK0usChUNLfDYp9sawBKytdDycg+VjkVsbOP5trDabilCoYB19+bsEUTnoxz8N1EWRI0
-         bYEQWMG85TSLNUn5jHqYijJLZ32w/k6K4rTsT9Z9kQ198Zoh3osjWgWPrckZQ64E/Pz7
-         vR5bIY15GRLc0p6zrmq7/EcJvsWvE0ZcUSq0erbvi7xitWc9w0qNYrSonBI9pW0dQCGV
-         n1Zw==
+        bh=RrfbhJhpWyjn5vAaoJoaKtZ+zVmxKxTyBXnZ3krPL+Q=;
+        b=SDqUyk+necOVYJzybnwYI2ofeiM8nlUZsEglufLnX8VNlNX/pBzqhXLfdgmhm80CF8
+         pTa5DAU4ve0MNlFg1WEIoklPInTf1mQSXwoEOhPpbLqJwRNDdSIzVBE1ZNzYU1yakv6F
+         1/LhZgwCURRXOt7wlM2NGegaKQHICQ2glEv2p2pZR+HRhOaDlF+46d9P1InUcye1btsM
+         YzNIp7gCjEeUA0J9z3fLlIDXv7UQ4+5K6FipPkVrLBZyJ/FFwG15XdKIbeB9pJ72LnC5
+         aCtbDNLmA1ntqfh941rHIOnN+aj3kxKFro0djmhuYesTgStQvElA0BwPUJMmQMejn/iA
+         geXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794302290; x=1794907090;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1794302343; x=1794907143;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=tIES/1ZtUVQWW9RQ9o/3BCRLnyN+/ueCJUQ4SJ2LWzc=;
-        b=oL9EcbTfT2Tx0TF1fdhB4bWlFnZviW4yx2fQYpCHZDCbszy9E1GWbl6LRBKZJiau0a
-         J+MkPi6xtc7c4vWnQHguQt2mCn5YmAv4/8fN2VYWuthgcyWMP+6BlD3QC1ygZ5VZBr3F
-         nfuw62YlfAVXIr6AAzkWG42698ZJ6+cN0nPFol9F+MNPS+J4TwAehn5d3X3xcWD2hd1b
-         9ejJXhsnOdGBbt1UiTDIiRSA0fqYQhxXdtq6JB7btvKiTb6C/s2xLBru/r9r8rNg6G/p
-         p9BtXc+5ZtfiatVJz6QQTmxFT2qnq7sZ87LPmMjE3GtXveKdcPHJSjWgJXI6DyfBNboa
-         NmJg==
-X-Forwarded-Encrypted: i=1; AL+hErGWZbxWgYVqJKlb/rXNp8fRO5Pr5dy+/v/OIYhsxouWS8+EK/MslqPrXSxLksxB3a52DMC/RcJvqMta@vger.kernel.org
-X-Gm-Message-State: APuU4Z/N0MMq44muX/CbB1a7t6pknYMwmbhrvC7tGsk/TDtClF2azqBr
-	GZ4ZXFWgU6GzokYJKECBie42tufPEot+3k900H0Gd9FtVaFummI9z2wbmMfdAtL7HG+B2bum3aH
-	NuQ4XtDQVs4uupSewLtV3PhQAglK73C2jCueF4kg=
-X-Gm-Gg: AYBFou308fOSbTnSl7L6Gwwk6Oap4hqzRB9YNdaWc+Ljad005ZvVHpHSIu5HjqMyYeO
-	4UeEmwGrY2F5vx2EAYOHw+qcMi5zFtJfchrcqSZJ/BMZUsgU/ZUOPfmekyx1jlEReCsUXc8nqTB
-	rNJ3zflIcsWcqhjrPxKMunEXXL9gzfNis4KFm12WnfvYoJ2yJJzAFJYRT+PJ4oGg6R4TRs2bkhw
-	tpdFuys6saFWC6ycmCtCpjb1KiZd/tVkKqfrq9sVhIs4HkhWqNl17Uwd7j3cUmapQa3Pl32cNMF
-	7bHST5IyJy5xu8NwxHhRlHzCUobjqhdmlyvC2LZaeR0MPMW4OGd5NKiB4Bm/oTbVwqM5E8Ecqwv
-	G4fr8TmGKV3xKvuQG99P9kOPfqO6QsJmvS0hfYy+l5UZmRg7ga/6TQp16Pwi2TNjVq1svI9C2A9
-	WUsqV+ttJD/Vr+C6zkAfDeiDRqtKJZdBZEacLaRJT+H8WRJ06h+6Ui1uw82Pg3yrUfx0w/3Q4sX
-	w3iLfBuu87mMl+4es6tBw0U6OOoFzrW5eyYorRxp6bCeq4c3JCrwlWf5l7BlA==
-X-Received: by 2002:a05:690c:c6d1:b0:8b3:3f54:353b with SMTP id
- 00721157ae682-8b392a5fd86mr10563747b3.23.1794302290725; Tue, 10 Nov 2026
- 01:18:10 -0800 (PST)
+        bh=RrfbhJhpWyjn5vAaoJoaKtZ+zVmxKxTyBXnZ3krPL+Q=;
+        b=1nn+97GTD16MgRJeRnkkuVX5aT4MnO5NAPNr2d246j+2GjioJ+oTwBj2yMRuh3ILR2
+         2mrreOMlvDeAEez9j+YrH3h4+bWAM6RCX9tmkeKqHwSwa7Dg1IkUy8eG1xjKWU+FSQvy
+         m5Okw7tN1nP2R0e7k3DE6ftXbfX6nclk6akf3WH0OmDPkU+XWzGxt/fLq1jYvOMHgb0S
+         Pb5e0ICBX5nfPbWZmNUJ3WqjkOzDrCyB6UemOpGq2TwL+ReELtDxXgTvE7YoASFWnAft
+         OhZkT3+zhg+Fbv/Ch8QAbDXgrJs/QJXW7TCyPczjNsOlp3mnE2cdJNkJ3trc23dt98wF
+         8YpA==
+X-Gm-Message-State: APuU4Z9Kpn7SpC07LpeS8ARDpBJuaSEzOMYmpwsmwz7/jHU+cKmfKSa1
+	VbEHHmqfWINVM6TwZRQgtxQQ+/Q3CUFVWGwGE/3CfGjiVxrEO8GSxWB0T3UIGI5BGaTgbu1wvj7
+	ZkcC5XwpARbzc7eAag2y+CvNXLk9+BUruz/C37JsrCCN2sH8Gxfk4Imo3uBiebgnj
+X-Gm-Gg: AYBFou3qUiQ/tOb0o4/D0I1UQBDo42i92AQnIPDnfaChhPGbFIitCy25AFvyVIpZs79
+	ycl/VyLoRq05B7iyq0qxCoJ1kfLuRxO2E7b3B22ss+buKCgpFJhZUHh+WqeFDtM7G14Zdr+O+VM
+	u6ZRKd7o0CDap4l4IAJNB54n3637/BzKpkHnSEjuGcRoz8hI7BKSNnMjVLILEYzr8K+mkUtv7dt
+	mijhVf3TG1H4hSo7SvcgGEVaIiCck+OxwND0ZyKEBIAtC2K35mn+F274YSyMTn6aXm+4YKlbgaV
+	q+BQLxBQWcQxj05tPZkWWRSPPueq0TyjQFRn7fwJDqDhgjqlXmjDQ8We56kzhwWe0Zft3zVc5xf
+	kItmFGMKaH38y3fIF9mRIq/mHB3ju4qMRjuP8rSJNv+2+KvnIDGk8D1oun5qcMxtmKEZEncIABD
+	aYj7J/bb2mmX05WwXDxx0+1Go22YHj1VxHGJuEQup6/NO9ejC69sLOy5nEIPUy3A==
+X-Received: by 2002:a05:620a:319e:b0:93f:633b:ee1f with SMTP id af79cd13be357-9479f2b50c8mr335994785a.28.1794302342567;
+        Tue, 10 Nov 2026 01:19:02 -0800 (PST)
+X-Received: by 2002:a05:620a:319e:b0:93f:633b:ee1f with SMTP id af79cd13be357-9479f2b50c8mr335993185a.28.1794302342156;
+        Tue, 10 Nov 2026 01:19:02 -0800 (PST)
+Received: from brgl-qcom.home (2a01cb1d00dc7e0089167b9b97a26c96.ipv6.abo.wanadoo.fr. [2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba01fba476sm60276505e9.2.2026.11.10.01.19.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Nov 2026 01:19:01 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: synchronize updates of descriptor labels
+Date: Tue, 10 Nov 2026 10:18:59 +0100
+Message-ID: <179430233645.6529.8490191928778846102.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261105-gpiolib-set-desc-label-corruption-v1-1-fa84726ceac0@oss.qualcomm.com>
+References: <20261105-gpiolib-set-desc-label-corruption-v1-1-fa84726ceac0@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -106,42 +123,56 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261105-gpio-sodaville-use-after-free-v1-1-f572f40feedd@oss.qualcomm.com>
- <kyqnjm57yrercvg5raacrxwt46p2fig6leeeywipv66c3iqzlg@tdh5swet65jb>
-In-Reply-To: <kyqnjm57yrercvg5raacrxwt46p2fig6leeeywipv66c3iqzlg@tdh5swet65jb>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 10 Nov 2026 11:17:34 +0200
-X-Gm-Features: AclHuK_tfRAddWryhIu2itwZTuCw6dMSKtHbGDbuVRDpd2s9leUebZVLl6Fly40
-Message-ID: <CAHp75VcO0tFShCN5n+7WXQwM9ZBAUS7-0G+SQL3LW_tbObKtpQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sodaville: fix use-after-free bug when registering
- the irqchip
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Andy Shevchenko <andy@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: QCRCHLX-9O-cQHXuXbAFx2hTsVSgqUFX
+X-Authority-Analysis: v=2.4 cv=S6lMU4sP c=1 sm=1 tr=0 ts=6af2e187 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=w_KnAPlzl-2QHVUEQtYA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: QCRCHLX-9O-cQHXuXbAFx2hTsVSgqUFX
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEwMDAzNiBTYWx0ZWRfX1s2tiOd8KUd4
+ kutZVi7vyNgjiWXpiiAcBicwzkOgKVoztLLrs2e5g/GVlzsdyVgEP1goWcpx9c0vh5mu7EuwS9i
+ YrxOYy9CDSrM7J71eBdeUlzepFwszSA=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEwMDAzNiBTYWx0ZWRfX4J626QkhC+tE
+ 4FSTDtPY6SPLnfN4HBQf0G/IY6kgQq//CPRcE4woQsM4QM/6SyBazYs2q6p80fcyqjj/OOU9APb
+ frQSWezco3WfBgBE5SAZjo3h2TcFB1h4Z/gaqFV6fXZG4g8gS2dZ+wyTZ+Cv6FE4dm5UiLVtHX4
+ YVGD+SlOBnm7KOGLibvoZtIODGClwWI9CilxwLMq32fVcCQRhGAtpZUbSnco5+EC14cVvhKT5Wd
+ xsxqR45feDvVmAZKSkDbd26TUwZ75S73cmAgWq+BpEmrTEKtiGf0TFGpVlkCIVsRQqCqo6luHIM
+ b0vGc2EyCNEgbANg2gFjqA7vV3RBz351PZiE2EMUOr1eitEl5MtD5OQOHArxowz9O0+SePqHt9M
+ ZEPse70FV1sTylUV/9ud3wSJgYqUkRxWU7KPWHsUpvmKLL2QE747iywHB9nsawLRx6WZHTCopuP
+ S/c/mc1GCvp4XMiJQow==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-10_03,2026-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611100036
 
-On Tue, Nov 10, 2026 at 11:15=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.o=
-rg> wrote:
->
-> On Thu, Nov 05, 2026 at 02:14:27PM +0100, Bartosz Golaszewski wrote:
-> > In sdv_register_irqsupport(), if irq_domain_create_legacy() fails durin=
-g
-> > device probing, a generic IRQ chip is left registered in the global gc_=
-list
-> > while its underlying memory is freed, leading to a use-after-free. Use
-> > the managed variant of irq_setup_generic_chip() to ensure that the chip
-> > gets unregistered before the memory it uses is freed.
-> >
->
-> Andy, will you queue this or should I take it for this week's PR with
-> fixes?
 
-Feel free to take it, I won't think of any conflicts in this area in
-the future with this driver.
+On Thu, 05 Nov 2026 14:23:45 +0100, Bartosz Golaszewski wrote:
+> desc_set_label() swaps desc->label with rcu_replace_pointer() but
+> without any synchronization of concurrent updates. The swap is a plain
+> read + write: two threads can observe the same old label and then call
+> call_scru() on the same SRCU head corrupting the state of the chain.
+> 
+> Add a spinlock to struct gpio_device - we're using a single spinlock for
+> all descriptors as using a per-descriptor lock would unnecessarily bloat
+> the size of the desc array with very little chance and no consequences of
+> contention - and use it to serialize the pointer update.
+> 
+> [...]
 
---=20
-With Best Regards,
-Andy Shevchenko
+Applied, thanks!
+
+[1/1] gpiolib: synchronize updates of descriptor labels
+      https://git.kernel.org/brgl/c/82028344caeed2ea3536708906adee02e472633d
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
