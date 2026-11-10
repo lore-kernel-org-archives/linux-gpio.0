@@ -1,69 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794324556;
-	b=txc8TYG20njGoayuf3LmRJZi0O8DmRqp7dnPGvjfqsRTkgYgO6VH5fkc4adX6nVHm1Ti
-	 GGIQygiDvA2MTaERZT7XRfMOGiA8rz1iF0S9MROb/FKKLkQKlctaLt8mhKO7I/6aroanJ
-	 KCWvEcKsiUX9CEAJWFNRjCDi9dkO+0zioJFr1I04hyCNnNsPP/MDsgnzt8aXqVwDqYY1m
-	 6p4EAKwWrK1UiNDXzT5aEZAlFWma5aLPFP9MlH/wDu0CnTSjw+lsU0fd6nsVgXj5dQJMC
-	 0MT+28Pg0yDSBML8w+QZus2aLPXigzQeE4RP8Lzjdsl67/JTYiyfHec9TuUzvNv7p1g==
+	t=1794324803;
+	b=hfXQ1dzqQqtsv0N2K5+8rL2lmJ0IsJ5aZ5/ejqUXwFneT+Sm8snITfA2x0fhXbzzEZ1R
+	 DEMwbOEDL8+4UsVl6p/0H34UkiB44aeGkJDmSayFPkKljRIJ6uY1tZ8DTz3OVlo1dUf1c
+	 G1/iqcwj2x4uM9cHV71Fx1luGIdlLMtG6YLIck4dRVWCOUEcF6x+XiXjmyIcj85bsMHtT
+	 mcW5V906NmS8XoLTUBwN296ye4FYaNVFX8RklEcxyj0dH9N1fxShOyWCk8OwDzPWIOn9l
+	 C90DPx0S6+Wsz5Gge8ZQCEpWGycEYwGhrUi1cZLcTEUMh+HSEpb8P7DO+aXSjoWyxvQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794324556;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 X-Zmail-TransId:X-Mailer:Message-ID:In-Reply-To:References:Date:
-	 Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:X-TLS:
-	 X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:X-Fangmail-Anti-Spam-Filtered:
-	 X-Fangmail-MID-QID;
-	bh=ojmfQEgabq7LjYhH/0e/WnDqt5DoTFwwRvbtK/l+cuQ=;
-	b=Y9J1gp5lpNRtJP+jfc/fb6+fN5NDA27BbO1k6J++B681DRzxYxuXUuPUz1M03rw1uHc0
-	 SgqE8tw/4dDQCy9SDm8igICi1h+++S/XK4e3MqAUo9y2qMXW9mhnD8lDljpfWyhWTnfdP
-	 fSm86dbrYJ42S7b0tpPdMMvcW4IFpZZuHuRrHKp8SlYVShimeOzN+pTvSrwqZjzceHXcf
-	 5MnnZnoEwsXF8lkLE2xJbFuSJKWBtdVUbfg2uyIqxhbHTr0MvlH+ZBfG7SNoDU2mOD0Bb
-	 Zi9VGDNUGdxnvoKuBfm6Tuy7ZJzbiEMHy47Tqo8vMVMUEBT0/dxonkN2RvQ2/UOpQNw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794324803;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:X-Mailer:
+	 Alx-In-Reply-To:MIME-Version:Content-Type:Content-Disposition;
+	bh=XCxFswGonhuE70D4bHiEsaJMPpD38NA8Fe7r383T5jE=;
+	b=EMNgWp5MM5/w6hjo3AOKEJ76/vX3n7mYXIHdQLxgzFo/ffkuMCieXTmdtkV5+bl1/tq/
+	 cqegvVKGu8w1g6s0Ceroc053OrBAH7kiUKSVYofVO5ZOP4ioYm94cEdHfzk6enk7kAKi1
+	 /GH2OFMBNfGNBzh/2iK4DrV78kHam2avGckV4MUaT10+L+6pg3SjuLgzxk7B84OTtrnS9
+	 EcTsiF4C1wTKKhRnZlPVBxYenXzJMy6phM37BYjIKnqmVpR26wHI0rhjMjtmvYQuPLmS1
+	 4Dc4fbfyVPCnihiqT21sz3gC3tfAtqYjdpqqfw1QwDcbrM5cssGYdd3gGS9ALaPgIJA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	dkim=pass header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=f+weS3Bw;
-	arc=none smtp.remote-ip=160.30.148.34
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ddie5fmi;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7447606A31C;
-	Tue, 10 Nov 2026 15:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7447606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B44606A332;
+	Tue, 10 Nov 2026 15:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=f+weS3Bw
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jP9YQ44Xpz5BNRx;
-	Tue, 10 Nov 2026 23:29:14 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
-	s=z202610; t=1794324554;
-	bh=fufO+gX6QS4vo+PTSpCfSfgRsHaMCX+Zwe2EReJIm4s=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject;
-	b=f+weS3BwTi7EjVvJzjg8og72BGqTcVFu7uNqdJzjcOUTWkYio/x8UlMx0bPNxTNSK
-	 Bp8H74HZsqovweks1CR6c31vfZE+nKPypz4/eqlhn2aohJx3yPbV2w7oQhxnXpR84z
-	 88a84ehoSoS3XrAKGrvkJcgoiq25M+fERztdLH9oSncqyuqN1QOgJHk5b0tqNISvti
-	 li4NzX8Tc6FcZQYT/XNq9gm+MprVGsobGEhRNqKw4FPH9OAfVMY/+B6OQFc+ET2gV3
-	 YIuJohuOnrt8GsYkLROprdJPNI6gv+j7PpUTVYiLCoF08cHRngXKIHNGY3B46/yXVD
-	 p6to1nXbsm58w==
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 6AAFT4wR023884;
-	Tue, 10 Nov 2026 23:29:04 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 10 Nov 2026 23:29:07 +0800 (CST)
-X-Zmail-TransId: 2af96af338431b4-1c7dd
-X-Mailer: Zmail v1.0
-Message-ID: <20261110232907733D52XsR40GxjBszev8WXDA@zte.com.cn>
-In-Reply-To: <20261110232858050VtOdBBpXCW3UEgZXA69mH@zte.com.cn>
-References: 20261110232858050VtOdBBpXCW3UEgZXA69mH@zte.com.cn
-Date: Tue, 10 Nov 2026 23:29:07 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ddie5fmi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C8A91F008BC;
+	Tue, 10 Nov 2026 15:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794324803;
+	bh=XCxFswGonhuE70D4bHiEsaJMPpD38NA8Fe7r383T5jE=;
+	h=Date:From:To:Cc:Subject;
+	b=Ddie5fmijPGpWDhGPmU+YjBYCpO5CEMKmqG4sNfMvkr//zUNZs3epGRhkI8paoKet
+	 wQ4vpdKa5p8mdW2cObWPCOOPKzonr50YJ4VO1PSfeVdUyeUxbB2uZ1wnheKlGftFAR
+	 cLOslfVMB4yrZSG5ZrBf1MSX9glRSMIHiwagiHg2CTz7yTJtNIIi80uayaOs4cqH+x
+	 eUbdJ7xO1lKv1gLumX5pXvrPj+T7aEVBOYEYFod+IE+/mKcUu+qbpMu1SWN2knF5aE
+	 KDIZ1CntjQRnLQEGEm7OIdHUan7qwdDxOAF1Y3KHjGYBKpbMYdhRvpvx+vSTKRyM9g
+	 2PsPHgsQ/jucA==
+Date: Tue, 10 Nov 2026 16:33:15 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-hardening@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Alejandro Colomar <alx@kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v3 0/5] Add strprefix() and fix a bug with it
+Message-ID: <cover.1794323750.git.alx@kernel.org>
+X-Mailer: git-send-email 2.55.0
+Alx-In-Reply-To: <cover.1793876837.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,68 +69,234 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <linusw@kernel.org>, <brgl@kernel.org>, <linux-gpio@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <andrew@codeconstruct.com.au>,
-        <wbg@kernel.org>, <opendmb@gmail.com>, <florian.fainelli@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <jelonek.jonas@gmail.com>
-Subject: =?UTF-8?B?W1BBVENIIHYyIDQvNF0gZ3BpbzogbGluZS1tdXg6IGZpeCB1bnNpZ25lZCB0cnVuY2F0aW9uIG9mIHByb3BlcnR5IGNvdW50IGVycm9y?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 6AAFT4wR023884
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 10 Nov 2026 23:29:14 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AF3384A.001/4jP9YQ44Xpz5BNRx
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ldbuj4gtwrs6ecqn"
+Content-Disposition: inline
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-device_property_count_u32() returns an int and reports errors with a
-negative errno (e.g. -EINVAL when the "gpio-line-mux-states" property is
-missing).  Storing that into an unsigned int turns -EINVAL into a huge
-value, so the "if (!ngpio)" guard never triggers and struct_size() then
-computes a huge size.  The allocation fails with -ENOMEM, hiding the
-real error; struct_size() saturates on overflow, so this is not an
-undersized allocation on 32-bit builds either.
+--ldbuj4gtwrs6ecqn
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-hardening@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Alejandro Colomar <alx@kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v3 0/5] Add strprefix() and fix a bug with it
+Message-ID: <cover.1794323750.git.alx@kernel.org>
+MIME-Version: 1.0
 
-Use a signed int for the count, propagate the property-array error, and
-reject a zero count.
+Hi!
 
-Fixes: 2b03d9a40cd1 ("gpio: add gpio-line-mux driver")
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
----
-v2:
-  - keep the declarations in reverse christmas tree order; merge
-    "int ngpio, ret" (Jonas Jelonek)
-  - propagate the property-array errno when ngpio < 0, and map only a
-    zero count to -EINVAL (Jonas Jelonek)
-v1: https://lore.kernel.org/all/20261107161258203oCy-Pa4_0rNe65TqrzFWD@zte.com.cn/
+str_has_prefix() is based on sizes and lengths, which means it must
+overload the valid length 0 to mean not found.  This is a typical
+consequence of choosing to design an API around sizes and lengths, and
+vanishes when moving to pointer-based similar APIs.
 
- drivers/gpio/gpio-line-mux.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+According to its author (Steven R.), str_has_prefix() was never meant to
+accept an empty prefix, but that's not documented, and there's no
+obvious reason why that would be acceptable for a generic string
+function (as opposed to a function very specific to its original use).
+Users of strings need a function whose behavior extends naturally to the
+empty string, and we can do better, by returning a pointer.  And indeed,
+users have ended up using str_has_prefix() with empty prefix, expecting
+it to work (as is natural of a generic string API).
 
-diff --git a/drivers/gpio/gpio-line-mux.c b/drivers/gpio/gpio-line-mux.c
-index b4452d956bf0271d25598de2117c0db73805aba6..00b69632c4401300d11bbc296306df114d18c08f 100644
---- a/drivers/gpio/gpio-line-mux.c
-+++ b/drivers/gpio/gpio-line-mux.c
-@@ -48,11 +48,12 @@ static int gpio_lmux_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct gpio_lmux *glm;
--	unsigned int ngpio;
- 	size_t size;
--	int ret;
-+	int ngpio, ret;
- 
- 	ngpio = device_property_count_u32(dev, "gpio-line-mux-states");
-+	if (ngpio < 0)
-+		return ngpio;
- 	if (!ngpio)
- 		return -EINVAL;
- 
--- 
-2.27.0
+This patch set adds strprefix(), deprecates str_has_prefix(), and uses
+strprefix() in one place to fix a bug reported by Bartosz.
+
+We can later work on replacing the other uses of str_has_prefix(), which
+might hide similar bugs.
+
+This patch set also adds infrastructure to make string functions return
+a pointer that is as qualified as the input pointer.
+
+Changes in v2
+~~~~~~~~~~~~~
+
+-  Copy the description from str_has_prefix().  [Steve]
+-  Add links for the Reported-by tags.
+-  Make these APIs const-generic.  [Geert]
+
+I didn't apply some changes requested by reviewers:
+
+-  I didn't remove the deprecation of str_has_prefix(), because I think
+   it should not be used in new code.  It remains useful for code that
+   is already using it, because rewriting all the surrounding code to
+   use pointers instead of offsets might be too risky.  However, for new
+   code, strprefix() produces simpler code, and is safer, so I don't see
+   why str_has_prefix() would be good in any new code.
+
+-  I didn't rename strprefix() to strsuffix(), because that name would
+   be worse (strsuffix() is widely implemented with other semantics, and
+   having it different here would lead to confusion and bugs).  Andy
+   agreed.
+
+See range-diff below.
+
+Testing
+~~~~~~~
+
+I haven't changed the implementation of the function, so haven't re-run
+tests.  Since the changes since v2 are only about type safety, with a
+new wrapper macro, I have built again with 'allmodconfig', just to make
+sure it still compiles.
+
+
+Have a lovely day!
+Alex
+
+v1: <https://lore.kernel.org/linux-hardening/cover.1793876837.git.alx@kerne=
+l.org/>
+v2: <https://lore.kernel.org/linux-hardening/cover.1793882260.git.alx@kerne=
+l.org/>
+
+Alejandro Colomar (5):
+  string: Add strprefix(), and deprecate str_has_prefix()
+  device property: Fix fwnode_name_eq() for empty node names
+  stddef: Add const_cast()
+  string: Add [C]QChar_of() and QVoid_of()
+  string: Make strprefix() const-qualifier-generic
+
+ drivers/base/property.c  |  5 +---
+ include/linux/stddef.h   | 12 ++++++++
+ include/linux/string.h   | 63 +++++++++++++++++++++++++++++++++++++---
+ lib/tests/string_kunit.c |  9 ++++++
+ 4 files changed, 81 insertions(+), 8 deletions(-)
+
+Range-diff against v2:
+1:  d3b325ecefd1 ! 1:  556766412884 string: Add strprefix(), and deprecate =
+str_has_prefix()
+    @@ Commit message
+    =20
+         We'll slowly migrate existing code from str_has_prefix() to strpre=
+fix().
+    =20
+    +    Copy the description from str_has_prefix().
+    +
+         Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm=
+=2Ecom>
+    +    Link: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-=
+each-prop-v1-1-6e28fe1c72c4@oss.qualcomm.com/
+         Cc: Andy Shevchenko <andy@kernel.org>
+         Signed-off-by: Alejandro Colomar <alx@kernel.org>
+    =20
+      ## include/linux/string.h ##
+     @@ include/linux/string.h: void memcpy_and_pad(void *dest, size_t dest=
+_len, const void *src, size_t count,
+    - 	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
+      })
+     =20
+    -+/**
+    + /**
+    +- * str_has_prefix - Test if a string has a given prefix
+    +- * @str: The string to test
+    +- * @prefix: The string to see if @str starts with
+     + * strprefix - string prefix
+     + * @s: The string to be tested
+     + * @prefix: The string to see if @s starts with
+    -+ *
+    -+ * Returns:
+    -+ * *  @s+strlen(@prefix) if @s starts with @prefix
+    -+ * *  NULL if @s does not start with @prefix
+    -+ */
+    -+static __always_inline char *strprefix(const char *s, const char *pre=
+fix)
+    -+{
+    -+	size_t len =3D strlen(prefix);
+    -+	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
+    -+}
+    -+
+    - /**
+    -  * str_has_prefix - Test if a string has a given prefix
+    -  * @str: The string to test
+    -  * @prefix: The string to see if @str starts with
+       *
+    -+ * DEPRECATED: Use strprefix()
+    -+ *
+       * A common way to test a prefix of a string is to do:
+       *  strncmp(str, prefix, sizeof(prefix) - 1)
+       *
+       * But this can lead to bugs due to typos, or if prefix is a pointer
+     - * and not a constant. Instead use str_has_prefix().
+    ++ * and not a constant. Instead use strprefix().
+    ++ *
+    ++ * Returns:
+    ++ * *  @s+strlen(@prefix) if @s starts with @prefix
+    ++ * *  NULL if @s does not start with @prefix
+    ++ */
+    ++static inline char *strprefix(const char *s, const char *prefix)
+    ++{
+    ++	size_t len =3D strlen(prefix);
+    ++	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
+    ++}
+    ++
+    ++/**
+    ++ * str_has_prefix - Test if a string has a given prefix
+    ++ * @str: The string to test
+    ++ * @prefix: The string to see if @str starts with
+    ++ *
+    ++ * DEPRECATED: Use strprefix()
+    ++ *
+    ++ * A common way to test a prefix of a string is to do:
+    ++ *  strncmp(str, prefix, sizeof(prefix) - 1)
+    ++ *
+    ++ * But this can lead to bugs due to typos, or if prefix is a pointer
+     + * and not a constant. Instead use strprefix().
+       *
+       * Returns:
+2:  ac9728afa027 ! 2:  eed085c85f36 device property: Fix fwnode_name_eq() f=
+or empty node names
+    @@ Commit message
+    =20
+         Fixes: a9c8c738066b7 ("device property: Add fwnode_name_eq()")
+         Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm=
+=2Ecom>
+    +    Link: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-=
+each-prop-v1-1-6e28fe1c72c4@oss.qualcomm.com/
+         Cc: Andy Shevchenko <andy@kernel.org>
+         Signed-off-by: Alejandro Colomar <alx@kernel.org>
+    =20
+-:  ------------ > 3:  2bf5cf7baad8 stddef: Add const_cast()
+-:  ------------ > 4:  415453a31ebf string: Add [C]QChar_of() and QVoid_of()
+-:  ------------ > 5:  35bf6672f84f string: Make strprefix() const-qualifie=
+r-generic
+--=20
+2.55.0
+
+
+--ldbuj4gtwrs6ecqn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzOTUACgkQ64mZXMKQ
+wqnw2xAAsmfnUTsvAQv1TyrYARi1Rd58hvUnxkG0m6V70un81IQZzPti4rO0jV16
+0Fog3LISySdunRGGJ7C5HE4TaZYCs/sbwTLU6LY+cLR6iNrQUbMt5JJ2csSsh9FZ
+/rf0HmaN1+Vrefx9yPI/ORllPlLfH3kCaOYxrYZwQKXxWPPCfmAX2juZwRrIrUEL
+qrpTLm6saG5XjpbaklmpSvFhwB9xp5g0BOj9GTrB9msYVlvGtyYh6OuO/T/uPfg1
+RJtPsIU0xly8E8EFdmMjPj+Rl9wAljEiM8+bFftAvLPLI5R/UY8WQG9Vw1vyyZhK
+IMxpEBg0/ukd1nXwiV4xN3aMxBMw3/JjILW9iv4WR3r5fCLUgvJWxsKkRsoq2SNA
+fYkw+617nuwSDyI3jqD/UUGw7OEHLvUTHGA9zMRVirJUY/y0l0gpbNYZJzABNcTw
+sIRWOcIvaUp16PU5jKcB0Zw6lPs5rjdoVhcRgPy7hpg3um5icBOnIx8p26VwlmJL
+CfRFjY/fTiGzEcBL+MG8FU3FTy41SWTfeCWAzwUzrWgZhdQTGvRh1b6jcsqTubpS
+QNCQ+2tGq93IX9uv3IhtwUB7+Op/a3V1s456OTWHrhAulkmDy3DUN3lJc8espvXr
+qaVWVPlJDQbKx0o7Jgr+L6Fm6wlHspagP7b550s7AtoCTCEQ1Qw=
+=S/N8
+-----END PGP SIGNATURE-----
+
+--ldbuj4gtwrs6ecqn--
