@@ -1,88 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.142
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794326833;
-	b=EeSnGibHF/LTC0CqKIrtYUw38CFU64jprzWcVZEvZI/k+2qiotQ1x3/sXGSCtlf0TV47
-	 LKeUGgNnD7x0L+sGrTaraNDdQ9njTouYFc6egVfvmGrYvdbTeb3bVsEjg/G4xVWQjnpSl
-	 SdlDYjK6Lv8v+bZk6NiWSWNpd39lm1uAqTBosBDr59FgpHGBlC7Gf8LSJT7D4juPH6I0E
-	 sUnpu5Hps6ojfxNZTBcaGmum73bg7CikFLw/awf2R/l+7v/TOuNhceiLxE0gqyEgQoN1d
-	 Q1HymWstt7/NDkX2gSJGMQhIINRkE+GCAimdq7Jr8Z5mJIV0OxgiMxOwPGxzVe4ZHQg==
+	t=1794327194;
+	b=2fqX09vqk31UxPtOidKYcB2AusIOIRcG03x3J95fqTSYthCA3qCbK+a7NX69/ntVNY1y
+	 K6mxawSQ2NwW3PLHPFy4CSph0wzSQ9hYLn5OOGu4ZrmK5FRajwRzy2wjIqp7YN7LTLxwT
+	 rIH8idenHRLcnKIapWyB441AVvc9l/Vufkhyey46beGD+GPUSTT3ogXnbo/mj5HPdPoKb
+	 8c1fWSxu1TjYK06Jtc/nk4vZo/A1kbGUQjKuKC6H+YHT/6ukx1Z5O9Q+j0B5WxDiVKR0+
+	 USVPTCwdEFdjS9axRqEhPE1UYFx7dR7K3UZtCundEruTFpvmnhm7wl1Ks/AktK4RMQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794326833;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:Content-Language:To:
-	 Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Hx7PdOFoy3DDyb5Yl9lhBRCrmT8HbVEMfYuz02WsYzw=;
-	b=P0sYCmWZQcLulTdTGmeZ6nO4ylphwmYqlAhqzKTnaDDc7auh6fmeTsEFXTH0vs7FjBn8
-	 0t1ot2QW7dasKWY73g14dY/gVfmKJ6xZdhJaWqrUzIZb9lCWjXsxzz3FMu2ojuh/zJOWz
-	 Dg+qtYlf7kCXndJ7nvv33WNQNsY+pZCiNfZKKGB5+83++qGVuVOBjGJxaIgMhrgwTs13j
-	 f8FswCx+OxpTH8izZyPkKIFT9X1udKxQcjAV+BClcGS+UeIk7K742zN9/1QBiHvn9sF/+
-	 WovUVxjhAovYUjfCa34GPDtmg1BL9xvILSNfEpArlQMiY/kq35TjiMvqqdmr768M4Ww==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794327194;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=4stWdQp7BpJLS0676322fsmeG4ymFjAT9IbMRkPmpp0=;
+	b=gQB4H5v5bxkl2NbdOr4OomdPE5rlUXo/Ot5o4OJKyNJN8zxttZcu90QluYysXBb2PhsB
+	 X1yForbclIu4bBz2RRflhKJRdOCxaifSuLZf+mqGQFEKkVR8ecBosmmQWZF16FjxylNFt
+	 om+OCQq08VMq/hSt7oZfQeGcBUjmyMOsy+As0E+X8rWYSBXeVnlNkddvRikxPh475k5Uq
+	 pn1+F4Wn91efsysCW4yG4HcwZqtiRtWeY4SgXFGBPlc0/+oToo8li7YG0MVOxKIJAejrA
+	 S9vo0vfHLfTpXtrUQm1MJ/9twIr2ll27aZAX2KlnUa1drYyyJZ8rjwQmiRaWJALwFPw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XDjiHE03;
-	arc=none smtp.remote-ip=209.85.218.54
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=arndb.de;
+	spf=pass smtp.mailfrom=arndb.de;
+	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=asQC+qHD;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=pjDZKFBW;
+	arc=none smtp.remote-ip=103.168.172.142
+Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4CF606A321
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 16:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F4CF606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEFE606A333
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 16:13:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0CEFE606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XDjiHE03
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c504bfd7393so139026866b.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 08:07:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794326831; x=1794931631; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Hx7PdOFoy3DDyb5Yl9lhBRCrmT8HbVEMfYuz02WsYzw=;
-        b=XDjiHE03zZBunu/ipDBY/mgWQbXa2axnnltc3YePQgBV8RPN1JM1Ou9GlFxXY17m1Q
-         RSlHAVYSkhRhJSo8FFG6K6gM0yfiUeC8zKpPIOSQPeDu5t7KsvijzV+fN9gxHc7407bs
-         1yCLVAHoqhGCM/kUsg43WbPmY12Ao1nqrxGQzZ+ljryuDOzRgWbuKnsFWDYFvDxmv7ms
-         b1Wna2pyQ3ykpuxN97HitesQ9/JyDj6RPvWEAsFHMNcONOsWanuH7/L6Pv70+dhi+lzn
-         28AQdmm1qACi5Q82u0VafPXe72OlvYC0RwtolxkO/x6tLiL7WSgG3HXZrchhLDdyokvM
-         plMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794326831; x=1794931631;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Hx7PdOFoy3DDyb5Yl9lhBRCrmT8HbVEMfYuz02WsYzw=;
-        b=ZkMvovwMIgFQ1/A1y7FwrWUGJ0utRkPR+yYy9rRJLmOtN2juBMwQVwM0TcXA19inOW
-         h6Ihc/29lqGANQvEr8L6F8biLL6PC/rQ514yBNjlIrwfteYXWTaXQ2Rbld+PfdYNqiIg
-         0sAJ9H0m+8hQeGAqKcPfBOIajHzRohizUC6j+NLAfVplrr9lr2nunpUzxHgOv1MkDSG/
-         bnAGeVY2HWM2lDQWfjswl8NFt04z41lJ2oOZxtznvwqtUoIJZnqcFFSV2X+oNy2UiHZq
-         u/t3sxVOfDl7WeP0gztCcLsZIi+eVamxJFxiLQMsjnq59JozzCIZBwAZARbg30nURK1E
-         Qplg==
-X-Forwarded-Encrypted: i=1; AL+hErFFhpXmCaz20J907OIZlkx1IYRJFTG7u7fUmqCZdyQMNUCbvn8rAzNER9uhFXjL5f8DWRJOS70kWWGR@vger.kernel.org
-X-Gm-Message-State: APuU4Z8faPA9uR8EbaXqkkNxtOgzVICuF1ZREGIn6CNJwBauTmLfGgP+
-	lZC6w8BD8Z2VaSS2zekjr++F3PGJwswQ5elQ942lQRdvqjxuOcSOduWZ
-X-Gm-Gg: AYBFou2xmQ8oIdpkiKhds4l0PdIZ87OVTi9qbZldRS6t+o3ePi4L9JipdP3x5U7GXHm
-	hq4oyfN6ckjIeHpYvISQmDvCSitTQLNQyTfeUgoituPnoI17wkH0PLbhbVVWaQaOfRFKz63+38Z
-	kOMNniVc2WwCgM8Ou9kygI3EjgUYH3AvIkQpo999PS0lGDkC41Ln2PSFno3g1znTFQHfjdtjuqT
-	TyjOqIt8X7xoautn3e7LI3D1qMHIOmrc5VCSJf/PFx3JRVjrCSWkhcALEL5cyTgI+JgInNCFtDD
-	QO62RNByaMItdMSQyExq+YeCqASMjXG3wmj9p1Mf4esXCmJNDV/bnDCKnyF1vCEanpsmE9xtxEh
-	NdKo0AFN+eIubLHADtdVB6Xc0VGYc5LDbF1vAgz5r6O/hj9myLkWG1J80XEVy8IpBg/bBoZsO0P
-	ktkzbl5dOxGuWvQMCylhfB4lQnA5RlrmhQ355HkWrO29vgeFoFvI+4buYbRJRXXpe4YR/2Ais20
-	5iP4mRcLWVCb1uDDTMP+WniziawxGETNWxlLSTr3+d/D6AjN+j8klI7bm92REB0nK6ycn055rRH
-	qecRQsErYKHm456ziNLR/fC16lSBStAT1rzAlF6XEIIfmxNWz3VbgjTIqZj41RRPAga6My0nPKM
-	HqRfgtOiJIBNYgSNT2xgD1lgBlPU=
-X-Received: by 2002:a17:907:3f0d:b0:c2e:4a61:d436 with SMTP id a640c23a62f3a-c50495d6ee1mr267672066b.36.1794326830946;
-        Tue, 10 Nov 2026 08:07:10 -0800 (PST)
-Received: from ?IPV6:2001:9e8:f112:4801:300f:57c8:c9fd:3080? ([2001:9e8:f112:4801:300f:57c8:c9fd:3080])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c504a6551efsm126029266b.68.2026.11.10.08.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 08:07:06 -0800 (PST)
-Message-ID: <8f5f5582-523f-4632-be69-b176f7ac52db@gmail.com>
-Date: Tue, 10 Nov 2026 17:07:04 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=asQC+qHD;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=pjDZKFBW
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailflow.phl.internal (Postfix) with ESMTP id 3DC3813813D7
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 11:13:13 -0500 (EST)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Tue, 10 Nov 2026 11:13:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1794327177;
+	 x=1794334377; bh=4stWdQp7BpJLS0676322fsmeG4ymFjAT9IbMRkPmpp0=; b=
+	asQC+qHDAv/I83EYngLJ0bkBe+uuEnPcLg0jrc2OX9kVtaPYAd/md3quox9jqmy4
+	S/jELTpXjA2k1IxJWtdK3HZW4IriVAHis0xufJR256BBPAzbfZ5QsGw2eqYq1k/I
+	S4qzaUtb3Ob4GAV2mxThnKp0r/zG0TfcXAK+eUmyQOHhHqtyGONG7gkgzRBQG2d0
+	/gzJT11LHsGNvLKSZnn9JL3iytYjrT3V7KZt2FZsHfjjQeZHywjaesrjJhD0e7vN
+	Y6/iN3Jg7w8xS8OVdYMBSUZOfxDnVhVfPJGqKe/oSxsAZXPn7y2e4GOOItdMLZ2R
+	LLVckhHoSzC+MGE1iJu5eg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794327177; x=
+	1794334377; bh=4stWdQp7BpJLS0676322fsmeG4ymFjAT9IbMRkPmpp0=; b=p
+	jDZKFBWlX484yfO06iZThedU7MnSaqyMkXKHKaXomC5/xVavgZU65SsCjokZJWML
+	GjeTj8Lq4+LWeI1CWzzxuQj2m4isbVa0ssa9g7eZhXilCypVINe5kxTBiobUF6uZ
+	Gtle0jaTmJtlAyGlrtNmbTTDPt9uAjbADo1dgbyzsDA47ykOoKjYt1o87LKBSqHb
+	mP2YIbspjWDiF2EJOgZRHTKT7VhzsY0TtBEN2nWcPAnRSw5Q7HRlPmorpTONvfpP
+	auvP37j94bGeH1y2GQ4LwX12DjFEZi+3xGQave3kINRA2PBRPI5FXxcFzbhhhvXR
+	Tsc8Y3Jb1FgwsS6Y0dcjg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=arndb.de a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794327177; d=arndb.de;
+	mf=PGFybmRAYXJuZGIuZGU+;
+	rt=PGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:kQxWF7m3/+x82CoFMezkLzHAggrtBQKwNQMpfjKt8CGazw9
+	7J0YvMMHNUgkV+kPuejU1dcEud7aBTdckb25NRF5jpqMDfZ+uudIQ+bUuNuZzQ3B
+	hTxTIz/OtLeWGUlfn6JZ9lheXT/p0xHASfKyrdGo62jni1bVx44E9AALGqRCod/p
+	wjthxUg8G/d6TB7jqHj6GJVV1veIm20UB323RkVMz0Kfu2JxXpc7G6Gqbs8vYkmD
+	KkdWdeheEG523COPBCmmTLDJgvUbg5xJt4xgdfHyXRFRTTvm7qfIt3RcwJoU117M
+	YTSXc00PV91OOvXYoUxlCTh6aC8H+RGhhYm2uaA==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:NY+qH6VFe1gb9eaYka4u3Pju9dQg6z2rB5jHAxzea+M=:YUoKa4y1cAE3r8AhMFawDzVW7orX9AEZ4cmB97mmTGA=;
+X-ME-Sender: <xms:gELzat-KhdG49YOXD28knxP-wmxhvouurLuqg65ijoK_1PztTiM67w>
+    <xme:gELzashOw3MORHNRaj5VZYoHPjgRatChT2__Hps4-a7QS4ExIju8qL8_9B3SiDtB2
+    sGKQug7JFF_lfIFqrxv09JzfzrzZWKrRlvdLjWPWqavJafwb6XI9q0tBA>
+X-ME-Proxy-Cause: dmFkZTEwJqmeu88i0D1P4NSr1o0RdeyL0ncQrpwlZpsRiyH4mGhKK76jqiY9/AURvmAyKQ
+    Xh2LjT8fovpOgpIQnvH5QYWZs5UCg8lDhPsbwXo4GfEZeWp/aOvfLOYPWjqnmAFI1BwG/q
+    XyZG43p0HoLIgnysLFo6MzsLlgysOWgB08DJdha5yxDuEjeXR7MU6VvvNb4tgDJLpz9WaL
+    DOmlUn0Mje4CQssJm+pxYVCWPCE7uxZNBjliBSIc14Pa1+Q+euFKNdLxxVitjY9vJ+1g1T
+    +rig9iVkFuoti3t+qEcHMM2vh4+G+ag1IzrG3We9+FcQnC6cOfB1bItA6vAPi6A+u1KULf
+    wxoJ36bIqa+kM9OWApvgKo4MId3H8RRe0FCkMwp8Cj2i2hPzQqFijO+zALFklT7XBp4yQ4
+    D0Bsmvzif3sMMCJY2OSk1bwCPIIRPEFuJI4Mi/vpw7sfUa+jfrhN159tiieQQE7aztSV43
+    DlSawBFw+hJYm5oAPkD2NlBoL/gRh3vgmwf+Y/GbihlHM/o3EcsWCertLTOcD6iStWXR7G
+    LAS2aVSdVtxoGSiZj2/kYUSfLhEBFCn05KpxcrFYCW/FmzT2YT72YPVx3p0wR8sMiJ3lAW
+    x+8+3z8XttowLJjfinG9ew4R0xJsilSkEkmhmN5AqofFDl0uTCDo7P0ixMQQ
+X-ME-Proxy: <xmx:hkLzak2BPEyGi10FxxkrY3byRVHSjq_0wLclV2jUuSmkyRE3xcj4fw>
+    <xmx:hkLzakkySXPgYGwh_r1Ql-VHDAdYXcQ3p0tjVOV29OCOWQo8MbFMmw>
+    <xmx:hkLzavloJp1yUj6WriMMnPneQ8pVgU9Ew-sH84r-kdZ-OdXPheHDYw>
+    <xmx:hkLzarPnZB-B1EOixQtLefzjQeDp3wnHNrTbJ3SPpTKyjOvpO-EsFA>
+    <xmx:iULzajThipr-UxTyuQQEJ7jWDCsE73KlfzXTf41eZRpd8Rpi4a2MNCT2>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id AC32432A0097; Tue, 10 Nov 2026 11:12:48 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -92,75 +115,97 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] gpio: line-mux: fix unsigned truncation of property
- count error
-Content-Language: en-US
-To: shao.mingyin@zte.com.cn, linusw@kernel.org, brgl@kernel.org,
- linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20261110225742308FW7iPw8mc9gwd2DU0W-_w@zte.com.cn>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <20261110225742308FW7iPw8mc9gwd2DU0W-_w@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AK-jVwBtQCQR
+Date: Tue, 10 Nov 2026 17:12:28 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ "Jonathan Cameron" <jic23@kernel.org>
+Cc: "Svyatoslav Ryhel" <clamor95@gmail.com>,
+ "Arnd Bergmann" <arnd@kernel.org>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Bartosz Golaszewski" <brgl@kernel.org>, "Mark Brown" <broonie@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Daniel Thompson" <danielt@kernel.org>,
+ "Helge Deller" <deller@gmx.de>, devicetree@vger.kernel.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ dri-devel@lists.freedesktop.org, "Jingoo Han" <jingoohan1@gmail.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "Liam Girdwood" <lgirdwood@gmail.com>, "Linus Walleij" <linusw@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-fbdev@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ "Guenter Roeck" <linux@roeck-us.net>, linuxppc-dev@lists.ozlabs.org,
+ llvm@lists.linux.dev, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ mfd@lists.linux.dev, "Michael Hennerich" <michael.hennerich@analog.com>,
+ patches@opensource.cirrus.com, "Pavel Machek" <pavel@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Sebastian Reichel" <sre@kernel.org>,
+ "Support Opensource" <support.opensource@diasemi.com>
+Message-Id: <991009b6-e62b-46bd-9a0b-43c3b7a6d10a@app.fastmail.com>
+In-Reply-To: <avM5EnC9yujUZcCO@nsa>
+References: 
+ <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
+ <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+ <20260912232047.19c4cb10@jic23-hlaptop> <avM5EnC9yujUZcCO@nsa>
+Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shao,
+On Tue, Nov 10, 2026, at 16:39, Nuno S=C3=A1 wrote:
+> On Sat, Sep 12, 2026 at 11:20:47PM +0100, Jonathan Cameron wrote:
+>> On Thu, 10 Sep 2026 20:14:15 +0200 "Arnd Bergmann" <arnd@arndb.de> wr=
+ote:
 
-On 10.11.26 15:57, shao.mingyin@zte.com.cn wrote:
-> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>> > drivers/iio/adc/ad7793.c
+>> Maybe. Analog devices ack needed.
+>>=20
+>> Production part but this one indeed fails to probe.  Analog
+>> folk, do you want to fix this one up?
 >
-> device_property_count_u32() returns an int and reports errors with a
-> negative errno (e.g. -EINVAL when the "gpio-line-mux-states" property is
-> missing).  Storing that into an unsigned int turns -EINVAL into a huge
-> value, so the "if (!ngpio)" guard never triggers and struct_size() then
-> computes a huge size.  The allocation fails with -ENOMEM, hiding the
-> real error; struct_size() saturates on overflow, so this is not an
-> undersized allocation on 32-bit builds either.
->
-> Use a signed int for the count, propagate the property-array error, and
-> reject a zero count.
->
-> Fixes: 2b03d9a40cd1 ("gpio: add gpio-line-mux driver")
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-> Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> ---
-> This patch supersedes 5/5 of the v1 series; 1/5 has been withdrawn and
-> 2/5-4/5 are unchanged.
->
-> v2:
->   - keep the declarations in reverse christmas tree order; merge
->     "int ngpio, ret" (Jonas Jelonek)
->   - propagate the property-array errno when ngpio < 0, and map only a
->     zero count to -EINVAL (Jonas Jelonek)
-> v1: https://lore.kernel.org/all/20261107161258203oCy-Pa4_0rNe65TqrzFWD@zte.com.cn/
->
->  drivers/gpio/gpio-line-mux.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-line-mux.c b/drivers/gpio/gpio-line-mux.c
-> index b4452d956bf0271d25598de2117c0db73805aba6..00b69632c4401300d11bbc296306df114d18c08f 100644
-> --- a/drivers/gpio/gpio-line-mux.c
-> +++ b/drivers/gpio/gpio-line-mux.c
-> @@ -48,11 +48,12 @@ static int gpio_lmux_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct gpio_lmux *glm;
-> -	unsigned int ngpio;
->  	size_t size;
-> -	int ret;
-> +	int ngpio, ret;
->  
+> Given it's production we should fix. Looking at platdata seems to nice=
+ly
+> fir in DT. Issue is that I don't have HW with me to test. So I'll maybe
+> just remove platdata and assume some defaults.
 
-I think you still need to move it up where 'unsigned int ngpio' was before 
-for RCT.
+Sounds good. I already dropped my removal patch for this one.
 
->  	ngpio = device_property_count_u32(dev, "gpio-line-mux-states");
-> +	if (ngpio < 0)
-> +		return ngpio;
->  	if (!ngpio)
->  		return -EINVAL;
->  
+>> > drivers/iio/frequency/ad9523.c
+>> Maybe. Analog Devices ack needed.
+>>=20
+>
+> Hmm we definitely use this one and we have OF support out of tree with
+> likely some DT abuse of what can be in DT or not. Not sure if I have
+> some HW around but we'll need to fix it.
+>
+> In general for ADI parts, I think we can drop the ones that are not
+> recommended for new designs. All the others I tempted to say we should
+> keep. Naturally we need to fix all the drivers that do not compile
+> without platdata. And for the ones with defaults we can also just remo=
+ve
+> platdata and use the plain defaults.
 
-Best,
-Jonas
+Ok, I'll leave it alone as well now.
+
+I currently still have patches to remove adp8860/8870 (backlight), ad7877
+(touchscreen), ad714x (touch) and adxl34x (input, not the iio one), which
+are currently unusable with DT but are all listed as in production.
+
+I assume you want to fix all of these and keep them in the kernel,
+but possibly still remove the adxl34x and only keep the IIO driver for
+that part?
+
+I also have patches to remove platform_data probing from ad5761, adf4350,
+ad5791, ad5421 and ad5504, these all have DT support.
+
+See=20
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/=
+?h=3Dboard-remove-7.4
+for the updated series. I hope to slowly get through that. Let
+me know if you want me to skip any more of those patches.
+
+Thanks,
+
+    Arnd
