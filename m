@@ -1,69 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794299578;
-	b=UODA6I+c8xVqj7TFRb1fq4w+Fd1DxpzcEtEVoGQNdIohGTREWS1IazuffW58z1KIuzy3
-	 uvPIgXxI+2S2FFnrdTRWjy5aN/7HqwoR9bIbWgANcsoPkcYsU4ZYKljBKrNHiyuSH91fq
-	 OzeEEmBXeZXByXOMB+aqPhNbiSaE2xQeZaOQSv+0WiYCkXV6HNrJbysQuONFxi2aY5LGf
-	 pM72psdWhV6OoLzfcXWwZDSqlUTsuOXL5GdNX8H3wniy4xHHQLLlIGWcedAhWff56H+Va
-	 LjHj3lETh38rVB5P5qHK4FnSEebbFrufyQPp0/so7g2JPLJK67cJAp4AyLL2weNYIBw==
+	t=1794300651;
+	b=Cf6UfDRSYG1X3ijDkx8tZgmxPhP4vWXQx5wg4eksjYYpPCFJsmgePM3WS6HwJGMpXuSw
+	 dlHiqcgNsL2GWNC8twwg3oT8PJVbeyWh3ZXZ8j7GL5J9iMXqS0BbNg2r3lal+D4WPLHbB
+	 UkamouHA5GYc9AXbygbR+bNeFEvKwZLi+NUxDJWcdvEqyH/l96ysKuhuEndTsBYkZC+Su
+	 c7IYp067XXLv+DYv5bjZ83y0aSvzU7Ob8HvCL4uwAotIt0WwfElc0Gi1PBCL9+NoIIbXF
+	 PqQT0n7wZpPEq9ejNSf+uWiQ0hjAZt86t23lopmUMVMnrklFC9G3Wkom54WnpGQ3ZHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794299578;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=xh8F630yN77eRVLFRW+731lWzZ0fRCWqNCGE0dp/ZXc=;
-	b=O7U3Y+0XmttZHK2hY0C4WTUvMKFtD4mssUEdOLAp2aSM4Gj3umba53atsLL5l6ixBCYp
-	 uoL+ruAAkEay5SY2g90cDwKIE/fZ9pwfwqnK46Y3J52etDwevAhRK2tAC7LEsMs1vxpx0
-	 pyqw6TqFysHVZEtoQ/eFKm2Rrz17oAC3R84QF98RoaiRUytE67erKxLyGnnI39uHy5Kyt
-	 MeevctvzCXNyi5UpnCYVW6PtxN0TcI0NZlvPLNFH4O4j2pWNGq/IWqHhk3WHUy7tQ7HEj
-	 riRSw0a0n8AnWmC+/NJv4r6h14GkFQTTZ/t2jy5N35/vRm2MzdMfrrQn5xur6QsgsVg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794300651;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=o3VdPSRK9H0HuvqvVAIiSd+1PkVCf5x+okbObysvyMQ=;
+	b=aJPjDKHix5qN79nCUbf+SaSf62//vQ4iW/ZRbNkGO+DeHpxGDQtMWcLJ39xjof7rIjA5
+	 H99BQfOAOAbCuqELH7hfKjA8lqN+nDrQIF5oc3DXb/hZAiHwRLa5fJLZaIU8q0h28MbXO
+	 QOEpr5mWDniNJ9hQ0CGCuHFyaunE0ujf7BhF/Qa8b5qxx8iPcXZr3i9yE0EfPVtyU4AyS
+	 rNwp+mKg/VdNhMaYBpVXMHEFa7PatMzeGAToBDhWHCWnWWO5fs4LEHEfMF68I9J/4eWVJ
+	 JMSo5922s6rJjYoxSonC/Z0+bIp8nRBMhcCD5m77xSfegfXFIQxJITEx2KQNAsUzvYg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ItYCH+sa;
-	arc=none smtp.remote-ip=111.22.67.135
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BE2606A326;
-	Tue, 10 Nov 2026 08:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3BE2606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U+weE6s5;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 52D29606A321;
+	Tue, 10 Nov 2026 08:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ItYCH+sa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=ItYCH+sas3HlcRu2sLhhlP5SXir0JwIAk4K2qif0N60G2LLd13VUdHoBXVkn8YFW9VNnh48Hgb6Su
-	 au7Pm9dN61xf5+hZecirANgBN87z3DYyaVvrHq5ABY+ieT5qv+7keswx5XmN1ZeW0JwLsiFVE2jn38
-	 XEcG386r1dbxm8p8=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee76af2d6b6447-cdcde;
-	Tue, 10 Nov 2026 16:32:55 +0800 (CST)
-X-RM-TRANSID:2ee76af2d6b6447-cdcde
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from DESKTOP-3K8GUTQ (unknown[223.108.79.98])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee46af2d6b551b-ae357;
-	Tue, 10 Nov 2026 16:32:54 +0800 (CST)
-X-RM-TRANSID:2ee46af2d6b551b-ae357
-From: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-To: antonio.borneo@foss.st.com,
-	linusw@kernel.org
-Cc: mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-Subject: [PATCH v2] pinctrl: stm32: Fix reset control leak in stm32_pctl_probe() error paths
-Date: Tue, 10 Nov 2026 16:32:52 +0800
-Message-ID: <20261110083253.1525-1-laixiangwu@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U+weE6s5
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 46E381F0089F;
+	Tue, 10 Nov 2026 08:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794300650;
+	bh=o3VdPSRK9H0HuvqvVAIiSd+1PkVCf5x+okbObysvyMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=U+weE6s5MD/8387GBJImcLeu74R630SpRdsqVYTBfryEGucgGQ7K1EiUWw7LeqzxM
+	 +E+Pna221n3af+qRE+0hRsugcutMutEM2c85ArD3MBlnFAgoPxWo7VI9L446NuduSs
+	 mZahv+mW2Q0QB8G20UldXUGA1bkPDy+GtLHTq9ym1/D6mFH2/PAh2ptOxaC+N0HbGq
+	 cnnF8gcCTnyihRD5CGAZe1hEjpFH4tEZH76pN8tGWwE8fb6AdVSwxyk0fFBa8g0Ype
+	 yaWyIxI+aH8wlz3d8pbp5yfwGuStiCAxEfjcDyehJEH1bBqg9xiOIVWi+ZR7o5WJYd
+	 jgvmIsCNiOKHQ==
+Date: Tue, 10 Nov 2026 09:50:47 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
+Message-ID: <avLZsjdbASMaYN1L@monoceros>
+References: <20261104215959.24035-1-rosenp@gmail.com>
+ <20261104215959.24035-6-rosenp@gmail.com>
+ <cw32kfja4uifaotvodb7cfxrpzawt4zqcuzf4k3hvjgxwutxqu@gyaayjuyq3j4>
+ <2d9d1da9-0d2e-461b-9c9a-eaf3dc512035@kernel.org>
+ <CAKxU2N-oA_EQ-nC4y6E+Y1XCaai_QNmicobvJZ03mRRDikZ5RA@mail.gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -73,92 +60,69 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-stm32_pctl_probe() acquires an exclusive reset control for every GPIO
-bank with of_reset_control_get_exclusive(), but none of the error
-paths release them again: the bank loop returns directly on
--EPROBE_DEFER and on a failed clock lookup, and the
-clk_bulk_prepare_enable() failure and the err_register path also
-leave the already acquired reset controls behind.
-
-On success the reset controls are kept for the lifetime of the device
-and are never released either (the driver has no .remove), but that
-is harmless.  On a failed probe, and in particular when the probe is
-retried after -EPROBE_DEFER, every attempt leaks another set of
-reset control references.
-
-Release the acquired reset controls on all error paths.
-
-Also release the clocks of the already processed banks on the
--EPROBE_DEFER path, which was missed by the earlier clock leak fix
-dfd8259507c5 ("pinctrl: stm32: Fix clock reference leak in
-stm32_pctl_probe()").
-
-Fixes: 2254e77665d5 ("pinctrl: stm32: defer probe if reset resource is not yet ready")
-Signed-off-by: laixiangwu <laixiangwu@cmss.chinamobile.com>
----
-Changes in v2:
-
-- Point the Fixes tag at 2254e77665d5, which introduced the reset
-  control acquisition in the stm32_pctl_probe() bank loop and the
-  -EPROBE_DEFER return path; bb949ed9b16b only replaced the child
-  node iteration helper (suggested by Sashiko AI review).
-- Also release the clocks of the already processed banks on the
-  -EPROBE_DEFER path, which was missed by dfd8259507c5.
-
-Link: https://lore.kernel.org/all/20261110065722.1340-1-laixiangwu@cmss.chinamobile.com
- drivers/pinctrl/stm32/pinctrl-stm32.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 98cf9c6f4..2a54a0176 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -1966,15 +1966,18 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		bank->rstc = of_reset_control_get_exclusive(np, NULL);
- 		if (PTR_ERR(bank->rstc) == -EPROBE_DEFER) {
- 			fwnode_handle_put(child);
--			return -EPROBE_DEFER;
-+			clk_bulk_put(i, pctl->clks);
-+			ret = -EPROBE_DEFER;
-+			goto err_put_rstcs;
- 		}
- 
- 		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
- 		if (IS_ERR(pctl->clks[i].clk)) {
- 			fwnode_handle_put(child);
- 			clk_bulk_put(i, pctl->clks);
--			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
--					     "failed to get clk\n");
-+			ret = dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
-+					    "failed to get clk\n");
-+			goto err_put_rstcs;
- 		}
- 		pctl->clks[i].id = "pctl";
- 		i++;
-@@ -1984,7 +1987,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(dev, "failed to prepare_enable clk (%d)\n", ret);
- 		clk_bulk_put(banks, pctl->clks);
--		return ret;
-+		goto err_put_rstcs;
- 	}
- 
- 	for_each_gpiochip_node(dev, child) {
-@@ -2009,6 +2012,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 
- 	clk_bulk_disable_unprepare(banks, pctl->clks);
- 	clk_bulk_put(banks, pctl->clks);
-+err_put_rstcs:
-+	for (i = 0; i < banks; i++)
-+		if (!IS_ERR_OR_NULL(pctl->banks[i].rstc))
-+			reset_control_put(pctl->banks[i].rstc);
- 	return ret;
- }
- EXPORT_SYMBOL(stm32_pctl_probe);
--- 
-2.50.1.windows.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hu5qy6ejaulp5gcl"
+Content-Disposition: inline
+In-Reply-To: <CAKxU2N-oA_EQ-nC4y6E+Y1XCaai_QNmicobvJZ03mRRDikZ5RA@mail.gmail.com>
 
 
+--hu5qy6ejaulp5gcl
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 5/5] gpio: ppc44x: tidy up includes and probe
+MIME-Version: 1.0
 
+On Mon, Nov 09, 2026 at 12:46:13PM -0800, Rosen Penev wrote:
+> On Mon, Nov 9, 2026 at 3:30=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@ke=
+rnel.org> wrote:
+> >
+> > Hello Bart,
+> >
+> > On 2026-11-09 10:01, Bartosz Golaszewski wrote:
+> > >>  static const struct of_device_id ppc44x_gpio_match[] =3D {
+> > >> -    {
+> > >> -            .compatible =3D "ibm,ppc4xx-gpio",
+> > >> -    },
+> > >> +    { .compatible =3D "ibm,ppc4xx-gpio" },
+> > >>      {},
+> > >
+> > > Uwe: is this in line with your recent cleanups?
+> > The change is fine, I'd appreciate to also do
+> >
+> > -       {},
+> > +       { }
+> >
+> > at the same time.
+> {} was done by clang-format IIRC.
+
+I saw that already, too. I'd argue that clang-format is wrong here, with
+non-empty initializers we want a space after the opening brance and
+before the closing one.
+
+Last time I looked (and IIRC), the kernel intended to still work with an
+old version of clang-format and that doesn't distinguish between a space
+between { } and ( ). For the latter we don't want a space, so there is
+no way to configure clang-format to do the right thing. That's better
+with newer clang-format versions, but I didn't find a way to specify { }
+and () without breaking older clang-format.
+
+Best regards
+Uwe
+
+--hu5qy6ejaulp5gcl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmry2uUACgkQj4D7WH0S
+/k6Z3Af/Ukihvr6an8xoXI2ftoIc2p51BSO0igI0VAtExDpb6IR+1D+Krj+nA4fE
+SzlUgDZPNUXkXm/RLhOi2UY4Ax8spKGumwiVTFzHE/yu12N9Jt6ze5gu6vubTsrm
+YqNd0Lv7WSNiJNeivLBKdSa1UkoDLGnF0XjPkemgosVdbB767BsTQ5xSdGl+wy2H
+GuysSB9aZdHU51P9mTP63HvNZRS47lK/pdVNE8z3Xzv3ajsShn4P7Yplv7csj6m4
+ChjCjHTfXOllzT83T/sqn42TiRCioWrbvt9SqlnKXqQCboy9fjwd8BPZNA5lbHZf
+ziuUR23Q9F5kG8ECYpRieF6SwRGzFQ==
+=uXlP
+-----END PGP SIGNATURE-----
+
+--hu5qy6ejaulp5gcl--
