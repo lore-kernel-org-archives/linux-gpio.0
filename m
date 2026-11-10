@@ -1,75 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794270529;
-	b=NG0M5OZZWAad9Dh/a046oqKCKZHdWxmQtP1K4D8fFN5OYix12kljUBaNDnvbjgWmERms
-	 lWbLEqMqR7IiwHM8LuqOjQDSo3VadhIOQqWjhoJaS4wyhdj5Nc8ZpJis2vNNKCJCFUdl9
-	 FKGFKTTjxIpjfmsaBKeX++Soqc2k27yoKVNWHULvY7l8lI3iDaoZOxZfoJgBnLJvk+oM5
-	 SXUCnkzfcx2D8lOWprXTu0jnqsMfV9XPCsgRqLZLtllCTkz0+3WkhHjtWGpjEL/60aqCv
-	 MHNLIA7H5HLYzp81VZelBcs9ct0Eeu2tzXknKm6tA1AzZLRFcpLpGkhPbYqhjmO63mg==
+	t=1794270591;
+	b=WoKUbv5UKneUE84M3EPYqYyrhUMz2BQQh/1ASYAkAzvdPcz/EJ7qK3YVIBZy82XG/Utb
+	 K2uTNTSwRmdApesKpbPY+581+TFxeT5EjQAzfgOlPNsTd2qfTXpR1M6KO49xFjxxhWsHF
+	 KZ64ksztTvqJonqyiKdOrI/AF+kzyvABrVvXuIHBdAcdPSwfS/QQsHXVkgt7xHKMg0vT0
+	 HEYLO5XmVrte5cwzUjB5sXLe8oyNdRVJKFsYJ6ymLcb91mH96c3GWKqyQNwvj+Elk5M2s
+	 R22kISTsDqojBtzI0Ei2EAtgt6+9jseFc2iSyL8FsW6yjGleLK2ZGFDeWwWOFFuhhbQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794270529;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794270591;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
 	 Cc:Subject:Message-ID:User-Agent;
-	bh=mrkbDxVN9yJbCPVSWnQpn8SnbI8WMDbpE8ya7JPtcGI=;
-	b=IuEDzAVfl49HrD5qRPalzPQ7OCvKjPFi+4VhF/CcJYfhnC68SGdPsavXQQydti8ceEwP
-	 TsOjHZ7iftRyNJEkoasc+lpRYt4H5O/g0X61XMtlLMPm7FPTJA1uP9rbbL1uPpUjLhb8T
-	 CIGXoxZpPSY6R/6m1oByfMA+O3pGsfypGLLKYOtcYr5x1n3ixjdOdVJ1IDHW8XvjE9M+1
-	 F7IDgEbczF6aawsIiWb9h0uEDT2OE/STgEEFv4xtqdkwMkk2dRwC7nyD269NeW0yLY0rx
-	 zUvHc+ARwHhyICJ2AHo3cJv2IYIIoa2Z+PcfGBpELaMUNh+kAGwt5tXxLSurRwPvafA==
+	bh=fgDYQifLIHnUXxa39ebTOYQnSQxQApyEdQ8qCBDWCBk=;
+	b=I0b3ZA121HMsW1Sigd2RNt3Qjija9hWzhBdxkNweqkSRKfKgf+F73MO6X8thYrwTq7T9
+	 n3Fm8NXr976YzSk9eRJW35VD/kjcynM13yHg0+b26ijOpsqZpgjZWRaYDtqGfJUZXJboT
+	 pvBFGcRFUPSgiKuSDGtoRrCYcCEmIueaBks7MpMRREwoUeBmn181QafMyAsBJZgUvAF1P
+	 tLPoZxZYEWVSU3B2ViV/RNlD6P9Oe/YLL3Do7WS39BX5Fvaczfe51OCXozQWlLSgV+ODN
+	 cX0tyQs9K+Vutmn3UxfA03b3QPMc+eDDNq1lH5FktS210Q+1pPq4TMyfgxAuBaOfRFA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CgpQHqfC;
-	arc=none smtp.remote-ip=198.175.65.16
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IhVfddRm;
+	arc=none smtp.remote-ip=198.175.65.11
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD182606A31C
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 00:28:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD182606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77406606A321
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 00:29:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77406606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CgpQHqfC
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IhVfddRm
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794270529; x=1825806529;
+  t=1794270589; x=1825806589;
   h=date:from:to:cc:subject:message-id;
-  bh=YAt0EYDj1XimziLkMUDXscofxUIXmfGA+I/WbSwlwys=;
-  b=CgpQHqfCsbMTk9q9/Fe9Az34su9sW+HFUEIu3vMbVV5C56fYNzIvKYn9
-   u2hWuokEVQPi0dqmsKLRb4Os8AIaBwUeCGU9E4yhrPxB67tyofGKyKhbL
-   pIMdySnV5eTcEiUijIFoq7vHQPfDwMvyeY/SyRwkOCxv/uKZvprqiwBuy
-   t+yKxpdjawBikPgXKgp8i4QDXd8PJ+Mzu7P+cFoBBvei5Sh0HWJtHUVVW
-   XIqdFBkDPVPM/kWVpi+KgkPS9w/jIOV5BqVgfgsDajJHYZWESma6rrSco
-   jzTpX81CqoguVy0JKJBCLqKZqgrI4D2iudOE5dRtzKOngeaKGc11sWcTe
-   Q==;
-X-CSE-ConnectionGUID: PgqXB5ZrTqyCKupCUcQsKQ==
-X-CSE-MsgGUID: OtWm4Qa5Q82OGr+fLmWgIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2994812"
+  bh=5w+OzWRf7gkSggNlI99KQFSMh/g+c1eePfB+rivn1ug=;
+  b=IhVfddRmAtJOuoExKlzTD6xU8FGSci3FR/Jy0vbN5hrw0pTq4xIODmam
+   7bR9TvwTPBEABBQiz8LMT1KBWKWOlb0qpjOgkjNZhU5QAfth0Q4fJBpFz
+   rtHPaFz/HRaQkpEb+r1ZllwNiRNXJeOv+CYDczrvyr4Ye+5KKQrNdzPkc
+   jDfAFR++8AFYWJ2MF9+vr/VS3MWhiAe8vG2UBaMvz0xYXVuiC2vkl2E/I
+   lo6NQT3cvcJSOog0TkzcCZqvbfnPA2aT6XoDsc3SsLAqDn0ScSe2HfOBi
+   YuJfYE+K6euFxuZWo2Y6DX+PtILPuOH+M4zxlU3Nlo0Olh3pr1AeTVzR+
+   A==;
+X-CSE-ConnectionGUID: Ra1Fd2GtSrmieLUSmAtkUA==
+X-CSE-MsgGUID: N5g0GeV+TfmUioKjtfT+jA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2894239"
 X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="2994812"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 16:28:49 -0800
-X-CSE-ConnectionGUID: 4e6IaH2fRwe7U+xGafB4mQ==
-X-CSE-MsgGUID: RcqRZb7iRaKp6WKyMYRxLQ==
+   d="scan'208";a="2894239"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 16:29:48 -0800
+X-CSE-ConnectionGUID: 4tBsd626RRGl9+ji2J0isA==
+X-CSE-MsgGUID: VG6KU/62SFCE1ZexZ+qpSA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="7892633"
+   d="scan'208";a="7994291"
 Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 09 Nov 2026 16:28:47 -0800
+  by fmviesa004.fm.intel.com with ESMTP; 09 Nov 2026 16:29:48 -0800
 Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1xQZjA-00000000vcV-3muS;
-	Tue, 10 Nov 2026 00:28:44 +0000
-Date: Tue, 10 Nov 2026 08:28:42 +0800
+	id 1xQZk9-00000000vcd-0Oig;
+	Tue, 10 Nov 2026 00:29:45 +0000
+Date: Tue, 10 Nov 2026 08:29:03 +0800
 From: kernel test robot <lkp@intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio:for-current] BUILD SUCCESS
- e20e4b8cda2b4d7dd32dbd2c0875a15d92545f04
-Message-ID: <20261110082842.Nm9qY0Ds-lkp@intel.com>
+Subject: [brgl:pinctrl-qcom:for-current] BUILD SUCCESS
+ 6c940958950e5df52831fb8c78a045d426b09f1b
+Message-ID: <20261110082903.gKoyhUNe-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,12 +80,12 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: e20e4b8cda2b4d7dd32dbd2c0875a15d92545f04  gpiolib: of: return -ENOENT from of_gpio_count() stub
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pinctrl-qcom/for-current
+branch HEAD: 6c940958950e5df52831fb8c78a045d426b09f1b  pinctrl: qcom: fix a use-after-free bug in system shutdown path
 
 elapsed time: 883m
 
-configs tested: 287
+configs tested: 288
 configs skipped: 4
 
 The following configs have been built successfully.
@@ -200,6 +200,7 @@ loongarch             randconfig-1000-20261109    clang-19
 loongarch             randconfig-1000-20261110    clang-17
 loongarch             randconfig-1001-20261109    clang-19
 loongarch             randconfig-1001-20261110    clang-17
+loongarch             randconfig-2200-20261109    gcc-16.2.0 smatch
 m68k                              allmodconfig    gcc-16.2.0
 m68k                               allnoconfig    gcc-16.2.0
 m68k                              allyesconfig    clang-24
