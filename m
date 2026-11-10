@@ -1,63 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794308711;
-	b=hPb3zgTQK7YC3h2ym4wMbP+OchZ2ds5WrfkRryiieDlxv6+GjE6oPBxAtZbAQngOhdu1
-	 l6kMsk0hyuupPjHIFWGkXE0eQ6lWusNgm8GaiX7ASAJ2GyIXWEnlnb2DE/a8+4MmC2dOj
-	 uulxv0+8dsGgwiTrlzaQI/yNcTOjhW1SL9mkBTrArkRAouZHJDcpgP9EGG+CfKQjOVTFW
-	 teZ9U+/pbgZMQ+KSHp3grZulJ+Udr1EsAvTus/1tZORzzoTrwYpoNTBwtR61Feo9AKKui
-	 ohe6hl+CeBUI147oYZKLGeoyFkohr8Fg8bmFH1anzFZpbxXssLoYpEQbnN8iRJnvUBg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794308711;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=IuHa3jls9LRkHwvOun3A0QaThqvu39Ev4s8CcaAo1EE=;
-	b=qv241/A/xL+ceo7t/krZ0VTweVtbZPrG1v1pFfcEEn8XFMxxVgAUoqfLY34nGOBZ5Hen
-	 YuoBmrCVrsNcJizemcbxtXL7K3mxlOSEU72lEa2RmZa5/6Y0b9L9qb9ZBQlqZwn8CB/Dk
-	 0xoG9AyS+gSP4nPf7ogSdGOrHBHhp/g42wC40M/Pq94zsn+Do0fpFiU+/Em/mtByW2+5L
-	 9B2AZNUiGbGnjlYFHLnUFp2zMQKoWeO07l6HWv5CJGE94ruhhKH71BUXBr8Wdumf4D+EJ
-	 /fDAoDDCfefyXjvBzHJxzmnCNisx5p12r0EN+gBrPaCF3y802KZhrHZjZQodu1UOnhg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b="jYJd5Wq/";
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36941606A321;
-	Tue, 10 Nov 2026 11:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36941606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794308815;
+	b=tZxF3yMtRviD5eVx8UOacXdnERcVkeQd9ubJxzHYYeFP7FF8pQkqAj6jJbyWexV1bPCp
+	 v8l1uopWxfsmJH2rkiC22VNE3SPUpBl1lBRnN4bUBu3pgO8Kpo7qJ51PsTeRwYvHc9fDZ
+	 goaJMHY9sanIVYt5MGgmak2BYK+9tinsbz1qOEvwwyvGFvdpfITYHK/SK3G5dqMo6IE5z
+	 gl8JziQ5lv4Ov37HJK7rnZk6Mct8TOmCQ0BP5vuDtLak2eM/BMQnRAX9thwdNMn3nUIC/
+	 NMkZ+raJKEOzkRzWplo4UchZje3hX5ImIT1CuTsf3t6EH5i/M9XCB32PL3etgIzQfNw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794308815;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=hdfqSP6O2bu/ZFVTKJWa+3T77fQJrSmp1zvbC/sdJsg=;
+	b=06Cs9asP/56ykRlzm8/kIbqM1HNeRzDXk6iD/sDpc/c3z3uuYubKdC/CZNAnZoLl6Hah
+	 LdpVjyaIuDcRNm2mzE9hgGsfugWo8SpHMLA3T/3RRRVq1cevOtU/s/pS3ItLm8Fj57GI2
+	 CqoAYn0bp+HEHYorG01qhtOlTkQAw1tkeTl1eBOS7oJ58/nZUipg7rxI5SuaYye4ZgELs
+	 87R0C0vs5NPGTBDqWtaCmc6sm7M/eSkqD5aewxOOOwKI9ZdmJshzM9TO6llgWo3kLV5Ct
+	 OBEozGczW2AdnmXpVOE6sihRlpvow8pl70nR4mwPaZhBhC7AxSXaEapgt86YMq5gp+w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RaPBbqvl;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C25E606A31C;
+	Tue, 10 Nov 2026 11:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=jYJd5Wq/
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B4AC1E7D;
-	Tue, 10 Nov 2026 03:05:07 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D95E73F882;
-	Tue, 10 Nov 2026 03:05:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794308710; bh=TfORLbInG/5mS5oAL+o44mwrKV8SP9yUjQAQHbgEGcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jYJd5Wq/d8vt/JF/iGiDk9aBhLRAshODa/k92KYzr/PDNzKZhpDoydUs805bLtpvb
-	 Wz8g6109rdDOA1z6v9CJgjz9JlLYHt8OFKOoKVj9NDvPCLGwVHHe3Np7pLSX56em4h
-	 xXPLByy1b4qei2g2SoCm65eRCdyP2MQx1HmOf9Bo=
-Date: Tue, 10 Nov 2026 11:05:06 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
-	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] pinctrl: scmi: send the settings without argument
- as enabled
-Message-ID: <avL6YteZHaQJc3D_@pluto>
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-3-52d92843ad97@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RaPBbqvl
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=90.182.112.124
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794308814;
+	b=qBJLc17Q7AOmTHytvjpSbQ13wIHAzClNZMgnl3gYLm6zfRgcPGOK7F+lU5OvD0Jxm6+r
+	 fzH1CZcdA/17ArRTikgmX58JfXuZmXXhDBPBSgqWz/FvB1Zg+iC/4d4ue4Dp/z5gHBVGP
+	 OouJvLJfKVKjfu8xReQJvCv8CdcVouZMUFM8jaEdjrkCZstpz+FFBvh/4ocoupfrlP4rY
+	 42GBb4xIsNt4FT3Yi3cs8UbZ8YLEsi58yYJJetEmXFb2TS9Y4uCZtAXcImFanv8n/rxQa
+	 2uOI2iEdLjhFU82hwmTiJNgtbDkmov61xMo37FiYpvnRCt4r6rWEP3uBj+SFNoE0+MQ==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794308814;
+	h=DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=hdfqSP6O2bu/ZFVTKJWa+3T77fQJrSmp1zvbC/sdJsg=;
+	b=Fu9lH5duE0dAjhVRHopV78/mJ4jrdI/l7GCvXhWqcgiVA3Z25D1d1xzqsBm2wOKGa9Ye
+	 h4horm25fcrx965fPp0IWermd+LBPDrGKFee+VOkwOsiQJXMawdFQHdNyHEoclLq0LiPU
+	 3aV8Z37R6Ehpt7/yRpVYh/O63D8t4DH+h2d8CnKM3fvfbo67vMlBAJbHzaHXlgVDEbV8F
+	 Nlqf3vu7xYKrBwgnV5WQyRM9XOnvBNiqniX+IQhdsEcNRpnH+PWmP5VOUV1E9NRh0smRM
+	 3NnYCwItepYj8k5UyJzZgeUbf4q8Rh3/VsAJMPHFkinyIrrdK1s+QALn+XLEcl9YHDw==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=90.182.112.124
+Received: from localhost (90-182-112-124.rcp.o2.cz [90.182.112.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPSA id 045631F0089F;
+	Tue, 10 Nov 2026 11:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794308814;
+	bh=hdfqSP6O2bu/ZFVTKJWa+3T77fQJrSmp1zvbC/sdJsg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=RaPBbqvlwtiHrmdrreMYMiTezWh0LAMERjSnC3LHDkR0kOrzYWksC0GHw7x19pRID
+	 obvFrOrDhPOi8mMH9DNZ3rZHkvHzSYsWCVnw0OKhz2XTLXbl312+ExqSerbzhfDfCu
+	 R+Ijxc4Lna125A86FyOW0ATZM6gRsM4T6r5biY/5Zw8GvXA3JUvinwnXy0840ofCtH
+	 V5CYgIzBODgHrguyJLEIzj7/yYPrB4f+P8pxW33DTpI68vqIhSyivEeC8hV8Gza8ov
+	 tSxoWJeRuDFOqfY7phUC2n09w+xTwJTcReJJr/uGf5HXCMlnE1eaEEGcAzgcGhGlFS
+	 2Lk7vUUe98EnA==
+Date: Tue, 10 Nov 2026 12:05:28 +0100
+From: Joshua Crofts <crofts@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron
+ <jonathan.cameron@oss.qualcomm.com>, Joshua Crofts
+ <joshua.crofts1@gmail.com>, Bartosz Golaszewski
+ <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>,
+ Kent Gibson <warthog618@gmail.com>, Adrian Ambrozewicz
+ <aambrozewicz@nvidia.com>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field
+ in gpiod_free_commit()
+Message-ID: <20261110120522.000057f9@kernel.org>
+In-Reply-To: <avLsrOqdXSFSH6WM@ashevche-desk.local>
+References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
+	<20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
+	<avJAv_3ACjvyc9VU@ashevche-desk.local>
+	<gw26q2blrbmmxwzv7vfjxwc5bzqzfgt57zs7bvt2kdx7x6a6qk@6i5z3a3crqft>
+	<avLsrOqdXSFSH6WM@ashevche-desk.local>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,23 +94,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-3-52d92843ad97@baylibre.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 30, 2026 at 04:58:34PM +0100, Clément Le Goffic wrote:
-> bias-bus-hold, bias-disable, bias-high-impedance, drive-open-drain,
-> drive-open-source and drive-push-pull take no argument in Linux, so
-> they were sent with the value 0, which the protocol reads as disabled.
-> Send 1.
+On Tue, 10 Nov 2026 12:06:36 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> On Tue, Nov 10, 2026 at 09:54:11AM +0100, Bartosz Golaszewski wrote:
+> > On Mon, Nov 09, 2026 at 11:53:03PM +0200, Andy Shevchenko wrote:  
+> > > On Mon, Nov 09, 2026 at 11:27:08AM +0100, Bartosz Golaszewski wrote:  
 > 
-> Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
-> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
-> ---
+> ...
+> 
+> > > >  #include <linux/acpi.h>
+> > > >  #include <linux/array_size.h>
+> > > >  #include <linux/bitmap.h>
+> > > > +#include <linux/bitops.h>
+> > > >  #include <linux/cleanup.h>
+> > > >  #include <linux/compat.h>
+> > > >  #include <linux/debugfs.h>  
+> > > 
+> > > No need, bitmap API implies all bitops.  
+> > 
+> > I honestly have no idea what the policy is on "proxy" headers. In some
+> > cases people advise against them, in others they say to include them.
 
-LGTM.
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+The main proxy header one should beware when adding new drivers or tweaking
+is kernel.h, better to just use the iwyu principle.
 
-Thanks,
-Cristian
+There are a few loose exceptions (i.e. not fully iwyu but good enough), e.g.
+
+- bitops.h implies bits.h
+- bitmap.h implies bitops.h
+- acpi.h, i2c.h, spi.h etc. imply the corresponding linux/device_id/* header
+- if you have an opaque pointer (like struct device * but don't use any
+  functions from device.h) you can just skip the header entirely.
+
+This can be also "automated" using iwyu-tool (which requires LLVM). I have
+a mapping file tailored for IIO but surely you can swap the iio headers for
+gpio ones.
+
+https://lore.kernel.org/all/20260512073505.1310-1-joshua.crofts1@gmail.com/
+
+> > Is this documented anywhere?  
+> 
+> No, but feel free to start such a documentation. In IIO we did a huge work
+> to enforce IWYU principle, and there we have some tribe knowledge about
+> the dependencies and guarantees. (Cc'ed some people.) In this case the
+> bitops.h inclusion is guaranteed by bitmap.h. If it stops doing like this
+> it will be a flag day.
+
+Would be great if someone documented this in detail, at least people who read
+the docs and LLMs would learn it :P
+
+Javier Carrasco Cruz wrote a blog post on iwyu-tool where he links to my
+mapping file:
+
+https://hackerbikepacker.com/iwyu
+
+-- 
+Kind regards,
+Joshua Crofts
