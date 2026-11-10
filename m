@@ -1,62 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794311342;
-	b=BtWWdlj1uf5wSMrrQ1IeYTnhDIdxaB/Pu+pTFa1ARzEDT3KJ5K68ffisHWCThMdD4WDJ
-	 LsXstWJNG9idJvq8Mqq7MiThf4WmvGqaEspJXDvQidQSxF/wmVkTI8+6iEbKIo9tq3ULm
-	 VKTDtqZh1vAcmJhxDFhJWhe0hNIwM2mns4b9SxISBIiWBGTvjydlgLpZKlesxD40vuls0
-	 QbKo4zwZt++YBgCbnOQSr8ZH+HoyGfSBS//mvxNWnW6QEXE3AxIs9/TVSK75vReOCWtE5
-	 YDNtTcQN4k6rA427XnkfQ4/muB7fxAw5oqDWh9NrrzXHxp9r27pLiSQc2lFjh4qD5UQ==
+	t=1794313533;
+	b=myf9LpHz78mn06VUM9GfX++RTHklBJALeY+7/sTq/6p4lS3Q957p9hoLDycQUr9tc2m9
+	 LbVFytoxvhVvSfKTEdui8X7bjSh/TrEAqXzGeve6OB4L5R8SAGi8ghyYZJfFuL/PxuT0F
+	 5gv3+LgPKA2zibZ4ckqt4Ehjv9diNc4Uxm+UhMMidZHibgP5ilTOIPQESCtdW6+27q3kE
+	 7VEpRQBeA7+DzZj/ThtSgpJZhWv2TR0Gj7fH3I9NLBchdi/W1yin8YUmrRMqOSWnb9Xc4
+	 RWedDtYIf/NzkwtLwaFoNk6+u5bgvstQOQuk7qg1oAl4Y9ZP5faZ3ByoiW7OJjcsKBQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794311342;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=XH2Psc0/RA0xHqjw/BmgXYna8gK5TSDyk/31rRsHXag=;
-	b=MkVjR93qmZDEgJU3iMDP3zGLgkYY/8GO8mlDJtkVd0UhWZUHpxldNNzXpUvBZ5WplirX
-	 waw/kVike/LOIQ3C7YccpMR/O8p9YSbxHEK9CyuLJiOrbiDEOKi3S0mEijNDvNlbZQmsI
-	 mI3JtZitZlmxlJGT2poh5jF47A8XHZwOJYJe2s1nGBy69ngpdYRgK/zybVrRkeaZPTtoz
-	 WYVkJL/ewIS68w0PS4GGVbSpW85tO2G5XjEQGbuTRRzG3WGGucoHWmHR0hh/l0ZvV1Z32
-	 3SN1y23w+XJr20P2vLmMlwrrSOI7Ucxr0qVGg2guhT7tp9IHZ/moUnbt+TMws+ol88g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794313533;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:From:
+	 Subject:To:Cc:References:Content-Language:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=o8vOqPjQp+qIgT4SjBM1vuuP9NkLzsqzq4almCwh0ns=;
+	b=oFQ1RvRXS406PJsCj+QZ3nmxN4FQMJSwNxDmPp6y0MI4P1A5rNsJpOXT7zMx1yhYn1aW
+	 Ci3fTwyfSCCcjN+Ib0ST0u4abDM9kFBhWClJP9SipalzSk5A4awWWuN7lSY3tKe0M7lR0
+	 lCmQCCHc1ZiijrSbRRx8ph3E/tCsQd9NTnKuIuqMZ/rJifKpCus2ssalM55pkKz2k5pfZ
+	 uZFaEt4ZE3VcWZP/K76qrRY1b5QDNC90wsSWaMCo4F5Tr5q+ymQQ+aI6waPkb+wOeHxaJ
+	 Hte7eSR3a3y/++xAGCiYdTr2mYxDhyRQh6JRw8xK3vw6YIGSfCDJG2cCI2AJVW/+29A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gtRdmI93;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927A4606A31C;
-	Tue, 10 Nov 2026 11:49:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 927A4606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gr5nohgX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9AC606A32A;
+	Tue, 10 Nov 2026 12:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gtRdmI93
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E43941516;
-	Tue, 10 Nov 2026 03:48:57 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4FA3F882;
-	Tue, 10 Nov 2026 03:48:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794311340; bh=AZ4NvMO0DhplbnLnvBGhZhX6wT0BZLera84rlUdLLTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gtRdmI9385we0i76Dbqp4XWv8SMqquN/p5CTy/nrl+UVL5dQjy0QcsbbaPgdmcBs1
-	 okrD76nZEA1xiq7c8fwInfEiM3WNuSjFAyjld2FL0HS0S/ks0t/7+q8mWNpKe51v/F
-	 VOfXa5RtXMULAo0NF4OlIGd1wP3Zm3+A0UC1X26A=
-Date: Tue, 10 Nov 2026 11:48:56 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
-	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] pinctrl: scmi: give no groups to pin-only functions
-Message-ID: <avMEqP_O5-R7m3-z@pluto>
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-7-52d92843ad97@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gr5nohgX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A651F008A2;
+	Tue, 10 Nov 2026 12:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794313532;
+	bh=o8vOqPjQp+qIgT4SjBM1vuuP9NkLzsqzq4almCwh0ns=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=Gr5nohgXHm1YYyj6tvLEZ2lSM8AwTngl7Y9YhcAEKBH+Qk95txebAZ9NtKzrDhbMu
+	 /kcVhI4wBuCa61a001FzAROnBPqNtiO/ytzlzOWo7XJ5chQlrrTZ0jAur7hkGa2Dea
+	 9e8VcncC+5ovHWHZPm9Udas/YhDeQJz+/Hw/DgiFOKQphYC3tCbIwtuUfnQDwnkr0A
+	 NlkNf0d03csKo9TcHJmIS39u4zkv/CzH2xeQIMrUlC8N+o3OuHRReJJo3cYKVKlsnW
+	 Ok7Bxat5Tx0PnCcbiQSm1rkYigOOsx53IhuLC4CVONUmhMnelBCuvRRROviPHPq5B4
+	 hzmGl2iyPjB0A==
+Message-ID: <69a3552e-1fca-49e9-a9c0-66963319d2a9@kernel.org>
+Date: Tue, 10 Nov 2026 13:25:23 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,25 +51,89 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-7-52d92843ad97@baylibre.com>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 03/14] mfd: remove unused si476x driver
+To: Arnd Bergmann <arnd@kernel.org>, Lee Jones <lee@kernel.org>,
+ mfd@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek
+ <pavel@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
+ linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev
+References: <20260909132153.1596191-1-arnd@kernel.org>
+ <20260909132153.1596191-4-arnd@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20260909132153.1596191-4-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 30, 2026 at 04:58:38PM +0100, Clément Le Goffic wrote:
-> For a pin-only function PINCTRL_LIST_ASSOCIATIONS returns pins, but the
-> driver registered them as groups. Register pin-only functions without
-> groups.
+On 09/09/2026 15:21, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
-> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
+> The si476x driver was added in linux-3.9 without devicetree
+> support, and has always failed the probe function in the
+> absence of a si476x_platform_data definition.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+For drivers/media/radio, include/media/drv-intf/si476x.h,
+Documentation/admin-guide/media and include/uapi/linux/v4l2-controls.h:
+
+Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+
+Regards,
+
+	Hans
+
 > ---
->  drivers/pinctrl/pinctrl-scmi.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-
-LGTM.
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Thanks,
-Cristian
-
+>  .../admin-guide/media/radio-cardlist.rst      |    1 -
+>  Documentation/admin-guide/media/si476x.rst    |  160 --
+>  .../admin-guide/media/v4l-drivers.rst         |    1 -
+>  drivers/media/radio/Kconfig                   |   17 -
+>  drivers/media/radio/Makefile                  |    1 -
+>  drivers/media/radio/radio-si476x.c            | 1523 ----------------
+>  drivers/mfd/Kconfig                           |   13 -
+>  drivers/mfd/Makefile                          |    3 -
+>  drivers/mfd/si476x-cmd.c                      | 1543 -----------------
+>  drivers/mfd/si476x-i2c.c                      |  861 ---------
+>  drivers/mfd/si476x-prop.c                     |  233 ---
+>  include/linux/mfd/si476x-core.h               |  532 ------
+>  include/linux/mfd/si476x-platform.h           |  256 ---
+>  include/linux/mfd/si476x-reports.h            |  154 --
+>  include/media/drv-intf/si476x.h               |   28 -
+>  include/uapi/linux/v4l2-controls.h            |    4 +-
+>  sound/soc/codecs/Kconfig                      |    5 -
+>  sound/soc/codecs/Makefile                     |    2 -
+>  sound/soc/codecs/si476x.c                     |  263 ---
+>  sound/soc/fsl/fsl-asoc-card.c                 |    8 -
+>  20 files changed, 2 insertions(+), 5606 deletions(-)
+>  delete mode 100644 Documentation/admin-guide/media/si476x.rst
+>  delete mode 100644 drivers/media/radio/radio-si476x.c
+>  delete mode 100644 drivers/mfd/si476x-cmd.c
+>  delete mode 100644 drivers/mfd/si476x-i2c.c
+>  delete mode 100644 drivers/mfd/si476x-prop.c
+>  delete mode 100644 include/linux/mfd/si476x-core.h
+>  delete mode 100644 include/linux/mfd/si476x-platform.h
+>  delete mode 100644 include/linux/mfd/si476x-reports.h
+>  delete mode 100644 include/media/drv-intf/si476x.h
+>  delete mode 100644 sound/soc/codecs/si476x.c
+> 
