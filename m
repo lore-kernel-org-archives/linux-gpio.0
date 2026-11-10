@@ -1,55 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794311053;
-	b=UC34AJZYF0I3d3tPF3Pj8TRJFfTo7LfgoqYpchixAKnDgNHHiUvJF0ohm10oT56rjXE8
-	 Wm4XV7WDKRTqpZiHze/bvPGjT1f7ODRWAhu2JrstAQnFd8/zVI1um2mdw6It3NO9ReADW
-	 CFq3skbSiurvnCfl6sfLzTPdpazkuHd2kEenbJRDwBazTNkfu1xMIgmYX0o1t9nW53uXk
-	 KKFyt1FvOEGzTcOonXcofiADYDikFuojX8Kj6v7wQV4mMnOV4DuY+NdlxapL5KmR9quKt
-	 PvoxkFZO8wr8NzwlBhUSgl5ocf3tsUTRDozQarq10OF2ODSE4apIjUvBRFv3P4i/XZg==
+	t=1794311342;
+	b=BtWWdlj1uf5wSMrrQ1IeYTnhDIdxaB/Pu+pTFa1ARzEDT3KJ5K68ffisHWCThMdD4WDJ
+	 LsXstWJNG9idJvq8Mqq7MiThf4WmvGqaEspJXDvQidQSxF/wmVkTI8+6iEbKIo9tq3ULm
+	 VKTDtqZh1vAcmJhxDFhJWhe0hNIwM2mns4b9SxISBIiWBGTvjydlgLpZKlesxD40vuls0
+	 QbKo4zwZt++YBgCbnOQSr8ZH+HoyGfSBS//mvxNWnW6QEXE3AxIs9/TVSK75vReOCWtE5
+	 YDNtTcQN4k6rA427XnkfQ4/muB7fxAw5oqDWh9NrrzXHxp9r27pLiSQc2lFjh4qD5UQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794311053;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=IN60gOhiFLXTiUujpua2k2lDg3kIk++JqhLJJqH7/6g=;
-	b=i6GL+ckyDSdC5qrQ3oPW7/DYda5mI35boFbKzey7Pk0NF4bPwRdJwYj3kUr6/3J9lE4Z
-	 CyKdTYBeSD7fdwdBHO2IBfdJkxfn0jvWIVIg7fDJbJ6yhHicHT4BwjQatLE6PfMy3OKwQ
-	 APw3d0LweNX68uJ5KBhhWDzpHfAoBz4+zFAehWegAOQZBCJS+o9Lcv94jcIzNOoiHPYC4
-	 T6hRfI0dRKfroJD7XLWKAZqJuD7/7dvni9cS0ZFAOausE2/Y8AvL93zf8xwEXY35LLdfE
-	 tlzmhGUgY9zry8tcGyfqs3FE1u+8+sx9/tenNdjY4DheVcq/Arntm53xYwkQrnCjtVA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794311342;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=XH2Psc0/RA0xHqjw/BmgXYna8gK5TSDyk/31rRsHXag=;
+	b=MkVjR93qmZDEgJU3iMDP3zGLgkYY/8GO8mlDJtkVd0UhWZUHpxldNNzXpUvBZ5WplirX
+	 waw/kVike/LOIQ3C7YccpMR/O8p9YSbxHEK9CyuLJiOrbiDEOKi3S0mEijNDvNlbZQmsI
+	 mI3JtZitZlmxlJGT2poh5jF47A8XHZwOJYJe2s1nGBy69ngpdYRgK/zybVrRkeaZPTtoz
+	 WYVkJL/ewIS68w0PS4GGVbSpW85tO2G5XjEQGbuTRRzG3WGGucoHWmHR0hh/l0ZvV1Z32
+	 3SN1y23w+XJr20P2vLmMlwrrSOI7Ucxr0qVGg2guhT7tp9IHZ/moUnbt+TMws+ol88g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H3JG0qKZ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871F0606A31C;
-	Tue, 10 Nov 2026 11:44:13 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gtRdmI93;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927A4606A31C;
+	Tue, 10 Nov 2026 11:49:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 927A4606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H3JG0qKZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250591F008A1;
-	Tue, 10 Nov 2026 11:44:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794311053;
-	bh=IN60gOhiFLXTiUujpua2k2lDg3kIk++JqhLJJqH7/6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=H3JG0qKZ9niYs6YjHIufI/k3dsoPl13q0IBWxSMbWj6z3Dx2ASXFeABv7ljz/tTVJ
-	 w5+1n3xgQbW2VYc598nFr0vwNccC60tWXoMpvdxfexmeBxp8zOvTZStBAXo3Pe6ZQa
-	 iPgiHa9k6AL4ZgYoXbRQ6ZafZzjX+6cce1adWMZ0OBsosqLDjMb+JFBgSxvxbYzEWM
-	 IFkN+1zfqCBOuLHEVYkwaJlb5NBaB/B2WMxUNbaTIPpiY15/oNnsPpF3diKV7dsa1x
-	 E/tpcYtBHBMXmjmxbrcF2UkoOuELMKXQIGxVUyRHC1VVbwyRNj2MQajuO0OYAaW/rv
-	 hQ47pcUWS0qVQ==
-Date: Tue, 10 Nov 2026 12:44:09 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Sander Vanheule <sander@svanheule.net>, Bert Vermeulen <bert@biot.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: realtek-otto: Add RTL9311B
-Message-ID: <20261110-classy-normal-zebra-0a0d7c@quoll>
-References: <20261109052808.3035449-1-joshua.scott@alliedtelesis.co.nz>
- <20261109052808.3035449-2-joshua.scott@alliedtelesis.co.nz>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gtRdmI93
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E43941516;
+	Tue, 10 Nov 2026 03:48:57 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4FA3F882;
+	Tue, 10 Nov 2026 03:48:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1794311340; bh=AZ4NvMO0DhplbnLnvBGhZhX6wT0BZLera84rlUdLLTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gtRdmI9385we0i76Dbqp4XWv8SMqquN/p5CTy/nrl+UVL5dQjy0QcsbbaPgdmcBs1
+	 okrD76nZEA1xiq7c8fwInfEiM3WNuSjFAyjld2FL0HS0S/ks0t/7+q8mWNpKe51v/F
+	 VOfXa5RtXMULAo0NF4OlIGd1wP3Zm3+A0UC1X26A=
+Date: Tue, 10 Nov 2026 11:48:56 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
+	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
+	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/11] pinctrl: scmi: give no groups to pin-only functions
+Message-ID: <avMEqP_O5-R7m3-z@pluto>
+References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
+ <20261030-clegoffic-pinctrl-scmi-gpio-v1-7-52d92843ad97@baylibre.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,27 +66,25 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20261109052808.3035449-2-joshua.scott@alliedtelesis.co.nz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-7-52d92843ad97@baylibre.com>
 
-On Mon, Nov 09, 2026 at 06:28:07PM +1300, Joshua Scott wrote:
-> The Realtek RTL9311B is a network switch with integrated ARMv8 CPU. It
-> has the same GPIO controller as the RTL9310, with one bank of 20 GPIOs.
-> Add a compatible for it, with the RTL9310 compatible as a fallback.
+On Fri, Oct 30, 2026 at 04:58:38PM +0100, Clément Le Goffic wrote:
+> For a pin-only function PINCTRL_LIST_ASSOCIATIONS returns pins, but the
+> driver registered them as groups. Register pin-only functions without
+> groups.
 > 
-> Signed-off-by: Joshua Scott <joshua.scott@alliedtelesis.co.nz>
+> Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
+> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
 > ---
-> Changes in v2:
-> - Add the RTL9311B as its own compatible list, with "realtek,rtl9310-gpio"
->   as a fallback, instead of adding it to the enum used with
->   "realtek,otto-gpio" alone
-> 
->  .../bindings/gpio/realtek,otto-gpio.yaml      | 22 ++++++++++++-------
->  1 file changed, 14 insertions(+), 8 deletions(-)
+>  drivers/pinctrl/pinctrl-scmi.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Best regards,
-Krzysztof
+Thanks,
+Cristian
 
