@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794324828;
-	b=g71LKay1owJ4oQgP9nm09B9pYq/B2HZXp/jhLWTRM43JNWdN2xCaqNJBwS7wvdJOjzd5
-	 W+6mpgxtanzTDW72VyQEfjydOnsBVLnmO5ufv2s8Cv4Rg5eaf2BRq+BRJ8+ispxa4HoxC
-	 X79xDDTTq2XR8AZrkpba4exojakSoh0kt45AnjCt+cnVeNqBRnKLwK0GD5J0DEZ2YLPSj
-	 JAnwvWEzSCpUatNwNC5VQgUvbVe9TbjYczTy3a5DdDytvxC25/7GszKgVC04qwXglnqOV
-	 JCmiKI1Lox1Feyhmku4mzm759RohRL0CaIg9y1l3YjrLbib62q7XZ+K5ldvOuxV0+0w==
+	t=1794324844;
+	b=WjRQLWeMwP+rngnD4A4rR4GBQuwNgn1PpXRelE6u3lLniyPdY+/R2bZUNCupJOosaNNe
+	 HI8WWQ1FC8iDEGWQnJKYRsWTwQfz7C1vMMqyd+ZmzNx7aHnNz08UsgKcJ5e/hSBqpo92i
+	 To4bk8/YXiLrOUj+H+Kn5ZWVZkRjTlxlU2vLU0B0jvVgD9AemWkoebe55uKgC7vZpVC8K
+	 ndCGvMnNV2ekQQHK+6e+bhZi4cxkZE0abg0y9TZ7VYZ3sWk9Dvxmefw/uXOXjMekksgDF
+	 gre+Y3I4+GEHdHbKLYQ59hSW230ltXgKgPqdqf+feQGeU3yzbRW//ABN4mJfvEWf1rA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794324828;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794324844;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:X-Mailer:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=g/SjKPleM9qVQQO+iskDBaMPr/z+uX0TPZsgdSwyR3w=;
-	b=vJddyVMZbQOS2zOpZaQKdNCVdA0caDB1LZpX0jWawuH4ZM6LxUSMsaCbwRq0YuBSvdOv
-	 RxqIkgWAc3gJSBOKLPgVoKVZxDMhJjc8G5VuE0UOR4E4qjFfoP2jRH7tL5vL6FQPoaF/2
-	 IkO7fcuqUmdsF4++iKYBEltEMJBV1FG+8hTZ1et96lt/x7h11YkvrAXk3RJw4EE5lN9dV
-	 7XAsLSW5m3DwoGf4CxTWnLK6V4KHZ324J5oisS6Z9ONrtRVnsc9IgSsqqYJPM0g7w0YOs
-	 5qwBHCQimCwGarE9yyZyDGvHJpf5UbKE10PAEHU+oF6fBhtowdDkR3YxxyktT86+b9A==
+	bh=suPwDnEQ4Nuqw9vmAHzmrX5geUBzqPwGK0H7vf0Futs=;
+	b=xcrL5gJWeY/qodJPLAkgKQc9duuWEEN0f/c/nzGgTq2LdLPU9K7f8o1+raYlWJb7l2sN
+	 P/n6n//e5niKMeNqzcf8De8ngdOehLs8HVEA+y3zZ9nZrboNH4dTBE7DKcuFaYN88/FM9
+	 QSr9r+3wTzcxCi8HqH3Yg8vAQsK/W6MPfx0iiKlwpaUT3MMS6P/j6qvEadl6jK7hK/Rix
+	 MKdWsALgPZK+aKfBpmxJCNZLFgTC8Knsshm/1UrWpKMTmHuDacl8EhWsy6NhT8E5O7FeS
+	 5gN56otuO/nDnHl8NQzqetqLs9Inicbr0IhazHW2pJGBAqMrEztzGyiHBaVtlPuPTMA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iesYPJDp;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GMMDR55l;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C913606A330;
-	Tue, 10 Nov 2026 15:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F70606A33B;
+	Tue, 10 Nov 2026 15:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iesYPJDp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F071F0089F;
-	Tue, 10 Nov 2026 15:33:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GMMDR55l
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BC81F008A6;
+	Tue, 10 Nov 2026 15:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794324827;
-	bh=g/SjKPleM9qVQQO+iskDBaMPr/z+uX0TPZsgdSwyR3w=;
+	s=k20260515; t=1794324844;
+	bh=suPwDnEQ4Nuqw9vmAHzmrX5geUBzqPwGK0H7vf0Futs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iesYPJDpDPjLVnVdiNy5DXLlxBTia/Kwz27Osob2NsVKBGheX/8B5gx6Yf2LoF+K0
-	 0+zFKA51XIPot7UGZlZh/uxVy+c7sqDHL67CREW04ba5e//+ez3rnkPJBjMAOklXeD
-	 t9kRgik7xwXHWudNFYktA3i7j6s0GncwMh+3JUIZoGkGBqtMldkb6JKKveM9W9+r0L
-	 QNhxfvLHGR0VDXm9q+ze4qKTL35xCnWKz7J+3W53S4ucbRnp879wimNIdC1FuxqI5K
-	 XjypcLiuLHsvNTl22UrfYXHhLjww8mYuIdl1OrxOL0wVB7A89HUKn/ZvArQTBwJvb2
-	 wI62LDd7lBo7Q==
-Date: Tue, 10 Nov 2026 16:33:40 +0100
+	b=GMMDR55lRHfWeXagXOdigkIRL7+nf5KxAXntF9PRcNLgt0f9VlLELaK20V8rAMfA3
+	 m+8Ky4bX+D0FZT4IM9fPzhXUbSccvjptmMwKMj5IxWVR+2J3QHegPebmaTpTI/nKlS
+	 o4fPFBwlKnofG07NUcr0jHr1aQnYRvWf+tiaXrBSxdyUlLVcbVKuhXqLH2XKvU6+rk
+	 c8hYb2y8o6zBBzqqTruuosv1Er8tEpz37somlOdHWzjzGgI/m7p07WLyKbE15q+tsE
+	 Qpa6EK/uyVWnr5xLptw9qYHvmUyDoaam2T/4/RYImfDBEvRO+mmcqwKJE6/Y90Idip
+	 Sgo9lpr/XkkKA==
+Date: Tue, 10 Nov 2026 16:33:56 +0100
 From: Alejandro Colomar <alx@kernel.org>
 To: linux-hardening@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -57,8 +57,8 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
 	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-gpio@vger.kernel.org
-Subject: [PATCH v3 3/5] stddef: Add const_cast()
-Message-ID: <2bf5cf7baad87b5b7b7f833df390596a033fd6f6.1794323750.git.alx@kernel.org>
+Subject: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
+Message-ID: <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
 X-Mailer: git-send-email 2.55.0
 References: <cover.1794323750.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -71,12 +71,12 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x4z5nhiegy4aftww"
+	protocol="application/pgp-signature"; boundary="2akalsv6evdjykkq"
 Content-Disposition: inline
 In-Reply-To: <cover.1794323750.git.alx@kernel.org>
 
 
---x4z5nhiegy4aftww
+--2akalsv6evdjykkq
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -97,66 +97,56 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
 	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-gpio@vger.kernel.org
-Subject: [PATCH v3 3/5] stddef: Add const_cast()
-Message-ID: <2bf5cf7baad87b5b7b7f833df390596a033fd6f6.1794323750.git.alx@kernel.org>
+Subject: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
+Message-ID: <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
 References: <cover.1794323750.git.alx@kernel.org>
 MIME-Version: 1.0
 In-Reply-To: <cover.1794323750.git.alx@kernel.org>
 
-This macro serves to cast const away without risking unwanted
-conversions due to mistakes in the cast.
-
-It's similar to C++'s const_cast(), but it is more restrictive: it can
-only cast away 'const', and not arbitrary qualifiers.
-
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Alejandro Colomar <alx@kernel.org>
 ---
- include/linux/stddef.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ include/linux/string.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/stddef.h b/include/linux/stddef.h
-index e1851c50c89b..d79a81406b78 100644
---- a/include/linux/stddef.h
-+++ b/include/linux/stddef.h
-@@ -194,4 +194,16 @@ enum {
- #define TRAILING_OVERLAP(TYPE, NAME, FAM, MEMBERS)				\
- 	__TRAILING_OVERLAP(TYPE, NAME, FAM, /* no attrs */, MEMBERS)
-=20
-+/**
-+ * const_cast() - Drop const in the left-most derivation of a pointer
-+ *
-+ * @T: Type for the cast.
-+ * @p: Pointer to be casted.
-+ *
-+ * If @p is of type const @T, then it is casted to @T.
-+ * Otherwise, @p is returned without any casts.
-+ * This avoids mistakes that change anything other than 'const' in a cast.
-+ */
-+#define const_cast(T, p)  _Generic(p, const T: (T) (p), default: (p))
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 9e59f9697c9e..55ca4cb5122c 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -590,7 +590,9 @@ void memcpy_and_pad(void *dest, size_t dest_len, const =
+void *src, size_t count,
+  * *  @s+strlen(@prefix) if @s starts with @prefix
+  * *  NULL if @s does not start with @prefix
+  */
+-static inline char *strprefix(const char *s, const char *prefix)
++#define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx))
 +
- #endif
++static inline char *(strprefix)(const char *s, const char *prefix)
+ {
+ 	size_t len =3D strlen(prefix);
+ 	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
 --=20
 2.55.0
 
 
---x4z5nhiegy4aftww
+--2akalsv6evdjykkq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzOVQACgkQ64mZXMKQ
-wqkhtRAAlHrELZUj/9qogUkPnG1xDQtdWzwKbfz+1uyKYE54u/857CGFAEB4XKWo
-FMPLZI/Cm9cAj9WeBoqgNNxIDhWx+pvv1tUuot6iGkbG7mgqBBsk/ijPViAsNGn0
-tBT2ao/aBkf7MZ+/Sg5QAlV2HxUYFWujrHFo2P+HkDfnFSV3RtaZkT5t/+HXK+1p
-rHRDXix4+8aSKIid32Ki3Vcd0vwOf6u+heTElGiyQc79YJ8bCR/vvtPrg5IJjx8B
-XVR6D+NYv3xJ5/bOivfF+nRBttumFtXFCWsy9YFiYgogO7yZoFde3Au7hj7ALvwj
-BCffEQUqUgge13j4mlTGx2uEv74/0kH86FCRJxyqFqh7sFiytDy9Qvd4IEBowwxW
-yk0MTMUiCa+MBg4VTejxtf1AzOX9ANzt5sHL1evrobEddQYPUP6EO4WI+0Q/XPYj
-7dD429Tcn2sTTcvTQ+yofDuFpFVri7oBqbOSnjAd5NhfV4dMRVszXDGLZ1Z2I1el
-kXZYKOLOQG/CHfVpd5B8KE0QQePlk5NzT8nodTlUQAPIlKDkN1w4M2Yulxt46r5X
-r76wRDxSfpAktmr0mAl7UG65Y8RJvtBCmAaznfHq8S++Fhdi5VpqQuQWRMCc8IpP
-yVGvH+GTRv3qyx7nonwf0ZQLXSm7v1E0ZXTTnWA+uog99TFgsyM=
-=KJ8i
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzOWQACgkQ64mZXMKQ
+wqlcyA//QPet05X7Vq71O9QY6rC2CAd9KE+ARESBD95/8CRIJyyKSmnZbemnUMk7
+Q8st9ldGgylY8jP1iGRSP8dM8TwSLt/AqMQSU6PlbCqWqTXwNOSQeqP1pD836p+m
+sT/uMUwL8M9MTZJGOAprbpToUg+zg3QcNQ3RfbHkLSQM80FoZi/GAp0YsVBx21h2
+mhMQoZ2l1k2GAZ1Y9H1btEa9s8hMiwDrKO/Jgf1OuKmb3p1ctfTaZcd+rnVcH80M
+0uLiL/0fMqWJAgiNfVLJRsKDl77unPN8kdBiLmakm4OTk+kKaooIo2J5dpHLQIj4
+iC64N0eTQN2gjw3N2ZfmKcYnYvg6peoZs26ElWUfV7/6fOhDjc8ZWLtHJyD4m3Jg
+BDq3a4ngDplvCJiRuvI0z67/EwF3uspXE6DUJwfQrndBVD5AMmNhjq4gU+zzTrqb
+eeQOfOslcFSX8Q0as5cKK88sQrhdMfvMVoyLNSaH33li/xPI4brt5bbAUyHZY86m
+wgqRQP7iUb7YYr+MA5prX8rdl892kolIgAiqiIsvpaXNW8UoUBdDE5dTm6WiBIPy
+EFO8EyqL6yuiB7a4f1hgIIvarlgV+TRnc8paZRZj53EBlDXizX9yz5OBnTEG/Tek
+yjwMRNfd643ozhEQJLPhy7feOnXgbTMMWiSBVUbmajUfY8v5EOA=
+=s6WA
 -----END PGP SIGNATURE-----
 
---x4z5nhiegy4aftww--
+--2akalsv6evdjykkq--
