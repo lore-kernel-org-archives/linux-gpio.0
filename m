@@ -1,66 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794324836;
-	b=094+BvUreguZPlQ+LLxBuEQJ6CwqiFKrboFwi6J+IE/j7VvUaRuZYXpMKrPuHr90W6Vz
-	 59u0hvL6NrEMoKA4hpZ+q63p1q9Ve3ZLVvRGA4BmAc/irl7LeLzZJyQsHTLJtYpS0vicV
-	 8nB9JGtJQQR0pcmVOu+Q9AMX9rE0XD3nCZGxCfOfvUpTC53kp+RJWJMJIITpxJZS/rtvk
-	 J8u/5rhBd/6gIJ+RmGSq7APaX6zqhCavejVY+RnzOikyx+gayO2yW7LCWWUBp5pdz3tJB
-	 l2raFqliLELV5L7Ks9A93CNCsLjQANhlOzbOpRbzJ6Gxu+DdqyB1BEvLmeqIwKE+TMw==
+	t=1794324913;
+	b=sn5IRmotAgKARZdh2Ll4rXVfY2X9zOTFaP8sRImPJ1v3pUKHQgl2ZfRiQyCX9J9Nw+Q+
+	 CLtsFRxUmU6eqCrBwVf67sNsmR2UUlYn/OHSEbXXtM/uthwJ4OivZctOnRHTiYxEUZM04
+	 YTWYKl9829lEgcINkbIhvtc0+1hjPF2xaqOk852DvEUiqav2UZxIJFV/CHuC4YMyKbDu0
+	 yOmKkeAGep2i+sybzSs8cAwgz6SnmKMPljKs73H5fOTzwazZp//iVhzxkpafTmmlT7/AA
+	 u4xi1TIHhVyLFdFJCiLUr4S4peIBqFViUKYFDNDZPBUH73x835A+VqUhJHj5YOstWfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794324836;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:X-Mailer:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=3owOOx7owO0YzW+AS/1sjv03XsYwvN9g+0EiAc1SJKM=;
-	b=HanrY5QL4tDwstvoqiPbUZ4FI8r35QDnhuzhapliZvEtMqUulGnoDCAtlJmZDJpx9jRR
-	 op34wch11Omq4UYqNImklCJi5nKZkMFR7FzJvOpkic46RHIyOuB7OHSPw8HP/tWRtQOBy
-	 Dhwg1lpDLXLBy4EGhggTvp0a4zPfelmtvKXAHBa4BKBcaowYfjrTjqtVxn3sf2OaiRTuu
-	 KpzacugTBva6p2nUcXbNcEQ0jmWKeU2rTgf0xb6xPK8g5M9vFC0bwr+vQX4iETEk6MeZf
-	 9qhbni5TtwtjAmTY0VvwMtLZUlARWHoLPHSHehM4wHB750hDerYaS5fqzCxOMMJQqcg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794324913;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=H6y3PWhbhmjJH8XU6/GXMjP5//jRrDgQxTjcYvOrbII=;
+	b=0qwCYQLq0/sUGkrLe83tV/HG3q7riyJI9NGOn8Q6EzJR7ml+vy7E+aO1E/r251I/s69N
+	 LaXUjymmgrrlYq3FdiZRX15bUSLUQf/Co4SI/vwVLcfwXKomgv+jKKY1UiemxQQ9+VZOD
+	 HLedh0sj9ucXnMiL1LPiE0fQ3ZEBSj4OxkHWkEPXYy0Yfs/b0bh03+W02qt/urtJiBSZb
+	 L46b1eLuAI42afsaeJHCGNS7q0uKBR9FrANtqu5yOaMFYZ/Ypt3vaOOSecNORJZI4aLB6
+	 erlBZzxaozrJdlWD0YWNCOxu58KEeTfiIq2yBbYFcpFvt6EeJirgTO1yBSlkwCwLQsw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q4oM7nrx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A3F606A33E;
-	Tue, 10 Nov 2026 15:33:56 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gUpB7Ms6;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62CC60A3834;
+	Tue, 10 Nov 2026 15:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C62CC60A3834
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q4oM7nrx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32FF1F0089F;
-	Tue, 10 Nov 2026 15:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794324835;
-	bh=3owOOx7owO0YzW+AS/1sjv03XsYwvN9g+0EiAc1SJKM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Q4oM7nrxcrrlczuZqvPnLiHAqazfrBHUvuSz2o3p9VOjHGMtSzK1hC968kqIHgCYJ
-	 1jeTc8Ynh96dbrYr9Uft7K0o/zjP39HYpfY2VvBvuZeINr2xj4XoURY7i/ZktdRnVp
-	 fQ3Btd+ZvmWr+tXFA1VKPVlLFbQ3EplnxIzXz8Fal03O8ylNDe5VOL7SQlrYLZ9OE+
-	 Opn8BCzmK8lAUdLvGZOcKdGiV5EpBLnd+5g9kNeehVj/LyW5NYIvDF/gxqhXBjScO7
-	 Y97rdbXf6wgvhlH05tBqaldtqNp79yuVlBKQPenDI9wDkMqyGnnv6vmyM9EOgCgd8X
-	 2LdGQIkClXx4g==
-Date: Tue, 10 Nov 2026 16:33:48 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-hardening@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Alejandro Colomar <alx@kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: [PATCH v3 4/5] string: Add [C]QChar_of() and QVoid_of()
-Message-ID: <415453a31ebf1aed3b41da1a28913f5cbe58f175.1794323750.git.alx@kernel.org>
-X-Mailer: git-send-email 2.55.0
-References: <cover.1794323750.git.alx@kernel.org>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gUpB7Ms6
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22C1B1477;
+	Tue, 10 Nov 2026 07:35:09 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FCD83F85F;
+	Tue, 10 Nov 2026 07:35:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1794324912; bh=carP3vbUYgr8qsVNCpHh1imjnhtxGTpLlqbqJ7iqKl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gUpB7Ms61i05bC8pBOCmVktL30n76DdrZCKYLCh8SWObKFPJerLKXPU/SaDxKV/x9
+	 esE5Z9dOguoSs7rVsiuV5wFfhNxTC/ivfdnVUn3IVcDEvTgceqBYhUkGeUXdVHfgQG
+	 X4wRc8iZlpvOnHotbK6aaCzF0hZg8GKH9L4tbHQs=
+Date: Tue, 10 Nov 2026 15:35:08 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
+	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
+	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] pinctrl: scmi: report an off setting as not set
+Message-ID: <avM5rBHedZDn45kc@pluto>
+References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
+ <20261030-clegoffic-pinctrl-scmi-gpio-v1-4-52d92843ad97@baylibre.com>
+ <avL-4lquUqW9lUNh@pluto>
+ <7f613b00-bafa-4f4d-889b-4e37f5009b6f@baylibre.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -70,110 +68,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="edzk26a3huisnjhz"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <cover.1794323750.git.alx@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7f613b00-bafa-4f4d-889b-4e37f5009b6f@baylibre.com>
 
+On Tue, Nov 10, 2026 at 03:47:33PM +0100, Clément Le Goffic wrote:
+> Hi Cristian,
+> 
+> On 11/10/26 12:24 PM, Cristian Marussi wrote:
+> > On Fri, Oct 30, 2026 at 04:58:35PM +0100, Clément Le Goffic wrote:
+> >> A get of a setting that is on or off, the flags and the pulls, returned
+> >> 0 as a value, so every one of them showed as set on every pin. Return
+> >> -EINVAL when the platform answers 0, which is how pinconf reports a
+> >> setting that is not active.
+> >>
+> >> Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
+> >> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
+> >> ---
+> > 
+> > LGTM.
+> > Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+> 
+> I'll apply Andy remarks. Can I keep your Reviewed-by with those fixes?
 
---edzk26a3huisnjhz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-hardening@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Alejandro Colomar <alx@kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: [PATCH v3 4/5] string: Add [C]QChar_of() and QVoid_of()
-Message-ID: <415453a31ebf1aed3b41da1a28913f5cbe58f175.1794323750.git.alx@kernel.org>
-References: <cover.1794323750.git.alx@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <cover.1794323750.git.alx@kernel.org>
+Sure.
 
-These macros serve to implement qualifier-generic macros as those
-specified in ISO C23.
-
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- include/linux/string.h | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 12e31c17f0d3..9e59f9697c9e 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -14,6 +14,36 @@
- #include <linux/stdarg.h>
- #include <uapi/linux/string.h>
-=20
-+/**
-+ * QVoid_of - qualified void of
-+ *
-+ * @p: Pointer to test for qualifiers
-+ *
-+ * This macro produces the type name 'void',
-+ * qualified with any qualifiers present in the element of @p.
-+ */
-+#define QVoid_of(p)       typeof((__QVoidptr_of(p)){0}[0])
-+#define __QVoidptr_of(p)  typeof(1?(p):(void*){0})
-+
-+/**
-+ * QChar_of - qualified char of
-+ *
-+ * @Q: Qualifier to test.
-+ * @p: Pointer to test for the @Q qualifier
-+ *
-+ * This macro produces the type name 'char',
-+ * @Q-qualified iff the input pointer points to a @Q-qualified element.
-+ */
-+#define QChar_of(Q, p)  typeof                                        \
-+(                                                                     \
-+	_Generic((QVoid_of(p) *){0},                                  \
-+		Q void *:  (Q char){0},                               \
-+		void *:    (  char){0}                                \
-+	)                                                             \
-+)
-+// CQChar_of - const qualified char of
-+#define CQChar_of(p)  QChar_of(const, p)
-+
- extern char *strndup_user(const char __user *, long);
- extern void *memdup_user(const void __user *, size_t) __realloc_size(2);
- extern void *vmemdup_user(const void __user *, size_t) __realloc_size(2);
---=20
-2.55.0
-
-
---edzk26a3huisnjhz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzOVwACgkQ64mZXMKQ
-wqnzfA/9GrZZK+W+KOb7/G65cAjO7rx/x9rBOsQvMCeJEwmDSJn3Be/VpJVier7+
-sUkHYATUyU+q+9GkR0OGKk0Kq1pf8y2wU/NJGFtM4FovgbG6NpZ3ciKSnftLI7p0
-JqixEpOHsDJtGgO4LvA1KiJnJhyWOLDIETHMCSEcn3ZLn4VLPfHa0rWIizUCkNpn
-BapLhk/76ZVtaUjc17zzlLnApa9VNwi6zdJZWnkicVGFVv8aUc8nXR6tarGsnbkN
-2VvWCHG32+Ex9+bXDNcTs4MvOS/m/o9A8k8uttKdhmV4vYu+4NeIBo3wCo0W1bbV
-fZI5ZFDqnbNWLnnm8DxyHegN5+fo+yorzE5rD0Bqm9y4Cip0knABMDhw1z7vKT0i
-SOvZ4mRB89i8iTMgRF0yLW9vYB5busWZ/xtTKlfQltGV3e/r/QO3f6J8YATYNPxY
-0rwViY3O36B7vTpQzAZRSKFElDojX8yJNEmEggc2kHWSyJ8YOSkUJd+1uAtWhm/p
-uTZicBjl1vKF7q11LevobiEZIPOobOEj9sB1IhqtVZSEbiRoYjJLzmODg8teLs1Y
-wi0WKcqUqdfQrLzPfWHIrvwtzGRxC/sByE9v+PT7xkauL8zQ1jSgQscLR+RrX1JB
-uXAh0bzgn8Lq9sxaWF6XoRmqYNObiby+RGvcm2t2nF0UaJwWvm8=
-=llC6
------END PGP SIGNATURE-----
-
---edzk26a3huisnjhz--
+Cristian
