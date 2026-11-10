@@ -1,70 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.4.11.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794328375;
-	b=Ibe0/d5v8U98ZMWBKc5cmXSUhTfro1uUdHjqjhXKhmp4Gxsh0wFCU4jjNLYyfRj2Ckd/
-	 1YROxa6STZOru0HW8w95+cADC8v5eQxwJ+/5ajoa4CtupLfD9CEudBUKs2B1o7UXhHZe2
-	 7C0L5Q3lr9VsRWjq5AhRvDOQmuIVARC++IpDpj4zsd+k8lUVs6zmZwrfR/QyQWOXPkKOZ
-	 XFl1L7e9Vxe2r1PknN8jBKKs6cQWrXstOdmlgFVzOMJeoGKB27MwtJCSMTNIYUDq7qv8z
-	 3Y8RLSt4Y8cQuXgisGexsiFL9/wxxK8y/vRq2qoY+lyImIZkaVVcft6zSDqkbhdu21A==
+	t=1794332394;
+	b=AQR+qy6hXVuPxMB1aWt+IqWH4sZR2W5g3boXYTqNk/0xyVsYbivOaLWCR+rMsFG3M0R7
+	 BAu6dpnPHNcwWrfuecf1ZAF+z9RIyygYQzQsJhd8gEJeDFv27CkKq2mu9edf+sdJWN4we
+	 +RCDEBmGxjEzs/Q9KLq/uovWRvboScgiPd11GnMOTYAd3kNnso8gbGLCzKyQdWQlNs8a3
+	 +VlnKDgmvjAahOIyCaSoppxLKYrtKdQRQXnLDO08pSgkGvD/VUaczhqzumMj7IjAHpEVZ
+	 t7QxCHYaaB5V+Tyql7saXkv6SXoR/WJSTIWrl8r8nZeSzlKESYujqktYVmsJXpNt9rQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794328375;
-	h=DMARC-Filter:Received:Received:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-Rspamd-Server:X-Rspamd-Queue-Id:
-	 X-Stat-Signature:X-Spam-Status:X-Session-Marker:X-Session-ID:X-HE-Tag:
-	 X-HE-Meta;
-	bh=O7Jegl1jgTWHpCnkVKKRRzSGStNzjcqpAmRoYpUqNSo=;
-	b=BwSdPQ4QHmMQjx5DRDSIPZqZjsy31QO5kxHB64X24103XhQOhN1Gv8t5VLUfXgHmekK9
-	 Z8mlFja7G3laYjXC5dDMoM/uBfxU9byKkuca3QrWEgI44bCs8axVbOHCuKZV/9ysB/nLJ
-	 /aiy5Y+xvTnOIewchBBmi7hUoGFDqWxzSPAqrLPy9ty2DTcecGhLoXErpwlADRMSOlTdD
-	 ITEOFr2aEZ8qdv8NG6RuxF59Eyx1fET2tgsOCctCkj0+D+u1UEVHT6yKdJoNIBLKfQ0Re
-	 MYoZtd4d6W4BpDxWvKP3xjYN/ppd9Bzp2HGlkSspdLc0UVkuokhqngC8BTKtQIAox2g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794332394;
+	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=C/CW9UeKb6nIJKTf8Z9vYcXmdOZkRzveAetbAoCHv0Y=;
+	b=i+xnq7unkpL74hC0gCgvFM0GbAgnO+KTmd3fpn875OscFvy14W2U9NQPnN3KlQaiOgUi
+	 5LJfiNDwi2q9xby2/SOAZJ4InhY3vm3OF3LYS5mr9XV8SIROLp0+rn0/mZ9z8HRxZbxGz
+	 Fr/X4H7rf4IXqyYGKAI6Uw//wRnfzPwCXzYMv92ZguRVit5+sxwIAiVUhxKKbFm6iWb48
+	 xNEshRMczwv0yS89SNXxIcPPbW2jnUzjOY22+4Sbr74/lkP2H67ROhaCSWmuUi35/6RUW
+	 v0nJ9FAAlwU/K2z98b3kZIO/WnPSKUdjhDKI7VCOsaIe7E6l6P0t8nlKVTPdDsSFyqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=perches.com;
-	spf=pass smtp.mailfrom=perches.com;
-	arc=none smtp.remote-ip=216.40.44.15
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	dmarc=none header.from=phrozen.org;
+	spf=pass smtp.mailfrom=phrozen.org;
+	arc=none smtp.remote-ip=46.4.11.11
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2AC606A204;
-	Tue, 10 Nov 2026 16:32:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EF2AC606A204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf01.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 0DD7E1C4341;
-	Tue, 10 Nov 2026 16:32:51 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf01.hostedemail.com (Postfix) with ESMTPA id EE3BD60016;
-	Tue, 10 Nov 2026 16:32:41 +0000 (UTC)
-Message-ID: <64aa89daf23821f95780813fe96882ff61688578.camel@perches.com>
-Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
-From: Joe Perches <joe@perches.com>
-To: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki"	
- <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, Andreas
- Schwab	 <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, Bartosz
- Golaszewski	 <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, Danilo
- Krummrich	 <dakr@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold
- <johan@kernel.org>, Kees Cook <kees@kernel.org>, Laurent Pinchart	
- <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus
- Torvalds <torvalds@linux-foundation.org>, Linus Walleij
- <linusw@kernel.org>, Namhyung Kim	 <namhyung@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring	 <robh@kernel.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Saravana Kannan	 <saravanak@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi	 <zanussi@kernel.org>,
- linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Tue, 10 Nov 2026 08:32:41 -0800
-In-Reply-To: <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
-References: <cover.1794323750.git.alx@kernel.org>
-	 <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 (3.60.2-3.fc44) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E06606A327;
+	Tue, 10 Nov 2026 17:39:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1E06606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phrozen.org
+Received: from [2a04:4540:1403:9bfc:b113:5373:d0ec:2ad1] (helo=bertha10..)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <john@phrozen.org>)
+	id 1xQpoy-001CWh-2R;
+	Tue, 10 Nov 2026 18:39:48 +0100
+From: John Crispin <john@phrozen.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org,
+	lei.dong@airoha.com,
+	Linqi.zhang@airoha.com,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	mfd@lists.linux.dev,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rajeev.kumar@airoha.com,
+	upstream@airoha.com,
+	Weifeng.xu@airoha.com,
+	zhengping.zhang@airoha.com
+Subject: [PATCH 2/7] pinctrl: airoha: add per pin mode field mux
+Date: Tue, 10 Nov 2026 18:39:36 +0100
+Message-Id: <20261110173941.301478-3-john@phrozen.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261110173941.301478-1-john@phrozen.org>
+References: <20261110173941.301478-1-john@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -74,36 +73,157 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: EE3BD60016
-X-Stat-Signature: mp8xao1qrwddju9nzuyip8mr885n8do4
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18QrhYeut7Lp9jEX7fMdRrU/x1vmS6is5s=
-X-HE-Tag: 1794328361-279135
-X-HE-Meta: U2FsdGVkX19mRZocbBpptel45dGmmyuITr1m5kU6f/MCdgw7zyp42Lt9p8rwk1AwtWwqvUuTXSrVbbpC+WZMCNQlScguvbF/fp8QvUKZy6bX5OrrWZVylJIK5F/uf/mP//94tQRpit19ctDzMHGmXyZHRUFZIahy7AXe+ttUOBAh8XiedqLFbcyMoZseYLv8KKb9P525JfTfeaipS3TohBcIVQOrwjl0q7sqJVCQkzab2gi2Y6fSCJY9aE/ycYkpvrssOELldVCYA/OT+QQagS8c/evSCjag8q9+FlL47GakQTWD6qMRb/yjUefhkQv+0cylqj9qmuN3Dgv6C1hQH070PEeodHlIUH5Xx5H14aAuv5AkhkMaKT8d8hNm0FHqaTzMXG236F+W/jDWUK48Bw==
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2026-11-10 at 16:33 +0100, Alejandro Colomar wrote:
+Newer Airoha SoCs select the function of a pin through a mode field in
+a dedicated IOMUX block instead of through function specific bits in
+the chip SCU. The AN7589 has a 4 bit field per pin, eight pins per 32
+bit register. A group can then need one register write per pin, and
+the two entry regmap[] of a function group cannot carry that.
 
-no commit description on proposed patch
+Let a function group supply a pin_modes[] array, parallel to the pins
+of the group. When it is set, set_mux writes each mode into the IOMUX
+regmap and then applies the regmap[] entries of the group, so a group
+can combine its pin modes with a register write in the GPIO block.
 
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> ---
->  include/linux/string.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 9e59f9697c9e..55ca4cb5122c 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -590,7 +590,9 @@ void memcpy_and_pad(void *dest, size_t dest_len, cons=
-t void *src, size_t count,
->   * *  @s+strlen(@prefix) if @s starts with @prefix
->   * *  NULL if @s does not start with @prefix
->   */
-> -static inline char *strprefix(const char *s, const char *prefix)
-> +#define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx))
-> +
-> +static inline char *(strprefix)(const char *s, const char *prefix)
+A SoC with an IOMUX describes it in its match data with struct
+airoha_pinctrl_iomux, which holds the width of the mode field. Probe
+then takes the regmap from the airoha,iomux phandle.
 
-Why introduce a new coding style?
+No functional change for the existing SoCs.
+
+Signed-off-by: John Crispin <john@phrozen.org>
+---
+ drivers/pinctrl/airoha/airoha-common.h  | 14 ++++++++
+ drivers/pinctrl/airoha/pinctrl-airoha.c | 48 +++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+
+diff --git a/drivers/pinctrl/airoha/airoha-common.h b/drivers/pinctrl/airoha/airoha-common.h
+index 850e733db15a..7a0cb8924e71 100644
+--- a/drivers/pinctrl/airoha/airoha-common.h
++++ b/drivers/pinctrl/airoha/airoha-common.h
+@@ -49,6 +49,12 @@
+ 		.group_size = ARRAY_SIZE(table##_func_group),		\
+ 	}
+ 
++#define PINCTRL_MODE_FUNC_GROUP(id, table)				\
++	{								\
++		.name = id,						\
++		.pin_modes = table##_modes,				\
++	}
++
+ #define PINCTRL_CONF_DESC(p, offset, mask)				\
+ 	{								\
+ 		.pin = p,						\
+@@ -75,6 +81,7 @@ struct airoha_pinctrl_func_group {
+ 		u32 val;
+ 	} regmap[2];
+ 	int regmap_size;
++	const u8 *pin_modes;
+ };
+ 
+ struct airoha_pinctrl_func {
+@@ -102,6 +109,10 @@ struct airoha_gpiochip_regs {
+ 
+ extern const struct airoha_gpiochip_regs airoha_gpiochip_regs_64;
+ 
++struct airoha_pinctrl_iomux {
++	u8 mode_bits;
++};
++
+ struct airoha_pinctrl_confs_info {
+ 	const struct airoha_pinctrl_conf *confs;
+ 	unsigned int num_confs;
+@@ -126,6 +137,8 @@ struct airoha_pinctrl {
+ 	const struct airoha_pinctrl_confs_info *confs_info;
+ 
+ 	struct regmap *chip_scu;
++	struct regmap *iomux;
++	const struct airoha_pinctrl_iomux *iomux_info;
+ 	struct regmap *regmap;
+ 
+ 	struct gpio_chip gpiochip;
+@@ -135,6 +148,7 @@ struct airoha_pinctrl {
+ 
+ struct airoha_pinctrl_match_data {
+ 	const char *chip_scu_compatible;
++	const struct airoha_pinctrl_iomux *iomux_info;
+ 	const char *pinctrl_name;
+ 	struct module *pinctrl_owner;
+ 	const struct airoha_gpiochip_regs *gpio_regs;
+diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/airoha/pinctrl-airoha.c
+index b50108826d8d..f9ae4020b764 100644
+--- a/drivers/pinctrl/airoha/pinctrl-airoha.c
++++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+@@ -401,6 +401,35 @@ static int airoha_pinctrl_add_gpiochip(struct airoha_pinctrl *pinctrl,
+ }
+ 
+ /* pinmux callbacks */
++static int airoha_pinmux_set_pin_mode(struct airoha_pinctrl *pinctrl,
++				      unsigned int pin, u8 mode)
++{
++	unsigned int mode_bits = pinctrl->iomux_info->mode_bits;
++	unsigned int modes_per_reg = sizeof(u32) * BITS_PER_BYTE / mode_bits;
++	unsigned int shift = (pin % modes_per_reg) * mode_bits;
++	unsigned int reg = (pin / modes_per_reg) * sizeof(u32);
++
++	return regmap_update_bits(pinctrl->iomux, reg,
++				  GENMASK(mode_bits - 1, 0) << shift,
++				  mode << shift);
++}
++
++static int airoha_pinmux_set_pin_modes(struct airoha_pinctrl *pinctrl,
++				       const struct group_desc *grp,
++				       const u8 *modes)
++{
++	int i, err;
++
++	for (i = 0; i < grp->grp.npins; i++) {
++		err = airoha_pinmux_set_pin_mode(pinctrl, grp->grp.pins[i],
++						 modes[i]);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static int airoha_pinmux_set_mux(struct pinctrl_dev *pctrl_dev,
+ 				 unsigned int selector,
+ 				 unsigned int group)
+@@ -431,6 +460,15 @@ static int airoha_pinmux_set_mux(struct pinctrl_dev *pctrl_dev,
+ 		if (strcmp(group->name, grp->grp.name))
+ 			continue;
+ 
++		if (group->pin_modes) {
++			int err;
++
++			err = airoha_pinmux_set_pin_modes(pinctrl, grp,
++							  group->pin_modes);
++			if (err)
++				return err;
++		}
++
+ 		for (j = 0; j < group->regmap_size; j++) {
+ 			switch (group->regmap[j].mux) {
+ 			case AIROHA_FUNC_PWM_EXT_MUX:
+@@ -824,6 +862,16 @@ int airoha_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	pinctrl->chip_scu = map;
+ 
++	if (data->iomux_info) {
++		map = syscon_regmap_lookup_by_phandle(dev->of_node,
++						      "airoha,iomux");
++		if (IS_ERR(map))
++			return PTR_ERR(map);
++
++		pinctrl->iomux = map;
++		pinctrl->iomux_info = data->iomux_info;
++	}
++
+ 	/* Init pinctrl desc struct */
+ 	pinctrl->desc.name = data->pinctrl_name;
+ 	pinctrl->desc.owner = data->pinctrl_owner;
+-- 
+2.34.1
+
