@@ -1,63 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794318572;
-	b=W6zEpbV1kJjH8+2YyBc3YPFoXWHPhnA/B9DhNDr98q0JOJSBWlE6PUdqqqMyqFKQpCEV
-	 tP02pV5VRaZCoyRWg9/Jy3vxSad8Nv8HRC+dENavnx4iX+ptKhx0wGo+DJ+AtRsywvY7y
-	 OtGaTAXe2k/F+hgdHrvl5X3dF7k48yB2tM+qTAjL3ZbSJq5fulZlea9IWH5drYWRZLVu1
-	 hZjvWv9u8cm38G+tbF3L8ii9q+ND77ZX5E2tNEHo6qfzsGpl5uag6FgG9HuvFQ7B7vBLv
-	 JXEBbZE2aeb46pdHZeq12JfKb2nPCSi3BfiAH9FMLU3B6rZZ7uLrvVRnAKV96cnCRNQ==
+	t=1794318938;
+	b=rCNKOTEhoCxEGnrpif8A4Px9x/+L1Miahee8JWPNlQVvpUSlnlTzotbgeeGKKvRxpWsg
+	 h92dAHTeLgNJvDqhsRxyNwvS53zU4iLZuS8W611nyo/nBPMpHvuGgKUthhH5RVo9DxDEG
+	 sYxDw3rckrLGehK7dYjx2t+FYyxD++etLi4WJjglNuV05BStpvPhNpPJZZbjLc0mzyCxc
+	 v/xxWsXQ+c5aR2R1IkiqbbUooenvGgdC9BNplVTCrsrgWzgimQmitCnWOsdAquGr/8nRu
+	 QMdCoAs7pHh0JZ20r8WqlVhHBqYluPpDx83ptJOofmjFjRThWZz7nvehozy04oVMhiw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794318572;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794318938;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=Rte+nFjJfCpN04ZQkjjif+xK/XpIBzJx/BQcSctTM9k=;
-	b=UVN1yp1SLkAMdnNxDfe++6CThSd1J32HPP/n3DwjDD2hy/jKz08V7pH+DHbWtblBKVvC
-	 w+Q5ofxpuUC9CgTFLdq2dMv9qWm13Z5QeoiuQwLYiHMbebQEIV/NxOcpjUIq0cCVZ37UQ
-	 /5GTzpjsiTL3PNuEqnFTti9rPPU9oJeD7Xy+semZclP2OpAtIoy2/wST8ogbpxxVu6RFG
-	 sXhKcFOdbswF9rBNyIf17OnNoaDa1czlkWz33RFmeSSBL1huxnCHLby5mXY8e5YhRBk7b
-	 kCSCXJOUWlqBMuaV+1lAnuqac/ZeDdv4iwowYfolmC35bxqFLDsOQKBuzMejhtspdbw==
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=IYGhANhPBrozk6ereFsD6fb9TNu93Ek+MLRFDmzCQDo=;
+	b=glqxBSoJD19fOor6NsJ27sFSITp7r0dzCfQileDBbhz2b68dZ+5/MAd/xMCVTyn5TtBC
+	 elLJitvTCG3JM4GfP2EVFMli0j3ua5SA9Lbhwmtv3g+q1AKhqgi7k7i99ajn2IwcH9LGG
+	 55WVa9jDccn+cY5O2MpLq772/ETgPz1bAzEVxrM9y0YTmsdISDEPtiOA9M8/66Wj1PPye
+	 wGPTBIQyx9ahF6SQxwTwu/Uq4majNQAwH8tt8GOQFSzDxrSMULsc38xudhK99TpoCStYE
+	 gAa09HWD8ZfJZCx68f/n+EjWu4YA+ojUgblW5mTOVlKJsSic28qIP4XMzr43iZ0LBDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=M7r9xLlF;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7AF606A31C;
-	Tue, 10 Nov 2026 13:49:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D7AF606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ECZSQnsD;
+	arc=none smtp.remote-ip=192.198.163.13
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F4E606A31C;
+	Tue, 10 Nov 2026 13:55:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A2F4E606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=M7r9xLlF
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20F1C1477;
-	Tue, 10 Nov 2026 05:49:27 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 353973F632;
-	Tue, 10 Nov 2026 05:49:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794318570; bh=hYzeZBtVBVDXCHttXoGztstvHvPFY7lN52/cdyn0Zr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M7r9xLlFeYK9RYXoymnR5xbY1504ntzT5LN8cIeeXIgXL7Xcq5lR7JwMvOMEIiJjM
-	 0NOQsrhoEejZso/105nnOcn9IBTS4yVgFxBKiIp0L+ABb8dyCAf6tpi+NzaNtCOxbX
-	 ovxXTmqBujnIKaBPS7kGPeKc09iRcAGySN6wXaaw=
-Date: Tue, 10 Nov 2026 13:49:25 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
-	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] pinctrl: scmi: select the GPIO function on GPIO
- requests
-Message-ID: <avMg5XmU8uSzPR4s@pluto>
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-11-52d92843ad97@baylibre.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ECZSQnsD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794318937; x=1825854937;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W8O1LBRwu+sB/68DfU9Zjqdg14RpoGbap0+yHR8ZzjA=;
+  b=ECZSQnsDrfSVTzCJXOTlOjsK6r9y1Rjd2JtxtBwVwVELwmURUOqXW/Br
+   6la/Oof7V7lOrZnyW16vu61y903YZvPtRltk9n2wyjtuD5d4JNm2kX1CW
+   ZNhYh6c6PWQaZvvgl5ElbN+8ljxraJQyF0wRHzf0lphXEE3LJEkST0opE
+   EHf0Yv4NJfXmoxbLAlgp7qqBZ7MN3sJjpvc9u7wTAkmiZDOTuztR5VmiK
+   woCaXdIQ46ZT48mQVpGiUr8+DxXR+OlGlaHBnxM8279w+jehamQE7e0AQ
+   AzZ8/CBDlGNuo4Q2hOG6TiERdtSEuJBI/ETMI5uLJycwzt6QBbbI/pNbi
+   A==;
+X-CSE-ConnectionGUID: KJI/dfMGR9CpDcBewIQnFQ==
+X-CSE-MsgGUID: YAwx74T0R5CBQYZsIplJug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="3059467"
+X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
+   d="scan'208";a="3059467"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 05:55:36 -0800
+X-CSE-ConnectionGUID: swvv99rkQ1udTRNjdJRSQg==
+X-CSE-MsgGUID: TUiSrJe5RlSHRKUdDZxGEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
+   d="scan'208";a="8018180"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.244])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 05:55:32 -0800
+Date: Tue, 10 Nov 2026 15:55:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>, devicetree@vger.kernel.org,
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 14/14] gpio: pl061: use string_choices helpers for
+ IRQ trigger logging
+Message-ID: <avMiUkiq54lM20mX@ashevche-desk.local>
+References: <20261110-cv75-gpio-v14-0-e586aad0467a@ambarella.com>
+ <20261110-cv75-gpio-v14-14-e586aad0467a@ambarella.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,79 +87,21 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-11-52d92843ad97@baylibre.com>
+In-Reply-To: <20261110-cv75-gpio-v14-14-e586aad0467a@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Oct 30, 2026 at 04:58:42PM +0100, Clément Le Goffic wrote:
-> On a GPIO request, select the GPIO function of the pin, on the pin for a
-> pin-only function or on its single-pin group. Without a GPIO function the
-> mux is left as it is.
-> 
-> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
-> ---
->  drivers/pinctrl/pinctrl-scmi.c | 64 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-scmi.c b/drivers/pinctrl/pinctrl-scmi.c
-> index 6f44e8c0fee6..ba649304638e 100644
-> --- a/drivers/pinctrl/pinctrl-scmi.c
-> +++ b/drivers/pinctrl/pinctrl-scmi.c
-> @@ -74,6 +74,69 @@ static int pinctrl_scmi_free(struct pinctrl_dev *pctldev, unsigned int offset)
->  	return pinctrl_ops->pin_free(pmx->ph, offset);
->  }
->  
-> +static int pinctrl_scmi_gpio_mux_set(struct scmi_pinctrl *pmx, unsigned int pin)
-> +{
-> +	const unsigned int *elems, *pins;
-> +	unsigned int nr_elems, nr_pins, i;
-> +	bool pin_only, gpio;
-> +	int nr_functions, func, ret;
+On Tue, Nov 10, 2026 at 12:32:39PM +0800, Long Zhao via B4 Relay wrote:
 
-Beside nr_functions, cannot all of these variable definitions be moved
-inside the scope in which they are exclusively used, i.e. down inside
-the for-loop ?
+> Use str_high_low() and str_rising_falling() for the level and edge
+> debug lines.
 
-> +
-> +	nr_functions = pinctrl_ops->count_get(pmx->ph, FUNCTION_TYPE);
-> +	for (func = 0; func < nr_functions; func++) {
-> +		ret = pinctrl_ops->function_flags_get(pmx->ph, func, &pin_only,
-> +						      &gpio);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (!gpio)
-> +			continue;
-> +
-> +		ret = pinctrl_ops->function_groups_get(pmx->ph, func, &nr_elems,
-> +						       &elems);
-> +		if (ret)
-> +			return ret;
-> +
-> +		for (i = 0; i < nr_elems; i++) {
-> +			if (pin_only) {
-> +				if (elems[i] != pin)
-> +					continue;
-> +
-> +				return pinctrl_ops->pin_mux_set(pmx->ph, func,
-> +								pin);
-> +			}
-> +
-> +			ret = pinctrl_ops->group_pins_get(pmx->ph, elems[i],
-> +							  &pins, &nr_pins);
-> +			if (ret)
-> +				return ret;
-> +
-> +			if (nr_pins == 1 && pins[0] == pin)
-> +				return pinctrl_ops->mux_set(pmx->ph, func,
-> +							    elems[i]);
-> +		}
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-So it is a possibility that in the above loops nothing is set..and it is
-fine should AFAIU...but should we log/debug something in both cases to ease
-troubleshooting ? (maybe just a stupid question ...)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Cristian
 
