@@ -1,70 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794320600;
-	b=oHkNrA8VARrGqd313PG4GcY7IgzeRizisKtUxQPmC0Nki9Z5htjVb6YWrHCdDaCwkwPm
-	 7Fn+3GBk/cHIU3jJdJ1p87ojl8u7oGxg4Whhntfe9zjhuPgxHIso5yLphMR/F7Yf0BlyX
-	 s3SL399B+JnbYbqF9hSwvo+R03FQzWsweehjDNE0tiuu9/H+S0+LObVDDtKAOMW+1CXsU
-	 nmtRbK9uNIuPVqI0OSzYievPvfvd/si8czSZxmqTXJKZVkhjifCwcaAd+n6ifciwXauK/
-	 PaqtaAg8/JixdLjjTDrmRXyfInT7TQXj+YswLMUUwl5MREHC8T1FtdMFRPgzI/b/9pQ==
+	t=1794321654;
+	b=YOaYxi//0e18ion1UawA2Y+FBF6ZJP+v1J8qRyrkUhiQIyFjWd/iwbm43f8sT0GroedR
+	 qAFLYdmCvd15zfo7WVcdWJvAHpAUgo080j9mnXA+/r6tM9ODkxPzXDhA6KPSmcv0AqjlG
+	 cmAS6OYOJeR28Oh7koMxsGzd6A/sZtG6uHqGR1QZSlIiYmh3W+LXU3YgipMysgvWXc2uZ
+	 kwzpyIl8roKVcfVreIUVGdgWxqevdL5RI7NvQQ1zKQEist44LKxgcaL72zq5n86tD+Llw
+	 6Q/vXdd9RfS7qN3N8z+Gv0lkVW7xz9KiFIrSrin7tdlmEhRQUCc2LyFGDbKoMcWXq1g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794320600;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=3B7CtILb3LLO9q+THe0t5ht3uVshXwChn80xi7KOiak=;
-	b=UEiAAOdNCDGsseS8SFtTC/m7ULRgS7l/Rzy6kmFjsjECwgOxBtOteCmj4nark3t493cj
-	 IJbkMZMytEaZ3TVzx+veVOOES4OnlhZbkZgcUrxGyzVG7v8+tvpwYKWQel5FeIN6pPba0
-	 7mRJgvXDFow7+2jTeCWW2vuRvbKljEXBKSLcoRjoWxHZO7s56ZqKTXpljLXdCzBU4di9A
-	 6WyPmqNoya8bgGz/o+bmCvD3VW+Bgh1YEQJqHIY8GEs7cjGAGzQYVIlxzBM/hNIfHKswL
-	 85wwtR5KRaaeppELPoLLfKxOGo72hlU5fl1kZxV3W/pCAQgWwFG+wpVpjpspXT73GuA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794321654;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Sy0r9F+Az0xK7r4VzTWIINl0ay8Dddv38l9X2AM0tA0=;
+	b=N5Q++X6wmdpSohq66xx3w92T+1+y0tUdM+iBps1WdfE/M+ay4cI0mOQ1yNiSDVhM134Z
+	 iPIf1rqWtBUVVE74fn9iDFTwh0+f2pJnHHB/DV0yW+dAqZiX1Gu64uP9fZQeMKoGaDl5A
+	 eV0vtBQJN6MzA2Pw6lq1BrxMVVxMXsJ3O4/3RzZwAxwdq/ZIGdCuxUwSFImkGGaLTmNl/
+	 BnevBG/fQeluI6tm80OIGSxuqE8vK/W7DbREHn3u4tw6cPwD2JXQPKP9AMw9l+9FxanxP
+	 T3OKwiU035q2pNaWs9tDBfOIUUksbyxYr76KRU5xI0k9lM6Bjd1AQRfeU+OBtDxgT8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eqinskO5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=inDkL2P9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7D3D8606A325;
-	Tue, 10 Nov 2026 14:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ABD606A31C;
+	Tue, 10 Nov 2026 14:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eqinskO5
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A25AD1F0089F;
-	Tue, 10 Nov 2026 14:23:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=inDkL2P9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E621F008A1;
+	Tue, 10 Nov 2026 14:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794320600;
-	bh=3B7CtILb3LLO9q+THe0t5ht3uVshXwChn80xi7KOiak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=eqinskO5eMgPYMTCrXUdZfO5Vf3gIJLFfRp1UCy6RBOuLCmE5myW+Fg8gakN7cqQ3
-	 15d2sujTkCMLobLAtCKtr838Z6VgOEmKU6dMAG5OUjX7MPS0sxnDXNNv94fvExoPoY
-	 07k6hHxMNxF5RLu/7IkgemiZPXseddbNzyBpKGhFkyl22ekA1u/L8uHziVFDW0vNEK
-	 WesXcWZ+2N0sjHLjJKcG2gWTR0ZDN2qrzejMJZNZy5ODNYBGA85RKejXjiANlDYWaO
-	 8Wb/mnp4SvYBLArzQVDW2oimsXx58/abksSS3b9ZSB9nVoXwJiyKzVgSm68J+TpDla
-	 EfeNApjSAv2lQ==
-Date: Tue, 10 Nov 2026 15:23:16 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
- fwnode operation
-Message-ID: <p5y6f2vrber2i56lbzjvd2bnyjxde45g5arqa6wcuz6nd7xqzl@bsgjktsfgnky>
-References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
- <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
- <auuhy40x1BMoW96-@ashevche-desk.local>
- <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
- <avICwdxyi-W1Y3PD@ashevche-desk.local>
- <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
- <CAHp75VcwiGHB73ny8iSvXeFdjbTKUpnXZPS5iD7NwaMcJ6q-7A@mail.gmail.com>
- <l7ppjeoqvc6hblk52a6upei4ee2caahe2ltiur4gwig3ez7d3c@dmzzy22ixvlc>
+	s=k20260515; t=1794321653;
+	bh=Sy0r9F+Az0xK7r4VzTWIINl0ay8Dddv38l9X2AM0tA0=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=inDkL2P9bFpO4QRyW2PxkJKYTnr8VOnW+MS3ZGP1czOGkHybRJTKjKTL0qtJBmA9h
+	 JFFpeXzQk8QkLJMbQmw2UwMUH3gV0gZFadZnSaz7KTtzzyz5TUithWcBwNF16kiGBN
+	 c4nZFqYFKQfJoJQ/LFNYb45q46A0PSyMR8i/PgFtR2sQG9BBQeVBGeirY/I4woEZl+
+	 1jc3g3qDd25WFe+ufed6D/970sTMu95zu69RkxmZHmBRB5KzQzHep6kHGF1HfTVMeJ
+	 EE5869wAZPicFdBdJAcVApwnC6PxTG2RDamTsiExxTwPkpGOIU15aSRQ4cqIzNFUKG
+	 imK4cZ7CyrTUA==
+Message-ID: <sashiko-outbox-207202@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] pinctrl: cs42l43: Add GPIO controlled mic/spk mute LEDs
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Maciej Strozek" <mstrozek@opensource.cirrus.com>
+Cc: linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org
+In-Reply-To: <20261110142058.354518-1-mstrozek@opensource.cirrus.com>
+References: <20261110142058.354518-1-mstrozek@opensource.cirrus.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 10 Nov 2026 14:40:52 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -73,53 +58,99 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <l7ppjeoqvc6hblk52a6upei4ee2caahe2ltiur4gwig3ez7d3c@dmzzy22ixvlc>
 
-On Tue, Nov 10, 2026 at 10:50:57AM +0100, Bartosz Golaszewski wrote:
-> On Tue, Nov 10, 2026 at 11:12:02AM +0200, Andy Shevchenko wrote:
-> > On Tue, Nov 10, 2026 at 11:00 AM Bartosz Golaszewski <brgl@kernel.org> wrote:
-> > > On Mon, Nov 09, 2026 at 07:28:33PM +0200, Andy Shevchenko wrote:
-> > > > On Mon, Nov 09, 2026 at 02:07:46PM +0100, Bartosz Golaszewski wrote:
-> > > > > On Wed, Nov 04, 2026 at 11:21:15PM +0200, Andy Shevchenko wrote:
-> > > > > > On Wed, Nov 04, 2026 at 03:03:47PM +0100, Bartosz Golaszewski wrote:
-> > 
-> > ...
-> > 
-> > > > > > > +               names[i] = kstrdup(prop->name, GFP_KERNEL);
-> > > > > >
-> > > > > > Can property be statically defined somewhere? We might want to also optimize
-> > > > > > these duplications with const variant (here or elsewhere, for fwnode generic
-> > > > > > path, I believe).
-> > > > >
-> > > > > Please rephrase because I'm not quite following what you're saying.
-> > > >
-> > > > Can prop->name come from something that is declared as
-> > > >
-> > > > static const ... foo = {
-> > > >       ... .name = "bar";
-> > > > };
-> > >
-> > > You can't know it for every instance of struct fwnode_handle, so the
-> > > answer is: no.
-> > 
-> > I believe I misput my question. If there is any potential that *some*
-> > of fwnodes use statically defined string literals for the property
-> > name? If so, kstrdup_const() and friends may be a better choice here
-> > to save some memory (which is getting more and more expensive these
-> > days :-).
-> >
-> 
-> Ah, that makes more sense. I'll look into it.
->
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [High] pinctrl: cirrus: cs42l43: unbalanced fwnode put in
+  cs42l43_pin_probe() [1]
+--
 
-So I believe it doesn't make sense to address it just yet. OF nodes are
-created dynamically. We could potentially make use of it for software
-nodes but let's cross that bridge when we get there. That would require
-making kfree_strarray() const-aware and use kfree_const() for the member
-strings.
+commit 1aa7ff7b2b9b125f7c2e43385c49822080f93214
+Author: Maciej Strozek <mstrozek@opensource.cirrus.com>
 
-Bart
+pinctrl: cs42l43: Add GPIO controlled mic/spk mute LEDs
+
+This commit adds support for driving speaker and microphone mute LEDs via
+cs42l43 GPIOs when described by ACPI properties.
+
+> diff --git a/drivers/pinctrl/cirrus/pinctrl-cs42l43.c b/drivers/pinctrl/c=
+irrus/pinctrl-cs42l43.c
+> index a1c839b355578..44a9a759e0f65 100644
+> --- a/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
+> +++ b/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
+
+[ ... ]
+
+> @@ -598,6 +748,12 @@ static int cs42l43_pin_probe(struct platform_device =
+*pdev)
+>  		return dev_err_probe(priv->dev, ret,
+>  				     "Failed to register gpiochip\n");
+> =20
+> +#if IS_REACHABLE(CONFIG_LEDS_CLASS)
+> +	ret =3D cs42l43_mute_leds_register(priv, dev_fwnode(cs42l43->dev));
+> +	if (ret)
+> +		return ret;
+> +#endif
+> +
+>  	return 0;
+>  }
+
+[Severity: High]
+This problem wasn't introduced by this patch, but does assigning fwnode via
+device_set_node() in cs42l43_pin_probe() cause an unbalanced
+fwnode_handle_put() [1] when the platform device is released?
+
+Earlier in cs42l43_pin_probe(), fwnode is initialized from the parent MFD
+device or looked up from the "pinctrl" child node, and then assigned to
+priv->dev:
+
+drivers/pinctrl/cirrus/pinctrl-cs42l43.c:cs42l43_pin_probe() {
+	...
+	if (is_of_node(fwnode)) {
+		struct fwnode_handle *child;
+
+		child =3D fwnode_get_named_child_node(fwnode, "pinctrl");
+		if (child) {
+			ret =3D devm_add_action_or_reset(&pdev->dev,
+				cs42l43_fwnode_put, child);
+			if (ret)
+				return ret;
+
+			if (!child->dev)
+				child->dev =3D priv->dev;
+			fwnode =3D child;
+		}
+	}
+
+	priv->gpio_chip.fwnode =3D fwnode;
+
+	device_set_node(priv->dev, fwnode);
+	...
+}
+
+Unlike device_add_software_node(), device_set_node() does not acquire a
+reference on fwnode, whereas platform_device_release() unconditionally drop=
+s a
+reference on non-software nodes when the platform device is freed:
+
+drivers/base/platform.c:platform_device_release() {
+	...
+	if (!is_software_node(dev_fwnode(dev)))
+		fwnode_handle_put(pa->pdev.dev.fwnode);
+	...
+}
+
+When the "pinctrl" child node is present, its single reference from
+fwnode_get_named_child_node() is already released by cs42l43_fwnode_put() v=
+ia
+devres; otherwise fwnode belongs to cs42l43->dev with no extra reference
+taken.  When the platform device is later unregistered,
+platform_device_release() puts pdev->dev.fwnode an extra time, underflowing
+the fwnode reference count and risking a use-after-free.
+
+[1] https://sashiko.dev/#/bug/linux-a633bdf8-b5fe-4770-b14c-d3532525ae12
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110142058.3545=
+18-1-mstrozek@opensource.cirrus.com?part=3D1
