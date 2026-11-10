@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794285167;
-	b=B6ZSqeBp0U9wZyhrM+qyoAtonzf70ijCnPrQje4hkgvrxdYUuCt9K+USN4YV21bAh/jl
-	 3FKSZtb5nGonW1cCeXSemoeFh/dYzHH0TJRdiJT/EXJtly+1SaiXBFgLScH4wtmUouV0d
-	 f9LWr3gM0eqd4JqBrMry1idcSCmsMmIH5iB4bLe1sMcKRau3rqEt9CSQmpzkbKwqB8AWz
-	 AyVpqdbThwEt3xURYqh8TEz93UNIxR7udPz8IJcjdXmUsnB5HbmvLqTBPt61PAuA/vRDl
-	 H8hTEqNTIEQn1T5rcl2dSw79HkZnbsBGeyN+9aKKtNQv91EOJHCEMsZKQsXMkq+F6hA==
+	t=1794285170;
+	b=rvyFG48ejOguxPbaKovqjgjqCvEGnue1+3n7HDuQS/Nay8FApittCHX7B1burqgAosft
+	 wwH17GtmgMFApJ4XQ+6dzJG8/iVgluluqqgmO+Nstq9gwa638ssp1pA8KX2sGXa9bswQT
+	 /UPi2eqWPTEY6TnzbSkSGzMNeajL1z2BTwUfAjtyKf+WTU8hbA/liacnhy18aujMCEkvd
+	 8YUTRA7hSCZ/x1/uXMrJtZYoaCcddjj1sdkSelcJ9cGQzslv9X+LMB7WuaCYbPmfRGq6F
+	 rg4znt8418sIbA4H992z89Pf730VNYZb7g0yTFW4GzqnyMOOutZzNJwKvIhEEMU71DA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794285167;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794285170;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=mQHo+Pq1IJv6wRo06t/mpmrPiKGrNMyrY0EUw4RM8cA=;
-	b=1nj6/6r1orsO20wqWxk52Bwh9a85GtjGwaQP+IBE5XSz321e22BbtxG1YrgpaGQTR2bf
-	 yTr3dkm4CZLAA5VHF53PEj9Iyy8A1ondJV8FmGQJoV6703G7nfkaU+o7nVjRZeckQNORy
-	 44ESeFD6ux5fY2YABN8vZWAB2CPsMAynCGuIVJNLkFb6tJkTYK9KZOHr17A8JNCAYyklj
-	 y+4Q0hXngYS57n/npJV1dgwD8hLy2ZdHX6VaPfZWHJkI3o988tvilMcatHJfzNP0+H6RP
-	 QatuYzaa3m57nlVMHMS7f6Bi9aoS+gH69MnKu8ouhtoSfRomfow7ovEcbWjPw3d9tUw==
+	bh=o4jQDhcjo31dbJg2wJaIjLSidLekK7fUkFsWw7PV7Tw=;
+	b=SKvBSnTI59MdjtXqbvhTouzn7FuhOI0lPNRMoFeggwH5AtQSuBj4PxOwmAit+nJdbbQt
+	 EntbBLC1y7G0kaZF24xfXCm1eItUY9HPCQax+su7c10fbJ5CbvX21M1pMIaL7+H2ua6aj
+	 7+o40yymK5Av3BKrzlSWs3SMvXbEAqf4NBrk1ek5/bWswoxVfUlqv/TOirAa+Ng5LMEsI
+	 Ri3+GTaQQca8IoDRggqX9ZH/+0KNzV9xl+8CpkGW0QWKvKCAz0lrG5GjVp+D/onTluHiq
+	 iOuvPecCpuS6Vo0Y4TlTlrYt2ox4BIFpV3J3pjDPBwn9rEs3ATZyYppurOoP0vFvk1g==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mUmjn93F;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DPbvEt3r;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689B6606A338;
-	Tue, 10 Nov 2026 04:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2987C606A33E;
+	Tue, 10 Nov 2026 04:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mUmjn93F
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DPbvEt3r
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794285167;
-	b=rVOyOhqbUl9cgdkJUvxaWFGpxeccCbZ8d3YgvAyyMXf81BWFd6Ye8yYNr8Ma6qdf/Gs9
-	 zb433hmWXOmz2RxGtJRViUnZTJ2az93aILg0uZ+qaf2W1zd11KIUu1L3y4DxnENKYppYd
-	 DLb0rGFCnIBc7+B12pUN6SraK2R8+0QBclDe3/6JDUIPt/+92dzGG/Ln1Rv/Dyy4iDT4q
-	 CMpRvS/Rv4oGQo0dfj0oPNG2l8RfGc9AfkjBix3N1zG6Po7HTbOvWh8Jsfbq3qjzqALPr
-	 +c4hh/cQMC93pzX1lvnizG0zvq5q7tmL01JaEBpJrnnDjMco0Jn8tqm63ECp8rxIoUg==
+	t=1794285169;
+	b=SIJMwSUfWPU90zWjzy2SgMlTifAdkVYIcx/qq6hZ4ZOE1xmUHY3se4RRT+l6z4e8rpdJ
+	 6oLWWDgQMf0XYxhTaIu8NuFTm1COcbYy5XMSCyBfdQAd/6+XzHlQLF4nksUGiFSwrtbwq
+	 1Jz7N73gfbw4nQC1TrUl0vWaOokkERIl3c++d9/p7sUJuU4CtWLyIFse2Q5ZCvlsHdAoP
+	 lx4J1HYdkavGeZUHptCb/6VAz+gqcsO1BreTJJnIjh2DPfi2gp24zMF3hhBH/X6gWq52A
+	 GhiJCVzkWiByeQM0viruQVaT8sFPUR/G9hWhSy0pSRYq+g6UJL8Zqid5hJzUbdNUe1g==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794285167;
+	c=relaxed/relaxed; t=1794285169;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=mQHo+Pq1IJv6wRo06t/mpmrPiKGrNMyrY0EUw4RM8cA=;
-	b=m+PDAi1TQhqHdzwLW9W6fDn/bKh7TJFPdH9jXILtjI2vLtn46Z6Y39TGf3My1oXUgJyK
-	 0kyRPJiz1G3m3Z8J/C9eYzV36L9ymSHmWEuG7DuF27zvCo0cSALmZIZSgbxEDvWcN6d4H
-	 LsDPP5XxWmEPVsGvMlpYPSMTmyZiP+Doa1yJ2YCqTSA6COUuMRe1GJWUx8ukUibiaarKX
-	 O5v7zNNAkB1TlPNi1siSdV47qM4lxgCopS4EI2Pce3QanN6uLYUjZErWlYh1U6WO9HI8/
-	 yYq7v+BcnWKETnp25MBk/Czfa6B9Z/XEfyONLN9O1X6fvz+v6L9463U9DNK2Skx+19g==
+	bh=o4jQDhcjo31dbJg2wJaIjLSidLekK7fUkFsWw7PV7Tw=;
+	b=jDFm+N5xfF4xtvP1FS7xSWFfqRu0+Seet1qh73LFsH5lP5c5a4NufQILmZsy8+RZQqXk
+	 hWT1sPBIuqqfIGiFBbgkTeBrlzXNO2uBWpJLPthkdvA1vBHZ5Sq1Z73UfJ5T7szuHGv7O
+	 DJU15lqOPZ6VCHHjWUyxjJsQq+mcy36e4ooOV9JOwt9XM5ND+cVXRG0+UuEn620XQ1CBx
+	 LkvZ2MgOTBaj2mFMJC2ZYjii/alpyiwfYP85dcme8nVThvKmc70vfvg1JuyIJIwazzCzz
+	 xQPnG1YrX7wrHJaCzqYKWMd8Uj5e41jq8q9yXHxTprUsomK6q1fcrmdO6DopS1orWeg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 33CD51F008A3;
-	Tue, 10 Nov 2026 04:32:45 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id B3ECD1F00901;
+	Tue, 10 Nov 2026 04:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794285167;
-	bh=mQHo+Pq1IJv6wRo06t/mpmrPiKGrNMyrY0EUw4RM8cA=;
+	s=k20260515; t=1794285169;
+	bh=o4jQDhcjo31dbJg2wJaIjLSidLekK7fUkFsWw7PV7Tw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=mUmjn93F+mmb5trzt9NmmRN6/oyGx5fmwBBKxUD9wXEAy6gZ/ivShSIIOzvSFQ/pv
-	 wFrIMqb+YVen007giDRSarVKONaSKxJXWF2P9EDog9mTKIjE0d9jsy/PfsTNj8uXjq
-	 W6Sv6ZjO4dfWMsbMgeZrIL1V2d5SvxxE20rrPoGUFG9S/P8fb/KFsdddVgOm6rpOL8
-	 0d8JsFQtxAav25OvJkfF90FhYAXiz+crJAI5+cb9OGNHmsfAwgcTcXKEd9fgVmpOc/
-	 97GU6tZNmBnDjCqwkUI4epnWYCTU+CGoEkjtlsxYEk0rI4zqr915iJrbxzMyEinevo
-	 2279nGKKaP90A==
+	b=DPbvEt3r6SkdUBG1NW/AhoWx02cO1N2RVtYsjxCjbq2JtAHvIdb7+F8V/8Qab8w5T
+	 7ypvLOe7AOdKdCRqddRyCODxAoayZhhkZxz3dGzRXx3bQI97r+9ExZy5Is/KBbUT5K
+	 90yRpk377j4JwATVwW2jG8JRzpItK62PhV8D/F8ie3TS2kmrTU0NKrWKTI/QJYh+9K
+	 mjfib8TUfviM/06uPhSqYRdxClAxSY3agv0UcPnRUkOtjGjWuvDi3l+ALejWpTkiPb
+	 aPUBc/DZb1Wrulur3ChNUK0rCX9g0jGdN6QWqk1S0twwk9uPdRYwqAgXqLsRZxhw4P
+	 Mf8i4K6XKUoEA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id B318548859;
-	Tue, 10 Nov 2026 04:32:44 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 70BDC48881;
+	Tue, 10 Nov 2026 04:32:45 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Tue, 10 Nov 2026 12:32:28 +0800
-Subject: [PATCH v14 03/14] gpio: regmap: remove gpiochip before tearing
- down irqchip
+Date: Tue, 10 Nov 2026 12:32:38 +0800
+Subject: [PATCH v14 13/14] lib/string_choices: add str_rising_falling()
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261110-cv75-gpio-v14-3-e586aad0467a@ambarella.com>
+Message-Id: <20261110-cv75-gpio-v14-13-e586aad0467a@ambarella.com>
 References: <20261110-cv75-gpio-v14-0-e586aad0467a@ambarella.com>
 In-Reply-To: <20261110-cv75-gpio-v14-0-e586aad0467a@ambarella.com>
 To: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
@@ -95,13 +94,14 @@ Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
  Conor Dooley <conor+dt@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
  devicetree@vger.kernel.org, Long Zhao <longzhao@ambarella.com>, 
- Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+ Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org, 
+ Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794285162; l=1280;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794285162; l=959;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=hUOMd6dzhgSqIYRo/goV9ScP4Xfisuex5VCHYS0+NCE=;
- b=na1xyTOzbfzZEjqluTbwt9g6U6lD+ZUvJugRpIFG7dQTUdXuUo33Nw/FSIJc9N3AyBKldq0J2
- f6kmVe0CQOOAG02lWvmlU4GzDehd8DA4JXZzZYlWegd8smFsFIFSop3
+ bh=wyB82tzUGO+6Su8wsiZ1PCnlZE8C1WY1st0J3Yh3blM=;
+ b=ujWayqqQBdxFq5SKSKgXak3dYThVTLR5XGPpoFdHd0TQW3ngeSzAXibkTrG+AXd0Oyf2AbZT7
+ yuiDKQz51EzB/SZO0I77rOUkeopsiattzaFAsIuzsW1XVFy6UYFfjmL
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -112,42 +112,36 @@ Content-Transfer-Encoding: 7bit
 
 From: Long Zhao <longzhao@ambarella.com>
 
-gpiochip_remove() calls acpi_gpiochip_free_interrupts() and
-gpiod_free_irqs(). Both still need the irq domain.
-regmap_del_irq_chip() removes that domain, so remove the
-gpiochip first.
+Add str_rising_falling() and str_falling_rising() for code that
+prints an IRQ trigger edge.
 
-Fixes: 553b75d4bfe9 ("gpio: regmap: Allow to allocate regmap-irq device")
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
----
- drivers/gpio/gpio-regmap.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index 0a44deae3d01..1bfdb00dad95 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -445,12 +445,19 @@ EXPORT_SYMBOL_GPL(gpio_regmap_register);
-  */
- void gpio_regmap_unregister(struct gpio_regmap *gpio)
- {
-+	/*
-+	 * gpiochip_remove() runs acpi_gpiochip_free_interrupts() and
-+	 * gpiod_free_irqs(). Both still need the irq domain.
-+	 * regmap_del_irq_chip() removes that domain, so remove the
-+	 * gpiochip first.
-+	 */
-+	gpiochip_remove(&gpio->gpio_chip);
-+
- #ifdef CONFIG_REGMAP_IRQ
- 	if (gpio->irq_chip_data)
- 		regmap_del_irq_chip(gpio->regmap_irq_line, gpio->irq_chip_data);
- #endif
+---
+Cc: Kees Cook <kees@kernel.org>
+Cc: linux-hardening@vger.kernel.org
+---
+ include/linux/string_choices.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
+index ee84087d4b26..c3a0360334d6 100644
+--- a/include/linux/string_choices.h
++++ b/include/linux/string_choices.h
+@@ -65,6 +65,12 @@ static inline const char *str_read_write(bool v)
+ }
+ #define str_write_read(v)		str_read_write(!(v))
  
--	gpiochip_remove(&gpio->gpio_chip);
- 	bitmap_free(gpio->fixed_direction_output);
- 	bitmap_free(gpio->fixed_direction_mask);
- 	kfree(gpio);
++static inline const char *str_rising_falling(bool v)
++{
++	return v ? "rising" : "falling";
++}
++#define str_falling_rising(v)		str_rising_falling(!(v))
++
+ static inline const char *str_true_false(bool v)
+ {
+ 	return v ? "true" : "false";
 
 -- 
 2.34.1
