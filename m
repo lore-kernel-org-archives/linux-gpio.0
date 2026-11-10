@@ -1,56 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.139
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794289909;
-	b=oLELN1S2oFmMOhV5nCKt2N+GxIgq9epI8/qCxMRXjPir5uPKLxzqlZEsFLkZ4jQuRVM5
-	 S6ZAcHc3cYUgnvGbKa1SL7Kl6yRUBJS9crgchl9GkspbDCvBjjmTUspP+G2VWA2sahOY7
-	 D0WgUYBX1P+hry0lMM5FhrnW6P1B9cSxBJ3vHY7GsiIAIfzumzALRrQyGPFjzoScrNivc
-	 RaK+nxHg3XzOVHso5kpBNqKS99IgmpZjL7267lyCsi+p1s8H0uanrj3VO5eeuU2WyPptf
-	 c2aIY3l0N8foYLAsvC3kiL408eapUUo9BNoZ9Kise4+2rfvTV8cFxB2xM7B0xWwHwpg==
+	t=1794293849;
+	b=e34cF944JxUqhb6yyGAZeWD263yAxJ60oxkX8x26kYGqgtYySmNHpyo0UZB+P8+0na+k
+	 glB9IGiYOHcQRwCDJgqSUNyDnx3uDCjXp80o47IkEdZZpWJVGuaQaXOJ955HSW+TPWjsL
+	 tJoqM5MkpJU78xjnWqvwtE3bPyoZGFd+J2uC/r8VBUz8LqSv9NHybzJ8gS8XdggyaCBeF
+	 Mtj4mGwjFRbZJ0fj/3rPckUtxzMmcpdEvy2ZG2EpFYRtSILvaZO/vDpg1rxaBoUU4HQLW
+	 OUcRo70lkDdQMgM5Q4clCOozd7UkvWX+ypiVgBvWwuFsSaAGNv0MCEnlpsn7s+dQwag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794289909;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=yLEwQTD3+E4ufWNfmRuRFferJMvkILCK9cmOkTWmGnc=;
-	b=Ihl+bNIs5HQ6nJFtsKw6Fj1Ha+Ob4vD/DZ5CDs8fvNeoSyPcy4RoEEBThQOfCbCMD7HJ
-	 xKiS6CNbcl52h66/ZFBPl9EdWkz8mTojRnJYfgcA0TIJwDqnKEbLEYmd7WQw7QTZIWPUj
-	 lKybr7U6DsOzhzx8BI7bvG8hb3IjzX+fj1RNWb3V+5hrLrJlkjQS1LdKeWFNe16f4g8va
-	 WcI+RQhy5D9116tQglLto5yfFn4swaOSexwPUNieDn7UgBmWSqJJBZzno/Li2fc/5v9SE
-	 itguUHWcI+Tyu4MKA69wYNcHVpiPzJlWTeA0RhsgOh9geThNhPcPnoQ1osfesUnFE+A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794293849;
+	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
+	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
+	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=bpVRLFMzHhIoyUyMq+dANt1oSPhjof8tBITrqS0xxdU=;
+	b=x/N4sh1KWWmG5W4DFU61XeVspj8u+zJtyFHXEQb56Z6tG2P0Yg0vK4Lhct6EgXsm9m46
+	 ncf8ex/3+ZXu/mTWBZlqMlV3qU3pBWC8LsitUvlS3f48iFMbWfRIlOFrNRCRaWfdhO/NA
+	 5qriSzYobLEpzJbnTd+fmmoqUmsI7/NaNTnhHPD7hUgYBtJUnN8/GRxfrJ0VK3PkfLT4b
+	 OmIyWfBUGejUiVw+A04lGhFewd7KW3z8hfzbKPIn1mWAjSO0oR3whwHjS5DETBTx4u06e
+	 cCxiB6jzLgwsy/mfZ03bVQegWanOSk7/gTEJ7Y0/guCBsfhqY4jraazawRWmcpVXaYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AhivSZ4V;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED9E606A31C;
-	Tue, 10 Nov 2026 05:51:48 +0000 (UTC)
+	dmarc=pass header.from=cmss.chinamobile.com;
+	spf=pass smtp.mailfrom=cmss.chinamobile.com;
+	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=UxTZwwa2;
+	arc=none smtp.remote-ip=111.22.67.139
+Received: from cmccmta6.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3690E606A321;
+	Tue, 10 Nov 2026 06:57:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3690E606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AhivSZ4V
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7941D1F008A4;
-	Tue, 10 Nov 2026 05:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794289908;
-	bh=yLEwQTD3+E4ufWNfmRuRFferJMvkILCK9cmOkTWmGnc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=AhivSZ4V1mB6Iqx1MRKz1Q3o9N0XlxtiEvT04M1MuesLQ8Km787zQGQRWlnyblDci
-	 TOIYk5k18l89qDTEkvxrxqffAvrMLtKJ7aoZw61QcGKVL4vVJ+Q1zAd/WoUW8ed2DX
-	 ovKpSMGtNNGnkbgQcSi+xhT6R9I3owTzwzpvq12+oAqyAo/iyNh+ri7DhCPYNLAX5J
-	 T7BPdp2ix+pAf1kTA09+s7NKRru/7EhBYomt8C3JUVzxykWhQifXFtUnWDarNqDzOD
-	 VpeFLE/9O+boU6aBXZm4BBs0i1BnYeznUfImCACb4cFl/XGv4CgzMJMReqKT22Xy56
-	 LO5Kif/53SwRQ==
-Message-ID: <sashiko-outbox-206348@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v14 10/14] gpio: pl061: switch data path to gpio-regmap
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261110-cv75-gpio-v14-10-e586aad0467a@ambarella.com>
-References: <20261110-cv75-gpio-v14-0-e586aad0467a@ambarella.com>
- <20261110-cv75-gpio-v14-10-e586aad0467a@ambarella.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 05:51:48 +0000
+	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=UxTZwwa2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=cmss.chinamobile.com; s=default; l=0;
+	h=from:subject:message-id:to:cc:mime-version;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	b=UxTZwwa2kcsck/w/DxU6mG4Dms2Qn3adupOJqQiZlhAeGNoYL3bYWYck/soF8cbzbqxSjOUHK2tXg
+	 QUCuoTPwxaiHGT/GliFIc/bA3kw5KfGXG19Y/qClJUc0QfNEyOe14CkBMiGVNf4u2biuh+Qf8RvtvO
+	 3eszaPQBkqUFQCV0=
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96af2c055fa8-d1282;
+	Tue, 10 Nov 2026 14:57:26 +0800 (CST)
+X-RM-TRANSID:2ee96af2c055fa8-d1282
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from DESKTOP-3K8GUTQ (unknown[223.108.79.98])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee86af2c055a94-aa7e0;
+	Tue, 10 Nov 2026 14:57:26 +0800 (CST)
+X-RM-TRANSID:2ee86af2c055a94-aa7e0
+From: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
+To: Antonio Borneo <antonio.borneo@foss.st.com>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
+Subject: [PATCH] pinctrl: stm32: Fix reset control leak in stm32_pctl_probe() error paths
+Date: Tue, 10 Nov 2026 14:57:22 +0800
+Message-ID: <20261110065722.1340-1-laixiangwu@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,126 +72,75 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] gpio: pl061: dropping IRQ resource helpers breaks IRQ locking
-  and unbind
---
+stm32_pctl_probe() acquires an exclusive reset control for every GPIO
+bank with of_reset_control_get_exclusive(), but none of the error
+paths release them again: the bank loop returns directly on
+-EPROBE_DEFER and on a failed clock lookup, and the
+clk_bulk_prepare_enable() failure and the err_register path also
+leave the already acquired reset controls behind.
 
-commit d4312a121fe3ffeafa0c808d47b54f2cad54a4cd
-Author: Long Zhao <longzhao@ambarella.com>
+On success the reset controls are kept for the lifetime of the device
+and are never released either (the driver has no .remove), but that
+is harmless.  On a failed probe, and in particular when the probe is
+retried after -EPROBE_DEFER, every attempt leaks another set of
+reset control references.
 
-gpio: pl061: switch data path to gpio-regmap
+Release the acquired reset controls on all error paths.
 
-This commit converts the PL061 GPIO data path to gpio-regmap while keeping
-a custom irq_chip and instantiating an external irq_domain.
+Fixes: bb949ed9b16b ("pinctrl: stm32: Switch to use for_each_gpiochip_node() helper")
+Signed-off-by: laixiangwu <laixiangwu@cmss.chinamobile.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-> index 27ed759486caf..cb1ef0f3774c1 100644
-> --- a/drivers/gpio/gpio-pl061.c
-> +++ b/drivers/gpio/gpio-pl061.c
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 98cf9c6f4..49a8dcc9e 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1966,15 +1966,17 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		bank->rstc = of_reset_control_get_exclusive(np, NULL);
+ 		if (PTR_ERR(bank->rstc) == -EPROBE_DEFER) {
+ 			fwnode_handle_put(child);
+-			return -EPROBE_DEFER;
++			ret = -EPROBE_DEFER;
++			goto err_put_rstcs;
+ 		}
+ 
+ 		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
+ 		if (IS_ERR(pctl->clks[i].clk)) {
+ 			fwnode_handle_put(child);
+ 			clk_bulk_put(i, pctl->clks);
+-			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
+-					     "failed to get clk\n");
++			ret = dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
++					    "failed to get clk\n");
++			goto err_put_rstcs;
+ 		}
+ 		pctl->clks[i].id = "pctl";
+ 		i++;
+@@ -1984,7 +1986,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(dev, "failed to prepare_enable clk (%d)\n", ret);
+ 		clk_bulk_put(banks, pctl->clks);
+-		return ret;
++		goto err_put_rstcs;
+ 	}
+ 
+ 	for_each_gpiochip_node(dev, child) {
+@@ -2009,6 +2011,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 
+ 	clk_bulk_disable_unprepare(banks, pctl->clks);
+ 	clk_bulk_put(banks, pctl->clks);
++err_put_rstcs:
++	for (i = 0; i < banks; i++)
++		if (!IS_ERR_OR_NULL(pctl->banks[i].rstc))
++			reset_control_put(pctl->banks[i].rstc);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(stm32_pctl_probe);
 
-[ ... ]
 
-> @@ -229,54 +198,47 @@ static int pl061_irq_type(struct irq_data *d, unsig=
-ned trigger)
 
-[ ... ]
-
->  static void pl061_irq_mask(struct irq_data *d)
->  {
-> -	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> -	struct pl061 *pl061 =3D gpiochip_get_data(gc);
-> -	u8 mask =3D BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
-> +	struct pl061 *pl061 =3D irq_data_get_irq_chip_data(d);
-> +	unsigned int mask =3D pl061_line_mask(pl061, irqd_to_hwirq(d));
-> =20
-> -	scoped_guard(raw_spinlock, &pl061->lock)
-> -		regmap_clear_bits(pl061->regmap, GPIOIE, mask);
-> -
-> -	gpiochip_disable_irq(gc, d->hwirq);
-> +	regmap_clear_bits(pl061->regmap, pl061->data->regs->ie, mask);
->  }
-> =20
->  static void pl061_irq_unmask(struct irq_data *d)
->  {
-> -	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> -	struct pl061 *pl061 =3D gpiochip_get_data(gc);
-> -	u8 mask =3D BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
-> -
-> -	gpiochip_enable_irq(gc, d->hwirq);
-> +	struct pl061 *pl061 =3D irq_data_get_irq_chip_data(d);
-> +	unsigned int mask =3D pl061_line_mask(pl061, irqd_to_hwirq(d));
-> =20
-> -	scoped_guard(raw_spinlock, &pl061->lock)
-> -		regmap_set_bits(pl061->regmap, GPIOIE, mask);
-> +	regmap_set_bits(pl061->regmap, pl061->data->regs->ie, mask);
->  }
-
-[ ... ]
-
-> @@ -320,67 +280,169 @@ static const struct irq_chip pl061_irq_chip =3D {
->  	.irq_set_wake		=3D pl061_irq_set_wake,
->  	.irq_print_chip		=3D pl061_irq_print_chip,
->  	.flags			=3D IRQCHIP_IMMUTABLE,
-> -	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-> +};
-
-[ ... ]
-
-> +	if (irq) {
-> +		const struct irq_domain_info info =3D {
-> +			.fwnode		=3D dev_fwnode(dev),
-> +			.size		=3D data->ngpio,
-> +			.hwirq_max	=3D data->ngpio,
-> +			.ops		=3D &pl061_irq_domain_ops,
-> +			.host_data	=3D pl061,
-> +		};
-> +
-> +		pl061->irq_domain =3D devm_irq_domain_instantiate(dev, &info);
-> +		if (IS_ERR(pl061->irq_domain))
-> +			return PTR_ERR(pl061->irq_domain);
-> +
-> +		/*
-> +		 * Registered before the gpiochip so unbind runs it after
-> +		 * gpiochip_free_remaining_irqs(), while the domain is still
-> +		 * alive. devm removes the domain after this action.
-> +		 */
-> +		ret =3D devm_add_action_or_reset(dev, pl061_dispose_irq_mappings, pl06=
-1);
-> +		if (ret)
-> +			return ret;
-> +	}
-
-[Severity: High]
-Does dropping GPIOCHIP_IRQ_RESOURCE_HELPERS and
-gpiochip_enable_irq()/gpiochip_disable_irq() break IRQ teardown on unbind
-and gpiolib's direction vs. IRQ protections?
-
-Without those helpers, GPIOD_FLAG_USED_AS_IRQ and GPIOD_FLAG_IRQ_IS_ENABLED
-are never set on the GPIO descriptors.  Although the comment above
-pl061_dispose_irq_mappings() relies on gpiochip_free_remaining_irqs()
-cleaning up active interrupts first during unbind,
-gpiochip_free_remaining_irqs() only iterates over descriptors with
-GPIOD_FLAG_USED_AS_IRQ set and becomes a no-op.
-
-If a line has an active interrupt when the device is unbound (for example,
-via GPIO_V2_GET_LINE_IOCTL edge detection), pl061_dispose_irq_mappings()
-calls irq_dispose_mapping() -> free_desc() while desc->action and the
-threaded IRQ handler are still installed, warning in remove_proc_entry()
-and freeing the irq_desc; a later free_irq() then sees irq_to_desc(virq) =
-=3D=3D
-NULL and leaks the irqaction while leaving edge_irq_thread running with a
-dangling dev_id pointer.
-
-Leaving those flags unset also regressions direction and module lifetime
-enforcement: requesting an IRQ on a line configured as an output is no
-longer rejected by gpiochip_lock_as_irq(), switching a line with an active
-enabled IRQ to output mode is no longer blocked by
-gpiod_direction_output_nonotify(), and module refcounting in
-gpiochip_reqres_irq()/gpiochip_relres_irq() is bypassed.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110-cv75-gpio-=
-v14-0-e586aad0467a@ambarella.com?part=3D10
