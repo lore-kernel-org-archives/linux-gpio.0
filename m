@@ -1,66 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794322676;
-	b=HgqXTF7qO9R49/gNpvHnsXE3VvOcYyovrU7NJNPb2H2w5On9HVB+BXAkfej/rbjkBr5w
-	 2qZ2Yl5wtcCvS3g2eS+BN4XEBkgNvbX3uxIeXzZxRXECib0uuOLkGlUvzzAOsXGMb1XM7
-	 BNKTFfIJYjWMZdxgM2eLAYf8+otMaGcbZjbcuFk5FQfgzdBoAqXdKjPwcQY6SFbjBfixI
-	 m7rACsSOKUmkcXQE0VuXzvRMbZtOV28J5wrN84M81Ia3b6O8thBpxsY9E8YO18myhHu+b
-	 1vRCbwrozsyHb7TbXqmllOPPwEpA03NdJuWYFs8qWGOB0Mxsads/csp6XS5nwnFTq9A==
+	t=1794323461;
+	b=hyLRUFay9yH10S/slMhDJfavvGR5qAAoKckDf49Lyv6Ewv0OF3AuM0n/fGHee1p0fP6R
+	 VenQei5NFWOLTK9RibG/JB1Tw9HJ1PiCKIsa9Lj/ykt7CFHK/HxqHOZSC2Fb8wqm9o3GQ
+	 diOQFomyiQCWeKqyQlGb2kVr7JDE6iAKRYuGYsW0qsVYKZCiKEgxebwblH/i9dinJKu2N
+	 pjQ+xZKtOKl8pnb1Dag5GWA7+awvvPvTuYgY9eMpFnD5hG/H6FZxsiYT7Pr0rer/r3lZ3
+	 LUZMln/U1oc3AKxbtR/VzUB3BF395CuebuR+S8fUYsqxO44r/d37xZdxLSfmx+VYOtw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794322676;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 X-Zmail-TransId:X-Mailer:Message-ID:Date:Mime-Version:From:To:Cc:
-	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
-	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=7kd2hyoeBX9xf/X8LLEHLJQCEf7R6Q0R4GUKb7jsYbI=;
-	b=mQE39QZ7dK47wH6S8723NW42kSHhoqHHpHEJIlLA5OXE8Q3q+RhvgfdLnJGyuuv08CtP
-	 F3Rrd/3X7E9pXlgkaxcx0QcDibDsKXzLJdwj1wH5b6GVlFB3FxSRewhXRZhTMtO06+Rw2
-	 nw8yFY69HJGNWwsWtj9NbNX/X3SdOlbYfOpS7zjhJpgVLWBQcEga1q+0Hq4kSw2qokrs6
-	 ZpyN0ksBLoSMhTQ3NQQ3RXXzvmwC6nE+IeLjGb6sx/mnIBDT1vOk9LmgrUWpPFqQ1JPpB
-	 u2qvUV5SlByxRiD+Z5SguU91MAvns3uoQx7x+NTX17BiMLr24CEIWfJyAX/ELkYjqVw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794323461;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=k+JfUV0QhaAHCSo5uKVNqubmDMHshz3Y0tNpTYgBNWE=;
+	b=WX8kUhDlzDRCnaPncaycSbA5N31RSKip9nwxx7ruFbpuc5ZtExxkHCrWaLVquXkQCpMS
+	 hOiN0L4+0JyhTuksXKZYN9JLpB3J2Vt1QPSz1EUTFsWIpPWwCxWa9OdYeLcayFc7iYeWz
+	 5LBWl2iDezYSl1amuPszThASbamfvc9rYoPpKTiCXhjgHqGqKcGp0zZMWqVHkxisXkExH
+	 p04GgBOY1tR8gh1mtdQpAuiV04c2U1Wh0fgqxYIPTv3VdeOHUryphZoWbwOYc/xNwrKuf
+	 g2fn/Rw8ppbH3IbMK/Hx0H8aDJTaFQXGnT6yW1Xs+PrD407AmvqtlN6tqPOGMD7/iPw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	dkim=pass header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=WH7DBRBx;
-	arc=none smtp.remote-ip=183.62.165.209
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ff3FmVsD;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD40606A331;
-	Tue, 10 Nov 2026 14:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAD40606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1160606A31C;
+	Tue, 10 Nov 2026 15:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=WH7DBRBx
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jP8s13Lzcz57HS5;
-	Tue, 10 Nov 2026 22:57:41 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
-	s=z202610; t=1794322661;
-	bh=ZVT8VBF9GmkjP9xQ1T631scZCe9Y/OD7BRz9Pr3x3Nw=;
-	h=Date:From:To:Cc:Subject;
-	b=WH7DBRBxLsPuuorxjry15PTghunFt9oYK6BxDvZAoaLYMhHkO525IFnCbOx6UaoJc
-	 OsDBQmRowfXCY5d6lo9PtLDUOP7T2wF/NNFId9W5HbkK2co+l4oHdQxkiiIBtn5/vw
-	 PY/pMT9ElKNxHY7SUS/5MNgIq3odZnMaz3RutmmfdBNsv4ZFGii+bEQEvKYkBY95ha
-	 UxllHOzsXyMaI/jjFeS+Xh14lgJychZtizf6YrC8VHrU2D0RXeJMJkO7b1QANe/gsC
-	 qsgckGy/Q7izzKaylu/CROaWwtVDG1/IvGwA0dZULQEhJqDaIG8ifyVgRcIGYKvvxh
-	 Gen/8hIYTV1Ag==
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 6AAEvcuI005942;
-	Tue, 10 Nov 2026 22:57:38 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 10 Nov 2026 22:57:42 +0800 (CST)
-X-Zmail-TransId: 2afc6af330e68ce-fbf17
-X-Mailer: Zmail v1.0
-Message-ID: <20261110225742308FW7iPw8mc9gwd2DU0W-_w@zte.com.cn>
-Date: Tue, 10 Nov 2026 22:57:42 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ff3FmVsD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117751F008A5;
+	Tue, 10 Nov 2026 15:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794323460;
+	bh=k+JfUV0QhaAHCSo5uKVNqubmDMHshz3Y0tNpTYgBNWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ff3FmVsDnez4qfT39XX0kcfM/DNkc0rXxt/RVnKcZqMWRUtIVUZO3sY1Y1T/jrJAa
+	 LMkcjSntcqIt/Dbq3Xerko7WDpaJXndU2wUtOuoW2+uINMqX2Jsh+NPneCeq+ZzcTc
+	 y/10hlPv9GBW10fubJHi/KnE3+svfMF9H9xnKvALCEtFQgdn75smaq1BywPaQM223f
+	 lLXjmVkwU/bhZko1W7RzSFeDujo+89KOrwp2v8SoKRveZnQxtqZcT6qfBOCpXiNOJC
+	 WtdpzOM3P3/7d3roJBdk72LHb5u6IbqeBvAteyUJlQN8Vrn4anv8df/BaYyyG/q+C2
+	 W0F51h3lnQSGA==
+Date: Tue, 10 Nov 2026 16:10:54 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
+ fwnode operation
+Message-ID: <avMzoKHbsuMcZpW2@devuan>
+References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
+ <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
+ <auuhy40x1BMoW96-@ashevche-desk.local>
+ <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
+ <avICwdxyi-W1Y3PD@ashevche-desk.local>
+ <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
+ <avL4LoCz2wc164zo@devuan>
+ <avMBNUEL9_V7WnK-@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -69,70 +72,210 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <linusw@kernel.org>, <brgl@kernel.org>, <jelonek.jonas@gmail.com>,
-        <linux-gpio@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBncGlvOiBsaW5lLW11eDogZml4IHVuc2lnbmVkIHRydW5jYXRpb24gb2YgcHJvcGVydHkgY291bnQgZXJyb3I=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 6AAEvcuI005942
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 10 Nov 2026 22:57:41 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AF330E5.000/4jP8s13Lzcz57HS5
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qpxgmtmgum7gp73j"
+Content-Disposition: inline
+In-Reply-To: <avMBNUEL9_V7WnK-@devuan>
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-device_property_count_u32() returns an int and reports errors with a
-negative errno (e.g. -EINVAL when the "gpio-line-mux-states" property is
-missing).  Storing that into an unsigned int turns -EINVAL into a huge
-value, so the "if (!ngpio)" guard never triggers and struct_size() then
-computes a huge size.  The allocation fails with -ENOMEM, hiding the
-real error; struct_size() saturates on overflow, so this is not an
-undersized allocation on 32-bit builds either.
+--qpxgmtmgum7gp73j
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 5/9] of: property: implement the .property_get_names()
+ fwnode operation
+Message-ID: <avMzoKHbsuMcZpW2@devuan>
+References: <20261104-fwnode-for-each-prop-v1-0-6e28fe1c72c4@oss.qualcomm.com>
+ <20261104-fwnode-for-each-prop-v1-5-6e28fe1c72c4@oss.qualcomm.com>
+ <auuhy40x1BMoW96-@ashevche-desk.local>
+ <7sfr4ljlwbehal3or4dmy5jxbjz6ya2lf3dq3yptr54wym5tea@eqaexflmocih>
+ <avICwdxyi-W1Y3PD@ashevche-desk.local>
+ <ab73ez55exen3ew52svsxfinwsuatppdodu2e2zp6izjwwqwwu@2imxzxwclgtl>
+ <avL4LoCz2wc164zo@devuan>
+ <avMBNUEL9_V7WnK-@devuan>
+MIME-Version: 1.0
+In-Reply-To: <avMBNUEL9_V7WnK-@devuan>
 
-Use a signed int for the count, propagate the property-array error, and
-reject a zero count.
+> Date: 2026-11-10 12:35:22+0100
+> From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+>
+> > Date: 2026-11-10 12:10:57+0100
+> > From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+> >
+> > Hi Bart,
+> >=20
+> > > Date: 2026-11-10 10:00:42+0100
+> > > From: Bartosz Golaszewski <brgl@kernel.org>
+> > >
+> > [...]
+> > > > > > > +		names[i] =3D kstrdup(prop->name, GFP_KERNEL);
+> > > > > >=20
+> > > > > > Can property be statically defined somewhere? We might want to =
+also optimize
+> > > > > > these duplications with const variant (here or elsewhere, for f=
+wnode generic
+> > > > > > path, I believe).
+> > > > >=20
+> > > > > Please rephrase because I'm not quite following what you're sayin=
+g.
+> > > >=20
+> > > > Can prop->name come from something that is declared as
+> > > >=20
+> > > > static const ... foo =3D {
+> > > > 	... .name =3D "bar";
+> > > > };
+> > > >
+> > >=20
+> > > You can't know it for every instance of struct fwnode_handle, so the
+> > > answer is: no.
+> > >=20
+> > > PS: is there a way of using match_string() with non-const data?
+> >=20
+> > Given the definition here:
+> >=20
+> > 	$ grepc match_string .
+> > 	./include/linux/string.h:int match_string(const char * const *array, s=
+ize_t n, const char *string);
+> > 	./lib/string_helpers.c:int match_string(const char * const *array, siz=
+e_t n, const char *string)
+> > 	{
+> > 		int index;
+> > 		const char *item;
+> >=20
+> > 		for (index =3D 0; index < n; index++) {
+> > 			item =3D array[index];
+> > 			if (!item)
+> > 				break;
+> > 			if (!strcmp(item, string))
+> > 				return index;
+> > 		}
+> >=20
+> > 		return -EINVAL;
+> > 	}
+> >=20
+> > You should be able to call it with a cast.  It's dangerous, but
+> > technically it works.  I'm not encouraging it, though.  :)
+> >=20
+> > 	char **strings;
+> >=20
+> > 	...
+> >=20
+> > 	i =3D match_string((const char *const *) strings, n, "foo");
+> >=20
+> > This is a historic problem in C, which was solved in C++.
+>=20
+> BTW, self-correction:  it is solved for char *const *, but char** is not
+> convertible to const char *const *, neither in C++ nor in future C.
 
-Fixes: 2b03d9a40cd1 ("gpio: add gpio-line-mux driver")
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
----
-This patch supersedes 5/5 of the v1 series; 1/5 has been withdrawn and
-2/5-4/5 are unchanged.
+Self-correction of the self-correction: char ** will also be convertible
+to const char *const *.  I was confused during a short moment, it seems.
 
-v2:
-  - keep the declarations in reverse christmas tree order; merge
-    "int ngpio, ret" (Jonas Jelonek)
-  - propagate the property-array errno when ngpio < 0, and map only a
-    zero count to -EINVAL (Jonas Jelonek)
-v1: https://lore.kernel.org/all/20261107161258203oCy-Pa4_0rNe65TqrzFWD@zte.com.cn/
+	alx@devuan:~/tmp$ cat const.c=20
+	#include <stddef.h>
 
- drivers/gpio/gpio-line-mux.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+	int
+	main(void)
+	{
+		const char *const *ccp =3D NULL;
+		char **p;
 
-diff --git a/drivers/gpio/gpio-line-mux.c b/drivers/gpio/gpio-line-mux.c
-index b4452d956bf0271d25598de2117c0db73805aba6..00b69632c4401300d11bbc296306df114d18c08f 100644
---- a/drivers/gpio/gpio-line-mux.c
-+++ b/drivers/gpio/gpio-line-mux.c
-@@ -48,11 +48,12 @@ static int gpio_lmux_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct gpio_lmux *glm;
--	unsigned int ngpio;
- 	size_t size;
--	int ret;
-+	int ngpio, ret;
- 
- 	ngpio = device_property_count_u32(dev, "gpio-line-mux-states");
-+	if (ngpio < 0)
-+		return ngpio;
- 	if (!ngpio)
- 		return -EINVAL;
- 
--- 
-2.27.0
+		ccp =3D p;
+	}
+	alx@devuan:~/tmp$ cat const.c | gcc -x c++ -
+	alx@devuan:~/tmp$=20
+
+
+Cheers,
+Alex
+
+>=20
+>=20
+> Cheers,
+> Alex
+>=20
+> >  I have
+> > a proposal paper for the C Committee for solving it as in C++:
+> > <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3987.htm>
+> >=20
+> > This paper will be discussed (and probably voted in) in the next meeting
+> > of the committee (which happens next week), so there's a chance that
+> > this will be solved for C2y, and thus the cast will no longer be
+> > necessary.
+> >=20
+> > The history of why this is not allowed in C but is in C++ is, as far as
+> > I've been told, the following:
+> >=20
+> > Back before C and C++ were standardized, C++ invented const, with rules
+> > slightly more allowing than what they are now.  This was going to be
+> > standardized first in C89.  But very close to the release of C89, they
+> > realized about the danger of converting a const char** to a char**
+> > implicitly.  They were so close to the release, that they opted for the
+> > safest approach: disallow any non-trivial conversions.
+> >=20
+> > Later, while standardizing C++98, they realized we could allow a few
+> > more conversions safely, and so they did.
+> >=20
+> > C could have taken advantage of that, and pick C++ rules in C99 or C11,
+> > but for some reason, nobody proposed that.  I'm proposing it now.  :)
+> >=20
+> > We've already discussed this proposal informally within the committee
+> > for some a year and a half, and there seems to be consensus that we want
+> > it.  We're only being careful about the specific language.  But I think
+> > I finally got it, and it will go in next week.
+> >=20
+> >=20
+> > Have a lovely day!
+> > Alex
+> >=20
+> > >=20
+> > > Bart
+> > >=20
+> >=20
+> > --=20
+> > <https://www.alejandro-colomar.es>
+>=20
+>=20
+>=20
+> --=20
+> <https://www.alejandro-colomar.es>
+
+
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--qpxgmtmgum7gp73j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzM/0ACgkQ64mZXMKQ
+wqm5Vg/9FMzxE1DzVEdsHiBQi+kE7cGOI4ma9sgDJoEjK6z5pi5vl41VIbj9mKII
+2gyshPP75e70Ee00CxPc7F1OEuG0DLkf7Rz9MfydiUWxowxGnZZmvwGjgknk3uZY
+TEq+UcZ4eJneqVtMT2O74AtskE0VxyxIrr0fBn/vn/3wxMd3atylcFUuZqSW1jiQ
+vUAiMxz6JNIKvtIvaK6FPdMJqP60PxQ5gtIXQtvFlnRx6y8cB2Qoq/wsPdo7RBqf
+kmx/lVrbl7Z+i7d3pjq7DkIMdpEYzozg3i0PrGJb3+XmXS4OnNN7GRQUHFZvGEXg
+We8350HB3xTkLK3uJTkJ2OO0Yx1Rvuc1x3qIoGlBhhmJirYwjO4smRXKIABqNjEM
+tZY+QdsyOgfIiAD+2HGpqyxSSznYC8nOZ8+XlhGVxwEdDeLjJzA3cBuGVQZVzwo2
+TXhd/ONWz3/s8yv63CnJINvJliYYJSedAf96xADYYUo+gJx7Nk93eepRxQDWIMI8
+jXvCFC4Q9bNXrS5t4lDPGzyiK35y//hBaz1r56nVjRPIiAaUnd5uKDAbY4elhUjM
+0GGBVUuPq/ucJ73OfL3fY/oWl8s5aF3AyyGJQRp6PVp8zEzpBIX/6mX2b4MIz2mv
++f+RIixqGWjFtWrhHpUqAN0MEqtmid9TfhEokNAKeWhIAhcZPfM=
+=i4c8
+-----END PGP SIGNATURE-----
+
+--qpxgmtmgum7gp73j--
