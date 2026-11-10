@@ -1,121 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.61.82.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794303498;
-	b=4n6xSPm5FOAsR3o0KufxDGyr5t03aF04MguZUzBnVL29q+b3c5tEfBbllw9zTNAZH8Wk
-	 pu20KeiLRKzNsJNR5cI2pTrlG84VNJMgpdNGNRxXkPuqmFZHtnqgceJCZop0snqqZA6i+
-	 2YsK1HML05JeMkkKzIWhK8643KiK7rZJMaPXiBWs5+EnbDb7+D0lw5Pu1+cagjECRBpcW
-	 H4F6db1RLwDyKEIqI51PuBWpRzqdNFxbWEYZ/027YrWs3vS7ctLwDadEcyKgiTxppU9BX
-	 VSF6YwVA1epdt0eziPU5GhnZ4DNF1E8Ud6utHy0myOQ6XUe6roijTJIQOdtz0VxxR+A==
+	t=1794303828;
+	b=oMrBFV3lRk7bKMSG9fgZpkyeD8VFgLvJDyuOioViFUehz5fm4w7cFmu5gax5oHAHIk+j
+	 4tUVS1AjlYCRCz4GL3/sdQ7e/cPYnlEurtlWLQO5LqmHnkT7x0sxxNmIC9LrgyKQ5Hqoi
+	 iF9xF8nKKejxYiqPsun9toaM5AIUZGy31Aa+B9LHRYEY/tIylt39eidjeA4koxzv5iFFt
+	 B3SxHjri7lRJ+/709/kzWArdmC71IqnvJhqfiiRATa1y8tT76Z51wYLJMWWmDpj+ot3S7
+	 f16PQ/0VY+2odyjdAmpfjbNNoWo4nofAomhJoQKXOsgTSTle22H1N2eZIxa+Dk4Fpdg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794303498;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=GskYWq0okKXhChzrerCcQUfZoiREEqMRqr9GQwC2w8Y=;
-	b=c6OfBJbCN6mc6nb4O72FQ0E3/H2QeQaZ2OYyqh/95+tBNvSVc8Up9638M3SZtFWjMiGa
-	 moqlnv50S7oza7CU6g1zHYzfOZomvjqgW3WqvGizRoevVy4PrlWj9I+QzyZrG7NrCCnE6
-	 MEjZGMCHCiJWHn4sC6KKncP2AmkZ8yBWy2jCO9DQHDLbv846cC667zMsfQOtWMmuyBEiY
-	 8bjzNRGkLdr2zY1JICnqu2ueOAuiVOTmY5FmgyO3pleYhm3/b0YwwuibMVYIbZWSogXro
-	 XeBeZxI5hid8VfumfMfvJsxVnFhZJUHyioerTlcmQgeJiIa5oN9iBBPk9oiQZPAvuOg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794303828;
+	h=DMARC-Filter:X-UUID:DKIM-Signature:X-CID-P-RULE:X-CID-O-INFO:
+	 X-CID-META:X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-MTK;
+	bh=m2zyjpjCatk61E/s/TP65CRra9P/1L2a4z/kweMtxFE=;
+	b=ayUdHP09kz2xHOBDfho6g5kU8eCPtlnYCEyTzOjizs+TdjXkB+bo+Z6DbxgwNBBRzNrE
+	 SSZWdJ1JUSmJgq7yAXfmM7KCjMEGcLNuH4K9UPZGKCtGdh2GDWb/DRlEbqwKsvBO0X++/
+	 C350nBlUpvkxmYxX9kMmEi/2naHqUBs2Lfa8rwtkvfXIq1ZXQc4ODTyTEYrAYeT64CTH9
+	 4Qi2TVySmz3bSErl8M6gYNOaatmyXFrcrI4sQ8aWHS6tJwqZvpidZPP9gpGLxQ71ve+Zm
+	 mVV/qhcijXJPyHusyUE0Dk0WoSoGe/g67r/NcwYMNKaa3s0nq2a5ED0AVdx9sZAUHew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=aPRTJKQK;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A+oBaOUE;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dmarc=pass header.from=airoha.com;
+	spf=pass smtp.mailfrom=airoha.com;
+	dkim=pass header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=lkNkxeE5;
+	arc=none smtp.remote-ip=210.61.82.184
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59A9606A919
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:38:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D59A9606A919
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD805606B9CD;
+	Tue, 10 Nov 2026 09:43:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD805606B9CD
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=airoha.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airoha.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=aPRTJKQK;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A+oBaOUE
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AA7klob2779819
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:38:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GskYWq0okKXhChzrerCcQUfZoiREEqMRqr9GQwC2w8Y=; b=aPRTJKQKR6HnNm3p
-	Gn15g8HiARayyGrzaj5nAYiRG0y7dT8nL+GHvjo4p0HoMMCw8DmC8U7ANF4BQcNt
-	ltqASJN9ErdsKbznmMz7xAPyhW1I/ipXWhY2j9iFLNQuNYqC6y9iYMa3hZ4iL3vq
-	POk3f53z2MUVV23UG09gEsewNU7Du/ZtYfYtaayfa0VPrgTETc6cNeOVuDho9wZo
-	o+5VdL/vphdenyjg99KhEKaLdMvAB0Xv7rNiRakhV1A1QxCso/R0yseejdX6N8RO
-	r4Mw51kwJjikBlGp/zUOMfas2Tffl6AS9lD0lIlTB1xBqwAimXMdeqbYU2qh8nfO
-	d1Y6Jg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4huy5d8ehd-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 09:38:17 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93f322ef7d3so424189085a.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 01:38:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794303496; x=1794908296; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=GskYWq0okKXhChzrerCcQUfZoiREEqMRqr9GQwC2w8Y=;
-        b=A+oBaOUEayRVAO2q7aC5BPNpGEj/oPc1TFNI/Pl/fRTkPoa+9eG/8MXnVWmqYI3sRS
-         Tgc3BdOAvUoaPj9QQa8qGcb9cd0UlE/Z9VjyneGK16ZHR4P6i0OiWjnJEXcsTt7/S/BK
-         30hlHXPTEwtytZPt7e8CZj3zW+L86yOWNVysTXY8i5JfJyYRzLcVaPcMb+UWUjx5sdW1
-         z4T5d1QkSYe3iUtTTb8UE9Hd6J01WK/BfVXYcjXPc2aNyCy78APeDQjaPaeClh+okbeX
-         t3aeu7x2XYPTnC3rbfcTgmLUVH0uBs7Nns7jSqhnv9gPDvBXxbpJeAg3HRcIzzva3V7Z
-         CzEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794303496; x=1794908296;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=GskYWq0okKXhChzrerCcQUfZoiREEqMRqr9GQwC2w8Y=;
-        b=U9ftgBgIy1k7GLHmxAI18eqmrY4HL9wtLI6gzXJ3X17mvF0laejsBvJB1DepPTWB1o
-         /eojh8UM6vTZCyUA7JFVGe3oCYVU4x8gkL9sAQGe58Sa2wcacbRrC8dZYnpUYISMNF6D
-         oJGLAd6qRrZs7vPv1O8zT3nSgdKvhdBV4LK/LJe/PN65WVx7HcMAy1cxnAMbETDpCEYr
-         R7vq8MeywwpE3wCex82RxY/RMhrtSybezDTkf83igd7vslcL7MsZW2N26ZjYmU9ozaEk
-         e0J4M9YpxRb9mMfbU0bvjAnLuAyvw69+pn5dRwshTEzonWT9dNhfbb8vwZ37pl7MvtnS
-         +uFQ==
-X-Forwarded-Encrypted: i=1; AL+hErEY352eGUYHZT+ympKG8ZMo4/q0h5K9hWtxQSYRZAzIKSXUtj7SrAfqkUu6l1dnA6aE677ciSsbs5KF@vger.kernel.org
-X-Gm-Message-State: APuU4Z/I26Xgz6zcpB2SxdIO1FnBHeslwgAl15e+hrdZuvGCR1rsCNbg
-	mKxKloKL0MateoqOTI8IFsHGvI/nvpjLJSXC6q6b6qVKhtiQGsb1I1ReX4bfFAR3zEW1fNf2mvv
-	8FlcmHlsLsJXFaODufUDgbigy5ssqEqVmOS80q0o+w6zg47tvzYwo/i+82opoc/Q8
-X-Gm-Gg: AYBFou1alkFQ8GuBqpcpW5GmGf9T+tH0IaB8YM18iUhfPon0X7Xk4vam73uHdZ11LZY
-	zKfQFltqQZD2WcFKq7bSI8OKs+AcvXM9SPj999rOQdCckZew/9Oj9BgBo+3wcbYhyrGoPFjyDp5
-	ITfi4ZSzwW421ApfemI49bVoII5edm1v3wYEGIH/GqAde4+QjOXtdSiHb+WkU/ItH/rjMmHeWKw
-	ZlVtKHS0q3+bJfPV90HyWootHE98uLcN0SvOBN35PlKWrYfhsOAU0tQsWKEBWf9iMLs0iPVJGzz
-	EsMKFOMJxUQhNc1qSNq5yI9PR/L1Y5xCEzLo45MW/3LFWcP0ThQiTmoYVt7RuxL18v2kMVDQWpP
-	vbPiTNLHdR5LlZnjkug6djazEQ+HMva+7pjx79YGb+RHugWdUaMAlUWWtt8Qmk3oKOsvIRJvUgh
-	QPd8/5TV1AdcxiCfnO8jit5RKoYuzzxQI8TpH096Psb/is0c+ncF8PUCTEgvtZSw==
-X-Received: by 2002:a05:620a:46a7:b0:93b:d7a2:83d1 with SMTP id af79cd13be357-9479f3c5fc2mr320944685a.64.1794303496127;
-        Tue, 10 Nov 2026 01:38:16 -0800 (PST)
-X-Received: by 2002:a05:620a:46a7:b0:93b:d7a2:83d1 with SMTP id af79cd13be357-9479f3c5fc2mr320942885a.64.1794303495699;
-        Tue, 10 Nov 2026 01:38:15 -0800 (PST)
-Received: from brgl-qcom.home (2a01cb1d00dc7e0089167b9b97a26c96.ipv6.abo.wanadoo.fr. [2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba02005762sm53126545e9.2.2026.11.10.01.38.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2026 01:38:14 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] gpio: sodaville: fix use-after-free bug when registering the irqchip
-Date: Tue, 10 Nov 2026 10:38:12 +0100
-Message-ID: <179430349031.42519.17560346076327838160.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261105-gpio-sodaville-use-after-free-v1-1-f572f40feedd@oss.qualcomm.com>
-References: <20261105-gpio-sodaville-use-after-free-v1-1-f572f40feedd@oss.qualcomm.com>
+	dkim=pass (1024-bit key, unprotected) header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=lkNkxeE5
+X-UUID: 37994830dceb11f18dc8c9802ae25ab1-20261110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=m2zyjpjCatk61E/s/TP65CRra9P/1L2a4z/kweMtxFE=;
+	b=lkNkxeE5e5wGoZQwsVIrDFl96hFdWZV6GkZMCzEtNk2DkU6X/yRSLr+wV/LJWq/8Aj2fl1bnp/oyELQBMGfU0a25AdbkPcSfzmy0m27CwxRsMulnWA8do38h0PIzufDoXFnAZX/FSHlIIAvec/u+ZbRvAsbW71QWDbSc+zQwCw4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.21,REQID:a81d7e34-8cc3-4ec7-ad64-18721cf4c3cd,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0318ac,CLOUDID:f7e51766-4b51-4c95-bb1b-80ac6aad9c96,B
+	ulkID:nil,BulkQuantity:0,SF:102|836|865|888|898,TC:-5,Content:0|15|50|99,E
+	DM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 37994830dceb11f18dc8c9802ae25ab1-20261110
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <zhengping.zhang@airoha.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 842654037; Tue, 10 Nov 2026 17:43:43 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 10 Nov 2026 17:43:42 +0800
+Received: from mediatek.com (172.18.153.129) by mtkmbs13n1.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.2562.29 via Frontend
+ Transport; Tue, 10 Nov 2026 17:43:42 +0800
+From: Zhengping Zhang <zhengping.zhang@airoha.com>
+To: <linusw@kernel.org>, <lorenzo@kernel.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<brgl@kernel.org>, <mikhail.kshevetskiy@iopsys.eu>, <naseefkm@gmail.com>,
+	<benjamin.larsson@genexis.eu>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <lei.dong@airoha.com>,
+	<ansuelsmth@gmail.com>, Zhengping Zhang <zhengping.zhang@airoha.com>
+Subject: [PATCH 00/12]  pinctrl: airoha: configure GPIO muxes explicitly and fix pad mappings
+Date: Tue, 10 Nov 2026 17:43:27 +0800
+Message-ID: <20261110094339.749110-1-zhengping.zhang@airoha.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -125,52 +83,129 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 8knd4y0Sr7sfab5Qq_iWqmF89RZcRXqj
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEwMDAzOCBTYWx0ZWRfX/14fE4z/OtL8
- 2eUo+IeTbfFrQG9GK4/V5Ju9rwrzHcfylF5r25HLqnoUPE7u+5VE67VNFNKAXAfdXxrYlyVWs5A
- 6uWsIMY5L6IuJkqqdLK8iu4D+dfg69o=
-X-Authority-Analysis: v=2.4 cv=d+9gWhjE c=1 sm=1 tr=0 ts=6af2e609 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=Le8wEPVksgxnqJZgdr4A:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: 8knd4y0Sr7sfab5Qq_iWqmF89RZcRXqj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEwMDAzOCBTYWx0ZWRfX8EM02bQ4vlkB
- iuHopvxaDvFTh1Mr3Yy2aL7pXfndRQZsW4v31tYAnkgoSO7YvxNlue3Y+UMcVSXNIzPH+0C6Ju1
- /Os1j+F0THlMQJ2qedGkH+spETxWxklvLdzw7ers50IY7xnII2clMv8XcWfvq8XQC30QFjfnmUU
- 9V145UzwtHfiNw9HmjkYie40UqVYCkvBqwUT8R/j3x1ixxRRYYyJQwD8udh0r1SusDSygFmXoJZ
- 3zcIKxZAmyzIeAPsWIT16Jjoo1ptbGyzX5lW6hlryyRMlTp7qzHTPandynd5i0212+64g7Uh5q0
- z+QQC1rHslXCCrqmDe4G+m3iafLeaFk3yeuUDvR3EgtqZ7wwDq0X9xZfIBFaGpuopxEqvqy7fIC
- 2eAaFLP1wbMJKayQbyEzzw1KLIuLDahMayCLTozeuRisRrZIzN2j8ap8f5oxrZVTMfI8RwWCrSY
- TsBOqLVJVaM5ZbzIgXg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-10_03,2026-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 adultscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611100038
+Content-Type: text/plain
+X-MTK: N
+
+This series makes GPIO mode selection explicit on AN7581, AN7583 and
+EN7523, and fixes related GPIO direction, LED group and SPI/eMMC mux
+configuration issues.
+
+Background
+----------
+GPIO direction and data register programming is separate from pad mux
+selection on these SoCs. The current GPIO request path does not select
+the GPIO function, relying on the pads already being in an appropriate
+state. If the bootloader leaves a pad configured for an alternate
+function, a GPIO request can succeed without connecting the GPIO
+controller to the pad. Output writes may then fail to drive the pin,
+and input reads may not reflect the external signal.
+The problem also affects the opposite transition. Once a pad has been
+forced to GPIO mode, selecting its peripheral mux without releasing
+the GPIO override can leave the peripheral disconnected from the pad.
+While addressing these transitions, the series also corrects GPIO
+direction programming, AN7581 PHY LED group assignments, AN7583 SPI/eMMC
+mux configuration and the EN7523 128-pin PCM SPI CS2 pad assignment.
+
+Implementation
+--------------
+On these SoCs, shared GPIO pads can be routed to peripheral functions
+through mux control bits in the SCU registers. In the absence of an
+enabled alternate function, these shared pads normally operate as
+GPIOs. Dedicated peripheral pads have separate selectors for GPIO
+operation, so clearing all mux bits is not a universal way to select
+GPIO mode.
+
+Per-pad force GPIO controls allow individual shared pads to operate
+as GPIOs while leaving shared peripheral mode settings intact for
+other pads. GPIO-controller PWM output also requires the appropriate
+pad routing: selecting ordinary GPIO operation clears the pad's PWM
+selection, while PWM operation uses the PWM selection together with
+the applicable GPIO routing controls.
+
+The series uses these per-pad controls to configure GPIO mode on
+demand. Resetting the IOMUX registers at probe could disrupt interfaces
+still using bootloader settings, while clearing shared peripheral
+mode bits could affect pads outside the requested group.
+
+The common driver gains a gpio_request_enable callback and identifies
+GPIO-category functions through the pinmux core. It finds the matching
+single-pin GPIO group using pinctrl pin numbers, including controllers
+whose GPIO ranges have a nonzero pin base. GPIO requests and explicit
+GPIO pinctrl states apply the same SoC-specific group configuration.
+
+The common code checks for incompatible values of shared mux bits
+against GPIO owners and claimed mux groups. Validation and register
+updates are serialized, and register update failures are returned to
+the caller. GPIO request handling and conflict checks are enabled
+through SoC match data.
+
+The SoC-specific changes select GPIO mode as follows:
+
+  - AN7581: GPIO1-31 use SCU 0x228, and GPIO32-46 use 0x22c.
+    GPIO47-49 retain their PCIe reset GPIO selectors at 0x21c.
+    GPIO1/2 additionally require the I2C/MDIO routing to be disabled.
+
+  - AN7583: GPIO1-31 use SCU 0x228, and GPIO32-38 use 0x22c.
+    GPIO39-52 use the dedicated-pad GPIO selectors at 0x21c.
+
+  - EN7523: GPIO0-29 use SCU 0x224. GPIO28/29 also retain their
+    existing PCIe reset GPIO selector settings at 0x218.
+
+AN7581 and AN7583 have no documented force GPIO bit for GPIO0; their
+GPIO0 configuration clears the existing PWM selection only.
+
+Peripheral group configurations release the corresponding GPIO
+overrides when selecting their functions. AN7581 retains its existing
+MDIO and PWM configurations; AN7583 and EN7523 also enable the required
+GPIO overrides when selecting GPIO-controller PWM output.
+
+The AN7583 and EN7523 PON groups exclude the software-controlled
+TX_DIS/RX_DIS pads so they can be requested independently as GPIOs by
+the PON PHY driver, avoiding ownership conflicts with PON mux selection.
+
+The bindings describe the expanded GPIO groups and corrected pad
+assignments. GPIO numbering and existing compatible strings are retained.
+The final patch adds an Airoha co-maintainer and extends the maintained
+file patterns to cover the SoC-specific drivers and bindings.
+
+Validation
+----------
+Tested the PINCTRL functionality on AN7581, AN7583 and EN7523 using OpenWrt
+master (backport to kernel 6.18), including build tests and explicit GPIO
+requests, with particular attention to GPIO-controlled LEDs.
+
+Daniel Schwierzeck (2):
+  pinctrl: airoha: fix setting of GPIO direction
+  pinctrl: airoha: an7583: fix SPI pin mux config
+
+Robert Marko (1):
+  pinctrl: airoha: an7583: fix eMMC pin mux config
+
+Zhengping Zhang (9):
+  pinctrl: airoha: configure pin muxes on GPIO requests
+  dt-bindings: pinctrl: airoha: describe all EN7581 GPIO mux groups
+  pinctrl: airoha: an7581: fix PHY LED GPIO group assignments
+  pinctrl: airoha: an7581: select force GPIO mode on GPIO requests
+  dt-bindings: pinctrl: airoha: describe all AN7583 GPIO mux groups
+  pinctrl: airoha: an7583: use force GPIO mode for GPIO requests
+  dt-bindings: pinctrl: airoha: describe all EN7523 GPIO mux groups
+  pinctrl: airoha: en7523: use force GPIO mode for GPIO requests
+  MAINTAINERS: add myself as Airoha pinctrl co-maintainer
+
+ .../pinctrl/airoha,an7583-pinctrl.yaml        |  18 +-
+ .../pinctrl/airoha,en7523-pinctrl.yaml        |   9 +-
+ .../pinctrl/airoha,en7581-pinctrl.yaml        |  28 +-
+ MAINTAINERS                                   |   5 +-
+ drivers/pinctrl/airoha/airoha-common.h        |  15 +-
+ drivers/pinctrl/airoha/pinctrl-airoha.c       | 263 ++++++-
+ drivers/pinctrl/airoha/pinctrl-an7581.c       | 629 ++++++++++++---
+ drivers/pinctrl/airoha/pinctrl-an7583.c       | 736 ++++++++++++++----
+ drivers/pinctrl/airoha/pinctrl-en7523.c       | 579 +++++++++++---
+ 9 files changed, 1855 insertions(+), 427 deletions(-)
 
 
-On Thu, 05 Nov 2026 14:14:27 +0100, Bartosz Golaszewski wrote:
-> In sdv_register_irqsupport(), if irq_domain_create_legacy() fails during
-> device probing, a generic IRQ chip is left registered in the global gc_list
-> while its underlying memory is freed, leading to a use-after-free. Use
-> the managed variant of irq_setup_generic_chip() to ensure that the chip
-> gets unregistered before the memory it uses is freed.
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpio: sodaville: fix use-after-free bug when registering the irqchip
-      https://git.kernel.org/brgl/c/ab9102375b7c77e0c4d33c7594e514454dc9f2b3
-
-Best regards,
+base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.43.0
+
