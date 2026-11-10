@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794325477;
-	b=Ohmz7v1Mb2mXulPGp50QI9GrqZzDvuQiZ9D+Xy3sRtMzXx47iFnFF6FgUmAluBA9fyIS
-	 xlWzpm0p/JNgebyjrOQG8QoUYakLfEAQ34/LmePkmcjjUe5P7/Y+lfMWtHmg3IiFHDS+T
-	 KwmgTWv0ibkKiP6mAsBLPHBkelCrpUYaBGDAcKJeksBClMVDnA5eaDfbGsbVbmy4Kkwp3
-	 V4oSGInLF6no2WRHTvQPxvKRvb2MoUUmsQiqsf6w378yVBhY9oC04WZHSMSKw1TwX8+tx
-	 Qebt0fCWt2y0O4Shf7nkfmQbqC51L8sbl1uVI/6EpCnnGp9iNsS3yjEGQ7c3HPuYhvg==
+	t=1794325515;
+	b=Ag3n192U64SaT7eBP3D1mwbuzUmkrnt5AFmr8bPSZ0PBA0EwyKSDYMdGqkMbfi10Cmd/
+	 d6VQFU92M0SzSg89bvKT3jvszbwqw8rrTxsqIP7P9CGkq4D2KnTKosa4tKsProfF+Jv6A
+	 Bnp4hxfKns8nyaHMaygO29VFsEb2h8cbyawHPphNqhQMW4mkByjwzfLaP++dl/5E7CjRT
+	 ci1U0i43IpWyOkKILLwC1/Im/8YuOqL47K6BeS7FQjOuZ94Eg42JkgNmqVU/yQRHK+cGH
+	 UiseWemiL5RppIrChmzegMccBRKLAGoCiPPGe8SgOGhFkcFybyupX12vZVG1pq0L02w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794325477;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794325515;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=374PxO+3w1e3d3nPSFUNzy14TN0zxVAnl5Wj19VchHk=;
-	b=4h1kCpmP+ccYjRLGUzSVTKqtbPWfIlxXknZ2+B8e9Tg7r63oKkAXFONHZV4p44B5mhjb
-	 +yZs6U7pVZhhNft0P/B3QmjO5ho/1HzWAoz+r8rrina6atbfhLm5JTnugVue8t/GxnDk0
-	 WdnQMhU2aZ1NSZJmg4k4pXQf2HzACfYfVHZWuTrOXTFzRR/smVDCOQ3lZZ+aNoHe2eWIT
-	 0Tfahi0CVbpgo5ReYLirHZHGQ/nknSY7MWr23mC6WSn3bFzFQSne2ZIuiSIf5/cdim5uq
-	 UmUzZEoHEeutVoEVlbmj7oWaevJKFwm7bBwOGuGuYt/nfznnoqxkhF4adOYF9Qgut0w==
+	bh=AeKhbRI6prKP8epvHJ19D94oCdcgo2EeMB5hyb4N2xo=;
+	b=vukjLT5fR7ns8TQV++UjBLshe7CUcq4B8jzfpnwal8OeJIqgvnCMhUONp6kyE4fPoERP
+	 6NPtdFaEmDz3u4GdSzBLQUQmVxcNqznaY+rbNWQWQsMDNAno9yzNRjtbMuPmIVOI/l7De
+	 aYMunRLEvMzfVRrzvnJKpiFmmtICEzm40tXKyj8TyOgMkf4ruIFMxDkR491cP+U8XTN3G
+	 8/HYXulfyJR9tOfTx6xWOkOsWdLxfOCMiAFubDqzmyMxgS1FkeRLLg0totTuOLav0ur5D
+	 cLsNzM9jXzXZjvZetur4eSCHnjQHBl8AKRqsqZ/7S8DT7/srJY0PaQ9964FYH2cSuoQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XFdk0YJ8;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oK9onhr1;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69104606A332;
-	Tue, 10 Nov 2026 15:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02455606C41E;
+	Tue, 10 Nov 2026 15:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XFdk0YJ8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF231F008A3;
-	Tue, 10 Nov 2026 15:44:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oK9onhr1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43B481F0089F;
+	Tue, 10 Nov 2026 15:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794325477;
-	bh=374PxO+3w1e3d3nPSFUNzy14TN0zxVAnl5Wj19VchHk=;
+	s=k20260515; t=1794325514;
+	bh=AeKhbRI6prKP8epvHJ19D94oCdcgo2EeMB5hyb4N2xo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=XFdk0YJ8D6xr9EJt3KdmH8mXjDyC0ssy4EFI0Vm61BIDKqYu70YEo1/Xk3eFv1gs3
-	 nBB9aBp2AAAvZU5mm2dhDoqNMj6IOeWwR/HlYCeHSMucGsIcDLvTD9WbQqm8hIsu6b
-	 wcz04w2kpj08OBv921AH7vOgfyvvAKXaUMf9icP+ZLr6JgcTiOa9yXq8rx8VE5C7uZ
-	 AsE1yInEWo7vqIBR8g1/KFLo8cp3aOugi6u8pAGo+J9oget28xY3uKEviS0zLWCJvB
-	 ipG+IQvdjXESa8XcrLwEVkGxWSNzTxkZrzM84Ic/YFq82rqRDAGWQAZ5/twC7YHm67
-	 azSoWL73Lgr4g==
-Message-ID: <sashiko-outbox-207284@kernel.org>
+	b=oK9onhr1TljpIE63+PxSMqSZq1Ylfmg1qhC5UaR1FHv1ONAjho0TzRAu9G4GEpvWH
+	 HKyws9K/MJMnAVA3vyovvsy/BRvkoV58mbLrb8vxuF5T6JR0R9wrp87OkroRp8mxi+
+	 rB8uGWTetoipeKR3JT4EIrvhRNtJpF8hSEi5myYwqm/4pHB9WfRVrGppu8DtVbDa5x
+	 tYnjYS65L+VDtgvwvUHRwoOI8YVkDbMhxtXmlcmNHzRxb+mQ+skU9s4DDL3KX1FUxW
+	 UwLzMQqd0nmY59eGAXAr++0YPNsvTcwK8Rf+DsUw/Q3jqR5uryRuh+092G3cJovibS
+	 bBu723lg7kdtA==
+Message-ID: <sashiko-outbox-207285@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
+Subject: Re: [PATCH v3 4/5] string: Add [C]QChar_of() and QVoid_of()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Alejandro Colomar" <alx@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
+In-Reply-To: <415453a31ebf1aed3b41da1a28913f5cbe58f175.1794323750.git.alx@kernel.org>
 References: <cover.1794323750.git.alx@kernel.org>
- <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
+ <415453a31ebf1aed3b41da1a28913f5cbe58f175.1794323750.git.alx@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 15:44:36 +0000
+Date: Tue, 10 Nov 2026 15:45:13 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,78 +60,82 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential
+Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [High] string: strprefix() breaks Clang builds via void * subscript in
-  QVoid_of()
-- [Medium] string: strprefix() always returns char * due to non-const
-  (strprefix)()
-- [Low] string: strprefix() macro parameter pfx mismatches @prefix
-  kernel-doc
+- [High] string: void pointer subscript in QVoid_of() breaks Clang
+  builds
+- [Medium] string: QChar_of() fails to compile when pointee has
+  qualifiers other than Q
 --
 
-commit f882ec908122ee0c3f780648b859ed41700664d0
+commit cea37634307d89ede7b6ca6128f006d50a90391c
 Author: Alejandro Colomar <alx@kernel.org>
 
-string: Make strprefix() const-qualifier-generic
+string: Add [C]QChar_of() and QVoid_of()
 
-This commit wraps strprefix() in a const_cast(CQChar_of(s) *, ...) macro so
-that its return type preserves the const qualifier of its first argument.
+This commit introduces the QVoid_of(), QChar_of(), and CQChar_of() helper
+macros in include/linux/string.h to support qualifier-generic string macros.
 
 > diff --git a/include/linux/string.h b/include/linux/string.h
-> index cb096e9eb9835..3e8a0537b86bb 100644
+> index 3a70ba9ed3021..cb096e9eb9835 100644
 > --- a/include/linux/string.h
 > +++ b/include/linux/string.h
-> @@ -577,7 +577,9 @@ void memcpy_and_pad(void *dest, size_t dest_len, cons=
-t void *src, size_t count,
->   * *  @s+strlen(@prefix) if @s starts with @prefix
->   * *  NULL if @s does not start with @prefix
->   */
-> -static inline char *strprefix(const char *s, const char *prefix)
-> +#define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx))
+> @@ -14,6 +14,36 @@
+>  #include <linux/stdarg.h>
+>  #include <uapi/linux/string.h>
+> =20
+> +/**
+> + * QVoid_of - qualified void of
+> + *
+> + * @p: Pointer to test for qualifiers
+> + *
+> + * This macro produces the type name 'void',
+> + * qualified with any qualifiers present in the element of @p.
+> + */
+> +#define QVoid_of(p)       typeof((__QVoidptr_of(p)){0}[0])
+> +#define __QVoidptr_of(p)  typeof(1?(p):(void*){0})
 
 [Severity: High]
-Does expanding CQChar_of(s) here break Clang builds (make LLVM=3D1)?
+Does applying the array subscript [0] to a void pointer in QVoid_of()
+break Clang builds?
 
-CQChar_of(s) expands to QChar_of(const, s), which expands QVoid_of(s):
-
-include/linux/string.h:
-#define QVoid_of(p)       typeof((__QVoidptr_of(p)){0}[0])
-#define __QVoidptr_of(p)  typeof(1?(p):(void*){0})
-
-Because __QVoidptr_of(p) is void * or const void *, applying the [0] array
-subscript operator to it fails to compile under Clang ("error: subscript of=
- a
-pointer to void") in every translation unit that calls strprefix(), such as
-drivers/base/property.c, and triggers -Wpointer-arith under W=3D3 in GCC.
-
-[Severity: Low]
-Does naming the macro parameter pfx instead of prefix cause scripts/kernel-=
-doc
-warnings?  The kernel-doc comment immediately above documents @prefix, and
-scripts/kernel-doc binds that comment to the macro definition that follows =
-it.
+__QVoidptr_of(p) produces a pointer to (qualified) void.  Because array
+subscripting requires a pointer to a complete object type, Clang rejects
+(__QVoidptr_of(p)){0}[0] even inside typeof() with an incomplete type
+error, and GCC emits a -Wpointer-arith warning when pointer arithmetic
+warnings are enabled.  Using unary * instead of [0], such as
+typeof(*(__QVoidptr_of(p)){0}), avoids both issues.
 
 > +
-> +static inline char *(strprefix)(const char *s, const char *prefix)
->  {
->  	size_t len =3D strlen(prefix);
->  	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
+> +/**
+> + * QChar_of - qualified char of
+> + *
+> + * @Q: Qualifier to test.
+> + * @p: Pointer to test for the @Q qualifier
+> + *
+> + * This macro produces the type name 'char',
+> + * @Q-qualified iff the input pointer points to a @Q-qualified element.
+> + */
+> +#define QChar_of(Q, p)  typeof                                        \
+> +(                                                                     \
+> +	_Generic((QVoid_of(p) *){0},                                  \
+> +		Q void *:  (Q char){0},                               \
+> +		void *:    (  char){0}                                \
+> +	)                                                             \
+> +)
 
 [Severity: Medium]
-Does strprefix(s, pfx) still unconditionally return char * even when s is
-const char *?
+Can QChar_of() fail to compile when the pointed-to type of p carries a
+qualifier other than Q?
 
-include/linux/stddef.h:
-#define const_cast(T, p)  _Generic(p, const T: (T) (p), default: (p))
-
-In const_cast(CQChar_of(s) *, strprefix(s, pfx)), the first _Generic
-association is const CQChar_of(s) *, which is const char *.  Because the
-underlying (strprefix)() function returns char *, the controlling expression
-never matches const char * and always selects the default branch, returning
-an unqualified char * and stripping const from read-only strings.  Should
-(strprefix)() return const char * and avoid casting s to char *?
+QVoid_of(p) preserves all qualifiers on the target of p, but the _Generic
+selection only matches exact Q void * and unqualified void *.  Passing a
+volatile char * or const volatile char * to CQChar_of(p) produces a
+volatile void * or const volatile void * controlling expression, which
+matches neither association and fails at compile time.  Matching against
+Q QVoid_of(p) *: (Q char){0} and default: (char){0} would test specifically
+for Q regardless of other qualifiers.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794323750.gi=
-t.alx@kernel.org?part=3D5
+t.alx@kernel.org?part=3D4
