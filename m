@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794300860;
-	b=iaZiJx99ltdixwx8mPGGfLSWOGnwmZheNPXc5Ddc/iXhVEM3gFZnHFky2qu2D3+Pi70+
-	 aRNZ3njGEzqeQrCWuonT1LveIWwrHiBbpkeOY5tJP747ic0JCvDVCP/wzfznKEx2H2gtx
-	 y5USfdJ67kWXur9DujnU7gnYVYhksYSQQ43t753ixr3a3r70b/XQGuutx4rLSsK8LkV61
-	 VuZussz3RN4IdGvIWKEaNNuu8Grw3LE5Ch3memZ+3pXWc6AiRkevkw2KMuohor+TF1wO0
-	 zYhpMs9WExWJPK5wKiS/C2JJEgH830cmDK6K0CPPz+FkcZL/A2lcrM1yyMQk3RYYAaw==
+	t=1794301100;
+	b=yEyQtGtuDT/rQn0gLq1vpxIsX76ju01I6qb/SbxqJKnS2JklimS0u0uobRRk0VngqzS2
+	 cM0mzLJLn6bea1QVrGJ2mc44nRqb1VydqhXyalc5yy6NgvdivaBdsYZw03zxlvh0Wg3mU
+	 pcMON8ukhl7P+XzeuRjzREbzYU3FKOxaypVEfWJXSVnztr8WYBMaceYB5Cqo+/h7pFDiL
+	 MDceLMQaHIyythPvhJl7ZV2/mwlQMN3PCjMqZg/WNFvDlEUY/a5GwGR/mGvPEYPCQf5pF
+	 bUsaYNgwLKbk883Q3vK6Lalwc7GxvUATbU8OmR5WRz0gN0NXzIqtOtMpdwYR8HN2cbA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794300860;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794301100;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ggNk5U9ggfmA3f998rJ3qvt5tEr1LMQJ1Vt5cQlunjk=;
-	b=UH34kIWFwaz41vlW5qwx8dANbzCoFvrdmIs7apMM4PjlkkYbYwqy+pDKf2+BkqnpVK+/
-	 fGtrmK+OO20Hdodb+FmZeNWu0Xj3ZvT1OKc3h+C8HVBpyqUQlUVTSuYjJve0cHr9Tm7t0
-	 pXUurt68T/sMhJd+upTR0ilv8gfNG4k92thhcfEAboiIRVJ1Q8oDbq8b6ENuNZMQaPLq5
-	 8Jvcl99spiGKdhZ4lnabUQX0J+dR/qejr1MFXaphlzUCynlGJCACj+5KpVv0uypAaxL9M
-	 h0jsSvZXF6OFHzho38iIxi2gjHEYaf89/gArphpAE4Hq90ZN2PiY2RJBs+iREG6rVvw==
+	bh=RHZzSa8LRN5POIBifYmNxN50HUALunA8yewndzwP5vY=;
+	b=ANH7PGgp8kH8AQXruGExvo1hNDvne55BCYlhns/ml00JzuajBuwziHBKIUKXCW8l6fx8
+	 tokYleMLlpRDV2FLx02apZNsgd7dVDeigAeAKX4WcqRlnEY/EWeC8dZP9R58Bkl63+2Vw
+	 wBaJOOO/e8/fQE9lZa1r6nb9nW56tFlG82d5exeB7OO8r+CJ8UFccjXKNVV1sg2OO6VjC
+	 h+DQQQEfWkp7bhWoEcFdfR0x2/EjvUz5LoEa2hgKe4AWacbeKtt9r1C0woLOyftjTCFV6
+	 q7LZk96aOh23Fo+ECN+waBl9j55iNePUnEmuQQGhW0a9UYKF8rDbbTO/9pxB72LIMng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FGLPB3eP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=imyIu7jb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 57870606A31C;
-	Tue, 10 Nov 2026 08:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 16534606A321;
+	Tue, 10 Nov 2026 08:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FGLPB3eP
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B38F21F0089F;
-	Tue, 10 Nov 2026 08:54:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=imyIu7jb
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E9F541F0089F;
+	Tue, 10 Nov 2026 08:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794300859;
-	bh=ggNk5U9ggfmA3f998rJ3qvt5tEr1LMQJ1Vt5cQlunjk=;
+	s=k20260515; t=1794301099;
+	bh=RHZzSa8LRN5POIBifYmNxN50HUALunA8yewndzwP5vY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FGLPB3ePZ5J3tTWm+3ArMy/T20VTut0oj/NYSEZwJm0RoBXcknY9aKiNcYwkx6KUw
-	 eM2YT0yUEhLILXHkZIo9KqVD4P9uFS1GvOxsA+fz5ByeNW30o3dAU7Zbi9pifE7j6K
-	 0kYTyAkE2KKbRU61stIsWaoVM3WF3CojI48VgwB15/70c/nIkuY1LDCjrFwyTrE3/D
-	 SUR7w/slvklK5dxm0LaUl9XVQG3G3ctw4PBaZWvumMG6PmEOfdJfVXJtnymg+bewX5
-	 L4C6Ck/vFC2rzwZu1Cq5hTLF1YXBJepDsII8kLkuud8oRmuJmHSJt1WF962C9Kc/j7
-	 U4KH+Dd0aZ1Zg==
-Date: Tue, 10 Nov 2026 09:54:11 +0100
+	b=imyIu7jbu2jI6lFLP4qylpkSOcEqCRcjPSM7h5xbuxQWEoYdhhqrLvokp1oL8eqcH
+	 aWKUzSf1wJYixwmWWrZQs02FWenw86MTvpWe15pVrRnvjVwGUZNcDaTUte8IaZ1KbE
+	 YNd8DytXbnK19t4K9nynnRyODa+Rg4pqYTcjpmMa9yDN2M+WDkFZunouaQMFf3stwh
+	 XL7TssM35mcIFt60nHMDxnj5EbkM1izjYaiu5iSbaxEw0xbZjFWjHP9RjcljycQw6l
+	 jQ6bCyfrquyibDPemfYAQS110t+DknznWxVmb4pi6WX1/JWlmeJlmXHAlci4FMbVW/
+	 BzXvhJd/vWBmg==
+Date: Tue, 10 Nov 2026 09:58:15 +0100
 From: Bartosz Golaszewski <brgl@kernel.org>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Linus Walleij <linusw@kernel.org>, Kent Gibson <warthog618@gmail.com>, 
-	Adrian Ambrozewicz <aambrozewicz@nvidia.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field
- in gpiod_free_commit()
-Message-ID: <gw26q2blrbmmxwzv7vfjxwc5bzqzfgt57zs7bvt2kdx7x6a6qk@6i5z3a3crqft>
-References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
- <20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
- <avJAv_3ACjvyc9VU@ashevche-desk.local>
+Subject: Re: [PATCH] gpiolib: synchronize updates of descriptor labels
+Message-ID: <trnf2aayrjdo2ks3ads4cuda4yen6qdvzvpmitktmzuggv5ix2@hjqcnfq4zo6a>
+References: <20261105-gpiolib-set-desc-label-corruption-v1-1-fa84726ceac0@oss.qualcomm.com>
+ <auyYVmSaLBS--52n@ashevche-desk.local>
+ <zgvjoccnnhhjmlejoazmz7mpfmndbhi2filwbtudq5i6s46boy@szoywmokacny>
+ <avILL4gd737gmDR2@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,50 +62,24 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avJAv_3ACjvyc9VU@ashevche-desk.local>
+In-Reply-To: <avILL4gd737gmDR2@ashevche-desk.local>
 
-On Mon, Nov 09, 2026 at 11:53:03PM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 09, 2026 at 11:27:08AM +0100, Bartosz Golaszewski wrote:
-> > Use gpiod_update_flags() to clear all request-related flags in one go
-> > instead of risking racing with concurrent users and overwriting any
-> > changes they could have done between READ_ONCE() and WRITE_ONCE().
+On Mon, Nov 09, 2026 at 08:04:31PM +0200, Andy Shevchenko wrote:
+> On Fri, Nov 06, 2026 at 10:22:07AM +0100, Bartosz Golaszewski wrote:
+> > On Thu, Nov 05, 2026 at 04:53:10PM +0200, Andy Shevchenko wrote:
+> > > On Thu, Nov 05, 2026 at 02:23:45PM +0100, Bartosz Golaszewski wrote:
+> > > > desc_set_label() swaps desc->label with rcu_replace_pointer() but
+> > > > without any synchronization of concurrent updates. The swap is a plain
+> > > > read + write: two threads can observe the same old label and then call
+> > > 
+> > > s/call//
+> > 
+> > Why? It's "call $function_name" which happens to be call_srcu().
 > 
-> ...
-> 
-> >  #include <linux/acpi.h>
-> >  #include <linux/array_size.h>
-> >  #include <linux/bitmap.h>
-> > +#include <linux/bitops.h>
-> >  #include <linux/cleanup.h>
-> >  #include <linux/compat.h>
-> >  #include <linux/debugfs.h>
-> 
-> No need, bitmap API implies all bitops.
+> Because with that kind of name it sounds not good (tautological).
 >
 
-I honestly have no idea what the policy is on "proxy" headers. In some
-cases people advise against them, in others they say to include them.
-
-Is this documented anywhere?
-
-> > +		set_mask_bits(&desc->flags,
-> > +				   BIT(GPIOD_FLAG_ACTIVE_LOW) |
-> > +				   BIT(GPIOD_FLAG_REQUESTED) |
-> > +				   BIT(GPIOD_FLAG_OPEN_DRAIN) |
-> > +				   BIT(GPIOD_FLAG_OPEN_SOURCE) |
-> > +				   BIT(GPIOD_FLAG_PULL_UP) |
-> > +				   BIT(GPIOD_FLAG_PULL_DOWN) |
-> > +				   BIT(GPIOD_FLAG_BIAS_DISABLE) |
-> > +				   BIT(GPIOD_FLAG_EDGE_RISING) |
-> > +				   BIT(GPIOD_FLAG_EDGE_FALLING) |
-> > +				   BIT(GPIOD_FLAG_EVENT_CLOCK_REALTIME) |
-> > +				   BIT(GPIOD_FLAG_EVENT_CLOCK_HTE) |
-> > +				   BIT(GPIOD_FLAG_IS_HOGGED), 0);
-> 
-> Indentation is broken (and it has spaces, which makes me totally confused what
-> the point of those spaces in the first place?).
->
-
-Yep, and sashiko has some nits too. I'll need a v3.
+Nah, this is fine, it's a function name alright. I'll allow myself to
+keep the wording as is.
 
 Bart
