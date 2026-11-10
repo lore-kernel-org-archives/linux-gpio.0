@@ -1,83 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794304923;
-	b=LhuyWSbwVMguoj9Yt4cHpdvIcZbVtQG1GCBBzG8vTW4tF8+9CPpcaaVWcBjZ1TX6wTPG
-	 D4tua56sIq7vUzSxe/NfxOu0ejceCn1mk6FYRkG/RsdkW/pGP2MjvxN6y4v1ZPQv+ISiV
-	 /It/mrz1RnykuIdzFuOBC7cMSH9JQC7LKc0pi2DZ3ijauMN+dbolsBh2FdVYu1Vg0z/ZR
-	 ighknCI5d70qFhStnojhZQ4Jr+8iw1HWjy3ezRD1QRrs+1gQkmiCO6KkNcH/rr0G1dugh
-	 sJDw7aaA1ZxtjwNC3dBKt5myneFxKOhXes+lx4bko60UfpT9uFAF9dKiCzf4zIxqlSA==
+	t=1794305202;
+	b=nr6YiqvFnSHHTW2M3ZoCgI3e2CBtyMGW9tJ4jviInuhuiJOyGGtA/3Y632A5u/p0JP/F
+	 gM0esJM0jzYp+/tOjYL1dSqG9e/zkW4KeXLV4O/ywf/4j4mEaDyUWnfM2LARSy/mcqxMm
+	 JlnUZObEkS5LRFqaMvcviBTcr3QZCMBSCEsOvEuvKKFu8xs663I1AU76wRcRRlmE7OxCL
+	 fq8f5TJlLagddSv1QET1XWbIOBFIwPWh+Nh3kakSVC2rwUNffcmeQbLGcIcuZgVT1H20l
+	 NAdK8l/FFffFDqKrXVoDUpLP/EyqLCtcyqVa18fnustI1zP/aKJSgd2Qe4ZOL0Cm3IQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794304923;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794305202;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To:Organization;
-	bh=4zgWB+d5H5yTa9tvRw1sPy7h8ZaIadZT5pec+9DNROk=;
-	b=4f8iNbNRxWIIzOpO1wjAAPr3Q0l+Tv2tAOtu+3TDyoBTWSnGhsog1Bm9+sluYPqi0pqH
-	 w5K5m+H48zR+oCzaiX+ZXsDDltUiO+PkvPU7TKh6YSIZqrkwz1p7dJORg+oeBbNiCIl/A
-	 erv/u1lvJ/PkJ6ktMeTcb3w7OIlKKQV3xyFjshd138yuZZGtELbULu8VFouDwJEGJtlNM
-	 xCrsPew5DN5EpLAjUwEf06nbiBqJBKHt92kRzVI9F644o2owqOI590VXAEp6qspRA9ice
-	 SkzQqlv64aP3NxZWneDykJrno0r1H6OKp+GY+t1JTan5qqKmb01I96CU1aIqCvQ1DJA==
+	bh=0+56BmH46cTzz6cgAVlQ2fzvLFOPeYUgDkfm7Fk/6qk=;
+	b=ab0fGi/HZwL0ez8goGZB6AnORqjRMZIRCHiCw67Tdtffjpty+UaCxan3qmH5puIc86vP
+	 O5nNe4egTFASf95ub9PLnvXBDRj2oXRI7t8ba7owYQF6eyg7ENL+g8XSPQ8y6v+ktHms6
+	 UcJFLM0FokV+uTEcr6kfYeGecM2GnZoAYAJZov1W/2OcF5TD3zPL2shr/HepaYEYMNkRA
+	 fRnsqjAh1dB7lthNZIKyVYBxlKqO2h+Jk85mZHHwuetc/XAsghgt7uGkQBCYXNQ9v4bQv
+	 rK3GtFgnNRMan4iOiKRCwLJ/I4DBt512RhAB+gnNjhMl8IJNhArZbMl/uo1RJEWZ3Xw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MgjllcZm;
-	arc=none smtp.remote-ip=192.198.163.16
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="NwD/ThYC";
+	arc=none smtp.remote-ip=198.175.65.16
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85DE606A334;
-	Tue, 10 Nov 2026 10:02:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D85DE606A334
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614BA606A325;
+	Tue, 10 Nov 2026 10:06:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 614BA606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MgjllcZm
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NwD/ThYC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794304923; x=1825840923;
+  t=1794305202; x=1825841202;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=J5Wc56c9jMQ0107g8hx4PjcxQ3z1p91ZWMX5oWjHcfw=;
-  b=MgjllcZm7zQ+MlKC3x/IvnNekUzGYXZ/Q6wUTS5Gw1jkALDZh/gXQ2VO
-   bEBH5XnS7BrxhnJfCgfN61oCScIE+2uZ7xQKuaxvS+Zy0bKYAKf8J86Lu
-   espcRFPzjXiHFl9m4zsng3KIE1InwQQnQtlOx4te4h+n3FRUw4tpkgD6q
-   gK7iGSxSpbYnudWLvWgzXt6aBb2BiafzlPTPRdFCZ2qqOGpC1uXUk6kZp
-   wdlVPApfqOg+7JAQ4i20U41CbPQUHu2CKycJ0g6UH2xeAIFjEUxV99ByV
-   M1j9EkgJjMx0wxma08tHmEmBZV1N6QT4pLf9BfnLTOHtMkpKDmlwa1qoB
-   A==;
-X-CSE-ConnectionGUID: IqKKWk89TjaVg6Ktao0IkQ==
-X-CSE-MsgGUID: uTzCOi/JSfSTVgnMbAe8Fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="3071767"
+  bh=hPyoBw1zcnjyYyX+GWkyUwYoq6TCM3E4M22B/6C4Ed4=;
+  b=NwD/ThYCEmBc5Zs9ar2Vq4hl1pxmD9AtOj8iHNcSBYeqGyymZwsueUnv
+   sNSqeeb4lmwJD8AIXBLrPBoYiLKOIlY+rrdgKpPT5/rrL0xDWkZle/iQk
+   JomEF1lpWh4Cbp7/wHMf4lWz/jCgrfwZMagWoIK7cfB7U3YT38ANd28ns
+   HkbloCcfBfkD/wwvnzsZrKxrm4j6Ir1As+CVDAJ9rBoUhDSrfbPNq0NvC
+   F7Zqu5DwrOcjhnX9sB63I+Lj9FlAGl8hoFr7UcPmGF6vJNbC+sD+Ww74u
+   uRyr8ibPP7RAtoCgRnneqObYev/8kDpKQ5dIVGAtkaagp5n3fWFgxqjZ+
+   g==;
+X-CSE-ConnectionGUID: zux3HgRHRHKvhopm6dRszg==
+X-CSE-MsgGUID: BLM4AXdHR1ql4J4jvRhfLg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="3035498"
 X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="3071767"
+   d="scan'208";a="3035498"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 02:02:02 -0800
-X-CSE-ConnectionGUID: 7/z6BoevQjuFtNSEt4VzUA==
-X-CSE-MsgGUID: MDkkPIf+TDODMn/JYVlmIg==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 02:06:41 -0800
+X-CSE-ConnectionGUID: lHQLPFhaT8WI8G9crvQsXw==
+X-CSE-MsgGUID: eiwTZ/71QaS3vGs1UpQTTA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="7943054"
+   d="scan'208";a="7944534"
 Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.244])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 02:01:55 -0800
-Date: Tue, 10 Nov 2026 12:01:52 +0200
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 02:06:38 -0800
+Date: Tue, 10 Nov 2026 12:06:36 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
+	Joshua Crofts <joshua.crofts1@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Linus Walleij <linusw@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>, devicetree@vger.kernel.org,
-	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v14 13/14] lib/string_choices: add str_rising_falling()
-Message-ID: <avLrkPb8z35ou_vw@ashevche-desk.local>
-References: <20261110-cv75-gpio-v14-0-e586aad0467a@ambarella.com>
- <20261110-cv75-gpio-v14-13-e586aad0467a@ambarella.com>
+	Kent Gibson <warthog618@gmail.com>,
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] gpiolib: don't overwrite the entire flags field
+ in gpiod_free_commit()
+Message-ID: <avLsrOqdXSFSH6WM@ashevche-desk.local>
+References: <20261109-gpio-desc-flags-atomic-v2-0-c4c54b476628@oss.qualcomm.com>
+ <20261109-gpio-desc-flags-atomic-v2-4-c4c54b476628@oss.qualcomm.com>
+ <avJAv_3ACjvyc9VU@ashevche-desk.local>
+ <gw26q2blrbmmxwzv7vfjxwc5bzqzfgt57zs7bvt2kdx7x6a6qk@6i5z3a3crqft>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -89,20 +90,36 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261110-cv75-gpio-v14-13-e586aad0467a@ambarella.com>
+In-Reply-To: <gw26q2blrbmmxwzv7vfjxwc5bzqzfgt57zs7bvt2kdx7x6a6qk@6i5z3a3crqft>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Nov 10, 2026 at 12:32:38PM +0800, Long Zhao via B4 Relay wrote:
+On Tue, Nov 10, 2026 at 09:54:11AM +0100, Bartosz Golaszewski wrote:
+> On Mon, Nov 09, 2026 at 11:53:03PM +0200, Andy Shevchenko wrote:
+> > On Mon, Nov 09, 2026 at 11:27:08AM +0100, Bartosz Golaszewski wrote:
 
-> Add str_rising_falling() and str_falling_rising() for code that
-> prints an IRQ trigger edge.
+...
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-There are definitely more candidates for this, for instance
+> > >  #include <linux/acpi.h>
+> > >  #include <linux/array_size.h>
+> > >  #include <linux/bitmap.h>
+> > > +#include <linux/bitops.h>
+> > >  #include <linux/cleanup.h>
+> > >  #include <linux/compat.h>
+> > >  #include <linux/debugfs.h>
+> > 
+> > No need, bitmap API implies all bitops.
+> 
+> I honestly have no idea what the policy is on "proxy" headers. In some
+> cases people advise against them, in others they say to include them.
+> 
+> Is this documented anywhere?
 
-drivers/mfd/tps65010.c:280
-sound/soc/bcm/bcm2835-i2s.c:612
+No, but feel free to start such a documentation. In IIO we did a huge work
+to enforce IWYU principle, and there we have some tribe knowledge about
+the dependencies and guarantees. (Cc'ed some people.) In this case the
+bitops.h inclusion is guaranteed by bitmap.h. If it stops doing like this
+it will be a flag day.
 
 -- 
 With Best Regards,
