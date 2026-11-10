@@ -1,88 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794322057;
-	b=as9Je9nJjrGoIrAAoPL1zgmmqIpjoxwAHbT0KoZPl6hDR1ZliXAqGOJWKE5ioK9l51WB
-	 COij6O48VdhXEzmqGO2yXgDumU/4biDkTaG/RLv9JJ0Z/FUVwQQOnCEoQXQcDpBDhNOOS
-	 P722eSRxer5nSuhpc5cT4wlOvXaIf/eXQvThQWiTXIq38wwXuOW2F7XZhX9OQcC2MnU95
-	 EZyJHiyYgjGvmmK/Ete66QFfJwMjpaPSbM+povyur/W6s+VfSLR05i99NnzNxwtu3hZpf
-	 HR1UcyGvnUj5swXj7hjDVayQkMoMunPtB8PG3QgQyVhVVuc+MINBB6mLbPb/NsWBnTA==
+	t=1794322676;
+	b=HgqXTF7qO9R49/gNpvHnsXE3VvOcYyovrU7NJNPb2H2w5On9HVB+BXAkfej/rbjkBr5w
+	 2qZ2Yl5wtcCvS3g2eS+BN4XEBkgNvbX3uxIeXzZxRXECib0uuOLkGlUvzzAOsXGMb1XM7
+	 BNKTFfIJYjWMZdxgM2eLAYf8+otMaGcbZjbcuFk5FQfgzdBoAqXdKjPwcQY6SFbjBfixI
+	 m7rACsSOKUmkcXQE0VuXzvRMbZtOV28J5wrN84M81Ia3b6O8thBpxsY9E8YO18myhHu+b
+	 1vRCbwrozsyHb7TbXqmllOPPwEpA03NdJuWYFs8qWGOB0Mxsads/csp6XS5nwnFTq9A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794322057;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=MO+byH4b4UJciY+YAuSXOwdIPo4Acff/hgRSnkQLcP4=;
-	b=XM6ksX6vAHG5i/6nKgleUigvZY+rKmgh+zY69RV1m4pd6GRr2w9O33huTbGzLQawkWs5
-	 yof0uBMIkqs0Kyo/7LLA5X7Rai016ZK8oG1zREb9ScaFb/4RG6mrhsru0y1Cvxn/8TZG2
-	 D0WFqLBptOrHKuzkoYQlr0oWwXOq373nPp4kZRGa4JljoeBYnqx6en9INLv9GNRsvdMB+
-	 a7OPOvcC5OzZKJxbzg9po85wMd7inXtlj7gF8LRAuYt4vM6T/XkDK26J+U7/0PSGtuxu0
-	 9Dxm7b6kWyKZRwfOA3Po0Mz/xPq7nL8MdyeqCAume/SoHJbkraYUgYY8BKCm/OiQ+0Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794322676;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 X-Zmail-TransId:X-Mailer:Message-ID:Date:Mime-Version:From:To:Cc:
+	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
+	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
+	bh=7kd2hyoeBX9xf/X8LLEHLJQCEf7R6Q0R4GUKb7jsYbI=;
+	b=mQE39QZ7dK47wH6S8723NW42kSHhoqHHpHEJIlLA5OXE8Q3q+RhvgfdLnJGyuuv08CtP
+	 F3Rrd/3X7E9pXlgkaxcx0QcDibDsKXzLJdwj1wH5b6GVlFB3FxSRewhXRZhTMtO06+Rw2
+	 nw8yFY69HJGNWwsWtj9NbNX/X3SdOlbYfOpS7zjhJpgVLWBQcEga1q+0Hq4kSw2qokrs6
+	 ZpyN0ksBLoSMhTQ3NQQ3RXXzvmwC6nE+IeLjGb6sx/mnIBDT1vOk9LmgrUWpPFqQ1JPpB
+	 u2qvUV5SlByxRiD+Z5SguU91MAvns3uoQx7x+NTX17BiMLr24CEIWfJyAX/ELkYjqVw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="lxQqOG7/";
-	arc=none smtp.remote-ip=209.85.221.45
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=zte.com.cn;
+	spf=pass smtp.mailfrom=zte.com.cn;
+	dkim=pass header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=WH7DBRBx;
+	arc=none smtp.remote-ip=183.62.165.209
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45BD606A338
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 14:47:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B45BD606A338
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD40606A331;
+	Tue, 10 Nov 2026 14:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAD40606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=lxQqOG7/
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48e1d0e5dafso1396144f8f.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Nov 2026 06:47:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794322054; x=1794926854; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MO+byH4b4UJciY+YAuSXOwdIPo4Acff/hgRSnkQLcP4=;
-        b=lxQqOG7/ja3vQA3ubzTTIQQXnhHfPS+0aO2YnX7lae2OVRufASV1+doafyCZBTaKNr
-         j+LVB34btw2XqAN9zO80UB04MX2wvWDSAaeIgqgzy09tS7K03khvWHJfsbJ3yE5fG7w1
-         V1Y2hyUUGrxfopBFqMceSlnDujFZCC7M4rETAOUwOtRgmyj9Dz2JqaENxkNpcTKvOCYJ
-         FOHoAKiTaLPRDLPo2MEqmTxxOSMRnZoSAp8o5sxRuz1y4ZYpS8h2JO2oPTuDHc8OyqpE
-         gdkdqPf5esqDTQBfb9CPFOQjrCFdLQE9c1uI9wEa2IRvjK9dLYjshru49vGfQPPYXEgg
-         yDoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794322054; x=1794926854;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=MO+byH4b4UJciY+YAuSXOwdIPo4Acff/hgRSnkQLcP4=;
-        b=TIlSl1zqjRnrCVvXQuo3lL1bvrLLnloGvoqUPXeSINa3v80c3k421KFVAncG3bQrBP
-         WtpUl0VBjiV8uDiw2jP+TH3POeE3Fc1TZ4D3TL+rgSlQLFa2e4lvyGSUScZ3/H3URxW0
-         3V7MeKWwPE9F6VJenIVQ3VMW6XcMuigiWgauhyA/uIv1MKwc6yO57FUy4KJ8mH45speQ
-         lA/RyMxLG2BFyuCw1NbC6JIYcz+Q2aaRU2h2OXwyS91rrhjLNVrn9hnBMt44gfOzjtLL
-         H3uX2GxBO8emx0gCVfvitaKa/vCFkKxsspU7dp56v7ElH8QQOCotXG4Hlk761XA6VFjA
-         BRPg==
-X-Forwarded-Encrypted: i=1; AL+hErEXhHGuygIUVsFXsqsnHo66dvDwtjvtYDWd1b8DXhFiLYH/en8/l/kbt19hV9Sid4ruUvOTLvQ5y9P+@vger.kernel.org
-X-Gm-Message-State: APuU4Z9we123e7pqKeu12QrNjKp57LAYs9xCrZdhYyFVPbNGjYeYD/24
-	9xXGwijS9eWFd50AeActyVMonngtVhTune7PDylQL+vSyujU4+tzyyGeHOEfiz/OTLA=
-X-Gm-Gg: AYBFou2KD+Si4/nHCQv1B1fSI88SkG42O7uv/NLddjSrXu47ZXe4gFkjKTuoSaE0LY5
-	IKMX6X9oAqFXJWf8WkzEwEVfUdsOoASAr9GB8gHkXIWklLh81FTnqTU1fwC73j/NfVViO47iUSS
-	vttFMu57QDnp7QU1Fc94L5EVros0KyTFNfV8c9a4W3afXMQ+elWNjucVwShdlwgH8gZy0iBrNtk
-	8TS2D5Zn3dv+GrxuawM1W63jdsixeWdZ6zYF/ph2MmpjrjoOXpWJ/gk5QutenVrb9m7KhPGrFEh
-	X2OEU+5d+IimtX+fjaO2N/+QFZC24OW8MIBbkoaMvXbXVwp4ph05aRj3R2IHp3xzjtyZ7mNaTqn
-	ZyaSGRnaLWXCXAUtmz+c3iX2vAMElbn3H+XI1H8r5XGdQbaV5brXGQXV5t3t6rILBpTL6Xb6ZJc
-	N4OmfhkVlbCtmRUBT4Bsiec7P32NA789DBXFIFAcwI52ta5Ni98+wxrx462YqG8xqEJ8pIqkfn7
-	mK6iOT3tVufW8JYNc4eyNO9m3u3WMJwE68+1jZZaMmlEytPxIyRU6x6HnDeCt8Kh2+PBCsDpbgD
-	fLx5JCRhfF0dNQtvl1H73No0EW/jhMURdOJ7gVrA63UodKF6FL5lDzyaFA==
-X-Received: by 2002:a05:6000:29cd:b0:492:aff5:da60 with SMTP id ffacd0b85a97d-4982e82c642mr3775637f8f.13.1794322054505;
-        Tue, 10 Nov 2026 06:47:34 -0800 (PST)
-Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-498369a495csm5253059f8f.55.2026.11.10.06.47.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 06:47:34 -0800 (PST)
-Message-ID: <7f613b00-bafa-4f4d-889b-4e37f5009b6f@baylibre.com>
-Date: Tue, 10 Nov 2026 15:47:33 +0100
+	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=WH7DBRBx
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jP8s13Lzcz57HS5;
+	Tue, 10 Nov 2026 22:57:41 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
+	s=z202610; t=1794322661;
+	bh=ZVT8VBF9GmkjP9xQ1T631scZCe9Y/OD7BRz9Pr3x3Nw=;
+	h=Date:From:To:Cc:Subject;
+	b=WH7DBRBxLsPuuorxjry15PTghunFt9oYK6BxDvZAoaLYMhHkO525IFnCbOx6UaoJc
+	 OsDBQmRowfXCY5d6lo9PtLDUOP7T2wF/NNFId9W5HbkK2co+l4oHdQxkiiIBtn5/vw
+	 PY/pMT9ElKNxHY7SUS/5MNgIq3odZnMaz3RutmmfdBNsv4ZFGii+bEQEvKYkBY95ha
+	 UxllHOzsXyMaI/jjFeS+Xh14lgJychZtizf6YrC8VHrU2D0RXeJMJkO7b1QANe/gsC
+	 qsgckGy/Q7izzKaylu/CROaWwtVDG1/IvGwA0dZULQEhJqDaIG8ifyVgRcIGYKvvxh
+	 Gen/8hIYTV1Ag==
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 6AAEvcuI005942;
+	Tue, 10 Nov 2026 22:57:38 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 10 Nov 2026 22:57:42 +0800 (CST)
+X-Zmail-TransId: 2afc6af330e68ce-fbf17
+X-Mailer: Zmail v1.0
+Message-ID: <20261110225742308FW7iPw8mc9gwd2DU0W-_w@zte.com.cn>
+Date: Tue, 10 Nov 2026 22:57:42 +0800 (CST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,54 +69,70 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/11] pinctrl: scmi: report an off setting as not set
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Linus Walleij
- <linusw@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
- Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
- Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-4-52d92843ad97@baylibre.com>
- <avL-4lquUqW9lUNh@pluto>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Autocrypt: addr=clegoffic@baylibre.com; keydata=
- xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
- K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
- BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
- AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
- B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
- 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
- LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
- vLfPDQ==
-In-Reply-To: <avL-4lquUqW9lUNh@pluto>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <jelonek.jonas@gmail.com>,
+        <linux-gpio@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIHYyXSBncGlvOiBsaW5lLW11eDogZml4IHVuc2lnbmVkIHRydW5jYXRpb24gb2YgcHJvcGVydHkgY291bnQgZXJyb3I=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 6AAEvcuI005942
+X-TLS: YES
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 10 Nov 2026 22:57:41 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6AF330E5.000/4jP8s13Lzcz57HS5
 
-Hi Cristian,
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-On 11/10/26 12:24 PM, Cristian Marussi wrote:
-> On Fri, Oct 30, 2026 at 04:58:35PM +0100, Clément Le Goffic wrote:
->> A get of a setting that is on or off, the flags and the pulls, returned
->> 0 as a value, so every one of them showed as set on every pin. Return
->> -EINVAL when the platform answers 0, which is how pinconf reports a
->> setting that is not active.
->>
->> Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
->> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
->> ---
-> 
-> LGTM.
-> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+device_property_count_u32() returns an int and reports errors with a
+negative errno (e.g. -EINVAL when the "gpio-line-mux-states" property is
+missing).  Storing that into an unsigned int turns -EINVAL into a huge
+value, so the "if (!ngpio)" guard never triggers and struct_size() then
+computes a huge size.  The allocation fails with -ENOMEM, hiding the
+real error; struct_size() saturates on overflow, so this is not an
+undersized allocation on 32-bit builds either.
 
-I'll apply Andy remarks. Can I keep your Reviewed-by with those fixes?
+Use a signed int for the count, propagate the property-array error, and
+reject a zero count.
 
-Best regards,
-Clément
+Fixes: 2b03d9a40cd1 ("gpio: add gpio-line-mux driver")
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+---
+This patch supersedes 5/5 of the v1 series; 1/5 has been withdrawn and
+2/5-4/5 are unchanged.
 
+v2:
+  - keep the declarations in reverse christmas tree order; merge
+    "int ngpio, ret" (Jonas Jelonek)
+  - propagate the property-array errno when ngpio < 0, and map only a
+    zero count to -EINVAL (Jonas Jelonek)
+v1: https://lore.kernel.org/all/20261107161258203oCy-Pa4_0rNe65TqrzFWD@zte.com.cn/
+
+ drivers/gpio/gpio-line-mux.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-line-mux.c b/drivers/gpio/gpio-line-mux.c
+index b4452d956bf0271d25598de2117c0db73805aba6..00b69632c4401300d11bbc296306df114d18c08f 100644
+--- a/drivers/gpio/gpio-line-mux.c
++++ b/drivers/gpio/gpio-line-mux.c
+@@ -48,11 +48,12 @@ static int gpio_lmux_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct gpio_lmux *glm;
+-	unsigned int ngpio;
+ 	size_t size;
+-	int ret;
++	int ngpio, ret;
+ 
+ 	ngpio = device_property_count_u32(dev, "gpio-line-mux-states");
++	if (ngpio < 0)
++		return ngpio;
+ 	if (!ngpio)
+ 		return -EINVAL;
+ 
+-- 
+2.27.0
