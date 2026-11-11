@@ -1,69 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794389761;
-	b=3zxsowEi1dr3tEjurtXhnDk7UbezXVjv61Pwb81Ysoib6iBSq2BFiuRqmipLbbfM04A+
-	 BbrQxfA/9CEcHSyzi8CP+cbwiSBSeT5NbGI/WQ7ZS1iWborjHLd8zSECa1w3nFiM3dMkH
-	 fkuCBv1sk47HjS5xbwrk7PB0L3di75ZEu2JsXoUqmFULKi/Nuzh3Qa4pZ8aIFIO73ENAe
-	 K5efHCVe3eoGKf2yOuuxKY4zG6pVYDpRXYEDRNYgLQbmnHyYkewOVJ52QiTwICyrxRbjz
-	 mCf08ZLg/VwFbszeiTmkMGjDTaIfG/8AYUTcS26p186y1MXnc9bwq4SzS97kNs+zwHA==
+	t=1794392739;
+	b=F+bkuSLKNiK8zYkdEiWXYaHwfwn+/vVIHS7G7dcZ/qkJB7Xq85F2YIQ4BrEv69D0rOLe
+	 2wu8hKeiSqONsy25HEdCMnCBbY+6G5nBxuwPvaDJDv2X72B6ceDgLIEl/fp0CkZNzbPml
+	 +fjZShDGWFKyuPDZLdksWJFIWXLXBdMcyJFLccEC+I7SeGmqwmBCC/3HbdJRdBmlhcg0B
+	 80Y4yVIjKXNcOwiZ9neVNHKrrVnmiae2ECAk2m5LRau9WjU3e8tnG4xdk5IEP7ZUgRPAi
+	 GuPdBIQVX9TU6DGuvqE1M057r7Sg0rsVxwDhCOdI7LJBqhTRryiJ5a8ExymlQmqT35A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794389761;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 X-Zmail-TransId:X-Mailer:Message-ID:In-Reply-To:References:Date:
-	 Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:X-TLS:
-	 X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:X-Fangmail-Anti-Spam-Filtered:
-	 X-Fangmail-MID-QID;
-	bh=FLxx306+tAISOP/bkIgH6EctXfc6n+IEfXg8sHsWejY=;
-	b=u4qDY2l5oLw4m/ahXYkBKylKulF62PktnJ9PrMkAhEw5g9qK/SnHXuZkwsynqvlDeafw
-	 XK+vfTmih+opJ7o4rvshsOhO/lMuWwiZUcHa/+oERcWDoi2YAKr+L3kRgaMViNl2gwsdN
-	 qTClc+t09OZS/y9lNs99e07I5AX9I3l1N+hji/ZIxAu/0wigBuVgpsRsLLrX/YK2CLlsc
-	 BvXo08jXnrS9PxZCkGAAzeb3gV+ZiNdYDbSthcmO8y9fRNc44g4JsMEKKgwO5Y8W/mPJh
-	 ovJw1Ax4AUv7wnNKwceHlyp/iY33GBO6p13DAONbVGA5shyp5Q+YPzIq7iXyx7j2QWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794392739;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=WCGh2v7nU1b/qpgNrVkksi8LEcAJjTlz9SScJQHog1U=;
+	b=dVYaEK7TVKD0WvwpBRwZdI/j3ed3kS20Wd+PbuGcGaYHW25+VwkYl+KmbfCqWcdual4t
+	 AxF7g9h440KnCZZen6yLUJtMhd/xureQj/Jbb+bmUtP5FX5wSaHdAsgsFFAaJkwgv3vH8
+	 UirA9pSwE4qyDAc9JEu+2yg8jT4Pkz7zpXmoztQI3E7KRgSXcmOhoQg3vgFJCS+7MkFr9
+	 SfapM+Iqn9P31e34ujF+ATcDd+euV+GDim20vY8knCk3+4UvUxKcHq2qiXsswzsRELJXl
+	 uT7tIExfWKNmb1kFGV1hmfB3/rgywcGBpWlbdGhR/L+aYEquRSGCMvzmGSj9IoKLbVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	dkim=pass header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=OwAkZraT;
-	arc=none smtp.remote-ip=183.62.165.209
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Mb3uhiUC;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69868606A324;
-	Wed, 11 Nov 2026 09:36:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69868606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD63606A31C
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2026 10:25:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6CD63606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=OwAkZraT
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jPdgG1F6kz5B147;
-	Wed, 11 Nov 2026 17:35:54 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
-	s=z202610; t=1794389754;
-	bh=M65uMDfm7EZkwKp4x31kX/uQWmsDRn/+DdbUriicHVo=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject;
-	b=OwAkZraTE3FJ3UG0y+tDshPE54pAg6EbZwPOOv7C55mwMIVC9G/zMQXwxjn7vvfr8
-	 IQaOlrC0s99xVjXt7NNsDfQqByYjKpzkJyLbaqERTkzxS4CRfgvC4EiO5Y4KkiQJTy
-	 xgx75OGpH/BIAnCjOBH8idRGJ5IU+NEddks08XNAIBYP3jQ6I8XEtnXTPKHOjCq3nY
-	 XJLNRJlkC+ssqjsrzg5Vn90DtN5bHDF76RrGtMwV5Mt03vwYfbhuLXvkaay+Ha86or
-	 8jOnNwDfNuLvcJwHFlHMSmOlYLiIXU0gQJwEz8LdidZLOuEorZ2OeVZbrTRnWdhCh4
-	 mMxlzMnTc609w==
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 6AB9Zih2007469;
-	Wed, 11 Nov 2026 17:35:44 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 11 Nov 2026 17:35:46 +0800 (CST)
-X-Zmail-TransId: 2afb6af436f2a9d-e5b02
-X-Mailer: Zmail v1.0
-Message-ID: <20261111173546439alUdLx-iD6-ISoa9jqS5H@zte.com.cn>
-In-Reply-To: <8f5f5582-523f-4632-be69-b176f7ac52db@gmail.com>
-References: 20261110225742308FW7iPw8mc9gwd2DU0W-_w@zte.com.cn,8f5f5582-523f-4632-be69-b176f7ac52db@gmail.com
-Date: Wed, 11 Nov 2026 17:35:46 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Mb3uhiUC
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a210470b49so24528995e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2026 02:25:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794392738; x=1794997538; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WCGh2v7nU1b/qpgNrVkksi8LEcAJjTlz9SScJQHog1U=;
+        b=Mb3uhiUCOo+9OL8nkk0DPqlbHMU+U3YfPJtQRGohaqBLQ8OevIfv8dsETu4ueSqwRn
+         NFUTwQnpCyUxKUDcsxzqJiYueO55nV4pkpQgYg9LUK5WPus9n/ERdDgHae8RQ7j2Dw+4
+         fM3ibr2Y6ts1e/OTqbgJiTQW3L8WDSaeJuxScEHyWMzPN+bGBiq2tlQqZ+g6LQEpKD58
+         mnmah5jGdWJ/FHCGptkaUokAM2nmjVjDMlQqXY1Y0+QNVEBolaI9RZeQ+wAs3afJIVDJ
+         0j7wdyVZa4FS6RKopL2kvM92RArS1Tu/5W/MXYkBtd4iocmh7ndrHYxmSyr8Mi6yyFzr
+         +H+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794392738; x=1794997538;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WCGh2v7nU1b/qpgNrVkksi8LEcAJjTlz9SScJQHog1U=;
+        b=MHFB7H5YCopJr4P1Jg9ufZWBVTo4OW92gx9/JOFnBfOKPhAa4KdOcWxGGaI2oPqXSi
+         mcPlEO03XY1b9ElZRNpYnkzeFOa5/YB4g6jozDGtS1JUoDtcfQaQlrPEDSfUuQjirWoS
+         qmo9XJnXhTT47GMZiBdD6P/AFSNOcWI5N1IDzhCxN1qptYDllJhiW1pwUldZetjKw9hY
+         x0Mw0ge6gCA8m+p+yyPeFKHDLlatTfW/iOrrKwu1V0OKM/tN6FPSrl2f1cc2SHmtO9fj
+         XotcsoJEma3y929yeXNNaQrPIxxl3l8vu2+4hHHZx2cXujT15XI/+C5t/DtW58WZJOfJ
+         5qJg==
+X-Forwarded-Encrypted: i=1; AL+hErGcw1G96KVSlTyCrBZFRaYxzWrgEj4WYOyECmgKtjakIzRkssalmF/yZZZHewG9xiNmZ9XUP1VMPnJA@vger.kernel.org
+X-Gm-Message-State: APuU4Z+Tv1aQ3/nzOJwDFz/0UNhthgjKvzART38n7qlmdcLKI4I3ulOx
+	P6WxFbOyDWoroWh4DbspyOwLF6vEjVof4FJcDsT567cs0RAHV/UxcI/x
+X-Gm-Gg: AYBFou1y3Yj7bCxkujUdhuTK3E1CUZB1sy0mHhEYE3Rd2y8eql3JsZVdCCWoZswO7fp
+	jP4Y/s9TYA1XN6RITOnFRwckkAYNDEojSMrvo/LCD96DwY/tm4SyYY/2jNSRRdQSmuOYXCE7uE5
+	91jlQEIGHsXA6jqMZRiWYuEKix782wJww1OEddwaWbYqYcgRfozQgcK2aC0SrYitYNvThldOe3y
+	66p/vizKcOvyDneu14tVkWY/6ASOgx2mmUZ2g2sxnG+SiVmWqd7eVNC7OpNVEXPKlSjN6PRb4v2
+	9iugQHRAl0YZ3fzcp9kRkqCqe1P1aj4vz9r+h9iqIxCDHnS7NRWfLarCCSU+Ytp3XLlPXYNfsQ/
+	OyIzYGvIh6ixLdQrEqyyXKuwbaSABF+CJXdC/hsHlMtDrCqDcNdM0NwZdGNo50bMfjvStPgJSla
+	PVH1RMPEoWf1RIRzyu00iJKzS4FbnGiMPZ4yl6hbvjANO3HY0U/IV9cc3oja/9ybpTWTZmfMMO1
+	73uQGiQiS1llCkqYP4b4KPuXRIoWs9dJd4uZt4gFqzlYhpIu9YiUIpIHIA49rJrIuwRzhOKMkgw
+	3CBzCU83AYhB0lrWsR74uvsa3Q0+uNfQjX72xNmd8VFKnuYH34vN0hFo3j0DOFdlebs=
+X-Received: by 2002:a05:600c:4f14:b0:4a6:44b:2593 with SMTP id 5b1f17b1804b1-4ba093b5ec4mr41235955e9.29.1794392737707;
+        Wed, 11 Nov 2026 02:25:37 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4988f5b1ce3sm8610917f8f.14.2026.11.11.02.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 02:25:37 -0800 (PST)
+Date: Wed, 11 Nov 2026 10:25:35 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, Andy
+ Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Daniel
+ Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan
+ Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Linus Walleij
+ <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>,
+ linux-acpi@vger.kernel.org, driver-core@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] stddef: Add const_cast()
+Message-ID: <20261111102535.434c2eee@pumpkin>
+In-Reply-To: <2bf5cf7baad87b5b7b7f833df390596a033fd6f6.1794323750.git.alx@kernel.org>
+References: <cover.1794323750.git.alx@kernel.org>
+	<2bf5cf7baad87b5b7b7f833df390596a033fd6f6.1794323750.git.alx@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,35 +114,53 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <jelonek.jonas@gmail.com>
-Cc: <linusw@kernel.org>, <brgl@kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gZ3BpbzogbGluZS1tdXg6IGZpeCB1bnNpZ25lZCB0cnVuY2F0aW9uIG9mIHByb3BlcnR5IGNvdW50IGVycm9y?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 6AB9Zih2007469
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Wed, 11 Nov 2026 17:35:54 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AF436FA.001/4jPdgG1F6kz5B147
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---------------------------------------------------------------------------------
-Hi Jonas,
+On Tue, 10 Nov 2026 16:33:40 +0100
+Alejandro Colomar <alx@kernel.org> wrote:
 
-On 10.11.26 17:07, Jonas Jelonek wrote:
-> I think you still need to move it up where 'unsigned int ngpio' was
-> before for RCT.
+> This macro serves to cast const away without risking unwanted
+> conversions due to mistakes in the cast.
+> 
+> It's similar to C++'s const_cast(), but it is more restrictive: it can
+> only cast away 'const', and not arbitrary qualifiers.
+> 
+> Signed-off-by: Alejandro Colomar <alx@kernel.org>
+> ---
+>  include/linux/stddef.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+> index e1851c50c89b..d79a81406b78 100644
+> --- a/include/linux/stddef.h
+> +++ b/include/linux/stddef.h
+> @@ -194,4 +194,16 @@ enum {
+>  #define TRAILING_OVERLAP(TYPE, NAME, FAM, MEMBERS)				\
+>  	__TRAILING_OVERLAP(TYPE, NAME, FAM, /* no attrs */, MEMBERS)
+>  
+> +/**
+> + * const_cast() - Drop const in the left-most derivation of a pointer
+> + *
+> + * @T: Type for the cast.
+> + * @p: Pointer to be casted.
+> + *
+> + * If @p is of type const @T, then it is casted to @T.
+> + * Otherwise, @p is returned without any casts.
+> + * This avoids mistakes that change anything other than 'const' in a cast.
+> + */
+> +#define const_cast(T, p)  _Generic(p, const T: (T) (p), default: (p))
 
-I read RCT as ordering by decreasing declaration length, in which case
-`int ngpio, ret` after `size_t size` already complies.  But if you want
-it in ngpio's old slot (right after `glm`), that's a one-line move --
-say the word and I'll fold it into the next revision (v2 already has
-your Reviewed-by, so I'd rather not respin just for this).
+Should it be de_const_cast(), or just de_const().
+It is a shame you need to specify the type, but why not:
+	_Generic(p, T: p, const T: (T)(p))
+so that you get a compile time error from the _Generic() if the type
+is wrong.
 
-Thanks,
-Shao
---------------------------------------------------------------------------------
+David
+
+
+> +
+>  #endif
+
