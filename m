@@ -1,75 +1,75 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.21
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794378375;
-	b=nkuMyEiY0jZPz1ISmUiyl16NX5jiIP9FgHGQ8XhDgmWrqABju3rLOG/2pWx78UK1Sbxy
-	 I9SOb2/YTbGK30q3yF04xG+QlRgtsbUginlGHShJN1CjG2N6597gQwOljAHdyNUv7R10r
-	 ZtJozl0PVDgoTlZNMjHeI0sYU26pVsMdpdV85X5lVuS+eTpKrHSWCc5RWlIqQiIlpLTpA
-	 F1RgVSSzmTEzXBv/NkP2thYSA+0T79UWpDb4W3Magr3EQGwjrgh53r0UKh8kWNJMJbEvf
-	 o0zzUKKaR5unk413YmJ3gmrDGTaoA5jObpZnNJpw9nQ+FxHW8+7X7VRTJdJvWFBGKdw==
+	b=HWKbxaCDU+K02qYP4tgxjzYMC/Ty5QU4BjFeZaact5wmS5SgiBxThbQnsdinIYwy5zlj
+	 qfXGvkJsOMjLWNTYcs2zqHNXo4LUm2k7MpX89SugISEBuv77b0nnC2lcLGnTTQphX0/nL
+	 fegL5tU3kPMGJh1sFLrcWwlS74it+b7F/LZq8Csm3ZKO8XwTJPD9hLkOZx+Mi2srEXUmY
+	 tQ1HNeSuX38Lr3fh38Ra2sErVvnjodAuH5XPLLd9lz5hw0m6sjW1c561UdZcVpxf9qdkp
+	 jD8TE04TePOvIghqg2rCzNjqGs8T95qLk6vGi3lAuuXdivLQgCfyJRz63ie0AlFxjjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794378375;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
 	 Cc:Subject:Message-ID:User-Agent;
-	bh=23M3K2LdAn9i3wDLEHhAV2l46IN0QDX21sqIQaKk/Bs=;
-	b=PcAnmAy1q+Jny+JT5Q6wyuS74+fvXDln1/Brc4Njka0mh/NVFjju2zVqF65w5XhReRWv
-	 y9XyZfWfFax/C8SVLvIV9nmseTBt8CFbF6wt75uVcgrm2ATj97k8R8Rc3/ClBwxBkFWq/
-	 TcaNKIXw7YWx4z1xHqV0ud18Dkjlplf2tFrJ6RvAKc58HKY7Vs7odxtwZoIxbLiSDmoZH
-	 V8I4UjsYaqTqPzn5pG+4pEf7xIQ2bnjXfGzYR2AVXrQkXbnXAihweyX7iIghPuPVRd8Xy
-	 fwaHehWq8nFxPC4VgDUTcxOFHNMPmxsryAsWyfQSlxujN2aF6IasvMB5KIeK0YXlF4g==
+	bh=BNzrUqj+fNM38Og2/as9juq1X19dD3Tu2iduEx8pBuY=;
+	b=YuZPf0IIQbRv741dFuMtm9AqEg9ftrcPiBq/A+Et3CFLDRGDZikXPatk3rF/Mdgh0FmM
+	 JVu/KTpemft1OuSh9l14ScV7klPs0JOGJYXcWGCTkIXap66xL27YzmM4oilx21xYBLFg+
+	 ESQA2S6HFs1x1dRiBvf/7m2abwZEbB4Yj8sLaaEhBMKyVKYuD24RkkzyRzGGqZpoYtnOc
+	 zaU7wm2+EPMn5CrDgLVAtXcs/nKKynSc8HD6rktZXcsxWJgh+KU/RcTWrc5ZaDTrCk7wq
+	 v2M3t0wq+5oFkdEygTE9EDJqasW5JlvPtpgoZwpFDEsGDFJCOhVqygvnLfV7tx5Wpvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=il5hd+hX;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fwr1QoTM;
 	arc=none smtp.remote-ip=198.175.65.21
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C20606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B875606A31C
 	for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2026 06:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D9C20606A32A
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B875606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=il5hd+hX
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fwr1QoTM
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794378374; x=1825914374;
+  t=1794378375; x=1825914375;
   h=date:from:to:cc:subject:message-id;
-  bh=0wrqxvy5MW/tkKOkg2/5yFk2kQb7LL6Z1nZoYVNRs78=;
-  b=il5hd+hXC7GEMeEZ0Sjw6hv53inVyt0DJN6mCKguxzY8gqFYv9DYaEa6
-   gxGHJN0Mo8BXdMydqPTKk2dyKl74qxiYxVIE2E7LO1tsPVVEhxKke2Num
-   kfRTNAUnyStz3jS2FipNnqSD1zwQq0UEzezWOhW151/DZ/hGb/bhGGcot
-   fQT1W+Tf3d6xB0REjyt1z3iSXAiJ/XZKepLoEld1CS11cmXTuZwBP3XtM
-   AHGQhL2FO9t4sy7okO0l0+pb0FsN7ukWVKYCAkdTcDvEX2lpRwIkte5dP
-   1AYhpeIO5aJtmyweu1QaWYJTAilfTkGIVBnNmFEGLfjxi5cVMvETwQUTn
-   g==;
-X-CSE-ConnectionGUID: yV7JWn8lTHCvVTQ/nOqCPA==
-X-CSE-MsgGUID: 9yKSxh4hTmCxNcQz33puLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11962"; a="3230172"
+  bh=qL5D+NMTXHSZpjpifc0bAKfpqX6IFKlqPe1vRLn6/EM=;
+  b=fwr1QoTMWkWgP6pMWRzxUuj/nDhOgd2D/ouEzjxQPPJsNBOWpM2UFz0j
+   wnSGWw436JRU93y6gXsWTdNTz/kOYf19+RsPBJBNVM86ORu8UD4Eqrlty
+   rFFL2EGFy0KSGZ+DSIJ6YDwE9+yBEezVxXuiAwLsZ5lv6UlMtR0ut36Fn
+   A2Klqg2i8LH538t2arPPfojDKaqhP8XEnrd7r+9vno4IpeFY7lsYrIJRU
+   MvlLFaHdVAbdsaX0RKfoBrCRWFyivg/oyK+fwVwD1A4tpCXsPYWi4puWS
+   teJc58XwkIAx6Zfov6enszRiAHfPnSa5FmktvoXLqOBoDoCOwy1ufKwvo
+   w==;
+X-CSE-ConnectionGUID: diPyCN0vQsSdU5eA/PaAEQ==
+X-CSE-MsgGUID: OR9gTNkWSCKEGe/ibGO9hA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11962"; a="3230174"
 X-IronPort-AV: E=Sophos;i="6.27,207,1787036400"; 
-   d="scan'208";a="3230172"
+   d="scan'208";a="3230174"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
   by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 22:26:12 -0800
-X-CSE-ConnectionGUID: 3CW1nYHsR66pKUK3783kDg==
-X-CSE-MsgGUID: oQSLOX2tQ9qUitJLcWEvZA==
+X-CSE-ConnectionGUID: wSNWkxN9StqA3EElzwsV9A==
+X-CSE-MsgGUID: k/0LEivTT0+LykKG/PW1qw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,207,1787036400"; 
-   d="scan'208";a="8509495"
+   d="scan'208";a="8509499"
 Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 10 Nov 2026 22:26:10 -0800
+  by fmviesa002.fm.intel.com with ESMTP; 10 Nov 2026 22:26:11 -0800
 Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1xR1mZ-00000000yGh-2LGy;
+	id 1xR1mZ-00000000yGl-2Y2M;
 	Wed, 11 Nov 2026 06:26:07 +0000
-Date: Wed, 11 Nov 2026 14:25:19 +0800
+Date: Wed, 11 Nov 2026 14:25:46 +0800
 From: kernel test robot <lkp@intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio:for-current] BUILD SUCCESS
- ab9102375b7c77e0c4d33c7594e514454dc9f2b3
-Message-ID: <20261111142518.aFVyT0wR-lkp@intel.com>
+Subject: [brgl:pwrseq:for-current] BUILD SUCCESS
+ 073f01043e79fd76f4fa648e58061c80329a6eef
+Message-ID: <20261111142546.Tn8exTn5-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,8 +80,8 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: ab9102375b7c77e0c4d33c7594e514454dc9f2b3  gpio: sodaville: fix use-after-free bug when registering the irqchip
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pwrseq/for-current
+branch HEAD: 073f01043e79fd76f4fa648e58061c80329a6eef  power: sequencing: fix serdev controller reference leak
 
 elapsed time: 1041m
 
