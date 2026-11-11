@@ -1,67 +1,67 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794396503;
-	b=ZTelH6QMWJWytzNQqavo+vYAHFDY9ymH19tcOmUfLiiIoLC4SNP4TjkSm7HO+rkoehVc
-	 FhPU07JTRaUydHfiqad0GfydXZIJ2bwEXpbTBQ7CdnMpFtDcSCERypYqVxGH7//AJOZBn
-	 J9kJHVfkxVCw+Zvg5Kt3OeS1xVwUwIBc7JRX0Lo3jlUiVN4kVBo8SSG7beKKD236ugBzi
-	 KM+niKBetmt+QSGClsK95Oj0Yw/Zwe01RNoGUbd+Zg085Pz5Tz+Zhnvu3+fanNjHrVprd
-	 kBSx1NCwMKAViBb9ypC35hGZOph3DxTq9YKjJ/QNusKBrWm/W16Da4NDtjcbslmHCBQ==
+	t=1794396579;
+	b=o6V+gqKaguoMowPCVtVWUyrJ9qxl2yA1/5Va+FfRNGkX1bY6y3D//vLMU5OVAdZTDV1k
+	 2GSdc4p9tf7lwZt5ezAWBlKpqqj/2MtwfE4aK7TkMQYFByb3bAB0cT6cXF3jQLkzUG3X3
+	 MZtxvj2BfLlXvS/dn9uYrJmNf26AVEgAh/olwdU5JrA47Otm4cgQZo2SBmtnDdSjXEuHl
+	 5KNH3mBD3vh1CXD7PSbuG9f90e70oVmnf75PlBiEQZ+BNtAjoJrb3pltW78bqK3w4dLTH
+	 +J4EHQcNwoY1dmk40ET+AkinjxR+tEw7DwjR2jsvL0o+33g7BucsA1PxA/V3P+XMTQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794396503;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794396579;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=clef96KdjZtZB+RQYxzzZuV2jPu47KF1xnUT/nBcCUg=;
-	b=BfxgPTyOD9pbPaNOEKjseD2ifDodqPwJjfQQuyMoEDPbE7Pq5+fe/ADXrVySDS0+qt4W
-	 HmYeW1+LTHBqRxDIiHAwrtm0CNT6n5m/951YuQc1KbDWNljdEjEgd1dAKTN2kSCxH/pxr
-	 Kdbx9lrKcERkURS0u5BU6hltj3lmTPkZhJEk8+VKnJnYA/5axBaEUbUv6wn+qBLulqOPr
-	 1twVYk6OuMh70sDYjE8RzVUqSzZBEJTw3mvi9APNaMdEImRLjJKmE0qf470NLSvXSYR3/
-	 G7FU5pEpNXdKFqitCKHJ3UUWbaf2DSqxR48cHTgRsHG+ppfdUBDFQcIb81zU0X45bBA==
+	bh=nB1flizO6uB7iFQMRV+Ko/XwuLe+88pnNTnOA5soo+4=;
+	b=cAkiMW4cTrchWgHH21D2LiQsibKnj3yS1l50Ejphqb4hJu9NHBjn3hyqzuPTljRs35rf
+	 usF9pSRdfqyt5RqSXh4fpzCiNtTkWMmGGb8K1a0vsHvfZyQM7g41VkQejk/pgrhjXu375
+	 hoCgVtxpjxQoIKOI/G24rbHqbXdHVyGTH7dkw985J/VtlarwD61UVwTU7E4XHFEEaAvIB
+	 m0NMo/BKYl7Xtu3LUtiAmy10arQKRrTMi/OU2eSEG4hJ6jwRW8hA6SzISoyQzIuZWnCQL
+	 ShjO6ZexBdrlRhFAtcIVecgdM8unGPPVna+Q6DsWDYeNmcPNsLV8XcnP6k8PiLf5PMw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ayqxgo59;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zr3nySW5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6369606A321;
-	Wed, 11 Nov 2026 11:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15195606A31C;
+	Wed, 11 Nov 2026 11:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ayqxgo59
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393661F00A05;
-	Wed, 11 Nov 2026 11:28:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zr3nySW5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368781F00A05;
+	Wed, 11 Nov 2026 11:29:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794396503;
-	bh=clef96KdjZtZB+RQYxzzZuV2jPu47KF1xnUT/nBcCUg=;
+	s=k20260515; t=1794396578;
+	bh=nB1flizO6uB7iFQMRV+Ko/XwuLe+88pnNTnOA5soo+4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ayqxgo59eQ+nGKS/KTdfCsu+dMa/H8G1aehKwxPZyzLU7hiJqpdhteuph0QlvGVar
-	 KThM/cQMx+yC/8FhudvKzGGSjuTORv/dw/KZrSfd1QdzN/JBaF3dBnBgxRmnuFdfqp
-	 n1FPOZ16vGTb4zwDZbm/h/rSsit0DXrRQqbnVHsyyFQx7Yrics0Ki0FMLRhV9cgXbB
-	 2eQKV8/9MmvQdJDho+7xXgjGczcNXaE8iKOxuwg807er8Hc9a7Vi0PoB0KkbwZlRWj
-	 L+OoRFmxDM5wjOCx6lk/7VkLFZPB7zXnl35kahUakxg14Wwuf7k0YSYXTI45UoQIPQ
-	 6wRvbic8PMXAA==
-Date: Wed, 11 Nov 2026 12:28:15 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
-Message-ID: <avRQgOTnRtfec9fQ@devuan>
-References: <cover.1794323750.git.alx@kernel.org>
- <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
- <20261111103438.2f822202@pumpkin>
+	b=Zr3nySW59a+Dg0cCtBbxm31VtBek5LH8Au8VdWiweBNt9mLGGDAyMwFVhClskAM2s
+	 N8DyNG8L3N944lERbZsuts/GfyxZxjydKVa1O33ORPvSwo2VJiYjKzwbDIq7P/MzXH
+	 4tNvSiQvS+jlXPMt+vepqCAiBt/sz8vZKHDmBFs+KrBGH3lx8o38PbIPYmlaoyuFS/
+	 BwEFPBgGzkvhjoKXG+zI7VpnBGM+8LahX5XbYTf3r2XREjbNYo7fao0igHRR6p87Yg
+	 58buqCkC7qy962NY7yKUT4KpI5U93yWBc1pWvWt6HEa6uAn+WlB3djrKHXN4xTBS+q
+	 oSmryLscNI30g==
+Date: Wed, 11 Nov 2026 12:29:36 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: John Crispin <john@phrozen.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org, lei.dong@airoha.com,
+	Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	mfd@lists.linux.dev,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
+	zhengping.zhang@airoha.com
+Subject: Re: [PATCH 6/7] pinctrl: airoha: move the GPIO register offsets to
+ the common header
+Message-ID: <avRRoCRYZnhx1dnk@lore-desk>
+References: <20261110173941.301478-1-john@phrozen.org>
+ <20261110173941.301478-7-john@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -72,87 +72,110 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="emb45eljbrwlkh5i"
+	protocol="application/pgp-signature"; boundary="EoDU/m3tfAAmliEx"
 Content-Disposition: inline
-In-Reply-To: <20261111103438.2f822202@pumpkin>
+In-Reply-To: <20261110173941.301478-7-john@phrozen.org>
 
-
---emb45eljbrwlkh5i
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--EoDU/m3tfAAmliEx
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
-Message-ID: <avRQgOTnRtfec9fQ@devuan>
-References: <cover.1794323750.git.alx@kernel.org>
- <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
- <20261111103438.2f822202@pumpkin>
-MIME-Version: 1.0
-In-Reply-To: <20261111103438.2f822202@pumpkin>
 
-Hi David,
-
-> Date: 2026-11-11 10:34:38+0000
-> From: David Laight <david.laight.linux@gmail.com>
->
-[...]
-> > -static inline char *strprefix(const char *s, const char *prefix)
-> > +#define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx=
-))
+> The GPIO register offsets are private to pinctrl-airoha.c, which builds
+> the shared 64 pin register table from them. A SoC with more GPIO banks
+> needs its own table, built from the same offsets and its own for the
+> extra banks.
 >=20
-> Isn't in enough to do:
-> #define strprefix(s, pfx) ((typeof(s))strprefix(s, pfx))
+> Move the offsets to airoha-common.h so the SoC drivers can use them.
 >=20
-> which correctly preserves all qualifiers.
+> No functional change.
 
-This would return a const void* if you pass a const void*.  In general,
-we shouldn't be passing a void* to a string function, but C allows this.
-With CQChar_of(), you coerce a 'const void *' into a 'const char *'.
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-See also: <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3998.pdf#subse=
-ction.0.7.28.5>
+>=20
+> Signed-off-by: John Crispin <john@phrozen.org>
+> ---
+>  drivers/pinctrl/airoha/airoha-common.h  | 20 ++++++++++++++++++++
+>  drivers/pinctrl/airoha/pinctrl-airoha.c | 20 --------------------
+>  2 files changed, 20 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/airoha/airoha-common.h b/drivers/pinctrl/air=
+oha/airoha-common.h
+> index adfce89493f0..dc9b897ea77c 100644
+> --- a/drivers/pinctrl/airoha/airoha-common.h
+> +++ b/drivers/pinctrl/airoha/airoha-common.h
+> @@ -34,6 +34,26 @@
+>  #include "../pinconf.h"
+>  #include "../pinmux.h"
+> =20
+> +/* GPIOs */
+> +#define REG_GPIO_CTRL				0x0000
+> +#define REG_GPIO_DATA				0x0004
+> +#define REG_GPIO_INT				0x0008
+> +#define REG_GPIO_INT_EDGE			0x000c
+> +#define REG_GPIO_INT_LEVEL			0x0010
+> +#define REG_GPIO_OE				0x0014
+> +#define REG_GPIO_CTRL1				0x0020
+> +#define REG_GPIO_CTRL2				0x0060
+> +#define REG_GPIO_CTRL3				0x0064
+> +#define REG_GPIO_DATA1				0x0070
+> +#define REG_GPIO_OE1				0x0078
+> +#define REG_GPIO_INT1				0x007c
+> +#define REG_GPIO_INT_EDGE1			0x0080
+> +#define REG_GPIO_INT_EDGE2			0x0084
+> +#define REG_GPIO_INT_EDGE3			0x0088
+> +#define REG_GPIO_INT_LEVEL1			0x008c
+> +#define REG_GPIO_INT_LEVEL2			0x0090
+> +#define REG_GPIO_INT_LEVEL3			0x0094
+> +
+>  #define AIROHA_NUM_PINS				64
+>  #define AIROHA_PIN_BANK_SIZE			(AIROHA_NUM_PINS / 2)
+>  #define AIROHA_REG_GPIOCTRL_NUM_PIN		(AIROHA_NUM_PINS / 4)
+> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
+roha/pinctrl-airoha.c
+> index a805f542bc7b..8f901f251c00 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+> @@ -7,26 +7,6 @@
+> =20
+>  #include "airoha-common.h"
+> =20
+> -/* GPIOs */
+> -#define REG_GPIO_CTRL				0x0000
+> -#define REG_GPIO_DATA				0x0004
+> -#define REG_GPIO_INT				0x0008
+> -#define REG_GPIO_INT_EDGE			0x000c
+> -#define REG_GPIO_INT_LEVEL			0x0010
+> -#define REG_GPIO_OE				0x0014
+> -#define REG_GPIO_CTRL1				0x0020
+> -#define REG_GPIO_CTRL2				0x0060
+> -#define REG_GPIO_CTRL3				0x0064
+> -#define REG_GPIO_DATA1				0x0070
+> -#define REG_GPIO_OE1				0x0078
+> -#define REG_GPIO_INT1				0x007c
+> -#define REG_GPIO_INT_EDGE1			0x0080
+> -#define REG_GPIO_INT_EDGE2			0x0084
+> -#define REG_GPIO_INT_EDGE3			0x0088
+> -#define REG_GPIO_INT_LEVEL1			0x008c
+> -#define REG_GPIO_INT_LEVEL2			0x0090
+> -#define REG_GPIO_INT_LEVEL3			0x0094
+> -
+>  #define airoha_pinctrl_get_pullup_conf(pinctrl, pin, val)			\
+>  	airoha_pinctrl_get_conf((pinctrl), AIROHA_PINCTRL_CONFS_PULLUP,		\
+>  				(pin), (val))
+> --=20
+> 2.34.1
+>=20
 
-
-Cheers,
-Alex
-
---=20
-<https://www.alejandro-colomar.es>
-
---emb45eljbrwlkh5i
-Content-Type: application/pgp-signature; name="signature.asc"
+--EoDU/m3tfAAmliEx
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr0UU4ACgkQ64mZXMKQ
-wqntIA/8CnvRBh0GWiV0pEkB8CsI4Ei5vpzo05YozhZPx/C1LqQ1TJF36UF6GtZ1
-+MjZVOShNf6prPOICad/7qSz/Uay+Q/H14G5O4ErzKZbKCyqC4osWoLsTIeskIFO
-ptOZSr/EQF3GM+fKSrowiVbw+FkPOT6CetmSbrvUNOhXo0Sd62SOyM3QorRW/QfA
-EbInkrMvvBUiivyqITSgmCFAKynJvncUQeoobTjAnxe14KnWKwXAYMiES5UEnxlt
-egShlBDaCgDbKYgtawdjj5iMZM25YQuYHFzj9N163MJwZSusKK81kzBHxkpdtIHj
-TZq0SKiUUar7nC2hI3YQNIT6yVMhNdnvCE4dkfgDuNqDaPuq2geHWuNNLd4LGFh6
-u4g10Ncbqm9g1xdyESjXUYLuBfebPrHsQ4F6T3cx09GE+6GzxGET3466rQs0qTlA
-Hm26LNi/ZT8Y4Up/V8EWgWweE0yji+i1Kcm8Z3y1U6KfYFIsnT5lms9lLz6h04IQ
-cf5UH3vSVZgzbvZg2IcAwevjodfrdHDMFUYLO0Gz572B2ztMTpC1MJW6QiXogLbz
-JIc8+VKrfb4HxP3Gt00HTz85/Ug502kAFe3NmpW62Uxsn6bmQi/up6X2IjgoIWOQ
-kbhH92N6QFMGkKgBS+LhFS7TXmhDzDNVh5yJbbCb3yL8Dg1VpMA=
-=TVMp
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCavRRoAAKCRA6cBh0uS2t
+rNtIAP9YA+4HYdVSVijK5Kt60x1yVJSHf4hv44tps1dOQDZXmwD/eewSFReRqe8v
+dLDBFNkJ2t1DiU6CZEhLsdPNd4eK7w8=
+=gyZ2
 -----END PGP SIGNATURE-----
 
---emb45eljbrwlkh5i--
+--EoDU/m3tfAAmliEx--
