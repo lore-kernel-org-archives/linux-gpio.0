@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794428094;
-	b=IeN4462V/YtzGDpiGpDazxv5H/awb97VRE1Ko1ieDTh/WyQWgv6SE4/S/etAgW2pHIeP
-	 +KcBhOVO9JTNWRTyRqzeOI83KeW1yMb88YNG/27u+Wf1E57GXJnRk2c/LZzDtZIEKreuU
-	 006hJKKGzGvAC7fZo1G8pFBWT7+wflzlfk9YswkarbnHTughOtsrj2cuRrVW+0/svG5M8
-	 nmG3XZ2+FRP0TkHb45Qa71KiU4NOCgKxVLfXTTBQuMNVeWeb3JHvnb/S78qKa1Vobrc9+
-	 /wIM4BCdypJhnjv6tB5HHHKFTe4mXMKQIACmvaumwvcRnEjGXlZXCIyjA1lZy29KbNQ==
+	t=1794428105;
+	b=fm3oF4DJxIjOpnTpbnJ99QnuotZWXGbhdWN7yoWMvj55Fek4fDPnH1egoB0It7wZ9fcI
+	 k+kzpPi0Wg++p1gZHQyIANy5vi6684QDDJxEO305Jd7vUn/n7ija5vmiIr0f9aKToAib/
+	 DIaQXb24YDS89ytLZI2HVjPLD3PbEmIKp+x9eAcXgFzoxR5Ga0brpkmOaOxlPvtiDnEQP
+	 si1ZyaihGD1Dvf6qmGepdjHj0eTcjlU8LFWjloFUEIDtppJxdpIJSvvElyWhAM6NMyAoO
+	 up59eloTzttozjJm67wy6zHumQ9NxviG3F/UTq1eFKpVasAC1xpz+KB7Xdk+5WJRdNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794428094;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794428105;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=iAAACyvAYYoTdLd+Zw42qeec+ticUjzl1+7QZgeBkRk=;
-	b=2RPJIHrJfh9xn/2fmry+of1MnAVgBbuFIX7YEQt3JbJwYKFalWi/H+Pn99bddH2ZJPuq
-	 Frlg7NBbxcxBDZ6nAl8Psic4zaruBD32A0vstNl7LEU4xlkNMciCt26eQMgAsYCSnsCVR
-	 KsjGl9kdZAS8iMwK12TNinqciybPH6uf9CjkvFFVm3m7LZOVTBMyALQmA0++LUBsT4EIr
-	 rVgWSBzs8UQybtS9UY82tTZiWgPH2NuetWaQc7l8G/j07pr+nTTO+EO7AdO+2K8ElsZWs
-	 wyDPgeaR4DnDAoCkdyFP0B+5SAssFtv318WoNZQ624GDqqL6HsIQAHi8mssLXnVtNIw==
+	bh=wjqQbn4a+7dcLaWn2FPIKO3ZJVxZraaaMz1re4KgK1A=;
+	b=kCbrw/lRxGsUJOI9f+WNRgZ2GSLaJ/Nenu+RWJnYjZlED1aakdNSezzWRUY/fhhcNq6F
+	 n98CZkVvKAqTRSNDkBTwTofLxMCsCK87OptY4rqSW8TGBIcclf32aNj7Ot5Vcpj2qia5k
+	 LRGpC5JAC81mGZuOQ+e9VR67dAdGIMo1XlkLJ9Lb1Qh+tzSQPSfXe0OCuheAZCkrqHB0L
+	 PEIp2Aw2+alY+mu+tdyREwOZO6QTcrQecxUK5Wu3uwdOM/uTQhpwrSVs/r7ChPckFA0Q8
+	 ovgTkk0pMMBoDII9/o6VasPLUa7al4X4sk3WnJzrJVLA384n2k+W9XkMfBstJvQDy3Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mCt4G8ar;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d6emHhNX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AE4606A31C;
-	Wed, 11 Nov 2026 20:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD9D606A31C;
+	Wed, 11 Nov 2026 20:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mCt4G8ar
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089C31F00A05;
-	Wed, 11 Nov 2026 20:14:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d6emHhNX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D291F00A05;
+	Wed, 11 Nov 2026 20:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794428094;
-	bh=iAAACyvAYYoTdLd+Zw42qeec+ticUjzl1+7QZgeBkRk=;
+	s=k20260515; t=1794428105;
+	bh=wjqQbn4a+7dcLaWn2FPIKO3ZJVxZraaaMz1re4KgK1A=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=mCt4G8ar0Hr/+Gsf5t/QikFo5uAI0mHfuscZ75f+R8MTf8JjH9ZbjRVBajNTE32w0
-	 eTQ8g+B44iTlqGEcYpoBiK2Av/KdJhgZ+nJYk7lWyj6F2a4rP3rW0aLKrRtBn7yOBJ
-	 KyZhap3uXbM0LTf8dss+Fs1iRVc6JUYKTjdqqDI9o/jC3REJMIEHGRri9Fnuxmm5kt
-	 v4mSVQMMfKYniIYPhg4ijim7qSFREWe8Cd/7vJ734kvQYZEQg/rieT+BKj3OYegenT
-	 xjbz1QKqmViu0i8+/8c64yqdjYkDMgdcAZXfRmOtGqdPPo9oQF1mblxx5ujGE7VBmu
-	 A389XlP5GgbXg==
-Message-ID: <sashiko-outbox-209623@kernel.org>
+	b=d6emHhNXgvYwUNGnqFeGgL8AgXDYL/Y2EDDSIF/ZdjHHD6TBHjdsWiQTLaJ5vsKQH
+	 wL9RFXZtDjERN/VWDmJJ/SAZ1CwO3aj7BcJQR+4a8W2YKpIMiHpGRLZkZ9sH3Wpv1u
+	 fKp2NtemAoNvjEF0q3Ss4Ziee/scbDOYDHXVnqyefSPlxvMjSE62kDxGSQ3t3JdWzV
+	 r66naiu7Bri47E8sJ81TFJwlQcnv2vzXX3S2G31sZpingVc5wbgs940NpOvNTcJJz2
+	 /ooou7aDsNj0nabk5/t03MmPsrYL0qZOwMAKoTlgBTC5lBVFsizgo67PA2iWJ4uSw/
+	 XV0AHP3hmrVEg==
+Message-ID: <sashiko-outbox-209624@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 1/6] string: Add strprefix(), and deprecate
- str_has_prefix()
+Subject: Re: [PATCH v4 2/6] string: Warn if the prefix is the empty string
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Alejandro Colomar" <alx@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <a74fabd985a874da7556ae1601053b4bcc100f13.1794425425.git.alx@kernel.org>
+In-Reply-To: <cd09427148a0c4718b46029c9e806f9dc1622f9b.1794425425.git.alx@kernel.org>
 References: <cover.1794425425.git.alx@kernel.org>
- <a74fabd985a874da7556ae1601053b4bcc100f13.1794425425.git.alx@kernel.org>
+ <cd09427148a0c4718b46029c9e806f9dc1622f9b.1794425425.git.alx@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 20:14:53 +0000
+Date: Wed, 11 Nov 2026 20:15:04 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,59 +62,56 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Low] string: malformed kernel-doc ReST markup in strprefix() return
-  comment
+- [High] string: missing linux/bug.h include for WARN_ON_ONCE() in
+  str_has_prefix()
 --
 
-commit 8eed33304d3a2d7359bd34313832099b3feee074
+commit 544547ef558a49b7dbb876a077fff7f7bedc8b0c
 Author: Alejandro Colomar <alx@kernel.org>
 
-string: Add strprefix(), and deprecate str_has_prefix()
+string: Warn if the prefix is the empty string
 
-This commit adds the strprefix() helper returning a pointer past the
-matched prefix or NULL, updates str_has_prefix()'s documentation to
-reference it, and adds a KUnit test case.
+This commit adds a WARN_ON_ONCE() check to str_has_prefix() and documents
+that passing an empty prefix string is unsupported.
 
 Link: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-each-prop=
 -v1-1-6e28fe1c72c4@oss.qualcomm.com/
 
 > diff --git a/include/linux/string.h b/include/linux/string.h
-> index 5702daca4326b..ec6ca50599fed 100644
+> index ec6ca50599fed..8e6b78c6196a7 100644
 > --- a/include/linux/string.h
 > +++ b/include/linux/string.h
-> @@ -533,15 +533,33 @@ void memcpy_and_pad(void *dest, size_t dest_len, co=
-nst void *src, size_t count,
->  })
-> =20
->  /**
-> - * str_has_prefix - Test if a string has a given prefix
-> - * @str: The string to test
-> - * @prefix: The string to see if @str starts with
-> + * strprefix - string prefix
-> + * @s: The string to be tested
-> + * @prefix: The string to see if @s starts with
+> @@ -561,6 +561,10 @@ static inline char *strprefix(const char *s, const c=
+har *prefix)
+>   * This is similar to strprefix(), but returns an offset instead of
+>   * a pointer.
 >   *
->   * A common way to test a prefix of a string is to do:
-> - *  strncmp(str, prefix, sizeof(prefix) - 1)
-> + *  strncmp(s, prefix, sizeof(prefix) - 1)
->   *
->   * But this can lead to bugs due to typos, or if prefix is a pointer
-> - * and not a constant. Instead use str_has_prefix().
-> + * and not a constant.  Instead use strprefix().
+> + * Unlike for strprefix(), if the prefix is an empty string, the
+> + * behavior is undefined.  If you need to support arbitrary prefixes,
+> + * use strprefix().
 > + *
-> + * Returns:
-> + * *  @s+strlen(@prefix) if @s starts with @prefix
+>   * Returns:
+>   * * strlen(@prefix) if @str starts with @prefix
+>   * * 0 if @str does not start with @prefix
+> @@ -568,6 +572,7 @@ static inline char *strprefix(const char *s, const ch=
+ar *prefix)
+>  static __always_inline size_t str_has_prefix(const char *str, const char=
+ *prefix)
+>  {
+>  	size_t len =3D strlen(prefix);
+> +	WARN_ON_ONCE(len =3D=3D 0);
 
-[Severity: Low]
-Does "@s+strlen(@prefix)" produce broken reStructuredText inline markup in
-the documentation build?
+[Severity: High]
+Does include/linux/string.h need to include linux/bug.h for WARN_ON_ONCE()?
 
-kernel-doc expands @param references to **param**, turning this into
-"**s**+strlen(**prefix**)".  Because "+" is neither whitespace nor closing
-punctuation, Docutils does not treat the "**" after "s" as closing strong
-emphasis and renders literal "**" characters inside the bold text.  Adding
-spaces around "+" ("@s + strlen(@prefix)") avoids this.
+Currently, include/linux/string.h only pulls in linux/bug.h transitively
+through linux/fortify-string.h when CONFIG_FORTIFY_SOURCE is enabled and
+__NO_FORTIFY is not defined. Because str_has_prefix() is an inline function
+rather than a macro, translation units that include linux/string.h without
+linux/bug.h (such as arch/x86/lib/string_32.c with __NO_FORTIFY, or
+lib/net_utils.c when CONFIG_FORTIFY_SOURCE is disabled) fail to build with
+an implicit declaration of WARN_ON_ONCE().
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794425425.gi=
-t.alx@kernel.org?part=3D1
+t.alx@kernel.org?part=3D2
