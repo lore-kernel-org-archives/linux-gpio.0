@@ -1,62 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794434063;
-	b=TmTAThXKPgx8at7xBlScyH5RAb9eJXjHiFSnQo1RO2szuyz2LT5Er3Pi76SzAUSOestI
-	 ygQR6q5eZoyA8GtwNegGsIuhxfDF/WgQRl7ZcNrR8uVNOrFAFYOD53rDOUrIQLVU5tpXU
-	 qJyRcn/t08/9ssX3vo/BfgA2KtS8TuXu8hN1Ne9qxtcI9n77BASUrsPL8ZjCbJqsJXFfT
-	 s3qoLv3YSNxPbnViJd/n8EwzXMStgufUTgHw4veu9qe6fPfAx5AMcRTeJ+Vga5LeADp0l
-	 qJX+Ym+oKemZIhX+CIAAJxnOMxM2mpgacHPf/6LA21EjOiDJy75Kp48XhOMxZ9iHqiA==
+	t=1794436303;
+	b=VhoZvoScg2h8zzZIV3wWTGn+ozQye4Zi87MERiDA57AbrsXL2S1BXnck7rHnZq9uPmJh
+	 eLk/74wTOjG6uqIJ+sB/aji/gO/gMudpGd/JYy7blb5U6hT+ATWfGktliU4HD9bIX7Gkv
+	 nxLVY5U4wyCWegvaa2r3e3oalVwlmdgkAhX7dn6PT74uTXT+/UzrjUVJDh41jrVn4t73h
+	 lzCpWMH6KcuyNbVz+iShTDDI8IfQy+KBdV52amjzL88GZUP1xBWUxnWXvqET/qcHRkEc6
+	 Ukb7aeHZDfJbeT29kaj2vSmcLgyp5Mr6HdeRDtQJqt7+RDrhcp0tQRwcyB8lp4zIwKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794434063;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=Q87Wl85GfFdAm5sI7YhIU296WIXHysjelEmZ6Jt78Zo=;
-	b=XEwRD+M5eDBj+ohSNiauvT9KTybOLHTydRH5dDWblhNZtqAL8kSlWtbs8u07bj7MpAyU
-	 iN2qSgJPyi+LE3+XVsWz1G6QpHkdjoGRncEHiFXlfBGc+m6QldNL4yXSkozw4QiwHf4PN
-	 0pvIbFgKE9ljerW9zmXeTScPnDDc2/l/egih1WSIra/rTLo8ndrJxFaALBKWFir0NqdPk
-	 Qmdnf9ipEQ7fFJsRcZUgQdqpxIwd7bQGRTsObbMu9nlpleKpmQmFkcDXk7YPcaNDA9sxI
-	 C1Do1buKTZwbK2S/206R1Bsf96LPIjSw3RQA/bAtwFNcvw5dV0tWqwzO+UVlDWNuaoA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794436303;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=fzYKTFxmBm0L+Z2LicHXDNVVDeiw5L12HCk1gRR8awE=;
+	b=s2AC79H6pZk53c7paMdLZO1+8zqTaEMNZZIvvcKKq/z1CXErBb+glD5TLE0282PBOqgJ
+	 xC1xseT7PTvNOn3CiDx8BbUj6VvBj+H7l2TajD/njsRN8S8GJLuMLzrpdq00rUS29NbNE
+	 ONDfoA07O2RS5dbHabORFUZK58O3CysEQ4Xz7neOtoGAU9n+BITLzPIKVp1NvrhFYOF7+
+	 01ye15/pdXOO+3wKCdjDu/Rt2eZjfnXFPRh3tnda/XvR6vBaTrUYJ04QbFciRSH2TPYm3
+	 yf3QDYrmAwkgIduXhOq9zIr9ZRs6EBX/gMHxqhanKhiC5I/IecReN9iPOiJR0jzL78A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aAbDfQab;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Qx/cyhhI";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8771560A3801;
-	Wed, 11 Nov 2026 21:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585B4606A32A
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2026 22:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aAbDfQab
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0E41F00A13;
-	Wed, 11 Nov 2026 21:54:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qx/cyhhI
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59681F00A05;
+	Wed, 11 Nov 2026 22:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794434063;
-	bh=Q87Wl85GfFdAm5sI7YhIU296WIXHysjelEmZ6Jt78Zo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=aAbDfQabkJCWMoI446YjnWaSVHAkThh4Xya03u901cDNc41eR145Skd0CaRzYQoGh
-	 ZAEREymwRaHATtz1OkSCi0sAfMPKSvBPo6KVVyXbpEXXEdTwIbIqER6BbSYCTxGhEr
-	 zwrhld9wfi1mxQ3vPy5p1eDcU9djnbtcENyu0wxamYC06UC2ptFtcI36AIbksl6X3q
-	 s8PzmrvmwsMdJpr3VC22vFwfvitB9FeM2E7ZSZUNUjXuGgZdC9+Nq8qo+NX0m/tzsB
-	 KBO7SOc5HLRBABrmR2agjY6BmWU5ATM1oNI+1YRf9gD/pwcwG1nb10vslRQrKO5/IH
-	 i79eIEZjyZtjw==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	James Tai <james.tai@realtek.com>,
-	Yu-Chun Lin <eleanor.lin@realtek.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Tzuyi Chang <tychang@realtek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-realtek-soc@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH 10/10] pinctrl: realtek: rtd1625: Set dcycle_offset to NA for pins without duty-cycle support
-Date: Wed, 11 Nov 2026 21:51:55 +0000
-Message-ID: <20261111215256.1982044-11-lee@kernel.org>
-X-Mailer: git-send-email 2.56.0.567.gdb80ae8cd5-goog
-In-Reply-To: <20261111215256.1982044-1-lee@kernel.org>
+	s=k20260515; t=1794436302;
+	bh=fzYKTFxmBm0L+Z2LicHXDNVVDeiw5L12HCk1gRR8awE=;
+	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
+	b=Qx/cyhhIJe8RR8jbZVof0Wx5KXt8XF5rwPkpd7Ab+CFaeiuMq3UH4q95342lR6wmi
+	 p74qY1ceuoIvNfNoS6K2IHQe+aH+h6AnpMCgj/yEfZ8Dx5m764560wnSWNrlzO48k6
+	 t+EeIdWqwi4W3j+K0XcS9ubdlLzH7Ag6c4rFqgJHAPq6wO0tMtYMgRz5crE7RCbZxD
+	 qscbIs4DGAjbyxUVitgSpfpD4Lh214/I0ro0gVZA76QarvciJvJb31hpkg+O7ECL1f
+	 kAh6nAX04dxjNuArxcDEEVBI5bm1BxqOO/ik+OYCMNpr3y6j27cPoOCl08jj21q1Uv
+	 zfgjNGHBEhU7g==
+Message-ID: <sashiko-outbox-209797@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 02/10] pinctrl: nuvoton: ma35: Prevent out-of-bounds
+ write in ma35_pinctrl_get_soc_data()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Lee Jones" <lee@kernel.org>, linux-gpio@vger.kernel.org
+In-Reply-To: <20261111215256.1982044-3-lee@kernel.org>
 References: <20261111215256.1982044-1-lee@kernel.org>
+ <20261111215256.1982044-3-lee@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 11 Nov 2026 22:31:42 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,49 +59,58 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-In rtd1625_main2_sconfigs[], pins gpio_86 through gpio_91 do not support
-clock duty-cycle adjustment (dcycle_maskbits is 0), but specify 0
-instead of NA for dcycle_offset.  Because rtd_pconf_parse_conf() tests
-sconfig_desc->dcycle_offset == NA to determine whether duty-cycle
-configuration is supported, an offset of 0 causes it to compute
-GENMASK(0 - 1, 0) and corrupt the pad control register.
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [Critical] pinctrl: nuvoton: use-after-free in ma35_gpiolib_register()
+  [1]
+--
 
-Set dcycle_offset to NA for gpio_86 through gpio_91.
+commit d261fa88956097cc3c05a1bf0a8ef41b4bf318b2
+Author: Lee Jones <lee@kernel.org>
 
-Fixes: e309dbd523b8 ("pinctrl: realtek: add rtd1625 pinctrl driver")
-Closes: https://sashiko.dev/#/bug/linux-8a8f690f-15e7-4dbd-a3a2-87bc00edf7b9
-Cc: stable@vger.kernel.org
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- drivers/pinctrl/realtek/pinctrl-rtd1625.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+pinctrl: nuvoton: ma35: Prevent out-of-bounds write in ma35_pinctrl_get_soc=
+_data()
 
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd1625.c b/drivers/pinctrl/realtek/pinctrl-rtd1625.c
-index 88f2be37f743..f6e038e4bbdd 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd1625.c
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd1625.c
-@@ -2993,12 +2993,12 @@ static const struct rtd_pin_sconfig_desc rtd1625_main2_sconfigs[] = {
- 	RTK_PIN_SCONFIG(gpio_65, 0x34, 16, 3, 19, 3, 22, 3),
- 	RTK_PIN_SCONFIG(gpio_66, 0x38, 3, 3, 6, 3, 9, 3),
- 	RTK_PIN_SCONFIG(gpio_67, 0x38, 16, 3, 19, 3, 22, 3),
--	RTK_PIN_SCONFIG(gpio_86, 0x3c, 0, 0, 14, 4, 18, 4),
--	RTK_PIN_SCONFIG(gpio_87, 0x3c, 0, 0, 24, 4, 28, 4),
--	RTK_PIN_SCONFIG(gpio_88, 0x40, 0, 0, 2, 4, 6, 4),
--	RTK_PIN_SCONFIG(gpio_89, 0x40, 0, 0, 12, 4, 16, 4),
--	RTK_PIN_SCONFIG(gpio_90, 0x40, 0, 0, 22, 4, 26, 4),
--	RTK_PIN_SCONFIG(gpio_91, 0x44, 0, 0, 2, 4, 6, 4),
-+	RTK_PIN_SCONFIG(gpio_86, 0x3c, NA, 0, 14, 4, 18, 4),
-+	RTK_PIN_SCONFIG(gpio_87, 0x3c, NA, 0, 24, 4, 28, 4),
-+	RTK_PIN_SCONFIG(gpio_88, 0x40, NA, 0, 2, 4, 6, 4),
-+	RTK_PIN_SCONFIG(gpio_89, 0x40, NA, 0, 12, 4, 16, 4),
-+	RTK_PIN_SCONFIG(gpio_90, 0x40, NA, 0, 22, 4, 26, 4),
-+	RTK_PIN_SCONFIG(gpio_91, 0x44, NA, 0, 2, 4, 6, 4),
- 	RTK_PIN_SCONFIG(hif_clk, 0x44, 13, 3, 16, 3, 19, 3),
- 	RTK_PIN_SCONFIG(hif_data, 0x48, 3, 3, 6, 3, 9, 3),
- 	RTK_PIN_SCONFIG(hif_en, 0x48, 16, 3, 19, 3, 22, 3),
--- 
-2.56.0.567.gdb80ae8cd5-goog
+This commit adds a bounds check on id against ctrl->nr_banks in
+ma35_pinctrl_get_soc_data() to prevent writing past the end of
+ctrl->pin_banks when the Device Tree contains more than
+MA35_GPIO_BANK_MAX GPIO controller child nodes.
 
+> diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuv=
+oton/pinctrl-ma35.c
+> index 16f12cafa9404..4d1203b243c0b 100644
+> --- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+> +++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+> @@ -622,6 +622,12 @@ static int ma35_pinctrl_get_soc_data(struct ma35_pin=
+ctrl *pctl, struct platform_
+>  	}
+> =20
+>  	for_each_gpiochip_node(&pdev->dev, child) {
+> +		if (id >=3D ctrl->nr_banks) {
+> +			dev_err(&pdev->dev, "Exceeded max GPIO banks (%u)\n",
+> +				ctrl->nr_banks);
+> +			fwnode_handle_put(child);
+> +			return -EINVAL;
+> +		}
+>  		bank =3D &ctrl->pin_banks[id];
+>  		bank->fwnode =3D child;
+>  		bank->regmap =3D pctl->regmap;
+
+[Severity: Critical]
+This problem wasn't introduced by this patch, but does storing child in
+bank->fwnode without fwnode_handle_get() leave a dangling pointer
+[1]?
+
+for_each_gpiochip_node() drops the reference on each child node as the
+iterator advances, so bank->fwnode is left without a reference once the
+loop moves on.  Later during probe, ma35_gpiolib_register() passes
+bank->fwnode to dev_warn() with "%pfw" if !bank->valid, resulting in a
+use-after-free.
+
+[1] https://sashiko.dev/#/bug/linux-f140abe2-145a-4f6b-b626-bbabdc7327c4
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111215256.1982=
+044-1-lee@kernel.org?part=3D2
