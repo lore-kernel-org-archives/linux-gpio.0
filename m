@@ -1,66 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794353257;
-	b=BtyObp4fAXxDDpQ+AQ1QQJHVxAONEWb72Y08nS28Cv1upiFvjIvlWXxopbF4Pl+Lgr8/
-	 AqcwA1nWsqrR33kBxPiVc6MlmhqXdH7PALOiyILVDLyymoKi500fkk7GselrCB/wRcGQ/
-	 r7rf2h4tZczeLyZQl4hZ+ErIyY8241MW07YFXzLYjk5+uhcGczzjNeAjHDVUZJnQ9Eq3n
-	 YteeKX1fsuwQrmVJrbpgpv4f6dUmuYBNXNSlWqhz2eCrRSo3MzPr0wct0VcZT8XLcpCU8
-	 5xz26+ToX8wMV2B8fTItepj3abENlzfX3NbBkrVcreH1o2d+GtWA4xroOH/s9BTMsWg==
+	t=1794355430;
+	b=TxoL0i6Asera+hTuH0kp/sI3+AnwVqwbHrruLrNfGCuq3tAeM+K1DIq+lH8mX44Zckoq
+	 U+AC3Cvg012yoXKWKVMdt3K7xOXZ8vP8ApJMZCin5thl/lHrGlTX0/AexugUAh0JzHoAu
+	 zbihFV6Ee5+J9SmXSWAvdnzmRE5qwVEuTlDlWU1km/tatnOq6sOqng3n1a81vC4J6v8L4
+	 +G4txGrYHAakr6wKwTkeyW/KLBXzKymNJGWmUbIZg9To1qB/nkbsgjbBPowuGmkHclBBj
+	 IzjtLHL4kKEvh9Rk4pQhBJhhhk4st7AGyVOVuewB659DRGYP8oCG4Fth5xaXOGq6dvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794353257;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794355430;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=9SU31qE105wrvP2RpFtRMcpfeuKBum+yU6ILTSHS1GM=;
-	b=n02YznYzH4FldH63UE7+o/g+PNp7h0M4VbQifJu24VIBf1ozWZ40peJep8oS3Wv2I8LP
-	 wX6U0unwr2KF+gCOcqVsJLjjtgd/TQ8nBZXMMDenfxuIGxGMEoMKY+AIeFXJ9qY87A+wf
-	 mO/FefoISvkgCq9xiwG7Moj6/bp3QziVMk7d9woNVR9C6ULv0fpj9fcypHaYrwTEd5oV7
-	 iH/FMKmlgaUj7tlcBNbpvSKL7vTTSoxXha7VhM+EW8umGcUXoQFUHLfR1Ofm1XG8jVM9/
-	 WtoBpLX+hfsrTPqlFY9npmqwsqBGZgsUzmuFO4C/sIKByDqusS5K6laQtKJ46OZ/ncA==
+	bh=G6vtQZE3ujvpxlS2I2KZ02SKJAR98+LOdANoRmy/Db8=;
+	b=f51UNJiu0AVyj/2DDO4ZHt4+KLU5QA/SW0qTSlkDflSWqMmbcoqKM3alUTBc6iNwULOw
+	 kE4EFdOXXXJCjmHZS/gHhnamx/3azQ78KVIxcI9ongOf61XQ1ueEa5hmYVhfFMpzp33kE
+	 IRkhTUd2t2/EDq5lbgl7UIAQ+G0MxXUgCxMCf3GUn3So/fle1n5wEISaxIZg/Aj/s11VK
+	 tGHNzJPgsvVK8ou26dNZw1deA4VZEoCJo6ZtvWS5r2pnWcg/pxHlloOntXGdIn6gUCkKc
+	 xbP6rhl3YjQUyVhDPIzTpGDSboP9xeCbSImh3PeCTr9BRBfe4qFYx+JgmMfUtWfy28w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KJ19FyuM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gf6gFqXN;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6135A606A31C;
-	Tue, 10 Nov 2026 23:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDD8606A321;
+	Wed, 11 Nov 2026 00:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KJ19FyuM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160641F0093C;
-	Tue, 10 Nov 2026 23:27:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gf6gFqXN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A60A1F0089F;
+	Wed, 11 Nov 2026 00:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794353257;
-	bh=9SU31qE105wrvP2RpFtRMcpfeuKBum+yU6ILTSHS1GM=;
+	s=k20260515; t=1794355429;
+	bh=G6vtQZE3ujvpxlS2I2KZ02SKJAR98+LOdANoRmy/Db8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KJ19FyuMQ16mdsKO22OSo/lQFdDl2kxijdpfs/PF1yA76fI+By9ox3drrd/O0XSvA
-	 v8NjcftwFfKTxaSM5Xnh5Cywb5T2elzFBm9YYwZzhfuwUmxX+ObbaEYuBbsF6XzJWb
-	 +lT05RUof+xJFIWGEur+Dgt+EoY1Pmn2X1idZFZAsVNpDr9SlGuwDi9YyMwwNP8QC1
-	 YBk2jHRBSo3r5YVW3aFyBqXuTlAdATK8Az+lPxbfvj8MxuK0xFJTrbK/ihEKC3zpIw
-	 KGlCJ/lwbgrMAuyzQV/knVHSvNk/0aSmVJQ99Rg3sktRktx8jKxiR8HoXGFCLVA3cX
-	 ijdLNfc56ltkg==
-Date: Wed, 11 Nov 2026 00:27:28 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
-Message-ID: <avOn57pfHntiwcaD@devuan>
+	b=gf6gFqXNZ9CoFov+cIHt/cLKduR6rdDO3hZNovZFqQjIJb91tU7vfitfeuSQzC/fv
+	 fWIQCb2bUxxHk1W128Gd//Ji/w6uMyBqoBfIIg1ntXT9Qu6jwAxnVcWbOmSQwChBVT
+	 vMwFfp+4vDBcfwQPf2vXZOCtwgNtFkWXPW70CNmirYevx4C7KuBUIL4HZkNIkONfb+
+	 MD8kMgoXiD9tNKkXeZgTuaDEEFDDdd8vzWfCqJczzmWOgxK9oAQgi94iYZXH8CRGcC
+	 prnhCdr6jI5sdhjddXFqbDL1iF0YsQOB/cUkGz9cD5XljsTwQ9bOI/jHOPLUZTl+8N
+	 QGJamtB4FVfwQ==
+Date: Wed, 11 Nov 2026 01:03:46 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] string: Add [C]QChar_of() and QVoid_of()
+Message-ID: <avOuLrmqKK5Vb2vH@devuan>
 References: <cover.1794323750.git.alx@kernel.org>
- <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
- <64aa89daf23821f95780813fe96882ff61688578.camel@perches.com>
+ <415453a31ebf1aed3b41da1a28913f5cbe58f175.1794323750.git.alx@kernel.org>
+ <sashiko-outbox-207285@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,104 +59,152 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b2kxsrve4gpqpi5u"
+	protocol="application/pgp-signature"; boundary="k4z2mch3442cdwfc"
 Content-Disposition: inline
-In-Reply-To: <64aa89daf23821f95780813fe96882ff61688578.camel@perches.com>
+In-Reply-To: <sashiko-outbox-207285@kernel.org>
 
 
---b2kxsrve4gpqpi5u
+--k4z2mch3442cdwfc
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
-Message-ID: <avOn57pfHntiwcaD@devuan>
+From: Alejandro Colomar <alx@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] string: Add [C]QChar_of() and QVoid_of()
+Message-ID: <avOuLrmqKK5Vb2vH@devuan>
 References: <cover.1794323750.git.alx@kernel.org>
- <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
- <64aa89daf23821f95780813fe96882ff61688578.camel@perches.com>
+ <415453a31ebf1aed3b41da1a28913f5cbe58f175.1794323750.git.alx@kernel.org>
+ <sashiko-outbox-207285@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <64aa89daf23821f95780813fe96882ff61688578.camel@perches.com>
+In-Reply-To: <sashiko-outbox-207285@kernel.org>
 
-Hi Joe,
-
-> Date: 2026-11-10 08:32:41-0800
-> From: Joe Perches <joe@perches.com>
+> Date: 2026-11-10 15:45:13+0000
+> From: sashiko-bot@kernel.org
 >
-> On Tue, 2026-11-10 at 16:33 +0100, Alejandro Colomar wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential
+> issues to consider:
+> - [High] string: void pointer subscript in QVoid_of() breaks Clang
+>   builds
+
+It seems I can't build with LLVM in the way that sashiko suggested in
+the other mail, so I can't reproduce this:
+
+	$ make LLVM=3D1
+	  SYNC    include/config/auto.conf
+	  HOSTCC  scripts/basic/fixdep
+	clang: error: invalid linker name in argument '-fuse-ld=3Dlld'
+	make[3]: *** [scripts/Makefile.host:114: scripts/basic/fixdep] Error 1
+	make[2]: *** [Makefile:682: scripts_basic] Error 2
+	make[1]: *** [/srv/alx/src/linux/linux/llvm/Makefile:912: include/config/a=
+uto.conf] Error 2
+	make[1]: *** [include/config/auto.conf] Deleting file 'include/generated/r=
+ustc_cfg'
+	make[1]: *** [include/config/auto.conf] Deleting file 'include/generated/a=
+utoconf.h'
+	make: *** [Makefile:248: __sub-make] Error 2
+
+But I see no reason why Clang shouldn't build this.  I've written
+a small test program just to see, and Clang seems to just work well:
+
+	alx@devuan:~/tmp$ cat const.c=20
+	#include <stddef.h>
+
+	#define QVoid_of(p)       typeof((__QVoidptr_of(p)){0}[0])
+	#define __QVoidptr_of(p)  typeof(1?(p):(void*){0})
+
+	int
+	main(void)
+	{
+		const void  *p;
+		QVoid_of(p) *q;  // const void *
+	}
+	alx@devuan:~/tmp$ gcc -Wall -Wextra -Wno-unused const.c=20
+	alx@devuan:~/tmp$ clang -Wall -Wextra -Wno-unused const.c=20
+	alx@devuan:~/tmp$=20
+
+Unless anyone can actually reproduce the build issue, I'll assume this
+report is nonsense.
+
+> - [Medium] string: QChar_of() fails to compile when pointee has
+>   qualifiers other than Q
+
+That's actually desirable.  You don't want to call strchr(3) with
+a pointer to volatile.
+
+> --
 >=20
-> no commit description on proposed patch
-
-There isn't much to say, but I'll add something (the explanation of why
-the parentheses are needed around the function name, for example).
-
-> > Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> > ---
-> >  include/linux/string.h | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >=20
+> commit cea37634307d89ede7b6ca6128f006d50a90391c
+> Author: Alejandro Colomar <alx@kernel.org>
+>=20
+> string: Add [C]QChar_of() and QVoid_of()
+>=20
+> This commit introduces the QVoid_of(), QChar_of(), and CQChar_of() helper
+> macros in include/linux/string.h to support qualifier-generic string macr=
+os.
+>=20
 > > diff --git a/include/linux/string.h b/include/linux/string.h
-> > index 9e59f9697c9e..55ca4cb5122c 100644
-> > --- a/include/linux/string.h
-> > +++ b/include/linux/string.h
-> > @@ -590,7 +590,9 @@ void memcpy_and_pad(void *dest, size_t dest_len, co=
-nst void *src, size_t count,
-> >   * *  @s+strlen(@prefix) if @s starts with @prefix
-> >   * *  NULL if @s does not start with @prefix
-> >   */
-> > -static inline char *strprefix(const char *s, const char *prefix)
-> > +#define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx=
-))
-> > +
-> > +static inline char *(strprefix)(const char *s, const char *prefix)
+[...]
 >=20
-> Why introduce a new coding style?
+> [Severity: High]
+> Does applying the array subscript [0] to a void pointer in QVoid_of()
+> break Clang builds?
 
-It's not style; the parentheses are technically needed to avoid macro
-expansion, since the macro has the same name as the function.
+I don't see why it would.  I can't use LLVM myself, so can't reproduce,
+but a small test program shows that Clang works just fine with it.
 
-Alternatively, I could rename the function to __strprefix().
+> __QVoidptr_of(p) produces a pointer to (qualified) void.  Because array
+> subscripting requires a pointer to a complete object type, Clang rejects
+> (__QVoidptr_of(p)){0}[0] even inside typeof() with an incomplete type
+> error, and GCC emits a -Wpointer-arith warning when pointer arithmetic
+> warnings are enabled.  Using unary * instead of [0], such as
+> typeof(*(__QVoidptr_of(p)){0}), avoids both issues.
+
+This is a lie, unless anyone can confirm.
+
+[...]
+> [Severity: Medium]
+> Can QChar_of() fail to compile when the pointed-to type of p carries a
+> qualifier other than Q?
+
+Indeed, a desirable property.
+
+> QVoid_of(p) preserves all qualifiers on the target of p, but the _Generic
+> selection only matches exact Q void * and unqualified void *.  Passing a
+> volatile char * or const volatile char * to CQChar_of(p) produces a
+> volatile void * or const volatile void * controlling expression, which
+> matches neither association and fails at compile time.  Matching against
+> Q QVoid_of(p) *: (Q char){0} and default: (char){0} would test specifical=
+ly
+> for Q regardless of other qualifiers.
+
+You certainly don't want to pass a volatile char* to strchr(3).
 
 
-Have a lovely night!
 Alex
 
 --=20
 <https://www.alejandro-colomar.es>
 
---b2kxsrve4gpqpi5u
+--k4z2mch3442cdwfc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzqFoACgkQ64mZXMKQ
-wqnkyw//SMcrvLK94m7pGptAYwrkzsAjnS/ms1rp2DXVYYygDz590sAwqXuMmExR
-SIEeUlm5Tj25X3zVAAi1b1P9GPG96sKMz1xVWYrbr2rp5kTW6Ugzlh2lozAfCpn2
-KKR6o+yz5vrU0dor0jy6/m0FdiIuWUiDcAquAoNIuXP7xXJifq/YQiaXrqV7wGQw
-qPA7rP8WcEXGtStTMGyZMscwwkbEAkUOjj62u4LKIXEdBIT531d+tVgGo8wZDXYx
-yNQshQTqYa10OZGy3Yox8CukE6h70T9PSUSGp/hdGnriyUY4OlsgnSvbESvPbHM7
-Hogdw3SS+hEV2mPxVsiKhYdomgUe2OlMNFaXwocFYzG14kGSVrKHHSjgAOhiXuBT
-8Y/DdHRNaUwvk4n4M+JkjWsqBlBlEtOkwN/EiXoaXxjP2wfkJgK/XnkcxMERclrY
-gDUsM/wiP73wMno2RMb9kicpHFd17RjWMAvH1/57QW4Oypa3y/fCTCEIXPn+Zt2i
-GELd/ylruhm6vPAIN9bPC3vtBbrWs/PVUqK1ezgf6khXdJq+DdbFkFG8t/wesnm6
-utI5wPKRQ1moDEwIfqTBBCialEyod8Nh3a+hCUz5B4yg8EzbZxGuAG6ctjIEI8Mr
-99esL/VEmx5QoXEHdE1RhoejHLhmlfgk+4FKZHTXSbC0+Ty3o68=
-=AAVC
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmrzsNsACgkQ64mZXMKQ
+wqlYyA//WP431CwOyyGiJ5Z4Nq4DkoB7lbZioy90Yl+g7zuCkZGvPoK5u3DTM6y2
+RcILdOR7a+CcZwlnfZ+uq6cFM0MSdsj4AkNWGVChYTCRKNaO3K4Ln6S62Gj9/xqR
+f1EGFr7gHkARKeFJCb+nAUUKHuRXXOsXEmAvFZrxsG/SM33rP3kmnKO829UvLoBQ
+DDi3V2Gmf3N3AS9MKk8yfv7yWFktDkogn2WPwRr7l+7QP0KbM8pyeFCQ8DtxXzMQ
+nHJ4/Xyg3O1SYFOFSr30b7TVDSg9sX0WHFTg6vy6Q097B/+nZ0mcXtUebgFc6i+v
+ctGoaRYlL9/ULqWYqyOWb/yMxDXKJuiLmLh2BVGfQsIHG+KC19F+aSoCehyawg0J
+2Sv1qGWgZhaE/5DdwPr2VRD3bYDx79n6JemIS2z3YDMpN4YmjNkOHolqFr3I8qMZ
+p7+mc5t7ACtB7psgUh4BJ+oUAPaLflvXKCjn0tFtbNRS94SfiMpwxfYrMT+MzPI1
+h0HvUuS+8kGTZhvriKw5pKLe5qXf1m+iwIfzznyEY0e5Dsz/hdxLK/vhDORsnGSJ
+UBW2c9G67/dZS8FdNJC+GLfLLeJSFLEf1onrBjtigp5ebFOwwjrM5j+m5XZO8gfM
+3T5YUS4eDKCZLwzH38VjkYqQ+ztrEmFtGggF746acwwtrGj9wTo=
+=N5aI
 -----END PGP SIGNATURE-----
 
---b2kxsrve4gpqpi5u--
+--k4z2mch3442cdwfc--
