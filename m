@@ -1,73 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794386658;
-	b=KG9rQKCoaGbpXB1JzGgppaWItPYZRSWY9dbxJUHhl6qZxojErsX+KvDeELUC4LyE+Dd+
-	 W4yrnI5zZ3ixQfSZAYJvOHzkZ2+U/0Hh/l5/EHRVjm9B+3/uQCw0yvcD1HZzdvCM/9hEK
-	 FJ+0UpuhI1jQN5Bc1G6DE2EmdPMs15ExwDZLlhISgqssZoiXaKeUX1CpBNNVFYRYN9AMB
-	 J7uokswprQDljLWrFyHiHFbpPvN8R+R4zPXiAiMoJrkvVKPShLcGRXyHYwBzaSQA1LN3a
-	 Pcws2s3QePOIysrMzw247V2sBdU4sN7k8Edd+1fdhvqkS3qCn6gOFvlZSEqbFJJyGPQ==
+	t=1794389761;
+	b=3zxsowEi1dr3tEjurtXhnDk7UbezXVjv61Pwb81Ysoib6iBSq2BFiuRqmipLbbfM04A+
+	 BbrQxfA/9CEcHSyzi8CP+cbwiSBSeT5NbGI/WQ7ZS1iWborjHLd8zSECa1w3nFiM3dMkH
+	 fkuCBv1sk47HjS5xbwrk7PB0L3di75ZEu2JsXoUqmFULKi/Nuzh3Qa4pZ8aIFIO73ENAe
+	 K5efHCVe3eoGKf2yOuuxKY4zG6pVYDpRXYEDRNYgLQbmnHyYkewOVJ52QiTwICyrxRbjz
+	 mCf08ZLg/VwFbszeiTmkMGjDTaIfG/8AYUTcS26p186y1MXnc9bwq4SzS97kNs+zwHA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794386658;
-	h=DMARC-Filter:Received:Received:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Stat-Signature:X-Rspamd-Server:
-	 X-Rspamd-Queue-Id:X-Spam-Status:X-Session-Marker:X-Session-ID:
-	 DKIM-Signature:X-HE-Tag:X-HE-Meta;
-	bh=kj4d2juRbTUyjRObk5lhKiw8KbvGP7+NJHQ2SToNLJA=;
-	b=1F8LlE8nwcnkne5BLHvQDqmv0ePyNEN0/Ua2befT7JSQNjZIOvFBIXZ1OvTkik1Ww7ot
-	 qYfhaORAmR6G7TET9NQD0RIsm4jFtI2ZInCB7dn/8ps8TmWdP6qiaMYft/pRjGDOwfWiV
-	 u2GTDRWCCzMpJVLsYNtVgw/dRsi+5AO3du5uNg7Y8XbpXTsX6I4zCuc4BeEjnutNczITW
-	 P0YRajegbzf44DtAB87oXDReuK3r6K4in0yBOhmyx+WulNgB3uFpoB9t1ZzK6gBF9sWg7
-	 oS6BS+A9Pu9QbKuitgMGGJYYBtFAgZG4bGGHKrGzpgc6ppb+qg7Dl1e2uuHlIU6t9Tw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794389761;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 X-Zmail-TransId:X-Mailer:Message-ID:In-Reply-To:References:Date:
+	 Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:X-TLS:
+	 X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:X-Fangmail-Anti-Spam-Filtered:
+	 X-Fangmail-MID-QID;
+	bh=FLxx306+tAISOP/bkIgH6EctXfc6n+IEfXg8sHsWejY=;
+	b=u4qDY2l5oLw4m/ahXYkBKylKulF62PktnJ9PrMkAhEw5g9qK/SnHXuZkwsynqvlDeafw
+	 XK+vfTmih+opJ7o4rvshsOhO/lMuWwiZUcHa/+oERcWDoi2YAKr+L3kRgaMViNl2gwsdN
+	 qTClc+t09OZS/y9lNs99e07I5AX9I3l1N+hji/ZIxAu/0wigBuVgpsRsLLrX/YK2CLlsc
+	 BvXo08jXnrS9PxZCkGAAzeb3gV+ZiNdYDbSthcmO8y9fRNc44g4JsMEKKgwO5Y8W/mPJh
+	 ovJw1Ax4AUv7wnNKwceHlyp/iY33GBO6p13DAONbVGA5shyp5Q+YPzIq7iXyx7j2QWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=goodmis.org;
-	spf=pass smtp.mailfrom=goodmis.org;
-	dkim=pass header.d=goodmis.org header.i=@goodmis.org header.a=rsa-sha256 header.s=dkim1 header.b="4q/KfQgV";
-	arc=none smtp.remote-ip=216.40.44.17
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	dmarc=pass header.from=zte.com.cn;
+	spf=pass smtp.mailfrom=zte.com.cn;
+	dkim=pass header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=OwAkZraT;
+	arc=none smtp.remote-ip=183.62.165.209
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D691606A320;
-	Wed, 11 Nov 2026 08:44:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9D691606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69868606A324;
+	Wed, 11 Nov 2026 09:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69868606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=goodmis.org header.i=@goodmis.org header.a=rsa-sha256 header.s=dkim1 header.b=4q/KfQgV
-Received: from omf07.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id B1896A794B;
-	Wed, 11 Nov 2026 08:44:13 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id AF7D02002D;
-	Wed, 11 Nov 2026 08:43:59 +0000 (UTC)
-Date: Wed, 11 Nov 2026 03:43:52 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, Andy
- Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Daniel
- Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan
- Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus
- Torvalds <torvalds@linux-foundation.org>, Linus Walleij
- <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, Tom
- Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org,
- driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v3 1/5] string: Add strprefix(), and deprecate
- str_has_prefix()
-Message-ID: <20261111034352.5c45e30f@fedora>
-In-Reply-To: <556766412884389a7cecfe6affcc9fa3a78f9807.1794323750.git.alx@kernel.org>
-References: <cover.1794323750.git.alx@kernel.org>
-	<556766412884389a7cecfe6affcc9fa3a78f9807.1794323750.git.alx@kernel.org>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=OwAkZraT
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jPdgG1F6kz5B147;
+	Wed, 11 Nov 2026 17:35:54 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
+	s=z202610; t=1794389754;
+	bh=M65uMDfm7EZkwKp4x31kX/uQWmsDRn/+DdbUriicHVo=;
+	h=In-Reply-To:References:Date:From:To:Cc:Subject;
+	b=OwAkZraTE3FJ3UG0y+tDshPE54pAg6EbZwPOOv7C55mwMIVC9G/zMQXwxjn7vvfr8
+	 IQaOlrC0s99xVjXt7NNsDfQqByYjKpzkJyLbaqERTkzxS4CRfgvC4EiO5Y4KkiQJTy
+	 xgx75OGpH/BIAnCjOBH8idRGJ5IU+NEddks08XNAIBYP3jQ6I8XEtnXTPKHOjCq3nY
+	 XJLNRJlkC+ssqjsrzg5Vn90DtN5bHDF76RrGtMwV5Mt03vwYfbhuLXvkaay+Ha86or
+	 8jOnNwDfNuLvcJwHFlHMSmOlYLiIXU0gQJwEz8LdidZLOuEorZ2OeVZbrTRnWdhCh4
+	 mMxlzMnTc609w==
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 6AB9Zih2007469;
+	Wed, 11 Nov 2026 17:35:44 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 11 Nov 2026 17:35:46 +0800 (CST)
+X-Zmail-TransId: 2afb6af436f2a9d-e5b02
+X-Mailer: Zmail v1.0
+Message-ID: <20261111173546439alUdLx-iD6-ISoa9jqS5H@zte.com.cn>
+In-Reply-To: <8f5f5582-523f-4632-be69-b176f7ac52db@gmail.com>
+References: 20261110225742308FW7iPw8mc9gwd2DU0W-_w@zte.com.cn,8f5f5582-523f-4632-be69-b176f7ac52db@gmail.com
+Date: Wed, 11 Nov 2026 17:35:46 +0800 (CST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -76,37 +72,35 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 9reopibxfacub77xym1aj6ezurap8jk8
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: AF7D02002D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/dz/mQgZDwHS78NvaXBjDCWjyDcEshuPI=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=goodmis.org; h=date:from:to:cc:subject:message-id:in-reply-to:references:mime-version:content-type:content-transfer-encoding; s=dkim1; bh=kj4d2juRbTUyjRObk5lhKiw8KbvGP7+NJHQ2SToNLJA=; b=4q/KfQgVhXoeg8xxMeWFbqjrWg46MH1GvbRkZIHunPPEhGE2FUz3n26rVbQKu7mQEd3oLUVEREy1FX2Z7IQPxf5GoltXzV/840+Y6haIl3aFDHw3C1e6iwsAhmkyrsa0rV6Ud+cjmoPNFR4DjsrldCCabHIkWJ2YSuSlxaffT/k=
-X-HE-Tag: 1794386639-904136
-X-HE-Meta: U2FsdGVkX1/C781zNDqzzzHmIbqsmLh06ijPMbUYTNeFmEftFAzWFbEeoukyycUuSbCaZii994t1DsdsTGSfeaDSTYrLJIKWL0NXbWbZyZRqYcTZtA8hOGedLXB25zjW0dUgWN8qmnqKDkOX1Sa+103QOaHyhExVRadf5Ttml/P5URtJEB+pEyGY56v/iWfRffSuoBC69xXt0ioMcQUxW3ka6yhxD7p0Hfg2UVzA87r1+YwE0GTPH4nQCr6t5z4DBNkHW7EAKQli0TZEiqo8Bq+Bdd73SWVl5pWGGlU/u6CSuuEuopC9IQKy8y0kS4BKyg7ajHjxBP9sI1/eA9aMLuoKckNRCBTB
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <jelonek.jonas@gmail.com>
+Cc: <linusw@kernel.org>, <brgl@kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gZ3BpbzogbGluZS1tdXg6IGZpeCB1bnNpZ25lZCB0cnVuY2F0aW9uIG9mIHByb3BlcnR5IGNvdW50IGVycm9y?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 6AB9Zih2007469
+X-TLS: YES
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SOURCE-IP: 10.5.228.133 unknown Wed, 11 Nov 2026 17:35:54 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6AF436FA.001/4jPdgG1F6kz5B147
 
-On Tue, 10 Nov 2026 16:33:23 +0100
-Alejandro Colomar <alx@kernel.org> wrote:
+--------------------------------------------------------------------------------
+Hi Jonas,
 
-> +/**
-> + * str_has_prefix - Test if a string has a given prefix
-> + * @str: The string to test
-> + * @prefix: The string to see if @str starts with
-> + *
-> + * DEPRECATED: Use strprefix()
+On 10.11.26 17:07, Jonas Jelonek wrote:
+> I think you still need to move it up where 'unsigned int ngpio' was
+> before for RCT.
 
-I'm still not convinced, so NAK on this part.
+I read RCT as ordering by decreasing declaration length, in which case
+`int ngpio, ret` after `size_t size` already complies.  But if you want
+it in ngpio's old slot (right after `glm`), that's a one-line move --
+say the word and I'll fold it into the next revision (v2 already has
+your Reviewed-by, so I'd rather not respin just for this).
 
--- Steve
-
-
-> + *
-> + * A common way to test a prefix of a string is to do:
-> + *  strncmp(str, prefix, sizeof(prefix) - 1)
-> + *
-> + * But this can lead to bugs due to typos, or if prefix is a pointer
-> + * and not a constant. Instead use strprefix().
->   *
+Thanks,
+Shao
+--------------------------------------------------------------------------------
