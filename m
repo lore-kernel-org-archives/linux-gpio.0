@@ -1,126 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=67.231.152.168
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794394886;
-	b=1L+D+iPxsB/M+RqjVs5WE4p2S12HeICLyzKTJQ6zqXWv+ZzcSf61Rbny1EieV9DPF9SZ
-	 AEar81OGIXN3AFaX39rdXomeoFRvKgg2jy/oUy/2Oq5zJQlNmnBjZwnO8kofwVbtZ5HWo
-	 KZzUdRU8jCOoZMo/k3wLnEVqR+kxOWkmC2r5YKGcaqUQRCAek0eSjS2pxuY0l6Va94gxh
-	 gzkTmMbyIHXo6YHLIWUPbPQ2Jr5QaQmOMIkt8bvQnQrcDYfWxw/4LzvxKJarCX+vL6QEM
-	 ZyJDkuZ3gyrWDq3shn76oR2dmpTvxlR2YqnU6WCs1IRPNJkhU5s4i1OmfRhKTjPaiAQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794394886;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:DKIM-Signature:
-	 Received:Received:X-MS-Exchange-Authentication-Results:Received-SPF:
-	 Received:Received:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-EOPAttributedMessage:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
-	 X-OriginatorOrg:X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-GUID:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Reason;
-	bh=b2ujhpezfv713AkHipE7RprQnY9NnqzjNzgnd102prQ=;
-	b=5AJcUMjHY++I34ZFxuOcLiH7eao4hT4IUJxo5zbjPWYIfBFopU0UkrFzhxjuvYF05F1o
-	 BRXc4iT3LFyUj2u+r6WWnQz2ZfGW/JQtkdO571/h0nIH2JNqmyyxaEftHTOUYCzSadoi3
-	 kjSwYrvS+9aZJc4BCxqWUIG36wFA5tbQhkDv9EW3B63crVSJqlg1urqWB/Jbn805udA4D
-	 +KttcZ9VMmEmSoWNFBESg5dTVBj8/n44xuwbJf/i3lKvuG2Bxel4XnG7FNjp+SMdUcQ3u
-	 ZpcvL4VvuqTGmGhDEDE8M/PBZ8CbesBiM6h/z44lSezuenqW4z8GeQcz/0NGLPBVG8A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=opensource.cirrus.com;
-	spf=pass smtp.mailfrom=opensource.cirrus.com;
-	dkim=pass header.d=cirrus.com header.i=@cirrus.com header.a=rsa-sha256 header.s=PODMain02222019 header.b=k0ywQICF;
-	dkim=pass header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.a=rsa-sha256 header.s=selector2-cirrus4-onmicrosoft-com header.b=gmgYNYjj;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=67.231.152.168
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794396131;
+	b=kOYJByP5Fug18XZqtQ9Sm8mDJAokDYIkvOXAeHocODNvvTnlSWBKaSDXjxrZJUENrMQz
+	 cwY1JWD0HIpm39ae0ehs+kBLg3iYmDDnujhmBp8NerbthygAGNRyjmXy8mQVANa1eGvNq
+	 yRAOcUBVnYP4qn9Dz+y/miqGv9psA7wLlC1saS4RSo+PYJelFpLmzToKy/VmF7thC2Z8N
+	 XUrCisEYo8tdkq7yTCmJll82XWImoYtLSFB0yC2IMP92igYeVR6BdOalNsn5RCKDot/bv
+	 Mt6u0sRXGOPuR1Jh1MOAzBtn1zgvKJhofBsBoOXqBNbpfUIUkoAcCDUd/jSJSXl915A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794396131;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=q3uvYkOZjdrvPs2HRdExTdIgvGA4FrRTNjbjAdqeYns=;
+	b=NmoDj7BjrWdXr1Um9QUVwXn+CVLaNe85wF0zGK/poFzT8iZkdrbD9WSUGwvV6IE/DA/Z
+	 ZXobxm/P6RrmBFph0uSHtksl4c+txed8J62/GFdOGMTGSPzCmJA7hkLOn5iplQg8gb1x4
+	 AmRECBSL9rcRwSzvHe+I7up4dzpnY5Ne6Wchr5oUFipam6YIY486FwUtWuWBQKkunaAtj
+	 FtSJthwW0FCiFAGAThp1iQFOV5XoULwmop+7eLBRN7cH97reXv8o2Zbrp2RSAYw6+Ij1U
+	 b+11fTokLrLV71qbmqHqy8YM/393khI8QeGdiYiWJFjYSCtfAZGabtfH7Cs8FZpHh5Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l5iahbXV;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42102606A321;
-	Wed, 11 Nov 2026 11:01:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 42102606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEE4606A324;
+	Wed, 11 Nov 2026 11:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.a=rsa-sha256 header.s=PODMain02222019 header.b=k0ywQICF;
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.a=rsa-sha256 header.s=selector2-cirrus4-onmicrosoft-com header.b=gmgYNYjj
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABAxxdB3568065;
-	Wed, 11 Nov 2026 05:01:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=b2ujhpezfv713AkHip
-	E7RprQnY9NnqzjNzgnd102prQ=; b=k0ywQICFNjwKlBPevjZKUBmQm/mGWXOOTs
-	++TgjYBjKcCBuiXkGqc7cO4Lrg4yqZPxn0r/4+regw26lkzDhgUMSHdbMGgqz+Ak
-	QBclGdVb75BL6jWE1VaOeP141m7mX3jeBbGgKUB4CyNIez4IXorWyTo4H9tA7QXX
-	DI0wt9j7SOCg2aU6sIoBrd+dDfn1Hlu7qCBEykReMupiahiYWTy4/f6GKjnHRhDC
-	MAC/T/gGaG55ANZqYlpz/DUG9+sWbkyyk/8N6My8xs/fmn0xwnBtS9g1wNyaxrfz
-	qxm3leejweXDZ/4BxvzDbP9DoC3t7WflNgpL5pmVGgEEQzoPOfYg==
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11021142.outbound.protection.outlook.com [40.107.208.142])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4hv7ursb0v-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 11 Nov 2026 05:01:21 -0600 (CST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=anZU04E15swk+IeO3Vx8jLHMPjNRQfFBdKBpayZGfZW30hRdHE6JfweR+gNwJSDrMMErHrswqWKd2eBYRvRC4ntDjUkpCUjZFhLTwsI6d4PioIaAeC2itKKmzQD1hRs1iJyGHCpmd0VYWbTTqUkpSUTpvbGYgum01mEi0cq4wYpVA+dOahyi35THAwNBnLG32k2BUSpK5ZkiR4vCtSYzP9OcjBKup4eXKFwn5PEa08ROqLMTvmvT/NckGiJSlnp1z3GoG8hC/+SQklvC6PcECzM2Zr7beXnPRSZHyaVudFIyLDxSoZFrDQ2H9P/XwVUHnXzio9qaVP0NhaNZlQc3bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b2ujhpezfv713AkHipE7RprQnY9NnqzjNzgnd102prQ=;
- b=ax4R+sOHjuBTP+d9rvpUc6X6fH2/wjJMQbkjwBr1WBpolJnfsMaiZ3g9do0dqVDy/buqrYRc4mJnBOCnJ/BNRhXbMVUFejfeVZ6IhxjwvaNfjL9zGSrRmCbDi78yFs0qNYkvBfferIU9J/V6cKgjePCzwrrk/SLuxfZSnz18U6gRwpxO2uMFpYdsLXcxchNqmjSGOk4CJp5kB7t+2ZrCK8Jqw4Bfacq2t453qJ6YQghmRIlWvrynncH31Zw5kaXDpNFuLmxhbFF3Zthi6tKN3IlbZIQooeYVCZMerFo0JYjeReTEwyHLHIvRczo79YnednmRfOZthSynu8lpkS+iRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b2ujhpezfv713AkHipE7RprQnY9NnqzjNzgnd102prQ=;
- b=gmgYNYjj2EPabLuEyxV+9vgsQCW8LS4jId6lWhqDSsJVVwOJ/m3Ri98jIn8MUrAgmwWzkwH9lyhu+k6WAlbHd2pIjiDMKfleXcEz+ImpXZ93EMjbwFogDZkBtskpdxJEWQxTotgrKXq0vrc9AMbgOb8mE8hACDdcOAyFVrbBPDk=
-Received: from PH8P221CA0044.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:346::22)
- by IA1PR19MB7277.namprd19.prod.outlook.com (2603:10b6:208:42a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Wed, 11 Nov
- 2026 11:01:17 +0000
-Received: from PH1PEPF00062F24.namprd02.prod.outlook.com
- (2603:10b6:510:346:cafe::ab) by PH8P221CA0044.outlook.office365.com
- (2603:10b6:510:346::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.9 via Frontend Transport; Wed, 11
- Nov 2026 11:01:16 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=softfail (sender
- IP is 84.19.233.75) smtp.mailfrom=opensource.cirrus.com; dkim=none (message
- not signed) header.d=none;dmarc=fail action=oreject
- header.from=opensource.cirrus.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- opensource.cirrus.com discourages use of 84.19.233.75 as permitted sender)
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- PH1PEPF00062F24.mail.protection.outlook.com (10.167.243.53) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.4
- via Frontend Transport; Wed, 11 Nov 2026 11:01:15 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 4910D406566;
-	Wed, 11 Nov 2026 11:01:14 +0000 (UTC)
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 2763E820273;
-	Wed, 11 Nov 2026 11:01:14 +0000 (UTC)
-Date: Wed, 11 Nov 2026 11:01:12 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Cc: linusw@kernel.org, brgl@kernel.org, patches@opensource.cirrus.com,
-        linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: cs42l43: Add GPIO controlled mic/spk mute LEDs
-Message-ID: <avRK+M3AO5dXL1Dv@opensource.cirrus.com>
-References: <20261110142058.354518-1-mstrozek@opensource.cirrus.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l5iahbXV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF76F1F00A05;
+	Wed, 11 Nov 2026 11:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794396131;
+	bh=q3uvYkOZjdrvPs2HRdExTdIgvGA4FrRTNjbjAdqeYns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=l5iahbXVODhXP5BYaVz3lVdaFKAxPbIAV3hq96sXjhxKI9HOoR2/3E6F8yc6p2lnn
+	 WYOV4BO44d1ftIV1pYZaZ3P7x+X/K2hOfbck3hrxOLF7+DjUwkP1dkVZwOTp5bdgG/
+	 0sA2Mynj4aVVQBX02rcqTENjrjW6h1cFMupMrd/VGuNMR4fGbbJcQi3AXAHtjHVf1/
+	 R1xIHOd1CRUUf0iqhEH6Io8GPTn2iXxZ6MYFs44afGFgnuAJUfVFUAkbbw8wWdoxMh
+	 HWHJFOAMcvVoy7TPU9c2M72++kukupwo9oRI6P9ZjxkO/HHrCoWN2dajaitGrzKiKw
+	 BW28RKsWw6/CQ==
+Date: Wed, 11 Nov 2026 12:22:08 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: John Crispin <john@phrozen.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org, lei.dong@airoha.com,
+	Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	mfd@lists.linux.dev,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
+	zhengping.zhang@airoha.com
+Subject: Re: [PATCH 1/7] pinctrl: airoha: make gpio register layout per SoC
+Message-ID: <avRP4MTHKRkP00oh@lore-desk>
+References: <20261110173941.301478-1-john@phrozen.org>
+ <20261110173941.301478-2-john@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -130,68 +70,233 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WqyvA75ADRGpy4XY"
+Content-Disposition: inline
+In-Reply-To: <20261110173941.301478-2-john@phrozen.org>
+
+--WqyvA75ADRGpy4XY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261110142058.354518-1-mstrozek@opensource.cirrus.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH1PEPF00062F24:EE_|IA1PR19MB7277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35e59ae5-1484-4ac3-149d-08df3fe31b65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|61400799027|376014|23010399003|82310400026|36860700016|10067099003|11063799006|56012099006|261022105027099003|261026140227099003|261028144727099003|16102099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	sz6m/HAme63XJPWQgjxEIWINn1snkRjdrf0n+90O2eJLX743wxHfJrdnIUUCtmxLcuLTTfeNQKreSF5YSKWH0lqGjCJ75RWX4QAEC+vh+8e1qeLDV6jBf316KsvREHUHO7SSMpsWCumKc+7Rgt3MK3nX0dfXgBZdJOL7tDWpjLQG2g9HwoKjTAOI52JuwW7WJcAqKOhKYUSEigkRLiKVNvXeKPUaL8sV1pzr0jI+7vOlQ3M+Sx1E40RCYp6DsDp2UJ/3oBUNLiUvn6vZlWTGvIoiVp2bcUbQnBE5hZ/CUWcksv+AZraO/sfVu0QDGvWUrLKi0tCwbCp4X7ZW+1ofnKr9w26hbKy8kCnY4nTXUNGY/1cpNUYa1JC4W+nkEjJhkfJrHXx+/KpRLJQR344YXSO68PsANNFf3WyflnJob7agwA2dZ8APF+VQd1gFnnGyuQt79BxZQ9eBEMCXFpsED8yOfAS3n1MfpQlsohV68OqAwCQR2/C6Y1QPRjRFYnrqo8kHfn8Z6H+m5LKBKJZbMrF5i6a7BqYU4tSak0tWJfsXYIOogybyGfv4rMtNJzZsZVroS8qpoxeG+jWhiCMblFV36Qe+iu7Peq8RgDC99pKMozS1R/jmy2BLMDuHwBkq4Crp1II9KMUwLr5oNTBMZRJ4T/K9WxetnUI6zwt9oqNHNDfx6BaoHJORS/+H4jWNuAb7Cu1fXThdwOHmAEvUiw==
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(61400799027)(376014)(23010399003)(82310400026)(36860700016)(10067099003)(11063799006)(56012099006)(261022105027099003)(261026140227099003)(261028144727099003)(16102099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	UPaW3dtjZSumMmdUD0YYTB/312OfPTtidZ04bdzj1ED1oZR4b+bFok2x6MMcQ4ylDD5DBx3DeT7Gh54c6+9g/+lmwQ45F4fSyecJdk2FbBDOBUvgTE+ZR85J/QWVKJXLJOryW793nGeAH5ScX4yxaajjfAgFCcGfzgtbwVR1khYq9ekE3epUxD2Y/EBTl2/qPeco8VCB4OUFU9rISOzwxzEPh0v13PFg6GAJ9jDqb3N1bIRKvbcir36TVulM9wL3tdzvo60nCfvtLpoakaHyDlzbS0NfEfFAvCJgZZgh09Q7uiKtoiREJ9o2e3QfAlGdTnVSE8uBIS/GMHfI4+534ObHRQP4OdUZvDgLuFZp5dEoPknWUmxk+aNp5BdLb14XPvdLIDkc95hDWpXTf4k9T+rgAzw7x/AWXeaqgZJ1E7dXaZx9cQpC9iKkUBpvBJ3D
-X-Exchange-RoutingPolicyChecked:
-	COkz+9TX7s2YRL6OABbA7KaY4zz2U0RJyik6bxsIb2TOSMDAtyobiKtmDAVgQyX1HpGHgE5xrzeXRjGg7OBR1yCfOpYU2HnYi2y473qffL6AIKohgxzrMdbkOKVlbZlZlOAYfgII9sq9om5oR/kftF11h700GKpXXlLtT/1LKhEMJVLPeSEH7L7NJHQRs7FxZUW2oooXHru8jZ5pnmJJ9NQ5kyS4uPH7FMt029+LRLGkN3n40+VciHwoeUajFIKE1f8iw959m/OLrnwmERCoyES9FjAnaczFwmuK9LzMPA3QGCtx3l8RHvURmBdz6BHZKqATUoj09ehHGf3w0okQeQ==
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2026 11:01:15.6577
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35e59ae5-1484-4ac3-149d-08df3fe31b65
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-PH1PEPF00062F24.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR19MB7277
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDA0MyBTYWx0ZWRfX7uxpQQwOoTrI
- l6UJiB8lAgepcoACfI/psCGb49rNbio8pXOZi0tqlZMbnvx1tzYq7URhMXiWk5ie+zKk84jXkjH
- jnjYHK9nnEbXRkfMP6AMN6CDmTH5m1zWX+FzyImg5Dc3CCCaIRjJzXWvHa8vEz8IZiae5NWD4kD
- IwMA0doph/OTqfHivITY4R8WtvvFufYk/XKUYDG9rzSlW+TINRSXx7/+Giue6WPxvBzGNfRPz6Z
- xxq6iPDJCl13LABJ/+fHkJsTA/BqPJJgcO5BwlNJpWoWZWFNpeSwVcebsIzXjA4p78dsZb+8Y6W
- mljpYawyspl6hQLveHQcttvq/bTC20030s6QnfCuO8QLyeZz8ltHjLN5SSTx3NorecEUsvbm95t
- I7fL4Z6ul07heYbP9n/Ccn3JwsZd8YiE4KeuWwXw5pv/YFxoKurqc4OR1oKluO8UHfvyDWuQwqZ
- Lum/V9Eyl8kWzOR2ZBA==
-X-Proofpoint-ORIG-GUID: LlflBkNdSRneJgsTzB49pQXyTip2J3pp
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDA0MyBTYWx0ZWRfX1OlASTu43KaQ
- rxKSiWzmaPLi67MRgzB7GeOIeoswdmPkwMsX59W2/PaRzTPcTuSpj4FfK7ZJTkKMTWH5ManrNnh
- 8kTyjysPaRkmnfsCIfq259XFj2fDeC4=
-X-Proofpoint-GUID: LlflBkNdSRneJgsTzB49pQXyTip2J3pp
-X-Authority-Analysis: v=2.4 cv=JagpPkKV c=1 sm=1 tr=0 ts=6af44b01 cx=c_pps
- a=s+5vLJ1poW1T9bNDw6yRNw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=RWc_ulEos4gA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=iX4cTi3TZMoOKdANLEfx:22 a=KfkQE9S9VqCBgivYGm0O:22
- a=w1d2syhTAAAA:8 a=2L2IZ_fT2_NVQbZiCfsA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 10, 2026 at 02:20:58PM +0000, Maciej Strozek wrote:
-> Add ability to use cs42l43's GPIOs to drive speaker and microphone mute
-> LEDs. The LEDs must be described using
-> 01fa-global-mute-led-(spk|mic)-mute-gpio ACPI property, which tells
-> which of the 3 available cs42l43's GPIOs to use for the respective
-> function.
-> 
-> Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
+> The GPIO register layout is fixed to 64 pins in two 32 pin banks and
+> four 16 pin direction banks. Every SoC uses the single static
+> airoha_gpiochip_regs and the compile time AIROHA_NUM_PINS.
+>=20
+> Move the layout into the match data. The gpiochip register table
+> carries its own pin count, and the five existing SoCs point at the
+> shared 64 pin table.
+>=20
+> No functional change for the existing SoCs.
+>=20
+> Signed-off-by: John Crispin <john@phrozen.org>
+
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+
 > ---
+>  drivers/pinctrl/airoha/airoha-common.h  |  6 +++++-
+>  drivers/pinctrl/airoha/pinctrl-airoha.c | 14 ++++++++------
+>  drivers/pinctrl/airoha/pinctrl-an7563.c |  1 +
+>  drivers/pinctrl/airoha/pinctrl-an7581.c |  1 +
+>  drivers/pinctrl/airoha/pinctrl-an7583.c |  1 +
+>  drivers/pinctrl/airoha/pinctrl-en7523.c |  1 +
+>  drivers/pinctrl/airoha/pinctrl-en7528.c |  1 +
+>  7 files changed, 18 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/airoha/airoha-common.h b/drivers/pinctrl/air=
+oha/airoha-common.h
+> index 16f7abcdfb83..850e733db15a 100644
+> --- a/drivers/pinctrl/airoha/airoha-common.h
+> +++ b/drivers/pinctrl/airoha/airoha-common.h
+> @@ -89,6 +89,7 @@ struct airoha_pinctrl_conf {
+>  };
+> =20
+>  struct airoha_gpiochip_regs {
+> +	unsigned int ngpio;
+>  	/* gpio */
+>  	const u32 *data;
+>  	const u32 *dir;
+> @@ -99,6 +100,8 @@ struct airoha_gpiochip_regs {
+>  	const u32 *edge;
+>  };
+> =20
+> +extern const struct airoha_gpiochip_regs airoha_gpiochip_regs_64;
+> +
+>  struct airoha_pinctrl_confs_info {
+>  	const struct airoha_pinctrl_conf *confs;
+>  	unsigned int num_confs;
+> @@ -126,7 +129,7 @@ struct airoha_pinctrl {
+>  	struct regmap *regmap;
+> =20
+>  	struct gpio_chip gpiochip;
+> -	struct airoha_gpiochip_regs *gpio_regs;
+> +	const struct airoha_gpiochip_regs *gpio_regs;
+>  	unsigned int num_irq_pins;
+>  };
+> =20
+> @@ -134,6 +137,7 @@ struct airoha_pinctrl_match_data {
+>  	const char *chip_scu_compatible;
+>  	const char *pinctrl_name;
+>  	struct module *pinctrl_owner;
+> +	const struct airoha_gpiochip_regs *gpio_regs;
+>  	const struct pinctrl_pin_desc *pins;
+>  	const unsigned int num_pins;
+>  	const struct pingroup *grps;
+> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
+roha/pinctrl-airoha.c
+> index 52a768c859b7..b50108826d8d 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+> @@ -94,7 +94,8 @@ static const u32 irq_edge_regs[] =3D {
+>  	REG_GPIO_INT_EDGE3
+>  };
+> =20
+> -static struct airoha_gpiochip_regs airoha_gpiochip_regs =3D {
+> +const struct airoha_gpiochip_regs airoha_gpiochip_regs_64 =3D {
+> +	.ngpio =3D AIROHA_NUM_PINS,
+>  	.data =3D gpio_data_regs,
+>  	.dir =3D gpio_dir_regs,
+>  	.out =3D gpio_out_regs,
+> @@ -102,6 +103,7 @@ static struct airoha_gpiochip_regs airoha_gpiochip_re=
+gs =3D {
+>  	.level =3D irq_level_regs,
+>  	.edge =3D irq_edge_regs,
+>  };
+> +EXPORT_SYMBOL_GPL(airoha_gpiochip_regs_64);
+> =20
+>  static int airoha_convert_pin_to_reg_offset(struct pinctrl_dev *pctrl_de=
+v,
+>  					    struct pinctrl_gpio_range *range,
+> @@ -207,7 +209,7 @@ static void airoha_irq_unmask(struct irq_data *data)
+>  {
+>  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(data);
+>  	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(gc);
+> -	struct airoha_gpiochip_regs *gpio_regs =3D pinctrl->gpio_regs;
+> +	const struct airoha_gpiochip_regs *gpio_regs =3D pinctrl->gpio_regs;
+>  	u8 offset =3D data->hwirq % AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u8 index =3D data->hwirq / AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u32 mask =3D GENMASK(2 * offset + 1, 2 * offset);
+> @@ -244,7 +246,7 @@ static void airoha_irq_mask(struct irq_data *data)
+>  {
+>  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(data);
+>  	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(gc);
+> -	struct airoha_gpiochip_regs *gpio_regs =3D pinctrl->gpio_regs;
+> +	const struct airoha_gpiochip_regs *gpio_regs =3D pinctrl->gpio_regs;
+>  	u8 offset =3D data->hwirq % AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u8 index =3D data->hwirq / AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u32 mask =3D GENMASK(2 * offset + 1, 2 * offset);
+> @@ -261,7 +263,7 @@ static void airoha_irq_ack(struct irq_data *data)
+>  {
+>  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(data);
+>  	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(gc);
+> -	struct airoha_gpiochip_regs *gpio_regs =3D pinctrl->gpio_regs;
+> +	const struct airoha_gpiochip_regs *gpio_regs =3D pinctrl->gpio_regs;
+>  	u8 offset =3D data->hwirq % AIROHA_PIN_BANK_SIZE;
+>  	u8 index =3D data->hwirq / AIROHA_PIN_BANK_SIZE;
+> =20
+> @@ -379,7 +381,7 @@ static int airoha_pinctrl_add_gpiochip(struct airoha_=
+pinctrl *pinctrl,
+>  	gc->set =3D airoha_gpio_set;
+>  	gc->get =3D airoha_gpio_get;
+>  	gc->base =3D -1;
+> -	gc->ngpio =3D AIROHA_NUM_PINS;
+> +	gc->ngpio =3D pinctrl->gpio_regs->ngpio;
+> =20
+>  	girq->default_type =3D IRQ_TYPE_NONE;
+>  	girq->handler =3D handle_bad_irq;
+> @@ -831,7 +833,7 @@ int airoha_pinctrl_probe(struct platform_device *pdev)
+>  	pinctrl->desc.pins =3D data->pins;
+>  	pinctrl->desc.npins =3D data->num_pins;
+> =20
+> -	pinctrl->gpio_regs =3D &airoha_gpiochip_regs;
+> +	pinctrl->gpio_regs =3D data->gpio_regs;
+> =20
+>  	err =3D devm_pinctrl_register_and_init(dev, &pinctrl->desc,
+>  					     pinctrl, &pinctrl->ctrl);
+> diff --git a/drivers/pinctrl/airoha/pinctrl-an7563.c b/drivers/pinctrl/ai=
+roha/pinctrl-an7563.c
+> index f011c6c9ccce..6a2a307807e3 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-an7563.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-an7563.c
+> @@ -1063,6 +1063,7 @@ static const struct airoha_pinctrl_match_data pinct=
+rl_match_data =3D {
+>  	.chip_scu_compatible =3D "airoha,en7581-chip-scu",
+>  	.pinctrl_name =3D KBUILD_MODNAME,
+>  	.pinctrl_owner =3D THIS_MODULE,
+> +	.gpio_regs =3D &airoha_gpiochip_regs_64,
+>  	.pins =3D pinctrl_pins,
+>  	.num_pins =3D ARRAY_SIZE(pinctrl_pins),
+>  	.grps =3D pinctrl_groups,
+> diff --git a/drivers/pinctrl/airoha/pinctrl-an7581.c b/drivers/pinctrl/ai=
+roha/pinctrl-an7581.c
+> index bfb777594811..6bec1d44b8a0 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-an7581.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-an7581.c
+> @@ -1435,6 +1435,7 @@ static const struct airoha_pinctrl_match_data pinct=
+rl_match_data =3D {
+>  	.chip_scu_compatible =3D "airoha,en7581-chip-scu",
+>  	.pinctrl_name =3D KBUILD_MODNAME,
+>  	.pinctrl_owner =3D THIS_MODULE,
+> +	.gpio_regs =3D &airoha_gpiochip_regs_64,
+>  	.pins =3D pinctrl_pins,
+>  	.num_pins =3D ARRAY_SIZE(pinctrl_pins),
+>  	.grps =3D pinctrl_groups,
+> diff --git a/drivers/pinctrl/airoha/pinctrl-an7583.c b/drivers/pinctrl/ai=
+roha/pinctrl-an7583.c
+> index 1cd0f442ddc1..2689bbd9ebba 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-an7583.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-an7583.c
+> @@ -1465,6 +1465,7 @@ static const struct airoha_pinctrl_match_data pinct=
+rl_match_data =3D {
+>  	.chip_scu_compatible =3D "airoha,en7581-chip-scu",
+>  	.pinctrl_name =3D KBUILD_MODNAME,
+>  	.pinctrl_owner =3D THIS_MODULE,
+> +	.gpio_regs =3D &airoha_gpiochip_regs_64,
+>  	.pins =3D pinctrl_pins,
+>  	.num_pins =3D ARRAY_SIZE(pinctrl_pins),
+>  	.grps =3D pinctrl_groups,
+> diff --git a/drivers/pinctrl/airoha/pinctrl-en7523.c b/drivers/pinctrl/ai=
+roha/pinctrl-en7523.c
+> index b0c5e60f0aeb..1589acef683f 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-en7523.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-en7523.c
+> @@ -1107,6 +1107,7 @@ static const struct airoha_pinctrl_match_data pinct=
+rl_match_data =3D {
+>  	.chip_scu_compatible =3D "airoha,en7523-chip-scu",
+>  	.pinctrl_name =3D KBUILD_MODNAME,
+>  	.pinctrl_owner =3D THIS_MODULE,
+> +	.gpio_regs =3D &airoha_gpiochip_regs_64,
+>  	.pins =3D pinctrl_pins,
+>  	.num_pins =3D ARRAY_SIZE(pinctrl_pins),
+>  	.grps =3D pinctrl_groups,
+> diff --git a/drivers/pinctrl/airoha/pinctrl-en7528.c b/drivers/pinctrl/ai=
+roha/pinctrl-en7528.c
+> index f6c8f834421f..9854e9530219 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-en7528.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-en7528.c
+> @@ -1155,6 +1155,7 @@ static const struct airoha_pinctrl_match_data pinct=
+rl_match_data =3D {
+>  	.chip_scu_compatible =3D "econet,en7528-chip-scu",
+>  	.pinctrl_name =3D KBUILD_MODNAME,
+>  	.pinctrl_owner =3D THIS_MODULE,
+> +	.gpio_regs =3D &airoha_gpiochip_regs_64,
+>  	.pins =3D pinctrl_pins,
+>  	.num_pins =3D ARRAY_SIZE(pinctrl_pins),
+>  	.grps =3D pinctrl_groups,
+> --=20
+> 2.34.1
+>=20
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+--WqyvA75ADRGpy4XY
+Content-Type: application/pgp-signature; name=signature.asc
 
-Thanks,
-Charles
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCavRP4AAKCRA6cBh0uS2t
+rDPBAPwN08fBuOv0LvZ5GSpm3nNQBDO/6ajcZnEG7ZqY1ifYrAEAz42H7L6jUwuY
+Lj4bMSvEqOwOxZTxPFWF6i03FlMFWwE=
+=7ilg
+-----END PGP SIGNATURE-----
+
+--WqyvA75ADRGpy4XY--
