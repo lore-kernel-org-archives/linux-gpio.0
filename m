@@ -1,66 +1,67 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794396476;
-	b=4MZiAcgoBItuZ3YZf4WSO8/Z++dVfnqyzi7oVbQFWKSWzeLcBMfr7t61+Z/1Fd2CMICZ
-	 janESsD1RSvg1Hn3dG3kOzQevPPbX6VcRA0fFpa6ARQdb5HCRe8GxRWHH62BUtlMxZC0U
-	 VOoA99ffbfGaA9/if9tlozayaGk2ZAlA0BoguqKOzzg+Jfkej735lRNIbLyMV7eH2iqM+
-	 YxW+OrcitwUwkcp7xzVkh6wZzJowOkG3rxORSCuH4naGfjdX2EHFVyhaUJCOxb0Kf3rwn
-	 qtTl4wVQCnQype80+RotExJ+fUKIBJEWQ0SnHiSkCRpaIoudI7O8AVDMkObfF9YGwaw==
+	t=1794396503;
+	b=ZTelH6QMWJWytzNQqavo+vYAHFDY9ymH19tcOmUfLiiIoLC4SNP4TjkSm7HO+rkoehVc
+	 FhPU07JTRaUydHfiqad0GfydXZIJ2bwEXpbTBQ7CdnMpFtDcSCERypYqVxGH7//AJOZBn
+	 J9kJHVfkxVCw+Zvg5Kt3OeS1xVwUwIBc7JRX0Lo3jlUiVN4kVBo8SSG7beKKD236ugBzi
+	 KM+niKBetmt+QSGClsK95Oj0Yw/Zwe01RNoGUbd+Zg085Pz5Tz+Zhnvu3+fanNjHrVprd
+	 kBSx1NCwMKAViBb9ypC35hGZOph3DxTq9YKjJ/QNusKBrWm/W16Da4NDtjcbslmHCBQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794396476;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794396503;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=CisNle0adgNt9jEGJ2fMfUGTiG/LllD/flOCUw5zy2k=;
-	b=O3Vg5+63hXDKVC9gVvUMKD9vh2pl0aeejb6beRoXy0IB/uX9ZnXVaD3CuqsvJfSTEq8r
-	 XkBHeu3YMsu9niwQtF3umhDL7SWNwyplJMM9eEVis5/J6sPtYlHAfec0wr03jOlmCknRG
-	 tWWCqgEbHw9Ck5GHalsGWqAiSunXJTRmRCPn5Llp6X+Fyy7djfLf/lyCajoSOX8cFviB/
-	 XFkr7FEMVQ/urkZXIjCFWZ0p2HvlsLfneKCgNKXPIsNe2Hw/gREi6nwu2Xbn/Iewfya8u
-	 6im7FGIpksM2CaDDPUOJziaf9LV9B+s2qd7culuqKBS16Arjkcbqf4I3oHKnIq7cltA==
+	bh=clef96KdjZtZB+RQYxzzZuV2jPu47KF1xnUT/nBcCUg=;
+	b=BfxgPTyOD9pbPaNOEKjseD2ifDodqPwJjfQQuyMoEDPbE7Pq5+fe/ADXrVySDS0+qt4W
+	 HmYeW1+LTHBqRxDIiHAwrtm0CNT6n5m/951YuQc1KbDWNljdEjEgd1dAKTN2kSCxH/pxr
+	 Kdbx9lrKcERkURS0u5BU6hltj3lmTPkZhJEk8+VKnJnYA/5axBaEUbUv6wn+qBLulqOPr
+	 1twVYk6OuMh70sDYjE8RzVUqSzZBEJTw3mvi9APNaMdEImRLjJKmE0qf470NLSvXSYR3/
+	 G7FU5pEpNXdKFqitCKHJ3UUWbaf2DSqxR48cHTgRsHG+ppfdUBDFQcIb81zU0X45bBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cDEP7fNU;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ayqxgo59;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BB6606A326;
-	Wed, 11 Nov 2026 11:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6369606A321;
+	Wed, 11 Nov 2026 11:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cDEP7fNU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B781F00A05;
-	Wed, 11 Nov 2026 11:27:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ayqxgo59
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393661F00A05;
+	Wed, 11 Nov 2026 11:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794396475;
-	bh=CisNle0adgNt9jEGJ2fMfUGTiG/LllD/flOCUw5zy2k=;
+	s=k20260515; t=1794396503;
+	bh=clef96KdjZtZB+RQYxzzZuV2jPu47KF1xnUT/nBcCUg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cDEP7fNUn48bZ8kLQC59leIB1HUlPzXU9x0z/rVshW/4/IhNLfGz0LFz2MKWLZtjN
-	 Rhaa1BTvjS0PZGC7S1aBu2zPXF4bFZ4kTkFy5YwKhNUAGlgxv47qLbbLVYuawmWSW3
-	 SgYu6TaGkK05kRQlHnMl3TMNMuyUTuq9ZYzHGWU96aKggH9wcUg86GY43Z40a4yMWt
-	 Z2uOBZ+3qYE3Ygkydpzp/Y4jFA5vQIGwvPdzbBxEctfRgYK6HANvJqzExjUQYpvy2e
-	 y+gKSjVR87W1lenne2SB9R/VbDZe6UB0VabfdZ/TAv89evqIFAiZDAZREl01XnVR1X
-	 xXesPLbn/i0rg==
-Date: Wed, 11 Nov 2026 12:27:53 +0100
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: John Crispin <john@phrozen.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Ahmed Naseef <naseefkm@gmail.com>,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	devicetree@vger.kernel.org, lei.dong@airoha.com,
-	Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	mfd@lists.linux.dev,
-	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-	Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
-	zhengping.zhang@airoha.com
-Subject: Re: [PATCH 3/7] pinctrl: airoha: make the chip SCU optional
-Message-ID: <avRROTmy9oFLwJCS@lore-desk>
-References: <20261110173941.301478-1-john@phrozen.org>
- <20261110173941.301478-4-john@phrozen.org>
+	b=Ayqxgo59eQ+nGKS/KTdfCsu+dMa/H8G1aehKwxPZyzLU7hiJqpdhteuph0QlvGVar
+	 KThM/cQMx+yC/8FhudvKzGGSjuTORv/dw/KZrSfd1QdzN/JBaF3dBnBgxRmnuFdfqp
+	 n1FPOZ16vGTb4zwDZbm/h/rSsit0DXrRQqbnVHsyyFQx7Yrics0Ki0FMLRhV9cgXbB
+	 2eQKV8/9MmvQdJDho+7xXgjGczcNXaE8iKOxuwg807er8Hc9a7Vi0PoB0KkbwZlRWj
+	 L+OoRFmxDM5wjOCx6lk/7VkLFZPB7zXnl35kahUakxg14Wwuf7k0YSYXTI45UoQIPQ
+	 6wRvbic8PMXAA==
+Date: Wed, 11 Nov 2026 12:28:15 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
+Message-ID: <avRQgOTnRtfec9fQ@devuan>
+References: <cover.1794323750.git.alx@kernel.org>
+ <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
+ <20261111103438.2f822202@pumpkin>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,93 +72,87 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A3sZ98eitumN/6Hf"
+	protocol="application/pgp-signature"; boundary="emb45eljbrwlkh5i"
 Content-Disposition: inline
-In-Reply-To: <20261110173941.301478-4-john@phrozen.org>
+In-Reply-To: <20261111103438.2f822202@pumpkin>
 
---A3sZ98eitumN/6Hf
-Content-Type: text/plain; charset=us-ascii
+
+--emb45eljbrwlkh5i
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] string: Make strprefix() const-qualifier-generic
+Message-ID: <avRQgOTnRtfec9fQ@devuan>
+References: <cover.1794323750.git.alx@kernel.org>
+ <35bf6672f84f07de3f40e8db9e7fcfd643894fec.1794323750.git.alx@kernel.org>
+ <20261111103438.2f822202@pumpkin>
+MIME-Version: 1.0
+In-Reply-To: <20261111103438.2f822202@pumpkin>
 
-> A SoC that muxes every pin through the IOMUX block and describes no
-> pin configuration has no use for the chip SCU. Skip the lookup when
-> the match data names no chip SCU compatible, instead of handing a
-> NULL compatible to syscon_regmap_lookup_by_compatible().
+Hi David,
+
+> Date: 2026-11-11 10:34:38+0000
+> From: David Laight <david.laight.linux@gmail.com>
+>
+[...]
+> > -static inline char *strprefix(const char *s, const char *prefix)
+> > +#define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx=
+))
 >=20
-> No functional change for the existing SoCs, which all name one.
+> Isn't in enough to do:
+> #define strprefix(s, pfx) ((typeof(s))strprefix(s, pfx))
 >=20
-> Signed-off-by: John Crispin <john@phrozen.org>
-> ---
->  drivers/pinctrl/airoha/pinctrl-airoha.c | 25 +++++++++++++++++++------
->  1 file changed, 19 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
-roha/pinctrl-airoha.c
-> index f9ae4020b764..9116d3ded258 100644
-> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
-> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
-> @@ -833,6 +833,22 @@ static const struct pinctrl_ops airoha_pctlops =3D {
->  	.dt_free_map =3D pinconf_generic_dt_free_map,
->  };
-> =20
-> +static struct regmap *
-> +airoha_pinctrl_chip_scu(struct device *dev,
-> +			const struct airoha_pinctrl_match_data *data)
-> +{
-> +	struct regmap *map;
-> +
-> +	if (!data->chip_scu_compatible)
-> +		return NULL;
+> which correctly preserves all qualifiers.
 
-should you move this check after the first lookup?
+This would return a const void* if you pass a const void*.  In general,
+we shouldn't be passing a void* to a string function, but C allows this.
+With CQChar_of(), you coerce a 'const void *' into a 'const char *'.
 
-Regards,
-Lorenzo
+See also: <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3998.pdf#subse=
+ction.0.7.28.5>
 
-> +
-> +	map =3D syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu"=
-);
-> +	if (!IS_ERR_OR_NULL(map))
-> +		return map;
-> +
-> +	return syscon_regmap_lookup_by_compatible(data->chip_scu_compatible);
-> +}
-> +
->  int airoha_pinctrl_probe(struct platform_device *pdev)
->  {
->  	const struct airoha_pinctrl_match_data *data;
-> @@ -853,12 +869,9 @@ int airoha_pinctrl_probe(struct platform_device *pde=
-v)
->  	if (IS_ERR(pinctrl->regmap))
->  		return PTR_ERR(pinctrl->regmap);
-> =20
-> -	map =3D syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "airoha,chip=
--scu");
-> -	if (IS_ERR_OR_NULL(map)) {
-> -		map =3D syscon_regmap_lookup_by_compatible(data->chip_scu_compatible);
-> -		if (IS_ERR(map))
-> -			return PTR_ERR(map);
-> -	}
-> +	map =3D airoha_pinctrl_chip_scu(dev, data);
-> +	if (IS_ERR(map))
-> +		return PTR_ERR(map);
-> =20
->  	pinctrl->chip_scu =3D map;
-> =20
-> --=20
-> 2.34.1
->=20
 
---A3sZ98eitumN/6Hf
-Content-Type: application/pgp-signature; name=signature.asc
+Cheers,
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--emb45eljbrwlkh5i
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCavRROQAKCRA6cBh0uS2t
-rKZKAP4hQfDss2hwRFv5+/p8aTHT0BSzjyISfuDUraz+Z6e5wQD/REqJy29vBUtC
-g8T6MzxN+vmO2e/FtddtNey+mQe36wU=
-=dBSt
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr0UU4ACgkQ64mZXMKQ
+wqntIA/8CnvRBh0GWiV0pEkB8CsI4Ei5vpzo05YozhZPx/C1LqQ1TJF36UF6GtZ1
++MjZVOShNf6prPOICad/7qSz/Uay+Q/H14G5O4ErzKZbKCyqC4osWoLsTIeskIFO
+ptOZSr/EQF3GM+fKSrowiVbw+FkPOT6CetmSbrvUNOhXo0Sd62SOyM3QorRW/QfA
+EbInkrMvvBUiivyqITSgmCFAKynJvncUQeoobTjAnxe14KnWKwXAYMiES5UEnxlt
+egShlBDaCgDbKYgtawdjj5iMZM25YQuYHFzj9N163MJwZSusKK81kzBHxkpdtIHj
+TZq0SKiUUar7nC2hI3YQNIT6yVMhNdnvCE4dkfgDuNqDaPuq2geHWuNNLd4LGFh6
+u4g10Ncbqm9g1xdyESjXUYLuBfebPrHsQ4F6T3cx09GE+6GzxGET3466rQs0qTlA
+Hm26LNi/ZT8Y4Up/V8EWgWweE0yji+i1Kcm8Z3y1U6KfYFIsnT5lms9lLz6h04IQ
+cf5UH3vSVZgzbvZg2IcAwevjodfrdHDMFUYLO0Gz572B2ztMTpC1MJW6QiXogLbz
+JIc8+VKrfb4HxP3Gt00HTz85/Ug502kAFe3NmpW62Uxsn6bmQi/up6X2IjgoIWOQ
+kbhH92N6QFMGkKgBS+LhFS7TXmhDzDNVh5yJbbCb3yL8Dg1VpMA=
+=TVMp
 -----END PGP SIGNATURE-----
 
---A3sZ98eitumN/6Hf--
+--emb45eljbrwlkh5i--
