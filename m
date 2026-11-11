@@ -1,56 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794428105;
-	b=fm3oF4DJxIjOpnTpbnJ99QnuotZWXGbhdWN7yoWMvj55Fek4fDPnH1egoB0It7wZ9fcI
-	 k+kzpPi0Wg++p1gZHQyIANy5vi6684QDDJxEO305Jd7vUn/n7ija5vmiIr0f9aKToAib/
-	 DIaQXb24YDS89ytLZI2HVjPLD3PbEmIKp+x9eAcXgFzoxR5Ga0brpkmOaOxlPvtiDnEQP
-	 si1ZyaihGD1Dvf6qmGepdjHj0eTcjlU8LFWjloFUEIDtppJxdpIJSvvElyWhAM6NMyAoO
-	 up59eloTzttozjJm67wy6zHumQ9NxviG3F/UTq1eFKpVasAC1xpz+KB7Xdk+5WJRdNQ==
+	t=1794428294;
+	b=vEqbOAOzmQV4BPqsUJPDYe2FTaN2rswqBV7bzgKpkkiTmPJp/9ayLcvNbmgTRiNNhE1Z
+	 MAyQ5gsFGHOAU+Cu1iK1Nw/BGyq8hLYnz9c0wQEd7dyOMgrEGDPsckSSWoKzuFrvV93k0
+	 rDNdd6gPM+R5L4hQ6FN+YSDyKMAE2BycCONLzRFUNJBCXTkFPQw9siI0k14FlTRppGHTK
+	 ScGMWjpwNYQcf7hfohVmnbvOQH4ZF9aFVLhiEHdCjEYxayFWQQA72eaPnvGGuTqVGSKbV
+	 9JNcPl8jOdNyqGTfaafmDkkuY0aYOLEBoFJdvoGPTiJ487RNngl1G+dWDjMmLiF1kXA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794428105;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=wjqQbn4a+7dcLaWn2FPIKO3ZJVxZraaaMz1re4KgK1A=;
-	b=kCbrw/lRxGsUJOI9f+WNRgZ2GSLaJ/Nenu+RWJnYjZlED1aakdNSezzWRUY/fhhcNq6F
-	 n98CZkVvKAqTRSNDkBTwTofLxMCsCK87OptY4rqSW8TGBIcclf32aNj7Ot5Vcpj2qia5k
-	 LRGpC5JAC81mGZuOQ+e9VR67dAdGIMo1XlkLJ9Lb1Qh+tzSQPSfXe0OCuheAZCkrqHB0L
-	 PEIp2Aw2+alY+mu+tdyREwOZO6QTcrQecxUK5Wu3uwdOM/uTQhpwrSVs/r7ChPckFA0Q8
-	 ovgTkk0pMMBoDII9/o6VasPLUa7al4X4sk3WnJzrJVLA384n2k+W9XkMfBstJvQDy3Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794428294;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Els3/l9AGCSjcC7efz1j19ntkOAQMAY8UI2QWizsyMU=;
+	b=R/w0ioztyeTGpw+iH81efs75Gr11u1T7FTX/D4R6WRKdGM/r/Lxg5Fn4aF4IZS9cakik
+	 DWqOto5Gp03qWXLqEHRnpMTRtsBGWSz89HDyRYoJ9xuP2WV9FqSRq7viKIsGFf/EpxS4Z
+	 hjPDdD8lKrC6iJVYfIaxD6a1FIO+FYYj5AtX16tBYNuzTprcLRCCMugChIX/nWtvfivnp
+	 tZBhoB41xazDU0K2euchANBodL1Tt5oFBtHeIbu/RTJI3ALUGL5Vel1Q2BwC9Tdx7aDwy
+	 jJGol60jVPU70+ZPu1+xO9lbm1bWjibvr0Qg6k3Rv2fYZ+LNhNjvWu+crD/fXZxQL5g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d6emHhNX;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="nLI3/DNW";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD9D606A31C;
-	Wed, 11 Nov 2026 20:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAF3606A321;
+	Wed, 11 Nov 2026 20:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d6emHhNX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D291F00A05;
-	Wed, 11 Nov 2026 20:15:04 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nLI3/DNW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE5FC1F00A05;
+	Wed, 11 Nov 2026 20:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794428105;
-	bh=wjqQbn4a+7dcLaWn2FPIKO3ZJVxZraaaMz1re4KgK1A=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=d6emHhNXgvYwUNGnqFeGgL8AgXDYL/Y2EDDSIF/ZdjHHD6TBHjdsWiQTLaJ5vsKQH
-	 wL9RFXZtDjERN/VWDmJJ/SAZ1CwO3aj7BcJQR+4a8W2YKpIMiHpGRLZkZ9sH3Wpv1u
-	 fKp2NtemAoNvjEF0q3Ss4Ziee/scbDOYDHXVnqyefSPlxvMjSE62kDxGSQ3t3JdWzV
-	 r66naiu7Bri47E8sJ81TFJwlQcnv2vzXX3S2G31sZpingVc5wbgs940NpOvNTcJJz2
-	 /ooou7aDsNj0nabk5/t03MmPsrYL0qZOwMAKoTlgBTC5lBVFsizgo67PA2iWJ4uSw/
-	 XV0AHP3hmrVEg==
-Message-ID: <sashiko-outbox-209624@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/6] string: Warn if the prefix is the empty string
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Alejandro Colomar" <alx@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <cd09427148a0c4718b46029c9e806f9dc1622f9b.1794425425.git.alx@kernel.org>
+	s=k20260515; t=1794428293;
+	bh=Els3/l9AGCSjcC7efz1j19ntkOAQMAY8UI2QWizsyMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nLI3/DNWdeV0x1vHF44IGq1ZgW1d12PIIB+PI2iGWrUtJREN6UWn50o5jtAKDZHAP
+	 VGvfhxb5Y89pzBf6edS//7RnKRcqZRrMIYW7a1vY5srKD0JLCv3IfAUSt2JBhKSiFE
+	 kvMBGL71p1wRbe5uOqiV+7JcSYZOmAsLDhU2/AcyuoDWcu5WOegiWpyeWiCUyAGPrV
+	 GbUnZqgqkhG+L6a8A/qLfBXYEhL5XdQ5lCXIvca5JL4WgtWLqQSNJstSHEKd+7NZ0S
+	 /vEOx3OgGLn3Zpky4EquBRs3HjuxoWtbaPgQ7k31pOA+ekt+GnkTDLtexOAModBNgp
+	 4e2OsXagqP1xA==
+Date: Wed, 11 Nov 2026 21:18:05 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] stddef: Add const_cast()
+Message-ID: <avTMrylZawfodg_A@devuan>
 References: <cover.1794425425.git.alx@kernel.org>
- <cd09427148a0c4718b46029c9e806f9dc1622f9b.1794425425.git.alx@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 20:15:04 +0000
+ <ce623fe0432ba7fe74e12171e52d2dd1f1ad2c39.1794425425.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,59 +68,129 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wqjyunsqqp33uwdl"
+Content-Disposition: inline
+In-Reply-To: <ce623fe0432ba7fe74e12171e52d2dd1f1ad2c39.1794425425.git.alx@kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] string: missing linux/bug.h include for WARN_ON_ONCE() in
-  str_has_prefix()
---
 
-commit 544547ef558a49b7dbb876a077fff7f7bedc8b0c
-Author: Alejandro Colomar <alx@kernel.org>
+--wqjyunsqqp33uwdl
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] stddef: Add const_cast()
+Message-ID: <avTMrylZawfodg_A@devuan>
+References: <cover.1794425425.git.alx@kernel.org>
+ <ce623fe0432ba7fe74e12171e52d2dd1f1ad2c39.1794425425.git.alx@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <ce623fe0432ba7fe74e12171e52d2dd1f1ad2c39.1794425425.git.alx@kernel.org>
 
-string: Warn if the prefix is the empty string
+Hi David,
 
-This commit adds a WARN_ON_ONCE() check to str_has_prefix() and documents
-that passing an empty prefix string is unsupported.
-
-Link: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-each-prop=
--v1-1-6e28fe1c72c4@oss.qualcomm.com/
-
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index ec6ca50599fed..8e6b78c6196a7 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -561,6 +561,10 @@ static inline char *strprefix(const char *s, const c=
-har *prefix)
->   * This is similar to strprefix(), but returns an offset instead of
->   * a pointer.
->   *
-> + * Unlike for strprefix(), if the prefix is an empty string, the
-> + * behavior is undefined.  If you need to support arbitrary prefixes,
-> + * use strprefix().
+> Date: 2026-11-11 20:55:39+0100
+> From: Alejandro Colomar <alx@kernel.org>
+>
+> This macro serves to cast const away without risking unwanted
+> conversions due to mistakes in the cast.
+>=20
+> It's similar to C++'s const_cast(), but it is more restrictive: it can
+> only cast away 'const', and not arbitrary qualifiers.
+>=20
+> David made it a bit more robust.
+>=20
+> Link: https://lore.kernel.org/linux-hardening/20261111102535.434c2eee@pum=
+pkin/
+> Co-developed-by: David Laight <david.laight.linux@gmail.com>
+> Signed-off-by: Alejandro Colomar <alx@kernel.org>
+> ---
+>  include/linux/stddef.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+> index e1851c50c89b..5201d71db387 100644
+> --- a/include/linux/stddef.h
+> +++ b/include/linux/stddef.h
+> @@ -194,4 +194,16 @@ enum {
+>  #define TRAILING_OVERLAP(TYPE, NAME, FAM, MEMBERS)				\
+>  	__TRAILING_OVERLAP(TYPE, NAME, FAM, /* no attrs */, MEMBERS)
+> =20
+> +/**
+> + * const_cast() - At most, drop const in the left-most derivation of a p=
+ointer
 > + *
->   * Returns:
->   * * strlen(@prefix) if @str starts with @prefix
->   * * 0 if @str does not start with @prefix
-> @@ -568,6 +572,7 @@ static inline char *strprefix(const char *s, const ch=
-ar *prefix)
->  static __always_inline size_t str_has_prefix(const char *str, const char=
- *prefix)
->  {
->  	size_t len =3D strlen(prefix);
-> +	WARN_ON_ONCE(len =3D=3D 0);
+> + * @T: Type for the cast.
+> + * @p: Pointer to be casted.
+> + *
+> + * If @p is of type const @T, then it is casted to @T.
+> + * If @p is of type @T, then it is returned without any casts.
+> + * This avoids mistakes that change anything other than 'const' in a cas=
+t.
+> + */
+> +#define const_cast(T, p)  _Generic(p, const T: (T) (p), T: (p))
 
-[Severity: High]
-Does include/linux/string.h need to include linux/bug.h for WARN_ON_ONCE()?
+Ouch!  I _thought_ I had built with this already, but I might have done
+something wrong.  Trying to build now, it fails to compile.  Which
+reminds me why I used 'default:' in the first place: when T is the same
+type as const T, this fails to build, because _Generic() can't have two
+identical selectors.
 
-Currently, include/linux/string.h only pulls in linux/bug.h transitively
-through linux/fortify-string.h when CONFIG_FORTIFY_SOURCE is enabled and
-__NO_FORTIFY is not defined. Because str_has_prefix() is an inline function
-rather than a macro, translation units that include linux/string.h without
-linux/bug.h (such as arch/x86/lib/string_32.c with __NO_FORTIFY, or
-lib/net_utils.c when CONFIG_FORTIFY_SOURCE is disabled) fail to build with
-an implicit declaration of WARN_ON_ONCE().
+So, indeed, we need default:.  It's not a big problem, because since
+the type T is already validated by the function itself: it T is not
+something that can be passed to strprefix()'s first parameter, it will
+fail to compile.
+
+So, I'll revert this in v5.
+
+
+Have a lovely night!
+Alex
+
+> +
+>  #endif
+> --=20
+> 2.55.0
+>=20
+
+
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794425425.gi=
-t.alx@kernel.org?part=3D2
+<https://www.alejandro-colomar.es>
+
+--wqjyunsqqp33uwdl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr0zXcACgkQ64mZXMKQ
+wqkGUA/+OaiDbeJU30QN+XXhjq4wsZoadkGM+HONKlcYIvwd1wpZCXvTexjqEAiu
+rBOd45EWU9TJmFtZfv0ss7JTAc5xMLd7aFuqjFWXUQeb0xlMmHyb1RyU8wEHf2TP
+b9l8iEe2F0wpccRV30rYPspU28euHBBwvIVQaoWRFNztin3JDGFM76O8OPXI4ySP
+oErRSC5piw6pB1fLLy0YfyobN4qkzm9TU6qjnz8W+LUWE2lLq3L2AyRwth6oE/5E
+Y3l1kVzSJFuyvlf2pFUxGsNTt0GyHP0UD3tRB0uSJkg/VKOCPChJPXNZiM8IERPU
+EH8hK4TivyOOgfEl6M35wtjASXP3TUtZqIajnGuVKIDCb1lq/s5nZGJavY5G9NCQ
+NCN5azwflC5oLRU+4gVaTaoXGRq06ZPZYTpMlR6qcHQAhexT+K1/MJXmCDiRpD2f
+T4HSIzb2y/3jZW48Ac+5miIOz/AJn3/kq7yu0VvSwmYqBMDqouuPYaOyD7v1CvPW
+CT/T3+VPGXsYTAgyZ/4bj4noo33Rr0K1SgBQcwrgtbKOSbCyCf3wny0cFngFZeEj
+cm0nPs5WLLhnD6aDNwvrPKRN0U6r5Dkqp/BDgQqqkIr+nDlauvmgPYboFufrkQs/
+bKfX7UNnK9v+T1LTE3qorD8tPCCSYtCabBda3K3CYLRCkdw3kic=
+=i3+x
+-----END PGP SIGNATURE-----
+
+--wqjyunsqqp33uwdl--
