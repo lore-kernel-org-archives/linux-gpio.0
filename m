@@ -1,95 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.48.69
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794451387;
-	b=2tvNl0skwKxbLMu0SdWNcqw8R70NJo07+nR4eyHDOkh5HnPG8IuVRqKaD8UMC1lpuBTr
-	 zZ662FaZx19hFpCTkCu3FnGjOQ0D63imFB+7d8s//dGg8XPnI7OZOlvshoz0wnlXGnUKT
-	 gZVeUrDlvkCW+jKQOoPnB/s8ITzTo1AvsK3QAMR8nTfFrZLR/HjBzKUOGEt036JmsMzEM
-	 NKaNMzITxg2K1Oq+zPgeVJPwJD61Qo5KHJxzD5kB1o54nQ8jIt5EXSAAgQBaX6RCmY9S+
-	 /C1qNY8/0dG5+38ejawuW5gMQIhMN+vfjutXGtEmu5d5FwRKdSk7JWF/4Wwugxhz4jA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794451387;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-ID:X-B4-Tracking:X-Change-ID:To:CC:X-Mailer:X-Originating-IP:
-	 X-ClientProxiedBy:X-EOPAttributedMessage:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=RsiQZJdEXDMF5iUujGZ9PiIFb9cPbaOip0t29zAFuDA=;
-	b=cblXpjcJumBv7tgeMJGn+GQh9ocSf6Y3jsE3nlBREtkvgzGGEzH1aWaNsJFC0c1jrG76
-	 +3UHBHbbBBL6TJqakxmzrfja1ZFkur4fbyri68/w/K4HAxLmGDE9olnQj8Hq29WewSc64
-	 UB8GKf0tJFlf4KvJeP2IdG7Y+Da+bH/4c7kmaJf6CbmH5Y+gKYtk4L7F6+eUpbYs+xjyw
-	 qMyt1oyuKnldeqxkd9BvtfzqV59/GJtaP7KaVxQRvBBB/6EsoxBPpuCPuOEVNMc3PGQ9U
-	 iNDzwezjIIUL/CX7TctZqmA9H0RhGqfUbTUEYr6+BQNZ+ejFd8eIJtaLIYMPWp/MJiA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amd.com;
-	spf=fail smtp.mailfrom=amd.com;
-	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=YrOI5cqB;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.48.69
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012069.outbound.protection.outlook.com [52.101.48.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794464841;
+	b=EvOHhsGeMU8ODMIubTycNfzNqvUdEfHOXEXtE7KY4EOkNfov4tq0j3tQl7inJPEmiq4Z
+	 CPOIFcxfOGf5E2BhUJwFUlWHOHnk7kskqRucKERomz5P6aqD4MgcwWk4AzcXKglnEm7ZY
+	 VboVVu1//wr7P9Ag5myiDtKm6hmaZ3T14LNqhXc7GqtVVV/JT8W4BlFApBUzj9WDTbiYm
+	 5hX7qS+RwlXTW3pisF1npk1hTnfJaF2+kCceZq2Qjp5TQ7ZSrO5wnWhPcqQ33ubNmGh0O
+	 BOTYIedLEsRaeEWD65ophe4B97RdEYeCaB8bO6QmbVHve/f8CppuiAj5P2VIyDa+vxQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794464841;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
+	 MIME-Version:Content-Type;
+	bh=RF8nSYHgZ3mAndPkH0mt47AX5IWuspIpOM9gMeupC3M=;
+	b=NgSkVo0rJpB1A9h5rzp/BD0RNeWsqD/O81aHz0luJKIULlpCg+/Q7V/mrX5fFQrlpSKD
+	 SHor5daxjB0lrfOk1HANyYQVKsqJdg04E3oUTBfKNaIJjc3u2kjVb0u/FcDv2VfvlzsaQ
+	 X8m3ijIuMngrrsNoHCZy97e2JdU5g4c4ZkJ9pb1yBt0xUeAMmCmV1AFy91D6+cifJJIs8
+	 XcUfhIXQIth2DuB5JLf8IQlCfvioAY+qvySU7AEIDkq0NynvNWakxons/XFiIsGFiGEh+
+	 I6eT0eqZJm84AUOTQHRFK2ERz07SpdlOqx0p7E6VwZV7V99iB2taibnXvZQGe5PItsw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=ffroot.co.za;
+	spf=pass smtp.mailfrom=ffroot.co.za;
+	dkim=pass header.d=ffroot-co-za.20260707.gappssmtp.com header.i=@ffroot-co-za.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=oALOAzYZ;
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE5F606A31C;
-	Thu, 12 Nov 2026 02:43:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DBE5F606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133D2606A327
+	for <linux-gpio@vger.kernel.org>; Thu, 12 Nov 2026 06:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 133D2606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ffroot.co.za
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=YrOI5cqB
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TLKbbmRSpxKdj0Zvdzfqd99lN4MPNsV+cClrStErgGr9lOI3hIqGaOokabEoeagG0be11Y/ikizaW6dlROaAkrDpN7GI4x9Z8h9+NgIkISY858DZkL4yCMQAJXeQp0LuihhzYteDpNFQ70/lrfxfKpcl0Rl7YAIfkoAVxWGM/E75Lg1faebrtY2xzVWB77zosfFO3jxkZCbRuubv+nOsr3ih1cBBAeW+EK+qlhMKIcosCsrn8tcsM2YTb6UGBQPIWV3x+DWgx9f6T2x1I8Cwr6pLgp02N7zKuHoYQO9qr/bFCxL1gm5BUTPj8Rct6oEcG3KJgQv76mkAIFPSVUjCrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RsiQZJdEXDMF5iUujGZ9PiIFb9cPbaOip0t29zAFuDA=;
- b=gFWkTuzOSatk++5y20TTiqKNgzjiildrHjJ5a2dOX/druzIi4CtV5B+XinmqV4vZnDdbzqpqnApcr5GAh6C4wGPSLMcmZzWVkFBq97fQqG3G612vqarCaBv/lRDHBlTP66kzj0qsHA7py/uZonpYgZmitsXXbOQ5P3CZT6m2UpvLwPWHK2KamJlvAMJVjc/SfuX63+0W9OboNzMI2ba1Oo1Zq9+1mhGyjT8fhAx7cdgDa3DCOAT9exuxcYLsdG6CP+1lDtBybmKI5CSr1L0jxZgNBegJZnkGkLsUkjMI54YqQHIlgBeyWe5ZvpWpXRroltvH68oG1zGNZTH1CPSMbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RsiQZJdEXDMF5iUujGZ9PiIFb9cPbaOip0t29zAFuDA=;
- b=YrOI5cqB1mLeXmCQuaxzjRQ0va0zEJgZUhylTq2bJbN4e7sBU7qr1TgPyZJBU0ltkB+m3Owo8PdM0N2Ke4cKGXVR8qEqDqYpEs6KqL525kmvkWNv/ipnyIn486UWvmZ2NkLMwlfMPK6EHxKYdCmG/OVSpCMMYTjI0Rk5pSWgoVE=
-Received: from DS7PR03CA0154.namprd03.prod.outlook.com (2603:10b6:5:3b2::9) by
- DS0PR12MB8245.namprd12.prod.outlook.com (2603:10b6:8:f2::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.9; Thu, 12 Nov 2026 02:43:03 +0000
-Received: from DSM2EPF0000000E.namprd02.prod.outlook.com
- (2603:10b6:5:3b2:cafe::36) by DS7PR03CA0154.outlook.office365.com
- (2603:10b6:5:3b2::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.9 via Frontend Transport; Thu, 12
- Nov 2026 02:43:03 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DSM2EPF0000000E.mail.protection.outlook.com (10.167.23.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Thu, 12 Nov 2026 02:43:03 +0000
-Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Wed, 11 Nov
- 2026 20:43:02 -0600
-From: Mario Limonciello <mario.limonciello@amd.com>
-Date: Wed, 11 Nov 2026 20:42:59 -0600
-Subject: [PATCH v2] pinctrl: amd: Steer GPIO interrupt to low
- power/efficiency cores
+	dkim=pass (2048-bit key) header.d=ffroot-co-za.20260707.gappssmtp.com header.i=@ffroot-co-za.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=oALOAzYZ
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-490a0e72588so2128949f8f.3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Nov 2026 22:27:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffroot-co-za.20260707.gappssmtp.com; s=20260707; t=1794464838; x=1795069638; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=RF8nSYHgZ3mAndPkH0mt47AX5IWuspIpOM9gMeupC3M=;
+        b=oALOAzYZM+oMzDxJH9B2GI5my8j2p0IDL8+qPlDJUCJEYhlsBObm4Pk2X9QbvtFSpZ
+         2LyZDB49iDJ9+DtBhTuvu87YPbCsw/OSEJ5hJ2a0O6e7R1UzPKAPJX2NugKrRwtbtuq0
+         3xC7W0RvAhGt+Qpx1VejPwHmlIT6VNajbZNU458fy6aueaBfNXqYFMW4jKMc/DI3TQQi
+         9Md/6tcZfofUoCwcALJPp26LEblCgoDZsESSyGZKCOdgOe7+3gW0qf0q93u/IoFJUcD+
+         uAYr5zfl7Q04WWv1nrxz6w+1RJBlxuYXZud+4X4NC12tJX840RdKGPQLBTmmYRJgKDZn
+         l77g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794464838; x=1795069638;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=RF8nSYHgZ3mAndPkH0mt47AX5IWuspIpOM9gMeupC3M=;
+        b=xAH+dK6kPrrqprshM6A6YnpuYt+M2PBgr805NiiG7zC2SftiiIU4HDIGn2tF6Kil/I
+         QDoDWowQtYjihL7W8QVmGQQpjA4vZGLw9rAZmm48wtaivQ2TiXH5j1cq8j2Cxfx9S7Ud
+         v7F4ApyYxYPAoE8/2SrHu0YAOpotLWwwn6HFlDJ5OjTbO5zsoJjtNiVIA0qGkLyacgPl
+         MWNBzBUwAWAhWCxRG84AzV4NEdoXcZXU7XpvERYL05AvthicOjA9Okif6OKiAjKPDgVR
+         MNc5O7cXNpbcWnpBSwicGyK+xZBbQQOL8wjO/w0T4ycxjQXj8C3NHcwFBguDDh4wPx4J
+         8B8A==
+X-Forwarded-Encrypted: i=1; AL+hErEYcBppp3xmiDhUVr3Hdomcqzyl8WnVY/jiTtbG3dEubS8b+ubHa8XRlp64AGOiV9bbhzluPXFLGrdL@vger.kernel.org
+X-Gm-Message-State: APuU4Z82EiZIJj6eTR0dLKEAtt3guaFW/RS7cl2OJBtArK1tNXBWf5A1
+	AOLTs4Qjh3XLNdWeuANIE/v/eGcKGmSz3B9avOAuEfFpYdgH3FDmrm9fAdt5FKl3G1Y=
+X-Gm-Gg: AYBFou1LkWyy2LRDBSDi2AF0xRjAJnAmhplH7/QLM8W7SQi1lUJi8wtXsvGnOvSBX4V
+	S835DLv6RlU0EmykMbMrW0opIjyyweg5QE2W03s5mZPRnVtwDhDwocIUWsNQHlBWHPe4ocuVyKX
+	EQOTbXW3JVNVA7qQqLDz3LrqVqp5y4Lr1B25fnrD4bb2q2mVAL6Raa2KXjlAIcMeIpuS5LEYM+4
+	Q8dkpaigMJ4hKbR52WdFHvNij2oKZgKd7hVeH0jID7cQIZI0U3lK1QVg3DSwJkcPGL3HxQa7NIk
+	QoNMp0cIZyoDUz0qE0iaQda/i22hDwjeX3pjjlS09tVExXynnC8KB6v2haJFDCR/JhRElLq7a1W
+	BzgCjMiwP7W7gMn/dVmlw+ZIJZ4cGY1qTlN1G/TuIIozO2h19JkrcKbChWutpZgeSc3UBtiE42r
+	tN55xx79gTgvbzTNobnVMk+AJJGsFI7Ej3WpxVFHgOWUM/RDtpvNxKMybFHCHg8L3xxM2g9imU3
+	3hnC1e3lpxh2Fc3dwjvEWmJ9dqwpaF0L2AICBWU2/3liu9ULxnv4SyuWAukvpYT0lirPE1lMY6Z
+	f5zaU0X+lXi1L972WGlgQ/Vwto2GYp/rXur7w/6iuo5ulRv/FNbHNsuSoBZCV+kt58yMDKXPiSc
+	z/bY=
+X-Received: by 2002:a05:6000:460b:b0:493:2eb8:e7fa with SMTP id ffacd0b85a97d-499c888ce81mr7051233f8f.43.1794464838079;
+        Wed, 11 Nov 2026 22:27:18 -0800 (PST)
+Received: from andrew.office ([192.145.132.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4982eedfb36sm14820585f8f.0.2026.11.11.22.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 22:27:17 -0800 (PST)
+From: Andrew Gaylard <ag@ffroot.co.za>
+To: Lee Jones <lee@kernel.org>
+Cc: Dvorkin Dmitry <dvorkin@tibbo.com>,  Wells Lu <wellslutw@gmail.com>,
+  Linus Walleij <linusw@kernel.org>,  linux-arm-kernel@lists.infradead.org,
+  linux-gpio@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  stable@vger.kernel.org
+Subject: Re: [PATCH 09/10] pinctrl: sunplus: Validate pin_func index in
+ sppctl_dt_node_to_map()
+In-Reply-To: <20261111215256.1982044-10-lee@kernel.org> (Lee Jones's message
+	of "Wed, 11 Nov 2026 21:51:54 +0000")
+References: <20261111215256.1982044-1-lee@kernel.org>
+	<20261111215256.1982044-10-lee@kernel.org>
+User-Agent: mu4e 1.12.14; emacs 30.2
+Date: Thu, 12 Nov 2026 08:27:11 +0200
+Message-ID: <sa6se1636ps.fsf@andrew.office>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,142 +103,21 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20261111-superm1-pinctrl-power-improvement-v2-1-3b294116c835@amd.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOTQ6CMBSEr0K6toYWQsSV9zAsaPuUZ+xPXkvVE
- O5uwRM4uy+ZfDMLi0AIkZ2rhRFkjOhdAXmomJ5GdweOpjCTtexECY9zALKCB3Q60ZMH/wLiaAP
- 5DBZc4n3TtrUZQcm+YcUTCG743jeuw4/jrB6g0ybeGhPG5Omzn8hi6/2zlwUXvFUKOm2UkXC6j
- NYctbdsWNf1CwhG1ETiAAAA
-X-Change-ID: 20261111-superm1-pinctrl-power-improvement-93440daeb293
-To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>, Shyam Sundar S K
-	<Shyam-sundar.S-k@amd.com>, Linus Walleij <linusw@kernel.org>, "Bartosz
- Golaszewski" <brgl@kernel.org>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Mario
- Limonciello" <mario.limonciello@amd.com>
-X-Mailer: b4 0.15.2
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DSM2EPF0000000E:EE_|DS0PR12MB8245:EE_
-X-MS-Office365-Filtering-Correlation-Id: a3a1080f-bda0-4ee9-6ac5-08df4066ac7a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|23010399003|261009223027099003|18002099003|3023799007|261022105027099003|261021121427099003|261102123227099003|261028144727099003|261026121527099003|261026140227099003|56012099006|10067099003|11063799006|5023799004;
-X-Microsoft-Antispam-Message-Info:
-	wQaamLce6L63La1OTD1dAHO8eSfTIZ41chp+yu7b5BMPY7nL8qCVn7X39Ngf4jkstEznlO5fjpAncmF6fPTJUgP5E8DyJSD3VvScIi4Adt3jsirStdgBMwptFLfgWvNBlCAFOSjIc0RgiS/B+mHIBppXG/N7/cB4fAulsMedGpyxITEwxbs7c23j38bDZjdVDhS2nNbyI9vvGZ/OI15Zc2amhdvd/qa+a5QLc63SGFkDhB1vdxQOJqQgLeTscGNTmVs2tsn5imYx2pOMuigJWY4zJvheXB+IwEzJuzqSXOgplqKx84Wkg7UR8aC+RnB2Z6CItEJZVY2VYEl+2rheff5ChxKK6rrXME9fxb6ypR/qCVt1fHUypWpCv17JTJUFXKI0dbJEkwlkyF1gPjlcZLRrWN807fdg4xQLc4nRAuFQj20Xjfl5R7H2W6B8leY6cXwy0+fx4BLpD27ddOMHTYMC9iqkgYFiNeX40YLWw5b4OrhdNNNvNsbYTqxwZbr8MXTj/TTskrpR0ayLEnF0p6Ve6GfKE4aV6GLFqszOpTkrFdm4Mbd4sP2ya8T9s6Kru+CaPRRR77QwJ2PhF4FQDDsPNwJXRv0hhmt3eaJmvQyAjS5aDoX/3MPUshItax2yRw8sr352+b2bhdLldPG9fvD2B+D/Hd4pQHx1UpGH+co=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(23010399003)(261009223027099003)(18002099003)(3023799007)(261022105027099003)(261021121427099003)(261102123227099003)(261028144727099003)(261026121527099003)(261026140227099003)(56012099006)(10067099003)(11063799006)(5023799004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	DjOyXP57k0wkSydPGEV7xTsJaEmwt2vp5iZZZbtROKazn5FGE8PAOoYlIO6VaN2ueKANWFimy9Xa7tcpDvIQQYY6EJxUDSrsfpmlKu/T3uPeJtJLE9vmtBsZZHEc8+O8aB9GuLZ6dfuSVkdz9ZILEmfqIyVMRozsUpivWs+/vEAF6bR/rKjbvW4OWEOcUvdwQgh61yfZcqir6wKDtJyLrXqfllP0OCX+mCiqeJhAhkTSQ3yWOBK70us0cFisydVcAV1rYel39sbEkC8qUu3A/m7VqDKID8PH0kj4EPk11lg6eThiJ6tRLc2rXCpCoTg8ngzUd/iEWDbmxPQA4BJ+hxjIPBXRL7GG9pQwuiUPYAKWuPeeJBHh+5HsKaDIc5z1/lCltKUWm7sqPFHXYdXmbpfB1Xz2PVnmagc9+CoVqnxyWxb0OQrUaS3FpaRv0Vhk
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2026 02:43:03.3772
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3a1080f-bda0-4ee9-6ac5-08df4066ac7a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DSM2EPF0000000E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8245
+Content-Type: text/plain
 
-On hybrid x86 systems the GPIO controller interrupt can be a frequent
-wake and handler source.  Servicing it on a performance core can wake that
-core unnecessarily.
+Lee Jones <lee@kernel.org> writes:
 
-Prefer routing it to low power cores, then to efficiency (dense) cores,
-using the CPU type from the x86 topology information.  If the system has
-neither core type (non-hybrid), leave the affinity untouched.
+> In sppctl_dt_node_to_map(), the validation loop checks that pin_num is
+> within sppctl_pins_all_sz, but does not validate pin_func (bits 15:8)
+> before indexing sppctl_list_funcs[pin_func] for fully-pinmuxed pins.
+> Check that pin_func is less than sppctl_list_funcs_sz when pin_type
+> selects a mux function.
+>
+> Fixes: aa74c44be19c ("pinctrl: Add driver for Sunplus SP7021")
+> Closes: https://sashiko.dev/#/bug/linux-977252d6-b0cc-4d3a-ae2d-59d1e2f8a649
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
 
-The placement is applied with irq_set_affinity(), so userspace is still
-free to override it.
-
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-Changes in v2:
-- Guard with CONFIG_X86 instead of CONFIG_X86_64 to fix the UML build
-  failure (reported by kernel test robot and Sashiko).
-- Iterate online CPUs so offline low power CPUs don't prevent falling
-  back to efficiency cores (reported by Sashiko).
-- Link to v1: https://patch.msgid.link/20261111-superm1-pinctrl-power-improvement-v1-1-4bbe6cdbd2e8@amd.com
----
- drivers/pinctrl/pinctrl-amd.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 30da75bb93b9a..c1b5c5e18d2e4 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -31,6 +31,8 @@
- #include <linux/pinctrl/pinmux.h>
- #include <linux/string_choices.h>
- #include <linux/suspend.h>
-+#include <linux/cpumask.h>
-+#include <linux/processor.h>
- 
- #include "core.h"
- #include "pinctrl-utils.h"
-@@ -1272,6 +1274,41 @@ static void __iomem *amd_get_named_res(struct device *dev, struct platform_devic
- 	return base;
- }
- 
-+#ifdef CONFIG_X86
-+/*
-+ * On hybrid systems prefer to service the GPIO interrupt on low power cores,
-+ * then on efficiency (dense) cores to save power.  Userspace can still
-+ * override the placement.  Do nothing if neither core type exists.
-+ */
-+static void amd_gpio_set_irq_affinity(struct amd_gpio *gpio_dev)
-+{
-+	static const enum x86_topology_cpu_type types[] = {
-+		TOPO_CPU_TYPE_LOW_POWER,
-+		TOPO_CPU_TYPE_EFFICIENCY,
-+	};
-+	cpumask_var_t mask;
-+	int cpu, i;
-+
-+	if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(types); i++) {
-+		for_each_online_cpu(cpu) {
-+			if (cpu_data(cpu).topo.cpu_type == types[i])
-+				cpumask_set_cpu(cpu, mask);
-+		}
-+		if (!cpumask_empty(mask)) {
-+			irq_set_affinity(gpio_dev->irq, mask);
-+			break;
-+		}
-+	}
-+
-+	free_cpumask_var(mask);
-+}
-+#else
-+static void amd_gpio_set_irq_affinity(struct amd_gpio *gpio_dev) {}
-+#endif
-+
- static int amd_gpio_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
-@@ -1377,6 +1414,8 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto out2;
- 
-+	amd_gpio_set_irq_affinity(gpio_dev);
-+
- 	platform_set_drvdata(pdev, gpio_dev);
- 	acpi_register_wakeup_handler(gpio_dev->irq, amd_gpio_check_wake, gpio_dev);
- 	amd_gpio_register_s2idle_ops();
-
----
-base-commit: 7475ea8b58616b33c04afb976cf0fbaad9dd63fb
-change-id: 20261111-superm1-pinctrl-power-improvement-93440daeb293
-
-Best regards,
---  
-Mario Limonciello <mario.limonciello@amd.com>
-
+Reviewed-by: Andrew Gaylard <ag@ffroot.co.za>
+Tested-by: Andrew Gaylard <ag@ffroot.co.za> # on a Figment Design HW84 board
