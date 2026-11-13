@@ -1,57 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794596271;
-	b=zoN9zmt7v+dBmnAocNSRSkjZyZ/OqWelDLoPajIBayWieFyhk5aI9oPhIXC8B9J/fzhL
-	 epAT+9GR1Eayv+xdhU5I0wHfJBs7h1PPRH1aN9W2wVAWzjAVQG8gdQa+u8zSwfYS+f6C7
-	 A3waLrIK4leeJuALxXXe6m7uoMM611UdWjC3XT/AE+pP0MpqOgEmauPCiTptUjF32DKUV
-	 JgtWKXhGtYg5EP0Pt02pT5ZdHcaPqg5YfOFv8y80r/bYdKmVyS14zJXkzwxoO17P8w/q3
-	 dAJZ1IHEsqlDhJF2IsbZLHuuZO68wzvPIM4SlD3kMO27J8q376YRH6lowMsCTxSS+4A==
+	t=1794596559;
+	b=dohaNP6qlFmRhtvLP442/4gVMfoyaJDeMqNF3VPat0RKcNstINuV0tw3rG8DlG3SD/W1
+	 5V4Eh3fzQsVGOXr2ZnhpM6gGdnaTYNdZhse02qCpb35Ok7CX/aLGT9v8aviHg/WeBXSaK
+	 WGjj0mvNrEqrdZTm+PZ7QeOp0UF6c3k3e6V0ZRpKrIvo2Un9dfO/1+NrdoYtpBTQ+qoZx
+	 7wPHjhCdvmAfCJOZ3AaAalQZV72NsNP8VC3Cp4AgNPgSq6k1NSdL2mqZjIE8VYxZfSTsX
+	 FvNJvNXI51+C0v6rPnvu5Apd/XygBbOcTloPe3rIv6ZrXm+CQ6WUB6WWs/vI3FmZBTQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794596271;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794596559;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=EOI7EcoMDFR1JLtT4B1tTONbkLbkYKJqeMvbtc3fv7U=;
-	b=LYO1pfQLyiQMwYJwSytbyv6qopIz9+QvbPk6e47zNHV8cEcvFRHyYG76pWlEaOKmvlPK
-	 V6/x4JP4pF3gWrKB1uHTc+HpA1K7X2tR54dkdFNEx7gXK8tuIkcPTt9phtjr/lslfknd8
-	 Yq+XSFcbk0zaMnFonNgXG3TOuTn2a3K/x+nYjo9ok+FCi9XKfDqVMAVzxVEc0NUXWXsm9
-	 pPlv9SQYLDM6l5yeCu5NgjsSqZJA1EYLMo42N6xp6UQdKsSNzN4MHgcG1BFFwmWmGDOJ9
-	 NC6gu1p8SyTrqBeT6ngVj2d0dllmBN7PW9gDq4Ph3eGSlXR9X5YUw9X5RJxgt1Y441w==
+	bh=KcymmraBkDaAXzH4Jcmsb96TAiK9ZZVzXmBjjM9wTlw=;
+	b=EgxbAicIg+FdxJNS9vT1As8MMkZQ1xzLrHH2Rk6M7O0Wsq6B9dprrYpM0ctUXYqBjVl/
+	 QK5zsNkIHRQN6DCWVbAe7WYstyNUSwkVLU/3uGz1ELG8c4oJO7yWGCqIg1VLp79gCVKsw
+	 o1CEtVKVmCEz+h+4ivI0zWeWobsYTPkBZ7gqtewXVISWGEEaLWhDT3tEbLhHPMiz3cwAp
+	 zU38IejeAwX/RdTc6HnvWIlHmkGePaiqeqgp3qEWKneCxsPyP5mkTAgtc7rUXseqZVljk
+	 8IYwX+QEzBdYGZ2UEiyalpdEx2MOzCL6dTXX3YInP9za6E7/O66GRmqgOK/9DhGCNog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J13jsIkw;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TTmesqnh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CFE606A32E;
-	Fri, 13 Nov 2026 18:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BE606A33D;
+	Fri, 13 Nov 2026 19:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J13jsIkw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9391F000C8;
-	Fri, 13 Nov 2026 18:57:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TTmesqnh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF2A51F000C4;
+	Fri, 13 Nov 2026 19:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794596270;
-	bh=EOI7EcoMDFR1JLtT4B1tTONbkLbkYKJqeMvbtc3fv7U=;
+	s=k20260515; t=1794596559;
+	bh=KcymmraBkDaAXzH4Jcmsb96TAiK9ZZVzXmBjjM9wTlw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=J13jsIkw35TrYx2bmhYVQv2e7pQtL0RhNMGegBAHA8cMnl8kw8F2dxkGj5oD1qJjZ
-	 Y4vVH37WgLbFsyCG8hinaAd54fjfNbHPAa6oothqaNtI9IVVmaKlv50fArKx/WmkVz
-	 +fNpn+mWrs+9ud2+Tda5uZDLwHDP5oNBffchaZfw7Pow5z0IwxtXKdd9TPR/ifvjHP
-	 I6u3gbmPMg3fdSwUJK3dydj30REPkM7kppsMKnvE3FTgThfPys66M+l1icvDndIdHY
-	 1YrdJZ+mlIixakZykidGiRKgHEH4Hd0cpQuvPDAdNhHNohyB337UFbTbkZl6YVZiol
-	 s3dHgj8WkhMXw==
-Message-ID: <sashiko-outbox-213487@kernel.org>
+	b=TTmesqnhd5z0cbPmBegHcn7wIqCqbvycZ9pp8SLA8s3TRm5k/Eh6EUdLjmlvwWGOU
+	 QbR+y2TsJSIgw/8kfaJKBahtP0ffsnY75/jlNKTHmevrGYYOSGc6Obw9hhW81sFrZe
+	 ITTTV1hQTrDOMcJueQowOsROk97pIjPoOKpP+RLCHnixoLT3XEU5xX8hFNQdijwhiy
+	 xLbYb+9I00IM9LavKF5tmN2R0MEy5Ds9scyguzl4ZqZxOqHcD+9He7RjnqHHQZ85El
+	 EGun0wLpMaLEgrvjLthzlZJLKj48pIjzWxJZKa9zwr9XoDTbL0YOnsGphRwH5GXQqp
+	 D6CV6R3ymybJA==
+Message-ID: <sashiko-outbox-213493@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 01/23] dt-bindings: clock: qcom: add SM8650 LPASS
- core & audio clock controllers
+Subject: Re: [PATCH RFC 03/23] dt-bindings: pinctrl:
+ qcom,sm8650-lpass-lpi-pinctrl: document clocks and power domaines when ADSP
+ is not used
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Neil Armstrong" <neil.armstrong@linaro.org>
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261113-topic-sm8650-el2-v1-1-5183f6aab9fc@linaro.org>
+In-Reply-To: <20261113-topic-sm8650-el2-v1-3-5183f6aab9fc@linaro.org>
 References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-1-5183f6aab9fc@linaro.org>
+ <20261113-topic-sm8650-el2-v1-3-5183f6aab9fc@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 18:57:49 +0000
+Date: Fri, 13 Nov 2026 19:02:38 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,172 +62,58 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] dt-bindings: clock: qcom: broken examples in
-  qcom,sm8650-lpasscorecc.yaml
-- [Low] dt-bindings: clock: qcom: unwieldy per-compatible conditionals
-  in schema
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] dt-bindings: pinctrl: qcom,sm8650-lpass-lpi-pinctrl: redundant
+  oneOf in clocks
 --
 
-commit 822c52dcc683f4949600245b7d9f62d13802e752
+commit d8422bb265d6e088cce5d6024805eb9ced00d38a
 Author: Neil Armstrong <neil.armstrong@linaro.org>
 
-dt-bindings: clock: qcom: add SM8650 LPASS core & audio clock controllers
+dt-bindings: pinctrl: qcom,sm8650-lpass-lpi-pinctrl: document clocks and po=
+wer domaines when ADSP is not used
 
-This commit adds the Device Tree binding schema and header definitions for
-the SM8650 LPASS HM, core, audio, and AON clock controllers.
+This commit updates the SM8650 LPASS LPI pinctrl DT binding schema to
+allow a single core clock and add power-domains properties for platforms
+where the ADSP is bypassed.
 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-lpasscor=
-ecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-lpasscorecc.=
-yaml
-> new file mode 100644
-> index 0000000000000..9c5207ee02f15
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-lpasscorecc.yaml
-
-[ ... ]
-
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,sm8650-lpasshm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Board XO source
-> +        clock-names:
-> +          items:
-> +            - const: bi_tcxo
-> +      required:
-> +        - power-domains
-> +        - '#power-domain-cells'
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,sm8650-lpasscorecc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Board XO source
-> +        clock-names:
-> +          items:
-> +            - const: bi_tcxo
-> +        required-opps: false
-> +      required:
-> +        - power-domains
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,sm8650-lpassaoncc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Board XO source
-> +            - description: LPASS_CORE_CC_CORE_CLK
-> +        clock-names:
-> +          items:
-> +            - const: bi_tcxo
-> +            - const: iface
-> +        power-domains: false
-> +        required-opps: false
-> +      required:
-> +        - '#power-domain-cells'
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,sm8650-lpassaudiocc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Board XO source
-> +            - description: LPASS_AON_CC_MAIN_RCG_CLK_SRC
-> +        clock-names:
-> +          items:
-> +            - const: bi_tcxo
-> +            - const: iface
-> +        required-opps: false
-> +      required:
-> +        - power-domains
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-=
+lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lp=
+ass-lpi-pinctrl.yaml
+> index 1bf08860a4baf..4c54f873199cc 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pin=
+ctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pin=
+ctrl.yaml
+> @@ -29,11 +29,25 @@ properties:
+>        - description: LPASS LPI TLMM Control and Status registers
+> =20
+>    clocks:
+> -    items:
+> -      - description: LPASS Core voting clock
+> -      - description: LPASS Audio voting clock
+> +    oneOf:
+> +      - items:   # for ADSP based platforms
+> +          - description: LPASS Core voting clock
+> +          - description: LPASS Audio voting clock
+> +      - items:   # for ADSP bypass based platforms
+> +          - description: LPASS Core voting clock
+> =20
+>    clock-names:
+> +    oneOf:
+> +      - items:   # for ADSP based platforms
+> +          - const: core
+> +          - const: audio
+> +      - items:   # for ADSP bypass based platforms
+> +          - const: core
 
 [Severity: Low]
-Each of the four compatibles requires its own if-then block to override
-clocks, clock-names, power-domains, required-opps, and
-#power-domain-cells (which also leaves #power-domain-cells unconstrained
-on qcom,sm8650-lpasscorecc and qcom,sm8650-lpassaudiocc).  Would it be
-cleaner to split these variants into separate binding schema files instead
-of using per-compatible conditionals for every entry?
-
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,lpassaudiocc-sm8650.h>
-> +    #include <dt-bindings/clock/qcom,lpasscorecc-sm8650.h>
-> +    #include <dt-bindings/clock/qcom,sm8650-gcc.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +
-> +    clock-controller@6bc0000 {
-> +        compatible =3D "qcom,sm8650-lpassaudiocc";
-> +        reg =3D <0x06bc0000 0x38000>;
-> +        clocks =3D <&bi_tcxo_div2>;
-> +        clock-names =3D "bi_tcxo";
-> +        power-domains =3D <&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
-> +        #clock-cells =3D <1>;
-> +    };
-> +
-> +    lpass_aon: clock-controller@6e00000 {
-> +        compatible =3D "qcom,sm8650-lpassaoncc";
-> +        reg =3D <0x06e00000 0x30000>;
-> +        clocks =3D <&bi_tcxo_div2>, <&lpass_core LPASS_CORE_CC_CORE_CLK>;
-> +        clock-names =3D "bi_tcxo", "iface";
-> +        #clock-cells =3D <1>;
-> +        #power-domain-cells =3D <1>;
-> +    };
-> +
-> +    lpass_core: clock-controller@7b00000 {
-> +        compatible =3D "qcom,sm8650-lpasscorecc";
-> +        reg =3D <0x07b00000 0x58000>;
-> +        clocks =3D <&bi_tcxo_div2>;
-> +        clock-names =3D "bi_tcxo";
-> +        power-domains =3D <&lpass_hm LPASS_CORE_HM_GDSC>;
-> +        #clock-cells =3D <1>;
-> +    };
-> +
-> +    lpass_hm: clock-controller@7e00000 {
-> +        compatible =3D "qcom,sm8650-lpasshm";
-> +        reg =3D <0x07e00000 0xa000>;
-> +        clocks =3D <&bi_tcxo_div2>, <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>;
-> +        clock-names =3D "bi_tcxo", "iface";
-> +        power-domains =3D <&rpmhpd RPMHPD_LCX>;
-> +        required-opps =3D <&rpmhpd_opp_nom>;
-> +        #clock-cells =3D <1>;
-> +        #power-domain-cells =3D <1>;
-> +    };
-
-[Severity: Medium]
-Does this example pass make dt_binding_check?
-
-In lpass_hm, GCC_LPASS_CFG_NOC_SWAY_CLK is not defined in
-include/dt-bindings/clock/qcom,sm8650-gcc.h, causing dtc to fail with a
-syntax error.  In addition, lpass_hm specifies two clocks ("bi_tcxo" and
-"iface") while the qcom,sm8650-lpasshm conditional schema only allows
-"bi_tcxo", and clock-controller@6bc0000 (qcom,sm8650-lpassaudiocc) only
-provides "bi_tcxo" while its conditional schema requires both "bi_tcxo"
-and "iface".
+Could clocks and clock-names set minItems: 1 alongside the two-entry
+items list instead of using oneOf?  Because the single-entry ADSP bypass
+list is a strict prefix of the two-entry list, minItems: 1 avoids
+duplicating the first item in both properties.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113-topic-sm86=
-50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D1
+50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D3
