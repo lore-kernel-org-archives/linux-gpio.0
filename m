@@ -1,57 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.76
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794532571;
-	b=JVgyxDY86wNDMVE/yUDKq7EZGJUnZNxIVAVcIhXL+QyzV1jAjLNxaOONwpnBV5kI6hWo
-	 KiXSMdlwFUhx7FZChvkTtmm0bXIuMBk/UjW/uNjqb84OxmchMjV2oMRQ8ObNxRU9bv4qq
-	 +YnAFsHajw6StZ2fY4NkFpIJgQccGXniqTuh4MUJPJ3F1oACWQ4hKT3whUx7IqQxG5F74
-	 sH9E5jWmv6sMlH+bHgKy08EZkQIzjF5scj1waz6U+VaMn5wfXyjokUWqDs5buHq9wQMvn
-	 gcn8cdDdAQmfMy5iGFbob9Sgz1WmRXROIX3wGn9oJ5BD5a88iGzUByar0iEvx7iKS+g==
+	t=1794533378;
+	b=MBcZygZSP2ZTqy0PDF+d56UvIKDK+QUMM/URcl959HYn3QgBeWk4bSpXSDhUMmcp2Fa0
+	 H2ch0jKZO8cjNppukArU3TmuS5SMqGtrgi2eyjIapyVQkMv0SdHwlEjYb2CPf9bFfUcIe
+	 zURaOyjBBZqQAP8wtutP2NxdtPbyGVzsxyXvoZWnbdRRphZB+EBxSAv+p/z+hQnlBLHF0
+	 NOd+6tHIkqtz4vhrsXbo0l1IZnn3VgOUft51TkGOtmX7QZBmYde30FiJNH7BGYq9cBaqF
+	 PQY5U9Zwx2ClzSAz/PWWQfdJWxaTOj2ctNX07ZhaKB6SQ5ZodQw58F2mPgKlp78UKYQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794532571;
-	h=DMARC-Filter:X-Alimail-AntiSpam:Received:Date:Message-Id:Cc:
-	 X-Lms-Return-Path:In-Reply-To:References:Content-Type:
-	 Content-Transfer-Encoding:To:Subject:From:Mime-Version;
-	bh=EuJesQLZQcUL7RHGlbQVMGLxz6hVm1h8tgff4wrd2C8=;
-	b=Moc840iDbwGHg02CQpxF7NdIjoO2ZixMKdi6Qef3yWunhwi/FrKs0GhGw6rhJI4FOJet
-	 VDQQXf2OfZwO6xnmyaMAfhEo6yCWL40iZ1tUD6/FMMwGXXwzVYtv6TI5bQCwbBxwnWVj6
-	 WTEYAF6UN8nxSZYwIBeUgGf2k9P4KqZErt+g1G/VMlG8KESPVwxQuXB6cZhOOqsmibFLn
-	 4JVb8M5UFGDpMG5Oold9boKpBCEiIhQVfrAc/lkYpxiMiUbFg+X1fBnVYmk8WDRhnac0e
-	 QG3ogbBbCvUCv4ZLibHqlZ2M/DA1Ikuk4lWKBSO751U3cDOMyOgCh7EWgay4dn+XOHQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794533378;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:User-Agent;
+	bh=/UIZjplTyWFVNcFaN9XT79DT++d9ixmCWpXnRTg3jfw=;
+	b=xjkYPsXDwaFHbF0OF2Hj4PzkURUE496Nm4Q3y8G7EAPwu3GftpMHZvycOLxA+uQsrz9V
+	 ozIB+0cYQzikBJAq5JUmK/GdwBIq2zsIPirWXF6QTYp1u59LNva9tdfyn8Czj0d4/g3ZL
+	 ZbPHZKzQbM7DtXFFSnT5HBn5srVKPnBY1Q6yJb+MfbeE5+9AzPcFBe6o/AOIjzESYb077
+	 Trn2xf90j1rsGmp5+kvL5oBSCHXnnTDOg0wDj6LP5Z2D2izGhXuSzRpABzGpcWzFMx72f
+	 18O40m2xE/1c8QdVlH7cEFByA808nX1WEaTV3NK/8s+rUl/rF8KM/8ftNhi+O9GUbDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=kaihong.com;
-	spf=pass smtp.mailfrom=kaihong.com;
-	arc=none smtp.remote-ip=115.124.28.76
-Received: from out28-76.mail.aliyun.com (out28-76.mail.aliyun.com [115.124.28.76])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dqPPFOsP;
+	arc=none smtp.remote-ip=198.175.65.9
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656A9606A31C;
-	Fri, 13 Nov 2026 01:16:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 656A9606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaihong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaihong.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07437093|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.0364211-0.000647065-0.962932;FP=10195514563781422546|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033025068124;MF=wangxiaolei01@kaihong.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.k0uSnOv_1794532557;
-Received: from localhost(mailfrom:wangxiaolei01@kaihong.com fp:SMTPD_---.k0uSnOv_1794532557 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Nov 2026 09:15:58 +0800
-Date: Fri, 13 Nov 2026 09:15:54 +0800
-Message-Id: <e457d7c64cc913174affb10b272225cc3cbe88a3.47db7345.49f4.4282.8c3a.7d02c37fbf53@feishu.cn>
-Cc: <linusw@kernel.org>, <florian.fainelli@broadcom.com>, 
-	<rjui@broadcom.com>, <sbranden@broadcom.com>, 
-	<bcm-kernel-feedback-list@broadcom.com>, <daniel@dragonzap.com>, 
-	<iivanov@suse.de>, <andrea.porta@suse.com>, <phil@raspberrypi.com>, 
-	<linux-gpio@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>, 
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, 
-	"Jonathan Bell" <jonathan@raspberrypi.com>
-X-Lms-Return-Path: <lba+16af664cb+a9c232+lists.infradead.org+wangxiaolei01@kaihong.com>
-In-Reply-To: <avWuED_RGlEdGH-9@apocalypse>
-References: <20261106070628.1428691-1-wangxiaolei01@kaihong.com> <20261106070628.1428691-2-wangxiaolei01@kaihong.com>
-	<avWuED_RGlEdGH-9@apocalypse>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To: "Andrea della Porta" <andrea.porta@suse.com>
-Subject: Re: [PATCH 1/3] pinctrl: bcm: Fix off-by-one and out-of-bounds access in fsel_get()
-From: =?utf-8?q?=E7=8E=8B=E5=AD=9D=E9=9B=B7?= <wangxiaolei01@kaihong.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA8606A321
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 01:29:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9BFA8606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dqPPFOsP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794533378; x=1826069378;
+  h=date:from:to:cc:subject:message-id;
+  bh=JN58z7/CHMVwGBNHcHyMfXSYk2+MYSmzJIrzvqFHN1s=;
+  b=dqPPFOsPaQCoF8QStsCFw3ViJAi/ufJEEOgbKHFXVxM8Ex8++HOh20fZ
+   UX2EIa0n3dpJ79sgKFRQcQmSWIM0Kr3dKqk7p30OvWAsAVJrHnxSAZKLe
+   HDrJK4pZiRcJ12R/8VdrUfY/tZVRt5QS8u828t1yPauKn6maDBiMFk0AL
+   e/qx78JWSTqKUiku1NcVFzG5y/NTB75LFX2nC5hi24V1kopG0P1etOUEO
+   r/bta5pci3OqNIlgNygTJpkno0TjtBpBoen0oWs/Io9bZxNY3Ptht94Yg
+   gnaUNWB5ubPPj3lgwuH1PmLFYDTaU20TaorJVJpSKJNneNl5xulw0zYLu
+   Q==;
+X-CSE-ConnectionGUID: kUX6F279Qdu2/JrmwodasQ==
+X-CSE-MsgGUID: sEATy23SQymPAsM9eNqkOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11964"; a="3192041"
+X-IronPort-AV: E=Sophos;i="6.27,210,1787036400"; 
+   d="scan'208";a="3192041"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2026 17:29:38 -0800
+X-CSE-ConnectionGUID: tc2V5m6FQjGEK9D5YwlrxQ==
+X-CSE-MsgGUID: PmtVqj9KQTagNPSvditc6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,210,1787036400"; 
+   d="scan'208";a="8875621"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Nov 2026 17:29:36 -0800
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xRg6f-000000012Hn-2Vr6;
+	Fri, 13 Nov 2026 01:29:33 +0000
+Date: Fri, 13 Nov 2026 09:29:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio:for-current] BUILD SUCCESS
+ f8a4fdf57cedb9cb3f47d94269ff27fea8e819e8
+Message-ID: <20261113092901.NKfRSlEe-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,239 +79,290 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
 
-Hi Andrea,
-Thanks for the review,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: f8a4fdf57cedb9cb3f47d94269ff27fea8e819e8  gpiolib: fix stack out-of-bounds access in gpiochip_add_hog()
 
-> From: "Andrea della Porta"<andrea.porta@suse.com>
-> Date:=C2=A0 Thu, Nov 12, 2026, 20:12
-> Subject:=C2=A0 Re: [PATCH 1/3] pinctrl: bcm: Fix off-by-one and out-of-bo=
-unds access in fsel_get()
-> To: "Wang Xiaolei"<wangxiaolei01@kaihong.com>
-> Cc: <linusw@kernel.org>, <florian.fainelli@broadcom.com>, <rjui@broadcom.=
-com>, <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>, <da=
-niel@dragonzap.com>, <iivanov@suse.de>, <andrea.porta@suse.com>, <phil@rasp=
-berrypi.com>, <linux-gpio@vger.kernel.org>, <linux-rpi-kernel@lists.infrade=
-ad.org>, <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.=
-org>, "Jonathan Bell"<jonathan@raspberrypi.com>
-> Hi Wang,
->=C2=A0
-> On 07:06 Fri 06 Nov =C2=A0 =C2=A0 , Wang Xiaolei wrote:
-> > brcmstb_pinctrl_fsel_get() takes the value read from the pin's FSEL
-> > register and uses it directly as an index into
-> > pc->pin_funcs[pin].funcs[]:
-> >=C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 fsel =3D (val >> BIT_TO_SHIFT(bit)) & pc->p=
-in_funcs[pin].func_mask;
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 func =3D pc->pin_funcs[pin].funcs[fsel];
-> >=C2=A0
-> > That is not how the register field is encoded. The setter,
-> > brcmstb_pinctrl_fsel_set(), treats 0 as GPIO, 1..n_funcs as
-> > funcs[0..n_funcs - 1], rejects n_funcs + 1 and above, and n_funcs is
-> > always BRCMSTB_FSEL_COUNT (8). The field is therefore a 1-based functio=
-n
-> > number, while funcs[] is a 0-based array of eight entries.
-> >=C2=A0
-> > Every readback is consequently shifted by one slot, and a field value o=
-f
-> > 8 -- which the setter accepts, being the eighth and last alternate
-> > function -- indexes funcs[8], one element past the end of the array.
-> >=C2=A0
-> > This is reachable from userspace without supplying any invalid input:
-> >=C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 # echo "gpio45 alt8" > .../pinmux-select
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 # cat .../pins
-> >=C2=A0
-> > The write is an ordinary mux request that fsel_set() accepts; the read
-> > that follows goes through pinctrl_pins_show() ->
-> > brcmstb_pctl_pin_dbg_show() -> fsel_get() and triggers KASAN on
-> > Raspberry Pi 5:
-> >=C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 BUG: KASAN: global-out-of-bounds in brcmstb=
-_pctl_pin_dbg_show
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 Read of size 1 at addr ffffa07c577ab2e8 by =
-task cat/839
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 The buggy address belongs to the variable:
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__compound_literal.62+0x8/0x40
-> >=C2=A0
-> > A field value of 0 has the same root cause in a milder form: it is
-> > reported as funcs[0] instead of GPIO. The mux itself is programmed
-> > correctly in both cases, so this affects the debugfs readback and KASAN
-> > rather than the hardware configuration.
-> >=C2=A0
-> > Handle 0 and out-of-range values explicitly, and index funcs[] with
-> > fsel - 1, so that the getter uses the same numbering as the setter and
-> > the index can no longer go past funcs[n_funcs - 1]. The existing
-> > fallback for func__ placeholder entries is kept:
-> >=C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!fsel)
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return pc->func=
-_gpio;
-> >=C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (fsel > pc->pin_funcs[pin].n_funcs) {
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_warn(pc->de=
-v,
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0"invalid fsel %d for pin %u\n", fsel, pin);
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return pc->func=
-_gpio;
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
-> >=C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 func =3D pc->pin_funcs[pin].funcs[fsel - 1]=
-;
->=C2=A0
-> Non-blocking nit-pick: I think that pasting the code in the comment is
-> too verbose, especially when the same code consists in the entire patch
-> body here below. A succint explanation by words would be more than enough=
-.
+elapsed time: 992m
 
-You're right that the commit message is too verbose with the code pasted in=
-.
-In V2 I'll drop the snippet and describe the numbering difference in words =
-instead
+configs tested: 270
+configs skipped: 11
 
->=C2=A0
-> >=C2=A0
-> > Tested on Raspberry Pi 5 with KASAN enabled. Before the fix, writing
-> > "gpio45 alt8" to .../pinmux-select and then reading .../pins triggers
-> > the splat above. After the fix the same sequence reports
-> > "function spi_m" with no warning and no splat, and a register field
-> > value of 0 reports "gpio". The register is restored to 0 afterwards.
->=C2=A0
-> Since you're at it, would you mind fixing the SGPIO AON related OOB acces=
-s too?
-> Please take a look at bcm2712_[cd]0_aon_gpio_pin_regs struct: they both h=
-ave
-> a bunch of AON_SGPIO_REGS macro describing pins at the end of the struct.=
- That
-> macro puts them at [(n) + 32] in the struct so there's a hole between 'no=
-rmal'
-> gpios and SGPIO ones.
-> Accessing bcm2712_[cd]0_aon_gpio_pin_funcs struct via this +32 offset as =
-the
-> 'pin' index in pc->pin_funcs[pin].funcs[] will result in OOB access. KASA=
-N should
-> report that if you 'cat pins' in aon pin controller.
->=C2=A0
-> One way would be to refactor the code in order to avoid this hole, but I
-> won't pretend this.
-> The other way is just add the missing SGPIO entries in bcm2712_[cd]0_aon_=
-gpio_pin_funcs
-> (mind the +32 offset, a new macro is probably needed).
-> You can find the functions for SGPIO pins declared in downstream driver, =
-see file
-> drivers/pinctrl/bcm/pinctrl-bcm2712.c from rpi-6.12.y branch (later branc=
-hes
-> already have the upstream driver which is missing the SGPIO functions ent=
-irely).
-> I've posted here the relevant data copied from downstream for your conven=
-ience,
-> please rearrange accordingly:
->=C2=A0
-> static const struct bcm2712_pin_funcs bcm2712_c0_aon_sgpio_pin_funcs[] =
-=3D {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(0, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
-0, vc_i2c0, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(1, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
-0, vc_i2c0, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(2, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
-1, vc_i2c4, ctl_hdmi_5v, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(3, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
-1, vc_i2c4, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(4, avs_pmu_bsc, bsc_m2, vc_i2c5, ctl_hdmi=
-_5v, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(5, avs_pmu_bsc, bsc_m2, vc_i2c5, _, _, _,=
- _, _),
-> };
->=C2=A0
-> static const struct bcm2712_pin_funcs bcm2712_d0_aon_sgpio_pin_funcs[] =
-=3D {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(0, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
-0, vc_i2c0, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(1, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
-0, vc_i2c0, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(2, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
-1, vc_i2c0, ctl_hdmi_5v, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(3, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
-1, vc_i2c0, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(4, avs_pmu_bsc, bsc_m2, vc_i2c3, ctl_hdmi=
-_5v, _, _, _, _),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(5, avs_pmu_bsc, bsc_m2, vc_i2c3, _, _, _,=
- _, _),
-> };
->=C2=A0
-> In case you don't want to fix this, you will still have a Reviewed-by fro=
-m me,
-> and I'll take care of uploading the fix in a subsequent patch.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I have identified the issue and am preparing to submit a report.=C2=A0
-Thank you for reminding me; I will include it in version 2.
+tested configs:
+alpha                             alldefconfig    gcc-16.2.0
+alpha                              allnoconfig    gcc-16.2.0
+alpha                             allyesconfig    gcc-16.2.0
+alpha                                defconfig    gcc-16.2.0
+arc                               allmodconfig    clang-24
+arc                                allnoconfig    gcc-16.2.0
+arc                               allyesconfig    gcc-16.2.0
+arc                                  defconfig    gcc-16.2.0
+arc                   randconfig-1000-20261112    clang-24
+arc                   randconfig-1000-20261113    gcc-10.5.0
+arc                   randconfig-1001-20261112    clang-24
+arc                   randconfig-1001-20261113    gcc-10.5.0
+arm                               alldefconfig    gcc-16.2.0
+arm                                allnoconfig    gcc-16.2.0
+arm                               allyesconfig    clang-24
+arm                                  defconfig    gcc-16.2.0
+arm                             dove_defconfig    gcc-16.2.0
+arm                           gemini_defconfig    gcc-16.2.0
+arm                            imxrt_defconfig    gcc-16.2.0
+arm                       integrator_defconfig    gcc-16.2.0
+arm                   randconfig-1000-20261112    clang-24
+arm                   randconfig-1000-20261113    gcc-10.5.0
+arm                   randconfig-1001-20261112    clang-24
+arm                   randconfig-1001-20261113    gcc-10.5.0
+arm                   randconfig-1002-20261112    clang-24
+arm                   randconfig-1002-20261113    gcc-10.5.0
+arm                   randconfig-1003-20261112    clang-24
+arm                   randconfig-1003-20261113    gcc-10.5.0
+arm                          s3c6400_defconfig    gcc-16.2.0
+arm64                              allnoconfig    gcc-16.2.0
+arm64                                defconfig    gcc-16.2.0
+arm64                 randconfig-1000-20261112    gcc-14.4.0
+arm64                 randconfig-1001-20261112    gcc-14.4.0
+arm64                 randconfig-1002-20261112    gcc-14.4.0
+arm64                 randconfig-1003-20261112    gcc-14.4.0
+csky                              allmodconfig    gcc-16.2.0
+csky                               allnoconfig    gcc-16.2.0
+csky                                 defconfig    gcc-16.2.0
+csky                  randconfig-1000-20261112    gcc-14.4.0
+csky                  randconfig-1001-20261112    gcc-14.4.0
+hexagon                           allmodconfig    gcc-16.2.0
+hexagon                            allnoconfig    gcc-16.2.0
+hexagon                              defconfig    gcc-16.2.0
+hexagon               randconfig-1000-20261112    clang-24
+hexagon               randconfig-1000-20261113    clang-24
+hexagon               randconfig-1001-20261112    clang-24
+hexagon               randconfig-1001-20261113    clang-24
+i386                              allmodconfig    clang-22
+i386                               allnoconfig    gcc-16.2.0
+i386                              allyesconfig    clang-22
+i386        buildonly-randconfig-1000-20261112    clang-22
+i386        buildonly-randconfig-1000-20261113    clang-22
+i386        buildonly-randconfig-1001-20261112    clang-22
+i386        buildonly-randconfig-1001-20261113    clang-22
+i386        buildonly-randconfig-1002-20261112    clang-22
+i386        buildonly-randconfig-1002-20261113    clang-22
+i386        buildonly-randconfig-1003-20261112    clang-22
+i386        buildonly-randconfig-1003-20261113    clang-22
+i386        buildonly-randconfig-1004-20261112    clang-22
+i386        buildonly-randconfig-1004-20261113    clang-22
+i386        buildonly-randconfig-1005-20261112    clang-22
+i386        buildonly-randconfig-1005-20261113    clang-22
+i386                                 defconfig    gcc-16.2.0
+i386                  randconfig-1000-20261112    gcc-14
+i386                  randconfig-1000-20261113    clang-22
+i386                  randconfig-1001-20261112    gcc-14
+i386                  randconfig-1001-20261113    clang-22
+i386                  randconfig-1002-20261112    gcc-14
+i386                  randconfig-1002-20261113    clang-22
+i386                  randconfig-1003-20261112    gcc-14
+i386                  randconfig-1003-20261113    clang-22
+i386                  randconfig-1004-20261112    gcc-14
+i386                  randconfig-1004-20261113    clang-22
+i386                  randconfig-1005-20261112    gcc-14
+i386                  randconfig-1005-20261113    clang-22
+i386                  randconfig-1006-20261112    gcc-14
+i386                  randconfig-1006-20261113    clang-22
+i386                  randconfig-1007-20261112    clang-22
+i386                  randconfig-1007-20261113    clang-22
+i386                  randconfig-1008-20261112    clang-22
+i386                  randconfig-1008-20261113    clang-22
+i386                  randconfig-1009-20261112    clang-22
+i386                  randconfig-1009-20261113    clang-22
+i386                  randconfig-1010-20261112    clang-22
+i386                  randconfig-1010-20261113    clang-22
+i386                  randconfig-1011-20261112    clang-22
+i386                  randconfig-1011-20261113    clang-22
+i386                  randconfig-1012-20261112    clang-22
+i386                  randconfig-1012-20261113    clang-22
+i386                  randconfig-1013-20261112    clang-22
+i386                  randconfig-1013-20261113    clang-22
+loongarch                          allnoconfig    gcc-16.2.0
+loongarch                            defconfig    clang-24
+loongarch                 loongson64_defconfig    gcc-16.2.0
+loongarch             randconfig-1000-20261112    clang-24
+loongarch             randconfig-1000-20261113    clang-24
+loongarch             randconfig-1001-20261112    clang-24
+loongarch             randconfig-1001-20261113    clang-24
+m68k                              allmodconfig    gcc-16.2.0
+m68k                               allnoconfig    gcc-16.2.0
+m68k                              allyesconfig    clang-24
+m68k                                 defconfig    clang-24
+m68k                        m5249evb_defconfig    gcc-16.2.0
+m68k                        m5282evb_defconfig    gcc-16.2.0
+m68k                             mac_defconfig    gcc-16.2.0
+m68k                         mvme147_defconfig    gcc-16.2.0
+microblaze                         allnoconfig    gcc-16.2.0
+microblaze                        allyesconfig    gcc-16.2.0
+microblaze                           defconfig    clang-24
+mips                              allmodconfig    gcc-16.2.0
+mips                               allnoconfig    gcc-16.2.0
+mips                              allyesconfig    gcc-16.2.0
+mips                        bmips_be_defconfig    gcc-16.2.0
+mips                      decstation_defconfig    gcc-16.2.0
+mips                      eyeq6lplus_defconfig    gcc-16.2.0
+mips                            ip28_defconfig    gcc-16.2.0
+mips                         maltaup_defconfig    gcc-16.2.0
+mips                       pic32mzda_defconfig    gcc-16.2.0
+mips                        rbtx49xx_defconfig    gcc-16.2.0
+nios2                             allmodconfig    clang-20
+nios2                              allnoconfig    clang-24
+nios2                                defconfig    clang-24
+nios2                 randconfig-1000-20261112    clang-24
+nios2                 randconfig-1000-20261113    clang-24
+nios2                 randconfig-1001-20261112    clang-24
+nios2                 randconfig-1001-20261113    clang-24
+openrisc                          allmodconfig    clang-20
+openrisc                           allnoconfig    clang-24
+openrisc                             defconfig    gcc-16.2.0
+parisc                            allmodconfig    gcc-16.2.0
+parisc                             allnoconfig    clang-24
+parisc                            allyesconfig    clang-17
+parisc                               defconfig    gcc-16.2.0
+parisc                randconfig-1000-20261112    gcc-12.5.0
+parisc                randconfig-1000-20261113    gcc-13.5.0
+parisc                randconfig-1001-20261112    gcc-12.5.0
+parisc                randconfig-1001-20261113    gcc-13.5.0
+parisc64                             defconfig    clang-24
+powerpc                           allmodconfig    gcc-16.2.0
+powerpc                            allnoconfig    clang-24
+powerpc                         icon_defconfig    gcc-16.2.0
+powerpc                  mpc832x_rdb_defconfig    gcc-16.2.0
+powerpc                       ppc64e_defconfig    gcc-16.2.0
+powerpc                       ppc6xx_defconfig    gcc-16.2.0
+powerpc                      rainier_defconfig    gcc-16.2.0
+powerpc               randconfig-1000-20261112    gcc-12.5.0
+powerpc               randconfig-1000-20261113    gcc-13.5.0
+powerpc               randconfig-1001-20261112    gcc-12.5.0
+powerpc               randconfig-1001-20261113    gcc-13.5.0
+powerpc                  xes_mpc85xx_defconfig    gcc-16.2.0
+powerpc64             randconfig-1000-20261112    gcc-12.5.0
+powerpc64             randconfig-1000-20261113    gcc-13.5.0
+powerpc64             randconfig-1001-20261112    gcc-12.5.0
+powerpc64             randconfig-1001-20261113    gcc-13.5.0
+riscv                              allnoconfig    clang-24
+riscv                             allyesconfig    clang-24
+riscv                                defconfig    gcc-16.2.0
+riscv                 randconfig-1000-20261112    gcc-9.5.0
+riscv                 randconfig-1000-20261113    gcc-12.5.0
+riscv                 randconfig-1001-20261112    gcc-9.5.0
+riscv                 randconfig-1001-20261113    gcc-12.5.0
+s390                              allmodconfig    clang-17
+s390                               allnoconfig    clang-24
+s390                              allyesconfig    gcc-16.2.0
+s390                                 defconfig    gcc-16.2.0
+s390                  randconfig-1000-20261112    gcc-9.5.0
+s390                  randconfig-1000-20261113    gcc-12.5.0
+s390                  randconfig-1001-20261112    gcc-9.5.0
+s390                  randconfig-1001-20261113    gcc-12.5.0
+sh                                allmodconfig    gcc-16.2.0
+sh                                 allnoconfig    clang-24
+sh                                allyesconfig    clang-17
+sh                                   defconfig    gcc-14
+sh                           kfr2r09_defconfig    gcc-16.2.0
+sh                    randconfig-1000-20261112    gcc-9.5.0
+sh                    randconfig-1000-20261113    gcc-12.5.0
+sh                    randconfig-1001-20261112    gcc-9.5.0
+sh                    randconfig-1001-20261113    gcc-12.5.0
+sh                           rsk7269_defconfig    gcc-16.2.0
+sh                      sh7710voipgw_defconfig    gcc-16.2.0
+sh                         sh7757lcr_defconfig    gcc-16.2.0
+sparc                              allnoconfig    clang-24
+sparc                                defconfig    gcc-16.2.0
+sparc                 randconfig-1000-20261112    gcc-8.5.0
+sparc                 randconfig-1000-20261113    gcc-8.5.0
+sparc                 randconfig-1001-20261112    gcc-8.5.0
+sparc                 randconfig-1001-20261113    gcc-8.5.0
+sparc                        sparc32_defconfig    gcc-16.2.0
+sparc64                           allmodconfig    clang-20
+sparc64                              defconfig    gcc-14
+sparc64               randconfig-1000-20261112    gcc-8.5.0
+sparc64               randconfig-1000-20261113    gcc-8.5.0
+sparc64               randconfig-1001-20261112    gcc-8.5.0
+sparc64               randconfig-1001-20261113    gcc-8.5.0
+um                                allmodconfig    clang-17
+um                                 allnoconfig    clang-24
+um                                allyesconfig    gcc-16.2.0
+um                                   defconfig    gcc-14
+um                              i386_defconfig    gcc-14
+um                    randconfig-1000-20261112    gcc-8.5.0
+um                    randconfig-1000-20261113    gcc-8.5.0
+um                    randconfig-1001-20261112    gcc-8.5.0
+um                    randconfig-1001-20261113    gcc-8.5.0
+um                            x86_64_defconfig    gcc-14
+x86_64                            allmodconfig    clang-22
+x86_64                             allnoconfig    clang-24
+x86_64                            allyesconfig    clang-22
+x86_64      buildonly-randconfig-1000-20261112    gcc-14
+x86_64      buildonly-randconfig-1000-20261113    clang-22
+x86_64      buildonly-randconfig-1001-20261112    gcc-14
+x86_64      buildonly-randconfig-1001-20261113    clang-22
+x86_64      buildonly-randconfig-1002-20261112    gcc-14
+x86_64      buildonly-randconfig-1002-20261113    clang-22
+x86_64      buildonly-randconfig-1003-20261112    gcc-14
+x86_64      buildonly-randconfig-1003-20261113    clang-22
+x86_64      buildonly-randconfig-1004-20261112    gcc-14
+x86_64      buildonly-randconfig-1004-20261113    clang-22
+x86_64      buildonly-randconfig-1005-20261112    gcc-14
+x86_64      buildonly-randconfig-1005-20261113    clang-22
+x86_64                               defconfig    gcc-14
+x86_64                                   kexec    clang-22
+x86_64                randconfig-1000-20261112    clang-22
+x86_64                randconfig-1000-20261113    clang-22
+x86_64                randconfig-1001-20261112    clang-22
+x86_64                randconfig-1001-20261113    clang-22
+x86_64                randconfig-1002-20261112    clang-22
+x86_64                randconfig-1002-20261113    clang-22
+x86_64                randconfig-1003-20261112    clang-22
+x86_64                randconfig-1003-20261113    clang-22
+x86_64                randconfig-1004-20261112    clang-22
+x86_64                randconfig-1004-20261113    clang-22
+x86_64                randconfig-1005-20261112    clang-22
+x86_64                randconfig-1005-20261113    clang-22
+x86_64                randconfig-1006-20261112    gcc-14
+x86_64                randconfig-1006-20261113    clang-22
+x86_64                randconfig-1007-20261112    gcc-14
+x86_64                randconfig-1007-20261113    clang-22
+x86_64                randconfig-1008-20261112    gcc-14
+x86_64                randconfig-1008-20261113    clang-22
+x86_64                randconfig-1009-20261112    gcc-14
+x86_64                randconfig-1009-20261113    clang-22
+x86_64                randconfig-1010-20261112    gcc-14
+x86_64                randconfig-1010-20261113    clang-22
+x86_64                randconfig-1011-20261112    gcc-14
+x86_64                randconfig-1011-20261113    clang-22
+x86_64                randconfig-1012-20261112    clang-22
+x86_64                randconfig-1012-20261113    gcc-14
+x86_64                randconfig-1013-20261112    clang-22
+x86_64                randconfig-1013-20261113    gcc-14
+x86_64                randconfig-1014-20261112    clang-22
+x86_64                randconfig-1014-20261113    gcc-14
+x86_64                randconfig-1015-20261112    clang-22
+x86_64                randconfig-1015-20261113    gcc-14
+x86_64                randconfig-1016-20261112    clang-22
+x86_64                randconfig-1016-20261113    gcc-14
+x86_64                randconfig-1017-20261112    clang-22
+x86_64                randconfig-1017-20261113    gcc-14
+x86_64                                rhel-9.4    clang-22
+x86_64                            rhel-9.4-bpf    gcc-14
+x86_64                           rhel-9.4-func    clang-22
+x86_64                     rhel-9.4-kselftests    clang-22
+x86_64                          rhel-9.4-kunit    gcc-14
+x86_64                            rhel-9.4-ltp    gcc-14
+x86_64                           rhel-9.4-rust    clang-22
+xtensa                             allnoconfig    clang-24
+xtensa                            allyesconfig    clang-20
+xtensa                randconfig-1000-20261112    gcc-8.5.0
+xtensa                randconfig-1000-20261113    gcc-8.5.0
+xtensa                randconfig-1001-20261112    gcc-8.5.0
+xtensa                randconfig-1001-20261113    gcc-8.5.0
 
-
-+ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(32, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc=
-_m0, vc_i2c0, _, _, _, _),
-+ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(33, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc=
-_m0, vc_i2c0, _, _, _, _),
-+ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(34, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc=
-_m1, vc_i2c4, ctl_hdmi_5v, _, _, _),
-+ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(35, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc=
-_m1, vc_i2c4, _, _, _, _),
-+ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(36, avs_pmu_bsc, bsc_m2, vc_i2c5, ctl_hd=
-mi_5v, _, _, _, _),
-+ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(37, avs_pmu_bsc, bsc_m2, vc_i2c5, _, _, =
-_, _, _),
-=C2=A0};
-
-Thanks
-Xiaolei
-
->=C2=A0
-> Many thanks,
-> Andrea
->=C2=A0
-> >=C2=A0
-> > Fixes: 657cbf9b24ba ("pinctrl: bcm: Add STB family pin controller drive=
-r")
-> > Cc: Jonathan Bell <jonathan@raspberrypi.com>
-> > Cc: Phil Elwell <phil@raspberrypi.com>
-> > Signed-off-by: Wang Xiaolei <wangxiaolei01@kaihong.com>
-> > ---
-> > =C2=A0drivers/pinctrl/bcm/pinctrl-brcmstb.c | 11 ++++++++++-
-> > =C2=A01 file changed, 10 insertions(+), 1 deletion(-)
-> >=C2=A0
-> > diff --git a/drivers/pinctrl/bcm/pinctrl-brcmstb.c b/drivers/pinctrl/bc=
-m/pinctrl-brcmstb.c
-> > index f46b27155c3c..2b942ca7196b 100644
-> > --- a/drivers/pinctrl/bcm/pinctrl-brcmstb.c
-> > +++ b/drivers/pinctrl/bcm/pinctrl-brcmstb.c
-> > @@ -66,7 +66,16 @@ static unsigned int brcmstb_pinctrl_fsel_get(struct =
-brcmstb_pinctrl *pc,
-> > =C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0val =3D readl(pc->base + BIT_TO_REG(b=
-it));
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fsel =3D (val >> BIT_TO_SHIFT(bit)) &=
- pc->pin_funcs[pin].func_mask;
-> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0func =3D pc->pin_funcs[pin].funcs[fsel];
-> > +
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!fsel)
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return pc->fun=
-c_gpio;
-> > +
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0if (fsel > pc->pin_funcs[pin].n_funcs) {
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_warn(pc->d=
-ev, "invalid fsel %d for pin %u\n", fsel, pin);
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return pc->fun=
-c_gpio;
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0}
-> > +
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0func =3D pc->pin_funcs[pin].funcs[fsel - 1=
-];
-> > =C2=A0
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (func >=3D pc->func_count)
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0func =3D =
-fsel;
-> > --=C2=A0
-> > 2.34.1
-> >
->=C2=A0
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
