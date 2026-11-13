@@ -1,87 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794570388;
-	b=eZOKc3b1siFuemuot/smHaFwXLWlgW7Wl8sPBYRBc+/NqeuAx+kGiD2Q4YVRhXAQ7ui0
-	 5Mi/KQLdvMoSLLceJyIHM1XxBEXHVpqYIY3OQjZ7HzdmvmzJuaCRcdOisXowLYxYArbXS
-	 AGZXLAU18n221xxLOFDJQbJ9oyn6Eon5FKJK3uhXKz8LFKOTrImpawn35w+98I6ycaIuv
-	 ezb0MBTCx+aLg387sSRLg/dw/6C8Sp+kcvwb8G4TNNPLSYR3NzUI8Qji1mI8wEmm4mmLj
-	 q62XOXZHVkqhS6dOPx49JLHeaCAqioOJxVDqfFEszspp34F+VvuE90VO3lhT5HYoSTQ==
+	t=1794571559;
+	b=2IcOGyX7scSefHPowG5fs6H3f8PfZgpy0vOLy7omThSLya2JJ29Cr9kVyI6uFlJRcP/Z
+	 oashYN6RPWOuuWYcTtcq39m6T6hcXlp+XB07ixNma4O/rs/LxhYum3y1rXkzU4Eo4kr+Y
+	 UqALI2QH/qm47WIKX6J/3KO7siABEv0/tOeVSBM/l0fyKlLiuqZf3m86scR1up6CRZpeR
+	 qtkMHxWBJ3/CjMVFpl6L0w+d6oI3vrftktqLVM5duKbRRf8EMLXlW1Q6947K5NCHOoUl6
+	 AQ/XQNzatYv6KiPuMWRQhmu+dQLb4Wp9faTI1cEAsVw6j9CMUGGJz/c+XmJuDCQzqcQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794570388;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:
-	 In-Reply-To:References:Subject:Message-Id:Date:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Mailer;
-	bh=sIKt/11sRIpQoLlnwbdUZPL6D9m4uMaBATJci/erHQ4=;
-	b=TMP12hmUpYbGaWzJajBGeTuWOsnJf1xnf3ouN9IZqiU/mosmdc7lc6DlKWUeg02jatY5
-	 YNP/s2x/6SyK/mndjP/HJD2ex9QXeai8fevN9tAEdi+WQ9wRmDDz0ooSZPTS7XGQGJqtJ
-	 LaltbQahsMRLdvzX2/MuJLVcb8xiciCEgKRa+s2NbUYbriDqo7X7w6Ki+yfXP5aQapyq0
-	 Ko0K1t+fJG+8tro0fw7Tg5mQ32PFfrzJ/6SyamSfEdpzXbokTSN3xvlYQJQyGz4bLtE6/
-	 xwGIvNyFzoxj5OJYkCqTnbsDHWHwops9BT/VhE7q8brDKjkRl3PGjtAK357ow5PCJ/g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794571559;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ew8hOC13o9wfy+m40ApTMAeA1rhG3tv6pgX/NAGeWFg=;
+	b=G6S5OznqkerFBM+M0+nL/r3MF7nWDNSftmWsDDuRg4R7uInfQRsw1zZXM4Lw/GbX/iJL
+	 OhEHy0vsujJrmF6Wj5MjeG0sKrhCKKRTjZTP8utFgwXzefN9YxW2EshRDUMCw+MhHeMSW
+	 3/+OWlAEfCs9IJAUrwiWze2nawXF+hfTix0lDEIsQ9Evu3OU0oipnj4es1zvNXsZnqy2E
+	 AqjlZQaqncJFJnUenE0dweGVgjeDEKfI+9WxYb9SS0s9EhSeTPskG7j6cT9BmY5WuNF+G
+	 4tpHM0co6XAszwDTvJcMFK5Yzxja82vMTpiIy6gQ7Igkjty14DVlqWmg67JviiWNLTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UPnYWao7;
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mu99j7RL;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2B1606A323;
-	Fri, 13 Nov 2026 11:46:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A2B1606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE6F606A88F;
+	Fri, 13 Nov 2026 12:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UPnYWao7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794570388; x=1826106388;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=70lA5G/wnfwGcsKQOxEkBPPaTlPMDHLav32v2A0v/Rc=;
-  b=UPnYWao7hiHtsxLmVV6W/5Nv6l1hPukMUlOOFr8nmYlKSdhNcVrYsXd3
-   MjO1vbCRrNOc02ViLCQ010Eulb0SaBwx35Y6D9q/Irp8PGYcLmLigtmTC
-   zFUuI3HBSe/TNECiqkqxJV79/wqWQXRXx7nJ4nnkqC1QzpPwaLVO7GP3i
-   Ctwe4R0DGjIRxektfAAKkNNud9tn2Bc97hScNOVjkAcH9+Be3IOM42VDy
-   ySAMYTMF9als8kGqjM9+XGy9I2e86hwDBgq3AEfYmnc0OwobEVzlxlu3A
-   Nhe/7iJ5uR/SORmAGKKDu/XSeEdz3ia79fJg3A3EEq8/CtAsgQpMbSsFx
-   A==;
-X-CSE-ConnectionGUID: rgwzClnjTiOQBY5YVJ2x5Q==
-X-CSE-MsgGUID: yxOSNn5fThSOj+Ilm1bSaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11964"; a="3258128"
-X-IronPort-AV: E=Sophos;i="6.27,211,1787036400"; 
-   d="scan'208";a="3258128"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2026 03:46:27 -0800
-X-CSE-ConnectionGUID: GFXZNQ+AT8iHFNZW2Nec1A==
-X-CSE-MsgGUID: zZ+bSqT8TI2CZpHvQgVWfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,211,1787036400"; 
-   d="scan'208";a="8750533"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.214])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2026 03:46:20 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
- Sebastian Reichel <sre@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Eliav Farber <farbere@amazon.com>
-Cc: linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
- linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-pwm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>, 
- Andy Shevchenko <andy@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-In-Reply-To: <20261113104218.32566-1-farbere@amazon.com>
-References: <20261113104218.32566-1-farbere@amazon.com>
-Subject: Re: [PATCH v6 0/7] notifier: convert remaining drivers to
- device-managed registration
-Message-Id: <179457037547.7575.907664153895239687.b4-ty@b4>
-Date: Fri, 13 Nov 2026 13:46:15 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mu99j7RL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E9A61F000C4;
+	Fri, 13 Nov 2026 12:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794571559;
+	bh=ew8hOC13o9wfy+m40ApTMAeA1rhG3tv6pgX/NAGeWFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Mu99j7RLydX3ZksQxHNiqiV8a9C3HGC7C1B9GQzP3i7C2+X8JW5Nsl3ld9KFTB67b
+	 rTQi6bipXdld3U/uSYywJut+ua83KWwKn6KOM6cBbQ9OazBf9YJBKXJOG9raq88INl
+	 6748FiobUagmQyYCWbJzCZjOYLV+iqHT4vmAdGQoY1QFh/4D3MvGnzABWwgyfZZ8nC
+	 qc/PYUysfEen/3hzq4svDwJ/RgFoGqU9AMuqKy2lrFD2S6tqSL9RYtMASWBjIQDY4d
+	 YydpyRu0sSvtrB/5rpTSYMdQ5Eh2XX5FTmVV3wKdx/zsKDlnmB+0OS7/K3AkwYAiXw
+	 nHkUQpXGCnGXw==
+Date: Fri, 13 Nov 2026 13:05:49 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] Add strprefix() and fix a bug with it
+Message-ID: <avb862Pr0NKPVPQg@devuan>
+References: <cover.1794425425.git.alx@kernel.org>
+ <avTIWshl9klX0obF@devuan>
+ <avXYmk5sZKS0rm92@ashevche-desk.local>
+ <vjuf6ritphyrfi2befwf4pwrujrl3pmjjkutr2ccsvta3jjcep@5mpgr3dc7263>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,41 +72,87 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="l2hgnnxajsc5hpxz"
+Content-Disposition: inline
+In-Reply-To: <vjuf6ritphyrfi2befwf4pwrujrl3pmjjkutr2ccsvta3jjcep@5mpgr3dc7263>
 
-On Fri, 13 Nov 2026 10:42:02 +0000, Eliav Farber wrote:
 
-> The devm_atomic_notifier_chain_register() and
-> devm_blocking_notifier_chain_register() helpers this series added in v5
-> are now in mainline, together with 6 of the 11 driver conversions. This
-> revision carries the 6 conversions that were never picked up, plus one
-> new conversion for a driver that grew the old pattern after v5 was
-> posted.
-> 
-> [...]
+--l2hgnnxajsc5hpxz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] Add strprefix() and fix a bug with it
+Message-ID: <avb862Pr0NKPVPQg@devuan>
+References: <cover.1794425425.git.alx@kernel.org>
+ <avTIWshl9klX0obF@devuan>
+ <avXYmk5sZKS0rm92@ashevche-desk.local>
+ <vjuf6ritphyrfi2befwf4pwrujrl3pmjjkutr2ccsvta3jjcep@5mpgr3dc7263>
+MIME-Version: 1.0
+In-Reply-To: <vjuf6ritphyrfi2befwf4pwrujrl3pmjjkutr2ccsvta3jjcep@5mpgr3dc7263>
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
+Hi Bart,
 
-FYI [if applicable to your patch], as per Linus' policy change, also
-fixes are mostly routed through for-next unless the fix is for a
-commit introduced in the most recent cycle or is clearly a regression
-fix.
+> Date: 2026-11-13 10:25:00+0100
+> From: Bartosz Golaszewski <brgl@kernel.org>
+>
+[...]
+> > Are you sure that it's okay to use asm/bug.h APIs in string.h?
+> > The include/linux/string.h along with the backed C implementations is r=
+eally
+> > special in the kernel. Hint: check which stages of kernel boot use it.
+> >
+>=20
+> Agreed. I'd just move the implementation into lib/string.c and not do a
+> static inline function here.
 
-The list of commits applied:
-[1/7] platform/x86: bitland-mifs-wmi: use devm_blocking_notifier_chain_register()
-      commit: a362539b42193dcdb17f8fba40031a515c53885c
-[2/7] Input: adp5585: use devm_blocking_notifier_chain_register()
-      (no commit info)
-[3/7] ACPI: APEI: GHES: remove unused ghes_{,un}register_vendor_record_notifier()
-      (no commit info)
-[4/7] ACPI: APEI: GHES: use devm_blocking_notifier_chain_register()
-      (no commit info)
+Hmm, thanks!  I'll do that.
 
---
- i.
 
+Have a lovely day!
+Alex
+
+>=20
+> Bart
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--l2hgnnxajsc5hpxz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr2/RMACgkQ64mZXMKQ
+wqmNSw/+NhDKyBjn0lq0zuI2m5yLY3P6tSCdyIBSR8OKvV5HIUio9mh8ljNal/ym
+Sz0hjW4t9OVFiCg4UARs3vPAujQq7jO/vSAa3C2PWQT46VE9RK8aNskYMmFWXuWd
+/DcT6X54849AYkHr7FP5+q+l8Q2HFMnXGV+Delvdb/82rKB04/wRMBbFefcJMi92
+Z9Ks9wf1Y0JsCjcLHYZIgXD0w3RhzLM33+Cq5jdJtVeTOiBSPLZYywEDeFEBwrJ+
+dPkGu2/yKZbN3db4knaI8n8NYmcAYrVehn2XaD0PcYigSCt4IryJjkodh54Z7BOL
+fsod+nYMQt6xTt4nE6+g2UgHFhAjxnIjsgr8Rd3josxeqnQJCheCcMUgNIiZR1SA
+GFo/CmMtE9IMtffygFSkSt86VQRpSIH49pkeSNwdb40izuxkLmahKBTfUW4tRiYm
+NQcO7je5MPGGnM3qSOZSq2EebLlpck0CohvFJvzAKJ7od11NiOIISgnFQ6DuUSqX
+zUUTaJt+q2Mt+DcHQj0RFxgWs8xUuacQhaItoGcljBZSM1t5GoamUxGzQqpT6Jp5
+0/Im57WXfZxwYbLBbm71EGkOdaNOfb/Gf3g+N34lBjCn7/bxd642ooo4FD2Rq61Q
+Y8jtSDFA9KFhFTV/Q2NPiBI48xDhzabFoQguGK28sPybiAZK4Uk=
+=BE9Y
+-----END PGP SIGNATURE-----
+
+--l2hgnnxajsc5hpxz--
