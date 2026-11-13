@@ -1,61 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.97
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.10.4.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794547961;
-	b=OkJbGBGffA+e+1RmrDdh9gH5dsQ3iRD34UdbwqpbruxqYRsetVbNYV7B9ureMWqiowJd
-	 IC8NBxf362ValVTeRa47xb1wG87ULniMDL8hZn2mGbLKaTDyalZ6FM3Mu80e9mfYdnJly
-	 12IuhdMu/QR1WBD2evdI8cA6FBcPFWnPmMyQggWIg+P2x2u5jNZPI88r1bYBC28fJPg4M
-	 PJpQvn1fpaixaBvt1tzdt1AqncK+5J3mB+q7vQYYPxX39S2tdtW4koIEbMIoLkAd9IzWM
-	 OicxVQMxnbttpzyjmd1On5QrLeG3IbOir3ZTYrC9N4i/xPI8s2WO6cwpv6pahctp5kg==
+	t=1794549970;
+	b=KX9FPqAUupp/Oyop1e0JcimgGn3tjylncMtGVAiZhHzy5Si5l34d69Fv/jkT5FK2ur5L
+	 ocS3nZE8MfmxohdkkbQ3JMwLxvVj+H7WNP1vRxpK5BZ0wS/D8xhG7bGSGuXgBlyUGRI4/
+	 ICR5991CiMKmyedApFurSQrf/7a/yamHhGMz5XHr6OkasqA6AGw6Ee2Ub5AHh63c2mxWO
+	 7Oa05Rsujy75X0pY5I6y4CJFtxblTh+cDJWNj4vnFFfZmmcJoeeojnDI9cXCL2Zhs3KjW
+	 TQvOrY1dCTVp3DsgtGH7sTSVq+THIt6po+jYdHAVUId7iDxYPfe2Jq80DfTiWbZLlOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794547961;
-	h=DMARC-Filter:X-Alimail-AntiSpam:Received:From:To:Cc:Subject:Date:
-	 Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=LKJF6q7Ffcu2Nfb1b54xHNWuX2HLIOppHi1zSokMCF4=;
-	b=a2ryPcv4025vj203h5ItTAUiPz3EnrUqC+zPasNmoK2ZDkPaE+OEhpL3mFJAHscDAoNh
-	 apcoz+vN/MGCN6c3tSK03qd1fVSyFkrVtB9wuUzdTRozfcHLI0ojTWv1gJQQMZKiMhQOt
-	 RBR6+0IyYUK6S9ttU6cqcpg4i116IEc/oF6gJkgYVrd9DvPKf15TPytYO/aZegTMOVWuV
-	 hPKYpy9XOWDkjhLllWD7g5xArBSCP8MAcYPQsAXsSPT01M/p64PgOKcbkSMVhZQOZZmqI
-	 F7G3EBGt/thwBEXiEiDSbnjNb/nrZk0x42V0lp7Ns9IdGKcGkfN3GxvbrPOIpVyIAYw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794549970;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Originating-IP:
+	 X-ClientProxiedBy:X-TM-AS-Product-Ver:X-TM-AS-Result:
+	 X-TMASE-MatchedRID:X-TM-AS-User-Approved-Sender:
+	 X-TM-AS-User-Blocked-Sender:X-TMASE-Result:X-TMASE-Version:
+	 X-TM-SNTS-SMTP;
+	bh=flMc6FuWcJEoYIXLkF7OAV5DREmZKu32e8v9NGn7M9o=;
+	b=gGlgSPyzePwCAVZTFO+9d5/Ux0IkZjVK3cdwNpO2/ClcXWboVDVS8T4snKXlAX4mqDAW
+	 b5rf/vFwv4kbrHIT4FPMZ89KqnFPyIo6YgsA/+N3PLb1xeh6QcxOPzAGLRYkUMJWvI9Tk
+	 wghd1GbDpGRMPs6bNdnwVOwnj0v4zr/HZ+GFMAlPBqVxBliISu1oClZ6XB32FqNvpJS6j
+	 UB+8P5NNOlyGDl9U0hp7QI0Q5t/3GAnQI5v7Fg6VM5WwkVWCv6Yj2TU0BLNjcNU3TOgoP
+	 RP2kZ9LJNFJD0cFqeHuXsyHsRo7WMmtiKoKw5D2z8WuIuY7igg2Euyvlcmh6TcBYYlA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=kaihong.com;
-	spf=pass smtp.mailfrom=kaihong.com;
-	arc=none smtp.remote-ip=115.124.28.97
-Received: from out28-97.mail.aliyun.com (out28-97.mail.aliyun.com [115.124.28.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=asmedia.com.tw;
+	spf=pass smtp.mailfrom=asmedia.com.tw;
+	dkim=pass header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=l7BOD+Qa;
+	arc=none smtp.remote-ip=103.10.4.13
+Received: from ms.asus.com (ms.asus.com [103.10.4.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD069606A89F;
-	Fri, 13 Nov 2026 05:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD069606A89F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaihong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaihong.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.09999961|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.00779417-0.000499325-0.991707;FP=17112549435448952484|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037033194;MF=wangxiaolei01@kaihong.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.k13i.QY_1794547949;
-Received: from nj-vm-261.pxvirt.local(mailfrom:wangxiaolei01@kaihong.com fp:SMTPD_---.k13i.QY_1794547949 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Nov 2026 13:32:30 +0800
-From: Xiaolei Wang <wangxiaolei01@kaihong.com>
-To: linusw@kernel.org,
-	florian.fainelli@broadcom.com,
-	rjui@broadcom.com,
-	sbranden@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	daniel@dragonzap.com,
-	wangxiaolei01@kaihong.com,
-	iivanov@suse.de,
-	andrea.porta@suse.com,
-	phil@raspberrypi.com
-Cc: linux-gpio@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/4] pinctrl: bcm: Use pinconf_generic_dt_free_map in bcm2835
-Date: Fri, 13 Nov 2026 05:32:19 +0000
-Message-Id: <20261113053221.3131068-3-wangxiaolei01@kaihong.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
-References: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A647606A31C;
+	Fri, 13 Nov 2026 06:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A647606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=asmedia.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmedia.com.tw
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=l7BOD+Qa
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=asmedia.com.tw; i=@asmedia.com.tw; q=dns/txt;
+  s=asmediacomtw; t=1794549970; x=1826085970;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=flMc6FuWcJEoYIXLkF7OAV5DREmZKu32e8v9NGn7M9o=;
+  b=l7BOD+Qa5xyOLO1wC83RdAfBAZao7wfUpvPoGNyLUoSYitzTvIAjRBwB
+   L0q/kiIf45QQDV2/AYvMJNwgSkKh7dnqDJHwDrAhuVC/q+y2lYl6pXLMQ
+   W+ydHmP/KPMciqkMha/TbkUJrw+hIrprsMrjNFFgdiLlOFFSSD5GYFtk3
+   Q=;
+X-CSE-ConnectionGUID: toLrWvyeQVqzppneDsA2+Q==
+X-CSE-MsgGUID: KSpWdTozQFeByX+zxzPJ9A==
+Received: from apza006tmd.corpnet.asus ([172.22.47.66])
+  by ms.asus.com with ESMTP; 13 Nov 2026 14:06:02 +0800
+Received: from mymail.asus.com (42.79.126.46) by APZA006TMD.corpnet.asus
+ (172.22.47.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Fri, 13 Nov
+ 2026 14:06:00 +0800
+From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+To: <Markus.Elfring@web.de>, <linusw@kernel.org>,
+	<linux-gpio@vger.kernel.org>, <brgl@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <Yd_Tseng@asmedia.com.tw>,
+	<Jesse1_Chang@asmedia.com.tw>, <Richard_Hsu@asmedia.com.tw>, Szuying Chen
+	<Chloe_Chen@asmedia.com.tw>
+Subject: Re: Re: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
+Date: Fri, 13 Nov 2026 14:05:36 +0800
+Message-ID: <20261113060538.4105-1-Chloe_Chen@asmedia.com.tw>
+X-Mailer: git-send-email 2.48.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,67 +73,36 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: APZA003MDI.corpnet.asus (172.22.47.31) To
+ APZA006TMD.corpnet.asus (172.22.47.66)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3239-9.1.2019-30316.004
+X-TM-AS-Result: No-10--11.792200-8.000000
+X-TMASE-MatchedRID: /zrVISaer8Ju4DGBDoAs85GPSO6O5JCagKzitR6I0vS4jV9yUdXXgZ0i
+	AknL6Q/ZOoqFo6Nyyo5XHUOvAXclSmP0Ggjc6Q3cBZs/2FGsjFCIbFhMgnneR+NFKGiXDz16pR7
+	uRPM/V2RXNTAoFR626JevLf+TF4u/cNIaCdesyLsarEv/I2gPytXNOAQ2MSi2D9tBl6aBswtIkE
+	j2f2VroVo7GmCOJYd1+LH4VPpSV+tT0PyBnvNi7Sue369BGRwwiwAyD/hxCLy9BjdpmOpiF81Jy
+	1PXqwqcoVo+XKPEcnGJ+hk79BwW7k6vshqw/l+H
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--11.792200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3239-9.1.2019-30316.004
+X-TM-SNTS-SMTP:
+	3C1D71A61776DA73EF965B4C3231CF4B0C76A68F3FFE5AECDC1319594E99E5052000:8
 
-Replace the hand-written dt_free_map callback with the generic
-pinconf_generic_dt_free_map() helper, which wraps
-pinctrl_utils_free_map(). This drops the duplicated free loop and
-handles both CONFIGS_PIN and CONFIGS_GROUP map types.
+Hi Markus,
 
-The error path in bcm2835_pctl_dt_node_to_map() uses the same helper.
-The driver already selects GENERIC_PINCONF, so no Kconfig change is
-needed.
+Thanks for the review and feedback.
 
-Fixes: 0de704955ee4 ("pinctrl: bcm2835: Add support for generic pinctrl binding")
-Cc: stable@vger.kernel.org
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Andrea della Porta <andrea.porta@suse.com>
-Signed-off-by: Xiaolei Wang <wangxiaolei01@kaihong.com>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+>> This email and any attachments to it contain confidential information and are intended solely for the use of the individual to whom it
+…
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 725e880ae086..69a92cd7bfe0 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -760,18 +760,6 @@ static void bcm2835_pctl_pin_dbg_show(struct pinctrl_dev *pctldev,
- 		irq, irq_type_names[pc->irq_type[offset]]);
- }
- 
--static void bcm2835_pctl_dt_free_map(struct pinctrl_dev *pctldev,
--		struct pinctrl_map *maps, unsigned num_maps)
--{
--	int i;
--
--	for (i = 0; i < num_maps; i++)
--		if (maps[i].type == PIN_MAP_TYPE_CONFIGS_PIN)
--			kfree(maps[i].data.configs.configs);
--
--	kfree(maps);
--}
--
- static int bcm2835_pctl_dt_node_to_map_func(struct bcm2835_pinctrl *pc,
- 		struct device_node *np, u32 pin, u32 fnum,
- 		struct pinctrl_map **maps)
-@@ -916,7 +904,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	return 0;
- 
- out:
--	bcm2835_pctl_dt_free_map(pctldev, maps, num_pins * maps_per_pin);
-+	pinconf_generic_dt_free_map(pctldev, maps, num_pins * maps_per_pin);
- 	return err;
- }
- 
-@@ -926,7 +914,7 @@ static const struct pinctrl_ops bcm2835_pctl_ops = {
- 	.get_group_pins = bcm2835_pctl_get_group_pins,
- 	.pin_dbg_show = bcm2835_pctl_pin_dbg_show,
- 	.dt_node_to_map = bcm2835_pctl_dt_node_to_map,
--	.dt_free_map = bcm2835_pctl_dt_free_map,
-+	.dt_free_map = pinconf_generic_dt_free_map,
- };
- 
- static int bcm2835_pmx_free(struct pinctrl_dev *pctldev,
--- 
-2.34.1
+>I find such a signature inappropriate for a contribution in a public mailing list.
+
+Agreed, sorry about that. I have asked our IT team to disable this disclaimer
+for external emails, so it should be gone from v4 onward.
+
+Best regards,
+Szuying
 
