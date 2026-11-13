@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794597764;
-	b=wEUI941ArS9s9JXeITSTgEyfWdP+3pn50USllzNjLJ9tLW/A7opoIXe0Vu4Cj+/YQpKx
-	 FxvzoHRqt4qcRbVtn0lvcjdTK2kLz5ZX6Eg3qbvAzpYo9UnLjyP0Xj7NgHIRUouUX0unC
-	 Jcy9+EKcinJEqN8UfaGUM4xMeNyXs4HHIIbPlRz4lDjmUuLGDGZTq8oEFcTsZfZMg3ej7
-	 6H70fqJpWy6Wi+7YcFSecMMr27FnF9qcjm6iNrzmJnKE3dAT29u5kRiAngkiA6drRT/+i
-	 VRzNZJd0smApVJZRxwkzVP4V5NecPRISi0YCdZ5WwoEyje0MUWlFHaLyqpR3i35PtHg==
+	t=1794597796;
+	b=wE1fb6fcOMVHwqjU4OWezMulxayt4TXPr7BZhJD99wM9aOjGwdpjITw6xG2unLL7NJGz
+	 9/8N87SaekeIA9ou4UhbrIgj21Y79KXTjqlaOx8HMeuYpBs3sVO+PTb/0TH6+DTv4bL9S
+	 CiZDelHsDgqekikjiLAWY2gy70h0aqFLN4+/hRq92BvKgTPvjKERjXHInrOPwwBecdFJK
+	 N++cVrlRbTRJhrgILlpuBH0lQtpA8+igCOd85sE3GlmGub6AZTjc+UJWrC4bfbDY0aaIS
+	 CD1+3TCqzsO3oxAEqodpz66cgixpBrfSaL2iotPpT9FJiOkKbPqQvImkF5na4QkJZdw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794597764;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794597796;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Tf4tJqn4Ep+PSCMoPN7WDoYRmcFmA/KadWfmt4/jR4M=;
-	b=ysErLLoOoGZWicH7SdPyHXxsJId+Y/mNoZoq+c30xmNkMr2VsfCN9i2gTVGZO+lQ/xf0
-	 76BM5bv0bluh4MMUg1poQfTobzzY8bF/fBtaIhKwQ6mkshNWQFPhJ8Gy1c7nf3PYBEasJ
-	 rT6/cBIrCPtQ8AzPY4+k/IBZwPud/TtcSDdfrEQecJ/vqvDnYiIOcUN772zOuJctMOSE4
-	 dXYMdXdSscPgQHYfTm7mJNBOHeS3QEY4m7s7NhXJxf99V45SBo4Nha4bDX/FHgT6LLlKy
-	 RVoYIGYZjOUoahD6sh7EDD2CR+C54bV5Wg/0+uzCLDSE552S4C9QLwzxkucstVnmFng==
+	bh=JXKKwHVxInsndtUs/0yvRQbzFzI58tKEJsLZA3ssRfA=;
+	b=XqJtUdwn7tHpfrUD3ZUGTVHx7NktVgEePgm0yUyeBPDLzEszcZLd4viFLZyIWGGr6kzT
+	 UD2CTpEwg+AngB72U7KuD7GWgr1KJiEz+uB0vHjZsg4gBPzLSospYEeDOSW+pWOtaC+t0
+	 FcAbZNvPhEfFWnW8dUfYodDdzaLSDpHIv1yso/wi88uS38evIotzDx29v1AD0jSlMFbHX
+	 1PWlQMZQinvZtLmyOK8zcsYcAEvshovdQXcoLz6Cdqv55Xy+C1oF2+k61CXZtn9KmUFCI
+	 8+51oSLrK8p2eK3xUO8VehhIbwNkfX26drVrKCwmM61INWlUCV9uPbOE7A9wJlK4+yg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MvUVgQ7u;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KuK74rCK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5624C606A89B;
-	Fri, 13 Nov 2026 19:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837AC606A89A;
+	Fri, 13 Nov 2026 19:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MvUVgQ7u
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051951F000C8;
-	Fri, 13 Nov 2026 19:22:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KuK74rCK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003581F000C4;
+	Fri, 13 Nov 2026 19:23:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794597764;
-	bh=Tf4tJqn4Ep+PSCMoPN7WDoYRmcFmA/KadWfmt4/jR4M=;
+	s=k20260515; t=1794597796;
+	bh=JXKKwHVxInsndtUs/0yvRQbzFzI58tKEJsLZA3ssRfA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=MvUVgQ7ue+spDz1rtv++2dd1LQeLwKUD7VyVxOThGKINGuRHiroJHbC4d/DDcAfYW
-	 iNVY5ryV6Q1IMYpvNkpp/L8W+1GoTomtG8gUp7mjtdNBVE39gtCDfcY4GgLy7cNg7W
-	 44+43nCPYawt3YC4raeja2VZRV2y5aMwPnBVymmd5TlyvJ9iGnNyncZXTVgwkQKO/X
-	 gBW64Kg1fpCNk5H+rYzLlajWPkH+TM6Ppvz9z6JgmdDML8a6BBCoSCeOsNyzpfOISl
-	 QnaE/DX3l6H33mHUynP0oJ0irB4Gj/dQ2Gg+twjWxrejTRamxKi7yuonMbfuoP0rl/
-	 I7bP8dWon1xMQ==
-Message-ID: <sashiko-outbox-213544@kernel.org>
+	b=KuK74rCKL99W77V5C9xYqkYm4TDaHkaYX5wZVVDjzfSmiL7X5AokKHbik1HwibV8O
+	 mRlH/uTbkuUN5Bq+fVurRoJwRw4kaimBNd8j3j5YsSeWGBYDh+SYg9lYsjpCtKpWKq
+	 AUJCmdcpALrpFA+CEipjtbqYuLGodCjtXwoEca70moEuXHMKFLyFId4PFfa5giAefq
+	 k02DGmraLVweYJJJdY+D3m97Kmd8cGki6vmTrKYbYUKcr0sh6lax//VGsdqJ5c5O0J
+	 GtnYJqJSHi3LRZUqarNXw7UUTABPeRu0z03vQa6GqwDEhgOPUFCv7uk/e1NKZ0wmos
+	 +LCXgXOAMTHzg==
+Message-ID: <sashiko-outbox-213545@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 17/23] ASoC: qcom: add SM8650 LPASS CPU driver
+Subject: Re: [PATCH RFC 22/23] arm64: dts: qcom: sm8650-valve-deckard:
+ enable audio
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Neil Armstrong" <neil.armstrong@linaro.org>
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261113-topic-sm8650-el2-v1-17-5183f6aab9fc@linaro.org>
+In-Reply-To: <20261113-topic-sm8650-el2-v1-22-5183f6aab9fc@linaro.org>
 References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-17-5183f6aab9fc@linaro.org>
+ <20261113-topic-sm8650-el2-v1-22-5183f6aab9fc@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 19:22:38 +0000
+Date: Fri, 13 Nov 2026 19:23:15 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,118 +63,100 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [High] ASoC: qcom: wrong lpm_type for lpass-rxtx-lpaif in
-  sm8650_lpaif_mi2s_desc[]
-- [Medium] ASoC: qcom: missing set_bit() for RX channels in
-  sm8650_lpass_alloc_dma_channel()
+- [Medium] arm64: dts: qcom: sm8650-valve-deckard: missing VA DMIC1
+  route in audio-routing
+- [Low] arm64: dts: qcom: sm8650-valve-deckard: unused lpass_rxmacro and
+  lpass_txmacro enabled
 --
 
-commit ee9ae911e7b58d190ad971326ccfe23116c1a06b
+commit 159b85c8d3e0dd02d73b32823f4b0aaab92103dd
 Author: Neil Armstrong <neil.armstrong@linaro.org>
 
-ASoC: qcom: add SM8650 LPASS CPU driver
+arm64: dts: qcom: sm8650-valve-deckard: enable audio
 
-This commit adds the SM8650 LPASS CPU DAI driver variant supporting MI2S,
-DisplayPort, and codec DMA audio interfaces when driven directly by the
-application processor.
+This commit includes sm8650-lpass-cpu.dtsi and configures the SM8650 sound
+card, lpass_cpu, and macro nodes to drive the speakers on Senary MI2S and
+the DMICs on the VA macro.
 
-> diff --git a/sound/soc/qcom/lpass-sm8650.c b/sound/soc/qcom/lpass-sm8650.c
-> new file mode 100644
-> index 0000000000000..42050f56a4847
-> --- /dev/null
-> +++ b/sound/soc/qcom/lpass-sm8650.c
-> @@ -0,0 +1,651 @@
-
-[ ... ]
-
-> +static int sm8650_lpass_alloc_dma_channel(struct lpass_data *drvdata,
-> +					  int direction, unsigned int dai_id)
-> +{
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts b/arch/arm=
+64/boot/dts/qcom/sm8650-valve-deckard.dts
+> index a365caa28cee4..723f7911fc547 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts
 
 [ ... ]
 
-> +	case LPASS_CDC_DMA_RX0 ... LPASS_CDC_DMA_RX9:
-> +		chan =3D find_first_zero_bit(&drvdata->rxtx_dma_ch_bit_map,
-> +					   v->rxtx_rdma_channels);
-> +		if (chan >=3D v->rxtx_rdma_channels)
-> +			return -EBUSY;
-> +		break;
-> +	case LPASS_CDC_DMA_TX0 ... LPASS_CDC_DMA_TX8:
-> +		chan =3D find_next_zero_bit(&drvdata->rxtx_dma_ch_bit_map,
-> +					  v->rxtx_wrdma_channel_start +
-> +					  v->rxtx_wrdma_channels,
-> +					  v->rxtx_wrdma_channel_start);
-> +		if (chan >=3D v->rxtx_wrdma_channel_start + v->rxtx_wrdma_channels)
-> +			return -EBUSY;
-> +		set_bit(chan, &drvdata->rxtx_dma_ch_bit_map);
-> +		break;
-> +	case LPASS_CDC_DMA_VA_TX0 ... LPASS_CDC_DMA_VA_TX8:
-> +		chan =3D find_next_zero_bit(&drvdata->va_dma_ch_bit_map,
-> +					  v->va_wrdma_channel_start +
-> +					  v->va_wrdma_channels,
-> +					  v->va_wrdma_channel_start);
-> +		if (chan >=3D v->va_wrdma_channel_start + v->va_wrdma_channels)
-> +			return -EBUSY;
-> +		set_bit(chan, &drvdata->va_dma_ch_bit_map);
-> +		break;
-> +	case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
-> +		chan =3D find_first_zero_bit(&drvdata->wsa_dma_ch_bit_map,
-> +					   v->wsa_rdma_channels);
-> +		if (chan >=3D v->wsa_rdma_channels)
-> +			return -EBUSY;
-> +		break;
+> @@ -160,6 +161,37 @@ framebuffer_mem: framebuffer-region@af400000 {
+>  		};
+>  	};
+> =20
+> +	sound: sound {
+> +		compatible =3D "qcom,sm8650-sndcard", "qcom,sm8450-sndcard";
+> +		model =3D "VALVE-DECKARD";
+> +
+> +		audio-routing =3D "VA DMIC0", "vdd-micb";
 
 [Severity: Medium]
-Should the LPASS_CDC_DMA_RX0 ... LPASS_CDC_DMA_RX9 and
-LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9 cases call set_bit() on
-drvdata->rxtx_dma_ch_bit_map and drvdata->wsa_dma_ch_bit_map before
-breaking?
+Should audio-routing also include "VA DMIC1", "vdd-micb"?
 
-Without set_bit(), channel 0 is never marked as allocated (even though
-sm8650_lpass_free_dma_channel() clears the bit on close), so subsequent
-allocations from those bitmaps will hand out channel 0 again and overwrite
-drvdata->rxtx_substream[0] or drvdata->wsa_substream[0] in
-lpass_platform_pcmops_open().
+lpass_vamacro uses dmic01_default and the LPASS_CDC_DMA_VA_TX0 DAI in
+sound/soc/qcom/lpass-sm8650.c sets channels_min =3D 2.  In
+sound/soc/codecs/lpass-va-macro.c, "VA DMIC0" and "VA DMIC1" are separate
+DAPM ADC widgets, so without routing "VA DMIC1" to "vdd-micb", enabling VA
+DMIC1 without VA DMIC0 will not power the vdd-micb regulator supply.
+
+> +
+> +		speaker-dai-link {
+> +			link-name =3D "SPKR Playback";
+> +
+> +			cpu {
+> +				sound-dai =3D <&lpass_cpu MI2S_SENARY>;
+> +			};
+> +
+> +			codec {
+> +				sound-dai =3D <&left_spkr_i2s>, <&right_spkr_i2s>;
+> +			};
+> +		};
+> +
+> +		va-dai-link {
+> +			link-name =3D "VA Capture";
+> +
+> +			cpu {
+> +				sound-dai =3D <&lpass_cpu LPASS_CDC_DMA_VA_TX0>;
+> +			};
+> +
+> +			codec {
+> +				sound-dai =3D <&lpass_vamacro 0>;
+> +			};
+> +		};
+> +	};
 
 [ ... ]
 
-> +/* MI2S mapping over LPAIF instances */
-> +static const struct lpaif_mi2s_desc sm8650_lpaif_mi2s_desc[] =3D {
-> +	{
-> +		.reg_name =3D "lpass-lpaif",
-> +		.irq_name =3D "lpass-irq-lpaif",
-> +		.lpm_type =3D LPASS_LPM_NONE,
-> +		.port_desc =3D (const struct mi2s_port_desc[]) {
-> +			{ .intf =3D 0, .id =3D MI2S_PRIMARY, },
-> +			{ .intf =3D 1, .id =3D MI2S_SECONDARY, },
-> +		},
-> +		.port_desc_count =3D 2,
-> +	},
-> +	{
-> +		.reg_name =3D "lpass-rxtx-lpaif",
-> +		.irq_name =3D "lpass-irq-rxtxif",
-> +		.lpm_type =3D LPASS_VA_CDC_LPM,
-> +		.port_desc =3D (const struct mi2s_port_desc[]) {
-> +			{ .intf =3D 0, .id =3D MI2S_QUATERNARY, },
-> +		},
-> +		.port_desc_count =3D 1,
-> +	},
+> +&lpass_rxmacro {
+> +	status =3D "okay";
+> +};
+> +
+> +&lpass_txmacro {
+> +	status =3D "okay";
+> +};
+> +
+> +&lpass_vamacro {
+> +	pinctrl-0 =3D <&dmic01_default>;
+> +	pinctrl-names =3D "default";
+> +	vdd-micb-supply =3D <&vreg_l10b_1p8>;
+> +	qcom,dmic-sample-rate =3D <2400000>;
+> +};
 
-[Severity: High]
-Should the lpass-rxtx-lpaif descriptor use LPASS_RXTX_CDC_LPM instead of
-LPASS_VA_CDC_LPM?
+[Severity: Low]
+Are lpass_rxmacro and lpass_txmacro intentionally enabled here?
 
-lpass-rxtx-lpaif is in the Audio CC / RXTX domain (clocked by
-audio_cc_ext_if1_ibit), so setting LPASS_VA_CDC_LPM maps MI2S_QUATERNARY
-DMA buffers from the 12 KiB VA LPM region (va_cdc_dma_lpm_buf) and enables
-va_mem0 in lpass_cpu_daiops_startup() instead of using the 64 KiB RXTX LPM
-region and audio_cc_codec_mem0..3.  If MI2S_QUATERNARY is enabled
-alongside LPASS_CDC_DMA_VA_TX0, lpass_platform_allocate_lpm() also fails
-probe with -EINVAL because VA Codec DMA already consumes all 12 KiB of VA
-LPM, and if MI2S_QUATERNARY is enabled alongside MI2S_QUINARY without VA
-Codec DMA, va_cdc_dma_lpm_remain underflows and assigns an offset past the
-end of the 12 KiB VA LPM buffer.
+The sound card only uses MI2S_SENARY and lpass_vamacro, and nothing on this
+board consumes DAIs or clocks from lpass_rxmacro or lpass_txmacro.  Probing
+them registers unused ASoC components and calls lpass_macro_pds_init(),
+which holds active runtime PM references on the macro and dcodec power
+domains for the lifetime of the drivers.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113-topic-sm86=
-50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D17
+50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D22
