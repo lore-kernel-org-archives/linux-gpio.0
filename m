@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794564532;
-	b=kIbHpzGRscfE8/Ts/TorldZApAR0oiiINeZjr90PmDi8lcD5YhqwEBfuCgdqsT0dRvwN
-	 EnBiHQFJOXGx7JaA+dZdX8uuFcjgT1ybedvKgCtyyPGz62iGLZXirBNTUN3rK+iVZ95rf
-	 cCXCgbr5IdCbzUvDkgqjxi32CUJzTTEirn9FJnRl/AXPyurOxSF7bKLES2ckWkOb5NGUo
-	 p8auQ/KR4E0EtxsJBBrTW1e/XUFHEl8emQakeiiAee73J3M79EumKBRns0JFBaPdvP7Z7
-	 3C/epsY+pMoQ7Y3h3UQUm4OsgwaA1jbBpV28cdXDmAnM9rYonwiCIo7lqjb1UY6sXdg==
+	t=1794564569;
+	b=gwgfBmKjI0uDtw0GKf/7cZILw1/5LMBe1q2GPRqncc7dV2p30Bq7Q4OKlnY/r7AANJxh
+	 cPBl/60f8K+PyWRVnl3FkVfGP5PXy3a49srMcyS6XcXzneOCSggVa7g3Nd73LwKL/Doym
+	 pL49f76AHXv4LwKVEC6WYuh3WutLEZmv1LTD8oQxYy5F+2Rr3qH6WCHx3tNTgItaP9lfv
+	 Un1MtWiED0kUmccCrlZhkYnEVDsz2GiI3C437pOsHrhu6b+Qe5JeItjHIm539cuoWUpaQ
+	 X6EpyWFIH39OgAnQ+hwaxybvAylkNTqFK+1OrVz3KX8/wPCGuANlsvB3e9J9WVagnoA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794564532;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794564569;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=nZMLjQOnKSLNJDPbXg8WmoUPbegfRsFLvgEFn2RPTRY=;
-	b=1kOnzG0bQLCVKr91ayV1n3QUW7u4RagZyeQvkdiw+9NdvE6PsC7G06kCg45ZEIph/UPd
-	 90ohnV8Rm9n4mX++qWy4mBkp7lG91JMeD3M325duFR/4sT4uK5Uk3cFPTdFLCKYlcM85o
-	 KFeHtYrQhE5TTpxRwTaKYpZY7XZfZWA3C4amcm+emTDLmhkihAlAfVHbyHBvGUFin870L
-	 A1aZLrFFJYMSW0bTO/BeSS6/0wh87pyLvXv5GK52t9aC5JjPl/yD05gEOtYqrx5DAEU2v
-	 qtVBM92UVJQJKL5ijSmCY4/W0odYQlVNpO4kuShMeZOYBgEWh6cTdELSJZDTGi1eJEw==
+	bh=lHtGW/alZjcgKTPZf6fIR74OQ4JRsfsRwol3QZcsyok=;
+	b=mnOike/khpO+KkcFcO9KTCy4kT5zfABt6HtQ1QdJpus56DqqY6sd+T7/LmD1aG2cqJ9H
+	 RyedgveCX26r8fKdYPLssb9ZKiJ+3SZQ0H7MWuHNO+tUSrP3egeJgUcpwUKzq65AsasEl
+	 TY9dWY4YbGSZj14ukGwY+K5dTBrit4tqNWEhjIx2B/8LmnbmJoch/+kOpB133wztsbPlH
+	 e9k4wYOneeTk3n+d7rx8z3zMGRiU413XkOsehj9vqNqq+TN9jIdHzTsdbE2azFBf6Kqlq
+	 t1QL/1SRaUE65SnxA74+LChBGdtMloWRQdKhL+RMdaRjmI+pgogMjCXBM/ATfSeJkfw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TeFh1mZy;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gW7UDdEw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7920606B10D
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E355D606A335
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TeFh1mZy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51871F000C8
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:08:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gW7UDdEw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7557A1F000C9
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794564532;
-	bh=nZMLjQOnKSLNJDPbXg8WmoUPbegfRsFLvgEFn2RPTRY=;
+	s=k20260515; t=1794564568;
+	bh=lHtGW/alZjcgKTPZf6fIR74OQ4JRsfsRwol3QZcsyok=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=TeFh1mZyMj5nQxcRroPfaId9yIqV/bdgtpq5BoynHhde8p4+zmt2HRr/AFL2rZQ6G
-	 ysmLuO3JygPwXkLelCDIv4/Hzk6spaIk/P/p5uMgiQP1Mj1TmFoOShSjzn1jx6cycw
-	 cp5/gN6HWoHssFORDMtCZiyFR22TbcCPkBCKVU1e9hRklRdhoUDIdNRooLzj4W+Uv3
-	 02bc7d9tzzJXSjX5pL3WDCs1NZju6tc58E2BQTFclA147oe85eMU5ipPccxtqP8gjO
-	 9sPG+HU3OmxTgFvLxDGcC6ct1021Cz9Lau2gfLBWI/2DxkJAPMRdqZqDGQVeS6AdSi
-	 Pd/eOaCVSS1VQ==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-705cb6ceebaso1208633eaf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 02:08:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEfRsh7rUhD+fH9aR0xeFN0gsM2J6e9DLjwl74LTIecvw6yr7DTk63+i8/KgVpqXdARk4LsgLqTJ2nN@vger.kernel.org
-X-Gm-Message-State: APuU4Z9uMmum6aHRDoEnbahxcsDpGic9Ud8WNAR8CxZCI5+w4UUWaDus
-	qh4TViovljsgVGlnq8+uoWxBwgk7I/LuYjGFs1rhMGWM+/bb4smwRhNQDz0OlbGtstEO4pAkD5N
-	f5TkfPLHX3U5RT7xdpq3ixArZlaUC8Vg=
-X-Received: by 2002:a05:6820:a29c:10b0:700:52ae:7e4a with SMTP id
- 006d021491bc7-71ab50ba8fdmr819670eaf.71.1794564531943; Fri, 13 Nov 2026
- 02:08:51 -0800 (PST)
+	b=gW7UDdEw6q+5j8PL5LPh1L1vrI7/MIoKJeAjSu2NDHrd1buG3qVpd1qYhNaa9PhEZ
+	 0uUEqdklHY9Gbm+Ha9sUVGqC2s/1YeeDkfa483PuNbOwjkxP+CuS1Cq7pixdDBXc0R
+	 v8QNxCJfMDXzIkIbjr1I/9MdJDOrw5/S0pgMg9lGdK7+71Aqu3QtTLGZtdE5rfj8sP
+	 qBFGJ7jZOhrUemFPQdY3GuTbnZ9Tcy0O948NOaWNp92zja8/3HvsEPDwQXwO5lakfG
+	 Lp8avRshrUm2G/L0CF6u+KsL4b/b4JItR3lH9LpYwzqjlbuhIzWXdmkjW/xWIb50Fo
+	 jehn/M9xrMB9w==
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6d68de53053so378365eaf.0
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 02:09:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErGi1tWcodPEzFholDr6wtFXtZIHkW9Owv023e0OM6DS/3sx2GoeEKsaGWxkweJk81mMt0NFRgm/fEQx@vger.kernel.org
+X-Gm-Message-State: APuU4Z9dtcCDPb+oH96BKeE6w7AdObSZ1tE9ZLJi5+GB/FWPJZQEpxZx
+	Ew/t/FsP3DoX2aF6bsArpYKxQ5Sv3wCOVBk1c4KtUSSrMJoxzWmKIf9rsLNuN7QeDmsCsZ9jLMM
+	gpeXikKDckpsFbtaIVNARI6h0ozId51s=
+X-Received: by 2002:a05:6820:a294:20b0:6e0:8fc2:84a3 with SMTP id
+ 006d021491bc7-71ab510c545mr836854eaf.39.1794564567683; Fri, 13 Nov 2026
+ 02:09:27 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,15 +60,15 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-2-52d92843ad97@baylibre.com>
-In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-2-52d92843ad97@baylibre.com>
+ <20261030-clegoffic-pinctrl-scmi-gpio-v1-3-52d92843ad97@baylibre.com>
+In-Reply-To: <20261030-clegoffic-pinctrl-scmi-gpio-v1-3-52d92843ad97@baylibre.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 13 Nov 2026 11:08:37 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkwO7ysyF4A8UJR=ipDBKCaDzBGM_nNWDnE9RRCwdLH1A@mail.gmail.com>
-X-Gm-Features: AclHuK-wzX5arsrKUblOchzdDuA5RMs0whEnr2fNyQpXUEzcUQOamAacHQe25j0
-Message-ID: <CAD++jLkwO7ysyF4A8UJR=ipDBKCaDzBGM_nNWDnE9RRCwdLH1A@mail.gmail.com>
-Subject: Re: [PATCH 02/11] pinctrl: scmi: map the schmitt trigger enable to
- its SCMI type
+Date: Fri, 13 Nov 2026 11:09:12 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkcbCEvBYY3cdfM89kj3r6Nz-KSd25yypqom7TpbM1HHA@mail.gmail.com>
+X-Gm-Features: AclHuK8B628wWVXl0NuYQCslLhyar4b72cZPwoixzCfMqUSGPYc6JmsCw2evP6o
+Message-ID: <CAD++jLkcbCEvBYY3cdfM89kj3r6Nz-KSd25yypqom7TpbM1HHA@mail.gmail.com>
+Subject: Re: [PATCH 03/11] pinctrl: scmi: send the settings without argument
+ as enabled
 To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
 Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
 	Peng Fan <peng.fan@nxp.com>, Oleksii Moisieiev <oleksii_moisieiev@epam.com>, 
@@ -81,11 +81,10 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Oct 30, 2026 at 4:58=E2=80=AFPM Cl=C3=A9ment Le Goffic
 <clegoffic@baylibre.com> wrote:
 
-> PIN_CONFIG_INPUT_SCHMITT_ENABLE was sent as INPUT_MODE, which drives
-> the input buffer, and PIN_CONFIG_INPUT_SCHMITT, a threshold, as
-> INPUT_SCHMITT, which only takes 0 or 1. Send the enable as
-> INPUT_SCHMITT and refuse the threshold, the protocol has no type for
-> it.
+> bias-bus-hold, bias-disable, bias-high-impedance, drive-open-drain,
+> drive-open-source and drive-push-pull take no argument in Linux, so
+> they were sent with the value 0, which the protocol reads as disabled.
+> Send 1.
 >
 > Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl=
  driver")
