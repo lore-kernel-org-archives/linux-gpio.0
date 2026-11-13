@@ -1,57 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794581036;
-	b=gwSgIASFEACZnXeXI0LVjawZqHWUOy8gt6N259TeKDwaeAN9l2h4ygQOHhkzjXDJYTwz
-	 PUAat/6tCsuSEAklWgfhXdvS4mZaVgqkb5zN9P0XWlhmSHa7NZamdfSCi2MMwV6gAT0Cv
-	 gcJ/MbrfR5YK8FKYEl3YhAG6EujRj24wMVvr3MlucM9wG4dK6UxSS+Jmcbzr9+PH2tTzs
-	 Dt34kI2zxTslvBF4SLc2OIBx47eqvjCruPaVtyWIoZYQJRKSXha1i2UChzB33eWWf+NPC
-	 lJKgH9O083xZ5sL8TJS2deSwK1PmhKjXl4p6XhBG3ajDLlb4dZ+6kvo8s5WMIl77kng==
+	t=1794581074;
+	b=lCXvx0BUXaSDyRX3gIsn4FgOdHH/TeVd3fNZM3EDD2ztBakQcr84p+St7bhd4Lioe30T
+	 1xsnNIwicU5dv1zQuYbRnRS9+qzEOWA17gVHVWKjsGBqAvXtNQQnLH2koaGmfcze15gCS
+	 HztKQ3PZ1EgFn5aVnf0pE4QeHtGmfGj5o3nDP91voiVZcmbZ/+Z/SMY4zGIXrzslp8zAR
+	 b/R8xIpUxnKY9d6RpgBNycbDQWtuMgC9gzMNFXTjNv79Wyod0KADeKHBdRAM5DWEVGyPv
+	 3UAaCzQvDR+23395yiRWG4mx7yKHohI7pVr3jqtL3uPKPaCpD3cYwVO7JYGgPlxlKyA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794581036;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=P2XHr4Ge/UVcnDHImN3vw2OpxpRNWsCoWBP3+JfhYAI=;
-	b=K5PUJsMX/Rq46uGtQw960q2ovtGxZESTYZ53gSmiZNGab5TfR4V+WC8XLpAwb2OAU2W0
-	 AJp/3v1NwKN16oPqbRaEiB/FUJRxLDOswiFZRQqePs4Bzi4mSfMpOxhSIApx2L1PjSVJ1
-	 dqDKBj+YhcoKZLlgOcJ9w9J8PQQ34wTkmypTM68KC1kgQGoljfi53RW75iLgiDiDeDJ21
-	 tFq31ICT0SF2HADwe1/K9v6V0P9XPEMkB0Wg8iflqtfgXGYdctb5ayXFsSbpjjoFAJQwN
-	 WiR2mMb11FKeMXReVMOWskxGt78R0/aaTg/b2AA4By5vz5x9BV74gDaqrHPVIv8ut7Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794581074;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=PCohGcK4MbH0+m0C2E2oEI2m0dBP6JKw67OWX2Ixdd0=;
+	b=Um1AvFkCDVvxPuHrHnA5cbLPevxgMLRed3+qaRGVitro1/fzYHmu2hOYxrYEdEYKYx8O
+	 qr7QCO1i4pqzrDNY0WWnSGkU7EsG/Sy5v6c5f5bNTTNAoznqZkO5oK5O29InYxQgDdV24
+	 qCLspYENPSi5gk+FNinpdsXoWrrIb9zNKSBQqswk3hnctac4SKTfBXAicTSLKr/TdiTeW
+	 j4fy60QwnTeQZ3f7VQZ2k0iLTOPSGkfGQtr+xs7+3UnhI0hL/zBxzxs+3fRqxO9E8aWHc
+	 h2QbeozxJU8qUzTZaXGBXWMukZ0rBku7CNPJhQ6V1vOioCzb8+I2piQe5/6K1Vz7R/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="fk+z7/kn";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="QR/RmCXl";
+	arc=none smtp.remote-ip=192.198.163.12
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 36E83606A323;
-	Fri, 13 Nov 2026 14:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA75606A331;
+	Fri, 13 Nov 2026 14:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EAA75606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fk+z7/kn
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 319451F000C4;
-	Fri, 13 Nov 2026 14:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794581036;
-	bh=P2XHr4Ge/UVcnDHImN3vw2OpxpRNWsCoWBP3+JfhYAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fk+z7/knqvuqqmUYnHT/liunu6/PWqRJoqCBh8aR7mDySRGlu91+nFTsYnfHrwuWg
-	 TJHD5aAuVUu/EyVoGj7FfHG7mheAooQ/aPrreJsG107nP+4g90byUWI5tj5BBQkEx9
-	 VVzqvCC+LWlSty6ApMFsjWwMAm6WMkKW+HGXfydHVqlWYBw2z2p89frLEwxdA+3JU+
-	 3o0t82EveAS2EoEOkwuaCd4wGOZXXlLzeR5/2p8Z33vQZRnB+A+pKLJw4Wlx6aAn80
-	 /4FpJ/xpTb34cRlEovK1LkKq00pygWV8l5wsxasb6ULvY09ugCqymdRK3p2H+SMuun
-	 1xdKnb7oj6dRQ==
-Date: Fri, 13 Nov 2026 15:43:52 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: qcom: sm8650-lpass-lpi: Force runtime suspend
- on system sleep
-Message-ID: <pbgvr7fx4r6jmfuzprbna2p3fwllt3vopuwemyq4eygonuowk7@euyr4jbgh6ds>
-References: <20261112-lpass-lpi-system-sleep-v1-1-438cb997e0e9@oss.qualcomm.com>
- <b64cfe8e-7274-4a8f-8add-ee1b60522c42@oss.qualcomm.com>
- <7d55b69e-f1cb-4271-a2ab-2cfd2e1947bb@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QR/RmCXl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794581074; x=1826117074;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DyI5H6asWxx+tH3VejHSQI8D30gWxhl9i+ORCFAvja8=;
+  b=QR/RmCXlP7YeiKs4cIIQlvZUq5MI+AsMQylxmqVHyTMWw7lKwXW1Em/i
+   C8Za6TM3AWBodCXFoxBGHaSr08gZDp/2T1d33OsWoROoCgSzoPvIyAKgL
+   CKrY8ijrn5JUUe8Z3GKLModbDij415qNKB25Fy89aNmCaeMlcfguqUR7h
+   NYkRZ6mO+oCr5Kdd+CHSY9nDKc/X6Cb45xQTBkQvVYxQFzmyNBXJLeWr5
+   mSg01d6+9adGLilgryjfjXeZ5B43nnxQ5S4uwQTqtkv4pi/ChTIU6We76
+   s4RzzQE1maf4u0JUvpoxQhZK0K+cEVM8ZKkIG5WsXfTa1ZVN5prPz1YEZ
+   g==;
+X-CSE-ConnectionGUID: CTgI1O+eQmaJNplK+6hInw==
+X-CSE-MsgGUID: Z2Dq5KRQQLavbU3FEw0CpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11965"; a="3288677"
+X-IronPort-AV: E=Sophos;i="6.27,211,1787036400"; 
+   d="scan'208";a="3288677"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2026 06:44:18 -0800
+X-CSE-ConnectionGUID: rwx0kEqrS7KcRwQIohl0qQ==
+X-CSE-MsgGUID: TsUR/GvvQFKYNdvTuscMYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,211,1787036400"; 
+   d="scan'208";a="8831426"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.148])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2026 06:44:10 -0800
+Date: Fri, 13 Nov 2026 16:44:08 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andreas Schwab <schwab@linux-m68k.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Len Brown <lenb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org,
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] string: Implement strstarts() with strprefix()
+Message-ID: <avciONW-b_WXoetv@ashevche-desk.local>
+References: <cover.1794574496.git.alx@kernel.org>
+ <382a44f7c68672ecead2436d9f569ee23f383830.1794574496.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,39 +105,35 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7d55b69e-f1cb-4271-a2ab-2cfd2e1947bb@oss.qualcomm.com>
+In-Reply-To: <382a44f7c68672ecead2436d9f569ee23f383830.1794574496.git.alx@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Nov 12, 2026 at 09:59:57PM +0530, Gopi Chandra Sekhar Reddy Kanala wrote:
-> Yes. All the LPASS LPI drivers share lpi_pinctrl_probe(),
-> which manages the clocks through pm_clk with runtime PM, and every SoC
-> driver has the same runtime-only dev_pm_ops, so they should all have
-> the same problem.
-> 
+On Fri, Nov 13, 2026 at 02:11:17PM +0100, Alejandro Colomar wrote:
+> The compiler should be able to optimize out the unused pointer
+> arithmetic done at the end, so performance-wise this shouldn't change
+> anything.
 
-While they're the same, they don't reimplement the same callbacks, they all
-use the standard PM helpers so it's not like we're wasting that much
-memory.
+If strprefix() is not inline how would it be done? Or I missed the point?
 
-That being said, I won't reject a patch that moves them all together.
+> This change de-duplicates the almost-identical implementations,
+> and better shows the relationship between the two functions.
 
-> For v2, I was thinking of two patches:
-> 
-> 1. Move the dev_pm_ops into pinctrl-lpass-lpi.c, export it, and use it
->    from all the SoC drivers (no functional change).
-> 2. Add the system sleep callbacks to the shared dev_pm_ops.
-> 
-> Would that be okay, or is it preferable to add the system sleep callbacks to
-> each SoC driver instead?
-> 
+...
 
-I'm fine either way, but it might indeed be more elegant to centralize it.
+>  static inline bool strstarts(const char *str, const char *prefix)
+>  {
+> -	return strncmp(str, prefix, strlen(prefix)) == 0;
+> +	return strprefix(str, prefix);
+>  }
 
-> I can only test on Glymur CRD (sm8650 driver), so the other SoC drivers
-> would be compile-tested only.
-> 
-> Gopi
+There is no sense to keep strstarts() at this point. Can it be simply
+redefinition? However, after looking at the uses in the kernel, I prefer
+to see the strprefix() be not implemented at all, just optimization against
+strstarts()/strends() if required can be performed.
 
-Please don't top-post on the mailing list.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Bartosz
+
