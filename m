@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794575574;
-	b=4w4HU3aY4h8TWcLpZXdv8+wxIn5b12CDq0gWmcpdCapLmppJtuDLgVVuWgg+FfGvV1Vh
-	 8GqMvPAKa1Bq8L8aV46PkW50F4ErRoRGosPoLN9rZF5c7W3/N+KRZI9jB3obEFTJcI77f
-	 WAzJOtVN4OJXSR9mjSup4DM4D9K8IesnWNI9jjQKgzYhW+bqOKGV1+Dw0GUJHrOGW5nC3
-	 ZFGnNEA0P5/jDQ6KY3ionUHlEutHKj636iSN8T4Q3eVh1CmehPN0iMJWnZCmd8Ulcq1RH
-	 EzQAKJ/vmR8QwaJksvKDaUOUSw6o7dqbfZ4tA8gEKL4D+0Y/9x3j3l9aHkzo9NC+aMQ==
+	t=1794576017;
+	b=hG0CYt9Tk9PJiM/dc2q3toR2IB5CQ3kIcJE1cTA5uwinEREk1ubFVFYIL8ZjIty8Uht4
+	 HNB5hHwOvaur+eSYy2zOco0m37JSTFDyQkLyHnbnytOT3MVrSUFAVfXLAqdHA9PCjTwwj
+	 27+NHzPI+lvDsPwWcloeSO2UavxSq+GNgQARyLzHwhxzLGeeoUvlrZCpmR2hGPPLc6cil
+	 puMCHfWmUuZ/7mvD5vv6sOCNkgV6KHYGqudakCh8rpEtKaNcPkl+Dcs/K4KIqIvQ5J8uX
+	 +hTsXES/11zIm16JJp0rqe6uJ8L4HVW06oksbLEgPGwIi8bJ2Zd1n1xhALjEBr3bp4A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794575574;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=vSzzZQXyjWd707+YEztZNfwhTEMbuMsIk3gAaxR7cCs=;
-	b=T5bBjlGX45UtrMHMZKbEnulzwqpZIjqIHFS5UFzLwPtVMw9kqxAo7TmCX/E6+dAzV5Vi
-	 nlv8M2tygfnhdWZYrR0BQD6D6696Ho9Li6x8NGBuXRBDNUk3Yg/ptflE9e+n+2nB5HKAh
-	 QeMY12l4Z5kOPNKjXQ/GddEz6XUCtEqzihOeMRu+grxYn0ZYa2ElxzElF5d044KICtZK0
-	 fXhn4HxRtkCAWrLnL0DF9BjYRZwc0yCh6qPlOMSVupai4fQddQRao4tZYVSWygjpGXMKJ
-	 hI1FrFdttk9VSewWue5S5u65CC1uJOX7LfC0gQ+YNx14hRGact7AgarQXm/0Ilcs+PQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794576017;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=udqE3V5r0alc1cG201p9qQ+yU6Qa2qwmhjgy1A2cAfk=;
+	b=acF1KEucPFCHVPvbisZRWAh5xLGr7lfV+Jde0JV3hnLOrwurAlEFO5Y26kq0bFAm92bx
+	 jl4TzsqKUgNOLUBZR2SDxsOCdHz73UdF3SUrzR9E7cJxMQ4ZZCm8cqDaFkFk+DXyr+OU8
+	 cY3aAXnPk5XG1aNdxd637aeupevTJsaWu6gYLal/xfZrAPOxuLxs+7QNs060RzvjjT7g8
+	 mb+7zfwqpwOFxetWgG7AuJHq6JIK/3I+MDqKPzj+r43pbKtfy2wmWq5O8TvmPAqWFxEBA
+	 4jPJPuLHOL3kh8mibPfmZDL6bHhbr99ei8jJ4VNSsh3ZvzWwT/cONc6zqfZ639b5L7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cyskekEA;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZUPF5+vD;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39740606A8A9
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 13:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CADB606A33B;
+	Fri, 13 Nov 2026 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cyskekEA
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E137A1F000C5
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 13:12:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZUPF5+vD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A4C1F000C5;
+	Fri, 13 Nov 2026 13:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794575573;
-	bh=vSzzZQXyjWd707+YEztZNfwhTEMbuMsIk3gAaxR7cCs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=cyskekEAdhtrPKmUr/gE2ThgA7q7NVKzsV4u4W4HbaBqmHFsDI2iN/hkL+YZs9N/b
-	 UmV5t0iSJkFp29o86TmJIE2qqhltYZ1tqguxVdjr+5/KUzX+i7naCNolXlQgisd4gH
-	 rQjalS3iELABZ/bnOO7VCoyqXi0A7DJ5EZLP088yRBUX+LtT4IiKQtuL7qwpKgjbvD
-	 SOTzhTKhYAUI/2eECaWWpMGQnMGgRHmYKGveSMCrER0bofsJltyX3ycf51T+M2Y5kf
-	 wufBl0gA8j0nX1sBNQ2uOMWEqTQl3GbMoJTWNOH8oI/KlxkAjhB2HS4jWd6jEppmBV
-	 5FI604C/FopdA==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-716b58a4365so1076436eaf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 05:12:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGyLcgFMs7yXW52N9+IEWGkCEIp1Ocq6hXw/yZWv8XXQVLBZqAl9CZ5L1jy1858eSsfRQlKPjYVITto@vger.kernel.org
-X-Gm-Message-State: APuU4Z/4936DFRku2dWY2oorezJ5y6X1Tld3qiL8adRz3HHYG5+u3793
-	4bnHo3VeDmw6AkoIva245zpKRPkOg/Q3E0hmBTVFLtK0ZCu9XkA8NhTtvf5Zb2LnBTE/R/1tGQH
-	bT7RO0pNhEhgckA6+TGueYwXVoxqaqt8=
-X-Received: by 2002:a05:6820:60c:b0:6f5:1e7f:c65c with SMTP id
- 006d021491bc7-71ab4f38fbbmr1236618eaf.33.1794575573123; Fri, 13 Nov 2026
- 05:12:53 -0800 (PST)
+	s=k20260515; t=1794576016;
+	bh=udqE3V5r0alc1cG201p9qQ+yU6Qa2qwmhjgy1A2cAfk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ZUPF5+vDeAeQkLeKvRNx09e0kGn8CluUepAk7V0UIa/K8IK+cFhuQQrHdQUN2GV73
+	 MLdSEiFjKwKY62O2YwZd7tsQ/cKTJ1W7UXYAwQctQnf3jDAM6LvugqdjsQPIGz14gP
+	 TCH3g9vqfOvY717io9dDwMZ/jSo2x6w+bQFBuO2zbEQ5jeSPC83c368L+K+yG9PmAG
+	 s5g5G55A7Ke3aGKn05Nr8X1ANWu0o2KpzqaH6GtahEnI4+4odyAKgN5U+MHyEjKrFA
+	 qmzN1S9Iy0qW70cyzeu5OgbeNJAIZMb9z7Mfr3FEFwKGRrJiJGdA+ZEacs8Hc2BadZ
+	 aYxTol9wAh3Ow==
+Message-ID: <sashiko-outbox-212840@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v5 7/7] string: Implement strstarts() with strprefix()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Alejandro Colomar" <alx@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <382a44f7c68672ecead2436d9f569ee23f383830.1794574496.git.alx@kernel.org>
+References: <cover.1794574496.git.alx@kernel.org>
+ <382a44f7c68672ecead2436d9f569ee23f383830.1794574496.git.alx@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 13 Nov 2026 13:20:16 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,36 +59,46 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
-In-Reply-To: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 13 Nov 2026 14:12:38 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkE7zweAY5V1zihorrHv8EL7LO+r8z+VmOVUTCesdGK_A@mail.gmail.com>
-X-Gm-Features: AclHuK-XfwbbsThDWRKKp0Nlzp5SCGGel7-dOlgu3vEKR4VlZvcMoWFny-hIjEw
-Message-ID: <CAD++jLkE7zweAY5V1zihorrHv8EL7LO+r8z+VmOVUTCesdGK_A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] pinctrl: bcm: Two bounds fixes and a dt_free_map cleanup
-To: Xiaolei Wang <wangxiaolei01@kaihong.com>
-Cc: florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, daniel@dragonzap.com, iivanov@suse.de, 
-	andrea.porta@suse.com, phil@raspberrypi.com, linux-gpio@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 13, 2026 at 6:32=E2=80=AFAM Xiaolei Wang <wangxiaolei01@kaihong=
-.com> wrote:
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] string: strstarts() via strprefix() prevents optimizing out
+  pointer offset
+--
 
-> This series fixes two out-of-bounds accesses in the BCM pin controllers
-> and drops two hand-written dt_free_map callbacks that duplicate
-> pinctrl_utils_free_map().
+commit 8cdc2e9c96584305ea94313f2618d17d8e28f303
+Author: Alejandro Colomar <alx@kernel.org>
 
-Patches applied!
+string: Implement strstarts() with strprefix()
 
-There may be futher comments and/or Sashiko moanings, that
-stuff is better addressed in-tree with follow-up patches because
-this is GoodStuff(TM) that needs to be applied.
+This commit changes strstarts() to call strprefix() instead of calling
+strncmp() and strlen() directly.
 
-Yours,
-Linus Walleij
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 8c6a79d320474..8ca0deda61606 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -595,7 +595,7 @@ static inline const char *strprefix(const char *s, co=
+nst char *prefix)
+>   */
+>  static inline bool strstarts(const char *str, const char *prefix)
+>  {
+> -	return strncmp(str, prefix, strlen(prefix)) =3D=3D 0;
+> +	return strprefix(str, prefix);
+>  }
+
+[Severity: Low]
+Can the compiler actually optimize away the s + len pointer arithmetic in
+strprefix() here?
+
+strprefix() returns strncmp(s, prefix, len) =3D=3D 0 ? s + len : NULL, and
+converting that result to bool requires proving that s + len is non-NULL
+whenever strncmp() returns 0.  Because the kernel builds with
+-fno-delete-null-pointer-checks and -fno-strict-overflow, the compiler
+cannot assume that a runtime pointer is non-NULL or that s + len does not
+wrap to NULL, so callers of strstarts() end up keeping str and len live
+across strncmp() and emitting the extra addition and NULL check.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794574496.gi=
+t.alx@kernel.org?part=3D7
