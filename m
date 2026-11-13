@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794609214;
-	b=SFgrQN8DknnmdLxHPdghslYeaPHne7dEhb2Oip0zZE7K+8ZTT030rF8+eOEk2ZuYR54I
-	 j01C7iLSRnHta9J3HZR7jEOuvNHIePmZq4bfQy1PDn9xViXwPYQwQOiFMD5v3b/ZOibt3
-	 DN7QTLMYwtKNXhkN1+t6hFuAsxFzWY+gF9wJAn3aIZdz/l7XFMOf9TRuFF7NYdHjpj7Lu
-	 hOjqgukh5SIoWNWK15f+LKkQtfTEqtw+NMZ4gxxCS9lGd5RtOmu5UHDbxoJoH0MmVmEwK
-	 5dgfcHglpg4TC5cdHTiFB0+vYqSozFOpgPQllAmVwFmPfLW7xudGLuKG+jr+D8DALqw==
+	t=1794609219;
+	b=QdIIRTUx0NsOONMaeLjJxpLXWyWSDPOb+oDNgO7V0H2yvdAGqm/jJH7Es5uXubzQ1FmW
+	 M26AEOpk7jus4KET/c26tSImG0pcLinFtMNAwZOglUUdVThq31loKR+uJm4g6CqxQ8Ym1
+	 p+129C/vXsbbrEhZ/Pvv7FGIZBd8ynmEhKVS5FWLgsrNfoX37pyCB5+vympm51cVxwUfV
+	 ICnEeSwDwIl9cblpsmBBYHDt7reWQfpoV0uVmGwWEaafUC4SlR3AaFGdmSHExkhK13KIi
+	 f/JCaVN4I9W4Lwgmr1EETk8Vq92SQJVSVCME/7K7s54J5kKS9wHSGsdN2h39hMSiciQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794609214;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794609219;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=HyiTVbeXPQu8fkPfhfD3gHjXLJEZSVzM7qOeO91NGRg=;
-	b=ko5hGJ61DsjZ77irB5L/IeGWmi6m6wus3oYCu4Dh6lWouwMl/PaxzRzKg7TbjEUy77fc
-	 ZrnKqMnTiUOQktp/Zxmf1hI4XmF6/LUPRqzHXw8EcrDi/ulG4W/7x8eTmKa/n/SY+czhK
-	 MrKIS7g6KOM3qgwOG0vta+613riN3M/TcBt7KT3vnzG/R2DuLkiktjRVPhk+L++T67aQE
-	 xfY2EKdkLIlMbSixuC9q59IgmgjnEqGOEiglCrkcfC0HMhTwvgr90HIICmsVreA2OUoEv
-	 l8SYPesk69K0jGIGxvdpLSijN7hk2x/zCBeUZyvZfNzQsQSNpaq8WYnT+AqmAIl6iLQ==
+	bh=4mMY5cZaKx3ZCVEMaMmatdBt7ktTZ1OwhWVfuPFcows=;
+	b=2wdES6BMp32M8Qi0xYf8hf4jFBrVj2swoaeYulw12Dkkh4mPo26iSKE3Dddux8yl366L
+	 h2iZmip2dNzKsX0fnkl+uZRVFx0hyWluKz0l9X2jjQEJlW7lirf5uj+6aqu84TydIWpQy
+	 n0Rc1ARpuELRc8pEpz5gEV9cajpuTousG8rU3K/o9x3Q4nGV5j4zGM+0lNkjP4WTvWpfX
+	 KsmjuE/kb7E1E+zmBFV4ESEtCCIisfsJMrPoBldOlf0UrBGl3kEydbLhampJhIDiEQDXV
+	 ihnRgWaF2vWSWju20eosS/2FvYn4jP1JK3dyvHBNpPgnDxzrX7VoVoSW5AGj3UWDpaQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UtZMtRuy;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IigouBQH;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5262C606A883;
-	Fri, 13 Nov 2026 22:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD5560A3827;
+	Fri, 13 Nov 2026 22:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UtZMtRuy
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IigouBQH
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794609213;
-	b=rx6seLmVjtfP07fRicajwW4gcx5wTTRbDzYT/2gEVSZRGbyPFLYvc4JlMdzz9wPMVm1a
-	 o4Wuma0RFECZuk23+K6yj7gf8Gz4WLeCKlH9CFfJRe/GPpNr7vJAr2eg1TMTpEDUpRwtP
-	 Za15H9KpVjHzMgQf/1l1/k7d+3haLKmyom/SUlFVrTA2UVxDndp5dK0N95zUePAVTdB/S
-	 V1VBxMJkp8/OknttbjsfI6FY2z2RxQXnPDWU95byeomE+1lRfskkZn5dAWF4SYPIJ77Zg
-	 0Vx41wCqd0Q+oY5pTh1jUq4nKJ6Q2NJDfYwYRZyIFRbk9Opx9y7y/aqdldWRRIir2Mw==
+	t=1794609219;
+	b=AK91dPpd1Gkrn3J41qz2CWYf1laPPWxIrSBfZlfgFim4yJisYmmr/lxoSIaywDN7nEiy
+	 PlQKdyKxsK+wK4UTWAGSPcmLlc5yPC9/TleWiPLEBcRgMY2iXiORqjbAMhQiUxUZqQnuH
+	 z5UdN0gBZZo73uACwxuejHe7Uno4gSRSjkzimP7+itRf+RgJoFIUwNDwQ/+M9SfsBeW6q
+	 /pzFEc+cwFbNFnS46TqbhvFi4GBLb9nFfajgZxFjF4AGlxAKH4K0hCLweDuLE9AhngU8P
+	 2xRJB5p2ls9JpGx1b0tPpivPeC7ugaUitzX6k0Ka4uyt0qwCaXzDBWetQP+c7oLzIrw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794609213;
+	c=relaxed/relaxed; t=1794609219;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=HyiTVbeXPQu8fkPfhfD3gHjXLJEZSVzM7qOeO91NGRg=;
-	b=VWI/WkEdcF2Xlv6G3k41B0/FezxAS/CfJTmpL2XNORrf1xYrtNvDP1vaZnlCf1iqvuKY
-	 scjDd2YAE39vLXSGev5jkdeMhGTU7sQvOTxr6OgIFyJV+vO4L5PBb7s2Ly8ozZVSDcYlO
-	 otUPDdpbO8cuphtgIPD9st5EG0kcXb3XghlZ6Mc0FpjXYjXMzOFS69zUeCsL+yFZHpvo2
-	 mes6Lea+P/yUQT5WV4GlpqlTenXCVCLSQArjsIoo+Bf1J67BEdQUMhug6NZwxixaHzrhu
-	 IIgylUwAxaEqud62qoLY5JfYgGpECXS3FlMHizW6NqYEQwSDENqmBfSs2Z+SFxiCReQ==
+	bh=4mMY5cZaKx3ZCVEMaMmatdBt7ktTZ1OwhWVfuPFcows=;
+	b=2ptx1L6tcz9IB4GXAz0l18G6BNZT4lyA1V4FWo7G4FqmBuwt5Zh93ylzNL2zpKQzAuZl
+	 9IfYzSnBIN3VayWIXI/ZYurNl0wBxfSjn4RwNh+HyCYNdDzLJl6R+KWduwmwbZd/KhmD0
+	 Ir4wYzdSqa3+5PkLm89UOiyEUJj9/WsGaBA7vCV/+esAMEsDB1Lj6C9QSJ5YrxYED5rSd
+	 GgyLNMNOrQyHD5ov80rvLCHZv4elykQ+y3Z9c1eQYCYb6PB5wvx4sqTy2Gh69XeLH/KgW
+	 OIAZ3gkbG/UcGCIfRDZfxfuLBsbKBnniZazGyT7JvZBii+nhku/MrumI0KG2vyAcUMA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 314461F000C4;
-	Fri, 13 Nov 2026 22:33:33 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 2DA181F000D2;
+	Fri, 13 Nov 2026 22:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794609213;
-	bh=HyiTVbeXPQu8fkPfhfD3gHjXLJEZSVzM7qOeO91NGRg=;
+	s=k20260515; t=1794609219;
+	bh=4mMY5cZaKx3ZCVEMaMmatdBt7ktTZ1OwhWVfuPFcows=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=UtZMtRuy2RreIXnt6Vk6e1sTpBtQ42hqFvY/BLiBEfGCx4AjqmVAkYmV1ALjqjy9F
-	 VGgIrQa6TV9iILRc4ZtrjGqseyIhml3nkASLmeYP36fJvdWR9LL9EBW+VzRgV3yO3x
-	 jq2yE/dyD/YyOHwxa4uhfZ4X1693xNj+zD3+JrYHaY1Fm8ztHfdJ8/60mc6XnXjYCu
-	 K0aeGfZZd7k9Qbb2illPSJSUWJ5vfFBIl6K07SLfMHdo1VKv17IiphIZoIWI+kxZK3
-	 8UlXv/aS3/U+0yePxo51ddZFjPOJPCuM4iGO8axqUf3gSXu9ph6wYw8O7tc5eDeV7I
-	 wK9bQSwv3aBVA==
+	b=IigouBQHREYR6jRjc4A6nZGQczb6EoRkq8nHMkxDPIiQmmozMVzrb42NnHzNzcNro
+	 8xPtW7qZCV4G42LXacr3vytBCuTSYM+xTO03pTFRmw/kpkI/NJPSpBTPUIvCKlOy/x
+	 YFcL1FmqZH4pjEYo12xobeFwf5fAF25Hjkvm9MVkN6ZjqW5IiJvoV6gbP8Jp6TSEqr
+	 r0UpeMF5QjFTmQifkA0f26pbwcZa1rf0bkVgaKrmW1asF8FYCtooZBViDO27IUhMG8
+	 BYNxJPw8eqUiN/CPyFvhPRl7nccEGGt1s4iFHLBWsQfKdSxsUO0E2T3O5sHqljR88O
+	 dyDhP7WZcQk6w==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 9E3E349B58;
-	Fri, 13 Nov 2026 22:33:32 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 7D95F49B80;
+	Fri, 13 Nov 2026 22:33:33 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Sat, 14 Nov 2026 06:33:27 +0800
-Subject: [PATCH 01/19] riscv: sunxi: describe the wider Allwinner SoC
- family
+Date: Sat, 14 Nov 2026 06:33:37 +0800
+Subject: [PATCH 11/19] clk: sunxi-ng: sun6i-rtc: add Allwinner V861 support
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-v861-v1-1-eb71ec3ee523@iscas.ac.cn>
+Message-Id: <20261114-v861-v1-11-eb71ec3ee523@iscas.ac.cn>
 References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
 In-Reply-To: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
 To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
@@ -111,11 +110,11 @@ Cc: Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=987;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=1736;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=iIMXHW4ncH9rYCfV6gqeS1VFiDJbleuDtC++QacYRuM=;
- b=1qagKD3rCKA24HqW1EY7WOksbBJolj6tNk+/fSKplFvFfQFmuICjc/3HRPonNK6YXjTtHCQMd
- k+l2SiI9Az4DbHj5RDb1WJdE+MlgzAKOR89f9hwcRwjPTczallY0Cjt
+ bh=FtT3g2BsbPGWBSuneJ0o2oWXhhcqpYTjSs7COAH+YU8=;
+ b=EdbVxEBsgcIrqNXI47Kh+ivqcWZsMI/zxZ4SByBdzlJzw1sOBCXPcRNpv/CWAGJtOwhd6gogI
+ S8IwtXnP/rhCnSIObOMgO5DcL+JYJpzv+qW7cacx0j3ueZZ7G0KvR3A
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -126,35 +125,52 @@ Content-Transfer-Encoding: 7bit
 
 From: Han Gao <gaohan@iscas.ac.cn>
 
-ARCH_SUNXI is about to cover the V861 as well. Update its prompt and
-help text instead of adding another option.
+The V861 RTC clocks are like the A523 ones, without the 32k fanout mux.
+
+The 24 MHz to 32k divider ratio is not documented. With the RTC running
+from it, the RTC kept time with the architectural timer, which uses the
+same oscillator, to within 5 ppm over 15 minutes. So the divider
+outputs 32768 Hz, not 24 MHz / 750.
 
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- arch/riscv/Kconfig.socs | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index cecbce0c4983..4cf3b24467e8 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -61,13 +61,13 @@ config SOC_STARFIVE
- 	  This enables support for StarFive SoC platform hardware.
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+index b3619222fef0..1abee85271a9 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+@@ -392,6 +392,18 @@ static const struct sun6i_rtc_match_data sun60i_a733_rtc_ccu_data = {
+ 	.osc32k_fanout_nparents	= ARRAY_SIZE(sun50i_r329_osc32k_fanout_parents),
+ };
  
- config ARCH_SUNXI
--	bool "Allwinner sun20i SoCs"
-+	bool "Allwinner SoCs"
- 	depends on MMU
- 	select ERRATA_THEAD
- 	select SUN4I_TIMER
- 	help
--	  This enables support for Allwinner sun20i platform hardware,
--	  including boards based on the D1 and D1s SoCs.
-+	  This enables support for Allwinner SoC platform hardware,
-+	  including boards based on the D1, D1s and V861 SoCs.
- 
- config ARCH_TENSTORRENT
- 	bool "Tenstorrent SoCs"
++/*
++ * The V861 has no 32k fanout mux. Its 24 MHz to 32k divider ratio is not
++ * documented; measured against the architectural timer, it generates
++ * 32768 Hz.
++ */
++static const struct sun6i_rtc_match_data sun252i_v861_rtc_ccu_data = {
++	.have_ext_osc32k	= true,
++	.have_iosc_calibration	= true,
++	.osc24M_32k_mult	= 128,
++	.osc24M_32k_div		= 93750,
++};
++
+ static const struct of_device_id sun6i_rtc_ccu_match[] = {
+ 	{
+ 		.compatible	= "allwinner,sun50i-h616-rtc",
+@@ -401,6 +413,10 @@ static const struct of_device_id sun6i_rtc_ccu_match[] = {
+ 		.compatible	= "allwinner,sun50i-r329-rtc",
+ 		.data		= &sun50i_r329_rtc_ccu_data,
+ 	},
++	{
++		.compatible	= "allwinner,sun252i-v861-rtc",
++		.data		= &sun252i_v861_rtc_ccu_data,
++	},
+ 	{
+ 		.compatible	= "allwinner,sun55i-a523-rtc",
+ 		.data		= &sun55i_a523_rtc_ccu_data,
 
 -- 
 2.55.0
