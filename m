@@ -1,69 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.10.4.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794550063;
-	b=TbYrsIfY47DcgvzUBmcskaqAVUXWKMq0TVo3Hf8HG+DXjAKoOR5/yLtfKaqr53CQxEEh
-	 IJ/vbqPfWHoiZ3STgycxVo1MT22XHDO6yBojN5ODX51izQrx8HArHiXSqcRcM3s3a+ayb
-	 tx9W5H2zVVryfGxEu50zWP/4sHlL0ZIGyQTu7Axg9Dx8fS4l/zzvHwPi+qdXQaSlqen7/
-	 0GpcNoK8b9OwLrZdFwKFnBK2rY1lytqXL1diIdnTHfpAHg8yoDx2gwWH9rxsmF7PZh5gB
-	 t/1YbayKX+5ci6smsKaZ5kNWxLYToKHY6PGiOhzhB+R7ZHsWVC8ll5rAYEaCGhkAhNg==
+	t=1794557571;
+	b=WRaPuT3bV0bOYYeHkxmbRT4fD+HBt0pjq7oQ2StZmiAfKF6theQQ4no0KzzO5BkZjPRM
+	 bm532sFUrrj0eAAS0wihLK4TMyGkGnvTdrGwwczB0L64dcMp7pE3irr2oFEA6EIWiFVE6
+	 WSNAuTZhr3ktLlzerPHzjINeiZoRWR7hUdnJi36BRTUmUp4/fT/iyRkTZAa0iKLNbensi
+	 nLl0KXKa8zVsOl9GvqUGUbDCwlrLWGJR6437ClK34YkprNK6lINT5sqNUtjNPKqIUiCmA
+	 uF3ErAzZsrqHbgLuRzROuYpQ/sIv7cjSyML82X33mjQGQMNBhKbBFyc34EAstB37ZhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794550063;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
-	 X-ClientProxiedBy:X-TM-AS-Product-Ver:X-TM-AS-Result:
-	 X-TMASE-MatchedRID:X-TM-AS-User-Approved-Sender:
-	 X-TM-AS-User-Blocked-Sender:X-TMASE-Result:X-TMASE-Version:
-	 X-TM-SNTS-SMTP;
-	bh=KgxanPyLG1oE6QUC51vvwCcoOIoWUeqHJFzBqSVEx8A=;
-	b=tSWtddYZXZjDueR81UvFprd/6Rxd3lWNEClSMH7OKrhEQOD77jGCDBGP33jOVY2VScuu
-	 ve71rCGUjXnA2nz2aPPgldYKOanKnHxi48NdDnecFGdtef6r/xmmYVTyI/UwJRS4tze0H
-	 iju4KfHcYsap+HoPJ7yh5pm21JgQBtJs3T/sZXPrILIv1NobaQDa6pSI7BqpaSJy1FGkr
-	 0Cgd0krDEgvDfi3lDXSxD+EhaQhnjyScGawIBId2S5Msz5pnex3Ojcx9NjlicLUzokqIP
-	 mHKoRoB6je2bB/PskzgqrBe73fLTZhEQOevQZMcDv39t7L0D7+J1vvPa38ULuAHpIXw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794557571;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=QTwJUCLQ4QDDRVCFkenEQUWSKSxI4hDWzNhWkpHZXDo=;
+	b=k1LqBz8cHNhqFHEiNGHN3V107b2Hx+mirb2HjvdoCyFzBdwaVjt9Yy/vkNiQBtWFfzIJ
+	 fHt9N2juQmxgs+xUyMBKynhkcmAcp3r4reTfTvRdUP15yCbFVWzfa4CH+m1253vA70TEX
+	 irQwBnDOFAjpkVfv7Vm5d6DRQsj5oOH62vj+jikdNRoZiV4uR51XuSfAZWsy07S4lZU/d
+	 Il1XZ0S2lukjjLui4VCFSRWiET/qRopAl4gXBYxWrsi9n+zq7cyNiUecuIotAlgTYQ/I8
+	 GjMP7YSk57A42Ed0RsiHmpwvbQCuakacCucqdkrxy2J1Pv9OHfDjmG5mSs5osg9zPvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=asmedia.com.tw;
-	spf=pass smtp.mailfrom=asmedia.com.tw;
-	dkim=pass header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=qWERUPRv;
-	arc=none smtp.remote-ip=103.10.4.13
-Received: from ms.asus.com (ms.asus.com [103.10.4.13])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ms6yiLRJ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0EC606A321;
-	Fri, 13 Nov 2026 06:07:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB0EC606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=asmedia.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmedia.com.tw
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F66C606A31C;
+	Fri, 13 Nov 2026 08:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=qWERUPRv
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=asmedia.com.tw; i=@asmedia.com.tw; q=dns/txt;
-  s=asmediacomtw; t=1794550063; x=1826086063;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kESxTKefuWiEkIIdkkSEjVtoE/CLYY1e2PeOpFjFCz4=;
-  b=qWERUPRvuI0vxmyOx0XUvMiRUVN/GKJIbze6os+7RG7MM0ittZ7k0cEQ
-   YWAjAjghf/e1asSaKWbN1YiZnSyWl2xv1KzcHeGmN5SghcyqNCdBwHfD6
-   F+yqb91y8u3MqKyg8hPvP9TGq0W6TmAJ3Hs3nB5OO/ZvuNJNhFPJ4X5ob
-   o=;
-X-CSE-ConnectionGUID: wWDM4HShRLCIk00GgJcbjA==
-X-CSE-MsgGUID: f49iQX8ET4GILGfKqsAdJw==
-Received: from apza006tmd.corpnet.asus ([172.22.47.66])
-  by ms.asus.com with ESMTP; 13 Nov 2026 14:07:20 +0800
-Received: from mymail.asus.com (42.79.126.46) by APZA006TMD.corpnet.asus
- (172.22.47.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Fri, 13 Nov
- 2026 14:07:18 +0800
-From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-To: <linusw@kernel.org>, <Markus.Elfring@web.de>,
-	<linux-gpio@vger.kernel.org>, <brgl@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <Yd_Tseng@asmedia.com.tw>,
-	<Jesse1_Chang@asmedia.com.tw>, <Richard_Hsu@asmedia.com.tw>, Szuying Chen
-	<Chloe_Chen@asmedia.com.tw>
-Subject: RE: RE: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
-Date: Fri, 13 Nov 2026 14:06:59 +0800
-Message-ID: <20261113060700.4127-1-Chloe_Chen@asmedia.com.tw>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ms6yiLRJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A431F000C4;
+	Fri, 13 Nov 2026 08:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794557570;
+	bh=QTwJUCLQ4QDDRVCFkenEQUWSKSxI4hDWzNhWkpHZXDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ms6yiLRJV1A7ao0qEyOiSOl6jWnqQL077X6wZ/VPW/ltZ+LN5MQWkirGEzXoQ9g6P
+	 gMRfxTHd/R1Sb7AInWpUEFHWO0OYcTCnmVEVbwCJrqzLq4hyGY3O0cUrYM1Fo42cYT
+	 SlR4Ny8xWLw32tMYSenUTkJjj7y/vDGrBzbi8VNroWMzPoMOfC+sHK7Ys44XHQWZoh
+	 xA4qs3LkjgzB7X3dTqAdcP8hNJ2dSoXXn1a7yCFweZjZocx6xEKTkgRnS6y0IqjV92
+	 L13JlnXQqmewix+cA2tLDchmcskFjL/I9hXzb3iWnA0vg5qwpEIMd9qAQmEqofp2m3
+	 M1dZMtrrjTfsA==
+Date: Fri, 13 Nov 2026 09:12:48 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: John Crispin <john@phrozen.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org, lei.dong@airoha.com,
+	Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	mfd@lists.linux.dev,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
+	zhengping.zhang@airoha.com
+Subject: Re: [PATCH v2 3/7] pinctrl: airoha: make the chip SCU optional
+Message-ID: <avbGgANYSs_0mXSB@lore-desk>
+References: <20261112185941.1316112-1-john@phrozen.org>
+ <20261112185941.1316112-4-john@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -73,68 +70,95 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: APZA002EXB.corpnet.asus (172.22.6.14) To
- APZA006TMD.corpnet.asus (172.22.47.66)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3239-9.1.2019-30316.004
-X-TM-AS-Result: No-10--14.867700-8.000000
-X-TMASE-MatchedRID: +mH4VGfbtsxu4DGBDoAs85GPSO6O5JCagKzitR6I0vS4jV9yUdXXgZ0i
-	AknL6Q/Z0bs03Cj/zdbJbpWeSB+0RtZSVIh2F3SJ39nur6FlBV43RfriMbLZ1hERyafywvMoBK5
-	jsahkTKn+DLKQ2zS90DIdfNkCBOiLQtOofzK6nhO7/BkSrGh1ljSSxxZ1ewmwZAvO4QbJLKOQ+u
-	G18dpupfx3IL7oOgVqyrzRjZhtElOvngkjHjojpAqMtasBG2xzmuMpo5XKw2858Sarp97J84ckZ
-	T5abrxuV93NVRFdgSfmji6nqi0orDLPaFtwcF939eSlccz0Gku+z+D0qBfeLusO3zrvD+9awACm
-	bLFOQ7c=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--14.867700-8.000000
-X-TMASE-Version: SMEX-14.0.0.3239-9.1.2019-30316.004
-X-TM-SNTS-SMTP:
-	60F52F02C5E85A09FC7FC9409B0FF82CE6C5264498604BF7A42B3D3736557EB02000:8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="POY+md8lzvHs8Old"
+Content-Disposition: inline
+In-Reply-To: <20261112185941.1316112-4-john@phrozen.org>
 
-Hi Linus,
+--POY+md8lzvHs8Old
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review and feedback.
+> A SoC that muxes every pin through the IOMUX block and describes no
+> pin configuration has no use for the chip SCU. Skip the lookup when
+> the match data names no chip SCU compatible, instead of handing a
+> NULL compatible to syscon_regmap_lookup_by_compatible().
+>=20
+> No functional change for the existing SoCs, which all name one.
+>=20
+> Signed-off-by: John Crispin <john@phrozen.org>
 
->> +#include <linux/bits.h>
->> +#include <linux/compiler.h>
+Reviewed-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
->Why this include?? Add a comment next to it why it is included if this is really necessary.
+> ---
+> Changes in v2:
+> - Look up the airoha,chip-scu phandle before the check for a chip
+>   SCU compatible (Lorenzo).
+>=20
+>  drivers/pinctrl/airoha/pinctrl-airoha.c | 25 +++++++++++++++++++------
+>  1 file changed, 19 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
+roha/pinctrl-airoha.c
+> index f9ae4020b764..5ae0c49e491a 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+> @@ -833,6 +833,22 @@ static const struct pinctrl_ops airoha_pctlops =3D {
+>  	.dt_free_map =3D pinconf_generic_dt_free_map,
+>  };
+> =20
+> +static struct regmap *
+> +airoha_pinctrl_chip_scu(struct device *dev,
+> +			const struct airoha_pinctrl_match_data *data)
+> +{
+> +	struct regmap *map;
+> +
+> +	map =3D syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu"=
+);
+> +	if (!IS_ERR_OR_NULL(map))
+> +		return map;
+> +
+> +	if (!data->chip_scu_compatible)
+> +		return NULL;
+> +
+> +	return syscon_regmap_lookup_by_compatible(data->chip_scu_compatible);
+> +}
+> +
+>  int airoha_pinctrl_probe(struct platform_device *pdev)
+>  {
+>  	const struct airoha_pinctrl_match_data *data;
+> @@ -853,12 +869,9 @@ int airoha_pinctrl_probe(struct platform_device *pde=
+v)
+>  	if (IS_ERR(pinctrl->regmap))
+>  		return PTR_ERR(pinctrl->regmap);
+> =20
+> -	map =3D syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "airoha,chip=
+-scu");
+> -	if (IS_ERR_OR_NULL(map)) {
+> -		map =3D syscon_regmap_lookup_by_compatible(data->chip_scu_compatible);
+> -		if (IS_ERR(map))
+> -			return PTR_ERR(map);
+> -	}
+> +	map =3D airoha_pinctrl_chip_scu(dev, data);
+> +	if (IS_ERR(map))
+> +		return PTR_ERR(map);
+> =20
+>  	pinctrl->chip_scu =3D map;
+> =20
+> --=20
+> 2.34.1
+>=20
 
-Not need will drop it in V4.
+--POY+md8lzvHs8Old
+Content-Type: application/pgp-signature; name=signature.asc
 
->> +#include <linux/kernel.h>
+-----BEGIN PGP SIGNATURE-----
 
->I think this generic include should not be used in new code, use specific includes.
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCavbGgAAKCRA6cBh0uS2t
+rMagAP9vIckwK7ZzT4XVKJo4N/vp6QFYcjb5yeECo6nkS7d/wQD+MyIrZ6oDZE9i
+KO3RZTRO2FQ4p3pdodUIrZlYuIOKyQg=
+=hiZg
+-----END PGP SIGNATURE-----
 
-Agreed, I will replace it with the specific headers in v4.
-
->> +static int pt27_irq_reqres(struct irq_data *d) {
->> +       struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
->> +       irq_hw_number_t   hwirq = irqd_to_hwirq(d);
->> +       int ret;
->> +
->> +       ret = gpiochip_reqres_irq(gc, hwirq);
->> +       return ret;
->> +}
->> +
->> +static void pt27_irq_relres(struct irq_data *d) {
->> +       struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
->> +       irq_hw_number_t   hwirq = irqd_to_hwirq(d);
->> +
->> +       gpiochip_relres_irq(gc, hwirq); }
-
->These are reimplementations of gpiochip_irq_reqres() and gpiochip_irq_relres() so use these instead?
-
-Agreed these are redundant as they stand.
-However, v3 does not keep the device in D0 while an IRQ is in use,
-so I will extend the callbacks to hold a runtime PM reference in v4.
-They can't be replaced by the generic helpers.
-
->Eh? Get rid of this horrid footer.
-Sorry about that! I have asked our IT team to disable this disclaimer
-for external emails, so it should be gone from v4 onward.
-
-Best regards,
-Szuying
-
+--POY+md8lzvHs8Old--
