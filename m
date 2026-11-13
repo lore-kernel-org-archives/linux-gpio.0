@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794597097;
-	b=j3YWGB/HAAknBrWazsEcjRcv9koUPf5NKAM2I0xSIlQjaUHXzsAYD0CG+iYHL9F72NEk
-	 xCZOGHNho/q/tzos1j2VApirkhKrNQ3qi9XOqihWkd6ebUPZsf17AtYgvjGiDULFCSkpM
-	 sFrWqxSAcDSnAgV3j9ZCjlYoIx+zx62DkXMUZqxIr5f2osmjk3QcpbxZIameUIulwSEue
-	 EDZdwiObdVHiqzfPO+SmZvjA2FVJMLKqCCTJSWPdsuEZZp6uaPLw//AFisUY3cqe33VFw
-	 X4shB19b2nLHoFeyS5xMcDC7HUGvFXaMb3VXa8USjGJDtw1BKm8vbLSnoN4I8+GRhVg==
+	t=1794597157;
+	b=1WOUnISfZ0rQu354Pxk6xC19qqhT7U9tgH3PHKJuKmK/+xF3jrLpBr4AY6pxumNykeL8
+	 8Ga6HeWkv/280wsyzKPxG/o8D79Hr8mlA7nQLUFL6LiniSF3vHTjYnUll5LPu1BHAN8Ad
+	 3xE7jZeuasuuzmpWGHskij+Qsjt4pPWhFAYqhFUtUsZ5vhBqCo6/9A+ztVrOv1BDRDht1
+	 OUFVuX5K4OuYGUrQYlS7Arr38GIoEYBEOJf9uswvGp7uE2C1Xkp4Mj6//w8yorO2a9Wsx
+	 +K8C1lotIwE0+fWhY8BNIN0/BCFelFg3wqr2ZsVpUt6NZpok1LMwKdKRZIJiLwD3KXw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794597097;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794597157;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/Fn5AMGufDVCq5y/GZxunO0haisibBhqc7pf8K6AEzA=;
-	b=N73Xu0k9WMDVi1b04dheBi8Www7ob/X3BVQeI6zMl+PoC5KdGUdowqQ2PcvfLO9MxITg
-	 ytXU9dsgbtQQPzTti1UpohoPQwi22li/2DyvqBORR+eQf2XKRMjiqx1F9k+fWrgNpsylk
-	 b6ktlqJ8UjypOGXiv9JjXFmyL9eObGJeHQgkC299OfQVFYSKSnBxHNexdQQHGGdEUs65l
-	 vUyVL5bTT3dPo11QKmKA+OL8TIwd+1LYNpuStWDfrswgXvysxng0RQsaU9i79hTe8Gp5E
-	 T/WT3Xs+9yvzzkZ+BIyYve5kOrSUpjJZdo9JrotseeRwf1uopFKYOYwMx/iWCszaMwQ==
+	bh=0eSJ+UAtox68wwTt+R3rVw07d7N2vCwegB2p3jJqm7Y=;
+	b=sKJ+ja3vVHv6J4sOUn86urSpkYn7MXlTFW0ZxpQNhlwhZ5p+mPFi3cVKz0NRwm05esNE
+	 H+EtHm9XEx3gD78AyIY8UhLfX7CsiV6hpcvUyGectk3xIr1FA0COCwjO2c+bylTfFxk0o
+	 BJVym4e6I2wx5v4x52yW8ips1IxHL7sneVP2qNfcAMjt8Iy83pS58IL0EIP8/YIiHvLdi
+	 c9PHGeNg0BOOrKZpPn6gL765s+nphHUitedYV5ilC9mHHSSSl6OtbWtBqhia9SLHRVEg/
+	 IqV1oHwcb2LsN1laFIrCzOqAidTT0/DxsKS+kPrVZiRL19/yxLlWqX5qntrLx3wAJXw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jggOCwcs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LeMHAVGA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5B5606A323;
-	Fri, 13 Nov 2026 19:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990DB606A32D;
+	Fri, 13 Nov 2026 19:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jggOCwcs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41771F000C4;
-	Fri, 13 Nov 2026 19:11:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LeMHAVGA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1817D1F000C4;
+	Fri, 13 Nov 2026 19:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794597097;
-	bh=/Fn5AMGufDVCq5y/GZxunO0haisibBhqc7pf8K6AEzA=;
+	s=k20260515; t=1794597157;
+	bh=0eSJ+UAtox68wwTt+R3rVw07d7N2vCwegB2p3jJqm7Y=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=jggOCwcsuhTHK8j0/37y0H3CYk/b2k2SxF0UMaI0xY/S8J5AjJhc+NkPaVODYUVcC
-	 P2NJDuUsyAEc8G4luyXMwpYTFLtwJlSnjvGBxvwM3pJx5vJtDYfS5X1+5oL4LEn8T0
-	 AzK3KtiFYj0rSFmhaAz/aZOW2AHZwXOL+gIPWYD+f17i29QndNWp/w/LH/CDGK/rOJ
-	 2UjHzPNZ99HjDJOL8wCP0ZIolDaI6wNQYmutpJCQwcNEd7tQV0GWAngq8MjWJKrdbB
-	 D+iCPE31ATYf8LWxYbgQ148AvT6WxH6v6PSYRCs4SEE6ceB4dWsVELWkh7TjN/pg8U
-	 9O0jXpK8yeLJA==
-Message-ID: <sashiko-outbox-213519@kernel.org>
+	b=LeMHAVGAimEvVKKcqELJONHmwSL5IL5EYJlQaqIKT2vieBkel3XvHd7LOdFtxh9VY
+	 oNxMZk5nONhbD07KpTqNKXXmOFRgXNcIIOv7BscKv3hSrhqILBYwLddI7+A4E2oasC
+	 O2fOXItpjKSXdhNnljjoepZAZ34Sk6dKitlagS5HdgvTbpptVftP7fuBbcnhwLz7p9
+	 MH6qno8ftkmtoSRh6GHbyjo90Hg2wDAoS5dgfUjvtWxiFAjL2QHnWx41SXnZXQF1PI
+	 DVdv29qJGPhVE7zDBlZ7KeboOI2Wa4++BvfsuW5/RD80psuJeeOtqUw+WqlsBLZo4I
+	 +Z4qin7kRWQZw==
+Message-ID: <sashiko-outbox-213522@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 20/23] arm64: dts: qcom: sm8650: move EL1 Gunyah
- nodes to sm8650-el1.dtsi
+Subject: Re: [PATCH RFC 19/23] ASoC: qcom: sc8280xp: allow using the
+ sc8280xp card with lpass-cpu
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Neil Armstrong" <neil.armstrong@linaro.org>
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261113-topic-sm8650-el2-v1-20-5183f6aab9fc@linaro.org>
+In-Reply-To: <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
 References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-20-5183f6aab9fc@linaro.org>
+ <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 19:11:36 +0000
+Date: Fri, 13 Nov 2026 19:12:36 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,85 +61,136 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
+Thank you for your contribution! Sashiko AI review found 3 potential
 issues to consider:
-- [Medium] arm64: dts: qcom: sm8650: lpass_vamacro left enabled with
-  zero clocks
-- [Low] arm64: dts: qcom: sm8650: leftover video_mem reference on iris
-  in sm8650.dtsi
+- [High] ASoC: qcom: sc8280xp: DAI ID collision in
+  sc8280xp_snd_hw_params()
+- [Medium] ASoC: qcom: sc8280xp: DAI ID collision in
+  sc8280xp_be_hw_params_fixup()
+- [Medium] ASoC: qcom: sc8280xp: missing lpass-cpu jack DAI IDs in
+  sc8280xp_snd_init()
 --
 
-commit 6cf38f344aa0427c5afd87fe6828f76c27873b93
+commit 3e03c7d28b8733d89a72bc91c60e7c4086af115e
 Author: Neil Armstrong <neil.armstrong@linaro.org>
 
-arm64: dts: qcom: sm8650: move EL1 Gunyah nodes to sm8650-el1.dtsi
+ASoC: qcom: sc8280xp: allow using the sc8280xp card with lpass-cpu
 
-This commit moves the Gunyah EL1-specific reserved memory, remoteproc,
-SMP2P, IPA, GPU zap shader, and q6prm LPASS clock nodes out of sm8650.dtsi
-into sm8650-el1.dtsi, and removes the corresponding node deletions from
-sm8650-valve-deckard.dts.
+This commit adds LPASS Codec DMA DAI IDs and attaches DAI link callbacks
+unconditionally so the sc8280xp machine driver can be used with
+lpass-cpu DAI links.
 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650-el1.dtsi b/arch/arm64/boot/d=
-ts/qcom/sm8650-el1.dtsi
-> new file mode 100644
-> index 0000000000000..18b7c18ae3120
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm8650-el1.dtsi
+> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
+> index 8cc75a7ad866d..ff57fb9051a26 100644
+> --- a/sound/soc/qcom/sc8280xp.c
+> +++ b/sound/soc/qcom/sc8280xp.c
 
 [ ... ]
 
-> +&iris {
-> +	memory-region =3D <&video_mem>;
-> +};
-
-[Severity: Low]
-Was memory-region =3D <&video_mem>; meant to be removed from the iris node =
-in
-sm8650.dtsi?
-
-Now that video_mem lives in sm8650-el1.dtsi, leaving memory-region =3D
-<&video_mem>; in sm8650.dtsi duplicates the property on EL1 boards and
-causes an unresolved phandle build error on any EL2 board that does not
-define its own video_mem label.
-
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/q=
-com/sm8650.dtsi
-> index 86fbb0fd6472d..d88acdb8c7759 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-
-[ ... ]
-
-> @@ -4854,12 +4302,9 @@ swr2: soundwire@6d30000 {
->  		lpass_vamacro: codec@6d44000 {
->  			compatible =3D "qcom,sm8650-lpass-va-macro", "qcom,sm8550-lpass-va-ma=
-cro";
->  			reg =3D <0 0x06d44000 0 0x1000>;
-> -			clocks =3D <&q6prmcc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_CO=
-UPLE_NO>,
-> -				 <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> -				 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-> -			clock-names =3D "mclk",
-> -				      "macro",
-> -				      "dcodec";
-> +
-> +			clocks =3D <0>, <0>, <0>;
-> +			clock-names =3D "mclk", "macro", "dcodec";
-> =20
->  			#clock-cells =3D <0>;
->  			clock-output-names =3D "fsgen";
+> @@ -242,6 +243,8 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runti=
+me *rtd)
+>  	switch (cpu_dai->id) {
+>  	case WSA_CODEC_DMA_RX_0:
+>  	case WSA_CODEC_DMA_RX_1:
+> +	case LPASS_CDC_DMA_WSA_RX0:
+> +	case LPASS_CDC_DMA_WSA_RX1:
+>  		/*
+>  		 * Set limit of -3 dB on Digital Volume and 0 dB on PA Volume
+>  		 * to reduce the risk of speaker damage until we have active
 
 [Severity: Medium]
-Should lpass_vamacro also have status =3D "disabled" here, like the other
-five LPASS macro and pinctrl nodes?
+Does switching on cpu_dai->id here without checking rtd->dai_link->no_pcm
+collide with Q6DSP TDM DAI IDs, while leaving DisplayPort and WCD headset
+jack setup broken on lpass-cpu links?
 
-Because /delete-node/ &lpass_vamacro; is dropped from
-sm8650-valve-deckard.dts and sm8650-el1.dtsi explicitly sets status =3D
-"okay" on &lpass_vamacro, leaving it enabled in sm8650.dtsi with
-placeholder clocks =3D <0>, <0>, <0> causes va_macro_probe() ->
-devm_clk_get(dev, "mclk") to fail with -ENOENT at boot on EL2 boards that
-do not override the clocks, and breaks dtbs_check schema validation.
+LPASS_CDC_DMA_WSA_RX0 and LPASS_CDC_DMA_WSA_RX1 (36 and 37) have the same
+values as PRIMARY_TDM_RX_6 and PRIMARY_TDM_TX_6 on AudioReach DPCM links.
+Meanwhile, for lpass-cpu links, LPASS_DP_RX is missing from the
+DisplayPort cases below (skipping qcom_snd_dp_jack_setup()), and
+qcom_snd_wcd_jack_setup() only attaches the jack to the codec component
+for LPI_MI2S_RX_0 and TX_CODEC_DMA_TX_0..3, ignoring
+LPASS_CDC_DMA_TX0..3.
+
+> @@ -323,6 +326,10 @@ static int sc8280xp_be_hw_params_fixup(struct snd_so=
+c_pcm_runtime *rtd,
+>  		}
+>  		break;
+>  	}
+> +	case LPASS_CDC_DMA_TX0:
+> +	case LPASS_CDC_DMA_TX1:
+> +	case LPASS_CDC_DMA_TX2:
+> +	case LPASS_CDC_DMA_TX3:
+>  	case TX_CODEC_DMA_TX_0:
+>  	case TX_CODEC_DMA_TX_1:
+>  	case TX_CODEC_DMA_TX_2:
+
+[Severity: Medium]
+Does adding LPASS_CDC_DMA_TX0..LPASS_CDC_DMA_TX3 to
+sc8280xp_be_hw_params_fixup() alter PRIMARY_MI2S and SECONDARY_MI2S DPCM
+backends instead of affecting lpass-cpu links?
+
+In sc8280xp_add_be_ops(), sc8280xp_be_hw_params_fixup() is only wired up
+when link->no_pcm =3D=3D 1 (AudioReach DPCM backend links), so it never runs
+on non-DPCM lpass-cpu links.  On DPCM links where it does run,
+LPASS_CDC_DMA_TX0..LPASS_CDC_DMA_TX3 (16..19) alias PRIMARY_MI2S_RX,
+PRIMARY_MI2S_TX, SECONDARY_MI2S_RX and SECONDARY_MI2S_TX (16..19),
+changing their minimum channel constraint from 2 to 1.
+
+> @@ -533,12 +540,11 @@ static void sc8280xp_add_be_ops(struct snd_soc_card=
+ *card)
+>  	int i;
+> =20
+>  	for_each_card_prelinks(card, i, link) {
+> -		if (link->no_pcm =3D=3D 1) {
+> -			link->init =3D sc8280xp_snd_init;
+> -			link->exit =3D sc8280xp_snd_exit;
+> +		link->init =3D sc8280xp_snd_init;
+> +		link->exit =3D sc8280xp_snd_exit;
+> +		link->ops =3D &sc8280xp_be_ops;
+> +		if (link->no_pcm =3D=3D 1)
+>  			link->be_hw_params_fixup =3D sc8280xp_be_hw_params_fixup;
+> -			link->ops =3D &sc8280xp_be_ops;
+> -		}
+>  	}
+>  }
+
+[Severity: High]
+When sc8280xp_be_ops is attached to non-DPCM lpass-cpu links, does
+sc8280xp_snd_hw_params() misidentify LPASS_CDC_DMA_TX0..7 as MI2S DAIs
+and fail stream setup with -ENOTSUPP?
+
+sound/soc/qcom/sc8280xp.c:sc8280xp_snd_hw_params() {
+    ...
+	switch (cpu_dai->id) {
+	case PRIMARY_MI2S_RX ... QUATERNARY_MI2S_TX:
+    ...
+		if (mi2s_mclk_enable) {
+			ret =3D snd_soc_dai_set_sysclk(cpu_dai,
+						     LPAIF_MI2S_MCLK, mclk_freq,
+						     SND_SOC_CLOCK_OUT);
+			if (ret)
+				return ret;
+		}
+    ...
+	case PRIMARY_TDM_RX_0 ... QUINARY_TDM_TX_7:
+	case AIF_TDM_RX_0 ... AIF_TDM_TX_12:
+		return sc8280xp_tdm_hw_params(substream, params);
+    ...
+}
+
+LPASS_CDC_DMA_TX0..LPASS_CDC_DMA_TX7 (16..23) share the same numeric IDs
+as PRIMARY_MI2S_RX..QUATERNARY_MI2S_TX (16..23).  On platforms such as
+sm8650 where mi2s_mclk_enable and mi2s_bclk_enable are set in
+sm8650_priv_data, starting a capture stream on LPASS_CDC_DMA_TX0..7 calls
+snd_soc_dai_set_sysclk() on the LPASS Codec DMA DAI, which does not
+implement .set_sysclk and returns -ENOTSUPP.
+
+Conversely, actual lpass-cpu MI2S DAI IDs do not match the Q6DSP MI2S
+ranges: MI2S_PRIMARY..MI2S_QUINARY (0..4) hit the default case and skip
+format and clock setup, while MI2S_SENARY..MI2S_SEPTENARY (34..35) fall
+into PRIMARY_TDM_RX_0..QUINARY_TDM_TX_7 (24..103) and are routed to
+sc8280xp_tdm_hw_params().
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113-topic-sm86=
-50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D20
+50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D19
