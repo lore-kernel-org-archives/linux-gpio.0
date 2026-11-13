@@ -1,68 +1,68 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.10.4.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794549970;
-	b=KX9FPqAUupp/Oyop1e0JcimgGn3tjylncMtGVAiZhHzy5Si5l34d69Fv/jkT5FK2ur5L
-	 ocS3nZE8MfmxohdkkbQ3JMwLxvVj+H7WNP1vRxpK5BZ0wS/D8xhG7bGSGuXgBlyUGRI4/
-	 ICR5991CiMKmyedApFurSQrf/7a/yamHhGMz5XHr6OkasqA6AGw6Ee2Ub5AHh63c2mxWO
-	 7Oa05Rsujy75X0pY5I6y4CJFtxblTh+cDJWNj4vnFFfZmmcJoeeojnDI9cXCL2Zhs3KjW
-	 TQvOrY1dCTVp3DsgtGH7sTSVq+THIt6po+jYdHAVUId7iDxYPfe2Jq80DfTiWbZLlOQ==
+	t=1794550063;
+	b=TbYrsIfY47DcgvzUBmcskaqAVUXWKMq0TVo3Hf8HG+DXjAKoOR5/yLtfKaqr53CQxEEh
+	 IJ/vbqPfWHoiZ3STgycxVo1MT22XHDO6yBojN5ODX51izQrx8HArHiXSqcRcM3s3a+ayb
+	 tx9W5H2zVVryfGxEu50zWP/4sHlL0ZIGyQTu7Axg9Dx8fS4l/zzvHwPi+qdXQaSlqen7/
+	 0GpcNoK8b9OwLrZdFwKFnBK2rY1lytqXL1diIdnTHfpAHg8yoDx2gwWH9rxsmF7PZh5gB
+	 t/1YbayKX+5ci6smsKaZ5kNWxLYToKHY6PGiOhzhB+R7ZHsWVC8ll5rAYEaCGhkAhNg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794549970;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794550063;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Originating-IP:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy:X-TM-AS-Product-Ver:X-TM-AS-Result:
 	 X-TMASE-MatchedRID:X-TM-AS-User-Approved-Sender:
 	 X-TM-AS-User-Blocked-Sender:X-TMASE-Result:X-TMASE-Version:
 	 X-TM-SNTS-SMTP;
-	bh=flMc6FuWcJEoYIXLkF7OAV5DREmZKu32e8v9NGn7M9o=;
-	b=gGlgSPyzePwCAVZTFO+9d5/Ux0IkZjVK3cdwNpO2/ClcXWboVDVS8T4snKXlAX4mqDAW
-	 b5rf/vFwv4kbrHIT4FPMZ89KqnFPyIo6YgsA/+N3PLb1xeh6QcxOPzAGLRYkUMJWvI9Tk
-	 wghd1GbDpGRMPs6bNdnwVOwnj0v4zr/HZ+GFMAlPBqVxBliISu1oClZ6XB32FqNvpJS6j
-	 UB+8P5NNOlyGDl9U0hp7QI0Q5t/3GAnQI5v7Fg6VM5WwkVWCv6Yj2TU0BLNjcNU3TOgoP
-	 RP2kZ9LJNFJD0cFqeHuXsyHsRo7WMmtiKoKw5D2z8WuIuY7igg2Euyvlcmh6TcBYYlA==
+	bh=KgxanPyLG1oE6QUC51vvwCcoOIoWUeqHJFzBqSVEx8A=;
+	b=tSWtddYZXZjDueR81UvFprd/6Rxd3lWNEClSMH7OKrhEQOD77jGCDBGP33jOVY2VScuu
+	 ve71rCGUjXnA2nz2aPPgldYKOanKnHxi48NdDnecFGdtef6r/xmmYVTyI/UwJRS4tze0H
+	 iju4KfHcYsap+HoPJ7yh5pm21JgQBtJs3T/sZXPrILIv1NobaQDa6pSI7BqpaSJy1FGkr
+	 0Cgd0krDEgvDfi3lDXSxD+EhaQhnjyScGawIBId2S5Msz5pnex3Ojcx9NjlicLUzokqIP
+	 mHKoRoB6je2bB/PskzgqrBe73fLTZhEQOevQZMcDv39t7L0D7+J1vvPa38ULuAHpIXw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=asmedia.com.tw;
 	spf=pass smtp.mailfrom=asmedia.com.tw;
-	dkim=pass header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=l7BOD+Qa;
+	dkim=pass header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=qWERUPRv;
 	arc=none smtp.remote-ip=103.10.4.13
 Received: from ms.asus.com (ms.asus.com [103.10.4.13])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A647606A31C;
-	Fri, 13 Nov 2026 06:06:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A647606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0EC606A321;
+	Fri, 13 Nov 2026 06:07:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB0EC606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=asmedia.com.tw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmedia.com.tw
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=l7BOD+Qa
+	dkim=pass (1024-bit key) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=qWERUPRv
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=asmedia.com.tw; i=@asmedia.com.tw; q=dns/txt;
-  s=asmediacomtw; t=1794549970; x=1826085970;
+  s=asmediacomtw; t=1794550063; x=1826086063;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=flMc6FuWcJEoYIXLkF7OAV5DREmZKu32e8v9NGn7M9o=;
-  b=l7BOD+Qa5xyOLO1wC83RdAfBAZao7wfUpvPoGNyLUoSYitzTvIAjRBwB
-   L0q/kiIf45QQDV2/AYvMJNwgSkKh7dnqDJHwDrAhuVC/q+y2lYl6pXLMQ
-   W+ydHmP/KPMciqkMha/TbkUJrw+hIrprsMrjNFFgdiLlOFFSSD5GYFtk3
-   Q=;
-X-CSE-ConnectionGUID: toLrWvyeQVqzppneDsA2+Q==
-X-CSE-MsgGUID: KSpWdTozQFeByX+zxzPJ9A==
+  bh=kESxTKefuWiEkIIdkkSEjVtoE/CLYY1e2PeOpFjFCz4=;
+  b=qWERUPRvuI0vxmyOx0XUvMiRUVN/GKJIbze6os+7RG7MM0ittZ7k0cEQ
+   YWAjAjghf/e1asSaKWbN1YiZnSyWl2xv1KzcHeGmN5SghcyqNCdBwHfD6
+   F+yqb91y8u3MqKyg8hPvP9TGq0W6TmAJ3Hs3nB5OO/ZvuNJNhFPJ4X5ob
+   o=;
+X-CSE-ConnectionGUID: wWDM4HShRLCIk00GgJcbjA==
+X-CSE-MsgGUID: f49iQX8ET4GILGfKqsAdJw==
 Received: from apza006tmd.corpnet.asus ([172.22.47.66])
-  by ms.asus.com with ESMTP; 13 Nov 2026 14:06:02 +0800
+  by ms.asus.com with ESMTP; 13 Nov 2026 14:07:20 +0800
 Received: from mymail.asus.com (42.79.126.46) by APZA006TMD.corpnet.asus
  (172.22.47.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Fri, 13 Nov
- 2026 14:06:00 +0800
+ 2026 14:07:18 +0800
 From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-To: <Markus.Elfring@web.de>, <linusw@kernel.org>,
+To: <linusw@kernel.org>, <Markus.Elfring@web.de>,
 	<linux-gpio@vger.kernel.org>, <brgl@kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <Yd_Tseng@asmedia.com.tw>,
 	<Jesse1_Chang@asmedia.com.tw>, <Richard_Hsu@asmedia.com.tw>, Szuying Chen
 	<Chloe_Chen@asmedia.com.tw>
-Subject: Re: Re: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
-Date: Fri, 13 Nov 2026 14:05:36 +0800
-Message-ID: <20261113060538.4105-1-Chloe_Chen@asmedia.com.tw>
+Subject: RE: RE: [PATCH v3] gpio: amdptpci: add support for AMD PT PCI controller
+Date: Fri, 13 Nov 2026 14:06:59 +0800
+Message-ID: <20261113060700.4127-1-Chloe_Chen@asmedia.com.tw>
 X-Mailer: git-send-email 2.48.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -73,34 +73,66 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: APZA003MDI.corpnet.asus (172.22.47.31) To
+Content-Type: text/plain
+X-ClientProxiedBy: APZA002EXB.corpnet.asus (172.22.6.14) To
  APZA006TMD.corpnet.asus (172.22.47.66)
 X-TM-AS-Product-Ver: SMEX-14.0.0.3239-9.1.2019-30316.004
-X-TM-AS-Result: No-10--11.792200-8.000000
-X-TMASE-MatchedRID: /zrVISaer8Ju4DGBDoAs85GPSO6O5JCagKzitR6I0vS4jV9yUdXXgZ0i
-	AknL6Q/ZOoqFo6Nyyo5XHUOvAXclSmP0Ggjc6Q3cBZs/2FGsjFCIbFhMgnneR+NFKGiXDz16pR7
-	uRPM/V2RXNTAoFR626JevLf+TF4u/cNIaCdesyLsarEv/I2gPytXNOAQ2MSi2D9tBl6aBswtIkE
-	j2f2VroVo7GmCOJYd1+LH4VPpSV+tT0PyBnvNi7Sue369BGRwwiwAyD/hxCLy9BjdpmOpiF81Jy
-	1PXqwqcoVo+XKPEcnGJ+hk79BwW7k6vshqw/l+H
+X-TM-AS-Result: No-10--14.867700-8.000000
+X-TMASE-MatchedRID: +mH4VGfbtsxu4DGBDoAs85GPSO6O5JCagKzitR6I0vS4jV9yUdXXgZ0i
+	AknL6Q/Z0bs03Cj/zdbJbpWeSB+0RtZSVIh2F3SJ39nur6FlBV43RfriMbLZ1hERyafywvMoBK5
+	jsahkTKn+DLKQ2zS90DIdfNkCBOiLQtOofzK6nhO7/BkSrGh1ljSSxxZ1ewmwZAvO4QbJLKOQ+u
+	G18dpupfx3IL7oOgVqyrzRjZhtElOvngkjHjojpAqMtasBG2xzmuMpo5XKw2858Sarp97J84ckZ
+	T5abrxuV93NVRFdgSfmji6nqi0orDLPaFtwcF939eSlccz0Gku+z+D0qBfeLusO3zrvD+9awACm
+	bLFOQ7c=
 X-TM-AS-User-Approved-Sender: No
 X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--11.792200-8.000000
+X-TMASE-Result: 10--14.867700-8.000000
 X-TMASE-Version: SMEX-14.0.0.3239-9.1.2019-30316.004
 X-TM-SNTS-SMTP:
-	3C1D71A61776DA73EF965B4C3231CF4B0C76A68F3FFE5AECDC1319594E99E5052000:8
+	60F52F02C5E85A09FC7FC9409B0FF82CE6C5264498604BF7A42B3D3736557EB02000:8
 
-Hi Markus,
+Hi Linus,
 
 Thanks for the review and feedback.
 
->> This email and any attachments to it contain confidential information and are intended solely for the use of the individual to whom it
-…
+>> +#include <linux/bits.h>
+>> +#include <linux/compiler.h>
 
->I find such a signature inappropriate for a contribution in a public mailing list.
+>Why this include?? Add a comment next to it why it is included if this is really necessary.
 
-Agreed, sorry about that. I have asked our IT team to disable this disclaimer
+Not need will drop it in V4.
+
+>> +#include <linux/kernel.h>
+
+>I think this generic include should not be used in new code, use specific includes.
+
+Agreed, I will replace it with the specific headers in v4.
+
+>> +static int pt27_irq_reqres(struct irq_data *d) {
+>> +       struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
+>> +       irq_hw_number_t   hwirq = irqd_to_hwirq(d);
+>> +       int ret;
+>> +
+>> +       ret = gpiochip_reqres_irq(gc, hwirq);
+>> +       return ret;
+>> +}
+>> +
+>> +static void pt27_irq_relres(struct irq_data *d) {
+>> +       struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
+>> +       irq_hw_number_t   hwirq = irqd_to_hwirq(d);
+>> +
+>> +       gpiochip_relres_irq(gc, hwirq); }
+
+>These are reimplementations of gpiochip_irq_reqres() and gpiochip_irq_relres() so use these instead?
+
+Agreed these are redundant as they stand.
+However, v3 does not keep the device in D0 while an IRQ is in use,
+so I will extend the callbacks to hold a runtime PM reference in v4.
+They can't be replaced by the generic helpers.
+
+>Eh? Get rid of this horrid footer.
+Sorry about that! I have asked our IT team to disable this disclaimer
 for external emails, so it should be gone from v4 onward.
 
 Best regards,
