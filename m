@@ -1,104 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.66
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794605390;
-	b=T4RaQ6yLi88+bmYvmYn0ymwBJudhJsEZfX/MMlQnwJoSKTUXIxhJ75YX0M913sgpU9iV
-	 su52f25EyWNqLjgxbmgRdFlvkG+9QlyWMVMT3x+o221en7qeOKCYmy2BANX9JephK2Rx7
-	 hMSI30O+wXZ64QGGGXm/2Kk7lur77v1rPVnW7ECjWq6PUSeJ4zib0mvXIVwrJFf/4r2Ca
-	 PcbYBnPGYIU2IZD5HuGml6qQP8j+90dNGN91VGmqoIF7XLS1PycS634QVg31PqHnKZxfr
-	 5JkL19pedVgFTR7t7Bt52vjMd4Sj+FFUE9v11sAKiQ91EzxZFdWw3s7WGHmvU30LKkg==
+	t=1794609214;
+	b=i2H7mwS1p7sa34lKw1gp0mvonhmk2tz3XcoEdJ8cLhYvrmxnA6kJyhENPiDju1n2BibI
+	 gHRErpWglcdQbkktnANUpdJwK0X2YWpieQaO9nyBK/3hjcAQ5mjMny9sVP7Vnb6xLMIF/
+	 UvGNxZyeDdxfVyLChrtfqGYzvjMvNgbip+xKZzWA7S3/dkWvT68b4XyHExBFEsGcvklqE
+	 3YzVq8x09L8g6BsawDdwDkYwuTaHG4sPq47yvv1FmP1j1mo0sso43k+kjkLTaLLu5+Po7
+	 VQk/uutCioOdR1813Df/KlXMthxfEvunG++ya6cfKJmRs9xH7XtwCCMbrJ6MoKRJGSw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794605390;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=UPLlBhEFkzCKdx/9gg1lylf9okJBK3VnemYGQ3dag7k=;
-	b=i+K/rnREwVCo7Qhn9x27RJy6qsPq/fEq68W3eAuGztMcbqkQ6ilnhowuqjmMpUZKm5gr
-	 yKAfjJewxXMOuscPV01sE6d5hpMWs5idKx1KubYmCK0/w+DhUtbTQJ4kE3vQx6DKvBi+M
-	 co21xQskQe+0bsdIxSoVW4W+PNhCxY50DgT7vr6mU/+sCEhAnPhSKhIIihGILQZWqGxEJ
-	 jRAnYQk7xgUW3ls555gSZGZAT8RCVIza45XAhjkSLMD9JX30kSgf4rKjHvD67PGnTkpHm
-	 98OmlkDua8Bt+Bv7QptMFHiCGMi3spFmfkxKvqnOWgs4PUlh4EQ6OQk5UkWWJOaEDkw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794609214;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=TOlclL4YMcO1403e1qiCF3GU/nuLdoHldjlrv0LH3a8=;
+	b=3dSc/hKeQJt0YGZiJr0PBmtIhfYw9JejBoNHp6F5jee1qRhtd+QXP0lowRqBa4xfMbQL
+	 psPo+W1jktEJb6imM+TijXt0OuyGtMfxi4R9/UDih94A3IVDrHtF+ugPRoxNsd3PH5lNr
+	 db/K6wu47YUBNyl1pnvg+J3c3ddWIdm8Iy//JWwXj2Lna5QPUInqmUZpaFhDkdyBx5hna
+	 6dTeq950BwgC1GMzdyhaz4EUQS3YHiJBixqklLi61zq5a4Dyi3W0JIvbFh+d/P8GOjiTO
+	 j29sEwDU6ZYiwEelssd46byqIrpQRlaqexDdMX6HBmlRFLP7evWlJQm0c/av70fGedA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=DSj2pJOz;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.66
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012066.outbound.protection.outlook.com [52.101.66.66])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NkfHNVQ2;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556A9606A323;
-	Fri, 13 Nov 2026 21:29:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 556A9606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87150606A8A4;
+	Fri, 13 Nov 2026 22:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=DSj2pJOz
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tV7JdjmPpe+GSvEDPw6GinjJIwBZh/L6VsMNATUdR0ZrP79JMwGtCTQ0aLACWdtKGzqTQeqoOjz0wFGkNbzPCKIy2REs/4tBmL69ueui56E4ukcZloZVrBQ67ImpQ6rL9VhOwklew9/eTk40AwIsq3GjRAGPhtPSyOEXvXje5gkZPEkMIaL3P26CKaazWkiZ5Ga4BmRFfKOsZNJFsfa1gnjZ9ADPdrU3n849bair9uVFPo0k3N0Ex5P6JiOjec7M/AucU+yPdm+ckkS78GZXRyZWob8ivJzyRzN9vWdP6p8g+eXYx8wCiKdXO1iu4NArS6GPB8zuCL3d8PRgTuup8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UPLlBhEFkzCKdx/9gg1lylf9okJBK3VnemYGQ3dag7k=;
- b=Vkfn/ywlksmikcgVaERM2DJ50szSVysejiR6w/s6O/l+M8bqrGf3bL4N0w0T+Wt+dx7b4Ir9Z1xUbcJycS5a2T1zgAdMVWue/N3ujt0HKqepCEBC8N0xgLM0KFCGJbaNw2ED6SRyzttqM5hard4qge1MfFo5jrsisbj3UfIQWz8Xrd/EjEkO1D7gzjDn0BqkqKQ/BHYyR/VRzUU5j9CQr3zcGj6RBgrFWVb/epnMGuhzrQZQhYpDzqJgpkHWJSfKMCKcXuSmlrP57yCt24FhmalMl6Y8jLZ78BE6Ul+oSM7oaY1dQd52nEt5OyWGTQEAXktdc1dahGalrrFGDAcNKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UPLlBhEFkzCKdx/9gg1lylf9okJBK3VnemYGQ3dag7k=;
- b=DSj2pJOz31PAWsWUbUYIsPBXghyZAZAvJpvktziniubiBQMEbVjR81SXyOobq+NpJLlzxBcFkAmH6L/dLGWRdH8slQgWzzMYYp5SQn9UeILF2CWjzhrLmrCHXB1Ch9D3ta+3ulQJk7lgE4XrRVBDOn/epNAkEjd74dxvHmXc37IE2mj0Iz9XWbIUCataAKSO5MO6VPuoTKFI45QXwtCndC4CQHCXWZzM0p066RHN8paVJnzla3CtU19H/CUWFSmuNUbqYZT8YpQGSV9kXFi2vulp9YYFGplhkYG4nXC7pERl8kpIHPiPJiYzckB9UKjMQ879A+1KLCBO2qrGNODhPw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by PAXPR04MB8655.eurprd04.prod.outlook.com (2603:10a6:102:21e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Fri, 13 Nov
- 2026 21:29:46 +0000
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b%4]) with mapi id 15.21.0615.009; Fri, 13 Nov 2026
- 21:29:46 +0000
-Date: Fri, 13 Nov 2026 15:29:36 -0600
-From: Frank Li <Frank.li@oss.nxp.com>
-To: vjardin@free.fr
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: pinctrl: add the NXP LX2160A RCW pad
- mux
-Message-ID: <aveBQPeyjvHV98ZH@SMW015318>
-References: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-0-5a0063f1da9e@free.fr>
- <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-1-5a0063f1da9e@free.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-1-5a0063f1da9e@free.fr>
-X-ClientProxiedBy: DM6PR06CA0085.namprd06.prod.outlook.com
- (2603:10b6:5:336::18) To MI3PR04MB12438.eurprd04.prod.outlook.com
- (2603:10a6:290:76::14)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NkfHNVQ2
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794609214;
+	b=X7Nk/tZ7GonNx2KBw/8y4OaHJ5i7FCx8F7Vj1hsZFRhpxGtoYW59w76uQgBX493EgOCd
+	 mD87NDzx6MTRA9HakTlPL0MpVUgtKBofSunRxLAkVv4BVHyryv3IAFgmQ2aiauMZjMmqK
+	 B1oAgi/gO0Jn5zoQkb5hxY/EUVZ3J/H/lAcwYFr/dHkG5tcr0yRCTrlAyEM1Nj2o+sjiL
+	 GRADLAPwSr70itdqlRIQilL0GFehQ1QnDQefOA+0FdMsGuHh7baLdd5fGisnmsorRd/AR
+	 +lBLlGDJP/nJXSYptVvEr2aCOOfOtUyz9l9Vpwf08x5O1AL+WYEsvrdQkfzSSkRQCBA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794609214;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=TOlclL4YMcO1403e1qiCF3GU/nuLdoHldjlrv0LH3a8=;
+	b=d0GE6jupYk62y2sKYS/5FpGJDkn42D0xd7bDk5SFe65Vv4ghP6InG7lhVSEBgjaaVVaK
+	 /1vcSRm5xlZvFjRi5dzKWUuUYOYUqn1DA15py6vxIxD+fm+mfL85lHj7hP4+gH7Rj32rG
+	 oUq6qz/I8ffNvPbgiQyYImr94+tbK4tigRXWAM3aDCJXfN3EuiPIsUzSzM2AlEDc6TqRg
+	 W1/dMSKvKdcl2vVmpteLEVFzGzip4NwKtomYPir7B48thsIMPAh/mCb9aHkgbMAslElBO
+	 nr4VKmdPJUvInZc2GBIs90JF+tPCcxbqPkjUMCuj77yUmgRC3rqg3xFPPIoyovmlxIg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 3286A1F000C5;
+	Fri, 13 Nov 2026 22:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794609214;
+	bh=TOlclL4YMcO1403e1qiCF3GU/nuLdoHldjlrv0LH3a8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=NkfHNVQ2TMvbmMXE6fHwvBl9xcmpq9ky0p9rvXKU8tCScCglkZl3L/h/IS23zeIgj
+	 4WlapfQCcG63cdRxJkgHoUa5ta94XtV1YB0VFKL9QwsIp5QJ+dERlhTaFOxLamvr7G
+	 +6DTAQpTDl4xbvdR9Ts/X3fBIEtNJRg6CVdQDuGSuuKUHOFj6sbeUk8caDwbC/65Cd
+	 JGsdB/alXmyDqQpNl5OphsA9VvGmaJ+qZiAcBKqCQkRTOvNC6MdY6FWiI8N+N6Hhhb
+	 J10jihh2o7g0l0tzyewbVoYhZEyQh9DqYYNC6DHFWtEhFNQxipo7I7UdmqmJz9D0Vz
+	 S2OJKXYUweEzg==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id B1FFB49B5C;
+	Fri, 13 Nov 2026 22:33:32 +0000 (UTC)
+From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
+Date: Sat, 14 Nov 2026 06:33:28 +0800
+Subject: [PATCH 02/19] dt-bindings: riscv: cpus: add the XuanTie C907
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -108,356 +82,77 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|PAXPR04MB8655:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3658702b-8c90-4f55-ba70-08df41cd3d3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|366016|7416014|23010399003|376014|6133799003|22082099003|10067099003|18002099003|3023799007|11063799006|261028144727099003|56012099006|4143699003|261021121427099003|261026140227099003|261026121527099003|261009223027099003|261022105027099003|261102123227099003|41080700001|15866825006;
-X-Microsoft-Antispam-Message-Info:
-	EojC4cjPh2TLQyVfDDukZvEhpr4THOOTIK3KrNxCw2Fo5Hvgtsv/6H22DYsDCB/DyMESUS0HrquFXATh4Re+rB7BW8ExyuTsyQrIxcKp/Jwpa3DCyMfNpLvtiEwFTZqxp49y8wK0IdFMvgQyHU2NuVF8IS9Nt59Gcbt9LYYk2fclKMdcb0q3yCHlPHdy2I95Mg12aQxoxIN/Ehyed6m4iOx4FbdVTO22sbR/ZwfJWbyVKFx2lzvGNwNhQeQcMcPUYuO9v2lm2BGpHQKOAB4kgaBqnnD4zPxScOl683tPZHC5BKAyqpJCKGj9rpDExl5hAwLwKaKN1Q/kxQghkDM8u/kDKn8Fzw7z5oFjm2kFZcE7SQeshNLqNSGyQ8hz06U4kIMXMO6KymUYsuUgbDtcQxLAAj0Aa/ZqwIp55iAzZglF2//QlOxCNHL44jfQh6fplpAUSci+rFD23I0XHMhBotKmOKOg2IzWIjamqNeRmiFY5/OalhbScLyzqFoYrm/tcZkhveZQL27b/DHM5BKXNvlJjXvc0w6hGudOgRmDv7MPqHbnzXlatfQZv+7D3otU8AppvA1GSdBjtMkrdvj0wkjbYXsP9bxjxZYWbnxOP1vCKfuwwmxj2QEF3GHqMAv0Kzx1rqkNDItUTiIANqAUqZnU4xKvr3QhrWCU78m6ltKW6rYWV08o3616IhOz7PYAa1HoP3aK1MWQ0gLW5olw9Q==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(366016)(7416014)(23010399003)(376014)(6133799003)(22082099003)(10067099003)(18002099003)(3023799007)(11063799006)(261028144727099003)(56012099006)(4143699003)(261021121427099003)(261026140227099003)(261026121527099003)(261009223027099003)(261022105027099003)(261102123227099003)(41080700001)(15866825006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sci7rZ5vLilHe1wVtn4M+a9gIIG8YA4jhlesdVzFfF/fJU+anEeijfiFX3gh?=
- =?us-ascii?Q?K3K4hxY/l7W+7GQcHF1AWqzP0ohmVlUoZwUvGzLoevdOyG3MyqB5TIzRNKsH?=
- =?us-ascii?Q?QK81RhxWusi+gPQ0fhY/5eXTaY/NLSu2GH0fUNYXrL4RdibJAHZ0Ok5v/d/B?=
- =?us-ascii?Q?FN6AtN3DF5SVWMzazUQBAFIpludm6Y7nGEAmEgvr2jDQuaGWMoBsoITkZM8m?=
- =?us-ascii?Q?aIxJjAjVtSmDRaJkVfkRtL8/lX0fRVYTSF0kid/fdvhWUPboshKhN9jvAFFV?=
- =?us-ascii?Q?Od9xV84Tewti4KR0ZWrPX+hiEYq+AV5s7tUFVxZKOuLbVt06N7dra/uBfBSF?=
- =?us-ascii?Q?8oKtysfP+Bf3HW9hHLGOT6hrwW2z6YSmWKnwUYJngp/lvj2lIDSGGZeLjRtk?=
- =?us-ascii?Q?GP4NMfIA9J4m7UNdzBXvVNguPko7gJXj/Tl4o8Zk+/62b9nGcwwO22UEFx+/?=
- =?us-ascii?Q?WD7ufGxxS1SL0ixntsbDXvsQbjV7nYUvVw2K2TrcV1DU95qcW7g/30ofC5VS?=
- =?us-ascii?Q?03HnX6Uq5U0zTHbm0I6SfWYHMVPI/hlQxpTt3m5071lk0sZ/HsFoOzZW4q0U?=
- =?us-ascii?Q?WpF7W7dO+lwYvHjeqtFZ2NvVlBgdwY/0sEx/EZI8XS3pClb/gsNKtuiULjEx?=
- =?us-ascii?Q?y+em92u4aPRRT9ic0z6+D9AdrJmGnLDiw0qtuhoUuYg5y2Lxt8t1LNuCBrdN?=
- =?us-ascii?Q?JXvGZkBw9JYc4C58dcZCS6y5YwVvvL64XXqHSgmhrnpwGsp34Xh58jo3Hepq?=
- =?us-ascii?Q?vLWuCnkU6b5fGYNstpjKbCv6gVdGg71HEYP94R5CbWEZgm63ZA77YpS/kDQi?=
- =?us-ascii?Q?gM7WI6JRJMidF+PLP2QFhbjccoeE7rF36J0oK223kw97EbwInpUfrxskmyj0?=
- =?us-ascii?Q?UfcMJ70l0VWU3xzxeiFU5r7wT9iUrX+PiAsm/QeTyCQx85U4P7NQWZYPjbS7?=
- =?us-ascii?Q?9477ZOPZqq8qSgn3+g8MhamU9OjP+uBPUXw7bsFHg5j5adVwReeK86PBtCsa?=
- =?us-ascii?Q?J1cySmwIFvoCRVi3IBvS5cho6wm1n2UmMMqhoJtQOeA+Il4nfiQvSsKdlKpP?=
- =?us-ascii?Q?/xAOss0M8wob8TgSdZuTE0wczzrXXJsJ1dJcGlZI/e2yduOfRUvih5Dbp3U/?=
- =?us-ascii?Q?oEReZH+aJVs/2Px0SFhicyQ97yt7Hg8VvKoqVLRSlWdzbTU5cD4sIa49cOqn?=
- =?us-ascii?Q?lkKS/ePMmRKEiYbwWPIj9DbBcruYvNghZKAnnLJ3+Dnxd1WG0P8mH1Wq2aZP?=
- =?us-ascii?Q?WmRGrRJKnJETqGiWZ77cgTUSXflGQivbTbBOs9fRrtBsF/hZxQTWUsmM+N9l?=
- =?us-ascii?Q?mnqRYTFpo7ABMIChdeXQrJTGOYLwjvs/+3lY6JvOiB4/MReOpUJrdk/8sDEE?=
- =?us-ascii?Q?bwAKu+8eNFBr5pPT8cJNFbk3hyHrbT7sbdScKFZLNc83Wxe2UF0Xz/5NlWAJ?=
- =?us-ascii?Q?itOrKMbI051SnV//HtngU8FOdC4HQbgK2nAyz7n0H7PqNO4JAc1IM9pPe7kG?=
- =?us-ascii?Q?ui+OKxWXUz0ioKw/XmL/h8BwkKmXTOgdWYqLSbH06DtqJemSafrspH1Cwhkd?=
- =?us-ascii?Q?Cg7eVeC3xSncGwLugsbDtm+PxD/y8L5YzlfdcUdueYdpTkfbUepZr57/qKgz?=
- =?us-ascii?Q?w2Z5JHY1sqEWtyR9YA3J9cVdWo2y8Zi1fmTA6G6S+LpR8VOoP/N4vBpNVyOD?=
- =?us-ascii?Q?q9ogXjGoXGkDkwAEx73YYLWB68tx5R108AypR/hjPogDXrWJawKU7hXh9ANQ?=
- =?us-ascii?Q?1kgoqZMmG+hBn/VlskJaX+AoGTc/jnQ4HnNgNaTVCTkyq86OmSMh?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3658702b-8c90-4f55-ba70-08df41cd3d3a
-X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2026 21:29:46.2395
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zEK3vuuIBsqOHodsi/Rf2hkjTKVtACl70TjYJCd9oIbczDPaqtv49674tR37y+rxhQAL+zTRW/scBNE2FDt+AC6MqxgrCqh08fEnGf85QqrbTFmRHlJYtQx9l+mGHb/g
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8655
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261114-v861-v1-2-eb71ec3ee523@iscas.ac.cn>
+References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
+In-Reply-To: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Anup Patel <anup@brainfault.org>, Han Gao <gaohan@iscas.ac.cn>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Maxime Ripard <mripard@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Andre Przywara <andre.przywara@arm.com>
+Cc: Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
+ devicetree@vger.kernel.org, linux-csky@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=986;
+ i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
+ bh=Cm+aoOEvEdfEXFBW81kE8hGffN29ckzRUH816nQCB7k=;
+ b=mWoK/d3s7E1yljsgEDG5AOvjeGoZNBwoSoucC5cXcDHH1Ezvl8ge/m6Rc2ZMX+fXR9/JUk6Cd
+ sgDp+kyX4ikACJQQaTT68CWvbDPAa7lgh8Bv3nSSLDGn7sHbxhQnbqQ
+X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
+ pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
+X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
+ auth_id=1262
+X-Original-From: Han Gao <gaohan@iscas.ac.cn>
+Reply-To: gaohan@iscas.ac.cn
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 08, 2026 at 11:06:49AM +0100, Vincent Jardin via B4 Relay wrote:
-> From: Vincent Jardin <vjardin@free.fr>
->
-> The LX2160A muxes its IIC, XSPI, SDHC, UART, IRQ and EVT pads from
-> fields of the RCW: read-only in RCWSR12..14 of DCFG, changed at runtime
-> through the override registers of its DCSR view.
->
-> Describe the pad mux as a child of DCFG at its RCWSR12 to RCWSR14
-> window: the override registers are at the same offset of the DCSR view
-> of the parent. One group per RCW field, one function per encoding.
->
-> Each function lists the groups that take it, so a pair the driver
-> would refuse, such as can on iic1, is refused by the schema.
->
-> Signed-off-by: Vincent Jardin <vjardin@free.fr>
-> ---
+From: Han Gao <gaohan@iscas.ac.cn>
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Add the XuanTie C907, used in the Allwinner V861.
 
->  .../bindings/pinctrl/fsl,lx2160a-rcw-pinmux.yaml   | 264 +++++++++++++++++++++
->  1 file changed, 264 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pinmux.yaml
-> new file mode 100644
-> index 000000000000..6bd21c27a00c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,lx2160a-rcw-pinmux.yaml
-> @@ -0,0 +1,264 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/fsl,lx2160a-rcw-pinmux.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP LX2160A RCW pad muxes
-> +
-> +maintainers:
-> +  - Vincent Jardin <vjardin@free.fr>
-> +
-> +description:
-> +  The LX2160A muxes its IIC, XSPI, SDHC, UART, IRQ and EVT pads based on its
-> +  RCW. The related fields are from the read-only RCWSR12 to RCWSR14 registers
-> +  of DCFG, and can be changed at runtime by writing the RCW override registers
-> +  in the DCSR view of DCFG. The node is a child of the DCFG node, which owns
-> +  both views. Its reg is the RCWSR12 to RCWSR14 window of the CCSR view, and
-> +  the override registers are at the same offset of the DCSR view.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,lx2160a-rcw-pinmux
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +    $ref: pinmux-node.yaml#
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      function:
-> +        enum: [ asleep, can, evt, flexspi, flextimer, gpio, i2c, irq,
-> +                reset-req, sdhc, sdhc-clk, sdhc-data, sdhc-data4, sdhc-spi,
-> +                spi, uart, uart3, uart4 ]
-> +
-> +      groups:
-> +        items:
-> +          enum: [ iic1, iic2, iic3, iic4, iic5, iic6, xspi1-data74,
-> +                  xspi1-data30, xspi1-base, sdhc1-base, sdhc1-dir,
-> +                  sdhc2-data74, sdhc2-base, uart1-soutsin, uart1-rtscts,
-> +                  uart2-soutsin, uart2-rtscts, irq11-8, irq7-4, irq3-0,
-> +                  evt4-3, evt2-0, clk-out, asleep, reset-req ]
-> +
-> +    required:
-> +      - function
-> +      - groups
-> +
-> +    allOf:
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: asleep
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ asleep ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: can
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic3, iic4 ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: evt
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic3, iic4, evt4-3, evt2-0, asleep ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: flexspi
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ xspi1-data74, xspi1-data30, xspi1-base,
-> +                        sdhc2-data74, sdhc2-base ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: flextimer
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic2, irq7-4, irq3-0, evt4-3, evt2-0, clk-out ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: gpio
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic2, iic3, iic4, iic5, iic6, xspi1-data74,
-> +                        xspi1-data30, xspi1-base, sdhc1-base, sdhc1-dir,
-> +                        sdhc2-data74, sdhc2-base, uart1-soutsin,
-> +                        uart1-rtscts, uart2-soutsin, uart2-rtscts,
-> +                        irq11-8, irq7-4, irq3-0, evt4-3, evt2-0, clk-out,
-> +                        asleep, reset-req, iic1 ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: i2c
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic2, iic3, iic4, iic5, iic6, sdhc2-data74, iic1 ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: irq
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ irq11-8, irq7-4, irq3-0 ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: reset-req
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ reset-req ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: sdhc
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic2, sdhc1-base, sdhc1-dir, sdhc2-data74,
-> +                        sdhc2-base ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: sdhc-clk
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic5, iic6 ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: sdhc-data
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ sdhc1-dir ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: sdhc-data4
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ sdhc1-base ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: sdhc-spi
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ sdhc1-base ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: spi
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ iic5, sdhc1-base, sdhc1-dir, sdhc2-base ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: uart
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ uart1-soutsin, uart1-rtscts, uart2-soutsin,
-> +                        uart2-rtscts ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: uart3
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ uart1-rtscts ]
-> +
-> +      - if:
-> +          properties:
-> +            function:
-> +              const: uart4
-> +        then:
-> +          properties:
-> +            groups:
-> +              items:
-> +                enum: [ uart2-rtscts ]
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    pinctrl@12c {
-> +        compatible = "fsl,lx2160a-rcw-pinmux";
-> +        reg = <0x12c 0xc>;
-> +
-> +        iic3-i2c-pins {
-> +            function = "i2c";
-> +            groups = "iic3";
-> +        };
-> +
-> +        iic3-gpio-pins {
-> +            function = "gpio";
-> +            groups = "iic3";
-> +        };
-> +    };
->
-> --
-> 2.43.0
->
->
->
+XuanTie is a brand of C-SKY Microsystems [1], whose JEP106 ID 0x5b7 [2]
+is what the C907 reports in mvendorid, so use the csky prefix rather
+than thead.
+
+[1] https://www.xrvm.com/declaration
+[2] https://www.jedec.org/standards-documents/docs/jep-106ab
+
+Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+---
+ Documentation/devicetree/bindings/riscv/cpus.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+index 0da219ae6769..bdb119ab8ee0 100644
+--- a/Documentation/devicetree/bindings/riscv/cpus.yaml
++++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+@@ -48,6 +48,7 @@ properties:
+               - amd,mbv64
+               - andestech,ax45mp
+               - canaan,k210
++              - csky,c907
+               - nuclei,ux900
+               - sifive,bullet0
+               - sifive,e5
+
+-- 
+2.55.0
+
+
