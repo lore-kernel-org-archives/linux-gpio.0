@@ -1,65 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.73
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794542266;
-	b=3YpppL7STGFkZT6hoBzxiaTBdTutOL4+ssMcyIa54vB9/BOpPOOv3w9rrFuIeTOvRHn8
-	 ruG07FxCrlsk4qEbyCmmeUXp7CCKrdWUNOoSUccWH7yq5oE3/FgndYM4Ns9Hu3qCFhybB
-	 BAymlFsLYyomleUZUyHzkZVtGZ8quyWskEFyIFmRWJ/F5HJ8n9A8/f72j+hlpqLSTsRgS
-	 TMGsYWH3N4kKy5YshOnk7j9ROoaIz9D8kcD65mgbcFFnGl0lZlEI4iBdmNPwzWgG6Py8S
-	 2ZFGHa6uQCfDkeicHtcvq2yd4O37sOOcOXgEnBLBNbisfuabIqmNMi6NvlXUgabSmsA==
+	t=1794547959;
+	b=H3xhDKqnAaG0/iMHGLPB3ZK2D5UfG29dLGyJydPMCvOgWkhFOxGFTXOjJCiEhq1PqF/t
+	 MuLEZqJ/V6dVTLF0JYjHyybs/S1c4mY3XuRLRKfqEJRm3ADWUyJwV93woPBrzQkx0N+/T
+	 vzXB0FhHXB9hxMWqxCLb3B2/ICMHuho+CQh6pW+jm3ek8XQ7SwChrxVJu7PIaxQeGca5N
+	 SE36CVXEr1LqAbvktUb8xwzfThb8MiUNsTTCPWxpWabUa6IVVTYGN1byumCQlc5QYnurg
+	 kv5kAHokvPJzmB8qaYRDIBYR2i9wnzw8yk3+9vgKu8D2EKNnwNB5ZHgHp0o9m8rrm8w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794542266;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794547959;
+	h=DMARC-Filter:X-Alimail-AntiSpam:Received:From:To:Cc:Subject:Date:
+	 Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=a5RpNGnH6HbfX261zNHh57A0eHINOsfNFlw+S5s3mTQ=;
-	b=kpaiGB4R+Suaw9T+/6EBs2s5DL87KHc7452Q88T+G1lSj4RToXViEQJCLyQDXrreOJ7m
-	 m+2Rxru77Gt1OLoV+bmArG8XBURWu7TzsNoa2QZxUhubXLq32MJuofK3fccD7P6CvR+TY
-	 hImcfJkV4wMfPNBQdjGxAYxX+ar9Pli8ApvK5AdQlvYtim2+RtTpYI/XHXevO0IdB22oh
-	 8oA69Y4boPUwJOT/mr7oK3CzW8Cm8imZFkqPGCWdDdHBiOu24V6ivJeJZGRufArdTESvl
-	 5FlAqwf6Yo7guk1Z8athCjhxgwQj/YXMYMStNKFCTzRVnW+Vq7sUOPzj+nnRbSvjvBA==
+	bh=gO4fXpmHkGGnhp/y5ktDMWAcVpm6cOdhfAwLKdNSs34=;
+	b=sfUdMdvjVpXnuF53hphijzhWNKxFQPGsf2hMiCUOrCgMrNMZV6DoZq5vqyXidtxaguD1
+	 TLmuyJk+HPX5Pd6RewsyLuGPaDm+6HTV1CRSbhDGmL2096QigElA8q45cKYSWjatQL/RU
+	 djTDXQPRRJO2X8Tq3yWGJROqLVO0GR5gGKy/KotTcX7HKp/p1AVpkfy2KVgMx6mw/uHnb
+	 XcxjO+fW6jQ96bFsKbkZhj3MxEh85QljSlOAzKewOQAH5PoyR5y0mfmeDYcd0lblTBCA5
+	 vy8OwZjovEdBla7Qp8mjtHUjK+CsIMOoHsLWb+Ak1WIjh/9qYC7bH7c/jrU3m0wgCmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=tBWQTZdj;
-	arc=none smtp.remote-ip=111.22.67.137
-Received: from cmccmta4.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F23606A31C;
-	Fri, 13 Nov 2026 03:57:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8F23606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=tBWQTZdj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=tBWQTZdj25NNFWh6dfUj0wKzRCCo04gY/ARIl7VXg9+pLJM8NaLBenlPmCfPN26RDM8PYnrU/87Pl
-	 PCMXwfidzeWG+T4WPlA0qL2jX3uREsMvYawUbYo5OSkv5AwSKk8HZQJ6AjcgU/xSvCxia6p0X8edq+
-	 0BpJhObjbZJiQeDI=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee46af68aac4f1-874f4;
-	Fri, 13 Nov 2026 11:57:34 +0800 (CST)
-X-RM-TRANSID:2ee46af68aac4f1-874f4
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from FHB-W5100250 (unknown[36.137.216.21])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6af68aa6e89-16873;
-	Fri, 13 Nov 2026 11:57:34 +0800 (CST)
-X-RM-TRANSID:2eea6af68aa6e89-16873
-From: Gu Bin <gubin@cmss.chinamobile.com>
-To: brgl@kernel.org
-Cc: warthog618@gmail.com,
-	andriy.shevchenko@linux.intel.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tools: gpio: gpio-watch: do not clobber errno on read error
-Date: Fri, 13 Nov 2026 11:57:22 +0800
-Message-ID: <20261113035723.2215-1-gubin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	dmarc=none header.from=kaihong.com;
+	spf=pass smtp.mailfrom=kaihong.com;
+	arc=none smtp.remote-ip=115.124.28.73
+Received: from out28-73.mail.aliyun.com (out28-73.mail.aliyun.com [115.124.28.73])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A0E606A88A;
+	Fri, 13 Nov 2026 05:32:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A1A0E606A88A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaihong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaihong.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.1082897|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.214202-0.00041429-0.785383;FP=9475219001989795462|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033045099153;MF=wangxiaolei01@kaihong.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.k13i.Sy_1794547951;
+Received: from nj-vm-261.pxvirt.local(mailfrom:wangxiaolei01@kaihong.com fp:SMTPD_---.k13i.Sy_1794547951 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Nov 2026 13:32:32 +0800
+From: Xiaolei Wang <wangxiaolei01@kaihong.com>
+To: linusw@kernel.org,
+	florian.fainelli@broadcom.com,
+	rjui@broadcom.com,
+	sbranden@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	daniel@dragonzap.com,
+	wangxiaolei01@kaihong.com,
+	iivanov@suse.de,
+	andrea.porta@suse.com,
+	phil@raspberrypi.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 4/4] pinctrl: bcm: Add missing SGPIO entries to the BCM2712 AON tables
+Date: Fri, 13 Nov 2026 05:32:21 +0000
+Message-Id: <20261113053221.3131068-5-wangxiaolei01@kaihong.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
+References: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,40 +68,69 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-gpio-watch reads line change events from a gpiochip character device
-and reports a read() error or short read with perror(), which prints
-strerror(errno).  If read() fails, say with EINTR, the inner
+The BCM2712 AON controller describes six SGPIO pins as pin 32..37, but
+the AON function tables stop at the last normal GPIO: pin 16 for C0 and
+pin 14 for D0. Both are indexed by pin number, so dumping the pin list
+walks past the end of the table:
 
-	if (rd != sizeof(chg))
-		errno = EIO;
+  A=/sys/kernel/debug/pinctrl/107d510700.pinctrl-aon-pinctrl-bcm2712
+  cat $A/pins
 
-replaces the real errno with EIO, so the message always reports
-"Input/output error" instead of the actual cause.
+pinctrl_pins_show() hands desc->pins[i].number to pin_dbg_show(), so the
+list jumps from the last GPIO pin to pin 32, where a valid mux bit makes
+brcmstb_pinctrl_fsel_get() evaluate pin_funcs[32].funcs[] outside the
+array. The set path walks the same table for any DT node that assigns a
+function to aon_sgpio0..5.
 
-Only synthesize EIO for short reads (rd >= 0), keeping the errno
-that read() set when it failed.
+Add the entries as pin 32..37 to match pin_regs[] and pins[]. The values
+are from the downstream driver (rpi-6.12.y), which keeps separate C0 and
+D0 tables; they differ on the HDMI1 and PMIC pins, where D0 selects
+vc_i2c0 and vc_i2c3 while C0 uses vc_i2c4 and vc_i2c5. The empty indices
+in between are harmless, their mux bit is zero.
 
-Fixes: 33f0c47b8fb4 ("tools: gpio: implement gpio-watch")
-Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
+Tested on a Raspberry Pi 5 (C0): "cat $A/pins" triggers a KASAN
+global-out-of-bounds report in brcmstb_pctl_pin_dbg_show() with the
+driver as-is. The D0 table is not runtime tested.
+
+Fixes: 657cbf9b24ba ("pinctrl: bcm: Add STB family pin controller driver")
+Cc: Jonathan Bell <jonathan@raspberrypi.com>
+Cc: Phil Elwell <phil@raspberrypi.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Xiaolei Wang <wangxiaolei01@kaihong.com>
 ---
- tools/gpio/gpio-watch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/tools/gpio/gpio-watch.c b/tools/gpio/gpio-watch.c
-index 41e76d2441922..e7733cedcf0d6 100644
---- a/tools/gpio/gpio-watch.c
-+++ b/tools/gpio/gpio-watch.c
-@@ -64,7 +64,7 @@ int main(int argc, char **argv)
- 			memset(&chg, 0, sizeof(chg));
- 			rd = read(pfd.fd, &chg, sizeof(chg));
- 			if (rd < 0 || rd != sizeof(chg)) {
--				if (rd != sizeof(chg))
-+				if (rd >= 0 && rd != sizeof(chg))
- 					errno = EIO;
+diff --git a/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c b/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c
+index 752b78e2c0d8..1720c220cf3e 100644
+--- a/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c
++++ b/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c
+@@ -510,6 +510,12 @@ static const struct brcmstb_pin_funcs bcm2712_c0_aon_gpio_pin_funcs[] = {
+ 	BRCMSTB_PIN(14, bsc_m1, uart0, vc_uart0, uui, vc_spi5, arm_jtag, vc_uart2, vc_i2c3),
+ 	BRCMSTB_PIN(15, ir_in, aon_fp_4sec_resetb, vc_uart0, pm_led_out, ctl_hdmi_5v, aon_pwm, aon_gpclk, _),
+ 	BRCMSTB_PIN(16, aon_cpu_standbyb, gpclk0, pm_led_out, ctl_hdmi_5v, vc_pwm0, usb_pwr, aud_fs_clk0, _),
++	BRCMSTB_PIN(32, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
++	BRCMSTB_PIN(33, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
++	BRCMSTB_PIN(34, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c4, ctl_hdmi_5v, _, _, _),
++	BRCMSTB_PIN(35, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c4, _, _, _, _),
++	BRCMSTB_PIN(36, avs_pmu_bsc, bsc_m2, vc_i2c5, ctl_hdmi_5v, _, _, _, _),
++	BRCMSTB_PIN(37, avs_pmu_bsc, bsc_m2, vc_i2c5, _, _, _, _, _),
+ };
  
- 				perror("error reading line change event");
+ static const struct brcmstb_pin_funcs bcm2712_c0_gpio_pin_funcs[] = {
+@@ -585,6 +591,12 @@ static const struct brcmstb_pin_funcs bcm2712_d0_aon_gpio_pin_funcs[] = {
+ 	BRCMSTB_PIN(12, uart1, vc_uart2, vc_uart0, vc_spi0, usb_pwr, vc_uart2, vc_spi3, _),
+ 	BRCMSTB_PIN(13, bsc_m1, vc_uart0, uui, vc_spi0, arm_jtag, vc_uart2, vc_i2c3, _),
+ 	BRCMSTB_PIN(14, bsc_m1, aon_gpclk, vc_uart0, uui, vc_spi0, arm_jtag, vc_uart2, vc_i2c3),
++	BRCMSTB_PIN(32, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
++	BRCMSTB_PIN(33, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
++	BRCMSTB_PIN(34, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c0, ctl_hdmi_5v, _, _, _),
++	BRCMSTB_PIN(35, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c0, _, _, _, _),
++	BRCMSTB_PIN(36, avs_pmu_bsc, bsc_m2, vc_i2c3, ctl_hdmi_5v, _, _, _, _),
++	BRCMSTB_PIN(37, avs_pmu_bsc, bsc_m2, vc_i2c3, _, _, _, _, _),
+ };
+ 
+ static const struct brcmstb_pin_funcs bcm2712_d0_gpio_pin_funcs[] = {
 -- 
-2.50.1.windows.1
-
-
+2.34.1
 
