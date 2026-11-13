@@ -1,55 +1,121 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794565455;
-	b=Lu5p+861DnE3Auo/HobFF+ag+2jxe1x0npaMGGpXPAnRk30Wg+dthAIqhjVJoyCYZ6rh
-	 KTh6DXuTygDGAF8TtbNfchYLMIO2LIPhRFZZcRV/iiXW/fRQLVE3QbIXvzauEm3f/hoKX
-	 gKJrBZihXIO9fNAztYae8GJVxZRBwf5Pln7YZFJcms7a53SZNCTOaIee0jha6fWCJgzM8
-	 QBeVIpGBMg10watxQ/9ZnpNw95elqbZnVtag+jJlPvgFqR7yuXSc+yK4TiD03S8ID6GoS
-	 pyoI5NrSTNqFqI1fY7EgmUS9gNI7HBcKTtGm9LCyovQ7gURzESHrMVRkdQJFGXGY1gw==
+	t=1794566202;
+	b=ojuifjJgnvR5MUVkpiWW1PH7WFO1LW9hYImpx/GdWKCNDv1IItkrqJuWfIKiMReBKsq6
+	 FoVFl4CxpF2tc/sGWlCJPGU2CIvW9WyevEuIHxwlDhtYK2zLI8m6Rm82gSpdjDJoqqghP
+	 D6+5vgjauO8rqr49Z8X9XGYZKdp3iSflg2NOQOUWvXoSAr4YdpSJRKbKRSVAnyzQl0U+p
+	 /7EWNv75odysomFSxLoQGEufg44bxJvqIAhhdNeHbFNJNUPcqqkdfa02Yx0Aj7HiYbSnc
+	 XR+//5M0/RMQWHcNP98goqAeGGGPEPOS9GAMf8Uw0k9jS73TO1lsNl+jjo10lJ8yYng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794565455;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=QkN+1eF8Y/XADWpxlJCNMdoZN2CgphaWq6d8zvGa81w=;
-	b=D7cfI7neT8As7qUicJJdvbrPAxyZeUS8TpyOuL4ZKljrfuFaioHiwL2ATI7F31IT6GKg
-	 jqosUunILTL7v2E+QuoVoF/sHB/YKEW1/sT048T4fd7wBMK9biXItYYQ4FFZlPbKX92kr
-	 08nq+a4mg0gGCiK34idQVsyxfZXpffpTnbxpU7cisRnfgDx1FV+U+QiNQf6p4VZqW09gb
-	 Cw+C1jmJnpBGVgghbBKpWjg+/eLNsaqNXTeEshGFTxvm2Nbb/JRCuKT86sVphLBTJHNFl
-	 uoNbQvNnhn2LRrHVBSnv3mzcpTAjWVYyZph34tp+o2lCDPJAFZoxaFe/cQORkm7Cd/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794566202;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
+	 X-Received:X-Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=;
+	b=MJuaI1n/n9mQF4DPWXKaPQWMGZmayBiq7terXzdAjw0Y+uwBhQnA/x7VQhqnE6ZhcpBy
+	 soOmedAnn7y2bY7bhKLSSYXnv/+SZFxDKXX1/KhIOp0OJESESu9elX4Le7B15thwa2jyk
+	 X8L5Sc1GvIGKNuf9RE7NeTwAKcrw2Pb83FagiT9wERPeYoU9Wu3B8hHv2rXqxS3M2Atbd
+	 k7ppzX8lECsIE8y8GgbgorkOFh7CDD8aZS1u4Cgs3cakAlYaba87McKNhRTIgBVeq19qv
+	 s2rzfOTpN08YYu2P70nQw2CXHLDkn6TMrlI4LUHaJTEAcwY6vkgTha1vlRzBcfBdKHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fU65PqRC;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="j/7a+IS9";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=PiowsmQP;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B478606A895
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923F1606A321
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:36:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 923F1606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fU65PqRC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C721F000CE
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794565455;
-	bh=QkN+1eF8Y/XADWpxlJCNMdoZN2CgphaWq6d8zvGa81w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fU65PqRCkaugbF1FhT1enqvBJti9Kt3Y+4LMwZgGLCEYZAuDULEUbE8gn0RXxhC0r
-	 H64aa3TvA2ZB4I3bgbaUTP/qr8/yKFtcOwcVsnYdso6Lca0Th33ouu4o1Hslh2EZoa
-	 NfFY5a+UK89LnL17kju9CyePqTqRv7gT17OiHOGXsJsZ2f+BlDzpn4yyj6V0oPIswq
-	 Wl38NWgsfBbRxjVEdbXxtDN2t4wactkK/HhHtuDmJnK6wWDq4kSOPjvhE5lYjpd1GU
-	 wQQgy7egFx3GnGlX/XRw2LlyEwxJJ2gCWQv5Z/QPvDLeC3ufq4Fcj/BK2MRMKqXgs+
-	 WxLGwzk+mPClw==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-4a76f0cce5fso720971fac.2
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 02:24:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErE93MgBjoJPn5UTFByyDq6hkBR+sh6D020C+Sl+r1u+rl0X3srxkvEibBcIrE37tVAwfq2nBQOE3zwH@vger.kernel.org
-X-Gm-Message-State: APuU4Z/xEJLvxzFHG8LmRPLmAjxfcup+M3dmZ830+XsJkdsI511E+uh5
-	W+5WIlvnpc1976omEX8SlG8z0ljiMK1CTCa4JbMp6+69Cs6uAYJZ/nxRdQ1vEe+Egyj1C1k5UG1
-	erK/rzKJCis4qRMwyBNNzqyOdF3hBs50=
-X-Received: by 2002:a05:6871:7426:b0:48f:e3f5:c419 with SMTP id
- 586e51a60fabf-4afdf7ccd7fmr2000857fac.58.1794565454219; Fri, 13 Nov 2026
- 02:24:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=j/7a+IS9;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=PiowsmQP
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AD8VDIv074859
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:36:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=; b=j/7a+IS9KtkitUm0
+	U1+X/l8qLCEiqyzcHkRHohx/+V27/pOSHXufcbXOhYb5Cf7aY+kXWoXo+DkuYTn4
+	kJVAz3LQb4zZwjCPgcUI2gQaQlZin/pVm159XZfcLdxAvzwbA8NyRRwF7rMtc9aI
+	c+a+z6iqpLG9LofmYUb1XrKptwnvCFNnogv8cbKWWSh1k6nwe9K78yOifiIB4Q6l
+	Rr8FordHS8ZGSndNN6Re8C0bCG/zF0k4MYoXyKJD2mE7+sEiavJHeUYV5OKBHhmp
+	zffdhLnUtLiKpmCDlhUur1VHCHmOKjG/GOpub3B143sCNUs1bS3vevYmVvu+4QJb
+	QdHLtQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hwqufhwr3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:36:40 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93e92aad34aso174789585a.0
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 02:36:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1794566200; x=1795171000; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=;
+        b=PiowsmQPFtDtr70+mcK7MuRPkYINj/1HEbrIjya8GuriBX7J4N6U4aKLnALQaKNnOd
+         PFkf0amdCH3/U3VL0wg2iZ7bfvEuz3NqwbNoCQryp5wE6RXgjQqfJqWS9Pt+m3LWUl6c
+         i0tRWRqZGbict+OXi4OIDtDdpw0tCL8QuSsGB+FG/W8d5pysc9rwEe3B6G2FIo69lUYG
+         GdX9kYO2LEO3Z/sUQmdoc4u7Zte1zjPvLrcL517WOKcpJvfHWL2oDlskjN9iGDnWtx7U
+         RX12fMtoPRcw5uMl1WRdkkOQ+08ng3OfGjKMxSCLHnV1LmxAsBFpUb9NH8fnXRJdmqT9
+         Qz3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794566200; x=1795171000;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=;
+        b=itmjMeBPGKzTjZREC6xh6Mlzcy04wh9OEc871M6GTdaJg1dLD4V87EfjIvUYkZCbvT
+         VrTZBFgoS2Vq3coExPDspYSTKyeNsmVCU5iHwV/+AO9NKRHTKR1zelYR34/9Yo6xHQkG
+         Q1+GjoOa8oyr017RNoBrFW2vFIIFG5bNgPyqvq1WshZq9Wb4DS0JRZYTEs4/7DIKnzEq
+         7Y/Q0wnE3QWX3RD8bteFFYmQpvnavgi1Vm/gWRlovUua0TOWeczMkhy3wvhhKdEBym4E
+         QqI+1IYBFrbZWI8Mo6y6lTgruV23qQpdeu8YR/tezPtudxL2LcmXdr8o87jEl0HIeqzF
+         DlsQ==
+X-Gm-Message-State: APuU4Z/Rt5GxDgXBCVrozOJvv4g+bGzVHUB5LAjOONEGDNoN6vIYHG+L
+	WUWtJ4UphFXUtRbNPxP27F6+sqEOQr9OuxbFt3LU8pFPUh9/yeybiAwLMlwf/VcR6ZK5z5DLDmc
+	hE6AI69l/2Q4kTwu4mLUAKfzGhwE1eCJKcS8eSEzs26BGumiehmKt7AMVieQaMsc8
+X-Gm-Gg: AYBFou0OCHN1Lg2H8VOmIKit4MYpl0cIOR8Sx2eR9EMNQn7ooKMmhr/z4MMxofKzsVQ
+	7Hj9gynNgUT9d+i8odsLBZJkbKKvN0Bc3BPZrhr88vCQOYECdrzK8UPKl5QOHTD5U6itHneUzFu
+	ljIrGH121wHnLbemKOSLNpgac6afDQBG4Xp/SfNWP1RqE9+yH8CzhjJfx0FZ7dXfjDmDFACI2cR
+	xIG396yew4VVzdPHMoCEEvzjOFLW8D2ATKGga3Mqt7F6+HiAF7xlO1OPH5Q1stAm1ec+JmraVBa
+	K+2dCHozfWUkhyzq+U27BuUdvxcF1JwonDcyQ8GPOVEI5jNEBmQh3pmNeWqA2/YQCzXg88As+lC
+	HIrpaTlzgJWA5HiyVq/dZCH+1mQqORQCil2PdPu9Djgqmvcyp9I/gJ4U9NY9jKQls8SQEMUidvS
+	p/
+X-Received: by 2002:a05:620a:6290:b0:93b:d79a:c45f with SMTP id af79cd13be357-9494bc2f497mr335809085a.55.1794566199752;
+        Fri, 13 Nov 2026 02:36:39 -0800 (PST)
+X-Received: by 2002:a05:620a:6290:b0:93b:d79a:c45f with SMTP id af79cd13be357-9494bc2f497mr335807185a.55.1794566199260;
+        Fri, 13 Nov 2026 02:36:39 -0800 (PST)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5d22394esm4672388f8f.3.2026.11.13.02.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 02:36:38 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] gpiolib: improve concurrent access to the flags field of struct gpio_desc
+Date: Fri, 13 Nov 2026 11:36:36 +0100
+Message-ID: <179456619466.14668.6243591882039671593.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261110-gpio-desc-flags-atomic-v3-0-2f463bce8086@oss.qualcomm.com>
+References: <20261110-gpio-desc-flags-atomic-v3-0-2f463bce8086@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,53 +125,60 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261106-debug-info-v1-1-067c5c554f91@amlogic.com>
-In-Reply-To: <20261106-debug-info-v1-1-067c5c554f91@amlogic.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 13 Nov 2026 11:23:54 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnKJGDM5woHn5UXGmToS0g6N55=T=+8Zy+F6X92N0zW2w@mail.gmail.com>
-X-Gm-Features: AclHuK9SuxGHNdL_y83hLe0FJC4k4ytk2FDVH3qE4U10O6Iw68MpttghD3THgNo
-Message-ID: <CAD++jLnKJGDM5woHn5UXGmToS0g6N55=T=+8Zy+F6X92N0zW2w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: amlogic: a4: Allow functions without groups
-To: xianwei.zhao@amlogic.com
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 33LRlxwYjC56hFDVpp7wQW3AMKf1zPZi
+X-Proofpoint-ORIG-GUID: 33LRlxwYjC56hFDVpp7wQW3AMKf1zPZi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEzMDA0MiBTYWx0ZWRfX/NRdrjnfAIPH
+ wyVpoJywKT+d3ah5AImOJ4CNzGZ+rbpt1BZ/shSSdywfiFWlJvW8FgID1VM9xJy/bOzBooX65WH
+ x0FvzXJUZXZNtxDXaY20bZTFVzQzfvAHfVWcO0Snw543x0KDQxlOD76LnJnTRZfLDdquqzIR++s
+ X2uSEe+ICIHYYMO2+uUeDnpG8/W7qt0awiAltn36TxyG923ylpVxTWomuidrWe2ZpGTVs7C17i4
+ L7GXpgHtV28NX8TnpZlkg7vnqxWsWOaRBSQ1MSjXU2hdtkVgYNMcAlzXAINI3rwRwlVKoXqQFtR
+ UbOr9hIjHlm0nqtnNzMYf0gQeWPC++9GeB4azArdBn1L8Hq8JEKPX5Ft+3yhQsdBAOatpqqBdpa
+ Ueuo6TP8nOjK/46YxvH5ZX1qqocDjAausiykadwvJx05ZtenjMGINjXPHS/PbL/qqahas0zPMZf
+ /hxpcUQ2HkohO/g9ipw==
+X-Authority-Analysis: v=2.4 cv=XZocX455 c=1 sm=1 tr=0 ts=6af6e838 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=EyKgIFjRM3FL70iytX0A:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEzMDA0MiBTYWx0ZWRfX61SL2LDfBZ6M
+ M0E4ucWNQf1hTPjcpW1NE0OL6WHrpd7BbedL80pbrJr62ulq9FVs+QZrf92l+bZ/hxKZTrPppjW
+ QIr4ihSk2ZDbwI0ObVcTDGYbcJUF6EQ=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-13_03,2026-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611130042
 
-On Fri, Nov 6, 2026 at 8:09=E2=80=AFAM Xianwei Zhao via B4 Relay
-<devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
 
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->
-> Allow function nodes without child groups during device tree
-> parsing instead of returning an error.
->
-> Only count and parse nodes with the "func-" prefix as pinctrl
-> functions, ignoring other non-GPIO child nodes.
->
-> Also handle zero-sized allocations when no groups are defined
-> by checking for ZERO_SIZE_PTR in addition to NULL.
->
-> This allows the driver to support function nodes without
-> groups and avoid treating unrelated device tree nodes as
-> pinctrl functions.
->
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
-> Add debugging information for error dts and Error pinctrl config not affe=
-ct normal pin work.
+On Tue, 10 Nov 2026 14:47:00 +0100, Bartosz Golaszewski wrote:
+> This is a follow-up to our discussion[1] about desc->flags and possible
+> races with users who don't/can't synchronize with other means.
+> 
+> It's an attempt to use try_cmpxchg() to update only the required flags
+> atomically where needed + minor fixes using atomic variants of bitops
+> where it makes sense.
+> 
+> [...]
 
-The way I read Sashikos bug report the behaviour it is complaining
-about is exactly what you want?
+Applied, thanks!
 
-Patch applied.
+[1/5] gpiolib: don't overwrite the entire flags field in gpiod_get_direction()
+      https://git.kernel.org/brgl/c/8ed87a9adf48703b5729f9d020eb15fa79ffb099
+[2/5] gpio: shared: use atomic set_bit() for descriptor flags
+      https://git.kernel.org/brgl/c/7d1d799d6251bc8cd1d5cfc881b0c09060b6b90d
+[3/5] gpiolib: clear debounce period before the "requested" flag
+      https://git.kernel.org/brgl/c/8509d643ffb7be508568c696c9fe45eb1f84c33c
+[4/5] gpiolib: don't overwrite the entire flags field in gpiod_free_commit()
+      https://git.kernel.org/brgl/c/63d7aedf6add8a24415af4c010588f63fa7296ab
+[5/5] gpio: cdev: don't overwrite the whole flags field when configuring lines
+      https://git.kernel.org/brgl/c/fa8bc4aa06674e78a4ee702966419aa4fdd8dc94
 
-If there is something to Sashikos report, follow up with more
-patches.
-
-Yours,
-Linus Walleij
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
