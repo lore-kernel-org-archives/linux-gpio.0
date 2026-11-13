@@ -1,87 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794574120;
-	b=M9w8lz2btcup3qaM7cVUu5aK8YmSVmEyDXKaT92qi/CYMlPRbm5F17456bmnA5h/lWur
-	 mR1h3nSbdw0c4wFLCgT4UGLBRARhrC97SDtEYpNEz1wljCWRndAoEyrN2UGc8wSBCQ4w/
-	 fV09V6SZj3QMgm843g7wRXxRbdja2wbII1AXRwgBt/nhXpN90yCVlKcA2WMO8ersB9V4k
-	 dq4l5t5eMBxB+y8bDy8ek1tG0B6xZa3g2Gw1rcLL/iNsWo9IYwNIzywr0HN0+pkZ3NaJ4
-	 LRUgV7OYFwvDbLMDjrZWecfjHKGvzAJQviRdMCNQne6WFaSORUve3S9gqIR7snE40lw==
+	t=1794574158;
+	b=GsGXfxxM3EmdWWz7pV2Aolj2ab1dchBbPr+TRgF0wZN88Qlh0f5kEGuCSusInc9bP5Je
+	 1n0fE5DEjheZp6TzIkiJf35uI5m1hBTW45TvcUGEE5sPqasRYCN3Si6oG+Ju4sIHGYv2H
+	 R24+LPNoXcBC/yaTEO8GcZMn401NFEwsmGWsddIcpsdPWzAO2BXSWcLp7QI/yWbaZt5VR
+	 0hCIcn9hwN8QxMKAGYVtXUhJIWwCSV/jO8afJ+DjbSWslr20VSrb+dXbwLzm+uO1WI8c+
+	 e7sqTuddXksuSUw1QylXJo5i7aOm+r1hwkpyA8Ya9HBwvcslvtqTHsn5Mee/ZGPHgmg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794574120;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794574158;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:Date:To:Cc:Subject:Message-ID:References:
 	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=jz4hVdaW52UUAkyBzaCPrzOKHHNFtHiedb5E1/etRB8=;
-	b=OMUIG0yhaFRGhD+xdZaGaKaJcowfhCjOkvLzuH7q/BwbbOfu+lX18ZWU4xthXSHjrfL+
-	 vW0X34oDbu40ANlWqB95+W5YvOLTm3/2T0NcN4/H698doJ+tzeiSUejPcCIFDwHoQGIt0
-	 PSIBVbobEOdUTu8CjG2lCIo1rWuhwY8Sn+RNlGLFsTGMrnneJOHb+ERhTSWfFuIaGgAb/
-	 Zr26Cd1APrtEX/2vvwPVxGpeayRfb3Z0OR8mSfpfzCabH4oiNvXknbIp8tUM8fFDBUEux
-	 N2KWEojWYdbHds1KkxDykzD676w+PulKAHIBxDpuHyxPGdIeyWoBwhDCocI6obqCEvA==
+	bh=4s+uD7Kz9Ds6anaBbLwZ6WOQF/1zwYR8W1iYVgZ85Qs=;
+	b=cCJq1GJFZSps96D9hDxfehvoN/Jr30gRpeiT7JQkjd0Alug1NTuRhJSSvAyiD1v+Ebh6
+	 JSZbzQpv7LBJ+bl/ezctIall7IPLqvTRP2LjpyzeMgdUHsFZsrBTStCNrgHRKOaxU9Zxp
+	 +FKE/HN5f5dEvmE3zeHMlJPnpgunkgE133PzkZwLwv9jmdjM4xG1kF6eZ2ao+maqRiDAv
+	 WejFBLL/yuVsGNVHkP1qAHme+5DHLibc+y/1fMUzVlMFRrop1TKsqMEIHlENy8JdE0Dkd
+	 eSXf5F6YHdYVIwemmY4H9mGZvtu79X37MdktnyZMeyukdB1ErnJAUaYnELexndgjrhQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=suse.com;
 	spf=pass smtp.mailfrom=suse.com;
-	dkim=pass header.d=suse.com header.i=@suse.com header.a=rsa-sha256 header.s=google header.b=aa13XPBT;
-	arc=none smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass header.d=suse.com header.i=@suse.com header.a=rsa-sha256 header.s=google header.b=ZRl7mmvk;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F021606A327
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 12:48:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F021606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B8606A32D
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 12:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D44B8606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.a=rsa-sha256 header.s=google header.b=aa13XPBT
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48e3b22e971so387924f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 04:48:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.a=rsa-sha256 header.s=google header.b=ZRl7mmvk
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a35a60499eso6020315e9.0
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 04:49:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1794574117; x=1795178917; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1794574156; x=1795178956; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:date:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=jz4hVdaW52UUAkyBzaCPrzOKHHNFtHiedb5E1/etRB8=;
-        b=aa13XPBTnWlME6AGchQWWhj8WGEPUrnXgNH+WOydHvaXbcAUsWHkOI/GSW2/SIVUyB
-         8MtI2pih7abMuH5xIRGeiapYujpgnF3zpLYi/NF4R4aj5mWgalfCJEVVItt250DMFa5D
-         K1WauyvOHmvrHcBqavIlfhKvvj8/VU5wAqxUhIbg21kxq29L21DIl7hjTt4fHocn67zK
-         N3Tm8StUiETdtN/vaQJZzWUKYZRjnp+DPmYGs3wmG3/342ugfreO3AD6to7ULluEpV8b
-         SLiFg7T7rQ3WAoHUtEd/kUkdc8OmMKP1vDqdUoY+T1DTvSr34N/bQDHs/emCYvhMAE9Q
-         u37A==
+        bh=4s+uD7Kz9Ds6anaBbLwZ6WOQF/1zwYR8W1iYVgZ85Qs=;
+        b=ZRl7mmvkaSOIpgi+00caNJisqCQ3juMe9GT1Ap/MOAR2/b9P8lMZu3tKC+u46S6S8j
+         TUtCGf9pGgw8bFnDyqt5+kMJF83zC4Kl1naCDywqU2o3uTZacTBvNwL8fV3RSBrVp3xX
+         cy7eOQDs2KD/yllkBUnUK79KWwmVkLxhK8LdAqasPNzgeg/enoPy64WJvWRD069WGzQn
+         WtUHYDemOsrGKNh8VjEOZWmExYqWG1uc8nVukxhvFwL/eHpU0TU8kwQzZS12G5QY11Y/
+         ZZUjSVuBdDRV6Zsh4ln7OH/xqMufXHEqXOu5n++yNPe2xbLgTR8Pkp9+CPoREun3SjRm
+         EzOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794574117; x=1795178917;
+        d=1e100.net; s=20260707; t=1794574156; x=1795178956;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jz4hVdaW52UUAkyBzaCPrzOKHHNFtHiedb5E1/etRB8=;
-        b=fmov1zk0sdFq1Meu8NtSEViIHNnad01gZjnHZ0w5QY+ZJ5+m2S3DB8csKornAB26vs
-         ygwOgBD7xAQDnug5Fxj/Zgr3thJe4EKNrjqq3mA52LZPYbWeuL5FXRI5pYul12itHKj6
-         2bEfhZWsO5xAq4zKR6rAmcNW3bX1ZqcfaVWzBgfaGap/mzoyE5J8cip/VBEgEYJT8X92
-         NkHyS6ZUGIFumlcisd+ZTnh8eIb0KoeV8DQuYh8/m8f1jgRUSOqPy8bnEpMSu03Hdhyt
-         Xt9ODajDSGYn1p7p1UGtiqqCuTP3LMhkvTXFb2qRpWgNp51wVlP/zhdaABhulAqS6Xna
-         Jstg==
-X-Forwarded-Encrypted: i=1; AL+hErE01qZNmNb296KnNZ/oSwNaC4s/dkwcHYG5Q90Y6pxykQnM8CFhut2Rwx0+5ffuSjMg0bgV8ihUslxT@vger.kernel.org
-X-Gm-Message-State: APuU4Z+4O/7+26smGIqjh31tpErpnuNi3vFGaZ+IZ5cxG91bwzvvM2vK
-	TgzeIQVuhtRlXgKEjbpgwxiPgwIVy3x+Jp8H/eOnmMG/E5Bf7kDah+1oqgfqc8N8qig=
-X-Gm-Gg: AYBFou0w6nNDy/tRydQRyTas/9y0aNgtEELCnsLgSD9bKk/uVEyh6OMhESzscQt92ZB
-	gOBJWZeWwpAOWDpfD6SUwZi0qB+Prn02VbTmqrBYjEQBEO3BPMT5Ew9fhXtddJM82O8H49yxqGI
-	qDAqn1Ax8CVqF3wXkicbl3IXGL699s4a2EUVCbKWEKA1BW5P15KppxpoVSfiVb+IvLMM1ipib+h
-	0vNnhAjrJYzjGG01EUR9h1AGzy0GtOeU9DB7SQ3039KgM0bp8bPQlGdQUgtDB/uZpzBtwV8QWAX
-	O/tBXN3xI771gQeCJW8Alu888N2DChkMKLfKYEfQxo45iKWM/yHWwE/uzrWd8XKTsivT7i3rtPN
-	QyBaiyAks6nstOwyxn73Tt1iUFmiZyD8rqjn9993HzUM6IuwW8IDsax4tP+iidAibJxMedjWpcv
-	hE7cAkzYpCVtUk//rWcEMIywKFsqzhs/eFGGbCVWdRx41VNKeNVxBjhVYzFVsQgVzXTF/UtzMdz
-	HndbQyVfGx6F32gZLmGxVcqitGzZiJkeC10vfUc7NwAC1qj4Y110sql2AIJwbleDCvSu7kZc9lp
-	ZpRkSP67A8l9ZdZjzbujRTfTbTdh
-X-Received: by 2002:a5d:5e85:0:b0:48d:f391:5c45 with SMTP id ffacd0b85a97d-49c740bcf7amr4648801f8f.42.1794574117479;
-        Fri, 13 Nov 2026 04:48:37 -0800 (PST)
+        bh=4s+uD7Kz9Ds6anaBbLwZ6WOQF/1zwYR8W1iYVgZ85Qs=;
+        b=oBjxQZBnXeQGugmripppq0WyJHdRnNxB0y4smm3ZkzorVTZiZR1zoughN7/Tt3t8yo
+         vXci4DIspmhcGIn0eg+YoHReWYd+tuLJelcBR2HKarrx0NgXtjz1F03K3Sg527ShAgTJ
+         GUMH/vhpnjddyQYveFOX6DJYBpLSJIZ1LESGs7CuqzhCGREANne249yCsMykhjZvql8U
+         2oGwjLGsoMRazzutS7h4oDbM/mULTnOmvNa8AmO3zF8ZX57qbcxEB5VS/uFt+KI4m9zW
+         Rw2NM1J6uyM0SnveeKTDUO2Rr1zEVuEB6rAdgOnAmIrbKxToMi196blWO86rvbjeYOK2
+         M5fA==
+X-Forwarded-Encrypted: i=1; AL+hErHIfKisWS8ikYFaaHB2Ektl9kzrpau77ISDsUa2PxkwvAydkqB+jhpnmDqufOVPJeeB4D1yLWdPSPR7@vger.kernel.org
+X-Gm-Message-State: APuU4Z/PRyc1scCKylonJT2mdg97/TIiu3dCvzgc52afvUzxbptwQa3v
+	9X4+SngiGZRlVWQPk58qwXVKCPTj+T+KOOPAKFH8XTudXiwBHLpBcRF4fZP/DIowGXw=
+X-Gm-Gg: AYBFou2EszaM3BnAX1KT1x83CXc+XhWq9Y2aExD/H6zxGJnAqUTUioUPEvBsgO2lpCL
+	d8Io04COrf9eaf8hhdQtfWCww9Lx0M249m+0Ze8unkz3/DXz0HyMqjHj87cXrcWQg5ymppK5MGh
+	JvL5JxtNh17Ox/5MU+r6CHK9/xxFn+UIwGZ5dqSLeV9nBt4+2OtBvkW5UdeLFv4hlGDyqAgNYQ/
+	5vdQO57w/BSBD5gV48E67yCFBrzeMm9T58YSq5m2dj2NTL4PQsYrUmr2j2VILbYnnerG7XsZLhd
+	VeMrKaPY37DKZELra517abmF3Mu4aspwUaYAyJw9kL0l9S22YjxXZRLkPgu36ANGngrRnQt0mDR
+	tVYKHsVleAvSION0f8Lo7XfRRASdfRM8O4vqUc2tSEK77+LLuwO2+5FOAmLSc+4N7FxvdLEq2vc
+	w32Kg33sCpfgq5h9cDimy1mUZVGsD4YYm/eiDID1CVWdHSIhgNsbG9WbaXHIfncUFCdDX5n97TQ
+	KzRU8TEMgSfIHDo9iPpBZpNKz/8YhTY1oDbS+4yAdL5wgtvud+lp15ZkDoIFL9gFq4aGxoWC3Cz
+	wWy9BRTyH8n4F9hx/XG2MHatYTAY
+X-Received: by 2002:a05:600c:3487:b0:4a2:526b:d410 with SMTP id 5b1f17b1804b1-4bb55a4f1b4mr52848935e9.13.1794574156179;
+        Fri, 13 Nov 2026 04:49:16 -0800 (PST)
 Received: from localhost ([82.145.117.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5fe370f8sm4643230f8f.27.2026.11.13.04.48.36
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c60da0a03sm4122315f8f.53.2026.11.13.04.49.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 04:48:36 -0800 (PST)
+        Fri, 13 Nov 2026 04:49:15 -0800 (PST)
 From: Andrea della Porta <andrea.porta@suse.com>
 X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 13 Nov 2026 13:52:34 +0100
+Date: Fri, 13 Nov 2026 13:53:13 +0100
 To: Xiaolei Wang <wangxiaolei01@kaihong.com>
 Cc: linusw@kernel.org, florian.fainelli@broadcom.com, rjui@broadcom.com,
 	sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
@@ -90,11 +90,11 @@ Cc: linusw@kernel.org, florian.fainelli@broadcom.com, rjui@broadcom.com,
 	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	Jonathan Bell <jonathan@raspberrypi.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] pinctrl: bcm: Fix off-by-one and out-of-bounds
- access in fsel_get()
-Message-ID: <avcIEnCThuTHeWVv@apocalypse>
+Subject: Re: [PATCH v2 4/4] pinctrl: bcm: Add missing SGPIO entries to the
+ BCM2712 AON tables
+Message-ID: <avcIOTzDFrI3rGZY@apocalypse>
 References: <20261113053221.3131068-1-wangxiaolei01@kaihong.com>
- <20261113053221.3131068-2-wangxiaolei01@kaihong.com>
+ <20261113053221.3131068-5-wangxiaolei01@kaihong.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -106,61 +106,79 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261113053221.3131068-2-wangxiaolei01@kaihong.com>
+In-Reply-To: <20261113053221.3131068-5-wangxiaolei01@kaihong.com>
 
 Hi Wang,
 
 On 05:32 Fri 13 Nov     , Xiaolei Wang wrote:
-> The FSEL field is a 1-based function number: 0 means GPIO, 1..n_funcs
-> map to funcs[0..n_funcs - 1], and n_funcs + 1 and above are rejected.
-> brcmstb_pinctrl_fsel_get() indexes funcs[] with the raw value instead
-> of subtracting one, so readbacks are shifted by one slot: value 8
-> indexes funcs[8], past the array end, while 0 is reported as funcs[0]
-> instead of GPIO. The setter programs the mux correctly, so only the
-> debugfs readback is affected.
+> The BCM2712 AON controller describes six SGPIO pins as pin 32..37, but
+> the AON function tables stop at the last normal GPIO: pin 16 for C0 and
+> pin 14 for D0. Both are indexed by pin number, so dumping the pin list
+> walks past the end of the table:
 > 
-> Map 0 and out-of-range values back to GPIO, warn on the latter, and
-> index funcs[] with fsel - 1. Tested on Raspberry Pi 5 with KASAN: the
-> "alt8" readback no longer splats, and field 0 reports GPIO.
+>   A=/sys/kernel/debug/pinctrl/107d510700.pinctrl-aon-pinctrl-bcm2712
+>   cat $A/pins
+> 
+> pinctrl_pins_show() hands desc->pins[i].number to pin_dbg_show(), so the
+> list jumps from the last GPIO pin to pin 32, where a valid mux bit makes
+> brcmstb_pinctrl_fsel_get() evaluate pin_funcs[32].funcs[] outside the
+> array. The set path walks the same table for any DT node that assigns a
+> function to aon_sgpio0..5.
+> 
+> Add the entries as pin 32..37 to match pin_regs[] and pins[]. The values
+> are from the downstream driver (rpi-6.12.y), which keeps separate C0 and
+> D0 tables; they differ on the HDMI1 and PMIC pins, where D0 selects
+> vc_i2c0 and vc_i2c3 while C0 uses vc_i2c4 and vc_i2c5. The empty indices
+> in between are harmless, their mux bit is zero.
+> 
+> Tested on a Raspberry Pi 5 (C0): "cat $A/pins" triggers a KASAN
+> global-out-of-bounds report in brcmstb_pctl_pin_dbg_show() with the
+> driver as-is. The D0 table is not runtime tested.
 > 
 > Fixes: 657cbf9b24ba ("pinctrl: bcm: Add STB family pin controller driver")
 > Cc: Jonathan Bell <jonathan@raspberrypi.com>
 > Cc: Phil Elwell <phil@raspberrypi.com>
 > Cc: stable@vger.kernel.org
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > Signed-off-by: Xiaolei Wang <wangxiaolei01@kaihong.com>
+
+Thanks for fixing this!
 
 Reviewed-by: Andrea della Porta <andrea.porta@suse.com>
 
-Thanks!
-Andrea
-
 > ---
->  drivers/pinctrl/bcm/pinctrl-brcmstb.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+>  drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/drivers/pinctrl/bcm/pinctrl-brcmstb.c b/drivers/pinctrl/bcm/pinctrl-brcmstb.c
-> index f46b27155c3c..2b942ca7196b 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-brcmstb.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-brcmstb.c
-> @@ -66,7 +66,16 @@ static unsigned int brcmstb_pinctrl_fsel_get(struct brcmstb_pinctrl *pc,
+> diff --git a/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c b/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c
+> index 752b78e2c0d8..1720c220cf3e 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-brcmstb-bcm2712.c
+> @@ -510,6 +510,12 @@ static const struct brcmstb_pin_funcs bcm2712_c0_aon_gpio_pin_funcs[] = {
+>  	BRCMSTB_PIN(14, bsc_m1, uart0, vc_uart0, uui, vc_spi5, arm_jtag, vc_uart2, vc_i2c3),
+>  	BRCMSTB_PIN(15, ir_in, aon_fp_4sec_resetb, vc_uart0, pm_led_out, ctl_hdmi_5v, aon_pwm, aon_gpclk, _),
+>  	BRCMSTB_PIN(16, aon_cpu_standbyb, gpclk0, pm_led_out, ctl_hdmi_5v, vc_pwm0, usb_pwr, aud_fs_clk0, _),
+> +	BRCMSTB_PIN(32, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
+> +	BRCMSTB_PIN(33, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
+> +	BRCMSTB_PIN(34, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c4, ctl_hdmi_5v, _, _, _),
+> +	BRCMSTB_PIN(35, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c4, _, _, _, _),
+> +	BRCMSTB_PIN(36, avs_pmu_bsc, bsc_m2, vc_i2c5, ctl_hdmi_5v, _, _, _, _),
+> +	BRCMSTB_PIN(37, avs_pmu_bsc, bsc_m2, vc_i2c5, _, _, _, _, _),
+>  };
 >  
->  	val = readl(pc->base + BIT_TO_REG(bit));
->  	fsel = (val >> BIT_TO_SHIFT(bit)) & pc->pin_funcs[pin].func_mask;
-> -	func = pc->pin_funcs[pin].funcs[fsel];
-> +
-> +	if (!fsel)
-> +		return pc->func_gpio;
-> +
-> +	if (fsel > pc->pin_funcs[pin].n_funcs) {
-> +		dev_warn(pc->dev, "invalid fsel %d for pin %u\n", fsel, pin);
-> +		return pc->func_gpio;
-> +	}
-> +
-> +	func = pc->pin_funcs[pin].funcs[fsel - 1];
+>  static const struct brcmstb_pin_funcs bcm2712_c0_gpio_pin_funcs[] = {
+> @@ -585,6 +591,12 @@ static const struct brcmstb_pin_funcs bcm2712_d0_aon_gpio_pin_funcs[] = {
+>  	BRCMSTB_PIN(12, uart1, vc_uart2, vc_uart0, vc_spi0, usb_pwr, vc_uart2, vc_spi3, _),
+>  	BRCMSTB_PIN(13, bsc_m1, vc_uart0, uui, vc_spi0, arm_jtag, vc_uart2, vc_i2c3, _),
+>  	BRCMSTB_PIN(14, bsc_m1, aon_gpclk, vc_uart0, uui, vc_spi0, arm_jtag, vc_uart2, vc_i2c3),
+> +	BRCMSTB_PIN(32, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
+> +	BRCMSTB_PIN(33, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m0, vc_i2c0, _, _, _, _),
+> +	BRCMSTB_PIN(34, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c0, ctl_hdmi_5v, _, _, _),
+> +	BRCMSTB_PIN(35, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m1, vc_i2c0, _, _, _, _),
+> +	BRCMSTB_PIN(36, avs_pmu_bsc, bsc_m2, vc_i2c3, ctl_hdmi_5v, _, _, _, _),
+> +	BRCMSTB_PIN(37, avs_pmu_bsc, bsc_m2, vc_i2c3, _, _, _, _, _),
+>  };
 >  
->  	if (func >= pc->func_count)
->  		func = fsel;
+>  static const struct brcmstb_pin_funcs bcm2712_d0_gpio_pin_funcs[] = {
 > -- 
 > 2.34.1
 > 
