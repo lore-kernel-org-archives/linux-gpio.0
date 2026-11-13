@@ -1,64 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794581021;
-	b=ZUBoqQTilQFuNjTtiN/mAgeY+scZ/B5m885RiwLnV3oeM/GrWly32TEhdJXfV2al+Gb/
-	 7zcQm436+zVEE1GIyefZHTfyIamMx28qfV0gg4O/kGaQGllaI4gdUUdYZkDCU/+5DTnLo
-	 qP8TWjbnS+fdrWSTe9xhSM//XG+HG2DZvew8fhMwMqHghC/w3XpiW1j1Ert9pbh7GIrXo
-	 Z8QftW8DrzNCoXcizrSQF4a9QivJgMSTjmA1EdLLka6orWHpA0XWwjcQhU1J3DSS5TKUd
-	 jsvD4bDMwAXZU6l/0DeJPjjbkQgwxV7VDeICSF75Yrx0fz7YNy3C9o1tJmW6xtVHRXQ==
+	t=1794581036;
+	b=gwSgIASFEACZnXeXI0LVjawZqHWUOy8gt6N259TeKDwaeAN9l2h4ygQOHhkzjXDJYTwz
+	 PUAat/6tCsuSEAklWgfhXdvS4mZaVgqkb5zN9P0XWlhmSHa7NZamdfSCi2MMwV6gAT0Cv
+	 gcJ/MbrfR5YK8FKYEl3YhAG6EujRj24wMVvr3MlucM9wG4dK6UxSS+Jmcbzr9+PH2tTzs
+	 Dt34kI2zxTslvBF4SLc2OIBx47eqvjCruPaVtyWIoZYQJRKSXha1i2UChzB33eWWf+NPC
+	 lJKgH9O083xZ5sL8TJS2deSwK1PmhKjXl4p6XhBG3ajDLlb4dZ+6kvo8s5WMIl77kng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794581021;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794581036;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=+289KWwCUBwSGViqjea0W9Qg4FPkLuVGVzLN0NXnagA=;
-	b=BI7i9q1jRVA/NCyzNNy+UPHlipdCSJ9SN8h8V20I2X+mYsIBAaFf7on0sIqxIkqcqtNX
-	 u9iO5L8U4glTwaFV/4r8hix59z71pBqQLd2rNYN6oI03Y6LtJE1V/FZOZyQ9ukCXdKUd6
-	 TQ3ZESRigznJTrGvSx+R8ZB2/PJ3r1GKIa2/9KlsLyQyaE/c6MRBHQdRgy6r3pMA7LW9q
-	 5G/gQNpBZ/9rAat4BZrIkOT3v/Lg2hO7RCU2O617scL8SGn/E8loPZj2eIOJc26OTLGAd
-	 2wHPOF+tSUvJGAtZV7Lw/U7MeLrDXEbl81dLAHeNqOuv4UDfxRZ7njmgoIqcjq3yQgA==
+	bh=P2XHr4Ge/UVcnDHImN3vw2OpxpRNWsCoWBP3+JfhYAI=;
+	b=K5PUJsMX/Rq46uGtQw960q2ovtGxZESTYZ53gSmiZNGab5TfR4V+WC8XLpAwb2OAU2W0
+	 AJp/3v1NwKN16oPqbRaEiB/FUJRxLDOswiFZRQqePs4Bzi4mSfMpOxhSIApx2L1PjSVJ1
+	 dqDKBj+YhcoKZLlgOcJ9w9J8PQQ34wTkmypTM68KC1kgQGoljfi53RW75iLgiDiDeDJ21
+	 tFq31ICT0SF2HADwe1/K9v6V0P9XPEMkB0Wg8iflqtfgXGYdctb5ayXFsSbpjjoFAJQwN
+	 WiR2mMb11FKeMXReVMOWskxGt78R0/aaTg/b2AA4By5vz5x9BV74gDaqrHPVIv8ut7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V0SQ4rzU;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="fk+z7/kn";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831D7606A323;
-	Fri, 13 Nov 2026 14:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 36E83606A323;
+	Fri, 13 Nov 2026 14:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V0SQ4rzU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDF71F000C4;
-	Fri, 13 Nov 2026 14:43:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fk+z7/kn
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 319451F000C4;
+	Fri, 13 Nov 2026 14:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794581021;
-	bh=+289KWwCUBwSGViqjea0W9Qg4FPkLuVGVzLN0NXnagA=;
+	s=k20260515; t=1794581036;
+	bh=P2XHr4Ge/UVcnDHImN3vw2OpxpRNWsCoWBP3+JfhYAI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V0SQ4rzUxRzFRK4g6VJ+CGzkMySQWEIOsnv+rTId5imAOTMpxQVu2tWEoGRe+VKZa
-	 M3I/THA4Z4IDr7qOLGvsMsB1pz3ZhB3XeOBii5bRqjS5g83uE0zJiXc7azAm2HykXu
-	 kCD8wPuEYWNFbWX0MQ84R9EONcwGKB3leipchtAFgOwjoFn3ErDYlTsC/hFpwkabNQ
-	 R8jiOHzpqqOpSV7vaqypxlRDTTufWdOUWIEn1mYJHL+LNlxRR8dDBU78rpawikdGrC
-	 scVfXK5Hj0UKxwxGRb+RhDhFkkNdeHjbGixvCNTMsn8rBjZUoCWQ19aL3UA+XvSMog
-	 3D4liuRvDh1QA==
-Date: Fri, 13 Nov 2026 08:43:38 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Vincent Jardin <vjardin@free.fr>
-Cc: NXP S32 Linux Team <s32@nxp.com>, Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>, linux-arm-kernel@lists.infradead.org,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jacky Bai <ping.bai@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: soc: fsl: layerscape-dcfg: add the
- LX2160A pad-mux child
-Message-ID: <179458101851.831300.17996837915217986690.robh@kernel.org>
-References: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-0-5a0063f1da9e@free.fr>
- <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-2-5a0063f1da9e@free.fr>
+	b=fk+z7/knqvuqqmUYnHT/liunu6/PWqRJoqCBh8aR7mDySRGlu91+nFTsYnfHrwuWg
+	 TJHD5aAuVUu/EyVoGj7FfHG7mheAooQ/aPrreJsG107nP+4g90byUWI5tj5BBQkEx9
+	 VVzqvCC+LWlSty6ApMFsjWwMAm6WMkKW+HGXfydHVqlWYBw2z2p89frLEwxdA+3JU+
+	 3o0t82EveAS2EoEOkwuaCd4wGOZXXlLzeR5/2p8Z33vQZRnB+A+pKLJw4Wlx6aAn80
+	 /4FpJ/xpTb34cRlEovK1LkKq00pygWV8l5wsxasb6ULvY09ugCqymdRK3p2H+SMuun
+	 1xdKnb7oj6dRQ==
+Date: Fri, 13 Nov 2026 15:43:52 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: qcom: sm8650-lpass-lpi: Force runtime suspend
+ on system sleep
+Message-ID: <pbgvr7fx4r6jmfuzprbna2p3fwllt3vopuwemyq4eygonuowk7@euyr4jbgh6ds>
+References: <20261112-lpass-lpi-system-sleep-v1-1-438cb997e0e9@oss.qualcomm.com>
+ <b64cfe8e-7274-4a8f-8add-ee1b60522c42@oss.qualcomm.com>
+ <7d55b69e-f1cb-4271-a2ab-2cfd2e1947bb@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -70,19 +63,39 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261108-for-upstream-lx2160a-rcw-pinmux-v1-v3-2-5a0063f1da9e@free.fr>
+In-Reply-To: <7d55b69e-f1cb-4271-a2ab-2cfd2e1947bb@oss.qualcomm.com>
 
-
-On Sun, 08 Nov 2026 11:06:50 +0100, Vincent Jardin wrote:
-> On the LX2160A the DCFG node holds the pad mux, overridden through its
-> DCSR view. Allow fsl,lx2160a-dcfg with simple-mfd, so that the child is
-> populated, and the pinctrl child, on the LX2160A only.
-> 
-> Signed-off-by: Vincent Jardin <vjardin@free.fr>
-> ---
->  .../bindings/soc/fsl/fsl,layerscape-dcfg.yaml          | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+On Thu, Nov 12, 2026 at 09:59:57PM +0530, Gopi Chandra Sekhar Reddy Kanala wrote:
+> Yes. All the LPASS LPI drivers share lpi_pinctrl_probe(),
+> which manages the clocks through pm_clk with runtime PM, and every SoC
+> driver has the same runtime-only dev_pm_ops, so they should all have
+> the same problem.
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+While they're the same, they don't reimplement the same callbacks, they all
+use the standard PM helpers so it's not like we're wasting that much
+memory.
 
+That being said, I won't reject a patch that moves them all together.
+
+> For v2, I was thinking of two patches:
+> 
+> 1. Move the dev_pm_ops into pinctrl-lpass-lpi.c, export it, and use it
+>    from all the SoC drivers (no functional change).
+> 2. Add the system sleep callbacks to the shared dev_pm_ops.
+> 
+> Would that be okay, or is it preferable to add the system sleep callbacks to
+> each SoC driver instead?
+> 
+
+I'm fine either way, but it might indeed be more elegant to centralize it.
+
+> I can only test on Glymur CRD (sm8650 driver), so the other SoC drivers
+> would be compile-tested only.
+> 
+> Gopi
+
+Please don't top-post on the mailing list.
+
+Thanks,
+Bartosz
