@@ -1,101 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.42
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794534507;
-	b=yc5TtKQntuQYe3YLgCgUhBgElgxBBOzXZuCEEqgJ6AX//8ViZsx6VwCSlfqQaNY+FNIA
-	 A87MgSipBvEpnoqSCT2Wy5lhiekSv7Z9ZqzKyDdfdRxr6UEdRsHPmed65MbyKVBm8IFZe
-	 dM562qQCezgXm4hJC4k0OohKHm4MYOnyFuFOPEViHqmFvpztkuIdW7genwFy7RhCWbjhc
-	 Y20R0a2yqe7HPShPa0Vk149QKzBseISRM+cMweOIJYCbpOuplWcSUOS4KvEjnqg0k+8Xp
-	 vPUvuHRlxxUZAUwHtKQKreyec7xYlRCbHRLSsfKt/3zKGb8BrUXmqaG9ju6y4PaV64A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794534507;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.175
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794539991;
+	b=zsi+PkclXYJxfbBK7iDId56v94BRQQVHR90W8mqWOqaIhlSCcZpRnzm2WxTG0ZY2p+zW
+	 rAeJoOSunepxV0CEK1pNxdYHCuW+H4ST8qec1TrkeohDD4RpDM8nM914dhYiHB2rdknxi
+	 qysn/gb+bVr3HEsCGLQucgSW/Hcs9VTGV78NKdRexhm3G8UTUkUtoq4rqbKDJQr7M7bM1
+	 Naui2kukJRu+9AxCu48uoMGDdKEEILtmaddUsZoNUGW4CxnDNc1k6B/mI+C0tM5Vbymp0
+	 ZmgDiL3VV03ahfnnKw3sth9myDqQSMrt6NaAOMB0UwlGDXqCTd6/tsX58sOR47B2DIg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794539991;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=qHMuM5Z9d1NJ0qzFPFfug0ui3jGT4piml21ckpBOlMg=;
-	b=qJC+MYco+8obYAC+GFbBoM4GEU4Ynjj5XMh14lB8NSTRenfC8b1m8vPrziCLAy+E5dG0
-	 EjHFfxBZyE2QpUtUmzoL/b35AywQOQo4LKvbeQBfmtRmWZw1zS3U6xI9qEBBpnaWVq4t4
-	 LMWcRRBYbBbPyEBMYs5uaLa6B8oehh4FLUZl5vgujJJyLiG5TwL69kWXWlDXP3lEf34bo
-	 gqcOuJE8zlIg3WL63zTHN/2mgjQpNRPbssJmsNFcmT1qTqOHkvPVRjVB/uEYvoJBxr52+
-	 X2VLpsXBwxGfYa7G5EZozPPSX+ikJPU2C09SqtR1dPzWOa8htsKoEdN8iLGgYJ7UB9g==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=voIys8EwQkhUIwCPX9c3iOQmu5IoCkbo4OFDmG1MZKU=;
+	b=FEq3d56okpQlMhVBv2SnE7p+SkIXJ0Tm3kipYGRZotHvGVU6yFi8o7RcZt9PAXj/2ybM
+	 kebkl5k5xMT39hG4yLs1EQ2HHxufkO6dY7AgtkHzwEtu09BfGz+3fukovpF9c8KUlL2pf
+	 gGvwf/bP8M4Gh6DKjlaYcQoQlttBsTkwQLS+3OFsHFZCeLs8zq5QFDKdp3KVk02v3MT/I
+	 GWW+E7AmsPfLLVh8XFGJVMaIB0hpYo9i+pQY7qr4t4TRqFwxHi61x+nLoKS0cILMrDZeT
+	 IsAC47qkBIuOxmDqtSsNYc1sWV23ODu8T1ExxjApnGMIGrbxQ4l3yfvd+0OdJJNY1Ag==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=P3olxP7J;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.42
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=inbDH7TG;
+	arc=none smtp.remote-ip=209.85.210.175
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF4A606A323
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 01:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFF4A606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAC606A321
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 03:19:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 95CAC606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=P3olxP7J
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5bccb867d6fso652176e87.0
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Nov 2026 17:48:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794534505; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ZKx/Ni4z/9KLmDjeEWvDn9O+/us1pWScAeefQtoGZDPgUAgVFujEEtgEm2tOPD6HSR
-         KuwsKz5QsABIQ8G5aFybQ2L8LKNNZ8oiJwAaEuM/bjiBEuAltlyZpStOw5bwDnL+H4dd
-         rstQdyZVqCY1zoy8Xju8lNwQXLFoH9EEqoQ1YQ8B/d75ThqGkeMitdQPEyOMt3vKq4uG
-         tW2DMddp8U+Aa2dVAgyWUxWIwpeR13bEUPrJDopjmqKR4Gohr7ACmCG/F7PfUWnoPcJz
-         1gcaIgswwaCJzOOUoKFo09Vdew6Vx2NVZCCIvw3mYhkF7zeQDXqYcParwUVmFDX36k5A
-         ES1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=qHMuM5Z9d1NJ0qzFPFfug0ui3jGT4piml21ckpBOlMg=;
-        fh=vk1aZEAyvCAPObm26sVk3a1bf+2Zj9Vs2tlevKbWI0I=;
-        b=k9qJ9KJjv5AEGeMLZrxJP7b/dzb4/ovMdNsst7NHsIkPl1Zn7Yh2zDbswk5n7i5Jjq
-         UfoB3N7+T5jcn5FrqPDfVPabpnYRCHl9QCo62ecPR8l4WdsTBVARDF1riijytNWErgk/
-         O8t4D0xfq2ft3XgKfm5XbDxKfqz4CZ9+INd+AT8bQqrSmlopphXprjE9LJhNHYs7wp1s
-         kwz4eB2AP4x/or8GqPPyjFJCXMQ0diretrMjbQdUASHDT4W9TuVv+Ru6bfO5wALuiOc8
-         q3LcSA/adO3W2PctRHC378DF0gx2bQcB7Lvvm4QY9G1XV/lMVstgqvLrkE2p8D2UW4B2
-         dSZw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=inbDH7TG
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8a05b210703so205126b3a.0
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Nov 2026 19:19:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794534505; x=1795139305; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1794539991; x=1795144791; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=qHMuM5Z9d1NJ0qzFPFfug0ui3jGT4piml21ckpBOlMg=;
-        b=P3olxP7JPXksuID0OIufKWZhUQ3IH0dS8ULn3ZgVNrVGtvQvVG5nEMYhtJ9B4v1PnL
-         vYAxrUbmeyQfP1nOVAGKxZOYabSqvJecWv/gUmKI3gj9UMqz6g2LgS5mLGhtXXPMZ8pz
-         RqbtaCjQeWgHoIClTZHjQDi++UNttJvfo3TSX39z8gvdq1nKwkY4QlF+CfnjmPela2/a
-         LkzLSVYsG9wZ7nKbm77B5lOLQh92P3mK1vqJ9KqSxWbOeHnMjS2bWGkT27oKVgi4L0A7
-         hsLqWHBoFpJQDSYQzcAJ6ZPdWszzgxeUlvWx3yrTigXvqrTH4kr+do47lVjCaZwhTv5J
-         LniA==
+        bh=voIys8EwQkhUIwCPX9c3iOQmu5IoCkbo4OFDmG1MZKU=;
+        b=inbDH7TGQaS8YIhofdyopjaj2vvIPI0MTAVjELPvx6T6yv1rExDdkos8qLpXEzBV8s
+         rxjjuabXt9Yk1UQfzs/6nVzU8OqKotcTOuwtPs6quzFFqFvd3g26xehO7hCtbIFbEHvG
+         XzrnV0CaAiiDqw5y2bz09mWyTLLB4NlNw5oW3Uat+GXEqGRxgb0M2Z2FLdgXGNsKljLH
+         10Uf8DjwaXdkPK93j0BNkU2N/w3iGR3O+45l97ydQCR6qVMOqmYat9Sd6tFFdycaJT1n
+         sFDsiOm51XoRPLfzQWd5DVgadoQCH+7WGh+zac5y6UpmlEMd2ZANkGOEff2vVS9TWX0u
+         R75Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794534505; x=1795139305;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1794539991; x=1795144791;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=qHMuM5Z9d1NJ0qzFPFfug0ui3jGT4piml21ckpBOlMg=;
-        b=HE+5KLmlMg8c4c2uVUMSoIlvYlOX+I0XDN4MPa1mq3mN7o9LUIgkebJjGUMBuTDkJ2
-         /s/M2BOGgR14604c68KnWPGxfdv+s8RTtcHQmg1PWWO7EdkNSr2sgx6Sy/L1Qu0Kgw3y
-         tks2zM+T+aHzSqdoG9PnIBlRAMatd4FStVMMIgx8+vadwxyGO36FQsUDykewPqVCyTwr
-         UBCUTmI07AfXD9+IrmMUY9N2193fHJrK59Xi1foL/reghrsdfJdc18CtJTOxNzxrI+Cv
-         J4suMZ460naL3AmHbAr4LoVRh6gIWz13vmllbBI7Cow2VzIN6G+zZ1ctAweBk64b3YVy
-         WyBQ==
-X-Forwarded-Encrypted: i=1; AL+hErErPNP7RoKUs1L6ozDfE79u3Lo5ObE0dyUurHdX5ZZ/oUBi26UyX3/LMMZhFAYNLc8wl2I5BucMuajP@vger.kernel.org
-X-Gm-Message-State: APuU4Z/UWk8p9o9JHtyAXal1mXbqF2A35qfVKWMZJmcr5ughSqFhf+8k
-	chwLJB4SKnfxtckIKiRwRZz8aIT16yfZm1dqH2eZ1HzwoqU+TLzGbFUofKLIkYo9ZMfkKiabsOT
-	u1DbWpP0BmPKCQDADnxIxF0p1Ia5OwAU=
-X-Gm-Gg: AYBFou3qaTvSZNePOJhMP8Ons6Nfufb3N5fMbPO5FAEdtrZc+t7pws/SWPCV+ntSIgZ
-	oDNx6IhdXUxPOzpam6zXyKrXaTNs9x64BRnBINW1GP0tRPmFf3T0L53L5xNeVHw1kyp9/cpsxNK
-	b4B62ANfXAT1qGBEKYlfzl/8eAr04yIz+ki7rWX94LETcUXhGb3MjjWKJzeqCNuZgyzdrc7DitF
-	iwbxlOlykmft+24UUVzM9BNtuZPQqngHwEz64DDE/nWeCTtPUF1oGQod9d0gmx3Uh1GTZlCi0H7
-	Nvn+GYZd4j9Yl5Dmvqo3CxGpkV3N57pEp1871k1x5jxC3U1RVEOkOKvVlSufmb8z/Zp5dWY1JYu
-	VsSeCLy4YjiawSm46brrrCYw1b4nTqpoURJfc2X8+UlWa/IvQ710Fck9ZZnsl7muUlmXoSvstv0
-	hSdsV3/0xPs08bpEcfYDZIAIR+
-X-Received: by 2002:a05:6512:1304:b0:5c1:5974:8a54 with SMTP id
- 2adb3069b0e04-5c1705faa6emr444217e87.5.1794534504878; Thu, 12 Nov 2026
- 17:48:24 -0800 (PST)
+        bh=voIys8EwQkhUIwCPX9c3iOQmu5IoCkbo4OFDmG1MZKU=;
+        b=VGDX9WvrDZEV03sgbg6phCjltnDyjflnyvvFwvJG+oTecQQXi6PEWRCHlVTZkIfSj5
+         gZUrwoTRo1C1Rq65pUOhcq7vqx25CbOtoOhI9bt84yhQ0er8CB5HVOGPtVA47X9//hTf
+         h9MFAnndL39VacmKCcIgRs0FLAFxyCfkRsezegfhdYYQsz70dAa4Wwf95Rx91PPcH+Mp
+         1TbzylvZEqBr83Rbd7rbl/ulmG1cO995THgvwWD4hRkLCZ821wgfSyoxwIPpLS3dYySO
+         pry2YEFByIhGr2qN2ay3R9yfbWyxmZeNKq7dx2tLUh32Acppb9V2CMZAbSMaAI6mYmI0
+         UKAQ==
+X-Forwarded-Encrypted: i=1; AL+hErHnu1lT0zh8rdkWP6KQZkY0lix+3sjj3nMREjOQXHIcpsbsNq8yoMeDaMxLzYsMHDk7jntfDrRIprNA@vger.kernel.org
+X-Gm-Message-State: APuU4Z+v+sPiGfdKPPpbUiwFHv37PZ4JfdM6Zr5G+NcHuNj8mnChDdm4
+	dZbgn3k2/98GABHmCqACYzPHVgcvbfaJVs8KjghFitFxKPfjuln2aHsHwEz5zw==
+X-Gm-Gg: AYBFou3zkh2nMH3bFSLVDpJ3Y+x4K4seTFu3/+OkQ6fb7xYHjIiGuvwDX9gknVrtAaR
+	ng4Xi6RnD8B4AcvbhJVbvHgPDiT6XJcqX3QZ89lpuGjnRZVAp2swZPdHzCCFdzoIEq2mwe6kqXt
+	9B6Mt0t/kAnlqneH782AsqEpe9ZjsuCHDhQYSbow+bgBngFjyze7LYR8jg4FVzSi4Yb7n6bcvN9
+	HGcVjA+h316L3eVMu+XgXKcQGeYC45mKvZqI4BGqNv1939Y81a1PKeq+iKzo/uZl5qjewUTTKsr
+	WkCZuS9rCm5p0223UH9FzlUMf2Sp3FinSfq6L3ChovlWELnBkEnbLrUd6e+QYdjF2cOOtm9ib2Z
+	6W68yNM53j9UR0TOpusGXFNJyA0aWQubbz+2pIxcSlcKGnTVTVTtOsAcIpx+90PGfcliqKhPthh
+	ahZ2KiORS+cs5g2ZRov5USR9oRPOcTr+5Ksl9UyIuwPhS/Dld2GQKf5rPUMUUJEjRHlgkzcfI1y
+	AwzEz22g8rvKtsB+OZo6B7+I352bHqmefzFYnFTpmkGONpDxnLUGWM17zsLS/sUUaCx+4O5noXV
+	fDiJM0iKzdsS2XDdOqlFHS3yLkwVvqB7TNjGzVYU2unBD5Yj
+X-Received: by 2002:a05:6a00:1989:b0:89e:33ba:54ce with SMTP id d2e1a72fcca58-8beb753d177mr1447093b3a.46.1794539990691;
+        Thu, 12 Nov 2026 19:19:50 -0800 (PST)
+Received: from rigel (106-68-220-184.tpgi.com.au. [106.68.220.184])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed243e643sm388162b3a.42.2026.11.12.19.19.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2026 19:19:50 -0800 (PST)
+Date: Fri, 13 Nov 2026 11:19:43 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] gpio: cdev: don't overwrite the whole flags field
+ when configuring lines
+Message-ID: <20261113031943.GA39484@rigel>
+References: <20261110-gpio-desc-flags-atomic-v3-0-2f463bce8086@oss.qualcomm.com>
+ <20261110-gpio-desc-flags-atomic-v3-5-2f463bce8086@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -105,31 +102,34 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261019-b4-imx937-frdm-scmi-pinctrl-v1-1-0576fb20964b@oss.nxp.com>
- <CAOMZO5D1XDc7C6H9jYTtpiPah3DnQxJz35t+3k0--a072KsMuA@mail.gmail.com> <avQV+8VrthWpKAWT@shlinux89>
-In-Reply-To: <avQV+8VrthWpKAWT@shlinux89>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 12 Nov 2026 22:48:12 -0300
-X-Gm-Features: AclHuK_ZlsdyvAp9jZzuN6ezT2JMrw9zinFgseQFdkZHa41yGNMDULrPL8U4muA
-Message-ID: <CAOMZO5D3JXGh4FbLs9hRmQMnV-RY65Aq0uosgk+zgv4naQGbBQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: imx: Use of_device_id match table for per-SoC data
-To: Joy Zou <joy.zou@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Jacky Bai <ping.bai@nxp.com>, Ye Li <ye.li@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Joy Zou <joy.zou@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261110-gpio-desc-flags-atomic-v3-5-2f463bce8086@oss.qualcomm.com>
 
-Hi Joy,
+On Tue, Nov 10, 2026 at 02:47:05PM +0100, Bartosz Golaszewski wrote:
+> linehandle_flags_to_desc_flags() and
+> gpio_v2_line_config_flags_to_desc_flags() read the flags word with
+> READ_ONCE(), modify the local copy and write it back with WRITE_ONCE().
+> 
+> The per-request config_mutex does not exclude sysfs, the irq core or
+> drivers touching the same descriptor, so bits they set or clear
+> concurrently can be lost.
+> 
+> Build the mask of bits owned by the line configuration and their new
+> values locally and apply them with gpiod_update_flags(). The whole
+> group changes in a single atomic step.
+> 
+> While at it: rename the functions whose semantics changed from
+> "conversion" to "flags update" accordingly.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b7adfb6076ff ("gpio: cdev: update flags at once when reconfiguring from user-space")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> ---
 
-On Wed, Nov 11, 2026 at 4:10=E2=80=AFAM Joy Zou <joy.zou@oss.nxp.com> wrote=
-:
+Reviewed-by: Kent Gibson <warthog618@gmail.com>
 
-> I kept the check as a defensive guard in case the match data table is
-> modified incorrectly in the future. However, if you think this is
-> unnecessarily defensive, I can remove it in the next revision.
+for the series.
 
-If driver_override is used, then the check is important, so you can keep it
+Cheers,
+Kent.
