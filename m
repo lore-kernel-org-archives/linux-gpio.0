@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794609218;
-	b=g4OCjf5BCOVkPdVfHBULnVuk4ap0wbrV6KC9TqGvtmUf/WUTjXKLsLxCHhYfgw6wJ8WB
-	 aYKvhWsXlw6J+b9V/8XwHAWnT5dBzjVmNiYZg4iXEImkbY8t689uxGuANuaDzjv6hhDQw
-	 2j0Xky8H3v1J4FwpKMNhHGzfjSKVRfblhLvLLrU55ILW4q9HpFxUC2rqV6IH6qsqO1Fhw
-	 hXIaAuGNMAFj/P43UQxhnPnqiaCAk00Ly98dTfPBGY0ocC1MbtWGZ/ZPkDhHOEYz27xY4
-	 sQiqsWRVSWXRiG4tGQpXrauR9mQTnBMXgq35AOyAVxCPmtyvLexJIQ6V23JQOzX+5fQ==
+	b=0IMk1QXYirmxJ5UTO55RngCqjXOVkLSGCpIhAcO5y4CFzNq9HMhBvifBSoA5vR7AXlrL
+	 /m5J4pJ6PYVRRMbZOLcwO9v97uJ2tMIvZQpRYfF1CQ0zE6LSuthEec11idRyMDurAe3u5
+	 gH+RxwLTYo+2b2pg8zFo8JhCaNBuxqBXHzZm9MZZBaDxCy4OA1I3PjzcD5ozb1MQ1IczO
+	 0T1jO0xykorksx3MogrqPT87LXCwlBH9MYhjGogde38zGlorEX6N3wP0YR+5eR1tfzy0R
+	 rHkFS8gBvYDOD7fuhYKLXqG21gpCutRNZNAWqd3K9/FqcJc2jr8KxxyZlZIlXyLg7dA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794609218;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=wpbbKA4ajLzIsgcmiI1L7FK42JRHT9STO33kEE3TcR8=;
-	b=adjq/iWoj4ggbZnvzlyRMrTGchWnzmr4yKY24Z1ZDGoX1kwqCXmGPeDBFvH604pPOaP2
-	 tKlxlEy8hrjV1CTyobdukalfRW59Np4cKEOkNTz2Q7NvTGGtoWYBbbXhJQ5sqjg47j1Yn
-	 ufWetTYbFON02htRDhVoApV10xhGlAaZ4/RN9DCXam8CQsBYcpuMoRtFjGXT1BPFo+NU4
-	 ElQO7iKqzRxsiC5xswMYIZHd8iKu5KQU+MM2ZYJopGmCmgRfNuFPVwtGyze8FIsm5bmAR
-	 bXASifu2hNbS7L811Esm3V/6y96Bi2i6MOG74hipoWg7HbCh9KAD/WhIl1+I4z3IXiA==
+	bh=2hAcwHHxwsuzZBb2Xr9VuIK0jqUogfFZXLMnVu53bds=;
+	b=ATXzmn+C7eS0wwqO70ew0taD35UrF7+WXov1L2faitclmp3NGH06S6ExKb5dZ825P74o
+	 y/MoEJnJpnKpRhGWaUjP8EKyf2eO1Y6Sx23XAVKofds25PCZfrL2EnRu4mVxxBXkyac39
+	 PjkdRnVUsdGqozQzByO7v6rL+D1Pp9nL94WCo2PyfWUykX1QCWm/dtBhaTGtwGAlMlWuJ
+	 HCKLjr0HWteCKe+XNXkMLU2ADka6Ay697oagl0u5Bz3zK437rgyTqNNJNr6OqPgsEFkW8
+	 ZDafFYBOfv7IcAMZVDRMKyVW7UXVH7+Iv1I6KKfTZ8Zp1jxGPNnmNn9BuK66MN7iBdg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oOWJEzdx;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FV2QCBUk;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9AF606A88B;
-	Fri, 13 Nov 2026 22:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1B8606A33F;
+	Fri, 13 Nov 2026 22:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oOWJEzdx
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FV2QCBUk
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794609217;
-	b=bCVhZy8HnEYWGbBZH8HNZErHk5Pgj1+7eBZ4XoIB6pRvEN9iCRg3rFFn+00TSr8QAzDm
-	 11XTDwTY0tgHlyUSNajPWWcic2+IQdMQvzwmvz1pKt9Sz7Q92xXWwbBzfFHcNNchePWX9
-	 5ra67SQ2cR6x5ZSRJF5yVajI8rES219E7RwSKi++JXzwpmohjBq4e037liX3Of1fWkZLj
-	 n+yBmjr8Mt0kLQPBvZnFj2jqR7OxAtyBCk5sgd5QUmMy1CqydRc35qnSPJDbgWfif59RH
-	 jXrtio1njZKs1C4Rrr5X/8rgdNRGdxZdGX6baMvJHQxbeUvEeLRzhe+pzhq68IBVmIg==
+	t=1794609218;
+	b=dzzmXe6EOZUnCWCtCyX6KvaZZaIqecjvSw7Ihx+zuBvWbgLp6gh64xyKX8TpcHXvjvw9
+	 v76KpEGQ5KwrM9KjwjFczpr7r9p2d9Bc+rKZY4nuQx86unFW/JG0KQxh76wWozyyw20Bh
+	 IBoAzxPvDb8O7C8PnVqBroByWv5+M8CijlDTt8bTke3UpPx0GzRu2TpvLbyAmPWS4r/Au
+	 1LfHnALVFJw925Z6S6z2U//9BtiJ877BBlRqM81JeVHhDGEt6hSN4mbD4YddwsncRNtNN
+	 SeXQogDJc8npcvFZvmcbuZR/US9JKdABR6pCL+W5tFUzW+SwMo+7cUMKZbKkaUZ/qmg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794609217;
+	c=relaxed/relaxed; t=1794609218;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=wpbbKA4ajLzIsgcmiI1L7FK42JRHT9STO33kEE3TcR8=;
-	b=xGGJ+yRDLk/vdnDU+pMunghfA3rYoYMV1ULMReHGZyEB0NngMVtVbuuoVhsR47BYxnxr
-	 TjJrj/AJvifAxCGeamdsr+xL7MrNQKHI76+xRUB/2uNNvcoJixnGa36IeZ69dvAQq0Mzp
-	 uwnKaGyNQu56X8XB5B4kt1T1YW0RqaPA72Fl9AghLlypvW5YHogf1XCsGBWtYvrO6M6dk
-	 Uz3Vl8x+2XWNmS21zR5+/YQ69TXpy0fxHIskMsRRfmfkOiNZUi2lIBQ8EdoSGLAcDMgQG
-	 DWJDjN2Wc4o2ZmyrSd358xfv0DFlonPVg2WeA3NVPb4ZmAY+DNEqPdHiu8PGAaPXQ+g==
+	bh=2hAcwHHxwsuzZBb2Xr9VuIK0jqUogfFZXLMnVu53bds=;
+	b=zkdvl/0ZFb1FpxlIGKUO7fJ149Hb8jHBh3fjEDiS+tlD+6Bm9yVWE0pc+CIAyGAObLHB
+	 wkUkfOTEZDjnrUNLLH0VRplDT7PvTkcjp5RByloPTX01PJR63jYuO26QKH0EfBtboSvAL
+	 sW5g7GUxkInSp7HUe/Ixhu4AkEOj4/3M+rMBEddznGcKAgGjD5IU5AGlPPNxZcsZUnZt4
+	 vmeVMJD5Z+Fn4YjmTdZnfSHiPsnmXhb7vBE6MYjp4Drgc1lk5JytVbI1KX88QK34Qn7kX
+	 9LiyzDmDKUIur/nZDByJJKecbyn4vGw+VHUV5qCGCTjhhamqLVZKj2Gtb929+g9hDgw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id D5BE71F00932;
+	by smtp.kernel.org (Postfix) with ESMTPS id 359C41F0089E;
 	Fri, 13 Nov 2026 22:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794609217;
-	bh=wpbbKA4ajLzIsgcmiI1L7FK42JRHT9STO33kEE3TcR8=;
+	s=k20260515; t=1794609218;
+	bh=2hAcwHHxwsuzZBb2Xr9VuIK0jqUogfFZXLMnVu53bds=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=oOWJEzdxtLc85ptJmPiOIx2OlKkXvseUVIqkJZeoV9Kiluiw3t0Ux51rwp9eU8JTw
-	 N8qjiHD/HfYvCCVF+Z5z6J+eri2cn62tx+AvpJ5RZZMg9VrW3clYTvEUGAc5tNYNoo
-	 705xgno9SArazNBRzKTjpIdy7Gsd6JzCfX4Gd5dXWlnvMUP48ZESvdArOA+PnYWndc
-	 Vudfb23lZ0UjqZh2PLMZGZefDEyLJNmWEpcKfRqylxrboVROo8KuiyB5GG5i9BlMqj
-	 T9rr6i5oy+kI7wCuh7I80L+vfIXMOJsUcDzly3ak+CLCvpykl2ze4i8x/M6pIc9gwA
-	 1dTSpjp/GDM8Q==
+	b=FV2QCBUk2dFIqW9Sn4MhR5LOeAQRxbIE+193UXDCtDilblOtjVZQX+pjVDAu+XwtV
+	 9VgSVlAhu8ZSOkTKE4r4jxC/PuTMcu05YxHbiE/o2xhMHZ8tFFalM5sJJnIsuvMTz2
+	 XlkOYVkefUoz4DukDyaLwYyRI2SvzBUnJD6OfOpfHrhLTZP455+y2WilPeyHpFfANd
+	 SZ4MN2BNr+UjHclc+2wsrCMV9wKFVR1cvv5iGkVUT7M43u0hoiZARcjPne5SrlaoGk
+	 4C+0yT60mFBEQyJz5U+rG31MOjFxtqA+odRqx+fQ0GIEARrHcFqISuP40NlsGzrvBD
+	 ro/5salgoOc/Q==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A8E7B49B88;
+	by lkml.kernel.org (Postfix) with ESMTP id 937C549B84;
 	Fri, 13 Nov 2026 22:33:33 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Sat, 14 Nov 2026 06:33:39 +0800
-Subject: [PATCH 13/19] pinctrl: sunxi: allow a per-controller IRQ register
- base
+Date: Sat, 14 Nov 2026 06:33:38 +0800
+Subject: [PATCH 12/19] dt-bindings: pinctrl: add the Allwinner V861 pin
+ controllers
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-v861-v1-13-eb71ec3ee523@iscas.ac.cn>
+Message-Id: <20261114-v861-v1-12-eb71ec3ee523@iscas.ac.cn>
 References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
 In-Reply-To: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
 To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
@@ -111,11 +111,11 @@ Cc: Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=1288;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=2426;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=Q5nKbDPfL5bIJRudVipL8eRl+Sf6kVk4l+UGPGRoSrU=;
- b=grvbJPn/+R2MO+DEgByDUFTZtLVCqIBwHkLAL0ulBtY+dR3+FlP1mIhHsm4whuN7dLMvBp/6p
- +ihd2LdEuONA/g6geIuOhI8/hEPyOVjToZchKiHiT7GGOnYmqJ2XUOA
+ bh=OVFVAovojWhCjL1CcvpMpyxRiwB/0HvBnEwl/vSd8Os=;
+ b=I8y5zq/wfjE0lbgnncurtQ07hgFzNrVSMhKq4SHgkIBrpZNMZEux/+meGG5waFVfmHGj730hC
+ i4FabMIA2qFD386KAufZP4MB4on1RyqcbMFigp86/eUPgTrGQwyuMCx
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -126,39 +126,85 @@ Content-Transfer-Encoding: 7bit
 
 From: Han Gao <gaohan@iscas.ac.cn>
 
-The V861 always-on pin controller has its interrupt registers at 0x40
-instead of 0x200. Let the descriptor override the base.
+The V861 main and always-on pin controllers follow the A523 binding.
+The always-on one has a single interrupt bank, so also allow a single
+debounce value.
 
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../pinctrl/allwinner,sun55i-a523-pinctrl.yaml     | 31 +++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 7c2f29e75519..a0f5eac5c914 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -152,6 +152,11 @@ struct sunxi_pinctrl_desc {
- 	unsigned			pin_base;
- 	unsigned			irq_banks;
- 	const unsigned int		*irq_bank_map;
-+	/*
-+	 * Interrupt register base, where zero selects the traditional 0x200.
-+	 * Not used with the NCAT3 register layout.
-+	 */
-+	u32				irq_reg_base;
- 	bool				irq_read_needs_mux;
- 	bool				disable_strict_mode;
- 	enum sunxi_desc_bias_voltage	io_bias_cfg_variant;
-@@ -261,7 +266,7 @@ static inline u32 sunxi_irq_base_reg(const struct sunxi_pinctrl *pctl, u16 bank)
- 		return pctl->bank_offset + bank * pctl->bank_mem_size +
- 		       A733_IRQ_REGS_OFFSET;
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
+index d7d0ba32ced4..3c2924df17b9 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/pinctrl/allwinner,sun55i-a523-pinctrl.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--	return IRQ_REGS_OFFSET +
-+	return (pctl->desc->irq_reg_base ?: IRQ_REGS_OFFSET) +
- 	       sunxi_irq_hw_bank_num(pctl->desc, bank) * IRQ_MEM_SIZE;
- }
+-title: Allwinner A523 & A733 Pin Controller
++title: Allwinner A523, A733 & V861 Pin Controller
  
+ maintainers:
+   - Andre Przywara <andre.przywara@arm.com>
+@@ -26,6 +26,8 @@ properties:
+ 
+   compatible:
+     enum:
++      - allwinner,sun252i-v861-pinctrl
++      - allwinner,sun252i-v861-r-pinctrl
+       - allwinner,sun55i-a523-pinctrl
+       - allwinner,sun55i-a523-r-pinctrl
+       - allwinner,sun60i-a733-pinctrl
+@@ -35,7 +37,7 @@ properties:
+     maxItems: 1
+ 
+   interrupts:
+-    minItems: 2
++    minItems: 1
+     maxItems: 11
+     description:
+       One interrupt per external interrupt bank supported on the
+@@ -62,7 +64,7 @@ properties:
+       Debouncing periods in microseconds, one period per interrupt
+       bank found in the controller
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+-    minItems: 2
++    minItems: 1
+     maxItems: 11
+ 
+ patternProperties:
+@@ -149,6 +151,29 @@ allOf:
+           minItems: 2
+           maxItems: 2
+ 
++  - if:
++      properties:
++        compatible:
++          const: allwinner,sun252i-v861-pinctrl
++    then:
++      properties:
++        interrupts:
++          minItems: 7
++          maxItems: 7
++        input-debounce:
++          maxItems: 7
++
++  - if:
++      properties:
++        compatible:
++          const: allwinner,sun252i-v861-r-pinctrl
++    then:
++      properties:
++        interrupts:
++          maxItems: 1
++        input-debounce:
++          maxItems: 1
++
+ additionalProperties: false
+ 
+ examples:
 
 -- 
 2.55.0
