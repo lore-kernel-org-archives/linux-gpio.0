@@ -1,51 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.119.170.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794562680;
-	b=WaUVyFMjO+YZ+sSd/qLPfoXPqsysHM06nuejrb+BDNt6ztK2cVOlrgZM/B7D5B5bkSx2
-	 2NI+3DVBlcU4Ic8fX2O6cjHVWv8xL/5Oux1vRN/B2+n//Qoc2sja/BVN7Za9QROEKFFZG
-	 mA4DYPopKzcgMCClbEGQtQBhFL6hNST0F78ekmDYuyqHAyiC3TzT1nksWFTZUKzeIjtj8
-	 2ajwGABmZDq3SQg8F+M2lSBafGqfvACjHv9tPrKXVnN2Qjjldpwb2t47kvWTQddtlnm2H
-	 mdKIaOVBZgBoxngeOfuxuJbLqWyvgS6HIMmM8OpOQk/ryQmRQTsgXkYhYJwIS88ZM8w==
+	t=1794563130;
+	b=nCACkzUOPL9HQ2c+hys2VZ+hl+SBJh0/8DYErEJXTj5Of4+uYrgpFmYaFa2BmgbSPuz4
+	 aWDGY9bQDWv+slg/3DCW3l5lzmt8qNS6v0dAtGG2cGNWe6s2OWC/OPjIvkjQ/heQuFx4j
+	 HqcE9rIg0/4mZidBjK28KRFpgFhVyD/Y7oAdrt9Nvv+of5P/S48UDTPrU4/SU7C5aNEy2
+	 3ISR6yPDR/80LsmhtjvXljuNb4ia7ZJicW7CequPcBOp6Y9sCeAUn9QBV7+iGO3vPmf7i
+	 lVXRV7KCtzSHVapGUIYPRXCKx/2xzc8kZspIsrFE32n5xbdH/sJ3lZMYGn216w5LXTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794562680;
-	h=DMARC-Filter:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=B43MalWhg3h7upgl+gGJ5GYONh4y3XlBMTeB37zFhLU=;
-	b=KaJSB1ICKqnKxfdtU8bd6mTmOYtCPJHklECyRyk7hr9kcL5rh7/7yA74Ia9hJFudZT8v
-	 vBsI94U5pQqnWNxQGFKFARr5EEj4pHKCwhhvZn8If4eD6SEHdAl06wGlxBbKS/GRys+PA
-	 MuOtk1fe3uxmZ4/nA66NhA+zhIHo/ttFk2wdyrcxpvl2dtkbABeTTNFOe+zXdpz8u/KS/
-	 4Xwees4Xj1QwH8nyxgjqCGz11yHRXhwkaaTojRESs2y+QMt33FQqMkDV9ViC6Ekjbfb8P
-	 5h62oqsnv9rZwolxQVwLor2GCF/dLuhdXxKOpvInWjExLJDTTRvi/Pm/rticKjO1/Uw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794563130;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=2mn/wWIxYDd41vuRYClthy3/DhOFNQ4eNSSOfNesclE=;
+	b=y9GlZ3DILyXVeShJ4hIm12KarcbMlcol4RngwIbsmTzlM08sDx5L5D7b9Q91NgwJoAOm
+	 C9mPINb+2DFpZdoYDP8y5eTb9xtZvxyfgwFqmhrAYgPz3VTTXXoD9CwEwP5rWjUpDLPAn
+	 Hk1UQzss3pWOzfQfkon1y3tTO03XjIUF4QqpG9Tm97YLLRylGSfW2eht0ViwjIPBw/R5s
+	 1Kp1SlNjsyRIOijqsyZ2QSp0ANteknuIpz4FSFRxno2ozX2McH9PPrrW7ezK3Uu5ZfliA
+	 j971XJEvhglGJsl4bAfeV3djX9z3g1cUCIVvdtkpP7tggYnTxAliHZ98uaLfx8qHIjA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=crapouillou.net;
-	spf=pass smtp.mailfrom=crapouillou.net;
-	arc=none smtp.remote-ip=185.119.170.32
-Received: from aposti.net (aposti.net [185.119.170.32])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IBtXndxH;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8FB606A31C;
-	Fri, 13 Nov 2026 09:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F8FB606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-Message-ID: <3784202f7f6baa63b548af4c491805852e5835df.camel@crapouillou.net>
-Subject: Re: [PATCH 2/3] pinctrl: ingenic: Add X2600 register and GPIO IRQ
- support
-From: Paul Cercueil <paul@crapouillou.net>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>, Linus Walleij	
- <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
- Golaszewski	 <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	letux-kernel@openphoenux.org
-Date: Fri, 13 Nov 2026 10:37:48 +0100
-In-Reply-To: <1c495c7ac851aff2a798c82acf33bbb33da37953.1794557697.git.hns@goldelico.com>
-References: <cover.1794557697.git.hns@goldelico.com>
-	 <1c495c7ac851aff2a798c82acf33bbb33da37953.1794557697.git.hns@goldelico.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F650606A337;
+	Fri, 13 Nov 2026 09:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IBtXndxH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA89B1F000C4;
+	Fri, 13 Nov 2026 09:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794563129;
+	bh=2mn/wWIxYDd41vuRYClthy3/DhOFNQ4eNSSOfNesclE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IBtXndxHlGkjyB5i4NQs6sxJd///W8Z30QfbmDgSBK/7uC8zoc2DLv+VjiqscP3Ap
+	 He5oizKwIQa0tzlCpzLyE/NBkxTYtzAG1whQh3JCPmLD95dD3qmUZNdJXzD2KCm7YU
+	 TWrhSOoDMLGzAiWe2+f+P198b8u99BhANE0HbZ1CnEBleqnbUsDMGQ3dhDEe94JZyJ
+	 wS5wtH9lBzb5v2XBxNmblowhH9p0aGoqE6BdVtlWeiqX/uPv0FveqHSp/k59CpbVhw
+	 pTt9psksH4OiywyT7vF3SQJreG2c2zk8KuPHVmMnKSemg8vugTwk7vg2F58pbfw9M/
+	 uEoOv+g8M6Kiw==
+Date: Fri, 13 Nov 2026 09:45:21 +0000
+From: Lee Jones <lee@kernel.org>
+To: John Crispin <john@phrozen.org>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org, lei.dong@airoha.com,
+	Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	mfd@lists.linux.dev,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
+	zhengping.zhang@airoha.com
+Subject: Re: [PATCH v2 5/7] dt-bindings: pinctrl: airoha: add AN7589
+Message-ID: <20261113094521.GF6323@joneslee-macbookpro.roam.internal>
+References: <20261112185941.1316112-1-john@phrozen.org>
+ <20261112185941.1316112-6-john@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -55,235 +70,508 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261112185941.1316112-6-john@phrozen.org>
 
-Hi Nikolaus,
+On Thu, 12 Nov 2026, John Crispin wrote:
 
-Le vendredi 13 novembre 2026 =C3=A0 09:14 +0100, H. Nikolaus Schaller a =C3=
-=A9crit=C2=A0:
-> Add the X2600 SoC ID and adapt the GPIO register access functions
-> to its register layout.
->=20
-> Unlike earlier Ingenic SoCs, the X2600 uses a register bank
-> spacing of 0x1000 and provides separate shadow registers and
-> load registers for each GPIO port. It also uses a dedicated
-> register for clearing GPIO interrupt flags.
->=20
-> Update the GPIO interrupt configuration to account for hardware
-> dual-edge detection on X1600, X2000 and X2600. These SoCs require
-> PAT1 to be set when dual-edge detection is enabled, while X1000
-> and X1830 continue to use software emulation.
-
-So at the same time you're fixing X1600/X2000 and adding support for X2600.
-Looks to me like it should be splitted into two patches.
-
->=20
-> The corrected interrupt configuration has been tested on X1600,
-> X2000, and X2600, including GPIO dual-edge interrupts by a
-> gpio-button.
->=20
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Document the AN7589 pin controller and the GPIO system controller it
+> lives under. The pin controller selects functions through a separate
+> IOMUX syscon, referenced by the airoha,iomux phandle, and every pin is
+> a GPIO in mode 0.
+> 
+> The AN7589 has no chip SCU dependency and the vendor SDK carries no
+> pull or drive registers for it. Groups follow the SDK naming without
+> its _grp suffix. As in the other Airoha pin controller bindings, a
+> function names a block type, such as uart or i2c, and the group selects
+> the instance. The PON groups keep the working mode only: the SDK
+> encodes the driver reset sequence as extra pinctrl states, which
+> belongs in the consumer driver.
+> 
+> The pwm function routes a PWM channel to one of GPIO0 to GPIO15, with
+> one group per pin. The pin also needs its GPIO output enabled, so conf
+> nodes allow the GPIO direction and output level. Pull and drive
+> properties are not allowed, as no registers for them are known.
+> 
+> Signed-off-by: John Crispin <john@phrozen.org>
 > ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 71 +++++++++++++++++++++++++---=
----
-> =C2=A01 file changed, 58 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-
-> ingenic.c
-> index a62532c49fb60..90c734c74d267 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -70,6 +70,10 @@
-> =C2=A0#define X2000_GPIO_SR				0xd0
-> =C2=A0#define X2000_GPIO_SMT				0xe0
-> =C2=A0
-> +#define X2600_GPIO_FLAG_CLR			0x58	/* write only */
-> +#define X2600_GPIO_SHADOW_OFFSET		0x800
-> +#define X2600_GPIO_PAGLD			(X2600_GPIO_SHADOW_OFFSET +
-> 0xf0)
-> +
-> =C2=A0#define REG_SET(x)					((x) + 0x4)
-> =C2=A0#define REG_CLEAR(x)				((x) + 0x8)
-> =C2=A0
-> @@ -114,6 +118,7 @@ enum jz_version {
-> =C2=A0	ID_X1830,
-> =C2=A0	ID_X2000,
-> =C2=A0	ID_X2100,
-> +	ID_X2600,
-> =C2=A0};
-> =C2=A0
-> =C2=A0struct ingenic_chip_info {
-> @@ -164,7 +169,8 @@ static const unsigned long enabled_socs =3D
-> =C2=A0	IS_ENABLED(CONFIG_MACH_X1600) << ID_X1600 |
-> =C2=A0	IS_ENABLED(CONFIG_MACH_X1830) << ID_X1830 |
-> =C2=A0	IS_ENABLED(CONFIG_MACH_X2000) << ID_X2000 |
-> -	IS_ENABLED(CONFIG_MACH_X2100) << ID_X2100;
-> +	IS_ENABLED(CONFIG_MACH_X2100) << ID_X2100 |
-> +	IS_ENABLED(CONFIG_MACH_X2600) << ID_X2600;
-> =C2=A0
-> =C2=A0static bool
-> =C2=A0is_soc_or_above(const struct ingenic_pinctrl *jzpc, enum jz_version=
- version)
-> @@ -3545,15 +3551,21 @@ static void ingenic_gpio_shadow_set_bit(struct
-> ingenic_gpio_chip *jzgc,
-> =C2=A0	else
-> =C2=A0		reg =3D REG_CLEAR(reg);
-> =C2=A0
-> -	regmap_write(jzgc->jzpc->map, REG_PZ_BASE(
-> -			jzgc->jzpc->info->reg_offset) + reg, BIT(offset));
-> +	if (is_soc_or_above(jzgc->jzpc, ID_X2600))
-> +		regmap_write(jzgc->jzpc->map, jzgc->reg_base +
-> X2600_GPIO_SHADOW_OFFSET + reg,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 BIT(offset));
-> +	else
-> +		regmap_write(jzgc->jzpc->map, REG_PZ_BASE(jzgc->jzpc->info-
-> >reg_offset) + reg,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 BIT(offset));
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void ingenic_gpio_shadow_set_bit_load(struct ingenic_gpio_ch=
-ip *jzgc)
-> =C2=A0{
-> -	regmap_write(jzgc->jzpc->map, REG_PZ_GID2LD(
-> -			jzgc->jzpc->info->reg_offset),
-> -			jzgc->gc.base / PINS_PER_GPIO_CHIP);
-> +	if (is_soc_or_above(jzgc->jzpc, ID_X2600))
-> +		regmap_write(jzgc->jzpc->map, jzgc->reg_base +
-> X2600_GPIO_PAGLD, 1);
-> +	else
-> +		regmap_write(jzgc->jzpc->map, REG_PZ_GID2LD(jzgc->jzpc->info-
-> >reg_offset),
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 jzgc->gc.base / PINS_PER_GPIO_CHIP);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void jz4730_gpio_set_bits(struct ingenic_gpio_chip *jzgc,
-> @@ -3618,6 +3630,12 @@ static void irq_set_type(struct ingenic_gpio_chip
-> *jzgc,
-> =C2=A0		break;
-> =C2=A0	}
-> =C2=A0
-> +	if (type =3D=3D IRQ_TYPE_EDGE_BOTH &&
-> +	=C2=A0=C2=A0=C2=A0 (is_soc_or_above(jzgc->jzpc, ID_X2000) ||
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 (is_soc_or_above(jzgc->jzpc, ID_X1600) &&
-> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !is_soc_or_above(jzgc->jzpc, ID_X1830)))=
-)
+> Changes in v2:
+> - One function per block type, with the group selecting the
+>   instance, as in the other Airoha pin controller bindings (Conor).
+> - List the valid groups for the groups property (Conor).
+> 
+>  .../mfd/airoha,an7589-gpio-sysctl.yaml        |  66 ++++
+>  .../devicetree/bindings/mfd/syscon.yaml       |   1 +
+>  .../pinctrl/airoha,an7589-pinctrl.yaml        | 354 ++++++++++++++++++
+>  MAINTAINERS                                   |   2 +
 
-I remember you saying (in another patchset) that the X1830 was older than t=
-he
-X1600, if that's the case the IDs for X1600 and X1830 should be swapped. I
-believe this patch would then become much simpler.
+Split the MFD parts out please.
 
-Cheers,
--Paul
+>  4 files changed, 423 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,an7589-gpio-sysctl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/airoha,an7589-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/airoha,an7589-gpio-sysctl.yaml b/Documentation/devicetree/bindings/mfd/airoha,an7589-gpio-sysctl.yaml
+> new file mode 100644
+> index 000000000000..0785b61bdda3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/airoha,an7589-gpio-sysctl.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/airoha,an7589-gpio-sysctl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha AN7589 GPIO System Controller
+> +
+> +maintainers:
+> +  - John Crispin <john@phrozen.org>
+> +
+> +description:
+> +  Airoha AN7589 SoC GPIO system controller which provides a register map
+> +  for controlling the GPIO and pins of the SoC.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: airoha,an7589-gpio-sysctl
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  pinctrl:
+> +    type: object
+> +    $ref: /schemas/pinctrl/airoha,an7589-pinctrl.yaml
+> +    description:
+> +      Child node definition for AN7589 Pin controller
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    system-controller@1fbf0200 {
+> +      compatible = "airoha,an7589-gpio-sysctl", "syscon", "simple-mfd";
+> +      reg = <0x1fbf0200 0x100>;
+> +
+> +      pinctrl {
+> +        compatible = "airoha,an7589-pinctrl";
+> +        airoha,iomux = <&iomux>;
+> +
+> +        interrupt-parent = <&gic>;
+> +        interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +
+> +        mmc-pins {
+> +          mux {
+> +            function = "emmc";
+> +            groups = "emmc";
+> +          };
+> +        };
+> +      };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> index dae706ca7642..e87158d42e87 100644
+> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> @@ -24,6 +24,7 @@ properties:
+>      oneOf:
+>        - items:
+>            - enum:
+> +              - airoha,an7589-iomux
+>                - airoha,en7581-pbus-csr
+>                - al,alpine-sysfabric-service
+>                - allwinner,sun8i-a83t-system-controller
+> diff --git a/Documentation/devicetree/bindings/pinctrl/airoha,an7589-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/airoha,an7589-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..57e79e550caf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/airoha,an7589-pinctrl.yaml
+> @@ -0,0 +1,354 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/airoha,an7589-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha AN7589 Pin Controller
+> +
+> +maintainers:
+> +  - John Crispin <john@phrozen.org>
+> +
+> +description:
+> +  The Airoha AN7589 pin controller is used to control SoC pins. Pin
+> +  functions are selected through a separate IOMUX register block, one
+> +  mode field per pin. Every pin is a GPIO in mode 0.
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,an7589-pinctrl
+> +
+> +  airoha,iomux:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the IOMUX syscon holding the per pin mode fields.
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - airoha,iomux
+> +  - interrupts
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +
+> +    patternProperties:
+> +      '^mux(-|$)':
+> +        type: object
+> +
+> +        description:
+> +          pinmux configuration nodes.
+> +
+> +        $ref: /schemas/pinctrl/pinmux-node.yaml
+> +
+> +        properties:
+> +          function:
+> +            description:
+> +              A string containing the name of the function to mux to the group.
+> +            enum: [uart, i2c, spi, pcm, pcm_spi, i2s, mdio, mdcs, mdios, emmc,
+> +                   pcie, pon, sgpio, watchdog, shiftmux_spi, tod, sync_e, jtag,
+> +                   pwm]
+> +
+> +          groups:
+> +            description:
+> +              An array of strings. Each string contains the name of a group.
+> +            items:
+> +              enum: [uart1, uart2, uart3, uart3_alt, uart4, uart5, uart5_alt,
+> +                     uart5_full, uart6, uart6_full, i2c0, i2c1, i2c2, i2c3,
+> +                     i2c4, spi0, ext_spi0_full, ext_spi1, ext_spi1_full,
+> +                     ext_spi2, ext_spi2_full, ext_spi3, ext_spi3_full, pcm1,
+> +                     pcm2, pcm_spi, pcm_spi_cs, pcm_ctrl, i2s, mdio0, mdio1,
+> +                     mdio2, mdcs, mdios, emmc, pcie0_rst, pcie0_clkreq,
+> +                     pcie0_wake, pcie1_rst, pcie1_clkreq, pcie1_wake, pcie2_rst,
+> +                     pcie2_clkreq, pcie2_wake, pon1, pon2, sgpio0, sgpio1,
+> +                     watchdog, shiftmux_spi, tod, sync_e, cpu_jtag,
+> +                     cpu_jtag_alt, npu_jtag, ibex_jtag, pma50eth_jtag,
+> +                     ainpu_jtag, pma50pon_jtag, gpio0, gpio1, gpio2, gpio3,
+> +                     gpio4, gpio5, gpio6, gpio7, gpio8, gpio9, gpio10, gpio11,
+> +                     gpio12, gpio13, gpio14, gpio15]
+> +
+> +        required:
+> +          - function
+> +          - groups
+> +
+> +        allOf:
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: uart
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [uart1, uart2, uart3, uart3_alt, uart4, uart5,
+> +                           uart5_alt, uart5_full, uart6, uart6_full]
+> +                  maxItems: 10
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: i2c
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [i2c0, i2c1, i2c2, i2c3, i2c4]
+> +                  maxItems: 5
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: spi
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [spi0, ext_spi0_full, ext_spi1, ext_spi1_full,
+> +                           ext_spi2, ext_spi2_full, ext_spi3, ext_spi3_full]
+> +                  maxItems: 8
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pcm
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [pcm1, pcm2]
+> +                  maxItems: 2
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pcm_spi
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [pcm_spi, pcm_spi_cs, pcm_ctrl]
+> +                  maxItems: 3
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: i2s
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [i2s]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: mdio
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [mdio0, mdio1, mdio2]
+> +                  maxItems: 3
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: mdcs
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [mdcs]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: mdios
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [mdios]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: emmc
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [emmc]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pcie
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [pcie0_rst, pcie0_clkreq, pcie0_wake, pcie1_rst,
+> +                           pcie1_clkreq, pcie1_wake, pcie2_rst, pcie2_clkreq,
+> +                           pcie2_wake]
+> +                  maxItems: 9
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pon
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [pon1, pon2]
+> +                  maxItems: 2
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: sgpio
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [sgpio0, sgpio1]
+> +                  maxItems: 2
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: watchdog
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [watchdog]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: shiftmux_spi
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [shiftmux_spi]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: tod
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [tod]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: sync_e
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [sync_e]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: jtag
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [cpu_jtag, cpu_jtag_alt, npu_jtag, ibex_jtag,
+> +                           pma50eth_jtag, ainpu_jtag, pma50pon_jtag]
+> +                  maxItems: 7
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pwm
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6,
+> +                           gpio7, gpio8, gpio9, gpio10, gpio11, gpio12, gpio13,
+> +                           gpio14, gpio15]
+> +
+> +        additionalProperties: false
+> +
+> +      '^conf(-|$)':
+> +        type: object
+> +
+> +        description:
+> +          pinconf configuration nodes.
+> +
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> +
+> +        properties:
+> +          pins:
+> +            description:
+> +              An array of strings. Each string contains the name of a pin.
+> +            items:
+> +              pattern: '^gpio([0-9]|[1-6][0-9]|7[0-3])$'
+> +            minItems: 1
+> +            maxItems: 74
+> +
+> +          input-enable: true
+> +
+> +          output-enable: true
+> +
+> +          output-low: true
+> +
+> +          output-high: true
+> +
+> +        required:
+> +          - pins
+> +
+> +        additionalProperties: false
+> +
+> +    additionalProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    pinctrl {
+> +      compatible = "airoha,an7589-pinctrl";
+> +      airoha,iomux = <&iomux>;
+> +
+> +      interrupt-parent = <&gic>;
+> +      interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +      gpio-controller;
+> +      #gpio-cells = <2>;
+> +
+> +      interrupt-controller;
+> +      #interrupt-cells = <2>;
+> +
+> +      gpio-ranges = <&pinctrl 0 0 74>;
+> +
+> +      mmc-pins {
+> +        mux {
+> +          function = "emmc";
+> +          groups = "emmc";
+> +        };
+> +      };
+> +
+> +      pcie0-pins {
+> +        mux {
+> +          function = "pcie";
+> +          groups = "pcie0_rst", "pcie0_clkreq", "pcie0_wake";
+> +        };
+> +      };
+> +
+> +      uart5-pins {
+> +        mux {
+> +          function = "uart";
+> +          groups = "uart5", "uart5_full";
+> +        };
+> +      };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aa647f5d37dd..2041a8aed28f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22137,6 +22137,8 @@ PIN CONTROLLER - AIROHA
+>  M:	Lorenzo Bianconi <lorenzo@kernel.org>
+>  L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/mfd/airoha,an7589-gpio-sysctl.yaml
+> +F:	Documentation/devicetree/bindings/pinctrl/airoha,an7589-pinctrl.yaml
+>  F:	Documentation/devicetree/bindings/pinctrl/airoha,en7581-pinctrl.yaml
+>  F:	drivers/pinctrl/airoha/pinctrl-airoha.c
+>  
+> -- 
+> 2.34.1
+> 
 
-> +		val2 =3D true;
-> +
-> =C2=A0	if (is_soc_or_above(jzgc->jzpc, ID_JZ4770)) {
-> =C2=A0		reg1 =3D JZ4770_GPIO_PAT1;
-> =C2=A0		reg2 =3D JZ4770_GPIO_PAT0;
-> @@ -3640,6 +3658,9 @@ static void irq_set_type(struct ingenic_gpio_chip *=
-jzgc,
-> =C2=A0		ingenic_gpio_shadow_set_bit(jzgc, reg2, offset, val1);
-> =C2=A0		ingenic_gpio_shadow_set_bit(jzgc, reg1, offset, val2);
-> =C2=A0		ingenic_gpio_shadow_set_bit_load(jzgc);
-> +
-> +		if (is_soc_or_above(jzgc->jzpc, ID_X1600) &&
-> !is_soc_or_above(jzgc->jzpc, ID_X1830))
-> +			ingenic_gpio_set_bit(jzgc, X2000_GPIO_EDG, offset,
-> val3);
-> =C2=A0	} else {
-> =C2=A0		ingenic_gpio_set_bit(jzgc, reg2, offset, val1);
-> =C2=A0		ingenic_gpio_set_bit(jzgc, reg1, offset, val2);
-> @@ -3714,7 +3735,8 @@ static void ingenic_gpio_irq_ack(struct irq_data *i=
-rqd)
-> =C2=A0	bool high;
-> =C2=A0
-> =C2=A0	if ((irqd_get_trigger_type(irqd) =3D=3D IRQ_TYPE_EDGE_BOTH) &&
-> -	=C2=A0=C2=A0=C2=A0 !is_soc_or_above(jzgc->jzpc, ID_X2000)) {
-> +	=C2=A0=C2=A0=C2=A0 (!is_soc_or_above(jzgc->jzpc, ID_X1600) ||
-> +	=C2=A0=C2=A0=C2=A0 (is_soc_or_above(jzgc->jzpc, ID_X1830) && !is_soc_or=
-_above(jzgc-
-> >jzpc, ID_X2000)))) {
-> =C2=A0		/*
-> =C2=A0		 * Switch to an interrupt for the opposite edge to the one
-> that
-> =C2=A0		 * triggered the interrupt being ACKed.
-> @@ -3726,7 +3748,9 @@ static void ingenic_gpio_irq_ack(struct irq_data *i=
-rqd)
-> =C2=A0			irq_set_type(jzgc, irq, IRQ_TYPE_LEVEL_HIGH);
-> =C2=A0	}
-> =C2=A0
-> -	if (is_soc_or_above(jzgc->jzpc, ID_JZ4770))
-> +	if (is_soc_or_above(jzgc->jzpc, ID_X2600))
-> +		regmap_write(jzgc->jzpc->map, jzgc->reg_base +
-> X2600_GPIO_FLAG_CLR, BIT(irq));
-> +	else if (is_soc_or_above(jzgc->jzpc, ID_JZ4770))
-> =C2=A0		ingenic_gpio_set_bit(jzgc, JZ4770_GPIO_FLAG, irq, false);
-> =C2=A0	else if (is_soc_or_above(jzgc->jzpc, ID_JZ4740))
-> =C2=A0		ingenic_gpio_set_bit(jzgc, JZ4740_GPIO_DATA, irq, true);
-> @@ -3754,7 +3778,9 @@ static int ingenic_gpio_irq_set_type(struct irq_dat=
-a
-> *irqd, unsigned int type)
-> =C2=A0		irq_set_handler_locked(irqd, handle_bad_irq);
-> =C2=A0	}
-> =C2=A0
-> -	if ((type =3D=3D IRQ_TYPE_EDGE_BOTH) && !is_soc_or_above(jzgc->jzpc,
-> ID_X2000)) {
-> +	if (type =3D=3D IRQ_TYPE_EDGE_BOTH &&
-> +	=C2=A0=C2=A0=C2=A0 (!is_soc_or_above(jzgc->jzpc, ID_X1600) ||
-> +	=C2=A0=C2=A0=C2=A0 (is_soc_or_above(jzgc->jzpc, ID_X1830) && !is_soc_or=
-_above(jzgc-
-> >jzpc, ID_X2000)))) {
-> =C2=A0		/*
-> =C2=A0		 * The hardware does not support interrupts on both edges.
-> The
-> =C2=A0		 * best we can do is to set up a single-edge interrupt and
-> then
-> @@ -3849,16 +3875,35 @@ static inline void ingenic_shadow_config_pin(stru=
-ct
-> ingenic_pinctrl *jzpc,
-> =C2=A0		unsigned int pin, u8 reg, bool set)
-> =C2=A0{
-> =C2=A0	unsigned int idx =3D pin % PINS_PER_GPIO_CHIP;
-> +	unsigned int offt =3D pin / PINS_PER_GPIO_CHIP;
-> =C2=A0
-> -	regmap_write(jzpc->map, REG_PZ_BASE(jzpc->info->reg_offset) +
-> -			(set ? REG_SET(reg) : REG_CLEAR(reg)), BIT(idx));
-> +	if (set)
-> +		reg =3D REG_SET(reg);
-> +	else
-> +		reg =3D REG_CLEAR(reg);
-> +
-> +	if (is_soc_or_above(jzpc, ID_X2600)) {
-> +		u32 target_reg =3D (offt * jzpc->info->reg_offset) +
-> X2600_GPIO_SHADOW_OFFSET + reg;
-> +
-> +		regmap_write(jzpc->map, target_reg, BIT(idx));
-> +	} else {
-> +		regmap_write(jzpc->map, REG_PZ_BASE(jzpc->info->reg_offset) +
-> reg, BIT(idx));
-> +	}
-> =C2=A0}
-> =C2=A0
-> =C2=A0static inline void ingenic_shadow_config_pin_load(struct ingenic_pi=
-nctrl
-> *jzpc,
-> =C2=A0		unsigned int pin)
-> =C2=A0{
-> -	regmap_write(jzpc->map, REG_PZ_GID2LD(jzpc->info->reg_offset),
-> -			pin / PINS_PER_GPIO_CHIP);
-> +	unsigned int offt =3D pin / PINS_PER_GPIO_CHIP;
-> +
-> +	if (is_soc_or_above(jzpc, ID_X2600)) {
-> +		u32 target_load_reg =3D (offt * jzpc->info->reg_offset) +
-> X2600_GPIO_PAGLD;
-> +
-> +		regmap_write(jzpc->map, target_load_reg, 1);
-> +	} else {
-> +		regmap_write(jzpc->map, REG_PZ_GID2LD(jzpc->info-
-> >reg_offset),
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 pin / PINS_PER_GPIO_CHIP);
-> +	}
-> =C2=A0}
-> =C2=A0
-> =C2=A0static inline void jz4730_config_pin_function(struct ingenic_pinctr=
-l *jzpc,
+-- 
+Lee Jones
