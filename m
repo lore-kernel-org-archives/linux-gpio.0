@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794609219;
-	b=I6dqtygWSm52sZmnRuPisB9fUeP9nBjUt6P2RetSs6XRUrNZYpfGEMjsbXVKQp/BzZ4e
-	 p+3Np1JjXMI5x69fu231i/Soi8tp9pY8uWKQe3cgVvUqv/woO0rw7iUpb+fl7JPeQCWeY
-	 vWhY6ReDT6X2G5bJnmTpMHwbktI6EjCEJGvyN1irC48OwKzYPPlcZMAwKmANyXtl6LGwC
-	 KgGygjrFP5kA+V6WWCQ4mvXZmbd1fQXlv5LbwkqRryAfrGY4aQDRdEnfHSPv7f4J/p3hq
-	 l2Gt+qTAvWGlyPFbwWU8mgq/IOeauaWcZnB8owpvPqbEBaSLcfQcjBCJrrSom7R2wVg==
+	t=1794609220;
+	b=5rXw3qpgvNhDDSWTLGHeSQ748S7IRaNuebwA+PvLhPDrc/aofZhAR7lZYu67r8oW455q
+	 QqfJDAZfTP/eTCr6QVYBYTVLdqLgBmYmcGjp5a5+0YOsxukufKpOfka2GhIlgx4s1tDfP
+	 P/AHmQTa2dC/EwBnUCvhYnxRcvuIaa6c5duDRKtiMFIKnyZ0/D0whApAIDk6XE2UjTiM3
+	 kFptgKVU55++zfr4F4dYs3vLIiU0dnRIra+YYIxzmmiYxMRVHsB9O6yayfgRKZqDZy9qM
+	 eGdVSGAP7x5eFxhZd3xFxDs0sVg1L9jwK8SP5MAawA8jRj0rPPSrT8u6l0wZDX2vyOg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794609219;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794609220;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=EgUvpuSxsCb2CVpHCi5y8cb6KO60R3POtoPlWNrlOYE=;
-	b=VV5f0Slyb4sgFhl/qVEUHRoQKrW5h/bFwcKDTclcJKo88Kg7KXSv9+dE3OZdN07+xBcT
-	 hBZwHgw5LCFuycKKH+8ES0ImzkFw8PMNuRLwVnSnHZr1f8bm+kkOIWs0/3GS8HW9h7aMQ
-	 iBMiGCWYxBbk0TXaWHtvT2GrZRxLvYxQ4/MYORdkuZYjWat4uRVqpo3UalExP+kEwdGpW
-	 R/5XMlgl4KsFMpc2DX7GIXxlLy3sDXUd3L6RDUbgIN/sW6XDxt8gGqeweiYMLUmUg1ZNr
-	 YABCYY63ywCdtgFxWiBei4FX5zXSxIfH48XwX7AsYI32juPo03buwHsCkiDusAl4pXA==
+	bh=uCSBQsnFH1v0qJqLur3HuSvJBaK4cr2cKSQjBjx2zgs=;
+	b=1kgZn9NzVWWbcfV7dk1XMTfsUdCoSHtU2xZqxu7HLAvUxHMcxhNp4BqCjlDPAwulXvXK
+	 sisLoPNdlkmlFv7rfGxM7TirXVz05WCZMmwe4+rYWzUpET59IDX1OaWugD/iQUisYuGSY
+	 Us8KcodFk5NEJpqK6cZ0imEtEZp4KZR3muUw8A+8qymuAK6pmHsXhu6VQvJVpUHn+iK14
+	 0gD9XKo/4LdSzJR8/XQ6wbJIMEk4PBVy4WimYCFn503BzL3BnDLmIysnQFyW3ZEIEI0/f
+	 U1bmCubHXb6qPa4CUK2fXuuGryk7vjAfe70H750H2RTj344qLnyKPo82xdlCdktRVlA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ivEX/fHO";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ISGi70qh;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4D460A3835;
-	Fri, 13 Nov 2026 22:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3DB60A5BD0;
+	Fri, 13 Nov 2026 22:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ivEX/fHO
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ISGi70qh
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794609219;
-	b=Ijm9WCd+janV06o+3FG+qeipfIrOUuPSs4HDrU96MNmoG6azproJ4DTN2LbVOXTXIlO3
-	 r233Uq2iwXtCMk3NHkyMLVTdOPP3gU7PHILie5v64MSmsgysbkCJ8Ad+unzf81eiLF5NK
-	 60xrY/TD+saSlzKlA06cTPILsITgZFiIvg7sa9SVyjkGqjh3X9XWhg8zs672gTXpFZmKy
-	 R1msmwjC4YAhM/9ruEK7O8O6Tjqhcq0GU2tYoa5pQBsZaoFXh0vm57M9SyFiGXJgTAG+M
-	 Bslcx6Z8+CnsI1leWRVlnC+NeyxLhPU/HQORIZ+VDtsAhbKrdcLslSTjg6yzCQfoVMw==
+	t=1794609220;
+	b=UrDpaTKoAeL32rogoy7KmjT87zEMbdIBFUi8Yqskg6PLc7LFDr/Krw62oWfwlUKO5zx2
+	 OZmHbAUdq4OMuIgr1DKvan1aOxG6cDcUzi1Dwi8qWWYjfXpftheBHW68L81baZspk7n6b
+	 5gL9rvROvTzL334uhWZPHg7SL7gm/lSRG8sKqL7Jh5vQyy3e1Ve2PSy5KR3imaO/bncFL
+	 st3F8JbsDP6Pha4XqWVqKtiK55VnkY61wUZRpBdGxED2tZnZB0NQdUXE0TgChkW1ner42
+	 /87zEcxJ2X6Mti+lxfY4iJJvsKsbPEzYEdYvdl4B0pnET7wsBHxe7MPm9Um3LgbvKWg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794609219;
+	c=relaxed/relaxed; t=1794609220;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=EgUvpuSxsCb2CVpHCi5y8cb6KO60R3POtoPlWNrlOYE=;
-	b=l91O3aYTxkKM3r6G5zYrTqBI8e9XX8j4eLNgSOQFiTRhkrsgdEgYvoegA6BqeZHDZBmW
-	 n3A/p3FREQPeLHFsmBHq5lhAZ8msPWyrw8SVrzdNLNs+aG3C7SqggE5hZYRaAAf6T9GqL
-	 VOCJchzF6/75e5OabtBRaZHXvaiGB1KjIiMjbCPqosBWqH24AOCyqPIueGWZVbwR8EUkJ
-	 NtiCdLueuejLB5oZXMEOl8KAeMZ/d3XJ9U3v1gE1d2Iw8rMVZtof0h3kC58T4/a518XDe
-	 JGFVuOuc6P6GURlrcrw9ntCiDqmxzRIN3WBYdgjsxF5b30v9/lQtYFF5eUoaz0lGscA==
+	bh=uCSBQsnFH1v0qJqLur3HuSvJBaK4cr2cKSQjBjx2zgs=;
+	b=Y00WgXSs2lycL4GCl9Lu42iSpguhWJbdbbfIQqrQQGLUoq0oEd0b8N2cre9CHj1pRi0Q
+	 JGf1gLrIqNNZuWqHZ8Zu+Sgc8C0YdkoY9YAnv+7YoSyXoGF/eFsW6KL2iMgevqmkHgffT
+	 Fvv7S/WlRJV6ES57gm1rjGsP9djDokGGr5vlPEDJ403CZ9i6gwpH2NMu1swasADhh3dY2
+	 smwBoDYmBwROuIgWZxR/NgIJSJrPzrjONDY539q+BJEymzloIVY7vNfz8oLNsB9OhYdwU
+	 PMzoSyuk+TfmK6G1mGhY7h4YgtZ+rPWfToW53jywtMdeL5mkZLm+arl0MoY5eEZugoQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id EB8601F000CB;
-	Fri, 13 Nov 2026 22:33:34 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id E0D3E1F00937;
+	Fri, 13 Nov 2026 22:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794609219;
-	bh=EgUvpuSxsCb2CVpHCi5y8cb6KO60R3POtoPlWNrlOYE=;
+	s=k20260515; t=1794609220;
+	bh=uCSBQsnFH1v0qJqLur3HuSvJBaK4cr2cKSQjBjx2zgs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=ivEX/fHOyPQQRW4Azf26Wlui4mcCo9kqNUY2/xrZITdvvTclojv6QHsHj9s88uS5Q
-	 bgCT/QN7oNUZWa7Jxb6VRpkPrOyPE+vC5WtD6QAallvf7tMgHnt4dusmGJLQ0b+jjz
-	 Q9E/FwTwHcmEYoum0feeWmFBzYkM58b1JK8OGG6BXu4JGWchAf2kag3EpaObZ3FaZI
-	 l+GBGCRet3aj7MCKftdA/EIlHUHspSvdAKwkKWHBeSz99WpxwN+qGZNzRcpIJItWxG
-	 Fo2CRusM2R/HYZX1oVz22EzTNyTr4AIrrKQoq5n4tBsUG/Hk3TbhFb5ip53AGObelv
-	 he1Z9ZEVqCaSA==
+	b=ISGi70qhfAp3wCAhR/HLl33dPfOjD30lG6Awl/KjDKfO7VppU3ysQIY/QCpEMM0IP
+	 /v4vlno1rqjj+nWtkK3JMXh/cGWTvR3JjsQnmB4C7MY9vtZnazCUrm2TjkGAHKvLKn
+	 UJk0Xv7I5GyyE/b4tUiSpYQU0xe/7BbJ64bUsVEpmdTVkIYkNwjvHksc0gGFuw0rXP
+	 R3BKrdf6m3OjAlBkaDMdWrbfhmbyrDwJqfxBO+o7Yg9+H30Z0+BX24XiRCz1u66JDl
+	 3yEFLXZHiMnLE++W1cwkzYDCyfmXSh6P6ahPEtXDoPCqM1u2prMkZYuubRv9/o3DAP
+	 6ifwM67qtqYmQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 2828449B70;
+	by lkml.kernel.org (Postfix) with ESMTP id BEF0C49B8C;
 	Fri, 13 Nov 2026 22:33:33 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Sat, 14 Nov 2026 06:33:33 +0800
-Subject: [PATCH 07/19] clk: sunxi-ng: add support for the Allwinner V861
- PRCM CCU
+Date: Sat, 14 Nov 2026 06:33:40 +0800
+Subject: [PATCH 14/19] pinctrl: sunxi: add support for the Allwinner V861
+ PIO
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-v861-v1-7-eb71ec3ee523@iscas.ac.cn>
+Message-Id: <20261114-v861-v1-14-eb71ec3ee523@iscas.ac.cn>
 References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
 In-Reply-To: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
 To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
@@ -111,11 +111,11 @@ Cc: Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=5653;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=3631;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=8ySeNhscsjE5lze4jiyfha0KHf5aua/JAy1/q0k9bZM=;
- b=TUadDnW1nSz95FL9u8UFpESvcvkyAkDXY799PTWKc+MXz3CL2hJ0MgSfa4fzi/wKzEafTyb2z
- 1/aDVehaxXpD1nxwJWLfn2Jd/OTURblJG5gI4w8XxFdtTqbkeAH1XjH
+ bh=dyHeGHv1zlRbsyWinbBdGwEJ5XkzCvJf3cZN/GfUYvk=;
+ b=HNsKo9qWkRP5dIQtqxM+VpZT7emu0epD/ZwzOK2CDJX/49+eucj70g22c8PstYnuPDpuVLwW6
+ C8J/jc4D4tYDvHgV0PCOxmlDH2E+Huq7coTiH6w6N1oXNtS4dDJKdH1
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -126,173 +126,107 @@ Content-Transfer-Encoding: 7bit
 
 From: Han Gao <gaohan@iscas.ac.cn>
 
-Add the PRCM CCU driver for the V861. It provides the R-AHB and R-APB0
-bus clocks and the PPU and RTC gates and resets.
+Add the V861 main pin controller driver, using the DT based function
+tables.
+
+The 1.8 V mode of bank PF is not supported, as none of the existing I/O
+bias variants handles its control register.
 
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- drivers/clk/sunxi-ng/Kconfig              |  10 +++
- drivers/clk/sunxi-ng/Makefile             |   2 +
- drivers/clk/sunxi-ng/ccu-sun252i-v861-r.c | 110 ++++++++++++++++++++++++++++++
- 3 files changed, 122 insertions(+)
+ drivers/pinctrl/sunxi/Kconfig                | 10 ++++++
+ drivers/pinctrl/sunxi/Makefile               |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun252i-v861.c | 49 ++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 890a0cbb45b6..0c591b24f085 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -32,6 +32,16 @@ config SUN252I_V861_CCU
- 	  reset lines of most peripherals, so it is required on boards
- 	  based on this SoC.
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index 831bb1dc9373..2d5ace1e5f5f 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -86,6 +86,16 @@ config PINCTRL_SUN20I_D1
+ 	default MACH_SUN8I || (RISCV && ARCH_SUNXI)
+ 	select PINCTRL_SUNXI
  
-+config SUN252I_V861_R_CCU
-+	tristate "Support for the Allwinner V861 PRCM CCU"
-+	default ARCH_SUNXI
-+	depends on RISCV || COMPILE_TEST
++config PINCTRL_SUN252I_V861
++	bool "Support for the Allwinner V861 PIO"
++	default RISCV && ARCH_SUNXI
++	select PINCTRL_SUNXI
 +	help
-+	  Support for the PRCM clock control unit of the Allwinner V861
-+	  SoC. It provides the bus clocks and reset lines of the always-on
-+	  blocks, such as the RTC and the power management unit, so it is
-+	  required on boards based on this SoC.
++	  Support for the main pin controller of the Allwinner V861 SoC.
++	  It provides pin multiplexing, GPIOs and GPIO interrupts for the
++	  PA and PC to PH banks, and is required on boards based on this
++	  SoC.
 +
- config SUN50I_A64_CCU
- 	tristate "Support for the Allwinner A64 CCU"
- 	default ARCH_SUNXI
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 01869330dc4e..851c5ae6dc21 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_SUNIV_F1C100S_CCU)	+= suniv-f1c100s-ccu.o
- obj-$(CONFIG_SUN20I_D1_CCU)	+= sun20i-d1-ccu.o
- obj-$(CONFIG_SUN20I_D1_R_CCU)	+= sun20i-d1-r-ccu.o
- obj-$(CONFIG_SUN252I_V861_CCU)	+= sun252i-v861-ccu.o
-+obj-$(CONFIG_SUN252I_V861_R_CCU)	+= sun252i-v861-r-ccu.o
- obj-$(CONFIG_SUN50I_A64_CCU)	+= sun50i-a64-ccu.o
- obj-$(CONFIG_SUN50I_A100_CCU)	+= sun50i-a100-ccu.o
- obj-$(CONFIG_SUN50I_A100_R_CCU)	+= sun50i-a100-r-ccu.o
-@@ -57,6 +58,7 @@ suniv-f1c100s-ccu-y		+= ccu-suniv-f1c100s.o
- sun20i-d1-ccu-y			+= ccu-sun20i-d1.o
- sun20i-d1-r-ccu-y		+= ccu-sun20i-d1-r.o
- sun252i-v861-ccu-y		+= ccu-sun252i-v861.o
-+sun252i-v861-r-ccu-y		+= ccu-sun252i-v861-r.o
- sun50i-a64-ccu-y		+= ccu-sun50i-a64.o
- sun50i-a100-ccu-y		+= ccu-sun50i-a100.o
- sun50i-a100-r-ccu-y		+= ccu-sun50i-a100-r.o
-diff --git a/drivers/clk/sunxi-ng/ccu-sun252i-v861-r.c b/drivers/clk/sunxi-ng/ccu-sun252i-v861-r.c
+ config PINCTRL_SUN50I_A64
+ 	bool "Support for the Allwinner A64 PIO"
+ 	default ARM64 && ARCH_SUNXI
+diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+index 3658c9d06b49..dc7559e260e1 100644
+--- a/drivers/pinctrl/sunxi/Makefile
++++ b/drivers/pinctrl/sunxi/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
+ obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
+ obj-$(CONFIG_PINCTRL_SUN20I_D1)		+= pinctrl-sun20i-d1.o
++obj-$(CONFIG_PINCTRL_SUN252I_V861)	+= pinctrl-sun252i-v861.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H5)		+= pinctrl-sun50i-h5.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H6)		+= pinctrl-sun50i-h6.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun252i-v861.c b/drivers/pinctrl/sunxi/pinctrl-sun252i-v861.c
 new file mode 100644
-index 000000000000..9c8de9643722
+index 000000000000..742465076d86
 --- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu-sun252i-v861-r.c
-@@ -0,0 +1,110 @@
++++ b/drivers/pinctrl/sunxi/pinctrl-sun252i-v861.c
+@@ -0,0 +1,49 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (c) 2026 Han Gao <gaohan@iscas.ac.cn>
++ * Allwinner V861 SoC pinctrl driver.
 + *
-+ * Based on the A523 PRCM CCU driver:
-+ *   Copyright (C) 2024 Arm Ltd.
++ * Copyright (c) 2026 Han Gao <gaohan@iscas.ac.cn>
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
++#include <linux/mod_devicetable.h>
 +#include <linux/platform_device.h>
++#include <linux/pinctrl/pinctrl.h>
 +
-+#include <dt-bindings/clock/sun252i-v861-r-ccu.h>
-+#include <dt-bindings/reset/sun252i-v861-r-ccu.h>
++#include "pinctrl-sunxi.h"
 +
-+#include "ccu_common.h"
-+#include "ccu_reset.h"
++static const u8 v861_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =
++/*	  PA  PB  PC  PD  PE  PF  PG  PH */
++	{ 22,  0, 12, 23, 18,  7,  8, 16 };
 +
-+#include "ccu_gate.h"
-+#include "ccu_mp.h"
++static const unsigned int v861_irq_bank_map[] = { 0, 2, 3, 4, 5, 6, 7 };
 +
-+static const struct clk_parent_data r_ahb_apb_parents[] = {
-+	{ .fw_name = "hosc" },
-+	{ .fw_name = "losc" },
-+	{ .fw_name = "iosc" },
-+	{ .fw_name = "pll-periph" },
++static const u8 v861_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
++/*	  PA  PB  PC  PD  PE  PF  PG  PH */
++	{ 14,  0, 14, 14, 14, 14, 14, 14 };
++
++static struct sunxi_pinctrl_desc v861_pinctrl_data = {
++	.irq_banks = ARRAY_SIZE(v861_irq_bank_map),
++	.irq_bank_map = v861_irq_bank_map,
 +};
 +
-+static SUNXI_CCU_MP_DATA_WITH_MUX(r_ahb_clk, "r-ahb", r_ahb_apb_parents, 0x000,
-+				  0, 5,		/* M */
-+				  8, 2,		/* P */
-+				  24, 3,	/* mux */
-+				  0);
-+static const struct clk_hw *r_ahb_hws[] = { &r_ahb_clk.common.hw };
-+
-+static SUNXI_CCU_MP_DATA_WITH_MUX(r_apb0_clk, "r-apb0", r_ahb_apb_parents,
-+				  0x00c,
-+				  0, 5,		/* M */
-+				  8, 2,		/* P */
-+				  24, 3,	/* mux */
-+				  0);
-+static const struct clk_hw *r_apb0_hws[] = { &r_apb0_clk.common.hw };
-+
-+static SUNXI_CCU_GATE_HWS(bus_r_ppu_clk, "bus-r-ppu", r_apb0_hws, 0x1ac,
-+			  BIT(0), 0);
-+static SUNXI_CCU_GATE_HWS(bus_r_rtc_clk, "bus-r-rtc", r_ahb_hws, 0x20c,
-+			  BIT(0), 0);
-+
-+static struct ccu_common *sun252i_v861_r_ccu_clks[] = {
-+	&r_ahb_clk.common,
-+	&r_apb0_clk.common,
-+	&bus_r_ppu_clk.common,
-+	&bus_r_rtc_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sun252i_v861_r_hw_clks = {
-+	.num	= CLK_BUS_R_RTC + 1,
-+	.hws	= {
-+		[CLK_R_AHB]		= &r_ahb_clk.common.hw,
-+		[CLK_R_APB0]		= &r_apb0_clk.common.hw,
-+		[CLK_BUS_R_PPU]		= &bus_r_ppu_clk.common.hw,
-+		[CLK_BUS_R_RTC]		= &bus_r_rtc_clk.common.hw,
-+	},
-+};
-+
-+static const struct ccu_reset_map sun252i_v861_r_ccu_resets[] = {
-+	[RST_BUS_R_PPU]		= { 0x1ac, BIT(16) },
-+	[RST_BUS_R_RTC]		= { 0x20c, BIT(16) },
-+};
-+
-+static const struct sunxi_ccu_desc sun252i_v861_r_ccu_desc = {
-+	.ccu_clks	= sun252i_v861_r_ccu_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun252i_v861_r_ccu_clks),
-+
-+	.hw_clks	= &sun252i_v861_r_hw_clks,
-+
-+	.resets		= sun252i_v861_r_ccu_resets,
-+	.num_resets	= ARRAY_SIZE(sun252i_v861_r_ccu_resets),
-+};
-+
-+static int sun252i_v861_r_ccu_probe(struct platform_device *pdev)
++static int v861_pinctrl_probe(struct platform_device *pdev)
 +{
-+	void __iomem *reg;
-+
-+	reg = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun252i_v861_r_ccu_desc);
++	return sunxi_pinctrl_dt_table_init(pdev, v861_nr_bank_pins,
++					   v861_irq_bank_muxes,
++					   &v861_pinctrl_data,
++					   SUNXI_PINCTRL_NCAT2_REG_LAYOUT);
 +}
 +
-+static const struct of_device_id sun252i_v861_r_ccu_ids[] = {
-+	{ .compatible = "allwinner,sun252i-v861-r-ccu" },
-+	{ }
++static const struct of_device_id v861_pinctrl_match[] = {
++	{ .compatible = "allwinner,sun252i-v861-pinctrl", },
++	{}
 +};
-+MODULE_DEVICE_TABLE(of, sun252i_v861_r_ccu_ids);
 +
-+static struct platform_driver sun252i_v861_r_ccu_driver = {
-+	.probe	= sun252i_v861_r_ccu_probe,
++static struct platform_driver v861_pinctrl_driver = {
++	.probe	= v861_pinctrl_probe,
 +	.driver	= {
-+		.name			= "sun252i-v861-r-ccu",
-+		.suppress_bind_attrs	= true,
-+		.of_match_table		= sun252i_v861_r_ccu_ids,
++		.name		= "sun252i-v861-pinctrl",
++		.of_match_table	= v861_pinctrl_match,
 +	},
 +};
-+module_platform_driver(sun252i_v861_r_ccu_driver);
-+
-+MODULE_IMPORT_NS("SUNXI_CCU");
-+MODULE_DESCRIPTION("Support for the Allwinner V861 PRCM CCU");
-+MODULE_LICENSE("GPL");
++builtin_platform_driver(v861_pinctrl_driver);
 
 -- 
 2.55.0
