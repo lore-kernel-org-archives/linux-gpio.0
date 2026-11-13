@@ -1,98 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794539991;
-	b=zsi+PkclXYJxfbBK7iDId56v94BRQQVHR90W8mqWOqaIhlSCcZpRnzm2WxTG0ZY2p+zW
-	 rAeJoOSunepxV0CEK1pNxdYHCuW+H4ST8qec1TrkeohDD4RpDM8nM914dhYiHB2rdknxi
-	 qysn/gb+bVr3HEsCGLQucgSW/Hcs9VTGV78NKdRexhm3G8UTUkUtoq4rqbKDJQr7M7bM1
-	 Naui2kukJRu+9AxCu48uoMGDdKEEILtmaddUsZoNUGW4CxnDNc1k6B/mI+C0tM5Vbymp0
-	 ZmgDiL3VV03ahfnnKw3sth9myDqQSMrt6NaAOMB0UwlGDXqCTd6/tsX58sOR47B2DIg==
+	t=1794542266;
+	b=3YpppL7STGFkZT6hoBzxiaTBdTutOL4+ssMcyIa54vB9/BOpPOOv3w9rrFuIeTOvRHn8
+	 ruG07FxCrlsk4qEbyCmmeUXp7CCKrdWUNOoSUccWH7yq5oE3/FgndYM4Ns9Hu3qCFhybB
+	 BAymlFsLYyomleUZUyHzkZVtGZ8quyWskEFyIFmRWJ/F5HJ8n9A8/f72j+hlpqLSTsRgS
+	 TMGsYWH3N4kKy5YshOnk7j9ROoaIz9D8kcD65mgbcFFnGl0lZlEI4iBdmNPwzWgG6Py8S
+	 2ZFGHa6uQCfDkeicHtcvq2yd4O37sOOcOXgEnBLBNbisfuabIqmNMi6NvlXUgabSmsA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794539991;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=voIys8EwQkhUIwCPX9c3iOQmu5IoCkbo4OFDmG1MZKU=;
-	b=FEq3d56okpQlMhVBv2SnE7p+SkIXJ0Tm3kipYGRZotHvGVU6yFi8o7RcZt9PAXj/2ybM
-	 kebkl5k5xMT39hG4yLs1EQ2HHxufkO6dY7AgtkHzwEtu09BfGz+3fukovpF9c8KUlL2pf
-	 gGvwf/bP8M4Gh6DKjlaYcQoQlttBsTkwQLS+3OFsHFZCeLs8zq5QFDKdp3KVk02v3MT/I
-	 GWW+E7AmsPfLLVh8XFGJVMaIB0hpYo9i+pQY7qr4t4TRqFwxHi61x+nLoKS0cILMrDZeT
-	 IsAC47qkBIuOxmDqtSsNYc1sWV23ODu8T1ExxjApnGMIGrbxQ4l3yfvd+0OdJJNY1Ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794542266;
+	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
+	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
+	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=a5RpNGnH6HbfX261zNHh57A0eHINOsfNFlw+S5s3mTQ=;
+	b=kpaiGB4R+Suaw9T+/6EBs2s5DL87KHc7452Q88T+G1lSj4RToXViEQJCLyQDXrreOJ7m
+	 m+2Rxru77Gt1OLoV+bmArG8XBURWu7TzsNoa2QZxUhubXLq32MJuofK3fccD7P6CvR+TY
+	 hImcfJkV4wMfPNBQdjGxAYxX+ar9Pli8ApvK5AdQlvYtim2+RtTpYI/XHXevO0IdB22oh
+	 8oA69Y4boPUwJOT/mr7oK3CzW8Cm8imZFkqPGCWdDdHBiOu24V6ivJeJZGRufArdTESvl
+	 5FlAqwf6Yo7guk1Z8athCjhxgwQj/YXMYMStNKFCTzRVnW+Vq7sUOPzj+nnRbSvjvBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=inbDH7TG;
-	arc=none smtp.remote-ip=209.85.210.175
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAC606A321
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 03:19:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 95CAC606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	dmarc=pass header.from=cmss.chinamobile.com;
+	spf=pass smtp.mailfrom=cmss.chinamobile.com;
+	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=tBWQTZdj;
+	arc=none smtp.remote-ip=111.22.67.137
+Received: from cmccmta4.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F23606A31C;
+	Fri, 13 Nov 2026 03:57:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8F23606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=inbDH7TG
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8a05b210703so205126b3a.0
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Nov 2026 19:19:51 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=tBWQTZdj
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794539991; x=1795144791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=voIys8EwQkhUIwCPX9c3iOQmu5IoCkbo4OFDmG1MZKU=;
-        b=inbDH7TGQaS8YIhofdyopjaj2vvIPI0MTAVjELPvx6T6yv1rExDdkos8qLpXEzBV8s
-         rxjjuabXt9Yk1UQfzs/6nVzU8OqKotcTOuwtPs6quzFFqFvd3g26xehO7hCtbIFbEHvG
-         XzrnV0CaAiiDqw5y2bz09mWyTLLB4NlNw5oW3Uat+GXEqGRxgb0M2Z2FLdgXGNsKljLH
-         10Uf8DjwaXdkPK93j0BNkU2N/w3iGR3O+45l97ydQCR6qVMOqmYat9Sd6tFFdycaJT1n
-         sFDsiOm51XoRPLfzQWd5DVgadoQCH+7WGh+zac5y6UpmlEMd2ZANkGOEff2vVS9TWX0u
-         R75Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794539991; x=1795144791;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=voIys8EwQkhUIwCPX9c3iOQmu5IoCkbo4OFDmG1MZKU=;
-        b=VGDX9WvrDZEV03sgbg6phCjltnDyjflnyvvFwvJG+oTecQQXi6PEWRCHlVTZkIfSj5
-         gZUrwoTRo1C1Rq65pUOhcq7vqx25CbOtoOhI9bt84yhQ0er8CB5HVOGPtVA47X9//hTf
-         h9MFAnndL39VacmKCcIgRs0FLAFxyCfkRsezegfhdYYQsz70dAa4Wwf95Rx91PPcH+Mp
-         1TbzylvZEqBr83Rbd7rbl/ulmG1cO995THgvwWD4hRkLCZ821wgfSyoxwIPpLS3dYySO
-         pry2YEFByIhGr2qN2ay3R9yfbWyxmZeNKq7dx2tLUh32Acppb9V2CMZAbSMaAI6mYmI0
-         UKAQ==
-X-Forwarded-Encrypted: i=1; AL+hErHnu1lT0zh8rdkWP6KQZkY0lix+3sjj3nMREjOQXHIcpsbsNq8yoMeDaMxLzYsMHDk7jntfDrRIprNA@vger.kernel.org
-X-Gm-Message-State: APuU4Z+v+sPiGfdKPPpbUiwFHv37PZ4JfdM6Zr5G+NcHuNj8mnChDdm4
-	dZbgn3k2/98GABHmCqACYzPHVgcvbfaJVs8KjghFitFxKPfjuln2aHsHwEz5zw==
-X-Gm-Gg: AYBFou3zkh2nMH3bFSLVDpJ3Y+x4K4seTFu3/+OkQ6fb7xYHjIiGuvwDX9gknVrtAaR
-	ng4Xi6RnD8B4AcvbhJVbvHgPDiT6XJcqX3QZ89lpuGjnRZVAp2swZPdHzCCFdzoIEq2mwe6kqXt
-	9B6Mt0t/kAnlqneH782AsqEpe9ZjsuCHDhQYSbow+bgBngFjyze7LYR8jg4FVzSi4Yb7n6bcvN9
-	HGcVjA+h316L3eVMu+XgXKcQGeYC45mKvZqI4BGqNv1939Y81a1PKeq+iKzo/uZl5qjewUTTKsr
-	WkCZuS9rCm5p0223UH9FzlUMf2Sp3FinSfq6L3ChovlWELnBkEnbLrUd6e+QYdjF2cOOtm9ib2Z
-	6W68yNM53j9UR0TOpusGXFNJyA0aWQubbz+2pIxcSlcKGnTVTVTtOsAcIpx+90PGfcliqKhPthh
-	ahZ2KiORS+cs5g2ZRov5USR9oRPOcTr+5Ksl9UyIuwPhS/Dld2GQKf5rPUMUUJEjRHlgkzcfI1y
-	AwzEz22g8rvKtsB+OZo6B7+I352bHqmefzFYnFTpmkGONpDxnLUGWM17zsLS/sUUaCx+4O5noXV
-	fDiJM0iKzdsS2XDdOqlFHS3yLkwVvqB7TNjGzVYU2unBD5Yj
-X-Received: by 2002:a05:6a00:1989:b0:89e:33ba:54ce with SMTP id d2e1a72fcca58-8beb753d177mr1447093b3a.46.1794539990691;
-        Thu, 12 Nov 2026 19:19:50 -0800 (PST)
-Received: from rigel (106-68-220-184.tpgi.com.au. [106.68.220.184])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed243e643sm388162b3a.42.2026.11.12.19.19.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 19:19:50 -0800 (PST)
-Date: Fri, 13 Nov 2026 11:19:43 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] gpio: cdev: don't overwrite the whole flags field
- when configuring lines
-Message-ID: <20261113031943.GA39484@rigel>
-References: <20261110-gpio-desc-flags-atomic-v3-0-2f463bce8086@oss.qualcomm.com>
- <20261110-gpio-desc-flags-atomic-v3-5-2f463bce8086@oss.qualcomm.com>
+	d=cmss.chinamobile.com; s=default; l=0;
+	h=from:subject:message-id:to:cc:mime-version;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	b=tBWQTZdj25NNFWh6dfUj0wKzRCCo04gY/ARIl7VXg9+pLJM8NaLBenlPmCfPN26RDM8PYnrU/87Pl
+	 PCMXwfidzeWG+T4WPlA0qL2jX3uREsMvYawUbYo5OSkv5AwSKk8HZQJ6AjcgU/xSvCxia6p0X8edq+
+	 0BpJhObjbZJiQeDI=
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee46af68aac4f1-874f4;
+	Fri, 13 Nov 2026 11:57:34 +0800 (CST)
+X-RM-TRANSID:2ee46af68aac4f1-874f4
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from FHB-W5100250 (unknown[36.137.216.21])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6af68aa6e89-16873;
+	Fri, 13 Nov 2026 11:57:34 +0800 (CST)
+X-RM-TRANSID:2eea6af68aa6e89-16873
+From: Gu Bin <gubin@cmss.chinamobile.com>
+To: brgl@kernel.org
+Cc: warthog618@gmail.com,
+	andriy.shevchenko@linux.intel.com,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tools: gpio: gpio-watch: do not clobber errno on read error
+Date: Fri, 13 Nov 2026 11:57:22 +0800
+Message-ID: <20261113035723.2215-1-gubin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -102,34 +69,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261110-gpio-desc-flags-atomic-v3-5-2f463bce8086@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 10, 2026 at 02:47:05PM +0100, Bartosz Golaszewski wrote:
-> linehandle_flags_to_desc_flags() and
-> gpio_v2_line_config_flags_to_desc_flags() read the flags word with
-> READ_ONCE(), modify the local copy and write it back with WRITE_ONCE().
-> 
-> The per-request config_mutex does not exclude sysfs, the irq core or
-> drivers touching the same descriptor, so bits they set or clear
-> concurrently can be lost.
-> 
-> Build the mask of bits owned by the line configuration and their new
-> values locally and apply them with gpiod_update_flags(). The whole
-> group changes in a single atomic step.
-> 
-> While at it: rename the functions whose semantics changed from
-> "conversion" to "flags update" accordingly.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: b7adfb6076ff ("gpio: cdev: update flags at once when reconfiguring from user-space")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> ---
+gpio-watch reads line change events from a gpiochip character device
+and reports a read() error or short read with perror(), which prints
+strerror(errno).  If read() fails, say with EINTR, the inner
 
-Reviewed-by: Kent Gibson <warthog618@gmail.com>
+	if (rd != sizeof(chg))
+		errno = EIO;
 
-for the series.
+replaces the real errno with EIO, so the message always reports
+"Input/output error" instead of the actual cause.
 
-Cheers,
-Kent.
+Only synthesize EIO for short reads (rd >= 0), keeping the errno
+that read() set when it failed.
+
+Fixes: 33f0c47b8fb4 ("tools: gpio: implement gpio-watch")
+Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
+---
+ tools/gpio/gpio-watch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/gpio/gpio-watch.c b/tools/gpio/gpio-watch.c
+index 41e76d2441922..e7733cedcf0d6 100644
+--- a/tools/gpio/gpio-watch.c
++++ b/tools/gpio/gpio-watch.c
+@@ -64,7 +64,7 @@ int main(int argc, char **argv)
+ 			memset(&chg, 0, sizeof(chg));
+ 			rd = read(pfd.fd, &chg, sizeof(chg));
+ 			if (rd < 0 || rd != sizeof(chg)) {
+-				if (rd != sizeof(chg))
++				if (rd >= 0 && rd != sizeof(chg))
+ 					errno = EIO;
+ 
+ 				perror("error reading line change event");
+-- 
+2.50.1.windows.1
+
+
+
