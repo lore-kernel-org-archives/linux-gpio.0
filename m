@@ -1,58 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794580723;
-	b=QjlMW4ZXfaFC9RdukJsIVE9VUbimfl1b3YQwQD3WkKwLDsqjeLjeQQM5UU2zD19pY0Oc
-	 m5PW95GyQ/jO1a2CQNAWSbdiEaeQ57jklQsC46ypILkG7TiyBsirxFRAEGVHQOpOPVfKc
-	 xDCQ4CHICTkA8DR0IAfDmKRD9k3NUCcPQs/b9PIKgglesRAvmEyCrJn3oyzD2Zyx7bXuM
-	 hWQN0B/4V7BH961kV1Nnr1qxGoiZ8/CqN+iZGsx5vh6DV4qfyjfaeG2CuilWAZAKJMZz1
-	 64IDa/C4IYKxTBrqylVelX6mIzYyOkBmBvn7zilEkYvIicazvFTChtc1XPjaffCiOVw==
+	t=1794580840;
+	b=E9//KdLCqmg3GugNd2PH81LeQ5cUd+4Cf430OnzTIMonFDt685rnCzANzcihhj5mM5lR
+	 Ley9aUT+5V9mxsBy61cqK/zUBC97fNEotHSl9RjRHwAF3SgXOb+vlzm/c6DGX95mJwG1Z
+	 i+UF2i7e0zsf7LRgnuvVQMPmJyBD+9wVevzqfNaBB+fIdR1WaASiIZCn0/GACylqTAEBD
+	 O5d4bZMrXhet6efnSuXv7MfpXS43TYOlN5Yec5PpCQL9LwDdZjFsU62PMJ40tHdddFQdu
+	 pTRJ+7kBzEIIDDmW0RPfSgSBsZDEUh7W3upG4TmDUORHFqpJBXR59JiUdoYonqZpyVQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794580723;
-	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Debian-User;
-	bh=izXYLEjvY5H58Hoy1BiiCBLnL4wnWL1e+XA+j8Yu2b4=;
-	b=Oy6yFahfUKcGo1N4s26+vAKB+Ixs9hduSHT3FcJtnHzXpl7n3w9tvs2O0/NvB8prJr7v
-	 T6Yt4cQ7/OhJzOenV8N75VS8edjHkIjGWbvOB9jn5ImWQH5gmC+sxI/Cy4CyQRroZp/Lv
-	 CroZRMGnO5D9B6/JpceHETC5tyLH3Jg8q5ygS+Qs/aSgU2si4wYvR+qBvNZd5HEbvnFFf
-	 5a3EIlBS35sSsLMR1kPGm1zq2zy5vamozhggZqo9Hl5kiSRYEV2SXkt2ILszrjiLNwY/S
-	 1pFt2B8h1tKp2VU8Tmg/p+JTPBSIzpk8iFpfo6eGLYMX9tPorpVNUglRgO45yRnNVhQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794580840;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=v6J2PA8ps+Obv3xED5XfqFFelQRbMTd5jekvcT2len4=;
+	b=YconwISRlchaHhbAdb7fywNIILv24lGs0TsYX8SB27QgCAsD/0GBU7VNNzbrf9GI660c
+	 zN/Ni+it3+6BFJsynAvhssCPdbWf2LTkH5aLu0PgGLAsi1cxoHAKqF/i75cNskmj9SwkF
+	 kaNGFevjRP0DB1UcXmNVSCTTclo9sMKC6wIFbDkqPYc8IpTYWv0SoywpjWM8+i5NKyuYd
+	 GK/c1pQak50Xj0y3VPvNw66i1RQYDOYUOgARMZCZIBsY2E/aX241lNr2r/ktphro8Uqi1
+	 x9jf2tZXM82mYAv7WZeYUxSn88JiyTRufgVovSME+mP557aOZqMjZ+LdamGZACV2Y2g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=debian.org;
-	spf=pass smtp.mailfrom=debian.org;
-	dkim=pass header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=TYRS9ltb;
-	arc=none smtp.remote-ip=82.195.75.108
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UOokOIKW;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0CE606A327;
-	Fri, 13 Nov 2026 14:38:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AA0CE606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEBA606A337;
+	Fri, 13 Nov 2026 14:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.a=rsa-sha256 header.s=smtpauto.stravinsky header.b=TYRS9ltb
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:
-	Reply-To:Content-ID:Content-Description:In-Reply-To:References;
-	bh=izXYLEjvY5H58Hoy1BiiCBLnL4wnWL1e+XA+j8Yu2b4=; b=TYRS9ltbNsubU5kWA2yfAnpuD5
-	Ju5OtluKxXfhWof38dKSMpLs3/l9/boLTzzo36yBWbxFI2kS3XqlOnx4KR5//wQPRl4r64bMCeQHH
-	J/v6FHmvUgwlJG0WizVDEYtWJ1/I1ELA37lXYwbm15j3BOgGziN+Mm3yWU99jDUyM4i4il+721JOb
-	pqyRscggn/VKdDtWhipTKrOSDzfbQBfNzfkE/RP66CYJ5FJffiJ2YuxhA9jA2dK7TshK2zsMDTlMH
-	xUI7TO6NhqDght1LtrlUgZ4B21zgegiF/UXZj6hTpRZVlvIE6lWiX3DomOkhV8SysM5W9RVi9aV1J
-	awNs3Vhw==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1xRsQF-00Eozj-0W;
-	Fri, 13 Nov 2026 14:38:35 +0000
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 13 Nov 2026 06:38:28 -0800
-Subject: [PATCH] gpiolib: fix leaked descriptor labels in gpiodev_release()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UOokOIKW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B9B71F000C5;
+	Fri, 13 Nov 2026 14:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794580840;
+	bh=v6J2PA8ps+Obv3xED5XfqFFelQRbMTd5jekvcT2len4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UOokOIKWGgpSIDE8KdDGLFCLg9uf3qXaGEwldS6s7T8wNkf3IaVJitdyLsU1eJ4oX
+	 fTsSkdVOLtdYPyPBhdcnr4lyPyqLlgJo1qhmqGVzuvjEK3uRG3nIRqEosssbIihpi0
+	 IqdfJRfBm8+BASaoHX9p4NAnjNMAW3EJfXBLnyZ/9U28LmyNKp8wPXYWldk7pyAAZa
+	 +WfVLHXLW8L39eYbNsQKx9u5hCDmoSID/k0aIuiLOtP9+iLNdyLNItBW2LhzPPy0g9
+	 yFgg265RacmUFnRgnQEsLs9nisYTaT2e5tNaep7jK/NywMuJBBbKPZ3VDtvo560dyN
+	 vSfURV9hE10JA==
+Date: Fri, 13 Nov 2026 15:40:31 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/7] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <avcg2NEwaV-AuuCl@devuan>
+References: <cover.1794574496.git.alx@kernel.org>
+ <f25bf43d7f18c99019a52b9ba9a1e46fa68174c7.1794574496.git.alx@kernel.org>
+ <avcfuBAbNkBrk6uy@ashevche-desk.local>
+ <avcf5V0B52MV4_PZ@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,95 +73,113 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261113-gpio-label-leak-v1-1-c6c00f8ebfff@debian.org>
-X-B4-Tracking: v=1; b=H4sIAOMg92oC/x3MQQqAIBBA0avErBtITaGuEi20JhsSC4UIwrsnL
- d/i/xcyJaYMY/NCopszn7FCtA0su42ekNdqkJ00QgiF/uITg3UUMJA9sF/kYJTWq5EOanUl2vj
- 5j9NcygcX4NmtYQAAAA==
-X-Change-ID: 20261113-gpio-label-leak-4c296355d62b
-To: Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: catalin.marinas@arm.com, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2150; i=leitao@debian.org;
- h=from:subject:message-id; bh=e+jV4AfvLVV6YOXIpKVBvYeRj6IY1lG7eJPMVQH+eNw=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBq9yDo/HuejNDKbs9QtlJLeXvi9dRfsKdfC08VY
- XlBUq/a2TSJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCavcg6AAKCRA1o5Of/Hh3
- beqTEACGlccFDsfHvw53geRN/XVkVam1Um2Voeb4767yLYvfijqgy/DV6m9L6XQUFkTlRSfWqZ/
- cJHmVCiuxnDmPXoOjyWuDm3ZHagAM7tnHvIizn9oxOfSfUe/2wb3bzfPZbDilXA3IvBc59A9Sy3
- XZHFNFU6jpkYFRoOM81UeXCGb97vQsBTzVkVguW5ssX8MbAnBb6ZjRlwWsKtW85Kubkp9xW1NVC
- Y5vk1nqBOD7CDNU1jgDF38NY+5/ytmX7YrSNluEcYMzYt7B1kPP1XwHp436cG5H2GrsytCbQCXO
- 1VI5FbUzleo77rq5A23iMPJPqHdW19tqVXojsik1UHFMB0tdBpDI9EG83xNwM7e7Q2ssc+CStXP
- TNRCgxEXCcSlFEn2WQyKy5iLkMcJchr1jsH4TgAHsyWYpT7vgNzf8TDCVMBUZ6P/PVB4h5Q2GEB
- Wwd0T95C7XcmLSJ1EvGYZZAhrfgDHOlMITMcDC6Ymi5ubeN0hK2ldgsl4v88Xnr0bXu21Suneaq
- 8Z2h5fa5OrYMLTiPsWqYCfGluNxTmFIX18DWwkSIACPS2dwpVGPPCBBm5TBoAHBF4eTvPVb5VMB
- v8gHZyRlLGFG9I5TvpgGgaBQEEoygBMucZTlliwqHGIKMAq8fsgn+R7uDrmRiajbVDgnw64eC5n
- wQBetmjM6VUuOLw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
-X-Debian-User: leitao
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lbjzhvni5qjced7m"
+Content-Disposition: inline
+In-Reply-To: <avcf5V0B52MV4_PZ@ashevche-desk.local>
 
-We are seeing kmemleak report a leaked descriptor label on linux-next.
 
-  unreferenced object 0xffff0005d420f280 (size 32):
-    comm "gpio-cdev-uaf", pid 21987, jiffies 4297166145
-    backtrace (crc 7ff222d9):
-      kmemleak_alloc+0x40/0xd0
-      __kmalloc_noprof+0x300/0x670
-      desc_set_label+0x50/0x190
-      gpiod_request_commit+0x1e8/0x358
-      gpiod_request+0x88/0x290
-      gpio_ioctl+0x7e4/0x1b48
-      __arm64_sys_ioctl+0xc10/0x1360
+--lbjzhvni5qjced7m
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/7] string: Add strprefix(), and deprecate
+ str_has_prefix()
+Message-ID: <avcg2NEwaV-AuuCl@devuan>
+References: <cover.1794574496.git.alx@kernel.org>
+ <f25bf43d7f18c99019a52b9ba9a1e46fa68174c7.1794574496.git.alx@kernel.org>
+ <avcfuBAbNkBrk6uy@ashevche-desk.local>
+ <avcf5V0B52MV4_PZ@ashevche-desk.local>
+MIME-Version: 1.0
+In-Reply-To: <avcf5V0B52MV4_PZ@ashevche-desk.local>
 
-The test requests a line, removes the gpio-sim chip under it, and only
-then closes the request. By that time gpiochip_remove() has cleared
-gdev->chip, so gpiod_free_commit() skips desc_set_label(desc, NULL), and
-gpiodev_release() frees the descriptor array without the labels still
-attached to it.
+Hi Andy,
 
-Free those labels in gpiodev_release(). No reader can reach the
-descriptors once the device is released, so they can be freed directly
-rather than through call_srcu(). gdev->descs is NULL there when
-gpiochip_add_data_with_key() failed to allocate it.
+> Date: 2026-11-13 16:34:13+0200
+> From: Andy Shevchenko <andriy.shevchenko@intel.com>
+>
+> On Fri, Nov 13, 2026 at 04:33:37PM +0200, Andy Shevchenko wrote:
+> > On Fri, Nov 13, 2026 at 02:10:29PM +0100, Alejandro Colomar wrote:
+> > > As Bartosz reported, str_has_prefix() has a bug: it can't differentia=
+te
+> > > between an empty prefix matching an empty string from a non-matching
+> > > prefix.  This is a fundamental design flaw in this API, and not
+> > > something that can be fixed.
+> > >=20
+> > > As always, this is a consequence of choosing sizes instead of pointer=
+s.
+> > > Sizes are often the wrong choice.  In this specific case, pointers are
+> > > more capable of differentiating these cases, as NULL is a special
+> > > sentinel value that doesn't need to overload a valid value.
+> > >=20
+> > > Let's implement strprefix(), a function that returns a pointer
+> > > right after the prefix if found, and a null pointer if not found.
+> > >=20
+> > > We'll slowly migrate existing code from str_has_prefix() to strprefix=
+().
+> > >=20
+> > > Move the description from str_has_prefix(), and describe
+> > > str_has_prefix() by comparing it to strprefix().
+> > >=20
+> > > Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.co=
+m>
+> > > Link: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-eac=
+h-prop-v1-1-6e28fe1c72c4@oss.qualcomm.com/
+>=20
+> > It's unreferred Link tag, spurious? Please, refer to it in the commit m=
+essage
+> > to understand why it's here. Use Link: $URL [1] and use [1] in the text.
+>=20
+> Ah, perhaps you wanted Closes tag instead?
 
-Fixes: 35b545332b80 ("gpio: remove gpio_lock")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/gpio/gpiolib.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Yeah, it was for linking to Bart's report.  BTW, is it okay to have two
+consecutive patches with the same Closes tag?  I guess it is, because
+they close different aspects of the same issue.  But at the same time,
+the first one doesn't fully close the link.  I guess yeah, I should just
+put it in both.  Thanks!
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 033c6fce4fc8da..3d301234dff44d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -896,11 +896,16 @@ static void gpiochip_free_remaining_irqs(struct gpio_chip *gc)
- static void gpiodev_release(struct device *dev)
- {
- 	struct gpio_device *gdev = to_gpio_device(dev);
-+	unsigned int i;
- 
- 	/* Call pending kfree()s for descriptor labels. */
- 	synchronize_srcu(&gdev->desc_srcu);
- 	cleanup_srcu_struct(&gdev->desc_srcu);
- 
-+	/* Lines released after the chip was removed still hold their label. */
-+	for (i = 0; gdev->descs && i < gdev->ngpio; i++)
-+		kfree(rcu_access_pointer(gdev->descs[i].label));
-+
- 	ida_free(&gpio_ida, gdev->id);
- 	kfree_const(gdev->label);
- 	kfree(gdev->descs);
 
----
-base-commit: 6d582d78fad9d828e575ca0cdcff8ea47a77220b
-change-id: 20261113-gpio-label-leak-4c296355d62b
+Cheers,
+Alex
 
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
+--=20
+<https://www.alejandro-colomar.es>
 
+--lbjzhvni5qjced7m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr3IV8ACgkQ64mZXMKQ
+wqk5GRAAhv7Zt4QneszoZrqzs449xhdmOyig29DcWSpyjk0/VHKt24go5s61enXF
+6r5kEYZBYSl2bRU+WqNjqOJRDgNtLGM0YPMqWm2VzXexj6Ait+KtKpYz2SEPHrKy
+jQxFCRM78E/afGo9kjEsGfNwQr2XulO1A+u/U1rRyivh8QBJTeGH86Nma5AyjJC5
+WYsnEMdVRg9GdiOze2dZGWXktqGW0FjiET/Q+/fodVC1aRryOCYbbLTB+juXsGMA
+ij7YgoSZPWkVPGsu/C1btmurqYEIGWF7IZlxD7DtolfGDrVhdMQkhiFVL4wTpnBU
+/5NdnsHcydv1nJE0P6rdS+mJjqzsHCZI6rSsD92fEk1GC5MTLMUh9FFvOHQpyHmL
+GeJqEYFSd0VVc+OFV4DdYpTw4wxf2XO6xGQzn286kfrMlyhBhDphsv0V/jwGSsOm
+SBjce62B124SjdZpKyz2MMJsOGNRCokvOWyCmd+ILPKLDZj+5adUTOVxOYeN6Zoe
+M5lcLfNnARJ/jn+AgLqIFG3D0GcOgRJh0bu2jR3UR3GMdgUgXjU7kJQSYZdOYZ/J
+7JPyg2UprOuaDm7IpGmFCJgfweMOs1Rs7TCbi71Eyyt0Dn5AJzpcax+csHs3I0g7
+U3g9ge/jt2cejC2fiYBHpJ0eZm20ZpQgROJeBbcKuZtVIURDOJs=
+=B8A2
+-----END PGP SIGNATURE-----
+
+--lbjzhvni5qjced7m--
