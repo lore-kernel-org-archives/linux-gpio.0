@@ -1,100 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.76
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794530308;
-	b=0l6D5GFJuUoNyoGhroNMCkjntDCp+NSYRPqJRVmdyQS1X7U17mothq8yviFQRwGNnsSs
-	 RasYttQAV+vxXZ1Y7tPNJ4LnDn9mpkCrC4sK2ik3kiv9JGXxvkrbxbyaXidlJ5sjPWlr6
-	 XkgrC0OuQsox5iE0wQUG0CKNEzwDVdrpZZmUZ0oUnzZkAO38+DHTxmh5VTAcSPsHkzQct
-	 MwkODXuuZPAooO5USe7BO3UndvhkmK7cUK01r/JNhmThycKHHIsmN5y06/w8B0BvXW+2p
-	 qpbKxgSUGTqCYUDLxa6Uepu0mfsJZS27d3Mt4aKyIg6Rjk4JZBvXeSXlYe0uIBK6K5Q==
+	t=1794532571;
+	b=JVgyxDY86wNDMVE/yUDKq7EZGJUnZNxIVAVcIhXL+QyzV1jAjLNxaOONwpnBV5kI6hWo
+	 KiXSMdlwFUhx7FZChvkTtmm0bXIuMBk/UjW/uNjqb84OxmchMjV2oMRQ8ObNxRU9bv4qq
+	 +YnAFsHajw6StZ2fY4NkFpIJgQccGXniqTuh4MUJPJ3F1oACWQ4hKT3whUx7IqQxG5F74
+	 sH9E5jWmv6sMlH+bHgKy08EZkQIzjF5scj1waz6U+VaMn5wfXyjokUWqDs5buHq9wQMvn
+	 gcn8cdDdAQmfMy5iGFbob9Sgz1WmRXROIX3wGn9oJ5BD5a88iGzUByar0iEvx7iKS+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794530308;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=8NuJWbidnT5EA+aFxRD5SM39/Oj0VNhJI4etsJtJ9CI=;
-	b=Z8PYFTJ2vh8KzH1mhxGnajSNuyL9LUFRK+BHTe7WbBzXxsIJARP04AzQzp9tZODc/M+v
-	 3XC3G8v9skC7ZF81B6YZ168usORVj4eZqtzW+mON39zK/ez1uhkLAAY87DNdqsmM6CGaV
-	 lpmYZsEIGJyKG+eRC2H6qzBU6KxfQ1zJwogCxB3dbYI6PF9Uz7OghWjBq6zUd4GZiWrpj
-	 3yKsUyWEZsh2QUZiE7OMjMIXCapIH+KnSuuH8UZ1CmxMCL6eu7hwWWbDt8LULgXm6KSz0
-	 6WhQShroRTSr6hIE8KLBr6x6I+2FCwNrlWnWciltp4AeUHkDpWZ5KNKVxdjrsgB+dxA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794532571;
+	h=DMARC-Filter:X-Alimail-AntiSpam:Received:Date:Message-Id:Cc:
+	 X-Lms-Return-Path:In-Reply-To:References:Content-Type:
+	 Content-Transfer-Encoding:To:Subject:From:Mime-Version;
+	bh=EuJesQLZQcUL7RHGlbQVMGLxz6hVm1h8tgff4wrd2C8=;
+	b=Moc840iDbwGHg02CQpxF7NdIjoO2ZixMKdi6Qef3yWunhwi/FrKs0GhGw6rhJI4FOJet
+	 VDQQXf2OfZwO6xnmyaMAfhEo6yCWL40iZ1tUD6/FMMwGXXwzVYtv6TI5bQCwbBxwnWVj6
+	 WTEYAF6UN8nxSZYwIBeUgGf2k9P4KqZErt+g1G/VMlG8KESPVwxQuXB6cZhOOqsmibFLn
+	 4JVb8M5UFGDpMG5Oold9boKpBCEiIhQVfrAc/lkYpxiMiUbFg+X1fBnVYmk8WDRhnac0e
+	 QG3ogbBbCvUCv4ZLibHqlZ2M/DA1Ikuk4lWKBSO751U3cDOMyOgCh7EWgay4dn+XOHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wriMB4Ds;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=kaihong.com;
+	spf=pass smtp.mailfrom=kaihong.com;
+	arc=none smtp.remote-ip=115.124.28.76
+Received: from out28-76.mail.aliyun.com (out28-76.mail.aliyun.com [115.124.28.76])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D20606B7E8
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 00:38:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34D20606B7E8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wriMB4Ds
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a215e64962so5893515e9.1
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Nov 2026 16:38:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794530306; x=1795135106; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=8NuJWbidnT5EA+aFxRD5SM39/Oj0VNhJI4etsJtJ9CI=;
-        b=wriMB4Dsld87YFqNWQv6a5U3pmzdG4WOObP58uk/kuhN53e/HmBjWr50KMY8coCN7m
-         /BGyIroDjib2TGMolHIFz1FXRWUIV9p7SE7Stz4WyVVGwVJpMRn/8R80W3tGP3o4DPvW
-         ziXadZTdw3dchUAPFrzFlLdVI/cb8dSn7xc8cOwLNbs1Ob5f8LM5UXzIpoAXxjPeUh4T
-         TTEq+lr8OsE0QYIj0c6BUOHbMcWaQ3a8a0F1bcaXcoiW4boqd+hw5n0MMCT6jVOIJLsF
-         sL7VtehjRE5wd3Ck8a4MmtQ8LUAUJL4tAAXTEuZ3K3BO1vncoAavm6YwEj5gaizDyK/o
-         El0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794530306; x=1795135106;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8NuJWbidnT5EA+aFxRD5SM39/Oj0VNhJI4etsJtJ9CI=;
-        b=mLsb/y516ttFV24IHqIyVIVNDMmINpcKQCe9qkvWZc8VaBF2CtleMru7EUwtc7rU7Z
-         ypaInBcL1aahYxkKDRpE+rDfP9yom+vWAf1lHpiRgVjwrnDcvTsuc2JLc8m0rryZdiiv
-         KM723cBSmWMHDdv3vvaWOQoFFcIJdcWX5f8JTdtC/bt6KGcTFwkAn4p4h5k9yQi0OX+g
-         VDwZ3PO37d8g8rieALFeRVHBXZt8xYImp1Ql2Cm5xdavaB9xRXPtePO/2TobQBrZoX0y
-         UvxgfK1AhtFTmeMpLyKgHCJJ415Gm3mzCDlob34E5RXJuDMJBJIOVFQR8sFyNLuN7Ht4
-         78IQ==
-X-Forwarded-Encrypted: i=1; AL+hErHFHO4sdxgXdlB7fYyrfKt++sxGSpKQXjPNNszZceyY4QBNuCKbyG2tEvFdKxi0x0jQ2BpRgHMCH9Ze@vger.kernel.org
-X-Gm-Message-State: APuU4Z81RJJ8qPEPDZVAFDoIsup/w63YejV+5qbiexJdyZxsQ7gWhYST
-	TQ5RPJlTCdt0tGb9b6g2hiiPxEVViBO3LYthdinLkcDaPyAtA32nXM7H
-X-Gm-Gg: AYBFou0dvrKxB8hwMzwKXdtyxr/J8SDRBKJhtRb+Xmch+B4jxd6H16zDOnnkfOenQBL
-	8rLQJra3qYFmlX011GhcjoVqiFngR8p7JuqSzevr264VJV4z1AUBw8mjTKeB0JfgEQcDpQJoXZo
-	KPKFWbBwDPfdASRECdkP4Hki9+R8RqoAIPSaK4mbItO6yJzbyvSteLaHbs1DeVH/RHBI5u7hrKi
-	icXLNtOqKnTdmEkEzlu/IMLyI4XQYZ/L7LsSLKNo7cA0URR/eJmv3xmr3V+JkjCqLT5lbQemW8Q
-	a6WghBVcctu+qD61IJOOABjesBq9PNpwIFHJsHQwX3N21DGHkhXDFjtyzy3XwWJsi4759jRcBjj
-	7nLoyK++3zcnuV3w/3VzMiRAIYrvfx4ZjvGfv52A7PRFn7rjP6xsLsQGlYRU51w/f3SvM9LbyrZ
-	szzI0gJNtBoqJo72aiCq3dXDJNMM3M9TeS2h60HPaTW2iN+NO8sFiVwwxc4o6SPTmr9FRCStU5q
-	VVhmunXhBGJCN8KSOcuZbeo3JHwxZUlRldBaYaBxyQMKEW17fpw/OuEf3mRUxE/c/XFWKthI6R/
-	SCKl/osLiXuU1gyXe3dsUNGsknyoN0sf+KpOOqZZ6P7zyY1edjVT1m7khlOqIOAHjOE3HASI/Ac
-	6FetXHKI3z8MlRvEmRhgen93OOENDYL+1sZdWdAakztf+2+9OhSiwZ9Ec5YE7kHrohJnRZ+cfzu
-	gZRHgbBZn00UAuh6lihHQs/14JfVuKeM9vxe+NvfE=
-X-Received: by 2002:a05:600c:4e56:b0:4b3:9540:47a6 with SMTP id 5b1f17b1804b1-4bb55aad2demr18252015e9.28.1794530306547;
-        Thu, 12 Nov 2026 16:38:26 -0800 (PST)
-Received: from navid-pc ([2a01:4b00:a856:6220::a11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb55ace535sm19669805e9.6.2026.11.12.16.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 16:38:26 -0800 (PST)
-From: Navid Ghahremani <ghahramani.navid@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: arnd@arndb.de,
-	stefandoesinger@gmail.com,
-	krzk@kernel.org,
-	Linus Walleij <linusw@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 08/24] gpio: Add ZTE ZX279128S GPIO driver
-Date: Fri, 13 Nov 2026 00:38:24 +0000
-Message-ID: <20261113003824.3670843-1-ghahramani.navid@gmail.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <CAMRc=MfhnbwvM+c=e1=ga4wALCmj8Bi8LWkB_W4_0YHkK3Hikw@mail.gmail.com>
-References: <20261014072109.1759502-1-ghahramani.navid@gmail.com> <20261014072109.1759502-9-ghahramani.navid@gmail.com> <CAMRc=MfhnbwvM+c=e1=ga4wALCmj8Bi8LWkB_W4_0YHkK3Hikw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656A9606A31C;
+	Fri, 13 Nov 2026 01:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 656A9606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaihong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaihong.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07437093|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.0364211-0.000647065-0.962932;FP=10195514563781422546|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033025068124;MF=wangxiaolei01@kaihong.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.k0uSnOv_1794532557;
+Received: from localhost(mailfrom:wangxiaolei01@kaihong.com fp:SMTPD_---.k0uSnOv_1794532557 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Nov 2026 09:15:58 +0800
+Date: Fri, 13 Nov 2026 09:15:54 +0800
+Message-Id: <e457d7c64cc913174affb10b272225cc3cbe88a3.47db7345.49f4.4282.8c3a.7d02c37fbf53@feishu.cn>
+Cc: <linusw@kernel.org>, <florian.fainelli@broadcom.com>, 
+	<rjui@broadcom.com>, <sbranden@broadcom.com>, 
+	<bcm-kernel-feedback-list@broadcom.com>, <daniel@dragonzap.com>, 
+	<iivanov@suse.de>, <andrea.porta@suse.com>, <phil@raspberrypi.com>, 
+	<linux-gpio@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>, 
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, 
+	"Jonathan Bell" <jonathan@raspberrypi.com>
+X-Lms-Return-Path: <lba+16af664cb+a9c232+lists.infradead.org+wangxiaolei01@kaihong.com>
+In-Reply-To: <avWuED_RGlEdGH-9@apocalypse>
+References: <20261106070628.1428691-1-wangxiaolei01@kaihong.com> <20261106070628.1428691-2-wangxiaolei01@kaihong.com>
+	<avWuED_RGlEdGH-9@apocalypse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To: "Andrea della Porta" <andrea.porta@suse.com>
+Subject: Re: [PATCH 1/3] pinctrl: bcm: Fix off-by-one and out-of-bounds access in fsel_get()
+From: =?utf-8?q?=E7=8E=8B=E5=AD=9D=E9=9B=B7?= <wangxiaolei01@kaihong.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,32 +60,239 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
 
-Hi Bartosz,
+Hi Andrea,
+Thanks for the review,
 
-Bartosz Golaszewski wrote:
-> > +	struct gpio_generic_chip_config config = { };
->
-> Don't initialize it here, instead...
+> From: "Andrea della Porta"<andrea.porta@suse.com>
+> Date:=C2=A0 Thu, Nov 12, 2026, 20:12
+> Subject:=C2=A0 Re: [PATCH 1/3] pinctrl: bcm: Fix off-by-one and out-of-bo=
+unds access in fsel_get()
+> To: "Wang Xiaolei"<wangxiaolei01@kaihong.com>
+> Cc: <linusw@kernel.org>, <florian.fainelli@broadcom.com>, <rjui@broadcom.=
+com>, <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>, <da=
+niel@dragonzap.com>, <iivanov@suse.de>, <andrea.porta@suse.com>, <phil@rasp=
+berrypi.com>, <linux-gpio@vger.kernel.org>, <linux-rpi-kernel@lists.infrade=
+ad.org>, <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.=
+org>, "Jonathan Bell"<jonathan@raspberrypi.com>
+> Hi Wang,
+>=C2=A0
+> On 07:06 Fri 06 Nov =C2=A0 =C2=A0 , Wang Xiaolei wrote:
+> > brcmstb_pinctrl_fsel_get() takes the value read from the pin's FSEL
+> > register and uses it directly as an index into
+> > pc->pin_funcs[pin].funcs[]:
+> >=C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 fsel =3D (val >> BIT_TO_SHIFT(bit)) & pc->p=
+in_funcs[pin].func_mask;
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 func =3D pc->pin_funcs[pin].funcs[fsel];
+> >=C2=A0
+> > That is not how the register field is encoded. The setter,
+> > brcmstb_pinctrl_fsel_set(), treats 0 as GPIO, 1..n_funcs as
+> > funcs[0..n_funcs - 1], rejects n_funcs + 1 and above, and n_funcs is
+> > always BRCMSTB_FSEL_COUNT (8). The field is therefore a 1-based functio=
+n
+> > number, while funcs[] is a 0-based array of eight entries.
+> >=C2=A0
+> > Every readback is consequently shifted by one slot, and a field value o=
+f
+> > 8 -- which the setter accepts, being the eighth and last alternate
+> > function -- indexes funcs[8], one element past the end of the array.
+> >=C2=A0
+> > This is reachable from userspace without supplying any invalid input:
+> >=C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 # echo "gpio45 alt8" > .../pinmux-select
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 # cat .../pins
+> >=C2=A0
+> > The write is an ordinary mux request that fsel_set() accepts; the read
+> > that follows goes through pinctrl_pins_show() ->
+> > brcmstb_pctl_pin_dbg_show() -> fsel_get() and triggers KASAN on
+> > Raspberry Pi 5:
+> >=C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 BUG: KASAN: global-out-of-bounds in brcmstb=
+_pctl_pin_dbg_show
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 Read of size 1 at addr ffffa07c577ab2e8 by =
+task cat/839
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 The buggy address belongs to the variable:
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__compound_literal.62+0x8/0x40
+> >=C2=A0
+> > A field value of 0 has the same root cause in a milder form: it is
+> > reported as funcs[0] instead of GPIO. The mux itself is programmed
+> > correctly in both cases, so this affects the debugfs readback and KASAN
+> > rather than the hardware configuration.
+> >=C2=A0
+> > Handle 0 and out-of-range values explicitly, and index funcs[] with
+> > fsel - 1, so that the getter uses the same numbering as the setter and
+> > the index can no longer go past funcs[n_funcs - 1]. The existing
+> > fallback for func__ placeholder entries is kept:
+> >=C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!fsel)
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return pc->func=
+_gpio;
+> >=C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (fsel > pc->pin_funcs[pin].n_funcs) {
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_warn(pc->de=
+v,
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0"invalid fsel %d for pin %u\n", fsel, pin);
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return pc->func=
+_gpio;
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+> >=C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 func =3D pc->pin_funcs[pin].funcs[fsel - 1]=
+;
+>=C2=A0
+> Non-blocking nit-pick: I think that pasting the code in the comment is
+> too verbose, especially when the same code consists in the entire patch
+> body here below. A succint explanation by words would be more than enough=
+.
 
-[...]
+You're right that the commit message is too verbose with the code pasted in=
+.
+In V2 I'll drop the snippet and describe the numbering difference in words =
+instead
 
-> ... do:
->
-> 	config = (struct gpio_generic_chip){
-> 		.dev = dev,
-> 		...
-> 	};
+>=C2=A0
+> >=C2=A0
+> > Tested on Raspberry Pi 5 with KASAN enabled. Before the fix, writing
+> > "gpio45 alt8" to .../pinmux-select and then reading .../pins triggers
+> > the splat above. After the fix the same sequence reports
+> > "function spi_m" with no warning and no splat, and a register field
+> > value of 0 reports "gpio". The register is restored to 0 afterwards.
+>=C2=A0
+> Since you're at it, would you mind fixing the SGPIO AON related OOB acces=
+s too?
+> Please take a look at bcm2712_[cd]0_aon_gpio_pin_regs struct: they both h=
+ave
+> a bunch of AON_SGPIO_REGS macro describing pins at the end of the struct.=
+ That
+> macro puts them at [(n) + 32] in the struct so there's a hole between 'no=
+rmal'
+> gpios and SGPIO ones.
+> Accessing bcm2712_[cd]0_aon_gpio_pin_funcs struct via this +32 offset as =
+the
+> 'pin' index in pc->pin_funcs[pin].funcs[] will result in OOB access. KASA=
+N should
+> report that if you 'cat pins' in aon pin controller.
+>=C2=A0
+> One way would be to refactor the code in order to avoid this hole, but I
+> won't pretend this.
+> The other way is just add the missing SGPIO entries in bcm2712_[cd]0_aon_=
+gpio_pin_funcs
+> (mind the +32 offset, a new macro is probably needed).
+> You can find the functions for SGPIO pins declared in downstream driver, =
+see file
+> drivers/pinctrl/bcm/pinctrl-bcm2712.c from rpi-6.12.y branch (later branc=
+hes
+> already have the upstream driver which is missing the SGPIO functions ent=
+irely).
+> I've posted here the relevant data copied from downstream for your conven=
+ience,
+> please rearrange accordingly:
+>=C2=A0
+> static const struct bcm2712_pin_funcs bcm2712_c0_aon_sgpio_pin_funcs[] =
+=3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(0, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
+0, vc_i2c0, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(1, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
+0, vc_i2c0, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(2, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
+1, vc_i2c4, ctl_hdmi_5v, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(3, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
+1, vc_i2c4, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(4, avs_pmu_bsc, bsc_m2, vc_i2c5, ctl_hdmi=
+_5v, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(5, avs_pmu_bsc, bsc_m2, vc_i2c5, _, _, _,=
+ _, _),
+> };
+>=C2=A0
+> static const struct bcm2712_pin_funcs bcm2712_d0_aon_sgpio_pin_funcs[] =
+=3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(0, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
+0, vc_i2c0, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(1, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc_m=
+0, vc_i2c0, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(2, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
+1, vc_i2c0, ctl_hdmi_5v, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(3, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc_m=
+1, vc_i2c0, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(4, avs_pmu_bsc, bsc_m2, vc_i2c3, ctl_hdmi=
+_5v, _, _, _, _),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 PIN(5, avs_pmu_bsc, bsc_m2, vc_i2c3, _, _, _,=
+ _, _),
+> };
+>=C2=A0
+> In case you don't want to fix this, you will still have a Reviewed-by fro=
+m me,
+> and I'll take care of uploading the fix in a subsequent patch.
 
-Done in my tree, the config is now set with a compound literal like
-that. The GPIO driver will come back as its own series after the base
-support for this SoC.
+I have identified the issue and am preparing to submit a report.=C2=A0
+Thank you for reminding me; I will include it in version 2.
 
-> Looks pretty good, I love small drivers like this.
 
-Thanks, that is nice to hear.
++ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(32, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc=
+_m0, vc_i2c0, _, _, _, _),
++ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(33, hdmi_tx0_bsc, hdmi_tx0_auto_i2c, bsc=
+_m0, vc_i2c0, _, _, _, _),
++ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(34, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc=
+_m1, vc_i2c4, ctl_hdmi_5v, _, _, _),
++ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(35, hdmi_tx1_bsc, hdmi_tx1_auto_i2c, bsc=
+_m1, vc_i2c4, _, _, _, _),
++ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(36, avs_pmu_bsc, bsc_m2, vc_i2c5, ctl_hd=
+mi_5v, _, _, _, _),
++ =C2=A0 =C2=A0 =C2=A0 BRCMSTB_PIN(37, avs_pmu_bsc, bsc_m2, vc_i2c5, _, _, =
+_, _, _),
+=C2=A0};
 
-Best regards,
-Navid
+Thanks
+Xiaolei
+
+>=C2=A0
+> Many thanks,
+> Andrea
+>=C2=A0
+> >=C2=A0
+> > Fixes: 657cbf9b24ba ("pinctrl: bcm: Add STB family pin controller drive=
+r")
+> > Cc: Jonathan Bell <jonathan@raspberrypi.com>
+> > Cc: Phil Elwell <phil@raspberrypi.com>
+> > Signed-off-by: Wang Xiaolei <wangxiaolei01@kaihong.com>
+> > ---
+> > =C2=A0drivers/pinctrl/bcm/pinctrl-brcmstb.c | 11 ++++++++++-
+> > =C2=A01 file changed, 10 insertions(+), 1 deletion(-)
+> >=C2=A0
+> > diff --git a/drivers/pinctrl/bcm/pinctrl-brcmstb.c b/drivers/pinctrl/bc=
+m/pinctrl-brcmstb.c
+> > index f46b27155c3c..2b942ca7196b 100644
+> > --- a/drivers/pinctrl/bcm/pinctrl-brcmstb.c
+> > +++ b/drivers/pinctrl/bcm/pinctrl-brcmstb.c
+> > @@ -66,7 +66,16 @@ static unsigned int brcmstb_pinctrl_fsel_get(struct =
+brcmstb_pinctrl *pc,
+> > =C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0val =3D readl(pc->base + BIT_TO_REG(b=
+it));
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fsel =3D (val >> BIT_TO_SHIFT(bit)) &=
+ pc->pin_funcs[pin].func_mask;
+> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0func =3D pc->pin_funcs[pin].funcs[fsel];
+> > +
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!fsel)
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return pc->fun=
+c_gpio;
+> > +
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0if (fsel > pc->pin_funcs[pin].n_funcs) {
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_warn(pc->d=
+ev, "invalid fsel %d for pin %u\n", fsel, pin);
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return pc->fun=
+c_gpio;
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+> > +
+> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0func =3D pc->pin_funcs[pin].funcs[fsel - 1=
+];
+> > =C2=A0
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (func >=3D pc->func_count)
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0func =3D =
+fsel;
+> > --=C2=A0
+> > 2.34.1
+> >
+>=C2=A0
