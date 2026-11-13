@@ -1,121 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=52.35.192.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794566202;
-	b=ojuifjJgnvR5MUVkpiWW1PH7WFO1LW9hYImpx/GdWKCNDv1IItkrqJuWfIKiMReBKsq6
-	 FoVFl4CxpF2tc/sGWlCJPGU2CIvW9WyevEuIHxwlDhtYK2zLI8m6Rm82gSpdjDJoqqghP
-	 D6+5vgjauO8rqr49Z8X9XGYZKdp3iSflg2NOQOUWvXoSAr4YdpSJRKbKRSVAnyzQl0U+p
-	 /7EWNv75odysomFSxLoQGEufg44bxJvqIAhhdNeHbFNJNUPcqqkdfa02Yx0Aj7HiYbSnc
-	 XR+//5M0/RMQWHcNP98goqAeGGGPEPOS9GAMf8Uw0k9jS73TO1lsNl+jjo10lJ8yYng==
+	t=1794566550;
+	b=EoS1Swo17jtQ5dwCbhqQOIoNhyhKkzy8UFzU9YOCI7odHUTevzw0PGnlM2LZmij6snPZ
+	 E6Uc2Wt8G7aPIc1RTHUHXrYnf6tEwhSb37GuNM2KM8BpSU0nPKA/+Mh+9MnA0rbGheyLo
+	 xRVuvTFD90lyWTP9cueWuQRf5m8MQRMrSnFyf6mXEBV+0b43jYD4ASumr5rKkHg7AmT2N
+	 GEfRY5Q2GzBI1IOdwDqaZXISmfEyccTzI7/2gCE+eHMX1KLid1T/Js4/Z8ckHlvHynUP7
+	 PADMdRJY8yGB/f8a7JR5R3GOpKrOenAZOTzVi/5J8KpgjQr6HFOpoqYoGFXmAwkILMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794566202;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
-	 X-Received:X-Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=;
-	b=MJuaI1n/n9mQF4DPWXKaPQWMGZmayBiq7terXzdAjw0Y+uwBhQnA/x7VQhqnE6ZhcpBy
-	 soOmedAnn7y2bY7bhKLSSYXnv/+SZFxDKXX1/KhIOp0OJESESu9elX4Le7B15thwa2jyk
-	 X8L5Sc1GvIGKNuf9RE7NeTwAKcrw2Pb83FagiT9wERPeYoU9Wu3B8hHv2rXqxS3M2Atbd
-	 k7ppzX8lECsIE8y8GgbgorkOFh7CDD8aZS1u4Cgs3cakAlYaba87McKNhRTIgBVeq19qv
-	 s2rzfOTpN08YYu2P70nQw2CXHLDkn6TMrlI4LUHaJTEAcwY6vkgTha1vlRzBcfBdKHA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794566550;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
+	 From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+	bh=Imm14NIi8H5Q16VyabkUWRdp71FBLi9E+jVS7X0zunk=;
+	b=f5/xOPu1vdUWfnc+8Wq7aGTewmRgcHh56jxSL64zUZGI4gG0NP8pP4QiWTGGtx8qMwJS
+	 R5uhYyO8APYf7AyZJIjqvg8q46DZIGSojzd+4P87vCKLzpmLgcI//5POw01QkgVdH1FVw
+	 NHb9a0+bBVyAwMrgNpyDT5EsQD/bioaSsY5bsbjnx7eCTrEKMreJytEa7FD20wdXpwY7d
+	 T+oGVqKNcZwQ0ZaX8lxR3/q7gGQpRJzWv/3+4x0KN7FDvH0glF9SOoSXpk6eJ2fG5qWRe
+	 /B1k+KKfSS0LIR2CG18Tf7qz+Yq/SeWycZcdYBFPePP44r9w8l2hGJtMhyw72oiHwlg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="j/7a+IS9";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=PiowsmQP;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=amazon.com;
+	spf=pass smtp.mailfrom=amazon.com;
+	dkim=pass header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=reA+jITP;
+	arc=none smtp.remote-ip=52.35.192.45
+Received: from pdx-out-011.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-011.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.35.192.45])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923F1606A321
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:36:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 923F1606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3119606A330;
+	Fri, 13 Nov 2026 10:42:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B3119606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=j/7a+IS9;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=PiowsmQP
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AD8VDIv074859
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:36:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=; b=j/7a+IS9KtkitUm0
-	U1+X/l8qLCEiqyzcHkRHohx/+V27/pOSHXufcbXOhYb5Cf7aY+kXWoXo+DkuYTn4
-	kJVAz3LQb4zZwjCPgcUI2gQaQlZin/pVm159XZfcLdxAvzwbA8NyRRwF7rMtc9aI
-	c+a+z6iqpLG9LofmYUb1XrKptwnvCFNnogv8cbKWWSh1k6nwe9K78yOifiIB4Q6l
-	Rr8FordHS8ZGSndNN6Re8C0bCG/zF0k4MYoXyKJD2mE7+sEiavJHeUYV5OKBHhmp
-	zffdhLnUtLiKpmCDlhUur1VHCHmOKjG/GOpub3B143sCNUs1bS3vevYmVvu+4QJb
-	QdHLtQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hwqufhwr3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 10:36:40 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93e92aad34aso174789585a.0
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Nov 2026 02:36:40 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazoncorp2 header.b=reA+jITP
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794566200; x=1795171000; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=;
-        b=PiowsmQPFtDtr70+mcK7MuRPkYINj/1HEbrIjya8GuriBX7J4N6U4aKLnALQaKNnOd
-         PFkf0amdCH3/U3VL0wg2iZ7bfvEuz3NqwbNoCQryp5wE6RXgjQqfJqWS9Pt+m3LWUl6c
-         i0tRWRqZGbict+OXi4OIDtDdpw0tCL8QuSsGB+FG/W8d5pysc9rwEe3B6G2FIo69lUYG
-         GdX9kYO2LEO3Z/sUQmdoc4u7Zte1zjPvLrcL517WOKcpJvfHWL2oDlskjN9iGDnWtx7U
-         RX12fMtoPRcw5uMl1WRdkkOQ+08ng3OfGjKMxSCLHnV1LmxAsBFpUb9NH8fnXRJdmqT9
-         Qz3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794566200; x=1795171000;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TgEeUGxKovhjdSPgMfNKjzv/ECDclmpQx77zq+F5dDo=;
-        b=itmjMeBPGKzTjZREC6xh6Mlzcy04wh9OEc871M6GTdaJg1dLD4V87EfjIvUYkZCbvT
-         VrTZBFgoS2Vq3coExPDspYSTKyeNsmVCU5iHwV/+AO9NKRHTKR1zelYR34/9Yo6xHQkG
-         Q1+GjoOa8oyr017RNoBrFW2vFIIFG5bNgPyqvq1WshZq9Wb4DS0JRZYTEs4/7DIKnzEq
-         7Y/Q0wnE3QWX3RD8bteFFYmQpvnavgi1Vm/gWRlovUua0TOWeczMkhy3wvhhKdEBym4E
-         QqI+1IYBFrbZWI8Mo6y6lTgruV23qQpdeu8YR/tezPtudxL2LcmXdr8o87jEl0HIeqzF
-         DlsQ==
-X-Gm-Message-State: APuU4Z/Rt5GxDgXBCVrozOJvv4g+bGzVHUB5LAjOONEGDNoN6vIYHG+L
-	WUWtJ4UphFXUtRbNPxP27F6+sqEOQr9OuxbFt3LU8pFPUh9/yeybiAwLMlwf/VcR6ZK5z5DLDmc
-	hE6AI69l/2Q4kTwu4mLUAKfzGhwE1eCJKcS8eSEzs26BGumiehmKt7AMVieQaMsc8
-X-Gm-Gg: AYBFou0OCHN1Lg2H8VOmIKit4MYpl0cIOR8Sx2eR9EMNQn7ooKMmhr/z4MMxofKzsVQ
-	7Hj9gynNgUT9d+i8odsLBZJkbKKvN0Bc3BPZrhr88vCQOYECdrzK8UPKl5QOHTD5U6itHneUzFu
-	ljIrGH121wHnLbemKOSLNpgac6afDQBG4Xp/SfNWP1RqE9+yH8CzhjJfx0FZ7dXfjDmDFACI2cR
-	xIG396yew4VVzdPHMoCEEvzjOFLW8D2ATKGga3Mqt7F6+HiAF7xlO1OPH5Q1stAm1ec+JmraVBa
-	K+2dCHozfWUkhyzq+U27BuUdvxcF1JwonDcyQ8GPOVEI5jNEBmQh3pmNeWqA2/YQCzXg88As+lC
-	HIrpaTlzgJWA5HiyVq/dZCH+1mQqORQCil2PdPu9Djgqmvcyp9I/gJ4U9NY9jKQls8SQEMUidvS
-	p/
-X-Received: by 2002:a05:620a:6290:b0:93b:d79a:c45f with SMTP id af79cd13be357-9494bc2f497mr335809085a.55.1794566199752;
-        Fri, 13 Nov 2026 02:36:39 -0800 (PST)
-X-Received: by 2002:a05:620a:6290:b0:93b:d79a:c45f with SMTP id af79cd13be357-9494bc2f497mr335807185a.55.1794566199260;
-        Fri, 13 Nov 2026 02:36:39 -0800 (PST)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5d22394esm4672388f8f.3.2026.11.13.02.36.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 02:36:38 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Adrian Ambrozewicz <aambrozewicz@nvidia.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] gpiolib: improve concurrent access to the flags field of struct gpio_desc
-Date: Fri, 13 Nov 2026 11:36:36 +0100
-Message-ID: <179456619466.14668.6243591882039671593.b4-ty@oss.qualcomm.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1794566549; x=1826102549;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Imm14NIi8H5Q16VyabkUWRdp71FBLi9E+jVS7X0zunk=;
+  b=reA+jITP9DjAZRJuSf7pnGSH1UnfFSovyqcnc+b8AirmkISaiq8t0lyR
+   kHLyN5Zymfbv0KoeQwrHwB7H9AP1+/Y2cTw+d3uRiBug4qVmlCa8beQTD
+   +x973psOm7QPBrnPPgI50GcxjIRJG1+5NmF6LN3k57zwXwHyqUfMQpdpJ
+   /Ccnp3RJDSAv7ZZNPbfVevJpoxtPSnk7RE7Ci7iwTefhLv3ZfOmq6Xzv3
+   TJHFAokyMlgpNIIjrzQUiVQAz0yBsKQ3yr8pofyPRnJHBDu+beQjj+6yp
+   +XUoUb4SkBWINCvcfU7jTPOPAnGB3k6bOWU+zTZpXCCiaM76ADomDyyjp
+   g==;
+X-CSE-ConnectionGUID: 3vMfAQYVS5y5mJHrnHx35Q==
+X-CSE-MsgGUID: Fl042saRRQq7q41xme99Ng==
+X-IronPort-AV: E=Sophos;i="6.27,211,1787011200"; 
+   d="scan'208";a="33648523"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-011.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2026 10:42:26 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.178:3217]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.128:2525] with esmtp (Farcaster)
+ id 6d236261-7775-4822-b4c6-309f8ed89251; Fri, 13 Nov 2026 10:42:26 +0000 (UTC)
+X-Farcaster-Flow-ID: 6d236261-7775-4822-b4c6-309f8ed89251
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
+ Fri, 13 Nov 2026 10:42:26 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56; Fri, 13 Nov 2026
+ 10:42:23 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Armin Wolf
+	<W_Armin@gmx.de>, Sebastian Reichel <sre@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: Eliav Farber <farbere@amazon.com>, <linux-acpi@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-input@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+	<platform-driver-x86@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jonathan Cameron
+	<jonathan.cameron@oss.qualcomm.com>, Andy Shevchenko <andy@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Subject: [PATCH v6 0/7] notifier: convert remaining drivers to device-managed registration
+Date: Fri, 13 Nov 2026 10:42:02 +0000
+Message-ID: <20261113104218.32566-1-farbere@amazon.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261110-gpio-desc-flags-atomic-v3-0-2f463bce8086@oss.qualcomm.com>
-References: <20261110-gpio-desc-flags-atomic-v3-0-2f463bce8086@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -125,60 +92,142 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 33LRlxwYjC56hFDVpp7wQW3AMKf1zPZi
-X-Proofpoint-ORIG-GUID: 33LRlxwYjC56hFDVpp7wQW3AMKf1zPZi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEzMDA0MiBTYWx0ZWRfX/NRdrjnfAIPH
- wyVpoJywKT+d3ah5AImOJ4CNzGZ+rbpt1BZ/shSSdywfiFWlJvW8FgID1VM9xJy/bOzBooX65WH
- x0FvzXJUZXZNtxDXaY20bZTFVzQzfvAHfVWcO0Snw543x0KDQxlOD76LnJnTRZfLDdquqzIR++s
- X2uSEe+ICIHYYMO2+uUeDnpG8/W7qt0awiAltn36TxyG923ylpVxTWomuidrWe2ZpGTVs7C17i4
- L7GXpgHtV28NX8TnpZlkg7vnqxWsWOaRBSQ1MSjXU2hdtkVgYNMcAlzXAINI3rwRwlVKoXqQFtR
- UbOr9hIjHlm0nqtnNzMYf0gQeWPC++9GeB4azArdBn1L8Hq8JEKPX5Ft+3yhQsdBAOatpqqBdpa
- Ueuo6TP8nOjK/46YxvH5ZX1qqocDjAausiykadwvJx05ZtenjMGINjXPHS/PbL/qqahas0zPMZf
- /hxpcUQ2HkohO/g9ipw==
-X-Authority-Analysis: v=2.4 cv=XZocX455 c=1 sm=1 tr=0 ts=6af6e838 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=EyKgIFjRM3FL70iytX0A:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEzMDA0MiBTYWx0ZWRfX61SL2LDfBZ6M
- M0E4ucWNQf1hTPjcpW1NE0OL6WHrpd7BbedL80pbrJr62ulq9FVs+QZrf92l+bZ/hxKZTrPppjW
- QIr4ihSk2ZDbwI0ObVcTDGYbcJUF6EQ=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-13_03,2026-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611130042
+X-ClientProxiedBy: EX19D031UWA004.ant.amazon.com (10.13.139.19) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+
+The devm_atomic_notifier_chain_register() and
+devm_blocking_notifier_chain_register() helpers this series added in v5
+are now in mainline, together with 6 of the 11 driver conversions. This
+revision carries the 6 conversions that were never picked up, plus one
+new conversion for a driver that grew the old pattern after v5 was
+posted.
+
+Background, unchanged from v5. Many drivers repeat the same boilerplate
+when registering notifiers with device lifetime:
+
+  1. Register the notifier with *_notifier_chain_register()
+  2. Check for error
+  3. Register a devm action to unregister on teardown
+  4. Implement a per-driver static unregister callback
+
+The devm_*_notifier_chain_register() helpers reduce that to a single
+call with one error path, eliminating the per-driver unregister
+callback. Each conversion drops ~15 lines; this revision removes 117
+lines and adds 18.
+
+Already in mainline, so dropped from this revision:
+
+  v5       commit        subject
+  1/13     e38b9eda475f  notifier: add device-managed registration APIs
+  2/13     6b0c6ff76795  pwm: iqs620a
+  3/13     8c77589a7274  iio: light: iqs621-als
+  4/13     c9f54ead5793  iio: position: iqs624
+  5/13     870f46a42afd  gpio: adp5585
+  11/13    323906906101  gpio: eic-sprd
+  12/13    df6501bf6fc4  gpio: gpiolib-kunit
+
+What is left, with the v5 numbering for anyone who reviewed it then:
+
+  v6   v5      subject
+  1/7  6/13    platform/x86: bitland-mifs-wmi
+  2/7  7/13    Input: adp5585
+  3/7  8/13    ACPI: APEI: GHES: remove unused ghes_{,un}register_...
+  4/7  9/13    ACPI: APEI: GHES: use devm_...
+  5/7  10/13   platform/x86: uniwill-wmi
+  6/7  13/13   reboot
+  7/7  -       power: supply: cros_pchg (new in v6)
+
+The patches are independent and can go through their own trees. The only
+ordering constraint is that patch 3 must precede patch 4: patch 3 removes
+the unused exports, patch 4 converts what is left. The devm helpers are
+already upstream, so unlike v5 this revision needs no base commit or
+pull request to build.
+
+Suggested routing, since the series now spans five trees:
+
+  1/7, 5/7  platform-drivers-x86
+  2/7       input
+  3/7, 4/7  acpi, in this order
+  6/7       kernel/reboot.c has no MAINTAINERS entry, so it falls to
+            THE REST
+  7/7       power-supply
+
+Each patch is Cc'd to its own subsystem lists only, so no list receives
+patches it does not own. linux-kernel receives all of them.
+
+v5: https://lore.kernel.org/all/20260816060648.4030-1-farbere@amazon.com/
+
+Changes in v6:
+- Dropped the 7 patches now in mainline, listed above.
+- Rebased onto v7.4-rc1. No conflicts; the 6 carried patches are
+  functionally unchanged from v5.
+- Patch 3: replaced an em dash in the commit message with an ASCII
+  hyphen. No change to the code.
+- Patch 6: the commit message now records that the removed callback's
+  WARN_ON() on a failed unregister goes away, because
+  devm_blocking_notifier_chain_register() ignores the unregister return
+  value. No in-tree caller can trigger it. No change to the code.
+- Patch 7: new. cros_pchg grew the
+  blocking_notifier_chain_register() + devm_add_action_or_reset()
+  pattern in 631adfa03595 ("power: supply: cros_pchg: unregister EC
+  notifier"), which reached mainline in v7.3-rc1, five days after v5
+  was posted.
+- Carried forward the Acked-by and Reviewed-by tags given on v1 and v4.
+  Each was checked against the patch it was given for: all four are
+  byte-identical to the version here.
+
+Changes in v5:
+- Patch 1: rename notifier_block parameter from 'n' to 'nb' to match
+  the devres struct field name (Uwe Kleine-König)
+- Patch 2: remove extra blank line left after deleting the unregister
+  callback (Uwe Kleine-König)
+
+Changes in v4:
+- Patch 8: split the removal of unused
+  ghes_register_vendor_record_notifier() and
+  ghes_unregister_vendor_record_notifier() into a separate preceding
+  patch (Andy Shevchenko)
+
+Changes in v3:
+- Patch 1: drop devm_raw_notifier_chain_register() since raw notifiers
+  require caller-provided locking which is incompatible with the devres
+  teardown callback (Sashiko)
+- Patch 12: fix commit message to accurately describe the old code as
+  using devres_alloc() + register_reboot_notifier() (Sashiko)
+
+Changes in v2:
+- Patch 1: drop 'extern' from new function prototypes (Bart Van Assche)
+- Patch 1: fix kerneldoc to use 'Return:' format (Bart Van Assche)
+- Patch 1: use <linux/device/devres.h> instead of <linux/device.h>
+  (Andy Shevchenko)
+- Patch 8: also remove unused ghes_register_vendor_record_notifier() and
+  ghes_unregister_vendor_record_notifier() along with their exports and
+  ghes.h declarations (Jonathan Cameron)
+
+Eliav Farber (7):
+  platform/x86: bitland-mifs-wmi: use
+    devm_blocking_notifier_chain_register()
+  Input: adp5585: use devm_blocking_notifier_chain_register()
+  ACPI: APEI: GHES: remove unused
+    ghes_{,un}register_vendor_record_notifier()
+  ACPI: APEI: GHES: use devm_blocking_notifier_chain_register()
+  platform/x86: uniwill-wmi: use devm_blocking_notifier_chain_register()
+  reboot: use devm_blocking_notifier_chain_register()
+  power: supply: cros_pchg: use devm_blocking_notifier_chain_register()
+
+ drivers/acpi/apei/ghes.c                      | 27 +++----------------
+ drivers/input/keyboard/adp5585-keys.c         | 18 +++----------
+ drivers/platform/x86/bitland-mifs-wmi.c       | 17 +++---------
+ drivers/platform/x86/uniwill/uniwill-wmi.c    | 17 +++---------
+ .../power/supply/cros_peripheral_charger.c    | 16 +++--------
+ include/acpi/ghes.h                           | 16 -----------
+ kernel/reboot.c                               | 24 ++---------------
+ 7 files changed, 18 insertions(+), 117 deletions(-)
 
 
-On Tue, 10 Nov 2026 14:47:00 +0100, Bartosz Golaszewski wrote:
-> This is a follow-up to our discussion[1] about desc->flags and possible
-> races with users who don't/can't synchronize with other means.
-> 
-> It's an attempt to use try_cmpxchg() to update only the required flags
-> atomically where needed + minor fixes using atomic variants of bitops
-> where it makes sense.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/5] gpiolib: don't overwrite the entire flags field in gpiod_get_direction()
-      https://git.kernel.org/brgl/c/8ed87a9adf48703b5729f9d020eb15fa79ffb099
-[2/5] gpio: shared: use atomic set_bit() for descriptor flags
-      https://git.kernel.org/brgl/c/7d1d799d6251bc8cd1d5cfc881b0c09060b6b90d
-[3/5] gpiolib: clear debounce period before the "requested" flag
-      https://git.kernel.org/brgl/c/8509d643ffb7be508568c696c9fe45eb1f84c33c
-[4/5] gpiolib: don't overwrite the entire flags field in gpiod_free_commit()
-      https://git.kernel.org/brgl/c/63d7aedf6add8a24415af4c010588f63fa7296ab
-[5/5] gpio: cdev: don't overwrite the whole flags field when configuring lines
-      https://git.kernel.org/brgl/c/fa8bc4aa06674e78a4ee702966419aa4fdd8dc94
-
-Best regards,
+base-commit: 067c5c24cef23d913b67eaaf71ae67e7169a6620
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.47.3
+
