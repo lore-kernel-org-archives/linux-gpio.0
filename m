@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794597539;
-	b=wRf2Nn605630aNTtCHtNykJYz2e6wZuCbSekQr0nyddGFM5p5pqM8+LtFKjZ15+Lr5XM
-	 /wDF3tn49iUai9G8Y/SwdOJgfc9fq3sroGSvMBiM5+yXO2ZvPXXHm260dI0J7XSzloEc5
-	 fkowohLdaaElW7OIPJmBFc5fLl669NkYLeDpbv8TO58Nv7dORSU+pforu6hK8oBoKuIUs
-	 RT7s3vLeLIVHtuh6LmdhiSI0pfumznTruadxI+uPUOMjfOgjl6DkMk/zLS1QlwQ9kmB2w
-	 bfQCfpbvAzfOgSmUmRcgwYZeOdsoyQPgoXuxlcvEsaAPq4Yg1j2W92CcPQyREKn46WA==
+	t=1794597764;
+	b=wEUI941ArS9s9JXeITSTgEyfWdP+3pn50USllzNjLJ9tLW/A7opoIXe0Vu4Cj+/YQpKx
+	 FxvzoHRqt4qcRbVtn0lvcjdTK2kLz5ZX6Eg3qbvAzpYo9UnLjyP0Xj7NgHIRUouUX0unC
+	 Jcy9+EKcinJEqN8UfaGUM4xMeNyXs4HHIIbPlRz4lDjmUuLGDGZTq8oEFcTsZfZMg3ej7
+	 6H70fqJpWy6Wi+7YcFSecMMr27FnF9qcjm6iNrzmJnKE3dAT29u5kRiAngkiA6drRT/+i
+	 VRzNZJd0smApVJZRxwkzVP4V5NecPRISi0YCdZ5WwoEyje0MUWlFHaLyqpR3i35PtHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794597539;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794597764;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/SZZUB4imj0DCaiwX3SC+kOmypVCBifFyWOIoo60btE=;
-	b=2GKfBJwMN9ZlbEmqdU8OMok/CONOdGosjPMAnRPHBedFu0BKLxB2mMKOBvad6BYelyz/
-	 ZEqb79hUrpxJvvP0zGm4NH6i0zmAZmvC659ogB3zdpcDS3AH/LpEaAJ9/XEoqhzq4D4Ue
-	 EiHPO/SKCHIumWD7/iwwe1WaL1+3c6zZjsu7BaP294mtZ7o4EA7LajzNdgJ2Ij0a+29qM
-	 4/Axsj32BFZgEX4YfTy+3ZZnWhJHWuVr7X+m0njwe5dex/jbvd3bWKAdEmIW3FDQuAWjH
-	 vzL66eOPkcQae4CyxLXyU0q6ZU88sendJRRZrrxuC0dtK+yz11Zxcu6nxpCuxpBMjyg==
+	bh=Tf4tJqn4Ep+PSCMoPN7WDoYRmcFmA/KadWfmt4/jR4M=;
+	b=ysErLLoOoGZWicH7SdPyHXxsJId+Y/mNoZoq+c30xmNkMr2VsfCN9i2gTVGZO+lQ/xf0
+	 76BM5bv0bluh4MMUg1poQfTobzzY8bF/fBtaIhKwQ6mkshNWQFPhJ8Gy1c7nf3PYBEasJ
+	 rT6/cBIrCPtQ8AzPY4+k/IBZwPud/TtcSDdfrEQecJ/vqvDnYiIOcUN772zOuJctMOSE4
+	 dXYMdXdSscPgQHYfTm7mJNBOHeS3QEY4m7s7NhXJxf99V45SBo4Nha4bDX/FHgT6LLlKy
+	 RVoYIGYZjOUoahD6sh7EDD2CR+C54bV5Wg/0+uzCLDSE552S4C9QLwzxkucstVnmFng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gYhWEQMM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MvUVgQ7u;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31963606A333;
-	Fri, 13 Nov 2026 19:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5624C606A89B;
+	Fri, 13 Nov 2026 19:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gYhWEQMM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A893C1F000C4;
-	Fri, 13 Nov 2026 19:18:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MvUVgQ7u
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051951F000C8;
+	Fri, 13 Nov 2026 19:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794597539;
-	bh=/SZZUB4imj0DCaiwX3SC+kOmypVCBifFyWOIoo60btE=;
+	s=k20260515; t=1794597764;
+	bh=Tf4tJqn4Ep+PSCMoPN7WDoYRmcFmA/KadWfmt4/jR4M=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gYhWEQMM9Mg6uCNwwIGPt6BaY7GKmpmz4ZyDRVCV20Wk8/cA6VojXAboxS35H4NLG
-	 MGkxhkNbn9bOHn/vJRD24J9ghkWucuQp0YthuXhkOVoDdUDtQdXSgAG7X+CDFS6gaS
-	 rVgV+eHIUWFN4ud5p2FJmKXayLZBLHUsHWteyralcThF9sdDXC6RmZ60qC/FI0AKBO
-	 b7WvLhB4xkBLWUpThg1tQpjhsjaGH1p9IYdoZ9kZ2uIQ3lguGX2GT+Osj8xmKtiZ0r
-	 BrkoEMHG/J9lA1H4GGD9Ap9zEoT1vbqU26YgE7Fya6KFcEi3OrxVAB7eq+aBLU/Vqp
-	 iAw2rOwkKyV7A==
-Message-ID: <sashiko-outbox-213539@kernel.org>
+	b=MvUVgQ7ue+spDz1rtv++2dd1LQeLwKUD7VyVxOThGKINGuRHiroJHbC4d/DDcAfYW
+	 iNVY5ryV6Q1IMYpvNkpp/L8W+1GoTomtG8gUp7mjtdNBVE39gtCDfcY4GgLy7cNg7W
+	 44+43nCPYawt3YC4raeja2VZRV2y5aMwPnBVymmd5TlyvJ9iGnNyncZXTVgwkQKO/X
+	 gBW64Kg1fpCNk5H+rYzLlajWPkH+TM6Ppvz9z6JgmdDML8a6BBCoSCeOsNyzpfOISl
+	 QnaE/DX3l6H33mHUynP0oJ0irB4Gj/dQ2Gg+twjWxrejTRamxKi7yuonMbfuoP0rl/
+	 I7bP8dWon1xMQ==
+Message-ID: <sashiko-outbox-213544@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 21/23] arm64: dts: qcom: add SM8650 LPASS CPU dtsi
+Subject: Re: [PATCH RFC 17/23] ASoC: qcom: add SM8650 LPASS CPU driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Neil Armstrong" <neil.armstrong@linaro.org>
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261113-topic-sm8650-el2-v1-21-5183f6aab9fc@linaro.org>
+In-Reply-To: <20261113-topic-sm8650-el2-v1-17-5183f6aab9fc@linaro.org>
 References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-21-5183f6aab9fc@linaro.org>
+ <20261113-topic-sm8650-el2-v1-17-5183f6aab9fc@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 19:18:57 +0000
+Date: Fri, 13 Nov 2026 19:22:38 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,187 +60,120 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 4 potential
+Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [Medium] arm64: dts: qcom: unsupported power-domains on WSA macros in
-  sm8650-lpass-cpu
-- [Medium] arm64: dts: qcom: unattached multiple power-domains on
-  lpass_tlmm
-- [Medium] arm64: dts: qcom: lpass_core clock count mismatches
-  lpasscorecc-sm8650 driver
-- [Low] arm64: dts: qcom: node and property ordering in
-  sm8650-lpass-cpu.dtsi
+- [High] ASoC: qcom: wrong lpm_type for lpass-rxtx-lpaif in
+  sm8650_lpaif_mi2s_desc[]
+- [Medium] ASoC: qcom: missing set_bit() for RX channels in
+  sm8650_lpass_alloc_dma_channel()
 --
 
-commit 1f3d7332ea1210e666215d104062d22d42ebae2c
+commit ee9ae911e7b58d190ad971326ccfe23116c1a06b
 Author: Neil Armstrong <neil.armstrong@linaro.org>
 
-arm64: dts: qcom: add SM8650 LPASS CPU dtsi
+ASoC: qcom: add SM8650 LPASS CPU driver
 
-This commit adds sm8650-lpass-cpu.dtsi with the LPASS clock controllers,
-lpass-cpu node, LPASS macro clocks, and I2S2 pinctrl state for SM8650
-boards booting at EL2 without ADSP audio firmware.
+This commit adds the SM8650 LPASS CPU DAI driver variant supporting MI2S,
+DisplayPort, and codec DMA audio interfaces when driven directly by the
+application processor.
 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650-lpass-cpu.dtsi b/arch/arm64/=
-boot/dts/qcom/sm8650-lpass-cpu.dtsi
+> diff --git a/sound/soc/qcom/lpass-sm8650.c b/sound/soc/qcom/lpass-sm8650.c
 > new file mode 100644
-> index 0000000000000..43d0d8daa4fe2
+> index 0000000000000..42050f56a4847
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm8650-lpass-cpu.dtsi
+> +++ b/sound/soc/qcom/lpass-sm8650.c
+> @@ -0,0 +1,651 @@
 
 [ ... ]
 
-> +&lpass_tlmm {
-> +	clocks =3D <&lpass_core LPASS_CORE_CC_CORE_CLK>;
-> +	clock-names =3D "core";
-> +
-> +	power-domains =3D <&lpass_hm LPASS_CORE_HM_GDSC>,
-> +			<&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
-> +	power-domain-names =3D "core",
-> +			     "audio";
-> +
-> +	status =3D "okay";
-> +};
-
-[Severity: Medium]
-Does specifying two entries in power-domains leave both GDSCs unattached on
-lpass_tlmm?
-
-genpd_dev_pm_attach() returns early without attaching any domain when a node
-lists more than one power domain, and lpi_pinctrl_probe() only sets up PM
-clocks without calling devm_pm_domain_attach_list() or
-dev_pm_domain_attach_by_name().  As a result, runtime PM resume of
-lpass_tlmm will not power on LPASS_AON_CC_LPASS_AUDIO_HM_GDSC before
-accessing LPI TLMM registers.
+> +static int sm8650_lpass_alloc_dma_channel(struct lpass_data *drvdata,
+> +					  int direction, unsigned int dai_id)
+> +{
 
 [ ... ]
 
-> +&lpass_wsa2macro {
-> +	clocks =3D <&lpass_audiocc LPASS_AUDIO_CC_WSA2_MCLK_CLK>,
-> +		 <&lpass_audiocc LPASS_AUDIO_CC_TX_MCLK_WSA2_CLK>,
-> +		 <&lpass_vamacro>;
-> +	clock-names =3D "mclk",
-> +		      "macro",
-> +		      "fsgen";
-> +
-> +	power-domains =3D <&lpass_hm LPASS_CORE_HM_GDSC>,
-> +			<&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
-> +	power-domain-names =3D "macro",
-> +			     "dcodec";
-> +};
-> +
-> +&lpass_wsamacro {
-> +	clocks =3D <&lpass_audiocc LPASS_AUDIO_CC_WSA_MCLK_CLK>,
-> +		 <&lpass_audiocc LPASS_AUDIO_CC_TX_MCLK_WSA_CLK>,
-> +		 <&lpass_vamacro>;
-> +	clock-names =3D "mclk",
-> +		      "macro",
-> +		      "fsgen";
-> +
-> +	power-domains =3D <&lpass_hm LPASS_CORE_HM_GDSC>,
-> +			<&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
-> +	power-domain-names =3D "macro",
-> +			     "dcodec";
-> +};
+> +	case LPASS_CDC_DMA_RX0 ... LPASS_CDC_DMA_RX9:
+> +		chan =3D find_first_zero_bit(&drvdata->rxtx_dma_ch_bit_map,
+> +					   v->rxtx_rdma_channels);
+> +		if (chan >=3D v->rxtx_rdma_channels)
+> +			return -EBUSY;
+> +		break;
+> +	case LPASS_CDC_DMA_TX0 ... LPASS_CDC_DMA_TX8:
+> +		chan =3D find_next_zero_bit(&drvdata->rxtx_dma_ch_bit_map,
+> +					  v->rxtx_wrdma_channel_start +
+> +					  v->rxtx_wrdma_channels,
+> +					  v->rxtx_wrdma_channel_start);
+> +		if (chan >=3D v->rxtx_wrdma_channel_start + v->rxtx_wrdma_channels)
+> +			return -EBUSY;
+> +		set_bit(chan, &drvdata->rxtx_dma_ch_bit_map);
+> +		break;
+> +	case LPASS_CDC_DMA_VA_TX0 ... LPASS_CDC_DMA_VA_TX8:
+> +		chan =3D find_next_zero_bit(&drvdata->va_dma_ch_bit_map,
+> +					  v->va_wrdma_channel_start +
+> +					  v->va_wrdma_channels,
+> +					  v->va_wrdma_channel_start);
+> +		if (chan >=3D v->va_wrdma_channel_start + v->va_wrdma_channels)
+> +			return -EBUSY;
+> +		set_bit(chan, &drvdata->va_dma_ch_bit_map);
+> +		break;
+> +	case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
+> +		chan =3D find_first_zero_bit(&drvdata->wsa_dma_ch_bit_map,
+> +					   v->wsa_rdma_channels);
+> +		if (chan >=3D v->wsa_rdma_channels)
+> +			return -EBUSY;
+> +		break;
 
 [Severity: Medium]
-Are power-domains and power-domain-names supported on lpass_wsa2macro and
-lpass_wsamacro?
+Should the LPASS_CDC_DMA_RX0 ... LPASS_CDC_DMA_RX9 and
+LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9 cases call set_bit() on
+drvdata->rxtx_dma_ch_bit_map and drvdata->wsa_dma_ch_bit_map before
+breaking?
 
-Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml does not
-define power-domains or power-domain-names and sets unevaluatedProperties:
-false, so dtbs_check fails when sm8650-lpass-cpu.dtsi is included.  In
-addition, unlike the rx, tx, and va macro drivers, wsa_macro_probe() never
-calls lpass_macro_pds_init(), while genpd_dev_pm_attach() skips automatic
-attachment when more than one domain is listed, leaving both GDSCs
-unattached during register access.
+Without set_bit(), channel 0 is never marked as allocated (even though
+sm8650_lpass_free_dma_channel() clears the bit on close), so subsequent
+allocations from those bitmaps will hand out channel 0 again and overwrite
+drvdata->rxtx_substream[0] or drvdata->wsa_substream[0] in
+lpass_platform_pcmops_open().
 
-> +
-> +&soc {
-> +	lpass_audiocc: clock-controller@6bc0000 {
-> +		reg =3D <0 0x06bc0000 0 0x38000>;
-> +		compatible =3D "qcom,sm8650-lpassaudiocc";
-> +
-> +		clocks =3D <&bi_tcxo_div2>,
-> +			 <&lpass_aon LPASS_AON_CC_MAIN_RCG_CLK_SRC>;
-> +		clock-names =3D "bi_tcxo",
-> +			      "iface";
-> +
-> +		power-domains =3D <&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
-> +
-> +		#clock-cells =3D <1>;
-> +	};
-> +
-> +	lpass_aon: clock-controller@6e00000 {
-> +		reg =3D <0 0x06e00000 0 0x30000>;
-> +		compatible =3D "qcom,sm8650-lpassaoncc";
-> +
-> +		clocks =3D <&bi_tcxo_div2>,
-> +			 <&lpass_core LPASS_CORE_CC_CORE_CLK>;
-> +		clock-names =3D "bi_tcxo",
-> +			      "iface";
-> +
-> +		#clock-cells =3D <1>;
-> +		#power-domain-cells =3D <1>;
-> +	};
-> +
-> +	lpass_core: clock-controller@7b00000 {
-> +		compatible =3D "qcom,sm8650-lpasscorecc";
-> +		reg =3D <0 0x07b00000 0 0x58000>;
-> +
-> +		clocks =3D <&bi_tcxo_div2>;
-> +		clock-names =3D "bi_tcxo";
-> +
-> +		power-domains =3D <&lpass_hm LPASS_CORE_HM_GDSC>;
-> +
-> +		#clock-cells =3D <1>;
-> +	};
+[ ... ]
 
-[Severity: Medium]
-Does providing only a single clock at index 0 on lpass_core leave the
-P_BI_TCXO parent of lpass_core_cc_core_clk_src unresolved?
+> +/* MI2S mapping over LPAIF instances */
+> +static const struct lpaif_mi2s_desc sm8650_lpaif_mi2s_desc[] =3D {
+> +	{
+> +		.reg_name =3D "lpass-lpaif",
+> +		.irq_name =3D "lpass-irq-lpaif",
+> +		.lpm_type =3D LPASS_LPM_NONE,
+> +		.port_desc =3D (const struct mi2s_port_desc[]) {
+> +			{ .intf =3D 0, .id =3D MI2S_PRIMARY, },
+> +			{ .intf =3D 1, .id =3D MI2S_SECONDARY, },
+> +		},
+> +		.port_desc_count =3D 2,
+> +	},
+> +	{
+> +		.reg_name =3D "lpass-rxtx-lpaif",
+> +		.irq_name =3D "lpass-irq-rxtxif",
+> +		.lpm_type =3D LPASS_VA_CDC_LPM,
+> +		.port_desc =3D (const struct mi2s_port_desc[]) {
+> +			{ .intf =3D 0, .id =3D MI2S_QUATERNARY, },
+> +		},
+> +		.port_desc_count =3D 1,
+> +	},
 
-In drivers/clk/qcom/lpasscorecc-sm8650.c, lpass_core_cc_parent_data_ao_2
-looks up DT clock index 1 for P_BI_TCXO:
+[Severity: High]
+Should the lpass-rxtx-lpaif descriptor use LPASS_RXTX_CDC_LPM instead of
+LPASS_VA_CDC_LPM?
 
-drivers/clk/qcom/lpasscorecc-sm8650.c:
-static const struct clk_parent_data lpass_core_cc_parent_data_ao_2[] =3D {
-	{ .index =3D 1 },
-	{ .hw =3D &lpass_core_cc_dig_pll.clkr.hw },
-	{ .hw =3D &lpass_core_cc_dig_pll_out_main_div_clk_src.clkr.hw },
-};
-
-Because lpass_core only provides index 0, of_parse_clkspec() fails with
--ENOENT for index 1, leaving lpass_core_cc_core_clk_src and its child
-branch clocks (such as LPASS_CORE_CC_CORE_CLK and
-LPASS_CORE_CC_SYSNOC_MPORT_CORE_CLK) without their safe XO parent when
-clk_rcg2_shared_init() parks the RCG.
-
-> +
-> +	lpass_hm: clock-controller@7e00000 {
-> +		compatible =3D "qcom,sm8650-lpasshm";
-> +		reg =3D <0 0x07e00000 0 0xa000>;
-> +
-> +		clocks =3D <&bi_tcxo_div2>;
-> +		clock-names =3D "bi_tcxo";
-> +
-> +		power-domains =3D <&rpmhpd RPMHPD_LCX>;
-> +
-> +		required-opps =3D <&rpmhpd_opp_nom>;
-> +
-> +		#clock-cells =3D <1>;
-> +		#power-domain-cells =3D <1>;
-> +	};
-> +
-> +	lpass_cpu: audio@7b87000 {
-> +		compatible =3D "qcom,sm8650-lpass-cpu";
-
-[Severity: Low]
-This isn't a bug, but audio@7b87000 is placed after
-clock-controller@7e00000 instead of in unit-address order, and compatible
-is placed after reg in clock-controller@6bc0000 and
-clock-controller@6e00000 above.
+lpass-rxtx-lpaif is in the Audio CC / RXTX domain (clocked by
+audio_cc_ext_if1_ibit), so setting LPASS_VA_CDC_LPM maps MI2S_QUATERNARY
+DMA buffers from the 12 KiB VA LPM region (va_cdc_dma_lpm_buf) and enables
+va_mem0 in lpass_cpu_daiops_startup() instead of using the 64 KiB RXTX LPM
+region and audio_cc_codec_mem0..3.  If MI2S_QUATERNARY is enabled
+alongside LPASS_CDC_DMA_VA_TX0, lpass_platform_allocate_lpm() also fails
+probe with -EINVAL because VA Codec DMA already consumes all 12 KiB of VA
+LPM, and if MI2S_QUATERNARY is enabled alongside MI2S_QUINARY without VA
+Codec DMA, va_cdc_dma_lpm_remain underflows and assigns an offset past the
+end of the 12 KiB VA LPM buffer.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113-topic-sm86=
-50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D21
+50-el2-v1-0-5183f6aab9fc@linaro.org?part=3D17
