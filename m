@@ -1,79 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794647557;
-	b=l4bSiOBQQwR0MjW6GmfAmsYXYs3WTiDyfB79kY4Y8pm8oFvhvQcNUX/jEywkT0Fceglj
-	 SKsZqNOlRHnlyFV8q3g5gAqDnVVeP7dh2OFv2DFTtmqTOmKQcWrxC40QFtFIxjAkIb80W
-	 OoqKVgEkB8ld9KwLPVWs3c1NPml4asiH0jGHAQWJo9k3Hc+nFRiqWsSjd2Y0HFIAUvG5u
-	 uHdEOli5U+v5bXT6ATImQUtTmmvcUhOGj/+rjsqMIuaAThvVvBR53vP06VTd0bnQaZAD4
-	 vkqysO79aG1rkIIf4r9EKrjGhmRc9/qrDBl/yDxPrOpFiDS+MHLYHabIZZW4fA2rcYQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794647557;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=UKFC4kHDDGyiVWQsTKcJ9Dw2vTDxYCuv7HiHLK+Q5Pk=;
-	b=wbhj/ki/jdY3Q5Kr3X0BiheJKv0tWFwXS9nWkV5gjP/gnakQFDAcmb+Xc66FbNrfqjSV
-	 A4VO5wSxRmjvfg4XupKjzeNnHXjHIjs61MLCMSZ5YGbnbhPdFNsbVVDAVUjr53MGpu+6P
-	 EvWbbrqSbmMK9LTtgS7FuyK8z8Zs1fygHt1o8EZtakGHI+Q0vwhnyISO7b4/Nm64+d75P
-	 7wi+XFTGlFIoV6qr2vsapXx0LN5tZMP+LP1N0SD4GgAk392Hh/h/roJ5WukT1Bf3hAzli
-	 1DerKzi9dmXxGj1XPx9me4Mh+wTh0k3V9XrVukPthGKzqOYlUoIR6entxX0uGvGhoaA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeYKIrMi;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794650285;
+	b=OtGziNqcTe69iO5ozCs/PJ7JzkTVT63EJ6+5ITP8uO/SCAB9AXZBa+wRFmS5Ex4X2HyE
+	 4OH65MVIQ5xcBR6AgDc+kMsWT4dxp9k49N06fyazcV39z0uNu+e6BzU1YVAT7xyN3cDeB
+	 ot2MVgJUyNnoz0UDH5b5GgqDvwIDbg+0kqY1MDmSYzO+kD9eh6uS1TZWWaKfIt2AhKTuH
+	 gvJhNrtVzU2cfxb7GxyMDnSdFTMOv74s8dis25wKtENIQcY+WQRISjdYfU0V0RPo/oJ6o
+	 FzLB9JqTftn3ToNdXySGrV+ohjVZZu5H13xvUtbyhN5Qo0E7PoCuzQbBEBBhsF2v96Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794650285;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=1aAu2p5q+46k4xT0nfJKDCSVnUNtpAw2+j4NQOXi/aU=;
+	b=yCECD5Rc+JLGHl8GeM1G9Rh3LhxgQeQC3SWq2hDx8uQiGfIYVJqsdOid0FkqH2GrHjHY
+	 sKmlMIudhhEP3PBcbp9Mnfn7w+oVgKrgfA43LdcJGm3a5pmU1WGMz6WyAY9DH8CcWyOd3
+	 LqOzgOWdnNvfb124/kQKY570C8rHV049S6P/CARbc0tiyL9+SUVTzVRntzQEkCTZ6chvm
+	 1A84fTNxg+jyLs6agBsdGOXjmKnawW0KiGnqv29JHX6nta2TQ3z48a4iSU07+o8SIVkTj
+	 2g5dpvqtE+W3CYaBkNfxqU8r0IANeaAD2S3Grdd/tXGDk2Y/8HVd470EQYSpfOs24Wg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q0hfoM5a;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9533F60A2608;
-	Sat, 14 Nov 2026 09:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFFD606A327;
+	Sat, 14 Nov 2026 09:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeYKIrMi
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794647557;
-	b=clrWEcGq4yXDp8v6HFC5qLiaBNIvqIQvnRpmXjqr2UL6mZH4NndI2Z5w52Qt4WKZwXcM
-	 ueOyjQfl3EihPtkvh/UJUADKfnP+J8YWQ2oVR/Ip/JqYlNPQKzQm7/iEMEo68hyw/HsU1
-	 CoioUweyjcdnxVk3GwG1ntJHsdhxfLeQt4JTulbfyf4J52owrNGB6AqTGTUVKulVdcnVU
-	 nwHqDwb3KWScnG0pHleM7+UEetrxGU8UErZiZyypgIfQfPWfKLTFH+JdT/i2jczv6rpDA
-	 PTnYZinibNunOJ8XMjyWf5MEgZT5+LMEZ5FQvvS8tNKBRKm/IqhnqCmNjJCvS6Y69Jw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794647557;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=UKFC4kHDDGyiVWQsTKcJ9Dw2vTDxYCuv7HiHLK+Q5Pk=;
-	b=eUMoVGo7y9A/OzWatBp2tjeRjJ4ravHas15LOapKg0f2VhARQAo4aPz6Ey2ql6aIM4x5
-	 GRZSCwyvhXTFlHCXHVcQs7JEVGnQkSy3NAeXjLDA+V/e67QtqvaAh6wQCzmtSZfwsZLUw
-	 PWwNmCdG6maCs6ai/823lVLLZelD6p/f9drZZfoMhBIj8BIQT7vQcae5vAR3npyiuTz+U
-	 qbxYhNTb2cvIgki28n7E8qShKndDtzUXD6Dd/iwtgxTduAD06sk8dTHr+HFKP57nfOCcH
-	 j5xG7C0Phg0pEsaa9MSb92mZ7ordK/zzknC6cel9ACHkHiVlsC2MJ0pNxUQ0CBeeRBg==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 897181F000CF;
-	Sat, 14 Nov 2026 09:12:35 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q0hfoM5a
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09DB1F000C4;
+	Sat, 14 Nov 2026 09:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794647557;
-	bh=UKFC4kHDDGyiVWQsTKcJ9Dw2vTDxYCuv7HiHLK+Q5Pk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=SeYKIrMial+rN1XAWJedJO74HlcVsRrnVWanlR30yGdU+nqK9PiMcDl/PUynosQmC
-	 OtW7Zruvk/llDZLbyX9lhTsy04v68FKrORngtWKXM3YxrpJ/u+kXKuZ+UyxTfOY/c7
-	 0EZIPkHBIqPnxdY2YgRLJ/bMP8WeJqsLSwlyRE5+Z+o+m/Gg6/CR9zlZkRArWL5UJ7
-	 9sZOElNDI5xGLBaddo9uONOoLiWK/acXSYiZpgG/NedNel4eq6Nybk2FpU3QMOBOrK
-	 XcekCc30AfwKk1ZscbWjm+JUkDoNmfCEMN8QjsUb73Tt11rnJ6wWpRqav3u189KHBS
-	 qxatp1+IQmhWA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 2A54F49D22;
-	Sat, 14 Nov 2026 09:12:34 +0000 (UTC)
-From: Vincent Jardin via B4 Relay <devnull+vjardin.free.fr@kernel.org>
-Date: Sat, 14 Nov 2026 10:12:32 +0100
-Subject: [PATCH v4 5/5] arm64: dts: lx2160a: describe the pad muxes as the
- DCFG RCW override
+	s=k20260515; t=1794650285;
+	bh=1aAu2p5q+46k4xT0nfJKDCSVnUNtpAw2+j4NQOXi/aU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Q0hfoM5aikZN44ro7I4hnoYExts32CDZbuGMBnIhCaHhrl990JWcBKEh9QFaxRyf5
+	 yjiMrWzO7sz9jEgbFIwNHvrhA7JUFXV3nMl9yu+nK5D9We6jpY+EEBqTyWtIetEA6T
+	 kx0XghcDNQ3Ft1dgE8yrxi2z3W+Wnf6ZDVME6BSiWmYcl63CJfq2aTcbFJY/SCI4hU
+	 JpwonnmWW9/d22xtCdbe+oG2u7LheAXYxZQr4nr8eIEfSCqRevKU6Wi9BGmuoSnD/O
+	 w/xlbNWWUGIOKKwOejCBmgbC1SkEz+4hXpqt7Dc8brSGT3wi0qSsnt7vkrEKKXPTxk
+	 zk0mZX5OkUfmw==
+Message-ID: <d0f781bf-a325-4eee-9431-7eb387279934@kernel.org>
+Date: Sat, 14 Nov 2026 10:57:55 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -83,459 +51,153 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-5-eefcea066a55@free.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] soc: fsl: guts: add the RCW override of any RCWSR
+To: vjardin@free.fr, Dong Aisheng <aisheng.dong@nxp.com>,
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Jacky Bai <ping.bai@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>,
+ Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Ioana Ciornei <ioana.ciornei@nxp.com>
 References: <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-0-eefcea066a55@free.fr>
-In-Reply-To: <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-0-eefcea066a55@free.fr>
-To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- Vladimir Oltean <vladimir.oltean@nxp.com>, 
- Ioana Ciornei <ioana.ciornei@nxp.com>, Vincent Jardin <vjardin@free.fr>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794647552; l=10975;
- i=vjardin@free.fr; s=20260525; h=from:subject:message-id;
- bh=iwO9Ixvxy6W69Tb6Mt+g9kgxtFLpXhRJ1viNlsFmmYQ=;
- b=mvgixLMhunZ1nX0+U4KF1sVnjW++eprXvkzi9rO/ic0u2F56+KIa9POYWoqs2FU4kGDkeWomJ
- cBCZmZ1i8SGCT7x9oC34UKPyezNuL4kOWfStoAoHQlx8p/e+bM351nA
-X-Developer-Key: i=vjardin@free.fr; a=ed25519;
- pk=hppgLeFpGpKOi7LNwGEZ4jOYofJCoGd4Jf1ltAabiLw=
-X-Endpoint-Received: by B4 Relay for vjardin@free.fr/20260525 with
- auth_id=871
-X-Original-From: Vincent Jardin <vjardin@free.fr>
-Reply-To: vjardin@free.fr
-Content-Transfer-Encoding: 7bit
+ <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-3-eefcea066a55@free.fr>
+Content-Language: fr-FR
+From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+In-Reply-To: <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-3-eefcea066a55@free.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Vincent Jardin <vjardin@free.fr>
 
-The pad muxes are fields of the RCW: read-only in RCWSR12..14, changed
-at runtime through the override registers in the DCSR view of DCFG,
-which read 0 until written.
 
-pinctrl-single on those registers, since commit 8a1365c7bbc1
-("arm64: dts: lx2160a: add pinmux and i2c gpio to support bus recovery"),
-clears every other field of the word with its first pin state:
-a board whose RCW programs a non-zero pad mux loses those pads at the
-first I2C probe.
+Le 14/11/2026 à 10:12, Vincent Jardin via B4 Relay a écrit :
+> From: Vincent Jardin <vjardin@free.fr>
+> 
+> fsl_guts_rcw_rmw() only serves the SerDes lane modes. Export it for
+> other fields of the RCW:
+>   - fsl_guts_rcw_read() reads a status register
+>   - fsl_guts_rcw_override() changes fields of one under rcwcr_lock and
+>     waits for the status register to follow
+>   - fsl_guts_rcw_override_supported() tells whether the DCSR view of DCFG,
+>     which holds the override registers, is mapped
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Acked-by: Frank Li <Frank.li@nxp.com>
+> Signed-off-by: Vincent Jardin <vjardin@free.fr>
 
-Describe the pad mux as a child of the dcfg node, which gains its DCSR
-view and, as on the LS1028A, the addressing of its children:
-the child is at its RCWSR12 to RCWSR14 window, one group per RCW field,
-one function per encoding, driven by fsl,lx2160a-rcw-pinmux using
-fsl-guts. Labels and pin node names stay, so no consumer changes.
-The pinctrl-single node goes.
 
-Signed-off-by: Vincent Jardin <vjardin@free.fr>
----
- arch/arm64/boot/dts/freescale/fsl-lx216x.dtsi | 377 ++++++++++++++------------
- 1 file changed, 202 insertions(+), 175 deletions(-)
+Acked-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx216x.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx216x.dtsi
-index 2085362ab0ea..48e065aaafbc 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx216x.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx216x.dtsi
-@@ -669,9 +669,209 @@ clockgen: clock-controller@1300000 {
- 		};
- 
- 		dcfg: syscon@1e00000 {
--			compatible = "fsl,lx2160a-dcfg", "syscon";
--			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			compatible = "fsl,lx2160a-dcfg", "syscon", "simple-mfd";
-+			reg = <0x0 0x1e00000 0x0 0x10000>,
-+			      <0x7 0x00100000 0x0 0x10000>;
-+			reg-names = "dcfg_ccsr", "dcfg_dcsr";
-+			ranges = <0x0 0x0 0x1e00000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
- 			little-endian;
-+
-+			pinmux_i2crv: pinctrl@12c {
-+				compatible = "fsl,lx2160a-rcw-pinmux";
-+				reg = <0x12c 0xc>;
-+
-+				i2c1_pins: iic2-i2c-pins {
-+					function = "i2c";
-+					groups = "iic2";
-+				};
-+
-+				gpio0_31_30_pins: iic2-gpio-pins {
-+					function = "gpio";
-+					groups = "iic2";
-+				};
-+
-+				ftm0_ch10_pins: iic2-ftm-pins {
-+					function = "flextimer";
-+					groups = "iic2";
-+				};
-+
-+				esdhc0_cd_wp_pins: iic2-sdhc-pins {
-+					function = "sdhc";
-+					groups = "iic2";
-+				};
-+
-+				i2c2_pins: iic3-i2c-pins {
-+					function = "i2c";
-+					groups = "iic3";
-+				};
-+
-+				gpio0_29_28_pins: iic3-gpio-pins {
-+					function = "gpio";
-+					groups = "iic3";
-+				};
-+
-+				can0_pins: iic3-can-pins {
-+					function = "can";
-+					groups = "iic3";
-+				};
-+
-+				event65_pins: iic3-event-pins {
-+					function = "evt";
-+					groups = "iic3";
-+				};
-+
-+				i2c3_pins: iic4-i2c-pins {
-+					function = "i2c";
-+					groups = "iic4";
-+				};
-+
-+				gpio0_27_26_pins: iic4-gpio-pins {
-+					function = "gpio";
-+					groups = "iic4";
-+				};
-+
-+				can1_pins: iic4-can-pins {
-+					function = "can";
-+					groups = "iic4";
-+				};
-+
-+				event87_pins: iic4-event-pins {
-+					function = "evt";
-+					groups = "iic4";
-+				};
-+
-+				i2c4_pins: iic5-i2c-pins {
-+					function = "i2c";
-+					groups = "iic5";
-+				};
-+
-+				gpio0_25_24_pins: iic5-gpio-pins {
-+					function = "gpio";
-+					groups = "iic5";
-+				};
-+
-+				esdhc0_clksync_pins: iic5-sdhc-clk-pins {
-+					function = "sdhc-clk";
-+					groups = "iic5";
-+				};
-+
-+				dspi2_miso_mosi_pins: iic5-spi3-pins {
-+					function = "spi";
-+					groups = "iic5";
-+				};
-+
-+				i2c5_pins: iic6-i2c-pins {
-+					function = "i2c";
-+					groups = "iic6";
-+				};
-+
-+				gpio0_23_22_pins: iic6-gpio-pins {
-+					function = "gpio";
-+					groups = "iic6";
-+				};
-+
-+				esdhc1_clksync_pins: iic6-sdhc-clk-pins {
-+					function = "sdhc-clk";
-+					groups = "iic6";
-+				};
-+
-+				fspi_data74_pins: xspi1-data74-pins {
-+					function = "flexspi";
-+					groups = "xspi1-data74";
-+				};
-+
-+				gpio1_31_28_pins: xspi1-data74-gpio-pins {
-+					function = "gpio";
-+					groups = "xspi1-data74";
-+				};
-+
-+				fspi_data30_pins: xspi1-data30-pins {
-+					function = "flexspi";
-+					groups = "xspi1-data30";
-+				};
-+
-+				gpio1_27_24_pins: xspi1-data30-gpio-pins {
-+					function = "gpio";
-+					groups = "xspi1-data30";
-+				};
-+
-+				fspi_dqs_sck_cs10_pins: xspi1-base-pins {
-+					function = "flexspi";
-+					groups = "xspi1-base";
-+				};
-+
-+				gpio1_23_20_pins: xspi1-base-gpio-pins {
-+					function = "gpio";
-+					groups = "xspi1-base";
-+				};
-+
-+				esdhc0_cmd_data30_clk_vsel_pins: sdhc1-base-sdhc-vsel-pins {
-+					function = "sdhc";
-+					groups = "sdhc1-base";
-+				};
-+
-+				gpio0_21_15_pins: sdhc1-base-gpio-pins {
-+					function = "gpio";
-+					groups = "sdhc1-base";
-+				};
-+
-+				dspi0_pins: sdhc1-base-spi1-pins {
-+					function = "spi";
-+					groups = "sdhc1-base";
-+				};
-+
-+				esdhc0_cmd_data30_clk_dspi2_cs0_pins: sdhc1-base-sdhc-spi3-pins {
-+					function = "sdhc-spi";
-+					groups = "sdhc1-base";
-+				};
-+
-+				esdhc0_cmd_data30_clk_data4_pins: sdhc1-base-sdhc-data4-pins {
-+					function = "sdhc-data4";
-+					groups = "sdhc1-base";
-+				};
-+
-+				esdhc0_dir_pins: sdhc1-dir-pins {
-+					function = "sdhc";
-+					groups = "sdhc1-dir";
-+				};
-+
-+				gpio0_14_12_pins: sdhc1-dir-gpio-pins {
-+					function = "gpio";
-+					groups = "sdhc1-dir";
-+				};
-+
-+				dspi2_cs31_pins: sdhc1-dir-spi3-pins {
-+					function = "spi";
-+					groups = "sdhc1-dir";
-+				};
-+
-+				esdhc0_data75_pins: sdhc1-dir-sdhc-pins {
-+					function = "sdhc-data";
-+					groups = "sdhc1-dir";
-+				};
-+
-+				gpio1_18_15_pins: iic8-iic7-gpio-pins {
-+					function = "gpio";
-+					groups = "sdhc2-data74";
-+				};
-+
-+				i2c6_i2c7_pins: iic8-iic7-i2c-pins {
-+					function = "i2c";
-+					groups = "sdhc2-data74";
-+				};
-+
-+				i2c0_pins: iic1-i2c-pins {
-+					function = "i2c";
-+					groups = "iic1";
-+				};
-+
-+				gpio0_3_2_pins: iic1-gpio-pins {
-+					function = "gpio";
-+					groups = "iic1";
-+				};
-+			};
- 		};
- 
- 		sfp: efuse@1e80000 {
-@@ -1531,179 +1731,6 @@ pcs18: ethernet-phy@0 {
- 			};
- 		};
- 
--		pinmux_i2crv: pinmux@70010012c {
--			compatible = "pinctrl-single";
--			reg = <0x00000007 0x0010012c 0x0 0xc>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			#pinctrl-cells = <2>;
--			pinctrl-single,bit-per-mux;
--			pinctrl-single,register-width = <32>;
--			pinctrl-single,function-mask = <0x7>;
--
--			/* RCWSR12 */
--			i2c1_pins: iic2-i2c-pins {
--				pinctrl-single,bits = <0x0 0x0 0x7>;
--			};
--
--			gpio0_31_30_pins: iic2-gpio-pins {
--				pinctrl-single,bits = <0x0 0x1 0x7>;
--			};
--
--			ftm0_ch10_pins: iic2-ftm-pins {
--				pinctrl-single,bits = <0x0 0x2 0x7>;
--			};
--
--			esdhc0_cd_wp_pins: iic2-sdhc-pins {
--				pinctrl-single,bits = <0x0 0x6 0x7>;
--			};
--
--			i2c2_pins: iic3-i2c-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 3)>;
--			};
--
--			gpio0_29_28_pins: iic3-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 3) (0x7 << 3)>;
--			};
--
--			can0_pins: iic3-can-pins {
--				pinctrl-single,bits = <0x0 (0x2 << 3) (0x7 << 3)>;
--			};
--
--			event65_pins: iic3-event-pins {
--				pinctrl-single,bits = <0x0 (0x6 << 3) (0x7 << 3)>;
--			};
--
--			i2c3_pins: iic4-i2c-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 6)>;
--			};
--
--			gpio0_27_26_pins: iic4-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 6) (0x7 << 6)>;
--			};
--
--			can1_pins: iic4-can-pins {
--				pinctrl-single,bits = <0x0 (0x2 << 6) (0x7 << 6)>;
--			};
--
--			event87_pins: iic4-event-pins {
--				pinctrl-single,bits = <0x0 (0x6 << 6) (0x7 << 6)>;
--			};
--
--			i2c4_pins: iic5-i2c-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 9)>;
--			};
--
--			gpio0_25_24_pins: iic5-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 9) (0x7 << 9)>;
--			};
--
--			esdhc0_clksync_pins: iic5-sdhc-clk-pins {
--				pinctrl-single,bits = <0x0 (0x2 << 9) (0x7 << 9)>;
--			};
--
--			dspi2_miso_mosi_pins: iic5-spi3-pins {
--				pinctrl-single,bits = <0x0 (0x3 << 9) (0x7 << 9)>;
--			};
--
--			i2c5_pins: iic6-i2c-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 12)>;
--			};
--
--			gpio0_23_22_pins: iic6-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 12) (0x7 << 12)>;
--			};
--
--			esdhc1_clksync_pins: iic6-sdhc-clk-pins {
--				pinctrl-single,bits = <0x0 (0x2 << 12) (0x7 << 12)>;
--			};
--
--			fspi_data74_pins: xspi1-data74-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 15)>;
--			};
--
--			gpio1_31_28_pins: xspi1-data74-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 15) (0x7 << 15)>;
--			};
--
--			fspi_data30_pins: xspi1-data30-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 18)>;
--			};
--
--			gpio1_27_24_pins: xspi1-data30-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 18) (0x7 << 18)>;
--			};
--
--			fspi_dqs_sck_cs10_pins: xspi1-base-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 21)>;
--			};
--
--			gpio1_23_20_pins: xspi1-base-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 21) (0x7 << 21)>;
--			};
--
--			esdhc0_cmd_data30_clk_vsel_pins: sdhc1-base-sdhc-vsel-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 24)>;
--			};
--
--			gpio0_21_15_pins: sdhc1-base-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 24) (0x7 << 24)>;
--			};
--
--			dspi0_pins: sdhc1-base-spi1-pins {
--				pinctrl-single,bits = <0x0 (0x2 << 24) (0x7 << 24)>;
--			};
--
--			esdhc0_cmd_data30_clk_dspi2_cs0_pins: sdhc1-base-sdhc-spi3-pins {
--				pinctrl-single,bits = <0x0 (0x3 << 24) (0x7 << 24)>;
--			};
--
--			esdhc0_cmd_data30_clk_data4_pins: sdhc1-base-sdhc-data4-pins {
--				pinctrl-single,bits = <0x0 (0x4 << 24) (0x7 << 24)>;
--			};
--
--			esdhc0_dir_pins: sdhc1-dir-pins {
--				pinctrl-single,bits = <0x0 0x0 (0x7 << 27)>;
--			};
--
--			gpio0_14_12_pins: sdhc1-dir-gpio-pins {
--				pinctrl-single,bits = <0x0 (0x1 << 27) (0x7 << 27)>;
--			};
--
--			dspi2_cs31_pins: sdhc1-dir-spi3-pins {
--				pinctrl-single,bits = <0x0 (0x3 << 27) (0x7 << 27)>;
--			};
--
--			esdhc0_data75_pins: sdhc1-dir-sdhc-pins {
--				pinctrl-single,bits = <0x0 (0x4 << 27) (0x7 << 27)>;
--			};
--
--			/* RCWSR13 */
--			gpio1_18_15_pins: iic8-iic7-gpio-pins {
--				pinctrl-single,bits = <0x4 0x1 0x7>;
--			};
--
--			i2c6_i2c7_pins: iic8-iic7-i2c-pins {
--				pinctrl-single,bits = <0x4 0x2 0x7>;
--			};
--
--			/* RCWSR14 */
--			/*
--			 * IIC1_PMUX is a single bit at RCWSR14[10], but bit-per-mux
--			 * uses the mask for the field to clear before applying the
--			 * value.
--			 * So bits 11 and 12, which are reserved, are written as 0
--			 * on every mux switch, it is harmless.
--			 */
--			i2c0_pins: iic1-i2c-pins {
--				pinctrl-single,bits = <0x8 0x0 (0x7 << 10)>;
--			};
--
--			gpio0_3_2_pins: iic1-gpio-pins {
--				pinctrl-single,bits = <0x8 (0x1 << 10) (0x7 << 10)>;
--			};
--		};
--
- 		fsl_mc: fsl-mc@80c000000 {
- 			compatible = "fsl,qoriq-mc";
- 			reg = <0x00000008 0x0c000000 0 0x40>,
 
--- 
-2.43.0
 
+> ---
+>   drivers/soc/fsl/guts.c   | 73 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/fsl/guts.h |  3 ++
+>   2 files changed, 76 insertions(+)
+> 
+> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+> index 28361c63e26c..d2e3f66d0da4 100644
+> --- a/drivers/soc/fsl/guts.c
+> +++ b/drivers/soc/fsl/guts.c
+> @@ -369,6 +369,79 @@ int fsl_guts_lane_set_mode(int serdes_idx, int lane, enum lynx_lane_mode lane_mo
+>   }
+>   EXPORT_SYMBOL_NS_GPL(fsl_guts_lane_set_mode, "FSL_GUTS");
+>   
+> +/**
+> + * fsl_guts_rcw_read() - read a RCW status register
+> + * @index: one-based index, RCWSR1 to RCWSR32
+> + * @val: the value read
+> + *
+> + * Return: 0 on success, -ENODEV before the DCFG block is mapped,
+> + * -EINVAL when @index is not 1 to 32
+> + */
+> +int fsl_guts_rcw_read(unsigned int index, u32 *val)
+> +{
+> +	if (!soc.dcfg_ccsr)
+> +		return -ENODEV;
+> +	if (index < 1 || index > ARRAY_SIZE(soc.dcfg_ccsr->rcwsr))
+> +		return -EINVAL;
+> +
+> +	*val = fsl_guts_read(&soc.dcfg_ccsr->rcwsr[index - 1]);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(fsl_guts_rcw_read, "FSL_GUTS");
+> +
+> +/**
+> + * fsl_guts_rcw_override() - override fields of a RCW
+> + * @index: one-based index of the RCWSR and RCWCR pair
+> + * @val: the new value of the fields, in place
+> + * @mask: the fields to change
+> + *
+> + * The fields outside @mask keep the value the status register shows. The
+> + * override register is written and the status register polled until it
+> + * shows the result, as fsl_guts_lane_set_mode() does for a SerDes lane.
+> + *
+> + * Context: takes rcwcr_lock, shared with fsl_guts_lane_set_mode(), and
+> + * busy-polls the status register for up to RCW_TIMEOUT_US. Does not
+> + * sleep; must not be called from interrupt context.
+> + *
+> + * Return: 0 on success, -EOPNOTSUPP without a DCSR mapping of DCFG,
+> + * negative error otherwise
+> + */
+> +int fsl_guts_rcw_override(unsigned int index, u32 val, u32 mask)
+> +{
+> +	int err;
+> +
+> +	if (!soc.dcfg_ccsr)
+> +		return -ENODEV;
+> +	if (!soc.dcfg_dcsr)
+> +		return -EOPNOTSUPP;
+> +	if (index < 1 || index > ARRAY_SIZE(soc.dcfg_ccsr->rcwsr))
+> +		return -EINVAL;
+> +
+> +	spin_lock(&soc.rcwcr_lock);
+> +	err = fsl_guts_rcw_rmw(index - 1, val & mask, mask);
+> +	spin_unlock(&soc.rcwcr_lock);
+> +	if (err)
+> +		pr_err("RCW override of RCWSR%u failed: %pe\n", index,
+> +		       ERR_PTR(err));
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(fsl_guts_rcw_override, "FSL_GUTS");
+> +
+> +/**
+> + * fsl_guts_rcw_override_supported() - can a Reset Configuration Word be
+> + *				       overridden?
+> + *
+> + * Return: true when the DCFG block is mapped with its DCSR view, the
+> + * second reg of the dcfg node, which holds the override registers
+> + */
+> +bool fsl_guts_rcw_override_supported(void)
+> +{
+> +	return soc.dcfg_ccsr && soc.dcfg_dcsr;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(fsl_guts_rcw_override_supported, "FSL_GUTS");
+> +
+>   static u64 fsl_guts_get_soc_uid(const char *compat, unsigned int offset)
+>   {
+>   	struct device_node *np;
+> diff --git a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h
+> index 8d5ffb985fee..7127de897c23 100644
+> --- a/include/linux/fsl/guts.h
+> +++ b/include/linux/fsl/guts.h
+> @@ -142,6 +142,9 @@ int fsl_guts_lane_validate(int serdes_idx, int lane,
+>   			   enum lynx_lane_mode lane_mode);
+>   int fsl_guts_lane_set_mode(int serdes_idx, int lane,
+>   			   enum lynx_lane_mode lane_mode);
+> +int fsl_guts_rcw_read(unsigned int index, u32 *val);
+> +int fsl_guts_rcw_override(unsigned int index, u32 val, u32 mask);
+> +bool fsl_guts_rcw_override_supported(void);
+>   
+>   /* Alternate function signal multiplex control */
+>   #define MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
+> 
 
