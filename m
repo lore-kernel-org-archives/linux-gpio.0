@@ -1,66 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794676130;
-	b=jTnUvq0rZxU2iRQ2cs8l0CK4ZsSqd7FBcKelVDWvXFN0bJpliVc/WBdPWKzv21fUz1+6
-	 D82DfpFmJELalc9OF/GTsuXXiAwacss27c7Er/cfPrtumNZ+f7Tig+8sL1E4ZJVR0lOMk
-	 BKfFjd3V7fIilJY9rWcKtypCk9x6T3jgzzh8OM4yFlfVxP1Ll1w+YfceYiSs7Z6H/A6Go
-	 lin/0wAQimatVu90jHkqAIzdobludBItu8oI2MrpNUNv8xwM53r3oJiXM1R+WMt0pggYJ
-	 YQyKGB0vhYqQXjhKTrbYPzm4uQ1aM838lWYcbbcpj6WRGLr8475MOLs2za0bHpDRszg==
+	t=1794678756;
+	b=0JvmDWwvupkE7Udwsssx5tmloYSrGHEB1b8c0Bz2BwHSmV5tO8NigLzTPhJnN8XzcwtK
+	 pDbcN0JTP0ZFr2xcrAtjFXAcrPiqlJPvNzk52XdlwBVyGIfgG+bkTXCalKOv56fBYllrG
+	 1HeixDkOGqg92g3CRZjTvZFRYlCNOuUYziU1aseXP7mWi28Kfxvwv8c2gHzVdiZvR0SN+
+	 zTgM4j3+jbiC7N80khYq4X0ZBx7N5HLdhjwa8hEbAituBvuCUGicv2jhIw3zftwEmXLLY
+	 LBRN1ylbGJru15Oqmjy+7Y9V3E8FUFpP4W6cFv+rlORNcl29f0ZcTGQJvg5r0MFAkrQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794676130;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794678756;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=BfodKtywx0Z9yeYwpkod4XUy8CUJpBCkMdDTlgsEf/Y=;
-	b=ZQ3pBTHMO1TBtgN2h2Zb6mCgGaOHhnoZoYm8xZKzI8r3sHF97LLnY7R89lSmwL0+bURc
-	 Czdt22S0hSZapDcAe1ARK7qfOWvt9LHBWAfwpqxsR/HGT0eV1s1f3o6vvOhV7rdf9Vsj2
-	 Mvpr/D3lqTKRAw0jQHXBCzcQASHfs6yDgB+3M9hzReAs8l4QQQFsP5XnxVzmjizUvXXuN
-	 +M4qciVHL55V/f8yEq4+HXUG2DZsyRgI3N6JL+tUZXqcGqs2CQFDb7pzZsoor5/g9ObQF
-	 5wivQx0yH1e3xXcQ2LtXSQGYm2IwdO5i3xKYw/733/qGZJfYYnybZ44kgtx3p0xkJjQ==
+	bh=6DnD0ERJEjy82XS2qztXwiX3wlv4q+LQrDFFVZf8mKw=;
+	b=MRH0D/EXxHXFazW4gbSILYLaZNfD9wheaHIJeN+e1AH0tLfLpKG+vsXahbaKl2GOCR8U
+	 QYOiTAf+qrex05WrqKlnjdNmnB8ZUkqwbmNefL3gP6j5vSK5e2fJCJjhwPZ6ULHeskkvj
+	 aAswGLfl8y/bYofHTNIKbCWZOj6xdbdbpcn5ch0vYmUoAm7ivFAxoH7VZcfqVYYuiEUaf
+	 VJ+k8FEhK5bFutHdH80DUsEzfRGTbPSk6b2IEHhb4Hc+8xUq6TuldL7XCoOwHlIXjqO1f
+	 zvPRgsoF5fy5jF/ybZ0rw5WmM0ShLP6xDLxL3br4VLojnhn86J/mEtbrZut71TYa5qA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="CH/Jii6G";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LUkan6tp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4482606A323;
-	Sat, 14 Nov 2026 17:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADAD606A323;
+	Sat, 14 Nov 2026 17:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CH/Jii6G
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F8A1F000C4;
-	Sat, 14 Nov 2026 17:08:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LUkan6tp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C1F1F000C4;
+	Sat, 14 Nov 2026 17:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794676129;
-	bh=BfodKtywx0Z9yeYwpkod4XUy8CUJpBCkMdDTlgsEf/Y=;
+	s=k20260515; t=1794678756;
+	bh=6DnD0ERJEjy82XS2qztXwiX3wlv4q+LQrDFFVZf8mKw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CH/Jii6GOxKja93EiEqLupCUDr+JcZmm12fN0f6PRGR+n1EWlvK4pdoZ/yMT6Kksy
-	 nv/9wCo7HnuulWAn/hdyNaQPo7c1PvWyzQ9bRO0vAHyhQJ5xXtbauf+PwGyr6OT2ad
-	 07CV1JaljkS+4VN6PX1kw622V5PAx7ftVZTAkzSvPlQVQPgNicuIRNzIFiRRS6G/f8
-	 TApIYwLgHmJBi4IAPhGiwfaTsTaZerADz2a1ztYamOai0xg3bBO415Jvm73WqS9zmA
-	 OKtqiwwjr0wMLfnGv6yVK7zLGcaJIkYLO5gtrX1vdZ9VA7LNO/6lREbAEKWUgrlaQc
-	 j2oAxT5R7G8ZA==
-Date: Sat, 14 Nov 2026 18:08:41 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 10/19] platform/x86: hp-bioscfg: Rename local variable
-Message-ID: <aviVUS3cyyJNHrd6@devuan>
+	b=LUkan6tp+t9+xkSlDkdVdu+VhjTcLDaJ15jrfZbJ0KCQHyoDCmkBTfPrPJrTVRyrx
+	 MsyNwaIkGqXupHpT7VyJ6VUkWHlsPniqNmIAirG7hcGtcZIzxBkFn2zfZr9zCzM0Iw
+	 eXXHt5o1KTS3DOXc5R/k0jOESiJNvUyB1OKJimGuKEFnbAz1TLC23kYTNQmZ8CDoai
+	 fHCNAB34w/YQr8ihy+24iscloBE2xXWNZQly64OFFQXm/AN3PGwOS+u0UM6SInwQGd
+	 lZxwI1H/IU04/RMESBZbTdN2owYpJZPyxpWYqf+jNzb2A2I7RREDqmmgIfgtXr339S
+	 C79Wfxhd7ExdQ==
+Date: Sat, 14 Nov 2026 18:52:32 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: sashiko-reviews@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v6 09/19] string: Make strstarts() a legacy alias for
+ strprefix()
+Message-ID: <avifcIDnASrpmwJF@devuan>
 References: <cover.1794667407.git.alx@kernel.org>
- <ec94f69d2925d2362e8bde4ca1b1f7f3893c0315.1794667407.git.alx@kernel.org>
- <7d45a8e02dc9407e6b95893d6be1591aadc24cb9.camel@perches.com>
+ <212e7fc2cb99b631c493f59b8b38e1fd3db81231.1794667407.git.alx@kernel.org>
+ <sashiko-outbox-214720@kernel.org>
+ <aviDEUMYSy19Ce2P@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,100 +61,127 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="abnhfluguix7tdhv"
+	protocol="application/pgp-signature"; boundary="57smwsejatqietde"
 Content-Disposition: inline
-In-Reply-To: <7d45a8e02dc9407e6b95893d6be1591aadc24cb9.camel@perches.com>
+In-Reply-To: <aviDEUMYSy19Ce2P@devuan>
 
 
---abnhfluguix7tdhv
+--57smwsejatqietde
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Andreas Schwab <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 10/19] platform/x86: hp-bioscfg: Rename local variable
-Message-ID: <aviVUS3cyyJNHrd6@devuan>
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: sashiko-reviews@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v6 09/19] string: Make strstarts() a legacy alias for
+ strprefix()
+Message-ID: <avifcIDnASrpmwJF@devuan>
 References: <cover.1794667407.git.alx@kernel.org>
- <ec94f69d2925d2362e8bde4ca1b1f7f3893c0315.1794667407.git.alx@kernel.org>
- <7d45a8e02dc9407e6b95893d6be1591aadc24cb9.camel@perches.com>
+ <212e7fc2cb99b631c493f59b8b38e1fd3db81231.1794667407.git.alx@kernel.org>
+ <sashiko-outbox-214720@kernel.org>
+ <aviDEUMYSy19Ce2P@devuan>
 MIME-Version: 1.0
-In-Reply-To: <7d45a8e02dc9407e6b95893d6be1591aadc24cb9.camel@perches.com>
+In-Reply-To: <aviDEUMYSy19Ce2P@devuan>
 
-Hi Joe,
-
-> Date: 2026-11-14 08:04:56-0800
-> From: Joe Perches <joe@perches.com>
+> Date: 2026-11-14 16:51:58+0100
+> From: Alejandro Colomar <alx@kernel.org>
 >
-> On Sat, 2026-11-14 at 16:23 +0100, Alejandro Colomar wrote:
-> > strprefix shadows a function of the same name.  Let's rename it.
-> []
-> > diff --git a/drivers/platform/x86/hp/hp-bioscfg/spmobj-attributes.c b/d=
-rivers/platform/x86/hp/hp-bioscfg/spmobj-attributes.c
-> []
-> > @@ -87,13 +87,13 @@ int hp_populate_security_buffer(u16 *authbuf, const=
- char *authentication)
-> >  		 */
-> > =20
-> >  		/* append UTF_PREFIX to part and then convert it to unicode */
-> > -		strprefix =3D kasprintf(GFP_KERNEL, "%s%s", UTF_PREFIX,
-> > +		prefix =3D kasprintf(GFP_KERNEL, "%s%s", UTF_PREFIX,
-> >  				      authentication);
-> > -		if (!strprefix)
-> > +		if (!prefix)
-> >  			return -ENOMEM;
-> > =20
-> > -		auth =3D hp_ascii_to_utf16_unicode(auth, strprefix);
-> > -		kfree(strprefix);
-> > +		auth =3D hp_ascii_to_utf16_unicode(auth, prefix);
+> > Date: 2026-11-14 15:33:19+0000
+> > From: sashiko-bot@kernel.org
+> >
+> > Thank you for your contribution! Sashiko AI review found 1 potential
+> > issue to consider:
+> > - [High] string: strstarts() macro expansion shadowed by local strprefix
+> >   variable
+> > --
+> >=20
+> > commit e4b277f22320c7ff4dbc9e8cc88221ad43eb8ba6
+> > Author: Alejandro Colomar <alx@kernel.org>
+> >=20
+> > string: Make strstarts() a legacy alias for strprefix()
+> >=20
+> > This commit replaces the inline strstarts() function with a macro alias=
+ for
+> > strprefix().
+> >=20
+> > > diff --git a/include/linux/string.h b/include/linux/string.h
+> > > index 013c6169def05..0a466360dbb39 100644
+> > > --- a/include/linux/string.h
+> > > +++ b/include/linux/string.h
+> > > @@ -609,6 +609,7 @@ static inline const char *strprefix(const char *s=
+, const char *prefix)
+> > >  	return strncmp(s, prefix, len) =3D=3D 0 ? s + len : NULL;
+> > >  }
+> > >  #define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, p=
+fx))
+> > > +#define strstarts(s, pfx)  strprefix(s, pfx)  // legacy alias
+> >=20
+> > [Severity: High]
+> > Does expanding strstarts() to strprefix() break the build when a caller=
+ has
+> > a local variable named strprefix?
+> >=20
+> > drivers/platform/x86/hp/hp-bioscfg/spmobj-attributes.c:hp_populate_secu=
+rity_buffer() {
+> > 	u16 *auth =3D authbuf;
+> > 	char *strprefix =3D NULL;
+> > 	int ret =3D 0;
+> >=20
+> > 	if (strstarts(authentication, BEAM_PREFIX)) {
+> >     ...
+> > }
+> >=20
+> > Because the strprefix() macro expands to a call to the inline function
+> > strprefix() in the caller's scope, the local pointer variable strprefix
+> > shadows the function identifier and breaks compilation when
+> > CONFIG_HP_BIOSCFG is enabled.  A later patch in this series, commit
+> > "platform/x86: hp-bioscfg: Rename local variable", renames that variabl=
+e to
+> > prefix and should be ordered before this commit to keep the series
+> > bisectable.
 >=20
-> unassociated defect but the auth buffer isn't apparently sized
-> so some write beyond buffer seems possible.
+> This reivew is wrong.  A local variable cannot shadow a macro.  Also,
+> a function-like macro is only expanded if it's followed by an opening
+> parenthesis.  In the case of spmobj-attributes.c, the local variable
+> doesn't have a parenthesis, and thus doesn't trigger expansion.
 
-Thanks!
+After looking at it a second time, while the report from sashiko is
+wrong, the code is actually wrong, and reordering the commits would be
+appropriate.  I'll reorder them in v7.
 
-I don't fully understand that utf code, so I'll leave this to anyone
-else who knows about it.  But I'm interested in it, so if anyone writes
-a patch, please CC me.
+>=20
+> >=20
+> > --=20
+> > Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.179466740=
+7.git.alx@kernel.org?part=3D9
+>=20
+> --=20
+> <https://www.alejandro-colomar.es>
 
 
-Cheers,
-Alex
 
 --=20
 <https://www.alejandro-colomar.es>
 
---abnhfluguix7tdhv
+--57smwsejatqietde
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr4lZkACgkQ64mZXMKQ
-wqll2xAAlo/8OIh/wStVWgvbD2tunr8yoPiMTT+S4gmCiYL+v2IvsZLZEOvt+Uba
-cDJVqfcsP5vx7xZ4Az9wI1NmA4nqoNmttyo7lwUQwE89TzoBBL2xofp9bOskC64T
-oDzrHJcxmz6PhoWJijs+oETz6hGNZcr9+/PkWL4AvcvDcFygbXqV5XQhNzS9RYaI
-XCCfpw7zs84g1BFblgIKFJ6QBV8loAXRMaAKn/MMsG6KbYUhexLpQGfHFMZCT6tn
-mthZrsUC8xJEtvf6smTcnB7KnKH0uvv5BZKYKMB8J0DXVvUVyNFj5M7gNNQ77bXF
-DpbDOdI2vml5foRhv77trTSd3zacxum/pNucr1ZOsr4XsROas4jdBTCtVu9qCEbE
-YWVsYrnk6T5ved1awB8mdBcbOBEK29BFuOE1U4NylRvR3rBxcYk6rizn0oj1LD1J
-Vyj8S5TkJd/ic7WndOD1k3GkGU9nMQiyTEBmfiWRDAqcZB6PDm40phjzYJdrSd9f
-mV09vjgFz6SEqX9uNM9VB/sho0g6Y781mImo9KQf45jrHY1D4hdSCh8XLevTWQVL
-KoatE4iiGiegXAwje4sBD6rCTV3hhpAeQpE429JvHx7em/kcBniAFq13AWr3Ubmg
-om1bIje2tDd/EKuS8qKcUkJEDxwsM+8/ocUyCztQaFqtOy42XUA=
-=pHXv
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr4n9oACgkQ64mZXMKQ
+wqn94A/9GpJCSpka7wT82Abxs2fiQNZNwK2Q+QgOzL+PNv3wcF4mTe02uzPwmuhN
+I/jnDKuIEsEcoDKoZoZn2l4hNAckN1WOc1oj9+KBsX+bS0haexRX9zYvbWybbA8E
+A+5DmBX0zpCoi1Pj6rBE0hGP/21XUWzCicK4SeRXOBom/teBvX9npqIkJMJZvcs9
+OzSTePdutBFwD4gQCLGYjgFOu5+wOEAAgaI34g+gyhwzfiCjmBQfD0IMwlssn26Q
+K2mUegNaQkpoMtHG1ynoBIi1BjCx6lzt+WK+cpVaB7SEShH92yw5bAtEG1hdGkf5
+c7znVdPLLWbIBQR9jiZ9HnJmy8wOWsGHNF0yDk4w8PA6Cd+E2lXdkWpDZyQMkNk+
+HdZbhB5Qa02mzvB2htBUVEr1LjoeMgL1vGx4qp10hmzDHaPcgQIs77oKDWU3JkjJ
+fKXW7QFaCOSucMsJNLCGTMvG0bIt+fIt/mPi105xMU2aPigfzECPUhkceSUg8okf
+4iLYQP0BgvJ28qhz42HRMPjBqffM/TgKbx4YqoadTzfcsY+wDkWa5peG1Hex3KUe
+gJ0kBAs4V299DdAdBqYnTPRt19OxvsjNNkfZmdDjf4uPFeIyH4qcXZPE7SXy7988
+tza8A9EsD3HHV6eZWZdih6Ohiv5oZATtw+Y+AmMxR3eGKqG54YA=
+=RYYB
 -----END PGP SIGNATURE-----
 
---abnhfluguix7tdhv--
+--57smwsejatqietde--
