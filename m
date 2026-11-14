@@ -1,74 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794680683;
-	b=QNGCAzU3GNh6crZw6bS+jGZDK6GCJBko2RwZo/ljxhi/iziak34TviWaO2aUQV2D4c+5
-	 z6fiUQBcSj/LbtrX6UAPXEgQGEpxbG8TBNyccBv/Ee2lYv5A3Z0KB8U0RJor7mbaj10dL
-	 7xRDKbZlXgBbiU9X4aMzY7DZQv/eYio8BokJsvScEfa/ov7TVmAoc5SprsVtBjzwRifz4
-	 E5bcl54F+ZBoi5TzpsM0UdA8Ht5u74EvS57t6gYdSHD1MqsYdgpL3Ud6/Xr5Wcb746nYF
-	 qdNdDLgbfxioI1Bzjx/0Jle3VWIx/dzuZPluYqkPHq+sZBzgJs4nEGfVF+ZWgucxNbA==
+	t=1794681104;
+	b=rdH3z/ASr7s0oSk46DosZHy2LRYO1Oks7bbppKhDxLDZYOtgBihBlBAzvM1RXDXxlHab
+	 aUceTAlX0x+hR8+dOYAhvupEt4UViAj/aaWg39sp8A1MqrJEUKOLowHy/LS9eh4OcaDFj
+	 xvvPEsvINfdLbaKScxOUPqBiEjvhq4WsrF/jhgd0yKvIrkGLIB3oqEZWgGRveiFldkQDF
+	 Jv4FuSoVXABZ+QWOfZHJ52N+T8dZG9ibYxbxx3TrHEnv+iFQsYBU4J2Bi4daneiFzcn81
+	 Yjuosc5UJfQnUa2MqZ5TylV35XazCiT+ZXGF9KCvSx3r2heOTbm2KoezDzfp6yLHXbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794680683;
-	h=DMARC-Filter:Received:Received:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-Rspamd-Server:X-Rspamd-Queue-Id:
-	 X-Stat-Signature:X-Spam-Status:X-Session-Marker:X-Session-ID:X-HE-Tag:
-	 X-HE-Meta;
-	bh=7Gq0B0cMHNXa81F7NCHx8crSmgQ/6THqEAXao/juk5w=;
-	b=li/CByveF93NBTj8FmcM+dBLou9F10OeqoDixMfL1e6vVXk1qIPJUXp1kbrq2ki8SUaN
-	 Lt2ghx94fgjtvrT8CFHnsrG9oKLDdSOiTcykHL+pXTh9R9zMKqbvgAplN/aolUIFcbejJ
-	 9LQdvvKkfBI3YPn9Mllrc0rtIe4QymkxncCveCsNLOAKzCQ6ctSoMZB7YucXGlSvkxQ2j
-	 y7Tnvrv2vbH0Dj1P7fUVeSm0v8Zsx9pqS+IhhlUSw/ohIT+QaDqjm+7u6TOoJofwCBuqK
-	 E/xbdaIJgzaxW78kCu9qnbxD7IDpgUFCPooqnyPdg9CJaC1y3wZqbNUcfra2qO9zOQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794681104;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=2ZqLAiq/31fl4lr1W8a13mVKhM7arBtXqcwZdZQmjDQ=;
+	b=A0pQ0gvVJNsckeMtXiuvIfG4tSLorWL+n0TskHcbzHekc7vZ9uE0uP12hVvhjPBN36PV
+	 12fDqO2F6lXAq5qctN9Dbr/NvFhZJCxpuWp+tgFq5gpLDWlIYI8z5i0I7RTCNWKtnzoB4
+	 1HyZDSf1FEahmDyXww8fX5bJbVYyCjGfvYmLLdI6VFIPkUNjDvfFBVauaxVYFkXhp5Cqt
+	 E3p0FRuKmcvXTCCfEM+oVmUxWynqAIALhqtEpqh/zXfblK4zESqeWR2R0BmGam1ZQwvUl
+	 3SbYxYe4xDS0LOA7zdvqfgz5o7hEyiHo07P4t5m7dVrBXQqr49VtMufimV/HPa7zj0Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=perches.com;
-	spf=pass smtp.mailfrom=perches.com;
-	arc=none smtp.remote-ip=216.40.44.15
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=flxfUIlj;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C364B606A323;
-	Sat, 14 Nov 2026 18:24:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C364B606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf08.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id B12A180433;
-	Sat, 14 Nov 2026 18:24:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf08.hostedemail.com (Postfix) with ESMTPA id BD06320028;
-	Sat, 14 Nov 2026 18:24:27 +0000 (UTC)
-Message-ID: <32e7bdb5b8a4a522566b00763ba13974733290dd.camel@perches.com>
-Subject: Re: [PATCH v6 02/19] string: Add strprefix()
-From: Joe Perches <joe@perches.com>
-To: Alejandro Colomar <alx+linux-hardening@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
- Krzysztof Kozlowski	 <krzk@kernel.org>, "Maciej W. Rozycki"
- <macro@orcam.me.uk>, Geert Uytterhoeven	 <geert@linux-m68k.org>, Andreas
- Schwab <schwab@linux-m68k.org>, Andy Shevchenko	 <andy@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>, Daniel Scally	 <djrscally@gmail.com>, Danilo
- Krummrich <dakr@kernel.org>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold
- <johan@kernel.org>, Kees Cook <kees@kernel.org>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus
- Torvalds	 <torvalds@linux-foundation.org>, Linus Walleij
- <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring	 <robh@kernel.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Saravana Kannan	 <saravanak@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi	 <zanussi@kernel.org>,
- linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Bartosz Golaszewski	
- <bartosz.golaszewski@oss.qualcomm.com>
-Date: Sat, 14 Nov 2026 10:24:26 -0800
-In-Reply-To: <aviOPo6bZ-WGsndf@devuan>
-References: <cover.1794667407.git.alx@kernel.org>
-	 <0eaa4ce73a2b164fd49e3a9f71244a2e3f45b7bb.1794667407.git.alx@kernel.org>
-	 <c113f651d1ce1b2d42ab9d0c59ae5a0cd17ddb6a.camel@perches.com>
-	 <aviOPo6bZ-WGsndf@devuan>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600DA606A323;
+	Sat, 14 Nov 2026 18:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=flxfUIlj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8A71F000C4;
+	Sat, 14 Nov 2026 18:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794681104;
+	bh=2ZqLAiq/31fl4lr1W8a13mVKhM7arBtXqcwZdZQmjDQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=flxfUIljYcqY1gad1VQARX95loB0tnmGGVSmyXw5PrOqqzcD4+S9yZEDq31f+/AkP
+	 /eskcht6f0f/qko6C5Uwq4VB9U7Sjy6aeWPZWSl/8YTVLl9fNX6Q8zMBia7zpV4lZt
+	 dIwAMr/FEASH26Z86LjuUtr4F/FA3NGRcUDmFJMAnFmGAeH2fZcXRXrM9ylIqzhESu
+	 jzUIkRkIoHOjmXXnkrFrAMpJm49SopmXAKmnBtXiLo/Nb0lEz0Tj1IqRJU0BQN8NNF
+	 AfBz9SG0J6P7ER/m3pUjeQJulcryyOhTm8B80UYIxcYLkSVNHn2v/xsWk2pIny2NC+
+	 Y5wvQXnch4aaw==
+Message-ID: <sashiko-outbox-214903@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] leds: pca9532: Propagate I2C errors
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Daniil Demakov" <t3127430@gmail.com>, linux-leds@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261114181438.22204-1-t3127430@gmail.com>
+References: <20261114172431.11075-1-t3127430@gmail.com>
+ <20261114181438.22204-1-t3127430@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 (3.60.2-3.fc44) 
+Date: Sat, 14 Nov 2026 18:31:43 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -77,26 +59,68 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: BD06320028
-X-Stat-Signature: uj3e8mwsshemj8ge6ddf4mc91ri8dw4z
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+e5dSH8m66FQr+sABQJ+LjiDgM+6JENCM=
-X-HE-Tag: 1794680667-794125
-X-HE-Meta: U2FsdGVkX1/wA9X5ufzvQY1fzLCkRYRaqUgra+6tgFYA68i3lgt6uVjn8g7QfwHoBGUIot+9Ev2Xvr4AKKpjWIgjM6L0KUQIa5y3q8a0q9FfMbcbrbI7rgsHROnPQtix9KjPQvp/bb6JC0Bdaq0bxLevuGFacXxUtH7wLleE7lRzhzJoYKyyxPsjqgmQr+ayJvTlb7hkXBGqBfzwKj1DteUoGxcDbJcJeruRgVHzS5vcQdtL18diKvZaqTMJpj9F8o7L5oc90XlRmOHIyH51lymo9J9MIi8vtcoJIL1p2J3+6xoW8Ui+Dz6Q7+Ijsp9b
 
-On Sat, 2026-11-14 at 17:59 +0100, Alejandro Colomar wrote:
-> > A negative of this is that it implies the return should
-> > always be tested even though it can be known that the
-> > return is effectively bool.
->=20
-> I'm not sure I follow.  The attribute is about the arguments, not the
-> return value.  Perhaps I don't understand what you mean by "this".
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] leds: pca9532: sleeping mutex acquired in atomic
+  pca9532_event() callback
+--
 
-'this' is the return of the strprefix function itself.
+commit c7d1a2a939904c415bec23e00e60cb3b774b087c
+Author: Daniil Demakov <t3127430@gmail.com>
 
-It returns either a const char * or a char * or NULL.
+leds: pca9532: Propagate I2C errors
 
-Because it can return NULL, then the return value
-could/should be tested.
+This commit checks and propagates SMBus read and write errors across LED,
+PWM, blink, and GPIO operations while serializing shared state under
+update_lock.
+
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index c8085427696ff..eb9020e77b46d 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
+
+[ ... ]
+
+> @@ -255,15 +369,32 @@ static int pca9532_set_blink(struct led_classdev *l=
+ed_cdev,
+
+[ ... ]
+
+>  static int pca9532_event(struct input_dev *dev, unsigned int type,
+> -	unsigned int code, int value)
+> +			 unsigned int code, int value)
+>  {
+>  	struct pca9532_data *data =3D input_get_drvdata(dev);
+> =20
+> @@ -271,11 +402,15 @@ static int pca9532_event(struct input_dev *dev, uns=
+igned int type,
+>  		return -1;
+> =20
+>  	/* XXX: allow different kind of beeps with psc/pwm modifications */
+> +	mutex_lock(&data->update_lock);
+> +
+>  	if (value > 1 && value < 32767)
+>  		data->pwm[PCA9532_PWM_ID_1] =3D 127;
+>  	else
+>  		data->pwm[PCA9532_PWM_ID_1] =3D 0;
+> =20
+> +	mutex_unlock(&data->update_lock);
+> +
+>  	schedule_work(&data->work);
+> =20
+>  	return 0;
+
+[Severity: High]
+Does acquiring data->update_lock here sleep in atomic context?
+
+pca9532_event() is the struct input_dev::event callback, which input core
+invokes while holding spin_lock_irqsave(&dev->event_lock) (for example via
+input_inject_event() -> input_handle_event() -> input_event_dispose()).
+Delivering an EV_SND event when a pin is configured as
+PCA9532_TYPE_N2100_BEEP will sleep while atomic and can hang or panic the
+kernel if data->update_lock is contended.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114181438.2220=
+4-1-t3127430@gmail.com?part=3D1
