@@ -1,73 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.27.42.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794650818;
-	b=yZzOC8axm6D968Fw3bXEM8GX21AL8yZDxxtuu+CGx4wXwbPXSE3H68R6j3b9euKbgMZX
-	 gJyLCyQqDW6WIEmUdAVk+wmpzTNh6xlwrElF66BB7TLQskAzJTu0klMcE1xA7+ozxbFV1
-	 KgHEk+SxzP2NuR0gSejoy2hTlWnYKmrCX0kFClGFr9dnuFhPuu7dD8UZdMefZmmzXzePT
-	 J38IdADP9Eq1JTikBFCH84TqPRnvH+AawNhYeuH+phlHsd0Ot2ScLKDhcH3WEgJn3JaNu
-	 RpGYBAILye7W47Rt0sAAQD2RDo3wdiFO8sgSChR/dSd0pqWw6nu4AhpzqJu0oORw9yQ==
+	t=1794660951;
+	b=dQ40LXTjCUpuTnq676wn9DHzt3Kh1uM0mqm4RS25dhRkV+plIBfc8mg5lBPMmcWtLuGx
+	 qhCCm9E9s5vLhsWP4rBhUm3ahKGg2u+D+Mu3aSSKo1LQaVEPmweotR6XR4hcze85R/LLf
+	 zVKG+uJ0TkHxh8gl84J0snJLeXHwIcRCjnZQSaBUTeOSY/dOwuxtTZmr7H9vAEoy3yeep
+	 gZSaVAxB+G3TOI6vYcVHxtC4x81Xplc776RCxbt+dI6iPceXXctLaMj2lQyXWnysU6Vq4
+	 KMTn8Pf8l5H7hMSVB1GaRz7EjLTSKp4CWLaaJaoeIGj03/49foJ+hGBegCHf74+q2Aw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794650818;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=nA9uVd9Z0U/OOJAJirWA9SKPkRY0C9MO6GKy6l0PlO8=;
-	b=UBE7zTkPPM7gerlJsFE2Vj8ImBaItNGZkfsEap43lWONRX4lDWI4rg3Db6iqA+UyJvyr
-	 yMLb2Ihutt4xTmgRqumDF9ENpU3qUdz5AVei7p1SJ7Lgi1TnV1D7JJsI8i91F4IIgwKmW
-	 fJAoXMr6WDcKfQTPH/RfItd/JQ3gPz/MTaK/nvxzWV9fbV/NfJ76Orq7qQlbD1BNiY6dG
-	 p4yMqoQ+jbRZMCwdpbnMSHBv1PFhmHy96hsow1yrVWC4eUVE4oa2bfjMdoSDKxNRyy3qK
-	 KtVWhzTld6SxXNfBlr40nDV4JR07iImolWEkMBmIVGKzRJVsiZDSdLiymoNjl2eQ56w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794660951;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=smsm9ORhlPLDL5Nh8b0iZrku9Rm60/Khp9VarBhUFVE=;
+	b=lmY/VMVa9Emx1zhNMWq79ZDHlH4id32l+2fHI2/qexJh/Tyi+mIPpl0A7tHKuCPLD94J
+	 wPrY1Uusr9rwn9hU+AVrxWmNS3h2WMNg3ocZXDXguPsi2KLtv9Gf5MBTo/+9eNSRP+Azd
+	 e5PJALN8oODSEn3nxb1l+ht+PJodnQjJEXeXUOhXMI+xkH0ZTTO3n7Yge2tEiEuEo0eTm
+	 FOHqCc49KFoVq/iLKZdNFvzVg5H2+wheOEUqvyED0Q9uugSplYhKuadYHvKbjD2C93GZ0
+	 35yOg/qk/YAyjrN6qnLiV/mhncQPJP22ZFAPf9ygZVrfwOvO1H/84K1bpE2ifX1HIhg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=free.fr;
-	spf=pass smtp.mailfrom=free.fr;
-	dkim=pass header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=AQuAO0+L;
-	arc=none smtp.remote-ip=212.27.42.4
-Received: from smtp4-g21.free.fr (smtp4-g21.free.fr [212.27.42.4])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HaRvVopr;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FA5606A331;
-	Sat, 14 Nov 2026 10:06:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 15FA5606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC7F606A339;
+	Sat, 14 Nov 2026 12:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=AQuAO0+L
-Received: from L30177.local (unknown [78.241.242.250])
-	(Authenticated sender: vjardin@free.fr)
-	by smtp4-g21.free.fr (Postfix) with ESMTPSA id BBAB619F57E;
-	Sat, 14 Nov 2026 11:06:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-	s=smtp-20201208; t=1794650809;
-	bh=g0Aj3QD5cJIwmcGFVWYqEOdOoEhMM0NOddv6KOjkgb8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AQuAO0+LZLEF/gQfONel9daJSQ5G+M95vDYtU9EaA81yx0jCh7xMnXqRLFgMJBU9K
-	 jeOuqebH4GbanWCKhqhNViberAirFwC36UCWL77DI4wzGunWvC5L7kd1A0VyS2kvzv
-	 q1ANqthOBT7i5HnPa6QJVVK1pWT8laUcldqzv5BvOYFdmwEkhliKxq6HWuLnNMJnJc
-	 J8eEOBvLyLi+Grsj+LX16XZw2uVEhzq42HFUCJbHMBREzYGMMPbyL5n5bG1NIAiQIT
-	 vS8liQaaogXWcElLIw2rjPZBVMty3c9qR5g6YqYGv9+CHx13rwb+N4Vuk3Kbvb3lis
-	 Dt0bnTZBHj5YA==
-Date: Sat, 14 Nov 2026 11:06:22 +0100
-From: Vincent Jardin <vjardin@free.fr>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HaRvVopr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999561F000C4;
+	Sat, 14 Nov 2026 12:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794660951;
+	bh=smsm9ORhlPLDL5Nh8b0iZrku9Rm60/Khp9VarBhUFVE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=HaRvVoprCDXokhEvfXZunmRZ57OmBK16G+vrZvsktNqZvW7E/xHKpv36TJTsWKYT5
+	 tTMPncTJThx6q/vu9xmS01xlENgIj7cvILxowW59ARBvtu/gjo2TewkJsYVMyTorW8
+	 qtJztDUvKjpG8nHDxthKgjsvNqtB/fIUpqhMfY1qN2ViK1Q7vW3fJ4bL8XNtK7wYAY
+	 4a/jl1QUtSOCKf2HYMCt80ciwPqM9Di8KqOO88qAvNfB4Vc7Pxj7BbQNU0ujjGe6DP
+	 Oxp9cLMtLX6vNE2iQbiEkdJgFHw8+j5znujzqq5L83FIvIRJnGzg+/CQKoomalIMqm
+	 X9cCjnXmhtlJw==
+From: Sven Peter <sven@kernel.org>
+To: Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Radu Rendec <radu@rendec.net>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Subject: Re: [PATCH v4 3/5] soc: fsl: guts: add the RCW override of any RCWSR
-Message-ID: <avgynp6NS1u2-2Qv@L30177.local>
-References: <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-0-eefcea066a55@free.fr>
- <20261114-for-upstream-lx2160a-rcw-pinmux-v1-v4-3-eefcea066a55@free.fr>
- <d0f781bf-a325-4eee-9431-7eb387279934@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Sasha Finkelstein <k@chaosmail.tech>,
+	Linus Walleij <linusw@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Yureka Lilian <yureka@cyberchaos.dev>
+Cc: Sven Peter <sven@kernel.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/9] Initial Apple Silicon M5 device trees and dt-bindings
+Date: Sat, 14 Nov 2026 13:55:34 +0100
+Message-ID: <179466091298.20315.10220651986509721816.b4-ty@b4>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261106-apple-m5-initial-devicetrees-v3-0-cee55de54b2f@cyberchaos.dev>
+References: <20261106-apple-m5-initial-devicetrees-v3-0-cee55de54b2f@cyberchaos.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -77,19 +80,41 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d0f781bf-a325-4eee-9431-7eb387279934@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+On Fri, 06 Nov 2026 22:24:49 +0100, Yureka Lilian wrote:
+> This series adds initial device trees and dt-bindings for the Apple
+> Silicon devices using the M5 (t8142) SoCs.
+> 
+> This series covers only a minimal amount of hardware, which is useful
+> as a basis for future developments. The hardware added here has remained
+> largely unchanged from the earlier Apple Silicon generations.
+> 
+> [...]
 
-> Acked-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+Applied to git@github.com:AsahiLinux/linux.git (apple-soc/dt-7.5), thanks!
 
-With this ack and the reviews from Rob and Frank, my understanding it
-that the patches 1 to 4 can go into the pinctrl tree, while the
-patch 5 can go into Frank's tree once the driver is in.
+[1/9] dt-bindings: interrupt-controller: apple,aic2: Add t8142 compatible
+      https://github.com/AsahiLinux/linux/commit/d2ece48ec448
+[2/9] dt-bindings: arm: cpus: Add Apple M5 CPU core compatibles
+      https://github.com/AsahiLinux/linux/commit/29d432305187
+[3/9] dt-bindings: arm: power: apple,pmgr-pwrstate: Add t8142 compatible
+      https://github.com/AsahiLinux/linux/commit/a61030626ec1
+[4/9] dt-bindings: arm: apple: apple,pmgr: Add t8142 compatible
+      https://github.com/AsahiLinux/linux/commit/ca25b9f84383
+[5/9] dt-bindings: pwm: apple,s5l-fpwm: Add t8142 compatible
+      https://github.com/AsahiLinux/linux/commit/d60bedaceff2
+[6/9] dt-bindings: pinctrl: apple,pinctrl: Add t8142 compatible
+      https://github.com/AsahiLinux/linux/commit/d39d10bf2b37
+[7/9] dt-bindings: i2c: apple,i2c: Add t8142 compatible
+      https://github.com/AsahiLinux/linux/commit/b2755abb177e
+[8/9] dt-bindings: arm: apple: Add M5 based devices
+      https://github.com/AsahiLinux/linux/commit/33cfb254ebb8
+[9/9] arm64: dts: apple: Add minimal t8142 (M5) device trees
+      https://github.com/AsahiLinux/linux/commit/b9a12ab2c2d5
 
-Am I correct ?
+Best regards,
+-- 
+Sven Peter <sven@kernel.org>
 
-Thank you,
-  Vincent
