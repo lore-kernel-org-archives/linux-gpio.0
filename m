@@ -1,71 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794670123;
-	b=w9sBBrK1gSbSsbm8mnbpaRpGgZ/BCpRghoZVsER5QQIZt1yTY4qUOlNT/rtzQL1iV0RD
-	 GI6B3A1UtE0Lscj2+xtPLiGCiPoh+BDgjlDy5lPOjSylyJcWySpclu949D1MsU+PpJs0Z
-	 iHs6C981HcKRkN81qe3h0BF/8XmBrZ+RnPf3ccj4WV8SGxC1Se1V+vvLxpQQU+62YO8UO
-	 ZdkE6PYYYdtNNdy2pFdVI0L+DIQlkRtu+bxRUk1ydS8ywoLtJoDVBmNlVzdMr8/3Eihyj
-	 pKlldNGvDix0nhYt/ix7WmbBAkdnvvK+tgfOzrBoRW/TkJWp4WsgmQf6kTvsgN8YPVQ==
+	t=1794670191;
+	b=A0wOYEix8SlIXWpUOq9wwSNSba9haHxrqw5si4bBGDpIUx4bbEIZawF5VMxXiGzaJlt+
+	 qou4HW68K93ncXaLEycmM0N5s26dZmeVLx04gjg1U1Zsh2LLA5+CjJ9MU7H1GT2pa0EV0
+	 TqvJDMNqIjTeqe2z2c62x7rPJ/9gqKtC4P/oTti+kRZUiX/3AyaIvVrAld33u1tNXdcbi
+	 3lcbCYTIkThOSAjKLGZUXuMawR3SoIC9RihvzAZpl40BQ3zbsjxI2X8fY4+DXRD2eQoOQ
+	 ygFBPyVxxI+r+QFchxyKzH4pkmg+BPB3wLrOsUQNnW8XfElJxpBAkePX82Lsj7/9Row==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794670123;
-	h=DMARC-Filter:Received:Received:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-Rspamd-Server:X-Rspamd-Queue-Id:
-	 X-Stat-Signature:X-Spam-Status:X-Session-Marker:X-Session-ID:X-HE-Tag:
-	 X-HE-Meta;
-	bh=IdKF9ajWWE9SdG7ixSWGz+NY1Pz+dGrmBk+oq/+zmmk=;
-	b=wq0y9S1Yvw3Yl+qyfckUz4/6evYpuowHxU2HUbzzlBbTZPJoyTwf9X4++6mg7lYzAgrM
-	 drGXBjNKCbFU17Y1FT5jzPzx5BcUVC5m2tnRBu9c01AB77rRZjMMhZM0UXzRfA5ZDYAtz
-	 Trl9EHhR9UoXs+cUGgrZxeHtTmA8OGsOZ7bnJ2S4lX6+gNbjMcRNR1FNTPG/CZ3bBVjRf
-	 CcD/eYHRUY/DhcgBsm0nopIyQtWYuLH0VZQDqQxCw7o2mRR/+E5YENVrNdi6M6aMbZuzX
-	 EAlF/pG5AYdcQQ+4bs7/ap/D9/h6JbKruiwrMz57PGcCFO8YcwDMQbknSNA6eAtG9Vw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794670191;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=8aD2Ntc1u7Vyz+jk2M+W3ktbixvz2syGRvzQWDZooqo=;
+	b=e/buLCya6SL3LpNJQiO7FmVC1NCbfQVtPDWD72dqZ6s+QH5zuWovdj9W/FzSKBOw7q8o
+	 0HCe8uJAiK5tScGRR4oT08wxWm8VpWSy9JTOJhmdNm/zUQbJvySDE7PBBrBIsWJuTphii
+	 lJ7nCcS+5YQ7Xbr9v+vj7rno0Y3ztWqkQXPar8x9Qlbhr0DnYMGX7h0sk0dAeDcIVlCJK
+	 xxznHiSRfTMJOp3bLijzk0aWsfJus+WHidlr85yEXuHT1aw1mm26D/GEHRqkXXyxjHK/X
+	 AL/XGY76LmbT8PMWbNqBE9mReiVq4oFQdvCUu5Q198pbi9ICatrY+SpqrSMqdIC2/kA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=perches.com;
-	spf=pass smtp.mailfrom=perches.com;
-	arc=none smtp.remote-ip=216.40.44.13
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VEZnMs6B;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BB4606A329;
-	Sat, 14 Nov 2026 15:28:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C2BB4606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf16.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 121F940469;
-	Sat, 14 Nov 2026 15:28:34 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf16.hostedemail.com (Postfix) with ESMTPA id 8B07B20013;
-	Sat, 14 Nov 2026 15:28:24 +0000 (UTC)
-Message-ID: <6de04b9cf2dfe9ff1dacdddc0a76752a714a991c.camel@perches.com>
-Subject: Re: [PATCH v6 02/19] string: Add strprefix()
-From: Joe Perches <joe@perches.com>
-To: Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki"	
- <macro@orcam.me.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, Andreas
- Schwab	 <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, Bartosz
- Golaszewski	 <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, Danilo
- Krummrich	 <dakr@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold
- <johan@kernel.org>, Kees Cook <kees@kernel.org>, Laurent Pinchart	
- <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus
- Torvalds <torvalds@linux-foundation.org>, Linus Walleij
- <linusw@kernel.org>, Namhyung Kim	 <namhyung@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring	 <robh@kernel.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Saravana Kannan	 <saravanak@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi	 <zanussi@kernel.org>,
- linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Bartosz Golaszewski	
- <bartosz.golaszewski@oss.qualcomm.com>
-Date: Sat, 14 Nov 2026 07:28:23 -0800
-In-Reply-To: <0eaa4ce73a2b164fd49e3a9f71244a2e3f45b7bb.1794667407.git.alx@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9AC606A32E;
+	Sat, 14 Nov 2026 15:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VEZnMs6B
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDAC81F000C4;
+	Sat, 14 Nov 2026 15:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794670191;
+	bh=8aD2Ntc1u7Vyz+jk2M+W3ktbixvz2syGRvzQWDZooqo=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=VEZnMs6B8uOlUoqsJ9KY3CQy+Vu/8Aqrc8BwgwoPYeF9qCeMsqTZp0HZvB8H0MCND
+	 Ih3qLROtRYaoF8Qs4TO94pHKg7QUruH1cbYLE1BCHlqevkTJGVcsTRZla9PVH2OTF4
+	 82bXAZJ2L8NFJuGIuQqgt/ux43L5G+o6Qd1/R9MKdrLuWg7A7cBNBVMHPRF2aEEF/u
+	 o5iIiYWJxHRPGxOElKf9qlua+uWuRbtIN2Qb04UOz45+FYJ9eas97Om6ofbzGT+5UV
+	 mnTYaZ16izTE89cPd5dPfjLB/dR6FMiZwJwVGK0zmLmOMh2cGPtaIndV0n8WyqVVeB
+	 flP6PN8T8KkIg==
+Message-ID: <sashiko-outbox-214710@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v6 12/19] string: Remove strstarts()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Alejandro Colomar" <alx@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <cabc673b9ac73c137ad6f7dea52f8566c5821675.1794667407.git.alx@kernel.org>
 References: <cover.1794667407.git.alx@kernel.org>
-	 <0eaa4ce73a2b164fd49e3a9f71244a2e3f45b7bb.1794667407.git.alx@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ <cabc673b9ac73c137ad6f7dea52f8566c5821675.1794667407.git.alx@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 (3.60.2-3.fc44) 
+Date: Sat, 14 Nov 2026 15:29:50 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -74,21 +59,39 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 8B07B20013
-X-Stat-Signature: sohy545iapzg9mu1uffsyoa96ixkgcx4
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/rjNiB1xWIkYfGkbQxppcMa0euToSB66c=
-X-HE-Tag: 1794670104-923526
-X-HE-Meta: U2FsdGVkX1/dolkWhw1Shf589fZMJNjgtV6zXq9nJEZUGEms3SUQCnZ3JqNCATugLECoNt6e6CiZSlUe7PBglwX9X9k5wbCOnNkuelofH4gqgD4MNd64vrnjJM0h/3ZFZWMFzyt7HViBur4DTsc9/GSj9DziwhWvE3q7/gC572plZNKSWL+ra7Or84ucHZcBO5AFHaQg227mpSyQkj5V46Ar/3zrsUEUgnHkHbZ2q/xhn4WMeIOCE0G9F+qJEoRlm89zHC2xiBcZbOKVfOzOWLXLHRn5E5DFmKcbDFn61cT809DS8cRDvbOalFAg/ft4
 
-On Sat, 2026-11-14 at 16:22 +0100, Alejandro Colomar wrote:
-> As Bartosz reported, str_has_prefix() has a bug: it can't differentiate
-> between an empty prefix matching an empty string from a non-matching
-> prefix.  This is a fundamental design flaw in this API, and not
-> something that can be fixed.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] string: removing strstarts() breaks build in
+  xe_sysctrl_mailbox_write()
+--
 
-I still think this description is poor.
-It's neither a bug nor a flaw.
-It's a design choice.
+commit e1746880c54dd32f27fc7343468741cdc4b05246
+Author: Alejandro Colomar <alx@kernel.org>
+
+string: Remove strstarts()
+
+This commit removes the legacy strstarts() macro alias for strprefix() from
+include/linux/string.h.
+
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 0a466360dbb39..6b0de932e23a8 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -609,7 +609,6 @@ static inline const char *strprefix(const char *s, co=
+nst char *prefix)
+>  	return strncmp(s, prefix, len) =3D=3D 0 ? s + len : NULL;
+>  }
+>  #define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx))
+> -#define strstarts(s, pfx)  strprefix(s, pfx)  // legacy alias
+
+[Severity: High]
+Does removing strstarts() break the build when CONFIG_DRM_XE is enabled?
+drivers/gpu/drm/xe/xe_sysctrl_debugfs.c:xe_sysctrl_mailbox_write() still
+calls strstarts(token, "timeout=3D") and strstarts(token, "resplen=3D"), wh=
+ich
+now fail with an implicit function declaration error.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794667407.gi=
+t.alx@kernel.org?part=3D12
