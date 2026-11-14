@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794670400;
-	b=CXY2Kg57YJS1kNq4/u4YIKYTgHpiO1oPPRRz0gXLJcNTKT249pacP5BpgOmnDdBF08I/
-	 xLVfq0Axi9RE9FJ7xwarNVwywWQ1EynZKGzdzwsnXT7pnKzM7kCsWCoVXDPLrKPYndJeK
-	 n/Z4CyGxbO17rEbO21KKMnC0kykAf6n6sYOHRVWnXLkrBa0xQ5s5Bx1MNbeFXZIMvjAND
-	 fXx0Vr8ZkXoJc+moYbae2sDiYsCf1/5HOS93oebakqkl727FmXwGMjc9EDvgMQWkSu8Xk
-	 DvXBk55O95Sjfls6gFXlag5Fzl0VdMQEB11IckVvl1crNo7LJXHg1rvcMbnNXEqIdGA==
+	t=1794670481;
+	b=tCgx/ojrGvCha+3dasivVJJWd3AzFVdp1MRCAbSFmi7gwisL1THsr5CN+1d3FJVCvcO6
+	 e+649Xwv/ZBktZSSS5IJFn15n2oU3IDPmeQdvWMMcnIn8XQ1OU5HL+rjI5m89FjqCqo5A
+	 HrbZdAZkowM2I2k4qfE6FBYlCWn9mowT0ewwJ3i7urmn0bmj5q1DPL4U3vVvm1jnn5GPI
+	 XHSsTlEwPV6Qv2KSn8KahK+AkuwTg4ffiSpHTY7RhC0t+R2YZztdS34N32qXKeVeFNgA2
+	 OmKxwwbBeCAI+RCDrOi+MRgsTWxvdfLb/z1DHpQv55n04LVaVt83LFQmR5emrb02fqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794670400;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794670481;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=7r5UHs21AFunoYClT4OvTCKJSsYVS/CyA5k/ERCHGIE=;
-	b=dZZI/zimFNEkpggJ77YdKOSprY+Y+kPzuMT/O0Rkuw1absTm9E0hF7w6gS4QarauvsIx
-	 jYd10l2moTNPE+C6BtnhMoUY4rtImfEsKPlm61GXGmYuQmQ4kbWcmNAy3MdCTLayw2rbz
-	 e3vsOwtA6Btxe5JZKZSNQ50tb81UAKJD+sST5INsKRg6q75R4KMPd9T9IxFhYl99Yp1Db
-	 +d6vo60Pt+Iw7nLjVkY+Z/L4urXQqpdR2GyDA2iU73/fGjKXXH5/PoIFx7QaWyypizDwe
-	 HpPBWO5xRDHJT+Kz0Tj/PoZXwp4EQOKyRcCQgmpA8AaJtI9usQySRB+lhWDjPSrUDsw==
+	bh=60dwTg4TKvnY9XLU742q4cj6IJnYqSmzij0YB5SJ338=;
+	b=dtXxhU/o7k4kFaQIrZQtD2amcKYKoQ9Cu4bLTzFZ4k1mNl217Z8GCr2Z9XFpT1ZVSWMf
+	 Z/JeBTYb/yhoNs9R79tfVAasOSOvc34r0BD0IYnq//+Yii6BvZUb0j0H/ZlFt4W4opRAP
+	 O3Bivfc9QtHcia2Ia7JzhXNZacLiEMHUNsADMdfrHh8Szztvmab7vAa11kEFFRrNrN2Dx
+	 43ShZMVcjpB75Q1lHedS7AeZkr0MYoVrRmVcl65+BHpNW+8fxe04Itwmtfw/Ei/CgUJCB
+	 IyHbnEpfhzKvyqbJZzqPdDmXkDMJRAW9GKWOsMUEDByeK8wkyh6ROUIiYxIR2lrYE+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TSKelPqL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YbGzWfv9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413DA606A323;
-	Sat, 14 Nov 2026 15:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EDA606A329;
+	Sat, 14 Nov 2026 15:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TSKelPqL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D6981F000C4;
-	Sat, 14 Nov 2026 15:33:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YbGzWfv9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC511F000C4;
+	Sat, 14 Nov 2026 15:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794670399;
-	bh=7r5UHs21AFunoYClT4OvTCKJSsYVS/CyA5k/ERCHGIE=;
+	s=k20260515; t=1794670481;
+	bh=60dwTg4TKvnY9XLU742q4cj6IJnYqSmzij0YB5SJ338=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TSKelPqLA1H+uGiMQu2HTCr8+Fg5PFONt4iTRA7x2EK/1iZcUusJQ+xp+Tq2rkZvg
-	 FhJy/rQIZaX/cYD+6KB+ShQG0dSeTdT6AiLIjbHesyRDLTE+v47yW319HQnzbc5R+W
-	 KAT5wD02eVtAvnLrdf6V3cec4rwaHhJfi5qRGBXuXyb0jkhnclZQrwDcLw3YEOalDd
-	 0cKwPxIqP467+/xTZxqbaEIRld4x/1VazOanS+ZOqdwczAN3UZpoK4X8GVJzMiVQBM
-	 Qu2eYdv6RfGCjlITww+ZIpaI/Mq7L7ukWHK+Kqh3IGl3tl26s8PXLZ5WebzrHjDLMp
-	 xi/ICh1u+MubA==
-Message-ID: <sashiko-outbox-214720@kernel.org>
+	b=YbGzWfv9r/0xNsoE8GjZlRPeoG9ousVY/Iaet53A5sIb28EMCJZR8fUW6LgN6gnAQ
+	 OBaOA1KAQA4W2MNoWTcKJkeo+vAP30qNcniaenqyG8hVQ757d68RMNAAU/1u7A5SBH
+	 RRHpOWcl/6Nt8vZZw2OoGap6kZWExRmLIaAOnw60PqUFh2g6fyev2UbVCj+XWBBC7D
+	 hw1ubqNmheeQUwx7ALCQlJuF1dugxMOsWq2TIftNmL86GsOh+BGaTlsRilrpf6w0h+
+	 N0VsEvh7A2I9PeMpL9w+B9GYhNyPtwG1gkFYsjC77EJCnWMkQRJnCJaUUwy7v0Bt1O
+	 BWi0vD55L+1zA==
+Message-ID: <sashiko-outbox-214722@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 09/19] string: Make strstarts() a legacy alias for
- strprefix()
+Subject: Re: [PATCH v6 15/19] treewide: Replace some uses of
+ str_has_prefix() by strprefix()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Alejandro Colomar" <alx@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <212e7fc2cb99b631c493f59b8b38e1fd3db81231.1794667407.git.alx@kernel.org>
+In-Reply-To: <95bfed420dd9616707e640708245ce2aebbb6ff6.1794667407.git.alx@kernel.org>
 References: <cover.1794667407.git.alx@kernel.org>
- <212e7fc2cb99b631c493f59b8b38e1fd3db81231.1794667407.git.alx@kernel.org>
+ <95bfed420dd9616707e640708245ce2aebbb6ff6.1794667407.git.alx@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 15:33:19 +0000
+Date: Sat, 14 Nov 2026 15:34:40 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,51 +63,50 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [High] string: strstarts() macro expansion shadowed by local strprefix
-  variable
+- [High] tracing: NULL pointer dereference in trace_set_options()
 --
 
-commit e4b277f22320c7ff4dbc9e8cc88221ad43eb8ba6
+commit c09c1b839b46a18b156e43281c4fb679a76cfe40
 Author: Alejandro Colomar <alx@kernel.org>
 
-string: Make strstarts() a legacy alias for strprefix()
+treewide: Replace some uses of str_has_prefix() by strprefix()
 
-This commit replaces the inline strstarts() function with a macro alias for
-strprefix().
+This commit replaces several callers of str_has_prefix() across the tree
+with strprefix() to avoid manual pointer arithmetic.
 
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 013c6169def05..0a466360dbb39 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -609,6 +609,7 @@ static inline const char *strprefix(const char *s, co=
-nst char *prefix)
->  	return strncmp(s, prefix, len) =3D=3D 0 ? s + len : NULL;
->  }
->  #define strprefix(s, pfx)  const_cast(CQChar_of(s) *, strprefix(s, pfx))
-> +#define strstarts(s, pfx)  strprefix(s, pfx)  // legacy alias
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 4ccdefb5c3efe..f9f3faaede094 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -4085,19 +4085,18 @@ int set_tracer_flag(struct trace_array *tr, u64 m=
+ask, int enabled)
+> =20
+>  int trace_set_options(struct trace_array *tr, char *option)
+>  {
+> -	char *cmp;
+> +	char *cmp, *p;
+>  	int neg =3D 0;
+>  	int ret;
+>  	size_t orig_len =3D strlen(option);
+> -	int len;
+> =20
+>  	cmp =3D strstrip(option);
+> =20
+> -	len =3D str_has_prefix(cmp, "no");
+> -	if (len)
+> +	p =3D strprefix(cmp, "no");
+> +	if (p)
+>  		neg =3D 1;
+> =20
+> -	cmp +=3D len;
+> +	cmp =3D p;
 
 [Severity: High]
-Does expanding strstarts() to strprefix() break the build when a caller has
-a local variable named strprefix?
-
-drivers/platform/x86/hp/hp-bioscfg/spmobj-attributes.c:hp_populate_security=
-_buffer() {
-	u16 *auth =3D authbuf;
-	char *strprefix =3D NULL;
-	int ret =3D 0;
-
-	if (strstarts(authentication, BEAM_PREFIX)) {
-    ...
-}
-
-Because the strprefix() macro expands to a call to the inline function
-strprefix() in the caller's scope, the local pointer variable strprefix
-shadows the function identifier and breaks compilation when
-CONFIG_HP_BIOSCFG is enabled.  A later patch in this series, commit
-"platform/x86: hp-bioscfg: Rename local variable", renames that variable to
-prefix and should be ordered before this commit to keep the series
-bisectable.
+Does this set cmp to NULL when the option does not start with "no"?
+strprefix() returns NULL on a non-match, and "cmp =3D p;" runs outside the
+"if (p)" check, causing a NULL pointer dereference when cmp is passed to
+match_string() right below.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794667407.gi=
-t.alx@kernel.org?part=3D9
+t.alx@kernel.org?part=3D15
