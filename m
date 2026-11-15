@@ -1,45 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794739478;
-	b=lVjUqHu7gU/G92fp07dj8UGldzDvEpi4jgTpsQ1mOqX7tOttJRBiHO1rwb9ra0ijNOWF
-	 nX4g4Rpa/iGsRhV6qX+fBkkhEtDzwOjI0S2V1pGAvj59vfLcxrL02BjYvYpyqMwxACWUM
-	 leuMGHEvZ+iX793XtYCbFLUOAI9gvBpnD53+e5W556o1wRo8Sh4SsKJc8BOTgfUkkaelX
-	 yIklrDqkaYtDqvXbAcumfgn5tpFuEPaupteHkbBci+k9lm5nWbx4EvQKM8/0IXMjUA8p0
-	 IO/+y3D81YrJshWLnTC3pZ9wcwx8PTwXkzKSKKunurWKhWyRLY7HmYKkHBzFQap1DcA==
+	t=1794739487;
+	b=p2EvPDFqCAn9vp44kn6DVXbZzRo3PI0yw+htQ5LyDR6EclblfbkKSJiTDHHbcEa/YteC
+	 TSlga1f06zY9Fokm3/ZYHnK3jwbCI+oiqSQD9nWsLPim0LFDTjpBm2lJv5DhiDEAr4eBm
+	 Yi6il0ioOemkw5xzIsY2KPDRAo7iwD+/4N4WYmnn/Xw/wb2jT+DEKkOKEP8cjXrpfyJ4N
+	 g3Ez5zwDodonLaZi962PWXGSiWf0jOaedZlhDlI2P5r0UOMM98SiezhBis+PK3F4nlTVt
+	 AVLJ2EDKl/FmIBxTWmQ387SzUQ9G6QBzeCZ5rbtO1vf8RcxOeSPpT/MAEHFsVNmnD0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794739478;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794739487;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=/GxAQGaEwzuX7tT/z6HzIcfgj7yuN8Fe3RLWWhNbZcg=;
-	b=EG2z+Skwtw5AjjWq7yRxXmtl/RNC2tpt7NTJhcXnziuR35IVRmlpKcAovqRK+VLgAJag
-	 qkt2aci3QtGuMAQHJYmb5dh8Aa7AGqPUPLs95uyjaMVATq2PC8StgLpIOmuBsosVA8CIL
-	 IkTGvADIOrJXz5nq3EM0Ou7tNgOrYkP7hU7aJM5SZkyrmDvwbAEZVLSWdMYCAqpayxQQP
-	 dtMzicg9UnigdeS6V59rfB588w2T2IMeV8k1BnHNKMaOwjQZyXF4N8vV1dDtwuNp8xRqm
-	 2BSyJrjTYHTdbDIUKjvGIYnC1sftj6woYay0s7LzgNk7m1qVG1toLa+xiMn6yZv3izg==
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=flzTljZaFRQx/jUo4nd9R1iWKcBGyf/HIN2QRt0GDSc=;
+	b=fCg++a9z6qlx2Euk9/9WXiwE0op+n1bFjMYmvyKSYF2cog6nVf7ctyqM6drDgrD114pO
+	 FXsa54w8MsraiCpwLQEHDTi1y0oqmRmFMyhsA3hrDipgeY9Be59CMO0FT6H/8BasOQQ9n
+	 9gU7P0qdSh1ViFWOkGBZAT4coCIahv5JgjrN4Ruu+upKT4XVK4s2/rNs6KhuKdk5vo9dZ
+	 9PvYVFpqYwsoAShgh/BJhlyOHvncPmWyqHXH22FLC4aN2BlQ1bF/M58rVdOtDrDWYKkoQ
+	 bIzHTvjSxbr13OiH9dCsUg4j9tjLAv9GA5spCZXHR9KfkW0o6hr+iwV+2jMiD0m1FAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAsaO+rq;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KgPc9291;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A42606A32C;
-	Sun, 15 Nov 2026 10:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0990A606A31F;
+	Sun, 15 Nov 2026 10:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAsaO+rq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967BE1F000D0;
-	Sun, 15 Nov 2026 10:44:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KgPc9291
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887371F000C7;
+	Sun, 15 Nov 2026 10:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794739477;
-	bh=/GxAQGaEwzuX7tT/z6HzIcfgj7yuN8Fe3RLWWhNbZcg=;
+	s=k20260515; t=1794739486;
+	bh=flzTljZaFRQx/jUo4nd9R1iWKcBGyf/HIN2QRt0GDSc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NAsaO+rq1NJkVk+g8hwTEEfuKVPWB1kCkrQ27jjit92bSyqgfm619PjvQkRN7lYgX
-	 SUhAv7uGGZThvFiZIYSk3ZLWsnTcyExXFdXkExUjMSaHDAZjyEESSn+Z/thOZeuouk
-	 2S2ISS/Y3Ip52nFF1L/Ed+3+jPC9FplJo6CCcxtXGzBi0AE6LCdXTufthln2uj/0U7
-	 xUHVOChwTXE+7HjNk1MJrg81MyD1J3t4fb0lYRoYrI0aQti+rbkUznF3skAVMkv2az
-	 xi9Xm0WoNsW0juIx6EAEK/GsAy/RP+J7KK+8GfN2JqqizrX7DJUmEw8hvy1Z2uB3Zl
-	 UZ5T4XbvLX0vg==
+	b=KgPc9291/NdZVFdU5ucoWbsp7rxGMzN2ZZd/0hEItNdo4iFJd+aRa781eQay4TCrr
+	 Tnpo66lxIQ2+cf2zu6/7gi+bUxpYDzX8e59J03opLcU91OXuv+H+t+43PCgaFwLEQd
+	 F13rcjVJ29nrAhE0AHVQXlMfz/c+ZH1nv/CIOyOdBjaYnCaq+7cI5h12tEGWsH9zLs
+	 JJhEs313/b1cLk7o22+I7q8VFjzrDFszu8gAWWNjFMR//I3Y9jQV18BSjXfGOaJPRl
+	 QBbTFQsRGCZpoJ4kQoieK6jI00KBln5piRPrsBNgNqGLe/pQYRPBBZidm7Ac5XveV+
+	 niYeswr7c2hgQ==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -58,9 +57,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH v2 04/13] pinctrl: berlin: add optional pinconf support
-Date: Sun, 15 Nov 2026 18:23:43 +0800
-Message-ID: <20261115102401.3520-5-jszhang@kernel.org>
+Subject: [PATCH v2 06/13] soc: synaptics: add SL2610 system controller support
+Date: Sun, 15 Nov 2026 18:23:45 +0800
+Message-ID: <20261115102401.3520-7-jszhang@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261115102401.3520-1-jszhang@kernel.org>
 References: <20261115102401.3520-1-jszhang@kernel.org>
@@ -73,336 +72,180 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add pin configuration support for newer Synaptics SoCs.
+Create the clock, reset and pin controller platform devices implemented
+by each SL2610 system control block. Select the appropriate MFD cells
+from per-block compatible data while keeping register access available
+through the shared syscon.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/pinctrl/berlin/Kconfig  |   1 +
- drivers/pinctrl/berlin/berlin.c | 234 +++++++++++++++++++++++++++++++-
- 2 files changed, 230 insertions(+), 5 deletions(-)
+ MAINTAINERS                           |  1 +
+ drivers/soc/Kconfig                   |  1 +
+ drivers/soc/Makefile                  |  1 +
+ drivers/soc/synaptics/Kconfig         | 14 +++++
+ drivers/soc/synaptics/Makefile        |  2 +
+ drivers/soc/synaptics/sl2610-syscon.c | 84 +++++++++++++++++++++++++++
+ 6 files changed, 103 insertions(+)
+ create mode 100644 drivers/soc/synaptics/Kconfig
+ create mode 100644 drivers/soc/synaptics/Makefile
+ create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
 
-diff --git a/drivers/pinctrl/berlin/Kconfig b/drivers/pinctrl/berlin/Kconfig
-index 9b1644d1d4ea..abb1c912b9ba 100644
---- a/drivers/pinctrl/berlin/Kconfig
-+++ b/drivers/pinctrl/berlin/Kconfig
-@@ -3,6 +3,7 @@ if (ARCH_BERLIN || COMPILE_TEST)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e7c061ae5a87..eae1493485ee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3812,6 +3812,7 @@ F:	Documentation/devicetree/bindings/soc/synaptics/
+ F:	arch/arm/boot/dts/synaptics/
+ F:	arch/arm/mach-berlin/
+ F:	arch/arm64/boot/dts/synaptics/
++F:	drivers/soc/synaptics/
+ F:	include/dt-bindings/clock/syna,sl2610.h
+ F:	include/dt-bindings/reset/syna,sl2610-reset.h
  
- config PINCTRL_BERLIN
- 	bool
-+	select GENERIC_PINCONF
- 	select PINMUX
- 	select REGMAP_MMIO
- 
-diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-index a0ae75b1d705..0edf9d5a2a7b 100644
---- a/drivers/pinctrl/berlin/berlin.c
-+++ b/drivers/pinctrl/berlin/berlin.c
-@@ -7,12 +7,15 @@
-  * Antoine Ténart <antoine.tenart@free-electrons.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/platform_device.h>
-@@ -20,9 +23,24 @@
- #include <linux/slab.h>
- 
- #include "../core.h"
-+#include "../pinconf.h"
- #include "../pinctrl-utils.h"
- #include "berlin.h"
- 
-+#define PINCFG_DS_10BIT		GENMASK(3, 0)
-+#define PINCFG_IE_10BIT		BIT(4)
-+#define PINCFG_PE_10BIT		BIT(5)
-+#define PINCFG_PS_10BIT		BIT(6)
-+#define PINCFG_SL_10BIT		BIT(7)
-+#define PINCFG_SPU_10BIT	BIT(8)
-+#define PINCFG_ST_10BIT		BIT(9)
-+#define PINCFG_DS_8BIT		GENMASK(2, 0)
-+#define PINCFG_IE_8BIT		BIT(3)
-+#define PINCFG_PD_8BIT		BIT(4)
-+#define PINCFG_PU_8BIT		BIT(5)
-+#define PINCFG_SL_8BIT		BIT(6)
-+#define PINCFG_ST_8BIT		BIT(7)
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 483cbdcae153..5fe7348cddab 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -27,6 +27,7 @@ source "drivers/soc/sophgo/Kconfig"
+ source "drivers/soc/st/Kconfig"
+ source "drivers/soc/starfive/Kconfig"
+ source "drivers/soc/sunxi/Kconfig"
++source "drivers/soc/synaptics/Kconfig"
+ source "drivers/soc/tegra/Kconfig"
+ source "drivers/soc/ti/Kconfig"
+ source "drivers/soc/ux500/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 5a3efd68355c..3e51563b914c 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -33,6 +33,7 @@ obj-y				+= sophgo/
+ obj-y				+= st/
+ obj-y				+= starfive/
+ obj-y				+= sunxi/
++obj-y				+= synaptics/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-y				+= ti/
+ obj-$(CONFIG_ARCH_U8500)	+= ux500/
+diff --git a/drivers/soc/synaptics/Kconfig b/drivers/soc/synaptics/Kconfig
+new file mode 100644
+index 000000000000..9f0324a1a3b7
+--- /dev/null
++++ b/drivers/soc/synaptics/Kconfig
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: GPL-2.0-only
 +
- struct berlin_pinctrl {
- 	struct regmap *regmap;
- 	struct device *dev;
-@@ -56,6 +74,8 @@ static int berlin_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrl_dev,
- 	struct property *prop;
- 	const char *function_name, *group_name;
- 	unsigned reserved_maps = 0;
-+	unsigned long *configs = NULL;
-+	unsigned int num_configs = 0;
- 	int ret, ngroups;
- 
- 	*map = NULL;
-@@ -75,11 +95,19 @@ static int berlin_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrl_dev,
- 		return -EINVAL;
- 	}
- 
-+	ret = pinconf_generic_parse_dt_config(node, pctrl_dev, &configs,
-+					      &num_configs);
-+	if (ret < 0) {
-+		dev_err(pctrl->dev, "%s: could not parse node property\n",
-+			node->name);
-+		return ret;
-+	}
++config SOC_SL2610_SYSCON
++	tristate "Synaptics SL2610 system controller"
++	depends on ARCH_BERLIN || COMPILE_TEST
++	depends on OF && HAS_IOMEM
++	select MFD_CORE
++	select MFD_SYSCON
++	help
++	  Support the global and control register blocks on Synaptics SL2610
++	  SoCs. This creates devices for the clock, reset and pin controllers
++	  provided by each register block.
 +
- 	ret = pinctrl_utils_reserve_map(pctrl_dev, map, &reserved_maps,
--					num_maps, ngroups);
-+					num_maps, ngroups * (num_configs + 1));
- 	if (ret) {
- 		dev_err(pctrl->dev, "can't reserve map: %d\n", ret);
--		return ret;
-+		goto exit;
- 	}
- 
- 	of_property_for_each_string(node, "groups", prop, group_name) {
-@@ -88,11 +116,22 @@ static int berlin_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrl_dev,
- 						function_name);
- 		if (ret) {
- 			dev_err(pctrl->dev, "can't add map: %d\n", ret);
--			return ret;
-+			goto exit;
-+		}
++	  Say Y here to enable access to these functions on SL2610 systems.
+diff --git a/drivers/soc/synaptics/Makefile b/drivers/soc/synaptics/Makefile
+new file mode 100644
+index 000000000000..13710fc58903
+--- /dev/null
++++ b/drivers/soc/synaptics/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_SOC_SL2610_SYSCON) += sl2610-syscon.o
+diff --git a/drivers/soc/synaptics/sl2610-syscon.c b/drivers/soc/synaptics/sl2610-syscon.c
+new file mode 100644
+index 000000000000..c6fc2955ac0d
+--- /dev/null
++++ b/drivers/soc/synaptics/sl2610-syscon.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2026 Synaptics Incorporated
++ */
 +
-+		if (num_configs) {
-+			ret = pinctrl_utils_add_map_configs(pctrl_dev, map,
-+					&reserved_maps, num_maps, group_name,
-+					configs, num_configs,
-+					PIN_MAP_TYPE_CONFIGS_GROUP);
-+			if (ret < 0)
-+				goto exit;
- 		}
- 	}
- 
--	return 0;
-+exit:
-+	kfree(configs);
-+	return ret;
- }
- 
- static const struct pinctrl_ops berlin_pinctrl_ops = {
-@@ -177,6 +216,190 @@ static const struct pinmux_ops berlin_pinmux_ops = {
- 	.set_mux		= &berlin_pinmux_set,
- };
- 
-+static int berlin_pinconf_group_get(struct pinctrl_dev *pctrl_dev,
-+				    unsigned int group, unsigned long *configs)
-+{
-+	enum pin_config_param param = pinconf_to_config_param(*configs);
-+	struct berlin_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
-+	const struct berlin_desc_group *group_desc = pctrl->desc->groups + group;
-+	bool enabled;
-+	u32 val;
-+	int ret;
-+	u8 conf_bits = group_desc->conf_bits;
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
 +
-+	if (!conf_bits)
-+		return -EOPNOTSUPP;
-+
-+	ret = regmap_read(pctrl->regmap, group_desc->conf_offset, &val);
-+	if (ret)
-+		return ret;
-+
-+	switch (param) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		if (conf_bits == 10)
-+			enabled = !(val & PINCFG_PE_10BIT);
-+		else
-+			enabled = !(val & (PINCFG_PD_8BIT | PINCFG_PU_8BIT));
-+		val = 0;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		if (conf_bits == 10)
-+			enabled = (val & (PINCFG_PE_10BIT | PINCFG_PS_10BIT)) == PINCFG_PE_10BIT;
-+		else
-+			enabled = val & PINCFG_PD_8BIT;
-+		val = enabled ? 1 : 0;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		if (conf_bits == 10) {
-+			enabled = (val & (PINCFG_PE_10BIT | PINCFG_PS_10BIT)) ==
-+				  (PINCFG_PE_10BIT | PINCFG_PS_10BIT);
-+			val = !!(val & PINCFG_SPU_10BIT);
-+		} else {
-+			enabled = val & PINCFG_PU_8BIT;
-+			val = enabled ? 1 : 0;
-+		}
-+		break;
-+	case PIN_CONFIG_DRIVE_STRENGTH:
-+		enabled = true;
-+		if (conf_bits == 10)
-+			val = FIELD_GET(PINCFG_DS_10BIT, val);
-+		else
-+			val = FIELD_GET(PINCFG_DS_8BIT, val);
-+		break;
-+	case PIN_CONFIG_INPUT_ENABLE:
-+		if (conf_bits == 10)
-+			enabled = val & PINCFG_IE_10BIT;
-+		else
-+			enabled = val & PINCFG_IE_8BIT;
-+		val = enabled ? 1 : 0;
-+		break;
-+	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-+		if (conf_bits == 10)
-+			enabled = val & PINCFG_ST_10BIT;
-+		else
-+			enabled = val & PINCFG_ST_8BIT;
-+		val = enabled ? 1 : 0;
-+		break;
-+	case PIN_CONFIG_SLEW_RATE:
-+		if (conf_bits == 10)
-+			enabled = val & PINCFG_SL_10BIT;
-+		else
-+			enabled = val & PINCFG_SL_8BIT;
-+		val = enabled ? 1 : 0;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	*configs = pinconf_to_config_packed(param, val);
-+	return enabled ? 0 : -EINVAL;
-+}
-+
-+static int berlin_pinconf_group_set(struct pinctrl_dev *pctrl_dev,
-+				    unsigned int group, unsigned long *configs,
-+				    unsigned int nconfigs)
-+{
-+	struct berlin_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
-+	const struct berlin_desc_group *group_desc = pctrl->desc->groups + group;
-+	u8 conf_bits = group_desc->conf_bits;
-+	u32 mask = 0, val = 0;
-+	int i;
-+
-+	if (!conf_bits)
-+		return -EOPNOTSUPP;
-+
-+	for (i = 0; i < nconfigs; i++) {
-+		enum pin_config_param param =
-+					pinconf_to_config_param(configs[i]);
-+		u32 arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+			if (param != PIN_CONFIG_BIAS_DISABLE && arg > 1)
-+				return -EINVAL;
-+
-+			if (conf_bits == 10) {
-+				mask |= PINCFG_PE_10BIT | PINCFG_PS_10BIT |
-+					PINCFG_SPU_10BIT;
-+				val &= ~(PINCFG_PE_10BIT | PINCFG_PS_10BIT |
-+					 PINCFG_SPU_10BIT);
-+				if (param == PIN_CONFIG_BIAS_PULL_UP) {
-+					val |= PINCFG_PE_10BIT | PINCFG_PS_10BIT;
-+					if (arg)
-+						val |= PINCFG_SPU_10BIT;
-+				} else if (param == PIN_CONFIG_BIAS_PULL_DOWN && arg) {
-+					val |= PINCFG_PE_10BIT;
-+				}
-+			} else {
-+				mask |= PINCFG_PU_8BIT | PINCFG_PD_8BIT;
-+				val &= ~(PINCFG_PU_8BIT | PINCFG_PD_8BIT);
-+				if (param != PIN_CONFIG_BIAS_DISABLE && arg)
-+					val |= param == PIN_CONFIG_BIAS_PULL_UP ?
-+						PINCFG_PU_8BIT : PINCFG_PD_8BIT;
-+			}
-+			break;
-+		case PIN_CONFIG_DRIVE_STRENGTH:
-+			if (conf_bits == 10) {
-+				if (arg > FIELD_MAX(PINCFG_DS_10BIT))
-+					return -EINVAL;
-+				mask |= PINCFG_DS_10BIT;
-+				val |= FIELD_PREP(PINCFG_DS_10BIT, arg);
-+			} else {
-+				if (arg > FIELD_MAX(PINCFG_DS_8BIT))
-+					return -EINVAL;
-+				mask |= PINCFG_DS_8BIT;
-+				val |= FIELD_PREP(PINCFG_DS_8BIT, arg);
-+			}
-+			break;
-+		case PIN_CONFIG_INPUT_ENABLE:
-+			if (conf_bits == 10) {
-+				mask |= PINCFG_IE_10BIT;
-+				if (arg)
-+					val |= PINCFG_IE_10BIT;
-+			} else {
-+				mask |= PINCFG_IE_8BIT;
-+				if (arg)
-+					val |= PINCFG_IE_8BIT;
-+			}
-+			break;
-+		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-+			if (conf_bits == 10) {
-+				mask |= PINCFG_ST_10BIT;
-+				if (arg)
-+					val |= PINCFG_ST_10BIT;
-+			} else {
-+				mask |= PINCFG_ST_8BIT;
-+				if (arg)
-+					val |= PINCFG_ST_8BIT;
-+			}
-+			break;
-+		case PIN_CONFIG_SLEW_RATE:
-+			if (conf_bits == 10) {
-+				mask |= PINCFG_SL_10BIT;
-+				if (arg)
-+					val |= PINCFG_SL_10BIT;
-+			} else {
-+				mask |= PINCFG_SL_8BIT;
-+				if (arg)
-+					val |= PINCFG_SL_8BIT;
-+			}
-+			break;
-+		default:
-+			return -EOPNOTSUPP;
-+		}
-+	}
-+
-+	return regmap_update_bits(pctrl->regmap, group_desc->conf_offset, mask, val);
-+}
-+
-+static const struct pinconf_ops berlin_confops = {
-+	.is_generic = true,
-+	.pin_config_group_get = berlin_pinconf_group_get,
-+	.pin_config_group_set = berlin_pinconf_group_set,
++struct sl2610_syscon_data {
++	const struct mfd_cell *cells;
++	unsigned int num_cells;
 +};
 +
- static int berlin_pinctrl_add_function(struct berlin_pinctrl *pctrl,
- 				       const char *name)
- {
-@@ -286,6 +509,7 @@ static const struct pinctrl_desc berlin_pctrl_desc = {
- 	.name		= "berlin-pinctrl",
- 	.pctlops	= &berlin_pinctrl_ops,
- 	.pmxops		= &berlin_pinmux_ops,
-+	.confops	= &berlin_confops,
- 	.owner		= THIS_MODULE,
- };
- 
-@@ -339,5 +563,5 @@ int berlin_pinctrl_probe(struct platform_device *pdev,
- }
- EXPORT_SYMBOL_GPL(berlin_pinctrl_probe);
- 
--MODULE_LICENSE("GPL v2");
++static const struct mfd_cell sl2610_soc_cells[] = {
++	MFD_CELL_NAME("sl2610-soc-clk"),
++	MFD_CELL_NAME("sl2610-soc-reset"),
++	MFD_CELL_NAME("sl2610-soc-pinctrl"),
++};
++
++static const struct mfd_cell sl2610_mcu_cells[] = {
++	MFD_CELL_NAME("sl2610-mcu-clk"),
++	MFD_CELL_NAME("sl2610-mcu-reset"),
++	MFD_CELL_NAME("sl2610-mcu-pinctrl"),
++};
++
++static const struct mfd_cell sl2610_avio_cells[] = {
++	MFD_CELL_NAME("sl2610-avio-clk"),
++};
++
++static const struct mfd_cell sl2610_cpu_cells[] = {
++	MFD_CELL_NAME("sl2610-cpu-clk"),
++};
++
++static const struct sl2610_syscon_data sl2610_soc_data = {
++	.cells = sl2610_soc_cells,
++	.num_cells = ARRAY_SIZE(sl2610_soc_cells),
++};
++
++static const struct sl2610_syscon_data sl2610_mcu_data = {
++	.cells = sl2610_mcu_cells,
++	.num_cells = ARRAY_SIZE(sl2610_mcu_cells),
++};
++
++static const struct sl2610_syscon_data sl2610_avio_data = {
++	.cells = sl2610_avio_cells,
++	.num_cells = ARRAY_SIZE(sl2610_avio_cells),
++};
++
++static const struct sl2610_syscon_data sl2610_cpu_data = {
++	.cells = sl2610_cpu_cells,
++	.num_cells = ARRAY_SIZE(sl2610_cpu_cells),
++};
++
++static int sl2610_syscon_probe(struct platform_device *pdev)
++{
++	const struct sl2610_syscon_data *data = device_get_match_data(&pdev->dev);
++
++	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
++				    data->cells, data->num_cells, NULL, 0, NULL);
++}
++
++static const struct of_device_id sl2610_syscon_of_match[] = {
++	{ .compatible = "syna,sl2610-soc-syscon", .data = &sl2610_soc_data },
++	{ .compatible = "syna,sl2610-mcu-syscon", .data = &sl2610_mcu_data },
++	{ .compatible = "syna,sl2610-avio-syscon", .data = &sl2610_avio_data },
++	{ .compatible = "syna,sl2610-cpu-syscon", .data = &sl2610_cpu_data },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, sl2610_syscon_of_match);
++
++static struct platform_driver sl2610_syscon_driver = {
++	.probe = sl2610_syscon_probe,
++	.driver = {
++		.name = "sl2610-syscon",
++		.of_match_table = sl2610_syscon_of_match,
++	},
++};
++module_platform_driver(sl2610_syscon_driver);
++
++MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
++MODULE_DESCRIPTION("Synaptics SL2610 system controller");
 +MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("pinctrl library for Synaptics SoCs");
 -- 
 2.55.0
 
