@@ -1,57 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794740755;
-	b=AdbGR9NDfkSsqALLaffh4cI2/hEcvBZdVxgiVtlWM+kWQ+5/kqchmqlPHXwxMsRQuEMX
-	 S2bznwrUoT1qQ94RV6cL58teSRr9e/CqNAqOxGKrUhR84sXOxrDS/HK+J/zezWwKdEYVW
-	 YoT0X7CePDSWGmieipYILqylYseRs5MVUuxUlTXMCAa9n9WgJ4nB+LDCKbKxVJyvJoGEd
-	 IJuv54SqZ8BZPB8jTZs5ZZqlmYnN3PtR0XW7y7Y6bn67QdqNQNe/4AKJlYyTJUQbljNTW
-	 Y+oO8WnoS6iQAIx+ZeZ8jwntbsdF8fTYXWMeC4rnG2eNYkqIlEJC2VDJAYcSVqKIWGg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794740755;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=lUVrEEup0iduKm2ysaKvaC3+0aRICQZ5+uk49T5xxiw=;
-	b=zsvdLSsCKeQoEqZEyQhkdUd+VykMcEh33wu2Vy3Y9Q1Rege43tzeNNbD7KdLXqCpPXDd
-	 FHVIKVLYhPiU0McsKGXAaCcXtBZt3XS5ZNUjaywGqVZ2FcbpppTQkrcN+NryUGV0WyVB1
-	 vfC59fn0nGtr17Hqdbs83+DmQEwYjbzdWrJeEa5y4reWXGJHIqj4dTvmPCZiQSsXPUtFG
-	 JVlnSSv8P5Kq+IFmAZcbG5rwlFBCP6VCa86UGGvHfcdCDKnTFGNRRN/TlGOJOGeTqv9gG
-	 h04MQ8tGtbK7C/wGPI2NJvzFQDzpD9sg5XCaioB+r2qrjEu3evcAz3WYapvR7MI066Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H+paqQmI;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794740750;
+	b=2udFS3BgbiTxUudVPkBZoyk+cPu8Fb3wtemFnz+58YPIEtSS3jp9Y/fR5Na6jKV0pnSZ
+	 +BEA+rHzewLM3DlMJgFa9K8G1YOdQq87KvedoeYUxdfR0dFXDj9N3uafRcY0UwZeLIxzJ
+	 Lp4Yitc22Z/BTs+h0y4owx7nP+6juZTBj4vApNseerSrswf83s/TloA47LBOdCKiBpmI8
+	 SVNHgT24hKH4wmQkgo3yEuJYFaz7qlESq96QTrVF9+5qunuCZjvXdYBgciNpcgm8BlwYY
+	 VD+65KQcb7BDS7+BOxEYql6sDazuqX8w/MX6XKUVknkPrbFFtaqtpEDQob4YQR8rrHw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794740750;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=5MjPtFXOv2BYhPc0ozaJRS8h5y+u5O9SZoX0aUVYbQw=;
+	b=vuhQYnvPQnAXz+76LVIpK8qu4J49GZBDucUU9LsBBJN6i9H6EEV2zHlEvGx+sxwNRerO
+	 Eo4zDXrv/+WGi5AbiDFV++iAH7mcCgw0i19MdHbaz7YIngmS4f4JpVdTIvrkdInsB526p
+	 bvA7XqLxndu8GFZq/Dsksa7aFdP3/CSO9CNQg2ygUUwh21WjHJ2cgAbtJdlJO6gOawo98
+	 jgve7KoM7lxcNbjBWbULwE9zqFN/FxcQdedaKabmS1pfZ58A4BqeRm3oDEhuq8u1se5c0
+	 Zvrtclg+QZ9iKETzu1yFhurn3FtO89SVmh29AV7e9rq+JPQn08oZUsEGzPcgVx7YvHQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fvYuMRxH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6CF606A329;
-	Sun, 15 Nov 2026 11:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE15B606A89A;
+	Sun, 15 Nov 2026 11:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H+paqQmI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECFC1F0093B;
-	Sun, 15 Nov 2026 11:05:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fvYuMRxH
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794740750;
+	b=nJxIkEiNVb0zfMeM6Kg/W2OajNFWcilyHry33F/w0KTDwahbFrKCoYvr68Hq/2vJAfU3
+	 Ndz7cutgLf2ZfHUEv+up1mamj9m5GlTvfOR9E0bPyyYwOCOtj9id+71/nKZc9DeZBpAxI
+	 F5gOdtTNwBgcuHMryT/0EYG56TFVZUOJU370+OTW/fXyCJhE1WJpZbFkrONy3VhhBw8Gn
+	 /jskihutnuC23qNtAqjh8w8gQ07TKkvFBEYDwRuIPEEN9IEIAnUYRre2FisSME99OpaDU
+	 RGDLFx56oGDTUx4xKyY9DhI9YIDQCQQAquulsenPMcVAXVF9CFt4S5WIQgGUjoD5weQ==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794740750;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=5MjPtFXOv2BYhPc0ozaJRS8h5y+u5O9SZoX0aUVYbQw=;
+	b=LE0VG4Vr6MvuCiGRDgAhpJb2i8xdwf+wZlpUAWn0p8JGofaU8b38/2DktHpVY1wROlg4
+	 AGr31aRdrhbpgOiuQw9RPY1563yPXo4xh8gJqtf0H5M/l4BYquTYDQWvMgB8xgVGa8uWf
+	 22fAfpl7YgV2R4sqYELSH0nw7f5agqnMal4ywy9nCSwXwXi0fU8t6xEAp/A5kWA6P4J8r
+	 Uwv8JT1sl9LGX6JyE8QNexdtV7n14WSSBs0I6bCL++AIHHmZlVTG3oMlndxA5SaqgakRd
+	 ccBbD3FzvnFG8OQAmwLfBjGU8hViUbN731UiP1OD5/ZFg4PwbIiE7bQ/zh9tniY37Wg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id A32081F000C7;
+	Sun, 15 Nov 2026 11:05:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794740754;
-	bh=lUVrEEup0iduKm2ysaKvaC3+0aRICQZ5+uk49T5xxiw=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=H+paqQmIPpBb+l7FrPRKHvwyvu2J3lXL8UJLHBYhX0yerIiho5tvO+HVxHewXUYgq
-	 FepWyXJX401wWC6v08lrLsYos6u+tMfBkewYpVZyn0x+JdShL2/jTHSot7YYybOuo+
-	 BdBtl3JbHFiEDfy6J/rs2uSs+l4kyGvFCVgqkm+gNOKVdkBofWVaoZU9ffpHfDa2GL
-	 CqKlot1WbuBkTMzPVExJJv1eF1ZwuxRpCePv0tyLpk+LWEfYwZsz0IBlMlO8clbg4l
-	 2JqQlURjaF/psGX+2PtvFFbG3t0HhUkPdvLwMGUFenkVyjEflinXjWHfxmTYkLy1o0
-	 4YKMFSUIG0c6w==
-Message-ID: <sashiko-outbox-215438@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 13/13] arm64: dts: synaptics: add SL2610 family RDK
- boards
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jisheng Zhang" <jszhang@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261115102401.3520-14-jszhang@kernel.org>
-References: <20261115102401.3520-1-jszhang@kernel.org>
- <20261115102401.3520-14-jszhang@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 11:05:53 +0000
+	s=k20260515; t=1794740750;
+	bh=5MjPtFXOv2BYhPc0ozaJRS8h5y+u5O9SZoX0aUVYbQw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=fvYuMRxHk63bdHDYZ53BoxLY+EkrKlOiYcfLGkVIIJIxKa7HxUFXTyEe3TjUr1480
+	 19A87Kiko7KuQWzSOx8Ys4wh1yg6K+j28m8aLZJeU3C9IcqKqCCtyP4wlxiVXJhgbn
+	 KVMubRzMopDc4YJkBtvNb/Nnykj/qfUkX+uFqrVx2FdtHNJCAzwWvdOjVb0+Nc+r1m
+	 fqwIelr0y2BHFIEPoUnY1r3gAK15E8qQERSsedRL6FxSajJUH+fLfM1bAcBXmF6IiP
+	 ESdBUTprYZ2bXopf5qtsQqONCPzzr7fPby8AfHcgyQAgTx+5R6j8i+ZIf25JuQfcmy
+	 +HZQqM2F3NhJA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 301BD4A063;
+	Sun, 15 Nov 2026 11:05:47 +0000 (UTC)
+From: Vincent Jardin via B4 Relay <devnull+vjardin.free.fr@kernel.org>
+Date: Sun, 15 Nov 2026 12:05:39 +0100
+Subject: [PATCH v5 3/5] soc: fsl: guts: add the RCW override of the pad
+ muxes
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,76 +82,238 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v5-3-d246166ea469@free.fr>
+References: <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v5-0-d246166ea469@free.fr>
+In-Reply-To: <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v5-0-d246166ea469@free.fr>
+To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+ Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ Vladimir Oltean <vladimir.oltean@nxp.com>, 
+ Ioana Ciornei <ioana.ciornei@nxp.com>, Vincent Jardin <vjardin@free.fr>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794740742; l=6975;
+ i=vjardin@free.fr; s=20260525; h=from:subject:message-id;
+ bh=yCsWMGv3TGkHH2jQq1oxHA6zdyWVIrtKJoR/cK7FdRI=;
+ b=dlE1v+QAms8MvY/vnANYuHJ8AQAkMLiSL2QHiKzQUWYJ3++feGHzNPFtP8wKKI+Q7cWPxOLjS
+ o02G7apLrLWBvqBw7NtoPIDkPROFr45KrcHP5WVu+EBBML9f2+z0efW
+X-Developer-Key: i=vjardin@free.fr; a=ed25519;
+ pk=hppgLeFpGpKOi7LNwGEZ4jOYofJCoGd4Jf1ltAabiLw=
+X-Endpoint-Received: by B4 Relay for vjardin@free.fr/20260525 with
+ auth_id=871
+X-Original-From: Vincent Jardin <vjardin@free.fr>
+Reply-To: vjardin@free.fr
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [Low] arm64: dts: synaptics: deprecated cpu0-supply used in
-  sl261x-rdk-common.dtsi
-- [Low] arm64: dts: synaptics: underscore in soc_i2c0-pmux node name
-- [Low] arm64: dts: synaptics: unused linux-event-codes.h include in
-  sl261x-rdk-common.dtsi
---
+From: Vincent Jardin <vjardin@free.fr>
 
-commit f1ba81aeb15547b6a1942dc7df6778c88410e949
-Author: Jisheng Zhang <jszhang@kernel.org>
+fsl_guts_rcw_rmw() only serves the SerDes lane modes. Export it for
+the pad-mux fields of the RCW, and for them only:
+ - fsl_guts_pmux_read() reads the pad-mux fields of a status register
+ - fsl_guts_pmux_override() changes pad-mux fields of one under
+   rcwcr_lock and waits for the status register to follow
+ - fsl_guts_pmux_override_supported() tells whether the SoC has pad-mux
+   fields and whether the DCSR view of DCFG, which holds the override
+   registers, is mapped
 
-arm64: dts: synaptics: add SL2610 family RDK boards
+Each SoC lists in its fsl_soc_data the fields that can be overridden,
+per RCWSR: a register or a field outside of this list is refused, so
+the SerDes protocols stay with fsl_guts_lane_set_mode(). The LX2160A
+lists the pad muxes of RCWSR12 to RCWSR14 and of RCWSR27.
 
-This commit adds device tree files for the Synaptics SL2611, SL2613,
-SL2615, SL2617, and SL2619 reference development kits along with a shared
-common dtsi.
+Suggested-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Signed-off-by: Vincent Jardin <vjardin@free.fr>
+---
+ drivers/soc/fsl/guts.c   | 122 ++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/fsl/guts.h |   3 ++
+ 2 files changed, 124 insertions(+), 1 deletion(-)
 
-> diff --git a/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi b/arch/=
-arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
-> new file mode 100644
-> index 0000000000000..78a9b28fdf99e
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/linux-event-codes.h>
+diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+index 28361c63e26c..d8b8de6fbe32 100644
+--- a/drivers/soc/fsl/guts.c
++++ b/drivers/soc/fsl/guts.c
+@@ -53,6 +53,12 @@ struct fsl_soc_serdes_rcw_override {
+ 	int val;
+ };
+ 
++/* Pad-mux fields of the one-based RCWSRn, the ones that may be overridden */
++struct fsl_soc_pmux_mask {
++	unsigned int rcwsr;
++	u32 mask;
++};
++
+ struct fsl_soc_data {
+ 	const char *sfp_compat;
+ 	u32 uid_offset;
+@@ -62,6 +68,7 @@ struct fsl_soc_data {
+ 	int (*serdes_get_rcw_override)(int index, int lane,
+ 				       enum lynx_lane_mode lane_mode,
+ 				       struct fsl_soc_serdes_rcw_override *override);
++	const struct fsl_soc_pmux_mask *pmux;
+ };
+ 
+ enum qoriq_die {
+@@ -369,6 +376,107 @@ int fsl_guts_lane_set_mode(int serdes_idx, int lane, enum lynx_lane_mode lane_mo
+ }
+ EXPORT_SYMBOL_NS_GPL(fsl_guts_lane_set_mode, "FSL_GUTS");
+ 
++static const struct fsl_soc_pmux_mask *
++fsl_guts_get_pmux_mask(unsigned int rcwsr)
++{
++	const struct fsl_soc_pmux_mask *pmux;
++
++	if (!soc.data || !soc.data->pmux)
++		return NULL;
++
++	for (pmux = soc.data->pmux; pmux->rcwsr; pmux++) {
++		if (pmux->rcwsr == rcwsr)
++			return pmux;
++	}
++
++	return NULL;
++}
++
++/**
++ * fsl_guts_pmux_read() - read the pad-mux fields of a RCW status register
++ * @rcwsr: one-based index of the status register, as in RCWSR12
++ * @val: the pad-mux fields read, the other fields of the register are 0
++ *
++ * Return: 0 on success, -ENODEV before the DCFG block is mapped, -EINVAL
++ * when the register holds no pad-mux field on this SoC
++ */
++int fsl_guts_pmux_read(unsigned int rcwsr, u32 *val)
++{
++	const struct fsl_soc_pmux_mask *pmux;
++
++	if (!soc.dcfg_ccsr)
++		return -ENODEV;
++
++	pmux = fsl_guts_get_pmux_mask(rcwsr);
++	if (!pmux)
++		return -EINVAL;
++
++	*val = fsl_guts_read(&soc.dcfg_ccsr->rcwsr[rcwsr - 1]) & pmux->mask;
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(fsl_guts_pmux_read, "FSL_GUTS");
++
++/**
++ * fsl_guts_pmux_override() - override pad-mux fields of the RCW
++ * @rcwsr: one-based index of the RCWSR and RCWCR pair, as in RCWSR12
++ * @val: the new value of the fields, in place
++ * @mask: the fields to change
++ *
++ * Only the pad-mux fields that the SoC lists can be changed: a SerDes
++ * protocol is changed with fsl_guts_lane_set_mode(), and the other fields
++ * of the RCW are refused.
++ *
++ * The fields outside @mask keep the value the status register shows. The
++ * override register is written and the status register polled until it
++ * shows the result, as fsl_guts_lane_set_mode() does for a SerDes lane.
++ *
++ * Context: takes rcwcr_lock, shared with fsl_guts_lane_set_mode(), and
++ * busy-polls the status register for up to RCW_TIMEOUT_US. Does not
++ * sleep; must not be called from interrupt context.
++ *
++ * Return: 0 on success, -ENODEV before the DCFG block is mapped,
++ * -EOPNOTSUPP without a DCSR mapping of DCFG, -EINVAL when @mask is not
++ * made of pad-mux fields of the register, negative error otherwise
++ */
++int fsl_guts_pmux_override(unsigned int rcwsr, u32 val, u32 mask)
++{
++	const struct fsl_soc_pmux_mask *pmux;
++	int err;
++
++	if (!soc.dcfg_ccsr)
++		return -ENODEV;
++	if (!soc.dcfg_dcsr)
++		return -EOPNOTSUPP;
++
++	pmux = fsl_guts_get_pmux_mask(rcwsr);
++	if (!pmux || !mask || (mask & ~pmux->mask))
++		return -EINVAL;
++
++	spin_lock(&soc.rcwcr_lock);
++	err = fsl_guts_rcw_rmw(rcwsr - 1, val & mask, mask);
++	spin_unlock(&soc.rcwcr_lock);
++	if (err)
++		pr_err("RCW override of RCWSR%u failed: %pe\n", rcwsr,
++		       ERR_PTR(err));
++
++	return err;
++}
++EXPORT_SYMBOL_NS_GPL(fsl_guts_pmux_override, "FSL_GUTS");
++
++/**
++ * fsl_guts_pmux_override_supported() - can the pad muxes be overridden?
++ *
++ * Return: true when the SoC lists pad-mux fields and the DCFG block is
++ * mapped with its DCSR view, the second reg of the dcfg node, which holds
++ * the override registers
++ */
++bool fsl_guts_pmux_override_supported(void)
++{
++	return soc.dcfg_ccsr && soc.dcfg_dcsr && soc.data && soc.data->pmux;
++}
++EXPORT_SYMBOL_NS_GPL(fsl_guts_pmux_override_supported, "FSL_GUTS");
++
+ static u64 fsl_guts_get_soc_uid(const char *compat, unsigned int offset)
+ {
+ 	struct device_node *np;
+@@ -579,6 +687,18 @@ static const struct fsl_soc_data ls1028a_data = {
+ 	.num_serdes_lanes = 4,
+ };
+ 
++static const struct fsl_soc_pmux_mask lx2160a_pmux[] = {
++	{ 12, GENMASK(29, 0) },	/* IIC2..SDHC1_DIR */
++	{ 13, GENMASK(29, 0) },	/* SDHC2_DAT74..EVT43 */
++	{ 14, GENMASK(10, 0) },	/* EVT20..IIC1 */
++	{ 27, GENMASK(7, 0) },	/* EC1, EC2, USB_EXT, GTX_CLK, SDHC1_DS */
++	{}
++};
++
++static const struct fsl_soc_data lx2160a_data = {
++	.pmux = lx2160a_pmux,
++};
++
+ /*
+  * Table for matching compatible strings, for device tree
+  * guts node, for Freescale QorIQ SOCs.
+@@ -606,7 +726,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
+ 	{ .compatible = "fsl,ls1088a-dcfg", .data = &ls1088a_data},
+ 	{ .compatible = "fsl,ls1012a-dcfg", },
+ 	{ .compatible = "fsl,ls1046a-dcfg", .data = &ls1046a_data},
+-	{ .compatible = "fsl,lx2160a-dcfg", },
++	{ .compatible = "fsl,lx2160a-dcfg", .data = &lx2160a_data},
+ 	{ .compatible = "fsl,ls1028a-dcfg", .data = &ls1028a_data},
+ 	{}
+ };
+diff --git a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h
+index 8d5ffb985fee..ae245afeb7b9 100644
+--- a/include/linux/fsl/guts.h
++++ b/include/linux/fsl/guts.h
+@@ -142,6 +142,9 @@ int fsl_guts_lane_validate(int serdes_idx, int lane,
+ 			   enum lynx_lane_mode lane_mode);
+ int fsl_guts_lane_set_mode(int serdes_idx, int lane,
+ 			   enum lynx_lane_mode lane_mode);
++int fsl_guts_pmux_read(unsigned int rcwsr, u32 *val);
++int fsl_guts_pmux_override(unsigned int rcwsr, u32 val, u32 mask);
++bool fsl_guts_pmux_override_supported(void);
+ 
+ /* Alternate function signal multiplex control */
+ #define MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
 
-[Severity: Low]
-Is the dt-bindings/input/linux-event-codes.h include needed here? Neither
-sl261x-rdk-common.dtsi nor the board dts files that include it define any
-input nodes or reference event code macros.
+-- 
+2.43.0
 
-[ ... ]
 
-> +	cpus {
-> +		cpu@0 {
-> +			cpu0-supply =3D <&vcore>;
-> +		};
-> +	};
-
-[Severity: Low]
-Should cpu@0 use cpu-supply instead of cpu0-supply?
-Documentation/devicetree/bindings/arm/cpus.yaml marks cpu0-supply as
-deprecated in favor of cpu-supply, and the dual-core SL2615, SL2617, and
-SL2619 variants also define cpu1: cpu@100.
-
-[ ... ]
-
-> +&pinctrl {
-> +	soc_i2c0_pmux: soc_i2c0-pmux {
-> +		groups =3D "GPIO23", "GPIO24";
-> +		function =3D "tw2";
-> +		drive-strength =3D <7>;
-> +	};
-> +};
-
-[Severity: Low]
-Should the node name soc_i2c0-pmux use a hyphen instead of an underscore
-(for example, soc-i2c0-pmux)? Using an underscore in a devicetree node
-name triggers a dtc node_name_chars_strict warning when building with W=3D2.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115102401.3520=
--1-jszhang@kernel.org?part=3D13
