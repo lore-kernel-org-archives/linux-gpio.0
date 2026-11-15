@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794740698;
-	b=JgPYiWyUcYD97YUVDi1HOJYWNG8tPjeCm/5JfAwwtKTFz+xu7avchBT/RacGyPvLGaSG
-	 DFPmjdnGl1kvpJ7E23/rfEuA120RLgz9vLDGjY+gxcGMGzXoiIPx8rz8V+0JsaqSkre/g
-	 DCkEszfD6mKU/PQsj1d+WFAU1Hj4/Rh5nkxR7ewUmUoC3m9cPLVC+2MCFiRz3Pe5er8RI
-	 sOm15IpWyGrvXloRWNM7kGsHOyWFHzQCuCBaulUk9ebjbg+RnYzfGexGPknWeLK5Nm981
-	 IxVTxmAAqh/EOFYmFNdYwVDpMfFrvXVws/DNCAk9VVlj0wGmQ8zhu6WVHdeDvSkn0vg==
+	t=1794740729;
+	b=AfirtTy7onBEXZJIR8lhf1W4+5KuCsXoSgBbJEh7DPefgAaXxVatrut1lrHmsc2tSn2g
+	 RtE/hxK04y+plbjaAtNybkk0h15rqgbY/wSb18pYTE8dhP9K4Jrt9sEw/1PqaixheEKM1
+	 gVC9pI02XQ0bLWtALwjtbjjMmMTOfac4C59Nt1snATJf/MYd4QJ/WppbUR2ka4fFq68YE
+	 vPZmCq6AZyHB3FO5QiGm1OuG+tuyX+S9H7WUCOKeEsdgt3WQoWa6EzyPwE4yWvpEx0iN2
+	 r7uV2Omb2PNPfJIaGSxlzaS0JmuuxRkyfSdxVjHsqctbSfqeH8QDngVew4+n55sqswA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794740698;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794740729;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=e+fjAm1eM/shYvPgdmz2W63QYfmzoBK5AhfyBCIzjZ0=;
-	b=1jmdnRn5ApDWT7vQz0wkzKSIPf5B2npSZv5O1rJLuuP71I2l4mcuF1uEnMAoh5ion30E
-	 7R9jmJySEMz7+MQjbTLVdMQXvaoQfOZP2gBWP0htyempy4D5Jzc2gggpvffxsEeX8eWyD
-	 ApeF3W8mvDsRoRO2gGcV8RuZjsA0w3sDnnCSFASLPyVzpq4h5j2qMfUQaxqTPWTDC+j6g
-	 OHxRQYto5ygOFWumMyp2w1viTi/79UYg+e8D85kmNfcUWRBUfaOpU2DuN1zuCxD9uAPL0
-	 ryyKQxUxg/Q/JV5c84PowfCUUuVPbyn+0k9bYzfauyAAUqMVvR5hndV7UgyUpACElFw==
+	bh=QArUHYLf9L/U2NYw1vy2o+lKGGFsWVtZNi4VVFga1WY=;
+	b=vXwXJJLHIKG2xR4B4MO6nnSwkxVFHrnsxbg/d81Ol/mXdz9JGw5ICP1LocZ1VjOlHxhh
+	 KNJ5sqqjNwvcr//ECx+aQ/SEuHYdviIePLMYm0iepBHcVX/Xu76cSuV2kNGnRv7lXsy2/
+	 pgMfqQ9JVlrSgah5inXKih0CtwVlF6IuKbUJxKQ8GCqal0/0Ug8/eILZrS8utNc7zJvwz
+	 X6dutiuqlXcZW03ii1WVnSgt7kbUZ9yLjednjLJJDuuqaLMb2TTFDaPMJiM7uRDptsYPX
+	 WUJhdgP89OHAId3DG0WD4P1GCVBrDBgU8sG9ngfR4P8MSG+cqrXUAl8tUypKhoEtXFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BLQpzywt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eaFncKf4;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDDF606A31F;
-	Sun, 15 Nov 2026 11:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC5D606A31A;
+	Sun, 15 Nov 2026 11:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BLQpzywt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B371F000C4;
-	Sun, 15 Nov 2026 11:04:57 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eaFncKf4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB5B1F000C4;
+	Sun, 15 Nov 2026 11:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794740697;
-	bh=e+fjAm1eM/shYvPgdmz2W63QYfmzoBK5AhfyBCIzjZ0=;
+	s=k20260515; t=1794740728;
+	bh=QArUHYLf9L/U2NYw1vy2o+lKGGFsWVtZNi4VVFga1WY=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=BLQpzywtGIhQB40Fk79aXOT8eu80sIl1lY3Ufq7U8t/djbnGadhI3hI+nY9TdsP29
-	 R+0Xnk3XzLNrxL8+1QQ9ctaEPJhaqhGx9zJBsRECqoIseGLXqYgtXSK4XT6jZ/aD1G
-	 1BGVBa+tgcofN6wM0Fl3UraLPTeBkghSaKp1Af1SVa0w6holpCem9xWOqyPgbumGzk
-	 7aBWzaeJTbFz60eQTBPg6y6SMOxY6LT1dvFbgqw32tKH670RO49u8f1KMKvfE57LXH
-	 yAye56QRQQfcvV6a09bGSBIxllFIuCrupm2HEwqYOT2VfUDyTq7bTr3FyTM5AcNDiX
-	 skRJj0U4SNM2Q==
-Message-ID: <sashiko-outbox-215436@kernel.org>
+	b=eaFncKf4wWRODWaHGhgs3igls61PHECBfoS5HHawovAxp9FaxB4w0P7p/RUVudvHj
+	 Mds9cJjaEH9OAm6thAqS5qhStI/kRJYq2lSP7o2QljI3+05JHi3u6uW5XABXfkukif
+	 Dnldr+8wKAS5hrCjVlIDVwIefoMPufHhk+yGXZ7BU266KBnhdiEVuJlzFVr9nRgupp
+	 y9I9gZIoMpBwzZJWMdAgLw8CNLoM0X9Mj+KmJJd75+izMjfqIGddhcq59miShug+6M
+	 98vySNLMnvucxqDS8nqJl96lEVrK+A91DFkzw1+0PcQY6VgIZMh78BSspQsrgid1S9
+	 VurZnO6YnFggQ==
+Message-ID: <sashiko-outbox-215437@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 10/13] clk: berlin: add Synaptics SL2610 clocks and
- PLLs
+Subject: Re: [PATCH v2 09/13] clk: berlin: add Synaptics clock controller
+ helpers
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jisheng Zhang" <jszhang@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261115102401.3520-11-jszhang@kernel.org>
+In-Reply-To: <20261115102401.3520-10-jszhang@kernel.org>
 References: <20261115102401.3520-1-jszhang@kernel.org>
- <20261115102401.3520-11-jszhang@kernel.org>
+ <20261115102401.3520-10-jszhang@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 11:04:57 +0000
+Date: Sun, 15 Nov 2026 11:05:28 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,215 +63,228 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 5 potential
 issues to consider:
-- [Medium] clk: berlin: dereference of dev before NULL check in
-  sl2610_pll_register()
-- [Medium] clk: berlin: irq lock inversion on sl_sysmgr_gateclk_lock via
-  sl2610_sysmgr_clk_setup()
-- [Low] clk: berlin: fix apbuart3clk and apbi2c1clk typos in
-  sl2610_gates
-- [Low] clk: berlin: missing OF and HAS_IOMEM dependencies on SL2610_PLL
-- [Low] clk: berlin: unused SL2610_APLL macro and struct forward
-  declarations
+- [High] clk: berlin: non-irqsave spinlock in sl_sysmgr_gateclk_ops
+- [Medium] clk: berlin: uninitialized clk_init_data in sl-sysmgr-clk.c
+- [Medium] clk: berlin: sl_sysmgr_clk_setup() ignores descriptor flags
+- [Medium] clk: berlin: missing .disable callbacks and duplicated gate
+  clock in sl-sysmgr-clk
+- [Low] clk: berlin: non-self-contained header sl-sysmgr-clk.h and
+  unused macros
 --
 
-commit 9456f61cc7fffcd42790e27e9671ad341c8cf8cd
+commit a40ea8003017371f6f9b098c53eae5c758e872e4
 Author: Jisheng Zhang <jszhang@kernel.org>
 
-clk: berlin: add Synaptics SL2610 clocks and PLLs
+clk: berlin: add Synaptics clock controller helpers
 
-This commit adds clock and PLL drivers for the Synaptics SL2610 SoC,
-registering the SoC, CPU, AVIO, and MCU clocks.
+This commit adds configurable divider and gate clock helpers for Synaptics
+system controllers along with an MCU system manager clock setup helper.
 
-> diff --git a/drivers/clk/berlin/Kconfig b/drivers/clk/berlin/Kconfig
-> index 8f71d4c7a478b..be7e47e0ff523 100644
-> --- a/drivers/clk/berlin/Kconfig
-> +++ b/drivers/clk/berlin/Kconfig
-> @@ -5,3 +5,30 @@ config SL_COMMON_CLK
-> =20
->  config SL_SYSMGR_CLK
->  	bool
-> +
-> +config SL2610_PLL
-> +	tristate "Synaptics SL2610 PLL Driver"
-> +	depends on ARCH_BERLIN || COMPILE_TEST
-> +	default n
-> +	help
-> +	  Support the integer and fractional PLL outputs used by the SoC,
-> +	  CPU and audio clock controllers on Synaptics SL2610 SoCs.
-> +
-> +	  To compile this driver as a module, choose M here. The module will
-> +	  be called sl2610-pll.
-> +
-> +config SL2610_CLK
-> +	tristate "Synaptics SL2610 Clock Driver"
-> +	depends on ARCH_BERLIN || COMPILE_TEST
-> +	depends on OF && HAS_IOMEM
-
-[Severity: Low]
-Should SL2610_PLL also depend on OF && HAS_IOMEM like SL2610_CLK?
-sl2610-pll.c calls readl_relaxed() and of_clk_get().
-
-Also, both symbols allow COMPILE_TEST when ARCH_BERLIN=3Dn, but
-drivers/clk/Makefile only descends into berlin/ for CONFIG_ARCH_BERLIN, so
-neither driver is built under COMPILE_TEST=3Dy with ARCH_BERLIN=3Dn.
-
-> diff --git a/drivers/clk/berlin/clk-sl2610.c b/drivers/clk/berlin/clk-sl2=
-610.c
+> diff --git a/drivers/clk/berlin/sl-sysmgr-clk.c b/drivers/clk/berlin/sl-s=
+ysmgr-clk.c
 > new file mode 100644
-> index 0000000000000..b51d3523028de
+> index 0000000000000..f3cf921fc3c1a
 > --- /dev/null
-> +++ b/drivers/clk/berlin/clk-sl2610.c
+> +++ b/drivers/clk/berlin/sl-sysmgr-clk.c
+> @@ -0,0 +1,241 @@
 
 [ ... ]
 
-> +static const struct sl_gateclk_desc sl2610_gates[] =3D {
-> +	{ "usb0coreclk",	"perifsysclk",	CLK_USB0CORE,		0 },
-> +	{ "sdiosysclk",		"perifsysclk",	CLK_SDIOSYS,		1 },
-> +	{ "emmcsysclk",		"perifsysclk",	CLK_EMMCSYS,		2 },
-> +	{ "gpuaxiclk",		"hpcclk",	CLK_GPUAXI,		3 },
-> +	{ "gethrgmiisysclk",	"perifsysclk",	CLK_GETHRGMIISYS,	4 },
-> +	{ "sdio1sysclk",	"perifsysclk",	CLK_SDIO1SYS,		5 },
-> +	{ "usb1coreclk",	"perifsysclk",	CLK_USB1CORE,		6 },
-> +	{ "gethrgmii1sysclk",	"perifsysclk",	CLK_GETHRGMII1SYS,	7 },
-> +	{ "usb0phyrefclk",	"perifsysclk",	CLK_USB0PHYREF,		8 },
-> +	{ "usb1phyrefclk",	"perifsysclk",	CLK_USB1PHYREF,		9 },
-> +	{ "apbuart0clk",	"apbcoreclk",	CLK_APBUART0,		10 },
-> +	{ "apbuart1clk",	"apbcoreclk",	CLK_APBUART1,		11 },
-> +	{ "apbuart2clk",	"apbcoreclk",	CLK_APBUART2,		12 },
-> +	{ "apbuart3lck",	"apbcoreclk",	CLK_APBUART3,		13 },
-> +	{ "apbi2c0clk",		"apbcoreclk",	CLK_APBI2C0,		14 },
-> +	{ "apbi2c1lck",		"apbcoreclk",	CLK_APBI2C1,		15 },
-
-[Severity: Low]
-Are "apbuart3lck" and "apbi2c1lck" typos for "apbuart3clk" and
-"apbi2c1clk"?  Every other entry in sl2610_gates[] ends with "clk", so
-these two clocks are registered under misspelled names in clk_summary and
-any lookup by name.
+> +#include <linux/platform_device.h>
+> +#include <linux/version.h>
+> +
+> +#include "sl-sysmgr-clk.h"
+> +
+> +#define CLK_EN		BIT(0)
+> +#define DIV_CHNG_EN	BIT(1)
 
 [ ... ]
 
-> +static int sl2610_sysmgr_clk_setup(struct platform_device *pdev)
+> +static int sl_sysmgr_gateclk_enable(struct clk_hw *hw)
 > +{
-> +	return sl_sysmgr_clk_setup(pdev, sl2610_sysmgr_fixeds, ARRAY_SIZE(sl261=
-0_sysmgr_fixeds),
-> +				   sl2610_sysmgr_gates, ARRAY_SIZE(sl2610_sysmgr_gates),
-> +				   CLK_GATE_CTRL0,
-> +				   sl2610_sysmgr_clks, ARRAY_SIZE(sl2610_sysmgr_clks));
+> +	u32 val;
+> +	struct sl_sysmgr_gateclk *clk =3D to_sl_sysmgr_gateclk(hw);
+> +
+> +	guard(spinlock)(&sl_sysmgr_gateclk_lock);
+> +
+> +	val =3D readl_relaxed(clk->base);
+> +	if (!(val & BIT(clk->bit_idx))) {
+> +		val |=3D BIT(clk->bit_idx);
+> +		writel_relaxed(val, clk->base);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int sl_sysmgr_gateclk_is_enabled(struct clk_hw *hw)
+> +{
+> +	u32 val;
+> +	struct sl_sysmgr_gateclk *clk =3D to_sl_sysmgr_gateclk(hw);
+> +
+> +	guard(spinlock)(&sl_sysmgr_gateclk_lock);
+> +
+> +	val =3D readl_relaxed(clk->base);
+> +	val &=3D BIT(clk->bit_idx);
+> +
+> +	return val ? 1 : 0;
 > +}
 
-[Severity: Medium]
-Can registering the MCU gate clocks via sl_sysmgr_clk_setup() cause an IRQ
-lock inversion or deadlock on sl_sysmgr_gateclk_lock?
+[Severity: High]
+Can taking sl_sysmgr_gateclk_lock with guard(spinlock) instead of
+spinlock_irqsave deadlock?
 
-In commit "clk: berlin: add Synaptics clock controller helpers",
-sl_sysmgr_gateclk_enable() and sl_sysmgr_gateclk_is_enabled() acquire
-sl_sysmgr_gateclk_lock with guard(spinlock) instead of
-guard(spinlock_irqsave):
+clk_core_is_enabled() calls .is_enabled from process context without
+holding enable_lock and with local interrupts enabled (for example via
+clk_summary_show_one() or __clk_is_enabled()), while clk_enable() can be
+called from hardirq context:
 
-drivers/clk/berlin/sl-sysmgr-clk.c:sl_sysmgr_gateclk_is_enabled() {
-	struct sl_sysmgr_gateclk *gclk =3D to_sl_sysmgr_gateclk(hw);
-	u32 reg;
+clk_summary_show_one()
+  ...
+    sl_sysmgr_gateclk_is_enabled()
+      spin_lock(&sl_sysmgr_gateclk_lock)
+      <hardirq>
+        clk_enable()
+          ...
+            sl_sysmgr_gateclk_enable()
+              spin_lock(&sl_sysmgr_gateclk_lock)  <-- spins forever
 
-	guard(spinlock)(&sl_sysmgr_gateclk_lock);
-	reg =3D readl_relaxed(gclk->reg);
-    ...
-}
+sl_sysmgr_gateclk_enable() needs guard(spinlock_irqsave), while
+sl_sysmgr_gateclk_is_enabled() only performs a single readl_relaxed() and
+does not need the lock.
 
-clk_enable() holds the CCF enable_lock with interrupts disabled (and may
-run in hardirq context) before calling .enable, whereas
-clk_summary_show_one() and clk_hw_is_enabled() call .is_enabled from
-process context without enable_lock and with interrupts enabled:
-
-CPU0                              CPU1
-----                              ----
-clk_enable()
-  clk_enable_lock()
-    spin_lock_irqsave(&enable_lock)
-                                  clk_summary_show_one()
-                                    clk_core_is_enabled()
-                                      sl_sysmgr_gateclk_is_enabled()
-                                        spin_lock(&sl_sysmgr_gateclk_lock)
-  sl_sysmgr_gateclk_enable()
-    spin_lock(&sl_sysmgr_gateclk_lock)
-                                        <hardirq>
-                                          clk_enable()
-                                            clk_enable_lock()
-                                              spin_lock_irqsave(&enable_loc=
-k)
-
- *** DEADLOCK ***
-
-A single-CPU deadlock also occurs if the interrupt on the same CPU calls
-clk_enable() on an MCU gate clock while sl_sysmgr_gateclk_is_enabled()
-holds sl_sysmgr_gateclk_lock.  Using guard(spinlock_irqsave) (or reading
-gclk->reg locklessly in sl_sysmgr_gateclk_is_enabled() as sl_clk_is_enabled=
-()
-does) avoids this.
-
-> diff --git a/drivers/clk/berlin/sl2610-pll.c b/drivers/clk/berlin/sl2610-=
-pll.c
-> new file mode 100644
-> index 0000000000000..62c5d2d19c362
-> --- /dev/null
-> +++ b/drivers/clk/berlin/sl2610-pll.c
+> +static const struct clk_ops sl_sysmgr_gateclk_ops =3D {
+> +	.enable		=3D sl_sysmgr_gateclk_enable,
+> +	.is_enabled	=3D sl_sysmgr_gateclk_is_enabled,
+> +};
+> +
+> +static int
+> +sl_sysmgr_gateclk_register(struct device *dev, struct sl_sysmgr_gateclk =
+*gclk,
+> +			   const char *name, const char *parent_names,
+> +			   u8 bit_idx, void __iomem *base)
+> +{
+> +	struct clk_init_data init;
+> +
+> +	init.name =3D name;
+> +	init.ops =3D &sl_sysmgr_gateclk_ops;
+> +	init.parent_names =3D &parent_names;
+> +	init.num_parents =3D 1;
+> +	init.flags =3D 0;
 
 [ ... ]
 
-> +#define CTRLG			0x18
-> +#define DIVQF_MASK		GENMASK(2, 0)
+> +static const struct clk_ops sl_sysmgr_clk_ops =3D {
+> +	.recalc_rate	=3D sl_sysmgr_clk_recalc_rate,
+> +	.enable		=3D sl_sysmgr_clk_enable,
+> +	.is_enabled	=3D sl_sysmgr_clk_is_enabled,
+> +};
+
+[Severity: Medium]
+Should sl_sysmgr_gateclk_ops and sl_sysmgr_clk_ops implement .disable
+callbacks?
+
+Without .disable, consumer calls to clk_disable() and late boot's
+clk_disable_unused() cannot gate these clocks in hardware, and
+clk_is_enabled_when_prepared() treats them as enabled by .prepare even
+though .prepare is not implemented.  In addition, struct sl_sysmgr_gateclk
+and struct sl_sysmgr_gateclk_desc duplicate devm_clk_hw_register_gate()
+and struct sl_gateclk_desc in drivers/clk/berlin/sl-clk.h.
+
+> +static int
+> +sl_sysmgr_clk_register(struct device *dev, struct sl_sysmgr_clk *sclk,
+> +		       const char *name, const char *parent_names,
+> +		       u8 div_bits, void __iomem *base)
+> +{
+> +	struct clk_init_data init;
 > +
-> +#define SL2610_APLL
-> +struct sl2610_pll {
-> +	void __iomem *ctrl;
-> +	struct clk_hw pllout;
-> +	struct clk_hw plloutf;
+> +	init.name =3D name;
+> +	init.ops =3D &sl_sysmgr_clk_ops;
+> +	init.parent_names =3D &parent_names;
+> +	init.num_parents =3D 1;
+> +	init.flags =3D 0;
+
+[Severity: Medium]
+Does leaving struct clk_init_data init uninitialized on the stack in
+sl_sysmgr_gateclk_register() and sl_sysmgr_clk_register() pass garbage
+init.parent_data and init.parent_hws pointers into devm_clk_hw_register()?
+
+clk_core_populate_parent_map() reads init->parent_hws and
+init->parent_data unconditionally when registering the clock.
+
+[ ... ]
+
+> +	for (i =3D 0; i < gclk_n; i++) {
+> +		ret =3D sl_sysmgr_gateclk_register(&pdev->dev, &priv->gclks[i],
+> +						 gdescs[i].name, gdescs[i].parent_name,
+> +						 gdescs[i].bit_idx, base + gclk_offset);
+> +		if (ret)
+> +			return ret;
+> +
+> +		id =3D gdescs[i].id;
+> +		clk_data->hws[id] =3D &priv->gclks[i].hw;
+> +	}
+> +
+> +	for (i =3D 0; i < clk_n; i++) {
+> +		ret =3D sl_sysmgr_clk_register(&pdev->dev, &priv->clks[i],
+> +					     descs[i].name, descs[i].parent_name,
+> +					     descs[i].div_bits, base + descs[i].offset);
+> +		if (ret)
+> +			return ret;
+
+[Severity: Medium]
+Does sl_sysmgr_clk_setup() drop the flags field from gdescs[i] and
+descs[i]?
+
+struct sl_sysmgr_gateclk_desc and struct sl_sysmgr_clk_desc both define an
+unsigned long flags member, but sl_sysmgr_clk_setup() never passes them to
+sl_sysmgr_gateclk_register() or sl_sysmgr_clk_register(), which hardcode
+init.flags =3D 0 and ignore flags such as CLK_IS_CRITICAL or
+CLK_IGNORE_UNUSED.
+
+[ ... ]
+
+> diff --git a/drivers/clk/berlin/sl-sysmgr-clk.h b/drivers/clk/berlin/sl-s=
+ysmgr-clk.h
+> new file mode 100644
+> index 0000000000000..5ccf388bcccbd
+> --- /dev/null
+> +++ b/drivers/clk/berlin/sl-sysmgr-clk.h
+> @@ -0,0 +1,44 @@
+
+[ ... ]
+
+> +#ifndef __SL_SYSMGR_CLK_H
+> +#define __SL_SYSMGR_CLK_H
+> +
+> +struct sl_sysmgr_clk_desc {
+> +	const char	*name;
+> +	const char	*parent_name;
+> +	u32		id;
+> +	u32		offset;
+> +	u8		div_bits;
+> +	unsigned long	flags;
 > +};
 
 [ ... ]
 
-> +int sl2610_pll_register(struct device *dev, void __iomem *ctrl,
-> +			const char *out, const char *outf)
-> +{
-> +	struct device_node *np =3D dev->parent->of_node;
-> +	struct clk_parent_data parent =3D {};
-> +	struct clk_init_data init =3D {};
-> +	struct sl2610_pll *pll;
-> +	struct clk *input;
-> +	int ret;
+> +int sl_sysmgr_clk_setup(struct platform_device *pdev,
+> +			const struct sl_sysmgr_fixedclk_desc *fdescs,
+> +			int fclk_n,
+> +			const struct sl_sysmgr_gateclk_desc *gdescs,
+> +			int gclk_n,
+> +			u32 gclk_offset,
+> +			const struct sl_sysmgr_clk_desc *descs,
+> +			int clk_n);
 > +
-> +	if (!dev || !ctrl || !out || !outf)
-> +		return -EINVAL;
-
-[Severity: Medium]
-Does sl2610_pll_register() dereference dev and dev->parent before the !dev
-check?  If dev or dev->parent is NULL, initializing np at the top of the
-function causes a NULL pointer dereference instead of returning -EINVAL.
-sl2610_soc_clk_setup(), sl2610_cpu_clk_setup(), and sl2610_aio_clk_setup()
-in drivers/clk/berlin/clk-sl2610.c also dereference dev->parent->of_node
-without checking dev->parent.
-
-> diff --git a/drivers/clk/berlin/sl2610-pll.h b/drivers/clk/berlin/sl2610-=
-pll.h
-> new file mode 100644
-> index 0000000000000..b61a93b28610d
-> --- /dev/null
-> +++ b/drivers/clk/berlin/sl2610-pll.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SL2610_PLL_H
-> +#define __SL2610_PLL_H
-> +
-> +#include <linux/io.h>
-> +
-> +struct clk_hw_onecell_data;
-> +struct device;
-> +struct device_node;
+> +#endif
 
 [Severity: Low]
-This isn't a bug, but struct clk_hw_onecell_data and struct device_node in
-sl2610-pll.h and the empty SL2610_APLL macro in sl2610-pll.c are unused and
-can be dropped.
+Does sl-sysmgr-clk.h need #include <linux/types.h> and a forward
+declaration of struct platform_device so it is self-contained when
+included before other headers?  Also, <linux/version.h> and DIV_CHNG_EN in
+sl-sysmgr-clk.c are unused, and sl-clk.h uses u32 and u8 without directly
+including <linux/types.h>.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115102401.3520=
--1-jszhang@kernel.org?part=3D10
+-1-jszhang@kernel.org?part=3D9
