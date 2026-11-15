@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794740503;
-	b=qI498j0a0adib6BpInlE59IcG1mQFgyPOoB8aiqocKAG52nLS5WGOtyXQDtX4+Hyww6j
-	 ZyBCh532tf3eBqHVCHbgkOv1+0dxAGjFWpst4/IihOhxd957FRjCuSi6lkpJJr/yYzO5H
-	 C/eLzB40HHM4pfELGwrHXTAWUrDFSlOovGB5QdTI1rOuCVtKKIfyKeFKJEg9Mw2sCM8Mu
-	 RzcQrf5cM5KHpOfoB3LiHCb+ZDqzXh6mAZAYTIYPfkJ/59jGTrKLRjBA0MkrztAqSo2FR
-	 vsiE0dPfpVl/bbznBnMRrhHDfmEC8lXXGQNgG7iQNkAs1bB0B3Jt+rCYQO5CJIyMhAg==
+	t=1794740698;
+	b=JgPYiWyUcYD97YUVDi1HOJYWNG8tPjeCm/5JfAwwtKTFz+xu7avchBT/RacGyPvLGaSG
+	 DFPmjdnGl1kvpJ7E23/rfEuA120RLgz9vLDGjY+gxcGMGzXoiIPx8rz8V+0JsaqSkre/g
+	 DCkEszfD6mKU/PQsj1d+WFAU1Hj4/Rh5nkxR7ewUmUoC3m9cPLVC+2MCFiRz3Pe5er8RI
+	 sOm15IpWyGrvXloRWNM7kGsHOyWFHzQCuCBaulUk9ebjbg+RnYzfGexGPknWeLK5Nm981
+	 IxVTxmAAqh/EOFYmFNdYwVDpMfFrvXVws/DNCAk9VVlj0wGmQ8zhu6WVHdeDvSkn0vg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794740503;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794740698;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=4y8YfBFn/sD3+H60Q9x+7MvRVBt7bYEBbpGLtyPrw/k=;
-	b=HdGxLiHtA8Z2e+3CJrQTGxUVNIFVaDA4wiy3JvX9WLkFtBZVoIJ7/JjY3vlZoxtRfA52
-	 zdTcXUR+c2vbmvIlroUfJCQjNQ0MjdoIRSEedP+iVbj1H8spA7426AzxdFANa1oKu8B2q
-	 yX1iGB6WXdu4decQAOFuxW60Mekr4kSmKbrcotuK1Cd95JKaEPdaaqMe3zvGx4WHl9FPD
-	 QB0ko5+CkfetVf3oTd9/sWqqbYTsqHz2fdCFJR7ClbYaAI4vQnXKA0tcZotzvuGPJtNXP
-	 J/5RshrmaRz7btvsvNk6F3Xq/cBC8vR/RCdWh8iiNLAuD+BeRPMCM8gzNfvYte+Y4cQ==
+	bh=e+fjAm1eM/shYvPgdmz2W63QYfmzoBK5AhfyBCIzjZ0=;
+	b=1jmdnRn5ApDWT7vQz0wkzKSIPf5B2npSZv5O1rJLuuP71I2l4mcuF1uEnMAoh5ion30E
+	 7R9jmJySEMz7+MQjbTLVdMQXvaoQfOZP2gBWP0htyempy4D5Jzc2gggpvffxsEeX8eWyD
+	 ApeF3W8mvDsRoRO2gGcV8RuZjsA0w3sDnnCSFASLPyVzpq4h5j2qMfUQaxqTPWTDC+j6g
+	 OHxRQYto5ygOFWumMyp2w1viTi/79UYg+e8D85kmNfcUWRBUfaOpU2DuN1zuCxD9uAPL0
+	 ryyKQxUxg/Q/JV5c84PowfCUUuVPbyn+0k9bYzfauyAAUqMVvR5hndV7UgyUpACElFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bsmk7Ywu;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BLQpzywt;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE47606A323;
-	Sun, 15 Nov 2026 11:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDDF606A31F;
+	Sun, 15 Nov 2026 11:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bsmk7Ywu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F54C1F000C4;
-	Sun, 15 Nov 2026 11:01:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BLQpzywt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B371F000C4;
+	Sun, 15 Nov 2026 11:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794740502;
-	bh=4y8YfBFn/sD3+H60Q9x+7MvRVBt7bYEBbpGLtyPrw/k=;
+	s=k20260515; t=1794740697;
+	bh=e+fjAm1eM/shYvPgdmz2W63QYfmzoBK5AhfyBCIzjZ0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=bsmk7Ywu9oTI8gVLc4ZFOmJwjE3FekOcCHSvSK82jAQ4uWbXi1WsLTCBMwiwMkzDd
-	 tSdZc5arnO0nTBnP2lUr9ay4FNzYRYr6QySAAzbL0L+ZJm8NJH8+Y7c1JqetrbpL+i
-	 X2hJexnDevQ2HVv9868QIhM4V0zHHkhhVKuKQ/iOwaXSRaOS9FjWzvLsqFX8GbCzLN
-	 9JjGfyVlEEY0ZCzTpBX49wwR22fyun7eOet06OHBFGk2RNZiUytZF8x6Cn6Pq/qtx0
-	 HHPvnceDe/D48QAtFUB3VZ2UqcW1mjMBuc77Tj2T2M+zVdVxuEcdbueQQIQwpW0qwU
-	 Q18KLJ/Euqvmw==
-Message-ID: <sashiko-outbox-215435@kernel.org>
+	b=BLQpzywtGIhQB40Fk79aXOT8eu80sIl1lY3Ufq7U8t/djbnGadhI3hI+nY9TdsP29
+	 R+0Xnk3XzLNrxL8+1QQ9ctaEPJhaqhGx9zJBsRECqoIseGLXqYgtXSK4XT6jZ/aD1G
+	 1BGVBa+tgcofN6wM0Fl3UraLPTeBkghSaKp1Af1SVa0w6holpCem9xWOqyPgbumGzk
+	 7aBWzaeJTbFz60eQTBPg6y6SMOxY6LT1dvFbgqw32tKH670RO49u8f1KMKvfE57LXH
+	 yAye56QRQQfcvV6a09bGSBIxllFIuCrupm2HEwqYOT2VfUDyTq7bTr3FyTM5AcNDiX
+	 skRJj0U4SNM2Q==
+Message-ID: <sashiko-outbox-215436@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 04/13] pinctrl: berlin: add optional pinconf support
+Subject: Re: [PATCH v2 10/13] clk: berlin: add Synaptics SL2610 clocks and
+ PLLs
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jisheng Zhang" <jszhang@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261115102401.3520-5-jszhang@kernel.org>
+In-Reply-To: <20261115102401.3520-11-jszhang@kernel.org>
 References: <20261115102401.3520-1-jszhang@kernel.org>
- <20261115102401.3520-5-jszhang@kernel.org>
+ <20261115102401.3520-11-jszhang@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 11:01:42 +0000
+Date: Sun, 15 Nov 2026 11:04:57 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,196 +61,217 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 4 potential
+Thank you for your contribution! Sashiko AI review found 5 potential
 issues to consider:
-- [Medium] pinctrl: berlin: memory leak on error in
-  berlin_pinctrl_dt_node_to_map()
-- [Medium] pinctrl: berlin: wrong errno -EOPNOTSUPP in
-  berlin_pinconf_group_get()
-- [Low] pinctrl: berlin: map over-allocation in
-  berlin_pinctrl_dt_node_to_map()
-- [Low] pinctrl: berlin: berlin_pinconf_group_get() fails when slew rate
-  is 0
+- [Medium] clk: berlin: dereference of dev before NULL check in
+  sl2610_pll_register()
+- [Medium] clk: berlin: irq lock inversion on sl_sysmgr_gateclk_lock via
+  sl2610_sysmgr_clk_setup()
+- [Low] clk: berlin: fix apbuart3clk and apbi2c1clk typos in
+  sl2610_gates
+- [Low] clk: berlin: missing OF and HAS_IOMEM dependencies on SL2610_PLL
+- [Low] clk: berlin: unused SL2610_APLL macro and struct forward
+  declarations
 --
 
-commit 8d9a060e7649872ae247085353d00ffa248ae051
+commit 9456f61cc7fffcd42790e27e9671ad341c8cf8cd
 Author: Jisheng Zhang <jszhang@kernel.org>
 
-pinctrl: berlin: add optional pinconf support
+clk: berlin: add Synaptics SL2610 clocks and PLLs
 
-This commit adds generic pin configuration support (bias, drive strength,
-input enable, Schmitt trigger, and slew rate) to the Berlin pinctrl driver
-for 8-bit and 10-bit group configuration registers.
+This commit adds clock and PLL drivers for the Synaptics SL2610 SoC,
+registering the SoC, CPU, AVIO, and MCU clocks.
 
-> diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/ber=
-lin.c
-> index a0ae75b1d705d..0edf9d5a2a7b7 100644
-> --- a/drivers/pinctrl/berlin/berlin.c
-> +++ b/drivers/pinctrl/berlin/berlin.c
-[ ... ]
-> @@ -75,11 +95,19 @@ static int berlin_pinctrl_dt_node_to_map(struct pinct=
-rl_dev *pctrl_dev,
->  		return -EINVAL;
->  	}
+> diff --git a/drivers/clk/berlin/Kconfig b/drivers/clk/berlin/Kconfig
+> index 8f71d4c7a478b..be7e47e0ff523 100644
+> --- a/drivers/clk/berlin/Kconfig
+> +++ b/drivers/clk/berlin/Kconfig
+> @@ -5,3 +5,30 @@ config SL_COMMON_CLK
 > =20
-> +	ret =3D pinconf_generic_parse_dt_config(node, pctrl_dev, &configs,
-> +					      &num_configs);
-> +	if (ret < 0) {
-> +		dev_err(pctrl->dev, "%s: could not parse node property\n",
-> +			node->name);
-> +		return ret;
-> +	}
+>  config SL_SYSMGR_CLK
+>  	bool
 > +
->  	ret =3D pinctrl_utils_reserve_map(pctrl_dev, map, &reserved_maps,
-> -					num_maps, ngroups);
-> +					num_maps, ngroups * (num_configs + 1));
+> +config SL2610_PLL
+> +	tristate "Synaptics SL2610 PLL Driver"
+> +	depends on ARCH_BERLIN || COMPILE_TEST
+> +	default n
+> +	help
+> +	  Support the integer and fractional PLL outputs used by the SoC,
+> +	  CPU and audio clock controllers on Synaptics SL2610 SoCs.
+> +
+> +	  To compile this driver as a module, choose M here. The module will
+> +	  be called sl2610-pll.
+> +
+> +config SL2610_CLK
+> +	tristate "Synaptics SL2610 Clock Driver"
+> +	depends on ARCH_BERLIN || COMPILE_TEST
+> +	depends on OF && HAS_IOMEM
 
 [Severity: Low]
-Does this over-allocate *map when num_configs > 1?
-pinctrl_utils_add_map_configs() packs all num_configs entries for a group
-into a single PIN_MAP_TYPE_CONFIGS_GROUP map slot, so each group uses at
-most two map entries (ngroups * (!!num_configs + 1) in total), leaving
-ngroups * (num_configs - 1) reserved entries unused.
+Should SL2610_PLL also depend on OF && HAS_IOMEM like SL2610_CLK?
+sl2610-pll.c calls readl_relaxed() and of_clk_get().
 
->  	if (ret) {
->  		dev_err(pctrl->dev, "can't reserve map: %d\n", ret);
-> -		return ret;
-> +		goto exit;
->  	}
-> =20
->  	of_property_for_each_string(node, "groups", prop, group_name) {
-> @@ -88,11 +116,22 @@ static int berlin_pinctrl_dt_node_to_map(struct pinc=
-trl_dev *pctrl_dev,
->  						function_name);
->  		if (ret) {
->  			dev_err(pctrl->dev, "can't add map: %d\n", ret);
-> -			return ret;
-> +			goto exit;
-> +		}
-> +
-> +		if (num_configs) {
-> +			ret =3D pinctrl_utils_add_map_configs(pctrl_dev, map,
-> +					&reserved_maps, num_maps, group_name,
-> +					configs, num_configs,
-> +					PIN_MAP_TYPE_CONFIGS_GROUP);
-> +			if (ret < 0)
-> +				goto exit;
->  		}
->  	}
-> =20
-> -	return 0;
-> +exit:
-> +	kfree(configs);
-> +	return ret;
->  }
+Also, both symbols allow COMPILE_TEST when ARCH_BERLIN=3Dn, but
+drivers/clk/Makefile only descends into berlin/ for CONFIG_ARCH_BERLIN, so
+neither driver is built under COMPILE_TEST=3Dy with ARCH_BERLIN=3Dn.
 
-[Severity: Medium]
-Does the error path leak *map and any per-group config arrays already
-duplicated by pinctrl_utils_add_map_configs()?
+> diff --git a/drivers/clk/berlin/clk-sl2610.c b/drivers/clk/berlin/clk-sl2=
+610.c
+> new file mode 100644
+> index 0000000000000..b51d3523028de
+> --- /dev/null
+> +++ b/drivers/clk/berlin/clk-sl2610.c
 
-When ops->dt_node_to_map() returns a negative error code, the caller
-dt_to_map_one_config() in drivers/pinctrl/devicetree.c returns immediately
-without freeing the partially constructed map.  If
-pinctrl_utils_add_map_mux() or pinctrl_utils_add_map_configs() fails in the
-loop after pinctrl_utils_reserve_map() allocated *map, jumping to exit only
-frees the temporary configs array and leaks *map along with any configs
-duplicated for earlier groups.  Calling pinctrl_utils_free_map(pctrl_dev,
-*map, *num_maps) when ret < 0 would clean these up.
-
-> @@ -177,6 +216,190 @@ static const struct pinmux_ops berlin_pinmux_ops =
-=3D {
->  	.set_mux		=3D &berlin_pinmux_set,
->  };
-> =20
-> +static int berlin_pinconf_group_get(struct pinctrl_dev *pctrl_dev,
-> +				    unsigned int group, unsigned long *configs)
-> +{
-> +	enum pin_config_param param =3D pinconf_to_config_param(*configs);
-> +	struct berlin_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctrl_dev);
-> +	const struct berlin_desc_group *group_desc =3D pctrl->desc->groups + gr=
-oup;
-> +	bool enabled;
-> +	u32 val;
-> +	int ret;
-> +	u8 conf_bits =3D group_desc->conf_bits;
-> +
-> +	if (!conf_bits)
-> +		return -EOPNOTSUPP;
 [ ... ]
-> +	case PIN_CONFIG_SLEW_RATE:
-> +		if (conf_bits =3D=3D 10)
-> +			enabled =3D val & PINCFG_SL_10BIT;
-> +		else
-> +			enabled =3D val & PINCFG_SL_8BIT;
-> +		val =3D enabled ? 1 : 0;
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	*configs =3D pinconf_to_config_packed(param, val);
-> +	return enabled ? 0 : -EINVAL;
+
+> +static const struct sl_gateclk_desc sl2610_gates[] =3D {
+> +	{ "usb0coreclk",	"perifsysclk",	CLK_USB0CORE,		0 },
+> +	{ "sdiosysclk",		"perifsysclk",	CLK_SDIOSYS,		1 },
+> +	{ "emmcsysclk",		"perifsysclk",	CLK_EMMCSYS,		2 },
+> +	{ "gpuaxiclk",		"hpcclk",	CLK_GPUAXI,		3 },
+> +	{ "gethrgmiisysclk",	"perifsysclk",	CLK_GETHRGMIISYS,	4 },
+> +	{ "sdio1sysclk",	"perifsysclk",	CLK_SDIO1SYS,		5 },
+> +	{ "usb1coreclk",	"perifsysclk",	CLK_USB1CORE,		6 },
+> +	{ "gethrgmii1sysclk",	"perifsysclk",	CLK_GETHRGMII1SYS,	7 },
+> +	{ "usb0phyrefclk",	"perifsysclk",	CLK_USB0PHYREF,		8 },
+> +	{ "usb1phyrefclk",	"perifsysclk",	CLK_USB1PHYREF,		9 },
+> +	{ "apbuart0clk",	"apbcoreclk",	CLK_APBUART0,		10 },
+> +	{ "apbuart1clk",	"apbcoreclk",	CLK_APBUART1,		11 },
+> +	{ "apbuart2clk",	"apbcoreclk",	CLK_APBUART2,		12 },
+> +	{ "apbuart3lck",	"apbcoreclk",	CLK_APBUART3,		13 },
+> +	{ "apbi2c0clk",		"apbcoreclk",	CLK_APBI2C0,		14 },
+> +	{ "apbi2c1lck",		"apbcoreclk",	CLK_APBI2C1,		15 },
+
+[Severity: Low]
+Are "apbuart3lck" and "apbi2c1lck" typos for "apbuart3clk" and
+"apbi2c1clk"?  Every other entry in sl2610_gates[] ends with "clk", so
+these two clocks are registered under misspelled names in clk_summary and
+any lookup by name.
+
+[ ... ]
+
+> +static int sl2610_sysmgr_clk_setup(struct platform_device *pdev)
+> +{
+> +	return sl_sysmgr_clk_setup(pdev, sl2610_sysmgr_fixeds, ARRAY_SIZE(sl261=
+0_sysmgr_fixeds),
+> +				   sl2610_sysmgr_gates, ARRAY_SIZE(sl2610_sysmgr_gates),
+> +				   CLK_GATE_CTRL0,
+> +				   sl2610_sysmgr_clks, ARRAY_SIZE(sl2610_sysmgr_clks));
 > +}
 
-[Severity: Low]
-Does querying PIN_CONFIG_SLEW_RATE fail with -EINVAL whenever the slew rate
-bit is 0?
-
-berlin_pinconf_group_set() accepts 0 as a valid slew-rate argument to clear
-PINCFG_SL_10BIT or PINCFG_SL_8BIT, but berlin_pinconf_group_get() sets
-enabled from that bit and returns -EINVAL when enabled is false, so a slew
-rate of 0 cannot be read back (for example via debugfs pinconf-groups).
-Setting enabled =3D true as in the PIN_CONFIG_DRIVE_STRENGTH case would all=
-ow
-both 0 and 1 to be reported.
-
-> +
-> +static int berlin_pinconf_group_set(struct pinctrl_dev *pctrl_dev,
-> +				    unsigned int group, unsigned long *configs,
-> +				    unsigned int nconfigs)
-> +{
-> +	struct berlin_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctrl_dev);
-> +	const struct berlin_desc_group *group_desc =3D pctrl->desc->groups + gr=
-oup;
-> +	u8 conf_bits =3D group_desc->conf_bits;
-> +	u32 mask =3D 0, val =3D 0;
-> +	int i;
-> +
-> +	if (!conf_bits)
-> +		return -EOPNOTSUPP;
-[ ... ]
-> +		default:
-> +			return -EOPNOTSUPP;
-> +		}
-> +	}
-
 [Severity: Medium]
-Should berlin_pinconf_group_get() and berlin_pinconf_group_set() return
--ENOTSUPP instead of -EOPNOTSUPP when !conf_bits or when param is not
-supported?
+Can registering the MCU gate clocks via sl_sysmgr_clk_setup() cause an IRQ
+lock inversion or deadlock on sl_sysmgr_gateclk_lock?
 
-With .is_generic =3D true, reading debugfs pinconf-groups calls
-pinconf_generic_dump_one(), which queries every generic parameter in
-conf_items[] and only treats -EINVAL and -ENOTSUPP as legal responses:
+In commit "clk: berlin: add Synaptics clock controller helpers",
+sl_sysmgr_gateclk_enable() and sl_sysmgr_gateclk_is_enabled() acquire
+sl_sysmgr_gateclk_lock with guard(spinlock) instead of
+guard(spinlock_irqsave):
 
-drivers/pinctrl/pinconf-generic.c:pinconf_generic_dump_one() {
-	...
-		ret =3D pin_config_group_get(dev_name(pctldev->dev),
-					   pindesc->name, &config);
-		/* These are legal errors */
-		if (ret =3D=3D -EINVAL || ret =3D=3D -ENOTSUPP)
-			continue;
-		if (ret) {
-			seq_printf(s, "ERROR READING CONFIG SETTING %d ", i);
-			continue;
-		}
-	...
+drivers/clk/berlin/sl-sysmgr-clk.c:sl_sysmgr_gateclk_is_enabled() {
+	struct sl_sysmgr_gateclk *gclk =3D to_sl_sysmgr_gateclk(hw);
+	u32 reg;
+
+	guard(spinlock)(&sl_sysmgr_gateclk_lock);
+	reg =3D readl_relaxed(gclk->reg);
+    ...
 }
 
-Returning -EOPNOTSUPP causes debugfs pinconf-groups to print "ERROR READING
-CONFIG SETTING" for every unsupported parameter and for any group with
-conf_bits =3D=3D 0.
+clk_enable() holds the CCF enable_lock with interrupts disabled (and may
+run in hardirq context) before calling .enable, whereas
+clk_summary_show_one() and clk_hw_is_enabled() call .is_enabled from
+process context without enable_lock and with interrupts enabled:
+
+CPU0                              CPU1
+----                              ----
+clk_enable()
+  clk_enable_lock()
+    spin_lock_irqsave(&enable_lock)
+                                  clk_summary_show_one()
+                                    clk_core_is_enabled()
+                                      sl_sysmgr_gateclk_is_enabled()
+                                        spin_lock(&sl_sysmgr_gateclk_lock)
+  sl_sysmgr_gateclk_enable()
+    spin_lock(&sl_sysmgr_gateclk_lock)
+                                        <hardirq>
+                                          clk_enable()
+                                            clk_enable_lock()
+                                              spin_lock_irqsave(&enable_loc=
+k)
+
+ *** DEADLOCK ***
+
+A single-CPU deadlock also occurs if the interrupt on the same CPU calls
+clk_enable() on an MCU gate clock while sl_sysmgr_gateclk_is_enabled()
+holds sl_sysmgr_gateclk_lock.  Using guard(spinlock_irqsave) (or reading
+gclk->reg locklessly in sl_sysmgr_gateclk_is_enabled() as sl_clk_is_enabled=
+()
+does) avoids this.
+
+> diff --git a/drivers/clk/berlin/sl2610-pll.c b/drivers/clk/berlin/sl2610-=
+pll.c
+> new file mode 100644
+> index 0000000000000..62c5d2d19c362
+> --- /dev/null
+> +++ b/drivers/clk/berlin/sl2610-pll.c
+
+[ ... ]
+
+> +#define CTRLG			0x18
+> +#define DIVQF_MASK		GENMASK(2, 0)
+> +
+> +#define SL2610_APLL
+> +struct sl2610_pll {
+> +	void __iomem *ctrl;
+> +	struct clk_hw pllout;
+> +	struct clk_hw plloutf;
+> +};
+
+[ ... ]
+
+> +int sl2610_pll_register(struct device *dev, void __iomem *ctrl,
+> +			const char *out, const char *outf)
+> +{
+> +	struct device_node *np =3D dev->parent->of_node;
+> +	struct clk_parent_data parent =3D {};
+> +	struct clk_init_data init =3D {};
+> +	struct sl2610_pll *pll;
+> +	struct clk *input;
+> +	int ret;
+> +
+> +	if (!dev || !ctrl || !out || !outf)
+> +		return -EINVAL;
+
+[Severity: Medium]
+Does sl2610_pll_register() dereference dev and dev->parent before the !dev
+check?  If dev or dev->parent is NULL, initializing np at the top of the
+function causes a NULL pointer dereference instead of returning -EINVAL.
+sl2610_soc_clk_setup(), sl2610_cpu_clk_setup(), and sl2610_aio_clk_setup()
+in drivers/clk/berlin/clk-sl2610.c also dereference dev->parent->of_node
+without checking dev->parent.
+
+> diff --git a/drivers/clk/berlin/sl2610-pll.h b/drivers/clk/berlin/sl2610-=
+pll.h
+> new file mode 100644
+> index 0000000000000..b61a93b28610d
+> --- /dev/null
+> +++ b/drivers/clk/berlin/sl2610-pll.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SL2610_PLL_H
+> +#define __SL2610_PLL_H
+> +
+> +#include <linux/io.h>
+> +
+> +struct clk_hw_onecell_data;
+> +struct device;
+> +struct device_node;
+
+[Severity: Low]
+This isn't a bug, but struct clk_hw_onecell_data and struct device_node in
+sl2610-pll.h and the empty SL2610_APLL macro in sl2610-pll.c are unused and
+can be dropped.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115102401.3520=
--1-jszhang@kernel.org?part=3D4
+-1-jszhang@kernel.org?part=3D10
