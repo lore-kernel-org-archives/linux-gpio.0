@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794739464;
-	b=wxXHV5Sq59U7I9MOr9tH/4trkZ5taEPk43eyvTi7q8PQalBbzd+93ZVXfpcCfmCdn9vp
-	 bj2oTiWC+3lesVk9ZxmRxBfDjOZcFkj2uxO2/f77mgeY6H4BEMB8g/mCPddqhNuu7FCZ0
-	 39pj8WnKfrCmy1oY8o5E2oZRVVJSsS0Trnph0ENTTPWLwSzoePwm+y6hyAkoVFJ/4xv1o
-	 z0FIKAVXhae8ea6YPO2OFJsK++fz2i+GieWw+ENyGz3LrKUqPDT7T/O3yfS4dHP9Lh78F
-	 gTGlMPY5dig9mM9sbpiEKyagE+qJYfD16d0KCfZX+5V0n57tQzO1j3lqdyu/rxOxECw==
+	t=1794739469;
+	b=xRs296Vn7qIySzpIaZhclbEPtcFP8pGov3WRwKu7oQTMWTPDPNoqJmnC4+nvQtrnpxCD
+	 hmHtm1A8gf081F5r8Xthuh3ZUTRAg5nZ8ojyTPODrFA7NArdhrgmkIZ9QuQQvnD0qFR7w
+	 6dY64fTBxvqo66NQKn15a6268tfynPYLn1zdqIY9YTYmKdHkCha3wdRJgcOEyzDXcesYp
+	 SlUwrlXv0ftv/GZcuuh4Au8hiMklNMWRPGub2E/mBAa3t27fxK+RH4eQtKhcduQYLz4uy
+	 QoZNTQ2LNjZgvuM8uqsOGPzhxG7c4fw602SE9dAn7ebzUV9A59e2Ztw6+igaFPNJGUA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794739464;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794739469;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=63pVHVdLZ/AAb6QhX+KkOYKHoBRqlXz1mx2wQQLYHRU=;
-	b=X798yrre+34qg+bxUW9NAz9FLKPHD49ups54wrNnkOTDR+oSiwiacHiOqbwA9ZMGVT8q
-	 UubdPLkLwGQjaVVh9ci2yE0tRln+eApgLfeq14YRux82LXa33Eig+WM77XePzm5qkbiFP
-	 1UFlzOofFPQXgZPDLgpA9wwUI2obgmVZZIaaoKhP3xODELSlW6bOS9P9p3llAPEkkxM9v
-	 iwA0TF2nyo5vcDpQM2pT5x74cDBcxXv+egNkCh4hV4ffrzs2QauEwXnliIZ1bSyEt97Pb
-	 ZRES4MQYCU7eyMZKqYcVPGi0xJ84R4LDBlWZjeHI29/sM9zbBHVrD74wwJXFeK8BBsA==
+	bh=dlyM8LZ8160Xk/WGiZ4OTZ6xlqG6xxxO9wME58yDA7Y=;
+	b=R0jw8gjQN9QJDW3IxADH/SLZH/yzZJyTVhmpirN+8kvbo38+8gVCn8xEzcxe7zPQsAyl
+	 WB+GPlYuwQEjeSlFYkcZW+DAI9d6HDUhirgWCgcZqK52UDQ6PUTidLzz0eLpfmD6plhKV
+	 W9wHUBOeJfpa+n2AnG1+2QB6jiHTVmTYMRNblnnf9r3El7F/5MdNE8n9SuHOPAtBQhSza
+	 ugU2IccVbZgM2mvf9ADtUuuGHayoDLwahlua15jTVkwzyUuyvrzBL2vEchv7KjyNXv3J1
+	 xPfM6Azy7UBriGt3zR08+iW3BvEVLTv9RMJhmkdd3zWfxZVGuGhZz9004hwslIaBDCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aalB4+hB;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZDYeg+VD;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0A7606A323;
-	Sun, 15 Nov 2026 10:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31B0606A31A;
+	Sun, 15 Nov 2026 10:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aalB4+hB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E1A1F000C5;
-	Sun, 15 Nov 2026 10:44:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZDYeg+VD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D111F000C5;
+	Sun, 15 Nov 2026 10:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794739464;
-	bh=63pVHVdLZ/AAb6QhX+KkOYKHoBRqlXz1mx2wQQLYHRU=;
+	s=k20260515; t=1794739469;
+	bh=dlyM8LZ8160Xk/WGiZ4OTZ6xlqG6xxxO9wME58yDA7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=aalB4+hBCPAVo2paG9AWhpOHRJeXCGXOzM3qjOe7aCl14dGamAR+qArw60Ki7cjUL
-	 8ALEr7F5Bf53KO6yz3RfPxrXfTwKG9w0RfQVTzwmNOf47mZz0XAo+R8aSoPoG5BmZd
-	 +vPEEh1CzmBQkZvEpkxU9gLIy9/H7/GdfvUs5jsT4LrDnRchMvfm48nF3uBMUyQRuN
-	 fnOEsyaUYzdDT2jREdUDiS0hfsCTuw9Dz1BeFUTp0P+QSs8mkab/UlWw7r/jp6DDOP
-	 +80FA42dCIgX257A/7Dm18Loj+AR3M7/5mZIyUhFIcEjvd5iJk207zu84UMLtFQh1i
-	 RoluObqF7g9IA==
+	b=ZDYeg+VDf14irn2wv54QCZHpkOTAS7zW/xAKbxkEILd1biV7FfJVGOWGuQ5ElGz2H
+	 fNA3arw5CSrWMwuBlGWzUqMnXkV5ihPbH6vc7+K6rg0dH9uW98KyfKorIowTSitaOs
+	 dLzOvg8e5CB/SqYNJ+zGeEFYW6mpU+aXwi2GLVVcK0+f4GKPqFEXr7iz2jayKqWsK+
+	 dI0rDCw0SX1WxR8jTsXOpic7NCmmzHJt+ffyTBul/Qb7wfqxTRO+TY+2CERSNVTQuy
+	 WL2Pf11NmAiWJ4Ne7W+jt1juyzWg4Vd6njJPODP1meUKCWOozba+VQP6XD4fcBWabt
+	 2V9eOroVWgKgA==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH v2 01/13] arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
-Date: Sun, 15 Nov 2026 18:23:40 +0800
-Message-ID: <20261115102401.3520-2-jszhang@kernel.org>
+Subject: [PATCH v2 02/13] pinctrl: berlin: use u16 instead of u8 for the offset
+Date: Sun, 15 Nov 2026 18:23:41 +0800
+Message-ID: <20261115102401.3520-3-jszhang@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261115102401.3520-1-jszhang@kernel.org>
 References: <20261115102401.3520-1-jszhang@kernel.org>
@@ -74,33 +74,26 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend ARCH_BERLIN to cover Synaptics arm64 SoCs.
+The u8 may not be enough for newer Synaptics SoCs.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- arch/arm64/Kconfig.platforms | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/berlin/berlin.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 49dcd7be82ce..b830161fe68b 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -108,13 +108,13 @@ config ARCH_BRCMSTB
- endif
+diff --git a/drivers/pinctrl/berlin/berlin.h b/drivers/pinctrl/berlin/berlin.h
+index 231aab61d415..7e7096842eda 100644
+--- a/drivers/pinctrl/berlin/berlin.h
++++ b/drivers/pinctrl/berlin/berlin.h
+@@ -17,7 +17,7 @@ struct berlin_desc_function {
  
- config ARCH_BERLIN
--	bool "Marvell Berlin SoC Family"
-+	bool "Synaptics/Marvell Berlin SoC Family"
- 	select DW_APB_ICTL
- 	select DW_APB_TIMER_OF
- 	select GPIOLIB
- 	select PINCTRL
- 	help
--	  This enables support for Marvell Berlin SoC Family
-+	  This enables support for Synaptics SoCs or Marvell Berlin SoC Family
- 
- config ARCH_BITMAIN
- 	bool "Bitmain SoC Platforms"
+ struct berlin_desc_group {
+ 	const char			*name;
+-	u8				offset;
++	u16				offset;
+ 	u8				bit_width;
+ 	u8				lsb;
+ 	struct berlin_desc_function	*functions;
 -- 
 2.55.0
 
