@@ -1,105 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.176
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794764606;
-	b=NHbnHm0oAicY9jk1s3mqfi0Spj5drqBa74O4nivHB+I3oSVWKW2l9VqYuUjnUabHTRHY
-	 u7OqyPBLqd6IUr13ohFSN+iGB6I35Pbin8Ou6iBkPgTogwrpRL/jQh2XBF+DbgTEdufBj
-	 Qii00ZFrFRRWBk46e/56gyP0t4y2WKCnFiRZZQ7uYGHDA6PKkeXJ1REdwkJ9033OLYpu2
-	 zKLNyvlFi3cITmhQ0jnnTTmLPtkDDm0eDSvHdsSFivl4xSspTH++D1xBn2RIuX/Wzck0W
-	 7Mw9otYYNdhIu4js2GW20xgS/YXYPGcLwPGYrEtwRtjBp40iaF50WaeT8m6J4W+uS0Q==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794764606;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=eB3a/6b3wofIV5PVq3fo6B4mlRfJKc3ivia26nSP8Gg=;
-	b=4j8+pr609SHMk5Bxju4OIY2k9ttjHfDphEwqTtx/Jsv6EvBHGvwjs8FghX67mVkAkvJn
-	 vlswTMO0Zs7pBe6rGPnTM7QNF85D+QSG3zy9Cxl6AcamrbQxF6X7EvhJ/iMHfu78COt48
-	 st9Gk6qgoCGY5HayYmKbmfnH0gbtD20mWtcKZOpqZK8c01jUslb5sefIEoxD+mkWcdhtL
-	 ROG1k+GbzqjqhEj6fkpN41XnP8DeWSmxyrjCVJPH1eOmNg8h7UVzuE3H/YnLLSTkgOnfo
-	 2S+ek2QA59U/Y++EsHVkiKZOYoloBPHxaA0q+bkjugrAO0ma29ldYF8ZiNPoybHltLg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fBe7A8yb;
-	arc=none smtp.remote-ip=74.125.82.176
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794773965;
+	b=V2MCEtujSMeTW3Xwpa5yOxfQj6uc3S53P2xXE3d7WskYbm3WYYPZT1wwYhXCqvhiHdhN
+	 hJUDZP8WIcAFvImlXz88kCqkDKMwTV0jk6JFy1c5XMyCSTsAE6uervS9zPYXkunnRuEkB
+	 s4JqUHh7P74+M5qF0JoE3v3JGlXqhNoWi6UYi+3ganTHzsJbJTXJ/WgpVNN4Tl9jYZr1t
+	 NyiroqbhIXR94DENhDhW5pQCaTlFDKR2aFBQWbWsKjAXN7WkKb/8UgWjLNPkRcPsL4hee
+	 jtPl7V28D9xdycWKIg5AcDBtBRre3f7XP6+mKkb/pA85hCWDp8l4eDPVsUU71e8fD6g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794773965;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=aae1bjh24PUdqN+Loi5xRzc5UHxFDAQVmu+y4W/NfUQ=;
+	b=U9CUyOnISVfkys6AYCrRP3a3TqfDUT1qOKU5ENmfMeNUvyQFtM/D7OKGi6Kl21vfI/n6
+	 XSn682/PnFkpIF7za7jlbEHGVqpKnP28b6xOZABsbybq2mFQJRH71IKe+L29WG9qOV1Mq
+	 0FG3+eV3aE5aTS2TIt46I3xf98SxumQb4Db4X4kJweanuOKHoZHZWYehXccQeEW4uXgrg
+	 5RhJdrk9k0E/r4cbKZ6SLGmpTA1tnbJNJ5dRcDa/adAQ12WMgGmPPHUwbGmfo8qqjVNxb
+	 w9UuGPHV0rUNFOr01UG9pbJz3I6l4/jKlj30zJzpgnT305DqpSzlIs30jT4oKZrP/Pw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GWfWGzt1;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67834606A330;
+	Sun, 15 Nov 2026 20:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GWfWGzt1
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794773965;
+	b=t6dSadnpIjqv8b+RPfCdbTQSJLIiX2LXI7QAQe7CqqHfidhCGn8qP+DX6sjUJZ+1qAPC
+	 b4UXwo29P/63Sh21H+4KigRCv4EdESReG9No7MmB9Tpc3HZ3RA1FJK/vmG1pIDjYcfm93
+	 3NBWl9M0EtOLdHQDJMI0xqIq/pwMc0e8PB2Magj4XKnm2BqV7h89dW2QIzQ1taVGmhsbz
+	 Kqx4A18FvMXL6of/3OWb9gyiK1T3QsGowlAls5aO4CMzf5ldHYLDWIoI2iveRIjnjJVKe
+	 PIOzTLs4HVMKJL+b1AI0qCjJkd9H5CwKtV+orSbv6DQpcEtROkhUfS6o+4jJIVyYmjg==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794773965;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=aae1bjh24PUdqN+Loi5xRzc5UHxFDAQVmu+y4W/NfUQ=;
+	b=1edQiZvZfgpiZ3NFEa7l9xgDLmLvmSkelb3wAerz8YrANKXZn84q0fISeiUe4aC1wCs6
+	 oVs/drsVBNlTilIVAWjnRqGbVc/pFufDwTgeus4Cd45S48NxCt7EspiPqo/cGG6+SoYbQ
+	 WDH6s/zKnEbEPkFzpyl7oFcMkVP5nN4VEnLlYZPLvAu++dmGshumXWB/q9P9Oty/CmyD/
+	 6yZEN6hn+u/QQqdmaeH3p8OqhSuriv/lmbSV2u4zHItwm3gzfvlFYcH776FeuPg3W3pzI
+	 3p9S8pCZihvH/uGfvGhX+PehYoB0mDPKCDdJ4NJvKhEq/s9IYuGPIjgyqI7LmIHmCqA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67A8606A31E
-	for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2026 17:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E67A8606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fBe7A8yb
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-37071c0f42aso3963133eec.0
-        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2026 09:43:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794764605; x=1795369405; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=eB3a/6b3wofIV5PVq3fo6B4mlRfJKc3ivia26nSP8Gg=;
-        b=fBe7A8ybKmjdDCAZUf1AwgF4q44d/nheQLu/32nrMbMxbngZAUVuSOqxpLKUTYn5Oh
-         U4cfAd+4MTTOjCcl37kmirwnd2oZvvZSPRKpBA5l+f8LHHOAB+eT6CFzVeZBR1rwjGvQ
-         SCX2ed0LFNy8/6yjRAH+yeryFFgztze2AL79p936zIEXvRT258hK1+3bOQrKxOkXVBjN
-         Q7rOPdW7gjmNgYKpBFe0uVELjgllFL39L97cOrAyFKrmC5+NceUl4ZHAdw+PwsPuOLcj
-         L3B+/tEUw36iVhkWHXiPfY+SQFXOTGQhc3qrp6VCg1NJzZ9Z43pxuZdahJK6z+3PLoja
-         cDLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794764605; x=1795369405;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=eB3a/6b3wofIV5PVq3fo6B4mlRfJKc3ivia26nSP8Gg=;
-        b=DkjZb2PcVL6GKQD8YPsE9sSXUakgcV3cNRET1l1H44BZW52OUmO+bK5oGuHJO3fMw/
-         hFMOi5CcNZ1PIU3ivpgcYJUYx5biqd1uZK6NKykTh2Oqt+/MdUVnG0NSz7BWJ+4y7UD/
-         eLTjhtaelOYEp5OUYAgSRWcsWKdOWjVve1n1pPKE5vS3JoYnvM+8IkWkQCnVGANU6PR4
-         QlzLI3Xkva3F8xumZneQIlD01+QoAFSCD6nM3N/227vrO2RseIBWYoqRnSncSI/jPE8W
-         woSUc0GXpNj683U7F4/hftXSjbyv+xUzuLYKI41I/WCYY+VzbIZFP0cNC292h8ykfS0p
-         yJjw==
-X-Forwarded-Encrypted: i=1; AL+hErGUbFp49rParj8WkcFyREIv+2idAhufSubkPQdyjHAn44rjLnB/enTjrBsDAqimcaxaWJxAevN5LovS@vger.kernel.org
-X-Gm-Message-State: APuU4Z/RYigvu5Uf77uniOQZlPq2s8DLAL0IqVm/F/bpGpAKGbwsXI+f
-	GNF9zzkVOL+ziVilBGxGngTd7kGrpGZv0KF/VWDPBrAOPpNQ/7+q5jzt
-X-Gm-Gg: AYBFou3H24yNoHpkFNInZlvQ3KYL5wBksY4guVEBi0MKGvW4eCE+FXiEgnLki2gViau
-	Yw17TKlQr14O7wKK+2ro8QzRzlbu3E4HDgfW7HOY3iAdgjl5lWpYdSxUl5Lm4abkVhwwwQnYPmf
-	zJhGvn7t3BbnfnFmhARXWXluisQcWFB7YGkj21VySz4KnF0iEpON/iL/1ecqpeVKfMXZib+Skyk
-	zF95jUCmXAnineq4jNwrfmbRK8papP7TqUntcAlR7VfiatZCKBzQZwide9I+5xNIOUA8yfa1+oY
-	vJjYrAQ70xdYPUZslbROw2tEw9iIJDVkqYXS7HkuWf/a0WAcAt6Wu1pM0XHL2I7W6flR0oYATwQ
-	uZ7CKKbynSr3TUVGsg0DUNMcpXD4GpquSG2pNXKcUAHh3gpNrGF/niBoLXCFSXHEgPv4Tz5STxn
-	G6DiQctxANUEfFLjbtM7PCBtEsRAUcJUwloNWlSbGpL0im/wNTldr6dXEZTmNyqC75Yz/czi6KG
-	tsq08ceaLJ8/PPyi4gK9BprtM00rKfGkCGegR+uQS6C979xP3wcLxL6qLzmKwdoHlMfeFhSEfDJ
-	VkuBHeK/xJblePMmm7USqiQzPHUeKzTD8OI+w2xM3UpyRZy1OO83kaMq6dFUpEkHmYvV8UDnHRF
-	6nkCDDkFFelBsF7lYn0N4HKC1Gi4gLoNZ86c264r0GBB4XllEz4fMipjOP/KZ04QK4WX7kff5Es
-	N9nmZaGgmTM5avuy9/r/JCxHt8a6o=
-X-Received: by 2002:a05:7300:e9ce:10b0:368:7c2d:a612 with SMTP id 5a478bee46e88-37966c4738fmr8600534eec.10.1794764604805;
-        Sun, 15 Nov 2026 09:43:24 -0800 (PST)
-Received: from suraj-HP-Laptop-15s-fq2xxx.tailee6f87.ts.net ([2402:a00:163:3509:9ac3:b274:12a6:a1c4])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-37956bb0c40sm28204663eec.28.2026.11.15.09.43.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Nov 2026 09:43:24 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Subject: [PATCH v2 2/2] pinctrl: qcom: sc7280-lpass-lpi: add ext_mclk1_c function
-Date: Sun, 15 Nov 2026 23:12:37 +0530
-Message-Id: <20261115174237.48908-3-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261115174237.48908-1-surajsonawane0215@gmail.com>
-References: <20261115174237.48908-1-surajsonawane0215@gmail.com>
+	by smtp.kernel.org (Postfix) with ESMTPS id 819081F000C4;
+	Sun, 15 Nov 2026 20:19:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794773964;
+	bh=aae1bjh24PUdqN+Loi5xRzc5UHxFDAQVmu+y4W/NfUQ=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=GWfWGzt1IqHwQaAC5/LaUVihv4N6R2KvR53SumDY7BYcpFIh21Vi857wlPI4iXGxs
+	 VHel/ovxl+avD8dgki2KbTcjkhkfXPOIuRFdUj9BcewhvZb8zkxTnQuIxb52rJzxe7
+	 zjFyTCWnURsW16dfkNUr9sa3q2y1hN/SI+ixsbE4v6e0fzHZ6LAoqSHNXxIJBJuOYW
+	 EkrIaw2o8ii7XQt+E5oj5ZXjR3Sl6CEX1b4oIoxqN26hGf9CVfdwLwJMeWg1F3o/13
+	 PT5l8gTgpiKW+WjajTHf7ygDLv3I6bWh6vQA1Ee4Gt7CbJUGF8ZQCKux8Z81pYKyhe
+	 0FrmCOYGGwL8A==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 110544A185;
+	Sun, 15 Nov 2026 20:19:24 +0000 (UTC)
+From: Venkat Yadlapati via B4 Relay <devnull+venkat.yadlapati.yahoo.com@kernel.org>
+Subject: [PATCH 0/2] pinctrl: qcom: Add the Molokai TLMM
+Date: Mon, 16 Nov 2026 01:49:22 +0530
+Message-Id: <20261116-molokai-tlmm-v1-0-3ba4840002cb@yahoo.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -109,65 +83,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQ5EMBRG4VeRu9bEZXQxryIWxT9coyotIhHvP
+ mWW3+KckwK8INA7OcljlyBujuA0oXYwcw8lXTTlWa6ZWSvrJvc1otbJWtWYDHixRskFxWTx+Mj
+ x7Kr677A1I9r1ftB1/QBl/OSdcAAAAA==
+X-Change-ID: 20261116-molokai-tlmm-ba0ee416e513
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794773962; l=1461;
+ i=venkat.yadlapati@yahoo.com; s=20261023; h=from:subject:message-id;
+ bh=ycrpenfnV06XhWlfcVWQ1HMmfcwzHDxYlIujTz54+LI=;
+ b=OXUKtRiR3bN02LazYY80nM1rysJOYuqGc7EfCK1ErDXCW/w7ClFnBr/9vpUf9KDOu9u//uHi2
+ hjoXzWW0vnpC4l6q7FKapNOkjmB25tNDI83Mn6YY3MayXH4YGDBEZKy
+X-Developer-Key: i=venkat.yadlapati@yahoo.com; a=ed25519;
+ pk=e8KStCtEMvUP1Se/riB/KVnDAQFEVR2Dw2PcuA8/eME=
+X-Endpoint-Received: by B4 Relay for venkat.yadlapati@yahoo.com/20261023
+ with auth_id=1303
+X-Original-From: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+Reply-To: venkat.yadlapati@yahoo.com
 
-LPASS LPI gpio5 can mux EXT_MCLK1_C, but that function slot is left
-unnamed, so a device tree cannot select it. SC8280XP already names the
-same slot ext_mclk1_c.
+Molokai (SM8845) is a Qualcomm SoC derived from Kaanapali (SM8850), found
+for example in the Motorola Signature. Its TLMM has the Kaanapali register
+layout, but 205 GPIOs instead of 217, different functions on every pin and
+a different GPIO to PDC wakeup map. With the Kaanapali tables a
+wake-capable GPIO interrupt is routed to the wrong PDC input and never
+fires, so this adds a binding and a driver of its own.
 
-Name the slot on SC7280 and assign it to gpio5. The third slot stays
-empty; on SC8280XP it is qua_mi2s_data.
+The SoC and board devicetree that use it are sent separately in "Add
+support for the Qualcomm Molokai (SM8845) and the Motorola Signature".
 
-This file also provides the SM8350 LPASS LPI driver, which uses the
-same pin table, so the function becomes available on SM8350 as well.
+Tested on the Motorola Signature: the UFS reset, the keys and the GPIO
+interrupts that go through the PDC (touchscreen, amplifiers) work.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+I used an LLM (Claude) to help write these patches and their commit
+messages. I reviewed all of them and tested the result on the device.
+
 ---
-Changes in v2:
-- DT binding moved to patch 1.
-- No change to this driver diff.
+Venkat Yadlapati (2):
+      dt-bindings: pinctrl: qcom: Add Molokai TLMM
+      pinctrl: qcom: Add Molokai TLMM driver
 
- drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../bindings/pinctrl/qcom,molokai-tlmm.yaml        |  128 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-molokai.c             | 1679 ++++++++++++++++++++
+ 4 files changed, 1818 insertions(+)
+---
+base-commit: 7bbad7337a81d1d73559b783280a76a65a9de191
+change-id: 20261116-molokai-tlmm-ba0ee416e513
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
-index a61df10d4..278d5fac8 100644
---- a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
-@@ -34,6 +34,7 @@ enum lpass_lpi_functions {
- 	LPI_MUX_swr_tx_data,
- 	LPI_MUX_wsa_swr_clk,
- 	LPI_MUX_wsa_swr_data,
-+	LPI_MUX_ext_mclk1_c,
- 	LPI_MUX_gpio,
- 	LPI_MUX__,
- };
-@@ -77,6 +78,7 @@ static const char * const i2s1_data_groups[] = { "gpio8", "gpio9" };
- static const char * const wsa_swr_clk_groups[] = { "gpio10" };
- static const char * const wsa_swr_data_groups[] = { "gpio11" };
- static const char * const i2s2_data_groups[] = { "gpio12", "gpio13" };
-+static const char * const ext_mclk1_c_groups[] = { "gpio5" };
- 
- static const struct lpi_pingroup sc7280_groups[] = {
- 	LPI_PINGROUP(0, 0, swr_tx_clk, qua_mi2s_sclk, _, _),
-@@ -84,7 +86,7 @@ static const struct lpi_pingroup sc7280_groups[] = {
- 	LPI_PINGROUP(2, 4, swr_tx_data, qua_mi2s_data, _, _),
- 	LPI_PINGROUP(3, 8, swr_rx_clk, qua_mi2s_data, _, _),
- 	LPI_PINGROUP(4, 10, swr_rx_data, qua_mi2s_data, _, _),
--	LPI_PINGROUP(5, 12, swr_rx_data, _, _, _),
-+	LPI_PINGROUP(5, 12, swr_rx_data, ext_mclk1_c, _, _),
- 	LPI_PINGROUP(6, LPI_NO_SLEW, dmic1_clk, i2s1_clk, _,  _),
- 	LPI_PINGROUP(7, LPI_NO_SLEW, dmic1_data, i2s1_ws, _, _),
- 	LPI_PINGROUP(8, LPI_NO_SLEW, dmic2_clk, i2s1_data, _, _),
-@@ -118,6 +120,7 @@ static const struct lpi_function sc7280_functions[] = {
- 	LPI_FUNCTION(swr_tx_data),
- 	LPI_FUNCTION(wsa_swr_clk),
- 	LPI_FUNCTION(wsa_swr_data),
-+	LPI_FUNCTION(ext_mclk1_c),
- };
- 
- static const struct lpi_pinctrl_variant_data sc7280_lpi_data = {
--- 
-2.34.1
+Best regards,
+--  
+Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+
 
