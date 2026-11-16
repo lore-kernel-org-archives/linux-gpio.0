@@ -1,69 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.128.198.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794798648;
-	b=j9NqSryLoe+n2OMGHhou8MlPZlhFGT5/DBOb6G6Mq3uDYfXGTHb6NXUAS1t7HbKojizn
-	 ALsMkj2YKZ2x70RMwcfqhmcFaE9LgA32nQ+v78cWjkFu+sR58f72VOFJI7MNHs4B1tHHg
-	 KRgkPI0ATrdTzR7DHntTAYVlIx9ljv3C6Z6clSIXMBlVTjaZfna8Dvnirxy3pi7qcCxbG
-	 fMMr5qr9RfxN6BX4S7G2ZFaBK08wk8uzJh9HtcOIr9Tqev47WF1paWFjTrnKXJM9LQ6r5
-	 rqkIpBtrGi9poc3NhCJ8M5Da4DlitvqTBs2Zo//Y+Ao9H1mtxYaMUwkaQiacplTS1FA==
+	t=1794802186;
+	b=BuLFZOjl7YTa73yqkBHCcSqVyxl0kk6kUegVQuyjVddcRsTocs1XUnjXIgaBykq13Cgl
+	 q4nLD78VZFOMX4fvRql17BogRO/1zpjJTnV9bLToFqVeQWhILCbF60RIjHxRN+xAgTkbX
+	 fbq52Xg74D8wgQQrX7K1fMLSe3MJYlWTE9LgAKD1KidI0rTcSYKu04lwl/BZ1v2aEn8v2
+	 vKTAtDFcgo1umwhfY+vqmzmMTB6rypLUQ+aFOHD5bFMZ+4znS7fwUgCvF6hHMZpaOAt6t
+	 RRWK/MTI3BOsL7P5YaRw/0oOFJSFjtd8SXBggpJ6JgLO+xPYOZHmUCUmviwg19wcSwg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794798648;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=1boI632c9C/fcKg+l9a78rn9vI8twjKYya6RFg60Pek=;
-	b=HQvVW8PQJ1vJDDQA0Ws5FXupA9r0BuzMzZ2Mii43bvz0Uf1OpbBmktGg2imb5EzCGPnO
-	 uZA0/MTDWijXNhI6lxvXpSmu9syqxkRnxsHTqXPbJb29F54bGAWzZzY6ZXoIIbWxQeig+
-	 ZWQ/VPEjtfbHwFCFGVsLCP5VYoEsIcv+UikbviQHdm/1jiYZY2nVGKQOBH3bcm9w/6Tz6
-	 2dt6vzkjmPnfzP4HZe+E55wsjvJJepggZlk3ofPO9I5BhdtZ34wo5N+QDH5d6VYK1EWTn
-	 fHd0aRjleOlGkdkBOO7YMQ1M6IswI8mAyS9bv54mErFW2Zls6KA16haoeeaDQROLWww==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794802186;
+	h=DMARC-Filter:Received:Received:Received:From:To:CC:Subject:Date:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy:X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL;
+	bh=9laODPVsYIvfRtRp3n9an29q85ZUKSux2XuPz+/hiII=;
+	b=LmDiv7N6pvhsJBHaVbu4tW8oRObmuDADRua6j5iFF2+GOx+qWScDnl7YtldcLDLseisb
+	 7QaaKtPrVK3yAqsHjVg2Snlm8CpJfODbMftVd0cOED8Tu8VpE4LGzuVaewvvh8lq/1mWm
+	 M8lfU6cO8eG3l1bU57ATQjj/rJrtw6FSkSA1vE94pGKg7qKFq9uQ2TQCHmh31uuHY2F9y
+	 uTD9Y/QS/8PPCGQm+G5wmBL/XyDL8oizVU09QyVoa7XGrLtHlaMtIpOhVhpsQxiX59Dub
+	 bhiA7EWXJrXJKA013HBx6QNzuKtJ3N6iOASxtVR25o8k8NgeySRF1x2g+G7rYdwXXZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ShVug8x7;
-	arc=none smtp.remote-ip=111.22.67.139
-Received: from cmccmta6.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C6B606A337;
-	Mon, 16 Nov 2026 03:10:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2C6B606A337
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ShVug8x7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=ShVug8x7q6BZlBDCf2P8pHRb1N/x53L5AouUW7UO7Yie6PRBFxvE3qcN21wEFulUjhn1U/mGLbPnJ
-	 IWTbJhesJdNfXIc601dNeb1HWO1QUfwLkRuLHAXIs9l9kOkbQb/45xm5KmkK+iWvP/mFQDCLak5gZL
-	 3WuMFcPxRrQDSNCY=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96afa7435dea-004a9;
-	Mon, 16 Nov 2026 11:10:45 +0800 (CST)
-X-RM-TRANSID:2ee96afa7435dea-004a9
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from DESKTOP-3K8GUTQ (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6afa7433bf7-79dd3;
-	Mon, 16 Nov 2026 11:10:45 +0800 (CST)
-X-RM-TRANSID:2eea6afa7433bf7-79dd3
-From: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-To: antonio.borneo@foss.st.com,
-	linusw@kernel.org
-Cc: mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-Subject: [PATCH v3] pinctrl: stm32: Fix reset control leak in stm32_pctl_probe() error paths
-Date: Mon, 16 Nov 2026 11:10:42 +0800
-Message-ID: <20261116031043.502-1-laixiangwu@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	dmarc=pass header.from=andestech.com;
+	spf=pass smtp.mailfrom=andestech.com;
+	arc=none smtp.remote-ip=220.128.198.184
+Received: from Atcsqr.andestech.com (atcsqr.andestech.com [220.128.198.184])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C179606A329;
+	Mon, 16 Nov 2026 04:09:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2C179606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (atcpcs55.andestech.com [10.0.1.155])
+	by Atcsqr.andestech.com with ESMTPS id 6AG49WK7084335
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 16 Nov 2026 12:09:32 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from ATCPCS34.andestech.com (10.0.1.134) by atcpcs55.andestech.com
+ (10.0.1.155) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.56; Mon, 16 Nov
+ 2026 12:09:32 +0800
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Nov
+ 2026 12:09:32 +0800
+From: CL Wang <cl634@andestech.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: CL Wang <cl634@andestech.com>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tim609@andestech.com>
+Subject: [PATCH 1/3] dt-bindings: gpio: Add support for ATCGPIO100 GPIO controller
+Date: Mon, 16 Nov 2026 12:09:12 +0800
+Message-ID: <20261116040914.368298-2-cl634@andestech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261116040914.368298-1-cl634@andestech.com>
+References: <20261116040914.368298-1-cl634@andestech.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -74,99 +68,134 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs55.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 6AG49WK7084335
 
-stm32_pctl_probe() acquires an exclusive reset control for every GPIO
-bank with of_reset_control_get_exclusive(), but none of the error
-paths release them again: the bank loop returns directly on
--EPROBE_DEFER and on a failed clock lookup, and the
-clk_bulk_prepare_enable() failure and the err_register path also
-leave the already acquired reset controls behind.
+Document devicetree bindings for the Andes ATCGPIO100 GPIO controller.
 
-On success the reset controls are kept for the lifetime of the device
-and are never released either (the driver has no .remove), but that
-is harmless.  On a failed probe, and in particular when the probe is
-retried after -EPROBE_DEFER, every attempt leaks another set of
-reset control references.
+ATCGPIO100 is the name of the IP, which is integrated in the Andes AE350
+platform and in SoCs such as Qilai. As in the ATCSPI200 SPI controller
+binding, the compatibles follow the platform and SoC rather than the IP
+name: andestech,ae350-gpio is the fallback, and an SoC that integrates
+the IP adds its own compatible, such as andestech,qilai-gpio, in front
+of it. Drivers can then match on the fallback and still add SoC-specific
+handling later.
 
-Release the acquired reset controls on all error paths.
+The controller has up to 32 lines, and ngpios gives the number of lines
+implemented. The debounce logic can run from either of two clocks: pclk,
+the APB bus clock, which is required, or extclk, an optional external
+clock that allows longer debounce periods. The interrupt is optional, as
+the controller also works as a plain GPIO controller without it.
 
-Also release the clocks of the already processed banks on the
--EPROBE_DEFER path, which was missed by the earlier clock leak fix
-dfd8259507c5 ("pinctrl: stm32: Fix clock reference leak in
-stm32_pctl_probe()").
-
-Fixes: 2254e77665d5 ("pinctrl: stm32: defer probe if reset resource is not yet ready")
-Signed-off-by: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
+Signed-off-by: CL Wang <cl634@andestech.com>
 ---
-Changes in v3:
+ .../bindings/gpio/andestech,ae350-gpio.yaml   | 92 +++++++++++++++++++
+ 1 file changed, 92 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml
 
-- Use the real name "Xiangwu Lai" for the author and in the
-  Signed-off-by trailer instead of the account handle (Developer's
-  Certificate of Origin), consistent with the same fix in the
-  analogix_dp series.
-
-Changes in v2:
-
-- Point the Fixes tag at 2254e77665d5, which introduced the reset
-  control acquisition in the stm32_pctl_probe() bank loop and the
-  -EPROBE_DEFER return path; bb949ed9b16b only replaced the child
-  node iteration helper (suggested by Sashiko AI review).
-- Also release the clocks of the already processed banks on the
-  -EPROBE_DEFER path, which was missed by dfd8259507c5.
-
-Link: https://lore.kernel.org/all/20261110083253.1525-1-laixiangwu@cmss.chinamobile.com
-Link: https://lore.kernel.org/all/20261110065722.1340-1-laixiangwu@cmss.chinamobile.com
- drivers/pinctrl/stm32/pinctrl-stm32.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 98cf9c6f4..2a54a0176 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -1966,15 +1966,18 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		bank->rstc = of_reset_control_get_exclusive(np, NULL);
- 		if (PTR_ERR(bank->rstc) == -EPROBE_DEFER) {
- 			fwnode_handle_put(child);
--			return -EPROBE_DEFER;
-+			clk_bulk_put(i, pctl->clks);
-+			ret = -EPROBE_DEFER;
-+			goto err_put_rstcs;
- 		}
- 
- 		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
- 		if (IS_ERR(pctl->clks[i].clk)) {
- 			fwnode_handle_put(child);
- 			clk_bulk_put(i, pctl->clks);
--			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
--					     "failed to get clk\n");
-+			ret = dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
-+					    "failed to get clk\n");
-+			goto err_put_rstcs;
- 		}
- 		pctl->clks[i].id = "pctl";
- 		i++;
-@@ -1984,7 +1987,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(dev, "failed to prepare_enable clk (%d)\n", ret);
- 		clk_bulk_put(banks, pctl->clks);
--		return ret;
-+		goto err_put_rstcs;
- 	}
- 
- 	for_each_gpiochip_node(dev, child) {
-@@ -2009,6 +2012,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 
- 	clk_bulk_disable_unprepare(banks, pctl->clks);
- 	clk_bulk_put(banks, pctl->clks);
-+err_put_rstcs:
-+	for (i = 0; i < banks; i++)
-+		if (!IS_ERR_OR_NULL(pctl->banks[i].rstc))
-+			reset_control_put(pctl->banks[i].rstc);
- 	return ret;
- }
- EXPORT_SYMBOL(stm32_pctl_probe);
+diff --git a/Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml b/Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml
+new file mode 100644
+index 000000000000..01badd2a1342
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml
+@@ -0,0 +1,92 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/andestech,ae350-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Andes ATCGPIO100 GPIO controller on AE350 platform
++
++maintainers:
++  - CL Wang <cl634@andestech.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - andestech,qilai-gpio
++          - const: andestech,ae350-gpio
++      - const: andestech,ae350-gpio
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++
++  ngpios:
++    minimum: 1
++    maximum: 32
++
++  gpio-line-names:
++    minItems: 1
++    maxItems: 32
++
++  clocks:
++    minItems: 1
++    items:
++      - description: APB bus clock
++      - description: External clock for debounce
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: pclk
++      - const: extclk
++
++patternProperties:
++  "^.+-hog(-[0-9]+)?$":
++    type: object
++    required:
++      - gpio-hog
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - "#gpio-cells"
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++dependencies:
++  interrupt-controller: [ interrupts, "#interrupt-cells" ]
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    gpio@f0700000 {
++        compatible = "andestech,ae350-gpio";
++        reg = <0xf0700000 0x100>;
++        interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-parent = <&plic>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        ngpios = <32>;
++        clocks = <&pclk>, <&extclk>;
++        clock-names = "pclk", "extclk";
++    };
 -- 
-2.50.1.windows.1
-
-
+2.34.1
 
