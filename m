@@ -1,88 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.17.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794823215;
-	b=W/ql49rggafVZo1rZmm7j3FvAiBLsqmQYAOAATyh9WqmtKx3VGCCyKjD0AJs2yAUGljl
-	 Usz9/X74a/oxgWJKREb93so/jnYsL856ETKBu4/1fHZ0GZHDfZ7qlZ8rB+1xttVmxv9i8
-	 +Y5aBS6HVUWCB3loSW3cR2x/meurRPJNOeVN2kTOmkdRMxP/c/X8D9mSN9loDuWCoLtB+
-	 r1XfTasE1xKVQWucDPo8x7mQ1SAOSt781P755o19QD5gVIOB7GTWBMl/1/v135OEmTD1v
-	 /HSOCTiDT+igv8p5Nx3zNmHUmNhbt0NdSJ0Lw35HLsWcaZJkir1fHonbiTydoQDsljA==
+	t=1794823459;
+	b=bokBY5yavoCLXb6r44Z6DoTvTiuA/cCAdghAj7g92q6KBWN92TzivgAxGnhj0JIlQuny
+	 kXoR/RLwLdvhsti0xEIZIfUdr2UsVA7x22FPkFgTe1DBjKAxXAkpHog/tDySuF/L7KSCG
+	 wM0guVCi0qwk2Cug5zaloBfZDi40QpwQUyFUKhRtMtGWRMbpgXR515kFrPAE/4xv+DgDe
+	 ceYa8ph88HM8KkoxYksEfNSVdEZd/4XoFo+9ZBrH6jc6iX9VFRdaNFJVkqENER+vNjgRk
+	 RXmmlxvlugDCXRjgQmrk78Kd9HWRQrpm1abO/4fvmMqFncFGcTIhHJ12S2vxZRZg9rQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794823215;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=L2QG11mcJBEDMvu/QuPkL2NoETjOTlYzjaGlnujMsbc=;
-	b=ocPYovCgUr1/2tcVF45R6XEUNEitbKDgnZ00oNGhBUEAlhY8cLv2bPQ0GUn8KpoUh381
-	 tqW0bKteDdTnJkLgh7D68o+kGaWWGbtPYPbu7u+ZnQzZhYTY8kdZsw3Zly7S2SjmA2Dol
-	 b6o22Fm0W9mJtQOaWEDJTslTZ5gGlOIDrCgHNqCq1WAr3STDRcu6PRaR0RFRuvZoplNFG
-	 +hO03HAyrPmyZNFERq4H5wIHBrxhhpM64SjZfmf38ALfkMblLbGoR3NvFqPsnmj+WopG6
-	 THQ5B4pr+PmgBSoGQIbX4LZNUyCLpr/xNdU2Q20RWzD1jljrNPKVBe/HjR9iMUtf/Jw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794823459;
+	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
+	 X-UI-Sender-Class:Received:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
+	 UI-OutboundReport;
+	bh=0hfRGVDl+PzAZjsqP15lmfu4lbYtTRutweEiLzOonds=;
+	b=412fIWVIcsNXGHBCG8piqORrSRR/+QKfs+wXLhxpyv2obxh6qFxc8Ya0RBtRmCynoF1w
+	 aIXcEBlSHUfwnwlkkLWpoTnD2qcjkcKXD0GsDgeJxRWTGROSmjaWPmkCeZjei1yl4Yf0c
+	 vkA2oDnGzKc8cWnqvMknALAw1qKdJ4h1Sv8iMapdDl5L6qaNr6L4pXvaLtgDuu0eCc6pF
+	 KxTlx7UWXS4kCfH36n2XTdiS9jS+DBWJm/DUaHaZ+UH8qrjmfG2OP0MO1QxGM76ZJmTZO
+	 wUlKUwcV1HCRDRfud5PtAFzeGm06uWA/eb1xwPF+zr92yE2wvVpYMLTrjSt7EgLPL/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=EZyfG2ka;
-	arc=none smtp.remote-ip=209.85.221.41
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=web.de;
+	spf=pass smtp.mailfrom=web.de;
+	dkim=pass header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=qw9nCYWO;
+	arc=none smtp.remote-ip=212.227.17.11
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C25F606A329
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 10:00:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C25F606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C164606A323
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 10:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C164606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=EZyfG2ka
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4922dbcee23so1489063f8f.0
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 02:00:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794823213; x=1795428013; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=L2QG11mcJBEDMvu/QuPkL2NoETjOTlYzjaGlnujMsbc=;
-        b=EZyfG2karYEC6c2v8a9CVKvIn3VTpcvJjBWEKWkwZnMuVrzc3zfNGmB4Mkt8Q2Nxlk
-         GefOEJ/SKzAyW/cCiDPKHIfnla/ZHoqVairWDum9XOHNcvHXHpgaqJs0jZvAbCwtUw2y
-         /OZRstU9JA6TLMOPBwJlQBF2LZ6sSivDXJo0tgTSmk5h6DWDKhiX+f9OHcScLEV9J6M+
-         9D4an3zou30wtp+HhT9CGL+Ep+3D2RjGQjuSJZHW+4SNUt2H2ocP5BYNUlEshsgKsM/I
-         5v8n/qJqE2icsgR6ZMA7JHiNnOs7SKAGQlpCgutl27CEGsil1AOla/GK26pcMo8YWu5t
-         kOuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794823213; x=1795428013;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=L2QG11mcJBEDMvu/QuPkL2NoETjOTlYzjaGlnujMsbc=;
-        b=sgTV5V4/BvfhVb7XWTu2DWZgczTCmhUCJhMiaBQTqAlQqiDKyy30K3EeanxygWMciE
-         6wLZPaJg2n6SD0TMSKu3jQj3mTEnDRcRjVEZ+ryLEHXGOsINelJ4Z8ox3k/upvAvvEAa
-         EE3MCt0/WABX6wxHL+duPFtfmDjhPrFlYPIqOd3jGcRDKOHgChU+V3K9SsiMXB8KwFNy
-         oTP6KR03OJ7DdqIaID++5CGhv5Oq+UZgTrYcmHd9+ZPJJPCO/Db8fMsFY5P2X1xjJh9l
-         z6N3a9rlVn5yX6J1gCzC8iKcskc1E9a2GMafV02vbDpfnoBWqztgZjoI/0nSEwrX1aDH
-         b4wQ==
-X-Forwarded-Encrypted: i=1; AL+hErEbzQbkV9DeSh22/gwNMwpFdGLIgzcn+4lNaOeMTjDUg+p4QFLgPnD5mfQ8rxPWVS6+EPIDuH5cTlHm@vger.kernel.org
-X-Gm-Message-State: APuU4Z/58PB+P6oj8FKV0gR9z3CSvKzccJ6iHd030VXe+ZTkhwgKqRLw
-	SNMUSwxwQ5Ky1UsaTMC1Pf3ao8wKvPhA+nCsfOyfJZwgEJ0nmUx8evH7pVsi+cl/vo4=
-X-Gm-Gg: AZFdTZebp1wEZxe+7uSPgQYo+MkOkz1HYRv8seJARImFNBC0hnnoVrRPYmS9eXEilvL
-	ODr/zNbK2grqQhxjKmeY0r/YdtXoNEBXn4iGbD4RS3xy49R2HYWh/U6ynvZvdJdwZ3ovcHx1//o
-	9rhM3tnUPnLdtIh0VF6smttgtKSPWpu8RZtwMFNO/lSqWJnKe6lwBBp9D3qKiPDe0t+RS7ODh85
-	q4YNCANq/0C6QrHp9QJJwWtWT2xqfUWPZ8vD4yIjfyxssgGxwFWArAI8eZe1VdllBzwCjI1nRSl
-	Pabt+nJNJcm08TvOKKB1GC59xksOU6jnXquvmvonMkmauO6J8Tz9wttVaSuIKiTkSY3raFcHOVz
-	HcnOT9bOyArBqtvfMCK1UJYYETkZTt/R0vFOjA4CeBy3pCFGMyv6XmjwTjCQCSdOF+qGoSuqB8Z
-	S0FP/ULCCQf6Dd1qtpP+1YqP+wWzJs+ZlLqhtCuHH98BcxpS/mbBLjhCjlaOmw7JalGXKVgSUWM
-	TiRFqtRUCgLjgOsnBD+QLdzhxRty+R4DcBkONifUK4sKI2O0BsfvC8+vw4DoQk1vrwOTl7cppOH
-	OuDJDNiq96Q9fIATEqhjkN9Eg+KBa5lHgA==
-X-Received: by 2002:adf:e008:0:20b0:48e:6f76:de98 with SMTP id ffacd0b85a97d-49c71e3e1c0mr15349062f8f.9.1794823212810;
-        Mon, 16 Nov 2026 02:00:12 -0800 (PST)
-Received: from [10.48.2.141] ([212.133.41.25])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c604ecda5sm20247717f8f.37.2026.11.16.02.00.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2026 02:00:12 -0800 (PST)
-Message-ID: <ce463c97-8fde-44b3-b3bd-c21a69ee61b9@baylibre.com>
-Date: Mon, 16 Nov 2026 11:00:05 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=qw9nCYWO
+DKIM2-Signature:  i=1; m=1; t=1794823450;
+ mf=PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4=;
+ rt=PGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPg==;
+ d=web.de;
+ s=s29768273:rsa-sha256:ZJlapb0PrvanuZ2jl/rh7aRGB+fK
+   RnJgyfsgm36O3X7IEaPwlov6u9BTFhm31A07O0M8vsozwln7dUSJoHjI0VMqzw6g0uzI5Kt+Aqk
+   eIJCCAKU1qjtLj1+THlW461hkahaVstgameBLYeOzz+RmEtp/eT+e6RB2HiRAHXyMUmA8z2tzoF
+   a7mO+fZbXWXSJ1J/JwKejHgCSDPwrb6AxIXIBdXalGjsQfKkjk6Jm3oILFqe1zWhUjtlh0Rvr58
+   v9aOH0f+ED+nyCDjr0wDugR4izBLtSCXgC/l81E+I5rpksitO2DgDG5w8vDcfwOue5JuVKj45gV
+   ue/CTTgKUr7D8g==;
+Message-Instance:  m=1;
+ h=sha256:
+   MQq03cFCOaHqHWHqMa+tVB8Epfo6fUXsjBuA53CvzhY=:
+   0hfRGVDl+PzAZjsqP15lmfu4lbYtTRutweEiLzOonds=,
+  sha512:
+   xJzbg5ReXmHLxXNShqewDk5t9L0Qcu7gAdjhe2gvjeijh3AaB6p/2AUPjgIZuTl3nQZ/KYKeP/djg3n48KdtZw==:
+   mgHpMYo1aafIA3XS68jGXjS4q8yIhseyApK9H9Mmlyrx61urxjKAAwFbTM0qpOTVLYhIb2nw1GbNrzo02ir/dA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1794823450; x=1795428250; i=markus.elfring@web.de;
+	bh=0hfRGVDl+PzAZjsqP15lmfu4lbYtTRutweEiLzOonds=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qw9nCYWO7kyy7IWh3M8sSYVp1t33TUh1H7PtgUs0y4fpua8rxkXJIyk9V1tQCAA8
+	 HyzjW8SieXKq0Co5vp4fPvfM2kycR8LK9KVyJgIjRNFV8wvChQE3lCgr+O7R/qT58
+	 4CyU4Yg5fOLd4HEXRC8jG8hB5TaIZW4OeFVmH/9YUhmBc48wzgMvk0tFoaC7rYXZ+
+	 q5/dbx6TXBQnHPsFEr4Yve4vB7aw1GEDlyrdEP61lf8KbZPTb+vAzRVdKkwj/OOxY
+	 qTwEMyMYRV4eRcd1u6m592nW2xyaWdMQmtYDy0Ah0QA/kjE3uURBcXKuIlhKkpu3U
+	 aNGWiWOqTFkPedND9Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzTPW-1wXTac1CAy-00vrM0; Mon, 16
+ Nov 2026 11:04:10 +0100
+Message-ID: <37a1c30c-1504-4d2c-a794-92c2972830d9@web.de>
+Date: Mon, 16 Nov 2026 11:03:54 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -93,53 +82,136 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/11] pinctrl: scmi: give no groups to pin-only functions
-To: Linus Walleij <linusw@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>, Peng Fan <peng.fan@nxp.com>,
- Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
- Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
- Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261030-clegoffic-pinctrl-scmi-gpio-v1-0-52d92843ad97@baylibre.com>
- <20261030-clegoffic-pinctrl-scmi-gpio-v1-7-52d92843ad97@baylibre.com>
- <CAD++jLmS1Et_B_U2W5W3GAx8ge5V+B5innksqKwxYnBzh=JPag@mail.gmail.com>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Autocrypt: addr=clegoffic@baylibre.com; keydata=
- xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
- K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
- BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
- AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
- B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
- 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
- LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
- vLfPDQ==
-In-Reply-To: <CAD++jLmS1Et_B_U2W5W3GAx8ge5V+B5innksqKwxYnBzh=JPag@mail.gmail.com>
+Subject: Re: [PATCH v4] gpio: amdptpci: add support for AMD PT PCI controller
+To: Szuying Chen <Chloe_Chen@asmedia.com.tw>,
+ YD Tseng <Yd_Tseng@asmedia.com.tw>, linux-gpio@vger.kernel.org,
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jesse Chang <Jesse1_Chang@asmedia.com.tw>,
+ Richard Hsu <Richard_Hsu@asmedia.com.tw>
+References: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:U2b6MpGSM9yJTjhDpGj98/nRECZViQWEr3s288H5XGF3CVqoxWg
+ 6anBgn8Bvr1SyCrdnogNUAGwmKZkrYErPZ87jwaYGPtSF3LBTv9p76Zcd5v75tAADFHhptC
+ NnIUaFXbg/VvcnZG3OxYqtJGfSZUPrX+khkClnzE24N32iVaNRbfeShIPgO/6H6cotKojn+
+ 5vkW7+oPRjc4gavwhgpyg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wO89ISvSkWA=;plNvtaYZ1sjmZqkaEvrfhxQHFCT
+ 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
+ drxomWMOiDtYTAQCPmZ44jhFrOg==
 
-Hi Linus,
+=E2=80=A6
+> +++ b/drivers/gpio/gpio-amdptpci.c
+> @@ -0,0 +1,634 @@
+=E2=80=A6
+> +module_pci_driver(pt27_gpio_pci_driver);
+> +
+> +MODULE_DESCRIPTION("AMD Promontory PCI GPIO Driver");
+=E2=80=A6
 
-On 11/13/26 11:11 AM, Linus Walleij wrote:
-> On Fri, Oct 30, 2026 at 4:58 PM Clément Le Goffic
-> <clegoffic@baylibre.com> wrote:
-> 
->> For a pin-only function PINCTRL_LIST_ASSOCIATIONS returns pins, but the
->> driver registered them as groups. Register pin-only functions without
->> groups.
->>
->> Fixes: eb524cb651b7 ("pinctrl: Implementation of the generic scmi-pinctrl driver")
->> Signed-off-by: Clément Le Goffic <clegoffic@baylibre.com>
-> 
-> 
-> Patch applied for fixes.
-v2 went out after your mail, please skip its patches 1 to 3.
-Its patch 4 does not apply on the patch 1 from v1 (a line join Andy asked for), and its patches 5 and 6 carry the arm_scmi to arm/scmi move from linux-next.
+Would another macro call =E2=80=9CMODULE_AUTHOR=E2=80=9D become helpful he=
+re?
+https://elixir.bootlin.com/linux/v7.4-rc1/source/include/linux/module.h#L2=
+33-L236
 
-Should I send the fixes of v3, patch 6 included, on your fixes branch, and the rest as a separate series on linux-next?
-
-Best regards,
-Clément
+Regards,
+Markus
