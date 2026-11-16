@@ -1,89 +1,89 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794815362;
-	b=UH7lHIwe4Lkf8ef9se0l23aSAiBYP4vQ0Grye/IU9VUG1HIkTzzRo6Pa/0dOG8JFv+oL
-	 +/85OFgEhVSHM3xl+PbRgrZ1oQH/MydykT/FPij5WrAZve0chpCE9qGibBRy4lVsMWkMW
-	 Urhe/9SNXUyTG9fW9SfqbY9BF/Ty+Jn7r4aoAhn6HxO8jiH2ijsYTatQmeIhZoHS760Lw
-	 cfc7r6CMEyWU6GcKCFoLpzY46JC3LrGEvD0EKzT7bq7ifnM5FvA/J4M9/LbTgPCjiY7JZ
-	 QE3b9hDSiNSkzHj49UvqgADWbrR8/Ootr3hOy1WJF1CM5zqOrVAD5ntI/4QGb2LX7Rg==
+	t=1794815453;
+	b=3vK/AuwSd63vzsgGd6PM/xV5kAhPaUSzBS+gWxRXfby9AbsNGyJ79pejqxH1m0izWGzg
+	 mY8TjK+UuTxYEuyo1jzORvPPl8v+XoS3zZV4wCPOe/NFCQtRGa6buCYC07fMav4xsGPad
+	 har8r85j+l2wF0UXSSQRGvU6Fn5b12tKoFUEsMg7UAImow87PKVlkhBzm1PS6k4UJ+svm
+	 oYlw03mEEe8qGpSx/wwlW2pf1GMtcYJ8f+/W5sNaczlXxEbTzpgkhBJWKO8uoh2YKAmSj
+	 qdFD/F/LlZAkR8NHZ34twFolOIOJztQk9tsKEiKtw8UL/M1/YnxSHawojCBLM2pPgNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794815362;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794815453;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:From:Reply-To:Subject:To:Cc:
 	 References:Content-Language:Autocrypt:Organization:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=KFYvdj4WEJof34obcWvEATV9E3Li/puxLmIdcgVZxEA=;
-	b=W8iz/eH9bwCUI6oEFq/yVzBYc47pqCu+CxdCDbFoAkvLl4HEaI3rtMmljUT0Yyu2Tfi+
-	 XPybGL6n4AMyMP2o0KY8yEhxAWfZZLnlJKBa1MMNruc7bH1BJsE9FMu7/zoG/biufqKwc
-	 Wd++mckauLDdJsr+T1zLwO6LlwBh3S6HH9Y5SB0C9TH57quMF3B1e1p8ZMk2eqZyI4Q2t
-	 5mi8Sv/Mq5tp69qpSeDmozeMnjurPykEqt0i3mtNmp4lFBj5/EoGhdYI8OGrLkXobDUTY
-	 ETBuxnrrBDlTZ3M7Prh5Q1TDuw03qRcu/qkasFZlz10t+UBqdEVhRYJzWIjBNye51xA==
+	bh=gBevyYkB+KqpxLupXF92krJAbcbx52iOwb7rRaPzSaU=;
+	b=xV2FdOdKe1/OG15Iw54XSy5Ybv72IyhzA5soM73lPzpvbOM3KIJS91rj8ia0kvYzMs31
+	 +tI7hC6t0Dx3ech7bSPxU+XiyxaFNSZZCSPChx/9IqAZvo5lLQXNZmwLo+O/rB04YF5at
+	 m3T6ZkiMhQc14jRAiGKkw+UuTfAIeCDRIR1y1o2LYfyilMkGGQQpl821fRGZfczb/qOxE
+	 aEbZ1dOJK1l/XkmjUAaUmCtRQKbnPrSkFlCkNcAtIpFLKGQmfQ6bIfOT6P33jzgU5qBKH
+	 KkmZ/shEzkN4j3biinaXp4xCx5zvCSyhbYlWJbmyKxydfXL/wfrK2EjicwYfY8XARmg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=vcDneXcv;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=p3t64VCH;
 	arc=none smtp.remote-ip=209.85.221.41
 Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDC1606A32A
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 07:49:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CDC1606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15AD606A323
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 07:50:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C15AD606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=vcDneXcv
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-498f5fa4f70so3367937f8f.0
-        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2026 23:49:22 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=p3t64VCH
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4919a880834so1461139f8f.0
+        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2026 23:50:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794815361; x=1795420161; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794815451; x=1795420251; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=KFYvdj4WEJof34obcWvEATV9E3Li/puxLmIdcgVZxEA=;
-        b=vcDneXcvolrmz1XTn9h+22DBGNxwT7DHCvKLeWAa5Jrrgfvg9IQbnLFCW+rvMaEsZK
-         dtFjQrCHNSAnoj51/rNlsJmsoDx94maBvawwE7UaOCVEL1tfEG3FasSCxc+iC0mKzZu9
-         L+CV1VtuwsJTrFj5FrAff2Qv9uivlf/G5QQSUJPIWCdrv7WzdAXiuRKRKViquEHfmjgt
-         GtN5aBKxEnVN1lFmM1X9aaB6paz69tSAVQ7vzdGtoi4npAVhXtFQbg5m6XWzOQ82bnOw
-         p1HisaTqCjiQ2wS+w/dzJ912QScroZOc9hYjGugtNQxe/xO+5VM3FRL1FqcerdJjJUbO
-         EE0Q==
+        bh=gBevyYkB+KqpxLupXF92krJAbcbx52iOwb7rRaPzSaU=;
+        b=p3t64VCHuH0CfExDvDQNLTUnA8yJcL7hr2Su/honJPU3WAwc0Il6KYqHeHKAC6yBMU
+         KfyzitKrykfz2YNIXm77E/vj8iJ9e3AEEzgCStiYMfxV5tBBEh3XmE3CmTDH6jjgO9lx
+         1hHbHiKFJy8D+Zxa7X1X1RuYdYxDepNMWieAQAjYLv5cV4RtzpxvY/DLauQvOSKiOfZb
+         Tnky9PKiBOJccIsSjDsdtIQNWpo8BHyjw96wlDYE71UV+gCtACUwnhhnYUfsRjBhr2SD
+         YuX2Wt6A6tU+9PphYPz2oqzM7jGNZMvGCDMLTnlACJZsCruFSlim6C4qwpuGUYn6dinT
+         9vmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794815361; x=1795420161;
+        d=1e100.net; s=20260707; t=1794815451; x=1795420251;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=KFYvdj4WEJof34obcWvEATV9E3Li/puxLmIdcgVZxEA=;
-        b=aaUwT2JJjYfOdK//nbcw35nOohOa2w2Kxej7ZUros6NvYNEmcQvp5BYAtXgYk/Md2s
-         aADwvbQQz/zMCOTdIE31K5fTIh+r4UyyxU8v4UP2MfC/GiwCdxKyRNuEoS3UMUU9ioRa
-         NtK0J63o4OPE0JP0pyjFyA8ihVMIhDx6oSjdihSS4TzgOwRsgSmD5QmuqCyGp0OvKeOz
-         D1JVC1a6BV0oWqCSY5/UD2nv2JaONf9JitAdRcA2Aywcy8UgwQgRBWGJu1E81rbhz3iw
-         BcOuKuH2sXmKTaAqklpcG/KAcGt30xx0lfL2SnccA+1beYKNrFAnkIl5/ajVyRkypacM
-         g0Qw==
-X-Forwarded-Encrypted: i=1; AL+hErGNbEjoWQeRIg6V8VJaUg9Fou8xlc0m1c5BERyNkD0ij1o6ahjvXD48rhkErp8tkgAOvJevxediU79w@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Fv6KfH6VWUogPhblH0qJcdUFOXyji5AQmFPLBau2GFS+J61RW
-	/Kb1EROP0yLdkbiLHlFIXodV3vEzECYCkmuBsK0qePb7w8ICYpzhDjVE5RB/SAkTAX8=
-X-Gm-Gg: AYBFou1uGGtz47rMd0+8DMDliQ8JXWps7ihMAEHHTUtq5A9/ED9p/ybJalxiL9/kRDZ
-	pVGBeNpY73A5KTMizMqnR35+OKqPjyleS4pBZAxo4gEKxjC/Ojh1D4K4J4xOqB0mK9PHx8tnBSz
-	fLsYZQSKKlC0GbnDVQwxFNQCT0keniOik47zATVUmSTY6QqZLbJ85gQapejJNVqcVibFtzQvWUG
-	wQ84HAA7TzW7xUf6KIhQaamG36WVoIMA1C8sXaLPsmuMB+WzlTaCKlmnQzzN10jOnwVElzYzbPK
-	cH0yAMhOqG8x7HWLVCJAFatHP9qYO3xFpgB7IsnUHk/RjW6UMJyVKOxGYXnXx5mRd/YtybmXvX1
-	y8dqcAZTohYSMhNdkLanKvxuZMWfede9rT1G46CIPvL1ryj1qyxQqxKISVkYinNt6wBvR7e8aQ2
-	OOSY6JHLDeQwdQeNnu6YDVyALTMJSqSCls3wLhQ9M7SmnaHfwc6yiWm59eDofefyvTyMjr8TQgS
-	9xL7fXsu07MnNbxzfYnEWa6kN6v1MjqDwb64MnLPIHFR67+Ss8zRNVzbuBn7uZkU26Ln2xDSpQ4
-	aU+WdDk9HhaYsv9bFdw+Zbhb0wt4tRm5vA+PZoZSDVgPRfusJftCDZHF0feS1BQdHvGtgeD3L3c
-	X++iVTtQzKQ==
-X-Received: by 2002:a5d:588d:0:b0:493:e0db:b507 with SMTP id ffacd0b85a97d-49c6d4538damr22238404f8f.7.1794815360622;
-        Sun, 15 Nov 2026 23:49:20 -0800 (PST)
+        bh=gBevyYkB+KqpxLupXF92krJAbcbx52iOwb7rRaPzSaU=;
+        b=dkW0OeNvM938LE72H09kTbjLgwl97qO6zl9IKQoTDb+z7I7cdJOl2aGnRiBljKmC2P
+         B0OBPVQHSsJdvouqu28HLYWgUhYRJlpHG13V3r2wuk7JYl4hlEBVAhMQHD7cf5Gj71ob
+         jaX7iTC9L8+fkRF2xzoW0/cNTB/HKM9Ty2d54MLYiKEy6h11FxKVrYn05dBcuKiviPcq
+         SQU7VYArkSHqQuowMJMDLih1lyP6krG29XLdAQdyiezFU2/2GskIV72IYKUkMguJ56QD
+         OqF7ag76JNERbzhV2s+KvxdDxTfo5ppX+JoYL6NaD3h9b+GPUkaBTFOQhK0FWPs09MBF
+         ttrg==
+X-Forwarded-Encrypted: i=1; AL+hErG5QfLh0y4IvcDUmecV2rcwGqKsWFol+cOVt9dCyyTgYve6AIiwkA+2YRHkf1e9Nxu1m61Iw+8JAq5E@vger.kernel.org
+X-Gm-Message-State: APuU4Z/SbM1aI9iYj+G5NX/ZEFcIcYXekL61a31iU4GuB7EsKtJOmzKe
+	mc74oG9M5mBgWIMq3uUi02t88PcbUPHe8z5hutHMta+GcBxZ6QaL8MBR0aN37bJ1Mfg=
+X-Gm-Gg: AYBFou27iCWuJSCvkszkKZO8k/+o65xQHuxefSKhkLhbEV1DEEuamJA0pT0fNNsYrH9
+	tBwUin3TAYhIgHmVziT7pLD2oCCVlxC0VyQSs2nOISipgmni/lN2kJu5YCVMH1Eqxeggj9jd6vh
+	qAqUw3VLQWg1y1axn5Dx7RUupx5yhd3PRtDSHs9Q5aK2DmpjGEYh09UX2nT4qWV2qYisP0KcUr3
+	cMxwyrZD6uHV+lYfX97guRTuTTEncnku5rwx7Z+PtvXLzn/1hWv/QapA0X41Fra7+O7XlubTosG
+	4BRfcYpV9QoVzVsL/Rhkd6VkGwwIU5vkdkqREF9M7wg01uphRt66lBneLjbmT7pQ7tXWC/sqIN1
+	erovlWWiGlD9v9f2m7ajMUu92UjzQcdjT3rvTksL2TwwPqXWEi4LUplZ/o0daKVNTtVV+wBI8Yu
+	h8bm3BmPziS46ZalbVlXI89tIJUeJi7wbm7XzKgCRElvvYbRI0bM8o4NetwBll3azEgdq6xyIuC
+	HLjNl16R+dvCgj0ZH5gmbaIiSiOcLxz0hOXuafGA+loU4OcOyI1zkjzxgbukwYNMRg/XDY2E8j6
+	OTR7WQ972Qw2sRkstuRzOYrbMwWpJgID3fhycVIybk0Av10nogkxIkiBmMOVw8nVleMnSlWEgtS
+	LAKyJ54ml
+X-Received: by 2002:a05:6000:4582:b0:48e:44c7:bf0f with SMTP id ffacd0b85a97d-49c714a352fmr16250325f8f.25.1794815450969;
+        Sun, 15 Nov 2026 23:50:50 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:106d:1080:575d:8fcf:e30d:5aed? ([2a01:e0a:106d:1080:575d:8fcf:e30d:5aed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49d7150529dsm15273761f8f.51.2026.11.15.23.49.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f1c1797sm22775989f8f.11.2026.11.15.23.50.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Nov 2026 23:49:20 -0800 (PST)
-Message-ID: <2682b580-5611-4624-b5cb-b3b93847e95b@linaro.org>
-Date: Mon, 16 Nov 2026 08:49:19 +0100
+        Sun, 15 Nov 2026 23:50:50 -0800 (PST)
+Message-ID: <402595f8-0aec-405d-bcce-eb54981fcbb9@linaro.org>
+Date: Mon, 16 Nov 2026 08:50:50 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -96,15 +96,15 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 09/23] ASoC: qcom: lpass: add support for optional WSA
- interface
+Subject: Re: [PATCH RFC 10/23] ASoC: qcom: lpass-cdc-dma: add support for WSA
+ codec DMA
 To: sashiko-reviews@lists.linux.dev
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org,
  conor+dt@kernel.org
 References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-9-5183f6aab9fc@linaro.org>
- <sashiko-outbox-213518@kernel.org>
+ <20261113-topic-sm8650-el2-v1-10-5183f6aab9fc@linaro.org>
+ <sashiko-outbox-213505@kernel.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -131,240 +131,130 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <sashiko-outbox-213518@kernel.org>
+In-Reply-To: <sashiko-outbox-213505@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/13/26 20:11, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 4 potential
+On 11/13/26 20:07, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential
 > issues to consider:
-> - [Medium] ASoC: qcom: lpass: lpass_wsa_regmap_config uses RXTX
->    callbacks and macros
-> - [Medium] ASoC: qcom: lpass: lpass_platform_pcmops_trigger() enables
->    WSA IRQs on stop
-> - [Medium] ASoC: qcom: lpass: unchecked regmap_read() in
->    lpass_platform_wsaif_irq()
-> - [Medium] ASoC: qcom: lpass: missing wsa_lpaif_map handling in suspend
->    and resume
+> - [Medium] ASoC: qcom: missing WSA_TX4 case in
+>    __lpass_get_codec_dma_intf_type()
+> - [Medium] ASoC: qcom: unchecked clk_prepare_enable() in
+>    lpass_cdc_dma_daiops_startup()
 > --
 > 
-> commit ee7ef8a5c6b3d75b7ea08d4564f71cd7fbf7abeb
+> commit fe9e37da583fba7a4cfa98118783d3ccffae7524
 > Author: Neil Armstrong <neil.armstrong@linaro.org>
 > 
-> ASoC: qcom: lpass: add support for optional WSA interface
+> ASoC: qcom: lpass-cdc-dma: add support for WSA codec DMA
 > 
-> This commit adds LPASS CPU, regmap, and platform DMA support for the
-> optional WSA LPAIF Codec DMA interface used for speaker SoundWire buses.
+> This commit adds WSA codec DMA interface plumbing and clock handling to
+> the LPASS codec DMA driver.
 > 
->> diff --git a/sound/soc/qcom/lpass-cpu.c b/sound/soc/qcom/lpass-cpu.c
->> index ea8b6083529c1..d46b72c926b2b 100644
->> --- a/sound/soc/qcom/lpass-cpu.c
->> +++ b/sound/soc/qcom/lpass-cpu.c
->> @@ -983,6 +983,16 @@ static struct regmap_config lpass_va_regmap_config = {
->>   	.cache_type = REGCACHE_FLAT,
->>   };
->>   
->> +static struct regmap_config lpass_wsa_regmap_config = {
->> +	.reg_bits = 32,
->> +	.reg_stride = 4,
->> +	.val_bits = 32,
->> +	.writeable_reg = lpass_rxtx_regmap_writeable,
->> +	.readable_reg = lpass_rxtx_regmap_readable,
->> +	.volatile_reg = lpass_rxtx_regmap_volatile,
->> +	.cache_type = REGCACHE_FLAT,
->> +};
->> +
->>   static unsigned int of_lpass_cpu_parse_sd_lines(struct device *dev,
->>   						struct device_node *node,
->>   						const char *name)
+>> diff --git a/sound/soc/qcom/lpass-cdc-dma.c b/sound/soc/qcom/lpass-cdc-dma.c
+>> index 2dc8c75c4bf08..903055e3188d8 100644
+>> --- a/sound/soc/qcom/lpass-cdc-dma.c
+>> +++ b/sound/soc/qcom/lpass-cdc-dma.c
 > 
 > [ ... ]
 > 
->> @@ -1142,6 +1161,18 @@ int asoc_qcom_lpass_cpu_platform_probe(struct platform_device *pdev)
->>   		if (IS_ERR(drvdata->va_lpaif_map))
->>   			return PTR_ERR(drvdata->va_lpaif_map);
->>   
->> +		if (drvdata->wsa_enable) {
->> +			lpass_wsa_regmap_config.max_register = LPAIF_CDC_RXTX_WRDMAPER_REG(variant,
->> +						variant->wsa_wrdma_channels +
->> +						variant->wsa_wrdma_channel_start,
->> +						LPASS_CDC_DMA_WSA_TX0);
->> +
->> +			drvdata->wsa_lpaif_map = devm_regmap_init_mmio(dev, drvdata->wsa_lpaif,
->> +								       &lpass_wsa_regmap_config);
->> +			if (IS_ERR(drvdata->wsa_lpaif_map))
->> +				return PTR_ERR(drvdata->wsa_lpaif_map);
->> +		}
->> +
->>   		ret = of_lpass_cdc_dma_clks_parse(dev, drvdata);
->>   		if (ret) {
->>   			dev_err(dev, "failed to get cdc dma clocks %d\n", ret);
+>> @@ -68,49 +76,67 @@ static int __lpass_get_codec_dma_intf_type(int dai_id)
+>>   	case LPASS_CDC_DMA_RX0:
+>>   	case LPASS_CDC_DMA_TX0:
+>>   	case LPASS_CDC_DMA_VA_TX0:
+>> +	case LPASS_CDC_DMA_WSA_TX0:
+>> +	case LPASS_CDC_DMA_WSA_RX0:
+>>   		ret = LPASS_CDC_DMA_INTERFACE1;
+>>   		break;
+>>   	case LPASS_CDC_DMA_RX1:
+>>   	case LPASS_CDC_DMA_TX1:
+>>   	case LPASS_CDC_DMA_VA_TX1:
+>> +	case LPASS_CDC_DMA_WSA_RX1:
+>> +	case LPASS_CDC_DMA_WSA_TX1:
+>>   		ret = LPASS_CDC_DMA_INTERFACE2;
+>>   		break;
+>>   	case LPASS_CDC_DMA_RX2:
+>>   	case LPASS_CDC_DMA_TX2:
+>>   	case LPASS_CDC_DMA_VA_TX2:
+>> +	case LPASS_CDC_DMA_WSA_RX2:
+>> +	case LPASS_CDC_DMA_WSA_TX2:
+>>   		ret = LPASS_CDC_DMA_INTERFACE3;
+>>   		break;
+>>   	case LPASS_CDC_DMA_RX3:
+>>   	case LPASS_CDC_DMA_TX3:
+>>   	case LPASS_CDC_DMA_VA_TX3:
+>> +	case LPASS_CDC_DMA_WSA_RX3:
+>> +	case LPASS_CDC_DMA_WSA_TX3:
+>>   		ret = LPASS_CDC_DMA_INTERFACE4;
+>>   		break;
+>>   	case LPASS_CDC_DMA_RX4:
+>>   	case LPASS_CDC_DMA_TX4:
+>>   	case LPASS_CDC_DMA_VA_TX4:
+>> +	case LPASS_CDC_DMA_WSA_RX4:
+>>   		ret = LPASS_CDC_DMA_INTERFACE5;
+>>   		break;
 > 
 > [Severity: Medium]
-> Should lpass_wsa_regmap_config use dedicated WSA regmap callbacks instead
-> of the RXTX ones, and should max_register use LPAIF_CDC_WSA_WRDMAPER_REG()?
+> Should LPASS_CDC_DMA_WSA_TX4 also be included in the
+> LPASS_CDC_DMA_INTERFACE5 case?
 > 
-> __lpass_rxtx_regmap_accessible() and lpass_rxtx_regmap_volatile() check
-> v->rxtx_* parameters and pass LPASS_CDC_DMA_RX0 / LPASS_CDC_DMA_TX3 to
-> LPAIF_CDC_RXTX_*_REG(), leaving the newly added v->wsa_irq_ports,
-> LPAIF_CDC_WSA_RDMA_INTF_REG(), and LPAIF_CDC_WSA_WRDMA_INTF_REG() unused.
-> Any difference between WSA and RXTX register geometry or channel counts
-> causes accesses on wsa_lpaif_map to fail with -EIO or return stale
-> REGCACHE_FLAT entries.  In addition, __lpass_rxtx_regmap_accessible()
-> omits adding wrdma_channel_start to i when checking
-> LPAIF_CDC_RXTX_WRDMACURR_REG(), so lpass_platform_pcmops_pointer() reads
-> of LPAIF_DMACURR_REG on WRDMA capture channels >= rxtx_wrdma_channels also
-> fail with -EIO:
-> 
-> sound/soc/qcom/lpass-cpu.c:__lpass_rxtx_regmap_accessible() {
->      ...
-> 	for (i = 0; i < v->rxtx_wrdma_channels; ++i) {
-> 		if (reg == LPAIF_CDC_RXTX_WRDMACTL_REG(v, i + v->rxtx_wrdma_channel_start,
-> 							LPASS_CDC_DMA_TX3))
-> 			return true;
->      ...
-> 		if (rw == LPASS_REG_READ) {
-> 			if (reg == LPAIF_CDC_RXTX_WRDMACURR_REG(v, i, LPASS_CDC_DMA_RX0))
-> 				return true;
-> 		}
->      ...
-> }
+> __lpass_get_dmactl_handle(), lpass_cdc_dma_daiops_startup(), and
+> lpass_cdc_dma_daiops_shutdown() all handle the full
+> LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8 range, but omitting
+> LPASS_CDC_DMA_WSA_TX4 here causes __lpass_get_codec_dma_intf_type() to
+> return -EINVAL and __lpass_platform_codec_intf_init() to abort without
+> configuring or enabling the DMA interface.
 
-
-Will add wsa specific callbacks
-> 
->> diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
->> index e162627d6f86e..9c879a8090bbf 100644
->> --- a/sound/soc/qcom/lpass-platform.c
->> +++ b/sound/soc/qcom/lpass-platform.c
-> 
-> [ ... ]
-> 
->> @@ -838,6 +937,22 @@ static int lpass_platform_pcmops_trigger(struct snd_soc_component *component,
->>   			val_mask = LPAIF_IRQ_ALL(ch);
->>   			val_irqen = LPAIF_IRQ_ALL(ch);
->>   			break;
->> +		case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
->> +		case LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8:
->> +			ret = regmap_fields_write(dmactl->dyncclk, id, LPAIF_DMACTL_DYNCLK_OFF);
->> +			if (ret) {
->> +				dev_err(soc_runtime->dev,
->> +					"error writing to rdmactl reg field: %d\n", ret);
->> +				return ret;
->> +			}
->> +
->> +			reg_irqclr = LPAIF_WSA_IRQCLEAR_REG(v, LPAIF_IRQ_PORT_HOST);
->> +			val_irqclr = LPAIF_IRQ_ALL(ch);
->> +
->> +			reg_irqen = LPAIF_WSA_IRQEN_REG(v, LPAIF_IRQ_PORT_HOST);
->> +			val_mask = LPAIF_IRQ_ALL(ch);
->> +			val_irqen = LPAIF_IRQ_ALL(ch);
->> +			break;
->>   		default:
->>   			dev_err(soc_runtime->dev, "%s: invalid %d interface\n", __func__, dai_id);
->>   			return -EINVAL;
-> 
-> [Severity: Medium]
-> In the SNDRV_PCM_TRIGGER_STOP branch of lpass_platform_pcmops_trigger(),
-> doesn't setting val_irqen = LPAIF_IRQ_ALL(ch) keep WSA channel interrupts
-> enabled in LPAIF_WSA_IRQEN_REG instead of disabling them?
-> 
-> reg_irqclr and val_irqclr are also never written in the stop branch.  Once
-> lpass_platform_pcmops_close() clears drvdata->wsa_substream[data->dma_ch],
-> lpass_platform_wsaif_irq() ignores any pending interrupt on that channel
-> without clearing LPAIF_WSA_IRQCLEAR_REG while returning IRQ_HANDLED, which
-> can cause an interrupt storm.
-
-
-Wil investigate
+Typo, will fix
 
 > 
 > [ ... ]
 > 
->> @@ -1124,6 +1245,31 @@ static irqreturn_t lpass_platform_vaif_irq(int irq, void *data)
->>   	return IRQ_HANDLED;
->>   }
->>   
->> +static irqreturn_t lpass_platform_wsaif_irq(int irq, void *data)
->> +{
->> +	struct lpass_data *drvdata = data;
->> +	const struct lpass_variant *v = drvdata->variant;
->> +	unsigned int irqs;
->> +	irqreturn_t rv;
->> +	int chan;
->> +
->> +	rv = regmap_read(drvdata->wsa_lpaif_map,
->> +			 LPAIF_WSA_IRQSTAT_REG(v, LPAIF_IRQ_PORT_HOST), &irqs);
->> +
->> +	/* Handle per channel interrupts */
->> +	for (chan = 0; chan < LPASS_MAX_CDC_DMA_CHANNELS; chan++) {
->> +		if (irqs & LPAIF_IRQ_ALL(chan) && drvdata->wsa_substream[chan]) {
->> +			rv = lpass_dma_interrupt_handler(
->> +						drvdata->wsa_substream[chan],
->> +						drvdata, chan, irqs);
->> +			if (rv != IRQ_HANDLED)
->> +				return rv;
->> +		}
->> +	}
->> +
->> +	return IRQ_HANDLED;
->> +}
+>> @@ -184,6 +210,17 @@ static int lpass_cdc_dma_daiops_startup(struct snd_pcm_substream *substream,
+>>   		clk_set_rate(drvdata->va_mem0, CODEC_MEM_HZ_NORMAL);
+>>   		clk_prepare_enable(drvdata->va_mem0);
+>>   		break;
+>> +	case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
+>> +	case LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8:
+>> +		clk_set_rate(drvdata->codec_mem0, CODEC_MEM_HZ_NORMAL);	//??
+>> +		clk_set_rate(drvdata->codec_mem1, CODEC_MEM_HZ_NORMAL);	//??
+>> +		clk_set_rate(drvdata->codec_mem2, CODEC_MEM_HZ_NORMAL);	//??
+>> +		clk_set_rate(drvdata->codec_mem3, CODEC_MEM_HZ_NORMAL);	//??
+>> +		clk_prepare_enable(drvdata->codec_mem0);		//??
+>> +		clk_prepare_enable(drvdata->codec_mem1);		//??
+>> +		clk_prepare_enable(drvdata->codec_mem2);		//??
+>> +		clk_prepare_enable(drvdata->codec_mem3);		//??
+>> +		break;
+>>   	default:
+>>   		dev_err(soc_runtime->dev, "%s: invalid  interface: %d\n", __func__, dai->id);
+>>   		break;
+>> @@ -205,6 +242,13 @@ static void lpass_cdc_dma_daiops_shutdown(struct snd_pcm_substream *substream,
+>>   	case LPASS_CDC_DMA_VA_TX0 ... LPASS_CDC_DMA_VA_TX0:
+>>   		clk_disable_unprepare(drvdata->va_mem0);
+>>   		break;
+>> +	case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
+>> +	case LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8:
+>> +		clk_disable_unprepare(drvdata->codec_mem3);
+>> +		clk_disable_unprepare(drvdata->codec_mem2);
+>> +		clk_disable_unprepare(drvdata->codec_mem1);
+>> +		clk_disable_unprepare(drvdata->codec_mem0);
+>> +		break;
 > 
 > [Severity: Medium]
-> What happens in lpass_platform_wsaif_irq() if regmap_read() fails?
+> What happens if clk_set_rate() or clk_prepare_enable() fails in
+> lpass_cdc_dma_daiops_startup()?
 > 
-> Unlike lpass_platform_lpaif_irq() and lpass_platform_hdmiif_irq(), rv is
-> not checked before reading the uninitialized stack variable irqs, which
-> can dispatch spurious period, xrun, or bus-error events on active streams
-
-Will check ret
-
-> 
-> [ ... ]
-> 
->> @@ -1359,6 +1513,34 @@ int asoc_qcom_lpass_platform_register(struct platform_device *pdev)
->>   				"error initializing va dmactl fields: %d\n", ret);
->>   			return ret;
->>   		}
->> +
->> +		if (drvdata->wsa_enable) {
->> +			ret = regmap_write(drvdata->wsa_lpaif_map,
->> +				LPAIF_WSA_IRQEN_REG(v, LPAIF_IRQ_PORT_HOST), 0x0);
->> +			if (ret) {
->> +				dev_err(&pdev->dev, "error writing to wsa irqen reg: %d\n", ret);
->> +				return ret;
->> +			}
->> +			drvdata->wsaif_irq = platform_get_irq_byname(pdev, "lpass-irq-wsaif");
->> +			if (drvdata->wsaif_irq < 0)
->> +				return -ENODEV;
->> +
->> +			ret = devm_request_irq(&pdev->dev, drvdata->wsaif_irq,
->> +					       lpass_platform_wsaif_irq, 0,
->> +					       "lpass-irq-wsaif", drvdata);
->> +			if (ret) {
->> +				dev_err(&pdev->dev, "wsa irq request failed: %d\n", ret);
->> +				return ret;
->> +			}
->> +
->> +			ret = lpass_platform_alloc_wsa_dmactl_fields(&pdev->dev,
->> +								     drvdata->wsa_lpaif_map);
->> +			if (ret) {
->> +				dev_err(&pdev->dev,
->> +					"error initializing wsa dmactl fields: %d\n", ret);
->> +				return ret;
->> +			}
->> +		}
->>   	}
-> 
-> [Severity: Medium]
-> Should lpass_platform_pcmops_suspend() and lpass_platform_pcmops_resume()
-> also handle drvdata->wsa_lpaif_map when drvdata->wsa_enable is set?
-> 
-> lpass_wsa_regmap_config uses REGCACHE_FLAT, but suspend and resume only
-> manage hdmiif_map and lpaif_map.  If LPASS loses hardware state across
-> system suspend, cached WSA DMA registers are not synced on resume, and
-> subsequent regmap_update_bits() or regmap_fields_write() calls see the
-> pre-suspend values in the flat cache and skip writing to hardware.
+> Ignoring errors here lets the stream proceed with unclocked LPM memory,
+> leaves any earlier codec_mem clocks enabled on partial failure, and
+> causes lpass_cdc_dma_daiops_shutdown() to call clk_disable_unprepare()
+> on clocks whose enable failed.  Later commit "ASoC: qcom: lpass: enable
+> the right codec_mem clock when usin LPM memory" removes the "//??"
+> comments and selects a single clock via lpass_cdc_dma_mem_clk(), but
+> still leaves clk_set_rate() and clk_prepare_enable() unchecked.
 > 
 
-Will investigate but WSA uses the same handling as RTXT and VA
+Will fix the comments, the code uses the same schema as RXTX and VA, not checking
+the ret. If the clcok set fail, audio won't output but it wont cause any crashes.
+
+Neil
