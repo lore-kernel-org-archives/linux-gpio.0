@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794832024;
-	b=Df+hlYcGyRoqxvnZUd8AZ85RypKG5h3fqKlyK93KJXVC7BdUzJ1sRH2c0bCl6YznDA8E
-	 HfGixSvSALsoJD1489KMqiKLieptSf0pjY9bCPB62qgOsekdMj2UfGPkf6DiLsY8zLNHV
-	 BVf2UO6OVfehm/SyJF6GCJ6s0Y/umoNVZ3Qp+omYpPkWXH7fT3b/Da8LgaLVN+aPIZd+T
-	 gRjZbcu3ESs877jllUjl+EuWZ2+/o1gqoRiKCkbFBX6+sVlNL7LV9rC2CdVyOjX9Retah
-	 DEic3QNJPYB89BzeyFNRAmpmYLxZguWOlxBkr5yoiGPlDTL/1FAjQtjaSpDlQHtqN1A==
+	t=1794832135;
+	b=YTGRG+dJ/HHtKtw1pbXIgX08Apkrv/mywFPj0cup38NNu8CADc6KDj3Q6C8IUYHm1THL
+	 4nsafK5mAJLb476eSKbUbKzswY4h7vUgbTjbvDyiwKMATg8PmvKIxyu5BsODPST4lzj1p
+	 /Jo0eTT1uNCdXYB4C33wop7hkNUHMj2ZY/Qa/v6cKIDAnf/dtZJWmVZU/gs2ghskR0scu
+	 Ia5RwH71clJIMc1xXOuuClpgIryJ9WOJHPUo7IK7LIO1mZqk1tXPNOtSe3p3g/ghWmp19
+	 LIM0uh/MpxmHySaEm1sfwSVmFigsAjin8m0hTFSOEdCowvF7AQH5q3BCyh6DLDisCqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794832024;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794832135;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=dnDC8kwE7249tTFrvzPYMbaxuX3Yw02/TxaNtz8codw=;
-	b=x+1TRWCWCnc6P0MLrS3J21qMjka/1JbfBCM9BD5kGQq4llIU2p/ZRPIMBn+cIv8GMajU
-	 T0RvWdbtnYb4LjIpSmL4VQYxMrBXV62YX0hL/2+W+1GUiT2NeG6SplbRemR51LirF/xCS
-	 EjCGYILC8MwGXorMJDmkxrm5Y4gGI4oDfHMYDwBhlFusRpgQgydJ2UKYZgANW7mOITACw
-	 eG/BvPuQkdAf5eXvFrpt/gWNa7vT2pgmKs6Oohgw0OcaffORwvOp/f2aOVh6crAVBDr4j
-	 n/N23qUTlAu9xMrWjPCXhejiYDNMglgaN+GZWN/PuE7jPd7tHz0anpEr6Imgi+KDMtA==
+	bh=JeKZ5wZJ321yS8HbuqFJy5iQNRT57DS6pHOj/yOavqs=;
+	b=mpkaVAZXrzobFzyyjvOjIq0C8HG5aUefo2+8Y++zr9hqJv497oCiS47gsLIjhiw6nnqh
+	 Fc8VZCjoHDJaRNrpY+nsGFXQsWvkQRjs6mSV4Qa7rtHaoWKx60gnDgs1idSehsT+SPetz
+	 +1FsV3olEOzPGIYvwimOVGQwVnP5IZ0npzyro/2v0Naqywts5phHv0n4s//VZ1UhfDsQ9
+	 bjn4SZUGXs16CXKKWt+nNjUKtPMepOKUz6dpPouJdTRoxE8cH8dimOoFWELuc+BpVEb5r
+	 LQayICrKWXYfbBNqxedlg5U3/fhdMudlOQwXJf8S0VjHHTbFK1Cedzl8ffGqqBSfbzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JsH4mFLy;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aUofDWfx;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AB7606A330;
-	Mon, 16 Nov 2026 12:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238FD606A31C;
+	Mon, 16 Nov 2026 12:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JsH4mFLy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6041F000C5;
-	Mon, 16 Nov 2026 12:27:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aUofDWfx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379C01F000C5;
+	Mon, 16 Nov 2026 12:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794832024;
-	bh=dnDC8kwE7249tTFrvzPYMbaxuX3Yw02/TxaNtz8codw=;
+	s=k20260515; t=1794832134;
+	bh=JeKZ5wZJ321yS8HbuqFJy5iQNRT57DS6pHOj/yOavqs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=JsH4mFLyhjbwt935HUxFSnSGaThutUlYFl27mkdSbELFBjMksm+AGEioTf0gfmrIV
-	 YXmBIWgkpIB9TgVMDX3IAcAFB8vb2JJewrMXpQEiFybwtGnfCjmwgC9+NeUJpJQ12W
-	 haEGxO45ej2LQOaHaA5n2vbx0BgurCFs732yVjIaGw8BdHh/fdibB7nroBgDX4Zar5
-	 isek0VL+Uv1T1uSC1W/lqC3zarCjaLiTniIxwxkQ2JYLh5ESU57ipBmrlchdU5+xZy
-	 JDPFRpgcsBbD7VeOYGLhb9bak80v1Usu0xhkc4qCcfo9w/MkTAaIeGl2evIWYAgNrD
-	 2encfW80TtAzQ==
-Date: Mon, 16 Nov 2026 20:06:48 +0800
+	b=aUofDWfxg1iKv9OBQaWRYeos8f7FInqvk9543FOmfOXGrVmdv0PWtMFWYTBqAba9D
+	 cf6Pmn+SjVVsx2LyClE70jRcso2x+m4T3NU+CaTb8C8s3KbXORybPeSg8Z5HWr+kDa
+	 XBRqmRUUN0NVYsRoXA30XlEm2blVkugrooOEM3DNmS8CE2NpMkyXmtUyYGCBnTJPni
+	 i6d8kv7Uhc3S/ZwBUZKy1YKE8bwyBJnLxchg3ELQh8TrPtqCouGnscjDDV4g4Sb7EO
+	 hlNVxiWEFrCYvTVS9M/XxU20mXOF/g4CUywggFnnM5IRbBhvvoAMC+ngwXfVLwQWFV
+	 NOyGqNMGF4l9w==
+Date: Mon, 16 Nov 2026 20:08:38 +0800
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -54,9 +54,11 @@ To: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 00/13] arm64: add Synaptics SL2610 SoCs and RDK boards
-Message-ID: <avrx2EhgZ10ED40P@xhacker>
+Subject: Re: [PATCH v2 08/13] pinctrl: berlin: add Synaptics SL2610 pin
+ controller support
+Message-ID: <avryRut2kEhUiIm0@xhacker>
 References: <20261115102401.3520-1-jszhang@kernel.org>
+ <20261115102401.3520-9-jszhang@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,121 +70,837 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261115102401.3520-1-jszhang@kernel.org>
+In-Reply-To: <20261115102401.3520-9-jszhang@kernel.org>
 
-On Sun, Nov 15, 2026 at 06:23:39PM +0800, Jisheng Zhang wrote:
-> Add initial support for the Synaptics SL261X SoCs and corresponding
-> RDK boards.
+On Sun, Nov 15, 2026 at 06:23:47PM +0800, Jisheng Zhang wrote:
+> Add the SoC and MCU pin groups and mux functions for SL2610, together
+> with their pad configuration register descriptions. Bind to the platform
+> devices created by the system controller and associate pin configurations
+> with the parent syscon DT node.
 > 
-> The SL261X SoCs include five pin-to-pin compatible SoCs: SL2611, SL2613,
-> SL2615, SL2617, and SL2619.
-> 
-> Only reset, pinctrl, clk/pll, uart, gpio, i2c, spi, i3c are included in
-> this series. The support for Ethernet, USB, SDHCI, CAN, DMAC, XSPI will
-> be submitted after this series is merged.
-> 
-> since v1:
->  - rebase on latest rcN
->  - drop some patches which have been merged
->  - let the "gbl" node export pinctrl/reset/clk devices with
->    MFD_CELL_NAME()
->  - use <linux/platform_device.h> instead of <linux/mod_devicetable.h>
->  - adopt some coding suggestions from Uwe
->  - Use 0 and 1 to select normal and strong pull-up on 10-bit pads 
-
-Other SoCs doesn't use this defintion for pull up or strong pull up.
-After consulting our HW people, the strong pull up isn't used at
-all, so I will remove strong pull up support in newer version. We can
-add back its support when it's really needed in the future, nothing
-breaks.
-
->  - collect Acked-by tag
-> 
-> Jisheng Zhang (13):
->   arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
->   pinctrl: berlin: use u16 instead of u8 for the offset
->   pinctrl: berlin: enable module build support
->   pinctrl: berlin: add optional pinconf support
->   dt-bindings: soc: synaptics: add SL2610 system controllers
->   soc: synaptics: add SL2610 system controller support
->   reset: add Synaptics SL2610 reset controller support
->   pinctrl: berlin: add Synaptics SL2610 pin controller support
->   clk: berlin: add Synaptics clock controller helpers
->   clk: berlin: add Synaptics SL2610 clocks and PLLs
->   dt-bindings: arm: berlin: add Synaptics SL2610 SoCs and RDK boards
->   arm64: dts: synaptics: add SL2610 family SoCs
->   arm64: dts: synaptics: add SL2610 family RDK boards
-> 
->  .../bindings/arm/marvell,berlin.yaml          |  20 +
->  .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++
->  MAINTAINERS                                   |   8 +
->  arch/arm64/Kconfig.platforms                  |   4 +-
->  arch/arm64/boot/dts/synaptics/Makefile        |   5 +
->  arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +
->  arch/arm64/boot/dts/synaptics/sl2611.dtsi     | 457 +++++++++++
->  arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +
->  arch/arm64/boot/dts/synaptics/sl2613.dtsi     |  12 +
->  arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +
->  arch/arm64/boot/dts/synaptics/sl2615.dtsi     |  46 ++
->  arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +
->  arch/arm64/boot/dts/synaptics/sl2617.dtsi     |  46 ++
->  arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +
->  arch/arm64/boot/dts/synaptics/sl2619.dtsi     |  44 +
->  .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++
->  drivers/clk/Kconfig                           |   1 +
->  drivers/clk/berlin/Kconfig                    |  34 +
->  drivers/clk/berlin/Makefile                   |   4 +
->  drivers/clk/berlin/clk-sl2610.c               | 360 +++++++++
->  drivers/clk/berlin/sl-clk.c                   | 279 +++++++
->  drivers/clk/berlin/sl-clk.h                   |  31 +
->  drivers/clk/berlin/sl-sysmgr-clk.c            | 241 ++++++
->  drivers/clk/berlin/sl-sysmgr-clk.h            |  44 +
->  drivers/clk/berlin/sl2610-pll.c               | 145 ++++
->  drivers/clk/berlin/sl2610-pll.h               |  14 +
->  drivers/pinctrl/berlin/Kconfig                |  16 +
->  drivers/pinctrl/berlin/Makefile               |   1 +
->  drivers/pinctrl/berlin/berlin.c               | 259 +++++-
->  drivers/pinctrl/berlin/berlin.h               |  17 +-
->  drivers/pinctrl/berlin/pinctrl-sl2610.c       | 759 ++++++++++++++++++
->  drivers/reset/Kconfig                         |  13 +
->  drivers/reset/Makefile                        |   1 +
->  drivers/reset/reset-sl2610.c                  | 224 ++++++
->  drivers/soc/Kconfig                           |   1 +
->  drivers/soc/Makefile                          |   1 +
->  drivers/soc/synaptics/Kconfig                 |  14 +
->  drivers/soc/synaptics/Makefile                |   2 +
->  drivers/soc/synaptics/sl2610-syscon.c         |  84 ++
->  include/dt-bindings/clock/syna,sl2610.h       | 131 +++
->  include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++
->  41 files changed, 3771 insertions(+), 20 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
->  create mode 100644 drivers/clk/berlin/Kconfig
->  create mode 100644 drivers/clk/berlin/clk-sl2610.c
->  create mode 100644 drivers/clk/berlin/sl-clk.c
->  create mode 100644 drivers/clk/berlin/sl-clk.h
->  create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.c
->  create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.h
->  create mode 100644 drivers/clk/berlin/sl2610-pll.c
->  create mode 100644 drivers/clk/berlin/sl2610-pll.h
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>  MAINTAINERS                             |   1 +
+>  drivers/pinctrl/berlin/Kconfig          |  15 +
+>  drivers/pinctrl/berlin/Makefile         |   1 +
+>  drivers/pinctrl/berlin/pinctrl-sl2610.c | 759 ++++++++++++++++++++++++
+>  4 files changed, 776 insertions(+)
 >  create mode 100644 drivers/pinctrl/berlin/pinctrl-sl2610.c
->  create mode 100644 drivers/reset/reset-sl2610.c
->  create mode 100644 drivers/soc/synaptics/Kconfig
->  create mode 100644 drivers/soc/synaptics/Makefile
->  create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
->  create mode 100644 include/dt-bindings/clock/syna,sl2610.h
->  create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
 > 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1bd3b2f39865..b5bc76062771 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3812,6 +3812,7 @@ F:	Documentation/devicetree/bindings/soc/synaptics/
+>  F:	arch/arm/boot/dts/synaptics/
+>  F:	arch/arm/mach-berlin/
+>  F:	arch/arm64/boot/dts/synaptics/
+> +F:	drivers/pinctrl/berlin/pinctrl-sl2610.c
+>  F:	drivers/reset/reset-sl2610.c
+>  F:	drivers/soc/synaptics/
+>  F:	include/dt-bindings/clock/syna,sl2610.h
+> diff --git a/drivers/pinctrl/berlin/Kconfig b/drivers/pinctrl/berlin/Kconfig
+> index abb1c912b9ba..79541a4a81aa 100644
+> --- a/drivers/pinctrl/berlin/Kconfig
+> +++ b/drivers/pinctrl/berlin/Kconfig
+> @@ -32,4 +32,19 @@ config PINCTRL_BERLIN_BG4CT
+>  	depends on OF
+>  	select PINCTRL_BERLIN
+>  
+> +config PINCTRL_SL2610
+> +	tristate "Synaptics SL2610 pin controller driver"
+> +	depends on OF && HAS_IOMEM
+> +	select SOC_SL2610_SYSCON
+> +	select GENERIC_PINCONF
+> +	select PINCONF
+> +	select PINCTRL_BERLIN
+> +	help
+> +	  Support the SoC and MCU pin controllers on Synaptics SL2610 SoCs.
+> +	  These provide pin multiplexing and electrical pad configuration
+> +	  through their parent system control blocks.
+> +
+> +	  To compile this driver as a module, choose M here. The module will
+> +	  be called pinctrl-sl2610.
+> +
+>  endif
+> diff --git a/drivers/pinctrl/berlin/Makefile b/drivers/pinctrl/berlin/Makefile
+> index 7b4aa5444a4a..448965293e6a 100644
+> --- a/drivers/pinctrl/berlin/Makefile
+> +++ b/drivers/pinctrl/berlin/Makefile
+> @@ -5,3 +5,4 @@ obj-$(CONFIG_PINCTRL_BERLIN_BG2CD)	+= berlin-bg2cd.o
+>  obj-$(CONFIG_PINCTRL_BERLIN_BG2Q)	+= berlin-bg2q.o
+>  obj-$(CONFIG_PINCTRL_BERLIN_BG4CT)	+= berlin-bg4ct.o
+>  obj-$(CONFIG_PINCTRL_AS370)		+= pinctrl-as370.o
+> +obj-$(CONFIG_PINCTRL_SL2610)		+= pinctrl-sl2610.o
+> diff --git a/drivers/pinctrl/berlin/pinctrl-sl2610.c b/drivers/pinctrl/berlin/pinctrl-sl2610.c
+> new file mode 100644
+> index 000000000000..0a3dc146c2c0
+> --- /dev/null
+> +++ b/drivers/pinctrl/berlin/pinctrl-sl2610.c
+> @@ -0,0 +1,759 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Synaptics SL2610 pinctrl driver
+> + *
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "berlin.h"
+> +
+> +static const struct berlin_desc_group sl2610_soc_pinctrl_groups[] = {
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO23", 0x8000, 0x3, 0x00,
+> +			0x8800, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO23 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw2"), /* SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rgmii"), /* MDC */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row0"),
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi3"), /* SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col3"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT4 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO24", 0x8000, 0x3, 0x03,
+> +			0x8804, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO24 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw2"), /* SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rgmii"), /* MDIO */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row1"),
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi3"), /* SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col2"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT5 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO25", 0x8000, 0x3, 0x06,
+> +			0x8808, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO25 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "uart5"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "gpio_trig1"),
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row2"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_uart1"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col1"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT6 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO26", 0x8000, 0x3, 0x09,
+> +			0x880c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO26 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "uart5"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rgmii"), /* PTP_PPS_O */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_uart1"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "usb2"), /* VBUS */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT7 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO27", 0x8000, 0x3, 0x0c,
+> +			0x8810, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO27 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw3"), /* SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart4"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_uart1")), /* RTSn */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO28", 0x8000, 0x3, 0x0f,
+> +			0x8814, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO28 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw3"), /* SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart4"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_uart1")), /* CTSn */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO29", 0x8000, 0x3, 0x12,
+> +			0x8818, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO29 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart4"), /* DE */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row4"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_uart1"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col4"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SDI */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO30", 0x8000, 0x3, 0x15,
+> +			0x881c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO30 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart4"), /* REn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row5"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_uart1"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col5"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO31", 0x8000, 0x3, 0x18,
+> +			0x8820, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO31 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rgmii"), /* MDC */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi3"), /* SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SS2n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO32", 0x8000, 0x3, 0x1b,
+> +			0x8824, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO32 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rgmii"), /* MDIO */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi3"), /* SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SS3n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO33", 0x8004, 0x3, 0x00,
+> +			0x8828, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO33 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* TD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1"), /* TXD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "can0"), /* TX */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi3"), /* SS1n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SS1n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO34", 0x8004, 0x3, 0x03,
+> +			0x882c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO34 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* TD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1"), /* TXD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "can0")), /* RX */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO35", 0x8004, 0x3, 0x06,
+> +			0x8830, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO35 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* TD2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii2"), /* TXD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col7"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart5"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SS0n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO36", 0x8004, 0x3, 0x09,
+> +			0x8834, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO36 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* TD3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii2"), /* TXD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart5"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SDO */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO37", 0x8004, 0x3, 0x0c,
+> +			0x8838, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO37 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* RD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1"), /* RXD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "can1"), /* TX */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi5")), /* SDI */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO38", 0x8004, 0x3, 0x0f,
+> +			0x883c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO38 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* RD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1"), /* RXD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "can1"), /* RX */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi5")), /* SDO */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO39", 0x8004, 0x3, 0x12,
+> +			0x8840, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO39 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* RD2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii2"), /* RXD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row6"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart6"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SS1n*/
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4")), /* SS3n  */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO40", 0x8004, 0x3, 0x15,
+> +			0x8844, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO40 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* RD3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii2"), /* RXD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row7"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart6"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4")), /* SS2n  */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO41", 0x8004, 0x3, 0x18,
+> +			0x8848, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO41 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* RXC */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1"), /* CRSDV */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi5")), /* SCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO42", 0x8004, 0x3, 0x1b,
+> +			0x884c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO42 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* TXC */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii2"), /* CRSDV */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row8"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart7"), /* RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4")), /* SCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO43", 0x8008, 0x3, 0x00,
+> +			0x8850, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO43 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* TXCTL */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1"), /* TXEN */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4")), /* SS0n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO44", 0x8008, 0x3, 0x03,
+> +			0x8854, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO44 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* RXCTL */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii2"), /* TXEN */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row9"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart7"), /* TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4")), /* SDI */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO45", 0x8008, 0x3, 0x06,
+> +			0x8858, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO45 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii1"), /* CLKOUT */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "rmii1")), /* REFCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO46", 0x8008, 0x3, 0x09,
+> +			0x885c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO46 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "sdio1"), /* CDn */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "sdio2"), /* CDn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col0"),
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "sm_uart1"), /* RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row9"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dsi")), /* TE */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO47", 0x8008, 0x3, 0x0c,
+> +			0x8860, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO47 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "sdio1"), /* WP */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "sdio2"), /* WP */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col1"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "rmii2"), /* REFCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "sm_uart1"), /* CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row8")),
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO48", 0x8008, 0x3, 0x0f,
+> +			0x8864, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO48 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* TD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SS0n */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4"), /* SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SS3n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO49", 0x8008, 0x3, 0x12,
+> +			0x8868, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO49 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* TD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SDO */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4"), /* SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SS2n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO50", 0x8008, 0x3, 0x15,
+> +			0x886c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO50 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* TD2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SS1n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO51", 0x8008, 0x3, 0x18,
+> +			0x8870, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO51 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* TD3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SS0n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO52", 0x8008, 0x3, 0x1b,
+> +			0x8874, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO52 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* RD0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4"), /* SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SDO */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO53", 0x800c, 0x3, 0x00,
+> +			0x8878, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO53 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* RD1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spi4"), /* SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO54", 0x800c, 0x3, 0x03,
+> +			0x87c, 10,
+
+There's typo here, should be 0x887c instead of 0x87c. Newer version
+will fix it.
+
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO54 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* RD2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SDI */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO55", 0x800c, 0x3, 0x06,
+> +			0x8880, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO55 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* RD3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "spi5"), /* SDI */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SS1n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO56", 0x800c, 0x3, 0x09,
+> +			0x8884, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO56 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* RXC */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SS0n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO57", 0x800c, 0x3, 0x0c,
+> +			0x8888, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO57 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* TXC */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SDO */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO58", 0x800c, 0x3, 0x0f,
+> +			0x888c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO58 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* TXCTL */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO59", 0x800c, 0x3, 0x12,
+> +			0x8890, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO59 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "rgmii2"), /* RXCTL */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi4")), /* SDI */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO0", 0x800c, 0x3, 0x15,
+> +			0x8894, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s1"), /* LRCK */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SS0n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO1", 0x800c, 0x3, 0x18,
+> +			0x8898, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s1"), /* BCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SCLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO2", 0x800c, 0x3, 0x1b,
+> +			0x889c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO2*/
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s1"), /* DO */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "spdif"), /* O */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SDO */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO3", 0x8010, 0x3, 0x00,
+> +			0x88a0, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s1"), /* MCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SS1n */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO4", 0x8010, 0x3, 0x03,
+> +			0x88a4, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO4 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s1"), /* DI */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "spdif"), /* I */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "spi3")), /* SDI */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO5", 0x8010, 0x3, 0x06,
+> +			0x88a8, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO5 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s2"), /* LRCK */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* PIXCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row0"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "spdif"), /* I */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col7")),
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO6", 0x8010, 0x3, 0x09,
+> +			0x88ac, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO6 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s2"), /* BCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* HSYNC */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row1"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "spdif"), /* O */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col6")),
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO7", 0x8010, 0x3, 0x0c,
+> +			0x88b0, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO7 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s2"), /* DO */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row2"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "spdif"), /* O */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "sm_pdm"), /* CLKIO */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col5")),
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO8", 0x8010, 0x3, 0x0f,
+> +			0x88b4, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO8 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s2"), /* DI */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* VSYNC */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row3"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "spdif"), /* I */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_col4")),
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO9", 0x8010, 0x3, 0x12,
+> +			0x88b8, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO9 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm")), /* DI1 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO10", 0x8010, 0x3, 0x15,
+> +			0x88bc, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO10 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm"), /* DI2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "dsi")), /* TE */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO11", 0x8010, 0x3, 0x18,
+> +			0x88c0, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO11 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s2"), /* MCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_pdm"), /* CLKIO */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* CLK */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO12", 0x8010, 0x3, 0x1b,
+> +			0x88c4, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO12 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s3"), /* LRCK */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2"), /* WP */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sdio1"), /* WP */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT0 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO13", 0x8014, 0x3, 0x00,
+> +			0x88c8, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO13 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s3"), /* BCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "pdm"), /* DI1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "rgmii"), /* PTP_PPS_O */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "usb2"), /* VBUS */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT1 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO14", 0x8014, 0x3, 0x03,
+> +			0x88cc, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO14 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s3"), /* DO */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm"), /* DI3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spdif"), /* O */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT2 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO15", 0x8014, 0x3, 0x06,
+> +			0x88d0, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO15 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "i2s3"), /* DI */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA4 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sm_pdm"), /* DI0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "spdif"), /* I */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* OUT3 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO16", 0x8014, 0x3, 0x09,
+> +			0x88d4, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO16 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SS0n */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2")), /* DAT3 */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO17", 0x8014, 0x3, 0x0c,
+> +			0x88d8, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO17 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SS1n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA5 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2"), /* DAT2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "dsi")), /* TE */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO18", 0x8014, 0x3, 0x0f,
+> +			0x88dc, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO18 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA6 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2"), /* DAT1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm"), /* DI2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "can1")), /* RX */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO19", 0x8014, 0x3, 0x12,
+> +			0x88e0, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO19 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "cam"), /* DATA7 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2"), /* DAT0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm"), /* DI3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "can1")), /* TX */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO20", 0x8014, 0x3, 0x15,
+> +			0x88e4, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO20 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SDO */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2")), /* CMD */
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO21", 0x8014, 0x3, 0x18,
+> +			0x88e8, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO21 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2"), /* CLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "clkout")),
+> +	BERLIN_PINCTRLCONF_GROUP("GPIO22", 0x8014, 0x3, 0x1b,
+> +			0x88ec, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO22 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi2"), /* SDI */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sdio2"), /* CDn */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "sdio1")), /* CDn */
+> +};
+> +
+> +static const struct berlin_desc_group sl2610_sysmgr_pinctrl_groups[] = {
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO31", 0xb00, 0x3, 0x00,
+> +			0xc00, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO31*/
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM0*/
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart1"), /* SM UART1 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row7"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm"), /* SM PDM DI0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "uart0"), /* SM UART0 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "can1")), /* SM CAN1 RX */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO32", 0xb00, 0x3, 0x03,
+> +			0xc04, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO32 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart1"), /* SM UART1 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col0"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "pdm"), /* SM PDM CLKIO */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "uart0"), /* SM UART0 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "can1")), /* SM CAN1 TX */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO33", 0xb00, 0x3, 0x06,
+> +			0xc08, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO33 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "uart2"), /* SM UART2 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart3"), /* SM UART3 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "key_row5"),
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart3_de")), /* SM UART3 DE */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO34", 0xb00, 0x3, 0x09,
+> +			0xc0c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO34 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "uart2"), /* SM UART2 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart3"), /* SM UART3 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "key_row4"),
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart3_ren")), /* SM UART3 REn */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO35", 0xb00, 0x3, 0x0c,
+> +			0xc10, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO35 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM4 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart1"), /* SM UART1 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "uart3"), /* SM UART3 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart2"), /* SM UART2 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "key_row3"),
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart0")), /* SM UART0 RTSn */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO36", 0xb00, 0x3, 0x0f,
+> +			0xc14, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO36 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM5 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart1"), /* SM UART1 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "uart3"), /* SM UART3 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart2"), /* SM UART2 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "key_row2"),
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart0")), /* SM UART0 CTSn */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO37", 0xb00, 0x3, 0x12,
+> +			0xc18, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO37 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM6 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "tw0"), /* SM TW0 SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "key_row6"),
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "pdm")), /* SM PDM CLKIO */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO38", 0xb00, 0x3, 0x15,
+> +			0xc1c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO38 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "pwm"), /* SM PWM7 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "tw0"), /* SM TW0 SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "pdm")), /* SM PDM DI0 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO3", 0xb00, 0x3, 0x18,
+> +			0xc20, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO3 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SS0n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "tw1"), /* SM TW1 SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm"), /* SM PWM8 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "i3c")), /* SM I3C MS SCL */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO4", 0xb00, 0x3, 0x1b,
+> +			0xc24, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO4 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SS1n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "tw1"), /* SM TW1 SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm"), /* SM PWM0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "i3c")), /* SM I3C MS SDA */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO5", 0xb04, 0x3, 0x00,
+> +			0xc28, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO5 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SS2n */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm")), /* SM PWM1 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO6", 0xb04, 0x3, 0x03,
+> +			0xc2c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO6 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SS3n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "spi1s"), /* SM SPI1S SSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm")), /* SM PWM2 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO9", 0xb04, 0x3, 0x06,
+> +			0xc30, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO9 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SDO */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "spi1s"), /* SM SPI1S SDO */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm")), /* SM PWM3 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO10", 0xb04, 0x3, 0x09,
+> +			0xc34, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO10 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "spi1s"), /* SM SPI1S SCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm")), /* SM PWM4 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO11", 0xb04, 0x3, 0x0c,
+> +			0xc38, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO11 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SM SPI1 SDI */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "spi1s"), /* SM SPI1S SDI */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm")), /* SM PWM5 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO30", 0xb04, 0x3, 0x0f,
+> +			0xc44, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO30 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi"), /* SM XSPI DATA7 */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col6"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "sm_clkout")),
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO29", 0xb04, 0x3, 0x12,
+> +			0xc48, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO29 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi"), /* SM XSPI DATA6 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart3"), /* SM UART3 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col5"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart2"), /* SM UART2 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "uart0"), /* SM UART0 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row2"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "uart1")), /* SM UART1 CTSn */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO28", 0xb04, 0x3, 0x15,
+> +			0xc4c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO28 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi"), /* SM XSPI DATA5 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart3"), /* SM UART3 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col4"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart2"), /* SM UART2 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "uart0"), /* SM UART0 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row3"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "uart1")), /* SM UART1 RTSn */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO27", 0xb04, 0x3, 0x18,
+> +			0xc50, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO27 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi"), /* SM XSPI DATA4 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart2"), /* SM UART2 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col3"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart3"), /* SM UART3 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "uart3_ren"), /* SM UART3 REn */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row4")),
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO26", 0xb04, 0x3, 0x1b,
+> +			0xc54, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO26 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi"), /* SM XSPI CS1n */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart2"), /* SM UART2 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col2"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "uart3"), /* SM UART3 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "uart3_de"), /* SM UART3 DE */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row5"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "sm_clkout")),
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO25", 0xb08, 0x3, 0x00,
+> +			0xc58, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO25 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi"), /* SM XSPI DQS */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row6")),
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO24", 0xb08, 0x3, 0x03,
+> +			0xc5c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO24 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI CLKn */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO23", 0xb08, 0x3, 0x06,
+> +			0xc60, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO23 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI CLK */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO22", 0xb08, 0x3, 0x09,
+> +			0xc64, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO22 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI DATA3 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO21", 0xb08, 0x3, 0x0c,
+> +			0xc68, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO21 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI DATA2 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO20", 0xb08, 0x3, 0x0f,
+> +			0xc6c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO20 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI DATA1 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO19", 0xb08, 0x3, 0x12,
+> +			0xc70, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO19 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI DATA0 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO18", 0xb08, 0x3, 0x15,
+> +			0xc74, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO18 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "xspi")), /* SM XSPI CS0n*/
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO17", 0xb08, 0x3, 0x18,
+> +			0xc78, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO17 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "uart1"), /* SM UART1 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "can0"), /* SM CAN0 TX */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm"), /* SM PWM8 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart0")), /* SM UART0 TXD */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO15", 0xb08, 0x3, 0x1b,
+> +			0xc7c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO15 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw1"), /* SM TW1 SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart0"), /* SM UART0 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm"), /* SM PWM11 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "can0"), /* SM CAN0 TX */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart1"), /* SM UART1 RTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* DBG OUT */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO14", 0xb0c, 0x3, 0x00,
+> +			0xc80, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO14 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw1"), /* SM TW1 SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart0"), /* SM UART0 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm"), /* SM PWM10 */
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "can0"), /* SM CAN0 RX */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart1"), /* SM UART1 CTSn */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* DBG OUT */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO16", 0xb0c, 0x3, 0x03,
+> +			0xc84, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO16 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "uart1"), /* SM UART1 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "can0"), /* SM CAN0 RX */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm")), /* SM PWM7 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO13", 0xb0c, 0x3, 0x06,
+> +			0xc88, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO13 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw0"), /* SM TW0 SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "i3c"), /* SM I3C MS SDA */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sm_clkout"),
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* DBG out */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO12", 0xb0c, 0x3, 0x09,
+> +			0xc8c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO12 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "tw0"), /* SM TW0 SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "i3c"), /* SM I3C MS SCL */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "pwm"), /* SM PWM6 */
+> +			BERLIN_PINCTRL_FUNCTION(0x7, "dbg")), /* DBG CLK */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO8", 0xb0c, 0x3, 0x0c,
+> +			0xc90, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO8 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "uart0"), /* SM UART0 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "can0"), /* SM CAN0 TX */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "sm_clkout"),
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart1")), /* SM UART0 TXD */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO7", 0xb0c, 0x3, 0x0f,
+> +			0xc94, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* SM GPIO7 */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "uart0"), /* SM UART0 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "can0"), /* SM CAN0 RX */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_row6"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "gpio_trig"), /* TRIG2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "pwm"), /* SM PWM9 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "uart1")), /* SM UART0 RXD */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO2", 0xb0c, 0x3, 0x12,
+> +			0xc98, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "jtag"), /* TDO */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "gpio"), /* SM GPIO2 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "pdm"), /* SM PDM CLKIO */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "i2s2"), /* MCLK */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "pwm")), /* SM PWM11 */
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO1", 0xb0c, 0x3, 0x15,
+> +			0xc9c, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "jtag"), /* TDI */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "gpio"), /* SM GPIO1 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart0"), /* SM UART0 RXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col1"),
+> +			BERLIN_PINCTRL_FUNCTION(0x4, "gpio_trig"), /* TRIG0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "pwm"), /* SM PWM9 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "key_row7")),
+> +	BERLIN_PINCTRLCONF_GROUP("SM_GPIO0", 0xb0c, 0x3, 0x18,
+> +			0xca0, 10,
+> +			BERLIN_PINCTRL_FUNCTION(0x0, "jtag"), /* TMS */
+> +			BERLIN_PINCTRL_FUNCTION(0x1, "gpio"), /* SM GPIO0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x2, "uart0"), /* SM UART0 TXD */
+> +			BERLIN_PINCTRL_FUNCTION(0x3, "key_col0"),
+> +			BERLIN_PINCTRL_FUNCTION(0x5, "pdm"), /* SM PDM DI0 */
+> +			BERLIN_PINCTRL_FUNCTION(0x6, "pwm")), /* SM PWM10 */
+> +};
+> +
+> +static const struct berlin_pinctrl_desc sl2610_soc_pinctrl_data = {
+> +	.groups = sl2610_soc_pinctrl_groups,
+> +	.ngroups = ARRAY_SIZE(sl2610_soc_pinctrl_groups),
+> +};
+> +
+> +static const struct berlin_pinctrl_desc sl2610_sysmgr_pinctrl_data = {
+> +	.groups = sl2610_sysmgr_pinctrl_groups,
+> +	.ngroups = ARRAY_SIZE(sl2610_sysmgr_pinctrl_groups),
+> +};
+> +
+> +static const struct platform_device_id sl2610_pinctrl_ids[] = {
+> +	{ "sl2610-soc-pinctrl", (kernel_ulong_t)&sl2610_soc_pinctrl_data },
+> +	{ "sl2610-mcu-pinctrl", (kernel_ulong_t)&sl2610_sysmgr_pinctrl_data },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, sl2610_pinctrl_ids);
+> +
+> +static void sl2610_pinctrl_clear_node(void *data)
+> +{
+> +	device_set_node(data, NULL);
+> +}
+> +
+> +static int sl2610_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	const struct berlin_pinctrl_desc *desc =
+> +		(void *)platform_get_device_id(pdev)->driver_data;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = syscon_node_to_regmap(dev->parent->of_node);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap), "Failed to get syscon regmap\n");
+> +
+> +	device_set_node(dev, dev_fwnode(dev->parent));
+> +	ret = devm_add_action_or_reset(dev, sl2610_pinctrl_clear_node, dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return berlin_pinctrl_probe_regmap(pdev, desc, regmap);
+> +}
+> +
+> +static struct platform_driver sl2610_pinctrl_driver = {
+> +	.probe = sl2610_pinctrl_probe,
+> +	.id_table = sl2610_pinctrl_ids,
+> +	.driver = {
+> +		.name = "sl2610-pinctrl",
+> +	},
+> +};
+> +module_platform_driver(sl2610_pinctrl_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
+> +MODULE_DESCRIPTION("pinctrl driver for Synaptics SL2610 SoC");
 > -- 
 > 2.55.0
 > 
