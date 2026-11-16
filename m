@@ -1,72 +1,120 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794827088;
-	b=ZMnyZbG3jAn0FywNjAHCkfUj72Yd9UxcDEfH5qRsHtpOiOGiwNCpC+tC7MKb2Z7wtGYX
-	 UaIAPAV/6aFMlfyXajbLt64vdaBzuNuvdpJHtEiUk/MVySCm+Fdm8LWIqBCGNAo2/lNfL
-	 zVZHtbrLhlbQiFY7KTFc1ovjpHO3hepc1oRUIhtRyHNOWFvM516fQ5Hd2K7eM/UhJ+v1V
-	 WC+D+L5rQkF8GefjvGBKYFx/b4kyBbQ4eN7oQfqU2ej1gV9CHBF526/c2GkMImLjEskJ0
-	 GFf0s1CkaFTFm1Ke3VLtqK09yRGT/bSkDbAZiSNvca1S2Yr7KrhpqKxHialyOXxmANQ==
+	t=1794827522;
+	b=fL7yuPFYTNeLKcM91gtxd6+Jz2cAcQR6lw6mb1RYyErbaCVSJvNzbTtne+Kk0kS2fdQO
+	 Y30mudZVLvcdCzKIb3vQ8XWABqp+weOYCDrmLXQoYItXsNMzDlmyBYYliWfCN1i4cXjUi
+	 i0Yaxr1XEEN2rvEYLgWLDoomEeloLbgywi0e+Htl9SIsysSVTLWJfoIhb1ucne54kQi5o
+	 Tp/EDS6yyCz/Qqhd9ff7tzBOjXMabm4MRTgI0pWBnKKDhWT3XJjIMbZZoVUGLPn+u3asA
+	 TFhtk1slptEylrh49aB7QJGEKb2kzfsCezZuv/EN3pNLkXVqdhPJfXLL2O1WIlokNOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794827088;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ojv1C8PqgE0O+EonqeuruT11+CSXtErx4XDlHdngvG4=;
-	b=IP8HLVlJOSli/9l0va+75bsVs3ouN0+t5XYKRUY0tIt6jGbbfIRNjkQYgWvHezj4F/JD
-	 gELX7thJALurzDxaZOmG4aobpNEy7Bg3WtU1wBiAQ4WqPvRN+L2kRTjT9s478MB9f4Ufl
-	 iEFYmLz2e79742X2XLJHkzpeQJEWffqjRUeIXRTYsJfK4EVnqZe9FS5frARw5zsxs67uy
-	 O00BnxwLhYiuqi65agb/YDALK2G2BKyKfucI7kVD4k6p1fKJ+ZE0IOP7dNwLubweSwxYc
-	 Z66Q0rsWom/+0HeOU+FKyIUibKOqEedQxrnD+LHNWfUO7P2FGGUyLmdr7r0Ig4WZ+TA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794827522;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=Ej9jdDHgLV0e8+q224FTssM5bujI8HMl3OobzJU+HSY=;
+	b=rgES1ouYBzJocxB03yfqYidmU31mOYDH1owmcava64PRKvAq+S7omtCO1njy7q+kamT8
+	 7s4EkQJuG/wg3CSEnykY/8BnhpznOiT6XoiB1EtyzceZbFyLpzJL/ZJv02BWF6Q9mk9Ds
+	 sKF0KrMTSLE3MlzIQ7XxqlIQttMTPg8UXeESG68pF50lO1oXYbjjFca4WRVJ7SqRhUWjo
+	 x7lVwJj89czK0l5MohBH+kW6wmAUtXYXZQecukFco2omWo9P/2y4yWNbTIUgYAcR643UQ
+	 uwGzmRHT+rUthN9/77gSQmwnCn3bWGg9mZDhFebKF2OiDfUWyaeRuaPNXz1HwnRr82w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iUi+PNRe;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=SPbFwlNg;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jrxYe0XL;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3618B606A8AA;
-	Mon, 16 Nov 2026 11:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6828606A8BD
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 11:12:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A6828606A8BD
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iUi+PNRe
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B191F0092C;
-	Mon, 16 Nov 2026 11:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794827087;
-	bh=ojv1C8PqgE0O+EonqeuruT11+CSXtErx4XDlHdngvG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iUi+PNReGUUMppHJlzotgnYnDO2xlFPsLSCBn+G2VpzKMzbBFdWgvL29HYba4B6lR
-	 cpM35Fenr8zaI2TkOgj2xsXpXAZcNwEZJn4ZPkqRZZvjgIAQTZmISKcyMdgMPNWWOj
-	 WruDGnykd5E+rGabp5iU4A+nm5R+j/BIu5Y7+MXWwWyZg4OUylMz7/wnuT7cLndYr2
-	 6BON7qZ6ntfomn/0oaUFM9d2+Lz5QJMaXq3KbJSrNz7qBWFM4RSh1bW7EpuN54pofg
-	 modYf0DovYhNvdsGb5dTtE4J5j1pyqw4iOQDbMRagFTSR5FcvYssuwD8DoDx6BZnBY
-	 9rYhKkDBLqUGA==
-Date: Mon, 16 Nov 2026 12:04:38 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-mips@linux-mips.org, 
-	Ralf Baechle <ralf@linux-mips.org>, Joe Perches <joe@perches.com>, 
-	Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: Off-by-one in arch/mips/bcm47xx/time.c (was: [PATCH v6 02/19]
- string: Add strprefix())
-Message-ID: <avrjCJ27hY824tOb@devuan>
-References: <cover.1794667407.git.alx@kernel.org>
- <0eaa4ce73a2b164fd49e3a9f71244a2e3f45b7bb.1794667407.git.alx@kernel.org>
- <c113f651d1ce1b2d42ab9d0c59ae5a0cd17ddb6a.camel@perches.com>
- <avi54hgKgovNHfKy@devuan>
- <avriaVSTl4jL0OEo@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=SPbFwlNg;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jrxYe0XL
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AGB5eKp2093843
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 11:12:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ej9jdDHgLV0e8+q224FTssM5bujI8HMl3OobzJU+HSY=; b=SPbFwlNgGAX1d2Ij
+	jCPyY0ToQkVngHeWoqZbyO2qpTQVxLkBPqXCcL+ytwQaCeKyM2n49b/AWLvyyI3o
+	7bTDPQ7MbAi654QDvRyLk/e22au21iYYwdlyo4bu1iDBpUDgvJn9YjDF+KX1dt2g
+	k5X5VNeznb4+rjU86YsuRVsVqoXS22M1uF9bQZxDC917oKMtHSq2xtdnr91NXlrY
+	zYR7E0MeN8D3UnnuC72ehIIKUugnZz6IhZN9lAdnGvHA+1GshhirfI8F8+etthVS
+	UScFIepHQBCRhOxZbbyMy84KdEoMtP70bKIUvEx20ph5UBXxkFHUweHcHxyTb+7q
+	B1qp+w==
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j00nfg0mu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 11:12:00 +0000 (GMT)
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-7d2cba05824so2983932137.1
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 03:12:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1794827520; x=1795432320; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Ej9jdDHgLV0e8+q224FTssM5bujI8HMl3OobzJU+HSY=;
+        b=jrxYe0XLTPeJY75Pc/jTqkkKMSS6XkD0JBsb+lyBDvga50WWaDk4dhxR0WbVW3oV3u
+         JL5GqJhY/yWRWqRB1MuzfCIS8RwiP33OkQ67yMkV4AvTg//x4wk1TQnb+/9bJFuUFNn7
+         Jw8anFrASNBOQNciU5um6i1D4IoHxFmRlhlO1zRi2tT/ncyHI6M3b+Xm0UB+f5K4IwqH
+         z4cOsM6OA3Dp8rQH+L+zPMAEpSRwvdmEIh+txnzQOFxO2LtuO4rBXmooPVx6fDXGR58g
+         +ubfn51JnK8A+wYjeK7hxdLQOvF3yjtPVPaqENXPZwZLmEiFldQz5gYEn/ApOlZtWc2b
+         oIMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794827520; x=1795432320;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Ej9jdDHgLV0e8+q224FTssM5bujI8HMl3OobzJU+HSY=;
+        b=vWgyCLXKXs0s0fkSs6KDlE0wO7CSRssNSDODefKcj3s/A5Dr3ZvXdExLXpOTUMHmfR
+         jvci6t3DH46hPaqYeGM1Oe8Ih5lt+gsNmW1DGszvRsdKnPrfcsVXMElgzYlRCFmiVWIo
+         /fXNBqEeb+LzR7JzVuVPcn8qcYndndoOfgJ5MlAitxUu4c/QwLrLqlAZn9TQnT9ODSvM
+         WiqpcNZxNwczRJwo0CgoJJbZ8/+Df05bl8yQM/mmCazOAdR93Sc+RW5iDrLcjrW12oIw
+         2pEZSzEbwQxFFPaNXbZlAiEQ0u1a6nk8ksGPqEF19ImmkzPMI5a/zBqI2ZHnpzyP8Jai
+         Sq3A==
+X-Forwarded-Encrypted: i=1; AL+hErH+4UcnG2XGWezoZ9EhM7fy96X3RCBTlCvIbx1W3wxDUWA9lVtNhvbkvfI1J+13nKcstUtLLC2uSoi5@vger.kernel.org
+X-Gm-Message-State: APuU4Z8Br5/hTvCxQpPlX2FnArfS7N4696todSP5KEN+5LuGxot7SSSK
+	aVHWAeYH/cyYXHpanfNoLf2ILVpXHs0e8jdhGGyGiClkALLmgrGb3ZMTTM+KPF3nVkrZDBVCtQ6
+	Ffapfdox8ZRgALZSnLROmnDFbF30kXh/pWD51wGvpuoVDxrDfC8/SdC7BBpxScF+P
+X-Gm-Gg: AYBFou3aaTHNSk8auqveeXUPNw81kkm203SbQdZoSpCOEcctW/hkgcMlgNicyQ2S/wV
+	FQLrRttoO4dF9DXUxPFykryYGU1JveBU4pr8/qrWKXnUAUFritoywm52ux/z4N/5eDXDo3voa1m
+	+gFaWfQ4Q84QlrIGEdBZpGAhubNp2IqZ1VpBye6xDh8k5AXPURMpROXI1vAf073OmVgjl3Y2RHQ
+	R14eRqUTbz2vHW48wfMpXXZEwLwrK7GPTjdCTPfuWvKBwTk9NA/SeLIOXtD6g8ArsN6piVJPjkq
+	e3AJ6PmshNhu7dn+JhojpgqQ2T2qE/Vng5V2jiDYGwUTeVwonQVM5c0lHz1IJKSxCu2XXdPCeZa
+	wdtCgmR5w3WwUdnJC7+ycnDmNnawTTeuHhMeAeHOBb2h6cMDbpDaiXVrp7BC4v090KHlBOfWP7q
+	zrQHGX+BzkYnzBfQ==
+X-Received: by 2002:a05:6102:4410:b0:7c3:c0b9:9028 with SMTP id ada2fe7eead31-7d64d77b869mr3373689137.24.1794827519801;
+        Mon, 16 Nov 2026 03:11:59 -0800 (PST)
+X-Received: by 2002:a05:6102:4410:b0:7c3:c0b9:9028 with SMTP id ada2fe7eead31-7d64d77b869mr3373677137.24.1794827519145;
+        Mon, 16 Nov 2026 03:11:59 -0800 (PST)
+Received: from brgl-qcom.nice.aeroport.fr ([193.57.185.21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb4e2842e6sm390162175e9.4.2026.11.16.03.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 03:11:58 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/5] gpio: shared: replace platform lookup with dummy software nodes
+Date: Mon, 16 Nov 2026 12:11:56 +0100
+Message-ID: <179482751351.15583.15760848984534388271.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261104-gpio-shared-fwnode-lookup-v11-0-42b9963d26c7@oss.qualcomm.com>
+References: <20261104-gpio-shared-fwnode-lookup-v11-0-42b9963d26c7@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -76,107 +124,61 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y2ytdsd4hvmvmw6q"
-Content-Disposition: inline
-In-Reply-To: <avriaVSTl4jL0OEo@ashevche-desk.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=BrEIUoX5 c=1 sm=1 tr=0 ts=6afae500 cx=c_pps
+ a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=g6/0voG6I3K7UbaExJZWvQ==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=RChOLZm6GgJo1hU3wOUA:9 a=QEXdDO2ut3YA:10
+ a=-aSRE8QhW-JAV6biHavz:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE2MDA0MyBTYWx0ZWRfX64UTTyKd2zYr
+ 5mVlkANe0fokFpDHNNUdH/5WxbP9L8H2ko5VydRXC8uG3vEaxQdW8oqy7EABsJ0mmOo/ovfRjB4
+ SPF7OxFXRLvUDBnm+KXi/Ff6qn3/mQs=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE2MDA0MyBTYWx0ZWRfX1Dbx1qps6U6M
+ V9rpn9Q/ry8+wOlGWoc/yj/7lRK15F/PSlx7cWwdm+sj2fXvTXYNEzUPN2ysuM8l45MHeci3frY
+ uzL/Zg/UEGVCLUF3y4BfeIjzB0pcAJaeErbWr5DhDTZ4wUmaD0lmTyKmsF5xuCx3+CANKC8vVbf
+ uWruCxg1U7QIfp8sQqgL9ezz1HwsM5Jq68h9tYSqRW6XbYqlySaY9ME0G7/9v/5NtHpXA5fin8S
+ pshlcvojJPyv36jbbTK6LnBP8bqVBRUkRNBue69jkGSTaroK/udqvg5ObNZ0CZDFUZA10k708QX
+ fJs0HqWZkflM/VELBOToK2PVKoA8Ln97JVa+52NP6MSLM3tH2ug0WiFS+xJ1otBZmRyD1RBHWfu
+ KUkDr4fk235VLzAFtq1CJj0lRI5TrPKRqVhGWJ1yvYe4gXie0L4CUZ0pxKYEb3keNjgW0E63n/J
+ /L5CjL95zu3y9cfhTrw==
+X-Proofpoint-ORIG-GUID: ZefJUc3uuXMzpAQg1Z92TpY7csSH_kvl
+X-Proofpoint-GUID: ZefJUc3uuXMzpAQg1Z92TpY7csSH_kvl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-16_03,2026-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611160043
 
 
---y2ytdsd4hvmvmw6q
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, linux-mips@linux-mips.org, 
-	Ralf Baechle <ralf@linux-mips.org>, Joe Perches <joe@perches.com>, 
-	Alejandro Colomar <alx@kernel.org>, linux-hardening@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold <johan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: Off-by-one in arch/mips/bcm47xx/time.c (was: [PATCH v6 02/19]
- string: Add strprefix())
-Message-ID: <avrjCJ27hY824tOb@devuan>
-References: <cover.1794667407.git.alx@kernel.org>
- <0eaa4ce73a2b164fd49e3a9f71244a2e3f45b7bb.1794667407.git.alx@kernel.org>
- <c113f651d1ce1b2d42ab9d0c59ae5a0cd17ddb6a.camel@perches.com>
- <avi54hgKgovNHfKy@devuan>
- <avriaVSTl4jL0OEo@ashevche-desk.local>
-MIME-Version: 1.0
-In-Reply-To: <avriaVSTl4jL0OEo@ashevche-desk.local>
-
-Hi Andy,
-
-> Date: 2026-11-16 13:00:57+0200
-> From: Andy Shevchenko <andriy.shevchenko@intel.com>
->
-> On Sat, Nov 14, 2026 at 08:49:21PM +0100, Alejandro Colomar wrote:
->=20
+On Wed, 04 Nov 2026 11:38:07 +0100, Bartosz Golaszewski wrote:
+> Abel reported to me a crash on Eliza linked to fwnode GPIO lookup for
+> shared GPIOs. Turns out we don't support no-device, fwnode-based lookup
+> for shared GPIOs. With the NULL-pointer dereference now fixed, this is
+> a rework that implements support for this use-case.
+> 
+> Sashiko pointed out several issues under v4. Some of them were bogus and
+> I fixed the rest.
+> 
 > [...]
->=20
-> > > And these are all candidates for converted uses to
-> > > whatever is the function name or steq:
-> > >=20
-> > > $ git grep -P '[^w]strncmp\s*\(\s*[\w\.\-\>\s]*,\s*\"\w*"\s*,\s*\d+\s=
-*\)' -- '*.[ch]' | wc -l
-> > > 946
-> >=20
-> > Looking at those, I've seen a bug in BCM47XX, introduced in 2224de9d152b
-> > (2013-10-29; "MIPS: BCM47XX: Fix clock detection for BCM5354 with 200MHz
-> >  clock").
-> >=20
-> > Look at this line of code:
-> >=20
-> > 	$ grep strncmp arch/mips/bcm47xx/time.c
-> > 			if (len >=3D 0 && !strncmp(buf, "200", 4))
-> >=20
-> > That strncmp(3) call is wrong, as it's really behaving as strcmp(3),
-> > since the 4 is off-by-one.  I'd like to know what was the intention.
-> > Was it meant to be !strncmp(buf, "200", 3)?  Or was it meant to be just
-> > !strcmp(buf, "200")?
->=20
-> When in doubts, preserve current behaviour over refactoring.
 
-Thanks!  Agree.  I've done that in the separate streq(3) patch set.
-<https://lore.kernel.org/linux-hardening/cover.1794767906.git.alx@kernel.or=
-g/T/>.
+Applied, thanks!
 
+[1/5] gpio: shared: factor out per-entry teardown helper
+      https://git.kernel.org/brgl/c/c402fd2961dd013e2da56cf53d147b4943fc3bec
+[2/5] gpio: shared: factor out per-entry setup helper
+      https://git.kernel.org/brgl/c/cda42ff53c4b57f56f08de6af7abf280d755bd74
+[3/5] gpio: shared: unwind partial failures in gpiochip_setup_shared()
+      https://git.kernel.org/brgl/c/6067a8ace266c43eb9514288b76d1d07a0f31eb5
+[4/5] gpio: shared: detach the proxy device from struct gpio_shared_ref
+      https://git.kernel.org/brgl/c/0b80fc5d424d0926841379c1f190a8d1b2ac360b
+[5/5] gpio: shared: convert to using software nodes for GPIO shared proxy lookup
+      https://git.kernel.org/brgl/c/23cfadf96e14a32a398975d67ce48f1f59abc253
 
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es>
-
---y2ytdsd4hvmvmw6q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmr640YACgkQ64mZXMKQ
-wqkzAQ//S8rlu4W2qXz6P0gQz3J7TURv9r9A3EdbifKFmoV3+LJ86ajr425VDn+j
-mrY8uZSeKDSCOXH/RWaOtO2+xB1LA0bohcmAtAZ6Qr5qD/LeeOrOPgqB9MVhev2p
-5RBQI4H/XKGbNYZwwNZEmHwy2a8cv/zPaC69NuR7pKdlmTR7Q3RUObwemZ2xgXGv
-jFSedxxeJXL7Muy9m0xl7KDbNzu3SGScDsdBPvP2VkOMVLjYDZBRjzNUi4G0U4TU
-umtI2dtYzB5KC5ZGaLqHEq01nEZGWn//QElojp2biq0RQ4tLFtMXsiMUtkgxIdjl
-Fuc9PZlj4gzMy3VHvOJ+88tVCLGIRTqPuDlh0KwbOd2n8TFFcP+3/dLOCXMYZ6rf
-PpSkANM5GVeX+67cLeXR1DWWYabxQscI01R/r203S8w+O6hJAyGKEMcpxlaqps3M
-7EvhUEEP6j5tT69K+vEemJhfWgXEfn2QGmgb0FCgLGGLyoE+CwM7b2NkJ/zv2ekR
-of6eE7zCRrEQvEd4/ySFacfyLaZbe3Mv/lMa64sGiYZ+EHKlLxGSxojhYSxDFWoJ
-I4xsD2rJ1G2tJHMrYzPJDdtXJTYp4Xcfa3LIMArje/hzKuizs9Dd6TGDpnl9w6uk
-NnyauIcujGFSV9KMJEjCfbDV7d5liSsurA2hElx5FVU5Vz1+BSU=
-=UCCe
------END PGP SIGNATURE-----
-
---y2ytdsd4hvmvmw6q--
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
