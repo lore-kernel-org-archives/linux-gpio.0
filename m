@@ -1,55 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794818575;
-	b=3Igfmrby6EJv+gVebnMj4pGJBpcQ8nLMQKpqf4jVTZlwfPkpNksLT3rCvfvg5GH4Whyc
-	 +x7YVo+a+ZZ6Z8OzYf2DiBEcUWAXy5qu0NmG9jcPyFaudX9ymibZWtQSpKFX5RfJGhlkf
-	 fG88V+CzBzbBPKcvVDfgaz5CAwZaXt4b82lwCk1ofqMMSzvICTpRTeen9GfW7SDuRzn+L
-	 Ucin8c9mTTbk4Byf6ruh3KQ3Z8yb5h4nKcTe1LbRWxO978wbYPjIjlO2BUgKI2dyE2vhI
-	 U+hw5A/3rxFLi0oVLmHUEzR7+ylSIIZ4+Q8YNAz9LqEZ6aT/O8cXRLMJVEa7jigXLKw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794818575;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=MI2wa5tIRxNuAKlHwQZvP5i3Pz2FmBeOINblj22hSo8=;
-	b=MwttaHqIPuVYUBKfZpfuFoK6Pg/wClWRc06rODf8t322DZiOf7jFBNzD3qEm7yVj33Pn
-	 J7g2tSAKSiepdGrR/EXGU3Ck0y0kny6woHbjzB5TPfIRtyZIGVGVbn8wLToaRZH+d5+nf
-	 C+peWX3bthvT9pdi26GgHtPhoIkmxogEq4fH/uc0lENRoMhEiLafLHcBPIAlh2OhBfO/x
-	 2wxd08ErJYQwhkVQPo6WP1iQSdMCVx8t7qmLZ/DYHxqYhbgSBk4sieUqFbZx/uAaHbxX9
-	 W75PJN5YQ18HxuHpWsbDOGp5bdkhW7Xau/XJnfWpXOjFspNaXaV5rkxY2hIjZ6S9HDA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V5mLsuJa;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.52.12
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794819209;
+	b=0iHlZFLeY9ju59DBO/c12L5Pw4CrEGcViuG6jax0MiBJes4OCIn/8hQtx50n3/lsL0b+
+	 O4qFC67wG4pTH+JG3unQi6I+JGj9/WaZa0LCd7/UO8VtVeBBIKEWoNFoZQAB1FJ42sYbu
+	 eKZG3rwEOFk2zhm5vEII+3gMp1aizEEF26TveKC5qQlia+2rEqdWCc2Mjazm78ik8J+l4
+	 i3lIrJuwdn90+O46INAQLvNJLCfBltXrpbiDxxz0X9Vd/uDwS4yqy50mYGcYjanmXxgVn
+	 lRuEXlC29bWLxfxNYvODjzGN3/NyK3hwae+9ACbeJ1b1AFsIfZswaZyqZ10f/SEhX+Q==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794819209;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=vYfjevhDZrLyOdZirIUajDwiC49vLFzMXE7sYtqr+to=;
+	b=N/c/7BUXHr+BTxxiLc0nKoWhCGdZId9fvoCfdEi9daKGMmV2/YW4BG5Mv1iaWb6DvWVs
+	 yfXH9rTSm8LpnTrU+/lbn1vcd2fPFymw/5Sm2kBmCMyR/AstoIRhXo9RPhLN8iLq8A8Ew
+	 9QML+4oAVay8l0iN2ycUx5mXOP0rFDJkOaIIyAjRwFVJNov/UL6vrSsXBbqdj+If4A0t+
+	 ajay2T/Jn5PDjVLENEthrevJnvM9a8nVrSYnqwu4SwHTFsQHY7DoMShT5nVNNoZQAvLkM
+	 4+zVYo5Dn14CXOlg5IpLUc/3QHjDIRjAZDqmatv9crZmdJ/8iML4XXI78GvGucoegsQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=pq9MOvdi;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.52.12
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011012.outbound.protection.outlook.com [52.101.52.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1854C606A331
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 08:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3808F606A332
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 08:53:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3808F606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V5mLsuJa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1091F000C4;
-	Mon, 16 Nov 2026 08:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794818574;
-	bh=MI2wa5tIRxNuAKlHwQZvP5i3Pz2FmBeOINblj22hSo8=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=V5mLsuJavvH10wXTgIJZ/gfCyANQP9kWpHfI7fVduPhtffLr6izEsB2bFalFKSGe9
-	 +Dr3gJpCTbjQ601D7L1cEJ5A/WGbxDQ2UGjNrkWODUHRGVyhMHtOnpFYH166aSKsB7
-	 nbTXskeNCsz3vZBvedti31So/kE8wd6Jm5uaQdNITfrBCTjfFp+/1Waes7XnR+xarE
-	 9kPB9tYvG56gzEkYMVf30LDrGuGMxe6d7G8ysgwL1Tkts0jE4S6gsKdDSeiLGWvsZK
-	 7/FlSZb761YjwFoD8enVy3rTZydh7HF1FZc1qPFV5K6xX/ULwR1rzs8BD+8uNFU0HQ
-	 yw5TAtornFJ+Q==
-Message-ID: <sashiko-outbox-216556@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4] gpio: amdptpci: add support for AMD PT PCI
- controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Szuying Chen" <Chloe_Chen@asmedia.com.tw>, linux-gpio@vger.kernel.org
-In-Reply-To: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
-References: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Nov 2026 08:42:54 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=pq9MOvdi
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R6YXy9tXj7r5dXwRyG2ZbmM9K2zM2vxqiEP/b6FzPCyEWTTWQJqFkh3YKCKDwQJeXeYUJZxPtPHTow0zrgq8zzvoOy7peZugsUWY1LnZ9vPmDqTrp5DGST3jwlLnrNgZZTOVEvlJP9yEETqXAjwdh+K5DRt979lom1IhmEQJJBnUvJpMNiOHU+ttlSXKRBcMETkP2xQNfeeVuDLIX6GJZtkS+n9FNkwzHZRN5Axd2T+ePQdE/9Tjd8KGfd2n6hb6q5yBsbB+Q7qg0ITJh5yVEH4nj3Q+PbJbfkE1c8zT333wBxx6r5b9gnEUihH28JyO26lIvz5zkUD8DJ4AGpDHbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vYfjevhDZrLyOdZirIUajDwiC49vLFzMXE7sYtqr+to=;
+ b=P4TQa0MuspHvpAH2K5NiJdU6zZWxQVQLpkspDMRs/m/jFSElToF4g25T6DESKLy4O6fRtF92IzbOeyZM3QlFnhgJeDxdBkqbtu0cSOz9otR83PemqatGAMytqIfZ9j7BnBSsvYeOouz+XCHjm0pAW+Z3MeWMU9bOVjDord/L0r5IuMxdR1k0xVGCtTWCdN0n+CYaSFyI0sa/Nqt2nsGIPS+ttuMgjEaTpy9VZPmuPeqQdqHpU9jU+XsnUNQHf2Je496ZcSEdtH/HHjiGX7E33duesd6d0IlyiMjs1WmBaYzqPHVTU+UvWyH9aNmnQBfGY1z+ugoiSSXmiiu4pdNL4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vYfjevhDZrLyOdZirIUajDwiC49vLFzMXE7sYtqr+to=;
+ b=pq9MOvdiWjU6d+igok3H6lh+eC3arXUdzhoHJ6P7z7XWgJKPF/UpNyn536rhYykaQRaKvSwG4agyg1irw5iQK82ovPMnYQX9CPHLY4iGKRSYkzhB3gt7Kv6EEIQgB/daSBiSCyqkE5WfBcOH8s80dOUK11Xsvi5QJ6Gz8vUpDNzrZzsvjHKjKc2GpMcLChT8cz7ZeNFksWO9Ciiki3ko8aBcsx1XwGChmzUfXl8MzIwnrmgbFcLUthSbw58HdrkP/AxtXYKC7oWEcwNYpYUy3i3bdNUz4WPT4F1EjP0Tmcqn22/dLv6Jbb/socGLPvIrNmy+9lj6cNg8tgK2EYdY3g==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
+ by MN0PR12MB6247.namprd12.prod.outlook.com (2603:10b6:208:3c1::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Mon, 16 Nov
+ 2026 08:53:25 +0000
+Received: from PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
+ ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0615.013; Mon, 16 Nov 2026
+ 08:53:25 +0000
+From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: sashiko-reviews@lists.linux.dev,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] gpiolib: let the character device free its IRQs first on chip removal
+Date: Mon, 16 Nov 2026 10:53:21 +0200
+Message-ID: <20261116085320.2845766-2-aambrozewicz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <o6i3phl3kkioptwivmiamw5n6bj7a2butqamu7huh35eulx4ta@cbigrjyy4q6o>
+References: <20261103-gpiolib-chip-removal-v5-0-aambrozewicz@nvidia.com> <20261103-gpiolib-chip-removal-v5-7-aambrozewicz@nvidia.com> <sashiko-outbox-195211@kernel.org> <qabqccchlj6rz5tki6z3h7py36btm6nepdvlcz6vgbq37enfnl@ez2jmldpo5mz> <20261104141501.15473-2-aambrozewicz@nvidia.com> <o6i3phl3kkioptwivmiamw5n6bj7a2butqamu7huh35eulx4ta@cbigrjyy4q6o>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TL2P290CA0027.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:3::11) To PH7PR12MB5974.namprd12.prod.outlook.com
+ (2603:10b6:510:1d9::19)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,343 +95,65 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|MN0PR12MB6247:EE_
+X-MS-Office365-Filtering-Correlation-Id: baf0d263-1faa-40bb-4992-08df43bf1360
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|22082099003|18002099003|11063799006|4143699003|56012099006|261026121527099003|261021123027099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	N9yXMMZMIPnRKBKs4VJ0pCLyRDTSOvtwa6kczqcs27++Ou1k9NtOq22zubU2OFE1LJdEuM5UxuMqh1udbjqDGkLOKoD4oSF91eDnU/Q2rrUulSOdNDoT3iPISDu274Jt5uUPpjJ5fLMydRXk4a5hoe3xb7z7QUDTajiKDtOAtBpLbnUEEt1XyQu37KlU3JCAlgUn+jeVvxmcpT8u8CfLcz+tYUFmD8vZ8UxQrdYt255VXVVOC5sh/oFrurB93IT6ssP26eDW8b4Pwuc4DIROKumdOpEvYuU66h9AlwPCBJseQJZuYELBXbvkbE22R7eDmbTwrwlIMzrYeS6cGT3vDsZRwc9/La3mMreqEogMUvpsIIxKaKc8G6Dt2+9XdwoNn47lLJEW4WCa9M4WfCImZLGjZ51HPC7/hj3g8CDpoPpOGM2Aztztyj+Yoqdw0Gs2bp6C+4UD7k38hY2+ZSPkDtHeVHdOx3J8N/SoOLrzc4810SoyYYu+1BSdi0akxr0vf0ZTH8unbaIR2PShntrSChTzME/JCgmYtyt6rJYkKlviDQ94LeDuVLXCSJG0uKTDmS3VCm7CvECaDhnx4/JABEwrAz/l+RzLJS4I9+RYFfCfFCYEZ9ZpNix83irYqhx6tveFfd+dMHZPap2ErJPr0lOa8CAPEsPkfDl2jeWTZNs=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(22082099003)(18002099003)(11063799006)(4143699003)(56012099006)(261026121527099003)(261021123027099003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ft3DsPc6M6cGh8vyPrG6TLSHD3GV2zKLKaWdk3XZD4dVFQ+xrCPfU4rXTyUW?=
+ =?us-ascii?Q?P5dtrPr55lf5jA+eYQgpfHLnwOtURFxvK4NbJ7WEj/+9qSTj3lcjx00yo4TA?=
+ =?us-ascii?Q?V1YTwXXYw35U9wkFla24P0tNyPoYGmlRJg7sovq0d73cSjszcGx4o2TM66/C?=
+ =?us-ascii?Q?WVYfpMx4tNfbNq096EJf0aFyvofnvsZdODXAlDwjebubWLVYP5CDsUsQBT9i?=
+ =?us-ascii?Q?MrPLovg0K0kub4QBqeIaZWgig7t74VfM2cqC64sIUNPUdb87tplqjbPXNszx?=
+ =?us-ascii?Q?tolKSYxSRvolFb5+nZiLuu6bRAKvmUuWtKh/5L4OyBHr1Nie3cCYHQM0zrSI?=
+ =?us-ascii?Q?wr75B3UByh5vpnINvB0PqnpCjsb8ezGZnedPB5BSO0b/iWH8rexSH1TBWoYB?=
+ =?us-ascii?Q?xS1Q6IH5lEf+tp6tRwNBPw00OCquH2WK6oJ1TrO/IDT8m4M5ssHN0cvW5sjh?=
+ =?us-ascii?Q?ufAn3BTEAx7+Dl6FtbvykRZz8wsf2d8c2w0nQBvfmdfK23O5zRBN02BKsmzI?=
+ =?us-ascii?Q?lcDynJQoJ20zkhUJGktTCh9VobMOPSWozYeVslzMwbG9eN3Sxr5KAk+lcftZ?=
+ =?us-ascii?Q?hQueK4jqi/8J3skLnSSUQAltyewmpdGqmfy31qTKnwKuCiEhUVvudI2Wq+cG?=
+ =?us-ascii?Q?Gb4I66Diw+Prp37GuCODWrzhageYxm9Xl8DpAuUe89beUQksgFnHpBWuq13C?=
+ =?us-ascii?Q?sAZ27kk8mroYIVMaRmzlI5aevWN6m7QtBXh5swKK3jiX78pCTVxTs+TIoKoM?=
+ =?us-ascii?Q?Qe57TQiYoyu7dt26QAX2xpBrpgb7j7CA1POLxLFiF+bxwVumu4BANPIC0QaK?=
+ =?us-ascii?Q?pxAQPimV3WhTpHE7KxcCqpparMrGOWLfaVrOxoZDdxTJhglBz0cptWVEamLf?=
+ =?us-ascii?Q?jxoJpYPDDICfxFY9DHwZymfBlE+QQdRxxXSoLtExUjX+6P+b/TB/yd9SEipm?=
+ =?us-ascii?Q?2osI9evZB/mXy3VSxIo8kcXfjhob/ZDDQX4bL7mNSygI7+nkoN6qwyiPh/Jb?=
+ =?us-ascii?Q?/tgzbIJ1ViHkaZLw8GwTU4pNZcxsResDhwezDfdaJ4hm1c86i8X7iNuf0ET9?=
+ =?us-ascii?Q?dSXV0fns6+6oEI7W9f79BdTm2U714TDZJREjnmODHrqI2A8jc3Db/Wd0kPTl?=
+ =?us-ascii?Q?9VJP2G/DeJztFxMh3CArRcvmwjZpTAEHB1252a0c5aDZgJeC1kB3MHyfJtps?=
+ =?us-ascii?Q?/3LXeE6tzgarUrOcUct9E5of/m+d5KXtwSRBkaywWTo0ebEhIuA1yeTRlaOW?=
+ =?us-ascii?Q?yz1nV2BJrzdRz1nxgOlwe0ZaeoDcgwTidIetrShMSuNxkPhdcBW1svy7Z3J8?=
+ =?us-ascii?Q?JwWv2iyzEFI1nHGyFYJJcfPFF+BMNUOwJc+J7Etmpp6ieBHAgEkGYXPdYbY8?=
+ =?us-ascii?Q?2aCK8UmJHz/+eyuOzgz+0udgrvx/+AP5twP4IZFPRXFzNNraxXpteTFb8pfH?=
+ =?us-ascii?Q?Abwlqh54oIWNCodXhhZtuXFwfVIvJEbuLL8/GtMzu9oBmeJj04nbQB4IRp9T?=
+ =?us-ascii?Q?8nqMfDTwmYlT1MqqHp0kawdxCIKKlbHKcFkgXYS8qXiqxEyF/16XihFOrIVq?=
+ =?us-ascii?Q?09a+zE+YFqy8+C8aH44Y7YuUChe3Ag3EmxpcHAakLVlbUPxzYpx3vMe2HKD2?=
+ =?us-ascii?Q?aDbQXFomBrt3z3z+7zMlrGUudzndu8dvvs4U84w3ZkFEs3OueXPtyQvanAEU?=
+ =?us-ascii?Q?hpL8Dx1+UjZszZ2/nQtBEhkGcygVWrAb8GDEvqoZyXoK0jlPY3M1M114ubN/?=
+ =?us-ascii?Q?FoeBoigzsQ=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: baf0d263-1faa-40bb-4992-08df43bf1360
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2026 08:53:25.5399
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EIGbLWUbVkU3tAO/So+ABY3n+m424pG5C9a48qGdcRubhTJCHKF7SwY9pVEFAEZ2r7v+I8/fkSsmrV+vSDkXQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6247
 
-Thank you for your contribution! Sashiko AI review found 6 potential
-issues to consider:
-- [High] gpio: amdptpci: devres order in pt27_gpio_probe() frees
-  irq_domain early
-- [High] gpio: amdptpci: MMIO access while suspended and clobber in
-  pt27_restore_regs()
-- [High] gpio: amdptpci: runtime PM calls in pt27_gpio_isr() break IRQs
-  and lockdep
-- [Medium] gpio: amdptpci: sleep ops in pt27_gpio_pm_ops race noirq wake
-  IRQ handling
-- [Medium] gpio: amdptpci: unmasked wake_status and skipped wake disable
-  on suspend
-- [Medium] gpio: amdptpci: duplicate wake IRQ dispatch in
-  pt27_gpio_resume()
---
+On Fri, Nov 13, 2026 at 10:49:17AM +0100, Bartosz Golaszewski wrote:
+> Hey! Do you plan to send v6 soon? I'd like to have this upstream by rc5
+> if possible.
 
-commit afe67f7f6f93220edaeaabd38709a16694605523
-Author: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-
-gpio: amdptpci: add support for AMD PT PCI controller
-
-This commit adds a PCI GPIO and interrupt controller driver for AMD
-Promontory (PT27) platforms, including runtime PM and system wakeup support.
-
-> diff --git a/drivers/gpio/gpio-amdptpci.c b/drivers/gpio/gpio-amdptpci.c
-> new file mode 100644
-> index 0000000000000..d676fd8c0b1c7
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-amdptpci.c
-[ ... ]
-> +static void pt27_restore_regs(struct pt27_gpio *chip)
-> +{
-> +	iowrite32(chip->saved.out,       chip->base + PT27_REG_OUT);
-> +	iowrite32(chip->saved.dir,       chip->base + PT27_REG_DIR);
-> +
-> +	iowrite32(chip->saved.int_lvl,   chip->base + PT27_REG_INT_LVL);
-> +	iowrite32(chip->saved.int_mode0, chip->base + PT27_REG_INT_MODE0);
-> +	iowrite16(chip->saved.int_mode1, chip->base + PT27_REG_INT_MODE1);
-> +	iowrite8(chip->saved.int_ctl,    chip->base + PT27_REG_INT_CTL);
-> +
-> +	iowrite16(chip->saved.wake_lvl,  chip->base + PT27_REG_WAKE_LVL);
-> +	iowrite16(chip->saved.wake_mode, chip->base + PT27_REG_WAKE_MODE);
-> +	iowrite16(chip->saved.wake_en,   chip->base + PT27_REG_WAKE_EN);
-> +
-> +	iowrite32(chip->saved.int_en,   chip->base + PT27_REG_INT_EN);
-> +	iowrite32(chip->saved.int_mask, chip->base + PT27_REG_INT_MASK);
-> +}
-[ ... ]
-> +static int pt27_irq_reqres(struct irq_data *d)
-> +{
-> +	struct gpio_chip *gc   =3D irq_data_get_irq_chip_data(d);
-> +	int   ret;
-> +
-> +	ret =3D pm_runtime_resume_and_get(gc->parent);
-> +	if (ret < 0) {
-> +		dev_err(gc->parent, "%s: Fail to resume controller for IRQ: %d\n",  __=
-func__, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret =3D gpiochip_reqres_irq(gc, irqd_to_hwirq(d));
-> +	if (ret) {
-> +		pm_runtime_put_autosuspend(gc->parent);
-> +		return ret;
-> +	}
-> +	return 0;
-> +}
-[ ... ]
-> +static int pt27_irq_set_type(struct irq_data *d, unsigned int type)
-> +{
-[ ... ]
-> +	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
-> +		lvl_reg =3D ioread32(chip->base + PT27_REG_INT_LVL);
-> +		if (lvl_bit)
-> +			lvl_reg |=3D BIT(hwirq);
-> +		else
-> +			lvl_reg &=3D ~BIT(hwirq);
-> +
-> +		iowrite32(lvl_reg, chip->base + PT27_REG_INT_LVL);
-> +
-> +		if (hwirq < 16) {
-> +			u32 reg =3D ioread32(chip->base + PT27_REG_INT_MODE0);
-> +
-> +			shift  =3D hwirq * 2;
-> +			reg   &=3D ~(PT27_INT_MODE_MASK << shift);
-> +			reg   |=3D ((u32)mode_val << shift);
-> +			iowrite32(reg, chip->base + PT27_REG_INT_MODE0);
-> +		} else {
-> +			u16 reg =3D ioread16(chip->base + PT27_REG_INT_MODE1);
-> +
-> +			shift  =3D (hwirq - 16) * 2;
-> +			reg   &=3D ~((u16)(PT27_INT_MODE_MASK << shift));
-> +			reg   |=3D (u16)((u16)mode_val << shift);
-> +			iowrite16(reg, chip->base + PT27_REG_INT_MODE1);
-> +		}
-> +
-> +		iowrite32(BIT(hwirq), chip->base + PT27_REG_INT_STAT);
-> +
-> +	}
-[ ... ]
-> +static int pt27_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-[ ... ]
-> +	guard(raw_spinlock_irqsave)(&chip->gen.lock);
-> +
-> +	wake_en   =3D ioread16(chip->base + PT27_REG_WAKE_EN);
-> +	wake_lvl  =3D ioread16(chip->base + PT27_REG_WAKE_LVL);
-> +	wake_mode =3D ioread16(chip->base + PT27_REG_WAKE_MODE);
-
-[Severity: High]
-Can GPIO IRQ setup access MMIO while the PCI device is in D3 and then have
-pt27_restore_regs() overwrite the configuration on resume?
-
-Runtime PM references are only taken in pt27_gpio_request() and
-pt27_irq_reqres().  Standard IRQ mapping paths such as
-acpi_dev_gpio_irq_wake_get_by() configure input direction via
-gpiod_direction_input_nonotify() -> gpio_mmio_dir_in() and trigger type via
-irq_set_irq_type() -> pt27_irq_set_type() before request_irq() is called and
-without calling gpiod_request().
-
-If the controller has already runtime-suspended after probe, those MMIO
-reads and writes happen while the device is in D3hot/D3cold and do not
-update chip->saved.  When request_threaded_irq() then calls
-pt27_irq_reqres(), pm_runtime_resume_and_get() runs pt27_restore_regs(),
-clobbering PT27_REG_DIR, PT27_REG_INT_LVL, PT27_REG_INT_MODE0/1, and
-PT27_REG_WAKE_* with the pre-suspend values in chip->saved.  Right after
-that, gpiochip_reqres_irq() -> gpiochip_lock_as_irq() reads PT27_REG_DIR
-from hardware via gpio_mmio_get_dir() and fails with -EIO if the pin was
-previously an output, or leaves the interrupt trigger unconfigured.
-
-Also, if irq_set_irq_type() is called after enable_irq_wake(),
-pt27_irq_set_type() does not update PT27_REG_WAKE_LVL or PT27_REG_WAKE_MODE.
-
-[ ... ]
-
-> +static irqreturn_t pt27_gpio_isr(int irq, void *data)
-> +{
-> +	struct pt27_gpio *chip =3D data;
-> +	irqreturn_t ret =3D IRQ_NONE;
-> +	unsigned long pending;
-> +
-> +	if (pm_runtime_get_if_in_use(chip->dev) <=3D 0)
-> +		return IRQ_NONE;
-[ ... ]
-> +	pm_runtime_put(chip->dev);
-> +	return ret;
-> +}
-
-[Severity: High]
-Does calling pm_runtime_get_if_in_use() and pm_runtime_put() in
-pt27_gpio_isr() break interrupt handling when CONFIG_PM is disabled and take
-a sleeping spinlock in hardirq context?
-
-GPIO_AMDPTPCI does not depend on PM, and when CONFIG_PM=3Dn,
-pm_runtime_get_if_in_use() returns -EINVAL, causing pt27_gpio_isr() to
-return IRQ_NONE on every interrupt.  Even with CONFIG_PM=3Dy,
-pm_runtime_get_if_in_use() returns 0 while runtime_status is still
-RPM_RESUMING (after pt27_restore_regs() unmasks interrupts in
-pt27_gpio_runtime_resume()) and returns -EINVAL during early system resume
-before runtime PM is re-enabled.
-
-In addition, pt27_gpio_isr() is requested with IRQF_NO_THREAD, so calling
-pm_runtime_get_if_in_use() and pm_runtime_put() acquires dev->power.lock (a
-non-raw spinlock_t) from hardirq context, triggering lockdep invalid wait
-context warnings under CONFIG_PROVE_RAW_LOCK_NESTING and sleeping in atomic
-context on PREEMPT_RT.
-
-> +static void pt27_hw_clear(void *data)
-> +{
-> +	struct pt27_gpio *chip =3D data;
-> +
-> +	iowrite32(0, chip->base + PT27_REG_INT_EN);
-> +	iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_MASK);
-> +	iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_STAT);
-> +	iowrite16(0, chip->base + PT27_REG_WAKE_EN);
-> +	iowrite16(PT27_WAKE_MASK, chip->base + PT27_REG_WAKE_STAT);
-> +}
-[ ... ]
-> +static int pt27_gpio_probe(struct pci_dev *pdev, const struct pci_device=
-_id *id)
-> +{
-[ ... ]
-> +	ret =3D devm_request_irq(dev, chip->irq, pt27_gpio_isr,
-> +			       irq_flags | IRQF_NO_THREAD, dev_name(dev), chip);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "failed to request IRQ %d\n", chip->irq);
-> +		goto err_pm_disable;
-> +	}
-> +
-> +	ret =3D devm_add_action_or_reset(dev, pt27_hw_clear, chip);
-> +	if (ret)
-> +		goto err_pm_disable;
-> +
-> +	ret =3D devm_gpiochip_add_data(dev, gc, chip);
-
-[Severity: High]
-Does this devres registration order in pt27_gpio_probe() cause a
-use-after-free of chip->gen.gc.irq.domain in pt27_gpio_isr() during unbind?
-
-Because devm_request_irq() and pt27_hw_clear() are registered before
-devm_gpiochip_add_data(), devres teardown runs in reverse order when the
-driver is unbound:
-
-CPU0                                  CPU1
-pci_device_remove()
-  pt27_gpio_remove()
-    pm_runtime_forbid(dev)
-      pt27_restore_regs()
-  devres_release_all()
-    gpiochip_remove()
-      irq_domain_remove(gc->irq.domain)
-                                      <hardirq>
-                                      pt27_gpio_isr()
-                                        generic_handle_domain_irq(
-                                          chip->gen.gc.irq.domain, hwirq)
-                                          <-- use-after-free
-    pt27_hw_clear()
-    devm_irq_release()
-
-During probe, chip->gen.gc.irq.domain is also still NULL between
-devm_request_irq() and devm_gpiochip_add_data().  In addition,
-pt27_hw_clear() modifies PT27_REG_INT_EN, PT27_REG_INT_MASK, and
-PT27_REG_INT_STAT without holding chip->gen.lock while pt27_gpio_isr() is
-still active, and pt27_gpio_isr() does not mask pending with PT27_GPIO_MASK.
-
-Registering devm_gpiochip_add_data() before pt27_hw_clear() and
-devm_request_irq() ensures the IRQ handler is freed first on teardown.
-
-[ ... ]
-
-> +static int __maybe_unused pt27_gpio_suspend(struct device *dev)
-> +{
-> +	struct pt27_gpio *chip =3D dev_get_drvdata(dev);
-> +
-> +	if (pm_runtime_status_suspended(dev)) {
-> +		dev_dbg(dev, "%s: already runtime-suspended, skipping save\n", __func_=
-_);
-> +		return 0;
-> +	}
-> +
-> +	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
-> +		pt27_save_regs(chip);
-> +		iowrite32(0, chip->base + PT27_REG_INT_EN);
-> +		iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_MASK);
-> +		iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_STAT);
-> +
-> +	if (!device_may_wakeup(dev))
-> +		iowrite16(0, chip->base + PT27_REG_WAKE_EN);
-> +
-> +		iowrite16(PT27_WAKE_MASK, chip->base + PT27_REG_WAKE_STAT);
-> +	}
-> +
-> +	synchronize_irq(chip->irq);
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused pt27_gpio_resume(struct device *dev)
-> +{
-> +	struct pt27_gpio *chip =3D dev_get_drvdata(dev);
-> +	unsigned long replay;
-> +	unsigned int hwirq;
-> +	u16 wake_status;
-> +
-> +	if (pm_runtime_status_suspended(dev))
-> +		return 0;
-> +
-> +	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
-> +		wake_status =3D ioread16(chip->base + PT27_REG_WAKE_STAT) & PT27_WAKE_=
-MASK;
-> +		iowrite16(wake_status, chip->base + PT27_REG_WAKE_STAT);
-> +		pt27_restore_regs(chip);
-> +
-> +		replay =3D wake_status &
-> +			 ioread32(chip->base + PT27_REG_INT_EN) &
-> +			 ~ioread32(chip->base + PT27_REG_INT_MASK);
-> +	}
-> +
-> +	if (!wake_status)
-> +		return 0;
-> +
-> +	pm_wakeup_event(dev, 0);
-
-[Severity: Medium]
-Should wake_status in pt27_gpio_resume() be masked with chip->wake_mask, and
-what happens in pt27_gpio_suspend() if wakeup was disabled after the device
-entered runtime suspend?
-
-In pt27_gpio_resume() (which is also called by pt27_gpio_runtime_resume()),
-wake_status is only masked with PT27_WAKE_MASK, so any latched status bits
-on pins 0..11 that do not have wakeup enabled in chip->wake_mask will still
-report pm_wakeup_event() and replay interrupts.
-
-In pt27_gpio_suspend(), if the device entered runtime suspend with
-PT27_REG_WAKE_EN enabled and wakeup was then disabled via sysfs before
-system suspend, returning early when pm_runtime_status_suspended(dev) is
-true skips clearing PT27_REG_WAKE_EN, leaving hardware wakeup active during
-system sleep.
-
-> +
-> +	for_each_set_bit(hwirq, &replay, PT27_WAKE_GPIOS)
-> +		generic_handle_domain_irq_safe(chip->gen.gc.irq.domain, hwirq);
-
-[Severity: Medium]
-Can pt27_gpio_resume() dispatch the same wake interrupt twice?
-
-Inside the lock scope above, pt27_restore_regs() writes PT27_REG_INT_EN and
-PT27_REG_INT_MASK without clearing PT27_REG_INT_STAT, and then computes
-replay.  As soon as the scoped_guard releases chip->gen.lock and restores
-local interrupts, an asserted level-triggered wake line or a latched bit in
-PT27_REG_INT_STAT can fire chip->irq and run pt27_gpio_isr() ->
-generic_handle_domain_irq().  When pt27_gpio_isr() returns, this loop still
-iterates over the pre-computed replay bitmap and calls
-generic_handle_domain_irq_safe() a second time for the same hwirq, which
-invokes handle_irq_event() again even if the interrupt was already serviced
-and masked.
-
-[ ... ]
-
-> +static const struct dev_pm_ops pt27_gpio_pm_ops __maybe_unused =3D {
-> +	SYSTEM_SLEEP_PM_OPS(pt27_gpio_suspend, pt27_gpio_resume)
-> +	RUNTIME_PM_OPS(pt27_gpio_runtime_suspend, pt27_gpio_runtime_resume, NUL=
-L)
-> +};
-
-[Severity: Medium]
-Should pt27_gpio_suspend() and pt27_gpio_resume() be wired as noirq sleep
-callbacks instead of SYSTEM_SLEEP_PM_OPS()?
-
-With SYSTEM_SLEEP_PM_OPS(), pt27_gpio_suspend() saves PT27_REG_WAKE_EN and
-masks interrupts during dpm_suspend(), before dpm_suspend_noirq() runs
-device_wakeup_arm_wake_irqs() and suspend_device_irqs().  On resume,
-dpm_resume_noirq() runs device_wakeup_disarm_wake_irqs() (calling
-pt27_irq_set_wake(d, 0)) before pt27_gpio_resume() runs in dpm_resume(), so
-pt27_restore_regs() overwrites PT27_REG_WAKE_EN with chip->saved.wake_en and
-clobbers any GPIO or wake state updated during the late/noirq/early phases.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261116075510.5722=
--1-Chloe_Chen@asmedia.com.tw?part=3D1
+Yes, sorry for the delay. I plan to send v6 this week, rebased on
+gpio/for-current, with the shared proxy fix as a separate patch.
