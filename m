@@ -1,89 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.10.4.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794815453;
-	b=3vK/AuwSd63vzsgGd6PM/xV5kAhPaUSzBS+gWxRXfby9AbsNGyJ79pejqxH1m0izWGzg
-	 mY8TjK+UuTxYEuyo1jzORvPPl8v+XoS3zZV4wCPOe/NFCQtRGa6buCYC07fMav4xsGPad
-	 har8r85j+l2wF0UXSSQRGvU6Fn5b12tKoFUEsMg7UAImow87PKVlkhBzm1PS6k4UJ+svm
-	 oYlw03mEEe8qGpSx/wwlW2pf1GMtcYJ8f+/W5sNaczlXxEbTzpgkhBJWKO8uoh2YKAmSj
-	 qdFD/F/LlZAkR8NHZ34twFolOIOJztQk9tsKEiKtw8UL/M1/YnxSHawojCBLM2pPgNQ==
+	t=1794815747;
+	b=dE6KdK8wrsQaGb3u5KURBtmMXixF6SFjYATmy8h5hgOBlPElectiEBM0ZxEbLckTTITy
+	 AM96wTOIfNv8YyuyMBn7J49mmxqqupUtS45wMsYiuJ98eSIVIJHdR7fMO8FSD4tdA3ZwD
+	 b//PoQ1+JBTqNc8/BQoGWVTtbwMGDL5tIX2wThYLfPvD2FCWcAjgLHQGIs/iH5ZQYhAti
+	 lZ9Vu0q2mKHC+G0Nzt/NJCW8yVjoVHxagwuIhBdORsMIpmtb42XyWGYNjVU+gB4ZHi/sz
+	 Hsun0pf0l8MmEWJKQtt00YWJNb9rQnmlDIM/rjwf+8a1pEX9oP/V+oWQBpoxXZkZ8dQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794815453;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:From:Reply-To:Subject:To:Cc:
-	 References:Content-Language:Autocrypt:Organization:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=gBevyYkB+KqpxLupXF92krJAbcbx52iOwb7rRaPzSaU=;
-	b=xV2FdOdKe1/OG15Iw54XSy5Ybv72IyhzA5soM73lPzpvbOM3KIJS91rj8ia0kvYzMs31
-	 +tI7hC6t0Dx3ech7bSPxU+XiyxaFNSZZCSPChx/9IqAZvo5lLQXNZmwLo+O/rB04YF5at
-	 m3T6ZkiMhQc14jRAiGKkw+UuTfAIeCDRIR1y1o2LYfyilMkGGQQpl821fRGZfczb/qOxE
-	 aEbZ1dOJK1l/XkmjUAaUmCtRQKbnPrSkFlCkNcAtIpFLKGQmfQ6bIfOT6P33jzgU5qBKH
-	 KkmZ/shEzkN4j3biinaXp4xCx5zvCSyhbYlWJbmyKxydfXL/wfrK2EjicwYfY8XARmg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794815747;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy:X-TM-AS-Product-Ver:X-TM-AS-Result:
+	 X-TMASE-MatchedRID:X-TM-AS-User-Approved-Sender:
+	 X-TM-AS-User-Blocked-Sender:X-TMASE-Result:X-TMASE-Version:
+	 X-TM-SNTS-SMTP;
+	bh=RakCbxOqAGzATvq0KP92dmH80GhwpdUL9JS9vHuHr2o=;
+	b=Hpsl0qi2gQ/QfvZBmnQJ9awzenptc7gLnvFB+gCw22k1EtoNyZNYFL1TWbp4HzPcoTUp
+	 ABXzGSCPexEE9JvNmByXLh4z002pf43fun2LQtS1uFRUyhYxWta5ppruHh6snYBXdQ5u4
+	 Ba8kA3RtFR44AgNr2DAmtTHOkF31CZ9f8jVK+61QbLEaoxGzgWpGPGYP+jiNOV1muJEN+
+	 vEzvTEOupkAC6ahOFhyV7S8zUuiSNFv7DCCchq8DLIihGYBXO2H4nJ5fXrIt0s3On20OB
+	 Izjdm6FBQN2pU02fw7uDcm6GufLln3h2J+vWt/MmWibQaPSW7HRw6/xblDsC/Awuj3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=p3t64VCH;
-	arc=none smtp.remote-ip=209.85.221.41
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=asmedia.com.tw;
+	spf=pass smtp.mailfrom=asmedia.com.tw;
+	dkim=pass header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=QT5lewDS;
+	arc=none smtp.remote-ip=103.10.4.13
+Received: from ms.asus.com (ms.asus.com [103.10.4.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15AD606A323
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 07:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C15AD606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE56C606A31C;
+	Mon, 16 Nov 2026 07:55:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE56C606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=asmedia.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmedia.com.tw
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=p3t64VCH
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4919a880834so1461139f8f.0
-        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2026 23:50:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794815451; x=1795420251; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=gBevyYkB+KqpxLupXF92krJAbcbx52iOwb7rRaPzSaU=;
-        b=p3t64VCHuH0CfExDvDQNLTUnA8yJcL7hr2Su/honJPU3WAwc0Il6KYqHeHKAC6yBMU
-         KfyzitKrykfz2YNIXm77E/vj8iJ9e3AEEzgCStiYMfxV5tBBEh3XmE3CmTDH6jjgO9lx
-         1hHbHiKFJy8D+Zxa7X1X1RuYdYxDepNMWieAQAjYLv5cV4RtzpxvY/DLauQvOSKiOfZb
-         Tnky9PKiBOJccIsSjDsdtIQNWpo8BHyjw96wlDYE71UV+gCtACUwnhhnYUfsRjBhr2SD
-         YuX2Wt6A6tU+9PphYPz2oqzM7jGNZMvGCDMLTnlACJZsCruFSlim6C4qwpuGUYn6dinT
-         9vmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794815451; x=1795420251;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=gBevyYkB+KqpxLupXF92krJAbcbx52iOwb7rRaPzSaU=;
-        b=dkW0OeNvM938LE72H09kTbjLgwl97qO6zl9IKQoTDb+z7I7cdJOl2aGnRiBljKmC2P
-         B0OBPVQHSsJdvouqu28HLYWgUhYRJlpHG13V3r2wuk7JYl4hlEBVAhMQHD7cf5Gj71ob
-         jaX7iTC9L8+fkRF2xzoW0/cNTB/HKM9Ty2d54MLYiKEy6h11FxKVrYn05dBcuKiviPcq
-         SQU7VYArkSHqQuowMJMDLih1lyP6krG29XLdAQdyiezFU2/2GskIV72IYKUkMguJ56QD
-         OqF7ag76JNERbzhV2s+KvxdDxTfo5ppX+JoYL6NaD3h9b+GPUkaBTFOQhK0FWPs09MBF
-         ttrg==
-X-Forwarded-Encrypted: i=1; AL+hErG5QfLh0y4IvcDUmecV2rcwGqKsWFol+cOVt9dCyyTgYve6AIiwkA+2YRHkf1e9Nxu1m61Iw+8JAq5E@vger.kernel.org
-X-Gm-Message-State: APuU4Z/SbM1aI9iYj+G5NX/ZEFcIcYXekL61a31iU4GuB7EsKtJOmzKe
-	mc74oG9M5mBgWIMq3uUi02t88PcbUPHe8z5hutHMta+GcBxZ6QaL8MBR0aN37bJ1Mfg=
-X-Gm-Gg: AYBFou27iCWuJSCvkszkKZO8k/+o65xQHuxefSKhkLhbEV1DEEuamJA0pT0fNNsYrH9
-	tBwUin3TAYhIgHmVziT7pLD2oCCVlxC0VyQSs2nOISipgmni/lN2kJu5YCVMH1Eqxeggj9jd6vh
-	qAqUw3VLQWg1y1axn5Dx7RUupx5yhd3PRtDSHs9Q5aK2DmpjGEYh09UX2nT4qWV2qYisP0KcUr3
-	cMxwyrZD6uHV+lYfX97guRTuTTEncnku5rwx7Z+PtvXLzn/1hWv/QapA0X41Fra7+O7XlubTosG
-	4BRfcYpV9QoVzVsL/Rhkd6VkGwwIU5vkdkqREF9M7wg01uphRt66lBneLjbmT7pQ7tXWC/sqIN1
-	erovlWWiGlD9v9f2m7ajMUu92UjzQcdjT3rvTksL2TwwPqXWEi4LUplZ/o0daKVNTtVV+wBI8Yu
-	h8bm3BmPziS46ZalbVlXI89tIJUeJi7wbm7XzKgCRElvvYbRI0bM8o4NetwBll3azEgdq6xyIuC
-	HLjNl16R+dvCgj0ZH5gmbaIiSiOcLxz0hOXuafGA+loU4OcOyI1zkjzxgbukwYNMRg/XDY2E8j6
-	OTR7WQ972Qw2sRkstuRzOYrbMwWpJgID3fhycVIybk0Av10nogkxIkiBmMOVw8nVleMnSlWEgtS
-	LAKyJ54ml
-X-Received: by 2002:a05:6000:4582:b0:48e:44c7:bf0f with SMTP id ffacd0b85a97d-49c714a352fmr16250325f8f.25.1794815450969;
-        Sun, 15 Nov 2026 23:50:50 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:106d:1080:575d:8fcf:e30d:5aed? ([2a01:e0a:106d:1080:575d:8fcf:e30d:5aed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f1c1797sm22775989f8f.11.2026.11.15.23.50.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Nov 2026 23:50:50 -0800 (PST)
-Message-ID: <402595f8-0aec-405d-bcce-eb54981fcbb9@linaro.org>
-Date: Mon, 16 Nov 2026 08:50:50 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=asmedia.com.tw header.i=@asmedia.com.tw header.a=rsa-sha256 header.s=asmediacomtw header.b=QT5lewDS
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=asmedia.com.tw; i=@asmedia.com.tw; q=dns/txt;
+  s=asmediacomtw; t=1794815746; x=1826351746;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fC6lJLf6T4qRxV1peHv4L3F61CzutIPq4kyaA99JrKY=;
+  b=QT5lewDSI7Bq1QAT1Gs8LrCdGIbes0SIdY9l41rpz53McbSs4VH96+K7
+   1i5dmIOgoVtEd3LOgYqfxHAVgSuVpQ7bfvGp1UDKPuAVcUYvR5ZY5o4Hc
+   2LxpRoJLl/HrFPxogssVn9tTaeufmtv75wgjzdahEHEN5sT2WerOeLGMY
+   k=;
+X-CSE-ConnectionGUID: iyq1UHHhTf+kQp7FoZcE2Q==
+X-CSE-MsgGUID: L8JCZ6KqSyGGZ4atU+6kQw==
+Received: from unknown (HELO APZA006TMD.corpnet.asus) ([172.22.47.66])
+  by ms.asus.com with ESMTP; 16 Nov 2026 15:55:37 +0800
+Received: from mymail.asus.com (42.70.154.76) by APZA006TMD.corpnet.asus
+ (172.22.47.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 16 Nov
+ 2026 15:55:35 +0800
+From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+To: <linusw@kernel.org>, <Markus.Elfring@web.de>,
+	<linux-gpio@vger.kernel.org>, <brgl@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <Yd_Tseng@asmedia.com.tw>, <Jesse1_Chang@asmedia.com.tw>,
+	<Richard_Hsu@asmedia.com.tw>, Szuying Chen <Chloe_Chen@asmedia.com.tw>
+Subject: [PATCH v4] gpio: amdptpci: add support for AMD PT PCI controller
+Date: Mon, 16 Nov 2026 15:55:10 +0800
+Message-ID: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
+X-Mailer: git-send-email 2.48.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -93,168 +73,750 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 10/23] ASoC: qcom: lpass-cdc-dma: add support for WSA
- codec DMA
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org,
- conor+dt@kernel.org
-References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-10-5183f6aab9fc@linaro.org>
- <sashiko-outbox-213505@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <sashiko-outbox-213505@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: APZA001EXB.corpnet.asus (172.22.6.13) To
+ APZA006TMD.corpnet.asus (172.22.47.66)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3239-9.1.2019-30322.005
+X-TM-AS-Result: No-10--18.398000-8.000000
+X-TMASE-MatchedRID: DZy/h5Q5bnaDE1gnwKWGushQ2ZMNvRp3yeAmy1uygLnlbwjdfEVENL+I
+	ScJnXnqYcuWpm6G6Xunma/wXZpfjXgUTW+/SpSPA8RcXD+rQ7sGVmuhG06IIbR2IiA+FjjsSfw5
+	/fdoSsJAsee3t7Xiv0ZmPFncaNP40zbGNfvmor4uxkiMlzRAr9tUusl/JVaRNLzJeA+juOa97Fv
+	XZkVFxTXN522A3sEqcsen66SRX/zDT2djP7DKoDlJTtM6CHKVOgdXztqOEBnDUT3WVd+NuWY4Y1
+	WPFQTbuW3Mg6JEjAQvlIUH50w0kkFY5TNRuqCD9ftn7iRH3dJbn0oaU6WM++xe4W0jxFAx5EJqz
+	YPg/Da1n626sce8NRCVOh4fIkrxLtROtYKpzzi+fvSRjnTlyXQeATH6uEs3iAPyBWRTHJF8pLDU
+	L8+uTozkpaYe499FmzbzzaXKaJ0hhJE+esG8VForuruLIWfnx10/soz7yB7FUfXNliEJyIzYz/e
+	cf2e8Pw+n9MA1496TjdzjfEBbCgh1QZA7Oi95Fn44P8x8zBokGAyO8UPwf/V810k8HvA7WY3PfS
+	mNBHfKjg0lrtKMWyiT/9g75F2ivWjsaYI4lh3VVdLcIC34PGIs3wSS0wttw6QLge8Tcpn0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--18.398000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3239-9.1.2019-30322.005
+X-TM-SNTS-SMTP:
+	B271256219553582DCAC9BFAE28803788670DFD0170F582BA91CD214B2A15DE32000:8
 
-On 11/13/26 20:07, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 2 potential
-> issues to consider:
-> - [Medium] ASoC: qcom: missing WSA_TX4 case in
->    __lpass_get_codec_dma_intf_type()
-> - [Medium] ASoC: qcom: unchecked clk_prepare_enable() in
->    lpass_cdc_dma_daiops_startup()
-> --
-> 
-> commit fe9e37da583fba7a4cfa98118783d3ccffae7524
-> Author: Neil Armstrong <neil.armstrong@linaro.org>
-> 
-> ASoC: qcom: lpass-cdc-dma: add support for WSA codec DMA
-> 
-> This commit adds WSA codec DMA interface plumbing and clock handling to
-> the LPASS codec DMA driver.
-> 
->> diff --git a/sound/soc/qcom/lpass-cdc-dma.c b/sound/soc/qcom/lpass-cdc-dma.c
->> index 2dc8c75c4bf08..903055e3188d8 100644
->> --- a/sound/soc/qcom/lpass-cdc-dma.c
->> +++ b/sound/soc/qcom/lpass-cdc-dma.c
-> 
-> [ ... ]
-> 
->> @@ -68,49 +76,67 @@ static int __lpass_get_codec_dma_intf_type(int dai_id)
->>   	case LPASS_CDC_DMA_RX0:
->>   	case LPASS_CDC_DMA_TX0:
->>   	case LPASS_CDC_DMA_VA_TX0:
->> +	case LPASS_CDC_DMA_WSA_TX0:
->> +	case LPASS_CDC_DMA_WSA_RX0:
->>   		ret = LPASS_CDC_DMA_INTERFACE1;
->>   		break;
->>   	case LPASS_CDC_DMA_RX1:
->>   	case LPASS_CDC_DMA_TX1:
->>   	case LPASS_CDC_DMA_VA_TX1:
->> +	case LPASS_CDC_DMA_WSA_RX1:
->> +	case LPASS_CDC_DMA_WSA_TX1:
->>   		ret = LPASS_CDC_DMA_INTERFACE2;
->>   		break;
->>   	case LPASS_CDC_DMA_RX2:
->>   	case LPASS_CDC_DMA_TX2:
->>   	case LPASS_CDC_DMA_VA_TX2:
->> +	case LPASS_CDC_DMA_WSA_RX2:
->> +	case LPASS_CDC_DMA_WSA_TX2:
->>   		ret = LPASS_CDC_DMA_INTERFACE3;
->>   		break;
->>   	case LPASS_CDC_DMA_RX3:
->>   	case LPASS_CDC_DMA_TX3:
->>   	case LPASS_CDC_DMA_VA_TX3:
->> +	case LPASS_CDC_DMA_WSA_RX3:
->> +	case LPASS_CDC_DMA_WSA_TX3:
->>   		ret = LPASS_CDC_DMA_INTERFACE4;
->>   		break;
->>   	case LPASS_CDC_DMA_RX4:
->>   	case LPASS_CDC_DMA_TX4:
->>   	case LPASS_CDC_DMA_VA_TX4:
->> +	case LPASS_CDC_DMA_WSA_RX4:
->>   		ret = LPASS_CDC_DMA_INTERFACE5;
->>   		break;
-> 
-> [Severity: Medium]
-> Should LPASS_CDC_DMA_WSA_TX4 also be included in the
-> LPASS_CDC_DMA_INTERFACE5 case?
-> 
-> __lpass_get_dmactl_handle(), lpass_cdc_dma_daiops_startup(), and
-> lpass_cdc_dma_daiops_shutdown() all handle the full
-> LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8 range, but omitting
-> LPASS_CDC_DMA_WSA_TX4 here causes __lpass_get_codec_dma_intf_type() to
-> return -EINVAL and __lpass_platform_codec_intf_init() to abort without
-> configuring or enabling the DMA interface.
+The GPIO controller on AMD PT PCI platforms currently has no in-tree
+driver, so its pins cannot be used from Linux.
 
-Typo, will fix
+The existing gpio-amdpt driver cannot be reused. Setting aside ACPI
+vs. PCI probing, the hardware differs significantly:
 
-> 
-> [ ... ]
-> 
->> @@ -184,6 +210,17 @@ static int lpass_cdc_dma_daiops_startup(struct snd_pcm_substream *substream,
->>   		clk_set_rate(drvdata->va_mem0, CODEC_MEM_HZ_NORMAL);
->>   		clk_prepare_enable(drvdata->va_mem0);
->>   		break;
->> +	case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
->> +	case LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8:
->> +		clk_set_rate(drvdata->codec_mem0, CODEC_MEM_HZ_NORMAL);	//??
->> +		clk_set_rate(drvdata->codec_mem1, CODEC_MEM_HZ_NORMAL);	//??
->> +		clk_set_rate(drvdata->codec_mem2, CODEC_MEM_HZ_NORMAL);	//??
->> +		clk_set_rate(drvdata->codec_mem3, CODEC_MEM_HZ_NORMAL);	//??
->> +		clk_prepare_enable(drvdata->codec_mem0);		//??
->> +		clk_prepare_enable(drvdata->codec_mem1);		//??
->> +		clk_prepare_enable(drvdata->codec_mem2);		//??
->> +		clk_prepare_enable(drvdata->codec_mem3);		//??
->> +		break;
->>   	default:
->>   		dev_err(soc_runtime->dev, "%s: invalid  interface: %d\n", __func__, dai->id);
->>   		break;
->> @@ -205,6 +242,13 @@ static void lpass_cdc_dma_daiops_shutdown(struct snd_pcm_substream *substream,
->>   	case LPASS_CDC_DMA_VA_TX0 ... LPASS_CDC_DMA_VA_TX0:
->>   		clk_disable_unprepare(drvdata->va_mem0);
->>   		break;
->> +	case LPASS_CDC_DMA_WSA_RX0 ... LPASS_CDC_DMA_WSA_RX9:
->> +	case LPASS_CDC_DMA_WSA_TX0 ... LPASS_CDC_DMA_WSA_TX8:
->> +		clk_disable_unprepare(drvdata->codec_mem3);
->> +		clk_disable_unprepare(drvdata->codec_mem2);
->> +		clk_disable_unprepare(drvdata->codec_mem1);
->> +		clk_disable_unprepare(drvdata->codec_mem0);
->> +		break;
-> 
-> [Severity: Medium]
-> What happens if clk_set_rate() or clk_prepare_enable() fails in
-> lpass_cdc_dma_daiops_startup()?
-> 
-> Ignoring errors here lets the stream proceed with unclocked LPM memory,
-> leaves any earlier codec_mem clocks enabled on partial failure, and
-> causes lpass_cdc_dma_daiops_shutdown() to call clk_disable_unprepare()
-> on clocks whose enable failed.  Later commit "ASoC: qcom: lpass: enable
-> the right codec_mem clock when usin LPM memory" removes the "//??"
-> comments and selects a single clock via lpass_cdc_dma_mem_clk(), but
-> still leaves clk_set_rate() and clk_prepare_enable() unchecked.
-> 
+ - Register semantics conflict: offset 0x0C controls the clock rate
+   in gpio-amdpt but enables interrupts in this controller.
+ - Interrupt controller: gpio-amdpt has no interrupt support, while
+   this controller has its own INT_LVL, INT_STAT and INT_MASK
+   registers that require a full irq_chip implementation.
+ - Wakeup: this controller can wake the system from GPIO interrupts,
+   which gpio-amdpt does not support.
 
-Will fix the comments, the code uses the same schema as RXTX and VA, not checking
-the ret. If the clcok set fail, audio won't output but it wont cause any crashes.
+Only the basic data registers are common, and they are handled
+through gpio-generic, so little code is left to share.
 
-Neil
+Add the gpio-amdptpci driver to support the GPIO functionality on
+AMD PT PCI platforms.
+
+Co-developed-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
+Signed-off-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
+Signed-off-by: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+---
+V3->V4:
+	-Kconfig: select GPIO_GENERIC & GPIO_GPIOLIB_IRQCHIP.
+	-Use Chip->gen.lock for all register accesses.
+	-Keep the controller in D0 while a GPIO IRQ is requested.
+	-prode: reorder devres for a safe unbind sequence.
+	-Fix build error.
+V2->V3:
+	- Rework the driver to use gpio-generic.
+	- Move runtime PM handling to gpio_chip request() and
+	free() callbacks.
+	- Simplify locking with guard() and scoped_guard().
+	- Use devm_add_action_or_reset() for resource cleanup.
+	- Add rationale for a separate driver to the commit message.
+	- Regmap was evaluated but not used: the registers are mix of
+	8/16/32 bit and it would need more callbacks to define, which
+	complicates the code.
+v1->v2:
+	- Add .irq_request/release_resources to set irq_pm_held flag.
+	- switch to devres in probe/remove.
+	- Add synchronize_irq().
+---
+ drivers/gpio/Kconfig         |   8 +
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-amdptpci.c | 634 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 643 insertions(+)
+ create mode 100644 drivers/gpio/gpio-amdptpci.c
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index a48586bb8edb..a10e96b5295f 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1833,6 +1833,14 @@ endmenu
+ menu "PCI GPIO expanders"
+ 	depends on PCI
+
++config GPIO_AMDPTPCI
++	tristate "AMD Promontory PCI GPIO support"
++	depends on X86
++	select GPIO_GENERIC
++	select GPIOLIB_IRQCHIP
++	help
++	  Driver for Promontory IOHub PCI GPIO functionality.
++
+ config GPIO_AMD8111
+ 	tristate "AMD 8111 GPIO driver"
+ 	depends on X86 || COMPILE_TEST
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index dc9e6d643b5b..ca26e98fc8e8 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_GPIO_ALTERA)  		+= gpio-altera.o
+ obj-$(CONFIG_GPIO_AMD8111)		+= gpio-amd8111.o
+ obj-$(CONFIG_GPIO_AMD_FCH)		+= gpio-amd-fch.o
+ obj-$(CONFIG_GPIO_AMDPT)		+= gpio-amdpt.o
++obj-$(CONFIG_GPIO_AMDPTPCI)		+= gpio-amdptpci.o
+ obj-$(CONFIG_GPIO_ARIZONA)		+= gpio-arizona.o
+ obj-$(CONFIG_GPIO_ASPEED)		+= gpio-aspeed.o
+ obj-$(CONFIG_GPIO_ASPEED_SGPIO)		+= gpio-aspeed-sgpio.o
+diff --git a/drivers/gpio/gpio-amdptpci.c b/drivers/gpio/gpio-amdptpci.c
+new file mode 100644
+index 000000000000..d676fd8c0b1c
+--- /dev/null
++++ b/drivers/gpio/gpio-amdptpci.c
+@@ -0,0 +1,634 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * gpio-amdptpci.c - AMD Promontory PCI GPIO Controller Driver
++ *
++ * Copyright (C) 2026 ASMedia Technology Inc.
++ * Author:	Chloe Chen <chloe_chen@asmedia.com.tw>
++ *		YD Tseng <yd_tseng@asmedia.com.tw>
++ */
++
++#include <linux/bits.h>
++#include <linux/gpio/driver.h>
++#include <linux/gpio/generic.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/pm.h>
++#include <linux/pm_runtime.h>
++#include <linux/pm_wakeup.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++
++#define PT27_NUM_GPIOS          24
++#define PT27_WAKE_GPIOS         12
++#define PT27_GPIO_MASK          GENMASK(PT27_NUM_GPIOS - 1, 0)
++#define PT27_WAKE_MASK          GENMASK(PT27_WAKE_GPIOS - 1, 0)
++
++#define PT27_REG_DIR            0x0000
++#define PT27_REG_IN             0x0004
++#define PT27_REG_OUT            0x0008
++#define PT27_REG_INT_EN         0x000C
++#define PT27_REG_INT_LVL        0x0010
++#define PT27_REG_INT_MODE0      0x0014
++#define PT27_REG_INT_MODE1      0x0018
++#define PT27_REG_INT_STAT       0x001C
++#define PT27_REG_INT_MASK       0x0020
++#define PT27_REG_INT_CTL        0x0024
++
++#define PT27_REG_WAKE_EN        0x0034
++#define PT27_REG_WAKE_LVL       0x0036
++#define PT27_REG_WAKE_MODE      0x0038
++#define PT27_REG_WAKE_STAT      0x003A
++
++#define PT27_INT_MODE_MASK      0x3U
++#define PT27_MODE_LEVEL         0x0U
++#define PT27_MODE_RISING        0x1U
++#define PT27_MODE_FALLING       0x2U
++#define PT27_MODE_BOTH          0x3U
++
++#define PT27_INT_CTL_MODE       BIT(0)
++#define PT27_INT_CTL_PAD_EN     BIT(2)
++
++#define PT27_AUTOSUSPEND_DELAY_MS   2000
++
++struct pt27_saved_regs {
++	u32 dir;
++	u32 out;
++	u32 int_en;
++	u32 int_lvl;
++	u32 int_mode0;
++	u16 int_mode1;
++	u32 int_mask;
++	u8  int_ctl;
++	u16 wake_en;
++	u16 wake_lvl;
++	u16 wake_mode;
++};
++
++struct pt27_gpio {
++	struct device				*dev;
++	struct gpio_generic_chip		gen;
++	void __iomem				*base;
++	struct pt27_saved_regs			saved;
++	u16					wake_mask;
++	bool					use_msi;
++	int					irq;
++};
++
++static void pt27_save_regs(struct pt27_gpio *chip)
++{
++	chip->saved.dir       = ioread32(chip->base + PT27_REG_DIR);
++	chip->saved.out       = ioread32(chip->base + PT27_REG_OUT);
++
++	chip->saved.int_en    = ioread32(chip->base + PT27_REG_INT_EN);
++	chip->saved.int_lvl   = ioread32(chip->base + PT27_REG_INT_LVL);
++	chip->saved.int_mode0 = ioread32(chip->base + PT27_REG_INT_MODE0);
++	chip->saved.int_mode1 = ioread16(chip->base + PT27_REG_INT_MODE1);
++	chip->saved.int_mask  = ioread32(chip->base + PT27_REG_INT_MASK);
++	chip->saved.int_ctl   = ioread8(chip->base + PT27_REG_INT_CTL);
++
++	chip->saved.wake_en   = ioread16(chip->base + PT27_REG_WAKE_EN);
++	chip->saved.wake_lvl  = ioread16(chip->base + PT27_REG_WAKE_LVL);
++	chip->saved.wake_mode = ioread16(chip->base + PT27_REG_WAKE_MODE);
++}
++
++static void pt27_restore_regs(struct pt27_gpio *chip)
++{
++	iowrite32(chip->saved.out,       chip->base + PT27_REG_OUT);
++	iowrite32(chip->saved.dir,       chip->base + PT27_REG_DIR);
++
++	iowrite32(chip->saved.int_lvl,   chip->base + PT27_REG_INT_LVL);
++	iowrite32(chip->saved.int_mode0, chip->base + PT27_REG_INT_MODE0);
++	iowrite16(chip->saved.int_mode1, chip->base + PT27_REG_INT_MODE1);
++	iowrite8(chip->saved.int_ctl,    chip->base + PT27_REG_INT_CTL);
++
++	iowrite16(chip->saved.wake_lvl,  chip->base + PT27_REG_WAKE_LVL);
++	iowrite16(chip->saved.wake_mode, chip->base + PT27_REG_WAKE_MODE);
++	iowrite16(chip->saved.wake_en,   chip->base + PT27_REG_WAKE_EN);
++
++	iowrite32(chip->saved.int_en,   chip->base + PT27_REG_INT_EN);
++	iowrite32(chip->saved.int_mask, chip->base + PT27_REG_INT_MASK);
++}
++
++static int pt27_gpio_request(struct gpio_chip *gc, unsigned int offset)
++{
++	int   ret;
++
++	ret = pm_runtime_resume_and_get(gc->parent);
++	if (ret < 0) {
++		dev_err(gc->parent, "%s: cannot resume for GPIO%u: %d\n",  __func__, offset, ret);
++		return ret;
++	}
++	return 0;
++}
++
++static void pt27_gpio_free(struct gpio_chip *gc, unsigned int offset)
++{
++	pm_runtime_put_autosuspend(gc->parent);
++
++}
++
++static int pt27_irq_reqres(struct irq_data *d)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++	int   ret;
++
++	ret = pm_runtime_resume_and_get(gc->parent);
++	if (ret < 0) {
++		dev_err(gc->parent, "%s: Fail to resume controller for IRQ: %d\n",  __func__, ret);
++		return ret;
++	}
++
++	ret = gpiochip_reqres_irq(gc, irqd_to_hwirq(d));
++	if (ret) {
++		pm_runtime_put_autosuspend(gc->parent);
++		return ret;
++	}
++	return 0;
++}
++
++static void pt27_irq_relres(struct irq_data *d)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++
++	gpiochip_relres_irq(gc, irqd_to_hwirq(d));
++	pm_runtime_put_autosuspend(gc->parent);
++}
++
++static void pt27_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++	struct pt27_gpio *chip = gpiochip_get_data(gc);
++	irq_hw_number_t   hwirq = irqd_to_hwirq(d);
++	u32 val;
++
++	guard(raw_spinlock_irqsave)(&chip->gen.lock);
++
++	val  = ioread32(chip->base + PT27_REG_INT_MASK);
++	val |= BIT(hwirq);
++	iowrite32(val, chip->base + PT27_REG_INT_MASK);
++
++	val  = ioread32(chip->base + PT27_REG_INT_EN);
++	val &= ~BIT(hwirq);
++	iowrite32(val, chip->base + PT27_REG_INT_EN);
++
++	gpiochip_disable_irq(gc, hwirq);
++}
++
++static void pt27_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++	struct pt27_gpio *chip = gpiochip_get_data(gc);
++	irq_hw_number_t   hwirq = irqd_to_hwirq(d);
++	u32 val;
++
++	gpiochip_enable_irq(gc, hwirq);
++
++	guard(raw_spinlock_irqsave)(&chip->gen.lock);
++
++	val  = ioread32(chip->base + PT27_REG_INT_EN);
++	val |= BIT(hwirq);
++	iowrite32(val, chip->base + PT27_REG_INT_EN);
++
++	val  = ioread32(chip->base + PT27_REG_INT_MASK);
++	val &= ~BIT(hwirq);
++	iowrite32(val, chip->base + PT27_REG_INT_MASK);
++}
++
++static void pt27_irq_ack(struct irq_data *d)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++	struct pt27_gpio *chip = gpiochip_get_data(gc);
++
++	iowrite32(BIT(irqd_to_hwirq(d)), chip->base + PT27_REG_INT_STAT);
++}
++
++static int pt27_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++	struct pt27_gpio *chip = gpiochip_get_data(gc);
++	irq_hw_number_t   hwirq = irqd_to_hwirq(d);
++	u32 lvl_reg;
++	u8  lvl_bit, mode_val;
++	unsigned int shift;
++
++	switch (type) {
++	case IRQ_TYPE_LEVEL_HIGH:
++		lvl_bit = 1;
++		mode_val = PT27_MODE_LEVEL;
++		break;
++
++	case IRQ_TYPE_LEVEL_LOW:
++		lvl_bit = 0;
++		mode_val = PT27_MODE_LEVEL;
++		break;
++
++	case IRQ_TYPE_EDGE_RISING:
++		lvl_bit = 1;
++		mode_val = PT27_MODE_RISING;
++		break;
++
++	case IRQ_TYPE_EDGE_FALLING:
++		lvl_bit = 0;
++		mode_val = PT27_MODE_FALLING;
++		break;
++
++	case IRQ_TYPE_EDGE_BOTH:
++		lvl_bit = 0;
++		mode_val = PT27_MODE_BOTH;
++		break;
++
++	default:
++		return -EINVAL;
++
++	}
++
++	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
++		lvl_reg = ioread32(chip->base + PT27_REG_INT_LVL);
++		if (lvl_bit)
++			lvl_reg |= BIT(hwirq);
++		else
++			lvl_reg &= ~BIT(hwirq);
++
++		iowrite32(lvl_reg, chip->base + PT27_REG_INT_LVL);
++
++		if (hwirq < 16) {
++			u32 reg = ioread32(chip->base + PT27_REG_INT_MODE0);
++
++			shift  = hwirq * 2;
++			reg   &= ~(PT27_INT_MODE_MASK << shift);
++			reg   |= ((u32)mode_val << shift);
++			iowrite32(reg, chip->base + PT27_REG_INT_MODE0);
++		} else {
++			u16 reg = ioread16(chip->base + PT27_REG_INT_MODE1);
++
++			shift  = (hwirq - 16) * 2;
++			reg   &= ~((u16)(PT27_INT_MODE_MASK << shift));
++			reg   |= (u16)((u16)mode_val << shift);
++			iowrite16(reg, chip->base + PT27_REG_INT_MODE1);
++		}
++
++		iowrite32(BIT(hwirq), chip->base + PT27_REG_INT_STAT);
++
++	}
++
++	if (type & IRQ_TYPE_LEVEL_MASK)
++		irq_set_handler_locked(d, handle_level_irq);
++	else
++		irq_set_handler_locked(d, handle_edge_irq);
++
++	return 0;
++}
++
++static int pt27_irq_set_wake(struct irq_data *d, unsigned int on)
++{
++	struct gpio_chip *gc   = irq_data_get_irq_chip_data(d);
++	struct pt27_gpio *chip = gpiochip_get_data(gc);
++	irq_hw_number_t   hwirq = irqd_to_hwirq(d);
++	unsigned int trig = irqd_get_trigger_type(d);
++	u16     wake_en, wake_lvl, wake_mode;
++
++	if (hwirq >= PT27_WAKE_GPIOS) {
++		dev_dbg(chip->dev, "%s: GPIO%lu does not support wake (max GPIO%u)\n", __func__, hwirq, PT27_WAKE_GPIOS - 1);
++		return -EINVAL;
++	}
++
++	if (on && trig == IRQ_TYPE_NONE)
++		return -EINVAL;
++
++	guard(raw_spinlock_irqsave)(&chip->gen.lock);
++
++	wake_en   = ioread16(chip->base + PT27_REG_WAKE_EN);
++	wake_lvl  = ioread16(chip->base + PT27_REG_WAKE_LVL);
++	wake_mode = ioread16(chip->base + PT27_REG_WAKE_MODE);
++
++	if (on) {
++		wake_en |= BIT(hwirq);
++		chip->wake_mask |= (u16)BIT(hwirq);
++
++		if (trig & IRQ_TYPE_LEVEL_MASK) {
++			wake_mode |= BIT(hwirq);
++			if (trig == IRQ_TYPE_LEVEL_HIGH)
++				wake_lvl |= BIT(hwirq);
++			else
++				wake_lvl &= ~BIT(hwirq);
++		} else {
++			wake_mode &= ~BIT(hwirq);
++			if (trig == IRQ_TYPE_EDGE_RISING ||
++			    trig == IRQ_TYPE_EDGE_BOTH)
++				wake_lvl |= BIT(hwirq);
++			else
++				wake_lvl &= ~BIT(hwirq);
++		}
++	} else {
++		wake_en &= ~BIT(hwirq);
++		chip->wake_mask &= ~(u16)BIT(hwirq);
++	}
++
++	iowrite16(wake_lvl,  chip->base + PT27_REG_WAKE_LVL);
++	iowrite16(wake_mode, chip->base + PT27_REG_WAKE_MODE);
++	iowrite16(wake_en,   chip->base + PT27_REG_WAKE_EN);
++
++	return 0;
++}
++
++static const struct irq_chip pt27_gpio_irq_chip = {
++	.name					= "pt27_gpio",
++	.irq_ack				= pt27_irq_ack,
++	.irq_mask				= pt27_irq_mask,
++	.irq_unmask				= pt27_irq_unmask,
++	.irq_set_type				= pt27_irq_set_type,
++	.irq_set_wake				= pt27_irq_set_wake,
++	.irq_request_resources			= pt27_irq_reqres,
++	.irq_release_resources			= pt27_irq_relres,
++	.flags					= IRQCHIP_IMMUTABLE,
++};
++
++static irqreturn_t pt27_gpio_isr(int irq, void *data)
++{
++	struct pt27_gpio *chip = data;
++	irqreturn_t ret = IRQ_NONE;
++	unsigned long pending;
++
++	if (pm_runtime_get_if_in_use(chip->dev) <= 0)
++		return IRQ_NONE;
++
++	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
++	    pending =  ioread32(chip->base + PT27_REG_INT_STAT) &
++			~ioread32(chip->base + PT27_REG_INT_MASK) &
++			ioread32(chip->base + PT27_REG_INT_EN);
++	}
++
++	while (pending) {
++		unsigned int hwirq = __ffs(pending);
++
++		pending &= ~BIT(hwirq);
++		ret = IRQ_HANDLED;
++
++		if (generic_handle_domain_irq(chip->gen.gc.irq.domain, hwirq)) {
++
++			dev_warn_ratelimited(chip->dev, "unhandled GPIO%u IRQ, masking\n", hwirq);
++
++			guard(raw_spinlock_irqsave)(&chip->gen.lock);
++			iowrite32(ioread32(chip->base + PT27_REG_INT_MASK) | BIT(hwirq), chip->base + PT27_REG_INT_MASK);
++			iowrite32(ioread32(chip->base + PT27_REG_INT_EN) & ~BIT(hwirq), chip->base + PT27_REG_INT_EN);
++			iowrite32(BIT(hwirq), chip->base + PT27_REG_INT_STAT);
++		}
++	}
++
++	pm_runtime_put(chip->dev);
++	return ret;
++}
++
++static void pt27_hw_clear(void *data)
++{
++	struct pt27_gpio *chip = data;
++
++	iowrite32(0, chip->base + PT27_REG_INT_EN);
++	iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_MASK);
++	iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_STAT);
++	iowrite16(0, chip->base + PT27_REG_WAKE_EN);
++	iowrite16(PT27_WAKE_MASK, chip->base + PT27_REG_WAKE_STAT);
++}
++
++static void pt27_hw_init(struct pt27_gpio *chip)
++{
++	u8 int_ctl;
++
++	int_ctl  = ioread8(chip->base + PT27_REG_INT_CTL);
++	int_ctl |=  PT27_INT_CTL_MODE;
++	int_ctl &= ~PT27_INT_CTL_PAD_EN;
++	iowrite8(int_ctl, chip->base + PT27_REG_INT_CTL);
++
++	pt27_hw_clear(chip);
++}
++
++static int pt27_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++{
++	struct device *dev = &pdev->dev;
++	struct gpio_generic_chip_config config = { };
++	struct pt27_gpio *chip;
++	struct gpio_chip *gc;
++	struct gpio_irq_chip *girq;
++	unsigned long irq_flags;
++	int ret;
++
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->dev = dev;
++	pci_set_drvdata(pdev, chip);
++
++	ret = pcim_enable_device(pdev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable PCI device\n");
++
++	chip->base = pcim_iomap_region(pdev, 0, "pt27_gpio");
++	if (IS_ERR(chip->base))
++		return dev_err_probe(dev, PTR_ERR(chip->base), "failed to claim and map BAR0\n");
++
++	pci_set_master(pdev);
++
++	ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to allocate IRQ vector\n");
++
++	chip->use_msi = pdev->msi_enabled || pdev->msix_enabled;
++	irq_flags     = chip->use_msi ? 0 : IRQF_SHARED;
++	chip->irq     = pci_irq_vector(pdev, 0);
++
++	pt27_hw_init(chip);
++
++	config.dev	= dev;
++	config.sz	= 4;
++	config.dat	= chip->base + PT27_REG_IN;
++	config.set	= chip->base + PT27_REG_OUT;
++	config.dirout	= chip->base + PT27_REG_DIR;
++	config.flags	= GPIO_GENERIC_READ_OUTPUT_REG_SET;
++
++	ret = gpio_generic_chip_init(&chip->gen, &config);
++	if (ret)
++		return dev_err_probe(dev, ret, "generic chip init failed\n");
++
++	gc = &chip->gen.gc;
++	gc->label     = dev_name(dev);
++	gc->parent    = dev;
++	gc->owner     = THIS_MODULE;
++	gc->base      = -1;
++	gc->ngpio     = PT27_NUM_GPIOS;
++	gc->request   = pt27_gpio_request;
++	gc->free      = pt27_gpio_free;
++
++	girq = &gc->irq;
++	gpio_irq_chip_set_chip(girq, &pt27_gpio_irq_chip);
++	girq->parent_handler = NULL;
++	girq->num_parents    = 0;
++	girq->parents        = NULL;
++	girq->default_type   = IRQ_TYPE_NONE;
++	girq->handler        = handle_bad_irq;
++
++	ret = devm_device_init_wakeup(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable wake capability\n");
++
++	dev_pm_set_driver_flags(dev, DPM_FLAG_SMART_SUSPEND);
++
++	pm_runtime_set_autosuspend_delay(dev, PT27_AUTOSUSPEND_DELAY_MS);
++	pm_runtime_use_autosuspend(dev);
++
++	ret = devm_request_irq(dev, chip->irq, pt27_gpio_isr,
++			       irq_flags | IRQF_NO_THREAD, dev_name(dev), chip);
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to request IRQ %d\n", chip->irq);
++		goto err_pm_disable;
++	}
++
++	ret = devm_add_action_or_reset(dev, pt27_hw_clear, chip);
++	if (ret)
++		goto err_pm_disable;
++
++	ret = devm_gpiochip_add_data(dev, gc, chip);
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to register GPIO chip\n");
++		goto err_pm_disable;
++	}
++
++	dev_info(dev,
++		 "PT27 GPIO controller: %u GPIOs (%u wake-capable), IRQ=%d (%s)\n",
++		 PT27_NUM_GPIOS, PT27_WAKE_GPIOS, chip->irq,
++		 chip->use_msi ? (pdev->msix_enabled ? "MSI-X" : "MSI") : "INTx");
++
++	pm_runtime_put_noidle(dev);
++	pm_runtime_allow(dev);
++	return 0;
++
++err_pm_disable:
++	pm_runtime_dont_use_autosuspend(dev);
++	return ret;
++}
++
++static void pt27_gpio_remove(struct pci_dev *pdev)
++{
++	struct device *dev = &pdev->dev;
++
++	pm_runtime_forbid(dev);
++	pm_runtime_get_noresume(dev);
++	pm_runtime_dont_use_autosuspend(dev);
++
++}
++
++static int __maybe_unused pt27_gpio_suspend(struct device *dev)
++{
++	struct pt27_gpio *chip = dev_get_drvdata(dev);
++
++	if (pm_runtime_status_suspended(dev)) {
++		dev_dbg(dev, "%s: already runtime-suspended, skipping save\n", __func__);
++		return 0;
++	}
++
++	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
++		pt27_save_regs(chip);
++		iowrite32(0, chip->base + PT27_REG_INT_EN);
++		iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_MASK);
++		iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_STAT);
++
++	if (!device_may_wakeup(dev))
++		iowrite16(0, chip->base + PT27_REG_WAKE_EN);
++
++		iowrite16(PT27_WAKE_MASK, chip->base + PT27_REG_WAKE_STAT);
++	}
++
++	synchronize_irq(chip->irq);
++	return 0;
++}
++
++static int __maybe_unused pt27_gpio_resume(struct device *dev)
++{
++	struct pt27_gpio *chip = dev_get_drvdata(dev);
++	unsigned long replay;
++	unsigned int hwirq;
++	u16 wake_status;
++
++	if (pm_runtime_status_suspended(dev))
++		return 0;
++
++	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
++		wake_status = ioread16(chip->base + PT27_REG_WAKE_STAT) & PT27_WAKE_MASK;
++		iowrite16(wake_status, chip->base + PT27_REG_WAKE_STAT);
++		pt27_restore_regs(chip);
++
++		replay = wake_status &
++			 ioread32(chip->base + PT27_REG_INT_EN) &
++			 ~ioread32(chip->base + PT27_REG_INT_MASK);
++	}
++
++	if (!wake_status)
++		return 0;
++
++	pm_wakeup_event(dev, 0);
++
++	for_each_set_bit(hwirq, &replay, PT27_WAKE_GPIOS)
++		generic_handle_domain_irq_safe(chip->gen.gc.irq.domain, hwirq);
++
++	return 0;
++}
++
++static int __maybe_unused pt27_gpio_runtime_suspend(struct device *dev)
++{
++	struct pt27_gpio *chip = dev_get_drvdata(dev);
++	int ret = 0;
++
++	scoped_guard(raw_spinlock_irqsave, &chip->gen.lock) {
++
++		if (chip->wake_mask && !device_may_wakeup(dev)) {
++			ret = -EBUSY;
++		} else {
++			pt27_save_regs(chip);
++			iowrite32(0, chip->base + PT27_REG_INT_EN);
++			iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_MASK);
++			iowrite32(PT27_GPIO_MASK, chip->base + PT27_REG_INT_STAT);
++			iowrite16(PT27_WAKE_MASK, chip->base + PT27_REG_WAKE_STAT);
++		}
++	}
++
++	if (ret)
++		return ret;
++
++	synchronize_irq(chip->irq);
++	return 0;
++}
++
++static int __maybe_unused pt27_gpio_runtime_resume(struct device *dev)
++{
++	return pt27_gpio_resume(dev);
++}
++
++static const struct dev_pm_ops pt27_gpio_pm_ops __maybe_unused = {
++	SYSTEM_SLEEP_PM_OPS(pt27_gpio_suspend, pt27_gpio_resume)
++	RUNTIME_PM_OPS(pt27_gpio_runtime_suspend, pt27_gpio_runtime_resume, NULL)
++};
++
++#define PCI_DEVICE_ID_PT27	0x444b
++
++static const struct pci_device_id pt27_gpio_pci_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_PT27) },
++	{ }
++};
++MODULE_DEVICE_TABLE(pci, pt27_gpio_pci_ids);
++
++static struct pci_driver pt27_gpio_pci_driver = {
++	.name     = "ptpci-gpio",
++	.id_table = pt27_gpio_pci_ids,
++	.probe    = pt27_gpio_probe,
++	.remove   = pt27_gpio_remove,
++	.driver   = {
++		.pm = pm_ptr(&pt27_gpio_pm_ops),
++	},
++};
++
++module_pci_driver(pt27_gpio_pci_driver);
++
++MODULE_DESCRIPTION("AMD Promontory PCI GPIO Driver");
++MODULE_LICENSE("GPL");
+--
+2.48.1
+
