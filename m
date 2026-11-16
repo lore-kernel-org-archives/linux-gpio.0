@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.4.11.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794851347;
-	b=YDVAZ3vmvTc9w6eIrWdSgtZ1gkfN6NfnvifuW4k5r9jJEphzDH272DGCkD/PUr7iOC+S
-	 YEdhA7BdYdAM2WO0a+ScuXu8+TKRXUjFHgBZPwNrwYWSxzVvhAOyJ0Gp3JGdUD95LORrL
-	 lb5WKP0rKOzXJu0sPAeeTbLGDBw3CSMavNT3L8wJdlKrnTfJ1UW92n6O5n1xOtVsOM9Tk
-	 eu9jwyKuXFGuecfRG4tZWY1mu9PwLAZiXVTKa1L8ZsJWJRFo1Sopx6wOtRNLGV/oHm2He
-	 x+SkSs8eBDKZpSg8zYpom4HljBOHCGlmjRvnPAVpwHDSdc2ROtdVgqZycWirAW69Ekg==
+	b=WaTjakVoiYc5s/h3kYtqh/6XyojjkW3lVvIq7dH4+8ttkHoHkf0hCdvE/ayiPCt2+QuB
+	 jiFa3X4dsdv7GoNOHMeaJzFJFQgxbwTrL7YST83cWIyY4GlTcqCYoqoLsKwnA/9Wm6XkJ
+	 fC1UhDl7qVTLtfAtqfJNZ3tvdk3s2KCV46ArZar2V5Wrdg0d31gcUJkCFghx8A63HEA/T
+	 Ep2vQkeRCx9nnGxUkTq5uFzzH91C79BG0QeFcYuKGz4jyH5XuDVR6UaVgt6vxAXDvDN5+
+	 5ss3atGrfe4DINRpbc4lxdQMqfSK5+bIFpfi1VWicwygGKx9RoHNiF1wTQ0PmxA0p0Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794851347;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=xa5fiTEMg6d5Iuaeyil8PZxfmCqOi6k4o2XZafunfk4=;
-	b=DGfil7sZL4wDis2T2F/uVwQ3D0yqbiD4fREbMASasUDWqnqwUSEUZVJuWfoNVu1QY0WJ
-	 xbp3P4c2zESGVgP9cFTD0xVNLCR9/Xg/0WMOJUPP/H+WE72figiBdwwdKvq2WZWraHZLh
-	 kSmdr0SE3WMxqTyUWR7Kqs1snZHjbQyClxXg5lBhsyRz6aVcbaP2UUI598Hvii4PEGHCq
-	 zsXWNlHJ7OaWkO0eaCBJWy7CFza1j5hCJnAmOOb+0SquQwH+B/Ng45ucB6mQsECAH8c85
-	 XbMoYporoLwjC1RAiW7DTpQZmVRve8pqr9TuDz9uQ/KhF359heY+Lus0X2zaZeaeWGA==
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=X6MNUcikYiuz1tUhw20RwzrIvpnX6itfbcFVUVrQfSc=;
+	b=OKLBtZuPgmBdZeVrmv4uQ5xuYUxS9PDke1Dw1uKy1AXAAdsAJ6/tZ4b2nJ+c5kv42NFa
+	 FjITjNLbeiSa8srsSaXvRAPfb875FndKZAnVw+XKa374N+UREpfF6AKRQtl1JnN2lmvf7
+	 G5PIo7AaP20kDRVYCVwP2VsulCc86E0XfpnN/w1G9rVH2pz+jwN9RKYYHktzriH7mhgdX
+	 XAWaHQtWsy+SANbvjv0h36K11kbIovdsKwmBXsEdPhEjHPex4oJZMA50IzouEi4M8oVIW
+	 /fBDn413m3ehDTEYOG+XJWmjotExiFawRq3u23XZUIEo8HzUoKh670AU0OGwLcEHMDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=phrozen.org;
 	spf=pass smtp.mailfrom=phrozen.org;
@@ -24,17 +24,17 @@ Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F2C606A885;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F1F606A89E;
 	Mon, 16 Nov 2026 17:49:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 42F2C606A885
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0F1F606A89E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phrozen.org
 Received: from [2a04:4540:1403:e6fc:5f71:2c1e:7d62:945f] (helo=bertha10..)
 	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <john@phrozen.org>)
-	id 1xT0pB-004GcH-0P;
-	Mon, 16 Nov 2026 18:49:01 +0100
+	id 1xT0pE-004GcH-1J;
+	Mon, 16 Nov 2026 18:49:04 +0100
 From: John Crispin <john@phrozen.org>
 To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Lee Jones <lee@kernel.org>,
@@ -58,10 +58,12 @@ Cc: Ahmed Naseef <naseefkm@gmail.com>,
 	upstream@airoha.com,
 	Weifeng.xu@airoha.com,
 	zhengping.zhang@airoha.com
-Subject: [PATCH v3 0/9] pinctrl: airoha: add AN7589 support
-Date: Mon, 16 Nov 2026 18:48:45 +0100
-Message-Id: <20261116174854.342912-1-john@phrozen.org>
+Subject: [PATCH v3 8/9] pinctrl: airoha: move the GPIO register offsets to the common header
+Date: Mon, 16 Nov 2026 18:48:53 +0100
+Message-Id: <20261116174854.342912-9-john@phrozen.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261116174854.342912-1-john@phrozen.org>
+References: <20261116174854.342912-1-john@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -73,87 +75,87 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Airoha AN7589 has a GPIO controller like the EN7581 one, with a
-third bank for 74 GPIOs in total. Its pin functions are selected
-differently: a separate IOMUX block holds a 4 bit mode field per pin,
-eight pins per register, and mode 0 makes any pin a GPIO.
+The GPIO register offsets are private to pinctrl-airoha.c, which builds
+the shared 64 pin register table from them. A SoC with more GPIO banks
+needs its own table, built from the same offsets and its own for the
+extra banks.
 
-The first four patches prepare the shared driver and change nothing
-for the SoCs it serves today:
+Move the offsets to airoha-common.h so the SoC drivers can use them.
 
- 1. The GPIO register layout moves into the match data, so a SoC can
-    describe more than 64 pins.
- 2. A function group can carry one IOMUX mode per pin. A SoC
-    describes its IOMUX in the match data: the width of the mode
-    field and, from patch 4, the mode that makes a pin a GPIO.
- 3. The chip SCU becomes optional, as the AN7589 needs none.
- 4. A pin requested by gpiolib is put into GPIO mode through the
-    IOMUX, so no per pin gpio function is needed.
+No functional change.
 
-Patch 5 adds the IOMUX to the syscon compatibles. Patch 6 adds the
-binding for the pin controller. Patch 7 adds the binding for the GPIO
-system controller it sits under, which also holds the PWM controller.
-Patch 8 moves the GPIO register offsets to the common header, so the
-AN7589 data can describe its own register table, with no functional
-change. Patch 9 adds the AN7589 pin data.
-
-The series applies to next-20261105 and has no dependencies.
-
-Changes in v3:
-- Split the bindings in three: the syscon compatible (patch 5), the
-  pin controller (patch 6) and the GPIO system controller (patch 7)
-  (Lee, Conor).
-- Patch 6: allow one group per node, except for pcm_spi and pcie,
-  whose groups carry different signals of one device. Fix the uart5
-  example (Conor).
-- Patch 7: name the PWM controller in the commit message (Conor).
-- Add the Reviewed-by of Lorenzo to patches 3 and 9.
-- Link to v2: https://lore.kernel.org/r/20261112185941.1316112-1-john@phrozen.org
-
+Signed-off-by: John Crispin <john@phrozen.org>
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+---
 Changes in v2:
-- Patch 3: look up the airoha,chip-scu phandle before the check for
-  a chip SCU compatible (Lorenzo).
-- Patch 6: one function per block type (uart, i2c, spi, pcm, mdio,
-  pcie, pon, sgpio, jtag), with the group selecting the instance, as
-  in the other Airoha pin controller bindings. List the valid groups
-  for the groups property (Conor).
-- Patch 9: the function table follows the binding. Name the match
-  data, the OF match table and the platform driver after the AN7589
-  (Lorenzo).
-- Link to v1: https://lore.kernel.org/r/20261110173941.301478-1-john@phrozen.org
+- Add the Acked-by of Lorenzo.
 
-John Crispin (9):
-  pinctrl: airoha: make gpio register layout per SoC
-  pinctrl: airoha: add per pin mode field mux
-  pinctrl: airoha: make the chip SCU optional
-  pinctrl: airoha: mux a requested GPIO through the IOMUX
-  dt-bindings: mfd: syscon: add airoha,an7589-iomux
-  dt-bindings: pinctrl: airoha: add AN7589
-  dt-bindings: mfd: airoha: add AN7589 GPIO system controller
-  pinctrl: airoha: move the GPIO register offsets to the common header
-  pinctrl: airoha: add support of an7589 SoC
+ drivers/pinctrl/airoha/airoha-common.h  | 20 ++++++++++++++++++++
+ drivers/pinctrl/airoha/pinctrl-airoha.c | 20 --------------------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
- .../mfd/airoha,an7589-gpio-sysctl.yaml        |  66 ++
- .../devicetree/bindings/mfd/syscon.yaml       |   1 +
- .../pinctrl/airoha,an7589-pinctrl.yaml        | 355 ++++++++++
- MAINTAINERS                                   |   3 +
- drivers/pinctrl/airoha/Kconfig                |  11 +
- drivers/pinctrl/airoha/Makefile               |   1 +
- drivers/pinctrl/airoha/airoha-common.h        |  41 +-
- drivers/pinctrl/airoha/pinctrl-airoha.c       | 119 +++-
- drivers/pinctrl/airoha/pinctrl-an7563.c       |   1 +
- drivers/pinctrl/airoha/pinctrl-an7581.c       |   1 +
- drivers/pinctrl/airoha/pinctrl-an7583.c       |   1 +
- drivers/pinctrl/airoha/pinctrl-an7589.c       | 623 ++++++++++++++++++
- drivers/pinctrl/airoha/pinctrl-en7523.c       |   1 +
- drivers/pinctrl/airoha/pinctrl-en7528.c       |   1 +
- 14 files changed, 1193 insertions(+), 32 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/airoha,an7589-gpio-sysctl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/airoha,an7589-pinctrl.yaml
- create mode 100644 drivers/pinctrl/airoha/pinctrl-an7589.c
-
-
-base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
+diff --git a/drivers/pinctrl/airoha/airoha-common.h b/drivers/pinctrl/airoha/airoha-common.h
+index adfce89493f0..dc9b897ea77c 100644
+--- a/drivers/pinctrl/airoha/airoha-common.h
++++ b/drivers/pinctrl/airoha/airoha-common.h
+@@ -34,6 +34,26 @@
+ #include "../pinconf.h"
+ #include "../pinmux.h"
+ 
++/* GPIOs */
++#define REG_GPIO_CTRL				0x0000
++#define REG_GPIO_DATA				0x0004
++#define REG_GPIO_INT				0x0008
++#define REG_GPIO_INT_EDGE			0x000c
++#define REG_GPIO_INT_LEVEL			0x0010
++#define REG_GPIO_OE				0x0014
++#define REG_GPIO_CTRL1				0x0020
++#define REG_GPIO_CTRL2				0x0060
++#define REG_GPIO_CTRL3				0x0064
++#define REG_GPIO_DATA1				0x0070
++#define REG_GPIO_OE1				0x0078
++#define REG_GPIO_INT1				0x007c
++#define REG_GPIO_INT_EDGE1			0x0080
++#define REG_GPIO_INT_EDGE2			0x0084
++#define REG_GPIO_INT_EDGE3			0x0088
++#define REG_GPIO_INT_LEVEL1			0x008c
++#define REG_GPIO_INT_LEVEL2			0x0090
++#define REG_GPIO_INT_LEVEL3			0x0094
++
+ #define AIROHA_NUM_PINS				64
+ #define AIROHA_PIN_BANK_SIZE			(AIROHA_NUM_PINS / 2)
+ #define AIROHA_REG_GPIOCTRL_NUM_PIN		(AIROHA_NUM_PINS / 4)
+diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/airoha/pinctrl-airoha.c
+index e6b0180c9cb0..58e817cb8fbd 100644
+--- a/drivers/pinctrl/airoha/pinctrl-airoha.c
++++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+@@ -7,26 +7,6 @@
+ 
+ #include "airoha-common.h"
+ 
+-/* GPIOs */
+-#define REG_GPIO_CTRL				0x0000
+-#define REG_GPIO_DATA				0x0004
+-#define REG_GPIO_INT				0x0008
+-#define REG_GPIO_INT_EDGE			0x000c
+-#define REG_GPIO_INT_LEVEL			0x0010
+-#define REG_GPIO_OE				0x0014
+-#define REG_GPIO_CTRL1				0x0020
+-#define REG_GPIO_CTRL2				0x0060
+-#define REG_GPIO_CTRL3				0x0064
+-#define REG_GPIO_DATA1				0x0070
+-#define REG_GPIO_OE1				0x0078
+-#define REG_GPIO_INT1				0x007c
+-#define REG_GPIO_INT_EDGE1			0x0080
+-#define REG_GPIO_INT_EDGE2			0x0084
+-#define REG_GPIO_INT_EDGE3			0x0088
+-#define REG_GPIO_INT_LEVEL1			0x008c
+-#define REG_GPIO_INT_LEVEL2			0x0090
+-#define REG_GPIO_INT_LEVEL3			0x0094
+-
+ #define airoha_pinctrl_get_pullup_conf(pinctrl, pin, val)			\
+ 	airoha_pinctrl_get_conf((pinctrl), AIROHA_PINCTRL_CONFS_PULLUP,		\
+ 				(pin), (val))
 -- 
 2.34.1
 
