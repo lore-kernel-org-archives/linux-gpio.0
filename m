@@ -1,97 +1,119 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794829782;
-	b=Tsm3UvVgqbuZ6oTJ/TGv0UbFiw1X0W0Mzsksvcm6akpkklUIgJzNye78Wvvjq2H2GN5B
-	 AD+GA1vWMhqoxLqJ+QyxlDK1YxiRzSFRnkpow1CrGylmRGWckLvBXoV06P+R3pOoLM8dT
-	 vudE7Ib1O0JPtonkfMJizNsA5tjyLV9FTWmCOtPUhdhLdzZPCVdR07zxH5JZ5t3OH/81X
-	 nWRInqJkMHYgj1bZiswDuyKxoFNdYnd5uulpd20YW9qBqr67LP7ClOvtJv0frD88M1hR2
-	 ssgcOrq5TOiLFrfVJH+fjryMl94AsTDGvaSUgh25Xwt/jMLd7rrDPXLiLHeHog4IULA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794829782;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=m4J7Coq8r/xqjCecsg9Er+GxXxxD28PbpsvCfJr5jlM=;
-	b=PXm1oRbrWGAusbjaOcqVy/d95YmUhKSrbZVY2+ndaEbVVqma5EDVa2Qq/4aOzeb2SSOj
-	 r0iLUWupNjQXcn3lM1P4VzsU1plqgLktXO9g7g+cdNyrCYMsMMwWTSqBO2sWUJl9WoYsT
-	 4TjjSN14Utpj5o2hG2P7k1gI9slA/29PNQU2OspDDmQWoAOJxEH7e3B+TmE+ZhrOZ03uZ
-	 t/dig1kVHQ7gx+XTt1aITZBS32hym4+hgKwRtwnbs92v8hGxhQxB8jQlXRNs4nWAhfdXB
-	 /ynsHkiacuwfqJbdmEuzZ2u07M+3kMLMZNO1leVQ3t+wPEjKQVc4XruRPhkepM2anhQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=TCxJiKsk;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794829984;
+	b=I6tZW4aGP4jrfc/nvCdb8F1I2EfBB5yudsZjIXo3b5coR5KNFt1vr4KvVlCZL2YF04H+
+	 hQSzhgi2bIci42ZiTBl30wPeyAIkHhRydUpNmDu/xVpETeSn/Mnz9lTqsAc7DJjEQglZE
+	 AVnhYsmqJ8RChvnjKQlbYyclensrgsg5TVr1Edz1OrAPf5yvcIYP8m22EKblBgaowzkUM
+	 0daTVRNpG/6huWtIwD4LI5grGN/Oq3m6iNsDM4LPZSjgKHOd+Dmac7d0XUX451ZoCrI1u
+	 7eKOQSHIDD/5smdmot+cqtZTSznmrU2JoXlKmj23rZIiYoU77PRhqs1MxtyaEYFLZfg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794829984;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=pO7ejxuisYFiK67OM4MpgvsVQ7/7ICx6J2Ag4S25/oU=;
+	b=jGnb4FPqiNa4wfagQrSORDjoC5QO0LhqDIqCNPh8V1hZhKqcXYs2kPUyaJsiSZtJreKS
+	 ikY86Nu/CjFIs86hhv1NdkWU7tc2OF1gBr6PtShECaH6WBW5lKjHfEoqmsKqlYztpvLrI
+	 9gFCpcqe8nECG7n3iWRR347m+h6ABaCeK+i1ZobuIFk9ItdjxWNfK+tjk4TnrHlj3ctmv
+	 sYtSdDhSQucdMlS83vVYeis09TgYWI/vzAz2YdP2LwDhKw6oGffWQHdfkKBpCP3EdkUnz
+	 GwGhMek/zDdu02S3CIBEPOZu61GdcsRulcv6uGiQC25QkIyP5UkjLFm2UZ7jR05V84A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="EQorfjr/";
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CEF606A323;
-	Mon, 16 Nov 2026 11:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34CEF606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F78B606A339
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 11:53:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F78B606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=TCxJiKsk
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 2F5B3200AD7;
-	Mon, 16 Nov 2026 12:49:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794829779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m4J7Coq8r/xqjCecsg9Er+GxXxxD28PbpsvCfJr5jlM=;
-	b=TCxJiKskoA4zEC33jJD8RNwpMWe2fWbiQysXdhyFbET5LT3ak66+0+sVSJGBQJI3ZNYOy1
-	etmGIUzeAAtUhwF5L5di9tg/8oJwH1tWh12kJAkCU61aOQWG6+uJt13COdNXvypQHGHx/w
-	rpV02KzxRK5ukg2pXFygbpXEHf7LgAhKtlVEDfz+jTJ1Y3rGqnHT8uFfQ1sPlwCKAGf+U1
-	zO3LyMvJHHMI63YUIu2sWyWOCs9DWZtWCoozgTz6SrzcXx/GDJnJKXwjuPHEG/a6Bzt1JC
-	Mb+lVdJRkt0n2PceRMKJw6+efx/cxdFKq30HZWd06atfIz9yb3J+W5wM/pNYjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794829779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m4J7Coq8r/xqjCecsg9Er+GxXxxD28PbpsvCfJr5jlM=;
-	b=bhb5gt1s6T2CLoIn/WkEEKUFkiCJfuLzsBiov/r2AT0+WDgL6/Zi1GrtClImVckmhYmmXF
-	ubPEImde4nZygvCWDNecbGuT++VbNtsNTgaJ7aQ/s9u5Ogv7p/So5uoBeMHAzg0AmWOKgh
-	4XJPFN9jLpr9Sq7uNrzzun3lwDsC5QlMQ+T3nulSxHUrSywIccblHZzbVah/LT/DcwmqND
-	eBjilWReeBou5AcnaR+DuvfAHBvMDvcnqmyprx9lLvtxmjD4OCD4+CVRTdd+KFShZl3Uz7
-	wb6WBpjQLJq1uMw0QyHdLU17uqgumyucihewa0GtICRgaJgQhTq6+b9gC+xbdA==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794829779; a=rsa-sha256;
-	cv=none;
-	b=Q/GTP5h5iQHyLUddqPQpEnZOgcdwmSwpAHmQJd8kO6lR3N3oIFZDGuoeZaga1Wd+Y6VNov
-	fveCRaFRD/oLqzcTj//y8jWXZ8zFdTshHLPmzB9Empre5mur/qm1smIFBtZ2/GRTWhxmbc
-	WfGpk8e/pXhCuaDejdoG5lQhChgIJqSuNuEGGR3q36tnfksFoDqdrW0GedInlpUB3tSFSt
-	TTMlYRwWCnny6EJEJkYd+8ROY6yMDYtXk/WMH4gAkzeNXO64Uc+RxKCdH0QONE04Amkqmu
-	1ykfHeM2QpAlNVQ5GkcmbNv3ktrsWcSmDF0y5+IWT9CnzhskS9wr7IOGMjYjUQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <6ff41e4f76419d8f66b85f5a838e81f189f93521.camel@pengutronix.de>
-Subject: Re: [PATCH v2 07/13] reset: add Synaptics SL2610 reset controller
- support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Catalin Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland	 <mark.rutland@arm.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>,  Stephen Boyd <sboyd@kernel.org>, Brian
- Masney <bmasney+clk@redhat.com>, Jerome Brunet	 <jbrunet+clk@baylibre.com>,
- Linus Walleij <linusw@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Mon, 16 Nov 2026 12:49:39 +0100
-In-Reply-To: <20261115102401.3520-8-jszhang@kernel.org>
-References: <20261115102401.3520-1-jszhang@kernel.org>
-	 <20261115102401.3520-8-jszhang@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EQorfjr/
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48e10a70540so1815929f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 03:53:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794829983; x=1795434783; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pO7ejxuisYFiK67OM4MpgvsVQ7/7ICx6J2Ag4S25/oU=;
+        b=EQorfjr/le+xrt6rRx0aqewV5C/72AyI7slViP9I2mMqrY2frCMiC9eA2kU6PldTfe
+         d2ppNxxBW57kub0UzJYDi2m1bmxBnaQkiv+DBn7m73b82wtWpXZge2XEBVq8Yj5BdyiG
+         YuY+Hzn4cGfJDC2pvnbKrEDdfYWt2Z2iBDbH4ycXbvMHzeqt/2lqu3i70CUXVOK26kmu
+         GVLINhavriOSnCa0I1E/mKgT9MiAv+t0eJFkLeN7vlyZTXhcdbFV3CpeBKR3d8JeJxZI
+         3rV3PATeMttVTD4o/HvUX4HGKlhQviYoK1XMcV4K8Zc9LjGTSHhnLxeKxHdxvvktLTto
+         fhhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794829983; x=1795434783;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pO7ejxuisYFiK67OM4MpgvsVQ7/7ICx6J2Ag4S25/oU=;
+        b=ts+TvOIfO4lKaKzGLDyscPlKxjnWO7imzRQ683bzkprvHb+zl28Qgiiem/ihdn2ivL
+         95ZCTEm5d9HGMhcbI1WhteY/Cqew0fLST9fRzDqBdp/46a/2d3ujyL+NxX1owWDcjost
+         dMVEr0X86z9vKekY+Vy8epegEpj2EClNmxvNv7D7i2efuGx5N3Hwfx5aaBOtFMUT9JhA
+         eZKbTsKKzYft1Nh4ZZvH09KMNgM0UYdIt5xMQtMIponvSppdqklA0yqGAQgwljIkEh63
+         /rdJX5l74mJgPI+uIACV5w5L3PetZc42oO3/ev5EjZspdLHtf4FoMVdQMkNVrk20d6Ku
+         1Zlw==
+X-Forwarded-Encrypted: i=1; AL+hErGOL6fNzrw4elM/IKRa0Sj6n9ecrbZhfqT2qpcozMRfDwDTht/95nU9AaYDyHo73wWaMayJqKVF+A9Q@vger.kernel.org
+X-Gm-Message-State: APuU4Z/CshFlN4Gn++4H6V7T1ib1rnBdOAUoavM3YWIuQ0Ur8gfx592U
+	Aou/5x3kX7WL/6iJEIfA/pvm37jurCBMpKGFbd8RV1l3ns7WLrFJH5NK
+X-Gm-Gg: AZFdTZeurJoPQOg0YVBCY/21gVkjZBGnWzPl71uFOJjbg0ITr2dl8iZVRoe6L8ytHHk
+	IzU9Dyki4pAqcrx3orO+IjKPdF8XTF7F/Movw+tbtikXDNL1ustqFHGRG61qn2Gv4tm5wxmGTI4
+	zEQiGZNF/asxaD3ZC2bCzzjr6eWoG9AWPXl5VlMQgpgvZ9cgtSxwFHIx3XwQvPVuSDiMvOKbeOs
+	sbanSVjcUb1z1W13Bp4zpZrzqSMzGa8VkXr2q3EGk1rRYEjJ1pUGx1r+2d56Ay8nrfgVwMxDtbF
+	p7Sy6quFAJLPv9sIiklDePx3wvwWJN4Zrqcd1fspWved5/8OSjdq8f0nUO2BSyFAA3AZtCg2al6
+	RJbQfsUSubL0bFVxnClSSiQ/GjPkiTVvvhNtBbnCeZYQ1YwZ6AqXEGxDxdnKBRLBXG2uSwENtKE
+	ZysiGH4v/gnS/Igr7CrUOpJEa6PpBiRBBnaKedJ2lxrpXf1yFxpUdE8kYOAywGv9cj7YcjhguVQ
+	SXX7ZebGCqvBYfYS1vAfbrgEnLnEaY3wHbnTtyZM85foeUiGQ1nfmbuy5K730qTYJybYmUtahfB
+	koOb4YMCzk91C3FLZwoP2XII0ObglMd0q0+otwiK7bbt0HgSc8susBN83bI8j+yWXw==
+X-Received: by 2002:a05:6000:2c01:b0:499:1c0d:4568 with SMTP id ffacd0b85a97d-49c741b14a0mr24577066f8f.48.1794829982872;
+        Mon, 16 Nov 2026 03:53:02 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5a32d336sm23686370f8f.0.2026.11.16.03.53.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 03:53:02 -0800 (PST)
+Date: Mon, 16 Nov 2026 11:53:00 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Alejandro Colomar <alx+linux-hardening@kernel.org>, Hauke Mehrtens
+ <hauke@hauke-m.de>, linux-mips@linux-mips.org, Ralf Baechle
+ <ralf@linux-mips.org>, Joe Perches <joe@perches.com>, Alejandro Colomar
+ <alx@kernel.org>, linux-hardening@vger.kernel.org, Krzysztof Kozlowski
+ <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab
+ <schwab@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Daniel Scally <djrscally@gmail.com>, Danilo
+ Krummrich <dakr@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johan Hovold
+ <johan@kernel.org>, Kees Cook <kees@kernel.org>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Len Brown <lenb@kernel.org>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Linus Walleij
+ <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>,
+ linux-acpi@vger.kernel.org, driver-core@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Bartosz Golaszewski
+ <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: Off-by-one in arch/mips/bcm47xx/time.c (was: [PATCH v6 02/19]
+ string: Add strprefix())
+Message-ID: <20261116115300.544a33ec@pumpkin>
+In-Reply-To: <avriaVSTl4jL0OEo@ashevche-desk.local>
+References: <cover.1794667407.git.alx@kernel.org>
+	<0eaa4ce73a2b164fd49e3a9f71244a2e3f45b7bb.1794667407.git.alx@kernel.org>
+	<c113f651d1ce1b2d42ab9d0c59ae5a0cd17ddb6a.camel@perches.com>
+	<avi54hgKgovNHfKy@devuan>
+	<avriaVSTl4jL0OEo@ashevche-desk.local>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -101,301 +123,39 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On So, 2026-11-15 at 18:23 +0800, Jisheng Zhang wrote:
-> Support the SoC and MCU reset controls exposed by the SL2610 system
-> controllers. Match the MFD-created platform devices, use the parent
-> syscon regmap and register each reset provider against the parent DT node=
-.
->=20
-> Handle both pulse resets and sticky resets with assert/deassert controls.
->=20
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  MAINTAINERS                  |   1 +
->  drivers/reset/Kconfig        |  13 ++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-sl2610.c | 224 +++++++++++++++++++++++++++++++++++
->  4 files changed, 239 insertions(+)
->  create mode 100644 drivers/reset/reset-sl2610.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index eae1493485ee..1bd3b2f39865 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3812,6 +3812,7 @@ F:	Documentation/devicetree/bindings/soc/synaptics/
->  F:	arch/arm/boot/dts/synaptics/
->  F:	arch/arm/mach-berlin/
->  F:	arch/arm64/boot/dts/synaptics/
-> +F:	drivers/reset/reset-sl2610.c
->  F:	drivers/soc/synaptics/
->  F:	include/dt-bindings/clock/syna,sl2610.h
->  F:	include/dt-bindings/reset/syna,sl2610-reset.h
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index eda9c698a95f..98e973a8798c 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -358,6 +358,19 @@ config RESET_SUNXI
->  	help
->  	  This enables the reset driver for Allwinner SoCs.
-> =20
-> +config RESET_SL2610
-> +	tristate "Synaptics SL2610 Reset Driver"
-> +	depends on ARCH_BERLIN || COMPILE_TEST
-> +	depends on OF && HAS_IOMEM
-> +	select SOC_SL2610_SYSCON
-> +	help
-> +	  Support the reset controllers in the SoC and MCU system control
-> +	  blocks of Synaptics SL2610 SoCs. Both pulse and sticky reset lines
-> +	  are supported.
-> +
-> +	  To compile this driver as a module, choose M here. The module will
-> +	  be called reset-sl2610.
-> +
->  config RESET_TENSTORRENT_ATLANTIS
->  	tristate "Tenstorrent atlantis reset driver"
->  	depends on ARCH_TENSTORRENT || COMPILE_TEST
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 489fafd6bbe3..d28276a4f2ea 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -42,6 +42,7 @@ obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
->  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
->  obj-$(CONFIG_RESET_SKY1) +=3D reset-sky1.o
->  obj-$(CONFIG_RESET_SKY1_AUDSS) +=3D reset-sky1-audss.o
-> +obj-$(CONFIG_RESET_SL2610) +=3D reset-sl2610.o
->  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
->  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
->  obj-$(CONFIG_RESET_SUNXI) +=3D reset-sunxi.o
-> diff --git a/drivers/reset/reset-sl2610.c b/drivers/reset/reset-sl2610.c
-> new file mode 100644
-> index 000000000000..1ca58d5a3e71
-> --- /dev/null
-> +++ b/drivers/reset/reset-sl2610.c
-> @@ -0,0 +1,224 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2026 Synaptics Incorporated
-> + *
-> + * Synaptics SL2610 reset driver
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +#include <dt-bindings/reset/syna,sl2610-reset.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +
-> +/* SL2610 ACPU subsystem */
-> +#define SL2610_GBL_PERIFRESET			0x350
-> +#define SL2610_GBL_PERIFSTICKYRESET		0x360
-> +#define SL2610_GBL_APBPERIFRESET		0x370
-> +#define SL2610_GBL_TOPSTICKYRESET		0x378
-> +#define SL2610_GBL_AVIOSTICKYRESET		0x37c
-> +
-> +/* SL2610 system subsystem */
-> +#define SL2610_SMGBL_STICKYRST0			0x400
-> +
-> +#define to_sl2610_reset_priv(p)	container_of((p), struct sl2610_reset_pr=
-iv, rcdev)
-> +
-> +#define SL2610_RESET(id, reg, bit, sticky)[id] =3D { reg, BIT(bit), stic=
-ky }
-> +
-> +struct sl2610_reset_cfg {
-> +	u32 reg;
-> +	u32 bit;
-> +	bool sticky;
-> +};
-> +
-> +struct sl2610_reset_data {
-> +	const struct sl2610_reset_cfg *cfgs;
-> +	size_t num;
-> +};
-> +
-> +struct sl2610_reset_priv {
-> +	struct regmap *regmap;
-> +	const struct sl2610_reset_cfg *cfgs;
-> +	struct reset_controller_dev rcdev;
-> +};
-> +
-> +static const struct sl2610_reset_cfg sl2610_reset_cfgs[] =3D {
-> +	SL2610_RESET(RST_SOC_SDIO0, SL2610_GBL_PERIFRESET, 2, false),
-> +	SL2610_RESET(RST_SOC_USB0, SL2610_GBL_PERIFRESET, 4, false),
-> +	SL2610_RESET(RST_SOC_EMMC, SL2610_GBL_PERIFRESET, 5, false),
-> +	SL2610_RESET(RST_SOC_GETH0, SL2610_GBL_PERIFRESET, 6, false),
-> +	SL2610_RESET(RST_SOC_SDIO1, SL2610_GBL_PERIFRESET, 7, false),
-> +	SL2610_RESET(RST_SOC_USB1, SL2610_GBL_PERIFRESET, 8, false),
-> +	SL2610_RESET(RST_SOC_GETH1, SL2610_GBL_PERIFRESET, 9, false),
-> +	SL2610_RESET(RST_SOC_USB0PHY, SL2610_GBL_PERIFSTICKYRESET, 0, true),
-> +	SL2610_RESET(RST_SOC_USB0CORE, SL2610_GBL_PERIFSTICKYRESET, 1, true),
-> +	SL2610_RESET(RST_SOC_USB0MAHB, SL2610_GBL_PERIFSTICKYRESET, 2, true),
-> +	SL2610_RESET(RST_SOC_USB1PHY, SL2610_GBL_PERIFSTICKYRESET, 3, true),
-> +	SL2610_RESET(RST_SOC_USB1CORE, SL2610_GBL_PERIFSTICKYRESET, 4, true),
-> +	SL2610_RESET(RST_SOC_USB1MAHB, SL2610_GBL_PERIFSTICKYRESET, 5, true),
-> +	SL2610_RESET(RST_SOC_UART0, SL2610_GBL_APBPERIFRESET, 0, false),
-> +	SL2610_RESET(RST_SOC_UART1, SL2610_GBL_APBPERIFRESET, 1, false),
-> +	SL2610_RESET(RST_SOC_UART2, SL2610_GBL_APBPERIFRESET, 2, false),
-> +	SL2610_RESET(RST_SOC_UART3, SL2610_GBL_APBPERIFRESET, 3, false),
-> +	SL2610_RESET(RST_SOC_I2C0, SL2610_GBL_APBPERIFRESET, 4, false),
-> +	SL2610_RESET(RST_SOC_I2C1, SL2610_GBL_APBPERIFRESET, 5, false),
-> +	SL2610_RESET(RST_SOC_SPI0, SL2610_GBL_APBPERIFRESET, 6, false),
-> +	SL2610_RESET(RST_SOC_SPI1, SL2610_GBL_APBPERIFRESET, 7, false),
-> +	SL2610_RESET(RST_SOC_SPI2, SL2610_GBL_APBPERIFRESET, 8, false),
-> +	SL2610_RESET(RST_SOC_SPI3, SL2610_GBL_APBPERIFRESET, 9, false),
-> +	SL2610_RESET(RST_SOC_APBTIMERS, SL2610_GBL_APBPERIFRESET, 10, false),
-> +	SL2610_RESET(RST_SOC_APBSYSCNT, SL2610_GBL_APBPERIFRESET, 11, false),
-> +	SL2610_RESET(RST_SOC_APBWDT, SL2610_GBL_APBPERIFRESET, 12, false),
-> +	SL2610_RESET(RST_SOC_APBGPIO, SL2610_GBL_APBPERIFRESET, 13, false),
-> +	SL2610_RESET(RST_SOC_APBDMA, SL2610_GBL_APBPERIFRESET, 14, false),
-> +	SL2610_RESET(RST_SOC_GPUCORE, SL2610_GBL_TOPSTICKYRESET, 0, true),
-> +	SL2610_RESET(RST_SOC_NPUCORE, SL2610_GBL_TOPSTICKYRESET, 1, true),
-> +	SL2610_RESET(RST_SOC_AVIOAIOG, SL2610_GBL_AVIOSTICKYRESET, 0, true),
-> +	SL2610_RESET(RST_SOC_AVIOVPPG, SL2610_GBL_AVIOSTICKYRESET, 1, true),
-> +	SL2610_RESET(RST_SOC_AVIOVIPG, SL2610_GBL_AVIOSTICKYRESET, 2, true),
-> +};
-> +
-> +static const struct sl2610_reset_cfg sl2610_system_reset_cfgs[] =3D {
-> +	SL2610_RESET(RST_SM_ADCCORE, SL2610_SMGBL_STICKYRST0, 0, true),
-> +	SL2610_RESET(RST_SM_ADCPRST, SL2610_SMGBL_STICKYRST0, 1, true),
-> +	SL2610_RESET(RST_SM_CAN0PRST, SL2610_SMGBL_STICKYRST0, 2, true),
-> +	SL2610_RESET(RST_SM_CAN0SRST, SL2610_SMGBL_STICKYRST0, 3, true),
-> +	SL2610_RESET(RST_SM_CAN1PRST, SL2610_SMGBL_STICKYRST0, 4, true),
-> +	SL2610_RESET(RST_SM_CAN1SRST, SL2610_SMGBL_STICKYRST0, 5, true),
-> +	SL2610_RESET(RST_SM_GPIOPRST, SL2610_SMGBL_STICKYRST0, 6, true),
-> +	SL2610_RESET(RST_SM_GPIOSRST, SL2610_SMGBL_STICKYRST0, 7, true),
-> +	SL2610_RESET(RST_SM_I2CM0PRST, SL2610_SMGBL_STICKYRST0, 8, true),
-> +	SL2610_RESET(RST_SM_I2CM0SRST, SL2610_SMGBL_STICKYRST0, 9, true),
-> +	SL2610_RESET(RST_SM_I2CM1PRST, SL2610_SMGBL_STICKYRST0, 10, true),
-> +	SL2610_RESET(RST_SM_I2CM1SRST, SL2610_SMGBL_STICKYRST0, 11, true),
-> +	SL2610_RESET(RST_SM_I3CPRST, SL2610_SMGBL_STICKYRST0, 12, true),
-> +	SL2610_RESET(RST_SM_I3CSRST, SL2610_SMGBL_STICKYRST0, 13, true),
-> +	SL2610_RESET(RST_SM_PDMPRST, SL2610_SMGBL_STICKYRST0, 14, true),
-> +	SL2610_RESET(RST_SM_PDMSRST, SL2610_SMGBL_STICKYRST0, 15, true),
-> +	SL2610_RESET(RST_SM_PVTHSRST, SL2610_SMGBL_STICKYRST0, 16, true),
-> +	SL2610_RESET(RST_SM_PVTPRST, SL2610_SMGBL_STICKYRST0, 17, true),
-> +	SL2610_RESET(RST_SM_PWMPERIRST, SL2610_SMGBL_STICKYRST0, 18, true),
-> +	SL2610_RESET(RST_SM_PWMPRST, SL2610_SMGBL_STICKYRST0, 19, true),
-> +	SL2610_RESET(RST_SM_SPIMPRST, SL2610_SMGBL_STICKYRST0, 20, true),
-> +	SL2610_RESET(RST_SM_SPIMSRST, SL2610_SMGBL_STICKYRST0, 21, true),
-> +	SL2610_RESET(RST_SM_SPISPRST, SL2610_SMGBL_STICKYRST0, 22, true),
-> +	SL2610_RESET(RST_SM_SPISSRST, SL2610_SMGBL_STICKYRST0, 23, true),
-> +	SL2610_RESET(RST_SM_UART0PRST, SL2610_SMGBL_STICKYRST0, 24, true),
-> +	SL2610_RESET(RST_SM_UART0SRST, SL2610_SMGBL_STICKYRST0, 25, true),
-> +	SL2610_RESET(RST_SM_UART1PRST, SL2610_SMGBL_STICKYRST0, 26, true),
-> +	SL2610_RESET(RST_SM_UART1SRST, SL2610_SMGBL_STICKYRST0, 27, true),
-> +	SL2610_RESET(RST_SM_UART2PRST, SL2610_SMGBL_STICKYRST0, 28, true),
-> +	SL2610_RESET(RST_SM_UART2SRST, SL2610_SMGBL_STICKYRST0, 29, true),
-> +	SL2610_RESET(RST_SM_UART3PRST, SL2610_SMGBL_STICKYRST0, 30, true),
-> +	SL2610_RESET(RST_SM_UART3SRST, SL2610_SMGBL_STICKYRST0, 31, true),
-> +};
-> +
-> +static const struct sl2610_reset_data sl2610_reset_data =3D {
-> +	.cfgs =3D sl2610_reset_cfgs,
-> +	.num =3D ARRAY_SIZE(sl2610_reset_cfgs),
-> +};
-> +
-> +static const struct sl2610_reset_data sl2610_system_reset_data =3D {
-> +	.cfgs =3D sl2610_system_reset_cfgs,
-> +	.num =3D ARRAY_SIZE(sl2610_system_reset_cfgs),
-> +};
-> +
-> +static int sl2610_reset_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	struct sl2610_reset_priv *priv =3D to_sl2610_reset_priv(rcdev);
-> +	const struct sl2610_reset_cfg *cfg =3D &priv->cfgs[id];
-> +
-> +	if (!cfg->sticky)
-> +		return -EINVAL;
-> +
-> +	return regmap_clear_bits(priv->regmap, cfg->reg, cfg->bit);
-> +}
-> +
-> +static int sl2610_reset_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	struct sl2610_reset_priv *priv =3D to_sl2610_reset_priv(rcdev);
-> +	const struct sl2610_reset_cfg *cfg =3D &priv->cfgs[id];
-> +
-> +	if (!cfg->sticky)
-> +		return -EINVAL;
-> +
-> +	return regmap_set_bits(priv->regmap, cfg->reg, cfg->bit);
-> +}
-> +
-> +static int sl2610_reset_reset(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	struct sl2610_reset_priv *priv =3D to_sl2610_reset_priv(rcdev);
-> +	const struct sl2610_reset_cfg *cfg =3D &priv->cfgs[id];
-> +
-> +	if (cfg->sticky) {
-> +		regmap_clear_bits(priv->regmap, cfg->reg, cfg->bit);
-> +		usleep_range(10, 15);
-> +		return regmap_set_bits(priv->regmap, cfg->reg, cfg->bit);
-> +	}
-> +
-> +	return regmap_set_bits(priv->regmap, cfg->reg, cfg->bit);
-> +}
-> +
-> +static const struct reset_control_ops sl2610_reset_ops =3D {
-> +	.reset	=3D sl2610_reset_reset,
-> +	.assert =3D sl2610_reset_assert,
-> +	.deassert =3D sl2610_reset_deassert,
-> +};
-> +
-> +static int sl2610_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *parent_np =3D pdev->dev.parent->of_node;
-> +	struct sl2610_reset_priv *priv;
-> +	const struct sl2610_reset_data *data =3D
-> +		(void *)platform_get_device_id(pdev)->driver_data;
-> +
-> +	priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->regmap =3D syscon_node_to_regmap(parent_np);
-> +	if (IS_ERR(priv->regmap))
-> +		return PTR_ERR(priv->regmap);
-> +
-> +	priv->rcdev.owner =3D THIS_MODULE;
-> +	priv->rcdev.ops =3D &sl2610_reset_ops;
-> +	priv->rcdev.dev =3D &pdev->dev;
-> +	priv->rcdev.of_node =3D parent_np;
-> +	priv->rcdev.of_reset_n_cells =3D 1;
-> +	priv->rcdev.nr_resets =3D data->num;
-> +	priv->cfgs =3D data->cfgs;
-> +
-> +	return devm_reset_controller_register(&pdev->dev, &priv->rcdev);
-> +}
-> +
-> +static const struct platform_device_id sl2610_reset_ids[] =3D {
-> +	{ "sl2610-soc-reset", (kernel_ulong_t)&sl2610_reset_data },
-> +	{ "sl2610-mcu-reset", (kernel_ulong_t)&sl2610_system_reset_data },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(platform, sl2610_reset_ids);
-> +
-> +static struct platform_driver sl2610_reset_driver =3D {
-> +	.probe =3D sl2610_reset_probe,
-> +	.id_table =3D sl2610_reset_ids,
-> +	.driver =3D {
-> +		.name =3D "sl2610-reset",
-> +	},
-> +};
-> +module_platform_driver(sl2610_reset_driver);
-> +
-> +MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
-> +MODULE_DESCRIPTION("Synaptics SL2610 reset controller");
-> +MODULE_LICENSE("GPL");
+On Mon, 16 Nov 2026 13:00:57 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+
+> On Sat, Nov 14, 2026 at 08:49:21PM +0100, Alejandro Colomar wrote:
+> 
+> [...]
+> 
+> > > And these are all candidates for converted uses to
+> > > whatever is the function name or steq:
+> > > 
+> > > $ git grep -P '[^w]strncmp\s*\(\s*[\w\.\-\>\s]*,\s*\"\w*"\s*,\s*\d+\s*\)' -- '*.[ch]' | wc -l
+> > > 946  
+> > 
+> > Looking at those, I've seen a bug in BCM47XX, introduced in 2224de9d152b
+> > (2013-10-29; "MIPS: BCM47XX: Fix clock detection for BCM5354 with 200MHz
+> >  clock").
+> > 
+> > Look at this line of code:
+> > 
+> > 	$ grep strncmp arch/mips/bcm47xx/time.c
+> > 			if (len >= 0 && !strncmp(buf, "200", 4))
+> > 
+> > That strncmp(3) call is wrong, as it's really behaving as strcmp(3),
+> > since the 4 is off-by-one.  I'd like to know what was the intention.
+> > Was it meant to be !strncmp(buf, "200", 3)?  Or was it meant to be just
+> > !strcmp(buf, "200")?  
+> 
+> When in doubts, preserve current behaviour over refactoring.
+> 
+
+That entire function is strange...
+
+David
