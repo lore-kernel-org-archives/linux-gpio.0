@@ -1,43 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794857969;
-	b=JNmwXEVS4RlNs/k1qgKsR9NMirBnxbMq9SpATrt33rUIhmvoSpHNQNq7rzF5QLjJtv2e
-	 wL0IhlJTOlY/G1T0Iblp0sLNugs+Pnu9hMuVKOr/aPMTHZ3bjVG392OXIVYdnhM9ePBSH
-	 Vmhmnpo3e5TBaF77hzY8JIejrOWpQ4I6lfS3wyL6lIik8UDjOtdkrc9/h8ivjqemIoq4q
-	 pihfNSUv9CgrDdbPPQixO7hvOdhNfVONA/wBddf7BB8HLIkgetG4fBIf3Kep2FmA1+VC4
-	 RuB41W/D32VpjYtAxfhuU+28KJvIQvvGgZnA9zV+KcFJEkNhwKwMU0bhvRKMzwyvQGw==
+	t=1794862689;
+	b=TIPi922HM5Lmq8DBlQT2+slmYKdL/RHdYroO7B1Ggyml/RBptkOOi3a4sk8zX7Uprfat
+	 pZC0Ww6ChpDWgsdZNQ+OBySeMNFCJl+LJLI2u2UCM6ph7V398NvugL//LGdq5hPShJm6r
+	 EFbhC/1Pqt2Dzxr46CEmqrJpazM8AhWNJNsBpFJajY4O2dMfQ7BhvbKC7h1VcABwnPdwo
+	 53g+UvNMpZIwfFuJ4MBOrqYlj6OnnikRtFV2Oulm+7S9NxNNvWXgvKQFmNVWlqbaeUF/8
+	 qVeUwKxIt0HqGUYedJxeGV4epu/HpiAY5Pxc0X10a57Nvd+0ouRulV9034euOVPArKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794857969;
-	h=DMARC-Filter:Received:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=tb0Yt+co2HSyPMP/gmGUN3MHhQtM2v+tCYbEj1zzeMQ=;
-	b=0uvd5fxog53pqEfwPJeJTCpw3ti/V8UDwecB+F0deaWsCoa7Kztb6PrRt3itzMSkShGu
-	 clExX3u/8FJBOFtq1mzqtushDYlc6cLo8Giz4JLWGtwMDplDlfBMzyCsOprxG3YQjDBpU
-	 OKGCNSU2Op5WVKFMfMa78Q2BfnXA1A8+7cHtwNAlK8YxmxKchaqv1o6yQR51xBIl5zeF0
-	 Jhr9np2l2M8ct/3n09PErQF5Pv06akRGsZx6WrwwWLRoJ6gjjd3/vWqNGHjFEoKGA+m+k
-	 Y1qRTWkGzF0XrITBNL0tGB6hcIK5HdrhJRhl/8m4+0q+XcEXmpcLbigYW3SRyItzm0Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794862689;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=Vr8LxlwRGl/SVKMwZ1OihzYbqfOG5qsqLHZawnVcpJg=;
+	b=AOxT65Ij1No7d4b5mv1V36zlLufnHqPKgikMtSnXwlUv4kjo+Vj9uQqxJPFlHqWjBB6l
+	 591rzFl7EQXDLvmgQunLzoDvuyKw0iXOJ21VbqeI2+pgJwDWPZXXc+D3GZIRgA1n4hjv8
+	 W8Tyg6vG0iGXZLfXMnBXZlUpCJEWeZL8j6KyD53XWaWu9ojii+AVklrku60uLv5WH0yjF
+	 zKQ8B0tYUUkqYqvGPf/RdsIhM5pbT835ZmTQ9Kfk2l25vSZI3w5oyyGHYTK5pgkjaUmD+
+	 iBQi15iKLgInyovZbJM5TwFdyE7mEN8KN9F1QaDc/2GUn6tAgA1tDeO3Gumr9jJVmjw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=phrozen.org;
-	spf=pass smtp.mailfrom=phrozen.org;
-	arc=none smtp.remote-ip=46.4.11.11
-Received: from nbd.name (nbd.name [46.4.11.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="xhfpB4p/";
+	arc=none smtp.remote-ip=209.85.128.51
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19789606A323;
-	Mon, 16 Nov 2026 19:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 19789606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phrozen.org
-Received: from [2a04:4540:1403:e6fc:39d9:16d5:775d:5525]
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <john@phrozen.org>)
-	id 1xT2Xy-004L5b-1e;
-	Mon, 16 Nov 2026 20:39:22 +0100
-Message-ID: <e20f708f-ebfe-4dc0-a64c-1590fdf608f3@phrozen.org>
-Date: Mon, 16 Nov 2026 20:39:21 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674BB606A31C
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 20:58:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 674BB606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xhfpB4p/
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a207b02a2cso23198275e9.1
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2026 12:58:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794862688; x=1795467488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Vr8LxlwRGl/SVKMwZ1OihzYbqfOG5qsqLHZawnVcpJg=;
+        b=xhfpB4p/FLz4tPvQ4XDyzPJZhYbKdby9eMFjsG4ed6t2AZa3F7CPzOfipZSOTimeWe
+         BcDpq6gokbNTxIQ9l4fnGfjfFt29zj3RD0h6lHh+vJ1bX552MblcNRz+J8927R5ZmjeF
+         iKpG54++B5Tp/HqvgFsBZU/VNWRkvyP+JLjtw/G/z314VyLXrSJcxdPsDrmr/1FXdlvg
+         DIdw/tMELU7KsErDToyfosjf4meSG+J1RxQySHwdKjVeXk503qOmotvoqiMa9MiZS+ON
+         XrDB4pfb8+ohnHUAfF24YjeIm1F8rDtjJQd8EA/+blfE98B4+XJy/aO9+RNJN9y3qjfU
+         QxfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794862688; x=1795467488;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Vr8LxlwRGl/SVKMwZ1OihzYbqfOG5qsqLHZawnVcpJg=;
+        b=AUR+3VFoMRQE//sxBKc2xpUrCbHiaImHTJ76bZL5CizxQpUsrcc1r6x/JgZrAhnjHI
+         phnejFVB+M7J2Resm033AfsZCt0L460URsRn2Yf/k+13ltAN6fjp9kDMxlHiD7Up3l6U
+         fNwdAVlltog1qwVnoF+RsycUBnezGG9fiP/H/ryhLcaVZM0GZ7F7jgHZ7Ot/KsSOJvet
+         sHnU6lyVTWiOds43vc7pUMbJ62M9Zvjc1RZ+XPF4AyeilTbOmFxMd7CByUacUPhbfICe
+         c/cWC04aIMvDJXSdz1iX4xpFxtogCw7+P+pkWeN+hPC4xtzvUg1yiKp+vPVpfc1aGFCx
+         Ua2A==
+X-Forwarded-Encrypted: i=1; AL+hErELJKjdNI9Z0LqC6e//dd5Km+zuP46H9UTEgeqhxoPVo1YvebHdvO2DwmTa95GM2kLb5CwbN01zQf6I@vger.kernel.org
+X-Gm-Message-State: APuU4Z/VOJgrKLOYpQjGEh+XO962RnkmIX7B9+MXQIM9W+6Ab5a9IFGb
+	nv4rXUnjd3nHSl1y2CnqlbHG+iWl08c1oFU9u9/biGhuSS4eqTtHPoSD
+X-Gm-Gg: AYBFou3Whhs63yPamctCyhpG3K2dHb3K5qK0raxNOfxzQwDB1LeGR438U0yQpHUXrQz
+	jYdYXs2IsScsUyRhMefs9oTaO97kUEUmKwASJkMCIjQsT0PscmHtz2queTVGBhCHbvlVG/wdkg8
+	wTraQONY8EDpD3j5zvTO1I1+f+U5rH9wnrmdY6ecg5veml4PXZSfUtp+4EbHp7O4IG2h6rWNoR3
+	jSfen9NqfpUV3sHIJ7hUe/4CEQQxCzIWHYQ7YfDnNBu01qtIgG3+xmrAuM2TPLHJNKRpWOujApu
+	5ewccoccfEXHHJ0txPNqDEJr4dyI8wuIcybPaVq1p9KGiFBSkr5fAnfyzACUft1r2+JvLBMg8nT
+	0fOQkF1ftQjMpI/EPPnXQXtwEuDc4FmqnARTF7tQYOWnhUm7qavn0yJHBra5vRJ2ZmrArMsFXIW
+	zwAlbBmNQ0gg5vZ4ni02nL8z/FxtavJu+sdEOfc+kppCpdjgF+z7hWhUPzynDDivasUe5uuKQvG
+	nbqFTUbeLnRJpytRFtOliDlL6Yi26hIpyZgJXHFx4p8u0D05kLDxGzsllF0lJ1gfyJRz8+sUtfp
+	Nl3CVvZbh0Gb7aEkO3fdM+N1hZI=
+X-Received: by 2002:a05:600c:a00d:b0:4bb:693e:4c8e with SMTP id 5b1f17b1804b1-4bb693e4d5dmr149922355e9.21.1794862687584;
+        Mon, 16 Nov 2026 12:58:07 -0800 (PST)
+Received: from m2.. ([37.142.154.59])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4bb78418853sm20499255e9.8.2026.11.16.12.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 12:58:06 -0800 (PST)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: Maarten Brock <Maarten.Brock@sttls.nl>
+Cc: Michael Zaidman <michael.zaidman@gmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Raman Varabets <kernel-linux-20260610-80b7ab08@raman.v1.sg>,
+	Germain Hebert <germain.hebert@ca.abb.com>,
+	Christina Quast <contact@christina-quast.de>,
+	Rio Liu <rio@r26.me>,
+	Bruno Giacomazzi <brunoceg1@gmail.com>,
+	linux-input@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 08/16] HID: ft260: uart: add modem pins control via ioctl
+Date: Mon, 16 Nov 2026 22:57:50 +0200
+Message-ID: <20261116205752.18800-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <GV2PR05MB119417E6491EEDE07003C52D6837C2@GV2PR05MB11941.eurprd05.prod.outlook.com>
+References: <GV2PR05MB119417E6491EEDE07003C52D6837C2@GV2PR05MB11941.eurprd05.prod.outlook.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -47,144 +112,44 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] dt-bindings: pinctrl: airoha: add AN7589
-To: Conor Dooley <conor@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Ahmed Naseef <naseefkm@gmail.com>,
- Benjamin Larsson <benjamin.larsson@genexis.eu>,
- Christian Marangi <ansuelsmth@gmail.com>, devicetree@vger.kernel.org,
- lei.dong@airoha.com, Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- mfd@lists.linux.dev, Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
- zhengping.zhang@airoha.com
-References: <20261112185941.1316112-1-john@phrozen.org>
- <20261112185941.1316112-6-john@phrozen.org>
- <20261113-fame-smock-6ea3b8fadcd0@spud>
- <b94ed5e4-cb80-4e05-9964-bb08a61aa1fd@phrozen.org>
- <20261116-resolved-riot-c6a310bb2d8c@spud>
-Content-Language: en-GB
-From: John Crispin <john@phrozen.org>
-In-Reply-To: <20261116-resolved-riot-c6a310bb2d8c@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Conor,
+Hi Maarten,
 
-The largest users are EN7523 pcm_spi 14, AN7563 pnand 17, AN7583
-pnand 17, EN7528 pnand 17, EN7581 pnand 17 and AN7589 emmc 12 (these
-numbers are based on a hackish "grep foo | bar", so they might be
-slightly off).
+On Mon, 16 Nov 2026 11:47:46 +0000, Maarten Brock wrote:
+> > TIOCMGET and TIOCMSET work only while the modem pins are GPIOs, and
+> > return -EINVAL otherwise.
+>
+> Without checking if it is possible at all, I am wondering why it would be an
+> invalid operation to TIOCMGET the modem pin states when they are not
+> GPIOs.
 
-I copied and modified what the other AN/EN bindings do. These set the
-limit to the pin count of the SoC: EN7523 38, AN7563 38, AN7583 53,
-EN7528 50, EN7581 58. Your call really, I do not mind either way. I can
-send a v4 and then a follow up series cleaning up the existing bindings
-as well.
+Thanks for catching this. There is no good reason for TIOCMGET to
+fail there. The -EINVAL came from the Sashiko review of v1. In v1
+both ioctls returned 0 when the pins were not GPIOs, so TIOCMGET
+reported every line as inactive. v2 changed that to -EINVAL, which
+fixed the wrong answer but made TIOCMGET fail.
 
-        John
+The chip does the RTS/CTS and DTR/DSR flow control in hardware, and
+no HID report gives the level of these pins while they are in UART
+function. Two things I checked on hardware:
 
-On 16.11.26 19:15, Conor Dooley wrote:
-> On Mon, Nov 16, 2026 at 06:47:27PM +0100, John Crispin wrote:
->> On Fri, Nov 13, 2026 at 05:40:42PM +0000, Conor Dooley wrote:
->>> As Lee requested, please split this out. Two patches, maybe even three.
->>
->> Agreed. v3 splits it into three patches.
->>
->>> Do we even need a child node here? If all this node does is
->>> gpio/pinctrl, why can the driver not bind directly to this node?
->>>
->>> What else does it do that warrants being a syscon?
->>
->> The block also holds the PWM controller. Its registers interleave with
->> the GPIO ones. The PWM series adds it as a second child, as on the
->> EN7581. That series has a depency on this one so I have not posted it yet.
->>
->>> Otherwise, there should only be one. uart1 and uart2 should have
->>> different nodes.
->>
->> Agreed. v3 sets maxItems to 1. Only pcm_spi and pcie keep more, as
->> their groups carry different signals of one device.
->>
->>> So here, maxItems should be 1 for similar reasons.
->>
->> Agreed, v3 does this for i2c too.
->>
->>> I'm also curious about why this goes up to 74. None of the functions
->>> have 74 pins, surely?
->>
->> A conf node can set the same config on any set of pins. 74 is all the
->> pins. The EN7581 binding does the same with 58.
-> 
-> A difference in philosophy I guess - I would be grouping the pins in the
-> config node by user. So that there would be something like
-> 
-> spi1-stuff {
-> 	spi1-function {
-> 		function = spi
-> 		group = spi1
-> 	}
-> 
-> 	spi1-config1 {
-> 		pins = 1, 2
-> 		config1
-> 		config2
-> 	}
-> 
-> 	spi2-config2 {
-> 		pins = 3
-> 		config1
-> 	}
-> }
-> 
-> spi {
-> 	pinctrl-0 = spi1-function, spi-config1, spi-config2
-> }
-> 
-> or
-> 
-> spi {
-> 	pinctrl-0 = spi1-stuff
-> }
-> 
-> IMO, having config nodes covering more than one "feature" doesn't really
-> make sense, as you'd end up with something like:
-> 
-> spi1-function {
-> 	function = spi
-> 	group = spi1
-> }
-> 
-> all-config1-config2 {
-> 	pins = 1, 2, 4, 5
-> 	config1
-> 	config2
-> }
-> 
-> all-config1 {
-> 	pins = 3
-> 	config1
-> }
-> 
-> which kinda falls apart I think when a node can request a setting for
-> pins that are not part of it (in this case, that's pins 4 and 5)
-> 
-> spi {
-> 	pinctrl-0 = spi1-function, all-config1, all-config1-config2
-> }
-> 
-> So my opinion is that the max number of items should be the size of the
-> largest peripheral.
-> 
-> What's the largest actual user on the 7581?
-> 		
->>
->> v3 will follow shortly.
->>
->>         John
->>
->>
+- For a pin in UART function, the GPIO report (0xB0) reads 0. With
+  RTS/CTS flow control, the CTS bit stayed 0 while the peer toggled
+  RTS. With DTR/DSR flow control, the DSR bit did the same.
+- With flow control on and no data, the chip drives RTS (or DTR)
+  active. I read this on the peer.
 
+For v4 I am changing TIOCMGET so that it does not fail. Lines whose
+pins are GPIOs are read from the chip, as now. A line in UART
+function is reported as the get_mctrl() comment in serial_core.h
+asks: CTS, DSR and DCD active, RI not active. RTS (or DTR) under
+flow control is reported active, as measured.
+
+TIOCMSET does not return -EINVAL any more either. It ignores RTS
+while RTS/CTS flow control owns the pin, and DTR while DTR/DSR flow
+control owns it, and it sets the other line. So DTR can be used
+together with CRTSCTS.
+
+Thanks,
+Michael
