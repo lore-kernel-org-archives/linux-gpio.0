@@ -1,49 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794936157;
-	b=hV9zDU1cw7k1gIsqeETbQnuUKTZYM7Jx34bH5ZcQR8VPu8HQ6siLds+o7BblhjLEuk9U
-	 u+WDUPheBYa9L281R0haLWi4FpWzRhGvGF5GZYNU8qutID/g5fIGtzxB6xPnedYtiuUIx
-	 5+6pk27VlYkMsiED3pqCx0Cc9BVDkpCfOyyiDip2VTkMqIV8GUiHoqRehcdLB5Ee3OiaK
-	 Lw+pgknWCnI2C5qdWFqA/rjRkbVFYiWLt/kq2J18LYYfqKZuY9IQjC9+tg9u2C8H9ttmW
-	 9iP1mbrjFQa+i24hI8xYQNcfgzQ8RN5zNc4q33yOyElB9fjEjW8M+u2N6QOdvMFBPfQ==
+	t=1794938633;
+	b=r/EiRjtW0qhXq+0E6zSpMK43nFT7aeC/g5yTcrnzW27+nos3MXigXu4bBWmC2S4h3EWg
+	 Ua0y6xR3hJtwIDtZniQT5lWFeEUFi4jmLEf2DhcBEcrNML60qGb6Al4/eFRrXGEkshrEd
+	 WmyHCebQRovtpCSIJEdsrS+M8G4xYci3D8CMecT/Bo4A9bhEvo3GxvRK0wNFPO8cqE72t
+	 7KPNqC1LnFV2vfu44TCu+nXNoKLXqUog1zRrsb4p2nit5X8w/fo7WyOx4u9vwujOjQUIC
+	 DzNuinFJ8hxUgskGEJadymmQpYqhwJKtsVqQ6ZFYy6YMb4D2xco28bnNQIDejkkT3Dw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794936157;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=K8c9i2c9pA77ON1bwB34pN+TouNHlVdKNHMldunC6Ho=;
-	b=qVxGHWFNlDoxFl8YaQmjH3gL5GzxVEC1m3Yzbn3v0pS/09bIgNgnGY21uoySE9FXWaZ9
-	 n2yMvRg3EoEidQsEulZRsdZGZEJepk4gW/RT4Jv2BYPsoT3DJvQFDTm5O2ZEptgQdwmI0
-	 y3419aKLNz7onWXQT2ia5KgQS92EmNlzjvUjEyjg/6wM3E8Sram+RDFquJN+f0p3apP2X
-	 ced+cHl5aGQ844EtIn6xORwt3YeoFPOEx2XbpV3V3mzbg0vChYY94B98SieJMxOz+2Wu1
-	 SFQUSpufNL5Wt3aLTHhhZMbVCgstlpF2+7Ano+trOl4WFix5ZNhTdKMhl0+Nf2sGVDQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794938633;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=IhKPOj7Hor5KmSjiCzxW9s+vgx6buagkucJfrANTbbM=;
+	b=Q2XqagWYcV0jXj5VpftJerBb5IaYVGE14zWwoUwDO0wqZmQU/KCWBEQII7IO5k+/xZJw
+	 ohnTLvs1TNzKtNr0f7UI4qmCjpAxTb6neJforGKuB1q1oLvPYjWosZq5m1TEY/CU3SLKY
+	 uwyROeSD0PoViThlKhF21iR7l7hCV986w9wsXHcRr67s8vFqDdIibxTtmG9Cv9vSsjG3V
+	 PJhnTMQhjzx51gOLDmmkt/L+cY5T5A2iZlyBBJbJWozvr2wypnZUwXiY/1w3vKgr7TpPg
+	 9+Qo1PHbmSwD9mftftXw+OWqq2h0sVh8eCSviJ6AQUaPkZC9+AzJeEcvJInFIye3Qww==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b="JrhUs/dN";
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C366606A88D;
-	Tue, 17 Nov 2026 17:22:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C366606A88D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cKqwZ9AI;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2EE606A31C;
+	Tue, 17 Nov 2026 18:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=JrhUs/dN
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7C281A00;
-	Tue, 17 Nov 2026 09:22:33 -0800 (PST)
-Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06AAE3F632;
-	Tue, 17 Nov 2026 09:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794936156; bh=jCf/7a/YsnLbBlVT2TCDpR5Rx5MDswY+TpQ4UF++u2c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JrhUs/dNEIiQrr+/fgwKCnNl6TD35vdP16BsU/ZIFqsA/KLgpTVbHKprOfL+6wMok
-	 H/uYWKOGIDQNUILCf/caFLrLO3Q5XIqFEFcPcQyeDiMc5+uv0k4Gz2CyXPaUQtIt5Z
-	 y6oTZAuRVjiWbda/dmaY3wYF6OGb9v+JzHIhEJ90=
-Message-ID: <76d4d8ee-801d-426f-bda9-2ed8b9a074e0@arm.com>
-Date: Tue, 17 Nov 2026 18:22:37 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cKqwZ9AI
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E231F000C5;
+	Tue, 17 Nov 2026 18:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794938632;
+	bh=IhKPOj7Hor5KmSjiCzxW9s+vgx6buagkucJfrANTbbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cKqwZ9AIMIJWxujQ8XjH4udI9D9vAjOKNWATMZYLEBdrXO17pKIA8QO7EMiMftYW2
+	 1zEdmsTstOQ2ZvvctwDEIwkHTWR7ed+XDCxWPC1NqAj/A/lQt0wB2KMDZlXtXkn4Ef
+	 +c9IhEYakqLVuzuFPVsDfC3Ez/ezg/mCFEy82bTws6jKskf1Vj5fKpJqgLsyxALH0Y
+	 0XLLt8Z5q1DNt63iguUD3P1Z5qdcJC2daECEzt34/M5Zk/6ioRF2eCVvPmKmUgrqAe
+	 lgqhpDTBBuRh1+jk3DynAX3Nk5yxB7SGlAF0SIoIKG84rlVoohM+GjlJg0tiTiO1aV
+	 2vcxfm/KxhsTg==
+Date: Tue, 17 Nov 2026 18:03:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: John Crispin <john@phrozen.org>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org, lei.dong@airoha.com,
+	Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	mfd@lists.linux.dev,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com,
+	zhengping.zhang@airoha.com
+Subject: Re: [PATCH v2 5/7] dt-bindings: pinctrl: airoha: add AN7589
+Message-ID: <20261117-illicitly-translate-2d16b1279df9@spud>
+References: <20261112185941.1316112-1-john@phrozen.org>
+ <20261112185941.1316112-6-john@phrozen.org>
+ <20261113-fame-smock-6ea3b8fadcd0@spud>
+ <b94ed5e4-cb80-4e05-9964-bb08a61aa1fd@phrozen.org>
+ <20261116-resolved-riot-c6a310bb2d8c@spud>
+ <e20f708f-ebfe-4dc0-a64c-1590fdf608f3@phrozen.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -53,73 +75,146 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: sunxi: a733: do not switch the mux to read IRQ
- lines
-To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>,
- Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org
-Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Enzo Adriano <enzo.adriano.code@gmail.com>,
- Pablo Mazzini <pmazzini@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8k1LZRwMDy0PRoKK"
+Content-Disposition: inline
+In-Reply-To: <e20f708f-ebfe-4dc0-a64c-1590fdf608f3@phrozen.org>
 
-Hi,
+--8k1LZRwMDy0PRoKK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/10/26 14:01, Vinicius Pedrosa wrote:
-> The A733 description sets irq_read_needs_mux.
+On Mon, Nov 16, 2026 at 08:39:21PM +0100, John Crispin wrote:
+> Hi Conor,
+=20
+> On 16.11.26 19:15, Conor Dooley wrote:
+> > On Mon, Nov 16, 2026 at 06:47:27PM +0100, John Crispin wrote:
+> >> On Fri, Nov 13, 2026 at 05:40:42PM +0000, Conor Dooley wrote:
+> >>> As Lee requested, please split this out. Two patches, maybe even thre=
+e.
+> >>
+> >> Agreed. v3 splits it into three patches.
+> >>
+> >>> Do we even need a child node here? If all this node does is
+> >>> gpio/pinctrl, why can the driver not bind directly to this node?
+> >>>
+> >>> What else does it do that warrants being a syscon?
+> >>
+> >> The block also holds the PWM controller. Its registers interleave with
+> >> the GPIO ones. The PWM series adds it as a second child, as on the
+> >> EN7581. That series has a depency on this one so I have not posted it =
+yet.
 
-ouch, I missed that, sorry about that. I removed that even explicitly 
-from the A523 ...
+Hmm, or just add #pwm-cells to the syscon node itself? There's no need
+for a child node just to put #pwm-cells and a compatible in it. The pwm
+driver can be probed via mfd using mfd_add_devices().
 
-> When a GPIO used as an
-> interrupt is read, sunxi_pinctrl_gpio_get() then switches the pin to
-> input and back to SUN4I_FUNC_IRQ, which is function 6. The A733
-> interrupt function is 14, so after the first read the pin is left on
-> function 6 and its interrupt no longer fires.
-> 
-> On my board this breaks microSD card detection: the PF6
-> card-detect line is read at probe, and after that neither removal nor
-> insertion of the card is noticed.
-> 
-> The A733 data register reports the pin level while the pin is muxed
-> to the interrupt function, so the switch is not needed. The A523 and
-> D1 descriptions do not set this flag either. Drop it.
-> 
-> Fixes: 0535bfbfa97b ("pinctrl: sunxi: add support for the Allwinner A733")
-> Signed-off-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+> >>
+> >>> Otherwise, there should only be one. uart1 and uart2 should have
+> >>> different nodes.
+> >>
+> >> Agreed. v3 sets maxItems to 1. Only pcm_spi and pcie keep more, as
+> >> their groups carry different signals of one device.
+> >>
+> >>> So here, maxItems should be 1 for similar reasons.
+> >>
+> >> Agreed, v3 does this for i2c too.
+> >>
+> >>> I'm also curious about why this goes up to 74. None of the functions
+> >>> have 74 pins, surely?
+> >>
+> >> A conf node can set the same config on any set of pins. 74 is all the
+> >> pins. The EN7581 binding does the same with 58.
+> >=20
+> > A difference in philosophy I guess - I would be grouping the pins in the
+> > config node by user. So that there would be something like
+> >=20
+> > spi1-stuff {
+> > 	spi1-function {
+> > 		function =3D spi
+> > 		group =3D spi1
+> > 	}
+> >=20
+> > 	spi1-config1 {
+> > 		pins =3D 1, 2
+> > 		config1
+> > 		config2
+> > 	}
+> >=20
+> > 	spi2-config2 {
+> > 		pins =3D 3
+> > 		config1
+> > 	}
+> > }
+> >=20
+> > spi {
+> > 	pinctrl-0 =3D spi1-function, spi-config1, spi-config2
+> > }
+> >=20
+> > or
+> >=20
+> > spi {
+> > 	pinctrl-0 =3D spi1-stuff
+> > }
+> >=20
+> > IMO, having config nodes covering more than one "feature" doesn't really
+> > make sense, as you'd end up with something like:
+> >=20
+> > spi1-function {
+> > 	function =3D spi
+> > 	group =3D spi1
+> > }
+> >=20
+> > all-config1-config2 {
+> > 	pins =3D 1, 2, 4, 5
+> > 	config1
+> > 	config2
+> > }
+> >=20
+> > all-config1 {
+> > 	pins =3D 3
+> > 	config1
+> > }
+> >=20
+> > which kinda falls apart I think when a node can request a setting for
+> > pins that are not part of it (in this case, that's pins 4 and 5)
+> >=20
+> > spi {
+> > 	pinctrl-0 =3D spi1-function, all-config1, all-config1-config2
+> > }
+> >=20
+> > So my opinion is that the max number of items should be the size of the
+> > largest peripheral.
+> >=20
+> > What's the largest actual user on the 7581?
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+>=20
+> The largest users are EN7523 pcm_spi 14, AN7563 pnand 17, AN7583
+> pnand 17, EN7528 pnand 17, EN7581 pnand 17 and AN7589 emmc 12 (these
+> numbers are based on a hackish "grep foo | bar", so they might be
+> slightly off).
+>=20
+> I copied and modified what the other AN/EN bindings do. These set the
+> limit to the pin count of the SoC: EN7523 38, AN7563 38, AN7583 53,
+> EN7528 50, EN7581 58. Your call really, I do not mind either way. I can
+> send a v4 and then a follow up series cleaning up the existing bindings
+> as well.
 
-Thanks,
-Andre
+btw, please do not top post.
 
-> ---
-> Tested on a Cubie A7Z with the pending A733 clock, PMIC and DT series
-> applied: before this change PF6 read back function 6 and card removal
-> and insertion were not seen; with it PF6 stays on function 14 and one
-> removal/insertion cycle was detected.
-> 
->   drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-> index ca82f08a3a65..456d9170c2a2 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
-> @@ -23,7 +23,6 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
->   
->   static struct sunxi_pinctrl_desc a733_pinctrl_data = {
->   	.irq_banks = 10,
-> -	.irq_read_needs_mux = true,
->   	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
->   };
->   
+I'd much rather not let this permit doing things that do not make any
+sense.
 
+--8k1LZRwMDy0PRoKK
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavyXAgAKCRB4tDGHoIJi
+0kYvAPi/HmH3Vy8OOZFdQP22lPQI2A+1zxWZ5QRthgGK9h06AP9Ck9DBOrdwBmuf
+j1r5gIqXcDkItxjnbOdp4z1RBb6vCw==
+=sWmb
+-----END PGP SIGNATURE-----
+
+--8k1LZRwMDy0PRoKK--
