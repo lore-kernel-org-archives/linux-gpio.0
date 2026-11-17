@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794910498;
-	b=y1qpkkCrHpXxyNF6tFNY7ySKzThzVdrece9HEWQPtCnzr2udYpZUB6SVP58M4gzZiAUd
-	 peMpJwzgLkIJKxVmV7k2qEA3/RRB2/ih8m3VCqm/tstzPZh4NAQF4x2BSLM9yErOudsr8
-	 gIDO/3LXUOvDAZ9Nrn8Guvqq9t7ML2ntrz+oSElnkua4tUcBVqRPAZ25cbkGcdXf1j5mD
-	 6Eio27PfcuQavd/kvmG7tjMMTWqTj8GVWgHnXHkKLliboRZgR0oIpLFjYAV47VRzoegY7
-	 QkSfO/xXc2yXx458Wj/V6l9Qj5x4isgwvJYyEnauHbIKr1OQ7RWZsiy8Y2muHpqc+Vg==
+	t=1794910614;
+	b=wYvHMnhA2UjoquvSYrD+H3wvOwihbrASPYQ394JL8cexHFkH1DLmvFJTaAOAGtLkh8dg
+	 hwgZYibwhh4E1peYBHZEuKD/vlkfmpY2Pf5kKsxqPJOtFz/cXMSaKlxwXC/OkeW1EuqWC
+	 jxAlm47klQ19PAe8Q+8EAqsR6wUy8ZcVW+ueQFeeGzC3JFxjNcaEDPGT759gvs3cDfgVa
+	 APIGVwKUFEK1KUBUJaHpwI620W36BoHkzkODD6cJBghWCw5/VpR5EIjM4K/7kQwBbDItU
+	 BrrWZkW+3FFEJHdWqpFNEB1Kpa/Y8ljLQUHvqG/MR6onLLcq3PzPhd+KFvbVF8HWMqA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794910498;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794910614;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=YEoIVQrsnMK03GXZ9yaNEeHSXN3ZzTQo9mxTUCAf4G8=;
-	b=jRpKHdLybFSXXDOUGUvkvRLpgPeKtdq/EPpuwnAZAiiuwoDQnI669cwofIDwVnjHZXNZ
-	 R/qt970vTyO9N+74Zism0hi6goHuUhJ6mqVx++GFF91By9rOOTEoe5Ps68eK9prQuNT8C
-	 DM3HbWZCWy8tlM2/wY34mmoSI/KbYzL2MY0rFI/34upksIltrnU94M6y+ZTBTHNZnHz8Q
-	 90PPKRAPGcjWVQCGSCiPzs3YjVTDoiUyNTQp0FUWd3TS2WfLkxFvc3dTGLz3iEeo7Mf8+
-	 kSihsm6mQMYBVi2MZehFZneexdGtPKuz6MLcQGttWTmmmOfVqT9qEzqE4/lAstfVOFQ==
+	bh=VJrPkEwrXALFKL8vNpK+3kHWDK52Q6H3V8vvWXAX71A=;
+	b=slZfHHfvI5oCShPJr4SFw7POd1+wjm55mP/7MrKvwHgnFE070BW0C9SiIyIgUe/B/uje
+	 +0c43cjGvOQQPFkPne91qrD4HzADsYGn1e5aOaEE/wBRPGpko9tAlMSP0Ai+3sXH4gOyZ
+	 jnps5sewL1kAm1fYKTm/xh2nNRYABWCHpfWjJ646PQlQ1IaYzw4hRS3kqkhEXaMfvWj8Z
+	 OxInwmZF0B2+S/XPGT1fHdDWghZqxvvYMLUfyOGAalddBp1GK+9szGF/JL+Ai1sW5Svnl
+	 3fa4BMJdQco6ZkHfdBIFHopARl+gYXqEo5UBLMcNJcoyZnkzx9Cg/RQsIGHXzzhaVBQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jk10xqb7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="m7/VIA1J";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FE7606A88E;
-	Tue, 17 Nov 2026 10:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B27606A329;
+	Tue, 17 Nov 2026 10:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jk10xqb7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD5F71F000C6;
-	Tue, 17 Nov 2026 10:14:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m7/VIA1J
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F741F000C5;
+	Tue, 17 Nov 2026 10:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794910497;
-	bh=YEoIVQrsnMK03GXZ9yaNEeHSXN3ZzTQo9mxTUCAf4G8=;
+	s=k20260515; t=1794910613;
+	bh=VJrPkEwrXALFKL8vNpK+3kHWDK52Q6H3V8vvWXAX71A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Jk10xqb73ij4wE1zD0h3giueyrs/bZ3osUM2i3FdxjGtaL7a25NqRKM8Oad0Pt8wK
-	 rE6ps/Q6MwB4RdkfqlI5kOOPViuhfIY1NYjwI1evG+kE/2E5vB5Kh+1H8NqPxPsEHe
-	 oGY5cokpHphOasjHfkwALeadR2rNzwN2ZL8rXH+zybpl/Lye9MOTVe+UHmGhhiXcOs
-	 4HpVAGtChL9/aUOc9aKv0E0q/vKe6Y4LLUNJkKTQmO6dO2fjJyW7u13T9tTMDzyr6y
-	 vJ++CXFROBdZO1hOJSrR9Yx263ccLouL2JjZbux2N+h8cbImOev8WPlNsaXKZpcdvU
-	 L63i6SA2NA1Xw==
-Message-ID: <46e7b998-ffad-4401-b90b-862b05dd668d@kernel.org>
-Date: Tue, 17 Nov 2026 11:14:52 +0100
+	b=m7/VIA1JSqEZ2Oh0xvhh8ThLJr0XTPfb+nOtVHPPVR2uyYPLfAUCmgqnuF67H3DtN
+	 pH98/QsIV+CP+T6FEkU1SiIDTCmGVUYkJTshBWe41GBN3mwYOImgaXpJB0tS3WPvt7
+	 INpTZA+LSAx7KP30PMsTvWc3mLQEogN4ri7qyH3giTxNKfrIKNmKDOdte1C+h2G9sF
+	 7ybWf07MBACVXYHMwiVWxk5+H0gtem5FAHPmnjYKG1SuHfDInpQILytpav4Zldu+7L
+	 gx5DIoco+Eg9QCoRrPDg76BiqKtKHrgK/dNLvg/AStei/cUD4XZvBPwbUGDvQT6jBM
+	 /7PrWq2LhVe4A==
+Message-ID: <7e8fc808-9cd1-482c-947a-aedf60bd1175@kernel.org>
+Date: Tue, 17 Nov 2026 11:16:48 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -52,7 +52,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] pinctrl: qcom: Add qcs615 lpass lpi pinctrl driver
+Subject: Re: [PATCH v2 3/3] arm64: defconfig: Enable QCS615 LPASS LPI pinctrl
 To: Karthik S <karthik.s@oss.qualcomm.com>,
  Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson
  <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
@@ -61,7 +61,7 @@ To: Karthik S <karthik.s@oss.qualcomm.com>,
 Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20261117075100.272535-1-karthik.s@oss.qualcomm.com>
- <20261117075100.272535-3-karthik.s@oss.qualcomm.com>
+ <20261117075100.272535-4-karthik.s@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,36 +107,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261117075100.272535-3-karthik.s@oss.qualcomm.com>
+In-Reply-To: <20261117075100.272535-4-karthik.s@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/11/2026 08:50, Karthik S wrote:
-> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-> index 707067b9251f..abe7155f209f 100644
-> --- a/drivers/pinctrl/qcom/Kconfig
-> +++ b/drivers/pinctrl/qcom/Kconfig
-> @@ -72,6 +72,16 @@ config PINCTRL_HAWI_LPASS_LPI
->  	  (Low Power Island) found on the Qualcomm Technologies Inc Hawi
->  	  platform.
->  
-> +config PINCTRL_QCS615_LPASS_LPI
+On 17/11/2026 08:51, Karthik S wrote:
+> Enable the QCS615 LPASS LPI pin controller driver as a module.
 
-Why breaking the alphabetical order? It's not really difficult to spot
-the next entry after this one.
-
-> +       tristate "Qualcomm Technologies Inc QCS615 LPASS LPI pin controller driver"
-> +       depends on ARM64 || COMPILE_TEST
-> +       depends on PINCTRL_LPASS_LPI
-> +       help
-> +         This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-> +         Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
-> +         (Low Power Island) found on the Qualcomm Technologies Inc QCS615
-> +         platform.
-> +
->  config PINCTRL_MILOS_LPASS_LPI
->  	tristate "Qualcomm Milos LPASS LPI pin controller driver"
->  	depends on ARM64 || COMPILE_TEST
+Why? Please look at multiple previous review comments or git history. I
+don't get why defconfig update from Qualcomm every time receives the
+same comment, even though it is documented what is supposed to be here
+and previous discussions/git give clear guidance.
 
 Best regards,
 Krzysztof
