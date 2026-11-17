@@ -1,94 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794911027;
-	b=nKlcwK1yx2Pw4j9GTM5/mFzn1cwSnSkbg1zN/yUI7XzsQU8lu4FivIxK49mZ6KdoyegL
-	 7t+kZRx+XfwOt16L+u3lz1OXCXFJM+ofP5XEfaRaayGFPhUltuyXwH3AOYKsJks5xS/it
-	 PQBYcEtozGooXRblwrEOcrbLB9MztdjmpmBFXd8DhkrNtMzGUKYXDF3jVHzQ4ol1WpjVR
-	 IMRqILiyodR4TrMBr/R7PD3Eeo+ePmVlHakYKKELksEezigEXghmCgonj0lulnqMZ6z9y
-	 nrVe9+kuFHarpm+rqGg/SwwtlylORXPo9B4utUZ6c2jKrOcTETDo2GSqKRvcVbW0Sqg==
+	t=1794911947;
+	b=w4E2HBj3aYhasZQFfXaXSRh+YO/PHqO+h1sN6eJpVVhPkjcihqTqHustQnn8qmepkkvR
+	 M67WzLP19mObgkKHTPPLKHpRKSN9gkejXXdW0GfHk8kH7X6UMKGTm6UxW4y9z5u0eESJL
+	 8QXy3oFhbvvxJRHBnZzFpBoQ48zH1Ji1LGBnLMp6uqT3SqANIorE9tPHhaKro9FE3oSKp
+	 2mpMyLyCtq8j7QPchalOi320oAek6EgZA9lDCjZrHPa+dniIYDZRSlv7W2+iHt2tD/8M5
+	 5Dc6wPUKfabWkR1h30RMMqWqiQxxZbg49xfmfAVyo8FbyM8Ox1I5y4zaQCh6D5dGb3w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794911027;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=VymKjGyAJ2q2GfXg59+jpmA7NxuGTz8C+f/PCqXEurU=;
-	b=PzH5JnNP2bVp7C7TSUcz7pmhp4mY5v2NrPo/N0OruIQPh2kff8sacQtilxytXPT+wgPD
-	 AS+nnTNo/r6VXTNPffJEsBUUm/VBTjYJu/547eGjK7NpmHkrTcF0EVdxvYN9HQ6pBfXxD
-	 iKxi7Kqk4isWZror44el5N/MPtuRnwM5pipXLvPlnjxbH/oHHxkHPiGXW4LgVOn+9PXw0
-	 0iZxsry1bbdA9MlkbmZC29RlUvfz4K7dx8qu32q5HU8JqegLMujIauNDbzK1eJZocoXte
-	 DOt53LvxSlRK8yiLyEF9D4H7gCoaABIg0cxcl/sPY4ESiSNR2M5olgC3fmiyfQ5ZOWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794911947;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=NuyW+LPkABdZOmh3sBu4i9JSnfftHozPE5xHuZU3CeI=;
+	b=F1pZPIS8YWVgmTomvmKxXowuVHSRgLpohEFEvoTcNAN45Gzt6OyoYw0sP54oa1nkCQUV
+	 X/tTkk/9nnYOVAV/VGQI6QCSITtCRzKCdU6t4InbVuNiKqbdkIKtkC+MkBJI6mJXagqWQ
+	 6jCI/HvXTxkP6GLh5GpbBDnAuGZknjTy0gDMnS5VlrHNsmWXq766KStM6kw7NCf0fHj2D
+	 AEDGUzFrbuLdYID2VHXQvJEb0H57Z/lYqQWI2PYxJbuTTo82v+hGn1Y8YCjloBHalnyGe
+	 hpBnOI1O+7uUSgwRe33Gn4ojBZucUcrL1JO2nca0KzGoCdCluPsLwHWd1Y1C5nU/y3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Z3wSleuz;
-	arc=none smtp.remote-ip=198.175.65.18
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kCMXh3Ru;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB510606A323;
-	Tue, 17 Nov 2026 10:23:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB510606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A585A606A329
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Z3wSleuz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794911027; x=1826447027;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g2/a/v/77F7SZjM2iQWCePueXVd22kk+1HO6GSj35yQ=;
-  b=Z3wSleuzSaYZRZ91kreHBHCV/tn1nxTLfEqQ0hCZ6rWdAWUXlvNXlLTm
-   ZwlBQdb/2UewJ/Ne7zLvrKDpI7fdE4dl1bFDaDYfsrXWC3MTaIF+QVWy0
-   hMs8EraWuY2iLxG/eOom2XV+5CE1w9laTWoaw6aW9HXfieX9YxdzPrF47
-   H9Wy8Mb4xIxxTiSP8Hiy5YnKMweFmgkBxDwrH8A5z4Uxr8vVaT0LjflIY
-   ++YO9qF3V352JHEarNfAzwVw8FCu0DNyH+nlzZNYHZugHdx3+bjJ5cY4S
-   9IX1y+8cnexzZpaHl+3m85J2ipT6RKoQj+1ScQgGul9IVZLG2GECOBBz3
-   A==;
-X-CSE-ConnectionGUID: WsZrlZWBSIePnIROfgQHJA==
-X-CSE-MsgGUID: uFkJ0UTJSQ2kIiJfywOKzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11968"; a="3698086"
-X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
-   d="scan'208";a="3698086"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2026 02:23:46 -0800
-X-CSE-ConnectionGUID: MCFlTQPTSiG2kSjVPlvirA==
-X-CSE-MsgGUID: KbmW/sXKTm+5ZspZvPHxvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
-   d="scan'208";a="9934710"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.254])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2026 02:23:40 -0800
-Date: Tue, 17 Nov 2026 12:23:38 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Len Brown <lenb@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-acpi@vger.kernel.org, driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] gpio: shared: generalize most code to firmware
- nodes
-Message-ID: <avwrKmg3uyvP19pq@ashevche-desk.local>
-References: <20261113-fwnode-for-each-prop-v2-0-4edc23d5cf50@oss.qualcomm.com>
- <20261113-fwnode-for-each-prop-v2-10-4edc23d5cf50@oss.qualcomm.com>
- <avc4g9cbAOEElzRX@ashevche-desk.local>
- <riqrrdjxaygsphy2mxe5xbsrokjtw6kyrneiyzsh7kld4qnrwf@iaa73bchswrz>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kCMXh3Ru
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C25E1F000C8
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794911947;
+	bh=NuyW+LPkABdZOmh3sBu4i9JSnfftHozPE5xHuZU3CeI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=kCMXh3RuzFG0Ug/pEgPdThQxr6c4ceYwJwzJCgsccTaPx/IE81y5TbFtll09nr0Y4
+	 aqTBrPQVPxGZj56gp2+Qkp9bYLjjgaXtDBCrUpkj1sBEcodwqDBgHzf6+u9wbHDXQS
+	 N7KTYTmzj7EERVsE3wGws0Ur05cqGWBQ46VMs0oB+pEhhO0UY+IIa2WZDwH9bb9D7L
+	 d1sP3YHz4HOa9L6VKpc+AUSz4a0pIfATu90CQd53LCHolba+sJnvw6omsnBLrV2uBs
+	 7nJMUA22b4KI9eCp9bh5AMNk9KDDz4YDkngfaD1FPorh9JjZMzmAjxwqfFJJQYp7lv
+	 41nTwTwaGbcWQ==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3adfc004920so45157331fa.3
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 02:39:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHWj71cDz1kwfiiKPiYcbLKjB23qOOJpFpqSSlESxkXlYDl6BW2ZYj1QonhhSsvplrFpN6UlmqZtVt4@vger.kernel.org
+X-Gm-Message-State: APuU4Z+3OqH6lhF1xXva7Rs6Y8zGTJN+XDMlNszMuYncbCKrW7xxYfCv
+	37QLn1bUjoVFIB2lNpV+S3WgP9gb3XrOLuS6SF/FDrYENvojbXZcM3dOiMzka3b1IpBPgh8p9w7
+	ZnWyZAn57DUZGv5PJRZfrlyJvfk6y7Po=
+X-Received: by 2002:a05:6512:1317:b0:5c1:57ee:1887 with SMTP id
+ 2adb3069b0e04-5c1709991c9mr5809743e87.13.1794911946039; Tue, 17 Nov 2026
+ 02:39:06 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -98,63 +59,114 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <riqrrdjxaygsphy2mxe5xbsrokjtw6kyrneiyzsh7kld4qnrwf@iaa73bchswrz>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20261109-sf19a2890-gpio-v2-0-b885fbd84c4c@telaak.dev> <20261109-sf19a2890-gpio-v2-2-b885fbd84c4c@telaak.dev>
+In-Reply-To: <20261109-sf19a2890-gpio-v2-2-b885fbd84c4c@telaak.dev>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 17 Nov 2026 11:38:53 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkGavE9jL_EbPB2iPH=Aa=4Vdwj4nvHgiauJtq-dbwKZQ@mail.gmail.com>
+X-Gm-Features: Aa3M54ppfeS06feOaViTWRV8zuTIrQ_dO7MWlQDFZO4SKHToSwYpGEh5iS9tAzY
+Message-ID: <CAD++jLkGavE9jL_EbPB2iPH=Aa=4Vdwj4nvHgiauJtq-dbwKZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] gpio: Add Siflower GPIO controller driver
+To: joseph@telaak.dev
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
+	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Qingfang Deng <qingfang.deng@siflower.com.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 17, 2026 at 10:50:38AM +0100, Bartosz Golaszewski wrote:
-> On Fri, Nov 13, 2026 at 06:19:15PM +0200, Andy Shevchenko wrote:
-> > On Fri, Nov 13, 2026 at 04:47:10PM +0100, Bartosz Golaszewski wrote:
+Hi Joseph,
 
-...
+On Mon, Nov 9, 2026 at 9:09=E2=80=AFPM Joseph Telaak via B4 Relay
+<devnull+joseph.telaak.dev@kernel.org> wrote:
 
-> > > -static int gpio_shared_of_scan(void)
-> > > +static __maybe_unused int gpio_shared_fwnode_traverse(struct fwnode_handle *curr)
-> > >  {
-> > > -	if (of_root)
-> > > -		return gpio_shared_of_traverse(of_root);
-> > > +	int ret;
-> > > +
-> > > +	if (gpio_shared_fwnode_ignore(curr))
-> > > +		return 0;
-> > > +
-> > > +	ret = gpio_shared_fwnode_scan_properties(curr);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	fwnode_for_each_child_node_scoped(curr, child) {
-> > > +		ret = gpio_shared_fwnode_traverse(child);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
-> > >  
-> > >  	return 0;
-> > >  }
-> > > -#else
-> > > +
-> > >  static int gpio_shared_of_scan(void)
-> > >  {
-> > > +#if IS_ENABLED(CONFIG_OF)
-> > > +	if (of_root)
-> > > +		return gpio_shared_fwnode_traverse(of_fwnode_handle(of_root));
-> > > +#endif
-> > > +
-> > >  	return 0;
-> > >  }
-> > > -#endif /* CONFIG_OF */
-> > 
-> > Hmm... What do you exactly get from the compiler without this uglyfication?
-> 
-> The alternative is an empty stub for gpio_shared_of_scan() and keeping
-> CONFIG_OF around most of the code in that file. I think it looks better
-> this way.
+> From: Qingfang Deng <qingfang.deng@siflower.com.cn>
+>
+> Add a driver for the GPIO controller on Siflower SoCs.
+> This controller is found on all current Siflower MIPS and RISC-V
+> chips including SF19A2890, SF21A6826 and SF21H8898.
+>
+> Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> [Joseph Telaak:
+>   - take it from Chuanhong's siflower-7.1 branch
+>   - depend on MACH_SIFLOWER_MIPS instead of OF_GPIO, longer Kconfig help
+>   - get the reset with devm_reset_control_get_exclusive_deasserted(),
+>     so it is asserted again only after the GPIO chip is removed, not in
+>     a .remove that ran first
+>   - drop .owner and the unused drvdata, and get priv with
+>     gpiochip_get_data()
+>   - drop the irq_set_affinity callback, which reached the parent
+>     through irq_to_desc(), not exported with SPARSE_IRQ
+>   - call gpiochip_disable_irq() and gpiochip_enable_irq() from mask
+>     and unmask, as an immutable irqchip must
+>   - find the group by its parent IRQ instead of assuming consecutive
+>     numbers
+>   - return 0 or 1 from .get
+>   - use readl() and writel() directly, without wrapper functions
+>   - take the number of lines from the match data, not from an
+>     ngpios property
+>   - include linux/math64.h, drop the unused linux/pinctrl/consumer.h,
+>     sort the includes, spell it "Siflower"
+>   - subject]
+> Co-developed-by: Joseph Telaak <joseph@telaak.dev>
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+(...)
 
-My question basically was what will go wrong if you drop that #if completely?
+> +static int sf_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
+> +
+> +       return !!readl(priv->base + GPIO_IR(offset));
+> +}
+> +
+> +static int sf_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
+> +                            int value)
+> +{
+> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
+> +
+> +       writel(value, priv->base + GPIO_OR(offset));
+> +       return 0;
+> +}
+> +
+> +static int sf_gpio_get_direction(struct gpio_chip *gc, unsigned int offs=
+et)
+> +{
+> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
+> +
+> +       if (readl(priv->base + GPIO_OEN(offset)))
+> +               return GPIO_LINE_DIRECTION_IN;
+> +
+> +       return GPIO_LINE_DIRECTION_OUT;
+> +}
+> +
+> +static int sf_gpio_direction_input(struct gpio_chip *gc, unsigned int of=
+fset)
+> +{
+> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
+> +
+> +       writel(1, priv->base + GPIO_OEN(offset));
+> +       return 0;
+> +}
+> +
+> +static int sf_gpio_direction_output(struct gpio_chip *gc, unsigned int o=
+ffset,
+> +                                   int value)
+> +{
+> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
+> +
+> +       writel(value, priv->base + GPIO_OR(offset));
+> +       writel(0, priv->base + GPIO_OEN(offset));
+> +       return 0;
+> +}
 
--- 
-With Best Regards,
-Andy Shevchenko
+So this has one register per setting per GPIO line?
 
+This is ideally handled with select GPIO_REGMAP
+for gpio-regmap.c using regmap-mmio, see for example
+see for example gpio-mvebu.c that does this elegantly.
 
+Yours,
+Linus Walleij
