@@ -1,99 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.27.42.6
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794932249;
-	b=zXBc2MbkZAXF9sIYjForo2CbBAwq9H3FOFuyXJN8jox3GVY/ZROWG596CdgPO9Rc2re5
-	 H1NJC/dMpFzO+mpBYLfkxcrbBKfBAma72E+W+IXqGLB1QDUlE72kzjvyelmN/1VJnFnPZ
-	 c0LD0paPKbll3EH+HJ8RO0hF+TX04dvTWCzJo0+WudIx0813EYQAjns3iQa0tPKupRJTf
-	 BQgOGzHegXd7nL7SxYtTUeY2CZ7zRK09P4PAp+Flt8QrxXYAoNwXs5jrc9IdXr3zWbWnz
-	 3oYG9Y2Nf+zF4PgPIseUAopVZ6KTb5NUN9Bwgw0XeFHV9pTwUSuEyJSxFBvIiAVyMTA==
+	t=1794933869;
+	b=gQBvtaTqNs2wYO/SCZz/Vq+C9pYd4k1y3zCDYUghf0PjINcOBhfSoZ6fyLmk7r9TR7mg
+	 uFALiyW3lh6nCcbT+AcyefRGrXVYLTptqPO7kErFBLQAxNfyzYOHYXacVvcoBiltYEAWk
+	 /r4FJYMNCP9gT1c/os5w8x9gUNYW2E5b5fVIxC8XLaNDedsYDqM/eZBEiDJ/BAFOGsQex
+	 Lx6gFHYw0cuzowfr0ezX6hSn0VuqSRzLL8w1G8yTQck/VhS/itPLhqiDHRBc/HhvBCcpu
+	 VH0rtg49dxUgBDJH/aZnJmgpLDNFMyBVoz+qMOAidJGAppJceYXxrtfpadK99qvTE3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794932249;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=CtUGM4qs3NyrmXicigtcW+0ZUHZL+8lLEGt7ogClzmk=;
-	b=D9Pcyri4araIqcbuiDC2XIal1DOIDeFHrf5ET+zdvwyZrJgdUy+qxEFJ/cpQf36QPok7
-	 s8kBkb0f4Xmq6yQusdA2qVMuDwYvfMVjn3ow988VXCSapa4kyV/I/HbDhBqWhJKyRfpOI
-	 m+5q2NdraU+vrZcz1zLEVC4YACXhfRYGa5QS742x9yt2IyTemzaqaqs9pE9ZZF3t15Ldp
-	 eFTz/T4f5ykshBwfhE9QO0vB05ul31QjwKEubDaZArK32ge/MZms0fP5DxvZA0XjASLI5
-	 3KtIQiKW8raY6o91jYz3mGCsXpWcnV4L2cRF9iONWU5PgCWwSP7dXL8xzvrxT+p+SKg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794933869;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=mmhsYfo4oARdZWXfsQFEQDsYzn+5x9KB/AI2fdJWlJ8=;
+	b=oTnCeI8oG+yN9FyGZrqls8O2gscTRyqYLqNMCZXQapOTe0UgtswxIuaXBwvMYd0vj8nr
+	 Ie2zPW6anbcmxYeIofBrGW6DCwZ2tpbrUIYDBFb3qEur+5LIx6IvU/BDYEc4R773Uakhu
+	 wsBxNOmjqQYDNIlIJwduTvwb43r14880zF4f2qYGBngnX1gANrf4djjQI8J+bXM7R59W7
+	 PsYwBtzfwCtF6XTcHVD/vVq8Hh89WmI2ouSaTV5H32fRAmh0ao5oJT1EkbxsLVyeEHo/Z
+	 pRxH5J7/XBQGMdw7st5znI0KTjYRYjPn/ZXHq3zLg2A8YKZ44S4q3z4r8ixQCKtDhvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YRv5z8YL;
-	arc=none smtp.remote-ip=209.85.128.45
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=free.fr;
+	spf=pass smtp.mailfrom=free.fr;
+	dkim=pass header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=oM6f103S;
+	arc=none smtp.remote-ip=212.27.42.6
+Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4090C606A335
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 16:17:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4090C606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2134A606A331;
+	Tue, 17 Nov 2026 16:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2134A606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YRv5z8YL
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4ba013938d7so286205e9.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 08:17:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794932247; x=1795537047; darn=vger.kernel.org;
-        h=content-type:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=CtUGM4qs3NyrmXicigtcW+0ZUHZL+8lLEGt7ogClzmk=;
-        b=YRv5z8YLbbrtZy+LAnNNRr77AJWNhC/HoGsZBhMUc3UjigZJ4n3p23F79l+33PzxNZ
-         nJYBI6WVubKDGxbEpz8KIhV+/hYNFMojnOpbPlLaf86OJ3Z28qCXjoI2Wp0ODGNG5Flf
-         xApx7qoCcn6+Bt9oUjrdI78rH/JRqYtOYDLrNJc9XwSKlLcx7GdDCTo+OseLvoqYT3y/
-         JDCY/u2hDwQP2P4HOvnZrfroDEgQoiOmdIYH5jUhnBsXUp/wv1FYB8rMjO1AXzwbkv9l
-         r4IvKVA/rWFYf7bJPULOr9LaAVoj4auHQCpQHevRnzLaQ0Fglr6uu2NCSCpCootUd5xx
-         EMSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794932247; x=1795537047;
-        h=content-type:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CtUGM4qs3NyrmXicigtcW+0ZUHZL+8lLEGt7ogClzmk=;
-        b=rF4nTSnpBotlvDW7NDoL0X/31DQMr2urfwyp/MT/6oE/qOeVkLTQuuonyjwWYwDc01
-         1CQU1SmoUdIp0DfR1VLxsZbVsTuoJBehSdQoOc+NN7O4jU0GhHxQdGecnj2anj9OBRRf
-         bikSHFUzljb/ti+1orxNNzmqSnfZwf7WOupogN5i3SUOvzHsuZHb7pDCCL2NIbe7cQLg
-         UIhhGAkd+oubFr1CmXjRTK1R3rE4NN7W8mGQiSxHM353DQGi1s+bClpnxkmHKbwRSR3+
-         WuH05FqIRRqq/Wclx9N565ocGjNSV68c6kxOZ6BXTquEjRixaNenFIV0FojCFpSmf4dG
-         X0+A==
-X-Forwarded-Encrypted: i=1; AL+hErHy+UBsslGoXZ27Efmx0//lA1THRsqvRu0wYVaRqkqO4zDp0iVtr/+aOY7MzrTmkDjf7+3vfFyCOeU8@vger.kernel.org
-X-Gm-Message-State: APuU4Z9qcShhVbo5+FZ3ueos3Vmg4sK/px0AcQ3o2vlvwjomnMnKM3lX
-	Pfk0kvAsI9/hFJJFqknl9O3+ktWDFds4ea7oIKOi5ldAFDrll8hFS8uk
-X-Gm-Gg: AYBFou0jNENAtdmvHKfXM78CqHCx6bizFO2jfUt4WCMOJ91swdvLlYLK1qHEFXqGsas
-	2TTFwQ8eKimGIumwWDJuwxEkRzeqcH4RnMxHKZ57DC+U+lamAT/G8BN3FH4gvW97+/DsQh8f7sI
-	424cEUkugcJN9o+B/wS3ZwUI2ufQpfA5wXFbLPx92tjxMih8RfSZv38birw0EipEUfUtyeW6dzO
-	iFG8lqjN2XcPtdxhgOe6+gJ6gwB8ATIxCXzoYUcF11w4OQLzkyoosYLSg6rhdx9lu3pygFbIzAZ
-	ueWftlCDsEFmld0Mg7pp0jHEX1jaq9/EGCmKKyUKCUn/WNQByQFMwHi2HQLniB3E+uJrplAG8vU
-	uXxgTs5KM7073rZsn44WZWFes/FVllcCsme4HkAAgjU2l8CfAEssz4cSpNvAzCuDffCtlldd854
-	4WxrbFM7V3ocGJe9Ra8SOy8xjCZ3U2xC3SUcK+rdaSUaIS6qGTSQiHG7x+pZUEiOSUZn7wVfD8R
-	g1YNWDkwwUrVc/D8w4BKsvUsd6nVr5lYRHw8yNgHXKPUfHn5cFjBr6SJbvIgUIBwRvvU5qvxdiu
-	UrQIyIDbGndn28CASXrAD4KB253pj704lcYzzxqcvJIDHTaJJJKZs6Nv4pYpHFNQlhvP6Agst7N
-	jY7vRddb25xCheTW6Ke1BJD+EWpLHD9wlmbKLYVDpzMjRu4euUsdqyQokKUN7nbe/QGsr2+khGQ
-	MV7aHY9wfptRSbmYxmH8EtVn0UDwlTRZC+yuQ2tAzzKtlFvv3pNgumadOzjP/AixVfdrl5/CnQt
-	Ij8ugodEU+6tfZRc9I8A87cQzJ0pJKjQwZBge94XcpcwnWmcj/qTpVcmtTb
-X-Received: by 2002:a05:600c:b50:b0:4bb:5c5c:8130 with SMTP id 5b1f17b1804b1-4bb5c5c8255mr198447365e9.5.1794932247376;
-        Tue, 17 Nov 2026 08:17:27 -0800 (PST)
-Received: from jernej-laptop.localnet (95-143-148-21.dynamic.telemach.net. [95.143.148.21])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb78344ddbsm82097905e9.0.2026.11.17.08.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 08:17:26 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Linus Walleij <linusw@kernel.org>, linux-sunxi@lists.linux.dev
-Cc: Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- Yang Siyuan <hsyysy@163.com>
-Subject:
- Re: [PATCH v3 RESEND] pinctrl: sunxi: request the per-bank supply optionally
-Date: Tue, 17 Nov 2026 17:17:25 +0100
-Message-ID: <uNcaWoiORlCb9uOBOQgmvw@gmail.com>
-In-Reply-To: <20261117091944.12082-1-hsyysy@163.com>
-References: <20261117091944.12082-1-hsyysy@163.com>
+	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=oM6f103S
+Received: from L23803.iliad.fr (unknown [213.36.7.12])
+	(Authenticated sender: vjardin@free.fr)
+	by smtp6-g21.free.fr (Postfix) with ESMTPSA id 505A978050F;
+	Tue, 17 Nov 2026 17:44:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
+	s=smtp-20201208; t=1794933866;
+	bh=8l2fTCrBkpqaY8HCGM4+a4lOBeNcGWo5zClpf/ajZ4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oM6f103Ss/FYzVeyiPMkUl88MqlTQDs0RMWOZ/YH3RrGQ9jocwoPKT4ozk682LsEL
+	 edaTT5pXBvxGo6YRUjs2zEEKVzeoguISXqseXFnycNDnsnf9DNBYoi4FWlTMweSBDn
+	 o1VOEeATe1ZhFbc8EBpEmVf5nfXKBx7QajVgGRpq+32vod1+9bjRErp9cGfmCK2L0c
+	 Bzj7pTLCGTrVyOO325anFqd6AqlCtO0b9e/X0FFSqAiOK2TRSXb9JQ3Cie/rYT0e0p
+	 lc0C1MF+QDCdHJfXwNmlkI/XPfXNTvon8HzJCOFSgxDLTAfEISvhSdUo7sX2bUT0Z/
+	 nMmm42FPMwU2A==
+Date: Tue, 17 Nov 2026 17:44:00 +0100
+From: Vincent Jardin <vjardin@free.fr>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, Ioana Ciornei <ioana.ciornei@nxp.com>
+Subject: Re: [PATCH v6 4/5] pinctrl: freescale: add the Layerscape RCW
+ pad-mux driver
+Message-ID: <avyEUKJBiDwxpLt7@L23803.iliad.fr>
+References: <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v6-0-fbdce4565a5c@free.fr>
+ <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v6-4-fbdce4565a5c@free.fr>
+ <avtsY-7-I7_pdyD0@lxl00025.wbi.nxp.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -103,148 +78,74 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <avtsY-7-I7_pdyD0@lxl00025.wbi.nxp.com>
 
-Dne torek, 17. november 2026 ob 10:19:44 Srednjeevropski standardni =C4=8Da=
-s je Yang Siyuan napisal(a):
-> The per-bank "vcc-pX" supplies are optional in the device tree: the
-> binding documents them, but notes that many boards do not describe them.
-> sunxi_pmx_request() uses regulator_get() anyway, so the regulator core
-> falls back to a dummy regulator and warns for every bank that has no
-> supply:
->=20
->   sun50i-h616-r-pinctrl 7022000.pinctrl: supply vcc-pl not found, using
->   dummy regulator
->=20
-> The H616 R_PIO is such a controller, and its PL0/PL1 pins drive the
-> R_I2C bus, so every H616 board hits the warning during boot.
->=20
-> Use of_regulator_get_optional() instead.  A bank supply that is described
-> in the device tree is still acquired and enabled, as it powers the
-> physical VCC-Px rail, but one that is absent is skipped without a
-> warning.
->=20
-> The OF-only lookup matters here: regulator_get_optional() also falls back
-> to a global regulator-name lookup.  If a regulator with the same name as
-> an absent bank supply is registered later, a subsequent pin request in
-> that bank could acquire it and start the per-bank refcount at one, after
-> earlier pins in the bank had already been requested without a regulator.
-> Freeing any of those pins would then disable the supply while other pins
-> in the bank are still active.  Restricting the lookup to the pinctrl node
-> makes an absent supply permanent; record that state so later pin requests
-> do not retry the lookup.  The refcount therefore stays balanced.
->=20
-> Signed-off-by: Yang Siyuan <hsyysy@163.com>
-> ---
->=20
-> Changes in v3:
-> - Use of_regulator_get_optional() instead of regulator_get_optional().
->   The latter still performs a global regulator-name lookup, which can
->   bind an unrelated regulator that appears after some pins were already
->   requested and unbalance the per-bank refcount.
-> - Remember that a bank has no supply so later pin requests skip the
->   lookup, and keep the existing no-regulator check in sunxi_pmx_free().
+Hi Vladimir,
 
-Remembering IMO isn't worth it. It complicates the code which runs only
-at probe time.
+> The "i2c" and "gpio" functions of lx2160a_sdhc2_data74_funcs[] here
+> hides some real unpleasantness. These 4 pins either get all assigned to
+> I2C7_SCL, I2C7_SDA, I2C8_SCL, I2C8_SDA, or they get all assigned to GPIO.
+> But they cannot be assigned in pairs of two (or individually, i.o.w. not
+> in the granularity we need), which makes independent I2C bus recovery
+> practically impossible (i2c6 as I2C while i2c7 is as GPIO).
 
-Best regards,
-Jernej
+yep, the doc is clear about it: SDHC2_DAT74_PMUX is a single field for
+the 4 pads, 0b001 gives GPIO_2[18:15] and 0b010 gives IIC7 and IIC8
+together (RM rev 1, 4.9.8.9). IIC7 and IIC8 are not available on any
+other pad.
 
-> - Link to v2: https://lore.kernel.org/linux-gpio/20261026152027.1417178-1=
-=2Dhsyysy@163.com/
-> - Link to v1: https://lore.kernel.org/linux-gpio/20261026144751.1392715-1=
-=2Dhsyysy@163.com/
-> ---
-> ---
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 29 +++++++++++++++++++++++++--
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->  2 files changed, 28 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.c
-> index 70099052d..d2345a85a 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -913,23 +913,44 @@ static int sunxi_pmx_request(struct pinctrl_dev *pc=
-tldev, unsigned offset)
->  					    PINS_PER_BANK;
->  	struct sunxi_pinctrl_regulator *s_reg =3D &pctl->regulators[bank_offset=
-];
->  	struct regulator *reg =3D s_reg->regulator;
-> +	struct device_node *np =3D dev_of_node(pctl->dev);
->  	char supply[16];
->  	int ret;
-> =20
->  	if (WARN_ON_ONCE(bank_offset >=3D ARRAY_SIZE(pctl->regulators)))
->  		return -EINVAL;
-> =20
-> +	if (s_reg->supply_absent)
-> +		return 0;
-> +
->  	if (reg) {
->  		refcount_inc(&s_reg->refcount);
->  		return 0;
->  	}
-> =20
-> +	if (!np) {
-> +		s_reg->supply_absent =3D true;
-> +		return 0;
-> +	}
-> +
->  	snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
-> -	reg =3D regulator_get(pctl->dev, supply);
-> -	if (IS_ERR(reg))
-> +	/*
-> +	 * Use the OF-only lookup: regulator_get_optional() would also match
-> +	 * a same-named regulator from another device.  Such a regulator can
-> +	 * appear after some pins in this bank have already been requested,
-> +	 * which would unbalance the per-bank refcount.
-> +	 */
-> +	reg =3D of_regulator_get_optional(pctl->dev, np, supply);
-> +	if (IS_ERR(reg)) {
-> +		if (PTR_ERR(reg) =3D=3D -ENODEV) {
-> +			s_reg->supply_absent =3D true;
-> +			return 0;
-> +		}
-> +
->  		return dev_err_probe(pctl->dev, PTR_ERR(reg),
->  				     "Couldn't get bank P%c regulator\n",
->  				     'A' + bank);
-> +	}
-> =20
->  	ret =3D regulator_enable(reg);
->  	if (ret) {
-> @@ -959,6 +980,10 @@ static int sunxi_pmx_free(struct pinctrl_dev *pctlde=
-v, unsigned offset)
->  					    PINS_PER_BANK;
->  	struct sunxi_pinctrl_regulator *s_reg =3D &pctl->regulators[bank_offset=
-];
-> =20
-> +	/* The per-bank supply is optional, so this bank may not have one. */
-> +	if (!s_reg->regulator)
-> +		return 0;
-> +
->  	if (!refcount_dec_and_test(&s_reg->refcount))
->  		return 0;
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.h
-> index 8bd00c6ff..651249b23 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -162,6 +162,7 @@ struct sunxi_pinctrl_group {
->  struct sunxi_pinctrl_regulator {
->  	struct regulator	*regulator;
->  	refcount_t		refcount;
-> +	bool			supply_absent;
->  };
-> =20
->  struct sunxi_pinctrl {
-> base-commit: 091b06388b117fefdcb63336ac09956a4914b961
->=20
+Checking from other angles, the A-010650 workaround uses one write for both
+buses: 0x700100130 = RegA OR 0x031. That mask looks wrong to me though: bits 5:4
+belong to SDHC2_BASE_PMUX, and OR-ing 0x001 onto 0b010 gives the reserved
+0b011. Could someone at NXP have a look ?
 
+> The way the code is currently written, the pin_request() call will fail here:
 
+Yes, in fact, it is not new with this series: both nodes have shared the
+same setting since
+  8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c gpio to support bus recovery")
+from Carlos Song (NXP) where the two pinctrl-single states covered the same
+bits, so the second controller would have failed the same way. Wihtin the
+kernel, there is no board that enables i2c6 or i2c7, so nobody did hit it!
 
+> Due to the fundamental issue of this limitation, I don't think it makes
+> sense to have the pinctrl states described in fsl-lx216x.dtsi for i2c6
+> and i2c7. Perhaps you could remove them in another change (either as a
+> follow-up, or another patch in v7 if you need to resend).
 
+Done for v7 as an additional patch: the DTS drops pinctrl-names, pinctrl-0/1
+and scl/sda-gpios from i2c6 and i2c7, and the two states nothing else uses.
+A board that needs one of these buses can add its own states, or set the
+field once with a hog on the pad-mux node.
+
+I tested on my board for regressions, since there those 4 pads carry
+the eMMC DAT[7:4]: the other I2C buses still set up their GPIO recovery,
+and the eMMC still runs in 8-bit HS400.
+
+I also went through the other fields. 7 more settings mix two
+controllers the same way:
+ - flextimer on iic2, irq3-0, irq7-4, evt4-3 and evt2-0 (FTM1 and FTM2 channels)
+ - sdhc-spi on sdhc1-base (SDHC1 with SPI3_PCS0) and usb on usb-ext (USB1 and USB2)
+No dts claims any of them.
+
+About your previous comment on clk-out: v7 names encoding 0 "clk-out".
+On my board, with debugfs, it shows now:
+
+  pin 20 (evt2-0) 0:? evt
+  pin 21 (clk-out) 0:? clk-out
+  pin 22 (asleep) 0:? asleep
+
+and the U-Boot port of this driver shows "clk-out : clk-out" in
+"pinmux status".
+My take: the reserved marking comes from RM rev 1: its revision history
+says "Updated 0b000 as reserved" and the CLK_OUT configuration section was
+removed, while table 19 still lists 000 (CLK_OUT).
+
+There is a similar gap on EC1: the signal tables list CLK_OUT2 on
+EC1_TXD0/GPIO4_DAT03, but EC1_PMUX only has 0b00 RGMII and 0b01 GPIO,
+0b10 and 0b11 being reserved. Would you know which value selects CLK_OUT2 ?
+
+thank you,
+  Vincent
