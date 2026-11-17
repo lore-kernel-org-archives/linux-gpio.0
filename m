@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794950389;
-	b=JIhG+XNGkKgOJFcqPzSdDq1KFaLkmp6ndrj2sU/uXKyPyLcc/mwSwjUHyQE04kF0s539
-	 fLm+BFReAZSXeqO0LrI970cramOaBwEq0heZzeZbsZ9Dr8YkivQi612eSYvkyFJGREAuK
-	 8vV6jNoQch8UNZeylvw7yYM39LH7IGcDo4DPhRW8VIVMVn2vl/dAyip4VrdllPIsdudj2
-	 JWt8EMKSxlMD/0mdp6+5j/WZI/dj099Tz133r+bQMoYQhiMjLPTtRz/3nGgLa63sidKiI
-	 sd2GM4dn+7wXICQ4TRxUvhrN/3pM5RqYaVRXGlTMqMFcWVCrHY+fcviQ6J/3P3tY+9g==
+	t=1794950422;
+	b=MwECuh2DsecFSWbpsnNs06+9hxYNN+5UF8uU7CGIcM3PeHhLSQsyGVZ9QMqXrnUGMMSR
+	 ozjO6ECiqCRej3zCaClF0KobA+hTjq+7ELZ6ESaQbOCmlrx0B0hIxDpQ8CcbeNLPaCQZM
+	 xbDy965qIJbHsRGnLTtpoWuAX7HVaa7WggOEtX5nLITzCWiLmQIRVJQ+qXMs8Qp66hcoX
+	 huOO7f1DDYZoIX5mXhvJXPZyNMXSeteV3CHzIeIUsrURjvZkx7M1YnLoB4VqyQwZLudqt
+	 1R2J1Da+wXGWNGlasiNbF2lMhG8d6V6V1G/yUPIRekjYmMWJ2ozrtp/PESQadOB6cPA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794950389;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794950422;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=+MhpUSiK+IXbujmRSb4i0Yi0wcelsHhHjMYNDrl5RnM=;
-	b=r9Bu6riM4e4gpeLtNZUvQIWARSY/zU1+bjpX2LoSBF/lpgDptQ0hM2CMfddZjrUbCC6u
-	 yaVSYKULE/b5fTGk1JexA7lhJ9E2lM9WSLn5+Vbze8Y6LRo2BtwhSq1DmJEekRb1RIHfN
-	 XWK8C1Ja8QVW/EvMr8goRUkTcwhOitcaAQl7qUqoWouFqih1SwSK7BvenKqOe7RQMKN9o
-	 M37aNilR8r+OqgZMzOjsvtccVWQTGJlPefbqQlNP9EReBu3oOWOZRpR4YopjkEU3OL01F
-	 GsUx46yyEQAOYiHcqQt3BDMUPOn3NUBKuzzrdVTINHQAsNi9W/nEr6xoU8KD828cQUA==
+	bh=iGBY6pPGdt665O/LNZZyvPu55C366I0ivMrwgomHXZs=;
+	b=1nZMqMUorh6gOJQ4ydpberSIkJbi7jGtRRF7JvKbRC29LNBCPPwk9S83R5mmS0RzWoPC
+	 ZZ0GcIIZHMgB5CB87gi5YjsF2tiGcEOFAcSYWnMRiqEDV1EKOYHC2yQEHzHiQCcnyJWiE
+	 5Fs0EAflWNznWNxXCdkTkfRE7+9DqmzXPcnkASeDopekUXTTwOhfVgZnFoVcRywBJoFOP
+	 uB1cF+1euUqRcJJixbzGw12Zx7Xj9datUa+5F3GyZ8/EqQTV42W1gNAmBq1LO/ktV4ETr
+	 np0S7DwUIR9yWDdVC8y0XQ3SpqcVz+9+4trOT/um5+cuKF7eZRUA/wxT+jMoQc0gOzw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GAWTxZ2n;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YoDem+AT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46437606A32A
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 21:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E68606A32C
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 21:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GAWTxZ2n
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD86B1F000CA
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 21:19:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YoDem+AT
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B811F000C4
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 21:20:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794950388;
-	bh=+MhpUSiK+IXbujmRSb4i0Yi0wcelsHhHjMYNDrl5RnM=;
+	s=k20260515; t=1794950421;
+	bh=iGBY6pPGdt665O/LNZZyvPu55C366I0ivMrwgomHXZs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=GAWTxZ2nbhR94NJ7n90jGVrC1thSbsLc5wHSDTT0L7xPzk0+MMwZyVG6Xf1+ogpjh
-	 wMwKM1fBJSt1bMBHsvb/fro/WQwQQ9WGGWLzyb1WxoJaJU5qSMrV2/0xA9Kj+ulpEf
-	 pjKQ1AExGqL+CR0ivN19LZnHEWbRqTFdZIY1NAxC3yCwWJwjKX2d8pWoFcZ0yF519T
-	 MXBweq3WbJh/FOP5NV64xXsiqqZTajo8+SuEKglczZ03TcLm4k2SvyWlPVgsKHxRjP
-	 4PfTFXh3wlVqoHaSl+oHixRJsMcqNtYaRfDEH6pci/ndqACufc/7+r+adZytukX8KY
-	 qHKWOB7D45Z4w==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3adfed9a887so3512061fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 13:19:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGjna3EZfX1MXflrrebG/l2ThFoXihC/wkG8ro96EcpKNJfaU7+Ou+LOowyqXICyTszDzDlzrWFZ9uC@vger.kernel.org
-X-Gm-Message-State: APuU4Z+ThiWHW5wqcukt6c1E6Lep3f5QDBv2dfqXl8IsUoajJjiD9RzE
-	G8dP06g588oTLbAvN2YyYNXvpctFdwfdDYW2QDCFCpD9Z8KQk9upXr2oBnU+m20RhdO63J5z7pE
-	5CUmtjKXqYmlYvnPOOdgA6q3Vpx+4mxQ=
-X-Received: by 2002:a05:6512:3c9f:b0:5be:3444:57f1 with SMTP id
- 2adb3069b0e04-5c1aa04abf3mr115048e87.63.1794950387532; Tue, 17 Nov 2026
- 13:19:47 -0800 (PST)
+	b=YoDem+AT0QRAWmaS49ofjMVfTlKctJefFqajPnv7dCWmJoyXSbBAkQyiE9tFvFNqs
+	 WUSNbOIrXFwrlzuCkXlesHZnwIb2Ge/JLf5vk+f9XAO3KGh7WkIaYEXe/X1Pq+9foa
+	 /oH51RI8ruABMjLPQoH58w5MKs8UnWgeVzv+My7dFaqM6+VK/08wOWYPYQQWEv35Yv
+	 E4uIBZByTZLH2+mEGjQ1/hakxhq2nIAj/xq4NQLbSEQZmNEp6Jra/tdG9XJl23GItY
+	 dA9G/7xNrUOly17HloFjDuFvV49hemNLBzwB7EGQl8IUMpO1KlXYb07OYilH8Q1yxY
+	 XAnNwRF3TIPYA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5c158c4c15fso155681e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 13:20:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErH7K4UQvOxfYtMOXDup4Gl4+jNKNEhWO3DTu6mHYQPwEFAeBG6QFDI3Tio2m2z5JbyWnsdl8JVNeMsV@vger.kernel.org
+X-Gm-Message-State: APuU4Z/s4QbakcCdOJfRnJBjEPtRpDZhr4NimJG1BNHRhdcjKvsDDRbR
+	onWobE5neH1oPJAtmDvLWAO5hCfNi0zaUesSBFfDzZ5JgN5mL6ErSCENld7Mz+VmoXYYQxuxrW8
+	dU9ZwyrV0KSTllSzCMJ9hnG8n34nhqhI=
+X-Received: by 2002:a05:6512:2304:b0:5c1:4e10:20b2 with SMTP id
+ 2adb3069b0e04-5c1a0f94392mr1254808e87.45.1794950420663; Tue, 17 Nov 2026
+ 13:20:20 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,14 +59,15 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109194910.2282454-1-sahaj123.sc@gmail.com> <20261109194910.2282454-2-sahaj123.sc@gmail.com>
-In-Reply-To: <20261109194910.2282454-2-sahaj123.sc@gmail.com>
+References: <20261109194910.2282454-1-sahaj123.sc@gmail.com> <20261109194910.2282454-3-sahaj123.sc@gmail.com>
+In-Reply-To: <20261109194910.2282454-3-sahaj123.sc@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 17 Nov 2026 22:19:35 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkyU4OVTgYtbih7Q73WJB0kSFb64CYJLuiFW0ZUGpQ36g@mail.gmail.com>
-X-Gm-Features: Aa3M54o2GcB4ftxhBt5xRh5EJOcNS3butjePxGJPXmqVqLMPZ3xuDk1XYTeUbzM
-Message-ID: <CAD++jLkyU4OVTgYtbih7Q73WJB0kSFb64CYJLuiFW0ZUGpQ36g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: davinci: use controller-specific MMIO for BINTEN
+Date: Tue, 17 Nov 2026 22:20:08 +0100
+X-Gmail-Original-Message-ID: <CAD++jLm-Zo=L5A8kTDKaBojmdHT67TZLqc+LjgWPmYq2dTZGvQ@mail.gmail.com>
+X-Gm-Features: Aa3M54rX2Yw2mzLa-c0fBDhd98NWpVXKyS6G16iraPzzN9vKI1SD94pE8d26hWc
+Message-ID: <CAD++jLm-Zo=L5A8kTDKaBojmdHT67TZLqc+LjgWPmYq2dTZGvQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: davinci: allocate bank IRQ data before
+ installing handlers
 To: Sahaj Chaudhari <sahaj123.sc@gmail.com>
 Cc: brgl@kernel.org, j-keerthy@ti.com, nsekhar@ti.com, 
 	prabhakar.csengg@gmail.com, avinashphilip@ti.com, sujithkv@ti.com, 
@@ -77,20 +78,19 @@ Content-Transfer-Encoding: quoted-printable
 On Mon, Nov 9, 2026 at 8:48=E2=80=AFPM Sahaj Chaudhari <sahaj123.sc@gmail.c=
 om> wrote:
 
-> The file-global gpio_base can be overwritten when probes for multiple
-> DaVinci GPIO controllers overlap. The later IRQ setup can then write the
-> BINTEN register of a different controller.
+> If allocation fails partway through bank setup, previously installed
+> chained handlers still point at devm-managed data that is released when
+> probe fails. Allocate the complete bank-data array before installing the
+> first chained handler so an allocation failure leaves no handlers behind.
 >
-> Derive the BINTEN address from the current controller's mapped bank
-> instead of shared global state.
+> This fixes the probe-failure path; it does not change ordinary device
+> removal.
 >
-> Fixes: 118150f22d6b ("gpio: davinci: move to platform device")
+> Fixes: b5cf3fd827d2 ("gpio: davinci: Redesign driver to accommodate ngpio=
+s in one gpio chip")
 > Signed-off-by: Sahaj Chaudhari <sahaj123.sc@gmail.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Look into following up on Sashikos comment separately if you
-have the time and energy!
 
 Yours,
 Linus Walleij
