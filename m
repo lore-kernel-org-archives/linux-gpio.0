@@ -1,74 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.27.42.6
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794933869;
-	b=gQBvtaTqNs2wYO/SCZz/Vq+C9pYd4k1y3zCDYUghf0PjINcOBhfSoZ6fyLmk7r9TR7mg
-	 uFALiyW3lh6nCcbT+AcyefRGrXVYLTptqPO7kErFBLQAxNfyzYOHYXacVvcoBiltYEAWk
-	 /r4FJYMNCP9gT1c/os5w8x9gUNYW2E5b5fVIxC8XLaNDedsYDqM/eZBEiDJ/BAFOGsQex
-	 Lx6gFHYw0cuzowfr0ezX6hSn0VuqSRzLL8w1G8yTQck/VhS/itPLhqiDHRBc/HhvBCcpu
-	 VH0rtg49dxUgBDJH/aZnJmgpLDNFMyBVoz+qMOAidJGAppJceYXxrtfpadK99qvTE3g==
+	t=1794936157;
+	b=hV9zDU1cw7k1gIsqeETbQnuUKTZYM7Jx34bH5ZcQR8VPu8HQ6siLds+o7BblhjLEuk9U
+	 u+WDUPheBYa9L281R0haLWi4FpWzRhGvGF5GZYNU8qutID/g5fIGtzxB6xPnedYtiuUIx
+	 5+6pk27VlYkMsiED3pqCx0Cc9BVDkpCfOyyiDip2VTkMqIV8GUiHoqRehcdLB5Ee3OiaK
+	 Lw+pgknWCnI2C5qdWFqA/rjRkbVFYiWLt/kq2J18LYYfqKZuY9IQjC9+tg9u2C8H9ttmW
+	 9iP1mbrjFQa+i24hI8xYQNcfgzQ8RN5zNc4q33yOyElB9fjEjW8M+u2N6QOdvMFBPfQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794933869;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=mmhsYfo4oARdZWXfsQFEQDsYzn+5x9KB/AI2fdJWlJ8=;
-	b=oTnCeI8oG+yN9FyGZrqls8O2gscTRyqYLqNMCZXQapOTe0UgtswxIuaXBwvMYd0vj8nr
-	 Ie2zPW6anbcmxYeIofBrGW6DCwZ2tpbrUIYDBFb3qEur+5LIx6IvU/BDYEc4R773Uakhu
-	 wsBxNOmjqQYDNIlIJwduTvwb43r14880zF4f2qYGBngnX1gANrf4djjQI8J+bXM7R59W7
-	 PsYwBtzfwCtF6XTcHVD/vVq8Hh89WmI2ouSaTV5H32fRAmh0ao5oJT1EkbxsLVyeEHo/Z
-	 pRxH5J7/XBQGMdw7st5znI0KTjYRYjPn/ZXHq3zLg2A8YKZ44S4q3z4r8ixQCKtDhvg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794936157;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=K8c9i2c9pA77ON1bwB34pN+TouNHlVdKNHMldunC6Ho=;
+	b=qVxGHWFNlDoxFl8YaQmjH3gL5GzxVEC1m3Yzbn3v0pS/09bIgNgnGY21uoySE9FXWaZ9
+	 n2yMvRg3EoEidQsEulZRsdZGZEJepk4gW/RT4Jv2BYPsoT3DJvQFDTm5O2ZEptgQdwmI0
+	 y3419aKLNz7onWXQT2ia5KgQS92EmNlzjvUjEyjg/6wM3E8Sram+RDFquJN+f0p3apP2X
+	 ced+cHl5aGQ844EtIn6xORwt3YeoFPOEx2XbpV3V3mzbg0vChYY94B98SieJMxOz+2Wu1
+	 SFQUSpufNL5Wt3aLTHhhZMbVCgstlpF2+7Ano+trOl4WFix5ZNhTdKMhl0+Nf2sGVDQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=free.fr;
-	spf=pass smtp.mailfrom=free.fr;
-	dkim=pass header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=oM6f103S;
-	arc=none smtp.remote-ip=212.27.42.6
-Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2134A606A331;
-	Tue, 17 Nov 2026 16:44:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2134A606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b="JrhUs/dN";
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C366606A88D;
+	Tue, 17 Nov 2026 17:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C366606A88D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.a=rsa-sha256 header.s=smtp-20201208 header.b=oM6f103S
-Received: from L23803.iliad.fr (unknown [213.36.7.12])
-	(Authenticated sender: vjardin@free.fr)
-	by smtp6-g21.free.fr (Postfix) with ESMTPSA id 505A978050F;
-	Tue, 17 Nov 2026 17:44:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-	s=smtp-20201208; t=1794933866;
-	bh=8l2fTCrBkpqaY8HCGM4+a4lOBeNcGWo5zClpf/ajZ4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oM6f103Ss/FYzVeyiPMkUl88MqlTQDs0RMWOZ/YH3RrGQ9jocwoPKT4ozk682LsEL
-	 edaTT5pXBvxGo6YRUjs2zEEKVzeoguISXqseXFnycNDnsnf9DNBYoi4FWlTMweSBDn
-	 o1VOEeATe1ZhFbc8EBpEmVf5nfXKBx7QajVgGRpq+32vod1+9bjRErp9cGfmCK2L0c
-	 Bzj7pTLCGTrVyOO325anFqd6AqlCtO0b9e/X0FFSqAiOK2TRSXb9JQ3Cie/rYT0e0p
-	 lc0C1MF+QDCdHJfXwNmlkI/XPfXNTvon8HzJCOFSgxDLTAfEISvhSdUo7sX2bUT0Z/
-	 nMmm42FPMwU2A==
-Date: Tue, 17 Nov 2026 17:44:00 +0100
-From: Vincent Jardin <vjardin@free.fr>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: Re: [PATCH v6 4/5] pinctrl: freescale: add the Layerscape RCW
- pad-mux driver
-Message-ID: <avyEUKJBiDwxpLt7@L23803.iliad.fr>
-References: <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v6-0-fbdce4565a5c@free.fr>
- <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v6-4-fbdce4565a5c@free.fr>
- <avtsY-7-I7_pdyD0@lxl00025.wbi.nxp.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=JrhUs/dN
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7C281A00;
+	Tue, 17 Nov 2026 09:22:33 -0800 (PST)
+Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06AAE3F632;
+	Tue, 17 Nov 2026 09:22:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1794936156; bh=jCf/7a/YsnLbBlVT2TCDpR5Rx5MDswY+TpQ4UF++u2c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JrhUs/dNEIiQrr+/fgwKCnNl6TD35vdP16BsU/ZIFqsA/KLgpTVbHKprOfL+6wMok
+	 H/uYWKOGIDQNUILCf/caFLrLO3Q5XIqFEFcPcQyeDiMc5+uv0k4Gz2CyXPaUQtIt5Z
+	 y6oTZAuRVjiWbda/dmaY3wYF6OGb9v+JzHIhEJ90=
+Message-ID: <76d4d8ee-801d-426f-bda9-2ed8b9a074e0@arm.com>
+Date: Tue, 17 Nov 2026 18:22:37 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -78,74 +53,73 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <avtsY-7-I7_pdyD0@lxl00025.wbi.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: sunxi: a733: do not switch the mux to read IRQ
+ lines
+To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>,
+ Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Enzo Adriano <enzo.adriano.code@gmail.com>,
+ Pablo Mazzini <pmazzini@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20261110130157.112155-1-vinicius.eduardo.pedrosa@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Vladimir,
+Hi,
 
-> The "i2c" and "gpio" functions of lx2160a_sdhc2_data74_funcs[] here
-> hides some real unpleasantness. These 4 pins either get all assigned to
-> I2C7_SCL, I2C7_SDA, I2C8_SCL, I2C8_SDA, or they get all assigned to GPIO.
-> But they cannot be assigned in pairs of two (or individually, i.o.w. not
-> in the granularity we need), which makes independent I2C bus recovery
-> practically impossible (i2c6 as I2C while i2c7 is as GPIO).
+On 11/10/26 14:01, Vinicius Pedrosa wrote:
+> The A733 description sets irq_read_needs_mux.
 
-yep, the doc is clear about it: SDHC2_DAT74_PMUX is a single field for
-the 4 pads, 0b001 gives GPIO_2[18:15] and 0b010 gives IIC7 and IIC8
-together (RM rev 1, 4.9.8.9). IIC7 and IIC8 are not available on any
-other pad.
+ouch, I missed that, sorry about that. I removed that even explicitly 
+from the A523 ...
 
-Checking from other angles, the A-010650 workaround uses one write for both
-buses: 0x700100130 = RegA OR 0x031. That mask looks wrong to me though: bits 5:4
-belong to SDHC2_BASE_PMUX, and OR-ing 0x001 onto 0b010 gives the reserved
-0b011. Could someone at NXP have a look ?
+> When a GPIO used as an
+> interrupt is read, sunxi_pinctrl_gpio_get() then switches the pin to
+> input and back to SUN4I_FUNC_IRQ, which is function 6. The A733
+> interrupt function is 14, so after the first read the pin is left on
+> function 6 and its interrupt no longer fires.
+> 
+> On my board this breaks microSD card detection: the PF6
+> card-detect line is read at probe, and after that neither removal nor
+> insertion of the card is noticed.
+> 
+> The A733 data register reports the pin level while the pin is muxed
+> to the interrupt function, so the switch is not needed. The A523 and
+> D1 descriptions do not set this flag either. Drop it.
+> 
+> Fixes: 0535bfbfa97b ("pinctrl: sunxi: add support for the Allwinner A733")
+> Signed-off-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
 
-> The way the code is currently written, the pin_request() call will fail here:
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-Yes, in fact, it is not new with this series: both nodes have shared the
-same setting since
-  8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c gpio to support bus recovery")
-from Carlos Song (NXP) where the two pinctrl-single states covered the same
-bits, so the second controller would have failed the same way. Wihtin the
-kernel, there is no board that enables i2c6 or i2c7, so nobody did hit it!
+Thanks,
+Andre
 
-> Due to the fundamental issue of this limitation, I don't think it makes
-> sense to have the pinctrl states described in fsl-lx216x.dtsi for i2c6
-> and i2c7. Perhaps you could remove them in another change (either as a
-> follow-up, or another patch in v7 if you need to resend).
+> ---
+> Tested on a Cubie A7Z with the pending A733 clock, PMIC and DT series
+> applied: before this change PF6 read back function 6 and card removal
+> and insertion were not seen; with it PF6 stays on function 14 and one
+> removal/insertion cycle was detected.
+> 
+>   drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+> index ca82f08a3a65..456d9170c2a2 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+> @@ -23,7 +23,6 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
+>   
+>   static struct sunxi_pinctrl_desc a733_pinctrl_data = {
+>   	.irq_banks = 10,
+> -	.irq_read_needs_mux = true,
+>   	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
+>   };
+>   
 
-Done for v7 as an additional patch: the DTS drops pinctrl-names, pinctrl-0/1
-and scl/sda-gpios from i2c6 and i2c7, and the two states nothing else uses.
-A board that needs one of these buses can add its own states, or set the
-field once with a hog on the pad-mux node.
-
-I tested on my board for regressions, since there those 4 pads carry
-the eMMC DAT[7:4]: the other I2C buses still set up their GPIO recovery,
-and the eMMC still runs in 8-bit HS400.
-
-I also went through the other fields. 7 more settings mix two
-controllers the same way:
- - flextimer on iic2, irq3-0, irq7-4, evt4-3 and evt2-0 (FTM1 and FTM2 channels)
- - sdhc-spi on sdhc1-base (SDHC1 with SPI3_PCS0) and usb on usb-ext (USB1 and USB2)
-No dts claims any of them.
-
-About your previous comment on clk-out: v7 names encoding 0 "clk-out".
-On my board, with debugfs, it shows now:
-
-  pin 20 (evt2-0) 0:? evt
-  pin 21 (clk-out) 0:? clk-out
-  pin 22 (asleep) 0:? asleep
-
-and the U-Boot port of this driver shows "clk-out : clk-out" in
-"pinmux status".
-My take: the reserved marking comes from RM rev 1: its revision history
-says "Updated 0b000 as reserved" and the CLK_OUT configuration section was
-removed, while table 19 still lists 000 (CLK_OUT).
-
-There is a similar gap on EC1: the signal tables list CLK_OUT2 on
-EC1_TXD0/GPIO4_DAT03, but EC1_PMUX only has 0b00 RGMII and 0b01 GPIO,
-0b10 and 0b11 being reserved. Would you know which value selects CLK_OUT2 ?
-
-thank you,
-  Vincent
