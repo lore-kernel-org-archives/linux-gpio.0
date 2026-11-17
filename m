@@ -1,93 +1,90 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.135.77
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794904083;
-	b=EryJB7ffy6/6idoJr0EjWtds5Wq9OJsTkiR4RQbAoke/RbN9r6kWI3WM95bUru08KTOd
-	 Ohwi9OA+Kx6nxfCg9jX3P5dm+NFUvZdbLxc2hkR3owrm+rWRJIpoxtDtrSKrHCEP4bFWN
-	 IoaEAZ0DE0Eq60rwgi6gPbyn3rfudb7S7qgigPMg/exdwTJ274OTvmaTg17IyYqOuRvk1
-	 qDdPYq2DKrXJRXlmMNqf3/AU3ISqogc3BLAuY/WI3nZhWf7pXF3c8sBwOov3u+TuDSZDk
-	 U3ojTW8pBNYQiFVjTrltHc862Tkvayk8LdYjpflS3I/SvSo2vVT0ZvQNuV2qko0fguQ==
+	t=1794904092;
+	b=VcKsvsJ+O5lDUrif2ER19KZz8Un/pM+u0t3GgDL7Aw+zg6svv221OfQw5poeA242R80S
+	 Cf5Q0j2FVQuszKm3Eo0SvY0wyC4zBZj/VG2/8OM20mX+yoJ8vmLBwx3yLO+K7+yLzplMq
+	 nrwsgscWziLdxgMUA539YAySaTl05WVHGWyG5AGYoQBy0zTIHLVt78U2OPFeQYqzOjTAP
+	 +OryR5B3r6CkVca7ZdQmneq2O+sQ+CF+HdAk0oxw2dA/ihyHCoPb1P1KvNMLKO1Pa/8wf
+	 6nthbgctRKLrAiYFDI9C6fCyrrgxvNkLQE13ZgVRB5N7/c4Qxu/nrwpuwTmFvLfalTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794904083;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794904092;
 	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:Received:
-	 Received:Received:Received:Received:Received:From:Date:Subject:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-ID:
-	 References:In-Reply-To:To:CC:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key:X-ADIRuleOP-NewSCL:X-Proofpoint-Spam-Info:
+	 Received:Received:Received:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-ID:References:
+	 In-Reply-To:To:CC:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-ADIRuleOP-NewSCL:X-Proofpoint-Spam-Info:
 	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:X-Proofpoint-GUID:
 	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=uivMuJZoe2S/0CQvYgZGebbq60EIzw0/WQEXTk9GKmI=;
-	b=Qv5v3jXeyKoSU3H1BcUJJY3Q6fJww6I1GpV0WV837M4tidzF+6e9ytcDz/QKgZqrBaVb
-	 pvWTN3vNMqV6fmS8Qcx5CwIvZkY2Y6VeOBlF7MA4DrnoCZtGny3c/q7LalIC6kNSQ/Ngf
-	 XMa/gyoaKlx2kiyOMk0coX3Cda7Y/bwczI0DI/jUGE8PpgAYYe3IuNxHCWZ75sJiYcTZd
-	 IJOGyPASe+ZqVrFvpRpDoLShTp9rtvVziiZpOJujnINVJmnRn31s5J+LAUb5QzeB8hkuX
-	 3eBN/q4/wBQIRsGYUVwMKm84DWUbxdOJQtdR/3yjwAKDI2oc72+tlgxSia+lX1nRJuA==
+	bh=DscZNCxPv0fPHpx3Aes+D+fGFEMnFYIv+3Bwh2H5Cuk=;
+	b=aK0Oqw3cN4qZZHnU+gz4iNHGfvYRGhKpNqHUrS3nJ8GkKXzAIT+VMcgnJLHrRAEdsQGX
+	 HtFltO7swKnSpUOOgBIntuvkvXwsInL1o06XkEm7t5929qqXJRhcGjXI3q1eX3Q3SeVQE
+	 lR55UmR7OnzsxiTDu9YBZ4REqcs7kUqYz04tBteOPSj6oPXee0NDXielHUdhpp+ds4rh+
+	 OF775KigN7pTriRN9NOFmnmLete7733frwGpD348ZMFZ52/ZfpRJXiWt/b+HdfRpKo2mc
+	 qa3L//mtwXgaWCuOOquEemHL2NrhF417pVmT/8zwccNY5yTae6QsdUiuNugmRgjOBQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=analog.com;
 	spf=pass smtp.mailfrom=analog.com;
-	dkim=pass header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=MRIs0DGW;
-	dkim=pass header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=jX79ENAr;
+	dkim=pass header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=jIfHmrDH;
+	dkim=pass header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=UiHpTvv1;
 	arc=none smtp.remote-ip=148.163.135.77
 Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CA2606A332;
-	Tue, 17 Nov 2026 08:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 37CA2606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65C7606A33B;
+	Tue, 17 Nov 2026 08:28:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E65C7606A33B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=MRIs0DGW;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=jX79ENAr
+	dkim=pass (2048-bit key) header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=jIfHmrDH;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=UiHpTvv1
 Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AH8B2RD1698774;
-	Tue, 17 Nov 2026 03:27:41 -0500
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AH8B1bQ1698711;
+	Tue, 17 Nov 2026 03:27:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vtelectron.com;
 	 h=cc:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	DKIM; bh=uivMuJZoe2S/0CQvYgZGebbq60EIzw0/WQEXTk9GKmI=; b=MRIs0DG
-	WUCxIQCVHqMxgP9dLXmx0lI0ysoVFhjyLoaGzVhyZIvdL+4A2XTN87t8hMjCOPeb
-	iZxj9EwuSAGblTRu/hAbETReLUCD46TU1y9dPczBaT1+RAsJnRqNDSyJe3EU6KtJ
-	yh+Y81MAOS84W7fBiXZTcveQzr0RV6QSDuWxY/S4rvxPqRQTBWaXUjlKJKOlaWcS
-	4G8VQ3OrKxn8WNpnGVl8wlHNC8vsgRubKvtrRw/q8Cr96zjSoHGfvTIeU6cuNI+i
-	zWr1NgbMAupa0DiUHhXmE0thh0IVpBuUUJsKRELkNFwas+oH5CdlW+lMcAk+TehF
-	wpab/RP7FyPNFLA==
+	DKIM; bh=DscZNCxPv0fPHpx3Aes+D+fGFEMnFYIv+3Bwh2H5Cuk=; b=jIfHmrD
+	HFTmw5i4iV2vsxVA3FNJmlS6xTi1hPsKD6ONuIaA+NmnRKODW+k1rqqAYRlVPBJf
+	xb6hCq5bepamC+JhcYBb5eqhu2tmzVzdhKaKLF0ROB2j3bEjVTsUgPPB2BKkiLCv
+	N4D5fO2S/c/R3NZwM7LsWxHIa3D23AXoyXs25pCxX0/NisiidYs/T44yTPzglQj6
+	St7mRKjx4vCgkXp0TricO/EDc400Co5EhG6irBD7/iL2oop10EmJXAHx62OuMHAW
+	fxsVwfdiPM/1mVnu5HWpn8R6KWPdEGeGtzzyZTwWcVhFeuhchMRKBJcAZYg5TlDE
+	Y/3HRmyTvpoTnzQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=uivMu
-	JZoe2S/0CQvYgZGebbq60EIzw0/WQEXTk9GKmI=; b=jX79ENAr0jo8icPQZnTGS
-	+mP9qFBlHUUD4lWlpzUSmM1HuDpUKmZZbdkSCMhLSxawqbye1xPVhCXWj0/3fYDv
-	PqiqZoEwZhWmKLFIeGY3wlgPsXjjQC9pdWKjA5lHW5Mp5LyYhIjON5QNdl9lPj4E
-	cjNaKeuszsFvuT9exCDDNB7kbb5rhH6yGKsp409M+DBZW6/AlP6rJ4GbildXFK6A
-	wvQUB3qzmk9aa577YfV4sGYh7xv2An9Bage8+vLSTuz84dxa2+QX8UT+/7yyQrZv
-	nQRCl4/8ysIFPEY748DbO5M8QgiMaFOV1sZ7JZJAko+oiCciSUvq+/gCRodojq/S
-	Q==
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=DscZN
+	CxPv0fPHpx3Aes+D+fGFEMnFYIv+3Bwh2H5Cuk=; b=UiHpTvv19AHrDBaDYb29u
+	8BUyMFHxEO6u6gx2q4jGnZIcyeTf6M4W8P/VVmN4TjAxDxXw9EtB9/nWO6Wze7z1
+	OQkhnx0j+y13YPaRAKSZE8/tathxpPyGAQ6iWNibVlmIty1jZr7naAq6iAananDY
+	0OIsrC8XxvnB0rKZQJqWYG5+3dFlWED1HGVrnBzqvN9Aq5vYlP4yutJh6Q3HTf4p
+	Xg3Mq1zpYFGg+eaUmNCXUSDjBd03g1aXR/HdBOH4xMbu39+zosM7PgkwQxP3WiWd
+	H/m/xe63A+fqr9pfKKcK83AVETCLdrwGDaRDZT/O5S2oxJ7z1H5W5/bOtrLZbiS8
+	g==
 Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4j0k6mr388-1
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4j0k6mr3aa-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Nov 2026 03:27:41 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 6AH8Rdsx046873
+	Tue, 17 Nov 2026 03:27:53 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 6AH8Rq2W046893
 	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 17 Nov 2026 03:27:39 -0500
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 17 Nov 2026 03:27:39 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 17 Nov 2026 03:27:39 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.2562.56 via Frontend
- Transport; Tue, 17 Nov 2026 03:27:39 -0500
+	Tue, 17 Nov 2026 03:27:52 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Tue, 17 Nov
+ 2026 03:27:52 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.2562.56 via Frontend
+ Transport; Tue, 17 Nov 2026 03:27:51 -0500
 Received: from ATORRENO-L02.ad.analog.com ([10.66.6.192])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 6AH8RFcl007690;
-	Tue, 17 Nov 2026 03:27:29 -0500
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 6AH8RFcn007690;
+	Tue, 17 Nov 2026 03:27:40 -0500
 From: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Date: Tue, 17 Nov 2026 16:26:48 +0800
-Subject: [PATCH v3 1/3] dt-bindings: hwmon: ltc4283: add ltc4284
+Date: Tue, 17 Nov 2026 16:26:50 +0800
+Subject: [PATCH v3 3/3] gpio: gpio-ltc4283: update Kconfig description to
+ include LTC4284
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,7 +96,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20261117-staging-ltc4284-v3-1-326bb844e08c@analog.com>
+Message-ID: <20261117-staging-ltc4284-v3-3-326bb844e08c@analog.com>
 References: <20261117-staging-ltc4284-v3-0-326bb844e08c@analog.com>
 In-Reply-To: <20261117-staging-ltc4284-v3-0-326bb844e08c@analog.com>
 To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
@@ -113,40 +110,40 @@ To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
         Randy Dunlap
 	<rdunlap@infradead.org>,
         Linus Walleij <linusw@kernel.org>,
-        "Bartosz
- Golaszewski" <brgl@kernel.org>
+        Bartosz
+ Golaszewski <brgl@kernel.org>
 CC: <linux-gpio@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-doc@vger.kernel.org>,
         Alexis Czezar Torreno
 	<alexisczezar.torreno@analog.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794904036; l=3512;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794904036; l=1152;
  i=alexisczezar.torreno@analog.com; s=20250213; h=from:subject:message-id;
- bh=hNTQVnQ97p9HrzNo4KRtFvaC8bGXblkMbJn2E7CYo24=;
- b=aAxNmb9xF4fPlUwazVQD/KGyuhkPxzWG78BCFMPXA1L/5wj9RjcWsxOdAhzKfQ+pVe7kk80u2
- BQcZZ98Hdc6B+vpnZGS4sDhk4vVhojVhi6dQtqOupR3NL9Fi7Ui1KJi
+ bh=RQ67mCYjLvFz/VxLW60cP5pPxrbw6x/+ompPyj6fcvo=;
+ b=RQpLmnQOg0INPQm8cQqJ19YE2CMeSQSCEqVkkpW9h71aRxh7Pc6n0VNGeQ+HMfbORDSNI/PAQ
+ q9byCRsy9CAB/JmD8Hirwd6FWhTJsFUfm/G5vaqOevNYfjrFjFhO0jv
 X-Developer-Key: i=alexisczezar.torreno@analog.com; a=ed25519;
  pk=XpXmJnRjnsKdDil6YpOlj9+44S+XYXVFnxvkbmaZ+10=
 X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE3MDAzMyBTYWx0ZWRfX805T4OQbhl7r
- 23vBA8XiGZCdlMGDCubgAwle679JW3HPEsjwkbegdL4O6xUfnUBFrfntr0ynGk0AkY66zGIcOTA
- bn6//Omw3Uom3u7dNGv9IT5sItjJ040Q85X5i+UTyhKHtvkxJgB0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE3MDAzMyBTYWx0ZWRfX30aCrMDQ/hN5
- GA8hT2dJnVwGw2LqZyy8JkdeT8XduFzzdyTgZuXbsbF9JqLvXvuotn1YCF2hwjiFxqpJh002A2e
- COPfOU99+HncLaRwRp+q1RutRNm7TuLcQYeg3+rBelvuVnHc92s233wSA771zpROlK0Ly2mI1mD
- JCnmy4BRt3Iu5UQ82sK6QMrvwc2fB+pzP2D4BgDuFWK3+lR/DqN5QSQKAVlgb7E2KJLy52DU7cn
- mXiWNDZhvVrOTGlBG4+gis7SelEHf/7yVwsGW22fPIysmCIMo+9ua0ebvOab/eqVAMLHf+10p8t
- mowv33HQbvDyaP5vovOnNeH/ME+VCWleZpMtnoztbsYRE/UwUoJA2WFPVJ7JrdX4VTlV9+rY3ze
- FxHy8TWTHMSl09IIUerrxFjfcmqGYWxx6Yjc78Y6MHE5Ie6C/Ot9q8uyyAhz+PJRtuNymQ2b6fH
- dlVNg3lmF9XirKJ5PkA==
-X-Authority-Analysis: v=2.4 cv=O7OsLx9W c=1 sm=1 tr=0 ts=6afc0ffd cx=c_pps
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE3MDAzMyBTYWx0ZWRfX38LBtWNR9MnH
+ o97q+obXYr01C2tSG7wZGGjqKdgo5tfLCyfJdVjjAaxrqJFHwA+j/C33nDpxO1W46FK6Awir9EI
+ IsAxW1ZPI+uTiXtyMYqxmTiuyZb+Ri0FA8HIFSl6qZgwePXKdSSX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE3MDAzMyBTYWx0ZWRfX2B3ZJ6wxbX6i
+ 9s7Znw4VE9Bp02B7XG+Q3svpX+8S3xnKcPQhg4tax+ZXUqEwQFD7IJJh6wi9kTH8uuBIIUjLR6n
+ IGVTiy2jmkuwNB4QlEVNlQKOwkLk67debj/lCp1UAx8nrZbZ+W8mIb6wqpLD+Q+ubDzEdCIa1ew
+ 8fldKVI2t9VC42CVks/YHO6rTrv64M+oN6yhIJeRa8t1HyumFA/I1HMxbR3ewNvedX+aCcjrgBl
+ WThNsDC3N4fdqKwvzVnMAtXPkaW2RffKbRR5WjMgW9ZZY6nwP7cZ/JwWkQuGXLNClOCzxUT2Yb0
+ i/Gcdo+vmtPX/SmdWutRxtAD/y+19T9uGfgb+Dgef4n73hCJo3tUvKmCrBYB8skIMWolXiCYre4
+ uU+DmhICbl6Qw0+2Qmg8Wl+SFqulOnKNFeYvdFCztriTat/CEmyngNNpIXinekvSGelQjhoRxhg
+ cq7zci4pKOWbnlmbRCA==
+X-Authority-Analysis: v=2.4 cv=O7OsLx9W c=1 sm=1 tr=0 ts=6afc1009 cx=c_pps
  a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=0sLvza09kfJOxVLZPwjg:22 a=Z0pTeXoby7EwIRygza74:22 a=gAnH3GRIAAAA:8
- a=Mr05Dj8HPuIH2qX4H8UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: rrjoGCD-rZm-BCJurAaUZnckVuNB8Or-
-X-Proofpoint-ORIG-GUID: rrjoGCD-rZm-BCJurAaUZnckVuNB8Or-
+ a=iYeKZkTQcfneQMIFD6gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 1K5nZtQ-4iJwo6Zwpu6cEwdMvKJ08nc_
+X-Proofpoint-ORIG-GUID: 1K5nZtQ-4iJwo6Zwpu6cEwdMvKJ08nc_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-17_01,2026-11-16_01,2025-10-01_01
@@ -156,110 +153,33 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611170033
 
-The LTC4284 is a negative voltage hot swap controller that drives an
-external N-channel MOSFET to allow a board to be safely inserted and
-removed from a live backplane.
-
-Note that this device has a MODE pin that is determined by differing
-voltage levels (VEE, VIN, INTVCC, or left open) and cannot be
-controlled via software or GPIO.
+LTC4284 shares the same GPIO hardware as LTC4283 — same pin count, names,
+and registers. It is already handled by the existing gpio-ltc4283 driver.
+Updates Kconfig description to reflect this.
 
 Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
 ---
- .../devicetree/bindings/hwmon/adi,ltc4283.yaml     | 56 ++++++++++++++++++++--
- 1 file changed, 52 insertions(+), 4 deletions(-)
+ drivers/gpio/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
-index 05e2132ad4d8621ab76ee89aa166c131fed08e85..ca62e76f23f1e32df157f138298a4650493b3f08 100644
---- a/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
-@@ -10,22 +10,42 @@ maintainers:
-   - Nuno Sá <nuno.sa@analog.com>
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 55e4280029d86e7701d9a043c89537f60bb70c6e..de9226619ef2f77fdded123657a14c15cbba07b1 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1864,11 +1864,11 @@ config GPIO_AD7768
+ 	  called gpio-ad7768.
  
- description: |
--  The LTC4283 negative voltage hot swap controller drives an external N-channel
--  MOSFET to allow a board to be safely inserted and removed from a live
--  backplane.
-+  The LTC4283 and LTC4284 are negative voltage hot swap controllers that drive
-+  external N-channel MOSFETs to allow a board to be safely inserted and removed
-+  from a live backplane.
-+
-+  The LTC4284 features dual-gate drivers with four operating modes (single
-+  driver, parallel, high stress staged start, and low stress staged start)
-+  configured via the hardware MODE pin. The MODE pin must be connected to the
-+  appropriate voltage level (VEE, VIN, INTVCC, or left open) and cannot be
-+  controlled via software or GPIO.
+ config GPIO_LTC4283
+-	tristate "Analog Devices LTC4283 GPIO support"
++	tristate "Analog Devices LTC4283 and similar devices GPIO support"
+ 	depends on SENSORS_LTC4283
+ 	help
+ 	  If you say yes here you want the GPIO function available in Analog
+-	  Devices LTC4283 Negative Voltage Hot Swap Controller.
++	  Devices LTC4283 and similar devices Negative Voltage Hot Swap Controller.
  
-   https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4283.pdf
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4284.pdf
- 
- properties:
-   compatible:
-     enum:
-       - adi,ltc4283
-+      - adi,ltc4284
- 
-   reg:
-     maxItems: 1
- 
-   adi,rsense-nano-ohms:
--    description: Value of the sense resistor.
-+    description:
-+      Value of the sense resistor. For LTC4283, this is the resistor connected
-+      between SENSE+/SENSE- pins. For LTC4284, this is the resistor connected
-+      between SENSE1+/SENSE1- pins.
-+
-+  adi,rsense2-nano-ohms:
-+    description:
-+      Value of the SENSE2 current sense resistor. This resistor is connected
-+      between SENSE2+ and SENSE2- pins.
-+
-+  adi,radc-nano-ohms:
-+    description:
-+      Value of the effective resistance seen by the ADC+/ADC- pins.
- 
-   adi,current-limit-sense-microvolt:
-     description:
-@@ -195,6 +215,19 @@ required:
-   - adi,rsense-nano-ohms
- 
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: adi,ltc4284
-+    then:
-+      required:
-+        - adi,radc-nano-ohms
-+    else:
-+      properties:
-+        adi,rsense2-nano-ohms: false
-+        adi,radc-nano-ohms: false
-+
-   - if:
-       properties:
-         adi,pgio1-func:
-@@ -269,4 +302,19 @@ examples:
-             #gpio-cells = <2>;
-         };
-     };
-+
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        swap-controller@20 {
-+            compatible = "adi,ltc4284";
-+            reg = <0x20>;
-+
-+            adi,rsense-nano-ohms = <2000000>;
-+            adi,rsense2-nano-ohms = <2000000>;
-+            adi,radc-nano-ohms = <1000000>;
-+        };
-+    };
- ...
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called gpio-ltc4283.
 
 -- 
 2.34.1
