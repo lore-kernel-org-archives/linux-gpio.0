@@ -1,66 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.171
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794939394;
-	b=EkIVeIyWnvaa1fEC9/bnPK8FsANQaHOeLRSrRaQ6hoVKl4UaZrsEzlbnB0e2e7Wr/zgi
-	 z0FH8t+3BTXVX8w9efL9+GCfj8eIlZvnd6tMhfYGeihFXSsIclMY0cCorD1vS098zjV//
-	 HCaxRsl6yMyw27oJdq2CJbIJyhmHZowHVobsE5ww9QTgacwHN81i/+IGmLDoCRnranso/
-	 uhS9iEGNTxBVhiIMhq0D2ZWv3KuZIdomOpBXbEi449/wF9s/X+2usyoP5qDxX553nSU7h
-	 t+SUydy9digH31SMe4OjNYVCPC4cTcpulrpr+Rdtn5FU4ECMvaHL1jZEXQcmykGt98g==
+	t=1794940190;
+	b=KreEizU0v9/CEXnUPm2N+6fY1/La8XdPIN+HLw0zdCAVn8hTmZ2HI7rlMZ7jS9H0ejtk
+	 tnS0B0X6+KRGVZggiAQaY37iKPgswHRYKA5Y5kLUogeRqTu41wmBi813TIXRNvSXphtbK
+	 7f0PLD5Uv0zmTFtJmFXIOIa9qYD0nUg1loXyWtwuyLG4iS1W2IyI2Df89r25zpe68rUd3
+	 XsGOg98huHIuIpqG+33z4IcAGlwubGtVmj0iVgidETIUPmtQn960aQa/ammJJ2thrKE6m
+	 sIm8cxcxRMRqnP0AqKRPaMb5lIfrZAbNmUiaXTVn2+KxpvrNG29gf/j0BaJyBIHyqvg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794939394;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=WHIQxeoR6vINETekLiTI/f5ywXyoHU09pB3XVrXEfXE=;
-	b=j9rT8L4jnXVH5wcg0E2iWX2JnUBnKZvRwxpo6GC/B43vCuPaONjpMA3TaNmnISGaVbPW
-	 h5MXf/2rjpQoDSaYvwLZvgJ8HWJ7vgMOLf0+Ll3FUvrrKOb+hF1/yCu2erV2YKd3QlZhJ
-	 dRTrm6qqccHI9jdZ4WsAz2ifL/cpSfIOir0mH0tvdTOqbieoMzEg9/975QRbRaLnbPe4J
-	 Cl8YQmqVCoSqmcWmLo2vezTbIHTGiwsTU9AwxW/HBu7EG+Rksm2fsA6PwlrThJsZSW219
-	 qWkxSncF2k1JJPE2kuWNfkiW8tWYDjBl8fue3/bWmAiiTrT87DfMENmv1EYQg3rlN/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794940190;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+	bh=SDQ1RqXwbzzB5y54oBPJYOMCHoMzFvGnFsQhYpgHe0Y=;
+	b=rViEtBKx+A+YFlzq5TzoqBxtU08hw+4vGJ2qmSKWvcku5c9RE2dEyUDNi7Fa1IuEqR86
+	 0brVtVqfg4UpuUfsUXflO2bbpF4wN+YiSC90qb4+dw9iHfuouyjuYrV/iZfhJZgl/vwTm
+	 MmgHiGeTVHaxD/rFJneIVkQD5tgXT/W7f842oxsE5OP0D9S+9qBduYCd2Di7vjyro22tl
+	 4kKE/g5mnu2gGyQk2HZlbvBIc6zvI9dDp+L8cxDvIVF4s0LhJ1kmHqMR4hkkEqFnHoz+4
+	 PpyoQ7GUPrViZzSVlVZ+w065LwoU5fj49f/RYqG+brNHw8JrVtKe4wLSJcga5rcjhbg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iav.lv;
-	spf=pass smtp.mailfrom=iav.lv;
-	dkim=pass header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=ZllJTcWm;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
-Received: from sender-op-o15.zoho.eu (sender-op-o15.zoho.eu [136.143.169.15])
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=QBgrxjfz;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=FqvVyF6V;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.171
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA72A606A31C
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 18:16:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BA72A606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iav.lv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4FB606A337;
+	Tue, 17 Nov 2026 18:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE4FB606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=ZllJTcWm
-ARC-Seal: i=1; a=rsa-sha256; t=1794939373; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=jPM86I5fXXkHprkvLBi4twb7QXQFfGNSR471U4Xj2AmO33WwucwF4X/RByhfEVf/qStA55x0RUW+OLfQHVLvSLHp/cGG38CJxWp8GDdwPWTa7xrK9EGlg3N448KFGzVcMM+HvIBOmy/sKLpOfhpdHTF9ZCHSaeAu0wzy46Onpiw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1794939373; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WHIQxeoR6vINETekLiTI/f5ywXyoHU09pB3XVrXEfXE=; 
-	b=c0PUZxL6+rrPi5a894TpamTZZdLM9HmSRhUkHs/m/153b9lQT/XXZgwWeQpmCs8boR1MSN8RlUSNw8wnhkFGinH9MmtxzDxayDDSwqtJ49pO1e/IcAgdKfdUgESEuIXj1xtJhi9kXMsirBr6K75g+PXjTbD04KycgRz3UmS++1I=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=iav.lv;
-	spf=pass  smtp.mailfrom=iav@iav.lv;
-	dmarc=pass header.from=<iav@iav.lv>
-DKIM-Signature: a=rsa-sha256; b=ZllJTcWmygp+HGw1t9C5Z3dZMdLLoAUl+GmOz6SupgIpuMNnG+fiqVVkUkHp+W0yv7C46SBl/YZy3rcIcplXT07wDPPAcVL0FyCMESvt4CFt+q6QxfKHwswFWUjvmoIDVb7ALKrCqk/lRkdOB8BlvPX4iSwusI1uh4IKABJcexA=; c=relaxed/relaxed; s=zoho; d=iav.lv; v=1; bh=WHIQxeoR6vINETekLiTI/f5ywXyoHU09pB3XVrXEfXE=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zoho.eu with SMTPS id 1794939371281278.3710763207241;
-	Tue, 17 Nov 2026 19:16:11 +0100 (CET)
-From: Igor Velkov <iav@iav.lv>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
- Shawn Guo <shengchao.guo@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- linux-gpio@vger.kernel.org,
- linux-amlogic@lists.infradead.org,
- regressions@lists.linux.dev
-Subject: Re: [REGRESSION] gpio: shared-proxy: open-drain regulators on ODROID-HC4 fail with -EPERM
-Message-ID: <20261117-hc4-gpio-shared-od-2@iav.lv>
-In-Reply-To: <kcopbszdsz2amzas3hmchxokw4bjxafu2wzjplthyihkellwd2@hd2k3tomwvdq>
-References: <20261115-hc4-gpio-shared-od-1@iav.lv>
- <kcopbszdsz2amzas3hmchxokw4bjxafu2wzjplthyihkellwd2@hd2k3tomwvdq>
-Date: Tue, 17 Nov 2026 20:15:00 +0200
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=QBgrxjfz;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=FqvVyF6V
+ARC-Seal: i=1; a=rsa-sha256; t=1794940173; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=nAE1v2fumHDyAIFCcMgtwO6yn10NzZezk0eYyR8Ekb3dwNq4BEy+hpgUdaKw0O0IRu
+    2mGasL9oVaQ8Pbnt61uzq5kOP8DE3FV8cdLqw99ZKgR9PJ9YrPM6eh8H43qcWRtC/pnx
+    MWDj3uFGuBAUyIzg7DWL8zNlPbDyg8QGAG37WJN/PROi5/Z0ds9lZdAOmE0r/+rReIcp
+    6utSFdrmon88WzCk+c1TcjAsR6DPK+sWmWWTj5GpygQlAzVv4emup6aLgiBsXl4Z0cxI
+    FxlEMEP75LA403cH1r0t19fgMhEA9zydo3vQrE7JNMFKgMw9kGBLJA//xwOhQesn6RJX
+    UFFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1794940173;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=SDQ1RqXwbzzB5y54oBPJYOMCHoMzFvGnFsQhYpgHe0Y=;
+    b=O3pZrT8YFr1I/zZQIh/iWOvE0A16uQCeI1qSDHnsky3Pz3jAju3AOUNh/H4t+1va46
+    5Z5MVbdTSuxOf8ve5EE+WLGR/AoBo7EntwO8ACK6dNRwE8KC5Wb9h1hE6eX5mmnvHTHT
+    k4r1hebBaSXe7MVWIt8buNBeOGi/EBX4sGvWCLNJhIZ8/WkdvaxhvhUiJxF7uMmcwkqe
+    YQYJ2IuPSQoc/fgRqewppJDjYxrZH4X/Nk8HGt4F9/Qqe8ZvD/Zvx9AYiIMZR6P/d2CR
+    QmCT53Nxp4UhSJF0nrqy39Tho0NXXjp63mpcUKSHeQRm80cznPOsrZXVykXXgMSN3I3t
+    /e5g==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1794940173;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=SDQ1RqXwbzzB5y54oBPJYOMCHoMzFvGnFsQhYpgHe0Y=;
+    b=QBgrxjfzfVOsuZmws7tIhvo5/88QjU4bwMDwJH2SZz71sm7ZY0c63xYlDdDop8PKeQ
+    /+/ZcEz62GXjdbELJj3oGCN3qi06VpLvcqN8103/MNeKTl2oOuowREfibL695Aj7iSs7
+    z/Xm66H4fumo2MJjenTRpdKJolOxN14bb8N2hD9NR+DMEd5VVEjWgbqmQN+c2NEK12NK
+    U2ddsIFuHRU9XgZCnKvA2HJbZfdzRqroSZx+Awz5SDEb61C8gI60P7BzAfAGrZZLAdvy
+    Tn63xiD+pAPE8n6C0s6N4+sTSK0nSlR5GuYy+w09MbDSm96N9+MeqCQUKS3HC7Ya4nAj
+    U9bQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1794940173;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=SDQ1RqXwbzzB5y54oBPJYOMCHoMzFvGnFsQhYpgHe0Y=;
+    b=FqvVyF6VFsRsztJM8ZtCO3teab6qpQYwd078iXHOAHQHDSKSyMqHlZOv8V3A/bxAb3
+    7LwMos242TbYrYPceJBA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrQ3ppelMiNKoEY92nD9kO01+3QZuyyF4VcrvHZ"
+Received: from iMac.fritz.box
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22AHITXYbP
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 17 Nov 2026 19:29:33 +0100 (CET)
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	letux-kernel@openphoenux.org,
+	"H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 2/7] pinctrl: ingenic: Fix hardware dual-edge interrupts on X1600
+Date: Tue, 17 Nov 2026 19:29:23 +0100
+Message-ID: <b87494f8bd72efe7d4c8b8c7c6a5f37686861aff.1794940167.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cover.1794940166.git.hns@goldelico.com>
+References: <cover.1794940166.git.hns@goldelico.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -70,18 +111,65 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Nov 17, 2026 at 02:35:03PM +0100, Bartosz Golaszewski wrote:
-> I think the issue is with the proxy driver not
-> propagating the -ENOTSUPP error code in set_config().
-[...]
-> Could you try the following diff?
+Use the hardware dual-edge detector on X1600 and X2000.
 
-Thanks, that fixes it. With the diff on v7.4-rc3, 4 of 4 cold boots:
-no -EPERM, vcc_5v and both p12v regulators probe as open-drain
-outputs, and both SATA disks come up. Stock rc3 on the same board
-failed both p12v regulators on the boot before.
+Set PAT1 when configuring both edges and program EDG on X1600.
+Keep software edge switching for older SoCs without EDG.
 
-Tested-by: Igor Velkov <iav@iav.lv>
+Tested on X1600 and X2000 using GPIO buttons and register readback.
+
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 88c5edeaaddcc..51a4b1839f42b 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -3622,6 +3622,10 @@ static void irq_set_type(struct ingenic_gpio_chip *jzgc,
+ 		break;
+ 	}
+ 
++	if (type == IRQ_TYPE_EDGE_BOTH &&
++	    is_soc_or_above(jzgc->jzpc, ID_X1600))
++		val2 = true;
++
+ 	if (is_soc_or_above(jzgc->jzpc, ID_JZ4770)) {
+ 		reg1 = JZ4770_GPIO_PAT1;
+ 		reg2 = JZ4770_GPIO_PAT0;
+@@ -3644,6 +3648,9 @@ static void irq_set_type(struct ingenic_gpio_chip *jzgc,
+ 		ingenic_gpio_shadow_set_bit(jzgc, reg2, offset, val1);
+ 		ingenic_gpio_shadow_set_bit(jzgc, reg1, offset, val2);
+ 		ingenic_gpio_shadow_set_bit_load(jzgc);
++
++		if (is_soc_or_above(jzgc->jzpc, ID_X1600))
++			ingenic_gpio_set_bit(jzgc, X2000_GPIO_EDG, offset, val3);
+ 	} else {
+ 		ingenic_gpio_set_bit(jzgc, reg2, offset, val1);
+ 		ingenic_gpio_set_bit(jzgc, reg1, offset, val2);
+@@ -3718,7 +3725,7 @@ static void ingenic_gpio_irq_ack(struct irq_data *irqd)
+ 	bool high;
+ 
+ 	if ((irqd_get_trigger_type(irqd) == IRQ_TYPE_EDGE_BOTH) &&
+-	    !is_soc_or_above(jzgc->jzpc, ID_X2000)) {
++	    !is_soc_or_above(jzgc->jzpc, ID_X1600)) {
+ 		/*
+ 		 * Switch to an interrupt for the opposite edge to the one that
+ 		 * triggered the interrupt being ACKed.
+@@ -3758,7 +3765,8 @@ static int ingenic_gpio_irq_set_type(struct irq_data *irqd, unsigned int type)
+ 		irq_set_handler_locked(irqd, handle_bad_irq);
+ 	}
+ 
+-	if ((type == IRQ_TYPE_EDGE_BOTH) && !is_soc_or_above(jzgc->jzpc, ID_X2000)) {
++	if (type == IRQ_TYPE_EDGE_BOTH &&
++	    !is_soc_or_above(jzgc->jzpc, ID_X1600)) {
+ 		/*
+ 		 * The hardware does not support interrupts on both edges. The
+ 		 * best we can do is to set up a single-edge interrupt and then
+-- 
+2.56.0
+
