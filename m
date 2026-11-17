@@ -1,124 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794910854;
-	b=Fh6j3yP7CIZU+xEv2Tn0jvsqc/Vq2QYMUf7SOpVXy2paLEOAUaKhHvkWBRB40RsB2DKp
-	 vvf6uirnI/fszr+wUk5LkEu6U9FzF0Y9rlTKmcp1O4UDzHhC/CvDmqdbPmMfcq6+S0SAi
-	 kf4G47BJooJHXuvOVtoyNC6uRxcGmaiSJ/I66gly4NxIXyzCDuUqmXxpx8swWjvF4fgyH
-	 O4NGdR4/7Ww8qvATgsyTnPByV2+2J+LwgxLZjYSqtlc5HMjuAUGuoB4FiqUOJ4yf3i5Hu
-	 Vhsyuv9LO87HsKSR8/fpbe+6uJX3qOsV75ruJLcBbHMYOWJK+VPzfE0WxTB6yN5tz+g==
+	t=1794910901;
+	b=XS5mIYxKTgsvGulSJ76hNy7fOwr+zNPCeZ5j97ZAnNZdjWlGM5VpBdIEoWqr46XlHDtl
+	 B9nqGySd9eB3tulmfo4sdxCCJAfsy0N8fpvITJCvbRNgGEb14YAzr/gDjCdmIJEHo/35q
+	 PLOgYvSTiDSuEClHHF+J0hobVoQ2nKJN44Pwf/cQ8Y1KbykDdWkSIpDYPcYQHjWTm2HTS
+	 +oJhVYOC6Ro/bbUQofv1w2toXj14tusUfM9PeWgtft6sue6FfrrhNi1prSZyUYWCf3n24
+	 0nDskcGHzLYmygxt800g/90SBlTQH//zz5mZEKYBsYMWmJLzzSZV/fiRpPgzWDmbMIg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794910854;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=ilGgLF8asMhieoRjJnaDA152krpezAwFlFx6D0TT66g=;
-	b=qOdmJwFo7VpE5Bgl6kuaKQvfwxjc5p00KTnicVtMk9EBwl0PHXVWHBex02x8EWpuoiQv
-	 Wu0hlb3Qx0YmvSuSok8KLYZTZTL11YnVYUFfNcdDimKBvkwwus1SqBA2u1R7PGdO/bY++
-	 wtf/MVnIkwcOsSJAMoe/YxZ61pJDbwTq6mS5bQFXZ2agyZdO/tEoVJeNE7PU76+U2aJJt
-	 G3XgaAbUZqjGlNiadbRztxuhwbj4xJrjDkP2D5qpM1x+7pq3bQz+6WTwgQf16rjgJoecj
-	 V1YZySES8Fyvp5CHJHh0aGFlY1KLUuKKFuZJ8oJ9Th+BEEcloyB+EjQmUUcQuniw+uw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794910901;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=D942YyHXcVgnkkaU/11BZPN4JzbqpBRwvdb/nOY3osc=;
+	b=UZjUwf4ALFUjHS/32p8ia79c8wTkEVJzjMmVX36jYQWy65VaGqTit8/3XJDJdr4K/vle
+	 ljlXiYdQmVt1CXw/N6Z8DqnlS6dlxvMxSTTY4VW64HTbILUWPb7yaecj/CZYli1c2qENT
+	 gEo00oPCwW0vQS8P6KpkI1RfuSUXtuto8yTadg0Y9fdlH7MpebgnqoolUVpm4zGCNK16N
+	 wZouCKwHKf6IiOvfRqLGJstB+L+R5fc9VjhM1QtkoIe7zJDxkRo64RFUYP8A2H5HhnRPR
+	 MMY+r2J6yxrGZpWEmvOI9MGgeCfdzgy61mCKi94uDZ7CNCeLhPhEFoz3lFP+TBw4oAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=g94MOWNz;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=XjODMonJ;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NaDwIaZj;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E193606A323
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0E193606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DF2606A883;
+	Tue, 17 Nov 2026 10:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=g94MOWNz;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=XjODMonJ
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AH8uph22934224
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:20:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ilGgLF8asMhieoRjJnaDA152krpezAwFlFx6D0TT66g=; b=g94MOWNzth+xBunp
-	hOmkSpvC0JgQ6l3J4MLRkj++1Aj3Iob5oQovsEtW/rMKc+iynR1k56o2ngfn1sH3
-	vFQA08z5vD9negODGIgxfl+5WF3jA1PGgCUYTX+nSAmfit/62phKuKqcC6P7GE4e
-	+MtQjH+dvKjOLYUUSLcKrkJsCXWEduS5SL+ZS4L2llzptj2ReP1OmQsCptlWS/54
-	4q6Jz12yReAngkZgMpRZfEOsZPIp8KSJSYRAegwpWG371C9fooXkxEvbWqKJTwG4
-	+CLaNS4Dra+DQm7j2s+3LVgeJsHDfFmAm1RG0T9ZVZVf+2yA1mp7+iHDPPrce5/b
-	8vCRxQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j09m0akj7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:20:53 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93f2373e9b4so493126985a.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 02:20:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794910852; x=1795515652; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ilGgLF8asMhieoRjJnaDA152krpezAwFlFx6D0TT66g=;
-        b=XjODMonJHXxpwmhfHq4jCOgmc+C0k0FJ/3tCgftZn7xoWqq5O7W1TMTD9y3lktpiHb
-         qrqbkg66GQ/69oU7KRmgsTxj3zPEB7v3Coe/hL1h6Q6QvkOTNeSmfq34hmJR1BqT9URR
-         d4qWJO7oZqPbqZkX03vUekMTwneoMpXkW1WyBHlOsDKwQQMR9eCiSGhwNQ5aO/gtLKgm
-         XqJyy0salEvlvGVWTy6xaKmwYnQSOAzwDpTJRe7RDvrfb/vcMaQ1qkH2U7pe/1a3XjPg
-         APZskAdmn7AM1+J/yJ6pqTs5CePLMQ65fY5FWE+QnLhMTImzMjVoI6FM1NQzY/6NB4Mb
-         bDfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794910852; x=1795515652;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ilGgLF8asMhieoRjJnaDA152krpezAwFlFx6D0TT66g=;
-        b=tqGSg1r9PoaWwK6khVje2tluwIez70Mw6nCO81qkA3DAv6uzojeZVq0Lnkfi545jnQ
-         ow/di/fWU3ZjETppYr0QoJaSRi/Xm2YpbZ5VW9MvQQdzc4Kopw9mtbPbs93bFOkAViYt
-         Q9lcLQkWEFsww/XgLanvauUu1I+rthuck9tM/TdaSk9uKYSIaRYeVxSodx3s5JEVk3IO
-         McN0AqjY7fhQQOsCn7sc0S2tvToejIvZIPfnjaB7arhcFzZv415rwTv3hkpahiiCY+F+
-         UkEMelX17PMzpwgreGUfx8WedvzlzI8ham59TcYKKK/YIk4mcL/GuSCVfRBfNzcHXWnX
-         EBmQ==
-X-Forwarded-Encrypted: i=1; AL+hErEB3at3ngvJlqsGPir2HhrFhkvIpUz0Y8AdtsiG71QZt3c22z+UiMYPiLjTkaaqiUmCQssf/l3VniUq@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Kb73Uqn8g9U+aWM2EeaycADetdl5g+bY9jI0Icsgpf0qPORHc
-	wCMdzjoSGDNSAdR/Dfqiei+gGpQhoHdAeBnt5tPiM0Gvr1G6DMnCGGHxEhemYChcTSy6MhV0sXk
-	RXMR6fmeJhmlHL+yFaeRFZp8VLKbY7iBLUCzczQ0OeNz+jgRRNLyjVYJIA6/4jJaj
-X-Gm-Gg: AYBFou1nBoM+3LTWdnCdtqFNA8z/P/xWdP6RfzNJ3GgSnDrJOZ8bQi7zH4FqsdqV1qa
-	bMJ155WR1YT2NDOj9tS98Rasr5+Rbq2RHg6t/M+N+CFML+CDYrDo9eQQin8wBnh9VL/oliryQD3
-	Q6M5fEUc8eitqa3wN0B7iDLKygMCHsAujAeQQW9IrDfhnW+TMvaTVUzaEYe+OGdw7peg0w3mn7y
-	YKQtCRJcunjMe4fdA8OTVzzfD6QfjK2mZt9FxSNUFh09skIxcALs7RBjitI9hfUMWW02baDpyEu
-	dlC4NL112VsvuTdocNdIL2q0aU63J2dlusEtXl+YsO84rK6qwtuydFNPAIrRXam+3NPy/D6btgG
-	3PImS/CUxmwMCyZd3+4E83r71+X4sjucMLzmrQ5I9cA9P2SfcRjmLCINuNKLJpoHiRJRH5WZCRL
-	M=
-X-Received: by 2002:a05:620a:4592:b0:93e:e2ec:3bf with SMTP id af79cd13be357-9494bcc9ef9mr2151886685a.78.1794910851989;
-        Tue, 17 Nov 2026 02:20:51 -0800 (PST)
-X-Received: by 2002:a05:620a:4592:b0:93e:e2ec:3bf with SMTP id af79cd13be357-9494bcc9ef9mr2151884985a.78.1794910851460;
-        Tue, 17 Nov 2026 02:20:51 -0800 (PST)
-Received: from brgl-qcom.local ([195.50.164.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb783854cesm90386485e9.1.2026.11.17.02.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 02:20:50 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Lixu Zhang <lixu.zhang@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Haotian Zhang <vulab@iscas.ac.cn>,
-        Alexandre Becholey <alex@becholey.ch>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        stable@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: ljca: Validate the pin index of interrupt events
-Date: Tue, 17 Nov 2026 11:20:48 +0100
-Message-ID: <179491079451.28213.15188778805240746031.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261113144432.1354180-1-alex@becholey.ch>
-References: <20261113144432.1354180-1-alex@becholey.ch>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NaDwIaZj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8741F000CA;
+	Tue, 17 Nov 2026 10:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794910901;
+	bh=D942YyHXcVgnkkaU/11BZPN4JzbqpBRwvdb/nOY3osc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=NaDwIaZjAtMuIEkp98fdkOCUA7cozk999b994AOay8tjTHoGsKuVjDk5c7IE6GWs3
+	 oI0Z4VD/73ZXG31vMuuHr0FtPQs88NYXh2q+gaqouQJnVyYO04WKA69euwU+b710fF
+	 A+1WdNjEFVgQMfk9thjT4XsSLHSC4nf9gfkjxI1odqHAbW+2f7+Vzo2xdUzFZ0xDqG
+	 f9Yk3vwWmtXxjadVcd8FY0XIi2G5ovmsuJQE6ipFvl6w9gNMbV14IHRQFfpSEKqy2D
+	 Xn8rqrWjGLCWnOlrombXU+x35LGUIkXyRWR5zYluXCVDhX4aGy31IZCilZhkzv6oH0
+	 fvW/411LiEF0Q==
+Message-ID: <f290ccf7-1475-44c2-8152-b88db79d46fb@kernel.org>
+Date: Tue, 17 Nov 2026 11:21:36 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -128,59 +51,91 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE3MDA0MSBTYWx0ZWRfX6PGOOnuZNjmM
- zVo04bPk1d7+Vw6je7dJ9uOMGV8tqWM0soPvs9FXE4dCaqKQj26awAM2/nEbG5WkHU/PAmGIV1i
- Lr/u4MuflZDDNIDrK3DAKGZM6SUYxJE=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE3MDA0MSBTYWx0ZWRfX/MXVUfDaWjff
- tkYbVvHgyehPRhZTAxf7HnM0TXbyUa2LZdUCYbha8LNUhHQe4JKC8Ufve2HILSic12QqhFxIDot
- usOkQh8HbUHnzllr8FRrDWggnsJbgnttYMeOapZrfO8pm4pr7gY2grdxjpoQCo0nYE03Jl62jaM
- +IhbakjU66xwB3PwPqyFl7ixeP5nUTh/a+6HkDu3GFJvYSfelXSrKeMUzflsZmc0i2U2ppKi1cY
- RwzLeEwNedwP31MOB/joY9eLgr0v6iSAJwa6R93kAC+MSV3NdsraCYT+8Qsvcy9av9PObJp5hqr
- abV3SCTfSir71P83/lZHPg7WLG+XIwAz4yi7Ah6uIIX9IWR1HhUliTX3d8D4rUZI+gTR/ZASSer
- IN/Poe+pMmbfeRIUWrPWK/FYLcTQUXXe450sMB3jYJZx3LfyzYxL6UYy5LGVvM500ct+FgdAhsO
- VXCSFBl1oyid3QNRiMQ==
-X-Proofpoint-GUID: aYTxfd4FEJnV6bzln5DqlBJ-uURLO3kP
-X-Proofpoint-ORIG-GUID: aYTxfd4FEJnV6bzln5DqlBJ-uURLO3kP
-X-Authority-Analysis: v=2.4 cv=F7rC5ahN c=1 sm=1 tr=0 ts=6afc2a85 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=Jk2/TV77q6/E6wQq2oQJxQ==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=tYqXyjVJoe5DErGjTNgA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-17_01,2026-11-16_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- suspectscore=0 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611170041
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: qcom: Add QCS615 LPASS LPI
+ pinctrl bindings
+To: Karthik S <karthik.s@oss.qualcomm.com>,
+ Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261117075100.272535-1-karthik.s@oss.qualcomm.com>
+ <20261117075100.272535-2-karthik.s@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261117075100.272535-2-karthik.s@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 17/11/2026 08:50, Karthik S wrote:
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree/bindings/submitting-patches.rst#L23
+
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          pattern: "^gpio([0-9]|1[0-9]|2[0-9]|3[0-1])$"
+> +
+> +      function:
+> +        enum: [ dmic1_clk, dmic1_data, dmic2_clk, dmic2_data, gpio, i2s1_clk,
+> +                i2s1_data, i2s1_ws, spkr_i2s_mclk_a ]
+
+It's the first time spkr_i2s_mclk_a name appears. Are you sure that is
+the name of the pin function in the datasheet? You won't be able to
+change it later.
 
 
-On Fri, 13 Nov 2026 14:44:58 +0000, Alexandre Becholey wrote:
-> ljca_gpio_event_cb() takes the pin index of every item in a GPIO
-> interrupt event from the device and passes it to set_bit() on the
-> reenable_irqs bitmap, which is only LJCA_MAX_GPIO_NUM (64) bits long.
-> The index is a u8, so a malfunctioning or malicious device can set
-> bits past the end of the bitmap, in the members that follow it in
-> struct ljca_gpio_dev: the output_enabled bitmap, the connect_mode
-> pointer and the irq_lock mutex. connect_mode is later dereferenced and
-> written to by ljca_gpio_set_config() and ljca_irq_set_type(), so the
-> device can flip bits of a kernel pointer that is then used for a write.
-> 
-> [...]
-
-If you have an LLM write the commit messages, please ask it to be more concise,
-half the stuff in this commit message is just slop.
-
-Applied, thanks!
-
-[1/1] gpio: ljca: Validate the pin index of interrupt events
-      https://git.kernel.org/brgl/c/e6e2181c6920ff59ded349a100f80cf85d074601
 
 Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Krzysztof
