@@ -1,55 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794911947;
-	b=w4E2HBj3aYhasZQFfXaXSRh+YO/PHqO+h1sN6eJpVVhPkjcihqTqHustQnn8qmepkkvR
-	 M67WzLP19mObgkKHTPPLKHpRKSN9gkejXXdW0GfHk8kH7X6UMKGTm6UxW4y9z5u0eESJL
-	 8QXy3oFhbvvxJRHBnZzFpBoQ48zH1Ji1LGBnLMp6uqT3SqANIorE9tPHhaKro9FE3oSKp
-	 2mpMyLyCtq8j7QPchalOi320oAek6EgZA9lDCjZrHPa+dniIYDZRSlv7W2+iHt2tD/8M5
-	 5Dc6wPUKfabWkR1h30RMMqWqiQxxZbg49xfmfAVyo8FbyM8Ox1I5y4zaQCh6D5dGb3w==
+	t=1794912090;
+	b=sFvG1EziYNkwroU+E2cpHDJF+UJpTTpmw6MriF0E3LYN/AgpaEtUijzvQAqI+XBjRvUZ
+	 /I5UjK7kvTloJrbN/7WC8xStyvkZZGenf+45CT8buwBQAauhE1263q+IDHoxhXA98dWj9
+	 GT7Cg9Cy1Gb8vZKJpOGKpWdLdda8FEHyZGa0EQMOAlN012k29bn0NG1Di+7P4GOzGl34B
+	 iQmvZe9rVAUqexYM2iDlnk7DeNrGx1Vj/19FO3BiC+h8yLqB5C08G0tVXDMrvFdxxR8pV
+	 KZbE9if5ZCgvTChiwx9jrL0j1A0aDFU/IgOrD5LWOTK7ogJFLcfrYvKNXAmtOMMtMZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794911947;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=NuyW+LPkABdZOmh3sBu4i9JSnfftHozPE5xHuZU3CeI=;
-	b=F1pZPIS8YWVgmTomvmKxXowuVHSRgLpohEFEvoTcNAN45Gzt6OyoYw0sP54oa1nkCQUV
-	 X/tTkk/9nnYOVAV/VGQI6QCSITtCRzKCdU6t4InbVuNiKqbdkIKtkC+MkBJI6mJXagqWQ
-	 6jCI/HvXTxkP6GLh5GpbBDnAuGZknjTy0gDMnS5VlrHNsmWXq766KStM6kw7NCf0fHj2D
-	 AEDGUzFrbuLdYID2VHXQvJEb0H57Z/lYqQWI2PYxJbuTTo82v+hGn1Y8YCjloBHalnyGe
-	 hpBnOI1O+7uUSgwRe33Gn4ojBZucUcrL1JO2nca0KzGoCdCluPsLwHWd1Y1C5nU/y3A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794912090;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=eaga9iq2xMzHbd5n0lWO/WLBwljw+5hVBVM+gVZj3uk=;
+	b=OkY0nATpb0vd3F4DSz9OJxQBopbTfRYvs7DKxHamD7rLpmAbpz+f2CmcdLBLrTb0u5jz
+	 tYETFXghUEfkem+wPrDl8s2p0fkmRRoR+eXHxZaLatIl3vkJD32A1+F6n+ty5E1zrsK92
+	 7X3zwdePJXNMEFmewCGJYNXQfFAszNZAln8M7C1JfjNMOLTrWZA6PEteaU3eN9/b4Vqdi
+	 MIVRw5ahY/4Mb2i5NW18MefeBpbk3Rl3+esr/ns7+1v7AztE6BLTtHuwsiZInuIHB+AmM
+	 /0CKDqT2IaWjI4/ucwI/DESTgxmxqrEc4wy57nOSZCt1lOF/qCQ6GsPGTqzpvmmBimA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kCMXh3Ru;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vzTKbVTa;
+	arc=none smtp.remote-ip=209.85.210.176
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A585A606A329
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A33A606A323
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:41:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A33A606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kCMXh3Ru
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C25E1F000C8
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 10:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794911947;
-	bh=NuyW+LPkABdZOmh3sBu4i9JSnfftHozPE5xHuZU3CeI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=kCMXh3RuzFG0Ug/pEgPdThQxr6c4ceYwJwzJCgsccTaPx/IE81y5TbFtll09nr0Y4
-	 aqTBrPQVPxGZj56gp2+Qkp9bYLjjgaXtDBCrUpkj1sBEcodwqDBgHzf6+u9wbHDXQS
-	 N7KTYTmzj7EERVsE3wGws0Ur05cqGWBQ46VMs0oB+pEhhO0UY+IIa2WZDwH9bb9D7L
-	 d1sP3YHz4HOa9L6VKpc+AUSz4a0pIfATu90CQd53LCHolba+sJnvw6omsnBLrV2uBs
-	 7nJMUA22b4KI9eCp9bh5AMNk9KDDz4YDkngfaD1FPorh9JjZMzmAjxwqfFJJQYp7lv
-	 41nTwTwaGbcWQ==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3adfc004920so45157331fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 02:39:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHWj71cDz1kwfiiKPiYcbLKjB23qOOJpFpqSSlESxkXlYDl6BW2ZYj1QonhhSsvplrFpN6UlmqZtVt4@vger.kernel.org
-X-Gm-Message-State: APuU4Z+3OqH6lhF1xXva7Rs6Y8zGTJN+XDMlNszMuYncbCKrW7xxYfCv
-	37QLn1bUjoVFIB2lNpV+S3WgP9gb3XrOLuS6SF/FDrYENvojbXZcM3dOiMzka3b1IpBPgh8p9w7
-	ZnWyZAn57DUZGv5PJRZfrlyJvfk6y7Po=
-X-Received: by 2002:a05:6512:1317:b0:5c1:57ee:1887 with SMTP id
- 2adb3069b0e04-5c1709991c9mr5809743e87.13.1794911946039; Tue, 17 Nov 2026
- 02:39:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vzTKbVTa
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-8b68e59ab33so4176810b3a.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 02:41:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794912089; x=1795516889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=eaga9iq2xMzHbd5n0lWO/WLBwljw+5hVBVM+gVZj3uk=;
+        b=vzTKbVTaO0mnOjT0wrC9bJuj2U7c8JCBOJXeERXLXjO6BfmdRweqdJxvATO5aSRSHj
+         SXb9XVeZEaBHEWOO2LUH8py3vAozCejmhPwtmDUBrZi4zh1Az2YxxawDJJz8Ml7lH5wd
+         cnrD9bJqzzgyTEoscy4of5hkrgQDPSLHsjyaApIpOGz/V3CtmNtFnDppf79BVRrpsCzn
+         nQUYFA3GFydj38LtNiRADuY95g6sUsnytyW70R+5lCmFfR3lWNafrMTBuzYZgT09nVi6
+         vV8qmPYcO67Sg/XsSJIXbi9pwdzhbSr5k1Eq7p3ooNns1OQXih4gPtmlRxyRI3d3p11k
+         rEag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794912089; x=1795516889;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=eaga9iq2xMzHbd5n0lWO/WLBwljw+5hVBVM+gVZj3uk=;
+        b=WplMUd3jphf3eNT5hLJ/HiE899bXEDwUQiMft/Zp/GRlPhHal52onC2OLUF/Q8wd+D
+         gZ1vMlLhMgkJzw+UaK6XKAUSZ5dbAUeC3R/Hi4umd2NBo52e/bsTsAZNl6L416Glq8xu
+         LSwprfY2HV1/sTUDyFIkycLT3BtCEryBYBFwKgg8R5veiRMp95YpBN5YakF2HMv7us9T
+         w8kZkkVqVxLY4R6jaRlir9JkAV+tNMEmgIL4KWaBX1EswtkLhSJTWBP6dCGRqAfu5bqj
+         TVe+PIsF+EZLSNgtiqFk8LhiDVyEz6Dg25fBvXuON25hFHmcYaXBVaTgY71l4/ReOPrE
+         vlfQ==
+X-Forwarded-Encrypted: i=1; AL+hErERPHXKlOGtc5gIVTIiDkGy97s5WUbJ1QdsZ91GFsm17/tzg5vhz3OSDaghLopIMcbQl+4jO2p56fOC@vger.kernel.org
+X-Gm-Message-State: APuU4Z8gPz9rpW0ZveXRUqnbSVi5H/+gjgFSIPYXXSZ+GrVej7dT7Ekd
+	Q0oCsfIoXa972+HvtJY5NDhQDGOyW+aIRO3Kt+omH7YNTNvk7GVIE/U0hFQvtaO/
+X-Gm-Gg: AYBFou0D0CFOGITikt1EsU38+VFeTpS33qwroDrRmBYTu1dO2dPFKs+SiSIT8TuVGZ7
+	/pja6qOx4RpSntVFmNITAJKruVk72OI2/tloZ5xWc+mFvl7u0A98S+t3GISdiYwaMqDBXVD+5DM
+	OmGBN9Q7EDJg9LcxO7tf08b82+KX5pUal2/y0FHUpcbHXpHy1aDa617pBBhAG7/nkHK8pausSGX
+	ePWBh1v9WADaZhaoxuyDMlTXaw5ty9TTymttEv5lNounXuhmmmjobVKPeaK8dBSCmTLMFul6bEB
+	MIx3aFFCpR3nEaXmumLbQFi4pYuqXznEC/+iP0L5ELllMrx9+QvGRGRqBSoRdBmPaJX4ygOqQqq
+	L+Rc5D6eg8Wofudb5qYHjDnacwEmu1MNAVQwN8E+6UNsGwbHcrEUu8kw+T/En4Yy7O5swYHRRb5
+	7JF/DMEPp7jioyuTqhne/xCAxLGv3exDo7vkDJxA2foFzRSGBcHVwxG8QWOVZ2hIDVnC2YeuFtn
+	k3jQ/BLFVlA8lpfTshpa2J+m3lFwkMAjY5Po3fWxeJLtYVeYYF1o0CVtq21yNDVln8o8j9pqeeB
+	3RvzgNqqiey7UT99rxj3drvEQT+R1i1TIk8+BOkgodX6FQ66
+X-Received: by 2002:a05:6a00:2350:b0:8b3:15b4:45f2 with SMTP id d2e1a72fcca58-8beb6b6baffmr12020475b3a.25.1794912089476;
+        Tue, 17 Nov 2026 02:41:29 -0800 (PST)
+Received: from hj.. ([163.239.22.29])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed2829dcdsm4900102b3a.48.2026.11.17.02.41.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2026 02:41:29 -0800 (PST)
+From: Hyunjung Ko <hj351016@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Mary Strodl <mstrodl@csh.rit.edu>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Hyunjung Ko <hj351016@gmail.com>
+Subject: [PATCH] gpio: mpsse: reject bulk-in endpoints smaller than 3 bytes
+Date: Tue, 17 Nov 2026 19:41:10 +0900
+Message-ID: <20261117104110.240112-1-hj351016@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,114 +98,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-sf19a2890-gpio-v2-0-b885fbd84c4c@telaak.dev> <20261109-sf19a2890-gpio-v2-2-b885fbd84c4c@telaak.dev>
-In-Reply-To: <20261109-sf19a2890-gpio-v2-2-b885fbd84c4c@telaak.dev>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 17 Nov 2026 11:38:53 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkGavE9jL_EbPB2iPH=Aa=4Vdwj4nvHgiauJtq-dbwKZQ@mail.gmail.com>
-X-Gm-Features: Aa3M54ppfeS06feOaViTWRV8zuTIrQ_dO7MWlQDFZO4SKHToSwYpGEh5iS9tAzY
-Message-ID: <CAD++jLkGavE9jL_EbPB2iPH=Aa=4Vdwj4nvHgiauJtq-dbwKZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: Add Siflower GPIO controller driver
-To: joseph@telaak.dev
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
-	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Qingfang Deng <qingfang.deng@siflower.com.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Joseph,
+mpsse_read() reads min(len + 2, wMaxPacketSize) bytes and then copies
+len_actual - 2 bytes to the caller. A device that declares a bulk-in
+endpoint with wMaxPacketSize 1 completes the read with len_actual 1, so
+the copy length becomes -1 and memcpy() runs far past the one byte
+buffer on the caller's stack and past bulk_in_buf:
 
-On Mon, Nov 9, 2026 at 9:09=E2=80=AFPM Joseph Telaak via B4 Relay
-<devnull+joseph.telaak.dev@kernel.org> wrote:
+  memcpy: detected buffer overflow: 18446744073709551615 byte write of buffer size 1
+  WARNING: lib/string_helpers.c:1036 at __fortify_report+0x6e/0xc0
+  Call Trace:
+   __fortify_panic+0xd/0x10
+   gpio_mpsse_get_multiple+0x767/0x780
+   gpio_mpsse_gpio_get+0xa2/0xf0
+   gpiod_get_raw_value_commit+0xf8/0x1f0
+   gpiod_get_value_cansleep+0x1e/0xa0
+   value_show+0x42/0x90
 
-> From: Qingfang Deng <qingfang.deng@siflower.com.cn>
->
-> Add a driver for the GPIO controller on Siflower SoCs.
-> This controller is found on all current Siflower MIPS and RISC-V
-> chips including SF19A2890, SF21A6826 and SF21H8898.
->
-> Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> [Joseph Telaak:
->   - take it from Chuanhong's siflower-7.1 branch
->   - depend on MACH_SIFLOWER_MIPS instead of OF_GPIO, longer Kconfig help
->   - get the reset with devm_reset_control_get_exclusive_deasserted(),
->     so it is asserted again only after the GPIO chip is removed, not in
->     a .remove that ran first
->   - drop .owner and the unused drvdata, and get priv with
->     gpiochip_get_data()
->   - drop the irq_set_affinity callback, which reached the parent
->     through irq_to_desc(), not exported with SPARSE_IRQ
->   - call gpiochip_disable_irq() and gpiochip_enable_irq() from mask
->     and unmask, as an immutable irqchip must
->   - find the group by its parent IRQ instead of assuming consecutive
->     numbers
->   - return 0 or 1 from .get
->   - use readl() and writel() directly, without wrapper functions
->   - take the number of lines from the match data, not from an
->     ngpios property
->   - include linux/math64.h, drop the unused linux/pinctrl/consumer.h,
->     sort the includes, spell it "Siflower"
->   - subject]
-> Co-developed-by: Joseph Telaak <joseph@telaak.dev>
-> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
-(...)
+Reproduced with dummy_hcd and raw-gadget. A read needs room for the two
+status bytes plus at least one data byte, so refuse to bind otherwise.
 
-> +static int sf_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
-> +
-> +       return !!readl(priv->base + GPIO_IR(offset));
-> +}
-> +
-> +static int sf_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
-> +                            int value)
-> +{
-> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
-> +
-> +       writel(value, priv->base + GPIO_OR(offset));
-> +       return 0;
-> +}
-> +
-> +static int sf_gpio_get_direction(struct gpio_chip *gc, unsigned int offs=
-et)
-> +{
-> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
-> +
-> +       if (readl(priv->base + GPIO_OEN(offset)))
-> +               return GPIO_LINE_DIRECTION_IN;
-> +
-> +       return GPIO_LINE_DIRECTION_OUT;
-> +}
-> +
-> +static int sf_gpio_direction_input(struct gpio_chip *gc, unsigned int of=
-fset)
-> +{
-> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
-> +
-> +       writel(1, priv->base + GPIO_OEN(offset));
-> +       return 0;
-> +}
-> +
-> +static int sf_gpio_direction_output(struct gpio_chip *gc, unsigned int o=
-ffset,
-> +                                   int value)
-> +{
-> +       struct sf_gpio_priv *priv =3D gpiochip_get_data(gc);
-> +
-> +       writel(value, priv->base + GPIO_OR(offset));
-> +       writel(0, priv->base + GPIO_OEN(offset));
-> +       return 0;
-> +}
+Fixes: c46a74ff05c0 ("gpio: add support for FTDI's MPSSE as GPIO")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hyunjung Ko <hj351016@gmail.com>
+---
+ drivers/gpio/gpio-mpsse.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-So this has one register per setting per GPIO line?
+diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
+index 61c5ca96314b..3ad7048f009f 100644
+--- a/drivers/gpio/gpio-mpsse.c
++++ b/drivers/gpio/gpio-mpsse.c
+@@ -676,6 +676,10 @@ static int gpio_mpsse_probe(struct usb_interface *interface,
+ 	if (err)
+ 		return err;
+ 
++	/* Every read carries two status bytes ahead of the data */
++	if (usb_endpoint_maxp(priv->bulk_in) < 3)
++		return -EINVAL;
++
+ 	priv->bulk_in_buf = devm_kmalloc(dev, usb_endpoint_maxp(priv->bulk_in),
+ 					 GFP_KERNEL);
+ 	if (!priv->bulk_in_buf)
+-- 
+2.43.0
 
-This is ideally handled with select GPIO_REGMAP
-for gpio-regmap.c using regmap-mmio, see for example
-see for example gpio-mvebu.c that does this elegantly.
-
-Yours,
-Linus Walleij
