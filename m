@@ -1,66 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794912399;
-	b=pCBNospL9ZA9O2m1R9b84NNAg/5dWMgcJtwQoe8LYs5H7rW6iDccDVhfsRf+jLqI9s7G
-	 CjD9LwrmLtVnYK9r8R388rb+staUuQ0k5dkZCpmdb25xdsUtTqSUZSB20teNty6P7sQjv
-	 g/iWlASDmVvxP14xueFSBTGWuKBPP6CNNbD6lO9sWL8BZoM2fH6Nowac8LSGQimOo43Ei
-	 Y1ssbD+pRA2s2PoXhx3HQwwGbuDLj/oKhWbO1fOBK6mKZhQg59iNYR1IMaY/Vgjayz8ha
-	 IyOuHsg+uKYyxrdu6i61J7rkfzi1uqnnabqN3Qd8JEQdZ0Lsfp3+YxN1a9CkP3Yr+Gw==
+	t=1794916012;
+	b=YS9tmXJ9DpmykObSyxE8hvJ/1GA7egAJ2ac5PwmRg88dMU0CmBAiD3JNHjfpQuh62L6a
+	 lGQ0fhQO7/KCsoCurtNhQlCoipUY4G3eovPKFmVlsu2ETegV5a3lS59a8wBx2G9ZdcWdu
+	 eZn7w5/7cDEwYnciKgDIFM3i7ZoNJgqlnXsujuUFxhw2DxgkansUTop9twjrRITrffFSx
+	 TYo2iYWLzlw3qt35R+CPu3IisxKQ9m7zWE5is7c+HlNGTFYPtFvoEDXdkh+rD95bX5UvI
+	 VW/bR6wuzg3h4Oaf1EzL1wCr3+cJtQMawHcfvuVnB0C6amyVzmQFI7FLayHbCwVAyMQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794912399;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794916012;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=aDis8V/KVsikzKIBvDsHdyEbmMntZyFSoT1LoqQ4Fuc=;
-	b=myeK7cVsYhtPEsZVVstrEaqErzkuaM3KTQQW969eG3UXBFfmCqB+bHXnPVA4T8ycC78J
-	 QWh/Bt+NOVEF0UbH7zScT1P5O7BuYFe/rDxd7SBBpV+nDVcz4nTo7kWfzTPrLS0nnCK4W
-	 hG/AJDHMqo+24qfirHFqp9yBnK9a1UJV5GMICV2wQMEpa1p12BSdFjs1iIEfARR4BAPZD
-	 HDgHRsg1NsDGFsLTv/S+6fZ8hAnwQ0X+m85705dAykSM9SSZa2Chc3HzcCfU8Bw3JNpB0
-	 GLSlBWF1sZ/LzGYZbTCevBqs/wLXOHKbUakbbpk1rlucDuTw23wSEnIypx7bI4W7fOw==
+	bh=fWcihZsanqAN6UicgEb68MCZ/IaT3uQaNUiiRypTwdM=;
+	b=gnYOmWx0SNEP38ZR1vvtLRpRyTltACPnMO58bn1ehXptXUY8FFCCq/huN/aIrw4tGxyr
+	 la98PpykqyBv+lug2qGAIBvpfVy2ZbdSoKIzdov936FGchgg9Dys5Eb7dBbGQRSYb+Hke
+	 v2CSdni3G1uVF+WGhLLohV5/9ei5IxEXoLPwCXxb51vWYsxZ3inYKQUUm7qzE4IDVFP2l
+	 GUCRQ7rtau7pQligEU82sPQBh54oIhhZAHIRSk2libbsYcJx1ZNeWixRvXUZAi6gELbH3
+	 wXq5a2Z9Q72L8dkPI2BS354FutMb0FRIzMD1mm2HDg1Xf/eMomqdxQVjC3iIY27eKow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WOe5qFt4;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i+ZHZuc6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 724D4606A31C;
-	Tue, 17 Nov 2026 10:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5102F606A323;
+	Tue, 17 Nov 2026 11:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WOe5qFt4
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D78C81F000C4;
-	Tue, 17 Nov 2026 10:46:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i+ZHZuc6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999151F000C5;
+	Tue, 17 Nov 2026 11:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794912399;
-	bh=aDis8V/KVsikzKIBvDsHdyEbmMntZyFSoT1LoqQ4Fuc=;
+	s=k20260515; t=1794916012;
+	bh=fWcihZsanqAN6UicgEb68MCZ/IaT3uQaNUiiRypTwdM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WOe5qFt42uJK8YgtDTJm9LvnLmTNo5JoA40/u2CH6DON1DkzUCnp4kE0O3f0IFz/0
-	 zwmkh6pGNADvmDdQrPaAmnN8cwWQu25o9j3QkVDpgGw9U9jSqsP0pcXqwYxKJejF5H
-	 4hRJaIEIBiIZZElQaeI1oxrKcDf8y01CIqVwMw1T24IzfsZheIDdAHnq6zONExyQaC
-	 k80IoiicFea6bbhKr0QxPTSTtLAxFg42XfJipF1MEBQBX+nVOEK7uEDe1GwPuCyhQj
-	 N4M5wyRu4VTfVXtFXnOqQLore6NUBjKxH+tXFk+UD2fm/U2flpQZ2EqYDHQHA51QBh
-	 7fFiQnZC7iJcw==
-Date: Tue, 17 Nov 2026 11:46:35 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Len Brown <lenb@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	linux-acpi@vger.kernel.org, driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] gpio: shared: generalize most code to firmware
- nodes
-Message-ID: <ofjnhfxx32khew77khya2whrfg336qvfsxwq25gz2psckhducv@cnfhpk2uobg4>
-References: <20261113-fwnode-for-each-prop-v2-0-4edc23d5cf50@oss.qualcomm.com>
- <20261113-fwnode-for-each-prop-v2-10-4edc23d5cf50@oss.qualcomm.com>
- <avc4g9cbAOEElzRX@ashevche-desk.local>
- <riqrrdjxaygsphy2mxe5xbsrokjtw6kyrneiyzsh7kld4qnrwf@iaa73bchswrz>
- <avwrKmg3uyvP19pq@ashevche-desk.local>
+	b=i+ZHZuc6vDULVrPpnArR0cIZeGz8/FIqQ73jgKLCgwh2E7dlVbhVfCgnvg0MULcMR
+	 nv0RovCCsOtqy62mN7v4FoQTtOJlMr5FZg2vwwzPzOiR6cqwSWQKXZ9eHZkRgzrGTA
+	 E2xFeeFWxCEWoR0TGL5frX3eHXuxlhZbNNmAHUj86hnnP/vFRWfep3uK6iWfhbFmKw
+	 SZog8O1OLsMgUwwNE5xo78ucAlzidy93dhqJBHa8JsQ5Y///egKJjZcqSzDfD/Ue/G
+	 hqnMmXL/rLdZT4KmEGPW8GEMCBsHLbzn+/fLFQfHzkX2tXNv+S2qLlT8y+mhD5sdIX
+	 SuElDDLPArnxg==
+Date: Tue, 17 Nov 2026 12:46:49 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>, linux-gpio@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 02/10] pinctrl: tegra186: Fix out-of-bounds register bank
+ index for AON drive groups
+Message-ID: <avw8tOcBNMPwS_z5@orome>
+References: <20261103213002.1673560-1-lee@kernel.org>
+ <20261103213002.1673560-3-lee@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -70,62 +59,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i3edntsruv6eha4u"
 Content-Disposition: inline
-In-Reply-To: <avwrKmg3uyvP19pq@ashevche-desk.local>
+In-Reply-To: <20261103213002.1673560-3-lee@kernel.org>
 
-On Tue, Nov 17, 2026 at 12:23:38PM +0200, Andy Shevchenko wrote:
-> On Tue, Nov 17, 2026 at 10:50:38AM +0100, Bartosz Golaszewski wrote:
-> > On Fri, Nov 13, 2026 at 06:19:15PM +0200, Andy Shevchenko wrote:
-> > > On Fri, Nov 13, 2026 at 04:47:10PM +0100, Bartosz Golaszewski wrote:
-> 
-> ...
-> 
-> > > > -static int gpio_shared_of_scan(void)
-> > > > +static __maybe_unused int gpio_shared_fwnode_traverse(struct fwnode_handle *curr)
-> > > >  {
-> > > > -	if (of_root)
-> > > > -		return gpio_shared_of_traverse(of_root);
-> > > > +	int ret;
-> > > > +
-> > > > +	if (gpio_shared_fwnode_ignore(curr))
-> > > > +		return 0;
-> > > > +
-> > > > +	ret = gpio_shared_fwnode_scan_properties(curr);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	fwnode_for_each_child_node_scoped(curr, child) {
-> > > > +		ret = gpio_shared_fwnode_traverse(child);
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > +	}
-> > > >  
-> > > >  	return 0;
-> > > >  }
-> > > > -#else
-> > > > +
-> > > >  static int gpio_shared_of_scan(void)
-> > > >  {
-> > > > +#if IS_ENABLED(CONFIG_OF)
-> > > > +	if (of_root)
-> > > > +		return gpio_shared_fwnode_traverse(of_fwnode_handle(of_root));
-> > > > +#endif
-> > > > +
-> > > >  	return 0;
-> > > >  }
-> > > > -#endif /* CONFIG_OF */
-> > > 
-> > > Hmm... What do you exactly get from the compiler without this uglyfication?
-> > 
-> > The alternative is an empty stub for gpio_shared_of_scan() and keeping
-> > CONFIG_OF around most of the code in that file. I think it looks better
-> > this way.
-> 
-> My question basically was what will go wrong if you drop that #if completely?
->
 
-Kernel will not link with !CONFIG_OF as of_root is defined and exported in
-drivers/of/base.c.
+--i3edntsruv6eha4u
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 02/10] pinctrl: tegra186: Fix out-of-bounds register bank
+ index for AON drive groups
+MIME-Version: 1.0
 
-Bart
+On Tue, Nov 03, 2026 at 09:29:07PM +0000, Lee Jones wrote:
+> The Tegra186 AON pinmux controller has only a single register bank
+> (nbanks =3D 1, indexed at 0), and all PINGROUP entries in tegra186_aon_gr=
+oups
+> accordingly specify bank 0.  However, all 51 AON drive_* macro definitions
+> pass drv_bank =3D 1 as the final argument to DRV_PINGROUP_ENTRY_Y, causing
+> any drive configuration read or write on an AON drive group to index
+> pmx->regs[1] out-of-bounds.
+>=20
+> Update the AON drive_* macro definitions to use register bank 0.
+>=20
+> Fixes: 542baf77f092 ("pinctrl: tegra: Add Tegra186 pinmux driver")
+> Closes: https://sashiko.dev/#/bug/linux-a9a7165c-c5eb-463a-b7b1-24a30416b=
+33b
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra186.c | 102 +++++++++++------------
+>  1 file changed, 51 insertions(+), 51 deletions(-)
+
+Yeah, looks correct. It looks like this wasn't tested at all since the
+time this was merged. I'll add this to the list of things that need to
+have a test added.
+
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+--i3edntsruv6eha4u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmr8PqcACgkQ3SOs138+
+s6H1nw/9HNOxm8X4P1MUJzierJCZCidCUXihoGxwFxahWDDG7Ctif5w7tlMyKfg8
+rlkplkwz2xi8rm0j/w3icKQ50yx3JH6eVNAUkaAcdQRw3j/uVCwnW1JlZ7S3ilzA
+8YrklDsup5I7asUAsTRB8b8Ty4Wiv0wpQ2eWV5iFcmzsEawP9vCuW5cTIDERCzvh
+scBQR3F9kbPWHShwLn5C7eUtWU4lYviqrmgVE+WUtDhBlhTU0qH8o5xrX8Vryv2n
+p7FzCDXDgJWzdyPQLkOx7Lr6bodM7EJ5iYbOKuOU0WORP0NwXSECjAidJMkTbI3i
+mtw5YIGYCZ1Ff7uOPSJ/2399CWEfrgi8qYLvKiUUpZvfDF0ZklRDyhNHxWBz791M
+HmK59v0ouBF0TEwmEyzF6SfwlLJXNP7xSr4dPsi606w0BbQSCbqBvCaRaQDisp6+
+/r+0wvs4X+TZum+8sXVNhztXtlhRfQjXxm+nFvvPJi/l9PWQnSmPvnHqjWphUgSP
+wCzmAsZhBqPuEQ30+FTggPQk+NS/xXS7jgmFx+wBIGXcy0VpAUyJKSvPiJtHzeGd
+Xe0wxcFqO2PjNVm+4Y4Y3fGgN+G8JEm0aTCPgWMOe6+NrZj0PfpkirRX7zsfOJfM
+h40AamWBMEoCPsRQn/SOfhZHLFztJc2yVczsCT+8gDXIRYJvuMU=
+=q8RY
+-----END PGP SIGNATURE-----
+
+--i3edntsruv6eha4u--
