@@ -1,96 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794921381;
-	b=Wyaf07YikczC49TzaeL8m2MOgdbfrWYSl3a9Fhf9BzjX+fvc9kVq9OuEd1vx3v9Xv37a
-	 4XGb/q/t+Q9YNS5IeIs8O34fnrU6e/vV2jWJXfSxFnDIfclasT0pybrq1vI/3/8KBbjSF
-	 Sivd+BHyHTHO9HN2lYHDkYWo6SePmqfryWGWXTiZLSDrDCrzOpFKVJ8qlm2k5HyS4gFjN
-	 OrVyuQ/qdXEsU9ag9nbYATssVkTbsvgCSrO4DiuB0Q18Ph6cj/SpzJr2lapZICn5+cshY
-	 I/scTltZ5aJ1btNqDUwIsBF7puPD51cG8vW232f26bzdj2MNDCVWsC4kt3X6WL6Uvew==
+	t=1794922508;
+	b=fOodY9msPZd5GRuJIhXfkIe/EbK40OeHyRWK6UelqA6lUZo70bLx2JjbFhubclZxoW7g
+	 G7L4S0o1FFA7zUG3hX5xMJpyGgWhEr+Z3vh+p/fcYwUq2+OQNQcDs5ibN/KHdIq5cufSI
+	 qlSwlSqPZNczfXV9mRQ+loE34qEK6cdbT8jogFOtWkQ9OlSyEH9lRFJuui7gjbsDANnPk
+	 FtkgmSSEy4zw9fg7pEoDnEWrnugECyCNiWj2k2qoDe+g0yEpuJH587VxWAPdC6Ooxo/Bj
+	 Eshgw2nzi9YuzcewuUhNXcqDOunB7Da+SLzxsdV/5vBdrMetcgH4BhTtKBC7wxprhdQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794921381;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=4adGshk3DcGvhqFeQZWKT+ilTqCtanGq6mRdY2JYAuk=;
-	b=BUEgITbex/Y2stC1SpolbgTw2qC4YS0gmiQbT9ZsqcIJ/15POShhNj+dKyEqVqmlsQMC
-	 TPLJ0TCVVUWaS+74IPQXDrAC+jxSm1K/rYwJ8K/KyxXoBiJ3Fpmj6XItFeW3WHcLsNIIl
-	 gxTL0xx18pTeCrmUNutlJfHMuJBLr0kAVuU1HCv/84UFcXxdEuhrQ5iGSDv8gXyovBU6L
-	 AySGyRJ4T5Aj96T84mohvU+hceLAOT+3Le8GZX5sYumyMrrcegzQleJ2ynaJvfdcKfLFn
-	 OoUZ0Pfz4O0OmCKrO/8nZR2Hj2v/zfJV/WqhOrX1EOuu7xr75bdmNGv4QFzO26b34ow==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794922508;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ioA43pJHcDJQL8W7VvWm4+CiwKJ1zY7tj7ZN6Wqk5cw=;
+	b=OBKhtG9jKB3dA4EE8euHF99pmOEhmTed9IdVNa8QXsUE2TIkwz4K866Btl8fUKnyJxEG
+	 AMcvRJj7jSM9PXNAjdls0SZDFBh6afvy+qYS0H7u1w2hDgy4xESrPUJ8yECluNgO/bAEE
+	 WNtQp8lazrXqL3vsTZJPYLwNpvC+RjHTtlgSv5I5f6dZC94/KOGkkD5xiL/VTu5kXgqaA
+	 RKeCDYPoHJdy8tKqtkqbh+Mzmyh4B/a2H1Wns9HgsAVthUvjEPU8CbtLwDCvhWCP/8Okg
+	 k/jpNpWpoQEPB5+ASeq9ESlLKcMRiGW7JYOfWYJtI/qgryQXXqj7BGMcYLCEYXwhVlg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=R9xDzHcN;
-	arc=none smtp.remote-ip=209.85.128.54
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aMYUJUxw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A4E606A32C
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 13:16:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C8A4E606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 50757606A334;
+	Tue, 17 Nov 2026 13:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=R9xDzHcN
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4bb64ef5a14so28382795e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 05:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794921379; x=1795526179; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4adGshk3DcGvhqFeQZWKT+ilTqCtanGq6mRdY2JYAuk=;
-        b=R9xDzHcNtbAZjwxTgsRkpU00vR8dAcHdR2bQUcQMgXtJ29uPBNV5HvCf5l8rQttRoU
-         j50+31s/MFCrwGtfCl+1y1JZbqGiPIOubKvNZyDPqfxwKninTM8eq2b6GncLMfzT+paE
-         auuFwus4cD3ZKr206CdTVtqE+/XtjBNqgQt3JG+oJk838roaYk0uVLe3DmJkuF169GhD
-         bGS1VT4+smy7G8XNBXg2mIFncStLasLSYFX6NxXHCa1heoQv2Ty4p9ebOqPruauNJqKE
-         /QkRZTitMwIz85KaFilZbGSvvn8cXZzZ9Hz6PCgNNkIIr1qTyr65bFfoZO+qCiScLF9x
-         qD/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794921379; x=1795526179;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4adGshk3DcGvhqFeQZWKT+ilTqCtanGq6mRdY2JYAuk=;
-        b=WPO+WcZrSt7de2S4zz/UAPVF+slIdUInm74Ns/SU40kHqgUloq7Wrtm6+K4aJ99mKb
-         r+lhaspVOwXs06OBRO2NliE7V11HhzX0TIllOhXxhftzx6NIUU7qvJl5AcUUVdjuYF69
-         Z6Pg0Qt4i+MS82yw7QJwDAY91olI2YmZL/RHSQaxgLuiIxOJ9Y6iQIaw0aL+dhaIW5aj
-         G2teqdIrH/mUd+2BUFBJmialpCf0ESm1d+cfaj9qtJOmL35onHGSP7wmHnICLYVLmK7x
-         5N+4F+4ViIe/ig4GOICkXJxKMvtiTRYkWiWsOG9HZUxCjz9oU4HqwnmiMlyipvnhOYBE
-         jpbA==
-X-Forwarded-Encrypted: i=1; AL+hErEXvNVLcq2riQWLMK32xCWFMxH0V9CbvQH7E+cwnwZ8TLYNp9KSyByvN64x/x9aiaHSICqrlTlsXx70@vger.kernel.org
-X-Gm-Message-State: APuU4Z9rJ5NvyeEFmkwYL0/oMlugVSP6wVYACm4yd9FI4etRB5Jq4ipG
-	CwZKnUJpgBHrt3CoCpBe8DgJmsRRBT224Fb3ImkQXj+eobkQ3TxtjEWqxr5Pe8pF
-X-Gm-Gg: AYBFou3kIW0ThmSbhq1cDYgwp8tKYrwEd2o+bEdctWwjSLh+IKjVMs/TJrHg7UvMOFK
-	hQwrhr7BgoR2r1Vk06Dzvakb7BjZ+BQMyg32kzF/3UaukMlrRXoL/AAjk/5vLdYJT0chauKu3S8
-	77XizTgK34dpV+ijqukdbSCi4gJtrUblFXWAa+Uvl/pe3gI0dyh+WLAOL7Sm7+8e0x0CTn6QcrY
-	Y/maZChMFRu2Ari4/0iLCp08lCzNaTnU3Ekxgb8EKWutwijevHyoyNYGizRftbd86cR7B+1r0/w
-	BREuULj0+wC6aW3mlyNbR6LtmZbhF535R5sWLbdyJB2CXjEBj9Ev5d+azVk5WlA8kypwXn444cX
-	FQfNZU0Om7uoqZEEqlmRecUA/DKsOg3Xof1yHtsXWCtYURgjNZ1lykUj0yrsn+Ck+eY01OMSjiJ
-	Y9wK1wr4W3otV8UlVigOAabjPisGaaDCqyxHjgVMQj7Mhc5iMu4FaZNR+u12ewt1FxkQEEHlXmH
-	JN7OOmlQAFSeO+FIVaXj5syplFTSjuV6VYMiC7FenAfujehICwBAs7RkEdsKvKQp7Pouwm0ait6
-	/xuURqCOZoRTs69uR0a/Zi0GA8xzJepR4IC/AjsQAkIHzY/htRUZMaZ3AHuN0U3bjA==
-X-Received: by 2002:a05:600d:3:b0:4a1:ddaa:571e with SMTP id 5b1f17b1804b1-4bb55a50eacmr238269805e9.15.1794921378994;
-        Tue, 17 Nov 2026 05:16:18 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f5972a7sm26817173f8f.21.2026.11.17.05.16.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 05:16:17 -0800 (PST)
-Date: Tue, 17 Nov 2026 13:16:16 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-Cc: Linus Walleij <linusw@kernel.org>, Michal Simek <michal.simek@amd.com>,
- <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <saikrishna12468@gmail.com>, <git@amd.com>
-Subject: Re: [PATCH] pinctrl: zynqmp: Ensure function names are NUL
- terminated
-Message-ID: <20261117131616.0a631d5c@pumpkin>
-In-Reply-To: <20261117073947.1100444-1-sai.krishna.potthuri@amd.com>
-References: <20261117073947.1100444-1-sai.krishna.potthuri@amd.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aMYUJUxw
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6C2D91F000C5;
+	Tue, 17 Nov 2026 13:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794922508;
+	bh=ioA43pJHcDJQL8W7VvWm4+CiwKJ1zY7tj7ZN6Wqk5cw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=aMYUJUxwV3D3h7O6WftIBGjTr+39NhtyC9CFwIximBe8cUa2/9uJe/qc/n5Rk8Ze+
+	 maEFKoZ6vfLi6KHduZDmxqIk/j4OqtlebeG3zquyHhgR82OPzXHVwk7UbK+WoD+v+L
+	 m61h+VgjWkU0IS03f1wbbCRReTD0YQyeGXS8fmqMF9FEAjfJn8HkE0whcU51ZTWzGu
+	 jYAbvI5xz6QmfX18oN/PdFlluZ8U/w7JQG2Hna7vkaye5SzcLO0IEfW+/lCfPC3APH
+	 5aMLQa/sEY09iCzj4ob1EXD8r/6bR5nFWn0Io5z0wO6aLSC4sVyKqEg1dDYj/nJZzj
+	 IQWQDrA+EnYVQ==
+Date: Tue, 17 Nov 2026 14:35:03 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Igor Velkov <iav@iav.lv>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Shawn Guo <shengchao.guo@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, regressions@lists.linux.dev
+Subject: Re: [REGRESSION] gpio: shared-proxy: open-drain regulators on
+ ODROID-HC4 fail with -EPERM
+Message-ID: <kcopbszdsz2amzas3hmchxokw4bjxafu2wzjplthyihkellwd2@hd2k3tomwvdq>
+References: <20261115-hc4-gpio-shared-od-1@iav.lv>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -100,59 +58,58 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261115-hc4-gpio-shared-od-1@iav.lv>
 
-On Tue, 17 Nov 2026 13:09:47 +0530
-Sai Krishna Potthuri <sai.krishna.potthuri@amd.com> wrote:
-
-> PM_QID_PINCTRL_GET_FUNCTION_NAME returns the function name in a fixed
-> 16-byte field and does not guarantee NUL termination. A 16-character
-> name fills the entire field.
-> The driver copies this field into a 16-byte buffer and subsequently
-> uses it as a C string. For a non-NUL-terminated name, string operations
-> can read past the end of the buffer into the adjacent groups pointer.
+On Sun, Nov 15, 2026 at 04:55:00AM +0200, Igor Velkov wrote:
+> Since f918e3804498 ("arm64: enable HAVE_SHARED_GPIOS for all ARM64
+> platforms"), two of the three fixed regulators sharing GPIOH_8
+> (GPIO_OPEN_DRAIN) on ODROID-HC4 fail on every boot:
 > 
-> Reserve an extra byte for the NUL terminator and explicitly terminate
-> the copied function name.
+>   reg-fixed-voltage regulator-p12v-0: setup of GPIO (default) failed: -1
+>   reg-fixed-voltage regulator-p12v-0: error -EPERM: can't get GPIO
 > 
-> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-> ---
->  drivers/pinctrl/pinctrl-zynqmp.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> The first user (vcc_5v) sets the line to output high in
+> gpiod_configure_flags(). Its enable then goes through
+> gpio_set_open_drain_value_commit(), which emulates high by calling
+> direction_input on the proxy, and the proxy switches the shared line to
+> input. The next users hit "Shared GPIO's direction already set to input,
+> refusing to change" in gpio_shared_proxy_direction_output(). Stack from
+> trace_trigger=gpio_direction.stacktrace:
 > 
-> diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-> index aba129ead04c..c778133fadc2 100644
-> --- a/drivers/pinctrl/pinctrl-zynqmp.c
-> +++ b/drivers/pinctrl/pinctrl-zynqmp.c
-> @@ -29,7 +29,11 @@
->  
->  #define ZYNQMP_PIN_PREFIX			"MIO"
->  #define PINCTRL_GET_FUNC_NAME_RESP_LEN		16
-> -#define MAX_FUNC_NAME_LEN			16
-> +/*
-> + * Firmware returns the name in a fixed-size field and does not guarantee a
-> + * NUL terminator. Keep one extra byte for the NUL terminator.
-> + */
-> +#define MAX_FUNC_NAME_LEN			(PINCTRL_GET_FUNC_NAME_RESP_LEN + 1)
->  #define MAX_GROUP_PIN				50
->  #define MAX_PIN_GROUPS				50
->  #define END_OF_FUNCTIONS			"END_OF_FUNCTIONS"
-> @@ -650,6 +654,7 @@ static void zynqmp_pinctrl_get_function_name(u32 fid, char *name)
->  	 */
->  	zynqmp_pm_query_data(qdata, payload);
->  	memcpy(name, payload, PINCTRL_GET_FUNC_NAME_RESP_LEN);
-> +	name[PINCTRL_GET_FUNC_NAME_RESP_LEN] = '\0';
+>   gpiod_direction_input <- gpio_shared_proxy_direction_input
+>   <- gpio_set_open_drain_value_commit <- gpiod_set_value_cansleep
+>   <- _regulator_do_enable <- set_machine_constraints <- regulator_register
+> 
+> Armbian v7.4-rc2 (its patches don't touch gpiolib or these nodes); same
+> with the five shared-proxy fixes from the v7.4-rc3 pull. The winner
+> depends on probe order: without the fixes vcc_5v lost in 2 of 4 boots,
+> leaving the SD card unpowered and no rootfs.
+>
 
-Too many constants....
-You might want to try embedding 'name' in a structure.
+I was wondering why does the second user even arrive in
+gpio_shared_proxy_direction_output() at all when it should take the
+emulation path. I think the issue is with the proxy driver not
+propagating the -ENOTSUPP error code in set_config(). While I did author
+that code, I have no idea why I did it and if I even had any reason at
+all. Could you try the following diff?
 
-Then, at least, you can use sizeof().
+diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-proxy.c
+index cb593192076f..8197ebb5f9a2 100644
+--- a/drivers/gpio/gpio-shared-proxy.c
++++ b/drivers/gpio/gpio-shared-proxy.c
+@@ -186,7 +186,7 @@ static int gpio_shared_proxy_set_config(struct gpio_chip *gc,
+ 	}
 
-David
+ 	ret = gpiod_set_config(desc, cfg);
+-	if (ret && ret != -ENOTSUPP)
++	if (ret)
+ 		return ret;
 
+ 	shared_desc->cfg = cfg;
 
->  }
->  
->  static int zynqmp_pinctrl_get_num_functions(unsigned int *nfuncs)
+With it, both users should take the simulation route.
 
+Thanks,
+Bartosz
