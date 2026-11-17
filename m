@@ -1,96 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794924655;
-	b=LjX2Sc+715Fkglu8pY3mzndKM6zvhBIqiKSROpkFm2F1iCsP24sw4iaIxWGxQsffUTZ5
-	 4KLkvg12sVWlDrSt8o5zrlSY4skMw97IirhJIIFVgFpqHDuMWGq0OMko+Gg9CpYjpaA2C
-	 jb57Zf1V5Qk7en4Pq9jPHKHppKaSNbwNA/LegsfjS1R5HgLBQbQPF2VZKWoCL2Cruy+en
-	 69AZiCn5SuOiF1hl1FYWbwAC1P9dJWaFp6osAbL+T34zXislIGlWqR1bgrH3qJfN8BKm0
-	 mvGz6mFxhBIQH6KBdYMneLPjkXjG5Arkvjdd6AWUjyIUFeNHc17HH5hM35na7v3n7DA==
+	t=1794924734;
+	b=MHrQNmp1vLlMzUDnM9O1jRgnI61N9xtVAdql9xCWi1IsNccnbToqNuoQiR3Cx3SuZupX
+	 we2/9vahAmNR9Ms5P3cl9FsU7X/mX3wXFNdAOro0ByhpHe1JtPEF6FsaGS6rg0N0rNBt6
+	 RuTZujaYDKfOCfvSFb4kXUk8InnXcMAla25TOqT/MRlPqdyvvWblXbW00uJAGgWZ3deHM
+	 ywpv3eLONWifDZ7ErXgtWhnUZ2L7ytH7wRmhT3gYYIaUd2HpJGr1XRIci6+cf10/vzs/Q
+	 lVe6/7f+O+VnXz9bB+KIweuVzUuF4f6/Dh6+CafvAFfj42X9vFChabYmQijCHiHoLuA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794924655;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=whjZuJx803OECGZ5BXNalc3GEiTKyKTsH0cL456539g=;
-	b=j7nk2ZXPIs9fktDbQdB19ZVbXiDkYkFWnZlu5oLWeTgvm+pfFRhBwmcTnQlme0txFRcc
-	 aHvWeBnGT7EzV8pV1gkYfsJ8vuQ/5zfZJ1wnAw5ZnO/w3lR0F62DO8WMTV95bhVi5VfY4
-	 WO+KaaNTVf63TumfQQjAOmfYee5n/1S7jWu4mFFfPzNAXZQoEZm5pOV6B2PqfB36tCjyR
-	 iyNDFH5tZ/LXeIAafutUrbNsKoVMyEdEQP9WnaRn5OnfV2vjZ/MkFk1IT2yMSI1MK6vko
-	 7pgrD295NMf2EstoywfX5oqfXCSj2NkVJNKsHpPuE8Mq3ZLV3qKTKjRlBETPmot2PQQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794924734;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=pbNZwpO0WLPO2bSO9M9Tgbqe1kctlVysNw7KKHUQxRw=;
+	b=Jumxp+gBVHFm0mKVI9NkL0ctzh5KIlFT6uH9B23xcjYaHsWnE9P1/dVT7Iz4cPmHJgkz
+	 3KkbPcXV2N2/bALczKqQr1Aku7S06YXlmiGn6PdsADxjB1zGyUHQorFwN9dSG47VhSDVO
+	 StrvC1DwuCZ2Q0IDVM835kGxuwFMyY9neHZtguu9K4weeBEazoEDyqvToRUJWA4Ujiw1a
+	 7jO83rtXDtrFm5Cu/thmg3X6phzrx80W6J1kv7H3ZyoIUdup2SOfgAHJOoZSGUZPdU1NT
+	 yzgsVrEPhovOEmPgIGqP7UTeZMIz/cM0jdWI3WNThje1rEkV/88x5zHj08pPjLP7IhQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=d4Hvoy7p;
-	arc=none smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ImjEFfLZ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2985E606A333
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 14:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2985E606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B110606A883
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 14:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=d4Hvoy7p
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a3517554f7so50809795e9.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 06:10:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794924652; x=1795529452; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=whjZuJx803OECGZ5BXNalc3GEiTKyKTsH0cL456539g=;
-        b=d4Hvoy7pxpb1GN8453dYuj2x9rXEaWYlKEof1StTGBlLww33R9Lw6xoqKlcLrvYHEg
-         YcA7WzHjoCBNwPefRW6wiWxxjZg3WmvXAVQ/y2CBvz/23FocTudxaF+7f3ww/6QDESZu
-         MIWrhq6uVpRNeTJkq6Mf8mk8Flvjcq+dLp9jS5cXdjT+UGfOcdK6p5l8SGancjifHb4u
-         +3MpGfW93IOtOsvzaQaIUIlUWOY8BM+V/MZdWKyoxOkFkn4wG4hazAfMG9pMzlgxN5tQ
-         omoZTKXXn+yvRhWDzhmpSGiKLyGnkXMRCjkj2bq8cVcNbS5a2xYBqpyUUlW6h2KpiPmv
-         t8xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794924652; x=1795529452;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=whjZuJx803OECGZ5BXNalc3GEiTKyKTsH0cL456539g=;
-        b=ksx5p/8E0TqJaE9qc7Cy6VI3InoDE8QgF36SCLOcUrfZUaH9/1Re4MhGVFPM5b5Uc7
-         Zs+vCpMKQHpYD++sNfRMrz2tIB1d6+S5Oku6SioLGV9WCgZD+BcnrzLoNCv6rVDhmedE
-         F1CoLLWop4P/8Pmo0q+/sGY27Z3+ow65B8K2FPLpiQ/+WPknmzBiOTLIdK80WTGzqcvw
-         0+PuZSOXXJfMZlXSBmAmdwiUffpCxpNAMPTBTAIwqyhCK5JzNj7KZxMvALzr/+bKQ6mP
-         SPh7oaxPM/+LQznTILub5Jiv9qPlITuQpr+PJSoa8GXjzMgGhAYcTxhVwljzuOnxOYu2
-         YxsA==
-X-Forwarded-Encrypted: i=1; AL+hErGhckXYtIu6euMvKxkfJvWU72uuSJk+ilC9pWc/Lm+0MH3P7m0OccGMLYgjWi5RwrscFbsFpuN0D/Pi@vger.kernel.org
-X-Gm-Message-State: APuU4Z/AU+XhtDn0emDnVz4bXbZsPR+iQRbAe7kkelqwX5pKmKVhFviO
-	acf1c9e6WhTqe4RS9VOSy3PqUXfH8T7cExeMwCOb+kWGpv1TL0DmAkjlGLq1wj9Qg0Y=
-X-Gm-Gg: AYBFou3Wyw9L49gJwVo6xzh/l9H4ZWFcVi9sSWKWf/AUPikSo28Z5aQ/cVWyy+wCx8A
-	8HiCSyfZ69NIOSWmJ23nldT5azrUTqfvE2+TPnddZo5QwyGKbE8bloRduk+5n9FHadpePnmIV15
-	C2Fi2+CEdysgMHSxCSGuMLC8Ikryua4No5BA20VeUX5mFF2ZYfN9tadyiEIW+z6VWvvm0cA+9K2
-	mZ/AEH2BZqxCDC1C8gUO5N4LOzgioPds3rYFMnvY8k87Zi3oAT9c6baAx8PY3J//wYvNq4UoiD6
-	vwBaiO37bmVBiyVTj8W5POW07Fjbl3/dSSru6oiN5Jz9AuOCwmM7wwi6ygth6J5VkZbvND1rhts
-	KaGCIL3C9obfwOhHACC8SsU1Z++3+RycEHQrRv6dLcw6M3ytsJS4Lz7Jyn6OuRUsbxw4fGqSM9P
-	lhTolPzgm3EAy9kh5BkpZ5/QNYgtgKKi6bLOGsb+T8FSEmIV/5v+e12MbkI+4YbIcSPa+OuPXWN
-	Yqp8mcqACyfh2UH2sYlEc0r+TXBLodi7QDy1cWktjDjqpwuZ9+/YJ1NYPUWsO3J2ju6Xe+uxwEU
-	mXZ248khfyUupy6HWS9HfoVmdrGvUYXVecfOwRxIOEyhfqc8sb0H3LBSJnDHf4rl5ecrWIlOcgT
-	wNFozm0e9IDij4fo=
-X-Received: by 2002:a05:600c:6097:b0:4bb:6626:5a25 with SMTP id 5b1f17b1804b1-4bb66265d0bmr196643105e9.20.1794924652481;
-        Tue, 17 Nov 2026 06:10:52 -0800 (PST)
-Received: from localhost (p200300f65f19a904a5ac91f50e61369e.dip0.t-ipconnect.de. [2003:f6:5f19:a904:a5ac:91f5:e61:369e])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4bb78386902sm78143685e9.1.2026.11.17.06.10.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 06:10:51 -0800 (PST)
-Date: Tue, 17 Nov 2026 15:10:50 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: CL Wang <cl634@andestech.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tim609@andestech.com
-Subject: Re: [PATCH 2/3] gpio: atcgpio100: Add ATCGPIO100 GPIO driver
-Message-ID: <avxgGQL91z0ezLFH@monoceros>
-References: <20261116040914.368298-1-cl634@andestech.com>
- <20261116040914.368298-3-cl634@andestech.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ImjEFfLZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE1D1F000C7
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 14:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794924734;
+	bh=pbNZwpO0WLPO2bSO9M9Tgbqe1kctlVysNw7KKHUQxRw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=ImjEFfLZ4ReySMJg6pyyhW4kKzRBBH5I3lV4fAvOH2xoPnphth9aE3oCDev/Mk/8o
+	 Mdd7BwPAy/wogycRUXV5a05uRTiy++pkJUd2uN4afFORFy0rbWWiLenYwF4vYQvTvn
+	 z+SkPAIuPte2ZPVGu1CZW8f3JmpxlmSpAkFej67kIE9GOAvlgNmtPiUCLbeZeSmZdP
+	 +kTuRQpOi2chjAnWIxqZmO7Q+Ph89DSjbzCkd8mFZdZKneWjjx/keF2StoFnSbfHTH
+	 7OPbjBQcWX7esrUoAR18yiBd9A8Xtl310V1X3xWFDaAMSKeH/q68l6x2/HWKTNdfJ7
+	 bVv2YjTzcl+aw==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3ae1fd4252fso44695681fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 06:12:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErExF43X0o75TtHY3lXM2b7nSTnYOZ6ZZytJ0GPY6aismyrj4QNpt8v/o8faxe7TbyX5uSpDXihAJBjr@vger.kernel.org
+X-Gm-Message-State: APuU4Z8+r2BqAJJtiaS4AK3aAQBBZYjWjZ6Iu8nszqZRd88LBpAF4qif
+	JhKUzmkRlfXXktilO5bNs8IC99wb+cSZHpVuzNL0CMg6B9qKV8AKvCpaUzTbZrM270J4VhKlr9g
+	ktSMEh6qvIiajDPHxJtpCtGkSAZ8R5Pg=
+X-Received: by 2002:a05:6512:3182:b0:5c1:5a23:ec04 with SMTP id
+ 2adb3069b0e04-5c1709a86d0mr5207689e87.44.1794924732930; Tue, 17 Nov 2026
+ 06:12:12 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -100,43 +59,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cyuwbzqgdey2ihm5"
-Content-Disposition: inline
-In-Reply-To: <20261116040914.368298-3-cl634@andestech.com>
+References: <20261109-pinconf-widen-v1-1-469726456c84@nxp.com>
+In-Reply-To: <20261109-pinconf-widen-v1-1-469726456c84@nxp.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 17 Nov 2026 15:12:01 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=eaNy+JxLEbFQ52JPmTAE-_-jHmHzJzgUgUaqwtOOoGg@mail.gmail.com>
+X-Gm-Features: Aa3M54oZqHQKMZF59PzOU07B0U5kws7VjBYGwpelj8tlWXe9U6F2b0839kFN2Uk
+Message-ID: <CAD++jL=eaNy+JxLEbFQ52JPmTAE-_-jHmHzJzgUgUaqwtOOoGg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: pinconf-generic: widen the packed config
+ argument to unsigned long
+To: Peng Fan <peng.fan@linux.dev>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 9, 2026 at 1:28=E2=80=AFPM Peng Fan <peng.fan@linux.dev> wrote:
 
---cyuwbzqgdey2ihm5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 2/3] gpio: atcgpio100: Add ATCGPIO100 GPIO driver
-MIME-Version: 1.0
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> The packed pin configuration stores the parameter in the lower 8 bits and
+> the argument in the remaining bits of an unsigned long. However, the
+> argument was limited to 24 bits: pinconf_to_config_argument() masked it
+> with 0xffffff, and pinconf_to_config_packed() took a u32 argument, so eve=
+n
+> on 64-bit systems the left shift in PIN_CONF_PACKED() discarded the upper
+> bits. For example, the pad configuration value 0x1080000 used by a new
+> i.MX SoC was packed as 0x08000000 and read back as 0x80000.
+>
+> Allow the argument to use the full width of unsigned long so that such
+> values survive the pack/unpack round trip. Cast the argument in
+> PIN_CONF_PACKED() to unsigned long to keep direct users of the macro
+> consistent with pinconf_to_config_packed(), and print the full argument
+> in the debugfs dumps.
+>
+> The packed argument only has BITS_PER_LONG - 8 bits available, so on
+> 32-bit systems values above 0xffffff still cannot be represented. Reject
+> such firmware properties instead of silently truncating them.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-On Mon, Nov 16, 2026 at 12:09:13PM +0800, CL Wang wrote:
-> +#include <linux/mod_devicetable.h>
-> [...]
-> +#include <linux/platform_device.h>
+Allright patch applied for v7.5 let's smoke it out in linux-next
+and see if everything survives!
 
-<linux/platform_device.h> already provides of_device_id and
-<linux/mod_devicetable.h> adds a lot of unneeded build dependencies. So
-please drop <linux/mod_devicetable.h>.
-
-Best regards
-Uwe
-
---cyuwbzqgdey2ihm5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmr8YGUACgkQj4D7WH0S
-/k6Nbgf+OnbjIDFyQv3zYIqcwE/Un//NPGHrFQ9idxBn0sOWRA4bwsWkktGVG/ci
-m4eZ7fh6kVNQ/S75Ab8pg4+r2nges3azKBvLpjUB0w8W7GocXMcVhVGgtnEs7NhX
-x/C6fVqVxbFKcc515ipiVvs5MMQ/WyFf+AXuRea4KgAhVBdsSznpQ9MSYx5S5pNf
-LOXxIrMnnkzVHODUtFQqnUBvRheMhndwVSTKSO27i3jV5Ru2mjYMx9U1alrty93N
-LEhseOe4f6Ug+BRa8c0+x51EuARRVFxGNSf6b+uuy7zgz+hR3My9bhyu9JFieWmA
-lDkM4htuy3LfAAWTUW8eTCDBChFi7w==
-=Nh9T
------END PGP SIGNATURE-----
-
---cyuwbzqgdey2ihm5--
+Yours,
+Linus Walleij
