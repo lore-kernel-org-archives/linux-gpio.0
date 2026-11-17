@@ -1,77 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794944961;
-	b=G5rndOLmHpxVcZrOwCwG+WtJJHbxqzzAd5Mr82sxFM09Q9lpOyzWPE1IBamM4YNXM/rc
-	 8VLkY1MAj5rWux2aEcS57rmhm1NuhbNN+yY8AJICgbwC3DqjfTWNfUqD7OXGK7V+21gIb
-	 7qxdeuylvefhERHt8bXRuF01uTZpEN756y9ieu3TQXgFDVw6a30DRWan48qmARE8JRwbt
-	 FCZN3BH/bhTuwEl3QyV7p3LBi6uJZo1rW04X/7RcregSWMuwnDc2Q1JFiR+qL5IZYnFtO
-	 1CdToKjkTflAlwSUO09ZZdvWMdjfR9RKEUY/IixkNlyyxQyL/ahDKBBlDjIzhEALRkw==
+	t=1794945904;
+	b=Xg/TmNOIu8dgNh+/rBPgNy/2yRycS8/Cc4J5lg/mu319KVTaDOIpIkPRQMRCE75U+qC5
+	 LuX8yRkW3gzjyDgLODhzz+DdvBOGvtd0ut1bM0vUBnjb6ihQNgFNtGSRwheYLj737UKLl
+	 M2fGlt22d6zNeeamr3ueC1lumUv428KGhf0dllfd5zG3TW11FbsqHb1FTKsJyNfeW7IMC
+	 l4s9tM8tmUVTWm61VAVBVPqGkiiUov5zWb5pljIwOfSUQB1JrJj0HCAStPDfCmYUDmTjU
+	 MBviNU8DblcP4HYQfF2Cr8bTwm3neSaXDQOVftTM6T3DPeljgchj4OfE108wwhC8iWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794944961;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=dx7TBIE8Mp4LTw+L9asay8YhTgGHn7Srtn+pY/iE7EU=;
-	b=BnZ5WTZdxMg3Qzg1MLztsfQa1ZMItTWtn5CVDxIw70ebdzZ+xGDlcN1Y2LYPNvhhi6fz
-	 mH5TjDgDc6ewRaXya+vBjULaZgmiidpnWnhGeKvJdLhJQxHKxC6tSrpnGaRpLhUzudH2M
-	 XUr/mksuZH9WSlRYaa3IouVDimNDh0X5Ua1rcYuvu04gQby5CxkWWc6brWR+aoVjFddR/
-	 lkfaJyXODSplLZZhTK3GwvaR26tV3K2cHBCyqxl4KcnXnx8ZkV7eXx6M/O2g+x5WX24Cf
-	 kZa9WTuZjjd0p3ox0i+aD557A6PC6P4Wj8S3UaAtPff5zZGSRtUQlMnhNj8xwh+0nBg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794945904;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=rbt3Rhy1XEaIZQdvDh/UUWSNfD774dI3KIhZaPLXG14=;
+	b=nya8vaaHGUsT8F64GMn4/zcroBOkylE5t7NeM9WybxBs4YC7jeWdF5qR50JTPD1jHunp
+	 6b7TKWmZ8MV4cAj9sAZG+zvPAqRVKwIifkC5QOlJrFwvw10pQZX8AoFXd7wc8mkW41/53
+	 82p1UikgSmYiLKYcM2915zuGYHg+bNuMtxS1dg6KMnYrNqT0NoMlzgwTLfctn5xokHhy5
+	 r74UGzEva+TWFCcu79lW9C5vhOjvZQ8e+jb0wNCExXnfmlwLocGkn2z1O8gwkXpIZXYBS
+	 EMAlDayfTU4D6xiIBplpssZAVwnG2n6z4fehcU9yknlEk46GvNROHziU4wzzREwhpYg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=telaak.dev;
+	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.216.53
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="Rl3RG/9/";
+	arc=none smtp.remote-ip=209.85.221.43
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D549606A337
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 19:49:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2D549606A337
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE81F606A894
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 20:05:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BE81F606A894
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3b3bf3bef9aso82961a91.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 11:49:21 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Rl3RG/9/
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-49d64a88222so866490f8f.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 12:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794945902; x=1795550702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=rbt3Rhy1XEaIZQdvDh/UUWSNfD774dI3KIhZaPLXG14=;
+        b=Rl3RG/9/xZYVC0CxWmQNFvRhK2NwjXwdPqGVzkDVM0hVx4uVtIf5s+llV6tvNAe5sL
+         j8sg1nBHfVJzwU3v7Iwkm35zWbvB+T0tWqMYr2HCVCV+MdEsTqArWfYtNK013VpVBtBw
+         XB10U3MY58xqgocAUcU7JPFon23tpiyycY1uJjcp51uNugRdWgLxDKkVCYMwBCBXcTZ0
+         MZcyqBKLsCj394UHMGmbX9LeIWI+tlSD65ls1aIOpa0wEmirfHKlDDJWrv5wEbNU/VvS
+         Qbb2KAVJJLoavkN5TLKhapxwJPG9zZeQ8N9cAsic2igbnbSOM2SYO7ERc2hYjlNRqQyx
+         DVAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794944960; x=1795549760;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=dx7TBIE8Mp4LTw+L9asay8YhTgGHn7Srtn+pY/iE7EU=;
-        b=m2QYoafxjkgctJTdQGLfvo8QovEdwtcdIIoFZPkC9MkAQs6A0YPugu0jfK8os4gmHb
-         gQe7NoWfAxNOI0mObzu+ea6vONy0TNxBYn9SE/9zNr79arqxTFkBGVhXnqylQqwNQJBO
-         sezxgWR0AOpRYHKs/6otGkvb8BXJOGRlog0XMkd96vQlQw04O8naYcGkgZ9Cl7SejTHv
-         BLh3aAYg2FAUkCyKfAlXeI3CM/CU9OJXkUR7R3DEfYhYHR2sTdSLbfx/76BQZXmPnLHN
-         vg2fXXkU5TD9B2U42WFCFkN1rY2PoERPSb9iIKqhOlwMeNvIfkSLSKzwNo372z/pw2ZR
-         5XgA==
-X-Forwarded-Encrypted: i=1; AL+hErEJ+hf4DuDDfU3Xu8OIK63XqI3n1Qk3Tw0ZMHM/alSZJWpl950ylJPdObqGK5GzaqsC/MAX09KAgmA3@vger.kernel.org
-X-Gm-Message-State: APuU4Z/aHAM3WrA36z8tXc+fZqTSIo3di52AZj3F+LVxXEutFpnvvnpr
-	tz9HEfrvHW1Fdzez4egUgqgTH6myHUqDMpsf0ZpdcXm7exbNPThlyGcBqpYoemRl
-X-Gm-Gg: AZFdTZd6UxH5OYvd3WH0OaTSj4bYCH6EbIjfSESAzoBVmezrD9fHvbJiQqgvZEmU+JV
-	MstxAv+elzsBaL2mgjXkZ2N3PhPT0tgDOS/TQbsHl1EtUzIHM5fpDRuPJ9hT2sV9Qn0XHbNjQd8
-	V01AsoI67pDKxvRnwvtWek4ZcIhZcE/5/eD8AZNSRoI/sqqkvmtcWh0G7RxEXeaJOnbl4pIno1p
-	uIjxN9whGQ+GqIOy9FUEsm7yByDTj64/7lAWOU4ZEmxHeH598pAU0vxRtCTTTHqe7Z+bL7TEtbW
-	sKrBD0QBW3VADhooj/gBeWj6DHbQ/fhCD7amnpyoU3r7s9ylA6mab+whreBArZ3aGHwqc3RTt8O
-	5tOcc+zFwpSDzfdUhzbKWoXxZwrua2rD9G8xH1UfT233SgfPNj/Tu6IKUNIeVtzcq+YavDca4Zf
-	cdVy8obPL2EDLdmg4/l9dpzlcyNJM1Kuvv1p9y2CB5H2d+QNWDe7SmmePpt5RVB+WSTsbVCJ6pG
-	Y0fbqQtEzCzWLw4EgkZfwXr8ljNWMXglgZQuvPgTFoHrZmSzyIc9UgmfhSNu8dw9CiddbEVmRpL
-	UOW18hOcAwz8oun4PLxuAaG8mEzxzEzsYNnDSCMPUPh4d7DKEEOmzYy2TwkFDLkqyVejzMDmUmI
-	C3qigXFY+brQBxo3adw+cVO/GlA3BkVapV/nSD/iu/A+E
-X-Received: by 2002:a17:90b:1810:b0:3b1:bdc8:c32b with SMTP id 98e67ed59e1d1-3b3d07e0cbbmr443051a91.53.1794944960593;
-        Tue, 17 Nov 2026 11:49:20 -0800 (PST)
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com. [74.125.82.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b3abb786f7sm5387708a91.1.2026.11.17.11.49.19
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2026 11:49:19 -0800 (PST)
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-33fb4680717so504870eec.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2026 11:49:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGsiFo/DWmX222IAIuJ3QOwHzjKfmwkmPBDKBz3+1nsvgKIObYwnFLuSqrQxDdqkPu5ONtrbFy1r48K@vger.kernel.org
-X-Received: by 2002:a05:7300:e009:b0:370:a11f:dcb7 with SMTP id
- 5a478bee46e88-3828161f1d8mr420423eec.41.1794944958852; Tue, 17 Nov 2026
- 11:49:18 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794945902; x=1795550702;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=rbt3Rhy1XEaIZQdvDh/UUWSNfD774dI3KIhZaPLXG14=;
+        b=xoq6UJw88t87GASaTJ11JrZtsmeGptMR5lC/jFnERyphi+L4hh3BcS550qlBkTKJu+
+         /3norbWaEn+9ch5hw+0LbiFsaeJXwr8EipX7rAQX0FvvJUw+b8KkAZi13/vtHCiqusUt
+         Y7TGmxdoLt8ovbuC/MRGUFNbCvG4HGApWPhXzDHqw89XqSmJS4BuJOBHSUjLVCSi680e
+         3Xx1fE9yZhoV/sHXxrUIsQhzOcy5BfOKvg3FxmBI4rEG2LpUECVCQ9r+yMT7x5XDg2Z8
+         zJANigt4GnHCf8xm6rgj9NCrPWSGT4R9y9Fe0yUZ38vrzuQk1YsQ56DPokynlAi/CUKc
+         dgNQ==
+X-Forwarded-Encrypted: i=1; AL+hErH8OYZeMiKWbcPxRKj0hiMNgLFT4ioIohyMAXs7cHpSGu54UMVETGawEN4pb+l3L93TSulSiT4mw7tZ@vger.kernel.org
+X-Gm-Message-State: APuU4Z/T5UGMuRx5dPzsAceo4mFdQT8LIPx1OB/K2TZvibUJyg/HPknI
+	Y09z8j88V/g9qCw8AA0av/ZonUwC50Ijb3ZyCOXUBucm/NTKE2Lv7d5DZDgQtaqD
+X-Gm-Gg: AZFdTZf+9WfKJmqT1YXAxR0Gd2cdkxfCotjwRUK6vN/2nZsdKzgIuT5FJcQXQ2l3YGq
+	+jCYgkml1und61UuUNgsSBqvtuiKpOpD1tBY4r7F/WT6mkloLLWAjcyYdfrFxpYu8gUBT1TLST+
+	foe8zH1jJyYZdRTtrDcUc1ANS7pckDibDmPzh7cxbAaAVQlwcx0rhx+BiG4QiSES0BsrlOks6Wr
+	dN803M4AMqutnPZ2E598xxkpFgWskoF3Oq9kQI16uDs3wAy5oMcEEtBtORO/ekKfmE7C/FkW2aW
+	ERbRcaxpNGpOa1Ojaalpr5c1mP1K3vl9yMTXBG/aJKeB+el3tn4BZb3VMJB0PoRh0I2CZ5ENGnz
+	BOgL3VSNm03LzVgf1REV7Qrvjhcd8V19YlyiOaP/9nnRuVqkufn/Bi4qsu/4mmBM+fbXQRAzaET
+	EyKsLbrgJ2O+0YtwsH80bKDkGXKl43F4iMgwDGr8RqDqIfqqa7es4F14y/TaLAb5AgccJ1Rj/P0
+	hw+urOOztITdnlZ3Ail3tjLkY/myV6A1bvBw4kdYLnaXglsGVwZAybL/jP6F1jIBJ7oAjlR794r
+	ZlOHEDBj5cuoDQot4gQvzgu4h/LI
+X-Received: by 2002:adf:e18a:0:b0:491:d721:548f with SMTP id ffacd0b85a97d-4a3735b4463mr8160153f8f.12.1794945901961;
+        Tue, 17 Nov 2026 12:05:01 -0800 (PST)
+Received: from m2.. ([37.142.154.208])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4a64b60940csm625528f8f.0.2026.11.17.12.04.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2026 12:05:01 -0800 (PST)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Raman Varabets <kernel-linux-20260610-80b7ab08@raman.v1.sg>,
+	Germain Hebert <germain.hebert@ca.abb.com>,
+	Christina Quast <contact@christina-quast.de>,
+	Rio Liu <rio@r26.me>,
+	Bruno Giacomazzi <brunoceg1@gmail.com>,
+	linux-input@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Zaidman <michael.zaidman@gmail.com>,
+	Maarten Brock <Maarten.Brock@sttls.nl>
+Subject: [PATCH v4 00/16] HID: ft260: add UART and GPIO support, plus I2C fixes
+Date: Tue, 17 Nov 2026 22:04:06 +0200
+Message-ID: <20261117200423.19561-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -81,41 +109,119 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-sf19a2890-gpio-v2-0-b885fbd84c4c@telaak.dev>
- <20261109-sf19a2890-gpio-v2-2-b885fbd84c4c@telaak.dev> <CAD++jLkGavE9jL_EbPB2iPH=Aa=4Vdwj4nvHgiauJtq-dbwKZQ@mail.gmail.com>
-In-Reply-To: <CAD++jLkGavE9jL_EbPB2iPH=Aa=4Vdwj4nvHgiauJtq-dbwKZQ@mail.gmail.com>
-From: Joseph Telaak <joseph@telaak.dev>
-Date: Tue, 17 Nov 2026 14:49:07 -0500
-X-Gmail-Original-Message-ID: <CAPY4CJ49c1g9t6teEK7zSnvig_iwNfa_yM6GP_WcJJkzQ0Oq9Q@mail.gmail.com>
-X-Gm-Features: Aa3M54q2rRrfck_2znOo84tl7sC4Xfyn9RtGeBH_rlEOV0HSVp39Mi9qyquXGxc
-Message-ID: <CAPY4CJ49c1g9t6teEK7zSnvig_iwNfa_yM6GP_WcJJkzQ0Oq9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: Add Siflower GPIO controller driver
-To: Linus Walleij <linusw@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, 
-	Qingfang Deng <dqfext@gmail.com>, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Qingfang Deng <qingfang.deng@siflower.com.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 17, 2026 at 11:38:53AM +0100, Linus Walleij wrote:
-> So this has one register per setting per GPIO line?
+Mainline supports only the FT260's I2C bridge. This series adds the
+UART/TTY interface and GPIO on top of it, and carries the I2C fixes
+made alongside them [1].
 
-Yes. Each line has its own block of registers, 0x40 apart: input,
-output, output enable, the interrupt masks, the interrupt status, the
-trigger type and the two filter registers. Only the pending bits are
-shared, in one register per group of 16 lines.
+Patch 1 is Christina Quast's v4 serial driver, ported to the current
+I2C code. Patch 2 holds the fixes it needed on hardware and the fixes
+for the review findings in the patch 1 code. As agreed with Jiri, the
+series keeps the order in which the code was developed, and each patch
+keeps its own author. So the UART work is split: patches 7 and 8 add
+flow control and the modem pins after the GPIO and I2C patches.
 
-> This is ideally handled with select GPIO_REGMAP
-> for gpio-regmap.c using regmap-mmio, see for example
-> see for example gpio-mvebu.c that does this elegantly.
+The v1, v2 and v3 threads:
+https://lore.kernel.org/linux-input/20260822213941.98882-1-michael.zaidman@gmail.com/T/#t
+https://lore.kernel.org/linux-input/20261030223637.86907-1-michael.zaidman@gmail.com/T/#t
+https://lore.kernel.org/linux-input/20261114230800.1344401-1-michael.zaidman@gmail.com/T/#t
 
-I'll move it to gpio-regmap on regmap-mmio in v3, with a
-reg_mask_xlate() for the 0x40 stride and the debounce in its
-set_config(). gpio-regmap doesn't set up a gpio_irq_chip, and there is
-one parent interrupt per group of 16 lines, so the interrupts move to an
-IRQ domain of the driver's own, as in gpio-rtd1625.
+Changes in v4:
 
-Thanks,
-Joseph
+All 5 issues Sashiko reported on v3 are fixed, and patch 8 changes
+after Maarten Brock's question on it. The v4 note of each patch lists
+its changes, with the same words as below. Patches 7, 9, 11 and 15
+change only in the context lines that patches 2 and 8 changed. The
+other patches are unchanged from v3.
+
+Patch 2:
+Fixes for the issues reported by Sashiko:
+- Port marked as removed at unplug; port get, activate and the speed
+  change refuse it, so an open that races with the unplug does not
+  use the freed HID device.
+- Port taken off the list only in ->destruct, so a new device does
+  not get the index of a tty that is still open.
+- FIFO reset after a failed output report, and .flush_buffer added,
+  so tcdrain() and TCSETSW do not wait for data that is never sent.
+- Probe fails with -ENOSPC when all tty indexes are in use, in place
+  of a WARN_ON in tty_port_link_device().
+
+Patch 3:
+ft260_uart_change_speed() does not take port->lock here any more,
+because patch 2 takes it for the whole function since v4.
+
+Patch 8:
+TIOCMGET does not fail while modem pins are in UART function. It
+reports such a line as serial_core.h asks, and RTS or DTR under flow
+control as active (Maarten Brock).
+
+TIOCMSET ignores the line that flow control owns and sets the other
+one, in place of -EINVAL.
+
+The removed flag is now added and set by patch 2, in
+ft260_uart_port_remove() before the hangup. This patch only checks it.
+
+Patch 16:
+The scoped_guard() list follows the patch 2 changes of v4:
+ft260_uart_port_get() and ft260_uart_port_destroy() added,
+ft260_remove() removed.
+
+Fix for the issue reported by Sashiko:
+- The i2c_exit and smbus_exit labels removed, so goto and guard are
+  not mixed in one function.
+
+Testing:
+
+The kernel is built from hid/for-next 720806515cb6 with KASAN,
+PROVE_LOCKING and DEBUG_ATOMIC_SLEEP. The driver is built as a module
+from the last patch.
+
+The pytest suite [2] passed: 198 tests passed and 22 were skipped,
+with no KASAN or lockdep report. 5 of the skipped tests need fault
+injection; they passed with a test-only build of the driver that adds
+it. Without the patch 2 FIFO fix, the two new UART TX error tests
+fail: the data stays queued, and the unbind waits for the TCSETSW
+caller.
+
+For the TN_189 workaround, a HW setup that resets the FT260 chip by
+its RESETN pin ran 7,781 cycles. 101 of them hit the endpoint STALL,
+and each of these recovered with one USB reset (details in patch 11).
+
+Every patch builds with W=1 without warnings. checkpatch --strict
+reports no errors. It warns once, in patch 15, for a quoted kernel log
+line.
+
+[1] https://github.com/MichaelZaidman/hid-ft260
+[2] https://github.com/MichaelZaidman/hid-ft260/tree/main/tests
+
+Christina Quast (1):
+  HID: ft260: add serial driver
+
+Michael Zaidman (15):
+  HID: ft260: uart: fix serial driver
+  HID: ft260: add GPIO support
+  HID: ft260: i2c: reduce driver module loading time
+  HID: ft260: fix sysfs store failure notice for big numbers
+  HID: ft260: i2c: reduce bus-error message severity
+  HID: ft260: uart: enable flow control
+  HID: ft260: uart: add modem pins control via ioctl
+  HID: ft260: group sysfs attrs per HID interface
+  HID: ft260: i2c: fix large write transaction failure
+  HID: ft260: workaround for TN_189 errata endpoint STALL after
+    enumeration
+  HID: ft260: i2c: abort in-flight transfers with STOP before reset
+  HID: ft260: i2c: reject an I2C clock outside the supported range
+  HID: ft260: i2c: fix i2c_reset sysfs store return value
+  HID: ft260: i2c: recover a bus held by a slave
+  HID: ft260: use lock guards
+
+ drivers/hid/Kconfig     |   10 +-
+ drivers/hid/hid-ft260.c | 2667 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 2390 insertions(+), 287 deletions(-)
+
+
+base-commit: 720806515cb6921ab05caaa6f470f7054b56385e
+-- 
+2.43.0
+
