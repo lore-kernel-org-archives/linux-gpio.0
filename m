@@ -1,55 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794896676;
-	b=LcfbWNC7teYMuRJ4YbeYmgd43HCBby4vn52BXQv7CE83AdnJSFykQw0CmqBreXV21yt7
-	 oeMp02GezgTzRmtEeE//xRCIv0cleGM5gNTMMOrahqVWdtuMfRC4JTVIQehKI1k+9vLM0
-	 fshckS3StW5Jkkel4fZSLFEqyst1Cq/T57mb5nkEfAndd1AzYjjmrN6kpHMGD3UZ22m8e
-	 JDmwcqJknzCyC8RASEdz4qfVsXWP7gg45lj7ddzwAZupYwFok5dq6zyNPvDjOV6irQhhD
-	 VmJXy755opJ6GgV/QY8Iyi5oLDgDnei3izKpccxtSLVMD4wUGqzVrtQTMPWcdu/bqnA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794896676;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=h0dLpP4FIJcw/z8/ZgWTqrMO/HmWiIwp1l+S+/ygJLA=;
-	b=fHkCP3TLynX5TS9PQ3Qi+pS+OZAx/dzCo55nbHJB/sF2gCVbSZbIkYSKtin0vuU5ws51
-	 yLs1lP6NZ0ZbarkS1hPRMaYzLpNi84tyQQOYPQA7TsrVpjxq2OeUF+KL3dAGS9sx8F5rI
-	 VGnV4siHPzWQ7FRTMrJcWehN26rsZQsToiyb3OoGPJhyodlckZQdgNOUn8k10ZliwyoGk
-	 sfLpZS57n5gsNh4OOvDlriBW1WGRlc3qt4Hxi8k18gb+oIy0++q1Tv5BcyBdHriaAYR6U
-	 qk9nPn0wfw3qchYtb6iggaY8ATlYZn0B7tpiMMw+vvwLVsfKL+yYV47GGvGWaBgyUHw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oFmEMV5a;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.166
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794898245;
+	b=rtqUswgyva7ROmlaFYsIjT5T7Zh9FuTPrkeYUratFDAGxUI4ewtG8mnutj2A3sGHFAjH
+	 F2vbAo5V8wm4i+0gfN0jyp2CEoBRvC4JvcgfqqUda2yekRQpmmUy/Tz7UPWFX3tQSGy4e
+	 PXZq38ev0NRXxUgw4bhDO30c5Jv7PMP9GjYVaAy4dg+T5m9Uv6FZxzV+xxj7wBt+cnZsJ
+	 H8SNbTgiLZQqoPW6fL8+g9NEeAxGOzIabTV965lnzne6e0tS7O9bg+9QpTCcUidRZnWD2
+	 yUVW1+EEsynXFa/n/hRcAN1KLrKdZTZi+WubsY9VjX22P3y5iZhFPvgQgAcIDgfMO5A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794898245;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
+	bh=kN/jr6xyg28Ydyr+Qj0RhkF8SbAklwXrcNPjICsMfKU=;
+	b=Rt6DqGnJnTQ6MNqBI1oizrOgW6SheHfSpKWQ+EFtxZtijrOas/I0SH3WTe5jo3NwRHix
+	 pEzb9X8ayl7HUwn5gJeWFWdUle+gkEtc+ywrf/oifiX65tUV7yriDgkDVGO1fr1WrfvIN
+	 UrsCm2UfNGbR/7fhOsu+BJ16hcolHKLNCC43C4LfDc5ssa+UR/YXtyQU4ZdbucAeKuDpQ
+	 10xDdCM5OJDbF+9pYWqfy+CP1QtosmYTjXiDQq7mWAYPMjUC5qyz5GChunSfvskVXeb5S
+	 xqALFNU6KqenBzKPmcGAVVx4ljV4zVO9EdPt6PR/ZtpRy4FlGYQqugaZof9NwXj0vww==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=t2Xn6A7G;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=kTiKdP0G;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.166
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F83C606A33B;
-	Tue, 17 Nov 2026 06:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B86606A31C;
+	Tue, 17 Nov 2026 06:50:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12B86606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oFmEMV5a
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA561F000C4;
-	Tue, 17 Nov 2026 06:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794896675;
-	bh=h0dLpP4FIJcw/z8/ZgWTqrMO/HmWiIwp1l+S+/ygJLA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=oFmEMV5avfWMxiFR/gLxPK+d+MiKsMzXtKj8H1nAw5cZM7lWzBIazn7EiZ9GOBKZ+
-	 Pyq6mSLFhnuBzYb4vNYPPm2L2qN1+kgCeazqW9jo+EwRTuZAti1wQaSxpud+ckiKBh
-	 SlbYAeQrqIcFYLk3qtehys453R3aphtjbSukdJZAJA3F2TXMoiN4iQbbg1rRdD1/xM
-	 7l0JDLYg9OsFCHKxnxFIdsx6D8f4uDI78lcJE/uaVpUFDXnU8os64+zH6OVwsZKzqF
-	 0sM4d9syjjJHG9V9YQPwzTTVeuKA6lTGN5HRXVF13FDApgzlMs8545eP0ErJEqEGDB
-	 j53Fw1dikXvkg==
-Message-ID: <sashiko-outbox-218250@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4] leds: pca9532: Propagate I2C errors
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Daniil Demakov" <t3127430@gmail.com>, linux-leds@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261117060002.3752-1-t3127430@gmail.com>
-References: <20261117060002.3752-1-t3127430@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 06:24:35 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=t2Xn6A7G;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=kTiKdP0G
+ARC-Seal: i=1; a=rsa-sha256; t=1794898221; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=BXJabg1znsc/I3P6qWoycDnIxuY9MlcsOSFA/2NCfjAU+D6uUiA8We3tnoYvsooikm
+    pDunKgNsON+wC0mzVYp51NiXNSVkVi54Z5S+w/3mxpsTWhRGzlFKz0EOj41d1llVYZWA
+    vkfIa640ieGg/d+H3WxFvIRg91Y+X8YKogbNi3UZBNy1xoTWfcVeWtott9KoVJZkCoa1
+    J92P+cB4XH3oA6M9MM9r9z8B6XoFp9AFyIGYuE8cxAnv06uy58RTXJQBpK7L2fwTkaHq
+    Wh5hv08YFuktUW95FCrOhD8/pEEinguNwoTrVlwMMcE9dU8xORqActB0IvOK6EboAtdF
+    2iLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1794898221;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=kN/jr6xyg28Ydyr+Qj0RhkF8SbAklwXrcNPjICsMfKU=;
+    b=HNKDeCNyqju2s+vNK49o3H+SHfbJz2yUToUA91kxQOg3gpFMZxFZu5ULQwMIlGTPd1
+    ajPDUxcuO++fhpdoNBkqF+0hhVD7srVwnGMb4HQbBAkIyxCud6oPjRe6WUPrv/vU+RRY
+    nHBGg9c48/IC5LDFHLFRVCibK8r2JyYKRHpHMyJJwuMowc67hIxGEA0dvujdyMWBqOys
+    WTeuEI5913PEbzjPzV0HcAV2++Oop2KjGQ6YvT55OAM400vN4h0MlK01vI2uFikIWEZG
+    g0YMQ3WzQ/Yu1BEPT8IWGfMOnHGm8qdWR6L9J05Iw8HwCPCcLqOC4gcEyubTtyfVW247
+    sS2Q==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1794898221;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=kN/jr6xyg28Ydyr+Qj0RhkF8SbAklwXrcNPjICsMfKU=;
+    b=t2Xn6A7GCsuyi/r+IxalSSKJ8L06khBEVHeBXRtD/Ck9s3VtLcSnNRdPbFRk59Bghk
+    EJt5wKvI2vbqZnDyzU0LdRvCFLkL+3/FtSkewgFjp7zbif3k4bTOpSFVXpWKnN1sMFK2
+    hM/QWDsTA1mP0/1qXWpdfEg/hOhbeJgymfhpXd0f3ja85sHNUOpxWW3ZwWcfUqtrT9Wy
+    Nk8vmSrki9hpX+8InA4CvylIc5mfAAJIdbmxy9QbfjQ2JvIhc2thtkC0+cT6BI7509l0
+    oH++LPJaM5db9Vak2IjHeDFpa5r9IFVGVqaHz+SmZOEmQ62CUk1cz3ipOmZ9hl6Pa06o
+    p2mw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1794898221;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=kN/jr6xyg28Ydyr+Qj0RhkF8SbAklwXrcNPjICsMfKU=;
+    b=kTiKdP0Gdd/AP6XDzwGuM2vy6WJsbE3KeR5w2rSRu8efQXWuE5W2TJZ8MO46uy9mn9
+    oQbB/FbqYhCaFNA7BfCg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrQ3ppelMiNKoEY92nD9kO01+3QZuyyF4VcrvHZ"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22AH6oLUtO
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Tue, 17 Nov 2026 07:50:21 +0100 (CET)
+Content-Type: text/plain;
+	charset=us-ascii
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,134 +93,80 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.10\))
+Subject: Re: [PATCH 3/3] pinctrl: ingenic: Add X2600 pin groups and functions
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <179487827555.2153459.1199232821591145638@gmail.com>
+Date: Tue, 17 Nov 2026 07:49:50 +0100
+Cc: Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Paul Cercueil <paul@crapouillou.net>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org,
+ letux-kernel@openphoenux.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <E4751395-0CE1-4073-ABEA-9F4BF57304A6@goldelico.com>
+References: <cover.1794557697.git.hns@goldelico.com>
+ <afd42cc2ca2c93501ff1769b7d7a25559ef68a2f.1794557697.git.hns@goldelico.com>
+ <179487827555.2153459.1199232821591145638@gmail.com>
+To: Hunter Laux <hunterlaux@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81.1.10)
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] leds: pca9532: software blink fallback broken in
-  pca9532_set_blink()
---
 
-commit 68a4ebaa5c8871e0f2cc482a8a248aba7009e6bc
-Author: Daniil Demakov <t3127430@gmail.com>
 
-leds: pca9532: Propagate I2C errors
+> Am 17.11.2026 um 02:17 schrieb Hunter Laux <hunterlaux@gmail.com>:
+> 
+> Hi Nikolaus,
+> 
+> On Fri, Nov 13, 2026 at 09:14:58AM +0100, H. Nikolaus Schaller wrote:
+>> + INGENIC_PIN_GROUP("uart1-data-c", x2600_uart1_data_c, 1),
+>> + INGENIC_PIN_GROUP("uart2-data", x2600_uart2_data, 1),
+>> + INGENIC_PIN_GROUP("uart4-data-b", x2600_uart4_data_b, 2),
+>> + INGENIC_PIN_GROUP("uart5-data-b", x2600_uart5_data_b, 2),
+> 
+> Per the X2600 PM, shouldn't these be 2, 0, 1 and 1?
+> 
+>> +static int x2600_slcd_ctrl_pins[] = {
+>> + 0x34, 0x3c, 0x3d, 0x3e, 0x3f,
+>> +};
+> 
+> PB20 (0x34) has no function 1. Did this come from the X2000 table?
+> Should 0x34 be dropped?
+> 
+>> + INGENIC_PIN_GROUP("pcm", x2600_pcm, 3),
+> [...]
+>> + INGENIC_PIN_GROUP("pwm11", x2600_pwm11, 0),
+>> + INGENIC_PIN_GROUP("pwm12", x2600_pwm12, 0),
+>> + INGENIC_PIN_GROUP("pwm13", x2600_pwm13, 0),
+>> + INGENIC_PIN_GROUP("pwm14", x2600_pwm14, 0),
+>> + INGENIC_PIN_GROUP("pwm15", x2600_pwm15, 0),
+>> + INGENIC_PIN_GROUP("pwm-trig-c", x2600_pwm_trig_c, 1),
+>> + INGENIC_PIN_GROUP("pwm-trig-d", x2600_pwm_trig_d, 1),
+> [...]
+>> + INGENIC_PIN_GROUP("wait", x2600_wait, 3),
+> 
+> These groups aren't in any function.
+> 
+>> + 0x000007ff, 0xffffffff, 0x7ffbfff, 0x0000ffff, 0x000ffffe,
+> [...]
+>> + 0x000007ff, 0xffffffff, 0x01ffff1, 0x0001e000, 0x000fffff,
+> 
+> Port C is missing a digit?
+> 
+> On port E, 0x80 is pull enable and 0x90 selects up/down (PEPE/PEPS).
+> Doesn't that make the X2000 pull code wrong there?
 
-This commit checks SMBus read and write return values across LED, PWM,
-blink, GPIO, and probe paths in leds-pca9532, restoring previous state on
-failure and serializing shared state updates under update_lock.
+All points are valid (and there are some more), and already in my
+update queue especially port E pullup/down.
 
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index c8085427696ff..19b993d9ac9f5 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
+I just didn't find to work that into a v2 because the swappingof X1600 and
+X1830 must come before...
 
-[ ... ]
+BR and thanks,
+Nikolaus
 
-> @@ -144,68 +148,147 @@ static int pca9532_calcpwm(struct i2c_client *clie=
-nt, int pwm, int blink,
-
-[ ... ]
-
->  static int pca9532_set_brightness(struct led_classdev *led_cdev,
-> -	enum led_brightness value)
-> +				  enum led_brightness value)
->  {
-> -	int err =3D 0;
->  	struct pca9532_led *led =3D ldev_to_led(led_cdev);
-> +	struct pca9532_data *data =3D i2c_get_clientdata(led->client);
-> +	int old_state;
-> +	u8 old_pwm;
-> +	u8 old_psc;
-> +	bool pwm_updated =3D false;
-> +	int restore_err;
-> +	int err =3D 0;
-> +
-> +	mutex_lock(&data->update_lock);
-> +	old_state =3D led->state;
-> +	old_pwm =3D data->pwm[PCA9532_PWM_ID_0];
-> +	old_psc =3D data->psc[PCA9532_PWM_ID_0];
-> =20
->  	if (value =3D=3D LED_OFF) {
->  		led->state =3D PCA9532_OFF;
->  	} else if (led->state =3D=3D PCA9532_PWM1) {
-> -		return 0; /* Non-zero brightness shall not stop HW blinking */
-> +		goto out;
->  	} else if (value =3D=3D LED_FULL) {
-
-[ ... ]
-
-> @@ -223,29 +306,64 @@ static int pca9532_update_hw_blink(struct pca9532_l=
-ed *led,
->  		}
->  	}
-> =20
-> -	psc =3D ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-> -	if (psc > U8_MAX) {
-> -		/* Blink period too long to be handled by hardware */
-> +	if (delay_on > ULONG_MAX - delay_off)
->  		return -EINVAL;
-> +
-> +	period =3D delay_on + delay_off;
-> +
-> +	if (!delay_on || !delay_off)
-> +		return -EINVAL;
-> +
-> +	if (period > ((U8_MAX + 1) * 1000) /
-> +		     PCA9532_PWM_PERIOD_DIV)
-> +		return -EINVAL;
-
-[ ... ]
-
-> @@ -255,26 +373,47 @@ static int pca9532_set_blink(struct led_classdev *l=
-ed_cdev,
-> =20
->  	err =3D pca9532_update_hw_blink(led, *delay_on, *delay_off);
->  	if (err)
-> -		return err;
-> +		goto restore_state;
-> +
-> +	err =3D __pca9532_setled(led);
-> +	if (err < 0) {
-> +		led->state =3D old_state;
-> +		data->pwm[PCA9532_PWM_ID_1] =3D old_pwm;
-> +		data->psc[PCA9532_PWM_ID_1] =3D old_psc;
-> +
-> +		restore_err =3D __pca9532_setpwm(client, PCA9532_PWM_ID_1);
-> +		if (restore_err < 0)
-> +			dev_warn(&client->dev,
-> +				 "Failed to restore PWM settings: %d\n",
-> +				 restore_err);
-> +	}
-> =20
-> -	pca9532_setled(led);
-> +	goto out;
-> =20
-> -	return 0;
-> +restore_state:
-> +	led->state =3D old_state;
-> +out:
-> +	mutex_unlock(&data->update_lock);
-> +	return err;
->  }
-
-[Severity: Medium]
-Does returning -EINVAL from pca9532_set_blink() while leaving led->state set
-to PCA9532_PWM1 break the fallback to software blinking?
-
-When an LED is already hardware blinking (led->state =3D=3D PCA9532_PWM1) a=
-nd
-is reconfigured with delays rejected by pca9532_update_hw_blink() (such as
-setting delay_off to 0 under the timer trigger, which this patch now rejects
-with -EINVAL, or a period longer than the hardware limit), led_blink_setup()
-falls back to led_set_software_blink().  For delay_off =3D=3D 0,
-led_set_software_blink() calls led_set_brightness_nosleep(led_cdev,
-led_cdev->blink_brightness) to turn the LED steady on, and for software
-timer blinking, led_timer_function() alternates brightness between 0 and
-blink_brightness.  However, pca9532_set_brightness() ignores all non-zero
-brightness values while led->state is PCA9532_PWM1, so the LED stays
-hardware-blinking at the old PWM1 rate or fails to turn on during software
-blink on-phases.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117060002.3752=
--1-t3127430@gmail.com?part=3D1
