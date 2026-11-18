@@ -1,109 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794989815;
-	b=B2Mu7TymtXljdgXH9z9JScWwZXUt8vUAnRiSeZGmtATdL2pjWaX/vW3GjnR+0BGESPVB
-	 E/Czw1uYtLiAYkZakk1jckFRO8/AsJxYlngyb9NwyHxgT0hRAu2jVQRgFWTtYB0ZIc+mo
-	 gLYxiSySTbVXvvKDuQQqVvygeGADMqt0nxFgscQV5OcwdpWG4M/Cmz34ZlzKVlZg5IdFD
-	 E4wikozhvtQ7KRbSWZ0A50OpLOirPG3rpMcj9IAVNT0LDEG5cIWSSF/qDsS/Cua1ssBr1
-	 eqSxgKEpoBBuxXl6gYUOgWP7fciz91xKdkC99CA3r4Dfqcz3xMx6zDo/U4WxH4TvVkA==
+	t=1794990954;
+	b=RrEvLkntZr0rZn11XO0+QK3pKAG8eTN8/V2jF+q14DDvWRdsuEeS8+wNY4l8fozxIEkY
+	 M/eO6coiX0zD5HELA1/n1YDU7P9z9xDia5IMQ7jmiEy9QbjeYg/HFr1FJn/A0Et3rek/f
+	 wTeh/Cg9xKugHAbLmF3y7r2QlCMiL4VpsEWHcHyjsmZ+T/2r8wjaF4EC4zd7TdiIBbZ6r
+	 befjlnDzAQhswtTCNYUGbK0QtudZsGUWSaqNS6x4GaP6s7qFE5gFH0WKaBJYcArEUWqK3
+	 mJ2g0VEiffFWlHr6djMZX8p+/xm5EdeGtRdaJZPSOkIdRJ5aHFIwLxnMNmn1lV3mT5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794989815;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=DruTwIEuL419lERQzYgeQDALQqSuvj3CoTd7MhEXhE0=;
-	b=VRlRPGbI5tKtX2b/wQ/dPGqcdHpkS1az8Wk0D6Ew8QUnCygAE60Rf6nTxAGQ45uHsP+Y
-	 ijsL8qjAHfr696p2zjso3jKgibZYqkrZ1cB+iS8kKkls8ztHtjfvOG2ZX70lj9d7YHRT4
-	 JosbqOtYkk6flO2SSZnVN0namxZ8Pjx5qYVl7AroqqhR7hQ6EE2z3z/sboENnn1dK/7xS
-	 xpXQYQYtQVDhI2G7rtQW+WoB61crLBr4Z7lWe4IIVAuUNcGAE6mjMGQga1IQOjUblFrEL
-	 5fPGDhHBAweimSNqsKpzngsIfWzPzsRzhuE2DDDNuAxmvfDVvTnZh5WS7TI1gWbT+6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794990954;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=0JIqzdGHNYeH11NmkVY5pYUkgsK4toUE49+n7gYxnFg=;
+	b=yx8EFonar1Vw5SVukYyHJKQqnGU7F69Jweg6ApQiwVvPNnflosbKZ/qb4yE+1YAu8bJu
+	 5O2PoeQqsqwSHGWw9leqdaTfhFIwQBtA+7BGHRxHodYupSgZFmcBpa5kCGSVOQQJj2B6d
+	 sknFGmaou6QJY/zhBKivcL4DrDS2ck6ZMmhP/jzVOyOPacEMPRhpUXrKzdt1ufcpNEmMu
+	 b6emdaIaNXbZqHj3lMe/SPRpK/jGMKuYOEETgpa1B5AVuYl1AWQUShEKwTuFbrx+NRzz/
+	 j5OJCZ+mJNqahMsPXuElrcIpYubanmgXg/SgthLohhwifT/kTObl5cMaj2pWajb2azQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=USPeiRF6;
-	arc=none smtp.remote-ip=209.85.210.179
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hxmkntyR;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6609860A3808
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 08:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6609860A3808
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8E4606A31C;
+	Wed, 18 Nov 2026 08:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=USPeiRF6
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-8b9c51097e2so300739b3a.1
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 00:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794989814; x=1795594614; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=DruTwIEuL419lERQzYgeQDALQqSuvj3CoTd7MhEXhE0=;
-        b=USPeiRF6Io8kJCL6UTsJnDfsRDziB0l2u00jfPT4LTitHF1kc0qS0uCA0/sU0+A3nS
-         MSnbfb7Uo+xh9nIJaQrTTff3HzFw4Jwrswz53GxG19I1ZlMjHaeZui1UudS75cXxKUfr
-         T69s0m1YLE/7gSegRNvNFQiyMp/PwGjQyL/a80PcorVvtBEhwajvDFZJY1lSxPczHNM5
-         DUD2Z6yU3WMtPr15R95iS8LEmMfpRlQNKMFSVSCZq4yEx4Z8LuiYOd5w4GCwbp0WBAyP
-         R6Q75mnzaHNPWnXZGxu1LoTWomnwwugazAgdf16Akj9z/36ep1+J6458Cp4GH2T6vhLl
-         g1lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794989814; x=1795594614;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=DruTwIEuL419lERQzYgeQDALQqSuvj3CoTd7MhEXhE0=;
-        b=hMuYy3haRIN6MsmmkYULQhXZsl8PKXPiyYYA6bch+5JKJS3ik/tGph6VbckwrgcL6C
-         7/zvYZodrAoVACDuFvS6cnhnfoLuu20BkArW8Z2K/hr/cziseLeiwdGKzJ8Fl+DLzT7g
-         1ALEgJceknN05q/pNxgLtHARN6mTFy/tsTouTBYOCzfltRCSb9oHVCxEd0N4FCTNjHrK
-         XMh31giT/kMrYUtSneLGExWGKnQewWwcjo7c9z8xJ2G248VkN7b+4YQdqyDlHVbeddhi
-         cGdzFZqCLEuaRXKJlQhFhl8wLebMrK5BSI8aVgbEHD8r37WAJJTNZnwCbeO94FhRw3k6
-         /6Mw==
-X-Forwarded-Encrypted: i=1; AL+hErFff26gFYVkYWkMgO17uu2GojAAWnMcXu6wlQaxwPwi1ci6sRxMjOwlp7eUW0KEsTtEcNIMM8TO8vh6@vger.kernel.org
-X-Gm-Message-State: APuU4Z9IMpivW7+ye9Mtt66VJs6cnFpVmQWCqzNJv/LouiRgL+4FDDUw
-	zcD/HjubuD7AE90OuBtDunQ9t/YqibwIH7I1CtSda9w+LYNzsMltikp3
-X-Gm-Gg: AYBFou3M/rCe/Y4g/+5bcM3CrdltEqaYIF8TAEmaCcxLdD3CIt6h8Qvq/LyjhB4FfUk
-	WKuStQyiLP4WFmqZuDxrK0KJfrentCCNJkGTsJIQ4yf0O5iAt3qdsHQJssIoZQ4798f3ZNBT9in
-	1Dw6qPd1wV4F/+bt9KP005qXLAat6lJBCrG9ZIZnXc7FOmOm7rAkI1RCKnO2QiDDjZIlHNccsQb
-	uKhN7Wyx1URTfoi1cVg/S/gU4vyWrOBoc21Q+Xeq5wh5IFumxjCXu6m/qd+veyWE1Pni+ttuH39
-	VQVRo28MrWJb5nU38iHhkF/TQ+AQyglqNaG765692F/WYT0SeJPSBh9+nGuH4xLulyeSLC3zhUZ
-	gtf/+KRbPyhTROAbb6R/4lk8x4AQiOdxmaWHFoDbk+JzMs9AdNv+tuYCMnelwyvwiDcPG55ZcNz
-	KsKrOKBpfWtR94OoGsdekqhjTOOkKGt1Yy/JoQs1CCMqI7u6ZkvOWL9BFlnQslh2xVh8k1KWAAa
-	wjuHIHqP5HSyQu6BQyK2pAgGtXAQX4mm/gSueaH5z2v6WFh9EKrI5yz1RekIrK78PhCUemRlkFZ
-	8QdT0xN6WF6dpbXb10P+065GHYOXGS6rlmRfrnBbbWlz6TEVLuf57W2TnUVnCWPcKcm0pxU=
-X-Received: by 2002:a05:6a21:828c:b0:3f9:b55e:10bb with SMTP id adf61e73a8af0-3fe98af080bmr1592901637.87.1794989813764;
-        Wed, 18 Nov 2026 00:16:53 -0800 (PST)
-Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8c5cad8cefbsm764401b3a.31.2026.11.18.00.16.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 00:16:53 -0800 (PST)
-From: a0282524688@gmail.com
-To: lee@kernel.org,
-	Ming Yu <tmyu0@nuvoton.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: linux-kernel@vger.kernel.org,
-	Ming Yu <a0282524688@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	mfd@lists.linux.dev
-Subject: [PATCH v10 06/13] mfd: nct6694: Move module type macros to shared header
-Date: Wed, 18 Nov 2026 16:16:17 +0800
-Message-Id: <20261118081625.2399247-7-a0282524688@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261118081625.2399247-1-a0282524688@gmail.com>
-References: <20261118081625.2399247-1-a0282524688@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hxmkntyR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5395C1F000C4;
+	Wed, 18 Nov 2026 08:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794990953;
+	bh=0JIqzdGHNYeH11NmkVY5pYUkgsK4toUE49+n7gYxnFg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=hxmkntyR9kspWo+jxklIDWViHzR+3NtXQUiLwekNP+40q0OHg+H3sn5UJwWMVBD/4
+	 3FSq9WmqduxCDQZVlKg6v3I+ItQQQwLds0HkTxiPyPSIgFrRelC4dbtErY0mAs8fHC
+	 jsylQCQfj6pKRlst8vQy6pIYdCrZw6grlcQP8wemFdv3+kYm04YucPht/vjexTJpl0
+	 FNC3Uo4MdTsrFA4fn0PawDM/qIH5OOAF+lIbVFjHytuWKLAKoYYvS0dx+klRP17Rat
+	 NC9s1lQrxpwQMNxTNIgGlCWmjih6MYhMTGEcKGjzYKZGwMW0lNEF7GJ8rstH2RF3z2
+	 nSqnQVfLh0Jng==
+Message-ID: <sashiko-outbox-220460@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v15 10/14] gpio: pl061: switch data path to gpio-regmap
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Long Zhao" <longzhao@ambarella.com>, linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261118-cv75-gpio-v15-10-e3c563673fe1@ambarella.com>
+References: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
+ <20261118-cv75-gpio-v15-10-e3c563673fe1@ambarella.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 18 Nov 2026 08:35:52 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -112,208 +59,132 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Ming Yu <a0282524688@gmail.com>
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] gpio: pl061: premature IRQ domain publish breaks
+  pl061_irq_domain_map()
+- [Low] gpio: pl061: incomplete changelog and inaccurate
+  irq_set_parent() description
+--
 
-Each sub-device driver defines the module type used by its own
-commands. The upcoming HIF transport also needs to recognise
-NCT6694_RPT_MOD, as report accesses are served from a separate
-register space rather than through the command mailbox.
+commit 0b93363ac72443e24d6e5779edcb0ca7954b6b53
+Author: Long Zhao <longzhao@ambarella.com>
 
-Move all module types into the shared header so that the transports
-and the sub-device drivers use a single set of definitions.
+> gpio: pl061: switch data path to gpio-regmap
+>
+> Move get, set and direction onto gpio-regmap. ARM PL061 sets
+> GPIO_REGMAP_QUIRK_SET_AFTER_DIR so the output value is written after
+> the direction change.
+>
+> Keep a custom irqchip and irq domain. Create the domain with the PL061
+> private data and let gpio-regmap attach it.
+>
+> Leave the chained handler's regmap_read() unchecked. mis stays 0 on
+> failure, so the pending loop does nothing, and chained_irq_exit()
+> still runs. irq_type still ignores MMIO write returns.
+>
+> The irqchip uses its own child IRQ lockdep class. Split teardown into
+> two devm actions: dispose mappings while the domain is still alive,
+> and clear the chained handler only after it was installed. Checked
+> with lockdep on the CV75 board. irq_set_parent() nests the GPIO
+> irq_desc under the AMBA parent for irq_set_wake().
+>
+> The irqchip is immutable and stores struct pl061 as its chip data,
+> so the GPIOCHIP_IRQ_RESOURCE_HELPERS macro does not apply. Look up
+> the gpio_chip while mapping the IRQ, then call gpiochip_reqres_irq(),
+> gpiochip_relres_irq(), gpiochip_enable_irq() and
+> gpiochip_disable_irq() from the irqchip.
+>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-No functional change.
+[Severity: Low]
+This isn't a bug, but the commit message says irq_set_parent() nests the
+GPIO irq_desc under the AMBA parent for irq_set_wake().  irq_set_parent()
+only records desc->parent_irq under CONFIG_HARDIRQS_SW_RESEND for software
+interrupt resending; irq_set_lockdep_class() is what puts the child
+irq_desc in a separate lockdep class so irq_set_irq_wake() on parent_irq
+does not trigger a lockdep recursion warning.
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-Signed-off-by: Ming Yu <a0282524688@gmail.com>
----
-Changes in v10:
-- None.
+The changelog also omits the addition of struct pl061_regs and struct
+pl061_drvdata and the rewrite of pl061_suspend() and pl061_resume() to use
+regcache syncing instead of struct pl061_context_save_regs.
 
-Changes in v9:
-- Added Andi's Reviewed-by.
+> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+> index 27ed759486caf..db3d02976383d 100644
+> --- a/drivers/gpio/gpio-pl061.c
+> +++ b/drivers/gpio/gpio-pl061.c
+[ ... ]
+> @@ -289,29 +255,64 @@ static void pl061_irq_unmask(struct irq_data *d)
+[ ... ]
+> +static int pl061_gc_from_domain(struct gpio_chip *gc, const void *data)
+> +{
+> +	const struct pl061 *pl061 =3D data;
+> +
+> +	return gc->irq.domain =3D=3D pl061->irq_domain;
+> +}
+> +
+> +static struct gpio_chip *pl061_lookup_gc(struct pl061 *pl061)
+> +{
+> +	struct gpio_device *gdev;
+> +
+> +	if (pl061->gc)
+> +		return pl061->gc;
+> +
+> +	gdev =3D gpio_device_find(pl061, pl061_gc_from_domain);
+> +	if (!gdev)
+> +		return NULL;
+> +
+> +	pl061->gc =3D gpio_device_get_chip(gdev);
+> +	gpio_device_put(gdev);
+> +	return pl061->gc;
+> +}
+[ ... ]
+> @@ -319,68 +320,175 @@ static const struct irq_chip pl061_irq_chip =3D {
+[ ... ]
+> +static int pl061_irq_domain_map(struct irq_domain *d, unsigned int virq,
+> +				irq_hw_number_t hwirq)
+> +{
+> +	struct pl061 *pl061 =3D d->host_data;
+> +
+> +	if (!pl061_lookup_gc(pl061))
+> +		return -ENODEV;
 
-Changes in v8:
-- Reworded the commit message to explain why the transport needs the
-  module types.
+[Severity: Medium]
+Can pl061_irq_domain_map() fail with -ENODEV if a consumer maps an IRQ
+before devm_gpio_regmap_register() finishes?
 
-Changes in v7:
-- None.
+devm_irq_domain_instantiate() publishes pl061->irq_domain on
+irq_domain_list before devm_gpio_regmap_register() runs, and inside
+gpio_regmap_register(), gpiochip_add_data() registers the gpio_device
+before gpiochip_irqchip_add_domain() sets gc->irq.domain:
 
-Changes in v6:
-- None.
+CPU0                                    CPU1
+pl061_probe()
+  devm_irq_domain_instantiate()
+    ...
+      __irq_domain_publish()
+                                        irq_create_fwspec_mapping()
+                                          irq_find_matching_fwspec()
+                                          irq_domain_associate_locked()
+                                            pl061_irq_domain_map()
+                                              pl061_lookup_gc()
+                                                --> NULL (-ENODEV)
+  devm_gpio_regmap_register()
+    gpio_regmap_register()
+      gpiochip_add_data()
+      gpiochip_irqchip_add_domain()
+        gc->irq.domain =3D irq_domain
 
-Changes in v5:
-- Split from the monolithic v4 patch to follow the single logical change
-  principle.
+Because the domain is already published, a concurrent consumer does not get
+-EPROBE_DEFER from irq_find_host(); instead pl061_irq_domain_map() fails
+with -ENODEV and irq_create_fwspec_mapping() returns 0, failing the
+consumer's probe.
 
- drivers/gpio/gpio-nct6694.c         |  7 -------
- drivers/hwmon/nct6694-hwmon.c       | 21 ---------------------
- drivers/i2c/busses/i2c-nct6694.c    |  7 -------
- drivers/net/can/usb/nct6694_canfd.c |  6 ------
- drivers/rtc/rtc-nct6694.c           |  7 -------
- drivers/watchdog/nct6694_wdt.c      |  7 -------
- include/linux/mfd/nct6694.h         |  9 +++++++++
- 7 files changed, 9 insertions(+), 55 deletions(-)
+Since pl061_irq_domain_map() does not use pl061->gc itself, could
+pl061_lookup_gc() be deferred to pl061_irq_request_resources(), or could
+pl061->gc be populated before publishing the IRQ domain?
 
-diff --git a/drivers/gpio/gpio-nct6694.c b/drivers/gpio/gpio-nct6694.c
-index 9d51bf52e99a..b3eba9f344ef 100644
---- a/drivers/gpio/gpio-nct6694.c
-+++ b/drivers/gpio/gpio-nct6694.c
-@@ -13,13 +13,6 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- 
--/*
-- * USB command module type for NCT6694 GPIO controller.
-- * This defines the module type used for communication with the NCT6694
-- * GPIO controller over the USB interface.
-- */
--#define NCT6694_GPIO_MOD	0xFF
--
- #define NCT6694_GPIO_VER	0x90
- #define NCT6694_GPIO_VALID	0x110
- #define NCT6694_GPI_DATA	0x120
-diff --git a/drivers/hwmon/nct6694-hwmon.c b/drivers/hwmon/nct6694-hwmon.c
-index 32f96867635f..fde32010a66c 100644
---- a/drivers/hwmon/nct6694-hwmon.c
-+++ b/drivers/hwmon/nct6694-hwmon.c
-@@ -15,13 +15,6 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--/*
-- * USB command module type for NCT6694 report channel
-- * This defines the module type used for communication with the NCT6694
-- * report channel over the USB interface.
-- */
--#define NCT6694_RPT_MOD			0xFF
--
- /* Report channel */
- /*
-  * The report channel is used to report the status of the hardware monitor
-@@ -38,13 +31,6 @@
- #define NCT6694_TIN_STS(x)		(0x6A + (x))
- #define NCT6694_FIN_STS(x)		(0x6E + (x))
- 
--/*
-- * USB command module type for NCT6694 HWMON controller.
-- * This defines the module type used for communication with the NCT6694
-- * HWMON controller over the USB interface.
-- */
--#define NCT6694_HWMON_MOD		0x00
--
- /* Command 00h - Hardware Monitor Control */
- #define NCT6694_HWMON_CONTROL		0x00
- #define NCT6694_HWMON_CONTROL_SEL	0x00
-@@ -53,13 +39,6 @@
- #define NCT6694_HWMON_ALARM		0x02
- #define NCT6694_HWMON_ALARM_SEL		0x00
- 
--/*
-- * USB command module type for NCT6694 PWM controller.
-- * This defines the module type used for communication with the NCT6694
-- * PWM controller over the USB interface.
-- */
--#define NCT6694_PWM_MOD			0x01
--
- /* PWM Command - Manual Control */
- #define NCT6694_PWM_CONTROL		0x01
- #define NCT6694_PWM_CONTROL_SEL		0x00
-diff --git a/drivers/i2c/busses/i2c-nct6694.c b/drivers/i2c/busses/i2c-nct6694.c
-index 158a533dfba7..d3e2316ff53c 100644
---- a/drivers/i2c/busses/i2c-nct6694.c
-+++ b/drivers/i2c/busses/i2c-nct6694.c
-@@ -12,13 +12,6 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- 
--/*
-- * USB command module type for NCT6694 I2C controller.
-- * This defines the module type used for communication with the NCT6694
-- * I2C controller over the USB interface.
-- */
--#define NCT6694_I2C_MOD			0x03
--
- /* Command 00h - I2C Deliver */
- #define NCT6694_I2C_DELIVER		0x00
- #define NCT6694_I2C_DELIVER_SEL		0x00
-diff --git a/drivers/net/can/usb/nct6694_canfd.c b/drivers/net/can/usb/nct6694_canfd.c
-index e5f7f8849a73..262b4c26c9d4 100644
---- a/drivers/net/can/usb/nct6694_canfd.c
-+++ b/drivers/net/can/usb/nct6694_canfd.c
-@@ -18,12 +18,6 @@
- 
- #define DEVICE_NAME "nct6694-canfd"
- 
--/* USB command module type for NCT6694 CANfd controller.
-- * This defines the module type used for communication with the NCT6694
-- * CANfd controller over the USB interface.
-- */
--#define NCT6694_CANFD_MOD			0x05
--
- /* Command 00h - CAN Setting and Initialization */
- #define NCT6694_CANFD_SETTING			0x00
- #define NCT6694_CANFD_SETTING_ACTIVE_CTRL1	BIT(0)
-diff --git a/drivers/rtc/rtc-nct6694.c b/drivers/rtc/rtc-nct6694.c
-index 501c364277d8..86a03f02515c 100644
---- a/drivers/rtc/rtc-nct6694.c
-+++ b/drivers/rtc/rtc-nct6694.c
-@@ -14,13 +14,6 @@
- #include <linux/rtc.h>
- #include <linux/slab.h>
- 
--/*
-- * USB command module type for NCT6694 RTC controller.
-- * This defines the module type used for communication with the NCT6694
-- * RTC controller over the USB interface.
-- */
--#define NCT6694_RTC_MOD		0x08
--
- /* Command 00h - RTC Time */
- #define NCT6694_RTC_TIME	0x0000
- #define NCT6694_RTC_TIME_SEL	0x00
-diff --git a/drivers/watchdog/nct6694_wdt.c b/drivers/watchdog/nct6694_wdt.c
-index 57bcc1299973..94c630a9ced6 100644
---- a/drivers/watchdog/nct6694_wdt.c
-+++ b/drivers/watchdog/nct6694_wdt.c
-@@ -21,13 +21,6 @@
- 
- #define NCT6694_WDT_MAX_DEVS		2
- 
--/*
-- * USB command module type for NCT6694 WDT controller.
-- * This defines the module type used for communication with the NCT6694
-- * WDT controller over the USB interface.
-- */
--#define NCT6694_WDT_MOD			0x07
--
- /* Command 00h - WDT Setup */
- #define NCT6694_WDT_SETUP		0x00
- #define NCT6694_WDT_SETUP_SEL(idx)	(idx ? 0x01 : 0x00)
-diff --git a/include/linux/mfd/nct6694.h b/include/linux/mfd/nct6694.h
-index 2022b8fcc096..d752708c2a8d 100644
---- a/include/linux/mfd/nct6694.h
-+++ b/include/linux/mfd/nct6694.h
-@@ -8,6 +8,15 @@
- #ifndef __MFD_NCT6694_H
- #define __MFD_NCT6694_H
- 
-+#define NCT6694_HWMON_MOD	0x00
-+#define NCT6694_PWM_MOD		0x01
-+#define NCT6694_I2C_MOD		0x03
-+#define NCT6694_CANFD_MOD	0x05
-+#define NCT6694_WDT_MOD		0x07
-+#define NCT6694_RTC_MOD		0x08
-+#define NCT6694_RPT_MOD		0xFF
-+#define NCT6694_GPIO_MOD	NCT6694_RPT_MOD
-+
- #define NCT6694_VENDOR_ID	0x0416
- #define NCT6694_PRODUCT_ID	0x200B
- #define NCT6694_INT_IN_EP	0x01
--- 
-2.34.1
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118-cv75-gpio-=
+v15-0-e3c563673fe1@ambarella.com?part=3D10
