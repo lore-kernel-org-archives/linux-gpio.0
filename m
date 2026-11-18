@@ -1,95 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.200.30
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794991231;
-	b=ErXFvvueNG7wF74R6HfKcy0W3YirkIN448iS1uLpnvVkg2FkGQJpo5h5NjqQkN7D1Pt0
-	 Ut40DVhxD+KQ8Rq46hRkOA3/KOF2RucyFzPMoJ5hwSh61M0+7AKM46MgUGCBG5sEIa9b8
-	 QRdLC4iChQ7JjU7NSdTAbroFfth2TAhpmqM5GrJKOa1CnqJzPm9cMouVz9quVPN/nhVkp
-	 Ia6o3Ryoau91igeLh2IFSQV9FpcrylNpfl0pEiUuwTVOfcnXWLxZTykh79aJkehbxal0e
-	 BdtAxogORjfGbLi/3hN+MRl5MjXnfmJNpGB6iD5eTexdX85XYZOf4+34XVucBxSzurg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794991231;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=hXofRKU80HobS0eEy0BLJ+bXjd3BZ1obLil78HUAOCc=;
-	b=IPnrX3W102o9HrYhsHAqG0UZoJlioEdvuW6oAG1M2CIeJ/ivae/Frm8x6+Uehwd128MA
-	 iijwPonY161aSWl7k9TbV9wePBWoX1JwsfJt/flJXiq68TMJRjx+0mTv1rR2odjyibd5q
-	 i7kJ+Hv1XhCxC8yyCNYRfwdcX01VdnCx/n1wico64T1FIy0r4g+C4HV95BHhV++mBVQh/
-	 YUOtNArfcjE1EVNx+sFvS9NiLViXxHfhS8+ZlRF6EReFIAqW3yBz3zy4Ry8z66DJbhXKA
-	 CqdvLpvHqeMnyo4jSm1NQ+QapHwm/OigJOEtplRO4swKawSUZy/qi/DwVX/lYewIbVg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amd.com;
-	spf=fail smtp.mailfrom=amd.com;
-	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=1mnv6mBb;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.200.30
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012030.outbound.protection.outlook.com [40.107.200.30])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794992574;
+	b=ju2HNRHH18nCjY4/uEByn+rZX83ieOIflDs50Vq1QRXVlg95PGeTwvImnXSQQSsP0cae
+	 dTHYOkF80KndowM82eETznuqCzAD1FYrfOLcZNLtdtTZ7ez72/0VxbyPvD5nSHO3TXGey
+	 CaVgV+Az7bjmflJzgvBVfDuoJMSP0/IVJAhiMwcr3WfpJz/HaJWQ26kHVcef9FBj+tgE8
+	 DD+HtRfwyMzLTPzjTfBR7I7NwZmrdkUDQcV4zZkhIb3TTVzDnksykcNJs2WrD3rKEUMXO
+	 cTJkqDODnAru5d/0ifZq3sYOmBAmUn0SUSaNiJvOVtbBU4w9rkL22p3UY+w3SlrYwIQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794992574;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=TMv19XzBydjO5aL38YU2E7OmGv6/GTdijnJuqThzR4E=;
+	b=byLfXapmNTJmtotbq+57NL7oX3gszpf6qXdT7wG5f1AJzle70gAvVyv5NxiqHwPC9hGu
+	 49LZDQSVpdN2OELxJJhk3PXP3E1vbF0BiRVXzjtnqjNaEGrYzG52i8hdfo0Han168Pd5k
+	 Lwc4hTk2rmpuaAuyt46smQZHCPQucDX8fe5bstCNOPKX7e3JQ4t5vNFh72hO8IXtjwRuf
+	 B1cm53+rjb87/8e59wn7bhp/d6wyMpcMFDCTPdyb53LKTYUMfC+Md2UdMwkzxyGZlLnL0
+	 i8J2/sEGhoPf1OvxV45/ax7VNs0iEXe0FRuMNCdcMKHoLxnc/E4dhdK9RyfckpqpibQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jFYcflQW;
+	arc=none smtp.remote-ip=209.85.221.50
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661AD606A32A;
-	Wed, 18 Nov 2026 08:40:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 661AD606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59ACA606A320
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 09:02:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 59ACA606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=1mnv6mBb
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ylmUT5bZfDxB2qz/q2ZzLjHu5uCWoSQgUuu15cwHEDzf7BlzFLqy+sCvNHbrf0IR7Hk8i9jDB3IK3ZmiRk1VscNZbRlL047qec254BFjHE9JKedOuoe6GA57b6DlmhqzVeIGroFidLQawlICeOLw86OXsyOHcHQLsYStO5aK1HvlkTyL9t8Neb+ySp8gxPzSGb0Hhu4MM+wzePwPEd9w5/dtfwtuUHUhXFKhk61bE5uyuWd8HZ1VTKp/iDhWJYC/s9nv9qezH1fT3g5IVeWZcc+HMl/YxHfiGhCdy/O++SZ2ZF+OA+eQzCat7i8tBOCE78xbfxnnjURQxrkVU9nsuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hXofRKU80HobS0eEy0BLJ+bXjd3BZ1obLil78HUAOCc=;
- b=SLoFIcAgEpUs8J2eZDzMsStehdH2UrOB57+NOQTAGKZgJNTjh8/WghJuJ1AFGJjC/1wqpX89t9US9DbjhRyhiPp6Du3MF4LY/7xlRCJb7CnXCstp8KJyK/06fUn69CQxWjsk2D5jmWaCPvMbeQpMCg4rftEXZv3vSXrml6Rl1vr6zncWsPbzO0iHcRDW++7QmdZBTyONp7NSO/EQh2x7lJF4JR8+y+RofQFLWZ9pq8CcshoPNroDrb8+weGapWru70kYAj2/+xwsexy/fIDp7bzuwZyrksbeH56d6nj+jsnam1gAWdvkzB0ooODcGvhfCpBtgO4NZe8NFQ2uHUMrbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hXofRKU80HobS0eEy0BLJ+bXjd3BZ1obLil78HUAOCc=;
- b=1mnv6mBbp4b1DGGSepdPXBBRpUziwF8r7pbeBMtEV2cxldV8D+zDDemC2OdbTKpFJLrSre667Lt8grZGSnPJdYFNarUV1xImHh5anvEqBDYwCBdoSrdWWPSwFf7DDFfLEcqBOJIWaSyqsY8/ujogWqhD6YDYCZSSgf60GFU7nvo=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB9060.namprd12.prod.outlook.com (2603:10b6:8:c4::12) by
- SA3PR12MB7783.namprd12.prod.outlook.com (2603:10b6:806:314::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.13; Wed, 18 Nov
- 2026 08:38:22 +0000
-Received: from DS0PR12MB9060.namprd12.prod.outlook.com
- ([fe80::e096:864d:d60a:c83f]) by DS0PR12MB9060.namprd12.prod.outlook.com
- ([fe80::e096:864d:d60a:c83f%4]) with mapi id 15.21.0615.013; Wed, 18 Nov 2026
- 08:38:22 +0000
-Message-ID: <85ff5be0-4fad-4d92-b9f3-2553c7c4365b@amd.com>
-Date: Wed, 18 Nov 2026 14:08:16 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: zynqmp: Ensure function names are NUL terminated
-To: David Laight <david.laight.linux@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jFYcflQW
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-490d59c3f0aso265432f8f.1
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 01:02:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794992573; x=1795597373; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=TMv19XzBydjO5aL38YU2E7OmGv6/GTdijnJuqThzR4E=;
+        b=jFYcflQWi0KiGrvAIrYwGd0IhxRJsPZaaz0xMt0Zg88+3smh1NaWOYEDbv6YuGSxnT
+         JBqpzr3592IXDkwMsdm0IDibtktBVlN1pHF604H5IbgcU9RFWs1KmGdflNSHOmoccLo9
+         C5+PQPqerTi+/ZHrdYmwmOZuLcQ7LkO9fgKwS65K/KqMFDX+8Ez+Hb0RXIeqlFHUMQ4L
+         8vyrO5DUFI/1hYqZMYJQn1/qmbzub/uxWScRYUIuI8n3VBTQM3ptlBgP3dFzyF4SfChM
+         lsNJ++M5AX83DtWAmMjT6QJwSMWm9NNdgxS+7Zn0lMRhjhq1phaKPSzG5OKJlvOKTM+N
+         KgIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794992573; x=1795597373;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TMv19XzBydjO5aL38YU2E7OmGv6/GTdijnJuqThzR4E=;
+        b=Z/R4o6aB3Q2trDg/1DyMOTNJyxMpiGke9YJUUBXq2ZEvwQYpytAuHsZNlP0+kkO3co
+         aHLkvDO3/zEJwzQpq0a6fZye27ucFW4mfgjCYHGK1BgrgG0vTqoUAplHqDbPbhEiU+0Z
+         zrqlWRhsksxv1ipe4UkqPaucKI6PjfND2a9p1AaeltB7ts9fnvMlqUXXGc7r52MG7RUn
+         up9dRF4sRzkaJwuXe/nSnh/TcwRUTplz0oj7lsEtMxT8YCT6U0bCrymPG85ZaT8b9oAk
+         cCqKRm3iDAw//UkzkUIiYvvepWveY0CNeFywV9W3tQl9xWtpemTcnN9OEcqwXxAb306J
+         thLw==
+X-Forwarded-Encrypted: i=1; AL+hErFeZF6jPAEsdgF94dRwJEcEiMCS9iyzvKcYPCC6DJtDRFjgXv/iW/1SHrzPFOc8XzJNo5br6/28T108@vger.kernel.org
+X-Gm-Message-State: APuU4Z8ZBW3gQIppeJoJ5REww7z6kW9V07jYrcX9QLM2+c9tAaQSZ8Q+
+	1BQgy2Z3A3GYrV3wrSDYdJI4v6QsiX1NIo5orFPmHpJ6Glk7cibBW9Vr
+X-Gm-Gg: AZFdTZd7KCnDCPx8lLWERJSYwDrbYvCPAKQZlrNWWC78lbu2c6lKR9gVaXU/mxnAbaZ
+	k+DHH+wA74LDbJ9nw9l8HL/IAiWvdKuW6I8uQG4sQ3GID9QGc34lsUFBtrhn+S4dZvljCxjK0YS
+	SzfU2aKK9ZwBRj+6AbV+FfBUA8zyA3TLcpZ6k0cZ68pPOEq1wY95q3+9tvqi4odSnWFsGp5ID07
+	dKFFxjFUNgB3IASt7jKopOc+t/l2eIfFhbkFp0Px7Ms0JriFRWPvWLtbatIyqdnvaKF7YEqWdc6
+	Z9ZEHYPjjZRKR0sPgxu7jWe1HnqCuwlIxInZw+slrDrMWfgQcakEjz4lhDTYN4xvRytViwmPGc3
+	exOUIvumBQbHDo/Ckip0Q3Jd+OYVFKFiDukr+IqHwgaN4HdCY93L7KyXO/ENTLA41mYRsr+L45C
+	WeIhrGERNN8bmxKWUSBDMRufnfbIG3azf2g99mTlIoZyJ9N6ip+Sedg5dhIwMU6E06moknESfWm
+	5tIWw8NLe53RC+VsUPqYZD1MnPgbg3Ou/MQabvSMCT5s8eTrrvwZNQYL0mGBoBcFFW5KKUxSsbC
+	fSZSyWu6PnXmoS7nSXbf71AKzL3nJcnfRapdo8kQRAv1lm6t4CFHx38an6U7r8WvdQ==
+X-Received: by 2002:a05:6000:4812:b0:492:a72:9303 with SMTP id ffacd0b85a97d-4a63b9d9635mr3815055f8f.22.1794992572498;
+        Wed, 18 Nov 2026 01:02:52 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4a654a8c37fsm3475452f8f.18.2026.11.18.01.02.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 01:02:51 -0800 (PST)
+Date: Wed, 18 Nov 2026 09:02:50 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
 Cc: Linus Walleij <linusw@kernel.org>, Michal Simek <michal.simek@amd.com>,
  linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, saikrishna12468@gmail.com, git@amd.com
+Subject: Re: [PATCH] pinctrl: zynqmp: Ensure function names are NUL
+ terminated
+Message-ID: <20261118090250.2ae9258f@pumpkin>
+In-Reply-To: <85ff5be0-4fad-4d92-b9f3-2553c7c4365b@amd.com>
 References: <20261117073947.1100444-1-sai.krishna.potthuri@amd.com>
- <20261117131616.0a631d5c@pumpkin>
-Content-Language: en-US
-From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-In-Reply-To: <20261117131616.0a631d5c@pumpkin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0074.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::7) To DS0PR12MB9060.namprd12.prod.outlook.com
- (2603:10b6:8:c4::12)
+	<20261117131616.0a631d5c@pumpkin>
+	<85ff5be0-4fad-4d92-b9f3-2553c7c4365b@amd.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -99,140 +102,88 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB9060:EE_|SA3PR12MB7783:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44271f06-7127-4522-db4b-08df454f4ddd
-X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|1800799024|376014|22082099003|18002099003|6133799003|3023799007|11063799006|4143699003|56012099006|261022115727099003|261026135527099003|261022075727099003|261028144727099003|261022113327099003|261021121427099003|10067099003|261009221227099003|261021123027099003|261009223327099003|261009221727099003|261009223027099003|261021135927099003|261102123227099003|261021130227099003|261009220027099003|261021133027099003|261026140227099003|261026130827099003|261022105027099003|261026121527099003;
-X-Microsoft-Antispam-Message-Info:
-	M02bDW2vX/UFPgDlNMzKUcnnMejPN8yeQVCQ36C7ysCQ2vYsELALi0vbyMCbSUCDPxiC4ieMOUswRFFEwpWPyYBZgNSYa+vQyRKKkAdE32Ziv5fFx4q3rKyCSUN8pSNNutxyHdH2ATViciUsKgDjNqy/u34spUCTHrYgVZvyW+31ACRmup/VdmjXLQ7yj1MRhJbNAYzMbKFSiZPUG9UpA+460UUbE2iwBzRedIjmlIkyYAVmy1Tb4ODD/5GIYEihM2oGofvsDrkK08yGxomSrDAoMnVZXPLA61xgkN/AgRiAr+EGH0Z+fQO5RpHsUeqxZ0e2pFlfVGAYHDv7yqMMl7s0/zI/3DrYbNHT5bD87vj/sI17IRx0Qlc0edLgswLUmEb3i7xXLgpx2TOPMNzyGWiX8UPIqhumvOofBisiRinqkYwOe+CQeYzSLhSU7K5wnBFJkjVmq9aVomg6F1uwRMuUgLbBGTbGItx8qpNQ+JMO5JTNv1c47o+XCWGRFlmSSh+IVW+fx1FzoHfln4qg2KVzyPppXCY9ErHtzKYWp34DFwP9nq5numaZ/uSYh0jPouBLzsJG58m7NMQd+iuu8gzau67lOLAfManqLD3Z8OwUIpWX9KZ6nqBHbBRFJDD+fEAzj+aXizV089s61jR/djjZXjREEoi8fLOs5PbXPh0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB9060.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(22082099003)(18002099003)(6133799003)(3023799007)(11063799006)(4143699003)(56012099006)(261022115727099003)(261026135527099003)(261022075727099003)(261028144727099003)(261022113327099003)(261021121427099003)(10067099003)(261009221227099003)(261021123027099003)(261009223327099003)(261009221727099003)(261009223027099003)(261021135927099003)(261102123227099003)(261021130227099003)(261009220027099003)(261021133027099003)(261026140227099003)(261026130827099003)(261022105027099003)(261026121527099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q0hxK1Y0NHRCR2pna1BIUEY4NjErdDVWT25PTllIZlFmMms0aUoyczhqZWtL?=
- =?utf-8?B?TWF4Vlplbnc3ckRzbENoRTl0cWIySDRZYncwdXRLVUhCUGNOQmdmVkJwNmlw?=
- =?utf-8?B?cDRNbEJCSUx6ci9HQjl1UE5JY0tWUXFPMnQ0MXhXdG5UZDB5R21uWmROb3ZU?=
- =?utf-8?B?dlhNYmJ5WkZhalFZYnVpcXZpK2R2T1pqSnFVSVNWQ25WRVNEMzRaMlIvQnBI?=
- =?utf-8?B?UGFOYk1lMWE5ZklvSzcxRVpxeDRPQVZwb3NoajlFSWRoRlQ3eSt0Ly92R28z?=
- =?utf-8?B?eXM5VVJtT2xSWEdUbUJQa3kxTXh2R3RLVzRsQzFBd1hNY0ZkRlBPTkIyVDRZ?=
- =?utf-8?B?aWhaMlVsY25JNGdXdldmc0dxdzl6MEw1S0Q2dWNlc3BUaVFoTmk4ZHJ6VHIx?=
- =?utf-8?B?QW9DbWpCamtqOEZuNkZ3dE5nb3RRWGlQaWdVNDI4bjlwVjNQeUlvZnZ5ZzRw?=
- =?utf-8?B?Z3Brd28xM2lRdHlzelB5Z0xDKzhTN2hkR1ZoMDBudXhDOVRiUnF6TS9TdlhK?=
- =?utf-8?B?b1A1eURHK20zZlBBa0xDNkQwNjhDeDJkdDZodW52MUE5OUdjRGJMMXR0VE9i?=
- =?utf-8?B?NXJsNFRmbkkvWVB3TXFyZVFOSHZpV2FRcnF4ZThWZFkzUjh5dkRXRnVuWkhn?=
- =?utf-8?B?SW9nczhZY0Q5Wm01UkhQT1BKWUN3YmJZTldnd0k1bnVTaDJQQm1CSnBEaTlL?=
- =?utf-8?B?eHp2dXhCS0dZc255SmVGNW5oNUs5Y1h4NjhkUEsyZWduVXo3MnFJZWIxOURE?=
- =?utf-8?B?S1RNQmVMNlRNVmMrMU1EekZ0bEtLVXhSblBLakdOQ2lhYWFPazFmRzNWNDlX?=
- =?utf-8?B?RG9MY0N2ZzYyc0lUWEVFRlV1Yml1c2RiaXI0SkJtODFDeUhYVXQ3S1VuSW9v?=
- =?utf-8?B?ditLWmgveTgvQ2k3Wkdwb0FiK0xZaHYzeldyRm1Fd1E5aUxDZmx5SUp4b3JF?=
- =?utf-8?B?Ukd5a25WWjFnV2FwbmZ5TkhRdTNDQ2lSb29wYVRMdWQ3aVM5U0xHYzE2TDN2?=
- =?utf-8?B?QjAwU290RVZoT0RwZ0d3bWR5ZnhUYTBZejNkSHE3OFlXdFdqZjZickhhOXpF?=
- =?utf-8?B?b0psanJVNWh0czhiNzN0SDUxRlNVWk1GSXdWRHdWbS9VQ2htVWhpeEJuTDN0?=
- =?utf-8?B?SUhtOTNiRTltSzZCbVlCbTNZYjBNSzE2UmZRUkRjdTlDUVhib0tJNHVLRXlY?=
- =?utf-8?B?LzZ6enBJS1UrSGlEaGg3Wk5tV1JHaHRoSGl4ZGxKT0RGVHZIenM1RStKZmta?=
- =?utf-8?B?L3NzNFB6N0dxbzlrUDA2dXZYZW5oOW5HbzVqOGlSZGJHTWJTdnJSVU9RZW5y?=
- =?utf-8?B?SWRvbDNXWjVpMTNmY2JOTmVKV1A2YTVkWHFDbnF5dmhEcDM1dzNGTnRoU3Aw?=
- =?utf-8?B?VVBLMDA3TWhFV2hTNi9XazczT29ZQjk1ekN6ZVpFSVpiT0JuTjEvNVVEQllS?=
- =?utf-8?B?eThBZ1Q5b1BLYSsvRUVIVXhJbm1xd3o0dldxdXJCUXE2S3d0bzFUbFNTdy94?=
- =?utf-8?B?cmZXV2FKMFVRaTBWLzJldE5QQXIwUlh0eDQ5ajBwdTZFMndVdGc1UGtOT1R5?=
- =?utf-8?B?aFZZa01YN2Jib1FOK1BzVERWYnkxbEkyQWJac1VWaVMvaXJyd0dzYmhvREpN?=
- =?utf-8?B?Ri92M29wS3JYSFFqQWQremYwY2JPOXh5TzBtZk5wVzNwenpnREpJeXhPZmlh?=
- =?utf-8?B?SWlvNE9GZXQwK3JvOURscmpsSW9JalhlTEkrQjlERmc5OXhiRndHQ2NJMXMy?=
- =?utf-8?B?MTRnWnJmM0VVWVVPQ1VZMHNJKzZtK3Z1ZzR1cmVTNGViekVLNno3TktaWCt2?=
- =?utf-8?B?ZHo1TzJBajREN3h5RVB4cEJ6d1d2MFFrYU9uNXk0SHByVUNrdWg0YXdiaUQz?=
- =?utf-8?B?dnFwUjJYUW93M3J6U2NhMUIyTHFGZjZsK2pEc2x5dDRyWVNZMnNFZzRFNFBv?=
- =?utf-8?B?UmxpMzJwODlVK0lYSUdEalZvb2M2OHlsbFl5bG03S0ZNWkpVY1JoekhvV3dH?=
- =?utf-8?B?a0FsTldEQ1ZRb3ZkZmdEOWZGVm8zRzBKVkRleU5LbHFwUlVYdHBGeVhKbEpv?=
- =?utf-8?B?YWdkVk5LL1BxdWx6V1JPalhCK0VxRHZCUFIyWS9DV0ZWbDZsZUFmZFpHSTJm?=
- =?utf-8?B?SFVuMysxeDY2aEwwUGV6bU56NjlvcU1oYURXWEVoWGc4dG16dWhwV3NXblpm?=
- =?utf-8?B?dXBRdE4vM29VbXdRaXRkR0IyeWRqZGZ4UVRvTkRzdWZsMG9lREhpT0Y5L0Vw?=
- =?utf-8?B?QTVQZ3JBTytvL01GYmlka1VGbndTc0dJVXNqMHp2VTU3YUY2TVpLUG5RUVY0?=
- =?utf-8?B?K0RqT0l1SHY3b090YnRLblloRVUyUVBVUGxLT0JtWkUvZGpGSll5QT09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44271f06-7127-4522-db4b-08df454f4ddd
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB9060.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2026 08:38:22.5265
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ICZ+PW1Xc+NXtbGo4MJNQ3/XvDzDgs47U4UjmkaxL74TIAU5oTcieItUJiMYTJQ9cFAVhc3p9I8wHqJP9kAlrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7783
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On Wed, 18 Nov 2026 14:08:16 +0530
+Sai Krishna Potthuri <sai.krishna.potthuri@amd.com> wrote:
 
-On 11/17/2026 6:46 PM, David Laight wrote:
-> On Tue, 17 Nov 2026 13:09:47 +0530
-> Sai Krishna Potthuri <sai.krishna.potthuri@amd.com> wrote:
+> Hi David,
 > 
->> PM_QID_PINCTRL_GET_FUNCTION_NAME returns the function name in a fixed
->> 16-byte field and does not guarantee NUL termination. A 16-character
->> name fills the entire field.
->> The driver copies this field into a 16-byte buffer and subsequently
->> uses it as a C string. For a non-NUL-terminated name, string operations
->> can read past the end of the buffer into the adjacent groups pointer.
->>
->> Reserve an extra byte for the NUL terminator and explicitly terminate
->> the copied function name.
->>
->> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
->> ---
->>   drivers/pinctrl/pinctrl-zynqmp.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
->> index aba129ead04c..c778133fadc2 100644
->> --- a/drivers/pinctrl/pinctrl-zynqmp.c
->> +++ b/drivers/pinctrl/pinctrl-zynqmp.c
->> @@ -29,7 +29,11 @@
->>   
->>   #define ZYNQMP_PIN_PREFIX			"MIO"
->>   #define PINCTRL_GET_FUNC_NAME_RESP_LEN		16
->> -#define MAX_FUNC_NAME_LEN			16
->> +/*
->> + * Firmware returns the name in a fixed-size field and does not guarantee a
->> + * NUL terminator. Keep one extra byte for the NUL terminator.
->> + */
->> +#define MAX_FUNC_NAME_LEN			(PINCTRL_GET_FUNC_NAME_RESP_LEN + 1)
->>   #define MAX_GROUP_PIN				50
->>   #define MAX_PIN_GROUPS				50
->>   #define END_OF_FUNCTIONS			"END_OF_FUNCTIONS"
->> @@ -650,6 +654,7 @@ static void zynqmp_pinctrl_get_function_name(u32 fid, char *name)
->>   	 */
->>   	zynqmp_pm_query_data(qdata, payload);
->>   	memcpy(name, payload, PINCTRL_GET_FUNC_NAME_RESP_LEN);
->> +	name[PINCTRL_GET_FUNC_NAME_RESP_LEN] = '\0';
+> On 11/17/2026 6:46 PM, David Laight wrote:
+> > On Tue, 17 Nov 2026 13:09:47 +0530
+> > Sai Krishna Potthuri <sai.krishna.potthuri@amd.com> wrote:
+> >   
+> >> PM_QID_PINCTRL_GET_FUNCTION_NAME returns the function name in a fixed
+> >> 16-byte field and does not guarantee NUL termination. A 16-character
+> >> name fills the entire field.
+> >> The driver copies this field into a 16-byte buffer and subsequently
+> >> uses it as a C string. For a non-NUL-terminated name, string operations
+> >> can read past the end of the buffer into the adjacent groups pointer.
+> >>
+> >> Reserve an extra byte for the NUL terminator and explicitly terminate
+> >> the copied function name.
+> >>
+> >> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+> >> ---
+> >>   drivers/pinctrl/pinctrl-zynqmp.c | 7 ++++++-
+> >>   1 file changed, 6 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
+> >> index aba129ead04c..c778133fadc2 100644
+> >> --- a/drivers/pinctrl/pinctrl-zynqmp.c
+> >> +++ b/drivers/pinctrl/pinctrl-zynqmp.c
+> >> @@ -29,7 +29,11 @@
+> >>   
+> >>   #define ZYNQMP_PIN_PREFIX			"MIO"
+> >>   #define PINCTRL_GET_FUNC_NAME_RESP_LEN		16
+> >> -#define MAX_FUNC_NAME_LEN			16
+> >> +/*
+> >> + * Firmware returns the name in a fixed-size field and does not guarantee a
+> >> + * NUL terminator. Keep one extra byte for the NUL terminator.
+> >> + */
+> >> +#define MAX_FUNC_NAME_LEN			(PINCTRL_GET_FUNC_NAME_RESP_LEN + 1)
+> >>   #define MAX_GROUP_PIN				50
+> >>   #define MAX_PIN_GROUPS				50
+> >>   #define END_OF_FUNCTIONS			"END_OF_FUNCTIONS"
+> >> @@ -650,6 +654,7 @@ static void zynqmp_pinctrl_get_function_name(u32 fid, char *name)
+> >>   	 */
+> >>   	zynqmp_pm_query_data(qdata, payload);
+> >>   	memcpy(name, payload, PINCTRL_GET_FUNC_NAME_RESP_LEN);
+> >> +	name[PINCTRL_GET_FUNC_NAME_RESP_LEN] = '\0';  
+> > 
+> > Too many constants....
+> > You might want to try embedding 'name' in a structure.
+> > 
+> > Then, at least, you can use sizeof().  
+> Ok, i will define the below structure
 > 
-> Too many constants....
-> You might want to try embedding 'name' in a structure.
-> 
-> Then, at least, you can use sizeof().
-Ok, i will define the below structure
+> struct zynqmp_func_name {
+>         char name[ZYNQMP_FUNC_NAME_LEN];
+>         char nul;
+> };
 
-struct zynqmp_func_name {
-        char name[ZYNQMP_FUNC_NAME_LEN];
-        char nul;
-};
+I'd try getting rid of NAME_LEN and just define the array as size
+RESP_LEN + 1.
 
-and initialize them as below.
-
-memcpy(fname->name, payload, sizeof(fname->name));
-fname->nul = '\0';
-
-Regards
-Sai Krishna
+David
 
 > 
-> David
+> and initialize them as below.
 > 
+> memcpy(fname->name, payload, sizeof(fname->name));
+> fname->nul = '\0';
 > 
->>   }
->>   
->>   static int zynqmp_pinctrl_get_num_functions(unsigned int *nfuncs)
+> Regards
+> Sai Krishna
+> 
+> > 
+> > David
+> > 
+> >   
+> >>   }
+> >>   
+> >>   static int zynqmp_pinctrl_get_num_functions(unsigned int *nfuncs)  
+> >   
 > 
 
