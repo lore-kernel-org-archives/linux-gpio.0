@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.83
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.171
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795022751;
-	b=Ol5VmJkXY/MCTHbCTNoh//ES5Liaq0DxIs4FItsgr00eanWsc9D3431sfg90YT/0YbxU
-	 SzO9NpkZFLkC8HmIeY33tgrkPEeSBQtawuo/KlaZG1B6KgmBHJi8zA0EYE4k0l1owuodz
-	 uRzuoWgy3ITh1nOPrSRVvWxODOgiw5AONdWz16wkmTe/4ZaazWWNdkt0KUcZIb4MGQfOV
-	 cHR+ZVFP9cZoOX++qzrf/gLhvrfICC7+3C6CPHcUAcmWs0rj+Hkj6I7p4Ho3x5y4RQLnW
-	 duyp/W1263RUqG/Oz4PXdWfWEeHbH4wpSeSuQK6p8Z/ca378DwxFztWBFkpy1M8kabA==
+	t=1795022750;
+	b=eXo6SLNeLTK+K6Na9r2fdT9pDh88lJGul+kqfH0TRMHPP+t/bYa6S0aYO9ikBdXOoWAv
+	 aqWKqCji2qW+kNuTBhhLG5O2zhaWjK8oxx34Q5xGFzLGIbxeqVacsEHSA1L22YveuaEOf
+	 cPm7SmEjX0AY69Jcc5MwGKwaKwxK/n9tUq+jhLbisFC3WqYLmb/ou9qe5IK/8SJbCLaUe
+	 /IZ/zlSFI7dkAqDOVZen3fZfSYH07WOMHILhqBPYoS+tI/ddTv+Xn4AGxVLbwvrohhxyS
+	 6IH2J1e9zqqSu1o8DGgWd7xV4WgdfqfF51pEEZUDX3Sprn2pHLzg3zZpc0k6j3SNp2w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795022751;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795022750;
 	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
 	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=g9/yyvrRXWzYPBq/8c7/EuD+8MRZviiASUnGr27vgRk=;
-	b=f1wJW+OuOf/T6lTj9ShOhRgSpxLdlW7zExZMywoW/eB38c8oa00Cwx67cwB6nx5EgfXG
-	 LLnbR5B+CZgtUzDGaHjLIFPr+lJPULC83apOfBuiTliw3/v34Zy2gE66LzUu8/R2GLguo
-	 LHx/O7U9Vg73uf5xBPjBqpFWFiS978dnvl6xGmUtBb7dVnYl+A1slQ23X8TrsOKHLu72X
-	 gNMWxPXSyBqCaY28jNinCioTTeE1WWlfxK70vTGSY1jxkzIHxl6s4159BoWrevittxY6h
-	 Eio7dJcnvGhnnmf7NTSLhyVK0rflTW9fELgEq2ubWz45oORtFGVjc5blynk7dz9GYlA==
+	bh=MYvI0B0AFWkihxav/JeCGDvAQMA75yeS8e5SiMbrzBQ=;
+	b=r9W3+GMlpVR9TeVHRA016kjIXaSJf4fBHtyTGXb5vQUx1+Zof6QH/7J96USv7hgc7drN
+	 rSwQqtyKVlTa72XwQgEL4oKNou5VEAdOEJ4hNlqgib0h/YojkBLx2Hn3WxU/Df3Q9Wc4I
+	 oN30FA7pGkuUtDc3tqNnVpB0hen6NJXlTPn1V1Dz8T9+mgnM+JAi1G/sAE8QOize3lC13
+	 OfzraStYPK8teX9LTutKZMw7aIMBkg/d8ruCFZISAzFV2+IsqBOQGAhTr9cZVl8jgtlAK
+	 jBMVmvnFVybVBpb6hzEnqGzZSwZgl/dQvJ9M2RowcgB8zVQ01F+tadJ9BUVbOKl/5uw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=goldelico.com;
 	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=iyR8jzUK;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=B2xYaysX;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.83
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=G1MnETu+;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Ca851AO6;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.171
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62503606B5F7;
-	Wed, 18 Nov 2026 17:25:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 62503606B5F7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FEB606B5C6;
+	Wed, 18 Nov 2026 17:25:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86FEB606B5C6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=iyR8jzUK;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=B2xYaysX
-ARC-Seal: i=1; a=rsa-sha256; t=1795022742; cv=none;
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=G1MnETu+;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Ca851AO6
+ARC-Seal: i=1; a=rsa-sha256; t=1795022741; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=bDPGIqJo2RDs2GgamVkIpUQgvBbdzOJMA4XNV+Zl9DA9hcwSBwey5wDJzQnkcUgSQC
-    K33te1IauoEHwyyH5vcY0X2LkdWudyCi4SniCfLf5pkRsQ7JnsHOZYY59ho1O6yBsmVM
-    nRJ1A7+8UtKhpVNsNXTFQlSBvzUqKc7JExYY/T8jOIRV3DD2XCPXHw6Df/8NWaLxnqJG
-    cqdDS857CtJlSYlZWXfqLqucft23wWGyzinlnGOErd5cznn3pw963sOfhAV695pTOaIl
-    W+aFix0ole/yxnBbhR6B30zHTBiCRoeCnJnlmXjnRu/+yyG7+7HHXJIaortbLx5tBjYL
-    z22Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022742;
+    b=IXFslFJGSw8uleKCJRavp+7s5A+FA5WxsFFZnRWSzPbasIJO6lTgahKZm4P4aE7Phb
+    LwieVxr3LIpWBsV9Yt6UzPRQOZvDNFPsBobetkMj0iR9lgCR5zAVSp9QwG3oWsyVqGMi
+    NR8DHR8Xhy3yjS6utG+9GuRCobPrDd5VT8CGbrvurEZPn+CYRYkWy4nFRpIBWK+Y4o60
+    9aDGXDYkdvGwFZ8FgyECThYJAU9e9CT0hgS1JjorDoM6o+qpprO4G/4BCoCuDTZ2sOQ6
+    4qv9L+tXGcv/L+BtHRZyOda+uan2+iygUGEptRyzBvr23sU5RijXJG8Xi0ad1eykC8F1
+    7xZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022741;
     s=strato-dkim-0002; d=strato.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=g9/yyvrRXWzYPBq/8c7/EuD+8MRZviiASUnGr27vgRk=;
-    b=blbvaey6CuwmvoegBNzhg+Z97AOTbchNKTWOUA/IIZ8Y4gqfSpCdheN01lRo0WMg9e
-    +6WpJX+ux7tZ0JPIJW8bigc4EFJ1xRQz7y2C5jzJjLkc2RPDfx5ed6Q74+wBagCvzqY7
-    erAcY6cTjk3PerBto5L0BRlF31qFl3xutSlln4m3+NK1iLfh7peEm1vNjqDDel7B5dcL
-    IQhxin0nzgVThPXgPWngCpevUYrcLB0JCDIbZkvYBgoxDjrVlA2sHSZhTsSVP2ZTOAJL
-    Qs4Cs4CYevcMzUzOUmOjNHL4zJtYWtbGroEmamFm0vCiGcErixRG9o/+kYmT/SDo912c
-    VrMA==
+    bh=MYvI0B0AFWkihxav/JeCGDvAQMA75yeS8e5SiMbrzBQ=;
+    b=crU13TMjA85qrj2ntpL5/mFbfH+Z1fWGeH+WBsGikRLg0weY1RDXjcm+hdxaWa2MUk
+    6pBHmDLKgezVtI1aWjgiJsJzZ2lxN8Qs8vK2mSGlmfgp0vAJPLcE7cZMCgxgc7doz3Wl
+    UBZptoJ/OdfJ8D7JA+9tl+boblMSsMqF/mW//cB0DHzzosJE1DDVspeMvM801k/nhcVx
+    j1SWfLfvMr2wQbuqYsB2jDEku6UOIZ3xBJ809SXgs9Ytw4JZCvCVg0vPC03pwDue0vXu
+    SdXq4vQmVmlf30g7V4JshqPLl5idfJJlskUDudXMvQs62g+LuzqVUdF+3DvP59Fpnvea
+    jLIQ==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022742;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022741;
     s=strato-dkim-0002; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=g9/yyvrRXWzYPBq/8c7/EuD+8MRZviiASUnGr27vgRk=;
-    b=iyR8jzUKJaIqVsRgj3OEzIr1SMlSa4CfPhFGVW++uA/35GA/BzpfJoGPsk4tgUKIP/
-    YMd7Tp2iwCyWUNuCEY/Ycb56zhiUnkvmBECjj31LHYIbm0Lnltf9kT+g1tc8a4d58s8d
-    5RKFkyeUyXPMmlVFnbJw2RjQZNj6U0JmEAzOfmvml/xuWnb1bLrBgk3k1W0mvlgLYAxd
-    +BQ93p+YEUs5iXdR6qisL1kS6Qc22jXDLnIywigr2buMizj5leuEu3gb+qzegXuAet5J
-    FKz7l+S7cXwCMGVmaIt8rlbFiSgaF2mjk1kNlaVQy6oPYlqGstK4PG/ELm2ukicrgNbD
-    kxjw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795022742;
+    bh=MYvI0B0AFWkihxav/JeCGDvAQMA75yeS8e5SiMbrzBQ=;
+    b=G1MnETu+wKGb+E6G11mfXeYmbo2+5BgNciJXigV1KR/zOwVFstsv0QOQCZgyWqWIh8
+    DbvQajA+Tll3V3JrUOlrVL5NsPGwA3HJF0zlg3deHYxl3b7LZIV1opBs4A6b+PUiGHAf
+    vpHokJATtFoAoj8SJXoeHVyEiYrAnuPOIUE0XRlmn7Cnfv4wo7DfQZG7Vn+b3lcokqVr
+    FZ9wZR5IvUXs3Wi81kSF3SF4xaYh11Gf6fr2Mg6Y7scIbL5aDs3mHPq2AmRn5aosqiPB
+    rR1/vHXG7d1msWpdD2oCaL3d85irwICjV3MvThIh5M8Q7lpVb7XtnFSB0kr2wh8fyNhQ
+    dFpQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795022741;
     s=strato-dkim-0003; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=g9/yyvrRXWzYPBq/8c7/EuD+8MRZviiASUnGr27vgRk=;
-    b=B2xYaysX5FCeZbtm/MSik1PEqNujtbNlcRNryJqZwRlC8nMF4ixmzonpNMKM5D/zQi
-    +VPpzGjdH1wUYOpv1pCg==
+    bh=MYvI0B0AFWkihxav/JeCGDvAQMA75yeS8e5SiMbrzBQ=;
+    b=Ca851AO6ase+M78IF9QZcZElm6cK+Cz8zfEVO4tD+N0Gf9m9M1T+GGrAxnfk4mNwDW
+    Jvapn1FsJbw1XBgWZEBg==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV2Jpcm8iNZLZ2IBizV+3wFb55dglUeZzcEX9J"
 Received: from iMac.fritz.box
     by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22AIHPfdiZ
+    with ESMTPSA id Qb56a22AIHPediX
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
 	(Client did not present a certificate);
-    Wed, 18 Nov 2026 18:25:41 +0100 (CET)
+    Wed, 18 Nov 2026 18:25:40 +0100 (CET)
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -96,9 +96,9 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-mips@vger.kernel.org,
 	letux-kernel@openphoenux.org,
 	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v4 6/7] pinctrl: ingenic: Handle X2600 Port E Schmitt trigger
-Date: Wed, 18 Nov 2026 18:25:36 +0100
-Message-ID: <1932f6b68d67badeddcd1d1ec213d2918d877d71.1795022736.git.hns@goldelico.com>
+Subject: [PATCH v4 4/7] pinctrl: ingenic: Add X2600 register and GPIO IRQ support
+Date: Wed, 18 Nov 2026 18:25:34 +0100
+Message-ID: <57c9892c8e1c34308c18ef07bc007dc9506d6e04.1795022736.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1795022736.git.hns@goldelico.com>
 References: <cover.1795022736.git.hns@goldelico.com>
@@ -114,49 +114,119 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="us-ascii"
 
-Port E has two Schmitt trigger configuration bits per pin.
-Select the lower-hysteresis mode when enabling and read both bits
-to report firmware-initialized settings.
+Support the X2600 GPIO register layout with a 0x1000 bank stride,
+per-port shadow registers and load registers. The GPIO interrupt
+acknowledgement uses the existing JZ4770 flag-clear register path.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/pinctrl/pinctrl-ingenic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+
+Notes:
+    Changes V4:
+    - Simplify the GPIO port index used for the legacy global shadow-load register.
+      (suggested by Paul Cercueil)
+
+ drivers/pinctrl/pinctrl-ingenic.c | 49 ++++++++++++++++++++++++-------
+ 1 file changed, 39 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 02ebfecf9563a..876e8e9e00c45 100644
+index 7f65f3abf05f5..981789e468ac5 100644
 --- a/drivers/pinctrl/pinctrl-ingenic.c
 +++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -69,6 +69,7 @@
- #define X2000_GPIO_PEPD				0x90
+@@ -70,6 +70,9 @@
  #define X2000_GPIO_SR				0xd0
  #define X2000_GPIO_SMT				0xe0
-+#define X2600_GPIO_SMT1				0x100
  
- #define X2600_GPIO_SHADOW_OFFSET		0x800
- #define X2600_GPIO_PAGLD			(X2600_GPIO_SHADOW_OFFSET + 0xf0)
-@@ -4697,6 +4698,9 @@ static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
- 			return -EINVAL;
- 
- 		arg = !!ingenic_get_pin_config(jzpc, pin, reg);
-+		if (is_soc(jzpc, ID_X2600) && offt == 4)
-+			arg |= !!ingenic_get_pin_config(jzpc, pin,
-+						X2600_GPIO_SMT1);
- 		break;
- 
- 	case PIN_CONFIG_SLEW_RATE:
-@@ -4771,6 +4775,11 @@ static void ingenic_set_bias(struct ingenic_pinctrl *jzpc,
- static void ingenic_set_schmitt_trigger(struct ingenic_pinctrl *jzpc,
- 		unsigned int pin, bool enable)
- {
-+	/* Port E uses two bits; select the lower-hysteresis Schmitt mode. */
-+	if (is_soc(jzpc, ID_X2600) &&
-+	    pin / PINS_PER_GPIO_CHIP == 4)
-+		ingenic_config_pin(jzpc, pin, X2600_GPIO_SMT1, false);
++#define X2600_GPIO_SHADOW_OFFSET		0x800
++#define X2600_GPIO_PAGLD			(X2600_GPIO_SHADOW_OFFSET + 0xf0)
 +
- 	if (is_soc_or_above(jzpc, ID_X2000))
- 		ingenic_config_pin(jzpc, pin, X2000_GPIO_SMT, enable);
+ #define REG_SET(x)					((x) + 0x4)
+ #define REG_CLEAR(x)				((x) + 0x8)
+ 
+@@ -114,6 +117,7 @@ enum jz_version {
+ 	ID_X1600,
+ 	ID_X2000,
+ 	ID_X2100,
++	ID_X2600,
+ };
+ 
+ struct ingenic_chip_info {
+@@ -164,7 +168,8 @@ static const unsigned long enabled_socs =
+ 	IS_ENABLED(CONFIG_MACH_X1600) << ID_X1600 |
+ 	IS_ENABLED(CONFIG_MACH_X1830) << ID_X1830 |
+ 	IS_ENABLED(CONFIG_MACH_X2000) << ID_X2000 |
+-	IS_ENABLED(CONFIG_MACH_X2100) << ID_X2100;
++	IS_ENABLED(CONFIG_MACH_X2100) << ID_X2100 |
++	IS_ENABLED(CONFIG_MACH_X2600) << ID_X2600;
+ 
+ static bool
+ is_soc(const struct ingenic_pinctrl *jzpc, enum jz_version version)
+@@ -3549,15 +3554,21 @@ static void ingenic_gpio_shadow_set_bit(struct ingenic_gpio_chip *jzgc,
  	else
+ 		reg = REG_CLEAR(reg);
+ 
+-	regmap_write(jzgc->jzpc->map, REG_PZ_BASE(
+-			jzgc->jzpc->info->reg_offset) + reg, BIT(offset));
++	if (is_soc_or_above(jzgc->jzpc, ID_X2600))
++		regmap_write(jzgc->jzpc->map, jzgc->reg_base + X2600_GPIO_SHADOW_OFFSET + reg,
++			     BIT(offset));
++	else
++		regmap_write(jzgc->jzpc->map, REG_PZ_BASE(jzgc->jzpc->info->reg_offset) + reg,
++			     BIT(offset));
+ }
+ 
+ static void ingenic_gpio_shadow_set_bit_load(struct ingenic_gpio_chip *jzgc)
+ {
+-	regmap_write(jzgc->jzpc->map, REG_PZ_GID2LD(
+-			jzgc->jzpc->info->reg_offset),
+-			jzgc->gc.base / PINS_PER_GPIO_CHIP);
++	if (is_soc_or_above(jzgc->jzpc, ID_X2600))
++		regmap_write(jzgc->jzpc->map, jzgc->reg_base + X2600_GPIO_PAGLD, 1);
++	else
++		regmap_write(jzgc->jzpc->map, REG_PZ_GID2LD(jzgc->jzpc->info->reg_offset),
++			     jzgc->gc.base / PINS_PER_GPIO_CHIP);
+ }
+ 
+ static void jz4730_gpio_set_bits(struct ingenic_gpio_chip *jzgc,
+@@ -3852,16 +3863,34 @@ static inline void ingenic_shadow_config_pin(struct ingenic_pinctrl *jzpc,
+ 		unsigned int pin, u8 reg, bool set)
+ {
+ 	unsigned int idx = pin % PINS_PER_GPIO_CHIP;
++	unsigned int offt = pin / PINS_PER_GPIO_CHIP;
++
++	if (set)
++		reg = REG_SET(reg);
++	else
++		reg = REG_CLEAR(reg);
+ 
+-	regmap_write(jzpc->map, REG_PZ_BASE(jzpc->info->reg_offset) +
+-			(set ? REG_SET(reg) : REG_CLEAR(reg)), BIT(idx));
++	if (is_soc_or_above(jzpc, ID_X2600)) {
++		u32 target_reg = (offt * jzpc->info->reg_offset) + X2600_GPIO_SHADOW_OFFSET + reg;
++
++		regmap_write(jzpc->map, target_reg, BIT(idx));
++	} else {
++		regmap_write(jzpc->map, REG_PZ_BASE(jzpc->info->reg_offset) + reg, BIT(idx));
++	}
+ }
+ 
+ static inline void ingenic_shadow_config_pin_load(struct ingenic_pinctrl *jzpc,
+ 		unsigned int pin)
+ {
+-	regmap_write(jzpc->map, REG_PZ_GID2LD(jzpc->info->reg_offset),
+-			pin / PINS_PER_GPIO_CHIP);
++	unsigned int offt = pin / PINS_PER_GPIO_CHIP;
++
++	if (is_soc_or_above(jzpc, ID_X2600)) {
++		u32 target_load_reg = (offt * jzpc->info->reg_offset) + X2600_GPIO_PAGLD;
++
++		regmap_write(jzpc->map, target_load_reg, 1);
++	} else {
++		regmap_write(jzpc->map, REG_PZ_GID2LD(jzpc->info->reg_offset), offt);
++	}
+ }
+ 
+ static inline void jz4730_config_pin_function(struct ingenic_pinctrl *jzpc,
 -- 
 2.56.0
 
