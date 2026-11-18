@@ -1,57 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795011689;
-	b=LnUnmJC2ClL9U7wids6VL3eTb4xoY35xjfYutPjWl4p3r+gUaeuTNnvTlVtPjroVL3xW
-	 nMXuTlST8IUybgVYMl040MZoL+sb5Qn4T4rNNK6jDH8KfNX3yRf83K2udz3lH28ZK9h1+
-	 N88zv03XUDD6h8BmfkzB9ALqBcCadSUdTeLig488LepvqI3o0CxMGFG77xT4r8ThsvcuU
-	 GCnQGUWuZhhbZFKrWFye4sdjrG947vMieWaZlmbBWuRBgJOSiY9LIAVO9hOGttCnvicl5
-	 LO8wgCZ+iaxJfNKMPiVSQU8jSoH4SltVjVPwxFwSy4G4OICBfCof5HJ/UxOo6pxVR0Q==
+	t=1795013290;
+	b=cgp2hmUsF3xehJ3axiCn85xS6das16ENF/VHPEyTHchxTwDzCkahcwQkOtFRmuAxy+Kh
+	 78aBP3PKI4P/gkEzb++masFoHGarYcUut3Z/Wil3VuqncxlBC5cpA2uFiRj3Kh7Wsa28n
+	 +yDSKtEc6f0zI1v/vbFMHjNxYKokmcysOMHGR+gT4lJGHul5e7cc4RJ2q/fqvUxuiGMIT
+	 81JycNuDFURtcjgX4HQ+QvooP+DztXEOAarzW+/PBFEncf+EFChElHLNCVKbot45i3MDx
+	 AUjKdTwjVNspPR+X4K3BNFtIoQXu68+NMjrmLFxXxdxfK7kAENgRrR+nPlcRjRBAyww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795011689;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-HM-Tid:
-	 X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=nFXqbRa1OhelbFVhcjizOVyRIMqDJEhst38NtKslZYw=;
-	b=sEcEdyWOGftY2pEJ2pR1PabWTll5Ou2T7oimjz54nzknc7evcTb2ZVrJKGafPGBluD9y
-	 bak8iRvmgMATOlZOBPrK+sK7GsxazXTJrOIGPK9t/7y2/dOVsC+mLnY+l3IeFuiDshdt+
-	 3u3qBioAk4Ipzdf2wR92aBaSQf4EqUIDzi8yyh6pshDbTUZhNZmS++N9rkteJAYc7/g58
-	 qbRyZnDIZxNO9V7RZhGTshDQ1MDvehnOWjiymizU+riX3+lFvl/FTQD18WYZ4DZUQe7on
-	 OZt4TGAwGQXAvr3L5TQ0q0a5kGD4DGnHRLVAFCufuAduqDahNkBcdvJfJ7oojIOqpmw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795013290;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=gzRNEGh1T75zQlSlRR/9g8M4VpiwgPqk4EePch59KBo=;
+	b=jAOhD+XgmfbEwyz7IpTFMQF/9DNDDn4NRM6hr8ujI4As3PyqdA8ahazdkV1+86uu+AIv
+	 zzeUekkoDqt8ynZE6eI3u9KVuZ46Ze2WJY7K8upKL6BY2X/D34w+FO3ex91I9knUzyGMK
+	 5wzNNE247DC4M0BPGvHcRdbCaGXfJaMm0IXtt71mnjWBOmO9cbfMp9xcKcVSO4XjLtrH5
+	 WC8qMw19BYrt2s3I3eXz3J0ujl2RRCdjvavGV8aAfn+xi8RASlI85ysXHwyaCQXyIJDcf
+	 fqYxm7aztceQKR+MFPdelbUEp/eHOe2yrReY6kmtmg5o81SBelulYKoxgaluqSG6bLQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.sdu.edu.cn;
-	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=SJqmsQ0u;
-	arc=none smtp.remote-ip=45.254.49.198
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DGAhsHTt;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86B0606A338;
-	Wed, 18 Nov 2026 14:21:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B86B0606A338
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D7C67606A330
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 14:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=SJqmsQ0u
-Received: from lgs.. (unknown [101.76.249.61])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5526d794e;
-	Wed, 18 Nov 2026 22:21:20 +0800 (GMT+08:00)
-From: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] gpio: aspeed: Fix potential coprocessor bank map leak
-Date: Wed, 18 Nov 2026 22:21:19 +0800
-Message-ID: <20261118-324f82bd41-gpio-aspeed-0@mail.sdu.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DGAhsHTt
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D7AC71F000C4;
+	Wed, 18 Nov 2026 14:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795013290;
+	bh=gzRNEGh1T75zQlSlRR/9g8M4VpiwgPqk4EePch59KBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=DGAhsHTtzlIinrWGO762CTd6MeoqptMCj251ACvio8LctpblPKaDnv+MJrqEyxhYH
+	 +e8DgvEfiYVIElGKNdoHvCvzBB4nuIwxyOSPtfLWHb6OUU8plDsGENaaj0SqMy+rV3
+	 geTfFpYsc2zbFHJgrlVWQ1UwR7wVus2krRr8o8O1W1IVkLbzHtAKKylxTLbdDKSDuf
+	 vmskJZ+iZq4L9k+OS6SHARZlad18+tVC4O7iIlXQ1AdjZSjxaJSe5rq3Xh6ZOmpo8t
+	 zVGdxjVFW8QwefqC4hFN5fIo7Jn4DcKD4lVHLmSsRimAmuUsRg0pHHOs7sxZVXcsRy
+	 EG1dUw/sKfxYw==
+Date: Wed, 18 Nov 2026 15:48:04 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Guy Morand <guy.morand@bytesatwork.ch>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
+	mariagarcia7293@gmail.com
+Subject: Re: gpio: pca953x: TCA6418 support and driver design
+Message-ID: <knel65hfjbq3j4trrtrkdwg5brf4mu6md4fzudtkrf2mznqrnp@6nitoipqu7k5>
+References: <0935c08b-828e-4a8f-95fc-04b82ab30fe7@bytesatwork.ch>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,63 +57,50 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa1ef08970203a1kunma113d6ec1a11e7
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDGhlDVk9JQk5IHkpDS0IeHVYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0
-	NMVUpLS1VLWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=SJqmsQ0uS+5cKunv2Q1gw3yeNHJ31mxKPRdWXq42AJzPd8YIz2EVvhnTxBVEcxUfVaTPpWWa4ycF5OoU6bX9WixaC5ZQsjaZuLFRNZRto9hgJnPvL51ERYHphi3h/5Cc74atzmTdvvdHfxkp5HtkOusdvtPWu0TCavL3cOxlgso=; c=relaxed/relaxed; s=default; d=mail.sdu.edu.cn; v=1;
-	bh=nFXqbRa1OhelbFVhcjizOVyRIMqDJEhst38NtKslZYw=;
-	h=date:mime-version:subject:message-id:from;
+In-Reply-To: <0935c08b-828e-4a8f-95fc-04b82ab30fe7@bytesatwork.ch>
 
-The coprocessor bank map is allocated lazily but is never freed when
-the GPIO controller is removed. Its only owner is the device-managed
-GPIO private data.
+On Wed, Nov 18, 2026 at 01:25:35PM +0100, Guy Morand wrote:
+> Hi Linus, Bartosz, Maria,
+> 
+> We have been testing the TCA6418 support added to gpio-pca953x by the
+> following patch:
+> https://lore.kernel.org/all/20250703205740.45385-3-mariagarcia7293@gmail.com/
+> 
+> On our board, using a 6.18-based NXP linux-imx kernel, the following command
+> does not toggle the requested GPIO as expected:
+> gpioset -c /dev/gpiochip4 -t 10ms,10ms,0 0=0
+> 
+> While investigating, we found several issues in the TCA6418 support:
+> * The driver uses the PCA-style i2c auto-increment which is not documented
+> in the TCA6418 datasheet, leading to corrupted registers.
+> * Input-status registers are not marked volatile, so reads can return stale
+> cached values.
+> * The bulk get/set paths do not reverse the bit order of the first GPIO
+> bank, so they can read or update the wrong line.
+> * Interrupt handling is incomplete: the generic IRQ path does not configure
+> the TCA6418’s interrupt-enable and edge-selection registers or handle its
+> status and acknowledgement registers.
+> 
+> I have spent some time trying to fix the integration, but the TCA6418 seems
+> to require several chip-specific operations.
+> Before this support was added, we used an out-of-tree TCA6418 driver that
+> worked well for our use case.
+> 
+> I think the current support needs to be fixed, but I’m unsure whether it
+> would be preferable to add the necessary chip-specific operations to
+> gpio-pca953x or replace its TCA6418 support with a dedicated driver based on
+> our existing one.
+> 
+> I’m not familiar with the subsystem’s design preferences. Which approach
+> would you prefer?
+>
 
-Register a cleanup action before adding the GPIO chip, so removal frees
-the map after removing the chip and before freeing its owner.
+It really depends on how much model-specific operations there are. If
+every callback needs a completely different implementation for TCA6418
+then clearly, a separate driver is the way to go. Just make sure it
+doesn't break the ABI for OF systems.
 
-This issue was found by our static analysis tool under development.
-
-Fixes: a7ca13826e47 ("gpio: aspeed: Add interfaces for co-processor to grab GPIOs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
----
- drivers/gpio/gpio-aspeed.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index dc53b2decb66..bb30bbf8c60b 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -1300,6 +1300,13 @@ static const struct of_device_id aspeed_gpio_of_table[] = {
- };
- MODULE_DEVICE_TABLE(of, aspeed_gpio_of_table);
- 
-+static void aspeed_gpio_free_copro_bankmap(void *data)
-+{
-+	struct aspeed_gpio *gpio = data;
-+
-+	kfree(gpio->cf_copro_bankmap);
-+}
-+
- static int aspeed_gpio_probe(struct platform_device *pdev)
- {
- 	struct gpio_irq_chip *girq;
-@@ -1364,6 +1371,10 @@ static int aspeed_gpio_probe(struct platform_device *pdev)
- 				gpio->config->llops->reg_bank_get(gpio, (i << 5), reg_rdata);
- 	}
- 
-+	rc = devm_add_action_or_reset(&pdev->dev, aspeed_gpio_free_copro_bankmap, gpio);
-+	if (rc)
-+		return rc;
-+
- 	if (gpio->config->llops->privilege_init)
- 		gpio->config->llops->privilege_init(gpio);
- 
-
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+Bart
