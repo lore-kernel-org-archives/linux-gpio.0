@@ -1,87 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795004753;
-	b=p++X397AeaIOtugfUeFKo0PTQpfPN/OXULdxbPAu0NiuRMHJkwdhj6QT/gq/I32V5sUO
-	 eJ8O1RE3gnkqCAoEtxEy4v3PlZBQ85GR317oHaKe00WoyRBK1vKVC1Z7UOZ/Mc3o51Fzx
-	 9szCcMI8xPzqrJx3lNUHIWwcSlCqlo3YuxKOanNu5S/c3wvzFF+fTpHIVkdcEi2jFOEtJ
-	 wy8fqjh91MGdCz8AxHsR/JRaWCJHt1QPUhNrSMhIi7Wr/St2qDpU26LojCSXDd9B511gD
-	 wV4Bx/Ke5Btaj8yILk+ENBTjvwgXzqtRSsBssqsgE0XHCzYcfs0d5h5jO1XAw0o5vig==
+	t=1795005928;
+	b=T6tDeTYJ+hcXAqu1QLNUsYk4hBp8+6uLoVQ6I0uzDLt0k3v3Z4p/uZU0ffqNAlN/URTT
+	 ZFP5E/i1hbRnsW2LTuF0gD7DQW5xMhNK71/OYECXEJiqkJh3VKF3ubYsRFrZER2+HWxvP
+	 XP9pVtCNAaOxrWIbBUBHDBFSb1OoN+4zQoFR5KyZo29LfZBLGBhKXp5nPYfG3lqAakVR0
+	 xOpQ5WQJLsQY0HvnkoPw5NzuTh8SqlGgZE91LHU7mUOyyZFdQUeB300Pzjyx3E8bwIi5p
+	 dNwVo5WJj6fD1frmMwmHYSy4omHT/cCBS0tajfFtkAaiCSxuv0wQ/taVHEXUTdpTvrA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795004753;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Content-Language:To:Cc:From:Subject:Autocrypt:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=oMz2CiDtzW5Zne4K7pAS6FAEFfgLQq+HM5a99lHm90A=;
-	b=ceV5m51xdOgHejd3S+NigbDipxdF5IRVRJQVHKWfRf+umRQ4oaY3e5yEcvWboknlPo3H
-	 pSBQKTRdVlTTDBrGBeTRhWO7aqSouAKpYftkHFHVqH26cyhkOzdrxvmjEpIbFxpvnD0ON
-	 0iUSuGBhmH6hf1KvNtxgZCY2mQGA1qeP1NMMMgfYcVAbYaATC29VAuSTHM2W/3/GK6X7w
-	 UoPTcr5L3R2T1XiUR8R9rI3cSs919QRjO5UO2BEIas0jHiKxKERO+L46pAiBihtzhKSSc
-	 Jrhm/AP+kpUAGfwxVE54g2ZwfZIHEmtKmjydB+BS34KQu04aMOIsMCuayRIFQg/NUdw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795005928;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
+	 X-Received:X-Received:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=4QkJBgihenUd1kRurtl3rk0D12BilxuABfR9/a1XNzA=;
+	b=1B6+s7s6JrvNwbqZcmD1bSah693theThn745oUTn5pzdUMb6o4VAy+uB8hf7FC8XFQqw
+	 6s8dy45s+pUkDopKXDAzd5Uhj4d7jzAMjajJgBznAgPhhX6vgycTJH9g6laioMZbyqZTf
+	 pFh9Z7PVxYB2Fyd3WNdpqMWzkycM11ulMp1FYyE0gqeBYtpsk2cp+tKLXjMdusWiTBLEx
+	 kpDl86GjWlBUaCZ+tyXd+e40gcbkBJQmxpG3xgKxKgUDc9Sj2B3aPqZP9NBucz8QjmQ0Y
+	 kv0TGDAwep2lwH2qvogztKX1a8ZpNBg5OUaaXw+b1FIqAAXPn6HtoCdj2qEWUBCZSSg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=bytesatwork.ch;
-	spf=pass smtp.mailfrom=bytesatwork.ch;
-	dkim=pass header.d=bytesatwork-ch.20260707.gappssmtp.com header.i=@bytesatwork-ch.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=F6FJiz2n;
-	arc=none smtp.remote-ip=209.85.221.50
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=BXO7w9XF;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=O1jH1IL4;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12811606A31C
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 12:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12811606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bytesatwork.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytesatwork.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C0D606A320
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 12:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6C0D606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bytesatwork-ch.20260707.gappssmtp.com header.i=@bytesatwork-ch.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=F6FJiz2n
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4a42b34e930so659949f8f.2
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 04:25:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=BXO7w9XF;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=O1jH1IL4
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AICLId52748077
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 12:45:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4QkJBgihenUd1kRurtl3rk
+	0D12BilxuABfR9/a1XNzA=; b=BXO7w9XFhrDMchPMpmFOrV6DIDGAPhl/EX9M9I
+	uwveTxiyV9TRpdEHq3qQ4vshsnc7xag8lEt5/ISLJoYauPJxDSvLu9nYdGe+gGF/
+	lur9XKkqZCnPrVc3WgNsLbVS99tgmQPMV3cZ/6wmXqNvuxzuxwz22q1tiC3d/I5q
+	D8jX3Ag0+pc/AlMAu8Pj249AGlph+reZpNGCw8vW/DJ0ZVz799Y///0ha2/lp3R9
+	Q9//fMPRE8P8rtr9bGt6Djq6RnJTb5kY1zYKAUWwGasQGRL+Z22p7QQA8RajuPrb
+	uGQdRjwm4x4Hx2601xfd6v1/rvAsidIgA+3R4pYD1lwVU4EQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv932pq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 12:45:27 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-532f343a55bso16093681cf.3
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 04:45:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytesatwork-ch.20260707.gappssmtp.com; s=20260707; t=1795004750; x=1795609550; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=oMz2CiDtzW5Zne4K7pAS6FAEFfgLQq+HM5a99lHm90A=;
-        b=F6FJiz2nPhgqSo/+m2WKDy9ytO35E/fC6XXOX9OLDh2Itgt7iO0frdmN0rD1MRvfFc
-         C2tUElLmUpGM3P5pKH24bzqhG235Hoptq8p11IERSsySAi7aws3BqX97MRogBLo65D5F
-         4PC6LI9VaZ0Dus0KtaPWcp3C3Go7FxZxXSCNxWYBzJzNxRVjy1gIDlO/8ky+NtgiO8cu
-         1SRQZplGc9KVPelEVgbUgS0sPIlKG5XAtJ2GbW77+CLqBG59jfSqnTquI1v9tKl9uYnq
-         tjQWBdPWdX9DL4MJZA1etTUNckhzCPWk7ZMxN+peThctsh+H3E624x2LLi7xju/m771+
-         cVLg==
+        d=oss.qualcomm.com; s=google; t=1795005926; x=1795610726; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=4QkJBgihenUd1kRurtl3rk0D12BilxuABfR9/a1XNzA=;
+        b=O1jH1IL4NJDhmsWwYiP3tNx3eE6C2VQ5U79cMP8+rLFZi7XJwWluT8aCaY+zhMR1Ic
+         C12hGpHCtg5evmne94w3ecwb+CfiVfACXl4M9KW7AwjCWKNWBeZ2C/5A/h8/U0aQnByC
+         AyApNnx/EXPMgbv/j6qoyGsoje7F79iQbacsXbOicAAURuuiwhRxrXL15bYNPy8DQSjA
+         RmX1lPV/L1y8Es0QdWt8W45hgRbAavOr7PIilX+r2twTJhAc8f9IPrHWsL4ne/OrhLQJ
+         JD+ScgBevbVovpWopZzvWCtAQRz+DKcgAvGa1kVzDzkSLYtMbKP7XOf/nXmazi+CRMkv
+         JA3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795004750; x=1795609550;
-        h=content-transfer-encoding:content-type:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oMz2CiDtzW5Zne4K7pAS6FAEFfgLQq+HM5a99lHm90A=;
-        b=1p01KqK5XL3VQ66zt65ipsh0uT7k4KmulUDVr89OyJb9tLmMyI0NnoC778+p5MLS2T
-         uQJpq4ClVPN3xzT1LIKM3znzI63yOKJtnvYLLeue4wC9PZkgqcBffmrcj4JJH1T0tYDz
-         QtKIsGQyy/eeV/QDfHybGn+4Dv7vZwgg0bsmCGen7Jvg+O7K7jH/HEnGpnMuFGAcp8et
-         9fyJr8AxkdJs+Q/IPjR1eLm+tcLIXGBhzSwkPR3Zj8Pz9aqyElUW5dcpj0xqtP+ReHId
-         L1NcHBjdpB2xDEuDthwEP+tLZHMApL2sPDs401qbR7F6uZ2Pqqt2iOGexu0UDE/5gBlV
-         eoig==
-X-Gm-Message-State: APuU4Z/oL2PFvcxL5goLWKY9zcSM4ShVBV3Iyw1SFi+VlgE7gNn8Ex2W
-	2jEyrnA8SEdpv992xBL5rMvUmfDuVw+pnrF84iNvXimV+kibyVj5fWhOFW+gHy9t/+iLjPxfbtp
-	5kvceS04=
-X-Gm-Gg: AZFdTZchAAxvlvSC5jac4i5KDT0WEjspDmK+RCz2qSxdLBQVWF05HXJdPjtKdC4muzG
-	8FZdNyIN9JZ0slYhVrMb26pBZwMHNc8GVBrL+58EsJ0t+pvAxNu/5BdzEWW7zvTPFEV+fKmNG+K
-	N/66+bxa9GNWE0Fg7jSbYLiiCUo9LjOt6Qf6KATnQkuTfN6i2krUSzXkgCyvKIUzL8Zl1lzz/kL
-	uQjsb1tvH+j5Iylbrc6Hu8ZqMGZ002jQotiq74eMLGfcYn38RaaxGhkFIYpUlHUDaaYuIGeKLSj
-	5OWwhi57sM7iTSX3lwj46j4GYZ76AzpUZ9yNNaz201hiYwo4cWtR7JracuNU1mqQHZMCz/P7YY2
-	MR4pcMyUEscyVsjJqS226V3WxWxInt8eo0Cat0X0JwgVKDFr3scyaCYPEemYv9B4WQCbgMrOMyr
-	OLF2svWjDZ8YgkOYNjk0jH6KQQO5e0m9rrTJ57L3aqoUTpOHrmyDs7RQefK6DXaN+QIf55O3/Z4
-	n3vCwn00B4yBMzAT+PXOdG2FkZwqB0C/ELlK5tgfbC9ZFkxnFFTSk64tuJcw8jcteWrYdG+Yrm3
-	qB2wZoTaBSTMwg/EhYSnBOTrs4P1f1ZumOrUDVeNdVCcR5X0AVFAoJHja4e4sLuqhbsbIZNUfXD
-	8zbxY1lLWXlNlfqo=
-X-Received: by 2002:a5d:5888:0:b0:48d:ff71:dd87 with SMTP id ffacd0b85a97d-4a639475750mr4937737f8f.17.1795004737887;
-        Wed, 18 Nov 2026 04:25:37 -0800 (PST)
-Received: from [192.168.2.26] (162.40.150.83.ftth.as8758.net. [83.150.40.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4a656095f2csm4270431f8f.40.2026.11.18.04.25.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 04:25:37 -0800 (PST)
-Message-ID: <0935c08b-828e-4a8f-95fc-04b82ab30fe7@bytesatwork.ch>
-Date: Wed, 18 Nov 2026 13:25:35 +0100
+        d=1e100.net; s=20260707; t=1795005926; x=1795610726;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=4QkJBgihenUd1kRurtl3rk0D12BilxuABfR9/a1XNzA=;
+        b=AoN4jkhvik50EBbiQdxvEGFPcGUJ0OM0P6vjF7xd9DiyYwZNqFzJ2t887Jni6zZvle
+         5Uoe277ld4oCCisRe/4Zwcf71os3YMxp891jYDFQjzQhs+yAekE5YR3jocwcDX1szM3N
+         k7YmXWTUG9zOphsXqE9RDz22m26gO7ij2miUGNgya99lFYrgs1PRFBSYVt2iJAn+JI83
+         thFMILHpQiJgCfapgT1WBw//dRbSnTXEbUvm7FKPEhNFIcp7Ch7fKq977+iYWXlfjN1o
+         2/BwUnImSRFim3fIe18zdb2SEA3U5c6jZQEA+uNE+5MsTMpYh3HAJIGKrqe7Y/Yjxikb
+         k/sw==
+X-Gm-Message-State: APuU4Z8WzRmcKM4YS+IbNys5MfNe2XMi+cuY+MhdjCb7Pj7udsyfzrnJ
+	pv+qYp9sHwbLYflVrFsC/kw6VPPP3GFYhY9Dg/LY7OY+5JDXHudEt6VTQFJ77waxNr9wp4b03ni
+	wAgb6KN9WZzEKGCrW6JRtplZ5MHFrmbNTRAr7X/Mh+qitGnBgHu20UWgc4Ye4C5bo
+X-Gm-Gg: AYBFou3w/r/BY/CtmMWXPXf0fsoFtQ0LQTll5mBm/DaEjKfIKFQstGteU22pdRm9TCs
+	jAFyxDw1DqGTogqwUoyDrx+Jp+AjOtLt5+/UwGc2EDBryBEGnJ6Kyj6KtOiViNVdLNDVzFbymHj
+	ykXrGVtD5G5Zq870EdaPOF1N5PeRFGzSKH29ofG3iUFA3+ymvDRU0rKjJL4/+PE6wOwIN9NWXhs
+	Br9X2IzfIN3RAIn2MGTBm60vMrLqjbBw2Cob7NLp654+Wgoc6IGuWc8FoweVkFlhy8NmP9W0cqp
+	iyHPGWIL62fJldgM5BoAnB2MGpXQaSNK64mkEfKN71f60Rski8hKsmfcTlM/m8RLmfOge9xi+YO
+	YxrFy7SoFKcT6WUywSIFKhmkBsVs0W8UpvkrqA3JaBtaaayW86TSwIv9NxGnkUymHajmkRngIXc
+	4=
+X-Received: by 2002:a05:622a:260b:b0:55d:2e93:ffad with SMTP id d75a77b69052e-55d5a5c7032mr35366701cf.37.1795005925793;
+        Wed, 18 Nov 2026 04:45:25 -0800 (PST)
+X-Received: by 2002:a05:622a:260b:b0:55d:2e93:ffad with SMTP id d75a77b69052e-55d5a5c7032mr35365881cf.37.1795005925114;
+        Wed, 18 Nov 2026 04:45:25 -0800 (PST)
+Received: from brgl-qcom.local ([195.50.164.66])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4a65609389dsm4503187f8f.37.2026.11.18.04.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 04:45:24 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Date: Wed, 18 Nov 2026 13:45:19 +0100
+Subject: [PATCH] gpio: shared-proxy: propagate -ENOTSUPP from .set_config()
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -91,68 +112,101 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linus.walleij@linaro.org, brgl@kernel.org
-Cc: linux-gpio@vger.kernel.org, mariagarcia7293@gmail.com
-From: Guy Morand <guy.morand@bytesatwork.ch>
-Subject: gpio: pca953x: TCA6418 support and driver design
-Autocrypt: addr=guy.morand@bytesatwork.ch; keydata=
- xjMEYVrH0BYJKwYBBAHaRw8BAQdAoTOFJG+2Y+RQADup0trJWVq0txsRD9cwnFvJDOP972XN
- Jkd1eSBNb3JhbmQgPGd1eS5tb3JhbmRAYnl0ZXNhdHdvcmsuY2g+wosEExYIADMWIQRteh66
- gtptph+nQZni3NUZ5EzT5QUCYVrH0AIbAwULCQgHAgYVCAkKCwIFFgIDAQAACgkQ4tzVGeRM
- 0+XCrAD/fcnTVlpmfLk44MXE155KhfZlGF2ohVATPa2AFC0khfAA/1Avp55HOzMVCY2iwwbx
- VJXFd/3lwrqp90zqH2ORd+cAzjgEYVrH0BIKKwYBBAGXVQEFAQEHQKyxw9Yob3k4YKr/6iRL
- es1udYw9k9Eb7HJHxeIoPhBjAwEIB8J4BBgWCAAgFiEEbXoeuoLabaYfp0GZ4tzVGeRM0+UF
- AmFax9ACGwwACgkQ4tzVGeRM0+U3ZwEAp3vzYVz8JtxGQ8Q+n3pTdR5TOwMdkbE6EBMCiE/s
- Y58A+gLI+AWyJ3L0V5rINV7FxBc0caP0OJskWOYyN0aN7R8P
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261118-gpio-shared-proxy-enotsupp-v1-1-39d3fe4d3aa7@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAN6d/WoC/x3MQQqDQAwAwK9Izg2YtZbVr5QeRFPNZTckKhbx7
+ y49zmVOcDZhh746wXgXl5wK6FHBuAxpZpSpGEIdXkQUcVbJ6MtgPKFaPn7IKa++qSKPMXbts6X
+ Q1FACNf7K8c/fn+u6AXoRsl9sAAAA
+X-Change-ID: 20261118-gpio-shared-proxy-enotsupp-ec8895451230
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Igor Velkov <iav@iav.lv>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1656;
+ i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=Hi66f2izXtApj9fcw43zOj5fy/xiu3jVifOULfMATJI=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBq/Z3j5vWHTjcDCAtR2fInCMUz2sGI8LOkwlX4C
+ KACHOk72luJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCav2d4wAKCRAFnS7L/zaE
+ w0lUD/9uyYrHDQKWqIuvJ7H4Nj7Uy47Pwd45DNmNUgYPpj8YKU2gX8nivJHyiAZ3hOZVAUcec+d
+ +V1W0C629dVleJs0VswlTZJS324cjI98I7ydI/wGZ9NXZrPwx0xOxZOV81lS0dg1dqVYy0pdq/m
+ UKv0rnmRA2Cb92y9KbN3mUAaAwS0ZJmhOH5Pchc0Ih/6CyXLA0PO8qNjfkQ66G6RDaaj7ildBhJ
+ F7lZKI7at1fCMkTxyO/GM2YOtceanakrSSq8TSVZV9jpXyqtDy7CVkF3Hki48JUmhWXJooi5ptl
+ 0vVUpGteNE8MTs/G0Lwq9M00Y5VVK5tGUjenUCDVZ0RuOHJI9zJRmm8zWfaQDK6hmYx6BF+GFBL
+ 4mVf3/CFHuC3VgHDwq1inYvZUBzFUItKTAkjgFMiKpMfawjlpPVLlCaB/Qi1MvepPwJYZ6Q0eDN
+ 7qBKSy5vnfEFMiAp/EiEkrX7NF7sgCG8dWPobV0Eq74r6zh4jND7mPBde2DvOqB/1orWCL5tJl6
+ CVuO/J9jWcJA1ygUETap/NKbhjIN58BGPWNdkrQQ1aKoRxfAplQJiVJ5GqT8jlRT+3C6RYXawZR
+ TNtuIxlvaiQ4aYUOhBSx7vqTHDltIOFO4iTnF5iS22tD/gaRBAtw8EAbAB6eYdlkBtVx12l+gcf
+ SRMpCB17zCh31Qg==
+X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA1MCBTYWx0ZWRfX7OpEtFYLNQY0
+ BvCH/8QAJpWDlzmSmNsg5BKmrVfw3y3ytAzlVwdOCxtmfVRy+xCDAqvi/9sOQ7N/2bFzXub4Mei
+ ks77RHAh/gP80/JBY2CqoOgA4dfCe3OSURVO09wf+iFmgui5mX86vehNlSJlczUJTBeVUc8zxM0
+ P5QjSdos5iXHmkz5vBsVC47gwTydppp3qtSWPquxwdXA+zmYwBwcvhbQ5Tq6UxszZkEzgDwEFCm
+ bBcksza08rf5v6P6P4oET5R3aiyxX0o+XQghIURvJ8i/oICh4x0h76Vf/fJC9CUmmstqFjDhz8w
+ F6JQPh+A54gLzt8C3didJENf3W+2UIqeE72feekdBf7Gf6MsgP0IdQmi6+rikcgWAVrIKT4yEqg
+ EACFn459/7VJsAVDb0QVJOfHEwgqGfEYOsYFWuIKet63IA+r3hQQCmlLs6/VBDz+6oTV92l7pnb
+ YrkhONt1u+G3eeSbVkQ==
+X-Proofpoint-GUID: 7Ay7JOUos9qFPWQh5X4Uovyf7gDG0l90
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA1MCBTYWx0ZWRfX2cFEaRhnxtk/
+ 1GVdMce/sLVSWPX/6ZyOqbMgm6X6apz5/Kimc7mc/MlCZbfeJ1CXsx0f06wtJFjBankt8uKtCKl
+ OkRM8KQ4DQqaSuZALt4p8Y6pB0t9tuM=
+X-Authority-Analysis: v=2.4 cv=LuQHWXdc c=1 sm=1 tr=0 ts=6afd9de7 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=Jk2/TV77q6/E6wQq2oQJxQ==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=BhcNr7YcH8cnyUyuE0oA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: 7Ay7JOUos9qFPWQh5X4Uovyf7gDG0l90
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-18_03,2026-11-16_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 malwarescore=0 suspectscore=0 clxscore=1015
+ adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611180050
 
-Hi Linus, Bartosz, Maria,
+The gpio-shared-proxy driver does not propagate -ENOTSUPP returned from
+the set_config() callback by real GPIO drivers controlling the shared
+GPIOs. This can lead to a situation where for an open-drain, shared GPIO,
+we take the emulation path on request - ending up setting the direction
+to input for the initial user - and then fail to allow simulated output
+direction for the second user if the driver in question does not
+support using "real" open-drain.
 
-We have been testing the TCA6418 support added to gpio-pca953x by the 
-following patch:
-https://lore.kernel.org/all/20250703205740.45385-3-mariagarcia7293@gmail.com/
+Propagate all errors from the underlying .set_config() call in
+gpio_shared_proxy_set_config().
 
-On our board, using a 6.18-based NXP linux-imx kernel, the following 
-command does not toggle the requested GPIO as expected:
-gpioset -c /dev/gpiochip4 -t 10ms,10ms,0 0=0
+Reported-by: Igor Velkov <iav@iav.lv>
+Closes: https://lore.kernel.org/all/20261115-hc4-gpio-shared-od-1@iav.lv/
+Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
+Tested-by: Igor Velkov <iav@iav.lv>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+---
+ drivers/gpio/gpio-shared-proxy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While investigating, we found several issues in the TCA6418 support:
-* The driver uses the PCA-style i2c auto-increment which is not 
-documented in the TCA6418 datasheet, leading to corrupted registers.
-* Input-status registers are not marked volatile, so reads can return 
-stale cached values.
-* The bulk get/set paths do not reverse the bit order of the first GPIO 
-bank, so they can read or update the wrong line.
-* Interrupt handling is incomplete: the generic IRQ path does not 
-configure the TCA6418’s interrupt-enable and edge-selection registers or 
-handle its status and acknowledgement registers.
+diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-proxy.c
+index cb593192076fc0bfb53a66e5753ae3ed8d2fb47f..8197ebb5f9a2deb20477037d8c7b07847f1157d5 100644
+--- a/drivers/gpio/gpio-shared-proxy.c
++++ b/drivers/gpio/gpio-shared-proxy.c
+@@ -186,7 +186,7 @@ static int gpio_shared_proxy_set_config(struct gpio_chip *gc,
+ 	}
+ 
+ 	ret = gpiod_set_config(desc, cfg);
+-	if (ret && ret != -ENOTSUPP)
++	if (ret)
+ 		return ret;
+ 
+ 	shared_desc->cfg = cfg;
 
-I have spent some time trying to fix the integration, but the TCA6418 
-seems to require several chip-specific operations.
-Before this support was added, we used an out-of-tree TCA6418 driver 
-that worked well for our use case.
-
-I think the current support needs to be fixed, but I’m unsure whether it 
-would be preferable to add the necessary chip-specific operations to 
-gpio-pca953x or replace its TCA6418 support with a dedicated driver 
-based on our existing one.
-
-I’m not familiar with the subsystem’s design preferences. Which approach 
-would you prefer?
-
-If this could be useful, I can share our existing driver and the local 
-fixes we have tried.
+---
+base-commit: 7cfbf79c66c63e807ea452abf0546e6f6d6833a6
+change-id: 20261118-gpio-shared-proxy-enotsupp-ec8895451230
 
 Best regards,
-
-Guy Morand
 -- 
-bytesatwork
-Technoparkstrasse 7
-CH-8406 Winterthur
-Switzerland
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-phone: +41 52 213 79 79
