@@ -1,55 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=109.224.244.107
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795025940;
-	b=UHwIKFZydwHfWBGhLUqKw/EM3BQXfXpHt6kym7sKLKt5JvIbSPddI5ggb+GAvw/c3AJz
-	 PfmnxKiTh2TOC38FmuXnERA15bvFgPLFXm5bOVb+uDaTEY/8ir8I5w5b4iATS8KswqIs1
-	 RFhQgZMbRp6x3de/SPckYhUoir3BSIID98eeiIqxsRevrrUZRO1l2ZmblIt7gOYO8nm5J
-	 olaBtzddcFqRNGuL55D46iHT1S+26OJyxmeNDKZBKHym5L+8sH5g+DsM7e+h+ywXELliy
-	 MDOlhH67CLYVhsxRVlVci8BdHy3kHZC67oqf/7KPNWB7w5zdW0T7HZoW+7ZSLYPUnBw==
+	t=1795028646;
+	b=ptIuw6SmrajJghtO88XYSONIPldyR493xa27M4UB5hLCgEWs2mli2i0oA7sz7LUaQPfy
+	 A2ob5Y/7sUk4g6Z3tQDH/1ApYGzs+MhG4fN3J+Q3FWqM+AbjQCx527tq9uq3Ac/PRecjN
+	 E8k/9Ymcgdxx3sNXjf71B9HNrLpic/Rk5+EdazfdVq5liaTQ8Fo78jAc7smJshVOYcur9
+	 oMJMS/UYdYmTj2j29V+nh3mnLf5n0MMK9PuFHNPSS58nbxHHwoYph0I/Tphk0Mc1mAmwX
+	 zBOjWGObnSZA/1RYBL7gnGJEGdkghyKzA8i7fkf/BWGKgHGPTNOM868JQj1OkjL0AlQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795025940;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=mTjGPBEegQRgp+TkjbZALo5DNvb5ic4MusjOWTiPzo8=;
-	b=qXBbV3tcqFNx0rfLCT+O9AKOmmFht6SuOhD9sVbZ1b0scF+UkpD3n3v6vPZEJWdTbyl6
-	 I8zgHn7QLJ3j8SWXVhT/QggA6W/4rDAxr6CxXOi0KIjxyyRpDjSQftoA2/sw1Csjq8AZU
-	 YtXD4CSOmSMRQQhG3L7Ym2rFYXvKCw1di/+XCOzjYbJd+wg1MdULeWaHUT9z6vZEDWOjs
-	 X8vXyHDeC0hzkOM/C8aXLJAGqouWjseU4ecsCfpSADd3QTU9FIIv/l8erArs2h4pT8Ycr
-	 IbMZ2EF+/jWah9esXDzZXw1z97PdUHiC4Q+Ct3WDLTDBiZkQBhDvA6JBp0vLRz4MYsA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795028646;
+	h=DMARC-Filter:DKIM-Signature:X-Pm-Submission-Id:From:To:Cc:Subject:
+	 In-Reply-To:References:Date:Message-ID:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	bh=jB3zNzp9bGFfrdi7e1OlyYov72F+Grzt3PWA5XTMrYY=;
+	b=x8e6c+yFZv1z7tQSi7FNDIEMjeCIX6cHaayumzj8o1t39kQC3s9qe2I6ZntVYw+KO+K9
+	 Eq1Jj0CXB8S5Co/9aWO4isQfBOKVEZhyfUbwmwR5BdVOVoToWy5kuzB6ccyuJKPcAJHlS
+	 a8ncp9t/0JpnCADT5GIffmbtdele/mg3csIGENtCCFXwMST9gZDDduLPho6HEi/HKyu2d
+	 VysYy77pB4EeiGjtMelbx7MsOUs9CimBLEsIKGT5y5cf56gFV1H0FH6jaC5VNYq7Hzgu3
+	 KcxDXdINrzhatcqtD/G1LDY4ddz68r1D5+cQVgAPSoc905QEoxBqwTR27CFcWJnP/RQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fjJ9tHlI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=luixo.me;
+	spf=pass smtp.mailfrom=luixo.me;
+	dkim=pass header.d=luixo.me header.i=@luixo.me header.a=rsa-sha256 header.s=protonmail3 header.b=vJQcywnn;
+	arc=none smtp.remote-ip=109.224.244.107
+Received: from mail-244107.protonmail.ch (mail-244107.protonmail.ch [109.224.244.107])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7EB606A31C
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 18:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFF460A2604
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 19:04:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0CFF460A2604
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=luixo.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=luixo.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fjJ9tHlI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D277A1F000C8
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 18:18:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795025939;
-	bh=mTjGPBEegQRgp+TkjbZALo5DNvb5ic4MusjOWTiPzo8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fjJ9tHlITqozv2A92bNFUGPP3O63gD73RHRUV66TQHLqaE4cc6+TzRhFOqy9gzhem
-	 GTHREosT5FaTm2Pjdg+AjYNxu5//4SEZfEhEHhiozX8SZeWZ/8dEtGFuYPFxYwM4gK
-	 etPTTSZracOXrm1gcffhReZFmNPHRh3Hm7sBQgaV8+PuzeQ/1B/K/+OagIpFMxgsFY
-	 jkFkF/peQjEbokh2deNwGkjXqHFoWqnVcoWlqBfshEuyRIR2UswgkPTtiN2rgj3CcH
-	 snSBneN/QS5am26e2yW9pua73F29jEy+Csb7B9imBfYjzayRVV3WVJ7VRlyQkE0aLl
-	 GLz3xpVN2IP9Q==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c08539c827so904472e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 10:18:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEreC3I43tlQo3nq7H0NrqCBlgaO8PsJ4jt6iO9BWPjy99tapNQaey2COP9pbnXzqUPaVhGrE17tXMX@vger.kernel.org
-X-Gm-Message-State: APuU4Z8HqOkb5mpP2KoHDlj8BWfeV8f3z7YBGcogV2B71Jpc2weei5QD
-	sAbdPPbTHGbwWzrxbegd33kEMsZtAn+JfNxfkMI3jPawqD8on1yxedusUt4taejE2XGpQUDFi27
-	xhHJ9lFEwvIwVoz7JghhveqnZ5/nSzvY=
-X-Received: by 2002:a05:6512:401a:b0:5bf:d54c:1fb1 with SMTP id
- 2adb3069b0e04-5c1a9b709a1mr1153837e87.2.1795025938593; Wed, 18 Nov 2026
- 10:18:58 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=luixo.me header.i=@luixo.me header.a=rsa-sha256 header.s=protonmail3 header.b=vJQcywnn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=luixo.me;
+	s=protonmail3; t=1795028642; x=1795287842;
+	bh=jB3zNzp9bGFfrdi7e1OlyYov72F+Grzt3PWA5XTMrYY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=vJQcywnn3WPlHrpDbMIAMo3P9YDkcI3FTs9vLZq02zcQGPuqsj72cJqOpDxuoO9Fz
+	 +62w2VZeh0Mp2grCZkRDUkC6+Xs73vr86CYKHWcAmNmWsF7ihEpjJbQPPFmMI1uZO8
+	 9t0kROHiIMhLXCzvSTDp5JxqXeFASZdJn/nTQMYUwaudsCKR3RKKtFwWJPGnmsXd3k
+	 0poBxeG1b4ELrEGXQ6KgdxMwZh6oZ3fQrMTeH3R/VYBDfKB9jC/5JtpvO7ClRfkPnB
+	 weOPS24W+vsIfgPZ7EFF7KwRRNqY2hhEHxu9m1G7iD9BYKqmctaMDVNdFlcAPl/sef
+	 r9ylIEA31BJoQ==
+X-Pm-Submission-Id: 4jV9xW1Zl1z1DDLH
+From: Alexey Immoreev <luixo-public@luixo.me>
+To: exxxxkc@getgoogleoff.me, brgl@kernel.org
+Cc: andersson@kernel.org, linusw@kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v6 4/5] pinctrl: qcom: ipq5018: allow it to be bulid on arm32
+In-Reply-To: <20241007163414.32458-5-exxxxkc@getgoogleoff.me>
+References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
+ <20241007163414.32458-5-exxxxkc@getgoogleoff.me>
+Date: Wed, 18 Nov 2026 19:03:57 -0000
+Message-ID: <179502863770.692988.1837894979494592810@luixo.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,46 +67,32 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261110-debug-info-v2-1-73ad7aa0874b@amlogic.com>
-In-Reply-To: <20261110-debug-info-v2-1-73ad7aa0874b@amlogic.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 18 Nov 2026 19:18:45 +0100
-X-Gmail-Original-Message-ID: <CAD++jLk66k1EJg0cO_+12HSBdOLvkCD65V_9eDzpXpHBK4z=Dw@mail.gmail.com>
-X-Gm-Features: Aa3M54oSzmSzW6vVL6kt_cC3y7y55k_eM3IqSPDViqpXGwp_Vn4eEmeBhlms50g
-Message-ID: <CAD++jLk66k1EJg0cO_+12HSBdOLvkCD65V_9eDzpXpHBK4z=Dw@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: amlogic: a4: Allow functions without groups
-To: xianwei.zhao@amlogic.com
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 10, 2026 at 6:09=E2=80=AFAM Xianwei Zhao via B4 Relay
-<devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
+Hi Karl and Bartosz,
 
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->
-> Allow function nodes without child groups during device tree
-> parsing instead of returning an error.
->
-> Only count and parse nodes with the "func-" prefix as pinctrl
-> functions, ignoring other non-GPIO child nodes.
->
-> This allows the driver to support function nodes without
-> groups and avoid treating unrelated device tree nodes as
-> pinctrl functions.
->
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
-> Add debugging information for error dts and Error pinctrl config not affe=
-ct normal pin work.
-> ---
-> Changes in v2:
+The Xiaomi Mesh System AX3000 (RA82) is another IPQ5018 board where
+32-bit kernel support is useful. Our working path from the vendor
+firmware enters Linux in AArch32. This is a property of the chosen
+firmware path.
 
-Dropped v1 and applied this instead.
+On the current Qualcomm pinctrl tree, `PINCTRL_IPQ5018` is still
+unavailable on `ARCH=arm` without `COMPILE_TEST`, even if the Qualcomm
+pinctrl core is enabled. Your v6 patch makes the existing TLMM driver
+selectable on ARM without changing its code, DT binding or ARM64
+dependency. The separate IPQ5018 GCC change already landed as
+`5d02941c8399`.
 
-Yours,
-Linus Walleij
+With the same Kconfig change and `COMPILE_TEST` disabled, our downstream
+ARM32 OpenWrt kernel booted on the RA82 with a working serial console
+configured to use TLMM. An isolated check against the current Kconfig
+confirmed ARM32 selection without changing the tested ARM64 or
+`COMPILE_TEST` cases; we did not build or boot the current upstream
+kernel.
+
+Since v6, the driver has gained `default ARCH_QCOM`. Adding `ARM`
+alone now also defaults it on when the Qualcomm pinctrl core is built
+into a 32-bit Qualcomm config. Is that desired, or should ARM32 be
+opt-in while the existing ARM64 default is kept?
+
+Would it make sense to revisit the pinctrl change on its own? I'd be
+happy to help refresh it against the current tree.
