@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795016382;
-	b=3b6lwX5SAaU1xtLem6EPOhPLZS8bHOWnO+MlnCGdfDJEcVnFJnj5NyydrWaszeo9CHKW
-	 rf5hwSC+fP8AE8PLM0KVpJJl/vPFbJ989TGapLkyUEUsvfOjV0U+0YpuzN5A+ZJnYvUoJ
-	 T7Q+TMaK6wTnXXMdrNLZQtZEvB60zXemUcNthqxsJ2x4peed7bqgktX9UA50p3xksf14V
-	 k7v3WZjOP+cwRix3GOkqm78paNAYxqs+vCk8Kl2iBURHi20L+M3XMMNCqatdEvWR8phfo
-	 rXRKsfIbH02YJSgqdGoT56pgwg/wTg4Fi3YEO/Hd49Ufmiuv/8kgbElPGVEZv452ogA==
+	t=1795016450;
+	b=D4S+4sNUuYRpkJyAon/1dDoPsr1ujbBT8GiiisvGSj61RDFSmU59ssJ0gioBm6xq/h6N
+	 wNf/CutLDSlVei0K/ak4PWv7apjWRT5teF3jDj4LbY3um2FqDSRUSAL+ZvlZM9gc0m5Iz
+	 DfRWxBM9tMlFYzn/1JSroscMzXUL9ayWv/OkfM05i1VqJ9hgNQUJ0CA/rXgO0UC9mYOFA
+	 VeoTJUb1HaPxC/R3uVzjrHml89TSNr55zTdEDlH7VTqBVwL5gjtcyDw7COX4Rvny8rJYk
+	 l9EOKDKLY4oDECgHqrf94N0pfM8drdj8xZhpb9RF8b0A2+HNRMGVzkrmkdeF4HyJTvA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795016382;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795016450;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=5ax3Lipd+AcivWLlLBqoyKXnHoFVYuzVHK/u3oZQ3q8=;
-	b=HkO+q3dpwGUYSEO9Z+ZXdc+rrSBEYkJ3DW6wrQwkzcjYvh8RxwRcU1SnOSXLLerWPJYs
-	 59mxPdg+8cr339ajZBPyu9pjuRpm4R9FyO+qnn5octWuNp4fZBerrE7EI5glEy52GdVOP
-	 cOyKP7xG0NOh4ZmPN3ZwDxZGoV2pLdQHgQeuPmg3V5Je1+tmFSnopw7OV4aH36pj7hsdv
-	 dEPtANQtHvEG+CkUmsQJyg8Egg6dd7+WaAM8tuRdxNGbXxPL29jr+CXzf6sK3H7JKiuoW
-	 dWWhxQBhM3cDa9XLRo8mwfqvjCMZSiL+mjX2fjYzU+u+TYXq1g3Lac+S72Zp4mI8EbQ==
+	bh=tm6dB1EUYOThFG6qE8KMMgbho+/lR/6Gk/9spMdJzlU=;
+	b=0//bxR9sDHOt6rGE5rBBJ0upupwPR6cLiafetwjRva/OyIDGZvotKfFiOzonqhNXZyKi
+	 icKsDQnHoCbw44XutQU3cwxCauDy2FM3kIKojPlZyV3+/QaGL1MKqPFYkKeGIbmYnLQTY
+	 bnHfnSdrNr1RCr+pkAIBWcTpcGuwIa3YTQ30KH4SlU5J9dfrsXSeioohDBZpgpEwuTgf+
+	 Xiee5tlrtLJ3PJHPHlkO/J9h/CHncNMZAJWXRCLGMd7hGq9zxxPay8YiGiF+621nmJA9e
+	 /oB/u1D8mRt3gAjnHhi8dlcQV2t9ffRVzvCYtEzbKC1bNgoQbPTXQ0lNNcUFTaDBFqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ChN4RtDN;
-	arc=none smtp.remote-ip=209.85.210.53
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="F/T+wXSc";
+	arc=none smtp.remote-ip=209.85.210.182
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D157B60A2606
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 15:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D157B60A2606
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D3C606A331
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 15:40:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8D3C606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ChN4RtDN
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-8629ef8613aso457439a34.3
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 07:39:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=F/T+wXSc
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-8b2f59de176so1040901b3a.2
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 07:40:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795016381; x=1795621181; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795016449; x=1795621249; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=5ax3Lipd+AcivWLlLBqoyKXnHoFVYuzVHK/u3oZQ3q8=;
-        b=ChN4RtDNL4FAZnfKWrkcqtZR9IwHiD412LxnId3JvdDhc10w9CNmIAgsuSll3tHp2S
-         w3KfmBSLf8edMN/+2ABaalGwez79ruoZ/SLHAW5f8PboytQDbTeWW3KMmtPzNVcAS1XL
-         LacFnrw01OSIW6IiBARxJfk2riKOsOXA2hPsu+tHeK7H8HqUZwqtrRDkUEh4+I3EVtAm
-         KlaNLYjxxtrM5ZeDXLOKDL37vL6bOMnswIdnJehE7PBi4+/Tg7d7t/Imgru0kNALnnUR
-         +pnmMFx/6a5ctuXYw9NsymB5Ipe0OBvr0807ptcZxoYCgpG623H5kq+8yLlmuu05TsF4
-         /j6g==
+        bh=tm6dB1EUYOThFG6qE8KMMgbho+/lR/6Gk/9spMdJzlU=;
+        b=F/T+wXScP9Zgh1uofVaMqzOlFgqfmKgwCctq1qXcplNMa+wjBVSQAc7SSMeRLdzPB0
+         aZ1GrJrH5iye0o4/LLMI2fA25rH7UfxV1ehkUE7OC99in1a0QZS4q4fUT1mZWt1NMlya
+         gIwScpx9+n0G70Q0jOcfxLy+AeOQGv591C0uGFyEAHz9ZnLD0ZPavJuDzCS5ZaYKLAvn
+         6pxQ0tEw9NUG7Dmh4UdLTFYgD1RdG/Yy3r4oDl+vYou7NUVAtvVOSdOwQBIm1lDnzDne
+         iwJ1y8JgjfqQy1FPn6+euDTe3FiV8I9E4eClxfNeRAuzzroJEQOGh0/mIeVlCC2JDxXj
+         qTMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795016381; x=1795621181;
+        d=1e100.net; s=20260707; t=1795016449; x=1795621249;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5ax3Lipd+AcivWLlLBqoyKXnHoFVYuzVHK/u3oZQ3q8=;
-        b=ElljWYP+lATFlZLMBPgMd+Cp4zLgEtPyvU/C9Tk4v49AZ+YMhbpB33pys2caIVoZOz
-         xKdqlRfCCOadB9HGbogMqo1HHQ97oivRWZuc9jT8c4mK1EFPKdJnt8OLjaY/YX60i0z7
-         qK/fzP/fm5sZrASVjPuZxqjFUemTUKiKmVcU/3Yp/Pz+r3JPAHRaTSxO+r/VVkLwub3m
-         i0NfrCAWcCGa46/BwKUvyKRV2wlYFF11+CbF3d9sdZFBGI00cIm0UDiA8Uirr0GSBt+R
-         zkM9H4xWlqJ5Y4eVRFMTngBPQVvV3/BhtEHddbIX6FJnIISgM/x1zQu1PAgu/frGC7ue
-         9nfw==
-X-Forwarded-Encrypted: i=1; AL+hErGUvjPChgtienxa6kEptbs4Dj3+cPlfRNcUHUDeomH2jkcJHNo2ZOW38tMgIW2xRau0rJCKYPcAlBfA@vger.kernel.org
-X-Gm-Message-State: APuU4Z+Z0ZEw2mxlXBa94Fd+0o3ZelI/eLpDvsCcJl9JphGhdWDYcRgs
-	NzWrUZF7ymwUPbruAp/wqJAp+U3AWSUACHDVElKMsmejmbg4Yg5x8kiv
-X-Gm-Gg: AYBFou2ChWQMNmJFxm1blV4GSKeQXxqyx3V2zum5hS6t6HmntkMcR3/pBg4QON2IVEs
-	0KgeTDrNlicZ2NcpcnNVZXy6yNlyRF+AnQ1Evm4Iv6enVPoRvH5WpMGEgQ6m3U3UBfXvyLgi2xt
-	1Et+trnl0uMDvLu/b/TpUFBnf5Y8rUTRakf3kakeXqwGVTu4JHP1h1X6iYQRFG29PN08VNjNz4T
-	eWtN8fj9d4KDMKrhk9yXi3/RkiZ/zqeWMKQfAH/zK71ymvyhSFbK7/BMXlHR4HwPTIgdh4uN2Wi
-	gvy+5EMYJ1qPnUxU8jRo4BbTSE0aE/yNEsjAHhDHksQQ+2JMAIZrwbBlTfklm1zcTzVOdSgKtkx
-	vNBUK+Cfwss+JRLZ4lspGwI280LHpmV5f/Psdm7HhMNch9DN/GKnHxQLumSEVSDzRBLiR//y1BM
-	/EGKQ3Z0qPxqxkwbxtgrJsOnO1w6qOL6GONVVXUVFC7LPWJxGYEvuHtDEzcyIC5N3R7hExxL66P
-	nrgfF3oMaNozmnkXTdCtQV4YdiZewxo0+lwWU0tsZ6BUP4F6Hrfw7AX1Jm/sAAcScQCWw/ZI+au
-	A92YDn77XHy5OndMQMIUjz69i9cXjZcC9YefpNlidNcdwUN9
-X-Received: by 2002:a05:6808:220e:b0:573:f2e:2bee with SMTP id 5614622812f47-57741723566mr3647243b6e.37.1795016380749;
-        Wed, 18 Nov 2026 07:39:40 -0800 (PST)
+        bh=tm6dB1EUYOThFG6qE8KMMgbho+/lR/6Gk/9spMdJzlU=;
+        b=WvMndtNSIONCmYN1/9mFfszNcH5x3YAPz68SskXXBZdsTazQjU/4XiDO2lwPdDAnf4
+         pw2gnnIGdG4r/a6KnvgvEHyKXPeb3GCWQS7ywH+Z3rOM3xk8ANSZFtyXKypsPlD3g3ka
+         BMAolMbckIP2BSS5qkxAXFFykeojQhRslsjWSM0KROz5GRVaxKzrkbr5bXZHEaz/R9Pd
+         MvlYZHjebxpDYS2s9QG4yTmIiV34J7wiAKg7BpUvbTUjh10mriqe9JDa9P5mIms5YfEl
+         TomFi2tjbUYmIr1AIxZSUZssiSkCiT4/yfZahI+NRskbYqlvC/wH6ECBvZqFpwd+tt3W
+         qPnw==
+X-Forwarded-Encrypted: i=1; AL+hErEEGqlKy1iKnxCtLaJHaPsWE0rbO/2enAAi4cnkRjQPF3obN5OYdZC+t7h/wcBjMwjVjgmU4GrvMos8@vger.kernel.org
+X-Gm-Message-State: APuU4Z+uwUqGEsnGuO2xNpdn6w/h9oH3xcLyQ3Ofoq1nED4KVuos+kpJ
+	epaydBbrovOxJEJ/PGFohi/R2t3ZS3bCQZfxC/zlregiyX1IQv76gxAV
+X-Gm-Gg: AYBFou3kF5WmooPIzsts/62TgZetI86LCacS6R3PCpZtQca+ieoK+xmVl2z0woyDbpi
+	jCRQfi9GtbI3Xy965Aokty1ImcOuogrcpTK2WEBrn49+HPPYaXLzotJxW9jceZJ9ZqQPJF7z2Bt
+	Q6lLWX5C+SNcE3SlxEPYm1bTChd8l7tP7HQDhoyDpgFDQ9IxT5rwgnqLPfblhkR4i0wFhokzZN7
+	bBMorlp5kuavdONlJeLij/dXMAPht4xdaN8BuWUf1kB6utJWJiwtOWCRMA3m1A99R0S9ZuOfLRo
+	IYVdq2RIL4NGWQatnRRtWl0tdO2PrhceQAnkwEYIA9TUzz6IWKZNPqKpocToP6sfKH0v63xWZAJ
+	QroD1cTnR0bJPmVT0MfcAv5/nA/r9V4t1tM4E4+irIL1dCUZv+VFNHJj8uU3KL1oOJ5gGHyzDsU
+	RQ/ChbJ9FrMTv6dzEBD385W91KjIj9MR9a/VY+ILdXVCfvcHTRYwMa+e3vtbeauh57piw4GWml/
+	fHnLkonzGXt8UJsk/BvMyPa4cqluamOjpsMMlk7vDb1XLPD9GJkVslh9zBMWzqD5Fj9q0FBfyjl
+	peEElGXikVMcRlEz2pZZFGVXdoGqjxWHP4nF/kg86k/f41s8
+X-Received: by 2002:a05:6a00:a244:b0:892:e080:4ed8 with SMTP id d2e1a72fcca58-8c5d48d82b8mr2645070b3a.47.1795016449055;
+        Wed, 18 Nov 2026 07:40:49 -0800 (PST)
 Received: from rigel (106-68-220-184.tpgi.com.au. [106.68.220.184])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-57775461e70sm1987291b6e.0.2026.11.18.07.39.35
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8c5ca5bf959sm1421203b3a.20.2026.11.18.07.40.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 07:39:39 -0800 (PST)
-Date: Wed, 18 Nov 2026 23:39:31 +0800
+        Wed, 18 Nov 2026 07:40:48 -0800 (PST)
+Date: Wed, 18 Nov 2026 23:40:41 +0800
 From: Kent Gibson <warthog618@gmail.com>
 To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>,
@@ -91,11 +91,11 @@ Cc: Bartosz Golaszewski <brgl@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: Re: [PATCH v6 3/8] gpiolib: cdev: do not free line IRQs again after
- the chip is removed
-Message-ID: <20261118153931.GA46152@rigel>
+Subject: Re: [PATCH v6 4/8] gpiolib: cdev: don't sleep in the SRCU read
+ section in read()
+Message-ID: <20261118154041.GB46152@rigel>
 References: <20261116-gpiolib-chip-removal-v6-0-aambrozewicz@nvidia.com>
- <20261116-gpiolib-chip-removal-v6-3-aambrozewicz@nvidia.com>
+ <20261116-gpiolib-chip-removal-v6-4-aambrozewicz@nvidia.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -107,32 +107,31 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261116-gpiolib-chip-removal-v6-3-aambrozewicz@nvidia.com>
+In-Reply-To: <20261116-gpiolib-chip-removal-v6-4-aambrozewicz@nvidia.com>
 
-On Mon, Nov 16, 2026 at 03:47:06PM +0200, Adrian Ambrozewicz wrote:
-> Since commit ec8b6f55b981 ("gpio: free irqs that are still requested
-> when the chip is being removed"), gpiochip_remove() frees the IRQs
-> still installed on the chip's lines. A line request or v1 line event
-> kept open across the removal frees its IRQ again on release. If the
-> mapping is gone, that can touch freed memory, as reported with
-> virtio-gpio; if the number was reused, free_irq() warns:
+On Mon, Nov 16, 2026 at 03:47:07PM +0200, Adrian Ambrozewicz wrote:
+> linereq_read(), lineevent_read() and lineinfo_watch_read() stay in the
+> gdev->srcu read section while they sleep waiting for an event, so
+> gpiochip_remove() blocks in synchronize_srcu() until an event arrives
+> or the reader is signalled. The device lock is held meanwhile, which
+> also blocks device_shutdown():
 > 
->   Trying to free already-free IRQ 28
->   WARNING: kernel/irq/manage.c:1881 at free_irq+0x193/0x2d0, CPU#2: gpio-hold/111
+>   task:init state:D stack:0 pid:1 tgid:1 ppid:0
 >   Call Trace:
->    linereq_free
->    linereq_release
->    __fput
+>    __synchronize_srcu
+>    gpiochip_remove
+>    devres_release_all
+>    device_release_driver_internal
+>    platform_device_unregister
+>    gpio_sim_device_deactivate
 > 
-> Stop edge detection from the device notifier that gpiochip_remove()
-> calls, under config_mutex so that it does not race a reconfiguration.
-> Free the IRQ there only if it still has an action, as gpiochip_remove()
-> frees only those on lines flagged as used for IRQs. The release path
-> then finds nothing left to free.
+> Check the chip in a scoped SRCU section only; nothing after the check
+> dereferences it. End the wait once the chip is gone, and return -ENODEV
+> if there is no event to report.
 > 
-> Reproduced with gpio-sim: remove the chip under an open request with
-> edge detection, set it up again and request the same line, then close
-> the first request. Every cycle warns; with this change, 100 cycles pass.
+> Reproduced with gpio-sim: setting "live" to 0 hangs while a reader is
+> blocked in read() on a line request; with this change, the write
+> returns at once and read() fails with -ENODEV.
 > 
 
 Reviewed-by: Kent Gibson <warthog618@gmail.com>
