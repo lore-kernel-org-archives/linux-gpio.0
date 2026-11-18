@@ -1,92 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.6
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795007467;
-	b=pEN12Rl+c4cZUZdoIf+/9gKVMFxORA8mL01G/0Ow9PdH2G2XMM8dM04MBprwqrUTGtKf
-	 8gYcIU6PPrWv+qJhCfXyAX8mlMqNl0u8/eK7W/eqvvMtPzLlR7PEjgB15FJdzdbBiBDOn
-	 8bqYIQSoty3CiOjuto6vHSNNTBKUqWeh6ithZL68xJIebPsIdMektHLy14Vpblusk/4AH
-	 x0RJs/kJeleuB+XGOulL3Eul1CwubkKqF+GcTVXCmhzxHQwYviClACuDNwIadKGR6gXeZ
-	 t2ZEfJSke5lZnFDEXOHVKLoHLInjfqwZMQsamU85SDY/CAwZqMUvBT5RXUaF5OEr5dg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795007467;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=F4eYC0YNWQ2MX17RfIJpyfqPxjdDz3DiN2wzXakj+uw=;
-	b=Vl2D3Y9wZqGPeanKlsjtPNLQkTZcEuYHUukEsEmyfqz+RS+VTqnMfOOsBr6puSW2GQ/w
-	 xIAAK51+csmYRRymqVIvLI5jz+Ozg5bLNsZeLG+22xM5paggBptYqrDyEqs0uXAOk/Zra
-	 q+fdqTuKNL7M1fsm9Ai+uZGPKuxiKiWCAcaTYx0NxCV+Ne+VRkeoXmv0CRRK0uWoqod8s
-	 M2UCtBnKjQHPMdhqVpnrDOAbnuxwJP4igSWW/RM57hVftVZ5DG9/cFyiGOwcPED3ELlP4
-	 novA8/ZnjESK31VHhLP4h0Eb85Pz6hQ5009XmyMNpfsJMXF5bbUjVJZRFzGAr1szI5w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=VKjFwkcP;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.6
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011006.outbound.protection.outlook.com [40.107.208.6])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795009078;
+	b=TCeUdxVbrJ070a7Zv5XLA3e5wGT5RiHgA5CQA4UjWfNPzhqHldleb0MTn6JBWX8Me+2w
+	 8ahWi/c6GcbipU/5MUhINNAeLIybWdYTpgkgN4zMysKxbGNCRlpnr6GiPe8jApHPSjtvL
+	 DQmBrEgjm9O9Rcog3rUx3hK0YLQRz4Ks39Ae95cxGU+nsF8aVZflDr9Ch6TuWZCtgraYL
+	 TxI7GbrdATncm20sc4ZCaGS2lRdnafIIEY9+fqFculKo/g5E/rslcGXt35H8foLBmmdEZ
+	 jt+E6V28arVpzKrTzfYt43qp2doIag+iPQOR4QD6bXtK1FvpIo3eZP6ZCYErvb5kR3A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795009078;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-ORIG-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=fFhEs41KSZ4dfzyxb5QjYDd6/8oZJNiaCStnwzmcs3Y=;
+	b=Sa1fO1hX2193LzCaDSeQUzlxxgMfYb9SdEutTI6/mkeR9HIK9VJF06q0FOi8wsAceJ0/
+	 fOXFUkAzGnCAP69WDgzpgUTHcczQ/RxB0Az83gNv2fAwToJq/26oslHFon7TKj0oPdAXT
+	 nqzc4NBdbP5GTQ0L8GW1ZGycDWKcG7/JE7djeBWKkpyezg6MgQXxGiDYPxa4kHyuaEuJB
+	 yk0tk3LNtGesf6hJk6PEHN8Jv6sBW9YevKhO+6PMpGXAbViuzspC5/asT4ldRH700pNs7
+	 rvS9kiL28ffnDeXkksdyH2ueSxeffJ9ZV1r6UhNjYVS+E3e8l9mcEHk1eJKmA+xlmaQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=QK703xtB;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GgT1h26R;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC16606A330
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6AC16606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A471606A320
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:37:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A471606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=VKjFwkcP
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mXNcDRwxFIM6DqUY+EiSEZ+y6W0JzGXN0vMlFCET1dJyl3ArTE/1eeGxRaIVTrA7n3r4ccN/5/QzPu+p1tLOUJWQmjou8+0/E/85oZTBvDPZqr8gYMsvfAJ/NyWdBpRPMbmd/2jAZ19Hiemc82Xh3/hwnrZZpA3426xykmtCxAGmE5U17JZJX2q6/IFLpwOBc3aCP0HI/DDSO4zI6SiRdDbg4sQDXcxbgWI8P8Xs52U5ZFpU/vFSUjkIrRvD52vMwzOBaNa4mE5vN1RODOwZYFcz6e5BC3p7Dn5BT7pUGGuW4ka2wib35H64KlscTYAMPgmSmG7StJykNxcqd73pQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F4eYC0YNWQ2MX17RfIJpyfqPxjdDz3DiN2wzXakj+uw=;
- b=FLAcxoVRS1pr/XEwBadweCZRmnvqe1TlRqXb9cfls25pWxs2bOCBu7I+sEQdAWLwud/1Tm9MkUTVwUaIb28gLUwolENgW7j6Ffx/1JhANsimystpzousylB7zByKo3dg22HyyzTIqsPHK+d3V03ZyyrN07qsyWaf8Fpe4CoKx+hcIsusIRo3Xo+wZO9oTHIv4SkoVYfHi0gQhHrjLbI/1kwN6lRrdrCav3Exbum86yCqKJ2o3ryBc56rVaQr3dOyhrudhDfqSIDhu0baQUxfaLU1jm5Fpt+J+uAbBymyCwThMXAE13IBbMs5IxvJKOvoMSf5A0XTfHAjP9Q+GuR0Rw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F4eYC0YNWQ2MX17RfIJpyfqPxjdDz3DiN2wzXakj+uw=;
- b=VKjFwkcP4pfnqzx5ZRUiQXryTmu2ZqVkXI5NC/avrix+gaCH3B/9vRHFDus5qlZBj3LpnDUyTjYay0pSwIU+FEDxkcm/ddiopZBFgjzccQ2rlLoL3sn+jHu3rem5lCMhfNsSSMQZCpjjGJmwqe9DdUzmTqvMkeWY3nia2D+8hpKwS2AusxL+kSeazdM1y3duqakPcd0YqSxpPcRrdo0tA1NmC9eh/c5vX94eWR2uv7THw7y+2sDkvm62GpAZ4I2erodqX3nFmUXJ/9VOWF7QCcDh9wD9ZBozms6oCU7OHUC1RF6JupbK8N04FmyUAUdOsg2eIZ91JTv0q2Q7b5KIaQ==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
- by DM4PR12MB6158.namprd12.prod.outlook.com (2603:10b6:8:a9::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Wed, 18 Nov
- 2026 13:11:02 +0000
-Received: from PH7PR12MB5974.namprd12.prod.outlook.com
- ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
- ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0615.013; Wed, 18 Nov 2026
- 13:11:00 +0000
-From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: fix memory leak in gpiod_set_array_value_complex() EPERM error path
-Date: Wed, 18 Nov 2026 15:10:56 +0200
-Message-ID: <20261118131055.2383780-2-aambrozewicz@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261016105442.109836-1-warthog618@gmail.com>
-References: <20261016105442.109836-1-warthog618@gmail.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TL2P290CA0015.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:2::18) To PH7PR12MB5974.namprd12.prod.outlook.com
- (2603:10b6:510:1d9::19)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=QK703xtB;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GgT1h26R
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AIDQdti1928800
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:37:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fFhEs41KSZ4dfzyxb5QjYD
+	d6/8oZJNiaCStnwzmcs3Y=; b=QK703xtBzVmLuyertRufPhXhiZHv3M+NOwMMnC
+	H3F683rz9NoD+rlOxQ2G92Ld4lioiTHFXCkLH1RCYthLSL0spIjGM4tNC90rR7D/
+	uycQNn0e8vN5C2mhOyN3DEXxkD3YeMR/2XZPfhv4NPJfDAjjzX5Miu7gCHKkZeDc
+	BRQusAb/SGu0Zy6pLsctAdokr0eSRis4b8OOfm6HwzajYuB7Sy2v1RKP+NLCx+mW
+	xjMX1frRUsEwhprXWirllqSsDMBhqZVJy8TcsKZctn5s3RJdUNO+NOnrcN8iTczQ
+	z5qla7DIsKqniO/0EdnhycLibZMNEVM80YqE0DlAz81pFvNw==
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv8b6sh-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:37:56 +0000 (GMT)
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-99e09f506e8so254002241.2
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 05:37:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795009076; x=1795613876; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=fFhEs41KSZ4dfzyxb5QjYDd6/8oZJNiaCStnwzmcs3Y=;
+        b=GgT1h26Rag9nf4HspkUbEzKX5Y9ruG8brrtWPXH1sRcKg1iCwP7tb6POeAfwBaYjG6
+         N4QPH4+cMQ7vXeP10qrWInHkDTWmj0e0QQyt1+X5UGpIZAv8I/tmuIcKX2puCwcKEDPv
+         +G7cUbYTBM55lrE67pf+Px7FSY73O34Ccx28Ae6jHUK6VjXZwGSDXOZuGJge1dZxl0YG
+         aPBQpfQEpsIZnX7XouMo46klpgXsS2F4Cl9IYak0OauaJ1k1I/maWwmtviP2kLY17l04
+         WVcFs/BtxdzPpSb8ooUo2Xv9W/IXSijjiD5WODmsCsUEdsEsCbD5aUJnX8UJizoUZPVn
+         8kuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795009076; x=1795613876;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=fFhEs41KSZ4dfzyxb5QjYDd6/8oZJNiaCStnwzmcs3Y=;
+        b=Iql0zCg44RXI1eLLhWcKp5wP+x7Fsnt+kv1kj8cJsJZmzSFblFe65G9SSazw4qZuB2
+         VLhHCP4mUL6nJRSuX9ojyAc0EQ9BtHgSh3EpFpbW0dQsMEYbRSYUwlB58V8gondzdj49
+         PL2LplDLJicioUXDmFzHckrpT/IbLurKaKonQg5z5TfyoA3PosvGC4v/JSrsGA67zLq+
+         FmSWXxPo3oAT/OlYuOzmUu1jVzP5dqxXwMd58qhHU2TL3KMfRJ0/tvVFm8G+TP69igy2
+         fv2sIYd7Rn8OwFBDpw37LE0McCracjC16G5IUaZ8b0vO/jdFMSQvL76WueKRumQ76WIO
+         jzSw==
+X-Forwarded-Encrypted: i=1; AL+hErHWACcsm+mNhweOdpEHpLcQRrsmMUduux2sXRhg3rS2/L0OghHwxhgbCf8vGawTCA59D1KEOZjjTzMg@vger.kernel.org
+X-Gm-Message-State: APuU4Z91kwnDhTxHs9vPq/OZSVJxJhGs2vT60yWrXrUjwNeVd2xvIXZE
+	nSEExZQO2Ns4CXmWF7KvE2SAWcSOUHKp4x46U6Iz4/zrjqUldE8d1oqMyeQNx3N8i9flwI31uSM
+	MHgybUuQGn3jIN00C7ur+gLG4qRRv81qBm+EiBiVuHhZZrShqvqvHhlNRL7pYR1WF
+X-Gm-Gg: AYBFou2eJYnFHd0C4RM/vgmyEyAPrDL5iFKProwVs+8gQ8qVFEfS/iGxRiu7rsOzBeJ
+	8ib6Ie2P8xG0d0n3N996gYWAm/66PAtjC5EHKfSHbZ2ZnBNRnH5s0gqM1sDcGMWGnwSId8NWY6t
+	Y51+ffm/Q0iWmZ7JDDLR/BjdrmEfULz/GIEjTDGrn3FvMBMQ9lf5VqYt0bQyXfOyT8NK9V3OaEs
+	u7K7lVYnoOvZwxQSp41ePQ2aLwbZ18T1ZB5YO5bpltnEHbtp7TaXxkWUe+CZzc3jr4SJUTy+f2Q
+	dZccVmMgf4b+AwYRBQ46Hms4q1WEENRFnSEZTEmmrBuIaaY6bt/cpaHk6gTHmTIsciyPi/hlbjp
+	dty6CCQi/PPK4nO1x9xNWdIXv76i5nGcGHyYDBdH/95MN0wyCjJBDShYddTIh60ty6YiKRT5xIh
+	frYP4=
+X-Received: by 2002:a05:6102:4189:b0:7c4:a0e4:1a79 with SMTP id ada2fe7eead31-7d6ba423a02mr642696137.19.1795009075379;
+        Wed, 18 Nov 2026 05:37:55 -0800 (PST)
+X-Received: by 2002:a05:6102:4189:b0:7c4:a0e4:1a79 with SMTP id ada2fe7eead31-7d6ba423a02mr642676137.19.1795009074724;
+        Wed, 18 Nov 2026 05:37:54 -0800 (PST)
+Received: from hyd-e160-a52-3.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99e4a1b61eesm1809090241.3.2026.11.18.05.37.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 05:37:54 -0800 (PST)
+From: Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
+Subject: [PATCH v2 0/2] pinctrl: qcom: lpass-lpi: Force runtime suspend on
+ system sleep
+Date: Wed, 18 Nov 2026 19:07:29 +0530
+Message-Id: <20261118-lpass-lpi-system-sleep-v2-0-a6ec7f2ba424@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -96,69 +116,103 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|DM4PR12MB6158:EE_
-X-MS-Office365-Filtering-Correlation-Id: d83a6a04-72ba-405d-392d-08df457563f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|261102123227099003|261026140227099003|261028144727099003|261021123027099003|261021121427099003|261022105027099003|56012099006|11063799006|10067099003|22082099003|18002099003|261009223027099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	agyDRgb/LpLUmwevwbd1eLaNF861SEjv4H9rrbagFU20CloPy1G54XZZvmNGRqgbpgsojyP77X7LYNAND498bYj1j0c/RP7KsBw9xED21yXrj8Hb3QIHp76vfX7zUa9CH4nLSxM+7TBOpOwomBi7ScY48dDvAtg+rbMJ5uO6parWYTwEsOQjy5Wtie9qHaLdu7CG2sRPge4ihLnkHMvzuPnf319QQOleo6qyO23hTWjY4iNENJV/cTWvnchmZHq4OzA7Tk/PXsQlCWNIznuEGLIM8xWk5DuSS558bRq1fiW+aIlBqw8uKeCI4Q8CDgl1mCZ3a5hgTDL2gNMbGTA3PYsNnDb3m4SkHk2/4LNHZE7qfLtqM3WHQopdtERa6tBzDknxHwHGPM7BUbN0m4QzovVjuaW1pXUHFiQBtNoBmMRtKKgd4C0f+QXP9dhU0vS+3eaAbFrKS57yK4we0x6+r2kKB18C3QpBIoBb3yyC1dRyMOcxtmYIHPTXS00mJ7VtGKTvnXQ60vXk1x7ldPZIrbzErgQzDUP/hnx56V+vpJOCKODZnkVcLtWsXz8U/CN7oJOhUxXBj1YBhyo2aI7gqqLw1FESDQ+D4ftIEdklN2xaVCzjL5jEWDMxUceBuY4H6NJlhtO80wgODSgPmKT0CQhz8e/1Hwn84Z8PjG4p+Zw=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(261102123227099003)(261026140227099003)(261028144727099003)(261021123027099003)(261021121427099003)(261022105027099003)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003)(261009223027099003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dZOUuwpCG2iihWP6lDf3JG/x3i0wapI4P9skJnWPSLToLEQgRfa/O1dSTNWM?=
- =?us-ascii?Q?6Z86vagwmoIjmmBO3Kjlt2XszSPSX5E7IgtfGsH1X9RoMfovb9oVSd5YNr/Y?=
- =?us-ascii?Q?jQpJDzm/vqPmk8jrzfPclG/5Kok0eh7UMzScKwiQ7UmzMyMNPpfxXPFab5BR?=
- =?us-ascii?Q?ifihGJnLegfUsPUbCYfQYjAeuChQNZbgM2GTU5NW64ahA+WKgNgnpn5ybeQ8?=
- =?us-ascii?Q?rCN9gMws64Nlqbv7fsmbbmYteJ0/5RGBNdO6y+kezm2f12c2vDKUfjYmBUfp?=
- =?us-ascii?Q?FAsq0EArAChzceCoDvfjHxywipBGLHewc7cxlSdPoJ7myxtoPLjSZSnB60aX?=
- =?us-ascii?Q?9S4tBgkoLieZpMnsScs4YLce5SR12w+PIVJIPPIlzBonE/QrfaKYa4OXixIe?=
- =?us-ascii?Q?M/yMiBcOeLrlhc1Czp55Z6u2vKmIevuWtJUZYhQYJ6MtvVoNkXaFylGsYq1G?=
- =?us-ascii?Q?khJNJnQDJOqJF8rDzEmKVo/JvWwYR2EzKYdi9PWZutZEeaEOihD2JpQbbdqV?=
- =?us-ascii?Q?Wmvgn/hHXZtbXsUiYKk+OxufnwMakIbYcy+O7yNFThcShZ4sTVhJwVZF3I3u?=
- =?us-ascii?Q?gjQy8oz5scHpHCIOADpIuwoxA4xbwocXwJUWral+CJdvvJm4AHY5t3cRtbpx?=
- =?us-ascii?Q?p2hcMTUDrtsCkBEWT11zu4AlPzZ5AovXjI44YY2NZq+qeg3qeFe2m6uZbNg+?=
- =?us-ascii?Q?b/ImBbL/BpKcqutPupvcVpPHmPaLwcoLpjTP2ZXHcC5U3dhWRTzJLzscStXk?=
- =?us-ascii?Q?YSoXuX333rdvJes8abOz+5hHav64vyURsMiXfJmiu/eNdERCNDIMksUWSvTr?=
- =?us-ascii?Q?5CdQoyFnOXyXOe+RQOel4LNQv0BDyKR8fnHQv97/vzBLMEXgYRwfd5L6tAyD?=
- =?us-ascii?Q?TT91Bq450aYbDBi17B/yEB0fMkG6hSMBL3LfUXqdYuAIX8Bd4xYLf/ohryzy?=
- =?us-ascii?Q?LfnNhzfk+6f/EVF9Otad/+f6S9yppQXO4Xr+enJbbVtjwURr+pxeGaaOR65Y?=
- =?us-ascii?Q?SCRe1dMY4M6MPjRD8AQ0+cgTHLkXAVgpBFHcWYKKkI4Yrhcz/814YjTYa3X6?=
- =?us-ascii?Q?8SLeoVZ+6ofNz2lWl7zp1rzKg2ernC4T3LlPkeG7zsZu6Z6ZUYVvog9Nc6Hh?=
- =?us-ascii?Q?8Of8PyGT2o68yU3qKKl6T+Y2Ym/APo7nEc9JghGmhpO4tIdeeuqPEwBs++HZ?=
- =?us-ascii?Q?Np8P/BnyvXf+mqWo+M5uPA7nTZZqnOdNmvE+YebdQk/bpnspHo1NkPgrynk1?=
- =?us-ascii?Q?5Zjv2GOC1m5/xtJRED2DUQOVj+L5gJHQZeYeBYmcXuWEpyQA7k/+S0GChG9p?=
- =?us-ascii?Q?oIY+Y1ZdieFa+7wVSi3E6+I2iAbELzqGuxqA4MggbzCB6PbqyTXKtWV+gvUC?=
- =?us-ascii?Q?/aQCqlSaOulolYk/NG2tVZSIygA1DzF22o6Wn0d9VTtzgs9JEcFZyZ7XEwwC?=
- =?us-ascii?Q?a0byjtOkDFzQjHs7TB/UGjlmvIxl4Cl22ihKHyR5Fm8idQtf3WEqTb8VgA6g?=
- =?us-ascii?Q?QgDfJ2edrT0CZQQMkr0gGYP9VvGIZe0zO6Ip13EFrGJ75ZK4jVys8ifmwX3+?=
- =?us-ascii?Q?85s+URnVyrzW6iM6YDwJxtKo4uD+7TdpU6TK72XfvIxCemDZ3JO5F3lEfAuN?=
- =?us-ascii?Q?NCnJh/ebBVQn3ckM5clZANol+iyv3jy2m2n9O91RzJW27m3moNk9siaO/GnZ?=
- =?us-ascii?Q?LPh96rUBp/2BAivg2QmgD6azMcnQsTLNcuDDeyat1trU3GBwK9V8dAKI2fIO?=
- =?us-ascii?Q?r14h9Vn/3g=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d83a6a04-72ba-405d-392d-08df457563f2
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2026 13:11:00.1664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0FvCSu6fESaXo8kVI9OkRgxHMA7kzRBXByswymwi0e6VZsCLv5Inyp0OFskbYtS6z2w7aW7JoNLkgaxbXJq5kg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6158
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABmq/WoC/4WNQQ6CMBBFr0Jm7RBaiFhX3sOwKGWUSYBiB4mE9
+ O5WLuDmJ+8n//0dhAKTwDXbIdDKwn5KoE8ZuN5OT0LuEoMu9FkppXGYrUhKRtlkoRFlIJqxLlz
+ VaV0a2xKk8RzowZ9DfG8S9yyLD9vxs6pf+1e5KlRYlRfXGlNTQebmRfLX2w7Oj2OeApoY4xdmS
+ 8JgwwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795009070; l=2451;
+ i=gopi.kanala@oss.qualcomm.com; s=default; h=from:subject:message-id;
+ bh=2lmXizyvul/e/Sma3pDMRM3BD6BbkGljnmal79jyzLM=;
+ b=sBUfTNcOB7p5tkML481ltXLjh2wlew0tpP0oosaXXdXBszz01eysgOcy5TrSvqhXUiiTDUlJN
+ BI2eHfV5XssBr66/mQg+7GotzPIXDql6byfjaPI6RXTQffVzZ9XIAyH
+X-Developer-Key: i=gopi.kanala@oss.qualcomm.com; a=ed25519;
+ pk=4bCmbkbT6dfZt13k29qAL6yx8zUQ6p+yOdkRBH8lzXQ=
+X-Proofpoint-ORIG-GUID: udi0-RgP0pCafwEIvlfkhkZ82I9BgMC2
+X-Authority-Analysis: v=2.4 cv=N9u8hG9B c=1 sm=1 tr=0 ts=6afdaa34 cx=c_pps
+ a=KB4UBwrhAZV1kjiGHFQexw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=D0rfVSSvHAGRCStx8_UA:9 a=QEXdDO2ut3YA:10
+ a=o1xkdb1NAhiiM49bd1HK:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA1NCBTYWx0ZWRfX+0Fgrl2CraW2
+ GZ9B5XQbgHb6IC/LWplJdZykKeZTgZkIe9Y2R0j0ERwHWLDR6t03a5JoJ4wITXcchHqS/G0tg/q
+ J0OLqwomZYK1MZLsaqtdGxz/hkiH9i+1mhWOCKkb0ckrNTc0No4rV2h15Gl9bd3IuINuq8FwoaY
+ qdaDVrmG1HyWCUCsqZnHZlZnW1i4S3UchsrMbDL93+Je25RncCS73sI+nh7vOghyhIJH2WcYLiq
+ Yp/PVr0dVUsZ4Njm8Y+B3h8ZQOLkooy7SEENjQrFjhEJiI/1pIWXbOiLyR+2iF/TWluTPAIm+sG
+ 7jVLc6X5INCoKwp+UaNPUV2TwJ4rCX1a+AGIoVuK16kSleIsbijKZ1j4yQ9LHk9HMBRfa7GrZZX
+ Aiad/nSuL/uAeKi8MF1Vgy/+5a6aNHDd/C2PEMpiWAFzmUSYggAzhd3sLKlh6b4GgtTb59rEia+
+ lqYkpDhqcgoPYUVXa4A==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA1NCBTYWx0ZWRfX7lBTomNinXAb
+ rUcxxAfjbKMS0jTC6FO4E/1Q6/s5dViBLh06S4oeXJP9AIQZS0l/+9eCrOlUmqk7kn5DDRF9q8m
+ iq5LiGGhH76LP1ihWg8n7d+BCha6cuE=
+X-Proofpoint-GUID: udi0-RgP0pCafwEIvlfkhkZ82I9BgMC2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-18_04,2026-11-16_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611180054
 
-On Fri, Oct 16, 2026 at 06:54:42PM +0800, Kent Gibson wrote:
-> A drive-by review by Sashiko reports that, where the line has not been
-> configured as an output, gpiod_set_array_value_complex() can return
-> without freeing potentially alloced bitmaps, thus leaking memory.
+The LPASS LPI pin controllers only have runtime PM callbacks, so their
+clock votes stay held across system suspend when a consumer, such as a
+SoundWire controller, is active when suspend starts. On Glymur CRD this
+keeps CX and DDR from collapsing in s2idle.
 
-Sorry for the delay with the test I promised. With a 600-line gpio-sim
-chip and 50 GPIO_V2_LINE_SET_VALUES_IOCTL calls on input lines, all
-failing with -EPERM, kmemleak reported 21 leaked objects before this
-patch and none with it.
+Patch 1 moves the dev_pm_ops, which are the same in every SoC-specific
+driver, into the common driver. Patch 2 adds pm_runtime_force_suspend()
+and pm_runtime_force_resume() as the system sleep callbacks there, so
+the fix covers all the SoC-specific drivers.
 
-Adrian
+Tested on Glymur CRD (pinctrl-sm8650-lpass-lpi) with next-20261113.
+When s2idle is entered right after playback, the LPI clock votes are
+now released during suspend and restored on resume. Playback works
+after resume. The other SoC-specific drivers are compile-tested only.
+
+---
+Changes in v2:
+- Move the dev_pm_ops into the common driver and apply the fix to all
+  LPASS LPI drivers, not only sm8650 (Konrad, Bartosz)
+- Link to v1: https://lore.kernel.org/r/20261112-lpass-lpi-system-sleep-v1-1-438cb997e0e9@oss.qualcomm.com
+
+---
+Gopi Chandra Sekhar Reddy Kanala (2):
+      pinctrl: qcom: lpass-lpi: Move dev_pm_ops to the common driver
+      pinctrl: qcom: lpass-lpi: Force runtime suspend on system sleep
+
+ drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c     | 6 ------
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c          | 5 +++++
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.h          | 3 +++
+ drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c    | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sdm670-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm6350-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c   | 6 ------
+ drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c   | 6 ------
+ 15 files changed, 8 insertions(+), 78 deletions(-)
+---
+base-commit: 84abb955b1015477aa11a96e2f3ac1b938b77f48
+change-id: 20261112-lpass-lpi-system-sleep-70c4d2239abe
+
+Best regards,
+-- 
+Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
+
