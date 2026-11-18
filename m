@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794987757;
-	b=KfFN+3ii3aITcQZ31o9Q4ZEvsJTb47nrjLpDpOsbF8cRnRFKcGTrTCP5AyxgrDrJcJRk
-	 jo3QOrXBJWKA2DVzelSOlosAt0r7c3n6JhF+o+/1u2EOS7NZ+SK7U9qT4ekN3jxEb/Bks
-	 FAA9iE8FaNyNDuL6JEDeuDSF8ig5+g2HdqMGlKueUdqMRscwxyn6Ah5SeNe3w/dfNNVQb
-	 4roZS0uDe6K+Lv/ceirS9xfed/knjRbyJxogZVODYgInBMf4hi3k/WU7/0DjpwMAUgNqR
-	 ISmve5eH1TyIxWrgYFXgXRvyj7nqlDhAXIgSHKUIWucipxhkW7WCNIjhHpJXX4gTr3g==
+	t=1794987759;
+	b=cmIt+UpnZAhXUeX4pXvVq2v7M97ixORRF1csYjX/2Y6pGobWaucYP5OCnjFKKHU5l971
+	 HA80bhZBM+3VgGqPkjK2thE/RcFI/JIdaeTBlYB3ZlFBfMHbvrItJLMFPpyd1y6xOepXJ
+	 ld954MX0apP4vpgf84qcNCGdVD0a8Q9l3QXKXqczcl+wZc3lValFXsbpPPNFq9g0tw04l
+	 dPYcn0exPSo1peVVotD3MCj1pSCe0YzU9DsIm4f1RdTJjyBUAwGO566oNNbxIL4+7wSHe
+	 ZE7jUhb/fvMjan17yoEAgzyGiuuXbLf4iz5uFKxreoWsbu0dkqefikmaitMgULmCL3A==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794987757;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794987759;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=LAR7UG07ENN+2lb2kJivg6c45tgcctR261e0OwsJsJo=;
-	b=b+XU44HrhCYFMinku1qpiMuZkuqPnrxRalAV2eNINsYLu04MbdLKhifuf/FSLMTDja6c
-	 o1XaAqB3c9bUkgwBGzjOIXBOvf8X7VZthc155G+yzV/2cINGZcmo4HgedUUUQbAqqHSWJ
-	 IM5E5TERZ3KPVgboDz8EuPTJ8JTkiEfbpTmHafeeNoYf33cYs5/0oMjMXKZ5qO7Qm1Mn3
-	 ZK9SJl2OTNE1fqW8vDt6oavmC3O3DAr0n5HoHgLAAGpaQeCvuImMowmRc6GY7U0O90ZuF
-	 IIJVeu/SQbWn5y8k1txXe1Gh75QUdpSNOfns8xbRFLbezH3O0h8c76LFbZXfgM7dvBg==
+	bh=fzeHN8d8bldbeF38ydgew++Q3qGE0jDgmAbkpjww+F8=;
+	b=piwL1NeogqnKm6XvHFagcxfctIvn6sSZI1Ujr+jAs5jh7YHNrXqTYCwp5z8Q5OnqeXh0
+	 f55/+U5UibAtzQon+xmbLmrVtOJOl+zM1vjxlHnV7qdmHHngqD5+SWcpQBKQvjvVXiEqD
+	 YH+x/XyoDNcCk+s6XUbA42cGe3JKicVKm3jJvu0eO3hdv1CKiIKnTrFoOM8rlcc7oA1x1
+	 XR5m/u8Ma97axu46yoQu4qR2ea4v1XNQWGG5jz/fbSxbnfAvzmvLm5F/etQjSnkY6QD2W
+	 BgwqQv89sFZG2aztbI3hOgVKd4qkeIzA6lwhVoux+BRMy2LXvD3Rr4cSYD+3BzUi1cw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kaZlrkjN;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fvuVqmMY;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D1F606A894;
-	Wed, 18 Nov 2026 07:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F42460A2622;
+	Wed, 18 Nov 2026 07:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kaZlrkjN
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fvuVqmMY
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794987757;
-	b=DkF3KyYnW/SPn3GIEsxBqZp8tp4ehtKR4EyiFNy1LAIivwdv0I2cbqhmgsvWSb9Vbcbi
-	 Se2RWXY2Vm2zJdWp9FzHC7yMgUw2I1q8rtP6JdtlJ6S/ePYUVzApyUEI2SPbUkyXE+ctT
-	 PVc7Tr47PKfLcrIgNmrOXL7qxzQvWBShUi0zTk0+WDyWQXS5Vc+z8ORJKweZXodddN3xD
-	 SgLGgi+LR8PUsenst29oXZDagE8Sup+ci5o6Ql6yi4Z9VTFE/J9JKEsmyfKLv3wtOQRzM
-	 o5y5mihhp6Qsyj+7o7QvNF2CLqUL1fX6/2fPab0+5Jrr6DlB7ocGAhFvFWnfEeWwr3w==
+	t=1794987758;
+	b=MGcZWxQVfUxczKwvd2ITzsmVFuwCA+kuoUyD3BWf+yDLVQ/Cn+pyXylbPmJzockAP6KV
+	 P4GFLqiPo7h/eAltxU+oHIuhDnlyZW7IfSs82P/jVIUoagkDCRNjWw4RglYITR6C25Xmh
+	 iGXaslYqdUsNtMLndfIBYS717h8S6/vydJNXpJb1E6eGmLfYE7R83RH+RqF45UKQSOuyu
+	 +z+PPN+6a2p3yGPC/SKX24N9YEyux4i4p+YTSIZEqyLfGqcuYRtE42gMDtUViLq5WEYGh
+	 ay5rrsWYVJ4S7tWSN5neueFqaq+J8agxTtG+B5FDS6XD69/FeeV29dWnUlh7bbBb4IA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794987757;
+	c=relaxed/relaxed; t=1794987758;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=LAR7UG07ENN+2lb2kJivg6c45tgcctR261e0OwsJsJo=;
-	b=WAOF0LRug0hF82Jc6d/zT3zgI1iE9dwL/v5yva3eWw+RcDlaWhNhX9Rvpivcrvw4BK+u
-	 5fG6hNvFGhImt21WADtiMlWh4klRNLL7TBu8xczMdUNLFEHVcgceOZ4i4vFBhzna1a8eB
-	 KjGEqXip85tk0ZXXF6W+Y/NxjrxyNzBF3G4M6zktLP6hcOLAYARUyBvOuGWmoKoGuWhzR
-	 xkEb3+lWB3TCjFxuLxAcMzcatK6Az6zrQlx5YzLD2LlmjEwwHjRnpqcqCIwc8G4ZwvtF9
-	 3ohNzZe7d4iDS4tYYsq6nAQoQrPrPzSSFMOZsHVnod5vA9cQmcVYnc/E5TKvD7GaqtA==
+	bh=fzeHN8d8bldbeF38ydgew++Q3qGE0jDgmAbkpjww+F8=;
+	b=nHESpf/Chbsic9ftoMxVD2Vit1jXeToKu89On0uSqVkqpC+0HyQjPGTYDXSJ1My6Hr7K
+	 qOMNJTwiH2nhCF98P99lL8Dv5TGnV0NxSkGtg9CfQmuLLRIIeTDwdC0qwZLe60uko9ACz
+	 tv9Q/VKsNEHwC+YIewbBy+/LTItayp/DJvN0rzuUCqGnV5r0G/ZnPkhxzxPwFQOSVMD6b
+	 RvWvHzhkXtNWBTq1COdERhW9tNlsG4M4kGK421GLRpHHTW2J5pXF9ykqYLnCD+abeh19J
+	 AlU1wBfCgc19kuX+RMkOWTnKxAX7WJ73noVQGGq0xEA5Uue7QVWkbdCGQdEcbmHENPg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 4F6F31F000C8;
-	Wed, 18 Nov 2026 07:42:35 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 504271F00926;
+	Wed, 18 Nov 2026 07:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794987757;
-	bh=LAR7UG07ENN+2lb2kJivg6c45tgcctR261e0OwsJsJo=;
+	s=k20260515; t=1794987758;
+	bh=fzeHN8d8bldbeF38ydgew++Q3qGE0jDgmAbkpjww+F8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=kaZlrkjNCHc2c+UZrFAMc1LQwgInvDksWPbe3osOHg4ch4amcdZrA0c71Z1vaxj/G
-	 bMaqJv2uHr2hJHNSntsb3Osmldk7Z2dzldoINJMZIyFjlECiVZAfwv5JSSIAcWs2oF
-	 qjq5Xhjp6IBSXS20goOas4w0L54x7ZNSNnU/3esdx5dxfPpdXTOzWtE3VqxWbB4Rqu
-	 qDVLVL453vhDoBl6Iup0E/SOk0bK71gG2aPAmUVyEcLzYhnJyNboalE24UZ8oxR1+a
-	 1lsFWSsxm33IsYl9M5O1DT59wlob3fS0Sg6rZch8dSDar9T76qrmur6OQC1FuaxZ4g
-	 LPY2oSt//AoFw==
+	b=fvuVqmMYpDf1D54gcr9+3AV/y6w5DRph7FxLVmqoyiRBHQMrXLh5/bBRCBtWAiP/P
+	 kKpTW9vaqo5YKvNhb7fDvdVeo+l1Sq+9ZeWJ5C/bTesbhej32QipZmKF7f1mkoN0Pa
+	 t4E0LyR0j0zBgs0qOxpzhrcj7Ce7/0cAWrqG3fbDH/pwn8lRfB2XEiBchSeTxDGB11
+	 Zd2Hnbl8S1mPxQu2gsI6ZIaWL1wReCyKsRogbmKEgSDcbnXWi5KClvYMYRxgppYVM2
+	 SUolgtat4aSQcDKp7+VmUSOQLMlC3oVCJppyhDYIDg4uMASYL01GMkRGk/NLZb8/1l
+	 JyjCDk24jHNMA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id CD2F44AC62;
-	Wed, 18 Nov 2026 07:42:34 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 794BF4AC7E;
+	Wed, 18 Nov 2026 07:42:35 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Wed, 18 Nov 2026 15:42:21 +0800
-Subject: [PATCH v15 04/14] gpio: pl061: drop redundant pending check in the
- IRQ handler
+Date: Wed, 18 Nov 2026 15:42:28 +0800
+Subject: [PATCH v15 11/14] gpio: pl061: add Ambarella register-layout
+ variant
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261118-cv75-gpio-v15-4-e3c563673fe1@ambarella.com>
+Message-Id: <20261118-cv75-gpio-v15-11-e3c563673fe1@ambarella.com>
 References: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
 In-Reply-To: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
 To: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
@@ -97,11 +97,11 @@ Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>,
  devicetree@vger.kernel.org, Long Zhao <longzhao@ambarella.com>, 
  Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794987752; l=1082;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794987752; l=4176;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=3XWHZond2pOFeGIXcPtw+mHYxFL9WC432M4BN6DutlY=;
- b=ZhZt7h8oLm97sjmXZmQesDUQx4pHDi2d/bIaZ+IeF9PMMJcf7NFuUi3Kctn8zGTkEEMTuFv4F
- f/+KKZH93P1C/8PQBAd+cIvy4rQDLJwSsXRePbkJKunRlCecofQo9oE
+ bh=+FQ7ek8nO4X0Qa1cFQcJ8+CLuyvL3JmOgFFPFnQtJrs=;
+ b=2msvk5QAtOUI7yv0miDR54KHSYDXZ6GVB0FaRALj17Kjce0lNKqATe8J4fQZGRZl5T4I6d6EP
+ Szbet85BBuYBZdZ6NCoDaMSGbq6/uWsesCBK80xe9c1gUTNJpbRnh25
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -112,35 +112,142 @@ Content-Transfer-Encoding: 7bit
 
 From: Long Zhao <longzhao@ambarella.com>
 
-for_each_set_bit() does nothing when the mask is zero, so the
-if (pending) wrapper around it is redundant.
+Add a 32-bit, 32-line layout with DAT/DIR/IS/IBE/IEV/IE/MIS/IC plus
+MASK and ENABLE. Probe unmasks the bank and enables the controller.
+IRQ type changes also clear the pending bit. This derivative does not
+need write-after-direction or system suspend save/restore.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cache DAT (REGCACHE_FLAT_S, not volatile) so gpio_set() updates one
+bit from the output shadow instead of read-modify-writing the pin
+level across the bank.
+
+Match the part with designer AMBA_VENDOR_AMBARELLA (JEP106 identity
+0x68, bit 7 set) and part number 0x061.
+
 Reviewed-by: Linus Walleij <linusw@kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- drivers/gpio/gpio-pl061.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-pl061.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/amba/bus.h  |  1 +
+ 2 files changed, 59 insertions(+)
 
 diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 919cf86fd590..721f14cf404e 100644
+index db3d02976383..c0a3a8b5c2c1 100644
 --- a/drivers/gpio/gpio-pl061.c
 +++ b/drivers/gpio/gpio-pl061.c
-@@ -219,11 +219,8 @@ static void pl061_irq_handler(struct irq_desc *desc)
- 	chained_irq_enter(irqchip, desc);
+@@ -40,6 +40,18 @@
+ #define PL061_GPIO_NR	8
+ #define PL061_DATA_OFFSET	2
  
- 	pending = readb(pl061->base + GPIOMIS);
--	if (pending) {
--		for_each_set_bit(offset, &pending, PL061_GPIO_NR)
--			generic_handle_domain_irq(gc->irq.domain,
--						  offset);
--	}
-+	for_each_set_bit(offset, &pending, PL061_GPIO_NR)
-+		generic_handle_domain_irq(gc->irq.domain, offset);
- 
- 	chained_irq_exit(irqchip, desc);
++#define AMBARELLA_GPIO_NR	32
++#define AMBARELLA_DAT		0x00
++#define AMBARELLA_DIR		0x04
++#define AMBARELLA_IS		0x08
++#define AMBARELLA_IBE		0x0c
++#define AMBARELLA_IEV		0x10
++#define AMBARELLA_IE		0x14
++#define AMBARELLA_MIS		0x20
++#define AMBARELLA_IC		0x24
++#define AMBARELLA_MASK		0x28
++#define AMBARELLA_ENABLE	0x2c
++
+ struct pl061_regs {
+ 	unsigned int dat;
+ 	unsigned int dir;
+@@ -95,6 +107,17 @@ static bool pl061_arm_volatile_reg(struct device *dev, unsigned int reg)
+ 	}
  }
+ 
++static bool pl061_ambarella_volatile_reg(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case AMBARELLA_MIS:
++	case AMBARELLA_IC:
++		return true;
++	default:
++		return false;
++	}
++}
++
+ static const struct regmap_config pl061_arm_regmap_config = {
+ 	.reg_bits = 16,
+ 	.val_bits = 8,
+@@ -105,6 +128,16 @@ static const struct regmap_config pl061_arm_regmap_config = {
+ 	.use_raw_spinlock = true,
+ };
+ 
++static const struct regmap_config pl061_ambarella_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = AMBARELLA_ENABLE,
++	.volatile_reg = pl061_ambarella_volatile_reg,
++	.cache_type = REGCACHE_FLAT_S,
++	.use_raw_spinlock = true,
++};
++
+ static unsigned int pl061_line_mask(struct pl061 *pl061, irq_hw_number_t hwirq)
+ {
+ 	return BIT(hwirq % pl061->data->ngpio);
+@@ -382,6 +415,19 @@ static const struct pl061_regs pl061_arm_regs = {
+ 	.ic	= GPIOIC,
+ };
+ 
++static const struct pl061_regs pl061_ambarella_regs = {
++	.dat	= AMBARELLA_DAT,
++	.dir	= AMBARELLA_DIR,
++	.is	= AMBARELLA_IS,
++	.ibe	= AMBARELLA_IBE,
++	.iev	= AMBARELLA_IEV,
++	.ie	= AMBARELLA_IE,
++	.mis	= AMBARELLA_MIS,
++	.ic	= AMBARELLA_IC,
++	.mask	= AMBARELLA_MASK,
++	.enable	= AMBARELLA_ENABLE,
++};
++
+ static const struct pl061_drvdata pl061_arm = {
+ 	.regmap_config		= &pl061_arm_regmap_config,
+ 	.regs			= &pl061_arm_regs,
+@@ -391,6 +437,13 @@ static const struct pl061_drvdata pl061_arm = {
+ 	.reg_mask_xlate		= pl061_arm_reg_mask_xlate,
+ };
+ 
++static const struct pl061_drvdata pl061_ambarella = {
++	.regmap_config		= &pl061_ambarella_regmap_config,
++	.regs			= &pl061_ambarella_regs,
++	.ngpio			= AMBARELLA_GPIO_NR,
++	.clear_irq_on_type	= true,
++};
++
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct gpio_regmap_config config = {};
+@@ -567,6 +620,11 @@ static const struct amba_id pl061_ids[] = {
+ 		.mask	= 0x000fffff,
+ 		.data	= (void *)&pl061_arm,
+ 	},
++	{
++		.id	= (AMBA_VENDOR_AMBARELLA << 12) | 0x061,
++		.mask	= 0x000fffff,
++		.data	= (void *)&pl061_ambarella,
++	},
+ 	{ 0, 0 },
+ };
+ MODULE_DEVICE_TABLE(amba, pl061_ids);
+diff --git a/include/linux/amba/bus.h b/include/linux/amba/bus.h
+index 80a74cd2da7e..411533bfa61d 100644
+--- a/include/linux/amba/bus.h
++++ b/include/linux/amba/bus.h
+@@ -98,6 +98,7 @@ enum amba_vendor {
+ 	AMBA_VENDOR_ST = 0x80,
+ 	AMBA_VENDOR_QCOM = 0x51,
+ 	AMBA_VENDOR_LSI = 0xb6,
++	AMBA_VENDOR_AMBARELLA = 0xe8,
+ };
+ 
+ extern const struct bus_type amba_bustype;
 
 -- 
 2.34.1
