@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.81
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.82
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795022750;
-	b=eTbhOw1ZrjhOSmTohITBE6S7ESa4TQbIDJYfQJhShBfUXYe/uq4U9JYyFqO05B0EBKLO
-	 ubdQ6uadJ3v1lmjpqqRfpI7igL+xe6SjtwmHS+B379adX+rIegT2jXuIiLCyMXwGEHLaz
-	 cdDeXK7fWX2CGwvC0DmnwCTuSgxtvs3yR3EWDNk1YP8uBtyIuIvm9RgQZrHHK5d3UOvE2
-	 P9WXucUtSKkTtjXMDNO0tSpDCz7crJflaSJv9jnTM9D7KBvMhUALYTSl9XJ8crBVrffuM
-	 NXRbUh5Qcm1YqfTn60947l22JKcEKMMpq/29r4nXF1rtospnowizSpCu6WI8+kFujeA==
+	t=1795022745;
+	b=t43Gk8FaLhfOee4z8MpSnQeK9ySy369ZM14PMBoJZpWjbSAdpSPl729THtZ5rjRWZPhB
+	 d9C6RlZwJpjYxO/lJJi8ssN6G6G3Qb0rHmsTSrcoRvf8+TxHJMTQoXaWZG5SSgKiR5j31
+	 Ht5saeL4ZBrICpBPQknJ7Tl/mUb73dwZuSrnV5Kmjjt4i6ba+Uip69L/2Yr2t1sTQBvR9
+	 s45aEGCYXVnqylscH81pArTE3wWyW/yS1x7yn8Z21kJ7NSxeQjChUq6E26I6Z391WEk7d
+	 qw8g0mUDgZ47s0m5aExxakiH+1R+PA+UFlx1aCWrF4LG1+VrMPeMc/tj5vITdQMksBQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795022750;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795022745;
 	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
 	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=x6Yn9nVVvzkj4kuG4KNyqMnRlTqVsBOrIHwYwoZ4SuE=;
-	b=aV8d4EMGqGftu7fE1Xuf1xDl/MGGHT9NwcDrlJuZ+uzAT37BydE10eR7amVh1c0FhbuI
-	 jQi4RUScBXKr7yTuRZCVCJm0w8NPAhC8jzNhLFSsxChsu2B1rZEgNr2Blolf5EwbOM37F
-	 jsfAYUUsVpgV9e3o4gooXDF+jW+x1mcMoqIYUK3ndNJYSjNm8IfxOrj7ONpa0Z3u7pn10
-	 cANiTWitwD5KF2ChOasPWZlhzqv+Xjnm7y1uiP+3/ioY0OTMhY4iXvjIf7QFGMckNdlUT
-	 xKyRRV304J/p0hnxpdp9oYfk4HZSJYw1UTsm2s6A21ry4TTF2nWV6pquUY4mHiEHrMg==
+	bh=N+ZLUTfEpjO5oUNCth3iHY0m+60IhVuCjuhmSxCyjJg=;
+	b=GZSvJQ21ltr77OzsmNWbTIvKt+zfqOVSvID1kkK6e1SSBe7thaVzz4Nz2IwjBNgJ3wVS
+	 GZwhTSnQ1caRwutW9yM3Aqcc1834NvTe+muIu8TRi7EI52wX2CeFVk+0cvyQa6L4ATvut
+	 WnSgj5bhNUgGi81X9vyZBST/uQxacXe0vzAZ3huuoW7ktN/oyEjaxasmpxrAyjIaFTZPP
+	 7S5bpNc70yFm0rWdtRyQwbxfa4iEZ23AAvfvfktIG1C8VVytJxELpp/mnUTN74GCOmjdi
+	 sXtYHIvTJCluql3XiSDg8AyV26iHFYyepBdyismU2h3S4lGhATaFp8rEixgR3bn3sow==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=goldelico.com;
 	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="C0Tfdy/m";
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=D7BO09rM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.81
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.81])
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=JHhRuAT+;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=5DD7sqL7;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.82
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00C760A6F54;
-	Wed, 18 Nov 2026 17:25:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B00C760A6F54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C5C606A31C;
+	Wed, 18 Nov 2026 17:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12C5C606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=C0Tfdy/m;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=D7BO09rM
-ARC-Seal: i=1; a=rsa-sha256; t=1795022739; cv=none;
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=JHhRuAT+;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=5DD7sqL7
+ARC-Seal: i=1; a=rsa-sha256; t=1795022740; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=IAOHYYcDQKvg5gxJbZh/KWQCyEO2iomMVSyP42UCOHIWSrtPc8wEIvwFrmv1LjDgg4
-    Xa1BJeoEcVKQf+yNQWcHmLn9QkNKzEVQ7mjisPo3wyKNZ5RXYiwch2kLVnlMnTvqqjB+
-    dLWVz27rn0SJsNP28BpVlaAiAx8u7cOB0abuA6Fn5+M9XeNiuZKeNkLUXMAU2dFsNjEe
-    gAQfoOfTXiMyB+fEwXeU2IQcoeeU3GBaG/+ji2aCxXLbwajc6qNwcAUZb3tG3aBUdrix
-    4q63sGnU4oiC+4CQp1H/VY1l1eUupA6qZrg8wteLqHHB0+15CrlDyrYoeK9UM0+fkUUt
-    hhhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022739;
+    b=MbKJMsphile9weZ+pK1vUkLFTRnbQyJMdp+1CQrcDcRawmP9XBigR6T4AmvQmerJ0o
+    3AmoPO3m53YWMo9eMrXtHTHlFVB56eWzCgjTU/IXTSu3VitzUbyQwLzidRIihsXLSaK7
+    6O3qwofefRiYsUxsVsXmeeQYFsYwlN+h4wtKIU40MrF8Cmw4kLZndkMhGaHaBxjSU6kS
+    PBtKTcNCF7G/FG81xvic46xFBKcv8SFioyia8hL7zAhf5LyB06OZnI22FnArdDM77y7h
+    EubwfBWl4M0RrOVSsmeRZf9jzm1JvbyFIUMs5HX/OFvaomZIrK5kEjdkyBBpw8jRKNX2
+    gNNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022740;
     s=strato-dkim-0002; d=strato.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=x6Yn9nVVvzkj4kuG4KNyqMnRlTqVsBOrIHwYwoZ4SuE=;
-    b=klJpgx66coVO7xRkx4H5TTCPqoyQn6IusRowEkKAb8hWP2qaBvM6FH670szfoOPE5D
-    1c9jCU5UtF6u7oYHs3BxCBsgHtNG951gjsK9fccM1sfXYOt+okH0SMTfjlYSkvzqhAmM
-    PIOQwINizUKGXJirlynJiPeAE9uQ89s89hid7UmJlyEWkyP/3Rg+E8Drl6hEBgX7/oUg
-    l9dZg5Z8+d+8v9uPSI0tcORCwX3fPnXoF9kcmEeZuZ5oYvaxwPLmpgv5McRfbZWCpzRB
-    5XW/IEs4zMqm+OM544RQCEWUNluzZXb6vgnAAXtMyQR1YtXwvZqxEc/uacl+wSe9t5iz
-    KjYA==
+    bh=N+ZLUTfEpjO5oUNCth3iHY0m+60IhVuCjuhmSxCyjJg=;
+    b=KBxATpE7lUZZUBUPP7e3T5Kkfdl1+nNnZkZPysRMvKg4KU43+4BTqxZeqDBLs93wdE
+    mMNz5wl7C5p0HmEpIHWsxYYRLUpD3+JaSvYpNiYlKhxKojjsmgMEp0ViJVD56LH/PPPO
+    3GoB60AZXqYc0HXY3NyBdKarufgW0Yyp9pB4ASMRGQfAxUlzSUk0rCv76s2cy4ppRPO4
+    7z5k0z2Zp7etprfLX0Aj8FQZOHh7Fr/6Dxwclp+RngRIEREvUNa9IGkRJCQxkRabht8J
+    JUkZnRqmUj6ROYPVeuBqPYDlrqw9X4Ol2dxJnJf3XFvIzat52z8KqbTJgRK5He+EDGaV
+    5rbQ==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022739;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022740;
     s=strato-dkim-0002; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=x6Yn9nVVvzkj4kuG4KNyqMnRlTqVsBOrIHwYwoZ4SuE=;
-    b=C0Tfdy/mbEh9v1ZgTxbT+k+qTbUKUuBZWGHgQQHtPUymUzqqOQ5WsKNnRLcNmWE7ku
-    9pMVzDCQft9obcsl/GngPzLA38HyZ8khwDyT4eymJXMRl8GTwA+I2gjmh1pNS8JjhoVx
-    LddVtPLkxPJ5LVyptF1b57JBrdP78fLxENuv8LPea1oCc4jCejLbQITFPhCMIRkhevKg
-    su2hSNvXGNnt+icIeKxJMLS6pXhVLOha6tgR9ohp0QlZM/+IzK1h+XeB+9dFld2KrFZw
-    je/aFc6ekphUjsGOyXB3wLI+CVkLosZoUxJeLkHvctSnmihgTlc+oSdbbYvxOFqyRulD
-    Gxng==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795022739;
+    bh=N+ZLUTfEpjO5oUNCth3iHY0m+60IhVuCjuhmSxCyjJg=;
+    b=JHhRuAT+AAdU5kOcMr4OmJ75TpvcwdZa9RRzki+gFKzMsiCnUiUFgje0uaiStyaH3p
+    8kv9H4VSk7VyopJSgSQ8s8q5DBSvYbJD0LvtxcWaA3YarKbdtgglew4BrUwIlBarq3TM
+    hQ6NVqyTn+Zq73CCOawbAO8gs/K6V5D3sToRCoV8c00d1f4Z50XCQ7u0NTVfUgnHhKxT
+    0MjFsKGttu+w4ye1hDVy9vOShAdoD3j8D+w47bHY8n1dtdDu2eA+l2K82CIYypKgWvFj
+    e1dvzg9Cb4l4qCYzCyBPbphi/eJ0QjadUSgk8HRpMQ/Lx9J1CcCh8ao97iBxhqJsHX62
+    nkAQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795022740;
     s=strato-dkim-0003; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=x6Yn9nVVvzkj4kuG4KNyqMnRlTqVsBOrIHwYwoZ4SuE=;
-    b=D7BO09rMy6ryk90mjZBuoab9fDhn4kLNw50Xv67z4kCNuK9itXv7fwherWXgEYLtF/
-    2bQ5LHfhLwAPwID0RkBA==
+    bh=N+ZLUTfEpjO5oUNCth3iHY0m+60IhVuCjuhmSxCyjJg=;
+    b=5DD7sqL7flN3HAglVVBF37wTpZvIqG1k8Wpnl88U3rioEEvQeqiWHhJhL93C2lq1VH
+    pqVWYQxAp9VKJ2TWJ+BQ==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV2Jpcm8iNZLZ2IBizV+3wFb55dglUeZzcEX9J"
 Received: from iMac.fritz.box
     by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22AIHPddiU
+    with ESMTPSA id Qb56a22AIHPddiV
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
 	(Client did not present a certificate);
     Wed, 18 Nov 2026 18:25:39 +0100 (CET)
@@ -95,11 +95,11 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mips@vger.kernel.org,
 	letux-kernel@openphoenux.org,
-	stable@vger.kernel.org,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v4 1/7] pinctrl: ingenic: Swap ID_X1600 and ID_X1830
-Date: Wed, 18 Nov 2026 18:25:31 +0100
-Message-ID: <0fe84b1a87a384d810764c1043624e10a9214b8d.1795022736.git.hns@goldelico.com>
+	"H. Nikolaus Schaller" <hns@goldelico.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v4 2/7] pinctrl: ingenic: Fix hardware dual-edge interrupts on X1600
+Date: Wed, 18 Nov 2026 18:25:32 +0100
+Message-ID: <12e66f571e8765b1eefeab5939c2c874b71b28af.1795022736.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1795022736.git.hns@goldelico.com>
 References: <cover.1795022736.git.hns@goldelico.com>
@@ -115,112 +115,84 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="us-ascii"
 
-From: Paul Cercueil <paul@crapouillou.net>
+Use the hardware dual-edge detector on X1600 and X2000.
 
-The X1830 predates the X1600 and uses an older GPIO register layout.
+Set PAT1 when configuring both edges and program EDG on X1600.
+Keep software edge switching for older SoCs without EDG.
 
-Swap their IDs to reflect the hardware evolution. This allows
-is_soc_or_above() to distinguish newer X1600-based GPIO features
-like X2000 (and X2600) from the X1830 register layout.
-
-Add an is_soc() helper for features specific to a single SoC
-generation and adjust the existing pin configuration checks
-accordingly.
+Tested on X1600 and X2000 using GPIO buttons and register readback.
 
 Fixes: 4da56f9c6f14 ("pinctrl: ingenic: add x1600 support")
 Cc: stable@vger.kernel.org
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
 
 Notes:
     Changes V4:
-    - Add Fixes and stable Cc trailers.
+    - Fix Fixes: and stable Cc trailers.
+      (suggested by Paul Cercueil and Sashiko-Bot)
+    - Merge the common shadow-register paths and simplify EDG handling.
+      (suggested by Paul Cercueil)
+    - Retested hardware dual-edge interrupts on X1600/X2000 after the
+      shadow-register refactoring. Verified both button transitions
+      with evtest and confirmed via devmem2 that PAT1, PAT0 and EDG
+      remain unchanged across GPIO input transitions.
 
- drivers/pinctrl/pinctrl-ingenic.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 37310d9679457..88c5edeaaddcc 100644
+index 88c5edeaaddcc..7f65f3abf05f5 100644
 --- a/drivers/pinctrl/pinctrl-ingenic.c
 +++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -110,8 +110,8 @@ enum jz_version {
- 	ID_JZ4780,
- 	ID_X1000,
- 	ID_X1500,
--	ID_X1600,
- 	ID_X1830,
-+	ID_X1600,
- 	ID_X2000,
- 	ID_X2100,
- };
-@@ -166,6 +166,12 @@ static const unsigned long enabled_socs =
- 	IS_ENABLED(CONFIG_MACH_X2000) << ID_X2000 |
- 	IS_ENABLED(CONFIG_MACH_X2100) << ID_X2100;
+@@ -3601,7 +3601,8 @@ static void irq_set_type(struct ingenic_gpio_chip *jzgc,
  
-+static bool
-+is_soc(const struct ingenic_pinctrl *jzpc, enum jz_version version)
-+{
-+	return (enabled_socs & BIT(version)) && jzpc->info->version == version;
-+}
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		val1 = val2 = false;
++		val1 = false;
++		val2 = is_soc_or_above(jzgc->jzpc, ID_X1600);
+ 		val3 = true;
+ 		break;
+ 	case IRQ_TYPE_EDGE_RISING:
+@@ -3635,15 +3636,13 @@ static void irq_set_type(struct ingenic_gpio_chip *jzgc,
+ 		return;
+ 	}
+ 
+-	if (is_soc_or_above(jzgc->jzpc, ID_X2000)) {
+-		ingenic_gpio_shadow_set_bit(jzgc, reg2, offset, val1);
+-		ingenic_gpio_shadow_set_bit(jzgc, reg1, offset, val2);
+-		ingenic_gpio_shadow_set_bit_load(jzgc);
+-		ingenic_gpio_set_bit(jzgc, X2000_GPIO_EDG, offset, val3);
+-	} else if (is_soc_or_above(jzgc->jzpc, ID_X1000)) {
++	if (is_soc_or_above(jzgc->jzpc, ID_X1000)) {
+ 		ingenic_gpio_shadow_set_bit(jzgc, reg2, offset, val1);
+ 		ingenic_gpio_shadow_set_bit(jzgc, reg1, offset, val2);
+ 		ingenic_gpio_shadow_set_bit_load(jzgc);
 +
- static bool
- is_soc_or_above(const struct ingenic_pinctrl *jzpc, enum jz_version version)
- {
-@@ -4090,7 +4096,7 @@ static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
- 				!ingenic_get_pin_config(jzpc, pin, X2000_GPIO_PEPU) &&
- 				(jzpc->info->pull_downs[offt] & BIT(idx));
++		if (is_soc_or_above(jzgc->jzpc, ID_X1600))
++			ingenic_gpio_set_bit(jzgc, X2000_GPIO_EDG, offset, val3);
+ 	} else {
+ 		ingenic_gpio_set_bit(jzgc, reg2, offset, val1);
+ 		ingenic_gpio_set_bit(jzgc, reg1, offset, val2);
+@@ -3718,7 +3717,7 @@ static void ingenic_gpio_irq_ack(struct irq_data *irqd)
+ 	bool high;
  
--	} else if (is_soc_or_above(jzpc, ID_X1830)) {
-+	} else if (is_soc(jzpc, ID_X1830)) {
- 		unsigned int half = PINS_PER_GPIO_CHIP / 2;
- 		unsigned int idxh = (pin % half) * 2;
+ 	if ((irqd_get_trigger_type(irqd) == IRQ_TYPE_EDGE_BOTH) &&
+-	    !is_soc_or_above(jzgc->jzpc, ID_X2000)) {
++	    !is_soc_or_above(jzgc->jzpc, ID_X1600)) {
+ 		/*
+ 		 * Switch to an interrupt for the opposite edge to the one that
+ 		 * triggered the interrupt being ACKed.
+@@ -3758,7 +3757,7 @@ static int ingenic_gpio_irq_set_type(struct irq_data *irqd, unsigned int type)
+ 		irq_set_handler_locked(irqd, handle_bad_irq);
+ 	}
  
-@@ -4142,7 +4148,7 @@ static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
- 	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
- 		if (is_soc_or_above(jzpc, ID_X2000))
- 			reg = X2000_GPIO_SMT;
--		else if (is_soc_or_above(jzpc, ID_X1830))
-+		else if (is_soc(jzpc, ID_X1830))
- 			reg = X1830_GPIO_SMT;
- 		else
- 			return -EINVAL;
-@@ -4153,7 +4159,7 @@ static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
- 	case PIN_CONFIG_SLEW_RATE:
- 		if (is_soc_or_above(jzpc, ID_X2000))
- 			reg = X2000_GPIO_SR;
--		else if (is_soc_or_above(jzpc, ID_X1830))
-+		else if (is_soc(jzpc, ID_X1830))
- 			reg = X1830_GPIO_SR;
- 		else
- 			return -EINVAL;
-@@ -4190,7 +4196,7 @@ static void ingenic_set_bias(struct ingenic_pinctrl *jzpc,
- 			ingenic_config_pin(jzpc, pin, X2000_GPIO_PEPD, false);
- 		}
- 
--	} else if (is_soc_or_above(jzpc, ID_X1830)) {
-+	} else if (is_soc(jzpc, ID_X1830)) {
- 		unsigned int idx = pin % PINS_PER_GPIO_CHIP;
- 		unsigned int half = PINS_PER_GPIO_CHIP / 2;
- 		unsigned int idxh = (pin % half) * 2;
-@@ -4298,7 +4304,7 @@ static int ingenic_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			break;
- 
- 		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
--			if (!is_soc_or_above(jzpc, ID_X1830))
-+			if (!is_soc(jzpc, ID_X1830) && !is_soc_or_above(jzpc, ID_X2000))
- 				return -EINVAL;
- 
- 			ingenic_set_schmitt_trigger(jzpc, pin, arg);
-@@ -4314,7 +4320,7 @@ static int ingenic_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			break;
- 
- 		case PIN_CONFIG_SLEW_RATE:
--			if (!is_soc_or_above(jzpc, ID_X1830))
-+			if (!is_soc(jzpc, ID_X1830) && !is_soc_or_above(jzpc, ID_X2000))
- 				return -EINVAL;
- 
- 			ingenic_set_slew_rate(jzpc, pin, arg);
+-	if ((type == IRQ_TYPE_EDGE_BOTH) && !is_soc_or_above(jzgc->jzpc, ID_X2000)) {
++	if (type == IRQ_TYPE_EDGE_BOTH && !is_soc_or_above(jzgc->jzpc, ID_X1600)) {
+ 		/*
+ 		 * The hardware does not support interrupts on both edges. The
+ 		 * best we can do is to set up a single-edge interrupt and then
 -- 
 2.56.0
 
