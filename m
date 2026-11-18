@@ -1,112 +1,113 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795009078;
-	b=TCeUdxVbrJ070a7Zv5XLA3e5wGT5RiHgA5CQA4UjWfNPzhqHldleb0MTn6JBWX8Me+2w
-	 8ahWi/c6GcbipU/5MUhINNAeLIybWdYTpgkgN4zMysKxbGNCRlpnr6GiPe8jApHPSjtvL
-	 DQmBrEgjm9O9Rcog3rUx3hK0YLQRz4Ks39Ae95cxGU+nsF8aVZflDr9Ch6TuWZCtgraYL
-	 TxI7GbrdATncm20sc4ZCaGS2lRdnafIIEY9+fqFculKo/g5E/rslcGXt35H8foLBmmdEZ
-	 jt+E6V28arVpzKrTzfYt43qp2doIag+iPQOR4QD6bXtK1FvpIo3eZP6ZCYErvb5kR3A==
+	t=1795009082;
+	b=lTG0Yq3GrundPb+XHTnfWfIvyYHJS2Sep7IT23nIeTqURyIgzRWJVTXyANHUlCwZiASj
+	 3w42jrCTF5j6aJ5QzHtFJEBTzHmTJ+yNBwsQkW+DPs2H63Vh81D3P4eBuu1bytZDbDWqI
+	 jRN4o7AeiAlt6p8LivkHoP2wjQX5pRQ9Q7gNNX7DYS3ln05TysCKJwsV4sHMV5ZGtDosq
+	 zKRMN5b0dpdrQCSj0XrM05h6cUwD479fDjKS7HIOg6KmVsP6bN7a7nWWDOfloJ5VBqfQG
+	 fGjS6V5Okx9faSLySjqJ0dkSKGaVnG5TJPASVM6PPBdLid3X9DrxmiDULzaB5vO1rbw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795009078;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795009082;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
-	 Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-ORIG-GUID:
-	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=fFhEs41KSZ4dfzyxb5QjYDd6/8oZJNiaCStnwzmcs3Y=;
-	b=Sa1fO1hX2193LzCaDSeQUzlxxgMfYb9SdEutTI6/mkeR9HIK9VJF06q0FOi8wsAceJ0/
-	 fOXFUkAzGnCAP69WDgzpgUTHcczQ/RxB0Az83gNv2fAwToJq/26oslHFon7TKj0oPdAXT
-	 nqzc4NBdbP5GTQ0L8GW1ZGycDWKcG7/JE7djeBWKkpyezg6MgQXxGiDYPxa4kHyuaEuJB
-	 yk0tk3LNtGesf6hJk6PEHN8Jv6sBW9YevKhO+6PMpGXAbViuzspC5/asT4ldRH700pNs7
-	 rvS9kiL28ffnDeXkksdyH2ueSxeffJ9ZV1r6UhNjYVS+E3e8l9mcEHk1eJKmA+xlmaQ==
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
+	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=+pJUAQhkPRmzRygX+MTs82PgeId4074s5NzyBrzdQeg=;
+	b=DqV6PScDA5TcX4837FEV1aHz2ktnbggqhLoxqUsZPwFMkA7nvReYz0rGU0YhrlG/OISx
+	 4+pZkE6n36Oqr9yAZjoGHnggFJv+iV2DxuAfI2tXb37xo9jQmz5F9HIQjPnaHS5CGdaM0
+	 6zO7w5WLFoIzycIp6wDof3zRXrRxRWiABR3xdfibUriNsVQLzEvF786RX54wkEjDSbr2d
+	 mGYsG4mkAhpZkJ1uSRkMkRIh3neS/WSi2jnRxo0zJeMlXNsiIDtgL4zsNFwhCPAr6YDsT
+	 naZSdCq9ci7rex9krEPLVK3s48nYnYqIfG4j39qiuv1mvedOTOIY6DOX+/xRyz7sdLg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=QK703xtB;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GgT1h26R;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ove0LSi1;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=OWlEXgvw;
 	arc=none smtp.remote-ip=205.220.180.131
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A471606A320
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:37:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A471606A320
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2056B606A325
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:38:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2056B606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=QK703xtB;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GgT1h26R
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AIDQdti1928800
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:37:56 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ove0LSi1;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=OWlEXgvw
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AIDQItb376882
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:38:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=fFhEs41KSZ4dfzyxb5QjYD
-	d6/8oZJNiaCStnwzmcs3Y=; b=QK703xtBzVmLuyertRufPhXhiZHv3M+NOwMMnC
-	H3F683rz9NoD+rlOxQ2G92Ld4lioiTHFXCkLH1RCYthLSL0spIjGM4tNC90rR7D/
-	uycQNn0e8vN5C2mhOyN3DEXxkD3YeMR/2XZPfhv4NPJfDAjjzX5Miu7gCHKkZeDc
-	BRQusAb/SGu0Zy6pLsctAdokr0eSRis4b8OOfm6HwzajYuB7Sy2v1RKP+NLCx+mW
-	xjMX1frRUsEwhprXWirllqSsDMBhqZVJy8TcsKZctn5s3RJdUNO+NOnrcN8iTczQ
-	z5qla7DIsKqniO/0EdnhycLibZMNEVM80YqE0DlAz81pFvNw==
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv8b6sh-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+pJUAQhkPRmzRygX+MTs82PgeId4074s5NzyBrzdQeg=; b=ove0LSi1/fHH5Uxb
+	mmuxrKcc832X0fScAPleZYGJHzwsQbbno98vaimk4L9Bj4YBc3TI82R2m+NWeJO7
+	o14HzG6U8AEA7qfGAfxuuvxNXhSxNMV7MyAfN+Nyk5DgL/bvOc3lIene26REsaDY
+	P8JQlkdtDeP9/kXfPRYtTOfDmd2t2NbA8NEvdcYofu42Pyk7v9nztHi6I7BBis/g
+	ClZrIJye489ma40ZHp5EewJn2MWaH9TiQas3Dh+sGP9suIqwzcr33FFKmWr3jDFt
+	u8EvEZpBJc7/kMb5PLHSQgpe9yyI/9SBjDTWqldp0lKpYEpC8Ty3fjxpsKH3zoRS
+	hf8iXw==
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv9k5fd-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:37:56 +0000 (GMT)
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-99e09f506e8so254002241.2
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 05:37:56 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:38:00 +0000 (GMT)
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-9907de400a6so163885241.0
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 05:38:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795009076; x=1795613876; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=fFhEs41KSZ4dfzyxb5QjYDd6/8oZJNiaCStnwzmcs3Y=;
-        b=GgT1h26Rag9nf4HspkUbEzKX5Y9ruG8brrtWPXH1sRcKg1iCwP7tb6POeAfwBaYjG6
-         N4QPH4+cMQ7vXeP10qrWInHkDTWmj0e0QQyt1+X5UGpIZAv8I/tmuIcKX2puCwcKEDPv
-         +G7cUbYTBM55lrE67pf+Px7FSY73O34Ccx28Ae6jHUK6VjXZwGSDXOZuGJge1dZxl0YG
-         aPBQpfQEpsIZnX7XouMo46klpgXsS2F4Cl9IYak0OauaJ1k1I/maWwmtviP2kLY17l04
-         WVcFs/BtxdzPpSb8ooUo2Xv9W/IXSijjiD5WODmsCsUEdsEsCbD5aUJnX8UJizoUZPVn
-         8kuA==
+        d=oss.qualcomm.com; s=google; t=1795009080; x=1795613880; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+pJUAQhkPRmzRygX+MTs82PgeId4074s5NzyBrzdQeg=;
+        b=OWlEXgvwMxEPRNs+dcndM0YcKmFuMjL2KOk5RtbTas8WhEKp3nehjgRAsb50QOj9qe
+         85YnG2RHL2slF+Lm31xlexg+SBltAV6JtPcESlJiIu3r64TzS5fIB4Q0nGi5aXLFXfjN
+         bQP5h2VsyA9+qI7V4MwAQj5ZNrPoQ7KBG9/T1xsl8P0GMAYXN90/K33HkH30+skCVs20
+         q0LLsSzIonYPG1oW1WMOc3r4i+oe5P1zR2vrlWKwFBDB+sxcENjA5yPlriFwY54Ic1Kr
+         90r8oYZNPrSwMj7ZBxwjGEWZRH1kEkUudP57mKnqfWOWCrYRhVyK91xROHTUOVZQBQEo
+         wZlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795009076; x=1795613876;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=fFhEs41KSZ4dfzyxb5QjYDd6/8oZJNiaCStnwzmcs3Y=;
-        b=Iql0zCg44RXI1eLLhWcKp5wP+x7Fsnt+kv1kj8cJsJZmzSFblFe65G9SSazw4qZuB2
-         VLhHCP4mUL6nJRSuX9ojyAc0EQ9BtHgSh3EpFpbW0dQsMEYbRSYUwlB58V8gondzdj49
-         PL2LplDLJicioUXDmFzHckrpT/IbLurKaKonQg5z5TfyoA3PosvGC4v/JSrsGA67zLq+
-         FmSWXxPo3oAT/OlYuOzmUu1jVzP5dqxXwMd58qhHU2TL3KMfRJ0/tvVFm8G+TP69igy2
-         fv2sIYd7Rn8OwFBDpw37LE0McCracjC16G5IUaZ8b0vO/jdFMSQvL76WueKRumQ76WIO
-         jzSw==
-X-Forwarded-Encrypted: i=1; AL+hErHWACcsm+mNhweOdpEHpLcQRrsmMUduux2sXRhg3rS2/L0OghHwxhgbCf8vGawTCA59D1KEOZjjTzMg@vger.kernel.org
-X-Gm-Message-State: APuU4Z91kwnDhTxHs9vPq/OZSVJxJhGs2vT60yWrXrUjwNeVd2xvIXZE
-	nSEExZQO2Ns4CXmWF7KvE2SAWcSOUHKp4x46U6Iz4/zrjqUldE8d1oqMyeQNx3N8i9flwI31uSM
-	MHgybUuQGn3jIN00C7ur+gLG4qRRv81qBm+EiBiVuHhZZrShqvqvHhlNRL7pYR1WF
-X-Gm-Gg: AYBFou2eJYnFHd0C4RM/vgmyEyAPrDL5iFKProwVs+8gQ8qVFEfS/iGxRiu7rsOzBeJ
-	8ib6Ie2P8xG0d0n3N996gYWAm/66PAtjC5EHKfSHbZ2ZnBNRnH5s0gqM1sDcGMWGnwSId8NWY6t
-	Y51+ffm/Q0iWmZ7JDDLR/BjdrmEfULz/GIEjTDGrn3FvMBMQ9lf5VqYt0bQyXfOyT8NK9V3OaEs
-	u7K7lVYnoOvZwxQSp41ePQ2aLwbZ18T1ZB5YO5bpltnEHbtp7TaXxkWUe+CZzc3jr4SJUTy+f2Q
-	dZccVmMgf4b+AwYRBQ46Hms4q1WEENRFnSEZTEmmrBuIaaY6bt/cpaHk6gTHmTIsciyPi/hlbjp
-	dty6CCQi/PPK4nO1x9xNWdIXv76i5nGcGHyYDBdH/95MN0wyCjJBDShYddTIh60ty6YiKRT5xIh
-	frYP4=
-X-Received: by 2002:a05:6102:4189:b0:7c4:a0e4:1a79 with SMTP id ada2fe7eead31-7d6ba423a02mr642696137.19.1795009075379;
-        Wed, 18 Nov 2026 05:37:55 -0800 (PST)
-X-Received: by 2002:a05:6102:4189:b0:7c4:a0e4:1a79 with SMTP id ada2fe7eead31-7d6ba423a02mr642676137.19.1795009074724;
-        Wed, 18 Nov 2026 05:37:54 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795009080; x=1795613880;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+pJUAQhkPRmzRygX+MTs82PgeId4074s5NzyBrzdQeg=;
+        b=jt4vCPYy4rVvaAbBI3Bv7jObzTypZJx7b+wDpShp6y3QV71/Gcc7IE3UeCQi+4wyCy
+         IfisgUGM3PMzwPxw2B8vXjFSvYD2Zd6y934mW3AXZSaoungJH5yQyoKhQtKY3sKyL8HQ
+         ejmTR60xgTogHPmW/K5NpORi+LCruYWAnGbHPz1EppgZdwIQKavx3pLtkQm6HXyaADUf
+         vkEzAjUCy+3D6hnqz6wnWLXm3XCenxDkhSBuX0tGmh1lLEWaP0PpXfCAg7NTOQzK2zj0
+         Yj/M4AJIi5gu+5HCYYnV4GydPCsF5bifU3v4fyxynpxPellwqnUFKwscuskfFWzi2GT/
+         cNpw==
+X-Forwarded-Encrypted: i=1; AL+hErH5VTeJX1FNGju9DwgojVRo3taKYX+tADMylhfP+b+pZ1095VHpV0hcIhMz8Z1fssr4I5pS8DXUWv3r@vger.kernel.org
+X-Gm-Message-State: APuU4Z8ZUZPmEOE3ljvMwpJCjeCAIlXADlH69fq0U2CYz1Bx55z6WkcV
+	1cmlEh2kuEjH3PSvlid6y/FBB6yVAzplKu88yOSlK/BnlKh1gxGnKs6Nup32cHCkWg1C7TOqxMe
+	lmkVuWA8M4i4oj1dmZ8O871HyItCly+VIZnYiayPG2oWehjXDWb1/jd13hrsAILnq
+X-Gm-Gg: AYBFou2Dj/Q4dMs+4rhlkpxlkdFYYjF1XBYJdENqBiSsWuSd8wJF95GxVlqgZpmHEpF
+	qlN8xTA35vWaJ9QY+eBTEd0SIxkOXsxwll9x29wr8JTkrjo7wfOUsZa5zeiPEkjWPzMTvJc5LDZ
+	AjF/HsJd6Wee27yEpl+auSg3Kn31OUGv/y2ViG9BL5ymO88IDrunLFGLrRrjt+rsZW8jFPmYav4
+	gERKpkZfPExUtHJkbqB218rHvDPRh4eKxAgHrbQjgdZpPxF4HjeV89ZNSnhQ1WfIj8/4iH5j2BC
+	WzvAbyINkwcDB7RS29VqM4ppXbwWrrxidmASCIR3+7/vf99ziCDvr/Gk+P8Tn3bcKnRSN5qIIc6
+	taUbO/1B/xJCDEfTFCAnz7ADShSqNPuW2SnK+YPAFa8uANS5IKLG7RebPt7S8z0+Ly2+C3P00Yv
+	JysHc=
+X-Received: by 2002:a05:6102:50a3:b0:7c1:75c5:c4c with SMTP id ada2fe7eead31-7d6ba44f266mr709702137.25.1795009079935;
+        Wed, 18 Nov 2026 05:37:59 -0800 (PST)
+X-Received: by 2002:a05:6102:50a3:b0:7c1:75c5:c4c with SMTP id ada2fe7eead31-7d6ba44f266mr709678137.25.1795009079283;
+        Wed, 18 Nov 2026 05:37:59 -0800 (PST)
 Received: from hyd-e160-a52-3.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99e4a1b61eesm1809090241.3.2026.11.18.05.37.50
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99e4a1b61eesm1809090241.3.2026.11.18.05.37.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 05:37:54 -0800 (PST)
+        Wed, 18 Nov 2026 05:37:58 -0800 (PST)
 From: Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
-Subject: [PATCH v2 0/2] pinctrl: qcom: lpass-lpi: Force runtime suspend on
- system sleep
-Date: Wed, 18 Nov 2026 19:07:29 +0530
-Message-Id: <20261118-lpass-lpi-system-sleep-v2-0-a6ec7f2ba424@oss.qualcomm.com>
+Date: Wed, 18 Nov 2026 19:07:30 +0530
+Subject: [PATCH v2 1/2] pinctrl: qcom: lpass-lpi: Move dev_pm_ops to the
+ common driver
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -118,10 +119,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABmq/WoC/4WNQQ6CMBBFr0Jm7RBaiFhX3sOwKGWUSYBiB4mE9
- O5WLuDmJ+8n//0dhAKTwDXbIdDKwn5KoE8ZuN5OT0LuEoMu9FkppXGYrUhKRtlkoRFlIJqxLlz
- VaV0a2xKk8RzowZ9DfG8S9yyLD9vxs6pf+1e5KlRYlRfXGlNTQebmRfLX2w7Oj2OeApoY4xdmS
- 8JgwwAAAA==
+Message-Id: <20261118-lpass-lpi-system-sleep-v2-1-a6ec7f2ba424@oss.qualcomm.com>
+References: <20261118-lpass-lpi-system-sleep-v2-0-a6ec7f2ba424@oss.qualcomm.com>
+In-Reply-To: <20261118-lpass-lpi-system-sleep-v2-0-a6ec7f2ba424@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Bartosz Golaszewski <brgl@kernel.org>,
         Linus Walleij <linusw@kernel.org>
@@ -131,69 +131,57 @@ Cc: Srinivas Kandagatla <srini@kernel.org>,
         linux-kernel@vger.kernel.org,
         Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795009070; l=2451;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795009070; l=13998;
  i=gopi.kanala@oss.qualcomm.com; s=default; h=from:subject:message-id;
- bh=2lmXizyvul/e/Sma3pDMRM3BD6BbkGljnmal79jyzLM=;
- b=sBUfTNcOB7p5tkML481ltXLjh2wlew0tpP0oosaXXdXBszz01eysgOcy5TrSvqhXUiiTDUlJN
- BI2eHfV5XssBr66/mQg+7GotzPIXDql6byfjaPI6RXTQffVzZ9XIAyH
+ bh=jE15Q0P0dBodKbNo7JkIOCzUcqfeanI/3hLSz1WHMPk=;
+ b=EoQ7V9LlTqrIBD439HNyXfUOcVRWs5AbQYAuMiJGL0jDnXQ1xUT1fhEefI/4qlPwrXgoYPI2t
+ xl9HmBJ7TmDDaj/6M+1lZ5NZEJX1LQWahWL7oPimZp5xLVRUPnZFRPU
 X-Developer-Key: i=gopi.kanala@oss.qualcomm.com; a=ed25519;
  pk=4bCmbkbT6dfZt13k29qAL6yx8zUQ6p+yOdkRBH8lzXQ=
-X-Proofpoint-ORIG-GUID: udi0-RgP0pCafwEIvlfkhkZ82I9BgMC2
-X-Authority-Analysis: v=2.4 cv=N9u8hG9B c=1 sm=1 tr=0 ts=6afdaa34 cx=c_pps
- a=KB4UBwrhAZV1kjiGHFQexw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-GUID: XOEiBzqxyhmDy2zILyZK4qQNaqqxgrXH
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA1NCBTYWx0ZWRfX1aAPeoytD04O
+ kc7Y60uiZC8UNYIX6r10J9tXiwIcUJU6ZX9h5gRteKp5LB6gUDwizCcLf0Oc0Q1iFaZtL/itieT
+ Sg1ZFXZUaE8k9d2WIzSFhrFl0RfbY/U=
+X-Proofpoint-ORIG-GUID: XOEiBzqxyhmDy2zILyZK4qQNaqqxgrXH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA1NCBTYWx0ZWRfX967hfACW8onG
+ JP4okmBXUyNC318+CFKpOqhvAeb6W0b7WPZLOP4mg16AD977FNQagTB8aNtrR75ofIhgE/weZIi
+ vYoFAxXcyU1Okb3qUdg44xua4u0RiYuZ37VUOuFcZNe4o6vLm5f3QnxSuh8tb33QBYxhf+t84IG
+ 2b3wZCLS015qE01ugG1IoFZGn9syviht36xqS2ArbaL4of9LntCvLGKZ0cp8rWiqQXa3YKAx1l7
+ fHNc8yK4kCau+AmYcTKFgZqx2HVYqjHg2XzhWJdnBO5aoEQOC2faA8eEgzIfttv1f/PDS2JaGon
+ IPOlKjYDyvHdTUS5+XHNwIirSswt4VfQP/SGxnrxsum7UwdjG68yhP2ER75GCEwwLPjaJc8iiCz
+ iFfq6lgmnuEMtgIA+A4xgATVSgfP8OuVvx0UuwzB3Sa3f1jq1YtwLep47gcT9JWmYCio79aIm0G
+ 210vZ5+NJlmbb+PIefQ==
+X-Authority-Analysis: v=2.4 cv=RYIFmFtv c=1 sm=1 tr=0 ts=6afdaa38 cx=c_pps
+ a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=D0rfVSSvHAGRCStx8_UA:9 a=QEXdDO2ut3YA:10
- a=o1xkdb1NAhiiM49bd1HK:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA1NCBTYWx0ZWRfX+0Fgrl2CraW2
- GZ9B5XQbgHb6IC/LWplJdZykKeZTgZkIe9Y2R0j0ERwHWLDR6t03a5JoJ4wITXcchHqS/G0tg/q
- J0OLqwomZYK1MZLsaqtdGxz/hkiH9i+1mhWOCKkb0ckrNTc0No4rV2h15Gl9bd3IuINuq8FwoaY
- qdaDVrmG1HyWCUCsqZnHZlZnW1i4S3UchsrMbDL93+Je25RncCS73sI+nh7vOghyhIJH2WcYLiq
- Yp/PVr0dVUsZ4Njm8Y+B3h8ZQOLkooy7SEENjQrFjhEJiI/1pIWXbOiLyR+2iF/TWluTPAIm+sG
- 7jVLc6X5INCoKwp+UaNPUV2TwJ4rCX1a+AGIoVuK16kSleIsbijKZ1j4yQ9LHk9HMBRfa7GrZZX
- Aiad/nSuL/uAeKi8MF1Vgy/+5a6aNHDd/C2PEMpiWAFzmUSYggAzhd3sLKlh6b4GgtTb59rEia+
- lqYkpDhqcgoPYUVXa4A==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA1NCBTYWx0ZWRfX7lBTomNinXAb
- rUcxxAfjbKMS0jTC6FO4E/1Q6/s5dViBLh06S4oeXJP9AIQZS0l/+9eCrOlUmqk7kn5DDRF9q8m
- iq5LiGGhH76LP1ihWg8n7d+BCha6cuE=
-X-Proofpoint-GUID: udi0-RgP0pCafwEIvlfkhkZ82I9BgMC2
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=69SmcKYM6GwwC-r1KZAA:9 a=QEXdDO2ut3YA:10
+ a=TD8TdBvy0hsOASGTdmB-:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-18_04,2026-11-16_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 suspectscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ adultscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611180054
 
-The LPASS LPI pin controllers only have runtime PM callbacks, so their
-clock votes stay held across system suspend when a consumer, such as a
-SoundWire controller, is active when suspend starts. On Glymur CRD this
-keeps CX and DDR from collapsing in s2idle.
+All the SoC-specific LPASS LPI drivers probe through the common
+lpi_pinctrl_probe(), which sets up pm_clk and runtime PM, and each of
+them defines the same dev_pm_ops with only the pm_clk runtime callbacks.
 
-Patch 1 moves the dev_pm_ops, which are the same in every SoC-specific
-driver, into the common driver. Patch 2 adds pm_runtime_force_suspend()
-and pm_runtime_force_resume() as the system sleep callbacks there, so
-the fix covers all the SoC-specific drivers.
+Define the dev_pm_ops once in the common driver, next to the code that
+sets up pm_clk and runtime PM, and export it for the SoC-specific
+drivers, so the PM callbacks only need to be changed in one place. Drop
+the pm_clock.h and pm_runtime.h includes from the SoC-specific drivers,
+as nothing there uses them anymore.
 
-Tested on Glymur CRD (pinctrl-sm8650-lpass-lpi) with next-20261113.
-When s2idle is entered right after playback, the LPI clock votes are
-now released during suspend and restored on resume. Playback works
-after resume. The other SoC-specific drivers are compile-tested only.
+No functional change.
 
+Signed-off-by: Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
 ---
-Changes in v2:
-- Move the dev_pm_ops into the common driver and apply the fix to all
-  LPASS LPI drivers, not only sm8650 (Konrad, Bartosz)
-- Link to v1: https://lore.kernel.org/r/20261112-lpass-lpi-system-sleep-v1-1-438cb997e0e9@oss.qualcomm.com
-
----
-Gopi Chandra Sekhar Reddy Kanala (2):
-      pinctrl: qcom: lpass-lpi: Move dev_pm_ops to the common driver
-      pinctrl: qcom: lpass-lpi: Force runtime suspend on system sleep
-
  drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c     | 6 ------
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.c          | 5 +++++
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c          | 4 ++++
  drivers/pinctrl/qcom/pinctrl-lpass-lpi.h          | 3 +++
  drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c    | 6 ------
  drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c   | 6 ------
@@ -207,12 +195,354 @@ Gopi Chandra Sekhar Reddy Kanala (2):
  drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c   | 6 ------
  drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c   | 6 ------
  drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c   | 6 ------
- 15 files changed, 8 insertions(+), 78 deletions(-)
----
-base-commit: 84abb955b1015477aa11a96e2f3ac1b938b77f48
-change-id: 20261112-lpass-lpi-system-sleep-70c4d2239abe
+ 15 files changed, 7 insertions(+), 78 deletions(-)
 
-Best regards,
+diff --git a/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c
+index 7036bf4c6692..de7f28129012 100644
+--- a/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c
+@@ -6,8 +6,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -225,10 +223,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-hawi-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+index 02f678fa75b1..1f1635ec53d7 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+@@ -611,5 +611,9 @@ void lpi_pinctrl_remove(struct platform_device *pdev)
+ }
+ EXPORT_SYMBOL_GPL(lpi_pinctrl_remove);
+ 
++EXPORT_GPL_DEV_PM_OPS(lpi_pinctrl_pm_ops) = {
++	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
+ MODULE_DESCRIPTION("QTI LPI GPIO pin control driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
+index 056c4a774389..fc6aa5f552e6 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
+@@ -11,6 +11,7 @@
+ 
+ #include "../core.h"
+ 
++struct dev_pm_ops;
+ struct platform_device;
+ 
+ struct pinctrl_pin_desc;
+@@ -145,4 +146,6 @@ struct lpi_pinctrl_variant_data {
+ int lpi_pinctrl_probe(struct platform_device *pdev);
+ void lpi_pinctrl_remove(struct platform_device *pdev);
+ 
++extern const struct dev_pm_ops lpi_pinctrl_pm_ops;
++
+ #endif /*__PINCTRL_LPASS_LPI_H__*/
+diff --git a/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c
+index cb4934cd6f75..2a9f8d1c6cf3 100644
+--- a/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c
+@@ -7,8 +7,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -245,10 +243,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-milos-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
+index a61df10d46cb..fd448b6dbb6d 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c
+@@ -7,8 +7,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -141,10 +139,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sc7280-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c
+index 27c47710365e..cd350a1cde2f 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c
+@@ -6,8 +6,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -175,10 +173,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sc8280xp-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
+index 7b5aacaae7d7..9742bb5bb39a 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
+@@ -10,8 +10,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/pinctrl/pinctrl.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+@@ -147,10 +145,6 @@ static const struct of_device_id sdm660_lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, sdm660_lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver sdm660_lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sdm660-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm670-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sdm670-lpass-lpi.c
+index 0a31f7ad2e0d..20277990c2cc 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm670-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm670-lpass-lpi.c
+@@ -7,8 +7,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/pinctrl/pinctrl.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+@@ -153,10 +151,6 @@ static const struct of_device_id sdm670_lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, sdm670_lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver sdm670_lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sdm670-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
+index 75bafa62426a..3d71aa65e22a 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
+@@ -7,8 +7,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -223,10 +221,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sm4250-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c
+index 05435ea6e17a..d092bd838c3d 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c
+@@ -7,8 +7,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -143,10 +141,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sm6115-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm6350-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm6350-lpass-lpi.c
+index 946b23084304..1d009aac892e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm6350-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm6350-lpass-lpi.c
+@@ -6,8 +6,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -137,10 +135,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		   .name = "qcom-sm6350-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
+index 454de788be21..26fb78e493ca 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
+@@ -7,8 +7,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -136,10 +134,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sm8250-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c
+index 834eee8dcce9..76bff5854f03 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c
+@@ -6,8 +6,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -204,10 +202,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sm8450-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c
+index 875e04e5d2b9..7a36370238a4 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c
+@@ -6,8 +6,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -212,10 +210,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sm8550-lpass-lpi-pinctrl",
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c
+index bc7889c993d0..c98d6748560d 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c
+@@ -6,8 +6,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_runtime.h>
+ 
+ #include "pinctrl-lpass-lpi.h"
+ 
+@@ -219,10 +217,6 @@ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
+ 
+-static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
+-	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+-};
+-
+ static struct platform_driver lpi_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qcom-sm8650-lpass-lpi-pinctrl",
+
 -- 
-Gopi Chandra Sekhar Reddy Kanala <gopi.kanala@oss.qualcomm.com>
+2.43.0
 
