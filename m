@@ -1,63 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=34.202.193.197
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795020572;
-	b=yGiUrt/v2ApQsmo/LNfKwMqwsokFcDpYzsGfprTpSFO/rx0dj1AW/PJ1K9rYQClF1Gxm
-	 h4C4HcMAmi2F1CoLq+4X9JV6pzFcaZ93eYNgfBay/uo5ZFGfaq5KqlgyC+M69yBhDcWxR
-	 9xGOcZY9RZGSMUAwvempdZq1kFDFweEORLUSybUdzrYJ+AR8VNU41Kyob4m7XYIFeMVXA
-	 FnrlBenRvNY9IcOiQE+LfFzXR/6/kXZl8dijptoZ5kVb45MzC8skyDuYotPTp833TMwIy
-	 TiNCLDMI3kP0VivFG9zS/n69qz3+x53Rtc5p8m6Yzu22Ga5gpU5xTVgMtm87H/A2PPQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795020572;
-	h=DMARC-Filter:DKIM-Signature:Feedback-ID:X-Pm-Original-To:Received:
-	 Received:From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 User-Agent:MIME-Version:Content-Type;
-	bh=CypiicFre4WBwXpeVK7ccOtlft0aGSxKx03rsPEEj/g=;
-	b=lALGoGoVCWaEbFv/BZImJsVj2tGG/770qS10UFq9KcDlh9O9XGO5M59GnvW6LT9w5baK
-	 xEhlig9+NE1dzOt7l22i2ME7MqxuOfceReBKmwgoeKlBuwctF1SnwToMNuKJAvHIF8vQd
-	 PsMEmkTSx/Auy3QIuvnlY8LTY7MKTUBWRhj8x/tgvC+JBMNKxw1TA2lybj/9qU9ii/4wl
-	 ZD1urv+tza9t33m0zlKq4psZQKhR0XfS5zQuMlccG6MweOiJQqgtaol8MBKrhNEmXZHVy
-	 YJqrIODLbXp/cnUOEtCKyFJ4skmtCeFRLdk0qjFjlXlVumRZVz+igFMltnUJGKJpbkg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=korsgaard.com;
-	spf=pass smtp.mailfrom=korsgaard.com;
-	dkim=pass header.d=purelymail.com header.i=@purelymail.com header.a=rsa-sha256 header.s=purelymail1 header.b=ity7tghI;
-	arc=none smtp.remote-ip=34.202.193.197
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.83
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795022750;
+	b=HgV/gyNw7dsLwgEFiKQLbAq1BuKpo+hGSIRslqRCH1yRkD+CiGGwYfMBb0YdvkJi4ghk
+	 0VkORVt7+ic2AyeIvElDk4uEhUIe76XajHMEmxDkzNo6wpWyZerof0OeEFbKq9vk8INgn
+	 MWYf0atOA+3DaJmVxmmJLRytpVkf69Mk2v75yNOl8EcSlzeZsiWE4oB7vIhksiS/W7mgW
+	 y3ilc+Oto0jb7jFclH3BtbWNYMIVba7oLNNt3ZA7J7eqbm3qXYuZbvL4AOPPvgH6aODI+
+	 /sIDtgwbI+MfkRsfoNIZm6WAuHe/fBiNITLRxLBwTOhNLRc3g2oM5W1WmL0Yw7NtMAg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795022750;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+	bh=7QImKCQCn026qrKuxcLq5KpLrEULLEp8iucMM/ifoYE=;
+	b=k72OnFVLWqNc6+32ljLAiPlcXyXBESiFVeOdB1PRDFU6rn8vMXxj/Rky+NUlq+I8emvP
+	 FgSqKbqkqEuislFVQyBFu2frPYcY4fMDGu169B0AQ2qJ7gZO3orJIeTtB73NJaqD0/aeZ
+	 7L5m1Kjo3gDohtberCmxLq64sS3LuWCeyK0xaraPwDbPBNuHVOMUNEH3LplsQToM+8bQK
+	 K+CsWnXm37iSu2iQdGSD0qo4fHUnlkeLB2f4EhUzv8QpxfDZL90uWef8aLmp3YSYRb/Li
+	 eS0DRGalhqXvA3gMk67zW7zXN8iTub6kVMunsfvX3YgJnGY9j5p+r2kec4nmVfaNnHg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="izKK/t9h";
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=VwfE0Fym;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.83
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99107606A320
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 16:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99107606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1B660A6F53;
+	Wed, 18 Nov 2026 17:25:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AF1B660A6F53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=purelymail.com header.i=@purelymail.com header.a=rsa-sha256 header.s=purelymail1 header.b=ity7tghI
-DKIM-Signature: a=rsa-sha256; b=ity7tghIOZYfLhjtTnV5SWFkqmvLqm0FUum++BlONR49TMGyIQgT/rTgYsm3cuuFnV920idQQl1LzUy/GTFscKBAp6v1JpPk8aTrETB/HlYJg1gNZTXztNf7AOC3F8U5RD1+f2ItUnprJ0DQlMguQMtvGzpWUElzqa3zpQh0Owj0HF5NHxsv9X1RIgfcAprXbNxwg2gEuLkQHvjRpb+e5EyFANs8DHcleV6AcGJ3As0EW2y+ThBKkyukbkU8HZHkABVEOAAyAkx8CqnnHHCMIEg9GqGab2DiCzZMc8cQ2lwJZt611breWeD8XcK8nFst2nG7zvoF0FvEyUBkg/ZDgA==; s=purelymail1; d=purelymail.com; v=1; bh=PwCwEuAB6fs515WLXtAULsh+c1exq0+R5yemtdnUvHA=; h=Feedback-ID:Received:Received:From:To:Subject:Date:Message-ID;
-Feedback-ID: 21632:4007:null:purelymail
-X-Pm-Original-To: linux-gpio@vger.kernel.org
-Authentication-Results: purelymail.com; auth=pass
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 91259422;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Wed, 18 Nov 2026 16:49:20 +0000 (UTC)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.98.2)
-	(envelope-from <peter@korsgaard.com>)
-	id 1xTiqU-00000000BtX-2E5A;
-	Wed, 18 Nov 2026 17:49:18 +0100
-From: Peter Korsgaard <peter@korsgaard.com>
-To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-Cc: Linus Walleij <linusw@kernel.org>,  Michal Simek <michal.simek@amd.com>,
-  <linux-gpio@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>,  <saikrishna12468@gmail.com>,
-  <git@amd.com>
-Subject: Re: [PATCH v2] pinctrl: zynqmp: Ensure function names are NUL
- terminated
-In-Reply-To: <20261118111816.2483052-1-sai.krishna.potthuri@amd.com> (Sai
-	Krishna Potthuri's message of "Wed, 18 Nov 2026 16:48:16 +0530")
-References: <20261118111816.2483052-1-sai.krishna.potthuri@amd.com>
-Date: Wed, 18 Nov 2026 17:49:18 +0100
-Message-ID: <87mrr6ultd.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=izKK/t9h;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=VwfE0Fym
+ARC-Seal: i=1; a=rsa-sha256; t=1795022740; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=ZJcEeDvfhaj6ptUyftchRAKIYU0tVIVVSMlfEtpTaw/+cw7EUN4es99xwY66gx5ZUS
+    Ra8skddM2DLkZHRqJ6iwhEKgZX91gXXtwsfhzuVfkROmEV8MVyN3bz/z18S7e82KvpOB
+    lZH/9YrjSqv1PguKRhET1XnbbrItnH+S0P1lMkTz9xW+YdFwws0/IX58OvMwetk+SSyR
+    FWyTEkBypzSoYt9B39Ahq82+T1GOESBg/gVcRHvkZlFHutUjQG+M7EaZokDEpTjnfSAE
+    MaLJVs529RxpWY/TtieUSJAnbKPbuej58jTXLAZRFQWTWVJ/Nkh79mGUHgGJ9TPPs7fV
+    gG8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022740;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=7QImKCQCn026qrKuxcLq5KpLrEULLEp8iucMM/ifoYE=;
+    b=nQ8CDELXgscSmWWtb9ig3J1ENtn3vkTJPTjrr2Ie/aBZSgzfb4q8JSal0Xwm8uqG9t
+    pBAqdbd3DecG6bY5Povbe4zvV4CEYkpp7ABvym21mCh4/+QFY9jaWF/rdkJIgMZHRun+
+    HgDyyE3kGBspFMwDB4bBCgSsbC9UfC9Z1HDAosasut+P3SWF+TvKQsNbpo+Buwbg5Dyd
+    8yD+KfdP4gbg3mCzEArcqRcA9Ruy0Fgb9gJb9uCOfggP3PHC8Q9gL1dxgriiOQljiX//
+    mslG3UKsUIs+Y3+M48aJhMZrL7zmdmbpeWEwUgtg9aehgZeGeSbcBZpXJWWd+oWaHE/e
+    11SA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795022740;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=7QImKCQCn026qrKuxcLq5KpLrEULLEp8iucMM/ifoYE=;
+    b=izKK/t9h9qBViXi6RKoiAI0cZIKC4a9XNgZrdiLqHSeP721O4I3SuwPAZtRQVzQgFk
+    slEr2BGrhX6fR+Ok5pxq9WxQLNZbNtjNABNaBJP82HeqRJR8WMDT77ayyxTiLwJEEASp
+    BiV4N8xfBw3L0w8GGRWmM61cgFaAicvWe4Qz50AeHjsStEh+6QmieQOmp3jvk3LG94+5
+    kQoBOVM0f0X2G7mBJtMZrxZsz4aK+ndLK1X689Nu00gdljFUJm2CnUwfkOrFje7+EHdk
+    P/u99EuR1CooOt5j5F6LXY9N0cSw/H90qvh2rKdVHqFV/bHDH4aHLesdI4YFUqlWMoVs
+    kG/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795022740;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=7QImKCQCn026qrKuxcLq5KpLrEULLEp8iucMM/ifoYE=;
+    b=VwfE0FymMa+IlUHH53KWn2C94OIIsx63e24FZ9AzDIovqmEQ3JOUabBwRIvKW6gRGr
+    dHxc6tdzIHyGfOouMVAg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV2Jpcm8iNZLZ2IBizV+3wFb55dglUeZzcEX9J"
+Received: from iMac.fritz.box
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22AIHPediW
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 18 Nov 2026 18:25:40 +0100 (CET)
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	letux-kernel@openphoenux.org,
+	"H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v4 3/7] dt-bindings: pinctrl: ingenic: Add X2600 support
+Date: Wed, 18 Nov 2026 18:25:33 +0100
+Message-ID: <a8688e1ea979dbbb3ffa198ca041b31c97752bad.1795022736.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cover.1795022736.git.hns@goldelico.com>
+References: <cover.1795022736.git.hns@goldelico.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,26 +111,55 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
->>>>> "Sai" == Sai Krishna Potthuri <sai.krishna.potthuri@amd.com> writes:
+Add the pinctrl and GPIO compatible strings for the Lumissil
+X2600 SoC.
 
- > PM_QID_PINCTRL_GET_FUNCTION_NAME returns the function name in a fixed
- > 16-byte field and does not guarantee NUL termination. A 16-character
- > name fills the entire field.
- > The driver copies this field into a 16-byte buffer and subsequently
- > uses it as a C string. For a non-NUL-terminated name, string operations
- > can read past the end of the buffer into the adjacent groups pointer.
+The X2600 has five GPIO ports with 32 GPIO number slots per port.
+The programming manual lists 113 implemented GPIO pins.
 
- > Reserve an extra byte for the NUL terminator and explicitly terminate
- > the copied function name.
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ .../devicetree/bindings/pinctrl/ingenic,pinctrl.yaml   | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
- > Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
- > ---
- > changes in v2:
- > - Replace macro/constants with sizeof()(comment from David Laight)
-
-Reviewed-by: Peter Korsgaard <peter@korsgaard.com>
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+index 84e960255a36d..15966f6a79f15 100644
+--- a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+@@ -19,10 +19,10 @@ description: >
+   pin within that GPIO port. For example PA0 is the first pin in GPIO port A,
+   and PB31 is the last pin in GPIO port B. The JZ4730, the JZ4740, the JZ4725B,
+   the X1000 and the X1830 contains 4 GPIO ports, PA to PD, for a total of 128
+-  pins. The X2000 and the X2100 contains 5 GPIO ports, PA to PE, for a total of
+-  160 pins. The JZ4750, the JZ4755 the JZ4760, the JZ4770 and the JZ4780 contains
+-  6 GPIO ports, PA to PF, for a total of 192 pins. The JZ4775 contains 7 GPIO
+-  ports, PA to PG, for a total of 224 pins.
++  pins. The X2000, the X2100 and the X2600 contains 5 GPIO ports, PA to PE, for a
++  total of 160 GPIO numbering slots. The JZ4750, the JZ4755 the JZ4760, the JZ4770 and the JZ4780
++  contains 6 GPIO ports, PA to PF, for a total of 192 pins. The JZ4775 contains
++  7 GPIO ports, PA to PG, for a total of 224 pins.
+ 
+ maintainers:
+   - Paul Cercueil <paul@crapouillou.net>
+@@ -46,6 +46,7 @@ properties:
+           - ingenic,x1830-pinctrl
+           - ingenic,x2000-pinctrl
+           - ingenic,x2100-pinctrl
++          - ingenic,x2600-pinctrl
+       - items:
+           - const: ingenic,jz4760b-pinctrl
+           - const: ingenic,jz4760-pinctrl
+@@ -86,6 +87,7 @@ patternProperties:
+           - ingenic,x1830-gpio
+           - ingenic,x2000-gpio
+           - ingenic,x2100-gpio
++          - ingenic,x2600-gpio
+ 
+       reg:
+         items:
 -- 
-Bye, Peter Korsgaard
+2.56.0
+
