@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795036195;
-	b=J51WGhYGQv35MGcZl9IxiRKCTXiYQNIMoAKuQs6Q+eFT1e28PlDa/Ucu773t16tDkH1k
-	 S9AEVjQFe2ZFUpe6+dnjxfNc4Vd2ho58ZW4NPNTpufthtbwH2wp3Mqx4sfIg8CK8/OSq9
-	 89NBwMjvmr5xauTmvWf7SeuGJxXiK/sJt4sAYojsUyHycxQw6VdfrW/OSmo353KXn9LVU
-	 eYN4FJLsBpOWhkHZpZmtSCYuikZjh5V6hIha7+9h+0IHoa+BuQpMO78GueZuowCXU2t9V
-	 +HJJOK/QmmqaDU2ocm1uFbmylNsi26yYiSj8Fj/fIJNmMKj5uN3/z3+SdKceDqm6CiQ==
+	t=1795036533;
+	b=pWSXHQegopqiQFnAXRn6lwUwKA++AL3W+FTHVn+rguqqlozazMJtYMAYFQPmm7aft1+z
+	 1+ANc+XoJfXTTCc6OQhBKtz++fUOuQqzCoqMPa9b25yx3dd7JiHbcxD7u6o4IHY0Nc1K1
+	 UxYlKKGmVnSDFrmp1PFfhGrBnebpT/TP4WyABt0cAyB1WyDj7rhkiOqzsbYHTCjjXLEpl
+	 UyUYVxti+O/KnqGXKuJMPx8meX8eAIpSdkTv2NZGV3Eob13JibDs+NDvipudiAGfc2JSr
+	 NVBL4TibdCC9vIC2gAg3Afabi07nmzPFYZDBG96db/5GJTsUXRt/waArrLL5IaCvi6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795036195;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795036533;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=jr2i5Ws8efXcq7fsLottyNoSDK02f27nflx3w/WwBX4=;
-	b=OKgDBXSnOIo1Oapv4qsxANca28KKfpJORfRUo06VX/kxBfSkKMMM192Fs3JAzp7k3uFR
-	 G7hLX1fBfXtMIRnDtlCuvAETIYeE5dr1PLOUHZtRLq1wJi909CRdLmvKEJ8B/ju01mwj/
-	 khIJZuGpHQRyb1/3uTeMBR3xMJg5VeOBGm0SLyMDiQC15McN0EwG9JGNk1sveT8rjUtnj
-	 KKL4SJkzChqqN4bxpiWu5D7XVnO+uyC+6CZdPjM9LHfyhcFhU8h0HgT7FGgxTunWJbHMC
-	 mqdFQoch7W5w/VB/4xSYGnByNBjNUZYQVcx9q9kML5gHcESTUvGlk/1AelrgQee9Sqg==
+	bh=jXpHBT1/WDmLp0zpzRIxDl44SN5leSzeHP8wCtpU/Po=;
+	b=5i/+ZITCsICKq7KtHw1ATvrnGvvIs+27kIhimGNRfM5tqaCYSw2xZXaojSBxmhnFS1bI
+	 JOnm6/Oe2+0KPuWD0OCxFSnBmk2l78/nFISttJNe05TRcfJ62dUqxeoDO206eQcGpsinf
+	 VgJ8GBNxides4v9AJHtz17eqkSarL9+kKCOpvd2o6QoQ9oPwN+YXVPWuA+7VmzirUlE1l
+	 m1FXfFSz/2rQtw/Yp6G2x+h8t9JWzAqXfcM6/QSfojLp5HGoNatrpOzxfVUPZMJve3hg+
+	 QsfvjX1aQdC8mhsu1idRLZ9YPNQbKeHW2mkfGfH4GKQiCFWAaQYfXoCCh1pInyyHFFQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="e/v+eP0h";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kjSyc0l2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9677606A335
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 21:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D9B606A332
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 21:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e/v+eP0h
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741AC1F000CF
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 21:09:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kjSyc0l2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 769B01F000D0
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 21:15:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795036195;
-	bh=jr2i5Ws8efXcq7fsLottyNoSDK02f27nflx3w/WwBX4=;
+	s=k20260515; t=1795036533;
+	bh=jXpHBT1/WDmLp0zpzRIxDl44SN5leSzeHP8wCtpU/Po=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=e/v+eP0hWOV6kjrBAYvATcWqJ/gpTYajGabAuTPKDi7RdPofCoC4e4edajjc5vl40
-	 9yfvw4ZdmUN7Uf2c53lZTCOqs505LhW/o4zhZIDc+pnvObwR31spw8mxRUee1Al9y8
-	 tMCLQxfN0H8Y8nP2MqZA1EC3Wyb3Hb0imIEt6VKrRrtYYbZ0OfGkb5yehDHQqfy5DZ
-	 fNqnR2Ds/v3WKlR+NbSZQ1jSa65a8kBBXS8dDyquOO89DCX7OWtqJiKP51UimA9hNt
-	 W+8MYCG0JCTZKPxdOJ8Zz7jjSftDVIP+0zfe7+dV58zgGOzzdco5q6OTz8JltFYLQP
-	 EpFBCJR/jEn5w==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5c14f7768acso1128179e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:09:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEsLVdy8UmNJHfYwNSGpaqiyJk0v+ZetZq5OKrbd8Z5fKJjBi3YSHhWfQI6mAK2oaSXJ2W/8a1uppNj@vger.kernel.org
-X-Gm-Message-State: APuU4Z+uyhU+rtRg/iu1MCcY/G0e+qmzj52jGwlsZQslLtHEjRaUniec
-	631mAV4w43nExbq6BIGkduRJBLRsAQpat8cTR3zWRtnpOIFhFJ7dmjIm5ZmIZOc4BF/DskssVeq
-	7dI1oRSD074sxTPgsqRJvw6eXGkM8nJo=
-X-Received: by 2002:a05:6512:6891:10b0:5c1:b107:2bb with SMTP id
- 2adb3069b0e04-5c1b107097dmr214230e87.29.1795036194225; Wed, 18 Nov 2026
- 13:09:54 -0800 (PST)
+	b=kjSyc0l2jgfTa1Gr7mPOfzuP6tLnKgnN3OKAYB/HxNNqyFZcDFB46+L21kpljI9ky
+	 tJ9h+IalPk9axrIlGCBbpRHL6+29YZuB0IVHAKxz0bo4UY+/W/P9jT12kdqWlun20T
+	 2HxNcbk4DkYpClX+2W+G1UfwlY6KHQC5fEW0hNuGW6HVROF5lZNd2YIi+YBww4Uot9
+	 Moc3q1Tx7Y0K5G0dZt7BtpTCDpZnSHAZI9DehbqOkkDjGZ7F5pRKWwoKvj6xqWciWf
+	 NaL5g8qzFQNgtN34F5iEG1VxHl+YOFKpbN90QuJjw7Ir/pF7E7bE9cpA46y6plbFkh
+	 HI60rU5SAnfxw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c126fa1e3aso1011832e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 13:15:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFrpzZlYut0WXx7G7b6GTIslLBJku5waBKU4jlgAVh9im9UQ1jDEFfPFYis49X6rMRNZFOUot93b77s@vger.kernel.org
+X-Gm-Message-State: APuU4Z/2m5Clj0PBM6dZ+Wvt5g45WxWyuFsgaQS7cgfoPGEbTyoPr7tQ
+	kxjgzyJz8c/AluNIyhWKSo42i3Y/o31Wzo5FJkfo90z7exjmi0lCfgmwnDc5HqKeMZrCqjv711B
+	58ODn00hTI+FTQTWSutbAMjqHa6prBf0=
+X-Received: by 2002:a05:6512:1102:b0:5bf:f7e7:85eb with SMTP id
+ 2adb3069b0e04-5c1aa0736aamr1346704e87.21.1795036532194; Wed, 18 Nov 2026
+ 13:15:32 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,37 +59,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261110083253.1525-1-laixiangwu@cmss.chinamobile.com>
-In-Reply-To: <20261110083253.1525-1-laixiangwu@cmss.chinamobile.com>
+References: <20261110094339.749110-1-zhengping.zhang@airoha.com> <695991a0-ae67-4ce0-9b92-f191ae97a468@iopsys.eu>
+In-Reply-To: <695991a0-ae67-4ce0-9b92-f191ae97a468@iopsys.eu>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 18 Nov 2026 22:09:40 +0100
-X-Gmail-Original-Message-ID: <CAD++jLn1P9hT-YH9vM9VSvoMRei5LJv+hDZMH1en6CfFXPB-5w@mail.gmail.com>
-X-Gm-Features: Aa3M54qVfEnBQGnC1md9osy2E13w8uoX854ImpVfar6VoMvtX9B4F6U4NV-DAk4
-Message-ID: <CAD++jLn1P9hT-YH9vM9VSvoMRei5LJv+hDZMH1en6CfFXPB-5w@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: stm32: Fix reset control leak in
- stm32_pctl_probe() error paths
-To: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-Cc: antonio.borneo@foss.st.com, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 18 Nov 2026 22:15:15 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=_q3SWsh6AW6PLOC=h-z-h-N8AcC8SRCPVKsbzEPktfg@mail.gmail.com>
+X-Gm-Features: Aa3M54omwiJF0rg8LzwHPSiyolxNp74aN1hJ5GJPEJYrBTD3qh4Hbo9mWipBH1I
+Message-ID: <CAD++jL=_q3SWsh6AW6PLOC=h-z-h-N8AcC8SRCPVKsbzEPktfg@mail.gmail.com>
+Subject: Re: [PATCH 00/12] pinctrl: airoha: configure GPIO muxes explicitly
+ and fix pad mappings
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Zhengping Zhang <zhengping.zhang@airoha.com>, lorenzo@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, brgl@kernel.org, naseefkm@gmail.com, 
+	benjamin.larsson@genexis.eu, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, lei.dong@airoha.com, ansuelsmth@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 10, 2026 at 9:32=E2=80=AFAM Xiangwu Lai
-<laixiangwu@cmss.chinamobile.com> wrote:
+On Sun, Nov 15, 2026 at 3:10=E2=80=AFPM Mikhail Kshevetskiy
+<mikhail.kshevetskiy@iopsys.eu> wrote:
 
-> Signed-off-by: laixiangwu <laixiangwu@cmss.chinamobile.com>
+> Hello Zhengping Zhang,
+>
+> Please fix your patches. Looks like you insert patches to the e-mail body=
+,
+> thus your patches were converted to "mail encoding"
+> * tabs was replaced by spaces
+> * unchanged empty lines "<space>\n" were converted to just "\n"
+> * long lines were split with "=3D\n"
+> * "=3D" were replaced with "=3D3D"
+>
+> and so on. So please use "git send-email" for patch sending.
 
-Fix your email address in .gitconfig please so you don't use
-your login name as name.
+I agree, I can't work with this, maybe review a little.
 
-Example:
-
-[user]
-        name =3D Linus Walleij
-        email =3D linusw@kernel.org
-
+If possible use the b4 tool to manage your patch set(s).
 
 Yours,
 Linus Walleij
