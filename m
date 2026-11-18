@@ -1,108 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=34.202.193.197
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795020014;
-	b=qgRslZ/ZsS47M7a9B6ohee4FJ4N3TE/ltgRjJgHs8CyUB5/5ClwbVIZfglSbpF9KtWvk
-	 FdZXNx80Enig8+UWj5qUuKr4dV6eTihqC28qsGWtoZUl4V2x4ftvUaOwG+wdglRMhXkEf
-	 Wnj8QappSLjV+STiwxqzmJDQWXE9Y7WsTMBMxTxvm34oAFnh+hsGXEEzNvL9k3oRAiB7T
-	 W5QqzrFKWViijS7c3DuCD4EWUAPHTPWyFEEYDDi5vbQKpzCkled74H8rbZ+r46pqLeXPd
-	 73nvx4RK3Sw5vuk1VctCcnvNj5UC5wzwK5zjR9eY5yeiITw0468JszPn9+fIJbl/fDA==
+	t=1795020572;
+	b=yGiUrt/v2ApQsmo/LNfKwMqwsokFcDpYzsGfprTpSFO/rx0dj1AW/PJ1K9rYQClF1Gxm
+	 h4C4HcMAmi2F1CoLq+4X9JV6pzFcaZ93eYNgfBay/uo5ZFGfaq5KqlgyC+M69yBhDcWxR
+	 9xGOcZY9RZGSMUAwvempdZq1kFDFweEORLUSybUdzrYJ+AR8VNU41Kyob4m7XYIFeMVXA
+	 FnrlBenRvNY9IcOiQE+LfFzXR/6/kXZl8dijptoZ5kVb45MzC8skyDuYotPTp833TMwIy
+	 TiNCLDMI3kP0VivFG9zS/n69qz3+x53Rtc5p8m6Yzu22Ga5gpU5xTVgMtm87H/A2PPQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795020014;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=i+3+UkuuTd3PtMb87HnGpsXm1NEacz3pju9b62z1nDU=;
-	b=cisPACYltLfsnMCy2CZmVR84XerB8W9yPAAYWpdB7UdCmUEffAOHHVQBYMBpeMpfwZEg
-	 aWZp8GrFfYOd1+uHn2Z7t+i3jBymgyEWq9HtlkEtKMj3cBUrUUZm6abVl6/z0C8KaZCy0
-	 MGaSfFLRDHBP19i6fDSi43yDsp3UFW+CCyvy13+ZNaQfn+biJurVsxwMgnJNp1UjEXaXW
-	 ud0qylfkSaZcYydUVHg5LzjrzCqCSLS2PFbGpsosCnuJQMtFTnTz8VPiqccQq/xSy+vzL
-	 Vs9vSeLBZ77PYcJTUoTgVW33J1QE0UVkTiIqs8MDbL0Xa4z9XK8MNmS7G8iKLzf3kKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795020572;
+	h=DMARC-Filter:DKIM-Signature:Feedback-ID:X-Pm-Original-To:Received:
+	 Received:From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 User-Agent:MIME-Version:Content-Type;
+	bh=CypiicFre4WBwXpeVK7ccOtlft0aGSxKx03rsPEEj/g=;
+	b=lALGoGoVCWaEbFv/BZImJsVj2tGG/770qS10UFq9KcDlh9O9XGO5M59GnvW6LT9w5baK
+	 xEhlig9+NE1dzOt7l22i2ME7MqxuOfceReBKmwgoeKlBuwctF1SnwToMNuKJAvHIF8vQd
+	 PsMEmkTSx/Auy3QIuvnlY8LTY7MKTUBWRhj8x/tgvC+JBMNKxw1TA2lybj/9qU9ii/4wl
+	 ZD1urv+tza9t33m0zlKq4psZQKhR0XfS5zQuMlccG6MweOiJQqgtaol8MBKrhNEmXZHVy
+	 YJqrIODLbXp/cnUOEtCKyFJ4skmtCeFRLdk0qjFjlXlVumRZVz+igFMltnUJGKJpbkg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=E4U9mTZD;
-	arc=none smtp.remote-ip=209.85.128.44
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=korsgaard.com;
+	spf=pass smtp.mailfrom=korsgaard.com;
+	dkim=pass header.d=purelymail.com header.i=@purelymail.com header.a=rsa-sha256 header.s=purelymail1 header.b=ity7tghI;
+	arc=none smtp.remote-ip=34.202.193.197
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929E606A33B
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 16:40:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2929E606A33B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99107606A320
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 16:49:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99107606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=E4U9mTZD
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4bb6057b333so6268095e9.3
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2026 08:40:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795020012; x=1795624812; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=i+3+UkuuTd3PtMb87HnGpsXm1NEacz3pju9b62z1nDU=;
-        b=E4U9mTZDlIksJjVDWFzuHLbz7qz+H6X/WuZ+ANBvE5aFdUKR8wGJnCGbI38Iz/2/Am
-         DcYffqId9bYDRaceSRCjX0vLa8N2I1YNW8Nj1qZQ3GuZ73h9A9UTkhDsV3iQxJvUqloo
-         1qMFUUlT9Uexndc0moK7CkwofIBYGR4tJyD+emRsHapyfy2d+KrUNsMeTIWGDmfsN9A8
-         n0Sr1ChhOkJCtqcwuL0MKUD9rqm1bq+5vNOmBkoyrmnodDxhRqx2TCVJVvvt7P3+SNGo
-         Wu5SygkvVbJnpy7Ekh/QhM6Qt7MKP3IelqkgrWCVRnNLdHHFr4gSD62k/UvxKTiQFyLW
-         u3aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795020012; x=1795624812;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=i+3+UkuuTd3PtMb87HnGpsXm1NEacz3pju9b62z1nDU=;
-        b=g4DgT3RoJ5AKLHfRCg/9zxQ6soZUgzmOTWx9XjpSH/Cb5CKw3lYpz1F4LhmP8eoDr0
-         0v6yHDvSW+CTD3jtwZE9s3zDZOaL4OdQaQhfyh/NdkUgdydvLeyz2Cl5oC+Nn9pJROBd
-         v2cKosMnHdXurxtWUcETGG3J9xiyEYsORrg9SiFeu6LSFEKel+rc24cZi7BBF96MAPmo
-         ln9IXKwwIxoTh+cS8+XptM51+HIU7fO9WurfF2ADT4nBxvup2Cylw71c2biFogwiXxq2
-         +v9ILxz+V8pgyZk4znkbQ9t0c5E2kqCY6O6Qm+rpkLhaVz3bIqQmU02a2rDALONZTMUh
-         h5yA==
-X-Forwarded-Encrypted: i=1; AL+hErGJYedaHhFGH4+pXxxjq10MHVgJ6kb/O6y567pgBq9XnY3z6QO3USEtvB6BHQcEiupJ0RSZgMKk+Aql@vger.kernel.org
-X-Gm-Message-State: APuU4Z/l4k6TV4W+Fey0nrBVB3CPw8PVWTN/cEUpmgyI9rb8A7vlBwXs
-	0tVB6LkSmLY9rKidhN6+Dt0P6zqjr2xQEe4I9c4qgZnha17BBeukxJmw
-X-Gm-Gg: AYBFou2ZKxunynJv4BMm/oDgItVWEhHa1z21m4KhdMbb5mg/kYCSLJkgcVakf0vjilT
-	6Ww6PkpUS8koPq2Xupg6xM4Yk6p3S+2wN5zlPtf/nQQTVa/Dq5J19CYP5HfPbUkuMUeHYz6wefW
-	w0BxtjauXNL3ZocrZRk/TgTuMynFbUpYh5DweOEx+2iFQa+QbKpdTvL3vF9EHcadkLVuXS59fzp
-	300Qma71AqpaIekHXYUycDq4s/CobC+RBNYbZ22obi3VLb5z803vUe+dxzH33OMJuFvL85hw7Du
-	wVJuUfn6W0hsALIb6dFia2/7QRDsbUynWejIgvAajgGAbnmvnX747xz7bAKRi+zSajVOYUXQ9Je
-	nR4F34nmUKARiof+KnXGAKMBzcvRrdIg0yI8H+JDEma2Fah9ivo3/yn8sPDrctS4x7nnjB098Am
-	hDFISKJlpQ36MS8dvcUZSMtlnfHvp3bpBZY6UHwq95m5WdaxSJO3JX/Px73MC8MmSYJFPFU6yhZ
-	4L4vE2VW/J1B//lVoOhqgQcavYM8kEunvZpk+PUHs67DERe+X17t0Rt18gsE5GZnKTIPa6yEajx
-	kMUQl5akufSOgYeocKLtzyaZ2EWA
-X-Received: by 2002:a05:600c:4715:b0:4bb:76d9:f81a with SMTP id 5b1f17b1804b1-4bb7da3d288mr60167565e9.34.1795020012419;
-        Wed, 18 Nov 2026 08:40:12 -0800 (PST)
-Received: from m2.. ([37.142.154.208])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4bb78430918sm137986135e9.13.2026.11.18.08.40.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 08:40:12 -0800 (PST)
-From: Michael Zaidman <michael.zaidman@gmail.com>
-To: Maarten Brock <Maarten.Brock@sttls.nl>
-Cc: Michael Zaidman <michael.zaidman@gmail.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Raman Varabets <kernel-linux-20260610-80b7ab08@raman.v1.sg>,
-	Germain Hebert <germain.hebert@ca.abb.com>,
-	Christina Quast <contact@christina-quast.de>,
-	Rio Liu <rio@r26.me>,
-	Bruno Giacomazzi <brunoceg1@gmail.com>,
-	linux-input@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/16] HID: ft260: uart: add modem pins control via ioctl
-Date: Wed, 18 Nov 2026 18:40:03 +0200
-Message-ID: <20261118164004.28739-1-michael.zaidman@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <BR0PR05MB0491322068606AA1720DCE14C0837B2@BR0PR05MB049132.eurprd05.prod.outlook.com>
-References: <BR0PR05MB0491322068606AA1720DCE14C0837B2@BR0PR05MB049132.eurprd05.prod.outlook.com>
+	dkim=pass (2048-bit key, unprotected) header.d=purelymail.com header.i=@purelymail.com header.a=rsa-sha256 header.s=purelymail1 header.b=ity7tghI
+DKIM-Signature: a=rsa-sha256; b=ity7tghIOZYfLhjtTnV5SWFkqmvLqm0FUum++BlONR49TMGyIQgT/rTgYsm3cuuFnV920idQQl1LzUy/GTFscKBAp6v1JpPk8aTrETB/HlYJg1gNZTXztNf7AOC3F8U5RD1+f2ItUnprJ0DQlMguQMtvGzpWUElzqa3zpQh0Owj0HF5NHxsv9X1RIgfcAprXbNxwg2gEuLkQHvjRpb+e5EyFANs8DHcleV6AcGJ3As0EW2y+ThBKkyukbkU8HZHkABVEOAAyAkx8CqnnHHCMIEg9GqGab2DiCzZMc8cQ2lwJZt611breWeD8XcK8nFst2nG7zvoF0FvEyUBkg/ZDgA==; s=purelymail1; d=purelymail.com; v=1; bh=PwCwEuAB6fs515WLXtAULsh+c1exq0+R5yemtdnUvHA=; h=Feedback-ID:Received:Received:From:To:Subject:Date:Message-ID;
+Feedback-ID: 21632:4007:null:purelymail
+X-Pm-Original-To: linux-gpio@vger.kernel.org
+Authentication-Results: purelymail.com; auth=pass
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 91259422;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Wed, 18 Nov 2026 16:49:20 +0000 (UTC)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.98.2)
+	(envelope-from <peter@korsgaard.com>)
+	id 1xTiqU-00000000BtX-2E5A;
+	Wed, 18 Nov 2026 17:49:18 +0100
+From: Peter Korsgaard <peter@korsgaard.com>
+To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Cc: Linus Walleij <linusw@kernel.org>,  Michal Simek <michal.simek@amd.com>,
+  <linux-gpio@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,
+  <linux-kernel@vger.kernel.org>,  <saikrishna12468@gmail.com>,
+  <git@amd.com>
+Subject: Re: [PATCH v2] pinctrl: zynqmp: Ensure function names are NUL
+ terminated
+In-Reply-To: <20261118111816.2483052-1-sai.krishna.potthuri@amd.com> (Sai
+	Krishna Potthuri's message of "Wed, 18 Nov 2026 16:48:16 +0530")
+References: <20261118111816.2483052-1-sai.krishna.potthuri@amd.com>
+Date: Wed, 18 Nov 2026 17:49:18 +0100
+Message-ID: <87mrr6ultd.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -112,26 +67,26 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Nov 17, 2026 at 11:56:36PM +0000, Maarten Brock wrote:
->> +		if (value)
->> +			gpio->vals |= !!value << offset;
->
-> Odd choice of asymmetry: !!value == true, then converted to int and shifted up.
->
->> +		else
->> +			gpio->vals &= ~BIT(offset);
->
-> And here you choose to use BIT().
+>>>>> "Sai" == Sai Krishna Potthuri <sai.krishna.potthuri@amd.com> writes:
 
-Thank you, you are right. Inside "if (value)" the !!value is always
-1, so the set is BIT(offset). In v5 both branches use BIT(), here and
-for ex_vals.
+ > PM_QID_PINCTRL_GET_FUNCTION_NAME returns the function name in a fixed
+ > 16-byte field and does not guarantee NUL termination. A 16-character
+ > name fills the entire field.
+ > The driver copies this field into a 16-byte buffer and subsequently
+ > uses it as a C string. For a non-NUL-terminated name, string operations
+ > can read past the end of the buffer into the adjacent groups pointer.
 
-ft260_gpio_set() from patch 3 has the same two lines. v5 changes them
-too, so the driver sets these bits in one way, as ft260_gpio_pin_set()
-already does.
+ > Reserve an extra byte for the NUL terminator and explicitly terminate
+ > the copied function name.
 
-Thanks,
-Michael
+ > Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+ > ---
+ > changes in v2:
+ > - Replace macro/constants with sizeof()(comment from David Laight)
+
+Reviewed-by: Peter Korsgaard <peter@korsgaard.com>
+
+-- 
+Bye, Peter Korsgaard
