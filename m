@@ -1,55 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.65.228
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795129345;
-	b=GrjvT0p31lL0uNwihQQt7lNDk5psWG/N4F30vx+DADojA3rtg68Xmg3CPxrnALvHdro8
-	 P396ej9m07lAvAf4MmZqaEGJ+YCklPQ60pJcbfFRdHg2jtFbBb+TptRzHPfwMbNqvHeo8
-	 qtSNH0WG0mawlSoLhT6ao1TPqzz0cdP0rzQbPCJH/K7MIFGNiV80OULio12sxhhaqPJai
-	 adcoPK7tpsL1gpfn7VtKjg6qOpQ90NzkF2y6teA1LJc73PK4vE846DD1gw0CJcoyCgyvX
-	 LS9pJMeeHMp9YmzGWKK1Ifx90qIbcAhOCOVduEzrHn5BY2L6Sojy3QsonLHc5uVwabA==
+	t=1795130895;
+	b=m98Tpex8Mzdlf92kPU3a4OjH0lK0YRx3oPmjSA57+ciYBS912b7Plc0ca8ZQ7tYnaLjc
+	 i02fACO+9rLkciJ3WbGM2qFjZvjQc8v1sTRTvb6wU+ZQ6P6bqXlBlHpGywjSV5gaQMYJz
+	 GGGPwrGknMfHkIfE8mU8wyEyrefhFG8qLNcDF7IbYf1e+HSqnvRIowqEvigQtipUDJmWU
+	 jtZisImxuE8HYEV4x4M2WA3tOQzA2gBtG9Iuoaeu3Pyl9zsSQ8CVWWTFzDIrG6Qx6QU2S
+	 SD3jC6SCxlK5A+SJTDETylepNjlO5iJOAR9mZ0O8UgkxUmjogcBgTt4dun6TeZ73fLw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795129345;
-	h=DMARC-Filter:Received:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=BHZ87I4xB4zS2G/9KYOvToulTtpf2LsoVgn3bT5ySVs=;
-	b=bsPShNQmPdwd8IrmZcIo9GdOto0PpibvJxPa9Q7n6yOvWK4f2IYoxR2gjv6YLrBwmfzV
-	 HZrezH4BKvTLUzPcE/GM8etQBEYhdWhIN+ncbGRtc843iMVk0hPSrHg2mJ/s4jZLNRdar
-	 DC90BwuxaMOuB73TVAqPNJqw5pG1XFA97fSfVkhktvWquUQaDjCASVvt6ReB+0GSPqSVr
-	 q2AD4MQ/dMsldkqBY+pNYU6w44GQwYK6w1gesSMkrek08g81VCEEPvLJsmTc1xBR8WMcW
-	 MnW3onLtHPUP8C3RuzrmpCnXvPYvLB8lL7760oIB3/x9nYQLL+f6SHlUqPV1YntCmYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795130895;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-Flowmailer-Platform:Feedback-ID;
+	bh=Zqe81CUvl0CetbkbGMnAV9O0XTNAJxsTRcckQyPgzXA=;
+	b=g/5wdlbotgLE16YxpJtPSUzzDUBJteNkJU8nxUCpm/7X7Cfuycg+US13jYMl7T/0VLmf
+	 IxxrrhR/ePBdj8nzvHnxc74o5eXtiaj7uXFY9nv3bD8x2S6eLEzZVsDMCP7mIfYRafF3X
+	 RK/KteoJ9FgiEdk4Ib64w0hmDLrJK/16lUYWmvaJA/Dz6Tp+QVH9FAzOGK8/yoY/tXB1f
+	 TockDKt2l3+RWvLGT+rAqck9r5yoSz5wqKpmp50HvHCnwkOj8LRVs588jka0Cq5frkKIP
+	 OZ+Ll7GpMPL6RFgxQzJYR8swL2dZWkK2brvRpapW7StTcuv0nvAC5b8eWKehE/KjZdg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=makrotopia.org;
-	spf=pass smtp.mailfrom=makrotopia.org;
-	arc=none smtp.remote-ip=185.142.180.65
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=siemens.com;
+	spf=pass smtp.mailfrom=rts-flowmailer.siemens.com;
+	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=QVQsCspC;
+	arc=none smtp.remote-ip=185.136.65.228
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96776606A330;
-	Thu, 19 Nov 2026 23:02:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96776606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256:X25519MLKEM768)
-	 (Exim 4.100.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1xUB91-000000001j1-38dY;
-	Thu, 19 Nov 2026 23:02:19 +0000
-Date: Thu, 19 Nov 2026 23:01:59 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sam Shih <sam.shih@mediatek.com>, Rob Herring <robh@kernel.org>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE1760A2604
+	for <linux-gpio@vger.kernel.org>; Thu, 19 Nov 2026 23:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EBE1760A2604
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=QVQsCspC
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 2026111923281052119ab0c400020778
+        for <linux-gpio@vger.kernel.org>;
+        Fri, 20 Nov 2026 00:28:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=Zqe81CUvl0CetbkbGMnAV9O0XTNAJxsTRcckQyPgzXA=;
+ b=QVQsCspCFZfh3pzaqigWEG1tCg6xZUDZBU23sFlStAwf7/eOetWJdBl27yBAzWk/XchqyW
+ TPCr0bftwmNuwxDJ9bSp6JxhU/PwhgLODtSmZHysHsbbnF8TTNvPxl9IPQs02/+92zFe70pp
+ oFlvLQnfcz1BKI20HSDGnvmh/bNZa272exjUis+N7Esb+b4RTfRCqrlGap0AJuAdvGmCCToM
+ jIpG8gED4OwVqlh7mLDsOwRd8hqaf5g2NXeEVKPkccOlRLdEerWqd7mccWlkx4Ln7+gTJqRG
+ oZkuYM4dUVYnQu3IqN7s3TkEcFAwmiCK12GsuzAPK0oIsaU5FpUjbVnw==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-gpio@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
 	stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] pinctrl: mediatek: mt7981: Add missing entries to
- mt7981_ant_sel_funcs
-Message-ID: <av9_55iwEZUZH91m@makrotopia.org>
-References: <20261119204748.2558209-1-lee@kernel.org>
- <20261119204748.2558209-4-lee@kernel.org>
+Subject: [PATCH 1/3] pinctrl: single: Also free the pinconf table of a duplicate function
+Date: Fri, 20 Nov 2026 00:28:03 +0100
+Message-ID: <20261119232806.4093754-2-alexander.sverdlin@siemens.com>
+In-Reply-To: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
+References: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,23 +69,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261119204748.2558209-4-lee@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-On Thu, Nov 19, 2026 at 08:47:18PM +0000, Lee Jones wrote:
-> mt7981_ant_sel_pins[] defines 14 pins (pins 14..25, 34, and 35), all of
-> which select ANT_SEL at function mux mode 6, but mt7981_ant_sel_funcs[]
-> only contains 12 entries.  When mtk_pinmux_set_mux() iterates over
-> grp->grp.npins (14), it reads two int elements past the end of
-> mt7981_ant_sel_funcs[].
-> 
-> Add the two missing mode 6 entries to mt7981_ant_sel_funcs[] so its
-> length matches mt7981_ant_sel_pins[].
-> 
-> Fixes: 6c83b2d94fcc ("pinctrl: add mt7981 pinctrl driver")
-> Closes: https://sashiko.dev/#/bug/linux-6233f285-1487-4d2d-afe3-d4ce3c445054
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Reviewed-by: Daniel Golle <daniel@makrotopia.org>
+pcs_parse_pinconf() attaches a devm-allocated pcs_conf_vals array to the
+function pcs_add_function() has just allocated. When a node is mapped
+again, e.g. on consumer re-probe, that function is a duplicate of the one
+the core keeps and is freed since commit ad2093840ca3 ("pinctrl: single:
+don't leak group/function tables on consumer re-probe"), but its conf
+array stays on the controller's devres list. It accumulates with every
+re-probe of a consumer whose pin group has pinconf properties, until the
+controller is unbound.
+
+Free it together with the function.
+
+Fixes: 9dddb4df90d1 ("pinctrl: single: support generic pinconf")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index d72ebb186b894..64472465800c4 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1107,6 +1107,7 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
+ 	if (pinmux_generic_get_function(pcs->pctl, fsel)->data != function) {
+ 		devm_kfree(pcs->dev, pins);
+ 		devm_kfree(pcs->dev, vals);
++		devm_kfree(pcs->dev, function->conf);
+ 		devm_kfree(pcs->dev, function);
+ 		devm_kfree(pcs->dev, pgnames);
+ 	}
+-- 
+2.56.1
+
