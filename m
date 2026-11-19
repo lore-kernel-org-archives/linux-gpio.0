@@ -1,56 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795072185;
-	b=CnoNjyne8G+5x/hIZNwJJjTHrIHAGwKIy0Qcw9h/EjNSR4WOFS3ll2KOAckU9mNpuPyZ
-	 OtvSUmJZeDUVysflrp3rvHj0Ovc8GEZ1bN+MZZ8KfgO8mS4LT7VRugks2ubEKiaj9inK6
-	 Z5cE+MzYeptWkwLXPuCsJaglS5G4IaFfXnG6P7yQknyJ0p/aw0EHWBU066g2rbxJ+yJVV
-	 iFuTrNSqYvy+06kdBlhB7Euiv87bpfpnLNPZm+jQsRXYWARtS17bP2k+lYTUNaD2ABORb
-	 bpZNUWNwbpZip6clAQXLevtjaC0i5cG19ycwe45MbutFOXSnvasjREYetsRrsO5T0iw==
+	t=1795074021;
+	b=4KQplxWWYUn6zkwTAonwjHIpK9VmgBTv+SpfDPr136hyt2BoVGCIxYnQrNuNWJFh6QoH
+	 7NE+rvkIRQunz8ACMzB2n7W0jcjpS5Rl3187hGGl6b8MqPutT7KyzkjaeFmM3b6/ALQd1
+	 HBC7dI2Xziz8zzadB8jj/7MfUF0TnMjBsRxNNwmtmMdMxj+dp9NnJDcxU6MBKlvS+RJcu
+	 za6XYUsLsEWQMv6xGsifFU4LFMHPluXqkxZom4GcVnY81AHTPm5Ju2xWna5IajtzZwLFG
+	 /OHLylgRBngon5fslwvlyjM9prEP+iSOvBsz2YCAQ/TB7+0ookz239SeEm2YJ89iO+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795072185;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Md4Ur9HQ90Z2syVNPgkLIza02Wg2A5THNK5BpayfC4g=;
-	b=SY8ypadq5MStuI2VWiY2ZcLtwaQ4HKcbGrMlgMzYftyyNU8nGe1UMQTSKLPKXZci0TVK
-	 q+fXSZhezyMAd+HN/OyWt1Oh8QQ+cpV/hDO3jXIv+7YSqkVX7I6vtdsAw5ClvsJCz62tf
-	 RbVvAkfd4oU8lkadn+YAwHYsC+1f+PCi7OUMB8Hic3DadiyHZNnpY7gukiPMutEhAbm2A
-	 hW0484KKPqj83m5LJXgWE0grQLkpcIg6Ri3sGW0/wOfzG7O3G4nUeMimJBVbiN5+Ge2zc
-	 K0lnblJF+xHj1cCtf5kmLHOJtDL8QrmFIH8ZOXdIy5g6o61AV1ea5cv5zvPad3ba8ow==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795074021;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=I9EY3FKNiw5ECDhc/tcVzPRkDz+FAXugtL8mkl0pXls=;
+	b=j0BlFHYcI7DdIgx6h9wDexTrWnC0t/SLOVzB/QAfTuGXasN1hoD9Rk6sie1Q7eDx44ui
+	 16HfcrH9ky8UVmL1bejCriOAJq40+dI+fZQmdUxsgOd2Qq9Bq/a1tE4tj6PvfGhtBi6G8
+	 fcTONrvbFSUDz7LIrHPeY7jGLEV3Fs9r12m7uXPN7B9Ro84W7cOmvbebvAF/lC34X3vlg
+	 quf1hoicYlYOJm071TFcnsQtTo9Ye64ZRoGzAe4f28pBghK7yFUr7au3PkEF/bQMSy5eu
+	 pd2QgPZQwXZelSyK94xXL12lmNii7bs2vzpAA9wN6gnuRIKqeuFfEj2CVrUPYNYnDDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YUqmaZkx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=gYp2qiV1;
+	arc=none smtp.remote-ip=198.175.65.14
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8430606A324;
-	Thu, 19 Nov 2026 07:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC10606A320;
+	Thu, 19 Nov 2026 07:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7AC10606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YUqmaZkx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682421F000C4;
-	Thu, 19 Nov 2026 07:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795072185;
-	bh=Md4Ur9HQ90Z2syVNPgkLIza02Wg2A5THNK5BpayfC4g=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=YUqmaZkx7TNHSa6byExLkPkPsmD8II610KHTjAlWVrOBpmmj/yvSUkCQhgOB+R03d
-	 F8mCKIzbZpU6OhJtkRhiuJwFC4K45JId3/bFYc4Z+BkapZn0GBaS//slMS+zXStd7t
-	 T4Z81F4vU/eL2NZDm4IdJ3cCKJGASetThLlJJ7UFtdoX2nD6Ern13ftpHcepE+uOn4
-	 m4g+n1KVwY6VKV4GB/fLHp8uUaxzOY5BFX3gFSQR2JH7AswSH7tvq+/xfTXKGU/E6D
-	 zwxunbeKtoucdqoKV+G4lP+ryhc9bTe2p/prCq1rwSHWEK4Qi+k2GBadr1J+YDVY/C
-	 NuP0SBbOk75Lg==
-Message-ID: <sashiko-outbox-222543@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 3/3] pinctrl: tegra: Add support for Tegra268
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Prateek Agarwal" <praagarwal@nvidia.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261119065249.2425224-4-praagarwal@nvidia.com>
-References: <20261119065249.2425224-1-praagarwal@nvidia.com>
- <20261119065249.2425224-4-praagarwal@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 19 Nov 2026 07:09:45 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=gYp2qiV1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795074020; x=1826610020;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QRXYnY4IdZ7ChW1zAO9xKVzOQXeqLl1lwDpg3PTioFI=;
+  b=gYp2qiV1CpRHCSfRt9BZc4EabOc9ReqkYdHFOb257v2X2ImvjG8Ua8C/
+   nsNXL2IAGmuQq7zxcUH0ACmsbMzHEdVkPmNMtyVyoNaetaeYffrNiTgQm
+   146wRNdYZwikYnSVX5n6Mx7DKhc/vjBlBQ3cYyNWS2g1I4maat1Or2pQK
+   DnkWeGaqOqI3SM+BkL+QWTFT6fhq0qbdFgwC5mxcbi02hqKhBOxAljNn9
+   +TQsZINkEjQFvqmgJARw72xJP1AAakKFXwWSe8qhphu5cFDq7gbfPQEJS
+   NcMA52mTOgJKzlgIpblGSpKPNe1zGyr6eBGmlE8/0DtRDdFjNI65R/vAC
+   A==;
+X-CSE-ConnectionGUID: nIpflkS/QWmaCrzVJ4iMXA==
+X-CSE-MsgGUID: SY2itDpKTyipAb2KcDRNag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3804931"
+X-IronPort-AV: E=Sophos;i="6.27,220,1787036400"; 
+   d="scan'208";a="3804931"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 23:40:20 -0800
+X-CSE-ConnectionGUID: SycEWPP3RQqaL6ubb5b6dg==
+X-CSE-MsgGUID: Z+L9eNZ2SjaPtf3NqLaeqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,220,1787036400"; 
+   d="scan'208";a="12185505"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.61])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 23:40:16 -0800
+Date: Thu, 19 Nov 2026 09:40:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>, devicetree@vger.kernel.org,
+	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 03/14] gpio: regmap: remove gpiochip before tearing
+ down irqchip
+Message-ID: <av6n3oNVl2pyeLBK@ashevche-desk.local>
+References: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
+ <20261118-cv75-gpio-v15-3-e3c563673fe1@ambarella.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,51 +86,28 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261118-cv75-gpio-v15-3-e3c563673fe1@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] pinctrl: tegra: PIN_PINGROUP_ENTRY_Y hardcodes rcv_sel_bit to
-  -1 on Tegra268
---
+On Wed, Nov 18, 2026 at 03:42:20PM +0800, Long Zhao via B4 Relay wrote:
+> 
+> gpiochip_remove() calls acpi_gpiochip_free_interrupts() and
+> gpiod_free_irqs(). Both still need the irq domain.
+> regmap_del_irq_chip() removes that domain, so remove the
+> gpiochip first.
 
-commit 504e6b9e2c6aa5bbd3e59fd78e4ff51426a7e008
-Author: Prathamesh Shete <pshete@nvidia.com>
+So, AFAIR Michael rose the question that this patch makes the unregister flow
+not reverse symmetrical to the register one. I took a look at this and I can
+say that this is a bit twisted. The pure creation part is independent, but
+to function it requires GPIO chip to be instantiated. So, yeah, this patch
+is a bit controversial. Let me see what we can do here.
 
-pinctrl: tegra: Add support for Tegra268
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This commit adds the pinctrl driver for NVIDIA Tegra268 supporting the MAIN,
-AON, and UPHY pin controllers.
 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra268.c b/drivers/pinctrl/t=
-egra/pinctrl-tegra268.c
-> new file mode 100644
-> index 0000000000000..19f591061ec42
-> --- /dev/null
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra268.c
-
-[ ... ]
-
-> +#define PIN_PINGROUP_ENTRY_Y(r, bank, pupd, e_io_hv, e_lpbk, e_input,	\
-> +				e_lpdr, e_pbias_buf, gpio_sfio_sel,	\
-> +				schmitt_b)				\
-> +		.mux_reg =3D PINGROUP_REG_Y(r),			\
-> +		.lpmd_bit =3D -1,					\
-> +		.lock_bit =3D -1,					\
-> +		.hsm_bit =3D -1,					\
-> +		.odrain_bit =3D -1,				\
-> +		.ioreset_bit =3D -1,				\
-> +		.rcv_sel_bit =3D -1,				\
-
-[Severity: Medium]
-Should PIN_PINGROUP_ENTRY_Y set .rcv_sel_bit =3D e_io_hv instead of -1?
-
-Every PINGROUP entry passes bit 5 for e_io_hv, and cfg_params[] in
-drivers/pinctrl/tegra/pinctrl-tegra.c maps "nvidia,io-hv" to
-TEGRA_PINCONF_PARAM_RCV_SEL, which tegra_pinconf_reg() resolves via
-g->rcv_sel_bit.  Leaving .rcv_sel_bit hardcoded to -1 causes
-tegra_pinconf_reg() to return -ENOTSUPP whenever a Device Tree uses
-nvidia,io-hv.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119065249.2425=
-224-1-praagarwal@nvidia.com?part=3D3
