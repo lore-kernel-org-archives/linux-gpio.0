@@ -1,49 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.65.228
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.64.227
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795130895;
-	b=mUpFDSkSWgdrWuu7xXgEXiJpSHoBAKJQsMqf4+Z+QU5a+xGcjoH+h/YeWDhXH5NUbcts
-	 fVelcGVCYdvNKtBc0ddI/9RH3WEo7sfdv+rWpRK49Nf4JY6hyGyzn4lSBRK/Kdmd9Befj
-	 +4vF2kUktwgJ4yMidhttIQ2Vv9vkLRK/QSvdLAmj9ZqvdthrB+6qUqLk2/VRSDHkFLiRo
-	 Q0smZ4W0QpGmCK0OWf0Sjv58Nv4vLRP9VmFg9zxV60z5rBZEOcDhT4ASYI5m8cPp24T2c
-	 rVxhaL2TizGyLnyvpTf9R8JJTa9IlSKYP6TUm0MP+kRKHBmRCvQl5OG4L3S0N1oAv5A==
+	b=tkgS8u6No64+CQLT9gtN9MQkU52V5uCq/01IwWdidh/kI05U0Y+fTIyO0CNOTbBb60aJ
+	 a+lRNw0vk5Bgaj/WXtJs2AeOlp6oFYlgV1Tnz1k0vZ+kPIcLOEmTYhZRi3WvESTTLT4CM
+	 Z4hASB7xK4dfxwx5QKqWQO7yxp7LDUaM8gEg51zkh0Dyd1la+I9BjLE+dOoP3Knz5eCd6
+	 G70tZSpsGTCSesn98MlFsVaXegGv5D4K819eDUdhFlCQw5gnbPwo6h1u1U20VKEPOGvH2
+	 4TKTMxwjwya6SxeEiN8BYR4BE5CL+K4n2E3kWFSN5oBfrfaZENSsIez+V8O6GhcisQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795130895;
 	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
-	 Message-ID:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-Flowmailer-Platform:Feedback-ID;
-	bh=9DMDsUj4wu9ouiC6uWgd/VZi3mi0jlavk3gy5YlGjHY=;
-	b=qUsvR01YEL0Vgm4oDHwRy/sktPp6OwWRvDUjqWDIykGmCprm9bjSIBqHaa2XiZPorgba
-	 p+pXqtUSAqdNsUJbaihnTl/mc/P9XyYTNWpOAHjIJvrsJfnX8wM+CO0b6ENAdoZiDSf0i
-	 xDMSeizJ7D/NCs56e3PEhMpEBGO6iW6jxmHkrBxPpJoCBuU46l6sHzpdSbJT/UHgvSHrn
-	 JVKE+xlQH2jC6noUbLrQM41jNLmu44EHrFnqTVzdxfvB6rhA8BdfzSr94YteWQsdg7J5p
-	 Z13Rf2EYm0ECQs4Q6huHIRM1IpcuLZ176diW09wJPAhuvOrpCNjbpNXbhNCNVh4GRGw==
+	 Message-ID:MIME-Version:Content-Transfer-Encoding:
+	 X-Flowmailer-Platform:Feedback-ID;
+	bh=9/o/W5tNcdOKYmk/LYihUWpWeggbfuzqwss5u7J69Ig=;
+	b=n7isjNTgF5kdy0Cy42z1IrmKg1VflD42W7vhEqCPdNbsXYetTC3pT/EXbETV4KPeGm3K
+	 yTk3SPk6b0o+KM4UuouVn/cjtZpmrI1bfMAiWPULtHDErg4iJbSZfHXEiejKpOS6Iwsgn
+	 OQ6xzSkF2gOB0Ni1d7gLrLYu5aKdtnEeCjlZ73OjipAYplXA+965L05VyeU1H2ynmPmIx
+	 zEKRRjFEX79Wg1kFSFvXnBSS1DJVFSo0zvD7ZT7z+SM2S0FN3ihHMgdVYX5UFf1L7lVc4
+	 YzYfz0g4vbGxERkVGG0ZE81ojWLVrYVq5oNK4KtBl0d+W8PTNZxE6RJ3DRGCwoXA3yg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=siemens.com;
 	spf=pass smtp.mailfrom=rts-flowmailer.siemens.com;
-	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=r4vwh8ir;
-	arc=none smtp.remote-ip=185.136.65.228
-Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b="MN5f/I3K";
+	arc=none smtp.remote-ip=185.136.64.227
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC84960A2606
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BE860A260E
 	for <linux-gpio@vger.kernel.org>; Thu, 19 Nov 2026 23:28:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EC84960A2606
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1BE860A260E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=r4vwh8ir
-Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20261119232810602819f30500020771
+	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=MN5f/I3K
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20261119232809f397b8e5e100020753
         for <linux-gpio@vger.kernel.org>;
-        Fri, 20 Nov 2026 00:28:10 +0100
+        Fri, 20 Nov 2026 00:28:09 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=9DMDsUj4wu9ouiC6uWgd/VZi3mi0jlavk3gy5YlGjHY=;
- b=r4vwh8iravSFKDx0WkEJFOH/fKL+0dFSAO7bnXO1fR9kn1lcyFT6BdohDxXDBZLahOVh0R
- +o9r6y+3QdCT4yjp5IkcKeM3y99tLKVg4MtFxkENvIre9NYqhGTf7F1Nupm0gmuZJivizdaB
- Y7bShhhgEn86cw56MjzhOOufEzFibMu4Hsxvho2LPsaRuf7KscMqD3HFMTbrSQRm+aOykeTT
- ZqDbZl2cXiSx3lC7P3RVMtQCcQar/wmEt+pHOuN65PXFKODZiZ7VrIdomeB/HpWY+mc2KqsA
- qQHgpEZgi7u0MVjXGJ8M5/U0eF9rTYpM9mq5LQddiCIsrrisJfT6p45w==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=9/o/W5tNcdOKYmk/LYihUWpWeggbfuzqwss5u7J69Ig=;
+ b=MN5f/I3KOygkqTg61wdZXXmkAAUJQaGGAz//+N9iPobqJr8Seg1FSW/8m5AY5ujqSkQ1Lv
+ THtzWfV/3+DIgbunZBHTxdOfHZty9uTziZb4y9UWhWyqG3KFCCFwxdGvsaTkMK+fmPbj922U
+ oioPmAie3e/gOU8sCmbFOkfscyKkyu+TXuZFA/XbH6UQiiofy+dU+qY5N+fagJcXAfaiPRq+
+ oJdleITYU36jcyyyG5r73fkDSUnlFPgeQdvRWCEUQ2T8DBDeI/3YzcxW+9k/n6lPc7VkXYlg
+ afEETQo5gJYWUgIk/vrvqQ+QqzWIK0oJwWLWfA6gxHOlQkIqKMMVMcuQ==;
 From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
 To: linux-gpio@vger.kernel.org
 Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
@@ -54,11 +54,9 @@ Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
 	linux-omap@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lee Jones <lee@kernel.org>
-Subject: [PATCH 3/3] pinctrl: single: Reject bit-per-mux without a usable function mask
-Date: Fri, 20 Nov 2026 00:28:05 +0100
-Message-ID: <20261119232806.4093754-4-alexander.sverdlin@siemens.com>
-In-Reply-To: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
-References: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
+Subject: [PATCH 0/3] pinctrl: single: follow-up fixes from review
+Date: Fri, 20 Nov 2026 00:28:02 +0100
+Message-ID: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -74,53 +72,38 @@ Feedback-ID: 519:519-456497:519-21489:flowmailer
 
 From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-With "pinctrl-single,bit-per-mux", the number of bits per pin is derived
-from "pinctrl-single,function-mask" as fls(fmask). Neither the binding nor
-pcs_probe() requires the mask to be present with bit-per-mux, or to fit
-the register width:
+These are follow-ups to commit ad2093840ca3 ("pinctrl: single: don't leak
+group/function tables on consumer re-probe") in pinctrl/for-next, which
+this series is based on. All three issues were found in code review
+(partly while reviewing Lee's recent pinctrl-single series [1]). None of
+them was reproduced, so the series is compile-tested only (W=1, ARM).
 
-- If the mask is missing or zero, bits_per_pin stays 0. Probe succeeds,
-  but parsing the first pin group divides by zero in
-  pcs_parse_bits_in_pinctrl_entry() and pcs_get_pin_by_offset(), and so
-  does reading the debugfs "pins" file via pcs_pin_shift_reg_get().
+1/3 is a gap in ad2093840ca3 itself: the duplicate function is freed, but
+its pinconf table isn't. My re-probe testing of ad2093840ca3 (TPM
+bind/unbind loop on an AM625 board, watching the slab counters) could not
+have shown it. That controller is plain "pinctrl-single" without
+PCS_FEAT_PINCONF, so pcs_parse_pinconf() never runs there. kmemleak
+doesn't see it either, because the table stays reachable through devres.
 
-- If the mask is wider than the register, width / bits_per_pin is 0.
-  pcs_parse_bits_in_pinctrl_entry() then allocates zero-sized vals and
-  pins arrays and writes through the returned ZERO_SIZE_PTR, and
-  pcs_pin_shift_reg_get() takes a remainder modulo zero.
+2/3 fixes error paths that remove a group/function the core deduplicated,
+i.e. one still used by an earlier mapping. Reaching them needs an
+allocation failure during a consumer re-probe.
 
-Both configurations pass dt-validate against the current binding.
-Reject them in pcs_probe().
+3/3 rejects bit-per-mux without a usable function mask. Such DTs pass
+dt-validate but divide by zero at runtime. Checked with dt-validate and
+against all in-tree bit-per-mux users, but not booted.
 
-The patch was inspired by a sibling fix
-("pinctrl: single: Reject invalid register width in pcs_probe()").
+[1] https://lore.kernel.org/all/20261119205013.2563811-10-lee@kernel.org/
 
-Link: https://lore.kernel.org/all/20261119205013.2563811-10-lee@kernel.org/
-Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
- drivers/pinctrl/pinctrl-single.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Alexander Sverdlin (3):
+  pinctrl: single: Also free the pinconf table of a duplicate function
+  pinctrl: single: Don't remove deduplicated groups and functions on
+    error
+  pinctrl: single: Reject bit-per-mux without a usable function mask
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index f5f0b95dc4282..ba5782b6b63d0 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1860,6 +1860,14 @@ static int pcs_probe(struct platform_device *pdev)
- 
- 	pcs->bits_per_mux = of_property_read_bool(np,
- 						  "pinctrl-single,bit-per-mux");
-+	if (pcs->bits_per_mux &&
-+	    (!pcs->fmask || fls(pcs->fmask) > pcs->width)) {
-+		dev_err(pcs->dev, "invalid function mask 0x%x for bit-per-mux\n",
-+			pcs->fmask);
-+
-+		return -EINVAL;
-+	}
-+
- 	ret = pcs_quirk_missing_pinctrl_cells(pcs, np,
- 					      pcs->bits_per_mux ? 2 : 1);
- 	if (ret) {
+ drivers/pinctrl/pinctrl-single.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
+
 -- 
 2.56.1
 
