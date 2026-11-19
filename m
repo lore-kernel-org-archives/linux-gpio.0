@@ -1,103 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795120156;
-	b=GYq2C4SZ6+urS7zONphLPToE0yfY06LtyC6nSO4rcXaQThNxA3GeG8E77WCCHstksGUr
-	 ppPrzV1JjBasL4cLxt8qz9W+FckScctqU4yogcqS8SoOtyqGNbwPupGJYikMlMsHCHLAN
-	 C2zAGhkbZNtm49DmAJT5Q4sE3aXfstD4qDONMrAq5/wqkvY6rMNVpDXDw/z/6swdZe0Tb
-	 UF2J2A2rlPQHUHFI6G4qfrm8RCBOdufWo5x50grxp1wumoO9u2dddGUX9sLbuvwbngnk9
-	 OISO4AB5g3z8y+xWxsmrIb1P1mDIgnjZgaYT/fDuUwxApGb5sTYN+YNAytvvUrxNT8Q==
+	t=1795121276;
+	b=cprLyAnKDQMY+6WNFvf/vcYqdRmryllnjGLlZ9/QHHWlfKBQPr8VWajEtrFyEbFvWpei
+	 FhsKO5ZG64bY4IZlpQTYfD2T8sRo7IZyFa1U58NbeKjHpgvxrx8Vi95vZkCdmLiFHFunX
+	 Yi80rI2Fmnzi8othm2k/j63cNc7U1P5WR4lxiKgNbDDoQPkufDS8H2bAbDa1yASAJk/3t
+	 zNlA0G4IpG2H+2gMxqhXzg6BURaldjQek5yVXUVY8UofIY8YG7ZfxcoaVVzUKP52Tvy+g
+	 4Z5ktDQBL/e7jUBC1vwxv7HULFvsrYCJaMoIm5IE6kok99Cc4EOqYwNdGCQ3rmVohfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795120156;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding:X-Rspamd-Queue-Id:
-	 X-Spam-Level:X-Rspamd-Server:X-Rspamd-Action:X-Spam-Flag:
-	 X-Spamd-Result:X-Spam-Score;
-	bh=cI9+YUeBugSPFUjGT81xx+ZkV8SXqylOI2vYVbqcBAw=;
-	b=sDYnJlj7T35vcBfIYGbrzzGSI3mHMCe1bCrgQ0eFb4T55YWCUfBEbdkQfmebdp2Vlkxm
-	 FeMPBVpFeYvLHcTaqFB+4ovmb70IZI0yAb0ZKdbxX3tAdGaMk4vHeAoDn2appQcTgrzP9
-	 utz2XRbyyeKxfw5DMuu6XUhDTzsqhqu8IsCLWx2u6Har0o7HNnB4auEMDG+i3iCbtvyY4
-	 QTy8rd9lhMzLf6JmjUZzW8TQfwtoCVWidaGrvpsa1dmb+mA7gQyymMIxyf43V6qC6aA7X
-	 ZtuwT0lgUgO1M7cqNuEyh3GeHsHxvwM2fS1vY5XrVCiPjfabIZep3GvRTLFGVndk1yA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795121276;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=fjP62IC7BY5+fCteY4TlTF+5AyEq5vMalnJjs0i2F0k=;
+	b=Sfb0vrlhZw6Lq5CFyL+5lfJhD1jL9K/bCO/CBI3EUE5AFYxxZpJ5rkxy8T5qot6Zgwn8
+	 4XUIBqoZ1vRtiGK3g7KKYpUkGxJhkQpTx7lP6H8bM1Vhgz5CJsQO0nKt6ZnkMs76jp5q+
+	 7DRq7l3/G8EsFMRoOwzqhNE+x4JYGNknP9xvtuKLYqQ/gBjjRW7vej3mQV1aTrl8e/9F5
+	 DdPtrEewTjl90Q5VssV4pbd57ZWvoL2AVIWJsUI94eyS1pcQTmQJ61/Y/Tf1lHr721b6v
+	 2nsMy7CHNETi6bgFLW6bEDnyDW9Vb+iVMneUEBZdu9nXR/9bl572EOzg5wetwzlAtQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=suse.de;
-	spf=pass smtp.mailfrom=suse.de;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=Q7euJFgU;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b="0c+/SJfF";
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=Q7euJFgU;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b="0c+/SJfF";
-	arc=none smtp.remote-ip=195.135.223.130
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XGzroEby;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B8A606A330
-	for <linux-gpio@vger.kernel.org>; Thu, 19 Nov 2026 20:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0B8A606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DF6606CC5E;
+	Thu, 19 Nov 2026 20:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=Q7euJFgU;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=0c+/SJfF;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=Q7euJFgU;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=0c+/SJfF
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 030F82246C;
-	Thu, 19 Nov 2026 20:29:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1795120154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cI9+YUeBugSPFUjGT81xx+ZkV8SXqylOI2vYVbqcBAw=;
-	b=Q7euJFgU9g4yxOFh6yn1cLjahRINJn2NLiU+7exR85sKqEJ5NThA4zyHQpYF/GcmrUoY00
-	OkPTlLimigZ/HT5+eEy4b8lS/rbMddzPlvaZA+IEqM01809HQhQVUXRsxSQvttAr+WJH67
-	pigl2jdZ8cH2kbT4FXJzrAG6mA7mgN4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1795120154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cI9+YUeBugSPFUjGT81xx+ZkV8SXqylOI2vYVbqcBAw=;
-	b=0c+/SJfFMpc5RnZPUPD2LscqirKRur10l3WxiXBr2hzBKy1FV4jt67B/dzeHy2FlwYEaI8
-	E0l6K2zywyxBHACA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Q7euJFgU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="0c+/SJfF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1795120154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cI9+YUeBugSPFUjGT81xx+ZkV8SXqylOI2vYVbqcBAw=;
-	b=Q7euJFgU9g4yxOFh6yn1cLjahRINJn2NLiU+7exR85sKqEJ5NThA4zyHQpYF/GcmrUoY00
-	OkPTlLimigZ/HT5+eEy4b8lS/rbMddzPlvaZA+IEqM01809HQhQVUXRsxSQvttAr+WJH67
-	pigl2jdZ8cH2kbT4FXJzrAG6mA7mgN4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1795120154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cI9+YUeBugSPFUjGT81xx+ZkV8SXqylOI2vYVbqcBAw=;
-	b=0c+/SJfFMpc5RnZPUPD2LscqirKRur10l3WxiXBr2hzBKy1FV4jt67B/dzeHy2FlwYEaI8
-	E0l6K2zywyxBHACA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC3231342D;
-	Thu, 19 Nov 2026 20:29:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LWmqIBlc/2rxcgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 19 Nov 2026 20:29:13 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Linkai Gong <gonglinkai@kylinos.cn>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] pinctrl: amd: Correct irq-enable readback poll timeout
-Date: Thu, 19 Nov 2026 21:29:05 +0100
-Message-ID: <20261119202909.7363-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XGzroEby
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34BE11F000C0;
+	Thu, 19 Nov 2026 20:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795121275;
+	bh=fjP62IC7BY5+fCteY4TlTF+5AyEq5vMalnJjs0i2F0k=;
+	h=From:To:Cc:Subject:Date;
+	b=XGzroEbyIqfu1F020pLEYGri2yRna/SmU4yPDMxz2Wqj/z1KN7rGZn0GSOLhpYq7L
+	 QSg6SjYUgyDMhMEKCg3+aNqudcIsmhBZDWrpZF0/t0mzfhT9gfQZo+Cs/wFoWTSu9x
+	 9EBLqWQ5E+u3MaXNR+uRwGns1MurwMZswQqv+e2FBKtY5mGdGDHx2vU3exEwnSoWZs
+	 juXbrdCssWoAxWX/jyKVWruN+nXmB6x1c/fHuySNxbYGVJn6HPlyDFlIslXaTWVP7x
+	 3no91nBAFXMzjJvLMlgGs9DhKqw8GAlTDwBGfufKDHr6XkdwkYPu2iLKJAmq7Ov3Dl
+	 egQy1lD7u+OLw==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Aaron Kling <webgeek1234@gmail.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Hao Chang <ot_chhao.chang@mediatek.com>,
+	"H. Nikolaus Schaller" <hns@goldelico.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Maoguang Meng <maoguang.meng@mediatek.com>,
+	Nicolas Boichat <drinkcat@chromium.org>,
+	Olivier Louvignes <olivier@mgcrea.io>,
+	Paul Boddie <paul@boddie.org.uk>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Qingliang Li <qingliang.li@mediatek.com>,
+	Rob Herring <robh@kernel.org>,
+	"Ryder.Lee" <ryder.lee@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	zhouyanjie@wanyeetech.com
+Subject: [PATCH v2 0/6] pinctrl: Fix out-of-bounds accesses, divide-by-zero, and error handling
+Date: Thu, 19 Nov 2026 20:47:15 +0000
+Message-ID: <20261119204748.2558209-1-lee@kernel.org>
+X-Mailer: git-send-email 2.56.1.750.gf70dc682cf-goog
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -107,67 +83,68 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 030F82246C
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-12.01 / 50.00];
-	SUSE_INTERNAL_BYPASS(-9.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -12.01
 
-On Thinkpad T14s Gen6, I can't wake up from suspend via the power
-button any longer, and the git bisect pointed to the commit
-44c232e80adc ("pinctrl: amd: add timeout to irq-enable readback").
-At a short glance this commit looked harmless, but the problem was its
-timeout value 1000: supposedly it's meant for 1 second, but
-read_poll_timeout_atomic() takes the argument as usecs, so it's 1 msec
--- which is way too short.
+These issues were reported by Sashiko.
 
-Correct the poll timeout to 1 second to fix the regression.
+v1 => v2:
+ - Drop patches 05/10, 06/10, 07/10, and 10/10, already applied to pinctrl
+   for-next
+ - Drop patch 01/10 (sunxi) in favour of the broader Allwinner IRQ-bank
+   rework in flight (Andre, Sashiko)
+ - mediatek: Guard against NULL eint in mtk_eint_do_suspend() and
+   mtk_eint_do_resume() before resetting hw->eint to NULL on error (Sashiko)
 
-Fixes: 44c232e80adc ("pinctrl: amd: add timeout to irq-enable readback")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- drivers/pinctrl/pinctrl-amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1: https://lore.kernel.org/all/20261103213002.1673560-1-lee@kernel.org/
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 30da75bb93b9..e95851a327b6 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -581,7 +581,7 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	pin_reg_irq_en &= ~BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg_irq_en, amd_gpio_pin_reg(gpio_dev, hwirq));
- 	if (readl_poll_timeout_atomic(amd_gpio_pin_reg(gpio_dev, hwirq), reg,
--				      (reg & mask) == mask, 1, 1000))
-+				      (reg & mask) == mask, 1, 1000000))
- 		ret = -ETIMEDOUT;
- 	writel(pin_reg, amd_gpio_pin_reg(gpio_dev, hwirq));
- 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+Cc: Aaron Kling <webgeek1234@gmail.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Daniel Golle <daniel@makrotopia.org>
+Cc: Hao Chang <ot_chhao.chang@mediatek.com>
+Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: Maoguang Meng <maoguang.meng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Olivier Louvignes <olivier@mgcrea.io>
+Cc: Paul Boddie <paul@boddie.org.uk>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Qingliang Li <qingliang.li@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: "Ryder.Lee" <ryder.lee@mediatek.com>
+Cc: Sam Shih <sam.shih@mediatek.com>
+Cc: Sean Wang <sean.wang@kernel.org>
+Cc: Thierry Reding <thierry.reding@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: zhouyanjie@wanyeetech.com
+
+Lee Jones (6):
+  pinctrl: tegra186: Fix out-of-bounds register bank index for AON drive
+    groups
+  pinctrl: ingenic: Fix element type of x1600_sfc_funcs array
+  pinctrl: mediatek: mt7981: Add missing entries to mt7981_ant_sel_funcs
+  pinctrl: mediatek: Guard against NULL eint in mtk_eint_do_suspend()
+    and mtk_eint_do_resume()
+  pinctrl: mediatek: Clean up partially initialised hw->eint on error
+  pinctrl: mediatek: Prevent divide-by-zero for pins with fixed drive
+    strength
+
+ drivers/pinctrl/mediatek/mtk-eint.c           |   6 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7981.c     |   2 +-
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |  24 ++++-
+ drivers/pinctrl/pinctrl-ingenic.c             |   2 +-
+ drivers/pinctrl/tegra/pinctrl-tegra186.c      | 102 +++++++++---------
+ 5 files changed, 79 insertions(+), 57 deletions(-)
+
 -- 
-2.53.0
+2.56.1.750.gf70dc682cf-goog
 
