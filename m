@@ -1,64 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795130895;
-	b=TdLUu/jBmF/Q0UQ+cIBVVVRbfcFHTLxFVZxXL05wma9MA1o8eWUifnaUxqmBQMYQ9IGp
-	 7xS8CTJ77sXbZk+cCORULN+2w2y+xWalZPxUqa5kfITx/rDEAkWbsOMJ+HJb4trfcBMRW
-	 gXQFXBGIyZ6X9/2FknYh6xIkcKyBS5RozsF80OmX8SRq5X/fwSM5m8iHVlnm/QpjOMeL7
-	 x9nMeKCcE5sZDyGx96RaJ/BQi9Zll7AhsyljeEiKrfAWK/AcdfM/tPWI9mcCWxTMaEbup
-	 G62vScvQzmNQh8Z71nnupAbdZQJv9/nTijkZ499Q4WIgN6oShV4pfZdr3VohOjc71Ag==
+	t=1795131731;
+	b=jGAiEjR2ehoTF6cUVqiRkoX7S9K+m/rJOJ3odibDjqcjrvBHwwMQB+K+9hCwZqGv8JTz
+	 5jQQDGcKkDGe5DiWQA7NobTLa3rsFAvO0+Ff0S9FuedWlHezOttOiSR+YAbR7960W5U7N
+	 cDA1sMLc6wZ/LnytjjXlpOyg2CXpLqOt+jRRFtUc7gRWOTmvhEhIh4bwWiH/PKiIuzC4H
+	 MhEYmeoUjMaWXiNZ0kpTd0bYmOyoKtt88+KrzMHp87em7Sz9kM3MHlcucJ5JfJgXEgeUv
+	 q+Bq7ftJdHy4UTDZp8La59OsYb0Ye5gAEvNh9lgs2e5/Y/oNi2JodLX9BjgSJZKnazA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795130895;
-	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
-	 Message-ID:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-Flowmailer-Platform:Feedback-ID;
-	bh=PwFIKKz2y8o67G3ho/5uV17TqwfSzdRIlKLB5lCSaiU=;
-	b=lzwS0t+xWlwXiE0sISsPt6bgjnQGi3j38O7W5mA5zB1sxOceIxvz6jMrl/cOtmLB3vod
-	 xhR8RZJrhRn0g4Hh5+yposQlcWVGOQ/wFwBB6vfx11SZhH6KPWFtmfo0qqKj8uGiB9H3g
-	 MDLK6DhAVqOjmtWwphNE6BWAvh5DCLvdeERraTnw4T08unkApvuQJfbYFsr/6r6CXm2j0
-	 QHtO9EuBW/S/nvIuu8pd9hVs3rZwsWDNnvs/gAJaQd0p7bCxC7Hqi6sdA7uFbqjBn3bZx
-	 8yNHu/fUSw8vHkXP7nrBdNZkT/wz7/cKngzILQv5q3yHH0doqM3fP/R6axMbxyWkBWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795131731;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=iuWrXA+JpZStu2UyFi68H9Je3I9SsSvKBF5d+DgcO5g=;
+	b=M2BcH+mDKDpvQqG54ljnE3zxaNgasTTSNCJb/VNtCEfES/RF3KJnO7/ErJKznvh3evjy
+	 KTz38eDDoWZkUrLkcmpjnR67aWZTLtSNcty+4I6JQdrpBzuyLiLhagxJPt5N2QcOTbhbO
+	 hR2VBwcppN9+p+tmkwaoAhqlbLmJjXIWAh2TUu2rcsXnTNfVR1HUHq+tesVwymnAWG9rS
+	 epWRbXKoNltb12p9bLRDhSXB727iLPN3z6cmClIbjwztXyO0aoVnm9BqfNREiBoYyMLUO
+	 Zh9UTm4No8pLk6Ct8t1pBp21tcVZWT5Zvr1+LjEb4yleZWLpPgZVznXgHp5Wpe64tGg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=siemens.com;
-	spf=pass smtp.mailfrom=rts-flowmailer.siemens.com;
-	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=HYxldIoX;
-	arc=none smtp.remote-ip=185.136.64.227
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q9L8FyTX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E070560A260B
-	for <linux-gpio@vger.kernel.org>; Thu, 19 Nov 2026 23:28:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E070560A260B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F91606A320
+	for <linux-gpio@vger.kernel.org>; Thu, 19 Nov 2026 23:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=HYxldIoX
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20261119232810d066514e64000207c6
-        for <linux-gpio@vger.kernel.org>;
-        Fri, 20 Nov 2026 00:28:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=PwFIKKz2y8o67G3ho/5uV17TqwfSzdRIlKLB5lCSaiU=;
- b=HYxldIoXg+7andR2pdzZTPfbtAva6hOQI8vuq9L4AUnhuizEo1DibuO6PDqhvP2dyhVM06
- QWBkE95eo6+XzkciLfpB1rV1jJEDCq1U5aghnpF74CieyFoZv0eZwVYI5N2Ee3AIRC9cCzgA
- aSueLRcsfIZaHfRwfxOlxW2SaBRSn68ywpzeHsPp0FoiMfRch0VOLoJSF4T48Q8E1Aq8+441
- TpeKjtV7QdHDuAhTBQSQyC954Jr2JRPf/RPd1PHNCJuaEfAL7D5c/d4JJhCxFFssBEoD9FGQ
- xGntl+jC3gadQoH1rG865YGgyEBnCWw+7dvLD2gqz+CMTuBdDFkOtIhg==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: linux-gpio@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>
-Subject: [PATCH 2/3] pinctrl: single: Don't remove deduplicated groups and functions on error
-Date: Fri, 20 Nov 2026 00:28:04 +0100
-Message-ID: <20261119232806.4093754-3-alexander.sverdlin@siemens.com>
-In-Reply-To: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q9L8FyTX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40461F000C4;
+	Thu, 19 Nov 2026 23:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795131731;
+	bh=iuWrXA+JpZStu2UyFi68H9Je3I9SsSvKBF5d+DgcO5g=;
+	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
+	b=Q9L8FyTXli462UprAGLvCdpudRJ6RLNxZvkOk6ZRBR+0iZp+QICxbvGwVXTGLArPs
+	 rFWQALwNj3S0I5FJ12z8tx/WBG5EWHwWfLOVV0dTDcWnOeynZr9EBxefVpoYQIWjxP
+	 qzdPeP2n2dq1ZoHWQnNCEj6D3lDo/0sZMKvxMPWFogoi7slCNr64A9OwrAC/v0WUSE
+	 Ljf/Dri2qF5WexR6tanqFS0eZS4HK/tAFiOAfeuFORVa6CYMUsWTdGCVbh727mym3T
+	 MkOuSD9X20wd3/kainyoLqvshwx7xjIbyjkpGalPfBNOL8n1nqBu4/hWT5pUyWgbZB
+	 Zfx/NaBtcPZXA==
+Message-ID: <sashiko-outbox-224208@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/3] pinctrl: single: Reject bit-per-mux without a
+ usable function mask
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>, linux-gpio@vger.kernel.org
+In-Reply-To: <20261119232806.4093754-4-alexander.sverdlin@siemens.com>
 References: <20261119232806.4093754-1-alexander.sverdlin@siemens.com>
+ <20261119232806.4093754-4-alexander.sverdlin@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 19 Nov 2026 23:42:10 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,71 +59,106 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] pinctrl: single: __ffs(0) undefined behavior in pcs_probe()
+  on zero fmask
+It also noticed 1 related pre-existing issue this patch does not
+introduce:
+- [High] pinctrl: single: division by zero in pcs_allocate_pin_table()
+  [1]
+--
 
-pinctrl_generic_add_group() and pinmux_generic_add_function() return the
-selector of an existing entry with the same name instead of adding a new
-one. This is the normal case when a node is mapped again, e.g. on
-consumer re-probe. If parsing then fails, the error paths of
-pcs_parse_one_pinctrl_entry() and pcs_parse_bits_in_pinctrl_entry()
-remove the group and function by that selector anyway, i.e. the entries
-an earlier mapping is still using.
+commit cc08958bb33456e53a3135b8e53047a689914a44
+Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Besides breaking that mapping, this corrupts the selector space: the
-selectors are allocated from num_groups/num_functions, which the removal
-decrements, so the last entry is no longer found by name and the next new
-entry collides with it in the radix tree (-EEXIST).
+pinctrl: single: Reject bit-per-mux without a usable function mask
 
-Only remove them if this call actually added them, i.e. if the core's
-function refers to our pcs_function. As in the success path, testing the
-function is enough: the group has the same name and is always added and
-removed together with it.
+This commit rejects pinctrl-single,bit-per-mux configurations in
+pcs_probe() when pinctrl-single,function-mask is missing, zero, or wider
+than the register width.
 
-Fixes: a4ab10860723 ("pinctrl: single: Fix group and function selector use")
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
- drivers/pinctrl/pinctrl-single.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Link: https://lore.kernel.org/all/20261119205013.2563811-10-lee@kernel.org/
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 64472465800c4..f5f0b95dc4282 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1116,10 +1116,16 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
- 	return 0;
- 
- free_pingroups:
--	pinctrl_generic_remove_group(pcs->pctl, gsel);
-+	/*
-+	 * Only remove what we added, not an in-use deduplicated instance. The
-+	 * group is deduplicated together with the function.
-+	 */
-+	if (pinmux_generic_get_function(pcs->pctl, fsel)->data == function)
-+		pinctrl_generic_remove_group(pcs->pctl, gsel);
- 	*num_maps = 1;
- free_function:
--	pinmux_generic_remove_function(pcs->pctl, fsel);
-+	if (pinmux_generic_get_function(pcs->pctl, fsel)->data == function)
-+		pinmux_generic_remove_function(pcs->pctl, fsel);
- free_pins:
- 	mutex_unlock(&pcs->mutex);
- 	devm_kfree(pcs->dev, pins);
-@@ -1262,7 +1268,9 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
- 	return 0;
- 
- free_function:
--	pinmux_generic_remove_function(pcs->pctl, fsel);
-+	/* See pcs_parse_one_pinctrl_entry() */
-+	if (pinmux_generic_get_function(pcs->pctl, fsel)->data == function)
-+		pinmux_generic_remove_function(pcs->pctl, fsel);
- free_pins:
- 	mutex_unlock(&pcs->mutex);
- 	devm_kfree(pcs->dev, pins);
--- 
-2.56.1
+> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-s=
+ingle.c
+> index bc6a3a4999156..73425f6c97284 100644
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -1855,6 +1855,14 @@ static int pcs_probe(struct platform_device *pdev)
+> =20
+>  	pcs->bits_per_mux =3D of_property_read_bool(np,
+>  						  "pinctrl-single,bit-per-mux");
+> +	if (pcs->bits_per_mux &&
+> +	    (!pcs->fmask || fls(pcs->fmask) > pcs->width)) {
+> +		dev_err(pcs->dev, "invalid function mask 0x%x for bit-per-mux\n",
+> +			pcs->fmask);
+> +
+> +		return -EINVAL;
+> +	}
 
+[Severity: Medium]
+Can pcs_probe() invoke __ffs(0) before reaching this !pcs->fmask check?
+
+When pinctrl-single,function-mask is present in the Device Tree with a
+value of 0, of_property_read_u32() succeeds earlier in pcs_probe() and
+runs:
+
+drivers/pinctrl/pinctrl-single.c:pcs_probe() {
+	...
+	ret =3D of_property_read_u32(np, "pinctrl-single,function-mask",
+				   &pcs->fmask);
+	if (!ret) {
+		pcs->fshift =3D __ffs(pcs->fmask);
+		pcs->fmax =3D pcs->fmask >> pcs->fshift;
+	} else {
+	...
+}
+
+__ffs(0) is undefined (__builtin_ctzl(0)), and shifting the 32-bit
+pcs->fmask by pcs->fshift can also trigger an out-of-bounds shift before
+ reaching the new check.  Checking if (!ret && pcs->fmask) above would
+avoid both.
+
+[Severity: High]
+This problem wasn't introduced by this patch, but does pcs_probe() also
+fail to reject an invalid pcs->width [1]?
+
+Later in pcs_probe(), the switch on pcs->width ignores anything other
+than 8, 16, or 32 in its default case:
+
+drivers/pinctrl/pinctrl-single.c:pcs_probe() {
+	...
+	switch (pcs->width) {
+	case 8:
+		pcs->read =3D pcs_readb;
+		pcs->write =3D pcs_writeb;
+		break;
+	case 16:
+		pcs->read =3D pcs_readw;
+		pcs->write =3D pcs_writew;
+		break;
+	case 32:
+		pcs->read =3D pcs_readl;
+		pcs->write =3D pcs_writel;
+		break;
+	default:
+		break;
+	}
+	...
+	ret =3D pcs_allocate_pin_table(pcs);
+	...
+}
+
+When pcs->width is less than 8 and bit-per-mux is not set,
+pcs_allocate_pin_table() computes mux_bytes =3D pcs->width / BITS_PER_BYTE
+as 0 and divides by zero in pcs->size / mux_bytes.  If pcs->width is
+greater than 8 but not 8, 16, or 32, pcs->read and pcs->write remain NULL
+and pcs_add_pin() dereferences pcs->read when irq_enable_mask is set.
+
+[1] https://sashiko.dev/#/bug/linux-a0303b6e-d0c6-4292-aeeb-fa8a21861827
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119232806.4093=
+754-1-alexander.sverdlin@siemens.com?part=3D3
