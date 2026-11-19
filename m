@@ -1,90 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=68.232.154.123
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795107114;
-	b=EGFO3nUjbImkqeONoTxMYWnU3PYtXBL/RVM8Sb+nxwLpv/mtBOLw6nVzlBgZM0rAkSxb
-	 TPLdXQvgaE5DnWJtaBNaJJgiRhiDMdLWKvTNJCbuS/ZnNnanfAVUr8f1PZrkLw5Ig29r2
-	 JeRjnxyMJVAqMn25soft0PbBGij5byceTNBY1iqqRWB3EWJukxdLbp1TICNI0s/F5dUM9
-	 IZy653cVoN3LY240Lg/JG32O/kf1+gnOdOIa7NC83qFsDsQXHxPz7nenRos4iLTbQPX5h
-	 Eldb7nBe0wvnxcknHEjhEuL8WnooyuyqWsPCB9OuXCqHEzCm6yRC174wFoOaHBvPNKQ==
+	t=1795107892;
+	b=CCmF5829ABNVpxhDGXCa9l6JL2lkYTQhIsPY3AyPsNW0arnbMixakitvpXZmkDlE0Ldc
+	 nePteFCdjY+wSzrJoQHMxnuQMK06HKXgS+qFFjMbuv2j8W4ZgxnPhjRWSPzED92paeZRd
+	 H4AaD3Xd8qaHqDbtuOy75Cwyrkl2fzb9pGrn+IXt8aYopSin+450uzz8t6f7Wt37e08SO
+	 5IYndmS9dw+gI5Y6ipZPysrBlvBG79tZLHRdA9x/F6rA6oxBtIQIoc3INOk4RECEEl+3q
+	 DsaJeBuKGEblWp5K0syPmK8MTcO0Dv/xsuBgNlxUanOyYziJl/hSEaj2zgtrb+ALMOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795107114;
-	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
-	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
-	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
-	 X-Local-Domain:X-CMAE-Envelope;
-	bh=VyuLjUWlndm/ZBOLKhEN/lw43++AjMQwOBflJ5LOk6s=;
-	b=HY3h87Ndfta0oGEjeTAQ4SK4dmj66GXH8IJ0tiIKcy55A8iLnr1RnXJSsU6xk8WfBPIA
-	 iJXE4nnXBh2f/7mbAJEFlX/GfVRcIv3RSZPGTQcB4iOuzwpZlvIqLlq7Vy5OO5CKAopSr
-	 VxMgG/Jy+n6mFZGSzccaOQl6T8GMOBElJKBMcdDpC3L5GPw+2jwCTc3bADlUiwrv4eDTm
-	 ev06EfZcLnJDJV8OCCbSsbpjzoQsM3qtHZqCntdV0tJZtAIwTGXyaiBYS11UCNWP7LQvq
-	 55Q4XxB6j0+58Su2KWEJC09JgYjjnODhXi+By8DML0PYS4LJZEZpt2Eyi4EFci4HiNw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795107892;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-Amp-Result:Received:Received:Received:Date:From:To:CC:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=75ij6pDSw/dGd/ThqsciwAi6urz37SF8jJVI1DSJXJk=;
+	b=qUZwUqI9JwjT00dxbpLhkF6XHn5RluNBudKrMyMMfdg4Pof1f4Gri6TFRmlAMC7/UzM5
+	 U7vQw03Ym5l30Ndy+3RcF/0LgwjRQbj03YhmMNInYB9WW2OCNITTfuuw9/ItTzCHndJMN
+	 zbGKQsJRdjOd/C1zv4DKYapI9FPUjPBxOliSk/WDQaklmA2ZufbOzA/Y724blT6UWNdMX
+	 cqh4Ce8Skf0h7nNLjs14dE1lcvhAifjyHAA2ST6y5ReOW9DrvRHL2BpVLzFfivqTWtOzL
+	 PYbC0jKUSoDdK4JG3zyOsDggNCSiURQ5CKdhy4cnmipMVGSmL3UqjqfzKF7XOHfFfaw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=roeck-us.net;
-	spf=fail smtp.mailfrom=roeck-us.net;
-	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=TpqgAi2t;
-	arc=none smtp.remote-ip=44.202.169.35
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=microchip.com;
+	spf=pass smtp.mailfrom=microchip.com;
+	dkim=pass header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=Y+tz4o8T;
+	arc=none smtp.remote-ip=68.232.154.123
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE7B606A335
-	for <linux-gpio@vger.kernel.org>; Thu, 19 Nov 2026 16:51:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0CE7B606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6769A60A381B;
+	Thu, 19 Nov 2026 17:04:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6769A60A381B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=TpqgAi2t
-Received: from eig-obgw-6007b.ext.cloudfilter.net ([10.0.30.166])
-	by cmsmtp with ESMTPS
-	id TqVPxbXBS4vCDU5MXxipMa; Thu, 19 Nov 2026 16:51:53 +0000
-Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
-	by cmsmtp with ESMTPS
-	id U5MWxsbzw3nNNU5MWx322b; Thu, 19 Nov 2026 16:51:52 +0000
-X-Authority-Analysis: v=2.4 cv=TuLmhCXh c=1 sm=1 tr=0 ts=6aff2928
- a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
- a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10 a=pGLkceISAAAA:8
- a=VwQbUJbxAAAA:8 a=_jlGtV7tAAAA:8 a=IvRCNjoTNcy513YpXOgA:9 a=CjuIK1q_8ugA:10
- a=nlm17XC03S6CtCLSeiRr:22 a=KPbNTLLc3YvdawN95zVk:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VyuLjUWlndm/ZBOLKhEN/lw43++AjMQwOBflJ5LOk6s=; b=TpqgAi2tfvQr8FgT+aFEOK34fc
-	3BysAvJ3YX/SX8uqux912onyChgt5l0XwEoTIgfdY/1lBqm7IMEn6J/8+aGDb33+H/lB0s39d8TnS
-	B/mahwJPkIOGTLThSks0Cv7GF3nMMo6zlRDfPMzlIeFRp9S3LTTVWZufQrV0ZuSjvXLVk22NZBLiK
-	yUFAn+/tHSSCR2K7Qwjn6LLS07jB3IqxBZT+nL1igRkeT+1J9R9vZmtSKE6ONG5T/SUrA+Iy9o6GO
-	5YMPBYf8w1IaGxuiT/Nu5jdGrHh0xkEPD6ST9rtP5aNBQ4Dz6xwFiqbxswfmDbLD7C/DiRRdR6cpi
-	qSo3ZOzQ==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:56426 helo=server.roeck-us.net)
-	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <linux@roeck-us.net>)
-	id 1xU5MU-00000003LGz-3x54;
-	Thu, 19 Nov 2026 22:21:51 +0530
-Date: Thu, 19 Nov 2026 08:51:49 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: a0282524688@gmail.com
-Cc: lee@kernel.org, Ming Yu <tmyu0@nuvoton.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, mfd@lists.linux.dev
-Subject: Re: [PATCH v10 06/13] mfd: nct6694: Move module type macros to
- shared header
-Message-ID: <670e71a1-6f47-4d27-ae6d-10c24c66e34c@roeck-us.net>
-References: <20261118081625.2399247-1-a0282524688@gmail.com>
- <20261118081625.2399247-7-a0282524688@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=Y+tz4o8T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1795107893; x=1826643893;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=3GtScdnmVD92QIEfzF/uKMq+5JtKePSJLKPuyf+l/OE=;
+  b=Y+tz4o8TyYC08Mo3lcj3e83F6PaVWVFAz31nYlLtNC3pqC1db9VnpIoM
+   bKMY5cjW9D4vFUk/EDRtMUQQWT2t0kL1dLGvDTlEu2FYcPa2/3IGFoeG3
+   5YCNwySQgkwEFCV5voZ9Qd1KmUsWWVZXB8uMzXMpHV5nB2iMWPNnkZ/82
+   RO3qnegtSVbYItmOb/RlOjF5sFQp6vp/F3R5jmCINFYlIRgUi/JBfbQNg
+   70vd3izhpLTicHncPweGnVwTaMmEFhniafdhrkypxh9kEY53j6av2cgp8
+   NqY3VRxyNaV3+6DNoewADKexifxV8LYBGhWrE54liG0jnB05yeqRm0VsF
+   w==;
+X-CSE-ConnectionGUID: sHUV5i65RHCnATXYcmTEJQ==
+X-CSE-MsgGUID: SNuLV1XpRpahQOxGm4AAwA==
+X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
+   d="scan'208";a="67008031"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Nov 2026 10:04:46 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 19 Nov 2026 10:04:45 -0700
+Received: from MON-LT-C78453.mchp-main.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58 via Frontend Transport; Thu, 19 Nov 2026 10:04:43 -0700
+Date: Thu, 19 Nov 2026 12:04:41 -0500
+From: Charles Perry <charles.perry@microchip.com>
+To: Linus Walleij <linusw@kernel.org>
+CC: Charles Perry <charles.perry@microchip.com>, <linus.walleij@linaro.org>,
+	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<joshua.yeong@starfivetech.com>, <anup@brainfault.org>,
+	<rahul.pathak@oss.qualcomm.com>, <leyfoon.tan@starfivetech.com>
+Subject: Re: [RFC] RPMI pin control specification
+Message-ID: <av8sKVcE17v56Vew@MON-LT-C78453.mchp-main.com>
+References: <auEa46zLITsk-pAa@MON-LT-C78453.mchp-main.com>
+ <CAD++jLn2dBDakGxRzCby5bUJpianq65=WdmHKrpeF9ZqwH0Zgg@mail.gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -94,77 +82,52 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20261118081625.2399247-7-a0282524688@gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1xU5MU-00000003LGz-3x54
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:56426
-X-Source-Auth: guenter@roeck-us.net
-X-Email-Count: 12
-X-Org: HG=direseller_whb_net_legacy;ORG=directi;
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfAHEr+L5OolcOVGQzcdmRnJ7EkTbAUA/+RvdQUAekNk8fifqjOVAaPQJcVzXNpLoVeTr7UVS2JhzwyZLpqZG+mQw5A7BEFp0NrzOtp/KuAQ9ycgdduC+
- RtIFrEf1Ll36wvCpYJ2P1yaQcfK6pjZ+8JALuOfVzcTpmIzsw4lVtKsCHEu+GTdLTNHajnO13Kyc3DjP5hY9SP4V4KG0TT06BehDn5KMytUFFHVY/5H73B/f
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD++jLn2dBDakGxRzCby5bUJpianq65=WdmHKrpeF9ZqwH0Zgg@mail.gmail.com>
 
-On Wed, Nov 18, 2026 at 04:16:17PM +0800, a0282524688@gmail.com wrote:
-> From: Ming Yu <a0282524688@gmail.com>
-> 
-> Each sub-device driver defines the module type used by its own
-> commands. The upcoming HIF transport also needs to recognise
-> NCT6694_RPT_MOD, as report accesses are served from a separate
-> register space rather than through the command mailbox.
-> 
-> Move all module types into the shared header so that the transports
-> and the sub-device drivers use a single set of definitions.
-> 
-> No functional change.
-> 
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-> Signed-off-by: Ming Yu <a0282524688@gmail.com>
-> ---
-> Changes in v10:
-> - None.
-> 
-> Changes in v9:
-> - Added Andi's Reviewed-by.
-> 
-> Changes in v8:
-> - Reworded the commit message to explain why the transport needs the
->   module types.
-> 
-> Changes in v7:
-> - None.
-> 
-> Changes in v6:
-> - None.
-> 
-> Changes in v5:
-> - Split from the monolithic v4 patch to follow the single logical change
->   principle.
-> 
->  drivers/gpio/gpio-nct6694.c         |  7 -------
->  drivers/hwmon/nct6694-hwmon.c       | 21 ---------------------
->  drivers/i2c/busses/i2c-nct6694.c    |  7 -------
->  drivers/net/can/usb/nct6694_canfd.c |  6 ------
->  drivers/rtc/rtc-nct6694.c           |  7 -------
->  drivers/watchdog/nct6694_wdt.c      |  7 -------
->  include/linux/mfd/nct6694.h         |  9 +++++++++
->  7 files changed, 9 insertions(+), 55 deletions(-)
+Hello Linus,
 
-For hwmon and watchdog:
+On Wed, Nov 18, 2026 at 10:36:43PM +0100, Linus Walleij wrote:
+> Hi Charles,
+> 
+> sorry for replying so late, kernel development is intense these days.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+No problem, thank you for replying.
 
-Guenter
+> 
+> On Tue, Oct 27, 2026 at 10:43 PM Charles Perry
+> <charles.perry@microchip.com> wrote:
+> 
+> > There is currently a spec under review for adding a pin control service to
+> > Risc-V Platform Management Interface (RPMI). RPMI is a messaging interface
+> > between an application processor and a platform controller for riscv.
+> 
+> I actually have only one question:
+> 
+> Is this spec so similar to another four-letter firmware interface that
+> drivers/pinctrl/pinctrl-scmi.c can be used without changes or perhaps
+> by a simple addition of a compatible string?
+
+No, that is not the case currently. There are semantic differences in the
+protocol, the message format changes, the enums are not the same, the
+underlying transport is not the same, etc.
+
+On the topic of SCMI, are you aware of anything that could have been
+improved or should have been done differently in the pin control protocol?
+
+> 
+> Because what I'm not interested in are two necessarily different drivers
+> with the same content.
+> 
+> Other than that I understand these specifications are similar for some
+> reasons that I maybe don't want to concern myself with, so I'm fine
+> either way.
+> 
+> Yours,
+> Linus Walleij
+
+-- 
+Thanks,
+Charles
