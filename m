@@ -1,57 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795096068;
-	b=fGtb1Z2iQafsVGEq8B3SeBOxeCCKXo6I9wUorNp+eBEjbiGFxcaqyFhqTbK6OPjXW/Vg
-	 Ggxc1T4EaseeVTmr047oCZEAiStj25t7kR3sjeE9HO8oszXEoCekfDF3UjHHZCop4d6O1
-	 FNHALZ1GRdYshfQQWodoAKBIZgyXVoaWgIkGRHGvLSgf1BfCNP1/+zQ8Qc3BbxZsd1f40
-	 nJm9VEqmG6fMw4YmY9pufi6MWo05lBgCvKOThCoYqG/D70Jw2LrcaHaigzJODzaARihBd
-	 EDwe3UqKVvpamxTthuQ8RoiCUXVB+UFsYLS8Be5dBffvNBrPs61JJZlizCXTbmtB1QQ==
+	t=1795097785;
+	b=1i6bXJTFmCU/2GbUjIxeXOPU9+T/eAEj+9OkKu917d9CQDJY3oy9s0J8gdspuVYxRU/j
+	 Q5E8dbKWM4q9uZ2xErNLhA2MYUFG1BFN6sfTmZLSzLxWTJkjUh4px+ESLemVRLgqkZjQu
+	 tLA0jv1Aq/i0Ntl2Ufm4VaXW03rAARnxotdx6Eu1hE4KXzm8QYdIx47J/XAqddn/sH0vI
+	 IosW68h58tuqyYTa8YYTdtDtR757TOTCtj6lmH/gSBGsA11LIBwbm9TimCQtPMJO3R1tM
+	 tcOJCzcVKJT/m8yeDVr8fDD1piXrUHWXkWkYnUNe7F9BABO1UxvCaJCkLWdQBKcw5Lw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795096068;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=/aUkR2dZtbFzFdTxiIcu8jaum48sVObo0flYILxu/V8=;
-	b=lPemvpvauTMaBm6+Uj3C5quyTbm1WYqxsm76MMaR9tUpmYHlK7FZzBcIvcKRGwevR8+7
-	 7JbIOZ+Dmc7qo/jNjg1Wqf0M5Tn0jU6ICFRPIIuuWfiSTBCRxV8dqc6Zvy1TuQ+ge9Dr9
-	 ZM1mvOeWX85wpU4J1nhMHVkZP0WZzNH4rj2rAXQFrIWcYmUxJozMMSoxMobMcI9L2gZAI
-	 RO3YsYjYnfMSy/3fTaVv4ubthqzMuOTZEKUeScrJsx4jD2edFUWo212LvLNCAFttOeT5N
-	 sYXWZWKkw5qqS4oExAMnXzfaFkwqTxNQZSKMMUeXscYKP/5KIVZehdP39mDazJrTCVQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795097785;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=RvP7hMRsWVM8btK1nsXQy/u5gRKUh/9shR14WhIy4BM=;
+	b=nBKVMx/qfRi4Fpf3a0n9n6nKiE16s/6VCjV4UIQA5CskHwda5JuAGUI1+n9w7spIFcc5
+	 FQtHfyhIW6AP9859n0232S5wic0hnUUik2lFig2QklcgdbovoigyxPa7Yazp+IOabxmB7
+	 G7RBpc8OYXj0q/vE0SXMEQuu4IbQhFoBJcJnPU9xeRwhRIC0JcV9ICEtaNN8aTKbshTS/
+	 HhiuqQ0XPCajXyL4GeOIR33lIxgo2jKI7jN8/JZGjQ3Aq7o+k+xO44LZD25GZehY3+vfq
+	 nvjQYalFo9HrYfHchA4KODXyuGnuH8LwNhISMbLRHr7vMeZXc9a4HnMd3ISMZYuaPNQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ed8chs7W;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Dys+RchT;
+	arc=none smtp.remote-ip=198.175.65.12
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 470CE606A336;
-	Thu, 19 Nov 2026 13:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAEA606A320;
+	Thu, 19 Nov 2026 14:16:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECAEA606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ed8chs7W
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0908C1F000CF;
-	Thu, 19 Nov 2026 13:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795096067;
-	bh=/aUkR2dZtbFzFdTxiIcu8jaum48sVObo0flYILxu/V8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ed8chs7WaJt8q6FQslIocScqdEwLnMEhjIx8ewmFiCjgE2EP06utqiIHU4wtGkB6n
-	 4U0k8+sTi01VtzUmpxUZcxdtdYtI4lhoe9gz0+7BuejhwrlCdFYq8YuzxThgOlQFnx
-	 lzlMJsvIFpPzqGirTmEqPUj3OZZ3uomwZYDiO+0ZDihK7S7Ae+aYPTBCDMXMsRgu3W
-	 ISdwYbaFEFRw9GjOMGLonNR9SmIYvz3FB1lnv9FMWmHmwt8Yub/jrgqokAN3skuwU6
-	 dmE5NClPdYarXRP47ucWwGB9kIT7RxXrmbO+ZZI8mtyWBBIFEtI8aepz98jGlIZfeP
-	 hw7cuVbhkdA6g==
-Date: Thu, 19 Nov 2026 14:47:44 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: Karl Chan <exxxxkc@getgoogleoff.me>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] pinctrl: qcom: ipq5018: allow it to be bulid on
- arm32
-Message-ID: <ehikivdig5q4hvfdb76p2l6xtw5dlyhhvxfj5sfhjlj4btc27r@ickrtvtsi4ui>
-References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
- <20241007163414.32458-5-exxxxkc@getgoogleoff.me>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Dys+RchT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795097785; x=1826633785;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cYUbJ6JlPEmLhq2na7DI0qoGMRjgS9yB45BhkEJbc30=;
+  b=Dys+RchTqL1eqXy2saJIVF+GNhr9xbXZQ7Vd0bU/oGjbKtUOGMr+LlKp
+   Zn7QFLIz8HnZQYMWqs/Bkfs5W+aJu2g5lKb5eUcITE28JR8OWUhguupC1
+   wdNzRokqQe2v3Xw3+oJTH1ik6vdt2o6U3PKGj8fxk8bMfblsU18gggpkD
+   FVy8Gbv9IfAK6LXLvY5NXvuFiDMeF9kELn8az7wvdmRg2/DO2dVc1+xfc
+   Mzrz4FjzDgQwkCdZpvUVjiRdXkXRHbdxBvDHx0E+MPMQuaQGbrnvQg0wa
+   DQ2LUJyhV3qe+2j4tzn+d6ZZwaomX6GhOloqW1rPVrXA7Mq1nnlGZMiA/
+   Q==;
+X-CSE-ConnectionGUID: gVrcFUu6S82rKhshTzMfdg==
+X-CSE-MsgGUID: BtvjOTMvSqSBNufiLrQAfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11971"; a="3829150"
+X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
+   d="scan'208";a="3829150"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2026 06:16:24 -0800
+X-CSE-ConnectionGUID: QH6PJbYKQTqH6/WBBp8Z7Q==
+X-CSE-MsgGUID: B26etjMyShm5utmiEYgYEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,221,1787036400"; 
+   d="scan'208";a="10669841"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.61])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2026 06:16:22 -0800
+Date: Thu, 19 Nov 2026 16:16:19 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: silverducks@altlinux.org, Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: linux-gpio@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-acpi@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] gpiolib: acpi: Add ignore_wake quirk for Gigabyte
+ B650 GAMING X AX
+Message-ID: <av8EszUWsJIq3hIV@ashevche-desk.local>
+References: <20261119083813.390337-1-silverducks@altlinux.org>
+ <20261119122844.445945-2-silverducks@altlinux.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -63,16 +85,58 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007163414.32458-5-exxxxkc@getgoogleoff.me>
+In-Reply-To: <20261119122844.445945-2-silverducks@altlinux.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Oct 08, 2024 at 12:34:13AM +0800, Karl Chan wrote:
-> There are some ipq5018 based device's firmware only can able to boot
-> arm32 but the pinctrl driver dont allow it to be compiled on
-> arm32.Therefore this patch needed for those devices.
+On Thu, Nov 19, 2026 at 03:28:45PM +0300, silverducks@altlinux.org wrote:
+
++Cc: AMD folks.
+
+> The firmware's _AEI table on the Gigabyte B650 GAMING X AX declares AMD
+> GPIO pin 3 as GpioInt(Edge, ActiveLow, ExclusiveAndWake). gpiolib-acpi
+> requests it as "ACPI:Event" and amd_gpio_irq_set_wake() arms the hardware
+> S3 wake bit for that pin. The firmware then sends the signal a few seconds
+> after entering S3, so the machine resumes on it's own six to ten seconds
+> after suspend.
 > 
-> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+> Pin 3 is the only wake signal the OS can see for the whole GPP7 PCIe
+> domain, and GPP7 has no _PRW, so ignoring this wake flag is the only way to
+> keep S3 reliable on this board. Wake from USB keyboards/mouse and
+> Wake-on-LAN through that domain is lost as a consequence, but I figure S3
+> not working at all is worse. The power button still wakes the machine as
+> normal.
+
+Hmm... And you are running the latest BIOS?
+
 > ---
+> v2 - Put real name in signoff; Moved testing information to comment.
+> 
+> Quirk tested on upstream kernel v7.4-rc2.  Also tested on stable kernel
+> v6.12, which is the version where the issue was originally diagnosed.
 
-This doesn't apply on top of current linux-next.
+...
 
-Bart
+> +	{
+> +		/*
+> +		 * Spurious wake from S3: the firmware _AEI table declares AMD GPIO
+> +		 * pin 3 (GPP7 group) as Edge/ActiveLow ExclusiveAndWake, so gpiolib-acpi
+> +		 * requests it as ACPI:Event and amd_gpio_irq_set_wake() arms the
+> +		 * hardware S0i3/S3 wake bit. The firmware asserts this signal during
+> +		 * S3 entry regardless of the PCI wake sources configured by the OS,
+> +		 * waking the machine a few seconds after suspend.
+> +		 */
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Gigabyte Technology Co., Ltd."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "B650 GAMING X AX"),
+> +		},
+> +		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
+> +			.ignore_wake = "AMDI0030:00@3",
+> +		},
+> +	},
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
