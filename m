@@ -1,64 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795209241;
-	b=l7LQYhL+1FwSTrrsFNfqEPdp6Zw22K+7AMoKA3AlZG8my/9/d0J7GLNYF8om3vmy8YW+
-	 FQgeh2OG4BA3EUZUJAjhkO8a8ZlaKISBGulhxXy72RbqUs7hvlPzjenDrmqJ4hr5AgI+A
-	 X5nyeeeB6DcjJS1Hu7n5ij06UbfUy4tee7CG4APpcuYE1yy57lpo8x7cl9/0raYFuU/IX
-	 OeVCxgguKERaHt7VyjS1p61ZIPMpJHcYjJnAgB1eCW1r+ZtzEmKydhd3sDBbGatfTr13h
-	 5WlL8Dt0Sfi4RE44YXHV5V3IhEZ/+WbPLw4gGpecc3Pz/+9HS2P+XyBfMDHGFBd25Fg==
+	t=1795209282;
+	b=ZlLbZuD8oF7QSgeP1p9VInjSFb0+fg1DTBaHSA1A1R+UNs4cMAxTDGMQH+GAeX0vKDda
+	 MaEDExizZ0nzSmB9gAt//Tu6ktEJNalZXYu93xwq6wAfbJzXbUtChZBuJQzaJEgzG8Ki8
+	 wohq52SCRUfEFHGA7Kx2HaUXK6FRRa5RgVawX6b3yaXtAzuQbzecS0GCFD8RwkUF4icIw
+	 C0rzBsnLhh/3UfBI7i6glXYzx9+RfK/nZtr4Bzro3D9RxQIHT9Sz2rnQXZpX+wtWhZVPV
+	 6v6vPEkeaycPmRTYqgcuNggwF4DKi8gNHuHBoRCM02rK9FsrixHj87dIi2lP4ONeiKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795209241;
-	h=Received:DKIM-Signature:Received:Subject:From:In-Reply-To:References:
-	 X-PR-Tracked-List-Id:X-PR-Tracked-Message-Id:X-PR-Tracked-Remote:
-	 X-PR-Tracked-Commit-Id:X-PR-Merge-Tree:X-PR-Merge-Refname:
-	 X-PR-Merge-Commit-Id:Message-Id:Date:To:Cc;
-	bh=Y2qwJeFuBel3eIqphVrHJnM99TXaiNGsc4VfL62sonk=;
-	b=Whjny6ZWn0IAhMU448B6Zt3RYmp5rD5Zle42PS/RPz1QhACV+CYCYY47Z09hZo8OwJET
-	 kf6hYSBxx/0ZuquySbhUWgNlKJFbJmcAlSpD+dpW150s1Fxk8pKZhFDQufLDUSplDuBh0
-	 D0/OC8xb1FVqdlUZV36H5Bd/tDU+O4v/7BNqRJPXF1U/UDPcHvdlg0yS4yw9O0/HJcmpw
-	 ohQNhocsDVI/nHmewBbji24pvffekMzGLhZS3X+rNFPUHgET2Vl7Qw8HXtbkavSILw8ZU
-	 tvGhihEhzJtdYBJkUM+AzOijzTtDeWmmpfhLmjBB6lwoIam20mQppONiL6oQK1UwOPw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795209282;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=q2F+hZ2s1FcQekhq0Mjm8g+vBV5buzDjQcFxUknlCCM=;
+	b=BmqIdRhDHjp5xI1kw3YjFaf7qEAVfkMy3YJUqezFYsIsm4FnOlcTQzS87mHOt6bhnswK
+	 Y4wKnnw2+BWMZjv+/JMqZQyJRcXFMBHDP6eQd8N7GnkOQDAPlYd3Ah02ITCWnR0sU567g
+	 6UabKb+c4KUniB2P0ehBKax/D+/IR+oH34vWKogG38LI/fbEZBq4D3xA+LBnMW+mCmIG/
+	 wPFZHVq7bTla5n/0/lOePjjuJ9EfjbFovrGdLltLSYRAemLjXUkCXdZUEfrISA+CbBDqQ
+	 JEmNZpf+y+pNnakIwXN+BR6LfQD3TaKF8/a1iIie2d3E1DomTv7gCW/8j8qOQhA/uSw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QEguhrRJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QlyVTf74;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441D1606A69C;
-	Fri, 20 Nov 2026 21:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D20C606A687
+	for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2026 21:14:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8D20C606A687
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QEguhrRJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEC591F000D0;
-	Fri, 20 Nov 2026 21:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795209240;
-	bh=Y2qwJeFuBel3eIqphVrHJnM99TXaiNGsc4VfL62sonk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=QEguhrRJ1EQevTlTqO/OTDML5cGCDfcL6hL5rDrN8QwEWO8fFkgKBC4YObNSYWb4U
-	 gTVblR+TFyNbMu552oCCYI10DXlIjqOgVBf7bUYC01jwABBvOQU9xw8e94QVvpyxp+
-	 SRdxKAEugwmbSQun6K5v1n0VDm5nexENUkZZRTKsplQFXOvawzs8H5XI5uUoN7ucU8
-	 MRjSNU0xzLieQqpqm4wkHH9Ralgwz0jnLA2qo/Fg51PelBrbc+1+rVXDOzzzCBD7CI
-	 Yso2RcYQkU3PEPfpBWTLBN4fnrZjdTqZefOa4ZHSVfHpqGRFm8C7bWmZJNo18TQ1a2
-	 BfD3JfXVtKZlw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B4515380A964;
-	Fri, 20 Nov 2026 21:14:00 +0000 (UTC)
-Subject: Re: [GIT PULL] gpio fixes for v7.4-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20261120130921.29111-1-bartosz.golaszewski@oss.qualcomm.com>
-References: <20261120130921.29111-1-bartosz.golaszewski@oss.qualcomm.com>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20261120130921.29111-1-bartosz.golaszewski@oss.qualcomm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio-fixes-for-v7.4-rc4
-X-PR-Tracked-Commit-Id: 31678e68f82636a27fbad58ae40054557da4fd7e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0097b4aab00e02249532dfa5c1c10abc00d1cd59
-Message-Id: <179520923936.792202.12813609766774256310.pr-tracker-bot@kernel.org>
-Date: Fri, 20 Nov 2026 21:13:59 +0000
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, brgl@kernel.org, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QlyVTf74
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-3282db206d3so3576154eec.0
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2026 13:14:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795209271; x=1795814071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=q2F+hZ2s1FcQekhq0Mjm8g+vBV5buzDjQcFxUknlCCM=;
+        b=QlyVTf742k4U/rjm8UAn1WGc4emJ4bOl20MgQT+w8xAtAWUVeOBYs3F9k1SNDIeaQq
+         /a2AYhoN4V/bSfcJhf2HHEBhMRyJrVPT3r2+m8OT7nKHJlfRdZNTFVLIx9H7UZAD5+YQ
+         dgiA3E6NPwl3ipTAwLmWTMdTZFE3ygR4vQfEDT4+cY3yZvewKUr0D3fvwYEtAnK1VCf0
+         7wGYM+LJyJKe4vpdgUaqq6LWRfNmy0FbVlSH7LdSZJrFldIxvXwZ3PCOPvKdt6CO9f0F
+         VltEfyy6BUN9QTpAKrSq2J3GNJyGaB+afturQOKnQkc5J4jUV2u6TLS9hvNGVUcqWhZ2
+         5CnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795209271; x=1795814071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=q2F+hZ2s1FcQekhq0Mjm8g+vBV5buzDjQcFxUknlCCM=;
+        b=AfwS2uGPRa3WXk+C0jpoieHZhIDfd9GytwCDs7ZeGJ9UUvQrjZ5kgp9vd148KzsBw6
+         7JroIdxThFb7AJJ3pONynVxNeMj31rG5Akhwn7Lb2WwfDvfh700fN99s0kWj/C4ATgGR
+         cjP434YbagR4tdpXEWB3GhdpEAGRhUJciqSeAQWv0MBFEUUgWkLuG7Grxooo6q4IIWfv
+         aowMpr8JBCBYlmRc+lY3AG2G1EmP1OGCi2DvhvefXK7fIlrtcOEXOD8e7y/n1JQ95CuV
+         ue4p6eIQcn2KLZZ9bxx2KL2Y8kZuXuSgrUNjc7hvZzQQI/hRjUOrl4HotEZLfxQRP7KZ
+         ning==
+X-Gm-Message-State: APuU4Z9VtccFalGJsgNy7eMt8fuSRVs14j1PwenynsblRyHYCnHWuxPE
+	Gb9pGe143Ek0gVmk0ByA6VQ9RIVQ+lgHAue3UCN8SkDtG+QlgWZ3CT3wg1hP+gICWP7i
+X-Gm-Gg: AZFdTZdjeh7birIiFxqbu7rENBhTzRVOl/MNOv+Zav8L5AS4P2AXf0tLdAAdLuGxbQ6
+	ghd9bAqouxQbo+qqBDLaIhCEZvzNNTWeYQj7i41/ppAus68x+mkfKljmfO8iApQ/oEGqWkDrqcR
+	piWZcLkpb7kK10L2q8af5mQBdqrwSk2vBWnLJjdfcXXqn3RbC5Xvy2ddnGriZdrApUELT0nxjLu
+	8d//cjGpj670cu/0V1sy/5rUiyUD+8zwnS1tfgqiXfVZ6cc1wNrTH0j+JW+rb38DS8sfJ0CiaQz
+	1DHsHJK7mkL/C7yVcO8AryezD41GDahYLh5iWv+brCHbRqpVlvug7KZXAMIFui9Chsn525kpg+C
+	gVujhurZxSrGIJNkuRZvKkGtTAILa3yWFazrWPWkwQXLOL21eJwdvfE7917hG8W5e/ieGoMGT4R
+	b08FsV2DXWgt8OWzvEG2pUUrsdrls092uk5ZWrbJBOPDGlZK6dEIZ4+U9WoN2OCcwlzf263Bnfs
+	jrDbtmWbyY/IvXxxbi8NCkRcbxmdkDa/WqyFYMdpNmFzV0TxlOtRWhUYOpE/8HFVbq1VTZgQZF2
+	U8oXEenVo4XA0e+OMf4gPNUNCHZi+seHr8bUoWicDIplAEluIW8Nb3e7BkBUrASzvEYd+HP7WAt
+	6iMMyPNwL8BFc/RvnuQ==
+X-Received: by 2002:a05:7301:a0d:b0:368:2548:c08b with SMTP id 5a478bee46e88-3856f254a17mr4787099eec.21.1795209270227;
+        Fri, 20 Nov 2026 13:14:30 -0800 (PST)
+Received: from ryan.localdomain ([171.76.222.148])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385666e99fdsm13843126eec.5.2026.11.20.13.14.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2026 13:14:29 -0800 (PST)
+From: Mohammed Rayan <mohammedrah1289@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	Bamvor Jian Zhang <bamv2005@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mohammed Rayan <mohammedrah1289@gmail.com>
+Subject: [PATCH] selftests: gpio: Reject empty simulator names
+Date: Sat, 21 Nov 2026 02:43:39 +0530
+Message-Id: <20261120211339.79567-1-mohammedrah1289@gmail.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,16 +95,51 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 20 Nov 2026 14:09:21 +0100:
+The gpio-sim selftest checks that chip_name and dev_name are nonempty,
+but the command substitutions in both checks are unquoted. If a read
+produces no output, the shell removes the empty argument and leaves
+"test -n", which succeeds instead of reporting the missing name.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio-fixes-for-v7.4-rc4
+Quote the substitutions so that an empty result fails the checks.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0097b4aab00e02249532dfa5c1c10abc00d1cd59
+In a disposable QEMU guest, the original and modified scripts both
+passed normally. With empty output or a failed read injected for each
+attribute using a userspace wrapper, the original script passed and the
+modified script failed as expected.
 
-Thank you!
+The issue was investigated with Codex assistance.
 
+Fixes: 1d96b8f635d9 ("selftests: gpio: add test cases for gpio-sim")
+Signed-off-by: Mohammed Rayan <mohammedrah1289@gmail.com>
+---
+ tools/testing/selftests/gpio/gpio-sim.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/gpio/gpio-sim.sh b/tools/testing/selftests/gpio/gpio-sim.sh
+index bbc29ed9c60a..2c9e354fe9ed 100755
+--- a/tools/testing/selftests/gpio/gpio-sim.sh
++++ b/tools/testing/selftests/gpio/gpio-sim.sh
+@@ -181,7 +181,7 @@ echo "1.1. Chip name is communicated to user"
+ create_chip chip
+ create_bank chip bank
+ enable_chip chip
+-test -n `cat $CONFIGFS_DIR/chip/bank/chip_name` || fail "chip_name doesn't work"
++test -n "`cat $CONFIGFS_DIR/chip/bank/chip_name`" || fail "chip_name doesn't work"
+ disable_chip chip
+ remove_chip chip
+ 
+@@ -196,7 +196,7 @@ echo "1.3. Device name is communicated to user"
+ create_chip chip
+ create_bank chip bank
+ enable_chip chip
+-test -n `cat $CONFIGFS_DIR/chip/dev_name` || fail "dev_name doesn't work"
++test -n "`cat $CONFIGFS_DIR/chip/dev_name`" || fail "dev_name doesn't work"
+ disable_chip chip
+ remove_chip chip
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.34.1
+
