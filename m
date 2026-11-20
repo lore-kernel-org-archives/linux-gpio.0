@@ -1,101 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.52
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795176796;
-	b=Hr/hqFIq+9PjOFdoNBbHQ3M4PkqOvBw9qo1H5OMDn0Hxnzla0Ln4rEyNnMzbpTkViBO1
-	 4Lwz4zg8bdirhP7fUVMmLTTSuaA/MWVLw7PESKEUAhyu/7Oboni42x/0sp47a9ZXvI+UC
-	 t47Z019yZWTyyqKJyQxVsj1+5lrEXjn0ex0WtUyU4+IsXHym+bOWZd74iYvnTXmD/kIxN
-	 TlC3K6nX8q6TPy3p2HuGrzu6qfglMFo0x8xsGaj1x8oNBduyGIz6HrfoWr7znqN+9bjtN
-	 GhVwMxqmTA6u/Q/2651Xs+4UY5CpQ7RK4b/YKuZAi3sNBOiIp4fUcNfy+LGXoJV6ezw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795176796;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=fcQffss7eE/XcLf/4aHYjQKeo+L9JMp703XSJQyfycM=;
-	b=4atGVjMORi8gJ/C/t6f7/RfJeqE4I3xx4xWgFTwpcGHov4KMeUGnqdp27qZC5z4zZ5oT
-	 /Mw1KtDjpXADc9Wg/79iHZ/3qn+IcAqlbmJPlubNBeB+FwVRj+fF9L3QnviwoZVdLEEaG
-	 baXL4babJatg8FKuZneiCsxwv4XnwifVKovLAOh5zgsZfaoU5sTOF/PsemaheqWxt8T7U
-	 VTIQx0zFYKbbf46HrR4/zjqTREo87Yi5/LKiQnqwON/um1xj/n6tVE4Uoat21yimx9exu
-	 U3yjIJsCZEtwWu3lnfTQhsngvd4S+jPZqgnt/pyMkYm52ynXlfZRZ7a7V7SDIgZ+jfw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L2hKjcXw;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.52
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795177458;
+	b=OdvgRXFvPyuwMx/5WrK6eNqDmyZ5cpKQcTh6tuuJLOVqtdYpBrG7/lgR7BHp6j0dR9lw
+	 mMVM/OW2WdJREvABvdJ6VYMOwmHcsYd+3vtzWFnCH/28aG4r4UJNLHQmH1zBDNd1tsOS0
+	 YY6BvSMe0OFzWg3rGteTtgjSwVDlvR0/4TMkPsbOT+cVChjIn4zBvxzH9zZCUG1MSpKGI
+	 sX0p9wQ9ntEtApee7vgrQVHZNyZ8GI97kMP2ZZ2B3sHbz9kRk6v91GiRv/hP145Y185T6
+	 pn6+r4ItLJiI9bBrI/G1aGQCvf6LLVdN6M4BmS4u0IqXqBouyqDQHpvkJI2Z+DeIWtw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795177458;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=0czxhgq5wFGQ/KjwS9ColrCZlqVXj4X1xIOnzUvKlpA=;
+	b=PFTR8cCZgkng6okWFx0varpZGIhiiNct1QO43PfWLzj3PzI67ZP13iRPRTsuIMcYvWDU
+	 899GvfZ3r7O48S4C6F8ezYxXnIUFGdrzInQPlsGtujvs5UOK63P4Rl40GjZ+TKu5ew6X0
+	 7aMi6TmLU/1wW78LtalpabYMbpNRxEe71nDYzxw+xnGsKlNtX0QxfU9ePhPA6+YaUNmhy
+	 137pVyGiVUXULJUtDL1B3OaFSKGSkz938tcqRoubsLQnN4nSe8QWlCtIE4luYL8sZPuBg
+	 MG6X2tRIbpG+40j7lQlMHylVQNkT79yRgg9tsFMXGNtKnbLOb55NhUDVSLL/z7nju7A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LPwc5rAh;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0560606A326
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2026 12:13:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0560606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB36606A330;
+	Fri, 20 Nov 2026 12:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L2hKjcXw
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5c1a3374400so600672e87.2
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2026 04:13:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795176794; cv=none;
-        d=google.com; s=arc-20260327;
-        b=IhCn/npCuu/PhSrdD7xWEIdUaiMCAu7H0Kw0A6dwf87+mBLqrYrjLy+Xg/OH8J+ZYt
-         LyOLuv75Wr1KmCwjSGt3QxZA+zIYGlvgkr7uQavOFpe3dRDDLV9i+k49sgUAOZb0MCkz
-         N7MUwcJSW2Dy20SEveat7bJi7ObtL+36l/IQu2BjcGCSPYqw6x4A6ap8bcJpuuEoBApU
-         wj7FOTplgXApyXbiTbeYQEb9XGkzhpOrKlCoBv64SrVItAnDMLtA/4R8CDiSM7kXIcPF
-         AwCz4m7To5xgowUv6zfQyhsO+K7loOc+oY687ZxV5ZjbWIshu4921sbpsdMjTHtVisRz
-         0BZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=fcQffss7eE/XcLf/4aHYjQKeo+L9JMp703XSJQyfycM=;
-        fh=UoWgYbYYuvjb35UHYr+MDH6rTTOtaJvM+DcO/vm1fPo=;
-        b=quhrJCodu2JWZTf/LbjYaoUgXbTwedpRrbEtI9jYL1amELhybXF903FnnpuObqGavi
-         iHpe4awx8Bk9SRNcIvGN0/VOizNyZModvXQu8+GUj8ORicsZXvGFTHofP8BTcRxWI8yl
-         +a0oPQaVc8hkmP9TDd6tH6qoqQzS+2Vn6cgRbywZI3oUVbxiymXadqvey02nI+4is4yq
-         4YM1o8d5LLrji2FvS4YHB67HnaBOgU4J4Lc/2JC4OnOVG3c23lrRGJIA0MS4Ia7T8sD0
-         VLXU73tcLKmlWoHZlHQi1co7Nr7HZn8xp4jem2XBk3ayZq4gepPZg1/rILjZKkJq0oyM
-         fZKw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795176794; x=1795781594; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=fcQffss7eE/XcLf/4aHYjQKeo+L9JMp703XSJQyfycM=;
-        b=L2hKjcXwbx3DvIS2POAqz9jYjZHZ5sTJ+nSQ8kHtcsPZNgcWWJCNYUnmiZKbq4gyE4
-         H24B5ILw5MbSHky/FcU3owDeerrfpFVls7ytn+sunOwc9C88RKJbcmt0YpxGLP1M/TOd
-         FbvZyQmPtDMas3hW0BuqMvzrD9b5pSa9frHVK7i3I35L/72wYSqBnAN/txFqLpWMFzqd
-         eXSG3AVjv/BNal240Mhm9lTRZA0dJm2tRi8tWWZDunvYrZIcyMekWtvIUY9Ldn0htXht
-         odJYHBMxXLmuArerilao6ir+hxE5nxihRok/zca+D401llOKNyKJuEe6K+3Xc48Iz2Kt
-         nyrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795176794; x=1795781594;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=fcQffss7eE/XcLf/4aHYjQKeo+L9JMp703XSJQyfycM=;
-        b=GkA/PYRYlBOEethEAuAkuvEc1HIoNHB+Wo3SDWOomG34WNID7/OkKuy9VG2XQkwiAx
-         8fRxy1aViESdyyJ0ZwM96NwwHpO7SYOtAUW4eRMhoP3bNNT194cvwpv5Lln4x+03Tjit
-         h2IA4Eda1V0g8qrdDqGoT02rseATu5NZZmYnERVRABO5Vg9u7pWDTvXGIRXaIoYmiR7u
-         TX9F3CFsxaG6ppoVc/oYWOkDFS7ghWFN5b9ZsLE2uHFr13wTAin7H4ME8BDDLw1SRAPG
-         sUnYKQvGhnAIBuHt926BfnLQJRcDkulPzcpbZQovGaMZPLsC1Iqau9t5TSsfn/GFH3iG
-         72vg==
-X-Forwarded-Encrypted: i=1; AL+hErF0UEkkJbtmWBq4B1WWdJMmCJb9I8uDY+gWfmmAk5kv+IuPpEHJnyaLPYVxLWcaYlOLWPCajfU2tWv1@vger.kernel.org
-X-Gm-Message-State: APuU4Z9YznX0W/xHcY3ucUBz5Tjo3mD1pjzzRBWfz9sxg57WRsWTCLN5
-	kvZUDZhkkgeqQ0Kxm0qzX9f8FeMvnxr+5dv0l27jUhZ6CemO0i81V53bw0fDyIaY5d7obz6EUdb
-	vnot558wRtRXbGhQe5l9bKq5J4wommuU=
-X-Gm-Gg: AZFdTZc+DmRQ58BtZ1Tck88h1iIecJjDMZskEROui7MQzvVYv8eNAuvo/Rul/DDMYoR
-	9adF/Zx+EU/LhWnltZw32GDtDa6KU1Luic9bVGS6mGBo0tXywqrrOmrMxaJHfMQI/Mg9j50kyfU
-	/BZGP2FJ7L7lCMo/0sHG151jzjGRqi8uXQwp/M+lvbUDKkbM4rgPBw3AJSAw0fXoHpFOuMS7DhT
-	1mToxLijeSslTBJYOSDRmw263LUxtOJ+3+xalE2lcyeoOkdZdDDDHN6/rhA+55djCCqCEQ+ge9L
-	/ijFvdzCe7jI19X0YXBJ2+LEWNLdWxtl1nu2oNA/y+YOokuMQEMCPxXMHN9ipGJbLZPH2v5yDex
-	0Lru5PbXelLPBa/jEE8C3F3XcbJ8AiZFTMMMm0fWZ+TwLvxhQaRrC4Pr/1Xqh1iJDcybDyG6jDp
-	VYTTBE0rJTHHKUmLkCilcIamzZ
-X-Received: by 2002:a05:6512:a78d:10b0:5c1:46c8:4797 with SMTP id
- 2adb3069b0e04-5c1bc7d1153mr604351e87.17.1795176793721; Fri, 20 Nov 2026
- 04:13:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LPwc5rAh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B97A11F000C0;
+	Fri, 20 Nov 2026 12:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795177457;
+	bh=0czxhgq5wFGQ/KjwS9ColrCZlqVXj4X1xIOnzUvKlpA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=LPwc5rAhaBZY4Z7dJ1/dqLemSDA3Bizvp3uN2mSt5H6/XqGmXGhZIixkyGhj3SJtw
+	 bAtz10W5SYZi4gzseSvtU4wPWgV/RnZfQMNuubzvN38Pr+uFa8UP/33xKF5RMxYHQK
+	 6kaHgNYkiX/PjtOcBxm8Gnf5Uq1cxZE5oL6RlBXDDZ0O5lVqDWtSvicKTbU+1vLqfJ
+	 MG1FkCrPJJX7U+0MQkknfy0sZLl4vZivZ1MciY6918DxWH6ndytZYOXKHjbbzLThdI
+	 TfbTKtJBQKu1V6qUPpAFI8uEzFOMNUNGSOW3DnOvCAtTUsqiD3cIW11W6pnYXt18SN
+	 Pmjl+VEjuTb9g==
+Message-ID: <f7d4a1cd-accf-4cb9-8137-0912ad6d7fb8@kernel.org>
+Date: Fri, 20 Nov 2026 13:24:12 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -105,43 +51,92 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261120-b4-imx937-frdm-scmi-pinctrl-v2-1-911487a14300@oss.nxp.com>
-In-Reply-To: <20261120-b4-imx937-frdm-scmi-pinctrl-v2-1-911487a14300@oss.nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 20 Nov 2026 09:13:02 -0300
-X-Gm-Features: AclHuK94xOx7RNiFqLMbC6LRL1dQuiXB8r985LNFD94WYgXQMJhVIsyDHnh7OLI
-Message-ID: <CAOMZO5D4KV_v7w5tcLn44UsMxpOFDQwr48b24Mx1Fy+v_J-WFQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: imx: Use of_device_id match table for per-SoC data
-To: joy.zou@oss.nxp.com
-Cc: Peng Fan <peng.fan@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Jacky Bai <ping.bai@nxp.com>, Ye Li <ye.li@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Joy Zou <joy.zou@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add Molokai TLMM
+To: venkat.yadlapati@yahoo.com, Bartosz Golaszewski <brgl@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261116-molokai-tlmm-v2-0-429f8c8d8eb1@yahoo.com>
+ <20261116-molokai-tlmm-v2-1-429f8c8d8eb1@yahoo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261116-molokai-tlmm-v2-1-429f8c8d8eb1@yahoo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 20, 2026 at 7:46=E2=80=AFAM <joy.zou@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Replace the hardcoded of_machine_is_compatible() if-else chain and the
-> static string allowlist with a proper of_device_id match table carrying
-> per-SoC data via the .data field.
->
-> This eliminates the static local variable anti-pattern for daisy_off
-> (lazy-initialized, shared across instances) and adopts the idiomatic
-> kernel of_machine_get_match_data() APIs.
->
-> A new pinctrl_scmi_imx_data struct captures the daisy register offset
-> for future extensibility when new SoCs may not use register-offset based
-> daisy configuration.
->
-> No functional changes.
->
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+On 16/11/2026 08:39, Venkat Yadlapati via B4 Relay wrote:
+> From: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+> 
+> Document the Top Level Mode Multiplexer of the Qualcomm Molokai (SM8845)
+> SoC. It is a Kaanapali derivative, but has 205 GPIOs instead of 217, no
+> SDC2 pins and a different set of pin functions.
+> 
+> Assisted-by: LLM
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Drop
+
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
+
+> Signed-off-by: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+> ---
+>  .../bindings/pinctrl/qcom,molokai-tlmm.yaml        | 128 +++++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
+> 
+
+
+Best regards,
+Krzysztof
