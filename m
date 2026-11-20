@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795159467;
-	b=r5T2+cQQoPt/CGJaAECoKNz/SXmS8vgTLlWnLNUyiyHkDsvPzKxuQxFiNgAWKUSGCBA/
-	 sWAJ3VlGirqh6X8vXhyZw1pd2vuSXVmd/druhrD6SQ5qEDU8UbDaIWep9cpX+RUkkQM5K
-	 64q63xVTOh9jHk4S2wFeR2QxUJktKak4NRsngaADFbfsf6tBuNe33V9fLxoDd2rAJL/CD
-	 seJnfnSD+t9c80qRGQBdQWEVWJ/m9ZvpXXDifMfpEIMBIPpweuXZghtsfreHrH5Yeq/YE
-	 +Ey5K24tyFQmJHp996NrRPm9JosMO1teaemF9I9lAD4Dj0Zl/DsZYuBH6LLFwqHllCw==
+	t=1795159463;
+	b=k8en+0kd6VhlEyHUH4tBabQ8rSD7016m8iaan+OvCrXWFJL42PPthJ3pd4U2SN3CyDCA
+	 EEjRuTDAIW4Wm2pUHcLMULxc460nHsoXxH6bmmRymi8yijtEz3cEep5NPD9DWOc8trZ2z
+	 msZIb7C4Kl+6sZvy0wW8J3xb2P1vrsm5SAT9nsQzmOyAzkWyZc4WGTk2A5yeEA40n2CW6
+	 qitszIiUpw+ODLFnoa34NVRjwR5XtwnL1/C3J8PY4ByobRwPaurUsQL3ryx+et5dpQZJo
+	 vfkJ1Qj9SzcsiYXPEVve8EFxOxyp3aW19+73RXXZduVyGico8GzZZm/ZY59vdEfrZvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795159467;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795159463;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Last-TLS-Session-Version;
-	bh=942gLiJLh3c2pwpiobtEe58sUFzOK9l7pPqlal4Sb14=;
-	b=pZiNEfYNivyXVcupLXXCwLbthDDEfNo+woSdXJIESUTVAB31706doxy4XLyV4/w6+YLB
-	 2rE+4k2+HRL59wl12ApGuPfOWiRdmDKS1MqXUZNHzTsS1u2DssgI1Ph2bDDv8y6cTL2gH
-	 bOrzj8uNoL1VtjUCO/0IxU/kK53gT9uYO93qQMBpmcJt4DI/v3ZKsw3f6umYSqKPCj5Dy
-	 /D5DEmtBmRB7/2OGkkUV/8M/aF2XtNqFShkXtuNwh9TsTRKNG9IZwGAYGYLeBGjHee+Wy
-	 /0tMX7a/KtwjYjK4MIl72NBDgu/hUuUkQXqgYUXV6lT2VbrQrcMXI3mrxvj5n93y6ag==
+	bh=yW8Nv3/bjabR4IeowP0IwE2ZyKAWWY4hGOAY9Ef+3DE=;
+	b=I65XtBe7Gi9IvTGK+nHokB28hfbgkHw2x1THCbc/zC6l2Iewpe91KNDqrzUNFEIkTiz1
+	 QRSzF3YihGpiIk75eg7qBC03E7iOomXvjX0PjEOMho3NpHhTQWegYLM8mMY3HVyoGcLXt
+	 SEMXoiWW8edbt/NYEyeBS00r68WymhhRrtlce6GEXRFsgN92OrIX2A7T8kOuJNfiKeHso
+	 mf5X2NTLpbV3tROrqWpID231LyBj5rk7YLFuyGUGcAXYpBMsxKUHiO/trBie3Fwvhk2ri
+	 VZkl8fNpFB2RytN2IhI9sBmrT/QgWy6z1YHVsmBUEt6smJAhXCIOIbPk0JdwOTfJLmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=rkeCp4Pf;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=MkUznqSp;
 	arc=none smtp.remote-ip=185.246.84.56
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506FC606A333;
-	Fri, 20 Nov 2026 07:24:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 506FC606A333
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F68460A2621;
+	Fri, 20 Nov 2026 07:24:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F68460A2621
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=rkeCp4Pf
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=MkUznqSp
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 158DC1A173C;
-	Fri, 20 Nov 2026 07:24:25 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 5C3C31A173D;
+	Fri, 20 Nov 2026 07:24:21 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D55826017D;
-	Fri, 20 Nov 2026 07:24:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8861B11BC1199;
-	Fri, 20 Nov 2026 08:24:19 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 29C1F6017D;
+	Fri, 20 Nov 2026 07:24:21 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 77FE411BC1185;
+	Fri, 20 Nov 2026 08:24:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795159462; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1795159459; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=942gLiJLh3c2pwpiobtEe58sUFzOK9l7pPqlal4Sb14=;
-	b=rkeCp4Pf0MRjDXlXI73QLmWznLKgKc155aZpMshYco80x5NxLBHvxQ+d/lGj9kAUWnD4Bd
-	vboxat3r6H6PAsDqQm9RvHT8Mv2nV0Q8LiyPW5aQSyC61I4oEXJvxmktYcJH1L6TdWJMhC
-	iWXE9Zr8ZsDbWElvd95AKx2LpNXUhQ2iVCxdPTiqSi8OErPOlHdDS32kgtUoMxEH6zbpdU
-	T8OV+0Xh5Zhe9BDtKs1TEUg8Rm1p09ZMwtScO7gQe+HjsK1JZLu7Q5tRrw69d66/VedIee
-	LanQ8Gn8HXGm/0K+UWiIh1+O2FVgDnDMv1RkOIiIzhdBKvT9/lTA+D5u8eT0Pw==
+	bh=yW8Nv3/bjabR4IeowP0IwE2ZyKAWWY4hGOAY9Ef+3DE=;
+	b=MkUznqSpuuA46VvarcZLd7a6tU5Ne/+wiu8xd+aMz1Gcx2iIaZs45d/V+DHKNZAEKM1lLv
+	ZVwDTPMgK8LV2V/chJkY/WLMKqmA00x6t4PW+y1bdixp+teybIbBi2ldLDYoHpj3tNyiRZ
+	akWQpj0Qv0HPQfHt9+DXk3QJAgvQtmm2BDp3nc1gAJnbdyPXMmhlP7Jys+8ik3nQqXtGHY
+	W/gHCIICU9tmS70swo/E4WbqzzTeMUtsDQlJndGnH/d9+PlFF2OwFCaz10NdIWHxFEhgPh
+	aZ/b7jYmZn2uXf6DVLZzQdo3Mu8lQwrG/Uk47Q3jyqYXwEC1R4ZDhvRM6qoLIQ==
 From: "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>
-Date: Fri, 20 Nov 2026 08:23:56 +0100
-Subject: [PATCH v10 4/5] gpio: aaeon: Add GPIO driver for SRG-IMX8P MCU
+Date: Fri, 20 Nov 2026 08:23:55 +0100
+Subject: [PATCH v10 3/5] mfd: aaeon: Add SRG-IMX8P MCU driver
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,7 +65,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20261120-dev-b4-aaeon-mcu-driver-v10-4-a756687e7997@bootlin.com>
+Message-Id: <20261120-dev-b4-aaeon-mcu-driver-v10-3-a756687e7997@bootlin.com>
 References: <20261120-dev-b4-aaeon-mcu-driver-v10-0-a756687e7997@bootlin.com>
 In-Reply-To: <20261120-dev-b4-aaeon-mcu-driver-v10-0-a756687e7997@bootlin.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -86,318 +86,384 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Miquel Raynal <miquel.raynal@bootlin.com>, mfd@lists.linux.dev, 
  linux-doc@vger.kernel.org, 
- "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+ "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add GPIO driver for the Aaeon SRG-IMX8P embedded controller. This
-driver supports 7 GPO (General Purpose Output) pins and 12 GPIO pins
-that can be configured as inputs or outputs.
+Add a driver for the Aaeon SRG-IMX8P embedded controller. This driver
+provides the core I2C communication interface and registers child
+devices (GPIO and watchdog controllers).
 
-The driver implements proper state management for GPO pins (which are
-output-only) and full direction control for GPIO pins. During probe,
-all pins are reset to a known state (GPOs low, GPIOs as inputs) to
-prevent undefined behavior across system reboots, as the MCU does not
-reset GPIO states on soft reboot.
+The driver implements a custom regmap bus over I2C to match the MCU's
+fixed 3-byte command format [opcode, arg, value]. Register addresses
+are encoded as 16-bit values (opcode << 8 | arg) using the
+AAEON_MCU_REG() macro defined in the shared header. The regmap
+instance is shared with child drivers via dev_get_regmap(). Concurrent
+I2C accesses from child drivers are serialized by regmap's built-in
+locking.
+
+The MCU wants a STOP between a command and its response, so they are
+two separate transfers. Both are issued under the I2C segment lock so
+that no other transfer on the same I2C segment can land in between.
+
+I2C transfers use buffers embedded in the driver data and aligned to
+ARCH_DMA_MINALIGN rather than stack-allocated ones, as required by I2C
+controllers that perform DMA.
+
+Regmap caching is enabled (REGCACHE_MAPLE) with a volatile_reg
+callback that marks GPIO input read registers (opcode 0x72) and the
+watchdog status register (opcode 0x63, arg 0x02) as volatile. All
+other registers written by the driver (GPIO direction,
+GPO state, watchdog control) are stable and can be safely cached.
+
+Only those two kinds of registers are readable. Any other opcode is a
+command, and the frame sent for a read is the same as the one used to
+write it, so reading it, for instance through the regmap debugfs
+registers file, would execute the command.
 
 Co-developed-by: Jérémie Dautheribes (Schneider Electric) <jeremie.dautheribes@bootlin.com>
 Signed-off-by: Jérémie Dautheribes (Schneider Electric) <jeremie.dautheribes@bootlin.com>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Thomas Perrot (Schneider Electric) <thomas.perrot@bootlin.com>
 ---
- MAINTAINERS                   |   1 +
- drivers/gpio/Kconfig          |   9 ++
- drivers/gpio/Makefile         |   1 +
- drivers/gpio/gpio-aaeon-mcu.c | 235 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 246 insertions(+)
+ MAINTAINERS                   |   2 +
+ drivers/mfd/Kconfig           |  11 ++
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/aaeon-mcu.c       | 227 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/aaeon-mcu.h |  46 +++++++++
+ 5 files changed, 287 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 7546bc8ab83d..5cc24f875e36 100644
+index 8e0027ffa227..7546bc8ab83d 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -192,6 +192,7 @@ M:	Thomas Perrot <thomas.perrot@bootlin.com>
+@@ -192,6 +192,8 @@ M:	Thomas Perrot <thomas.perrot@bootlin.com>
  R:	Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
  S:	Maintained
  F:	Documentation/devicetree/bindings/mfd/aaeon,srg-imx8p-mcu.yaml
-+F:	drivers/gpio/gpio-aaeon-mcu.c
- F:	drivers/mfd/aaeon-mcu.c
- F:	include/linux/mfd/aaeon-mcu.h
++F:	drivers/mfd/aaeon-mcu.c
++F:	include/linux/mfd/aaeon-mcu.h
  
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 55e4280029d8..79285fbc061a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1346,6 +1346,15 @@ endmenu
+ AAEON UPBOARD FPGA MFD DRIVER
+ M:	Thomas Richard <thomas.richard@bootlin.com>
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 87ed55c155f0..a2405a075346 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -54,6 +54,17 @@ config MFD_ALTERA_SYSMGR
+ 	  using regmap_mmio accesses for ARM32 parts and SMC calls to
+ 	  EL3 for ARM64 parts.
  
- menu "MFD GPIO expanders"
- 
-+config GPIO_AAEON_MCU
-+	tristate "Aaeon MCU GPIO support"
-+	depends on MFD_AAEON_MCU
++config MFD_AAEON_MCU
++	tristate "Aaeon SRG-IMX8P MCU Driver"
++	depends on I2C
++	select MFD_CORE
++	select REGMAP
 +	help
-+	  Select this option to enable GPIO support for the Aaeon SRG-IMX8P
-+	  onboard MCU. This driver provides access to GPIO pins and GPO
-+	  (General Purpose Output) pins controlled by the microcontroller.
-+	  The driver handles both input and output configuration.
++	  Select this option to enable support for the Aaeon SRG-IMX8P
++	  onboard microcontroller (MCU). This driver provides the core
++	  functionality to communicate with the MCU over I2C. The MCU
++	  provides GPIO and watchdog functionality.
 +
- config GPIO_ADP5520
- 	tristate "GPIO Support for ADP5520 PMIC"
- 	depends on PMIC_ADP5520
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 88f748846e60..a0adacd94065 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+= gpio-104-idi-48.o
- obj-$(CONFIG_GPIO_104_IDIO_16)		+= gpio-104-idio-16.o
- obj-$(CONFIG_GPIO_74X164)		+= gpio-74x164.o
- obj-$(CONFIG_GPIO_74XX_MMIO)		+= gpio-74xx-mmio.o
-+obj-$(CONFIG_GPIO_AAEON_MCU)		+= gpio-aaeon-mcu.o
- obj-$(CONFIG_GPIO_AD7768)		+= gpio-ad7768.o
- obj-$(CONFIG_GPIO_ADNP)			+= gpio-adnp.o
- obj-$(CONFIG_GPIO_ADP5520)		+= gpio-adp5520.o
-diff --git a/drivers/gpio/gpio-aaeon-mcu.c b/drivers/gpio/gpio-aaeon-mcu.c
+ config MFD_ACT8945A
+ 	tristate "Active-semi ACT8945A"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index f8101d2a9ce9..166b25638f7f 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_MFD_88PM860X)	+= 88pm860x.o
+ obj-$(CONFIG_MFD_88PM800)	+= 88pm800.o 88pm80x.o
+ obj-$(CONFIG_MFD_88PM805)	+= 88pm805.o 88pm80x.o
+ obj-$(CONFIG_MFD_88PM886_PMIC)	+= 88pm886.o
++obj-$(CONFIG_MFD_AAEON_MCU)	+= aaeon-mcu.o
+ obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
+ obj-$(CONFIG_MFD_SM501)		+= sm501.o
+ obj-$(CONFIG_ARCH_BCM2835)	+= bcm2835-pm.o
+diff --git a/drivers/mfd/aaeon-mcu.c b/drivers/mfd/aaeon-mcu.c
 new file mode 100644
-index 000000000000..1c3cafaf70c8
+index 000000000000..83a63e0b7373
 --- /dev/null
-+++ b/drivers/gpio/gpio-aaeon-mcu.c
-@@ -0,0 +1,235 @@
++++ b/drivers/mfd/aaeon-mcu.c
+@@ -0,0 +1,227 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Aaeon MCU GPIO driver
++ * Aaeon MCU driver
 + *
 + * Copyright (C) 2026 Bootlin
 + * Author: Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
 + * Author: Thomas Perrot <thomas.perrot@bootlin.com>
 + */
 +
-+#include <linux/bitops.h>
-+#include <linux/gpio/driver.h>
++#include <linux/cache.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
 +#include <linux/mfd/aaeon-mcu.h>
++#include <linux/mfd/core.h>
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
 +#include <linux/regmap.h>
++#include <linux/slab.h>
 +
-+#define AAEON_MCU_CONFIG_GPIO_INPUT	0x69
-+#define AAEON_MCU_CONFIG_GPIO_OUTPUT	0x6F
-+#define AAEON_MCU_WRITE_GPIO		0x77
++/* A MCU register address is [opcode, arg] and holds a 1-byte value */
++#define AAEON_MCU_REG_LEN	2
++#define AAEON_MCU_VAL_LEN	1
++/* A MCU command is [opcode, arg, value] */
++#define AAEON_MCU_CMD_LEN	(AAEON_MCU_REG_LEN + AAEON_MCU_VAL_LEN)
 +
-+#define AAEON_MCU_CONTROL_GPO		0x6C
-+
-+#define MAX_GPIOS	12
-+#define MAX_GPOS	7
-+
-+struct aaeon_mcu_gpio {
-+	struct gpio_chip gc;
-+	struct regmap *regmap;
-+	DECLARE_BITMAP(dir_in, MAX_GPOS + MAX_GPIOS);
-+	DECLARE_BITMAP(gpo_state, MAX_GPOS);
++struct aaeon_mcu {
++	struct i2c_client *client;
++	/*
++	 * I2C transfer buffers, only used with the regmap lock held. Each
++	 * one is aligned to ARCH_DMA_MINALIGN so that it can be flagged
++	 * I2C_M_DMA_SAFE.
++	 */
++	u8 cmd[AAEON_MCU_CMD_LEN] __aligned(ARCH_DMA_MINALIGN);
++	u8 response[AAEON_MCU_VAL_LEN] __aligned(ARCH_DMA_MINALIGN);
 +};
 +
-+/* The GPIO lines follow the GPO lines in the chip */
-+static unsigned int aaeon_mcu_gpio_reg(u8 opcode, unsigned int offset)
-+{
-+	return AAEON_MCU_REG(opcode, offset - MAX_GPOS);
-+}
-+
-+static int aaeon_mcu_gpio_config_input_cmd(struct aaeon_mcu_gpio *data,
-+					   unsigned int offset)
-+{
-+	return regmap_write(data->regmap,
-+			    aaeon_mcu_gpio_reg(AAEON_MCU_CONFIG_GPIO_INPUT, offset),
-+			    0);
-+}
-+
-+static int aaeon_mcu_gpo_set_cmd(struct aaeon_mcu_gpio *data, unsigned int offset, int value)
-+{
-+	return regmap_write(data->regmap,
-+			    AAEON_MCU_REG(AAEON_MCU_CONTROL_GPO, offset + 1),
-+			    !!value);
-+}
-+
-+static int aaeon_mcu_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct aaeon_mcu_gpio *data = gpiochip_get_data(gc);
-+	int ret;
-+
-+	if (offset < MAX_GPOS) {
-+		dev_err(gc->parent,
-+			"offset %u is a GPO (output-only) pin, cannot be configured as input\n",
-+			offset);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	ret = aaeon_mcu_gpio_config_input_cmd(data, offset);
-+	if (ret < 0)
-+		return ret;
-+
-+	set_bit(offset, data->dir_in);
-+
-+	return 0;
-+}
-+
-+static int aaeon_mcu_gpio_config_output_cmd(struct aaeon_mcu_gpio *data,
-+					    unsigned int offset,
-+					    int value)
-+{
-+	int ret;
-+
-+	ret = regmap_write(data->regmap,
-+			   aaeon_mcu_gpio_reg(AAEON_MCU_WRITE_GPIO, offset),
-+			   !!value);
-+	if (ret < 0)
-+		return ret;
-+
-+	return regmap_write(data->regmap,
-+			    aaeon_mcu_gpio_reg(AAEON_MCU_CONFIG_GPIO_OUTPUT, offset),
-+			    0);
-+}
-+
-+static int aaeon_mcu_gpio_direction_output(struct gpio_chip *gc, unsigned int offset, int value)
-+{
-+	struct aaeon_mcu_gpio *data = gpiochip_get_data(gc);
-+	int ret;
-+
-+	if (offset < MAX_GPOS) {
-+		ret = aaeon_mcu_gpo_set_cmd(data, offset, value);
-+		if (ret)
-+			return ret;
-+		assign_bit(offset, data->gpo_state, value);
-+		return 0;
-+	}
-+
-+	ret = aaeon_mcu_gpio_config_output_cmd(data, offset, value);
-+	if (ret < 0)
-+		return ret;
-+
-+	clear_bit(offset, data->dir_in);
-+
-+	return 0;
-+}
-+
-+static int aaeon_mcu_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct aaeon_mcu_gpio *data = gpiochip_get_data(gc);
-+
-+	return test_bit(offset, data->dir_in) ?
-+		GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
-+}
-+
-+static int aaeon_mcu_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct aaeon_mcu_gpio *data = gpiochip_get_data(gc);
-+	unsigned int rsp;
-+	int ret;
-+
-+	if (offset < MAX_GPOS)
-+		return test_bit(offset, data->gpo_state);
-+
-+	ret = regmap_read(data->regmap,
-+			  aaeon_mcu_gpio_reg(AAEON_MCU_READ_GPIO_OPCODE, offset),
-+			  &rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!rsp;
-+}
-+
-+static int aaeon_mcu_gpio_set_cmd(struct aaeon_mcu_gpio *data, unsigned int offset, int value)
-+{
-+	return regmap_write(data->regmap,
-+			    aaeon_mcu_gpio_reg(AAEON_MCU_WRITE_GPIO, offset),
-+			    !!value);
-+}
-+
-+static int aaeon_mcu_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			      int value)
-+{
-+	struct aaeon_mcu_gpio *data = gpiochip_get_data(gc);
-+	int ret;
-+
-+	if (offset >= MAX_GPOS)
-+		return aaeon_mcu_gpio_set_cmd(data, offset, value);
-+
-+	ret = aaeon_mcu_gpo_set_cmd(data, offset, value);
-+	if (ret)
-+		return ret;
-+	assign_bit(offset, data->gpo_state, value);
-+	return 0;
-+}
-+
-+static const struct gpio_chip aaeon_mcu_chip = {
-+	.label			= "gpio-aaeon-mcu",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= aaeon_mcu_gpio_get_direction,
-+	.direction_input	= aaeon_mcu_gpio_direction_input,
-+	.direction_output	= aaeon_mcu_gpio_direction_output,
-+	.get			= aaeon_mcu_gpio_get,
-+	.set			= aaeon_mcu_gpio_set,
-+	.base			= -1,
-+	.ngpio			= MAX_GPOS + MAX_GPIOS,
-+	.can_sleep		= true,
++static const struct mfd_cell aaeon_mcu_devs[] = {
++	MFD_CELL_BASIC("aaeon-mcu-wdt", NULL, NULL, 0, 0),
++	MFD_CELL_BASIC("aaeon-mcu-gpio", NULL, NULL, 0, 0),
 +};
 +
-+static void aaeon_mcu_gpio_reset(struct aaeon_mcu_gpio *data, struct device *dev)
++/*
++ * Custom regmap bus for the Aaeon MCU I2C protocol.
++ *
++ * The MCU uses a fixed 3-byte command format [opcode, arg, value] followed
++ * by a 1-byte response. It requires a STOP condition between the command
++ * write and the response read, so two separate transfers are issued. The
++ * I2C segment lock is held across both so that no other transfer on the
++ * same I2C segment can land between the command and its response. The
++ * regmap lock serialises concurrent accesses from the GPIO and watchdog
++ * child drivers.
++ *
++ * Register addresses are encoded as a 16-bit big-endian value where the
++ * high byte is the opcode and the low byte is the argument, matching the
++ * wire layout produced by regmap for reg_bits=16.
++ */
++
++/*
++ * Send the command held in mcu->cmd and read the 1-byte response into
++ * mcu->response.
++ */
++static int aaeon_mcu_xfer(struct aaeon_mcu *mcu)
 +{
-+	unsigned int i;
++	struct i2c_adapter *adap = mcu->client->adapter;
++	struct i2c_msg msg = {
++		.addr	= mcu->client->addr,
++		.flags	= I2C_M_DMA_SAFE,
++		.buf	= mcu->cmd,
++		.len	= AAEON_MCU_CMD_LEN,
++	};
 +	int ret;
 +
-+	/* Reset all GPOs */
-+	for (i = 0; i < MAX_GPOS; i++) {
-+		ret = aaeon_mcu_gpo_set_cmd(data, i, 0);
-+		if (ret < 0)
-+			dev_warn(dev, "Failed to reset GPO %u state: %d\n", i, ret);
-+		clear_bit(i, data->dir_in);
++	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
++
++	ret = __i2c_transfer(adap, &msg, 1);
++	if (ret == 1) {
++		msg.flags = I2C_M_RD | I2C_M_DMA_SAFE;
++		msg.buf   = mcu->response;
++		msg.len   = AAEON_MCU_VAL_LEN;
++		ret = __i2c_transfer(adap, &msg, 1);
 +	}
 +
-+	/* Reset all GPIOs */
-+	for (i = MAX_GPOS; i < MAX_GPOS + MAX_GPIOS; i++) {
-+		ret = aaeon_mcu_gpio_config_input_cmd(data, i);
-+		if (ret < 0)
-+			dev_warn(dev, "Failed to reset GPIO %u state: %d\n", i, ret);
-+		set_bit(i, data->dir_in);
-+	}
++	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
++
++	if (ret < 0)
++		return ret;
++
++	return ret == 1 ? 0 : -EIO;
 +}
 +
-+static int aaeon_mcu_gpio_probe(struct platform_device *pdev)
++static int aaeon_mcu_regmap_write(void *context, const void *data, size_t count)
 +{
-+	struct aaeon_mcu_gpio *data;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!data->regmap)
-+		return -ENODEV;
-+
-+	data->gc = aaeon_mcu_chip;
-+	data->gc.parent = pdev->dev.parent;
++	struct aaeon_mcu *mcu = context;
 +
 +	/*
-+	 * Reset all GPIO states to a known configuration. The MCU does not
-+	 * reset GPIO state on soft reboot, only on power cycle (hard reboot).
-+	 * Without this reset, GPIOs would retain their previous state across
-+	 * reboots, which could lead to unexpected behavior.
++	 * use_single_write guarantees one register per call: a 2-byte
++	 * address followed by a 1-byte value.
 +	 */
-+	aaeon_mcu_gpio_reset(data, &pdev->dev);
++	if (count != AAEON_MCU_CMD_LEN)
++		return -EINVAL;
 +
-+	return devm_gpiochip_add_data(&pdev->dev, &data->gc, data);
++	memcpy(mcu->cmd, data, count);
++
++	/* The MCU always sends a response byte after each command; discard it. */
++	return aaeon_mcu_xfer(mcu);
 +}
 +
-+static struct platform_driver aaeon_mcu_gpio_driver = {
-+	.driver = {
-+		.name = "aaeon-mcu-gpio",
-+	},
-+	.probe = aaeon_mcu_gpio_probe,
-+};
-+module_platform_driver(aaeon_mcu_gpio_driver);
++static int aaeon_mcu_regmap_read(void *context, const void *reg_buf,
++				 size_t reg_size, void *val_buf, size_t val_size)
++{
++	struct aaeon_mcu *mcu = context;
++	int ret;
 +
-+MODULE_ALIAS("platform:aaeon-mcu-gpio");
-+MODULE_DESCRIPTION("GPIO interface for Aaeon MCU");
++	/*
++	 * use_single_read guarantees one register per call: a 2-byte address
++	 * and a 1-byte value.
++	 */
++	if (reg_size != AAEON_MCU_REG_LEN || val_size != AAEON_MCU_VAL_LEN)
++		return -EINVAL;
++
++	/*
++	 * reg_buf holds the big-endian register address [opcode, arg].
++	 * Append a trailing 0x00 to form the full MCU command.
++	 */
++	memcpy(mcu->cmd, reg_buf, AAEON_MCU_REG_LEN);
++	mcu->cmd[AAEON_MCU_REG_LEN] = 0x00;
++
++	ret = aaeon_mcu_xfer(mcu);
++	if (ret)
++		return ret;
++
++	/*
++	 * val_buf is owned by the regmap caller and is not necessarily
++	 * DMA-safe, so go through the driver's response buffer.
++	 */
++	*(u8 *)val_buf = *mcu->response;
++
++	return 0;
++}
++
++static const struct regmap_bus aaeon_mcu_regmap_bus = {
++	.write = aaeon_mcu_regmap_write,
++	.read  = aaeon_mcu_regmap_read,
++};
++
++static bool aaeon_mcu_volatile_reg(struct device *dev, unsigned int reg)
++{
++	/*
++	 * GPIO input registers are driven by external signals and can change
++	 * at any time without CPU involvement, always read from hardware.
++	 *
++	 * The watchdog status register reflects hardware state and can change
++	 * autonomously.
++	 *
++	 * All other registers are written by the driver and their values are
++	 * stable, so they can be safely cached.
++	 */
++	if (AAEON_MCU_REG_OPCODE(reg) == AAEON_MCU_READ_GPIO_OPCODE)
++		return true;
++	if (reg == AAEON_MCU_WDT_STATUS_REG)
++		return true;
++	return false;
++}
++
++static bool aaeon_mcu_readable_reg(struct device *dev, unsigned int reg)
++{
++	/*
++	 * Every opcode but the GPIO input read and the watchdog status is a
++	 * command: the frame sent for a read is identical to the one used to
++	 * write it, so reading such a register would execute the command.
++	 * Only the registers reflecting hardware state may be read.
++	 */
++	return aaeon_mcu_volatile_reg(dev, reg);
++}
++
++static const struct regmap_config aaeon_mcu_regmap_config = {
++	.reg_bits          = 16,
++	.val_bits          = 8,
++	.reg_format_endian = REGMAP_ENDIAN_BIG,
++	.max_register      = AAEON_MCU_MAX_REGISTER,
++	.readable_reg      = aaeon_mcu_readable_reg,
++	.volatile_reg      = aaeon_mcu_volatile_reg,
++	.cache_type        = REGCACHE_MAPLE,
++	.use_single_write  = true,
++	.use_single_read   = true,
++};
++
++static int aaeon_mcu_probe(struct i2c_client *client)
++{
++	struct aaeon_mcu *ddata;
++	struct regmap *regmap;
++
++	ddata = devm_kzalloc(&client->dev, sizeof(*ddata), GFP_KERNEL);
++	if (!ddata)
++		return -ENOMEM;
++
++	ddata->client = client;
++
++	regmap = devm_regmap_init(&client->dev, &aaeon_mcu_regmap_bus,
++				  ddata, &aaeon_mcu_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(&client->dev, PTR_ERR(regmap),
++				     "failed to initialize regmap\n");
++
++	return devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
++				    aaeon_mcu_devs, ARRAY_SIZE(aaeon_mcu_devs),
++				    NULL, 0, NULL);
++}
++
++static const struct of_device_id aaeon_mcu_of_match[] = {
++	{ .compatible = "aaeon,srg-imx8p-mcu" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, aaeon_mcu_of_match);
++
++static struct i2c_driver aaeon_mcu_driver = {
++	.driver = {
++		.name = "aaeon-mcu",
++		.of_match_table = aaeon_mcu_of_match,
++	},
++	.probe = aaeon_mcu_probe,
++};
++module_i2c_driver(aaeon_mcu_driver);
++
++MODULE_DESCRIPTION("Aaeon MCU Driver");
 +MODULE_AUTHOR("Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>");
 +MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/aaeon-mcu.h b/include/linux/mfd/aaeon-mcu.h
+new file mode 100644
+index 000000000000..561134b2fc7f
+--- /dev/null
++++ b/include/linux/mfd/aaeon-mcu.h
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Aaeon MCU driver definitions
++ *
++ * Copyright (C) 2026 Bootlin
++ * Author: Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
++ * Author: Thomas Perrot <thomas.perrot@bootlin.com>
++ */
++
++#ifndef __LINUX_MFD_AAEON_MCU_H
++#define __LINUX_MFD_AAEON_MCU_H
++
++/*
++ * MCU register address: the high byte is the command opcode, the low
++ * byte is the argument.  This matches the 3-byte wire format
++ * [opcode, arg, value] used by the MCU I2C protocol.
++ */
++#define AAEON_MCU_REG(op, arg)		(((op) << 8) | (arg))
++
++/* Command opcode of a MCU register address */
++#define AAEON_MCU_REG_OPCODE(reg)	((reg) >> 8)
++
++/*
++ * Opcode for GPIO input reads. These registers are volatile, their values
++ * are driven by external signals and can change without CPU involvement.
++ * Used by the MFD driver's volatile_reg callback to bypass the regmap cache.
++ */
++#define AAEON_MCU_READ_GPIO_OPCODE	0x72
++
++/*
++ * Opcode for watchdog control and status commands, the argument selects
++ * the command. The status register reflects hardware state and is volatile.
++ */
++#define AAEON_MCU_CONTROL_WDT_OPCODE	0x63
++#define AAEON_MCU_WDT_STOP_REG		AAEON_MCU_REG(AAEON_MCU_CONTROL_WDT_OPCODE, 0x00)
++#define AAEON_MCU_WDT_START_REG		AAEON_MCU_REG(AAEON_MCU_CONTROL_WDT_OPCODE, 0x01)
++#define AAEON_MCU_WDT_STATUS_REG	AAEON_MCU_REG(AAEON_MCU_CONTROL_WDT_OPCODE, 0x02)
++
++/*
++ * Highest register address in the MCU register map.
++ * The WRITE_GPIO opcode (0x77) with the highest GPIO argument (0x0B = 11,
++ * i.e. MAX_GPIOS - 1) produces the largest encoded address.
++ */
++#define AAEON_MCU_MAX_REGISTER		AAEON_MCU_REG(0x77, 0x0B)
++
++#endif /* __LINUX_MFD_AAEON_MCU_H */
 
 -- 
 2.56.0
