@@ -1,45 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795188978;
-	b=e3TNNlaAsC0r5SlY77qiPq09MbGUBeU4O/ynEVHl2RsN0+JRaQwNFhcsSIsQ08QNRqk+
-	 nTlm5MrxUKm008cA5dM+DvnNdPxsf2gdy/M3ztoeiqe0ip+2lTiUPHvfTknFt21mYxFQs
-	 qUtzCA7aGHsyHkjSVaTNF7bq1SF2F2h+mZIAr2ZAiV1tNKecKr2LIi7p026DwkzlzxJ2X
-	 xYhvyq6eYkQ5ncm4SkBqTDYdh8frkf50udNcjtjcprcBRxyDHPrTHGzDD5CEe9EvyyGu2
-	 FhiVZcw5cQ9sZXQpjX2bVlJxqb70u8queB2A+54kGFc/Fa0zXA/DbkLBqsKwfxTouUA==
+	t=1795189197;
+	b=VJw5EPoq0gpqxDC/Y4R0YIGWdqS2IGsWy9DwUnw3yWkv9Ox30EqLHvMA0GPFnNkiHssV
+	 dGRhtvYV280CN8EW3jLHxKt85ykjHc/XYns1oLSMLUs/44PgOkvOEADwdu96zutYZKOtf
+	 3iPp/ypeyV6lbpjWrixBBeH5F/rkstB8ZIgOy2kGrMFp2Qv18gKQOzQRYU3TJfsHUMVpb
+	 a5+nHBvKJBkpYPAo1L0KsPunvDYuxTQ7lB4aiZsnhOD2JIdv4+M9fjOZPckJLzmbKczEM
+	 KKM0gZViFpHz+gqKPRThs6pPnXry5J8KSYW8qSk7l5uQghDm9FVqhSZ1eHL8EnmCyKg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795188978;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=db2MO1a70PIE6Fv5WZXGz5F9j2CW0g9J+SpZG3GxKeo=;
-	b=nr3IJVgnN0WPEcXgGsSF8uOBldaFGV554gr7/CLUx5jCy2Fa4cveyVACL2f0gRmbERqs
-	 DaF6NVTT2PhNB2iH8irqhYGZ4PXKcWAD5/8JF/GX9rdx/XYObNPBjISpK0vdXklukctaD
-	 9R/CK2SQrGg++9zMIi09TO9oTnC6p/KMW5c3hEFw7viHokACdPJqLN4biDK1SBZyookJI
-	 k6v/hN5JyCH++1L2W42L4o9qMIwFcja3CZKdGwU4xMGlvONy10J78HBJClKY4ckBMctpK
-	 HsKfbIUvQFhB1mrxyTAaMSDmp4qaYH95ZjRfmSNsmJw2cZZm2QgioLQzpxiyBVe4Vrw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795189197;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-TM-AS-GCONF:
+	 X-Proofpoint-GUID:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=vmYG2CzA56D42MyndsHp83p6siaKz1u7RqN4C013/tY=;
+	b=oe17D3Jw/AysM/SWFnVwUFbVz4QAbPs2hFJ1cPFGfL+/aJ22T/MWZMjWLl6FEFkigXal
+	 HuAkxPyMfVIdJcQeeavkFJPkGi17gDUnk/wSpEh2GXvjxoXxwEaESxROnTXay04sBYpzv
+	 qiIN+TuNdol1ljnkNBZXHxY0dZqNEa9uSm+c4QkVXb8xyaN8aLfBerPWtiq9ni7YC10gO
+	 HDqokBjC1RxVDJHjqOFLBCOhl9Gd8/nESLHo7oX+fiIEtoAPQthN4iqEIgWJ7GHBSNbJZ
+	 1qqedCnSq5B4eU4ejmv1PN1F64PqqOGvZb6hHt/M6wF+HHSJku6irOwHcLBG09nxEQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iY7qbtRX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=nVOlxK41;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1288F606A320;
-	Fri, 20 Nov 2026 15:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42649606A32A;
+	Fri, 20 Nov 2026 15:39:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 42649606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iY7qbtRX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACC41F000C4;
-	Fri, 20 Nov 2026 15:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795188977;
-	bh=db2MO1a70PIE6Fv5WZXGz5F9j2CW0g9J+SpZG3GxKeo=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=iY7qbtRXUOcQFowK/jqsglS7S97JW+1X5C5Fwcm81+MKpDNUZduhnGEeIU1oh+Aer
-	 fpK6iPk9Am9peRUHDCbwruJ7KiPDfWWNTG71VAT1QVxMd+AZryE/DY5K3SCA605XhW
-	 3rkWv1M29RDeZG+T5ZnaRxM6XlWOBhcQvr5SPNVDxi18QC2FLK+vFXfj66NoXL3+XX
-	 wMLhb7jCy9Eka6FwWa7iuo1sT4fDoBvjcbWPSmptA5OHIyqMRq8hCrxhCAAPOgeEgs
-	 bvT1Lh3+g+CM9VCzhouhuC9DbnJTA8MUuf2/ijBXWXgwOshPlB6i7J6FDtgmmzPFpO
-	 pZQyzi78LzyRg==
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=nVOlxK41
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AKEuWlh3423804;
+	Fri, 20 Nov 2026 15:39:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=vmYG2C
+	zA56D42MyndsHp83p6siaKz1u7RqN4C013/tY=; b=nVOlxK4104buOQHMGgDEQT
+	+CS8pim7LGlwSOMkHe4CJro/72TxbBfSjy0gBO7OXxBrn6h3xKo0qdnRwREDrvCe
+	Ij33Dfr2noKC2ah5OJg6R5ZyRwxFohMM52EKyIqJmhFplCWDrLdprWdrVyAlzJ9X
+	hkh9Soe1Z/ge1JqRifFVUp/PRu0CUHs8nAgLEu4v2RCV4h0Engq1MQTQFEFelCzn
+	p5UkmA8td1bZWPSqVL2HEfJEpK7yvR6IXLVypCYMQY5L4fYMKJ5tmbrbS/2Tlvda
+	CDwyYiqejG9U9ahhj9j3OpWd2yxznk2dlllML9E4Lbc1CBHh+HeN5qoTALynRGwA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4j105w1428-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 20 Nov 2026 15:39:29 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AKEnuK22445442;
+	Fri, 20 Nov 2026 15:39:28 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4j1m3j2xac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Nov 2026 15:39:28 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6AKFdSiD26280638
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 20 Nov 2026 15:39:28 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4F51E5805A;
+	Fri, 20 Nov 2026 15:39:28 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7CF9758054;
+	Fri, 20 Nov 2026 15:39:27 +0000 (GMT)
+Received: from [9.61.14.72] (unknown [9.61.14.72])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 20 Nov 2026 15:39:27 +0000 (GMT)
+Message-ID: <84bb623a-151e-4f6d-ba6a-a303838f4aa7@linux.ibm.com>
+Date: Fri, 20 Nov 2026 09:39:27 -0600
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -49,61 +85,90 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fsi: aspeed: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Ninad Palsule <ninad@linux.ibm.com>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        Billy Tsai
+ <billy_tsai@aspeedtech.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-fsi@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20261103-fsi-aspeed-gpio-nonexclusive-v1-1-1fb040c59386@oss.qualcomm.com>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <20261103-fsi-aspeed-gpio-nonexclusive-v1-1-1fb040c59386@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH RFC 19/23] ASoC: qcom: sc8280xp: allow using the
- sc8280xp card with lpass-cpu
-From: Mark Brown <broonie@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rohit kumar <quic_rohkumar@quicinc.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
-References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
-Date: Fri, 20 Nov 2026 15:36:11 +0000
-Message-Id: <179518897124.6016.130748488943015768.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=760; i=broonie@kernel.org;
- h=from:subject:message-id; bh=yjz8fAQ3kPUwHl3NaYwbsrK24UeGk5MNb2vPPtnlmvw=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLIZMl5flv7+cs/s8ksfd2gXesrP8v/we9HlaS4PG/q27
- zuXtixPtaOUhUGMi0FWTJElLov7ZX3J6zV8Bxe2wcxhZQIZwsDFKQATSXZjZHj093gn057njsve
- uimc3TGrXnSbqJOnbKXX6oAYxRkszyUZ/vA9fbC880DHwxnXebgFOKsvXZ2bHf9gs4FflhO7meB
- EH04A
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EWHHhtBzh0nmcbaMz1EfwNJyLAH-95S_
+X-Authority-Analysis: v=2.4 cv=HL9WhYtv c=1 sm=1 tr=0 ts=6b0069b1 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VnNF1IyMAAAA:8
+ a=EUspDBNiAAAA:8 a=zmo_udYM6pYQbqL80pAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: EWHHhtBzh0nmcbaMz1EfwNJyLAH-95S_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIwMDA2MSBTYWx0ZWRfX60wzkTj5rCZJ
+ Axp/ATwXoOVTf231ZzOlUdUiZUAlIBZdfQMOAmGfXQ2dvcsy/YBaJUqo0K8t9mOl5+JrO33w1w8
+ Y9ZCfqsKSN7Bj877H0NzJ53ypLiU5RqWwIrfY1v/tbJR41icFDyGWQy2Gektlxz/v8rlX3mb4Gt
+ fdRVL3dhNMKnB8DmOuOVDRAN4YAk7HqhhPrDDMFi0XTZ5eAB/2Ela0EmGRZ88Z3zQ/IZJEC4D9D
+ Mn3/9qR9vEzdHuqEfB4yqzRlFBXWLSfYR1CRpdlHzfujRynLiR5//oRn9mS4Y11dRs4MFM/cXDJ
+ JG76PmEvIt1C0AcJ6LCf2MYFifVvu6ZA4FKm0vOeMkrUvU7PwyeHNerinxPq2aNYTcKpGCBa2O5
+ Eh2XKt3yh8lvYSNwmRaTQ6SwxiNCbxv/HRl1NRdYpx270DCbBAOXKMf+Hk3K2JQMUSC+njqOJDG
+ Pzm52nkbQ0wkQ2zMEug==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIwMDA2MSBTYWx0ZWRfX9eGEl6ytv4s7
+ wRpaigFbRZJwJrVgeVPYOcNynpR7TXt1RMCqBZsHVJeMNhIOPpy+SZcgBlLayV1NIs4pWoaEBLw
+ fj0J252ZWU7AYhsJue5whGe9rcUf3tA=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-20_05,2026-11-19_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611200061
 
-> Add the missing DAI ids and set the ops to allow using
-> the sc8280xp card with lpass-cpu and keep the sm8650 sound
-> card bindings working with either Audioreach or lpass-cpu
-> interfaces.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-> @@ -533,12 +540,11 @@ static void sc8280xp_add_be_ops(struct snd_soc_card *card)
->  	int i;
->  
->  	for_each_card_prelinks(card, i, link) {
-> -		if (link->no_pcm == 1) {
-> -			link->init = sc8280xp_snd_init;
-> -			link->exit = sc8280xp_snd_exit;
-> +		link->init = sc8280xp_snd_init;
-> +		link->exit = sc8280xp_snd_exit;
-> +		link->ops = &sc8280xp_be_ops;
+On 11/3/26 7:20 AM, Bartosz Golaszewski wrote:
+> There are no users that share fsi-routing-gpios in any of the upstream
+> DT sources. Even if there were, the right thing to do would be enable
+> HAVE_SHARED_GPIOS for the aspeed platform as this is the preferred way
+> of sharing GPIO pins. Don't request the GPIO as non-exclusive as this
+> flag is now deprecated and will be removed.
 
-This now applies to everything for all cards, that feels like it needs a
-lot of care?
 
--- 
-Mark Brown <broonie@kernel.org>
+Thanks!
+
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+
+
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> ---
+>   drivers/fsi/fsi-master-aspeed.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+> index aa1380cdff338dfef7caa8d516322e6bf90371cd..88a3a90abef9cd22cae03f5666936ef7eced8a7d 100644
+> --- a/drivers/fsi/fsi-master-aspeed.c
+> +++ b/drivers/fsi/fsi-master-aspeed.c
+> @@ -496,8 +496,7 @@ static int tacoma_cabled_fsi_fixup(struct device *dev)
+>   	 * The routing GPIO is a jumper indicating we should mux for the
+>   	 * externally connected FSI cable.
+>   	 */
+> -	routing_gpio = devm_gpiod_get_optional(dev, "fsi-routing",
+> -			GPIOD_IN | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+> +	routing_gpio = devm_gpiod_get_optional(dev, "fsi-routing", GPIOD_IN);
+>   	if (IS_ERR(routing_gpio))
+>   		return PTR_ERR(routing_gpio);
+>   	if (!routing_gpio)
+>
+> ---
+> base-commit: 2637bdec0535a2044cd830eba9a79363651d9043
+> change-id: 20261103-fsi-aspeed-gpio-nonexclusive-3dda6d175968
+>
+> Best regards,
