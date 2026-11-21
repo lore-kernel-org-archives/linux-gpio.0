@@ -1,91 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795283200;
-	b=cbG7nUywMJYPZCKSjIbvB9Mo4FcP0MW+NKa8xbrW203taccbL6gdq3bjt/P7raReeHBh
-	 4VamiXu+QUqcEGwnZXjV7CTef15AVixCfy2j4dQo89+VBb+McFoWfTDcQoweEhMYHjUif
-	 zT2QSNYYYHe4NG3wrcFbaXpx7b1uB92hwDU7zB5XPW6JbvVy9VF7IlYhoQdNL4Hjjltww
-	 Ej/UgCznHU0UrWHviMAE0RgdqZiL67hAH+wwTwYyvjoJAqf+iPNsZUmXwI0JSO7gVc5jt
-	 RJZewOp2ZQAGEAhSnaK+a7a0ji54s+j1IimAkviFrei2sCSUKcgItD2Xaz2GWv5Cvfg==
+	t=1795294018;
+	b=kTT4ukQJtClzTVNOTLl2PwohppnLfdgv/+YHG51J5oa4V8wI+egaE47rpUfZcV9BRq/k
+	 aRGeSmJn4rNj6n+/L/A5SFmJ6LI7DNRSbKblXH95RFn6yiTP6Ro3NwL1lzXYODsxKwpbj
+	 k6YZyB7CCT0Cof3UpC4OB1yDfToQWtDXFuXTnFwqBb6IHfFT19T/bP/s2AKKo7CL5sCmc
+	 5lCtYQOBIeUdhK5H0w7LWLi5zJH7jgN12FoBQVCCTPePcXhav9oazaaDVyXg0H1Lg/WOh
+	 KN5TpOaCfXBtsBAqct2GlmwEPyAndia1dDdl7AUH8RYwJMaV9qopbNuxoBd9qBkw/2Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795283200;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=fjNd46J+nIPFpsHDZsAhjGUwUD3QMtAsvElWh0BXGNs=;
-	b=g4D10gz4XK2ELRzoEeRLDzcKSW6+gS8C+uT0HN57S3XwHKhv9LMSs86tk64P18N0RTN1
-	 nJmfjp3lVzOBmpOOXp2x/jcI9WNJoDH162Qss4sVuZZppKFCRZhTfvwptUt+0ADIQ9GM1
-	 78zUJIH5tNVwmt29Zw8jJmvNVOYpgfDlNX3062eC8IoNfqw/2k9BZqKIrm7AIgaOhv/vc
-	 7wJHXwqOlLd4WTdq839kKK6jwsuHBh1skQBzmkXE75XbjpM8xEiDHR3V+gpo+ZdTF8A+K
-	 f0Hsqq52OS0z1GgP+KQVWtMcYT3eHwFtFTklo1sIXx0sRh03wKreqHMtupNFTj/J8QA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795294018;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=KBAP+JWazOGOCfastfioBRGlItoj95+2iYLwUgECcdg=;
+	b=P/UJmXQkNcUiiVB4VElVgd7CKlGLgb43yqFd/kQ5yOlpOZ3NhpU7X/YP2hMwLKSGIX8Q
+	 c36NlLdiHh4CGSvmevuBslGojrxKKfFDJNd/fwyHgE+8wNtvTTCRa54DTOatebwN56Lc2
+	 WCr5gRWwQA9sACMjWoYY3GBT9OtiVm9smmJg4VOm1S/pn3GcZo8Q1xigjevlmZsqhcuH2
+	 5+HmCBDHfhjNkbK9+vdeztjQBkL3wE2wo+xY8krggAU9WgSfKYdNPXgLn4DNL+Hgsserz
+	 11hscO6w5IWBbtdaXZwZIn86c9ab3JN+5Lg/1YXnlVjsSSQCTBduEMhUPjsEnmIZp7w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gapp.nthu.edu.tw;
-	spf=pass smtp.mailfrom=gapp.nthu.edu.tw;
-	dkim=pass header.d=gapp-nthu-edu-tw.20260707.gappssmtp.com header.i=@gapp-nthu-edu-tw.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=TAHo4MKx;
-	arc=none smtp.remote-ip=209.85.210.177
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WYCJCo4w;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94362606A320
-	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 17:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94362606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gapp.nthu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gapp.nthu.edu.tw
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB8606A332
+	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 20:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gapp-nthu-edu-tw.20260707.gappssmtp.com header.i=@gapp-nthu-edu-tw.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=TAHo4MKx
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-8b68e59ab33so1599349b3a.2
-        for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 09:46:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gapp-nthu-edu-tw.20260707.gappssmtp.com; s=20260707; t=1795283197; x=1795887997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=fjNd46J+nIPFpsHDZsAhjGUwUD3QMtAsvElWh0BXGNs=;
-        b=TAHo4MKxJE1LRdehpT6CytPalzs4hBRiAfU/vdbn4k5SWGEp8gUGtYaX6OVbufo1Ot
-         rvB5vXCgZ9KQ6SQ60J1iPY+lJLmhMQIlSgiQlyi8cjW1yuIw5N77tvzjilhFGUSvEKh4
-         lOnodlA5UzDq/+4lQnRA7hyST8PQIja0HQb1f6zekfgdAdRGU0w6AXyJkrgL4uNOhPtt
-         T15z7OP5s0Uu0M9kFUvkC1WQK26N6VquPP9zvh83vmLReI67TS7m6P5YlK+CS2leASo+
-         bh0M2J0eAOd9/CDWYlBuGBDy8YJ3S9NZyPYUzxyhXCwV3V9OMheqGMP4kpkQaeoimicC
-         jM5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795283197; x=1795887997;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=fjNd46J+nIPFpsHDZsAhjGUwUD3QMtAsvElWh0BXGNs=;
-        b=zllsC0XRTMfQ6fDftipgYMGg89gt9W/sClmdsk9qLYuS60NToXE7pgBICZzbJixb8X
-         i+W4IG4wPwfc3AliR8tM5bpORXEr1IR3oc0L/oeHH+HahjsGgHiUvSB968CVjEIBIym2
-         udMzwxg6RN+fadiRqCdN/dGqRCmkqqDz9B4onih+Wp/VHUw5z0CQ1FzaGT09XO2UTFA+
-         5iOhktnD6TDI277fv5vC3BAJ/tX83XeSYGXOrS5gWjFJsrv+myBu0qmhFA69QVrWuSU3
-         tcvwJFyXmQ9ELMb0XtM54IW68Qmm4aC0raRhrKn+PQXERGF8AtlVDKbg3bTTx2JxV9VD
-         vytQ==
-X-Gm-Message-State: APuU4Z9D3rmpKwKXPAp3reCFAMegoD9Q7mqWs/ucyt/lV6ojrIqMBzSJ
-	N7iNMCJ0a8LborFKTPGrauUqVkcpYVAfLmrMgmpGcfGU4GzsEj9tVZIxvPsNM9hmfco=
-X-Gm-Gg: AZFdTZf8mGNd4vj5EIbkP6U3zejYDdq879ggmNt22bE7E2+bz8UTt0piYcCUsb9DTzX
-	uCJp2xFPG7+KAkVDvYkU0WOepYfwaxrCerJlY/+hKvJeB+V+xSA6JlNe8XFB0/6+LZyGdKrjeLD
-	LomN+hhy4bhTBM3ckygy42tjPmOKuiMJddw81uvBEoy3CP7GgvBaErPvEagGxvo2TgOpRgfMoMX
-	XYzEuKoWM+LFkU3LdHOE0R+SaaznACVVcWLU7rGmuX+U1WZzyKe4B3zocVyaOmihMxbK3Mc6GRQ
-	pzZqAVyRaeAGjAFg6LZnghLeMdVu33/QHXNZnK+iGUxM21433xztzDSjlX/TFX2kMjWqAtKucD4
-	1O2cnvUsphy5+mpm85jQ45QfnkkgEhWAER1ulAjXkUKtqtutjH2cvj67FMX5khWMT3jFnbCwiNs
-	yM6OKQ5k1gI3tWmsDvr9XN68HGOfFsZtbBiATlkldpxVPfv4dT+6XbROODkEGIbuO0/78kAwPtI
-	ZeGMKzgmv3oa0n3QLCMuDFllfFBjXBk+dKurYSYwxqHaXidFQlWytuO0nT5/LN4ObMRtzH1Ki2/
-	gY4/HhaXqmqdSzsBMQ7zY6sGMPCe+R1+DnZVhOq8PpwUy4A2McXKqQrhX9VUeS3R/N/4ASEJe3c
-	mt/yZw2KFIhaSi7LwTgtJzPwhtHgRANQ0rUMcTgt3yleqD6aSXmOaZimAGHzSjdNW
-X-Received: by 2002:a05:6a21:7e83:b0:3fa:d7ac:effb with SMTP id adf61e73a8af0-4014c060f6cmr4572900637.40.1795283197197;
-        Sat, 21 Nov 2026 09:46:37 -0800 (PST)
-Received: from tomato-cultivator-HP-ZBook-15-G6.. (2001-b400-e3e5-27a4-7997-dbab-03e4-f5ee.emome-ip6.hinet.net. [2001:b400:e3e5:27a4:7997:dbab:3e4:f5ee])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde6d02ba46sm2651076a12.21.2026.11.21.09.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 09:46:36 -0800 (PST)
-From: Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
-Subject: [PATCH] gpio: amdpt: Use __func__ instead of hardcoded function names
-Date: Sun, 22 Nov 2026 01:45:27 +0800
-Message-ID: <20261121174527.19690-1-ku.loong@gapp.nthu.edu.tw>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WYCJCo4w
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E3F1F000C0
+	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 20:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795294018;
+	bh=KBAP+JWazOGOCfastfioBRGlItoj95+2iYLwUgECcdg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=WYCJCo4w136y0Fv5X7VFsWrs1eharrpyUYMdpn0pkCL/Ks/7iUSascPrPiKFNzyys
+	 uXZJTxXgoHxl90No9O8upE9fnjorLJ0KeMFsP/M6Bs5fpgWm2FrkmiOUvwCBiV02OR
+	 juvnnrAAmum2VYuMkQCEibMtal3H4ZhTkbfyM8BDCDyNBP0ryJaGDjQCEBxQHapOMb
+	 hIFiMY/QEn7IopwGpLhXG73YHx+AuTzdw23MCewWBuDUKCz75d1uNOTfLtge693PAN
+	 xy83diRqxtZol8QGqmpiEbNl2IW8K8LyEneLfJt9rYAtODqfKW1CPAyH1yUZzW03FI
+	 dux+IB7cYVNnw==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5c1479be604so1487393e87.1
+        for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 12:46:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErH4rWntWAfUhypnmeOQKdtpXBzZS/AD8zMvRFTJb70kqPe+SVOD9nMajC16VU/mDyXv3d95Ot+H/L3c@vger.kernel.org
+X-Gm-Message-State: APuU4Z/JVQTh+HWf9m4b4sT3Oije9hrNbtAcb5Xe2aggXUe/+mU3/Mh0
+	53GLkJKwLeflav115QcHgKPUozLsLGtx8GWI+VC4NMp6LcxpJt8r6msZPTXSq71lzNmGNXyUm84
+	Ybw60bZCH4ZykEbSxtNpMBJLg9sKdfHY=
+X-Received: by 2002:a05:6512:1042:b0:5c1:4c4a:f026 with SMTP id
+ 2adb3069b0e04-5c1bc6f633dmr2383041e87.4.1795294017042; Sat, 21 Nov 2026
+ 12:46:57 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -95,40 +59,54 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261106-egpio_fix-v1-0-569d220a4748@oss.qualcomm.com>
+ <20261106-egpio_fix-v1-1-569d220a4748@oss.qualcomm.com> <20261110-modest-significant-ostrich-8dd408@quoll>
+In-Reply-To: <20261110-modest-significant-ostrich-8dd408@quoll>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 21 Nov 2026 21:46:43 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkpFWWSV55LkhAa4YfckDvzB6PrHWugX0Mth=cQRYkMDg@mail.gmail.com>
+X-Gm-Features: Aa3M54pkPP-k4Hfm-HVSsCMs91C14Me4yvAKh2ZGSuerCOgY9HmCsGMWje0k63c
+Message-ID: <CAD++jLkpFWWSV55LkhAa4YfckDvzB6PrHWugX0Mth=cQRYkMDg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add qcom,remote-owned for
+ ownership update
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prasad Sodagudi <quic_psodagud@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace hardcoded function names with __func__ in the dev_dbg()
-messages to fix checkpatch.pl warnings.
+On Tue, Nov 10, 2026 at 2:28=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+> On Fri, Nov 06, 2026 at 01:29:41PM +0530, Pankaj Patil wrote:
 
-No functional changes.
+> > Add "qcom,remote-owned" boolean flag for egpio capable pins since they =
+can
+> > be owned by remote island io independently of the selected mux function
+> > even if function is non-egpio.
+> >
+> > Presently egpio is treated as a mux function level decision where as
+> > hardware programming guide(hpg) specifies it as pin conf level decision
+> > i.e setting egpio bit is independent of selected mux function, the
+> > driver/apps claims the ownership of the pin if it's egpio capable in
+> > case of mux function being specified as anything other than egpio.
+>
+> I don't understand this. If the pin is not owned by Linux, then simply
+> do not list it. What is the point of listing a pin configuration which
+> should be skipped?
 
-Signed-off-by: Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
----
- drivers/gpio/gpio-amdpt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We have instances of device trees which are maintained in Linux
+being used by e.g. secure world, U-Boot...
+So something else is using it perhaps?
 
-diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
-index e886cf9e14ea..54281851a086 100644
---- a/drivers/gpio/gpio-amdpt.c
-+++ b/drivers/gpio/gpio-amdpt.c
-@@ -35,7 +35,7 @@ static int pt_gpio_request(struct gpio_chip *gc, unsigned offset)
- 	struct pt_gpio_chip *pt_gpio = gpiochip_get_data(gc);
- 	u32 using_pins;
- 
--	dev_dbg(gc->parent, "pt_gpio_request offset=%x\n", offset);
-+	dev_dbg(gc->parent, "%s offset=%x\n", __func__, offset);
- 
- 	guard(gpio_generic_lock_irqsave)(gen_gc);
- 
-@@ -63,7 +63,7 @@ static void pt_gpio_free(struct gpio_chip *gc, unsigned offset)
- 	using_pins &= ~BIT(offset);
- 	writel(using_pins, pt_gpio->reg_base + PT_SYNC_REG);
- 
--	dev_dbg(gc->parent, "pt_gpio_free offset=%x\n", offset);
-+	dev_dbg(gc->parent, "%s offset=%x\n", __func__, offset);
- }
- 
- static int pt_gpio_probe(struct platform_device *pdev)
--- 
-2.43.0
+But I don't think the device tree should decide system partitioning
+like that. I think the boot loader should set gpio-reserved-ranges =3D ...
+before passing the devicetree to Linux instead, then pass
+other reserved ranges to other operating systems in the
+same physical system etc.
 
+Yours,
+Linus Walleij
