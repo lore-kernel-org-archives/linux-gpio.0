@@ -1,103 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=121.127.44.73
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795238804;
-	b=X1w5YcAMOgcUG5Wps+mcxNAwVo4lC5RjUDM95jsBKyXx3w/QuJiTYQ8+yuh1MQ2c0hcN
-	 hgmKSIKU31iE2DZOa2shV/dYlriQkJEp4gOK+p/Nuhl082uHlYT+RTYtAMvUlgOKOx1+M
-	 Q28IQEDCBJ4zv3G8GgrtTQNPyYaoHNfEeteT5w8j677WsswUQ5CvioKLvv7WWufacTRWj
-	 lGyMYWhYBvD0HTatPReuKy578NyyEsJmE9ENRgIuItJWK1e4mRHqIylzoVERTTbrRQoaj
-	 VJVmUVDCy6FisSDpEDVAwJ/Y+lLO39LNZEIiG9S14PnwBFT8T+/Yn50EiwNhbzBEgVg==
+	t=1795276757;
+	b=3VO6jnvN1vjm40DlCbqz6tNY0AQI90HSwyZvHPMyQPxi1JSxenoptAFV+Fak6fZLpeBE
+	 u1s0yzXmi0sdgEh4k/XkxMDKRQuAGtrGLR03C8uz7Z1H43n5CQiPsu3f1fXt8IbBfzCOh
+	 3KnWz9u/GWAmGNRxlABmzD77UfeoJNyuM4dd9xs32+ppx5qJkx6j/Fymk2YA+PjWAJGCy
+	 mIjk+8x2tpXyau37QUihzm0zQmq9QsLT3MpHL3zcve8ViPdbEhu9CnIN6vzce8HddN62z
+	 B/S70gKw2hHQsuwJCpOrLHoy5cFWP6vSbpDS29cUjyUDGJVRPcqLFhcobl8NgDR68sg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795238804;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=2mKaz/dqifKa6tvgIjKTsGu3wdsWa8OrLCV4/chX4LQ=;
-	b=NQGCDZeUPKQ7AB+PR5JyCFOi1XA11ZtMm+uzy/yKq7f6qUvgo4uVAwRadzzqn1HOXiRk
-	 HytIZVqSJDR7kxsVa/lFxkbN4SLBIPT2iQCu4Zer1C1ai5oINImF2Q0OBsd91c+0aYsfS
-	 5pN0oV0Bjrmau26ZFt3+tonTi0X55KImt9C43czafWxGH6TE1/ZHir67l6exWcTEcWqt3
-	 sdl6JIW4Y0ze0prQDQOi8+4bMUYRS9LpRoGzcrGUyFs0IRgxzyUctKyj7g6flWCKjTgNF
-	 h19qbu/CKdQ7X7rMybW1A2lp7T0heprEYBrL3WC0lGSiFRz1EPKxV2veKNd6dpvU4Dg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795276757;
+	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:CFBL-Feedback-ID:
+	 CFBL-Address:X-Forward-Email-ID:X-Forward-Email-Sender:
+	 X-Forward-Email-Version:X-Forward-Email-Website:X-Complaints-To:
+	 X-Report-Abuse:X-Report-Abuse-To:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=zTHlIUmDCvrpkduFYr0oVFq5R1k7q8xEe8JjZgfxKmM=;
+	b=25GifrWQduRieHxKihFXP/BR+puJ4Qi7JttAXi0h6cFdx6VRTL7PbudqS7sBIsksfmXk
+	 S1Hp0HyEUYUqC6lWaA+F2WTnRsspaaIftRkBBBtg5CNoXI4QDbObTPS6Q2qwoS7Euc7wL
+	 e1GHcm4duroflYST8swERM71QUQF3fTw0qqSi0MZBww2rPYwAGbR0Lnw4wETvOqHIkUd7
+	 WEhqHexGi6USIvruM7caUeCM32oDaqdjqPi9Xf9bcVsLRTfwZ+LPqrtUxQy8x5BrLrqp8
+	 EFkHeMlR3fTRqD2v3mDqcw+f+EDnSLT4aQP8Cqc8uZVe3htGCvXf6SbA6txYjov6C4g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OMjvtjYt;
-	arc=none smtp.remote-ip=209.85.215.181
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=kwiboo.se;
+	spf=pass smtp.mailfrom=fe-bounces.kwiboo.se;
+	dkim=pass header.d=kwiboo.se header.i=@kwiboo.se header.a=rsa-sha256 header.s=fe-e1b5cab7be header.b=Az4Hnbry;
+	dkim=pass header.d=forwardemail.net header.i=@forwardemail.net header.a=rsa-sha256 header.s=default header.b=kiXtSmVT;
+	arc=none smtp.remote-ip=121.127.44.73
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E612606A69B
-	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 05:26:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2E612606A69B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DC3606A320
+	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 15:59:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68DC3606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OMjvtjYt
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cdba1bbde0bso690242a12.2
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Nov 2026 21:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795238803; x=1795843603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=2mKaz/dqifKa6tvgIjKTsGu3wdsWa8OrLCV4/chX4LQ=;
-        b=OMjvtjYtuz/ck4cShSktGQWWBs+3kGP9qYEgUF7wDld3Qlmz1nB/udxsLsVhvf4yku
-         tagAPNPBBMmGf6HpALhJATxoXyF7m56tSmsO/1BZx7j+c4VfFV3PMF2qARoVGL4gInzl
-         WNLZOoAI5z98uwxlfrwSZFnjxujJ/SVpCepL2q31TpbpqOUFoFzZv/gpy71IdsuVJLWn
-         a+K9NI+YH1uKUKZgjetD+Dmmo7zFUM1hosU7hAXftGbU6okW8uLQuQD2nFyt2GTYynpJ
-         +JXzRyaPM7mQDk7mMteEOF0bNl34jcxAZwrmnC7TxbgWwbso3NGVH4HmV1CUZsbQ9xkS
-         79FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795238803; x=1795843603;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=2mKaz/dqifKa6tvgIjKTsGu3wdsWa8OrLCV4/chX4LQ=;
-        b=NeTrOVYrwxDfy4eZoohksigyE8yKCCFbYNVypOAdzim0t1yZG1OEyiJLMQLs9s0OMz
-         ktj1liWBe811XefLZ9xpRiA92ASvUHe1AvCwHWwMKL0rsOYs5jpNDimVFtxgleLi3JJz
-         hhoJWs2U6y0TbS+AirqdpKkcx+t6P6jBIiT2bMXYZwHb8MWWzOrCsopfeGUZXEoxBF2g
-         g4vGda9eRQqpVro1qrJryzuUsCaWvQ9rWHAfBUVf5nWtd4P6hU5SGBs0YVh1Rro833Bk
-         lZs2Et7nO7tBhmMgPXTidvC++2tdHBnLRAjqa4PVpT7n14K1wquAkHPyae2U9Bp+LCXX
-         WC0A==
-X-Forwarded-Encrypted: i=1; AL+hErFQ7gRKLlOtpgbAdDun+AxzGGTJY0q/vxTe1yi6s1m85q/34la90R1D1GWM6aMgtmxiVQ+LKaHrctXk@vger.kernel.org
-X-Gm-Message-State: APuU4Z/w+HN42ZWPNpQU13Byd0oxarcxO+UAwKyRXK9qlPjXKBKayauA
-	b+8G3sidxTKviphqcCLrmF5wH5N+KbKAIqlqLbO6PGFLU+ux/0UOaCkb
-X-Gm-Gg: AZFdTZcl23Arrqruh9Vf4CqpFvHQxFVKhR713aglsOofjB82iGfU/eggjvsEmV7Mr3i
-	xMxs0j8WczmFcvzgOEFAAbJ0eXaK/S0NxOSc1Vty3GB+oe5fF8sItqLiR+jV8GbpFyir1L2XzK5
-	DfE+WUluOLhY7FgwUtKx9R4qFtIyNUpu6rddTA2ylhkCECJ2uHF9/1MTiAoYvzuS6muhPx+sZFu
-	AXzd0oAvajlE556pA7aRjaljLuEswqLn+fUGkaW8VHw6HJCtv3yknZtaFQGijX9IQRGNv/CdQSs
-	x1ruVKeBmZ3Y0HG5cId0A67HZPsOkbcWuFc3jZ7+SB//rih2oATzPAH/0dPEDwTErC55IE/KLrD
-	zYpTgMqmXT9/g+rqGt9XVnKnuQ2pg8wuzhzwfwqxdEItIYWh32IBRMysYCZjogFcZY81rzk+Sxs
-	JGLHRUTLtl5ub4Hngmw1EugbfdxGr2yExPRabneYueLA+dvwqqgQPYb6lTn13CqFpJkMPvxmrWR
-	mQkOFMuNywbRnfG8Je+9LXCr5k2vH+WOVUbC/FlKoRfWqlWMcY5Wfj/p2xVrH7tnxC/Dz2LONq/
-	bfIsW93ewEFImfPjS6/iMyNu/w9PGcGiZDILNBU+8ZjlrkWq
-X-Received: by 2002:a17:90b:3890:b0:3aa:548f:eb77 with SMTP id 98e67ed59e1d1-3b41c97deecmr5244247a91.56.1795238803409;
-        Fri, 20 Nov 2026 21:26:43 -0800 (PST)
-Received: from rigel (106-68-220-184.tpgi.com.au. [106.68.220.184])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b44b7c6513sm1223708a91.4.2026.11.20.21.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2026 21:26:42 -0800 (PST)
-Date: Sat, 21 Nov 2026 13:26:35 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=kwiboo.se header.i=@kwiboo.se header.a=rsa-sha256 header.s=fe-e1b5cab7be header.b=Az4Hnbry;
+	dkim=pass (1024-bit key, unprotected) header.d=forwardemail.net header.i=@forwardemail.net header.a=rsa-sha256 header.s=default header.b=kiXtSmVT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From: CFBL-Address: CFBL-Feedback-ID; q=dns/txt; s=fe-e1b5cab7be;
+ t=1795276755; bh=zTHlIUmDCvrpkduFYr0oVFq5R1k7q8xEe8JjZgfxKmM=;
+ b=Az4HnbryfiJ9btHy2n5bBt9beotwNzP3QI2tithJndiKZCgxcsZbOhBmo3VSatcdkxzhiWhkc
+ +A12542Lck4clpmIWSETH0GTdPzCKPV2uthkDHBmBCwNXBU8kWzGEzm3E4iTbaWGQbRDYuFA16V
+ HDlOsukK+WWiBkwtbbWRJL13ofawEk1YCFITVBb4BUySpAJNu0yS1MfW99m+zMXI40IsuckXZeh
+ migxsAABkBrbEx7fXmB05I9sEvRY/zSOwes3SK52i5/Q15DJ4ro2Zo7LkkY8kDfEx1P2vpHbyXW
+ EeRJVJzdAauWnfH4dUqfcA7WhF1PEKEZw4305KBKVptw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=forwardemail.net;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From: CFBL-Address: CFBL-Feedback-ID; q=dns/txt; s=default;
+ t=1795276755; bh=zTHlIUmDCvrpkduFYr0oVFq5R1k7q8xEe8JjZgfxKmM=;
+ b=kiXtSmVTzfeG/DTqJNEcPeJUGCiVlt27fIP4ZogxtkhZF8/kifGGevqmOcamhNLAwpnSYJ/XH
+ CQMa2biUauUpFc5nZGCVVI8Mjr7c6Y7TL0woxSvRICw2kwYqND2BvCQlmvhFEcN+z+SQrrNB6QR
+ OoCjoFrU8wvDVr3ZPV8EuKE=
+CFBL-Feedback-ID: 6b01bf98090687713cf33d91:78dc9c7cc38c4dbae0ec3000e8638727
+CFBL-Address: abuse@forwardemail.net; report=arf
+X-Forward-Email-ID: 6b01bf98090687713cf33d91
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 2.19.33
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>,
 	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jia Jia <physicalmtea@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v7 7/8] gpiolib: let the character device free its IRQs
- first on chip removal
-Message-ID: <20261121052635.GA32792@rigel>
-References: <20261120-gpiolib-chip-removal-v7-0-aambrozewicz@nvidia.com>
- <20261120-gpiolib-chip-removal-v7-7-aambrozewicz@nvidia.com>
- <20261121044657.GA17013@rigel>
- <20261121051900.4118973-2-aambrozewicz@nvidia.com>
+	Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH] pinctrl: rockchip: Fix pull configuration readback on RK3506
+Date: Sat, 21 Nov 2026 15:58:09 +0000
+Message-ID: <20261121155810.706866-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -107,42 +84,47 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261121051900.4118973-2-aambrozewicz@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 21, 2026 at 07:19:01AM +0200, Adrian Ambrozewicz wrote:
-> On Sat, Nov 21, 2026 at 12:46:57PM +0800, Kent Gibson wrote:
-> > > @@ -1690,7 +1697,6 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
-> > >  			return -ENOMEM;
-> > >  	}
-> > >  
-> > > -	mutex_init(&lr->config_mutex);
-> >
-> > What is the rationale for relocating the mutex_init()?
-> > Looks like a gratuitous change, and if this patch is going to be
-> > backported then it should be kept minimal.
-> 
-> It is needed: linereq_free() now takes config_mutex, and __free() also
-> calls it when linereq_create() fails after allocating lr. The first such
-> failure, kstrndup(), returned before the old mutex_init(), so it would
-> have locked an uninitialised mutex. I plan to say so in the commit
-> message in v8.
-> 
+rockchip_get_pull() is missing a RK3506 case and instead returns -EINVAL
+for all pins. As a result, the pinconf-pins debugfs file omits the pull
+configuration for all pins on RK3506:
 
-Ahh, I overlooked the __free().  That makes sense then.
+  pin 0 (gpio0-0): ..., pin output (1 level)
+  pin 1 (gpio0-1): ..., pin output (1 level)
+  pin 2 (gpio0-2): ..., pin output (1 level)
+  pin 3 (gpio0-3): ..., pin output (0 level)
 
-Cheers,
-Kent.
+Add RK3506 to the case that decodes the pull configuration from the
+register value to fix pull configuration readback on RK3506.
 
-> > The lines removed/guarded were added in patch 3, so note that this patch is
-> > dependent on patch 3 in the description[1].
-> [...]
-> > The line removed/guarded was added in patch 5, so note that this patch is
-> > dependent on patch 5 in the description[1].
-> 
-> Agreed, I plan to note both dependencies in the v8 description.
-> 
-> Thanks for the review.
-> 
-> Adrian
+After this the pinconf-pins debugfs file includes pull configuration:
+
+  pin 0 (gpio0-0): input bias pull up (1 ohms), ..., pin output (1 level)
+  pin 1 (gpio0-1): input bias pull down (1 ohms), ..., pin output (1 level)
+  pin 2 (gpio0-2): input bias pull up (1 ohms), ..., pin output (1 level)
+  pin 3 (gpio0-3): input bias pull down (1 ohms), ..., pin output (0 level)
+
+Fixes: dbd2317d7b9f ("pinctrl: rockchip: Add rk3506 pinctrl support")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+Based-on: <20261120201540.672016-1-jonas@kwiboo.se>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 97a73f8c4f6e..cad602fa41ae 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -3910,6 +3910,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ 	case RK3328:
+ 	case RK3368:
+ 	case RK3399:
++	case RK3506:
+ 	case RK3528:
+ 	case RK3562:
+ 	case RK3568:
+-- 
+2.56.1
+
