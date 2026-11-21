@@ -1,58 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.177
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795277379;
-	b=w/JT7LDdK1l7wol75+dcUj0QtEx+SZNVR3iUrBAHhifqaD+D4ijgiYFy7AnESRiTWGTp
-	 cazoc2zalqt4IS76s8xCP2G65/G015JUVcFdhs0mmlOW3zeS1xmYhFHCIgOYWWqwojN3J
-	 tF8WXAtnRqYgyln1jaEROD8ee4sxymH1q9+bddc/RCWA9845Ud5N1a5DYVkK3SQ7bx9e+
-	 Egaa/JZ+M1KU62G+OdhhihsXVyRIv4v53c+gMc5eLRSphT9Bc8tYNcZBsWfknsdxyt8ne
-	 68Y6IX/xWGd6vWigY6BEwEJ6o1/wAMKMOgTQck0SAAuiI3V28TzM5Q1aW16Zv8n65Lw==
+	t=1795283200;
+	b=cbG7nUywMJYPZCKSjIbvB9Mo4FcP0MW+NKa8xbrW203taccbL6gdq3bjt/P7raReeHBh
+	 4VamiXu+QUqcEGwnZXjV7CTef15AVixCfy2j4dQo89+VBb+McFoWfTDcQoweEhMYHjUif
+	 zT2QSNYYYHe4NG3wrcFbaXpx7b1uB92hwDU7zB5XPW6JbvVy9VF7IlYhoQdNL4Hjjltww
+	 Ej/UgCznHU0UrWHviMAE0RgdqZiL67hAH+wwTwYyvjoJAqf+iPNsZUmXwI0JSO7gVc5jt
+	 RJZewOp2ZQAGEAhSnaK+a7a0ji54s+j1IimAkviFrei2sCSUKcgItD2Xaz2GWv5Cvfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795277379;
-	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 Content-Type;
-	bh=7BfZ4ezOsyJWlaZx8zGrRFH+Xob1HMqX/m78J/0L5dE=;
-	b=NnWJtQpVmQ1V7pYUk6vU+COe7bly2F/Efey+Bss5EM7URN5Qm4+2sJ0mMXVjE4hfMerB
-	 hNL+99odZEUSuXwAfryFssqgz1p9SmUutS/Ci4tlh5nhyHD7plxWJRca1vDhnV4h/1MMS
-	 hreyr2m1QzVvL9WG6SKmYmlOHPcHIjYxMr6dTO2xuFkGq4gpJhb77c+6Zf0kxXBWhSuFa
-	 e3XAAL+UwVgg6iXUSQjzrr7mAGWVhaCvs8iEtdmlN3idn8acRNmUKzSa/S7flGRuebR6j
-	 PDtw1GKj/JUKpopM/wAYERbKmflBXCQkisYipWPFQkQifvqPnlEbyG68jbOqvQ/U7rQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795283200;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=fjNd46J+nIPFpsHDZsAhjGUwUD3QMtAsvElWh0BXGNs=;
+	b=g4D10gz4XK2ELRzoEeRLDzcKSW6+gS8C+uT0HN57S3XwHKhv9LMSs86tk64P18N0RTN1
+	 nJmfjp3lVzOBmpOOXp2x/jcI9WNJoDH162Qss4sVuZZppKFCRZhTfvwptUt+0ADIQ9GM1
+	 78zUJIH5tNVwmt29Zw8jJmvNVOYpgfDlNX3062eC8IoNfqw/2k9BZqKIrm7AIgaOhv/vc
+	 7wJHXwqOlLd4WTdq839kKK6jwsuHBh1skQBzmkXE75XbjpM8xEiDHR3V+gpo+ZdTF8A+K
+	 f0Hsqq52OS0z1GgP+KQVWtMcYT3eHwFtFTklo1sIXx0sRh03wKreqHMtupNFTj/J8QA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=sntech.de;
-	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=vWMuBhEL;
-	arc=none smtp.remote-ip=185.11.138.130
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=gapp.nthu.edu.tw;
+	spf=pass smtp.mailfrom=gapp.nthu.edu.tw;
+	dkim=pass header.d=gapp-nthu-edu-tw.20260707.gappssmtp.com header.i=@gapp-nthu-edu-tw.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=TAHo4MKx;
+	arc=none smtp.remote-ip=209.85.210.177
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C1E606A32A
-	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 16:09:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 31C1E606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94362606A320
+	for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 17:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94362606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gapp.nthu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gapp.nthu.edu.tw
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=vWMuBhEL
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=7BfZ4ezOsyJWlaZx8zGrRFH+Xob1HMqX/m78J/0L5dE=; b=vWMuBhELKZhkOE50k9naugms6x
-	aBRzDyWiCU32WUfxiJ9CmkKxi7DPiXk2TpKQZ1ylTKhksqU2LE1aB0AP1uOW31p/5S1rP1WfPeDCc
-	6lQedV8M2Gfrx2hcQJvXhzDLqBjJRMZH/2s9cdDfWagzp7G/3zK6M1AANXQPNtvcR54nIzvTmp2t2
-	pMDEHSMc3MCXEXprx7KNgu1CXRENMIGtwqmaryI0beUU6HNGUou+mX10bNYSanKiTzSTZRBq1t7/X
-	KC+rjqRr+TtrZu2iNircQNWLAR+j7dXqzFq90eeLaHxSR4lAqMO3bYCV9n3bc6D1V3zmtd3Iz8jFz
-	neZ4o/5Q==;
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Linus Walleij <linusw@kernel.org>, Ye Zhang <ye.zhang@rock-chips.com>,
- Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Jonas Karlman <jonas@kwiboo.se>
-Subject:
- Re: [PATCH] pinctrl: rockchip: Fix pull configuration readback on RK3506
-Date: Sat, 21 Nov 2026 17:09:29 +0100
-Message-ID: <-Gre4owXTw2C51e--4u2UA@sntech.de>
-In-Reply-To: <20261121155810.706866-1-jonas@kwiboo.se>
-References: <20261121155810.706866-1-jonas@kwiboo.se>
+	dkim=pass (2048-bit key) header.d=gapp-nthu-edu-tw.20260707.gappssmtp.com header.i=@gapp-nthu-edu-tw.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=TAHo4MKx
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-8b68e59ab33so1599349b3a.2
+        for <linux-gpio@vger.kernel.org>; Sat, 21 Nov 2026 09:46:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gapp-nthu-edu-tw.20260707.gappssmtp.com; s=20260707; t=1795283197; x=1795887997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=fjNd46J+nIPFpsHDZsAhjGUwUD3QMtAsvElWh0BXGNs=;
+        b=TAHo4MKxJE1LRdehpT6CytPalzs4hBRiAfU/vdbn4k5SWGEp8gUGtYaX6OVbufo1Ot
+         rvB5vXCgZ9KQ6SQ60J1iPY+lJLmhMQIlSgiQlyi8cjW1yuIw5N77tvzjilhFGUSvEKh4
+         lOnodlA5UzDq/+4lQnRA7hyST8PQIja0HQb1f6zekfgdAdRGU0w6AXyJkrgL4uNOhPtt
+         T15z7OP5s0Uu0M9kFUvkC1WQK26N6VquPP9zvh83vmLReI67TS7m6P5YlK+CS2leASo+
+         bh0M2J0eAOd9/CDWYlBuGBDy8YJ3S9NZyPYUzxyhXCwV3V9OMheqGMP4kpkQaeoimicC
+         jM5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795283197; x=1795887997;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fjNd46J+nIPFpsHDZsAhjGUwUD3QMtAsvElWh0BXGNs=;
+        b=zllsC0XRTMfQ6fDftipgYMGg89gt9W/sClmdsk9qLYuS60NToXE7pgBICZzbJixb8X
+         i+W4IG4wPwfc3AliR8tM5bpORXEr1IR3oc0L/oeHH+HahjsGgHiUvSB968CVjEIBIym2
+         udMzwxg6RN+fadiRqCdN/dGqRCmkqqDz9B4onih+Wp/VHUw5z0CQ1FzaGT09XO2UTFA+
+         5iOhktnD6TDI277fv5vC3BAJ/tX83XeSYGXOrS5gWjFJsrv+myBu0qmhFA69QVrWuSU3
+         tcvwJFyXmQ9ELMb0XtM54IW68Qmm4aC0raRhrKn+PQXERGF8AtlVDKbg3bTTx2JxV9VD
+         vytQ==
+X-Gm-Message-State: APuU4Z9D3rmpKwKXPAp3reCFAMegoD9Q7mqWs/ucyt/lV6ojrIqMBzSJ
+	N7iNMCJ0a8LborFKTPGrauUqVkcpYVAfLmrMgmpGcfGU4GzsEj9tVZIxvPsNM9hmfco=
+X-Gm-Gg: AZFdTZf8mGNd4vj5EIbkP6U3zejYDdq879ggmNt22bE7E2+bz8UTt0piYcCUsb9DTzX
+	uCJp2xFPG7+KAkVDvYkU0WOepYfwaxrCerJlY/+hKvJeB+V+xSA6JlNe8XFB0/6+LZyGdKrjeLD
+	LomN+hhy4bhTBM3ckygy42tjPmOKuiMJddw81uvBEoy3CP7GgvBaErPvEagGxvo2TgOpRgfMoMX
+	XYzEuKoWM+LFkU3LdHOE0R+SaaznACVVcWLU7rGmuX+U1WZzyKe4B3zocVyaOmihMxbK3Mc6GRQ
+	pzZqAVyRaeAGjAFg6LZnghLeMdVu33/QHXNZnK+iGUxM21433xztzDSjlX/TFX2kMjWqAtKucD4
+	1O2cnvUsphy5+mpm85jQ45QfnkkgEhWAER1ulAjXkUKtqtutjH2cvj67FMX5khWMT3jFnbCwiNs
+	yM6OKQ5k1gI3tWmsDvr9XN68HGOfFsZtbBiATlkldpxVPfv4dT+6XbROODkEGIbuO0/78kAwPtI
+	ZeGMKzgmv3oa0n3QLCMuDFllfFBjXBk+dKurYSYwxqHaXidFQlWytuO0nT5/LN4ObMRtzH1Ki2/
+	gY4/HhaXqmqdSzsBMQ7zY6sGMPCe+R1+DnZVhOq8PpwUy4A2McXKqQrhX9VUeS3R/N/4ASEJe3c
+	mt/yZw2KFIhaSi7LwTgtJzPwhtHgRANQ0rUMcTgt3yleqD6aSXmOaZimAGHzSjdNW
+X-Received: by 2002:a05:6a21:7e83:b0:3fa:d7ac:effb with SMTP id adf61e73a8af0-4014c060f6cmr4572900637.40.1795283197197;
+        Sat, 21 Nov 2026 09:46:37 -0800 (PST)
+Received: from tomato-cultivator-HP-ZBook-15-G6.. (2001-b400-e3e5-27a4-7997-dbab-03e4-f5ee.emome-ip6.hinet.net. [2001:b400:e3e5:27a4:7997:dbab:3e4:f5ee])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde6d02ba46sm2651076a12.21.2026.11.21.09.46.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 09:46:36 -0800 (PST)
+From: Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
+Subject: [PATCH] gpio: amdpt: Use __func__ instead of hardcoded function names
+Date: Sun, 22 Nov 2026 01:45:27 +0800
+Message-ID: <20261121174527.19690-1-ku.loong@gapp.nthu.edu.tw>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,39 +95,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Samstag, 21. November 2026, 16:58:09 Mitteleurop=C3=A4ische Normalzeit s=
-chrieb Jonas Karlman:
-> rockchip_get_pull() is missing a RK3506 case and instead returns -EINVAL
-> for all pins. As a result, the pinconf-pins debugfs file omits the pull
-> configuration for all pins on RK3506:
->=20
->   pin 0 (gpio0-0): ..., pin output (1 level)
->   pin 1 (gpio0-1): ..., pin output (1 level)
->   pin 2 (gpio0-2): ..., pin output (1 level)
->   pin 3 (gpio0-3): ..., pin output (0 level)
->=20
-> Add RK3506 to the case that decodes the pull configuration from the
-> register value to fix pull configuration readback on RK3506.
->=20
-> After this the pinconf-pins debugfs file includes pull configuration:
->=20
->   pin 0 (gpio0-0): input bias pull up (1 ohms), ..., pin output (1 level)
->   pin 1 (gpio0-1): input bias pull down (1 ohms), ..., pin output (1 leve=
-l)
->   pin 2 (gpio0-2): input bias pull up (1 ohms), ..., pin output (1 level)
->   pin 3 (gpio0-3): input bias pull down (1 ohms), ..., pin output (0 leve=
-l)
->=20
-> Fixes: dbd2317d7b9f ("pinctrl: rockchip: Add rk3506 pinctrl support")
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Replace hardcoded function names with __func__ in the dev_dbg()
+messages to fix checkpatch.pl warnings.
 
-rockchip_set_pull has that case statenment, rockchip_get_pull is
-missing it.
+No functional changes.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
+---
+ drivers/gpio/gpio-amdpt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
+index e886cf9e14ea..54281851a086 100644
+--- a/drivers/gpio/gpio-amdpt.c
++++ b/drivers/gpio/gpio-amdpt.c
+@@ -35,7 +35,7 @@ static int pt_gpio_request(struct gpio_chip *gc, unsigned offset)
+ 	struct pt_gpio_chip *pt_gpio = gpiochip_get_data(gc);
+ 	u32 using_pins;
+ 
+-	dev_dbg(gc->parent, "pt_gpio_request offset=%x\n", offset);
++	dev_dbg(gc->parent, "%s offset=%x\n", __func__, offset);
+ 
+ 	guard(gpio_generic_lock_irqsave)(gen_gc);
+ 
+@@ -63,7 +63,7 @@ static void pt_gpio_free(struct gpio_chip *gc, unsigned offset)
+ 	using_pins &= ~BIT(offset);
+ 	writel(using_pins, pt_gpio->reg_base + PT_SYNC_REG);
+ 
+-	dev_dbg(gc->parent, "pt_gpio_free offset=%x\n", offset);
++	dev_dbg(gc->parent, "%s offset=%x\n", __func__, offset);
+ }
+ 
+ static int pt_gpio_probe(struct platform_device *pdev)
+-- 
+2.43.0
 
