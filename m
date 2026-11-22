@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795371917;
-	b=AByIiYdA07q591r+yB2bbJfpsnHQRPg39iIz1QF/0sT93+nyKzW1YG469/VZ0W9aqhvy
-	 u00GKmgJseyS5KbEL68Vb4eGVM8AnSEbOmRlBcBQBjgp47GJ5hTsWqTtANu3SK/qv3VV+
-	 RXATmnXyXQfLACuXUEgdvGK1ZBTIQFusBlDAJPE+oIn3rjlgRehTnYI2AKCuKyTk3KeTg
-	 mllkVTn0/E2YbgZUMgZ/rSITKNnaWrAJWE4oLS0x7pvqsDdw2ovGEMkkSrOcLWSY/2EU5
-	 LTuZRjCSBG9VpSPmNDgL/ccy/U5Sg+3zqGNjoG2p73KBUkvM0MtL+EnGXbeYgPV7kDg==
+	t=1795371952;
+	b=r8SDnRSQNU5ANJMpMj8RldpDkoWDhXmeOV3vr80IIneD9BlED52WVWHy5kNlrAzSCiQK
+	 kxU0WTliK3g5BpjK3ORIptmb/1KeSS6BdgSnyiVy24EWUY7jvTnmj2YtT3rw8BtSdOZaB
+	 TtQVeUtXrfPBtbghhMmjsrj3V4fWzajcyRgnLmsz1zTWgauLs2UL+4vrWsTkh7sWCbyL+
+	 FqX1s6FIRyao/FMAGKs32UyWgK+qFBd1PHY8nLbXY/HjYCQoXEJJaP9BmvWoJmI+g6NOe
+	 uzTx7uNjQ6SiThyifmKBuezPJRH/yi4k3Ot1LomA/ubMHUeWryxW4VfzcPSWk16i7EQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795371917;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795371952;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=1lgSvXfM1NpguQppsGiqChdK8jo6yWYjCTv/SuCYsSU=;
-	b=XXrrAvwYkiL9SPt9fzcC3OgBD3XIb8pzOi87r51aknyNjQVqPIZKLlSpA5/65Mw5mTjC
-	 YHM4GhQgXZttk54CQ4d2IIIGgUVrtNH2iwjKB8Kw9yVfExJXd3eV2d9B9Iyk8mIN8Ey9f
-	 CE29P5ZOWwUVAjTe+ZfPgDPXmZxpEs93pY8POohZa2EhR5vC2EBUNXFNkptBPitjSzkzk
-	 HASzHk1jzU4k4z4/SZeCRLDgPhGcz1fE6UBOg0+W2mDUiiDpitO54NN+uqmtqFhsqJCkd
-	 TR/BVS2aVVq57WSKPo2QxBUM9pob9WbLNXEoNS8Xux5hqUt7LwxzSb/A5xKXcSvttAQ==
+	bh=l9CfgsFXDwrrEwwpmeKXg+KOAvu1yqasIfQl+WG4JYU=;
+	b=g82jv6ypItt/7dnQtHgOoMbwyiP2SLHNsBef8Yu1dM4tT/PuapyF4xal0a9ZGl/7RR6V
+	 KxMA7LHmzfSqkVCyCMcYY1sB/lBsx9meQScxCQhjqvfW2cZ2eCgkMZtC7diJmTCLf5FUo
+	 Qf2uuXjj+dXY9kHW0Hnb4avFKriApG7FFTuLjsqzPk4DpjpQhF8oMVcHZyQTaS3jGoP7x
+	 5nzqH5woOFb9HS7idQDcS1DzXLBzOXKSU+9FTTwtGlEgMvmQqY+aFtfaQ7xWUjRNkLCRL
+	 Gbl325nSpyM7Mjj42OTWJcnKEh7lXXChX7zNktivjIKP9QvM2HQ4V452y2S/H44hFCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQqwl5KL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="LGc/9FGB";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F095606A32A
-	for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 18:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE7E606A320
+	for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 18:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQqwl5KL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6751F000C6
-	for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 18:25:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LGc/9FGB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8361F000D8
+	for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 18:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795371916;
-	bh=1lgSvXfM1NpguQppsGiqChdK8jo6yWYjCTv/SuCYsSU=;
+	s=k20260515; t=1795371951;
+	bh=l9CfgsFXDwrrEwwpmeKXg+KOAvu1yqasIfQl+WG4JYU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=EQqwl5KLh9FgRgQqiZx1o9UPuVtiNY8FZnvmw/+tZVSFTK37mS04CnXsS9fAmXWuB
-	 7It1be4gsmVswbDkShAfAJV8e2zCcfiiQPP2Tk+bLn0rXeUcv2TJEZcRTHGAGA2nQy
-	 ZUnIpzPIzZEIVvwP4gFFE5gntn/gXfy3Vhl9nLOYL/FLzt2QwKmsmugVwVDIp1M5sO
-	 Hm5KxLw2E+e6baRWkfcJ3+DQKDZLC3+/RXLXMX5aTRW3jQ9cZrQGQCXSSDLeXHopyw
-	 ZIHq8mxHQCPmlk2C2T5Szd4UZUZbGO6jRRAssA2O/ZErO+IgeU3mIQiwDQWl1g5N0Z
-	 r9VU2Qe/AHHRA==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3ae2ab35d82so19656761fa.0
-        for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 10:25:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEqiHqIroGiIe5IN86b+ZHubyqiOSqPVKFULidhy8tASLTVwZtUNTKaDd9r0aUPIR7joqyuVYq1sy6O@vger.kernel.org
-X-Gm-Message-State: APuU4Z/tGWu9OwNC+GfeM6gMB1Op9sFzr9+igtR6UwciFt5mQqmkTh9E
-	VxucwzNlsYsxPqt9huKlU+Km1IaInCMFEs2Vy+FVJM0MVSw4jmw9UPUmfUU+UiDwPKmEXrFnrqP
-	JkLVMtkEzxSd8Z8T7Dcq0x8FgIwFDTV0=
-X-Received: by 2002:a05:6512:32d5:b0:5bf:ce24:242d with SMTP id
- 2adb3069b0e04-5c1bc806edcmr2509874e87.35.1795371915162; Sun, 22 Nov 2026
- 10:25:15 -0800 (PST)
+	b=LGc/9FGBPBQZUvNmnpW9aoAV8DRN4f++L4BqYc5ofUu3imrsycqXZMRcVEBlOftP4
+	 vqUSv2ddiGT8RF7fySiPJY4OCXr+N9UBJewMpLaZV5PW/2ggNoZZFKTFBjOTYnyc7D
+	 79wisqxD9VZDky1SD0clVI6y5/AKpoUdxmnLf4iXtYiyRraYk8SLRMeqRC1C15AJVs
+	 5Z6mvSNeDKCG3CdgJt7EnNrcGIaG5B5PNHiDeR/dULP6ZZ2SypagrvzPfAq0QfmVqy
+	 mRjtpd8gKMvNXE4FMqpuahcZlvUqm9DGbYBFVGmqKSasaJSjjMyFMHHe1TGuiDCKU3
+	 xZXITtGy+mlxQ==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5c14a204305so1634365e87.3
+        for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 10:25:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFA0VaokXXyhyKeOWGNdpIxbZmuQ1HESwFSvLtbmYPLk2xLEH55uZekQrO2344vr0s5AkxIbfwie2+r@vger.kernel.org
+X-Gm-Message-State: APuU4Z+kJKLHA+gqJeadP1uA3K6EWnBaKiFk9gpeNETyp7nv5rMAvZdi
+	WWCBqCedjAvqx3BdxF2yKovEnyDlR2eSM1VUpWVIyibdIuFU5/XpQAXdqQXDMCn+JMtx3tOxk3n
+	Xy64th+GybOST3L9NWVJ1fQts6RkXKxU=
+X-Received: by 2002:a05:6512:6d2:b0:5c0:d9e2:f66 with SMTP id
+ 2adb3069b0e04-5c1bc7b4301mr2437293e87.20.1795371950328; Sun, 22 Nov 2026
+ 10:25:50 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261119-cs75xx-gpio-v5-0-8d14f2bb614b@gmail.com> <20261119-cs75xx-gpio-v5-1-8d14f2bb614b@gmail.com>
-In-Reply-To: <20261119-cs75xx-gpio-v5-1-8d14f2bb614b@gmail.com>
+References: <20261119-cs75xx-gpio-v6-0-37aeda0aaedd@gmail.com> <20261119-cs75xx-gpio-v6-1-37aeda0aaedd@gmail.com>
+In-Reply-To: <20261119-cs75xx-gpio-v6-1-37aeda0aaedd@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 22 Nov 2026 19:25:00 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkLX_d9cFLOvnXs84_9j5JvwU-ab8mpKt98x2CjTBnb=w@mail.gmail.com>
-X-Gm-Features: Aa3M54oX6RtYUEXPEftHEAaE8uR74PWqSa96JlgekCMpzJ1oVnJWKeD0gq7KO7I
-Message-ID: <CAD++jLkLX_d9cFLOvnXs84_9j5JvwU-ab8mpKt98x2CjTBnb=w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: gpio: Add Cortina Systems CS7542 GPIO controller
+Date: Sun, 22 Nov 2026 19:25:37 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkbKaRW8J-ZRxkrM5SX0-7eZPu=C_5OLCGquYOtWU4TOg@mail.gmail.com>
+X-Gm-Features: Aa3M54rbItLFWFNiExC6gKouuAtPmZpVlhpXK-hpWeRjgFU7aqgZIJC1n_xCbCk
+Message-ID: <CAD++jLkbKaRW8J-ZRxkrM5SX0-7eZPu=C_5OLCGquYOtWU4TOg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: gpio: Add Cortina Systems CS7542 GPIO controller
 To: filipp.dunsky@gmail.com
 Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
@@ -76,7 +76,7 @@ Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 19, 2026 at 12:03=E2=80=AFPM Fil Dunsky via B4 Relay
+On Thu, Nov 19, 2026 at 4:09=E2=80=AFPM Fil Dunsky via B4 Relay
 <devnull+filipp.dunsky.gmail.com@kernel.org> wrote:
 
 > From: Fil Dunsky <filipp.dunsky@gmail.com>
