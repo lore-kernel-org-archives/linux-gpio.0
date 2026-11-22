@@ -1,36 +1,35 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795354464;
-	b=nJao5gHpy44TKhHrm4kFga3qNburfwaShW1+ON+G0Rh7zC9pVhKuh+p9zjn/1p20Mk1f
-	 fywV7Myvyjes1NN8lhL56PwmXdBHyPeUbFLoS9zPzGmfrkzjqgWF6vbG8pglDKAnL9g6S
-	 xrRbHXxMBJgfkrMawUKn3Px4JLWoZakb+Dv2DWcfKEiDpv3HfakCKtJS02RsSiv2Fcg4H
-	 6Mmf648JaIX/GndhlTrnmiQGZu3ws9oafnVam1pIG8csw55hwenq4d63XkswUbOrdzm/l
-	 niEO4BgG7Mga+gGpq9RSyndkWzwHRDvOcGItdc4GJTYDSjNE82rmB4tzZJOMXGEqcSA==
+	t=1795354468;
+	b=QcLIU5C2MUyfDtKJ0SOT35+QF0y9hmARHUIVPHjdGjX7ynm3Xq2XOdhtnqimyjd4rU6g
+	 apmn5RJbk8aUv+rCDxbP8UV4olbAepifaMJIGcb0oiMPHFg/ObHqNXXVluqHXPcfOqHAS
+	 YNwKe3DDjSdSOJC2O38vFjXZ/kfT7HDrzscVvbQzyXn/aVSvBf9jL39wrn4tSIvFvJAA6
+	 dCmyKjeOM2gAlB/qgN6P74yfHHAu3rNt6Enz6yj1JREGebQ/kntk4eFK1YsLtlmZ5vRcJ
+	 pgjqTt2hM9A0TxNEkMvptb0FF8/8xkiVREHwqSJdcGKtJWD7D5mhuDHrXLjsRBJu+mQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795354464;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795354468;
 	h=Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=TJC5LwXjyN6K3U0aZ6NtQioegxnd38BsYmlWALXEBBs=;
-	b=ts4qsBzX93U5RD0NPetZx40M27lyV+dmXvrS8BMuZryW1YK9AcY2NrEWiprjkOcGPlPP
-	 I2APvSfqDlLOKkWeCMd2O/q53b3wei3JzCgNffPw1IbdAFmyZBz+ptiK59MoPrUA1r3ED
-	 9Y7sITyt0cEzL9OM1FbvG5gU0V94hKCsVFTLpesmFJtvp90OHPdDqNkB+pTsMY6gg/DMD
-	 NitBRfFMI5hc3bR2Zz97i57pTcAQaIrG5a74ZoflAY9f6pGjpgiWVN3mn6oaXe/vi6L/g
-	 9gHwgYWAaJyqv/n+1fMNDFUPoLnTfHoHnvtYMsKFWBPsmfbB8v5pzF1+ka0D52jJfTA==
+	bh=Qa6b84n8xcGcl2ezLQI9cYJ/y0dJWqSu6S35IePzMHA=;
+	b=nQAYP+anTTQrWk0YmU96NjAn0Fj4EWG/nVqLLKTQYqd9ebr0nyCtYLQveaI+WUsNFb8z
+	 t4cM0FK0fKbMPaq+6oW5WAvr33XwkylUGUyw2kwTXqpPNaNk5SxNZmOukGfchpd8tJSxO
+	 4TQ5zmXmnU9s5qeUIxUJmDp1hJlLkpBPq+3x75HvBpI5Jh0ripY9qPor2+95GcvQviymU
+	 6btJ4I3tUhibDMHUpqOD4ylaNN/sp8DKQn2mz56wsRxrJgAhkuAp2JqG+XzbNeYTn1u/g
+	 5O+XdCcCw3Irf6oIxlgmZWK13LtuQS4tDqHZSv255zol6Cv3MzEsUEolyCorzH2WXWA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A066F606A320;
-	Sun, 22 Nov 2026 13:34:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B4F1F01574;
-	Sun, 22 Nov 2026 13:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCB606A32C;
+	Sun, 22 Nov 2026 13:34:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865FC1F0156D;
+	Sun, 22 Nov 2026 13:34:27 +0000 (UTC)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Sun, 22 Nov 2026 14:34:06 +0100
-Subject: [PATCH 3/4] pinctrl: qcom: Consistently handle IPQ5018, MSM8953
- and others
+Date: Sun, 22 Nov 2026 14:34:07 +0100
+Subject: [PATCH 4/4] pinctrl: qcom: Correct indentation
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -42,7 +41,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-3-f0068f161636@oss.qualcomm.com>
+Message-Id: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-4-f0068f161636@oss.qualcomm.com>
 References: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-0-f0068f161636@oss.qualcomm.com>
 In-Reply-To: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-0-f0068f161636@oss.qualcomm.com>
 To: Bartosz Golaszewski <brgl@kernel.org>, 
@@ -50,117 +49,107 @@ To: Bartosz Golaszewski <brgl@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3424;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3390;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=Ud1WyF6aDNUDof6EjNz9HmEHSftHQV6bNdG3g92zFVY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrAu9Pstz1Ws/BMoIzU2G71lUMwCJazzpSdyaiS
- HxpO4o8wsCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawLvTwAKCRDBN2bmhouD
- 150UD/9E2WAcqR9stVlMJSOLqvCgcnAe234KexVCOSmgZwNIulTS7+o/Rj0VaWlfMIXbnaujuUx
- rscT62YsGSy0Fbh9YfophYK7SNCDYvTWVvKOeMCbycK8J6Amuxy0mqzYH9nnDi28ZYHUpv4I642
- uMj5BBc1eMrkrABof6u9KL1yzrabQ0Vc2RPmG3bVpKCoGwV8KAoTBFo7KRVm7LMbR74bbbssuII
- RiJfoxjFMVp1uY8mK9OrUIeB8De3y67Osmz5UxhGsxlq2DY7vJqj07ECbasV2PLVdWjaYM3nULy
- 5TXWZBbOyzkpy5vWps2/Y7YCSV77NCEdmfgYGma1bhaCR6DPKGdXiYKL8m1Z8kiG057qjj+dgde
- c8QT+IThB1dlaGMn32S+UbVCGtwc3jUQexHPJvb9CeBkVMfGkUjnPjpkUat2A94STQXfFIuRJhQ
- 1kAXu+XRSpbANMA34zakApViFTV3Y67nxHhGJd05ASzZYM3HuBbCL5iSA2IF2y3m3nJYtuKGCg+
- 09OxlKusO3GYkjZnqOc5mHLlbNOBJVzDYR67wEMHV2XZEfJ6YxdUPr/qWiHVIsg5PNjja3eGlYQ
- K6YqRZL5PAOceOSoQe6aVFq/WkIgtdgC7GOmDHic2GCrv/MKyDCcEmRgQri3QbCvHkYw8Yqp49d
- QCYYwMXJsIUq0Tw==
+ bh=U5moWmCDXpymfG3mgtgvmi89T+f9xtuOOB5Fy4gexe4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrAu9QBojPYnZuyOr12Uka+Bto8iNNZnmGOtdZV
+ dCiTQNdiJqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawLvUAAKCRDBN2bmhouD
+ 1xKjEACEzW6immHxQo72d2DvBRm/Z2ZUSVfQsLDRLoHhJyEmApVv842uLj+et4kzC376j5zh3f8
+ Q1F9sOHQsAOkAcSVQd9uwfEAOpiMXFgL5DUqdFSQFLANTygQUdulVcGs86U8Fm87ys0g72Issmv
+ 9pZc6JrdVkzCOd4Gew9LPntKpAQme5EMmKM5RaxYbWEn1quQihrR4V+T/G+ueKSM0820gXbIyeJ
+ sgFYpuis13OAw6/gFZzSLbRqF4y2bCrUygyOju8FZfbp+HzJnxDxKjsPAVMRzTy2f0abGg6VL+4
+ vvNyvlgdD1Lex0+ZCG8BEQirnSkYQnM21m4vkPFFi61Jc8HlJ/L+BSH5+XC/WOfrdNKvaUMX8Wc
+ NeSA0RANkv90B7lzCA4nUuFULb3GoRdUnW3eyL/yxxDSavGKZMp87LbYmMWNBeQVMd3E+Uye50m
+ SzxykcJPKCddgQpqs0prDqVUf//lmEUttLcvu6MPDYkSMKBtC6ACcG35ev4WuW06eyvL1XykI7f
+ uN9mPZJa+58UvDUEYIEh2nFdY6nhk0cInCurLbT8DfFhvmdT5o98XIZJjpI/cFOHAnqQI93FzKR
+ MiSov71txQgatF2WBwEUNjs8czpJEEc17SBachv2DfsRrVB9PFk2hijAOnmPBdKDtD/XLpakKFN
+ ji2o3VxYJKJbMaA==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Other critical drivers, like clock and interconnect, for Qualcomm
-IPQ5018, MSM8953, MSM8976 MSM8994, MSM8996, MSM8998, QCS404 and SDX75
-are allowed for 32-bit ARM builds, so pin controller drivers should
-follow.
+Correct Kconfig indentation style to expected tab, instead of spaces.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- drivers/pinctrl/qcom/Kconfig.msm | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ drivers/pinctrl/qcom/Kconfig.msm | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/pinctrl/qcom/Kconfig.msm b/drivers/pinctrl/qcom/Kconfig.msm
-index 82730112bb38..be7458aab9d8 100644
+index be7458aab9d8..d57114535bd4 100644
 --- a/drivers/pinctrl/qcom/Kconfig.msm
 +++ b/drivers/pinctrl/qcom/Kconfig.msm
-@@ -60,8 +60,7 @@ config PINCTRL_IPQ4019
- 
- config PINCTRL_IPQ5018
- 	tristate "Qualcomm IPQ5018 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
+@@ -99,9 +99,9 @@ config PINCTRL_IPQ5424
+ 	default ARCH_QCOM
  	help
  	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
- 	  the Qualcomm Technologies Inc. TLMM block found on the
-@@ -255,8 +254,7 @@ config PINCTRL_MSM8952
+-          the Qualcomm Technologies Inc. TLMM block found on the
+-          Qualcomm Technologies Inc. IPQ5424 platform. Select this for
+-          IPQ5424.
++	  the Qualcomm Technologies Inc. TLMM block found on the
++	  Qualcomm Technologies Inc. IPQ5424 platform. Select this for
++	  IPQ5424.
  
- config PINCTRL_MSM8953
- 	tristate "Qualcomm 8953 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
+ config PINCTRL_IPQ8074
+ 	tristate "Qualcomm IPQ8074 pin controller driver"
+@@ -129,9 +129,9 @@ config PINCTRL_IPQ9574
+ 	default ARCH_QCOM
  	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found on the Qualcomm MSM8953 platform.
-@@ -265,8 +263,7 @@ config PINCTRL_MSM8953
+ 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
+-          the Qualcomm Technologies Inc. TLMM block found on the
+-          Qualcomm Technologies Inc. IPQ9574 platform. Select this for
+-          IPQ9574.
++	  the Qualcomm Technologies Inc. TLMM block found on the
++	  Qualcomm Technologies Inc. IPQ9574 platform. Select this for
++	  IPQ9574.
  
- config PINCTRL_MSM8976
- 	tristate "Qualcomm 8976 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
+ config PINCTRL_IPQ9650
+ 	tristate "Qualcomm IPQ9650 pin controller driver"
+@@ -139,9 +139,9 @@ config PINCTRL_IPQ9650
+ 	default ARCH_QCOM
  	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found on the Qualcomm MSM8976 platform.
-@@ -275,8 +272,7 @@ config PINCTRL_MSM8976
+ 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
+-          the Qualcomm Technologies Inc. TLMM block found on the
+-          Qualcomm Technologies Inc. IPQ9650 platform. Select this for
+-          IPQ9650.
++	  the Qualcomm Technologies Inc. TLMM block found on the
++	  Qualcomm Technologies Inc. IPQ9650 platform. Select this for
++	  IPQ9650.
  
- config PINCTRL_MSM8994
- 	tristate "Qualcomm 8994 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found in the Qualcomm 8994 platform. The
-@@ -284,16 +280,14 @@ config PINCTRL_MSM8994
+ config PINCTRL_KAANAPALI
+ 	tristate "Qualcomm Kaanapali pin controller driver"
+@@ -440,21 +440,21 @@ config PINCTRL_SDX55
+ 	 Technologies Inc SDX55 platform.
  
- config PINCTRL_MSM8996
- 	tristate "Qualcomm MSM8996 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found in the Qualcomm MSM8996 platform.
- 
- config PINCTRL_MSM8998
- 	tristate "Qualcomm MSM8998 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found in the Qualcomm MSM8998 platform.
-@@ -316,8 +310,7 @@ config PINCTRL_QCM2290
- 
- config PINCTRL_QCS404
- 	tristate "Qualcomm QCS404 pin controller driver"
--	depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default y if ARCH_QCOM && ARM64
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  TLMM block found in the Qualcomm QCS404 platform.
-@@ -457,8 +450,7 @@ config PINCTRL_SDX65
+ config PINCTRL_SDX65
+-        tristate "Qualcomm SDX65 pin controller driver"
+-        depends on ARM || COMPILE_TEST
++	tristate "Qualcomm SDX65 pin controller driver"
++	depends on ARM || COMPILE_TEST
+ 	default ARCH_QCOM
+-        help
+-         This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+-         Qualcomm Technologies Inc TLMM block found on the Qualcomm
+-         Technologies Inc SDX65 platform.
++	help
++	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
++	  Qualcomm Technologies Inc TLMM block found on the Qualcomm
++	  Technologies Inc SDX65 platform.
  
  config PINCTRL_SDX75
-         tristate "Qualcomm SDX75 pin controller driver"
--        depends on ARM64 || COMPILE_TEST
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
-         help
-          This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-          Qualcomm Technologies Inc TLMM block found on the Qualcomm
+-        tristate "Qualcomm SDX75 pin controller driver"
++	tristate "Qualcomm SDX75 pin controller driver"
+ 	default ARCH_QCOM if ARM64
+-        help
+-         This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+-         Qualcomm Technologies Inc TLMM block found on the Qualcomm
+-         Technologies Inc SDX75 platform.
++	help
++	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
++	  Qualcomm Technologies Inc TLMM block found on the Qualcomm
++	  Technologies Inc SDX75 platform.
+ 
+ config PINCTRL_SHIKRA
+ 	tristate "Qualcomm Shikra pin controller driver"
 
 -- 
 2.53.0
