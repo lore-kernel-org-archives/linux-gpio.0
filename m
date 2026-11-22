@@ -1,130 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.175
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795368148;
-	b=wdkblGb0Kh4xYrhzZvz1NsnCrWkr9ZiAHlKnhf9Jgm96gTaPrMEhgN4kJlWpS5Z43c3E
-	 QmC4HZxtP8JQ9fochMAA7ircbCLJZNuQrCtiI1dRMZVMW073EcF5KvzmvJMHrdkCgHYv/
-	 RoYmrsxLTItjgEqDz3gDBK4HyzGz3xNMOsovGXOHyHQMWTuaYzsaxdbAvJyYvCqigeU20
-	 nu56vlSlf1ZdDU5MiwXnoB2/3AAw/thXNMVP/FzbMNe5PXqpIyONiFpXiHtky/PURDnBR
-	 MptbBtpUv9p1sPwUAY/48vD4/HH25+FvJRHNXHf9NFmnD2kh7tTXC5odatR0cEx7Szg==
+	t=1795368164;
+	b=pnWpiEbCAR6nPsJdKEIFThTF/qXqAVvWIJMX8pDm8S/Z3vrEVTDVirTfllJNAWT8xKA3
+	 LyMgsXipHh9jTSZelVIwyLwwwuNhig3tzWdqnFaMLtY3NIUaZ3Z3Z8Dr02DW2Msv/8LCq
+	 D4/mU2DO2/pZJBhaDw69p1BLPNu6sq0qZvarTdg5wF5RVpYUjDw6nlVS3yUFMLD74+eI5
+	 aPTK1GDq7YUg/3g7OI6RtdWmxW1onbDjjpXxzTHwCK7O2UfJHQGEtz0fktftRs1jrHWIZ
+	 X78LJJRmY3sUh4pHe6wEeGRNBFLbOVxVHrKI92hN2D50xd+UbUQIWGT2YNFI1OmAe4Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795368148;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795368164;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=bsJvZUqn+Bb7/gG6ywuV/4DLp7NmQEDZvD3R+5g2Jts=;
-	b=zLKrgOhhTltwzwlSfWkVJNVQZ10xj1dKhHKpi9dv1n58qJWQw0Mt9YvjKbNW/N6L6SOn
-	 To6Prmge07fu0bURq1QtJm6MstC9EL7lz7TsEw7YmGGNYU+wmc8MKgyx/ivTTkO/ahQpT
-	 uI/W/W9t5ZI/piftrakJLAudhxVBjTUjjMJrRJ8zIbYCwbHx/wdFF/cbcct3NF0z5fwPR
-	 DIn6IFf3g/JRLyxN+EO/tmhlfCS2YX/skzp9nD0/4atu6nSrWhfZ/kuUlK6sEtfXucfRe
-	 it9h/y40BzNbmN+GfWMTMLEvmaPiwLH8G807qrlzWUgyK1oRR3I20GrCp/EHzn3qoAA==
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=576Qvl2ypTDD9yrAIj4YAh6P34TjGSq1gM/j9EPcq4Y=;
+	b=tM9To6zfdxNTPTUzyOomg4EmKRoe8VZXKzXzc2GA/cqgrH94Q7e1poh9MOkXZx09Hk0l
+	 4iE7JkMa3ad0Fu8bQu96IUDE5CrPJT3oJehUtenywS8Qxa1cP3Nq8ErOQTwHpMYla0vH4
+	 yBrorwDln+584boq1BlawfvHUzybbSkmykWi41XQ77LtqRQnTEWm/03CNLqWARjC/Ggc7
+	 RCrKY2LHyXBnkQGfH5vZjKGB21ByBkh1owOjyFQcXpxqig/Bepw91aZMewaYb+fSxefx6
+	 UNsXzNLOnVUuba5/lUPuxFU9KM4huJcJrFf8NxLoKk++oirgPQzexJZOk7noktVwxoQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XBAzZYcv;
-	arc=none smtp.remote-ip=209.85.214.179
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="rdMN/uuh";
+	arc=none smtp.remote-ip=74.125.82.175
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0892606A33A
-	for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 17:22:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0892606A33A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE34C606A332
+	for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 17:22:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE34C606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XBAzZYcv
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2f01f296937so19581255ad.3
-        for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 09:22:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rdMN/uuh
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-386ab9ab619so774952eec.1
+        for <linux-gpio@vger.kernel.org>; Sun, 22 Nov 2026 09:22:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795368147; x=1795972947; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bsJvZUqn+Bb7/gG6ywuV/4DLp7NmQEDZvD3R+5g2Jts=;
-        b=XBAzZYcvI0UAjxnxRcreZ2xa57tWzsBIk+xJyJfakPnjZQLRqB7gnVTc6Qn5CdjUbO
-         xXTqI9r+rGRXSGvF5d9u/Gnt8cBL/N5/xf6tBndcQ9TnX3hHeuD9tSzX8sNkkbj7vhA2
-         NeZPxacRSsaOBC0O3QO9DSW6vT50WIL7fgQmtZa0YNtC+iyBs2ZZbCtUEdbBWGXZZsl3
-         XzMwvQ4v9H33vCd27VDcugFyzLDIPGo4nIjz28dfG3CtbzZTvpHODKvnyuNs3l4NIsgV
-         rmrwLL0KqwTgCr+ubLcXoPp9NBBDnxFxRbDWkoQYlII4OMLRVrvsRiSieYn+T9Gsvdjr
-         irPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795368147; x=1795972947;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1795368163; x=1795972963; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=bsJvZUqn+Bb7/gG6ywuV/4DLp7NmQEDZvD3R+5g2Jts=;
-        b=gn7Zh3iu60sBEQpzDb+w+/aBGLu/pZ18pQupjmLhx6+8m4dBBsjwLnD5VcCFj5hA83
-         32jEEuFzLy2KmsIuqtupKbkFd7JKDuo04IwJngVeRPObMk/DxDvKAcAXqHt7h6g+d+BO
-         4bt8GpgBG4uqbvDPsdrqC6kmey9xEcsJow/YKzJoCgTaq1E1rvtBx9G+HNqLYR83hjlA
-         tdfz1790Tm0vznddM9Ki4bknIoMbT0YewkpeJfIKC9LF553RdYO0MR/bTF3li8qwbnwb
-         GyWkAXqlwFlRyhxgA/kyOPvjrPdREEG2YURimtL1k7aF05jhzOGWxGyAm+tR0WaC96BD
-         jTUg==
-X-Forwarded-Encrypted: i=1; AL+hErEbwFIuhD8Le4eUZMOAeXI2PQWUk8N7rBTX7qJYgf6m41yVn4riJu+IoyUU2z0ojn+hn4gWN94OR8h7@vger.kernel.org
-X-Gm-Message-State: APuU4Z/W4fXDNtFscPSKSdCNwsErlYVFFDSMyxYIRpLHC/03jBmvprdx
-	1JrPdCjyZB3nI0cQV2GqUdJOY+cEAeEaK4OEhNt3jPfDUpE4RvVW4vws
-X-Gm-Gg: AZFdTZcsLJS5RNaRW5k7zhX5DmVqPA0EgmCCG4W81Q0nuel2ka+pp6LaeZKe5h/4Rbd
-	qTIwQfp1w3Qz9sLZPdqMTpfG4ABO2B/lMXk/6PoBW3GPE6cfYlBwoYWXrbyihjBoB3it2CkHOk0
-	qBzBnGaRv38oLlSPK/Ti+fvp0PWMgUcUJb1ZW2l1PnSAyuPZ1p6SdrwMoxhNcpkCRR/uOj5JKvc
-	NVqwOzXVv5YG9ob27Xf5tOdXBLloCW7cGhzHwRQKJOiC0iqbAFN0CUt2BAogbQ6TNH+PSgKuxmH
-	P2ZR3E2OdmHfNpddiQgcESSWAEsXaVwIhC0WnkGRVbf6md51andyKs1Ipxh7AxHAS1ZWyUHhIY+
-	5oIWcXkVrqhuKuE5Z58ET+EKdc0L5SMk76Tq0GbxF5Ak+BpKFCuCqGD/MI6ChRJkGtPb/42qolK
-	sRIsCw1CzODuuIFePQy+CTzPdBrO6oPbl6Vybm8G+Aj1wVjIIRVwRZLrj2D8+tkrdNGYacRV7+F
-	vtOMuSmhL3v9quJEkfemk5exYh9OAtCErYvkbYAmDSizjUAHXKmgZyH+dY8WbcH+V3fwN8dFGXk
-	Ht2IlucE1irVouSQhlGxFvn2LYL1eXGX8MV1p2saduYCjpueZxii81UXD4lQKvHDqZLU9esTgtp
-	MGwU=
-X-Received: by 2002:a17:90b:3d4d:b0:3b0:9162:948e with SMTP id 98e67ed59e1d1-3b41c905a3dmr8081661a91.27.1795368147033;
-        Sun, 22 Nov 2026 09:22:27 -0800 (PST)
-Received: from localhost ([2.27.148.107])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b41ad0b2c4sm13471136a91.4.2026.11.22.09.22.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 09:22:26 -0800 (PST)
-From: Han Gao <rabenda.cn@gmail.com>
-To: =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: Han Gao <rabenda.cn@gmail.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Radu Rendec <radu@rendec.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Anup Patel <anup@brainfault.org>,
-	Han Gao <gaohan@iscas.ac.cn>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@sifive.com>,
-	Conor Dooley <conor@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-csky@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rtc@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 06/19] clk: sunxi-ng: add support for the Allwinner V861 CCU
-Date: Mon, 23 Nov 2026 01:22:15 +0800
-Message-ID: <20261122172221.3552455-1-rabenda.cn@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <c8OwiyQSR8ivEFULfFWNow@gmail.com>
-References: 
+        bh=576Qvl2ypTDD9yrAIj4YAh6P34TjGSq1gM/j9EPcq4Y=;
+        b=rdMN/uuh37VKObF52K9+lcme53bqcVhzqmpmYe9zYf4xuf7IMBHBGOWYyCDpwozQem
+         HWXEws9rArjqW8P+BJrs8nA5WqwClIUasxOguhVLwHBAfr+1EfGiWqdYOGJcP3CtmHI0
+         gFM2LT3VrFa+7Y1gdLeG9WA6HQpTTkVWY35gj/quFUOILDjm/CiPqDGJ91U16Z19CGBl
+         KUK3EdQL3TDOO5ADOUiFXPerabn7IEcmxNlrpheQJPGdqhsKbS5g6fctTEQ8Xc8PYA1C
+         8gAFgyUBNZoud48/lrvtNYJu2wAHKjInCOYGYtovVezXg95EEZqg2FGRsu8+8BtEPE3j
+         PHuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795368163; x=1795972963;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=576Qvl2ypTDD9yrAIj4YAh6P34TjGSq1gM/j9EPcq4Y=;
+        b=nlZu53LDqy2bvS8pokdyZQ3Qbkke0aK0woIuXvp60+kYmiUoD8TCCt0BZuH7VpYOzB
+         hH7xg4wFoJUnnS/AdOm0fffIfcYMgBQHK13a2adtnmgisxw/bOPXHX5C9x5vbqBUi8K2
+         hDmIQefx0pSi8bebLT4P+Q31rUrku20bOD1oUmL1+MHPEGIrhgI9Z+TBJWk+HGowppt2
+         GgKq9cqvsrqrhUQelWPNmskRIAKj/P3a8lNxrYvSB6fMW9NURlvJe0BeuvlvksGbJNsV
+         o/FaNYTg/zTb2CsWdCx17w9+/knMjliMXOJ+K1fbMDxZn89Pnjzbfg3BZpNAycsMJE7w
+         feRQ==
+X-Forwarded-Encrypted: i=1; AL+hErEAcarA7oz6md8Nd/wYkhohNhqo9ujNOir51dUTex7Nrz/WnsZBJx2CinbO+dL3JwJBtAYuilo07CAV@vger.kernel.org
+X-Gm-Message-State: APuU4Z8RQgYAVH03RMJ8tRV6qXoWTX6IZD+rW6lENyMaItSWCbtPuoq8
+	d7CjirG3W/2deuIC7qMi6V6f4DL8/VC8b5gqLmF+8lRp/iSY7Xx6pPWx
+X-Gm-Gg: AZFdTZd7Q0RgBdU6uGECoSkC8Mz+J6zU/Cn0tDz/8KiTRIGtaYG9JK0Vu3HszNUIhjC
+	eWXd7+IoZ7JjjlM0YgB77E40RQmeWK9tc2VFf/mRSwYX6ipG1MuPCoMTDL7jCaTVDG1NuJ3tqvX
+	CBGyLKgylQAJLfy6yW+10OHDVuhnhlt6ahuhSflGaFPARYthzbfzlPPEPfe5k8f4raW7mJMJyHz
+	TdgaCJQTSiy+WWTXx1YqNPJ/SMPximmyf8+Tifn/J7Hh0cxCNrTWm149a/XXYB93rEOc32odUD/
+	iXA3RnEa0A4dq8+A8ySAK+IWf3qvKd+3Ym8ccYIa47MK1B+OJUVABuI2BjU43ezboWpoiZ3O7q0
+	cmNhCEqBYkPqx+TQGLjTlJ2FgwMosM9krOJwcH8NncvkiPpU7K3tigHsu/a1+hKuIV7P2R/nJFi
+	CHce5MmOmmfSicapm3fMRSXOdyc8AFY4gQGU93mLaHUyBUpDQZd6wfAyH35MCx9ciqH+D58pMmp
+	TcXCBsoLGlQpOdjpAjInO1V4sV933VYYzU4gP12t4idCo5vXMKMKaF81PwCOhOLUQCtS/wA4Bi8
+	HmNXNWZ+r1cZ1I+JvH4qDkp377Ud0whZRc0G4eXP1oFEidwkigoFb7j0GODDpduG0Md2NAcU4Xj
+	Ga22OQOw30lLTinzk0BwdPM/HI6mfHX2LuOUs4gNb5Yy5HrR5OkurBoHHy9bqjFELbTRNSWoTOY
+	0KfvZfUHioDqAWV1Q3Z2IojSZ6MalIqG2WEm8O1c0go/+cOBc=
+X-Received: by 2002:a05:693c:6010:b0:385:849b:7899 with SMTP id 5a478bee46e88-385849b7adamr10817054eec.4.1795368162901;
+        Sun, 22 Nov 2026 09:22:42 -0800 (PST)
+Received: from ?IPV6:2402:a00:163:3509:b842:8324:ef7c:136d? ([2402:a00:163:3509:b842:8324:ef7c:136d])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-38566fdce48sm30943866eec.14.2026.11.22.09.22.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Nov 2026 09:22:42 -0800 (PST)
+Message-ID: <9997e6c6-2e5e-4314-88b2-a8547ab035f2@gmail.com>
+Date: Sun, 22 Nov 2026 22:52:36 +0530
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -134,41 +94,62 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom,sc7280-lpass-lpi: add
+ ext_mclk1_c
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261115174237.48908-1-surajsonawane0215@gmail.com>
+ <20261115174237.48908-2-surajsonawane0215@gmail.com>
+ <20261116-nondescript-buffalo-of-whirlwind-6a5008@quoll>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <20261116-nondescript-buffalo-of-whirlwind-6a5008@quoll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 15 Nov 2026 08:31:11 +0100 Jernej Škrabec <jernej.skrabec@gmail.com> wrote:
 
-> Dne petek, 13. november 2026 ob 23:33:32 Srednjeevropski standardni čas je Han Gao via B4 Relay napisal(a):
-> > From: Han Gao <gaohan@iscas.ac.cn>
-> > 
-> > Add the main CCU driver for the V861, based on the A523 one. The CPU
-> > PLL, the CPU subsystem clocks and the E907 clocks are left to the
-> > firmware.
-> > 
-> > Unlike on the A523, the second divider of the 27 MHz output is a power
-> > of two. pll-audio-4x does not pass rate changes up, as its parent also
-> > feeds the UART clock mux.
-> > 
-> > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> 
-> Do you have any user manual for it? Or at least BSP code? It's hard to
-> review patches without any of those references.
 
-https://github.com/RevySR/linux/commit/bb06380bc2e5a02049cd01e0b10cb3c3c694b750
+On 16/11/26 18:10, Krzysztof Kozlowski wrote:
+> On Sun, Nov 15, 2026 at 11:12:36PM +0530, Suraj Sonawane wrote:
+>> LPASS LPI gpio5 can mux EXT_MCLK1_C. The SC7280 driver names that
+>> function ext_mclk1_c, matching SC8280XP, but the binding enum does
+> 
+> I do not see it in the driver, so are you sure you used correct reason
+> for the patch? Mentioning driver means you document existing ABI being
+> used.
+You are correct, thank you. In mainline, gpio5 in
+drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c is currently:
 
-BSP code
+   LPI_PINGROUP(5, 12, swr_rx_data, _, _, _),
 
-> 
-> Best regards,
-> Jernej
-> 
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
+so ext_mclk1_c is not implemented for SC7280 yet. I described it
+wrongly as existing ABI.
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+ >> not allow it.
+ >
+ > Entire sentence is clear here - there is ABI and binding does not allow
+ > it. Please point me to that implementation.
+
+There is no such implementation in SC7280. The same mux position is
+exposed as ext_mclk1_c on SC8280XP, in
+drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c:
+
+   LPI_PINGROUP(5, 12, swr_rx_data, ext_mclk1_c, qua_mi2s_data, _),
+
+On Vicharak's Axon Mini SBC (QCS6490, sc7280-compatible LPI) we need 
+LPASS gpio5 as
+EXT_MCLK1_C for the audio codec MCLK. Patch 2/2 adds ext_mclk1_c to the
+SC7280 LPI pinctrl driver, and patch 1/2 updates the binding so
+function = "ext_mclk1_c" is valid.
+
+I will send a v3 with a corrected commit message that says we are adding
+the missing function and binding, not documenting pre-existing ABI.
+Thanks,
+Suraj
