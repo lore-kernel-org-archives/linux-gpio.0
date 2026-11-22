@@ -1,37 +1,35 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795354452;
-	b=3rc87XOqGcECildxJYeH+8HnKPsOMMeGZwK2xPgdyezWaK6nfLbfryYmgGBdztWBZc6D
-	 +Hb5v78SwxybeXA5u7r04QeI1he/U3iVhA9nn6pnCWF3lri05noSIMeyPJJ7rjks8Ai/t
-	 mh/3YZ+oZYxFlt9qee89qc0RQF6qeeHU2SZ8+vMLBr04VdU0YaVFZgUbnGn5ZV1Ypiuzw
-	 EHdlROxUvVt6zCiJul7oyOxg8bWVWVufEXMcamhfWTqCCquzrRDCsj/L9Sb44Lsm1LHx6
-	 woIPCntBBoEszwOfPHwODBb9xp+F9aeCIbduYSMW+ZW8UYEzr/M3IZ2kZV9hZjtSJng==
+	t=1795354456;
+	b=2fcp65nVDz9Y2iJiyaaC5vOw3nsG4oiwQt6cwUiOJ5ghW0dKBU3goo43bIWlauAolGUF
+	 xRuTUy3h4pGhJ7kGg3VIWUZEFHaOaI2SZ7DoOHNb8e8DT8GnQdd2eRa8tv6rLctSCCDwz
+	 WHbKzeO6zfF8psektSebcaNU2IP4XWLbGMlyGuC0pC53Z3SOCw3UzaDZzC4lGhQG1akFt
+	 eB5QScrGvwyCL9zo08pYZJmQITc2kcnAKR40W1j/NJFlYqkFANF1bNvGgQrGezGXLZ5Jz
+	 x+ulJJcidf6XKuFm1RnNJCuKm+Oexe1Vu9UJ6vwDogLg88YW4Ou2WqA3wBeaQkIXPxQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795354452;
-	h=Received:From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=d2iXfhsAP2o2d9pxyEzUWRuXQx36XV1ORMOXwKM+vTg=;
-	b=qu1ZO7s5ES0RgsK5Akd4++dUaAaEcJEEmrshJIiGFAR/XwAxTO1b+XmRHset50qc7R6L
-	 DR/byHFTqfnjHuU2HjScyUb+iMbn+EbQoj/OeJCZgK94tncVYPuDkl/NjLuAz7sQci/8Z
-	 AGcQNHlHBhyuRYzaLWuUp8KnbGiHyNtpbRfX9UCNMrBf1trcYoSpE2PaYlOzCNTuMVHEx
-	 s42MwratQO+mbQMMkq3aW3KGP6QXis2iBeM4V5EiZU8krc8Y/AItps5QY+z+iqwHn8IG0
-	 BWCUk8hm2+KGD/DFFS0Y94ql/KoSxvQdEJ4+ZFCVDvE3zPJTXyDhMSL3NNvHzQz8LoA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795354456;
+	h=Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=9mHrneLO5YeQxJxtYfup6iTKvl1KGdxc2t3Qp4hgBR4=;
+	b=lZ5zET52MENB3cFf7/9cWwdFgMlkjd665Nz8+Nht0D6XLXBulddblkSieWjqKGvpm5Cf
+	 OgspTjP6D+3nyDaTHdRNDmWw5KLUsCveITGfxZkC5LTv7fY0cMEGJHn865CvaXGEecy0e
+	 kjvISa2X27bkdOpO5wTsPdmL+xKnijGUYJ1sNaEBxzklEjBDCmznTJ74ET/aXl0JGnzpZ
+	 WtD0PA0V/GC07uE+K95/aX8+jBf+nEG175WNpJ7mlgZTnDXZon0PU3cK8QLINIwRFDLOf
+	 ir30/GKSz51f0/LuXt4WHYG4ZAdDwTasH1Rf6vY8006zVK71FayipJ9JWq6+o0Gjv3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7130F606A68C;
-	Sun, 22 Nov 2026 13:34:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B6C91F000C4;
-	Sun, 22 Nov 2026 13:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED450606A332;
+	Sun, 22 Nov 2026 13:34:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC011F000D2;
+	Sun, 22 Nov 2026 13:34:14 +0000 (UTC)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH 0/4] pinctrl: qcom: Unify KConfig choices between clk,
- pinctrl and interconnect
-Date: Sun, 22 Nov 2026 14:34:03 +0100
-Message-Id: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-0-f0068f161636@oss.qualcomm.com>
+Date: Sun, 22 Nov 2026 14:34:04 +0100
+Subject: [PATCH 1/4] pinctrl: qcom: Consistently restrict MSM8917 to ARM64
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -43,58 +41,53 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/y2Nyw6CMBAAf4Xs2U1sQVF/hXiw6xbXRwt9GA3h3
- 63KcZLJzASRg3CEQzVB4KdE8a6AWlVAl5PrGeVcGPRab5XSCk2DI/kH3sg7Kz1mJ/aNgzhK4Y5
- trWlv2rrZ6Q2UxhDYyuvX745/jtlcmdI3uhiBx1zGadHm+QN9lN2/lgAAAA==
-X-Change-ID: 20261121-b4-qcom-kconfig-unify-pinctrl-732c9b734825
+Message-Id: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-1-f0068f161636@oss.qualcomm.com>
+References: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-0-f0068f161636@oss.qualcomm.com>
+In-Reply-To: <20261122-b4-qcom-kconfig-unify-pinctrl-v1-0-f0068f161636@oss.qualcomm.com>
 To: Bartosz Golaszewski <brgl@kernel.org>, 
  Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=985;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=828;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=sf4lPsw2nAo/P+YhPxV17gp6nPlpxB9qkn1qCU45JiQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrAu9MJeobv/tTE0LisAi1DPRgj029t3wdcw5oD
- k9XoqCliBKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawLvTAAKCRDBN2bmhouD
- 11BOD/wOWxEE1NUCUKcs2+SyE+AzNrVphSVPqzKnO9eImXvzOFeSjI6oyVZEIc5IPeLgkXHPufy
- RKKm6ZwsjTo8vnXQg5P7Zx1GOHdK7zERmUBLIB68MIYVWmELnuqAiDB8OvykpN6EjzR7aQgHOfH
- lIe8vI3B4HmU1x4AYlvkPg7FbbI8iZLItyoPTgNRuoRbVLDcS0jnn5BHaUZKvehAYUSDh7PPc+h
- FGpvlZ6VxRp577xkWCqcSsW13z4+FVVczoipzr6QD/9Do6EM1dj1Zdh5g/iZrCeSsvet12v+2TK
- YYh1BhDPg1zPsd70Nzrq842p8H6ei/PgirjPgVeVUqSFi8Hbd3YVvsWszVE3zyCkuQSdIxV9F8f
- h+/SHsrJsXP3ij6LBLqKXEM4/2Opx144ZNL1fpfvwyZE9jiYXhMuHAQKaBJ08svPHUSCOlcdjvk
- mIUIN0iyjBDBpOrdQ6Ct5RI+g7KVFMTe4Oxc2Zxh6iSP3zKNNbfyJUbFHUGRQzONJIeTz35kpAp
- eVdv28tKvc7iyPGLZGpZhWikWZYvbZKzxzY0c9aPxorCZK/5Xcgkoy1iopM74fUUNNVHQ7JErTo
- aEYQduZZudur0asiutDtfCf7RzJuTHj0KN8UT2XZtbIQX9MhrPLVJF0xQpX69NTS7sYXUvjH/lZ
- fOsRYPjj5kKWFrw==
+ bh=hihEppDh6fQtulqdk5wYxU/HR/T0HAYslHUlEMg3fO8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrAu9N6N5LHmnbk///C9RwxKoxdvZhGBbJPO+ej
+ vtm8DCmM6OJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawLvTQAKCRDBN2bmhouD
+ 1xdSD/92ngS/Y+s5mtAPjbaSwD9raBDTBr61/t4oxwq5u3hQv1PrO/mg9t/tuZI0T1D26W6KTkl
+ dtbagpxsHKKj0DI1dIM7QRJtvPYAmx61rB28saXj0qN6h1yorRzO4+cmzwFrPC7lxElxqPzxuXq
+ Ry0aKgbIylUuvl2RLWpSsbFPcIeri4UH7pkACfpLmZwo61jSuLQvFko/bp2oPF1mImwEVKm3uWn
+ 1ttwXK1v5v0dq6Ma5xWzxMVuLAeWoWvF2q6jDn5Y/ADoylxlNE2D3hi1Vfcp1+TjRa0Y1T642fY
+ iIjFjsrNAALtH3HuF9S6Wwnyt7MSOQ9IaKxoIy0TllMR2eEDG0tAEpDVALClum3lh5puu58pXle
+ ++gQcjFkLOIunyf1MKlyYQiO5dsQX1OG2lVunzyFyx90KZorF2TDVoy11lHQ/ais6B2g4hwgiCI
+ JKaJDQ1bneTR2PT2YHMjA6WdyrwgBz3YrZ8uG9WU6JgC2iTrLApomhoBOa2qhLrPKn6nUa3E1ZB
+ Z8c4f/88/+2bwDplVq4aiH5UAOh8+8vpuXptlCKjzWS+ocmK+fpj3O/gt/e+8w3XU+fK9XQUSf+
+ cBLWYZY2l3QcCMTuA8EcsxWCB0RLJsK+5LjaeOQa+VLRyAgWwMBByxmiw7af02yApm509CBwQn/
+ dDZXY/9RU0oPznw==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Recent commits adding defaults to clock, pinctrl and interconnect
-drivers left a options inconsistent between them, e.g. SDX65 clock
-driver not enabled by default but its pin controller enabled. This
-should be a consistent choice - we want by default all critical drivers
-enabled.
+Clock drivers for MSM8917 are restricted to ARM64 and there is only
+ARM64 DTS, thus consistently handle also its pin controller driver.
 
-There will be separate patches for clock and interconnect.
-
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
-Krzysztof Kozlowski (4):
-      pinctrl: qcom: Consistently restrict MSM8917 to ARM64
-      pinctrl: qcom: Enable by default MSM8917 and SAR2130P
-      pinctrl: qcom: Consistently handle IPQ5018, MSM8953 and others
-      pinctrl: qcom: Correct indentation
+ drivers/pinctrl/qcom/Kconfig.msm | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/pinctrl/qcom/Kconfig.msm | 67 +++++++++++++++++++---------------------
- 1 file changed, 31 insertions(+), 36 deletions(-)
----
-base-commit: 6f925fbadc8a5c6908d4c5294d0d9c757c61aeac
-change-id: 20261121-b4-qcom-kconfig-unify-pinctrl-732c9b734825
+diff --git a/drivers/pinctrl/qcom/Kconfig.msm b/drivers/pinctrl/qcom/Kconfig.msm
+index e45c701db627..3a2a97948e6e 100644
+--- a/drivers/pinctrl/qcom/Kconfig.msm
++++ b/drivers/pinctrl/qcom/Kconfig.msm
+@@ -239,6 +239,7 @@ config PINCTRL_MSM8916
+ 
+ config PINCTRL_MSM8917
+ 	tristate "Qualcomm 8917/8937 pin controller driver"
++	depends on ARM64 || COMPILE_TEST
+ 	help
+ 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+ 	  Qualcomm TLMM block found on the Qualcomm MSM8917, MSM8937 platform.
 
-Best regards,
---  
-Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+-- 
+2.53.0
 
