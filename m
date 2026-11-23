@@ -1,112 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795463535;
-	b=Ob4Nyu/ldNa325MZ8skWFmL42E+KwmmaxkXRMzCoyZN4pelZQMA2r3Jg9SlMVQhC/guZ
-	 0PghujpQyizXYaml2S1XdJt6BOLiBa0rLHtIdYjp/6BNMMHokGM0rQJ7dHRk9f9+uqrBr
-	 0pS82YQW0WkLDwv1UPt7rjwFtRdzhgSG3n8G7fJPBplBIFpK+qCe2bEMlSzLqP0qsjum6
-	 X9XGxKoQjbm5XX0rK2w4OONk6JfgtGjF8DPIgvE4iedTNSwMm4nXdVbvKFzFqZCl/7me8
-	 TbIvE5SUsm005Lyxusohwc1wDKqbB7OBjQQhdNtqby+dIaFMZAu+U5zuODbjSftG77w==
+	t=1795463542;
+	b=NLmUAHOFblxKBsKHYVf+7XBBPgoFQGXcG5jIWoh5OjUf4+j4MXtmPmUKnwJVwtJT0Yri
+	 BqYeORqCBlsFZFqtlasL/hYdmFK9Csal79g0SCte7VpaPrcCegwth3EDMh953wcbOIkUZ
+	 xwvWc/amTzvdxln8tYDZB5oUklSQhRgxjqT/+ZMR8TWaCGsW1mBgjViKtavfrDmC19BDv
+	 eEXlVjsmH8Smw1/SVTWSrpw77av4/8j4gut78xLoOfC0sE6tf2+sgNgka5ihmxGPOjwsm
+	 vTjK5eK0IZqXSOkxuf9+mLmHy/vG/bPiO85w/DOR1KTISV6ZlTUV6BipxehlQtx5+1A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795463535;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795463542;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
 	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=DH6WsJtIJ/ZrlkdvNhXLsUwijSOq8s9w7YBhsklCQpY=;
-	b=HZJlXvQEFE7WwJHVB4rPZHo/HP+UsTXsxUSVcjy6bk6NLUM6DsaRnkowG/XA3xvjCfAL
-	 PuLpF7cU1QOs0/M9yFe/4oqQbAEFo1M/+E1WO/WNmzLxEYpwmyT8F5D6rlFmn6DPY3IgM
-	 v1gSg5zZOden+GjEFiRcQuK71Xv92RSsGD2Gs2BZvHzTRwdjUdy/x7WC5v7Ug8+MNxY8I
-	 YGFnp+Rrik/QxUUKA4tzbC395AQcCTSb9JJ2cKUdN2kUhfEMDzytRhoHTxulfsqQ849qF
-	 udUtB0dkvsqRXubjM0cL9d0KRvxcTrjpUy/qMZ5b3oKSNackJNJVpQDkZgyrJGCfTfQ==
+	bh=wr8hKyb3fdhZFuS3Pwvmq7kRMuNlTVJBZoS/JMsjzZQ=;
+	b=nqmsu8bLCOVn/ciz0t/eVUiYvcVDyR623cQAWHFduhuymumaQR1JD6h64CaMZ0z2DeXg
+	 3Tj4Igp6e73pLLnecEWHv5d72Gz5slDxYhhUK3BueeK/kKpEhbrOPvARepJMbIh6/LFKA
+	 Dm+9vUrRglhP/Q274nigmZbWfPo8blNocAq2v5cxjoz46dABomdpieABSIiAo7XXpehsv
+	 X9sJ1T+h9j8je6m7qCOJRHXNfGUd3BF8NvZGbyG3lbSd2o5kCrzcvkX2OHpiPhp8zrG9Y
+	 fC2/9KavySRfEuaqL9G/+GPxT+HK/FHnjEj5bXO909u2Tnc/Om8DlAhoueR7k4MZa5w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=bPSNA50S;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=kuilyxAy;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=f7AoG1YI;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=E0F8Ximt;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52278606A331
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:52:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52278606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C960606A32A
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:52:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C960606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=bPSNA50S;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=kuilyxAy
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANGGxEm2377199
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:52:14 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=f7AoG1YI;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=E0F8Ximt
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANJNNYI3440505
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:52:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DH6WsJtIJ/ZrlkdvNhXLsUwijSOq8s9w7YBhsklCQpY=; b=bPSNA50SDkegywTD
-	/HyNrfI/5vqHd3BN4C9cicL8d0LLfI4LqV0hbU6En5hUZASCZ1tyBXiQKNWUFHCa
-	OgRyjeNjl7uQCVjqRBjwfSFZpN1tBlznUDjOti1eqO/ZSHHe35nzCVFlSqJLOj8L
-	cm4CPdzDs0qb1u1f+sMyXVWuf4gqgtmKs4RrFaZ+yzQdXLGp4J3ZXbUbm/yL3aM9
-	JlX24ypdwAWahre+HfZe3k2RaCUa7+g7dymTBUxT9SnHjtKesF6G+pwhYc4XyvBw
-	TqOmFy7XEvT1Rw5BhNLizIt2jrs3SZ8XrfteXxIYA5uxUXQ/sdA6190zOAZ/EYw6
-	A/tJ6w==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4m7ut5tm-1
+	wr8hKyb3fdhZFuS3Pwvmq7kRMuNlTVJBZoS/JMsjzZQ=; b=f7AoG1YIeupin4O0
+	R/5CTQYuKQ8tR1BMuBoq7/tIJlaIR/Tljnz2Ey+Ib9gZcHMBDuUvA+8RF0+4Bn+j
+	918ou4ynvY29Vl7SKWmRf2C9kabDXVUi7IB5+YPqRCocHF28v661troUrrKVKcYw
+	OM6ak215ha4X57QVVhx/Mrbj5YWMgZd4vknRsp7EvCQ/1/L40SCuhRe3LDX2u9fG
+	lcpIyqP+bWyZ5N5TTg01xFRfJ39IhkswoUf1QjiBAC+YwHV+ya1I7XWCfo30+9gK
+	vtLBY7AjY++cB4CuL4KnE0z7QbIZmvBl2TT8nAxMfAyyxSzGE9usEh40EvwWijld
+	leFTDw==
+Received: from mail-dl1-f71.google.com (mail-dl1-f71.google.com [74.125.82.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4ukr83rc-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:52:14 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-386b8624cf7so1964199eec.1
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:52:14 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:52:20 +0000 (GMT)
+Received: by mail-dl1-f71.google.com with SMTP id a92af1059eb24-1b56c696405so1734058c88.1
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:52:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795463533; x=1796068333; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1795463540; x=1796068340; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=DH6WsJtIJ/ZrlkdvNhXLsUwijSOq8s9w7YBhsklCQpY=;
-        b=kuilyxAyr0nIrdbyjC3Mwbf/ZUV1C/+bOwEdeAuYS+G4JawZIuhWtbrg2F/WCPGDL3
-         oT39aw2LxSApSbJFTAOfmsHw/5qALK8mVrhjiTpBNBR5iQjyuz75Oi2aiAvIZhhZMult
-         8fyBL66sD4QGypAoveVGzTQdbtjrqcFSn0Atjbbx1QPFhdX/D0uE9etRei32Uu/i9tZW
-         +3ZinZbIiz7ciDGcCaD+sb5nNqSN/VBDpfr+PPjtwBhpRVHjznTvoCzfaLWUDS2QvbJ/
-         Bm3//3Mc/+8gRUZXEhw5FIvManO5z9SO3DQw0M3kS2nKU5zwGASRB5wEimYBJxtxNDF1
-         StjA==
+        bh=wr8hKyb3fdhZFuS3Pwvmq7kRMuNlTVJBZoS/JMsjzZQ=;
+        b=E0F8XimtQzAv9D3Fqolp9gXkSX6L4IR3KSy5PXbNAql+WR+fLoDgzmO7gIM4Accl0f
+         NwQ5oI3+n8CSHJfxZAy9n4TkQJUjTSJsFUu5t3++PpJ1IzzVV8TgIvigSsfK756HmO8X
+         BmKBlewuO1ryWTeQrYIDq7doAajbvDNvCG6/CNi9beQ8zUHtPxp6RqSFwbmXpYEs825p
+         dYfzfMp9Ru1PpgLfXOVH/HkwqcepKz4vBs/BtP730mo517ikb47zjec+LrfEFCOSi9BH
+         O66F/6sZlkzQT6fa6yrjuDdsA5DTutpVqt6vIoMa0j2T8liTS/r/vJEDD+6d79VgNEAu
+         8T4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795463533; x=1796068333;
+        d=1e100.net; s=20260707; t=1795463540; x=1796068340;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=DH6WsJtIJ/ZrlkdvNhXLsUwijSOq8s9w7YBhsklCQpY=;
-        b=YRTdx85I/sCGYjjN8ZED3YHXZesuFzRl3VcrLcv3yl4ptNoTpIihDCPkvJAgy4r4E9
-         AArLyrK9VcBrUuEVA56Nkr0b5poqexVhW5ANnmY0mPrWLx6JW1dW6pKsS6rrdbWgHfON
-         jfjAFk/41K+AvwLPoLkX+WHDZUhKzF3Xed8wXUw9S+qDEIPAHES3AWsuaU1cVq3zA8sM
-         OFklgxVKw+W48SVvcwus5ChAG4mTbBZdr2uImzuvmhJal/gDW2+SjhxhafnivIq83/U7
-         YFjp2K6lOp0FABGsc9B+30LN+R9ndaVyC5GZrUogJ9+lt9BCYMhlXoVV87DkusTyF3xI
-         eMFg==
-X-Forwarded-Encrypted: i=1; AL+hErEytbtgIzgBLn2ZkDlb1hmc9cy29mj09Q/zsXAaxgjpi3/A38ZqkSZcCGS9MMFNR7jntAh13cmgyyFk@vger.kernel.org
-X-Gm-Message-State: APuU4Z9IeebWKvsHiL1yoFTHqTipgKeUl1i+roKdTBaUWb7g74l70N0Q
-	nyyNuSWA6tilnaxzuh35YyrPrJUqG5lYTIYqEoq4bxtRiYLy2z0Ulso9wvqn0U1s2JAITwf+0HS
-	uOsUpY40mPkAhcfMMBbPJnKb+QBBqyCkhTYNQt291CfcyIo11Qp9qCGFGbXGKxY14
-X-Gm-Gg: AZFdTZdCbWhkyY0FDfDvYnTiM5UGK5bcPj+g28oQsKE4MgLwg1NktAab7xvAdmQsQTG
-	cQ6aT2W0TQd6Iz5UjLts2G/qETqRTushNHKB5rSjzGJXmyPnDF44QWGccuR1GxJuZ39Mrf9BnLY
-	ElHolbV6SW5PgNIwnvhkcI01AXP0oM8FCJ3ejFwiPF/o+d680kXCRVpKWsx+fEyebjbYOccU5Ly
-	+qa/w8ATMs9QhfVbsWkU/0HjvYUF4Y/4c2fI8UsM0SMHTiABjbvOrcIs7srPCbJ1PdSLxc4xYnp
-	0YISpW+VmU7MwAxptiwE4wU6rV66caZBjR09q0ARC7snuexxr8o5Eck5Q51pc30Y7O2oEYW2iUF
-	ZsEaIvyk7Kjb1XkCc+5OV2EWv7Lu+f50G+sWtX+2vIT04nJWT0oiCzndyJLUttJeVH890d81cAg
+        bh=wr8hKyb3fdhZFuS3Pwvmq7kRMuNlTVJBZoS/JMsjzZQ=;
+        b=j6ELg434NadOGvCcpmEwa4LB9c9J0zbsqNKBfyiRbs9gcGIPQvtrk2Uu0YJUuF/Y0S
+         nkPAyaII3+wuUpK/qVWeF+NufDcw1kM1++rvzl6rERfKgiibMMrbjAOvmlEj3Qj8WBE+
+         tI3F3c2Ev7OvD0aEBx7UJCKCj6JAORsjeDqOMEUn2rP3a+nwIHO6hf15gobCkcUxd061
+         S4G7N9v+sGXo7l4XfjGDXXEu5EzHlYh2xVesrQLQ2NhtKbUszie/0MNEGtXiCnzpsQEz
+         AKSuTdvO4ITkhJiE8ruCPQIhj62MIjvsJ7G7SfZIoWLPnmi3vQpLPPOPCFbPk9GAlcEe
+         w8Ng==
+X-Forwarded-Encrypted: i=1; AL+hErFLyJE4qG3CBDD+fydKGBsBSEm5EkLeh0arwXmndAE+Sbj4hVC+0cicmqALWSDWe6lwxut1+6Y9Qmet@vger.kernel.org
+X-Gm-Message-State: APuU4Z+/EDXJWlZr9I8uwGniUAeHK71iOraqP7ISQriwuVxi+AEE7qT4
+	oStfO+xDDkdXLazNbSBO082BZD4eazYkmTwBpYpUeG6PxsdWKOXdb6wsCoAZ67dt8Qxs0Z9qFCo
+	onPHb3CHcNPtK91eLpKGU0BfcXjM7oIl8mnxxFFDix+WU/K5QP0auPkgqfiPp/6OU
+X-Gm-Gg: AZFdTZdvkkMeE3E8c6NWe13c22TJVSfly289vj95G5CbKGWqf14e7LE8B0VXjerVYcN
+	biTzdsAGQ4CTGltdTMTb+9G+Os23dNbNcLes0CzkPCvCRtYCgG1suHHSZQWnpbdJTMI+fC2raSi
+	EitBce+at2N7ieaiWCYTlTaPCgG0SXx+Ud1r5dtlfL6GvLzPZ1U+GiwfXacdrRZmLeGKSW7RfDG
+	S43tWfDJDPw8zzbaltfCkJnRpVNT/W3ffbZNQzumyler/AOHtKUIHzoTF05NhgooIIGeuqhPqxC
+	WQPCY+ZoEGFVYC9xSO86eCjTXvLhX+au4/JXj0IE4k3WtXCjVlJLZqTfmBtod+sB+OTzwzV8zZz
+	eilpzfgzTmmRfM8/v6hCLv21lELDauNGRsrJd+I1e83rtUgQC2XR5RzQNMQ2xnnQkJBMa+JGpAw
 	==
-X-Received: by 2002:a05:693c:6205:b0:386:a498:3ab1 with SMTP id 5a478bee46e88-386a4983cc5mr7927885eec.25.1795463533209;
-        Mon, 23 Nov 2026 11:52:13 -0800 (PST)
-X-Received: by 2002:a05:693c:6205:b0:386:a498:3ab1 with SMTP id 5a478bee46e88-386a4983cc5mr7927862eec.25.1795463532668;
-        Mon, 23 Nov 2026 11:52:12 -0800 (PST)
+X-Received: by 2002:a05:7022:3f0d:b0:1b5:3aca:8116 with SMTP id a92af1059eb24-1b55690bcfemr12298659c88.33.1795463540102;
+        Mon, 23 Nov 2026 11:52:20 -0800 (PST)
+X-Received: by 2002:a05:7022:3f0d:b0:1b5:3aca:8116 with SMTP id a92af1059eb24-1b55690bcfemr12298630c88.33.1795463539518;
+        Mon, 23 Nov 2026 11:52:19 -0800 (PST)
 Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385666e96bdsm36363123eec.7.2026.11.23.11.52.05
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385666e96bdsm36363123eec.7.2026.11.23.11.52.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 11:52:12 -0800 (PST)
+        Mon, 23 Nov 2026 11:52:19 -0800 (PST)
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Tue, 24 Nov 2026 01:21:35 +0530
-Subject: [PATCH v3 04/10] clk: qcom: gcc: Add configurable PDM XO4 div
- clocks across targets
+Date: Tue, 24 Nov 2026 01:21:36 +0530
+Subject: [PATCH v3 05/10] arm64: dts: qcom: qcs8300: Add GP M/N clock
+ controller
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -118,7 +118,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261124-b4-pdm_clk_gp_mnd_v2-v3-4-98db26a87500@oss.qualcomm.com>
+Message-Id: <20261124-b4-pdm_clk_gp_mnd_v2-v3-5-98db26a87500@oss.qualcomm.com>
 References: <20261124-b4-pdm_clk_gp_mnd_v2-v3-0-98db26a87500@oss.qualcomm.com>
 In-Reply-To: <20261124-b4-pdm_clk_gp_mnd_v2-v3-0-98db26a87500@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
@@ -137,322 +137,84 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
+        Taniya Das <taniya.das@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-ORIG-GUID: HhbgkolKBfM_ZmC5olQj5WIahCjzJSd6
-X-Authority-Analysis: v=2.4 cv=KurYSmWN c=1 sm=1 tr=0 ts=6b04996e cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA3OSBTYWx0ZWRfX9D70A5mswuej
+ O42ds04xE2wI+TkuCnxvWJ9/Zjo1rA0j1S7pWazcvmXp2LBrJDBRBqbfu0uI8583wSIzG8a8+m9
+ +8w6++KfyQI7y3XbVFPcnvttMxIdccc=
+X-Proofpoint-ORIG-GUID: Si5clAfmUrCsvqXmE1mZ5-C0m-7Q0b3p
+X-Authority-Analysis: v=2.4 cv=M+rYuCws c=1 sm=1 tr=0 ts=6b049974 cx=c_pps
+ a=JYo30EpNSr/tUYqK9jHPoA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=RvjwIfBVDrABg4tGW5kA:9 a=QEXdDO2ut3YA:10
- a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-GUID: HhbgkolKBfM_ZmC5olQj5WIahCjzJSd6
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA3OSBTYWx0ZWRfX4X6KSnWfmdcl
- ukAJ7oV49siAiG8pEdyaDCGM7vP3Kn39t7sZd5T6AQnWrydCMgMVolOpGrTRarPrKCqkf3I2ROv
- h0Cj/rj0pkr2xhfiN9mNb8p/YEeeOZY=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA3OSBTYWx0ZWRfX1x6z9aNvI8K3
- bQHbPYowPpmtzAaMD//O1v1QtCXmNwbG2D2+sme9s6vvc/QWBWo6+5KXr1EiQbI7nude+Skkztb
- TKFhRcFLIaQ+Y5NsxBAccGhMI/T2TTS6S5CrHyvf141Xux8HdQ/oUm5CuAaaL7Ije6mcpyMJJDF
- CfWKfl/ZKzexv2q6eXtTdq4ePx8ep5OoRrYcTxGMPRw51dO2fdyhussMUqFPLNMizJuvDkuiP3y
- 4wXnTnJS7RZest9Pg+EWRPOu0vEALIE+v/TvARYEF3zjQTDlPO5s3gUA5qGL5INV5jUw/v1iw9Z
- WtVII0acRbK7n2B/hwoPrCU0d/Ui13KE8nSAoXQdziEbjLHKAOyWZ+wlYNXN84VCX3iPYjdWPM8
- OvY7x+bpZVXC8X91FTAnK7if2oMojQZSYi185kx1PzTbK+H9b7XH+2XNx70NXXXfdR2GZ9MteY7
- LYdnI4Rk9v1dg4NDVvw==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=EUspDBNiAAAA:8 a=sMxVnY04UXhLatCab78A:9 a=QEXdDO2ut3YA:10
+ a=Fk4IpSoW4aLDllm1B1p-:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA3OSBTYWx0ZWRfX29KLyRvH4Ji6
+ DBGU2Aq2XbWlV4aIGo8pyIqrIs6oag6gcXd4EGQ3g7N5tZWc/Er1iNn2In9vkcWNwGJK7V06DUU
+ 7I0J3CIQQg88hhMlzdP5u8H3hzPLVz6yu99n7+lpLaesL6Lsdd9DTcRJPU5jJifsn0+PktYEFdp
+ NDoMi4ULJLbAi3WOCpvphFI5xaXJuDNgbapWJwTHbO0IJkQB8dzAn0/4Y3KSx0L+I6ANDfLkDq+
+ 1NwmPrLqXT5XaAW0bUX+nuDWX12tqjPYL7TQ3tI4n55o2WEqSUPxRwsCOdlZsdhROV3eiXljyhf
+ 7R9sM5S1cYTvIloXmwQVc/j4tvVRPdiwda4KIRe7EjwpXZ8KE3uVmMsLZEHJtlEEnyjaMDdqJRc
+ N9BiZoajQUN7PbU16op33PQSZ1+yX/yxlLVy6uDS6g9CF4gVBJGhJqz0DY3MlJliTxVs7JS+JKE
+ zLYVoyy+ZAyh6ZkRbbw==
+X-Proofpoint-GUID: Si5clAfmUrCsvqXmE1mZ5-C0m-7Q0b3p
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-23_04,2026-11-23_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
- malwarescore=0 adultscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611230079
 
-Add PDM XO4 divider clocks and make the PDM XO4 branches propagate rate
-requests to them on QCS615, QCS8300, SA8775P, SC7280, SM8750, and
-Shikra. This lets GP_MND select the supported PDM source clock rates.
+Add the GP M/N clock controller and its pin configuration for QCS8300.
+The controller uses the PDM XO4 and AHB clocks from GCC and routes its
+output to gpio32.
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- drivers/clk/qcom/gcc-qcs615.c  | 20 ++++++++++++++++++++
- drivers/clk/qcom/gcc-qcs8300.c | 20 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sa8775p.c | 20 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sc7280.c  | 20 ++++++++++++++++++++
- drivers/clk/qcom/gcc-shikra.c  | 20 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sm8750.c  | 20 ++++++++++++++++++++
- 6 files changed, 120 insertions(+)
+ arch/arm64/boot/dts/qcom/monaco.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-qcs615.c b/drivers/clk/qcom/gcc-qcs615.c
-index f205de3a936170413b21173c7af9668c14495369..f70d6bc25b0432aebb1c33f3f7ea3b7b2062ff8b 100644
---- a/drivers/clk/qcom/gcc-qcs615.c
-+++ b/drivers/clk/qcom/gcc-qcs615.c
-@@ -1656,6 +1656,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
+diff --git a/arch/arm64/boot/dts/qcom/monaco.dtsi b/arch/arm64/boot/dts/qcom/monaco.dtsi
+index 3541313a79bf47fe27499f6dc370cb778d780a08..3508869ed92b439b35182e94a5b9a24078efbf70 100644
+--- a/arch/arm64/boot/dts/qcom/monaco.dtsi
++++ b/arch/arm64/boot/dts/qcom/monaco.dtsi
+@@ -4892,6 +4892,20 @@ sdhc_ice: crypto@87c8000 {
+ 			power-domains = <&rpmhpd RPMHPD_CX>;
+ 		};
  
-+static struct clk_regmap_div gcc_pdm_xo4_div_clk_src = {
-+	.reg = 0x33028,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gcc_pdm_xo4_div_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_BI_TCXO,
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_regmap_div_ops,
-+	},
-+};
++		gp_mn: clock-controller@88d3000 {
++			compatible = "qcom,qcs8300-gp-mnd", "qcom,sc7280-gp-mnd";
++			reg = <0x0 0x088d3000 0x0 0x1000>;
++			clocks = <&gcc GCC_PDM_XO4_CLK>,
++				 <&gcc GCC_PDM_AHB_CLK>;
++			clock-names = "pdm", "ahb";
++			#clock-cells = <0>;
++			pinctrl-0 = <&gp_mn_active>;
++			pinctrl-names = "default";
++			assigned-clocks = <&gcc GCC_PDM_XO4_CLK>;
++			assigned-clock-rates = <4800000>;
++			status = "disabled";
++		};
 +
- static struct clk_branch gcc_pdm_xo4_clk = {
- 	.halt_reg = 0x33008,
- 	.halt_check = BRANCH_HALT,
-@@ -1664,6 +1678,11 @@ static struct clk_branch gcc_pdm_xo4_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pdm_xo4_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_pdm_xo4_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2804,6 +2823,7 @@ static struct clk_regmap *gcc_qcs615_clocks[] = {
- 	[GCC_PDM2_CLK_SRC] = &gcc_pdm2_clk_src.clkr,
- 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
- 	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PDM_XO4_DIV_CLK_SRC] = &gcc_pdm_xo4_div_clk_src.clkr,
- 	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_NRT_AHB_CLK] = &gcc_qmip_camera_nrt_ahb_clk.clkr,
- 	[GCC_QMIP_DISP_AHB_CLK] = &gcc_qmip_disp_ahb_clk.clkr,
-diff --git a/drivers/clk/qcom/gcc-qcs8300.c b/drivers/clk/qcom/gcc-qcs8300.c
-index 916617a001c854c1a0349c1793a427a2822acfab..4a152e95aa997bdcc7ec56a6ae96c61b3575cd88 100644
---- a/drivers/clk/qcom/gcc-qcs8300.c
-+++ b/drivers/clk/qcom/gcc-qcs8300.c
-@@ -2280,6 +2280,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
+ 		usb_1_hsphy: phy@8904000 {
+ 			compatible = "qcom,qcs8300-usb-hs-phy",
+ 				     "qcom,usb-snps-hs-7nm-phy";
+@@ -6458,6 +6472,13 @@ dp_hot_plug_det: dp-hot-plug-det-state {
+ 				bias-disable;
+ 			};
  
-+static struct clk_regmap_div gcc_pdm_xo4_div_clk_src = {
-+	.reg = 0x3f028,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gcc_pdm_xo4_div_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_BI_TCXO,
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_regmap_div_ops,
-+	},
-+};
++			gp_mn_active: gp-mn-active-state {
++				pins = "gpio32";
++				function = "gp_mn";
++				drive-strength = <2>;
++				bias-disable;
++			};
 +
- static struct clk_branch gcc_pdm_xo4_clk = {
- 	.halt_reg = 0x3f008,
- 	.halt_check = BRANCH_HALT,
-@@ -2288,6 +2302,11 @@ static struct clk_branch gcc_pdm_xo4_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pdm_xo4_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_pdm_xo4_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -3501,6 +3520,7 @@ static struct clk_regmap *gcc_qcs8300_clocks[] = {
- 	[GCC_PDM2_CLK_SRC] = &gcc_pdm2_clk_src.clkr,
- 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
- 	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PDM_XO4_DIV_CLK_SRC] = &gcc_pdm_xo4_div_clk_src.clkr,
- 	[GCC_QMIP_CAMERA_NRT_AHB_CLK] = &gcc_qmip_camera_nrt_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_RT_AHB_CLK] = &gcc_qmip_camera_rt_ahb_clk.clkr,
- 	[GCC_QMIP_DISP_AHB_CLK] = &gcc_qmip_disp_ahb_clk.clkr,
-diff --git a/drivers/clk/qcom/gcc-sa8775p.c b/drivers/clk/qcom/gcc-sa8775p.c
-index 47acd1b58f13037576888a860c58b6b777aac689..7ed7953e9beb41396f3ba65706edc7ca66180059 100644
---- a/drivers/clk/qcom/gcc-sa8775p.c
-+++ b/drivers/clk/qcom/gcc-sa8775p.c
-@@ -2712,6 +2712,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
- 
-+static struct clk_regmap_div gcc_pdm_xo4_div_clk_src = {
-+	.reg = 0x3f028,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gcc_pdm_xo4_div_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_BI_TCXO,
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_regmap_div_ops,
-+	},
-+};
-+
- static struct clk_branch gcc_pdm_xo4_clk = {
- 	.halt_reg = 0x3f008,
- 	.halt_check = BRANCH_HALT,
-@@ -2720,6 +2734,11 @@ static struct clk_branch gcc_pdm_xo4_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(const struct clk_init_data){
- 			.name = "gcc_pdm_xo4_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_pdm_xo4_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -4406,6 +4425,7 @@ static struct clk_regmap *gcc_sa8775p_clocks[] = {
- 	[GCC_PDM2_CLK_SRC] = &gcc_pdm2_clk_src.clkr,
- 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
- 	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PDM_XO4_DIV_CLK_SRC] = &gcc_pdm_xo4_div_clk_src.clkr,
- 	[GCC_QMIP_CAMERA_NRT_AHB_CLK] = &gcc_qmip_camera_nrt_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_RT_AHB_CLK] = &gcc_qmip_camera_rt_ahb_clk.clkr,
- 	[GCC_QMIP_DISP1_AHB_CLK] = &gcc_qmip_disp1_ahb_clk.clkr,
-diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-index 9e141a7ac424ad53f6bcf2869e456633f5612082..0708a1a5560985cae5f3eff5491da7c3de1c0bdc 100644
---- a/drivers/clk/qcom/gcc-sc7280.c
-+++ b/drivers/clk/qcom/gcc-sc7280.c
-@@ -1913,6 +1913,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
- 
-+static struct clk_regmap_div gcc_pdm_xo4_div_clk_src = {
-+	.reg = 0x33028,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gcc_pdm_xo4_div_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.fw_name = "bi_tcxo",
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_regmap_div_ops,
-+	},
-+};
-+
- static struct clk_branch gcc_pdm_xo4_clk = {
- 	.halt_reg = 0x33008,
- 	.halt_check = BRANCH_HALT,
-@@ -1921,6 +1935,11 @@ static struct clk_branch gcc_pdm_xo4_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pdm_xo4_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_pdm_xo4_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -3250,6 +3269,7 @@ static struct clk_regmap *gcc_sc7280_clocks[] = {
- 	[GCC_PDM2_CLK_SRC] = &gcc_pdm2_clk_src.clkr,
- 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
- 	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PDM_XO4_DIV_CLK_SRC] = &gcc_pdm_xo4_div_clk_src.clkr,
- 	[GCC_QMIP_CAMERA_NRT_AHB_CLK] = &gcc_qmip_camera_nrt_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_RT_AHB_CLK] = &gcc_qmip_camera_rt_ahb_clk.clkr,
- 	[GCC_QMIP_DISP_AHB_CLK] = &gcc_qmip_disp_ahb_clk.clkr,
-diff --git a/drivers/clk/qcom/gcc-shikra.c b/drivers/clk/qcom/gcc-shikra.c
-index 13c99a883e29877d9a929f26ca0b3b04b1ea0b11..fbb4ea209345120fb3e178a648509737a0825795 100644
---- a/drivers/clk/qcom/gcc-shikra.c
-+++ b/drivers/clk/qcom/gcc-shikra.c
-@@ -3191,6 +3191,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
- 
-+static struct clk_regmap_div gcc_pdm_xo4_div_clk_src = {
-+	.reg = 0x20028,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gcc_pdm_xo4_div_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_BI_TCXO,
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_regmap_div_ops,
-+	},
-+};
-+
- static struct clk_branch gcc_pdm_xo4_clk = {
- 	.halt_reg = 0x20008,
- 	.halt_check = BRANCH_HALT,
-@@ -3199,6 +3213,11 @@ static struct clk_branch gcc_pdm_xo4_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pdm_xo4_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_pdm_xo4_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -4206,6 +4225,7 @@ static struct clk_regmap *gcc_shikra_clocks[] = {
- 	[GCC_PDM2_CLK_SRC] = &gcc_pdm2_clk_src.clkr,
- 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
- 	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PDM_XO4_DIV_CLK_SRC] = &gcc_pdm_xo4_div_clk_src.clkr,
- 	[GCC_PWM0_XO512_CLK] = &gcc_pwm0_xo512_clk.clkr,
- 	[GCC_QMIP_CAMERA_NRT_AHB_CLK] = &gcc_qmip_camera_nrt_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_RT_AHB_CLK] = &gcc_qmip_camera_rt_ahb_clk.clkr,
-diff --git a/drivers/clk/qcom/gcc-sm8750.c b/drivers/clk/qcom/gcc-sm8750.c
-index 80b8ec119c553d06e192d793730a0176e74e7b49..5449462c25ecc8893a5fd44004989b45d51d53d1 100644
---- a/drivers/clk/qcom/gcc-sm8750.c
-+++ b/drivers/clk/qcom/gcc-sm8750.c
-@@ -1690,6 +1690,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
- 
-+static struct clk_regmap_div gcc_pdm_xo4_div_clk_src = {
-+	.reg = 0x33028,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gcc_pdm_xo4_div_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_BI_TCXO,
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_regmap_div_ops,
-+	},
-+};
-+
- static struct clk_branch gcc_pdm_xo4_clk = {
- 	.halt_reg = 0x33008,
- 	.halt_check = BRANCH_HALT,
-@@ -1698,6 +1712,11 @@ static struct clk_branch gcc_pdm_xo4_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pdm_xo4_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_pdm_xo4_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -3000,6 +3019,7 @@ static struct clk_regmap *gcc_sm8750_clocks[] = {
- 	[GCC_PDM2_CLK_SRC] = &gcc_pdm2_clk_src.clkr,
- 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
- 	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PDM_XO4_DIV_CLK_SRC] = &gcc_pdm_xo4_div_clk_src.clkr,
- 	[GCC_QMIP_CAMERA_CMD_AHB_CLK] = &gcc_qmip_camera_cmd_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_NRT_AHB_CLK] = &gcc_qmip_camera_nrt_ahb_clk.clkr,
- 	[GCC_QMIP_CAMERA_RT_AHB_CLK] = &gcc_qmip_camera_rt_ahb_clk.clkr,
+ 			hs0_mi2s_active: hs0-mi2s-active-state {
+ 				pins = "gpio106", "gpio107", "gpio108", "gpio109";
+ 				function = "hs0_mi2s";
 
 -- 
 2.34.1
