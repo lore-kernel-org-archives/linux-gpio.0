@@ -1,67 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795422775;
-	b=GpmtFYPyTUaK+opAqo56oV0EqeIo3sFHPmzKNKS588nHGzG5zWhJcuMTt0dvf52QrB1m
-	 Upee9Q30n3p/nCB/lqf77YCFhVInXKWXI11/2eRqpWKu1rxV73lDMNLmjCyCnsFXyztxs
-	 WILR6Jbx4KCHM4cfrl3ZkZ4I4ND0UHgHjMsaz3StudJ8LookUTo4Giu4vsnFFzcOOEdKx
-	 E9tEoOogOYok5smO2CqOySctkDSb048uhacQwHx33sjyD0H/7b4dmWDsSebUuYi8xr7RM
-	 3s7sQXLQTnljK9pMj3PCrtaBNHQQorIHXnLsBzOYuYs2VtZMGac6Y24hlEB5zYTGvAg==
+	t=1795423545;
+	b=Ka/1X9eW672jWoNEtDogWKpCVvy2iMaPZ6n9JKSr649lrfM5zwj40Lwr7KydQxv9R7QV
+	 AD10QXyyia5Z6UBdz7HfmvxRt/g0QxtLS7r9UB/Wb6MGLLHIP3BcX+7eSY3cHh+J0dyAq
+	 lOEveydqQ7V9820MsJH8qRXC8+F3q7EcNK+VhkC3caXJrinD66TtNxY6wcEIpl0jmEDpB
+	 LTAO3FU+TuhTjpI+DA7389ej8H1XICOf7g8VDrd8XkM5Pkusy/lYVrJ09xIk5O5Usj9s6
+	 uSOf/D0G3esEsLnZLNOc9NUgeEfnNMfgzsM/7y5ftgSh+rm6ocxTmhF/K/ZdW6Hfdtw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795422775;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=hK+8Q2rxW3+mXQi4LiySks8WPSozUnGzSojRtXKXJ6k=;
-	b=QngC/Xuj0W+zd+6iMpOX2ID0l73o6m3DB8P6KX+WqO8dFWF0prlZtkSNJi8Pidn5QWhO
-	 ryVdnRDZ0b5k9hKbAL3/roWHfNOd7D1zNcOqbeMl9qCQT3nuvCa41L1lVpwzNUfhYhf9P
-	 ILmLp2RGE0rcgrB8p3ZdPoYlQzi4xhVQA88A5CAyKzH6pkpueinct4GjY4UA1+jRGsMYU
-	 oeyr3bS8uhT3J9tuqng3qAgxUMcLxDjbiG7IDRsfgh64nPkOkUFEqmueAB2i2zCWXqVbG
-	 laKt3AGQp2CJ1TZ4S8sTjux2nmAC37gsKEDyDd5pQtw0DIFF2MxtT4ascm42dhkjX1A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795423545;
+	h=Received:DKIM-Signature:Received:Received:X-ME-Sender:
+	 X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=/Hgc+pAKMaP9FmTtcl1kKyQ25NZRhB37bUz/okZNCiQ=;
+	b=XjToKsqcHoKKpqtmZC4luH3ZeHdQb1qI+QXRbFT445vT2lqu2YOYnnyoc2ZNKusnyjQe
+	 jLPDTo93E5zAE15iN2U/bTC1ygtcZvGw80GBRsG/eZv6QWVewrb5n0kY3sjtfuMBFLfeV
+	 cQzT9d9uZjVFvxM7egeXkVSMgc95YJnLKCl0V4UaoAp8Cgy9UZVLv58aXoNZ8Sz6GH1SI
+	 gVybAbm7xuTrEoZKGGx+Ozm0VF2/BeclvKoXNAL6+mAFtTEqMR+068s7NmfvzRS63EdT1
+	 E9MGyxnqENXNQzcmkIS+PDwF5+oBfsSacxR73lUsN0oSPPpUJtqcMt/4xXe1iKsuL/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WByc7++y;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fiqtUFTK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DC6606A31A;
-	Mon, 23 Nov 2026 08:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5491E606A331;
+	Mon, 23 Nov 2026 08:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WByc7++y
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BA11F000CA;
-	Mon, 23 Nov 2026 08:32:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fiqtUFTK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 417891F000C6;
+	Mon, 23 Nov 2026 08:45:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795422775;
-	bh=hK+8Q2rxW3+mXQi4LiySks8WPSozUnGzSojRtXKXJ6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WByc7++ygvLRkDheW+2yLC+5gjdqpspTl98UBYEJeKQcwwr1WDtHL67TbgEKJJouy
-	 x4uMtXza5ipbnq3OEq1egoS9+ZypPMyEGGdGD4s4anBUAkMc10VPUotmky/lc9DvJX
-	 tS8+m31iQrZMcT07FtdgOQlg6/8gCVwBhFftrUyF7H3rR5G4wABafD5OmqQ9mXHNWq
-	 ThbSRO75lWHL5sxPbnCNyKniyin1NnX78Wc8h+tHBWJt2DbmJVryhHTQ1H+HNyI1jO
-	 lCtIcG6Xz9lg2N/g3EWSBkQPFjc9XcQglRQ2sTDxJYapGVDbVlKhu96urptr8gDu39
-	 dmJyzEwTQ98/g==
-Date: Mon, 23 Nov 2026 09:32:51 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Han Gao <gaohan@iscas.ac.cn>
-Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Samuel Holland <samuel.holland@sifive.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Maxime Ripard <mripard@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Andre Przywara <andre.przywara@arm.com>, 
-	Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@sifive.com>, 
-	Conor Dooley <conor@kernel.org>, devicetree@vger.kernel.org, linux-csky@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 08/19] dt-bindings: rtc: sun6i: add the Allwinner V861 RTC
-Message-ID: <20261123-agile-energetic-mouflon-dba749@quoll>
-References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
- <20261114-v861-v1-8-eb71ec3ee523@iscas.ac.cn>
+	s=k20260515; t=1795423545;
+	bh=/Hgc+pAKMaP9FmTtcl1kKyQ25NZRhB37bUz/okZNCiQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject;
+	b=fiqtUFTKO55WLaOP9pAFLyzpGOrbeS6uhs230g3TsoWX9YmBUOx4cDIzABEm19Ku4
+	 OCUst/NvZSUKZyLresoo1udqBRBdlyv3NRRrOthkXFss0192rhjka/aezz7wDYmvL1
+	 gQxuclUNo2umSiycr7eXsNgtfX7Nhvv3NlIY71dGiLLhWFJGAPVFzOQM+NnL7O1EzX
+	 dzRSySkmfdaPhNUAZXHLn2ybHUq7TwWjQTIFmt/scmMvj08er0WguF+0ZAjUSgU6JE
+	 mcYEtWahIiF0bDOO7TFPifJvm6xbXGV23q6PnX1nt0t/q+/5R2PrSDLugz/7nWn4lS
+	 OPvC854MzKG6Q==
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfauth.ams.internal (Postfix) with ESMTP id 813A8198003A;
+	Mon, 23 Nov 2026 03:45:42 -0500 (EST)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Mon, 23 Nov 2026 03:45:42 -0500
+X-ME-Sender: <xms:M_0Da8s6-Vjm_ehY0feG1wVsML9MnjDGLOP7N8DSVkTMDpkrlNadgw>
+    <xme:M_0Da0Q-o-U-rGQagsWhcGOOUER4LWK9yHhQEZJjT7E0SYj422TM0ZzsDro8P0UMc
+    eKMF9d4HAPIiPuYZK4XH04EA-bN7vZMP4swUNRraZpGq9C8LYPrMv40zg>
+X-ME-Proxy-Cause: dmFkZTFWBu9gCpKA/cqYsbbQXSqmPgKHrSSMwjz504DssOqrr8eAAL++nqiamc/VPV9J60
+    3I7yhx1ndCLqHw/fVcckLlizUwscfRmR55drXaG0ncsX0/G0USPDsc0QHn/ptBUYHq+L0d
+    aHg8nyNIRmYgvUcrItOvbNmKi4RR//wyBbluSitDqWVXLMGtsy/g4iMehAmRC2tK7wQIyA
+    m7B2+j+u5duYNSBGD+PjeE/o0cls4dn03R6W5MJ4ns6PbCXq5bt/w5V+3KPBzq6lappp97
+    O9GkiNGQllY2eQsCoqUfzy64IG4wi43GgVBksoMdB7WokYlzcUcvtJvhSYGBjmqIq+WItG
+    iYFQG2Hs/o9RlKDUTqb9Espy+/kTIXNqTWH6/2bF9e2eadFurEu/ZX6mdxbKptYC3X0eyC
+    6bj6P2Gbw5cDD4Ns56vwcAfsvKErKQnCSfguYZLmxffmgZBFuu99JzA3UvySsubyDx1M/k
+    QhFYUTuL+eprryXyign4PuytqD7JL4xQkAswJzSokIUJIk/Z2yAcNIKQMpmR9AyYaCmag9
+    ndwMc36eHIQC8Jjh/1CgzEEGHKsLrdW8sBECqnN3EfDls6usvT+H0qQ8PJCBgbq62mxyvk
+    bSPQG0kID1L1flSIWtcIma8kCu7mBnktYV8p5Bb2HeHdCfgRnxltOFEXVzMXGZ/CEG6wSu
+    uB1FXMyBYTDBoNXgKiFm+1V7BPiTWD7w/4CZwW7v0gpykt7fTEEpjkeK8lErJtyj/2Mn7E
+    ka2646vvB6g75PjmGbMPlMOBU56+gxxxCakCB4xDuvCExkB1qQF2NV+gno/Cogrl+9Vns7
+    hFvmjp9BlbkKOE9i/fFTJqxupdVMHwGJTdrFf0jUNh4LWDD8/2kVxm8JbDdoJMts8mg5Uo
+    uXTYBNtiNjxP0/vVaGVeb+pJy8LRIu+9PJlnBqMv0tkVMWLvacmszgMOgPC+bt646pMODJ
+    NEZdqz3E/tUpqv+NjzBT2cZcltph9yBRHBrdSaEtPFJTyb6wdoo
+X-ME-Proxy: <xmx:Nv0DawrauUgSF8boyxgPKR9EXCM97yUXGnVZPHBagXVJuqCXDxVrGw>
+    <xmx:Nv0Da2H2pbnL5K0_dBRkJFq1yZQzVWCwO5AdWCmBZf0gO47gs75JXg>
+    <xmx:Nv0Da2QSnPo2AU-pHIT8tBNjNmBWrFVmiL8xbOlz9a-0bzMeyOwugA>
+    <xmx:Nv0Da8Mf1Mxvh6zFXYVgQ2O8-NCujddoa5uHKe-QA_czaPOSQ3ngIQ>
+    <xmx:Nv0Dazkogo2b8v_Uy7oo9YHVWNvCqSxaRV0bFMUpU4p5y3W_EplqDchi>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id DB4AA32A009C; Mon, 23 Nov 2026 03:45:39 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,21 +82,67 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261114-v861-v1-8-eb71ec3ee523@iscas.ac.cn>
+X-ThreadId: A1EAYUxGQhrR
+Date: Mon, 23 Nov 2026 09:45:19 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
+Cc: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Rich Felker" <dalias@libc.org>,
+ "Yoshinori Sato" <ysato@users.sourceforge.jp>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Linus Walleij" <linusw@kernel.org>, "Bartosz Golaszewski" <brgl@kernel.org>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
+ linux-sh@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <6575adac-fb6f-4080-a69b-46e71a3f0bfe@app.fastmail.com>
+In-Reply-To: <dea00f90c205f8359baca729d8b0f31a@gmail.com>
+References: <20260929-rsk7203-properties-v3-0-02f84aeb8e47@gmail.com>
+ <3a51385d-9649-4bd7-87b3-0caf9e462b2e@app.fastmail.com>
+ <arzKNhmoL6yiGrzH@ashevche-desk.local>
+ <dea00f90c205f8359baca729d8b0f31a@gmail.com>
+Subject: Re: [PATCH v3 0/5] sh: mach-rsk: rsk7203: switch to using static device
+ property, drop legacy gpio API
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 14, 2026 at 06:33:34AM +0800, Han Gao wrote:
-> The V861 RTC is compatible with the R329 one. Add a compatible with the
-> R329 one as fallback.
-> 
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> ---
->  Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+On Mon, Nov 23, 2026, at 07:44, Dmitry Torokhov wrote:
+> On Wed, Sep 30, 2026 at 11:37:10AM +0300, Andy Shevchenko wrote:
+>> On Wed, Sep 30, 2026 at 09:23:21AM +0200, Arnd Bergmann wrote:
+> ...
+>> > The patches look good to me. I have build-tested this with the snippet
+>> > below and my series from
+>> > https://lore.kernel.org/all/20260907090956.2825703-2-arnd@kernel.org/
+>> > to check that no use of the legacy interfaces remain.
+>> > You can probably fold my one-liner into your last patch.
+> ...
+>> > I would guess even with access to hardware testing is going to be
+>> > challenging, I noticed that the defconfig kernel does not fit on the
+>> > 4MB flash any more (even without rootfs), and the USB support was
+>> > never added for rsk7203, only for 7264/7269.
+>>
+>> ...which induces a practical question, shouldn't we just drop the whole thing
+>> for good?
+>
+> Gentle ping on this series. Will you be applying these patches (possibly
+> with Arnd's Kconfig tweak folded in), or would you prefer patches
+> removing rsk7203 support altogether since it is not working anyway?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Hi Dmitry,
 
-Best regards,
-Krzysztof
+I just noticed that neither your series nor mine [1] has made it into
+v7.4, so we have the same conflict again for 7.5. 
 
+I would suggest that in order to get it moving, I'll send my patches
+as v8 without the rsk7203 oneliner so we can merge that through the
+gpio tree.
+
+If you rebase yours to drop both the '#include linux/gpio.h' and
+'select GPIOLIB_LEGACY', then your patch is correct both with and
+without mine and there is no conflict other than rsk7203 having
+an intermittent build failure that I hope nobody cares about.
+
+     Arnd
+
+[1] https://lore.kernel.org/all/CAMRc=McRc9Aw-5WBipW5QhqqHp4+UKch15ui3E8a0srk2CUN7g@mail.gmail.com/
