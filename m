@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795437320;
-	b=AJGpoM0GtG+IP1BbL+JW5nnMRKJ//ydcX+1Me1AIIwJpMmUPRcZyM1jEVgv8M1nDAdlX
-	 DAC/r3YeTVK2oQbmrIAq9WSfBspiFeFpHdc55kUwo4F8nyTub7al1W8/mHVwAxqHZhKFR
-	 oB6x4a3LrS4KJgz5eteHVzFFj0beuc7lL1ED/T3onwBMtaDTH6TAUq/bs9ltd12ftPbI+
-	 DSm5hgp32pB5+tesNLbhETK7HQYsCqWRQ0RzPi9J735mjPYJHqbFhRhNEOy3FbrCfhq0D
-	 oKtwkreaxc7HASRr/gpDRGaP51x0eygg9GaV6NlZfIm4k1jDKvfkLRXIp112n8rluwQ==
+	t=1795437325;
+	b=Z1wG9bGTLDQBpGfMy3v282bNlReiiUgdUgCF6JcAmZjNts5dPR9MwDZGIVAWVKaj0qGA
+	 rtAYFF++9IOrVrMj63JpK7aHuY0dHzMF5JqCxCSFrW3d4dIicajl59GHfYav9yIzo6fz/
+	 I9m9oXRhe7oYgkEvY/RqWi8Q3HZwX61RyzJf/EyHAxWPWrSofGIORj8qtEqi9M7t4cMH5
+	 uUYK5k2jMy6e5Wzs8ja32o15FEYYl0/HAd5EzpunP3i23bPPIN2iob2GE2NAcG3+a4rTx
+	 pVeUqdKZiTjLAJl5nvcvZXM9sxFBxnOxzSrJ1EmhVGd3zL4LQHH9VW38ddyaWJtB8tg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795437320;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795437325;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=SnK36Y9pli6fAhfG2bK4Kna1Thkk4RsjvqQSiahO20Q=;
-	b=sWIXpaIdpS0uX+knmUY7vdpjTBSWRCJwNxMvIReal8IMUn5fdNyohCwyM6yWRBP5mTCz
-	 sRw3ehtU+szz515Ilam8CcesbIHvLlhWCJ3GSpGzkBFfW4aFjV3Dx5cy0e3eGfh96mHAR
-	 5O/TALLKfDwD0on3wOSYOm5Tu+5TMqpCrqjIO5tJ68bMYCSh8gENWLafiK2TFHlb3ASGM
-	 oDnBavwNUuQfVCTuxy3VLPfzeaP3WzJ7ry2BnU1TWnkAveo0btEbnTLWTUh9QCApZ3Zbj
-	 JL7XKsSzN6IIa5QYGxjgU/oKnQXrMD5Ow4mPkqm8vEEvBX1CHc52Idlv9mQno4YO3nQ==
+	bh=B3xPSIloxPLJQdKjq7cJzsmlG4fsujtN71kGQk/8CH8=;
+	b=iVdWUYAus/j304LbF7bflmrX3ObEJhJEb81d7TH9gVd0TN2k3Uj46AWyv/9F5Cpsq908
+	 pOofD0l1rqrlk6bH8fSDH/TBd2HuCEtEK6dPIPfPARVARnSzDAb7BmLyTnh8INLw4Cl6L
+	 0tZmBVg3TT1zZ8Gs3xK+Z1iF2JOsVod/VUX2aMYU3sY0ZAQmfBNoLWyEYNTUYCJWUD+yC
+	 Jd4ooxpQyghN4Utmqnn/djRpPxey0COLX4nF4Z9eljDbvL7E3MkGDrGCwyn6LnxW+Yo4D
+	 k/tcO0SW/gwWEv2UVpftjsATImKycRyPxihK2nQjN/5YIALhutDSK3tMLpB4YjHxOcg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AiSA9oIh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=As9L7W+h;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98967606A31A;
-	Mon, 23 Nov 2026 12:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7417606A31E;
+	Mon, 23 Nov 2026 12:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AiSA9oIh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDA11F000C4;
-	Mon, 23 Nov 2026 12:35:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=As9L7W+h
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EBB1F000C6;
+	Mon, 23 Nov 2026 12:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795437320;
-	bh=SnK36Y9pli6fAhfG2bK4Kna1Thkk4RsjvqQSiahO20Q=;
+	s=k20260515; t=1795437325;
+	bh=B3xPSIloxPLJQdKjq7cJzsmlG4fsujtN71kGQk/8CH8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AiSA9oIhvqf+PNXMeafaDvz6dNOSSekhMR4ecxhlv6PPZ7layggGUaJjhfTEOf/Ae
-	 1U6PxPohpKJSKVSaseVTaTukrT7x3G/3O8ii0PlBM9JXQEypkv/z5DAXsXBL2+AfCU
-	 TUY9ax+vY/npL0I9RD7x//9k2PcmrlcimYCmYvTP5IpXbwb8mseQEsQX3PGLTLzK4E
-	 xXVDc/B5P95rKMztaJuCIxHGinzuXhDlkzxy8/lE/m1itYI/bQChEoX5c4Sn9ZEta6
-	 T9eK1MW5oMPHDzEdsQMQwWUF8U7D9oI/UtfZMoXZdFoovUKBczC6XR4MTYgIQc6djI
-	 69stPCMrF2gwg==
-Date: Mon, 23 Nov 2026 13:35:17 +0100
+	b=As9L7W+h8w9mY/+4YR1knIJg4HpoAAFzK5WtkViRFXn0CFQ4crQcBwYdGY3fAp1yq
+	 Ht1cjCopcMD2GMB7oXuEnUel4a4x4dISJWdXufm3Bk+AoNE6FVNcbF4j/ZHzxcoqOl
+	 aG+hAk8oSkvSAtiiPF6fbKbc2fdOdUTBiiLoFw4jsoCvFoNplXeB0fGVjcNmeh/CsF
+	 nq6AaBim1qvL83Rfa2f7it3qq7rVthkHbaOs2lptQWvaHzRIRwTUPrUZ90l8zl4mfx
+	 gP2cpU4pGlnZcTzFPwtd3etol5qFEGAOjQZaPAP/kTZT/WYPCWhoULq7ulBykt9Omd
+	 3fZzWDBpUfUUw==
+Date: Mon, 23 Nov 2026 13:35:22 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>, 
@@ -52,11 +52,11 @@ Cc: Bartosz Golaszewski <brgl@kernel.org>,
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
 	devicetree@vger.kernel.org, netdev@vger.kernel.org, 
 	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 01/18] dt-bindings: pinctrl: qcom: qcs8300: add gp_mn
+Subject: Re: [PATCH 03/18] dt-bindings: pinctrl: qcom: sa8775p: add gp_mn
  function
-Message-ID: <20261123-debonair-hidden-swine-4ee3da@quoll>
+Message-ID: <20261123-refreshing-tangible-frog-22329c@quoll>
 References: <20261118-gp_mn_tlmm_support-v1-0-703f7badd194@oss.qualcomm.com>
- <20261118-gp_mn_tlmm_support-v1-1-703f7badd194@oss.qualcomm.com>
+ <20261118-gp_mn_tlmm_support-v1-3-703f7badd194@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,16 +68,16 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261118-gp_mn_tlmm_support-v1-1-703f7badd194@oss.qualcomm.com>
+In-Reply-To: <20261118-gp_mn_tlmm_support-v1-3-703f7badd194@oss.qualcomm.com>
 
-On Wed, Nov 18, 2026 at 11:32:32AM +0530, Taniya Das wrote:
-> Add the gp_mn pin mux function to the QCS8300 TLMM function enum. This
-> exposes the GP M/N divider clock output and is used on gpio32.
+On Wed, Nov 18, 2026 at 11:32:34AM +0530, Taniya Das wrote:
+> Add the gp_mn pin mux function to the SA8775P TLMM function enum. This
+> exposes the GP M/N divider clock output and is used on gpio35.
 > 
 > Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/pinctrl/qcom,qcs8300-tlmm.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
