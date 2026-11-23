@@ -1,47 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795420347;
-	b=LTTXg5Fwb3f/BggfdpVkCAbWTkNCUHT3L39qh16Woy9z/oDimu4+WaQ79MqjAiE9t2QZ
-	 PnofpbsQuQfeledQ9W5HNS0/zAMclm5jnP1NXwN+X//CgMNpLDQAu+1MB22fxiv7EfvHd
-	 vc8PBOa4eaohPckj6wNRWoBFmelyDhcYu8vOumonU9g6JOysUlqCBeoU8TuGG8vQdnmjL
-	 LY0GBe5VjVvy56WThofHLimzqcpwcCgqE+5BoqKtaZpiXCw9AtBMI53xOp9NyuCDdkE2Q
-	 dIs82aobbbRtD615Qf6koQc1df22yYtdLz/BQwCDIiR7RxbC8wXr2+vDZ9Sc/IsF6SQ==
+	t=1795421128;
+	b=jB51mqNvJUW7Bu9813RI5HIqEuE05L7/wdh0Rf5HMuz0tzQFMSM0RGER6B4KTqlCpI9L
+	 cqAKRox9i6+FGtIF2ifEKYAIZPZnmaPbYBzceCgigs6jP39FZPOoUYe138KQ/m3mYHCs2
+	 OPhafo7iSi34Q35j7Yd5fQDybZplT3kRW1XzfVF8Fn1rmjHvHTLv5NqhWUlSqsis0aYDn
+	 brH9asR5ptq2S9PNDuEOHqfDFAgsfiAUDzwDW09bpw3PaToRIXqZYQi6Rxlv9q6vYmViW
+	 Iyv8UG+XdJS9HtSOw3D+5DDE4qYr/t7PYWU7SeV2mB1PQlu9hbPBYmrolZJd4JMOJvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795420347;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:From:
-	 Subject:To:Cc:References:Content-Language:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=/ak4JXEcaxLe+7GTY2EM46gD3aKECWkUdMVlHN9qWAU=;
-	b=Tu0+wpb5WFvr040MreItQ46oq920y5507QIL2zSVntL7Y4yKpIAj2Mc9QAoDChsvc2cM
-	 MekciQY8BAIMY0Rtbrf8UFI6aYL46juBgdL3f/qyHCuLqzTgNOUmB/IWE1PI9lgGU1ZPZ
-	 EDzOlLJEJzTJQ88dkTDaoQsSL2WIHBKtsgZtYWGCknqmhkMRXwO89eF3nP7oXGgpHdUc1
-	 UiUBWdGOBSe+FCj5W8zU3DjxULaqRj9oX28MzSa058/9Nl4C1Qw/oVQWUjY8THzbKH6Fq
-	 vqmF2i18qzZsqQt8+XS237+XvXgUGqpT8QBYNRLX6RMLU49Jier227H2AIF6VT1CdOg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795421128;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=twrxjfkIjpHysePIox8EoY+a4mTY5HZBuzREdgZ4c4k=;
+	b=O9yqPWy8nCol/+f45krN41qttfQnkwT0aD40jQpWW/roOSZ0a7Dt2gCXh7jHeuEK3JQp
+	 zQUHJMLvJy4lURWjay83dYJaIdAvr+EwuG17cGl3C/H+JFgxJJbpnjjqguCCR4RjTzzx7
+	 0DDChy3XWpIEOtMCZ3TOXrG2bfFJ01y442dDgrGaA+C48ZZl145NM5dle6NtKUVhecdQD
+	 1uAu93j+5OPwGvqP0eaRa4oDKyxfh/nHvneIoBCHpCT4RVO7EVbO2KQZzbvhbRwaAa7+t
+	 eeHzxiTFDVi4ykeig+8dL6xeUhzCQ6H1mUMti3O/Kx0bJl0cd25QPDTx2tzWDO69eAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=en2eFRUd;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q4BM2MtX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EAC606A6BF;
-	Mon, 23 Nov 2026 07:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD109606F626
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 08:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=en2eFRUd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8B61F000C6;
-	Mon, 23 Nov 2026 07:52:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q4BM2MtX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC581F000D1
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 08:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795420347;
-	bh=/ak4JXEcaxLe+7GTY2EM46gD3aKECWkUdMVlHN9qWAU=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=en2eFRUdtlQW6ldje8ZlkP4FyNawEEtEifjq2+Aqwy+8kV0CvK9j7OAvO+fVdK1IG
-	 MWonCPsilBRcHlS3KPwN3O+DWHstQ+kbVzKNlAwqnMRAbtVG5YAbT2HeeGrGXVRDZ4
-	 1saUxaP5f+al0PSGSyvtVslACTx7GbSTlDbmT506uTUToKE3eVuuWtY7nRoUdeII+J
-	 VoaZ9wbQ0+t3TT4/dfieZsNDvV/CxdkrZSo1Tl5aV7WTO551uh0kBQVVx9oMW5UK6u
-	 0+IAKM4A7AcFw0bHWWOXPoD7/cdCaCgEcOsASHR5n5vI4qj9OYRk/Tf0p/HHWKeD5r
-	 28bdXh/Rr+D1w==
-Message-ID: <24b7d337-341b-4bd6-82bd-97347095be2d@kernel.org>
-Date: Mon, 23 Nov 2026 08:52:22 +0100
+	s=k20260515; t=1795421128;
+	bh=twrxjfkIjpHysePIox8EoY+a4mTY5HZBuzREdgZ4c4k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Q4BM2MtX4N41I7AjB0viwchCUFmXmEQbYJ6K5yH9c1hk06TOaDGke9c+9jSk69MXK
+	 23hBtcz3HcpqVJqsXQhBAfyTPI6oSGP3PEVTrV4ObYDJ+DZrvkxw1fncBCJS7CZe6P
+	 QGUN+W9ifC+VHNlHSTbXrDIiufhH5wWFH5Ky2fU9f1eJwnnO7PUbBSFOz1+IQccxIy
+	 OKVoAcNSivdZCtf9+7MSDgZ3M+y7f5eaaIW3jVw5oTklX/IoOL0P8cRDbmhOJDgFds
+	 I+079TKuUpMo9CzhPtR9zc+KAqJzYFGQvrzaz/cF0aYAk4EbtazPOHntzNGqDYqkDb
+	 V9vnMo2kg7ldw==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5be4a2d94adso2616411e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 00:05:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErH5cqWi6D5UPnwNMNQ3tbF1/7fg5K12uEGMj3UIVifYcXNZLbOv4OwsgZRvWd+0rZx80Pg3X35CsIDB@vger.kernel.org
+X-Gm-Message-State: APuU4Z/B+PRHtgfREZaILeqId9uRaEDSlrhn6ebMHo2P1icMP5XNYCPL
+	tVweoA0HH4UFOTbgoO8P+g5TcO520OGnoB/3T0idWv+q+eM+ZwFMJHdvPNlhuzyV7QAI5ZIRtWS
+	4Ti9rcr8eG5tREP2XJXY0t7tFzFiDoAM=
+X-Received: by 2002:a05:6512:33ca:b0:5c1:520f:728a with SMTP id
+ 2adb3069b0e04-5c1bc80af8bmr2732246e87.38.1795421127123; Mon, 23 Nov 2026
+ 00:05:27 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -51,101 +59,57 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] drm/bridge: tda998x: Fix CEC calibration with lazy IRQ
- disable
-To: Nhat Tran <nhat.tranminhk2@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, Hans Verkuil
- <hverkuil@kernel.org>, Linus Walleij <linusw@kernel.org>,
- dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20261120150004.64033-1-nhat.tranminhk2@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20261120150004.64033-1-nhat.tranminhk2@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20261123004501.1771603-1-rdunlap@infradead.org>
+In-Reply-To: <20261123004501.1771603-1-rdunlap@infradead.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 23 Nov 2026 09:05:12 +0100
+X-Gmail-Original-Message-ID: <CAD++jLk2fZyDwTgc_ZpHSyd+M2oxpB8qT_nXS7wkE45D7Pbsew@mail.gmail.com>
+X-Gm-Features: Aa3M54oj6YBbA9XFup0ctnJJbEySVwx8-0ciWrikSUzYcfK9CqN6GvfxpDvMdTw
+Message-ID: <CAD++jLk2fZyDwTgc_ZpHSyd+M2oxpB8qT_nXS7wkE45D7Pbsew@mail.gmail.com>
+Subject: Re: [PATCH v2] chardev: GPIO common access methods: repair
+ non-kernel-doc comment
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Jim Cromie <jim.cromie@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/11/2026 16:00, Nhat Tran wrote:
-> The CEC oscillator calibration pulses the TDA998x interrupt line low for
-> 10ms through the "nxp,calib" GPIO. Before driving the line,
-> tda998x_cec_calibration() calls disable_irq() so that gpiolib allows the
-> GPIO, which is also used as an interrupt, to be switched to an output.
-> 
-> gpiolib only allows that once the interrupt is actually disabled at the
-> GPIO controller. Since commit a8173820f441 ("gpio: gpiolib: Allow GPIO
-> IRQs to lazy disable"), disable_irq() is lazy on GPIO controllers that
-> do not implement .irq_disable, such as gpio-omap: the line is not masked
-> and gpiolib still considers the interrupt enabled. The direction change
-> is refused and the calibration pulse is never generated. On a
-> BeagleBone Black this happens on every boot:
-> 
->   tda998x 0-0070: found TDA19988
->   gpio-537 (nxp,calib): gpiod_direction_output_nonotify: tried to set a GPIO tied to an IRQ as output
->   tda9950 0-0034: TDA9950 CEC interface, hardware version 3.3
-> 
-> Set IRQ_DISABLE_UNLAZY for the duration of the calibration so that
-> disable_irq() masks the line immediately, and clear it again once the
-> interrupt has been re-enabled.
-> 
-> Tested on a BeagleBone Black without an HDMI sink connected: the error
-> is gone, the GPIO is back to an input used as an interrupt afterwards,
-> no spurious interrupts are raised, and rebinding tda9950 repeatedly
-> reruns the calibration cleanly. CEC communication with a sink was not
-> tested.
-> 
-> Fixes: a8173820f441 ("gpio: gpiolib: Allow GPIO IRQs to lazy disable")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nhat Tran <nhat.tranminhk2@gmail.com>
+On Mon, Nov 23, 2026 at 1:45=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
 
-Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+> Change a "/**" non-kernel-doc comment to a plain C comment "/*"
+> to avoid 21 warnings like these:
+>
+> Warning: ./include/linux/nsc_gpio.h:2 Cannot find identifier on line:
+>    nsc_gpio.c
+> Warning: ./include/linux/nsc_gpio.h:4 Cannot find identifier on line:
+>    National Semiconductor GPIO common access methods.
+> Warning: ./include/linux/nsc_gpio.h:6 Cannot find identifier on line:
+>    struct nsc_gpio_ops abstracts the low-level access
+>
+> Fixes: fe3a168a2ce1 ("[PATCH] chardev: GPIO for SCx200 & PC-8736x: add gp=
+io-ops vtable")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Jim Cromie <jim.cromie@gmail.com>
 
-Regards,
+For the patch:
+Acked-by: Linus Walleij <linusw@kernel.org>
 
-	Hans
+For this stuff's existance:
 
-> ---
->  drivers/gpu/drm/bridge/tda998x_drv.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/tda998x_drv.c b/drivers/gpu/drm/bridge/tda998x_drv.c
-> index 0b966c9844e7..0815ce283f49 100644
-> --- a/drivers/gpu/drm/bridge/tda998x_drv.c
-> +++ b/drivers/gpu/drm/bridge/tda998x_drv.c
-> @@ -495,8 +495,16 @@ static void tda998x_cec_calibration(struct tda998x_priv *priv)
->  	struct gpio_desc *calib = priv->calib;
->  
->  	mutex_lock(&priv->edid_mutex);
-> -	if (priv->hdmi->irq > 0)
-> +	if (priv->hdmi->irq > 0) {
-> +		/*
-> +		 * The pulse is driven on the IRQ line itself, and gpiolib
-> +		 * refuses to drive a GPIO whose interrupt is still enabled.
-> +		 * Make disable_irq() mask the line right away instead of
-> +		 * lazily, so that the GPIO can be switched to an output.
-> +		 */
-> +		irq_set_status_flags(priv->hdmi->irq, IRQ_DISABLE_UNLAZY);
->  		disable_irq(priv->hdmi->irq);
-> +	}
->  	gpiod_direction_output(calib, 1);
->  	tda998x_cec_set_calibration(priv, true);
->  
-> @@ -508,8 +516,10 @@ static void tda998x_cec_calibration(struct tda998x_priv *priv)
->  
->  	tda998x_cec_set_calibration(priv, false);
->  	gpiod_direction_input(calib);
-> -	if (priv->hdmi->irq > 0)
-> +	if (priv->hdmi->irq > 0) {
->  		enable_irq(priv->hdmi->irq);
-> +		irq_clear_status_flags(priv->hdmi->irq, IRQ_DISABLE_UNLAZY);
-> +	}
->  	mutex_unlock(&priv->edid_mutex);
->  }
->  
+$ git grep 'nsc_gpio\.h'
+drivers/char/nsc_gpio.c:#include <linux/nsc_gpio.h>
+drivers/char/pc8736x_gpio.c:#include <linux/nsc_gpio.h>
+drivers/char/scx200_gpio.c:#include <linux/nsc_gpio.h>
+drivers/leds/leds-net48xx.c:#include <linux/nsc_gpio.h>
 
+Blaeh, we need to get this "necessarily different" stuff in line.
+
+I'm not blaming anyone because it may very well predate gpiolib,
+what could they do.
+
+I'll analyze.
+
+Yours,
+Linus Walleij
