@@ -1,78 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795459289;
-	b=rZCxeFIoT33x/x3ml0K7jvPU0owYBQ+SF6PHtDof569BJ4xaM5OqP9ghsQl86mp9cBUP
-	 35LqdXtzp4TgMyOL6v81fkTOXsmiT1tekz7tOZ6mUF8/XL0geoshgNRH7J2LUWMb0+GfB
-	 iYv22PlnpTkPyh9lB2ElqV2YJfgU1Of8wG2jvJKjPmmOqiVbcheBmRa/ln3v4HVZoTWS5
-	 5/SOcbPG7IwpEYN0kY/EYjjJbDsoUndw5yEderaqQEN6WBqUd9OWl+JrORMHkhh0IjauH
-	 SBnXy82zpDLbWQjh9WDQ8Yp8MmZl1gAzfvA1DqfPjhyfG5TPLTCrwj0RNCAV1hgiYnw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795459289;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=JA1RY4AoQnfSHpB9qDuwptqbpVvMYp1OIFwFo8h5NUs=;
-	b=dfkZtCrz5x/7JOwgJ5ENhRfsOlEPp7c3SupCAd2bkyVZUdoi6j3H+8T2pOa1df/U69MX
-	 cscCJCcx0EjW3OltltwADwpE3gNqPUq6EUTE+ZKoC4NzZqNvZUP2H3XVXHmypdH6VPT8R
-	 19oa/zDgiwFEbmfDlb0OSxdyj2yoEpkuQljymgjm7pfsm73KA+7cDO8WgEsJtndb1QsHJ
-	 xNOyfH4eIrN1WTxplU0y8mGgd35Mf4nvGJwoVT8a9pRvOTfOmGmAIVkdg72v19RORXGm4
-	 SMW/96LppSplesIaAOf3+VrDlaLToHHQU7aG9X9A7ysxhlTfyfaJafmq79f3+5NDwNg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hk3CV+w9;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795460155;
+	b=CyxbMOL9jLq1mTj14EGsLrapn5v1kyxM1W2QrzvfmpOZXfYGvO4M1haYR6UNX0n/mf9M
+	 tO2BPrjI2FU7OMvH3gN2rSx0fSKhA+LNRkP2+j8n+MrqSiuby8p6VXxUmku/gT8W40jli
+	 0wDjoh1bXYi7v0h7kudhdTwadTz1U45CF8ShPPNo4HcYnbBIKIjdnKcQMVTUagWGa5ZeX
+	 Den6tEw10iMzO7nbKshsuCWaYlIFgDBrGXItkiXbj7ZlQl/lxADBoHqU/yaFcPsefL6KP
+	 7VCaAAeDHjwW/YCGq42Dj9wW7fFY4Lp5rOM0MrhlJv1zexDFVsB7CKPYd3n8V/M8MXQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795460155;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=SZAQqMButyP2tMLf6h4QZvmumV2dcczmMYB0U2+e69Q=;
+	b=FHtT44n4ACjZxwikXoOJmGUNAYvB5pvXapDwh9S1ht0s7TJh1/pB7uMdLyaUqXr3PdC6
+	 8ULh3hqKBfPkGLvtvQfnh0cGCbHmUgnUE8SCvDw0Y99WRkMKcih9s1IuQsYhq6PAiAFr5
+	 4S8o4g6sYR8k3Axx8W5T+k+oipTftvan3svRe83+1sQ0iQ0c0wpNjIdwU8sSVO+mmEYU6
+	 CYeecuN+cbhmI3xTPCQHRyzwUyL8GgYrPxUqMKkGGEymnnfh7etpoAhxIEHTrejZrJup8
+	 7S3djR2cifgLyovJCvjIL/wKUZglA5a/Q4KycrufjYkE19meRh8dJtx4gcXyFPnBpTw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mAsIm9nG;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87858606A32E;
-	Mon, 23 Nov 2026 18:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9703A606A31A;
+	Mon, 23 Nov 2026 18:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hk3CV+w9
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795459289;
-	b=dQbm51Qaga2rcHEs3PjdI5AbYBKsDLNRvJN3rFPc+MHYf+POgLpHHV74DYikouOJ6r7B
-	 ZPo37rIGl74mHbNQIxngIW1saZB/4MzBgc8Z2O6byTO+Kvxa/bXD3+h0kkpVgz5YY9OgY
-	 Fa4q8oLiZgW+PLhGsBSnlTQZvFdLHbE+xFM/MkEpQMotIqcNRwlgUxZg7+jZzJmSck5RP
-	 olsY5Qz+vX8JRGejhQGHmyg+cYPmRCHsm1oJcWAkQ+hF6KfAk+B5S2Z3j9rF+KSPGkimG
-	 JtI/Y4+riPWW/vsr34SPLjzOp9rzhHX2eJHemdO3rD8nzfXaG9lGVGE+OL4Cqc/QRPw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795459289;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=JA1RY4AoQnfSHpB9qDuwptqbpVvMYp1OIFwFo8h5NUs=;
-	b=MZVrVyK7jOsFXCuR104V0N+2SAsmiky+RuGodUc/iv0WR5VLImcvTwlBt3R0wjLaL23+
-	 uSikhuhTt9TdaZ02NJl1ol9mMpvj4Q6yew36Y3NTMGLPsw7bykFMQs1nif7gZE9cRTncv
-	 ZBqV+nsBKicn/Wynv8+RQfyd3L/0yZpvfkkEZATDbsiQgycyo2QI+bE7MoftiuBHk+QoE
-	 vHvM95jfdXYJ58r6CUIr0K8e/AjBKix8gNtjF4p6IEXHaR2Nq7y+KrsFB56G71cXSyAzC
-	 jq4h6WCGY8j/n0i+TfS3AANTK9ztFJnGuNyU0ko5YQfzT5vvKcgCuo9USl8fUBCcSGQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 424831F000C0;
-	Mon, 23 Nov 2026 18:41:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mAsIm9nG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0B71F000CA;
+	Mon, 23 Nov 2026 18:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795459289;
-	bh=JA1RY4AoQnfSHpB9qDuwptqbpVvMYp1OIFwFo8h5NUs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=Hk3CV+w9++LCKyMaCPgnv5LYLF5e3niV97mXxvfYAkZqw6fJ0+sFTzfmSm5dLTn6+
-	 1iFH60QQ1p5DfAk2xuaxuEIN8sJfr/98sJ1ILeeAQST0Imr6stFw6PYDJdeeSO1YLk
-	 39xOTTXDhvYUvxOTYegHCPsHSfta/ZTQ/ZzvPa3qMKKAhddAf8EFV9MCVXuG4L0zuH
-	 ZB4QEzbk+xFG+Oprz7dyGukEpyL+E43rI/d6+nb5Q52HazSlxvz3G7oW/+Y0G61Jtm
-	 UrMVrKc+hxoedG/KDUUIwFExsO4E3hk+E/DPAG5MBn7hG+MegeczGpngQVEvW64M9J
-	 81yaeUpE9hMhw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A43704C5BF;
-	Mon, 23 Nov 2026 18:41:13 +0000 (UTC)
-From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Mon, 23 Nov 2026 21:41:16 +0300
-Subject: [PATCH 5/5] MAINTAINERS: Add CS7542 global control support
+	s=k20260515; t=1795460155;
+	bh=SZAQqMButyP2tMLf6h4QZvmumV2dcczmMYB0U2+e69Q=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=mAsIm9nGek6GGPaW6jwxV8zPptNi7HM+BYX/fLGLZSoF8L+Bw5P34KKF/+AEB03dj
+	 TG+ZYKV6giTYWjCVeu/0EdukJ2ah1OuZ6F34tUV6SMuqtawETDVA4VsutibSMPRpAl
+	 YONUXSZX2AUsTaJfKtdgPeZ02KNibhULeaeS1ff9mBDmlVOTZgac4X2V8mle6BF4bv
+	 qi7HNp1/fw9xpfYVUob62tMbHs8rL7o80Tmw7yHvrcnY4oPAJ0CIc6DCA1S6CTbxhX
+	 K/JVlg2VH2CgriDygq8a1J+6INIHuSlgOH+qoxRSVN9+NyAL9aR2QT8P346Z4kDg6V
+	 JVhZ1cA4hf7Vg==
+Message-ID: <sashiko-outbox-229885@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 4/5] pinctrl: Add Cortina Systems CS7542 pin multiplexer
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Fil Dunsky" <filipp.dunsky@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261123-cs7542-syscon-v1-4-49858e631449@gmail.com>
+References: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
+ <20261123-cs7542-syscon-v1-4-49858e631449@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 18:55:54 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -81,69 +59,84 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261123-cs7542-syscon-v1-5-49858e631449@gmail.com>
-References: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
-In-Reply-To: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795459271; l=1174;
- i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=fgWHYLyeGItAI+Z6w73sl393x6RrEmbFL0xFZL+FdhU=;
- b=sDCjqIa/sgV9CFJOqw4l+bU2+00O+z4TTreM9rs37EA5rtQg1l+SVzAMioWOdf3TXxhV5bRW5
- XsCQjqX31txAPMDIQE/gBNNAhnaIQzHvepqsA3/NEyZJvhSzcEmuC27
-X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
- pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
-X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
- auth_id=1085
-X-Original-From: Fil Dunsky <filipp.dunsky@gmail.com>
-Reply-To: filipp.dunsky@gmail.com
-Content-Transfer-Encoding: 7bit
 
-From: Fil Dunsky <filipp.dunsky@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] pinctrl: cs7542: missing function_is_gpio() breaks strict
+  GPIO requests
+--
 
-Track the global control binding, strap clock provider and pin
-multiplexer independently of the pending platform series.
+commit e26847f7ebd3df4b67ad59e0473df47cbaeaa5df
+Author: Fil Dunsky <filipp.dunsky@gmail.com>
 
-AI assistance: Codex prepared this change from the existing OpenWrt port
-and GPL vendor sources.
+pinctrl: Add Cortina Systems CS7542 pin multiplexer
 
-Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This commit adds a pin multiplexer driver for the Cortina Systems CS7542
+SoC supporting GPIO on all 160 lines and six UART pins via the global
+syscon regmap.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 44540a1eb..d8835aeca 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2949,6 +2949,16 @@ F:	tools/perf/tests/shell/coresight/*
- F:	tools/perf/util/cs-etm-decoder/*
- F:	tools/perf/util/cs-etm.*
- 
-+ARM/CORTINA SYSTEMS CS7542 GLOBAL CONTROL
-+M:	Fil Dunsky <filipp.dunsky@gmail.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
-+F:	Documentation/devicetree/bindings/soc/cortina/
-+F:	drivers/clk/clk-cs7542.c
-+F:	drivers/pinctrl/pinctrl-cs7542.c
-+F:	include/dt-bindings/clock/cortina,cs7542-clock.h
-+
- ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE
- M:	Hans Ulli Kroll <ulli.kroll@googlemail.com>
- M:	Linus Walleij <linusw@kernel.org>
+> diff --git a/drivers/pinctrl/pinctrl-cs7542.c b/drivers/pinctrl/pinctrl-c=
+s7542.c
+> new file mode 100644
+> index 0000000000000..977c4ce98100d
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-cs7542.c
+> @@ -0,0 +1,188 @@
 
--- 
-2.53.0
+[ ... ]
 
+> +enum cs7542_function {
+> +	CS7542_FUNCTION_GPIO,
+> +	CS7542_FUNCTION_UART,
+> +};
 
+[ ... ]
+
+> +static int cs7542_gpio_request_enable(struct pinctrl_dev *pctldev,
+> +				      struct pinctrl_gpio_range *range,
+> +				      unsigned int pin)
+> +{
+> +	return cs7542_set_mux(pctldev, CS7542_FUNCTION_GPIO, pin);
+> +}
+> +
+> +static const struct pinmux_ops cs7542_pinmux_ops =3D {
+> +	.get_functions_count =3D cs7542_get_functions_count,
+> +	.get_function_name =3D cs7542_get_function_name,
+> +	.get_function_groups =3D cs7542_get_function_groups,
+> +	.set_mux =3D cs7542_set_mux,
+> +	.gpio_request_enable =3D cs7542_gpio_request_enable,
+> +	.strict =3D true,
+> +};
+
+[Severity: Medium]
+Should cs7542_pinmux_ops implement .function_is_gpio?
+
+Because cs7542_pinmux_ops sets .strict =3D true and exposes "gpio"
+(CS7542_FUNCTION_GPIO) as a pinmux function without providing
+.function_is_gpio, activating a pinctrl state or hog with function =3D "gpi=
+o"
+sets desc->mux_usecount and desc->mux_setting on the pin.  When that pin is
+then requested as a GPIO, pin_request() leaves gpio_ok false and rejects
+the request with -EINVAL:
+
+drivers/pinctrl/pinmux.c:pin_request() {
+	...
+		if (mux_setting) {
+			if (ops->function_is_gpio)
+				gpio_ok =3D ops->function_is_gpio(pctldev,
+								mux_setting->func);
+		} else {
+			gpio_ok =3D true;
+		}
+
+		if ((!gpio_range || ops->strict) && !gpio_ok &&
+		    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
+	...
+}
+
+pinmux_can_be_used_for_gpio() likewise returns false for any pin muxed to
+CS7542_FUNCTION_GPIO via pinctrl.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-cs7542-sys=
+con-v1-0-49858e631449@gmail.com?part=3D4
