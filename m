@@ -1,99 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.47
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795434155;
-	b=PsgbKyKSSMW9eoY5wEXaSN0fMKfptzzJ0HsqEOLmYstINpoUM/kyQqs8/EyobuYXfhY1
-	 Zgc0GvefkavO2s7wTEgYJN+W5dYH7VYx8sOSYCMWsvgCCFPaB3vKytw1KhE67QqvrGO0T
-	 eoKSmCJ7Zq+Et6p0L7jHntdvRdH7xwywJCsc1esJ98eoVaC8csSpTKCiSkdDazU9e9pWJ
-	 hphXeHBKQ+1KlkUJn4yz1xvLR0rU6iDd4dkdYOHNfxtcSef01LH1Hr4tenVAgQJOu9PeX
-	 9TYEl1yU6ug22xYA0cf4/R2XvtKLaJVNulJH5JjSrFSdek07wraLGSLsyAAPtimmm6Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795434155;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:References:
-	 In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=1hW9+0nqRdg+3q1QPOHCOfA+kKVlzauKBMN1mSe+ESM=;
-	b=1HRmOo8OGpmOmpsrBciHWg/eDUPfxtv771aK483/0MCb/u9vCpTeAavb32DqyW+lstiV
-	 LUhlnszLKlVIuJa7nAlXZh55u9pwjZ+7bGchk1P/21GFPAljVJ8SutbxI+WtBntA0X1g4
-	 i/TCed2eEBiQ3gdWrU9Gdovhx2YHdgzzzZ63831e3HnibtK6l8YVr2MoyKNVGtzEmICEd
-	 WSwh9OEAar+itRshOd0c/1MiJCsBtrZ+V+NKaLh57DoolUC7s3KeMaZCeJpgsFLouln3P
-	 eMw80iIte/pjCo7X8JMCKssoznBBtvtpoe34QwCEpuNIF1AzziC/SNShMz96khQ2DDA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="waG4/sVP";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.47
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795434476;
+	b=3OjLq1qboJ7L3A2uwZNXzDXzfZiwBiOfrANs0n8P++g+sowYyDOzxJSyZ0Nn9flupGM2
+	 h0BEXFtv7jihXFAaFN5KRexn1EuQlWE575bqT5Hklwcshdp29V6h9Vjv7c0rnzBQTnmb/
+	 hNuqMDny3jL03i1IhNkwnNcdJFTGtNvRLjKjIxdaGPmTuEFQURbcxfWAsk702L0puhV5E
+	 rJ5+eEwQ5PS4SOKXc8cIr51NeZqoIHhcIYeWh7hmnSk2PGpGO9U+ViT63WBlWyDOIejrA
+	 C2hO4DkgWxcojN6JKrDc5EbizlbvM+wREQIq63d26brEtcuq0j9gc0Z7o5xv/i8W1Ug==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795434476;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Ue+NTiLrRaDWarDR3G7NHOftAHIYf/UacY07OYcKWro=;
+	b=qjs9kjZk/AeDAamcC3NcUOVWbnKlezzDOCVP4gbi85YWoKexEORjz14tmb2ys4EFhwJB
+	 s/25gHDjpU7n8uH7Sxx0z4Asi7qXiQUNNWrYQrsV5C43tAXL7aQk9OGey6wB/hCVaIq9a
+	 auTs/BRzGaNQ3LoffTAJ7srwQwf7NTgZ45jm2jtj2evJwsnQGgcT3OaxJR366v53FjRTn
+	 qCM6d7SVPzuI149O81zxFY7c4GF42mkhjh5dRpGMn0+MKJI2hhmgUfNhgdOdLeKL6DcqW
+	 ghwMAOPuswS7x2k4TIT9aybgGoZJSGF8tUoUrA5KmFR30XEsoX62oPLz2lwvqiio75w==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m92QDc+7;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE4C606A31E
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:42:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0BE4C606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93128606A31E
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=waG4/sVP
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-8633b750a19so580088a34.2
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 03:42:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795434154; cv=none;
-        d=google.com; s=arc-20260327;
-        b=JNIbM692YJDhRpCpJwrogiA3VHJnG2s2xgqgzYeImNyMgmgIXG5OriKu6JRkFCSoPE
-         n3AgyuOPVREzfliVCAZkGcKylPOHidJuHxJ0rGViwEDulOfdKyb0MZm67BxrFEAmMqQf
-         dmkQswjPwmZ2u1GiwNwmrmFFiHsqNA2tz1JIMpIoMtnJcLcDajhOUFfwAPLvLMq3hKmh
-         zwDKX/Oy1Kjmy90g1LunQcM7r9xc8odBNTwvrUhisuQ30IY5rZ4GevirdwG6ZXZ1XT+M
-         J6pRpjGXBzKMb1gdv1zRHduigYBS6jAA5fsnsOmxR1r8+exBTzf/d47R1eiu7gRfVPFQ
-         QxEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=1hW9+0nqRdg+3q1QPOHCOfA+kKVlzauKBMN1mSe+ESM=;
-        fh=YtEF6B1i1P4TrBQHOPpiMPtnfQ+DIbatSEsVMwghCTo=;
-        b=bGYRGkvBinhIV2NcoeM+culKx4vzXRYw4e1BUNh6EaEvxIItAc0owdTZ/Sto0abgY3
-         B/54PAtLco9QQ/GSOqRjYvlY9oo3ZnJmowScMmkaJjCgn+0CtYoLmwMifCsUKljp024Q
-         AP/uhHufszPVPY0Bfu29e9Y/jd+qnIE8ZlvxW44+T3Gss83vARyR4u2WpyrkXyCHIdew
-         IPtOpGr7RQo/rspoqcJD98N7stfwN1Jl8x1NDjovROsQfZB/SvdJcYwho76Pdje6YQuU
-         u2TvXiA0sWhT77po8qwM2U6/cHYE6pD/RaaZyeEc5Ue/wxyu1Rme2VM/xmPe5IHe2whh
-         AfHg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795434154; x=1796038954; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1hW9+0nqRdg+3q1QPOHCOfA+kKVlzauKBMN1mSe+ESM=;
-        b=waG4/sVPeZingUiVUORMLtng9Mbq/PKGmshRRhVj3jNPTuxRjIY8mZH6h37zpR4yvL
-         67pn+EBZw7qYlVRXJSY3kymoYqtK5ndAqUgf8WBAa80q7ULF3DwZeO8HKPUg641jBGlO
-         06o/y/nMOBlc9XjLN1HjtH8F/4VjFpP9C8wWSnGFXHPDiwNRBe2Nc8o7xvNCNxVkEVIh
-         dlbKfPr8nWa2XwPTinmrZNQZP20gOQeFzN9zEDLaIjwk3f6rLv2XAulIKDNaM4ahWP2E
-         Oft2NKK5Nfem8BGFabWyPKJ7DaGwnI4KRR+oki8vzhf9cET/5uJGp81G0Nrmfpsr3hL4
-         r1SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795434154; x=1796038954;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1hW9+0nqRdg+3q1QPOHCOfA+kKVlzauKBMN1mSe+ESM=;
-        b=eGzNomsrmaVWzRaER+pXYayrQEGZGo/BCtXw/xq6woNnz+/I/K2MrvttNraqhhw17x
-         FZXyv9eUOAD++XiUcGDRAMtSFkoL7vEQmZ7HnEFgXr8kg4Ccy7Rj1YptZrRZDg5NDLlR
-         p6rCjwRmI9Hzw3NtayXSb/JWCgKSUKPRFWQ6XH/OmFApy/V7lu+vqrzzQjVSHPrqPDZo
-         YCXwEuMvOkz4YRdYExo+b7q97og2LbkvHTdOp5grL+PGPdSDRzXTr9BpSRVpF5yPLqxb
-         jB754OiAlafIDtF5UHmQ866ttcO75f1t11lKmjQRu8Wwb0JlGShIoCffwlrsU8EMeq/q
-         VyFg==
-X-Gm-Message-State: APuU4Z/FKtiiVLDK1LcsMAeKLROdh5EGxtxMaCjGJ/Dl02tz3koRWBfv
-	XWzEHrBURamYhS+zOutRivgKqL8j0ovyUNimeY+6v/RsKpr9JhascAZs81FSeZDnMsVH00JpZAo
-	gbauW5CioEAsNSDsJ6+Oczt9Ea9N4YM9yzruvTis=
-X-Gm-Gg: AZFdTZckG7nbjhxiI8x4s/X9r+1R0fWzGDieFr7nwRgrGoacKvaTadNAlncdq1orcap
-	nLVWpmhOhZFodCB7Ka12GEpHJZ3x2P0hwZQ18ZNqIfaDsSE6Y+wqCuwEyGtKRbCBqED3OoqMh3e
-	o5ak1YyH1ckQvpoWH+azvQ9hvdFxQnCGkhb8GYGo34N7LWpcJuTjEDusExBNEQRlcSwewVz3Ubo
-	F5OA2T3IvvR/6UOk4TuAXQDNfYizKx0qYV08jKFsu1jcMVOiA9c0ZuHpylNL+HDBh/0jDlO7iqK
-	hSbCOITO6N5lERY6LADssSqF/Mj/F7GrvDly/QZnPxaHX4CbSsuQoAiXYHxFUt5fALZmACwrXOn
-	IlB1guFB7J7iqcKzjSPpFKMKTgFJQZQOzQBfiyA==
-X-Received: by 2002:a05:6808:1484:b0:4e4:627a:e0a5 with SMTP id
- 5614622812f47-57a0bb6bc73mr12310235b6e.40.1795434153972; Mon, 23 Nov 2026
- 03:42:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m92QDc+7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971B31F000C6;
+	Mon, 23 Nov 2026 11:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795434475;
+	bh=Ue+NTiLrRaDWarDR3G7NHOftAHIYf/UacY07OYcKWro=;
+	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
+	b=m92QDc+7VY0E2XUL186GuAYCcIlLMuSPAhoZI2aevxhqQKq68mDxfvI1LB40Pw5dd
+	 Cm6+vfLAsRP+tNCK/HYbIKBGcIM+Dwh/rES/SWhEfHnc8mvdrxp3OcL5uAOGDaq71h
+	 XhTB/grOj0tbfDnPtMpIaGdwLfU2stKtGvV6dNxF5O2aLX/1i3bixH7p+AZ1E3x7ue
+	 YTIPZJJpvc+Iqa37VjMReqUfcodkNztcrKyDEu5/IazKeC+H6qzQQMYLe4wa7ndFIc
+	 d27MH64yfBFcvLG2covOGTklJTXplyNEXZze79U/68+olEB6jYV4WlTcjwf2fvBdBL
+	 TUt3Qlf9U2CaA==
+Message-ID: <sashiko-outbox-229168@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/2] gpio: pca953x: Fix TCA6418 interrupt handling
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Maria Garcia" <mariagarcia7293@gmail.com>, linux-gpio@vger.kernel.org
+In-Reply-To: <20261123113234.197852-3-mariagarcia7293@gmail.com>
+References: <20261123113234.197852-1-mariagarcia7293@gmail.com>
+ <20261123113234.197852-3-mariagarcia7293@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 11:47:55 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -102,53 +58,73 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261123113234.197852-1-mariagarcia7293@gmail.com>
-In-Reply-To: <20261123113234.197852-1-mariagarcia7293@gmail.com>
-From: =?UTF-8?B?TWFyw61hIEdhcmPDrWEgRmVybsOhbmRleg==?= <mariagarcia7293@gmail.com>
-Date: Mon, 23 Nov 2026 12:42:21 +0100
-X-Gm-Features: Aa3M54qEgTnUApaug_umccwNyfXYHicYOq5jO2DBK4wHU_AjN4m9rB3P8QZtQ_E
-Message-ID: <CAFOBSkS92tdv9xkwYk2MAyYk4J5YL1b5rqgfbT4_A2prCJRupg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] gpio: pca953x: Fix TCA6418 multi-bank I/O, caching,
- and IRQs
-To: linux-gpio@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Guy Morand <guy.morand@bytesatwork.ch>, 
-	=?UTF-8?B?VGhlbyBMw6licnVu?= <theo.lebrun@bootlin.com>, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-El lun, 23 nov 2026 a las 12:33, Maria Garcia
-(<mariagarcia7293@gmail.com>) escribi=C3=B3:
->
-> This series fixes multi-bank register access, input register caching, and
-> interrupt handling for the TI TCA6418E GPIO expander in gpio-pca953x:
->
->   1. Disable REG_ADDR_AI (0x80) for TCA6418_TYPE so multi-byte reads and
->      writes advance sequentially across all three banks, reverse Bank 0
->      bit order (bitrev8) in bulk read/write paths to match the datasheet'=
-s
->      MSB-first layout, and mark the input status registers (0x14..0x16) a=
-s
->      volatile so reads do not return stale cached values.
->
->   2. Support TCA6418 interrupt setup, edge configuration (GPIO_INT_LVL),
->      masking (GPIO_INT_EN), status decoding (GPIO_INT_STAT), and W1C
->      acknowledgment (INT_STAT) by reusing the existing pca953x paths,
->      while rejecting unsupported IRQ_TYPE_EDGE_BOTH triggers.
->
-> Tested on TI TCA6418E hardware across all three banks (single-pin and
-> multi-pin reads/writes, input volatility, interrupts). Also, independentl=
-y
-> tested by Guy Morand on his hardware.
->
-> Maria Garcia (2):
->   gpio: pca953x: Fix TCA6418 bulk transfers and input caching
->   gpio: pca953x: Fix TCA6418 interrupt handling
->
->  drivers/gpio/gpio-pca953x.c | 120 ++++++++++++++++++++++++++++++------
->  1 file changed, 101 insertions(+), 19 deletions(-)
->
-> --
-> 2.52.0
->
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] gpio: pca953x: wrong TCA6418 direction check in
+  pca953x_irq_bus_sync_unlock()
+It also noticed 1 related pre-existing issue this patch does not
+introduce:
+- [High] gpio: pca953x: broken TCA6418 volatility in
+  tca6418_check_register() and IRQs [1]
+--
+
+commit 5ed3e002b749b9b8aa9dbd3081f6ed840b5b291d
+Author: Maria Garcia <mariagarcia7293@gmail.com>
+
+gpio: pca953x: Fix TCA6418 interrupt handling
+
+This commit adds TCA6418-specific interrupt register programming and status
+handling to pca953x_irq_bus_sync_unlock(), pca953x_irq_pending(), and
+pca953x_irq_setup(), and restricts TCA6418 to rising or falling edge trigge=
+rs.
+
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 8d9f5563e222a..5a39c5a5c8a36 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -910,6 +910,12 @@ static void pca953x_irq_bus_sync_unlock(struct irq_d=
+ata *d)
+> =20
+>  		/* Unmask enabled interrupts */
+>  		pca953x_write_regs(chip, PCAL953X_INT_MASK, irq_mask);
+> +	} else if (PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA6418_TYPE) {
+> +		/* 0 =3D falling edge, 1 =3D rising edge */
+> +		pca953x_write_regs(chip, TCA6418_GPIO_INT_LVL, chip->irq_trig_raise);
+> +
+> +		/* Unmask enabled interrupts */
+> +		pca953x_write_regs(chip, TCA6418_GPIO_INT_EN, chip->irq_mask);
+>  	}
+> =20
+>  	/* Switch direction to input if needed */
+
+[Severity: Medium]
+Does the direction switch below work on TCA6418?
+
+pca953x_irq_bus_sync_unlock() falls through to:
+
+drivers/gpio/gpio-pca953x.c:pca953x_irq_bus_sync_unlock() {
+	...
+	/* Look for any newly setup interrupt */
+	for_each_andnot_bit(level, irq_mask, reg_direction, gc->ngpio)
+		pca953x_gpio_direction_input_unlocked(&chip->gpio_chip, level);
+}
+
+On TCA6418, a bit in TCA6418_DIRECTION is 0 for input and 1 for output
+(unlike standard PCA953x where 1 is input and 0 is output).  Because
+for_each_andnot_bit() iterates over pins where reg_direction is 0, any
+interrupt pin that was previously configured as an output (reg_direction
+bit 1) is skipped and remains driving as an output, while pins already in
+input mode (bit 0) are reconfigured on every IRQ bus unlock.
+
+[Severity: High]
+This problem wasn't introduced by this patch, but as part of [1],
+pca953x_irq_bus_sync_unlock() still treats set bits in reg_direction as
+inputs on TCA6418 instead of outputs, leaving newly requested interrupt
+pins configured as outputs when switching direction to input.
+
+[1] https://sashiko.dev/#/bug/linux-a8794f43-5e5f-405d-ba31-cf360dc2e1af
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123113234.1978=
+52-1-mariagarcia7293@gmail.com?part=3D2
