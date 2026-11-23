@@ -1,35 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795419908;
-	b=a1C/j+HfREjcebyEbmPYtOa35c1+NXYxtQrE5pFxk7wMHiGyPJpt5vQaRtL4zqWgzTkE
-	 RrYw2DI+mVkTfLDlbJm1ubSBoJoj8s6a4fbEHRjyiSlqGKphDR1ZZVon1lbYDrai0Y6hm
-	 N0Sf9Llj4a3IGEgHkrNHLm+QpqiXeQ0LEfipFFZNzu38v6uMtPKc2AmshDzRmW1uEQ+vw
-	 8hF48GshTUTeFhUA4Ptytkrwcmcs1X5ra3RjtI36F3Udfzckyn0/6uux9hOvS/sM/2CC9
-	 3KOJTKhvioIFyfICMCgjWA8DftZ8uQ5/0V9ETo+mEDtFHg6zFDVrxgOkRS6MDlmIpzg==
+	t=1795420347;
+	b=LTTXg5Fwb3f/BggfdpVkCAbWTkNCUHT3L39qh16Woy9z/oDimu4+WaQ79MqjAiE9t2QZ
+	 PnofpbsQuQfeledQ9W5HNS0/zAMclm5jnP1NXwN+X//CgMNpLDQAu+1MB22fxiv7EfvHd
+	 vc8PBOa4eaohPckj6wNRWoBFmelyDhcYu8vOumonU9g6JOysUlqCBeoU8TuGG8vQdnmjL
+	 LY0GBe5VjVvy56WThofHLimzqcpwcCgqE+5BoqKtaZpiXCw9AtBMI53xOp9NyuCDdkE2Q
+	 dIs82aobbbRtD615Qf6koQc1df22yYtdLz/BQwCDIiR7RxbC8wXr2+vDZ9Sc/IsF6SQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795419908;
-	h=Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=nlDCK9VWXGDaB3guceRvEmNAmbx8U++rKhduEurw+wk=;
-	b=OjOfVOUsQJt4/eTXbQFtNY64a9qG/uMawNsQ3Yl1P1ISNOdbUGN109eH1Nr7oYiMhAR3
-	 qFVsoD45xYo7Ik984MzdtcZ6k6YrPEQ6hZJjc6xbcIS5UeulEy94PC6p/M7yu5VCeTcah
-	 53fYLcjdRLpBeOyr90jA1i2stsTOk9GzZvSFxodNnUll7Njvzp1U+joY4Jw6gUjXggDzT
-	 qsr8KSnoSAxEjQq7dCpjY+h5cvKPPa7U2dlmEDPES768zMSzkuRgMjP5Lo1gEw3poo/W1
-	 8SJ00w/O6X1uyZWwHatM5HpxDZ+j112IMSQY9WOE6lHInS8fUnZnzwLfwRGJ+8G8nqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795420347;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:From:
+	 Subject:To:Cc:References:Content-Language:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=/ak4JXEcaxLe+7GTY2EM46gD3aKECWkUdMVlHN9qWAU=;
+	b=Tu0+wpb5WFvr040MreItQ46oq920y5507QIL2zSVntL7Y4yKpIAj2Mc9QAoDChsvc2cM
+	 MekciQY8BAIMY0Rtbrf8UFI6aYL46juBgdL3f/qyHCuLqzTgNOUmB/IWE1PI9lgGU1ZPZ
+	 EDzOlLJEJzTJQ88dkTDaoQsSL2WIHBKtsgZtYWGCknqmhkMRXwO89eF3nP7oXGgpHdUc1
+	 UiUBWdGOBSe+FCj5W8zU3DjxULaqRj9oX28MzSa058/9Nl4C1Qw/oVQWUjY8THzbKH6Fq
+	 vqmF2i18qzZsqQt8+XS237+XvXgUGqpT8QBYNRLX6RMLU49Jier227H2AIF6VT1CdOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=en2eFRUd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E882B606A33B;
-	Mon, 23 Nov 2026 07:45:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6978A1F000C6;
-	Mon, 23 Nov 2026 07:45:07 +0000 (UTC)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Mon, 23 Nov 2026 08:44:49 +0100
-Subject: [PATCH v2 4/4] pinctrl: qcom: Correct indentation
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EAC606A6BF;
+	Mon, 23 Nov 2026 07:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=en2eFRUd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8B61F000C6;
+	Mon, 23 Nov 2026 07:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795420347;
+	bh=/ak4JXEcaxLe+7GTY2EM46gD3aKECWkUdMVlHN9qWAU=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=en2eFRUdtlQW6ldje8ZlkP4FyNawEEtEifjq2+Aqwy+8kV0CvK9j7OAvO+fVdK1IG
+	 MWonCPsilBRcHlS3KPwN3O+DWHstQ+kbVzKNlAwqnMRAbtVG5YAbT2HeeGrGXVRDZ4
+	 1saUxaP5f+al0PSGSyvtVslACTx7GbSTlDbmT506uTUToKE3eVuuWtY7nRoUdeII+J
+	 VoaZ9wbQ0+t3TT4/dfieZsNDvV/CxdkrZSo1Tl5aV7WTO551uh0kBQVVx9oMW5UK6u
+	 0+IAKM4A7AcFw0bHWWOXPoD7/cdCaCgEcOsASHR5n5vI4qj9OYRk/Tf0p/HHWKeD5r
+	 28bdXh/Rr+D1w==
+Message-ID: <24b7d337-341b-4bd6-82bd-97347095be2d@kernel.org>
+Date: Mon, 23 Nov 2026 08:52:22 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -39,118 +51,101 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH] drm/bridge: tda998x: Fix CEC calibration with lazy IRQ
+ disable
+To: Nhat Tran <nhat.tranminhk2@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Hans Verkuil
+ <hverkuil@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20261120150004.64033-1-nhat.tranminhk2@gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <20261120150004.64033-1-nhat.tranminhk2@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261123-b4-qcom-kconfig-unify-pinctrl-v2-4-958e205b1f60@oss.qualcomm.com>
-References: <20261123-b4-qcom-kconfig-unify-pinctrl-v2-0-958e205b1f60@oss.qualcomm.com>
-In-Reply-To: <20261123-b4-qcom-kconfig-unify-pinctrl-v2-0-958e205b1f60@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3390;
- i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=05HSQp7D1BTYTMSD8GhsWe4YfRK2y146voP7u3KV5vw=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrA+7yz6ZGQb9NNs03VPU5/pLVhY8VqN2DFHQ/V
- TJ4MZfYEoKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawPu8gAKCRDBN2bmhouD
- 14cXD/4+AY/mQ3X9MStgPPy/KMKWYrpY31edo7dRznoZqa5WYv7P/7u3kuZP4iKnReYi1v0186i
- i7u/DGeYxvBPIDeDAlpQGOwcg2P5guWEbLhJa26OL52ExJa292gXSXpzdMXibp1OPnDiU466U9+
- Lm1dVu3CF4ut6mTgdN3hSQhZl3lbTzsVke2kJ5IEhV0szMFKzdikg4Pwqzl5WFpoBWyMLaUBwT3
- Li5snOs/1uavazyOaD3czjYnoTG890LPtVSSjJpbjLm9CRyAMmlmAPhw5G0HAeiiY/MEm9HLros
- V8DzhFnPbjwea4PHcJI0eoa9xobJaCXpfAtXPoj1ArOMhr+MKh6b1WIel9vjsyUkG2wSElB1v+i
- HTwc40bv040s/rvnrPndQhqSogNtwUSdigVMVKYiUC0Pz4Pp27J/T/8F1TqUNP35fKeL9XpmK+g
- X1nj3Fjxnb93LcYv5xq2y5wghAMJ+TVEClOg+JdaOH1NWMJ9oqzYgagtnbRKy58Mz85d0sovZIA
- nHzObORkUDNRPIfUcdBTopwPlAiOVo6PMyuZC/gFR/ECQQVXMocjZPkGT9QRDa8BJbspmDdB8fb
- NPyWgbY9t77/z9EiEXdhR3N0xhWbQw5gu4DdIZ3qDHKw172Mo3PulPaUDYNo5zOPoEzKXpnqTuJ
- AuL4ADCIWDTiq0A==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Correct Kconfig indentation style to expected tab, instead of spaces.
+On 20/11/2026 16:00, Nhat Tran wrote:
+> The CEC oscillator calibration pulses the TDA998x interrupt line low for
+> 10ms through the "nxp,calib" GPIO. Before driving the line,
+> tda998x_cec_calibration() calls disable_irq() so that gpiolib allows the
+> GPIO, which is also used as an interrupt, to be switched to an output.
+> 
+> gpiolib only allows that once the interrupt is actually disabled at the
+> GPIO controller. Since commit a8173820f441 ("gpio: gpiolib: Allow GPIO
+> IRQs to lazy disable"), disable_irq() is lazy on GPIO controllers that
+> do not implement .irq_disable, such as gpio-omap: the line is not masked
+> and gpiolib still considers the interrupt enabled. The direction change
+> is refused and the calibration pulse is never generated. On a
+> BeagleBone Black this happens on every boot:
+> 
+>   tda998x 0-0070: found TDA19988
+>   gpio-537 (nxp,calib): gpiod_direction_output_nonotify: tried to set a GPIO tied to an IRQ as output
+>   tda9950 0-0034: TDA9950 CEC interface, hardware version 3.3
+> 
+> Set IRQ_DISABLE_UNLAZY for the duration of the calibration so that
+> disable_irq() masks the line immediately, and clear it again once the
+> interrupt has been re-enabled.
+> 
+> Tested on a BeagleBone Black without an HDMI sink connected: the error
+> is gone, the GPIO is back to an input used as an interrupt afterwards,
+> no spurious interrupts are raised, and rebinding tda9950 repeatedly
+> reruns the calibration cleanly. CEC communication with a sink was not
+> tested.
+> 
+> Fixes: a8173820f441 ("gpio: gpiolib: Allow GPIO IRQs to lazy disable")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nhat Tran <nhat.tranminhk2@gmail.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- drivers/pinctrl/qcom/Kconfig.msm | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
 
-diff --git a/drivers/pinctrl/qcom/Kconfig.msm b/drivers/pinctrl/qcom/Kconfig.msm
-index 51d005aea162..abb743d2235a 100644
---- a/drivers/pinctrl/qcom/Kconfig.msm
-+++ b/drivers/pinctrl/qcom/Kconfig.msm
-@@ -99,9 +99,9 @@ config PINCTRL_IPQ5424
- 	default ARCH_QCOM
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
--          the Qualcomm Technologies Inc. TLMM block found on the
--          Qualcomm Technologies Inc. IPQ5424 platform. Select this for
--          IPQ5424.
-+	  the Qualcomm Technologies Inc. TLMM block found on the
-+	  Qualcomm Technologies Inc. IPQ5424 platform. Select this for
-+	  IPQ5424.
- 
- config PINCTRL_IPQ8074
- 	tristate "Qualcomm IPQ8074 pin controller driver"
-@@ -129,9 +129,9 @@ config PINCTRL_IPQ9574
- 	default ARCH_QCOM
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
--          the Qualcomm Technologies Inc. TLMM block found on the
--          Qualcomm Technologies Inc. IPQ9574 platform. Select this for
--          IPQ9574.
-+	  the Qualcomm Technologies Inc. TLMM block found on the
-+	  Qualcomm Technologies Inc. IPQ9574 platform. Select this for
-+	  IPQ9574.
- 
- config PINCTRL_IPQ9650
- 	tristate "Qualcomm IPQ9650 pin controller driver"
-@@ -139,9 +139,9 @@ config PINCTRL_IPQ9650
- 	default ARCH_QCOM
- 	help
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
--          the Qualcomm Technologies Inc. TLMM block found on the
--          Qualcomm Technologies Inc. IPQ9650 platform. Select this for
--          IPQ9650.
-+	  the Qualcomm Technologies Inc. TLMM block found on the
-+	  Qualcomm Technologies Inc. IPQ9650 platform. Select this for
-+	  IPQ9650.
- 
- config PINCTRL_KAANAPALI
- 	tristate "Qualcomm Kaanapali pin controller driver"
-@@ -441,21 +441,21 @@ config PINCTRL_SDX55
- 	 Technologies Inc SDX55 platform.
- 
- config PINCTRL_SDX65
--        tristate "Qualcomm SDX65 pin controller driver"
--        depends on ARM || COMPILE_TEST
-+	tristate "Qualcomm SDX65 pin controller driver"
-+	depends on ARM || COMPILE_TEST
- 	default ARCH_QCOM
--        help
--         This is the pinctrl, pinmux, pinconf and gpiolib driver for the
--         Qualcomm Technologies Inc TLMM block found on the Qualcomm
--         Technologies Inc SDX65 platform.
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc TLMM block found on the Qualcomm
-+	  Technologies Inc SDX65 platform.
- 
- config PINCTRL_SDX75
--        tristate "Qualcomm SDX75 pin controller driver"
-+	tristate "Qualcomm SDX75 pin controller driver"
- 	default ARCH_QCOM if ARM64
--        help
--         This is the pinctrl, pinmux, pinconf and gpiolib driver for the
--         Qualcomm Technologies Inc TLMM block found on the Qualcomm
--         Technologies Inc SDX75 platform.
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc TLMM block found on the Qualcomm
-+	  Technologies Inc SDX75 platform.
- 
- config PINCTRL_SHIKRA
- 	tristate "Qualcomm Shikra pin controller driver"
+Regards,
 
--- 
-2.53.0
+	Hans
+
+> ---
+>  drivers/gpu/drm/bridge/tda998x_drv.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/tda998x_drv.c b/drivers/gpu/drm/bridge/tda998x_drv.c
+> index 0b966c9844e7..0815ce283f49 100644
+> --- a/drivers/gpu/drm/bridge/tda998x_drv.c
+> +++ b/drivers/gpu/drm/bridge/tda998x_drv.c
+> @@ -495,8 +495,16 @@ static void tda998x_cec_calibration(struct tda998x_priv *priv)
+>  	struct gpio_desc *calib = priv->calib;
+>  
+>  	mutex_lock(&priv->edid_mutex);
+> -	if (priv->hdmi->irq > 0)
+> +	if (priv->hdmi->irq > 0) {
+> +		/*
+> +		 * The pulse is driven on the IRQ line itself, and gpiolib
+> +		 * refuses to drive a GPIO whose interrupt is still enabled.
+> +		 * Make disable_irq() mask the line right away instead of
+> +		 * lazily, so that the GPIO can be switched to an output.
+> +		 */
+> +		irq_set_status_flags(priv->hdmi->irq, IRQ_DISABLE_UNLAZY);
+>  		disable_irq(priv->hdmi->irq);
+> +	}
+>  	gpiod_direction_output(calib, 1);
+>  	tda998x_cec_set_calibration(priv, true);
+>  
+> @@ -508,8 +516,10 @@ static void tda998x_cec_calibration(struct tda998x_priv *priv)
+>  
+>  	tda998x_cec_set_calibration(priv, false);
+>  	gpiod_direction_input(calib);
+> -	if (priv->hdmi->irq > 0)
+> +	if (priv->hdmi->irq > 0) {
+>  		enable_irq(priv->hdmi->irq);
+> +		irq_clear_status_flags(priv->hdmi->irq, IRQ_DISABLE_UNLAZY);
+> +	}
+>  	mutex_unlock(&priv->edid_mutex);
+>  }
+>  
 
