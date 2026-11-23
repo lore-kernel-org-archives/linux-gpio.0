@@ -1,100 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.177
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795433798;
-	b=uCqKo6zb9AfXcq6GHciCJOVNbOFZeG3B7KAGVx+LHfob7SuXRnXBINTyRRwN/8qbaDhH
-	 /+3MBHMnPAtfMFV2BDJy5NUv4EG2L/La4bXjkDmoilpTVyKKmZJl/ld1Ef3IdYxllrBKA
-	 7vL+zsT1glqQghKwSXwQFTqxMT/V2XdS7T1+6zmBqMZgET9KecX5ppF/9wW33ij3caxy3
-	 hl6Y6YeEf8uiYQDvF+CHmRkuq6ATzv/4uZseDEFphx30injC1QnT05fyZm4zJHSMVemw7
-	 sI0i54tsApMzvHZkhHKGHw7626HC9zMI25M6t76+HdQgVrxtfuJ6EZ4ydf5F/5YMeLA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795433798;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=vZYdA0fjzo7NjFJLaf6czIKNNxABIHmPQ8aqnddB+K8=;
-	b=KfYAesWe3G0Ni706UsTA9bpvxL5SusR49cXYtyfB5JsGFH/puyqevCUpAetJhJERh+1h
-	 qLlY2RQr8ok3KyDFaN0f8XwJoM7HPD2+lVBWUArqmhipdBklyyIgIINhRu1S4xDwhSU74
-	 gd/s8oBhujPj7pdvjOujHkz5EzpwaC3PAmSTSagCRbbK9rqTJuXVOqUumDIH0aHb5zMZd
-	 tgoCdozK5+d/1V4pVYiaAHD/WJHQJFzVvB7VkUmeu/nuc0LxI1Hy1tmvBjuqkb5lKZ24y
-	 5X7bHy2ofctpaM5Gc/oSgd2Z+BEwu+aEJeUMBk1rDCVKGEqdz9rVSEbMrHC5hJG9RcA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QwQS4Kvc;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.177
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=188.68.63.102
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795433937;
+	b=cW2FmQZvdNPZlDZHRLbw8WybUcJQSUiJ1kz5Oc6PuxNPLjfxcT7YT/9KU1yn9KT0ysqL
+	 Ng7jc+PxLm8/0o/c3o/5J5boHKnPX9neWUNPy8BQycgoaIgGExefZ3ixlzLyk6n6L1max
+	 cOpM/2PVSzJPI1n0JSdj5QOaez0eYO3QrIW1O/3hCgr6Kea7WfTyJXuQiQ48kU9xqx+RF
+	 SKtTl6t0EAYF07on17VltYkl29jnxXkyCDDdj2lJRHv/Br/eNy/hckkugF0ZZGLwsrQQS
+	 rCAtrpqWWDMXXEQfDMINB6pIwpLN/z+cMAdk0fK5as25GUnGJE6OQkGHGAPJk+x2m8A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795433937;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received-SPF:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 References:From:Content-Language:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-PPP-Message-ID:X-Rspamd-Server:
+	 X-Rspamd-Queue-Id:X-NC-CID;
+	bh=DXr0pXHD3bRMuhs+z9S3qmz1LdcfanyjhhMk8486lYs=;
+	b=bpS5pbv5OuVGHPik8MITeNsM5xfMPdz25DeHXQD4jM8i4+KGXGYqhpOkQVFEEqRJR0rD
+	 8P4fxYtzcs/Q9ec7ohedjHQRraf5D/V7uu9PXvQ/xayUc9lB2IJOWM/492VkIOVOXd9wf
+	 u6HJfsBafWKRSpnq6y3Ww59vrECeCPMHLjyxcIahMrvRvgCC1HyDQTnozXZ3d62cpOE5/
+	 xooB35S/fYP5ryhG36oUM0+AStVOiFnKvYVNJGPmoNEoWEGs3dURVWt6lz98HrLch/29p
+	 D/JqbTV46y/vGN8RUOBTwR9ZcYjMcZptlYERlB+VgsnDHOhG17jWjGw3XQLD6Q75RIg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=leemhuis.info;
+	spf=pass smtp.mailfrom=leemhuis.info;
+	dkim=pass header.d=leemhuis.info header.i=@leemhuis.info header.a=rsa-sha256 header.s=key2 header.b=hHxmnXfG;
+	arc=none smtp.remote-ip=188.68.63.102
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55B606A31A
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:36:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BC55B606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E45606A31E;
+	Mon, 23 Nov 2026 11:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 17E45606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QwQS4Kvc
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-4c5d8c7f326so1273142b6e.1
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 03:36:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795433796; cv=none;
-        d=google.com; s=arc-20260327;
-        b=iqoga9aj+VvGMWGbnCipnwNJayYHmrzzYNjNi2f2Y2BkdMmd7Y0NluCz7pdCOy+Nkb
-         D/kAwnJWduAdUm26l6Wdx+WEaoEOza8fRs/h6wVAQyqpcGmi/MfTRQR0jxg0EUi6XgR9
-         ogawNkfgBNanV/qfHZnPICrNddv/DmD3JNVdntyW2RBnYYh6W/es1rozXgb8HVrJEs3e
-         DS4CCil61kHi/ZR4joh+cwSmJqiV55biB0fub4ICLR71QvaiQHTRic3e4WKmCTLY7ZGe
-         oihHYuJQnlgogeUnMfOltQkIunw0L7iw7GNBshoPWEFfNQkRqExxwWH8a5vdQjNcqsk1
-         c8RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vZYdA0fjzo7NjFJLaf6czIKNNxABIHmPQ8aqnddB+K8=;
-        fh=VTfPfR6x6POwJjpcxStCC08LXB+WDKQKUZlOd00NBaA=;
-        b=ZMyJa6j/aB1ugpgJ6yP11IuuV0FjeOnL+yTtBmxL5iykOBtoF1s72FuNwPz6fZ+QhM
-         jShBAe61+rAJEttKzPcV/xuRs9l8spfoP2ekXT4/5Ijz2wLTiHQBLLuw8llXXRw/Fhum
-         c5/XSxoJf3cCZ0IZE8Sa/7CkqPStUynIbyfSaFR6tmdWTJTL8TD9csU2qgtfrXGsXTTx
-         K6PsQstUQqr33qFtsKLKqkI1627kqLeGnL5ogCDkhDT04naowpW34N3J+iLGzGDOquHh
-         e0FrYV+7VMuhzEzKCedfVrivJjpioKw2fEkL7uBIMZoisyVjam4Yk6ch+O+GOUkmWc0y
-         aE+w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795433796; x=1796038596; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=vZYdA0fjzo7NjFJLaf6czIKNNxABIHmPQ8aqnddB+K8=;
-        b=QwQS4Kvcmd9vEb9+JAVD5aspwCvbTumysoQQcTus9TF8U/CaBSd5oCYabzHDFOuQ07
-         MJkNAsCZBDj1wjxufBnjMibbFVdh2QPtjnzQURGXXe4253k1vNxgSSunhgGTzEUj3Gbi
-         H+C75OnI06SY7zJNZczKDJR1ovbVkWDzh+vjDdCnUPp3GowrdjW+4A5tj0UyUl/+d5A6
-         i5niABJpDMHlOuM9YWAwx2BVlObp+cFJzKRGSDdqY2wYX/+RqYmhB/KhB2iI00242FAR
-         Ctm6d10zT4+SrrXwmWC3UsoD9LWrk1IS9s2BghiEildugMzaEkvfIMBNjdqN3wfiqJOI
-         YMaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795433796; x=1796038596;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vZYdA0fjzo7NjFJLaf6czIKNNxABIHmPQ8aqnddB+K8=;
-        b=a2081nc3Hq+XDXCNO1UgYKcQibDj1/LR6zjVfg4b1iPASMWVNQk2kWvTx2JDikoyRo
-         7sxA9J+IybslG0c5hTY4eaS3o8iRChXe6m0cdqwisaLkgB5/c3ULfvdspjrjCDR+VjQS
-         pV+MSO4tlNR+QGAyUWln4J0FcUi0eRyHEOHNVVOv6IOQXDBh82wI4DQVLh+0XG3Bqdx/
-         8AgP35Ls8fSOkrDJrV8VuvItA4CnaRIAaeT9lOw+hW1iYO9yowP+YtLAau+x5ybU7/BB
-         UuisZM57SOmW4zGo6btHy5xcQalA2Z9ZYEBcdDSkZXOe0/2JJE1SIu/b2HIeLBH/5FFR
-         sc3A==
-X-Forwarded-Encrypted: i=1; AL+hErFv+U0ewIdlZOBgObAgB463TjSyQiuKSLXqe4DzcIeKX6XMywN6XYahpWtJEU7ZYfreky6ZiX/FzpWv@vger.kernel.org
-X-Gm-Message-State: APuU4Z8wbry068IHHXyHBhyaeaxoMfgBP71XxcOEuLSKHFDi942NmqeR
-	72Dk9F8UMmKgUddmQK19CbSA41UuZsKd1UHhg2EfTkVmRsxS4vEg28ilkGEcJMDVRaaPTZK3RZZ
-	m1waDdVNRhPRLt1aIwd++NFP3pPYzP28=
-X-Gm-Gg: AZFdTZeekYJzilYW4A6yYJlEkIxfcmNTqb4PU5vt6xqUr3qs826yENcGi5l5XcFf0h/
-	GtoCR9ppJLUzzTRz1gDtWOD/E/wppOz78PW0tcFf/uwGz2LaLkr4f71YLWJpqgJ6MkFGRHuMlP5
-	ZrfYUllZYGafSKLCU3sK4faghdIab/4/67GKUrX7V3pXAxdtSFg1QNOGhsD5ctFdXjPeQ+dcRfx
-	p1WLgmXHX2TMxW8Z/ImIykMWOXuqVNRBa+kemTCC1kHVI1v/YTpnKaavaBd8/Sn6a7qXBcl1E9G
-	KxpCU8uxcj6UUldA2gQem1RaixIvxK8z/P/K0ORgH00SXC0hgR1NzQguqNNKub0GG6eWj7WxSeV
-	jzgE1/13w3T1UeMCcvbRv0MalD6T5K33vClBOpQ==
-X-Received: by 2002:a05:6808:c1d3:b0:572:f1d1:d6b0 with SMTP id
- 5614622812f47-57a0c9c5064mr10468841b6e.65.1795433796427; Mon, 23 Nov 2026
- 03:36:36 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=leemhuis.info header.i=@leemhuis.info header.a=rsa-sha256 header.s=key2 header.b=hHxmnXfG
+Received: from mors-relay-2502.netcup.net (localhost [127.0.0.1])
+	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4jY3qN4pFMz6Mv3;
+	Mon, 23 Nov 2026 12:38:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
+	s=key2; t=1795433920;
+	bh=bpCvclBnqTFpGqJDi3k3TXF12kr9zYWAAPKnUQdM+Ys=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hHxmnXfGaV6gtwR1p/Y7UOMXqWyXPLF5fVG40GmvkkMHUIuPcB1obwxI3U/KCbsVa
+	 xjAQVl/w4bJWaZqfPDY754hKRxLgL2MtEiLX3gj4u7m/5PKSaBUzQFadwlEJxdgz0f
+	 5f5qSdKe6yOLF6XJyPa3AQKdcZmI5orisNMh8qsry09Y+R/q4nN3NoRT9YtcJLuvww
+	 bR3VzlvCHFE/8M+frvG2QBUXAG3qwMrPBB02hV0yb0ipcPxvTbzypwqjBjwyb/c+ki
+	 VeoECKG+4NK7dJhgyTPhC0MrfVa71l8oHmg3l8DziWeL87OOP+ZBANVDIz1SuRzg6Q
+	 l+EP9Z79oabWA==
+Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
+	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4jY3pS2P6Gz4yrS;
+	Mon, 23 Nov 2026 12:37:52 +0100 (CET)
+Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4jY3pQ3r1Qz8svX;
+	Mon, 23 Nov 2026 12:37:50 +0100 (CET)
+Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
+	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 799775F837;
+	Mon, 23 Nov 2026 12:37:44 +0100 (CET)
+Authentication-Results: mxe9fb;
+        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
+Received-SPF: pass (mxe9fb: connection is authenticated)
+Message-ID: <329cd215-d824-44be-a1dd-3ebbf5c0803a@leemhuis.info>
+Date: Mon, 23 Nov 2026 12:37:43 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -104,608 +74,82 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <0935c08b-828e-4a8f-95fc-04b82ab30fe7@bytesatwork.ch>
- <knel65hfjbq3j4trrtrkdwg5brf4mu6md4fzudtkrf2mznqrnp@6nitoipqu7k5>
- <CAFOBSkR9eHu_2UZkyu-v8saQ2YrKNcQxbLbyKNkFWtZw3XvMMQ@mail.gmail.com>
- <CAFOBSkSHt5nwdqsf=V0esBh23oTkOzy--9-vBQFPBoroGK3-HA@mail.gmail.com> <0a4623a1-0c3e-4802-a7fd-cfceb84de40f@bytesatwork.ch>
-In-Reply-To: <0a4623a1-0c3e-4802-a7fd-cfceb84de40f@bytesatwork.ch>
-From: =?UTF-8?B?TWFyw61hIEdhcmPDrWEgRmVybsOhbmRleg==?= <mariagarcia7293@gmail.com>
-Date: Mon, 23 Nov 2026 12:36:25 +0100
-X-Gm-Features: Aa3M54rdAVV7C_gJbRBedZf3DzILP08z6Wnb27-Si90wiryMu0y7LUZ2-qCn2xc
-Message-ID: <CAFOBSkRmgT2k37LEhxjfZBORgFnz-GiYayGKpy_Oo4ankO+P7Q@mail.gmail.com>
-Subject: Re: gpio: pca953x: TCA6418 support and driver design
-To: Guy Morand <guy.morand@bytesatwork.ch>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] usb: core: fix failed device driver probes, add
+ pre_probe
+To: James Clark <jjc@jclark.com>, Alan Stern <stern@rowland.harvard.edu>
+Cc: Johan Hovold <johan@kernel.org>, Bastien Nocera <hadess@hadess.net>,
+ Matthias Kaehlcke <mka@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Douglas Anderson <dianders@chromium.org>,
+ Robert Nelson <robertcnelson@gmail.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <cover.1793669297.git.jjc@jclark.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: de-DE, en-US
+In-Reply-To: <cover.1793669297.git.jjc@jclark.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: 
+ <179543386507.1524621.15830580690752356180@mxe9fb.netcup.net>
+X-Rspamd-Server: rspamd-worker-8404
+X-Rspamd-Queue-Id: 799775F837
+X-NC-CID: t5w+dL6WwtxG3tWCMI8WeaTrlJSnO3BdmPMvXavSdnkLoYzMeOI=
 
-Hi Guy, Bartosz,
+On 11/3/26 04:34, James Clark wrote:
+> On a BeagleY-AI with BeagleBoard's device tree, kernels since commit
+> f918e3804498 ("arm64: enable HAVE_SHARED_GPIOS for all ARM64 platforms")
+> no longer boot to a usable system: the on-board USB hub is re-probed in
+> a loop. Patch 2 fixes this as Johan Hovold suggested, with a pre_probe
+> callback that lets onboard_usb_dev defer before the hub is configured.
 
-You may be surprised by my recent submission after Guy had also just
-sent something. We discussed privately and have been testing and
-discussing the fix together (on our respective setups that is), and
-agreed on me sending it since we ended up using my code.
+James, Alan, what happened to this? Looks like it feel through the
+cracks after Alan's "This is all starting to sound very complicated and
+fragile.  Isn't there any way to simplify it?" later in the thread,
+which was more than two weeks ago. Or was this regression fixed and I
+just missed it?
 
-Thank you for your time.
+Side note: another regression bisected to the above mentioned culprit
+was reported recently:
 
-Kind regards,
+gpio: shared-proxy: open-drain regulators on ODROID-HC4 fail with -EPERM
+https://lore.kernel.org/all/20261115-hc4-gpio-shared-od-1@iav.lv/
 
-Maria Garcia.
+Doesn't look related from a quick look, but well, at the same time I
+wonder if there is some subtle connection.
 
-El jue, 19 nov 2026 a las 9:55, Guy Morand
-(<guy.morand@bytesatwork.ch>) escribi=C3=B3:
->
-> Hi Bartosz, Mar=C3=ADa,
->
-> Thanks for the quick feedback.
->
-> Maria, my intention is not to assign blame. These issues can look like
-> userspace bugs, so I would like to help prevent others from spending
-> time debugging the wrong layer. I would be happy to work together on
-> more specific test scenarios.
->
-> Bartosz, I have implemented a preliminary set of changes to the TCA6418
-> support in gpio-pca953x and tested input, output and interrupts on our
-> board. I=E2=80=99ve included the patch below as a starting point for disc=
-ussion,
-> it is not yet a formal submission.
->
-> My preference would be to move the TCA6418 support to a dedicated
-> driver, since it requires a number of chip-specific operations. Our
-> existing driver could serve as a starting point:
-> https://github.com/bytesatwork/linux-imx/blob/baw-lf-6.18.20-2.0.0/driver=
-s/gpio/gpio-tca6418.c
->
-> By keeping the existing ti,tca6418 compatible, it will remain compatible
-> with existing device trees.
->
-> Maria, if you have time to test the dedicated driver with your hardware
-> and use case, I would highly appreciate your feedback.
->
-> Would you prefer that I prepare the dedicated driver as an RFC, or clean
-> up the gpio-pca953x changes instead?
->
-> Best regards,
-> Guy Morand
-> --
-> bytesatwork
-> Technoparkstrasse 7
-> CH-8406 Winterthur
-> Switzerland
->
->  From 5e4be90be3d240893bb1125b5b763493be6d2605 Mon Sep 17 00:00:00 2001
-> From: Guy Morand <guy.morand@bytesatwork.ch>
-> Date: Wed, 18 Nov 2026 09:33:49 +0100
-> Subject: [PATCH] gpio: gpio-pca953x: Fix tca6418 support
->
-> The original support was only working when configuring a single line,
-> without changing its value at runtime (gpioset -c xxx 0=3D1). When
-> toggling the line at runtime, multiple write was generated on the i2c
-> bus which lead to corrupted register due to auto increment not being
-> supported by the chip (gpioset -c xxx -t 10ms,10ms,0 0=3D0).
->
-> Moreover, gpioget was not working due to regmap INPUT register not
-> declared as volatile, reading a staled value.
->
-> Interrupt handling was missing.
->
-> To make it work, the following changes were done:
-> * Do not use auto increment
-> * Declare INT_STATUS and INPUT registers volatile
-> * Add configuring interrupt handling registers
-> * Add tca6418 specific interrupt handler
-> * Revert the first bank bit order in set multiple line
->
-> Signed-off-by: Guy Morand <guy.morand@bytesatwork.ch>
-> ---
->   drivers/gpio/gpio-pca953x.c | 252 +++++++++++++++++++++++++++++++++---
->   1 file changed, 234 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index ead20c357418..bbedbd35e97c 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -10,6 +10,7 @@
->
->   #include <linux/atomic.h>
->   #include <linux/bitmap.h>
-> +#include <linux/bitrev.h>
->   #include <linux/cleanup.h>
->   #include <linux/device.h>
->   #include <linux/errno.h>
-> @@ -38,9 +39,14 @@
->   #define PCA953X_INVERT                0x02
->   #define PCA953X_DIRECTION     0x03
->
-> +#define TCA6418_INT_STATUS     0x02
-> +#define TCA6418_GPIO_INT_STATUS        0x11
->   #define TCA6418_INPUT         0x14
->   #define TCA6418_OUTPUT                0x17
-> +#define TCA6418_GPIO_INT_ENABLE        0x1a
->   #define TCA6418_DIRECTION     0x23
-> +#define TCA6418_GPIO_INT_LEVEL 0x26
-> +#define TCA6418_GPI_INT                BIT(1)
->
->   #define REG_ADDR_MASK         GENMASK(5, 0)
->   #define REG_ADDR_EXT          BIT(6)
-> @@ -385,22 +391,45 @@ static bool pcal6534_check_register(struct
-> pca953x_chip *chip, unsigned int reg,
->         return true;
->   }
->
-> +static void tca6418_revert_low_byte(unsigned long *reg_val)
-> +{
-> +       bitmap_set_value8(reg_val, bitrev8(bitmap_get_value8(reg_val, 0))=
-,
-> +                                         0);
-> +}
-> +
->   /* TCA6418 breaks the PCA953x register order rule */
->   static bool tca6418_check_register(struct pca953x_chip *chip, unsigned
-> int reg,
->                                    u32 access_type_mask)
->   {
-> -       /*  Valid Input Registers - BIT(0) for readable access */
-> +       /*
-> +        * BIT(0) readable
-> +        * BIT(1) writable
-> +        * BIT(2) volatile
-> +        */
-> +       if (reg =3D=3D TCA6418_INT_STATUS)
-> +               return access_type_mask & (BIT(0) | BIT(1) | BIT(2));
-> +
-> +       if (reg >=3D TCA6418_GPIO_INT_STATUS &&
-> +           reg < TCA6418_GPIO_INT_STATUS + NBANK(chip))
-> +               return access_type_mask & (BIT(0) | BIT(2));
-> +
->         if (reg >=3D TCA6418_INPUT && reg < (TCA6418_INPUT + NBANK(chip))=
-)
-> -               return (access_type_mask & BIT(0));
-> +               return (access_type_mask & (BIT(0) | BIT(2)));
->
-> -       /*  Valid Output Registers - BIT(1) for writeable access */
->         if (reg >=3D TCA6418_OUTPUT && reg < (TCA6418_OUTPUT + NBANK(chip=
-)))
->                 return (access_type_mask & (BIT(0) | BIT(1)));
->
-> -       /*  Valid Direction Registers - BIT(2) for volatile access */
-> +       if (reg >=3D TCA6418_GPIO_INT_ENABLE &&
-> +           reg < TCA6418_GPIO_INT_ENABLE + NBANK(chip))
-> +               return access_type_mask & (BIT(0) | BIT(1));
-> +
->         if (reg >=3D TCA6418_DIRECTION && reg < (TCA6418_DIRECTION + NBAN=
-K(chip)))
->                 return (access_type_mask & (BIT(0) | BIT(1)));
->
-> +       if (reg >=3D TCA6418_GPIO_INT_LEVEL &&
-> +           reg < TCA6418_GPIO_INT_LEVEL + NBANK(chip))
-> +               return access_type_mask & (BIT(0) | BIT(1));
-> +
->         return false;
->   }
->
-> @@ -711,14 +740,18 @@ static int pca953x_gpio_get_multiple(struct
-> gpio_chip *gc,
->         if (ret)
->                 return ret;
->
-> +       if (PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA6418_TYPE)
-> +               tca6418_revert_low_byte(reg_val);
-> +
->         bitmap_replace(bits, bits, reg_val, mask, gc->ngpio);
->         return 0;
->   }
->
-> -static int pca953x_gpio_set_multiple(struct gpio_chip *gc,
-> -                                    unsigned long *mask, unsigned long *=
-bits)
-> +static int pca953x_gpio_set_multiple(struct gpio_chip *gc, unsigned
-> long *mask,
-> +                                    unsigned long *bits)
->   {
->         struct pca953x_chip *chip =3D gpiochip_get_data(gc);
-> +       bool is_tca6418 =3D PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA64=
-18_TYPE;
->         DECLARE_BITMAP(reg_val, MAX_LINE);
->         int ret;
->
-> @@ -728,8 +761,15 @@ static int pca953x_gpio_set_multiple(struct
-> gpio_chip *gc,
->         if (ret)
->                 return ret;
->
-> +       /* TCA6418's first bank is reversed relative to GPIO offsets. */
-> +       if (is_tca6418)
-> +               tca6418_revert_low_byte(reg_val);
-> +
->         bitmap_replace(reg_val, reg_val, bits, mask, gc->ngpio);
->
-> +       if (is_tca6418)
-> +               tca6418_revert_low_byte(reg_val);
-> +
->         return pca953x_write_regs(chip, chip->regs->output, reg_val);
->   }
->
-> @@ -925,6 +965,74 @@ static void pca953x_irq_print_chip(struct irq_data
-> *data, struct seq_file *p)
->         seq_puts(p, dev_name(gc->parent));
->   }
->
-> +static int tca6418_irq_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> +       struct pca953x_chip *pca953x =3D gpiochip_get_data(gc);
-> +
-> +       if (type !=3D IRQ_TYPE_EDGE_RISING && type !=3D IRQ_TYPE_EDGE_FAL=
-LING) {
-> +               dev_err(&pca953x->client->dev, "Only rising or falling ed=
-ge are
-> supported\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       return pca953x_irq_set_type(d, type);
-> +}
-> +
-> +static void tca6418_irq_bus_sync_unlock(struct irq_data *d)
-> +{
-> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> +       struct pca953x_chip *chip =3D gpiochip_get_data(gc);
-> +       struct device *dev =3D &chip->client->dev;
-> +       DECLARE_BITMAP(irq_enabled, MAX_LINE);
-> +       DECLARE_BITMAP(irq_level, MAX_LINE);
-> +       DECLARE_BITMAP(irq_inputs, MAX_LINE);
-> +       unsigned int offset;
-> +       int ret;
-> +
-> +       bitmap_or(irq_inputs, chip->irq_trig_raise, chip->irq_trig_fall,
-> +                 gc->ngpio);
-> +       bitmap_copy(irq_enabled, chip->irq_mask, gc->ngpio);
-> +       for_each_set_bit(offset, irq_inputs, gc->ngpio) {
-> +               ret =3D pca953x_gpio_direction_input(gc, offset);
-> +               if (ret) {
-> +                       dev_err(dev, "failed to set IRQ line %u as input:=
- %d\n",
-> +                               offset, ret);
-> +                       clear_bit(offset, irq_enabled);
-> +               }
-> +       }
-> +
-> +       bitmap_copy(irq_level, chip->irq_trig_raise, gc->ngpio);
-> +       tca6418_revert_low_byte(irq_level);
-> +       tca6418_revert_low_byte(irq_enabled);
-> +
-> +       {
-> +               guard(mutex)(&chip->i2c_lock);
-> +               ret =3D pca953x_write_regs(chip, TCA6418_GPIO_INT_LEVEL,
-> +                                        irq_level);
-> +               if (!ret)
-> +                       ret =3D pca953x_write_regs(chip, TCA6418_GPIO_INT=
-_ENABLE,
-> +                                                irq_enabled);
-> +       }
-> +       if (ret)
-> +               dev_err(dev, "failed to configure TCA6418 interrupts: %d\=
-n",
-> +                       ret);
-> +
-> +       mutex_unlock(&chip->irq_lock);
-> +}
-> +
-> +static const struct irq_chip tca6418_irq_chip =3D {
-> +       .irq_mask               =3D pca953x_irq_mask,
-> +       .irq_unmask             =3D pca953x_irq_unmask,
-> +       .irq_set_wake           =3D pca953x_irq_set_wake,
-> +       .irq_bus_lock           =3D pca953x_irq_bus_lock,
-> +       .irq_bus_sync_unlock    =3D tca6418_irq_bus_sync_unlock,
-> +       .irq_set_type           =3D tca6418_irq_set_type,
-> +       .irq_shutdown           =3D pca953x_irq_shutdown,
-> +       .irq_print_chip         =3D pca953x_irq_print_chip,
-> +       .flags                  =3D IRQCHIP_IMMUTABLE,
-> +       GPIOCHIP_IRQ_RESOURCE_HELPERS,
-> +};
-> +
->   static const struct irq_chip pca953x_irq_chip =3D {
->         .irq_mask               =3D pca953x_irq_mask,
->         .irq_unmask             =3D pca953x_irq_unmask,
-> @@ -1011,6 +1119,80 @@ static bool pca953x_irq_pending(struct
-> pca953x_chip *chip, unsigned long *pendin
->         return !bitmap_empty(pending, gc->ngpio);
->   }
->
-> +static int tca6418_irq_pending(struct pca953x_chip *chip,
-> +                              unsigned long *pending, bool *asserted)
-> +{
-> +       struct gpio_chip *gc =3D &chip->gpio_chip;
-> +       struct device *dev =3D &chip->client->dev;
-> +       u8 int_status[MAX_BANK];
-> +       unsigned int status;
-> +       int i, ret;
-> +
-> +       lockdep_assert_held(&chip->irq_lock);
-> +       lockdep_assert_held(&chip->i2c_lock);
-> +
-> +       *asserted =3D false;
-> +       ret =3D regmap_read(chip->regmap, TCA6418_INT_STATUS, &status);
-> +       if (ret || !(status & TCA6418_GPI_INT))
-> +               return ret;
-> +
-> +       *asserted =3D true;
-> +       ret =3D regmap_bulk_read(chip->regmap, TCA6418_GPIO_INT_STATUS,
-> +                              int_status, NBANK(chip));
-> +       if (ret) {
-> +               dev_err_ratelimited(dev, "failed read int status: %d\n", =
-ret);
-> +               return ret;
-> +       }
-> +
-> +       for (i =3D 0; i < NBANK(chip); i++)
-> +               bitmap_set_value8(pending, int_status[i], i * BANK_SZ);
-> +       tca6418_revert_low_byte(pending);
-> +       bitmap_and(pending, pending, chip->irq_mask, gc->ngpio);
-> +
-> +       ret =3D regmap_write(chip->regmap, TCA6418_INT_STATUS, TCA6418_GP=
-I_INT);
-> +       if (ret)
-> +               dev_err_ratelimited(dev, "failed to handle TCA6418 IRQ: %=
-d\n", ret);
-> +
-> +       return ret;
-> +}
-> +
-> +static irqreturn_t tca6418_irq_handler(struct pca953x_chip *chip)
-> +{
-> +       struct gpio_chip *gc =3D &chip->gpio_chip;
-> +       struct device *dev =3D &chip->client->dev;
-> +       DECLARE_BITMAP(pending, MAX_LINE);
-> +       bool asserted =3D false;
-> +       int level, ret;
-> +
-> +       for (;;) {
-> +               bitmap_zero(pending, MAX_LINE);
-> +               {
-> +                       guard(mutex)(&chip->irq_lock);
-> +                       guard(mutex)(&chip->i2c_lock);
-> +                       ret =3D tca6418_irq_pending(chip, pending, &asser=
-ted);
-> +               }
-> +
-> +               if (ret || !asserted)
-> +                       break;
-> +
-> +               for_each_set_bit(level, pending, gc->ngpio) {
-> +                       int nested_irq =3D
-> +                               irq_find_mapping(gc->irq.domain, level);
-> +
-> +                       if (unlikely(nested_irq <=3D 0)) {
-> +                               dev_warn_ratelimited(
-> +                                       dev, "unmapped interrupt %d\n", l=
-evel);
-> +                               continue;
-> +                       }
-> +                       handle_nested_irq(nested_irq);
-> +               }
-> +               if (ret)
-> +                       break;
-> +       }
-> +
-> +       return IRQ_RETVAL(asserted);
-> +}
-> +
->   static irqreturn_t pca953x_irq_handler(int irq, void *devid)
->   {
->         struct pca953x_chip *chip =3D devid;
-> @@ -1019,6 +1201,9 @@ static irqreturn_t pca953x_irq_handler(int irq,
-> void *devid)
->         int level;
->         bool ret;
->
-> +       if (PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA6418_TYPE)
-> +               return tca6418_irq_handler(chip);
-> +
->         bitmap_zero(pending, MAX_LINE);
->
->         scoped_guard(mutex, &chip->i2c_lock)
-> @@ -1042,6 +1227,27 @@ static irqreturn_t pca953x_irq_handler(int irq,
-> void *devid)
->         return IRQ_RETVAL(ret);
->   }
->
-> +static int tca6418_irq_init(struct pca953x_chip *chip)
-> +{
-> +       DECLARE_BITMAP(disabled, MAX_LINE);
-> +       u8 int_status[MAX_BANK];
-> +       int ret;
-> +
-> +       bitmap_zero(disabled, MAX_LINE);
-> +
-> +       guard(mutex)(&chip->i2c_lock);
-> +       ret =3D pca953x_write_regs(chip, TCA6418_GPIO_INT_ENABLE, disable=
-d);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D regmap_bulk_read(chip->regmap, TCA6418_GPIO_INT_STATUS,
-> +                              int_status, NBANK(chip));
-> +       if (ret)
-> +               return ret;
-> +
-> +       return regmap_write(chip->regmap, TCA6418_INT_STATUS, TCA6418_GPI=
-_INT);
-> +}
-> +
->   static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
->   {
->         struct i2c_client *client =3D chip->client;
-> @@ -1067,21 +1273,30 @@ static int pca953x_irq_setup(struct pca953x_chip
-> *chip, int irq_base)
->         if (!(chip->driver_data & PCA_INT))
->                 return 0;
->
-> -       ret =3D pca953x_read_regs(chip, chip->regs->input, irq_stat);
-> -       if (ret)
-> -               return ret;
-> +       if (PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA6418_TYPE) {
-> +               ret =3D tca6418_irq_init(chip);
-> +               if (ret)
-> +                       return ret;
-> +       } else {
-> +               ret =3D pca953x_read_regs(chip, chip->regs->input, irq_st=
-at);
-> +               if (ret)
-> +                       return ret;
->
-> -       /*
-> -        * There is no way to know which GPIO line generated the
-> -        * interrupt.  We have to rely on the previous read for
-> -        * this purpose.
-> -        */
-> -       pca953x_read_regs(chip, chip->regs->direction, reg_direction);
-> -       bitmap_and(chip->irq_stat, irq_stat, reg_direction, gc->ngpio);
-> +               /*
-> +                * There is no way to know which GPIO line generated the
-> +                * interrupt.  We have to rely on the previous read for
-> +                * this purpose.
-> +                */
-> +               pca953x_read_regs(chip, chip->regs->direction, reg_direct=
-ion);
-> +               bitmap_and(chip->irq_stat, irq_stat, reg_direction, gc->n=
-gpio);
-> +       }
->         mutex_init(&chip->irq_lock);
->
->         girq =3D &chip->gpio_chip.irq;
-> -       gpio_irq_chip_set_chip(girq, &pca953x_irq_chip);
-> +       if (PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA6418_TYPE)
-> +               gpio_irq_chip_set_chip(girq, &tca6418_irq_chip);
-> +       else
-> +               gpio_irq_chip_set_chip(girq, &pca953x_irq_chip);
->         /* This will let us handle the parent IRQ in the driver */
->         girq->parent_handler =3D NULL;
->         girq->num_parents =3D 0;
-> @@ -1236,7 +1451,8 @@ static int pca953x_probe(struct i2c_client *client)
->
->         pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
->
-> -       if (NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) =3D=3D PC=
-A957X_TYPE) {
-> +       if ((NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) =3D=3D
-> PCA957X_TYPE) &&
-> +           PCA_CHIP_TYPE(chip->driver_data) !=3D TCA6418_TYPE) {
->                 dev_info(dev, "using AI\n");
->                 regmap_config =3D &pca953x_ai_i2c_regmap;
->         } else {
-> --
-> 2.47.3
->
->
-> On 18/11/2026 16:16, Mar=C3=ADa Garc=C3=ADa Fern=C3=A1ndez wrote:
-> > (Resending in plain text mode, sorry)
-> >
-> > Hi Bartosz, Guy,
-> >
-> > Very sorry about these bugs you encountered. The testing I did back
-> > then did not reveal any of these problems, and the teams that use this
-> > chip in one of the products at the company where I work have never
-> > complained about the chip not working properly. I will raise it ASAP
-> > and have a look. We can try to work together on this and define more
-> > specific testing scenarios other than the few tests I did by hand
-> > myself. I do think at this point we may be better off moving the
-> > TCA6418 to its own driver if the differences are so many.
-> >
-> > Thank you.
-> >
-> > Kind regards,
-> >
-> > Mar=C3=ADa Garc=C3=ADa.
-> >
-> >
-> > El mi=C3=A9, 18 nov 2026 a las 16:04, Mar=C3=ADa Garc=C3=ADa Fern=C3=A1=
-ndez
-> > (<mariagarcia7293@gmail.com>) escribi=C3=B3:
-> >>
-> >> Hi Bartosz, Guy,
-> >>
-> >> Very sorry about these bugs you encountered. The testing I did back th=
-en did not reveal any of these problems, and the teams that use this chip i=
-n one of the products at the company where I work have never complained abo=
-ut the chip not working properly. I will raise it ASAP and have a look. We =
-can try to work together on this and define more specific testing scenarios=
- other than the few tests I did by hand myself. I do think at this point we=
- may be better off moving the TCA6418 to its own driver if the differences =
-are so many.
-> >>
-> >> Thank you.
-> >>
-> >> Kind regards,
-> >>
-> >> Mar=C3=ADa Garc=C3=ADa.
-> >>
-> >> El mi=C3=A9, 18 nov 2026 a las 15:48, Bartosz Golaszewski (<brgl@kerne=
-l.org>) escribi=C3=B3:
-> >>>
-> >>> On Wed, Nov 18, 2026 at 01:25:35PM +0100, Guy Morand wrote:
-> >>>> Hi Linus, Bartosz, Maria,
-> >>>>
-> >>>> We have been testing the TCA6418 support added to gpio-pca953x by th=
-e
-> >>>> following patch:
-> >>>> https://lore.kernel.org/all/20250703205740.45385-3-mariagarcia7293@g=
-mail.com/
-> >>>>
-> >>>> On our board, using a 6.18-based NXP linux-imx kernel, the following=
- command
-> >>>> does not toggle the requested GPIO as expected:
-> >>>> gpioset -c /dev/gpiochip4 -t 10ms,10ms,0 0=3D0
-> >>>>
-> >>>> While investigating, we found several issues in the TCA6418 support:
-> >>>> * The driver uses the PCA-style i2c auto-increment which is not docu=
-mented
-> >>>> in the TCA6418 datasheet, leading to corrupted registers.
-> >>>> * Input-status registers are not marked volatile, so reads can retur=
-n stale
-> >>>> cached values.
-> >>>> * The bulk get/set paths do not reverse the bit order of the first G=
-PIO
-> >>>> bank, so they can read or update the wrong line.
-> >>>> * Interrupt handling is incomplete: the generic IRQ path does not co=
-nfigure
-> >>>> the TCA6418=E2=80=99s interrupt-enable and edge-selection registers =
-or handle its
-> >>>> status and acknowledgement registers.
-> >>>>
-> >>>> I have spent some time trying to fix the integration, but the TCA641=
-8 seems
-> >>>> to require several chip-specific operations.
-> >>>> Before this support was added, we used an out-of-tree TCA6418 driver=
- that
-> >>>> worked well for our use case.
-> >>>>
-> >>>> I think the current support needs to be fixed, but I=E2=80=99m unsur=
-e whether it
-> >>>> would be preferable to add the necessary chip-specific operations to
-> >>>> gpio-pca953x or replace its TCA6418 support with a dedicated driver =
-based on
-> >>>> our existing one.
-> >>>>
-> >>>> I=E2=80=99m not familiar with the subsystem=E2=80=99s design prefere=
-nces. Which approach
-> >>>> would you prefer?
-> >>>>
-> >>>
-> >>> It really depends on how much model-specific operations there are. If
-> >>> every callback needs a completely different implementation for TCA641=
-8
-> >>> then clearly, a separate driver is the way to go. Just make sure it
-> >>> doesn't break the ABI for OF systems.
-> >>>
-> >>> Bart
->
-> --
-> bytesatwork
-> Technoparkstrasse 7
-> CH-8406 Winterthur
-> Switzerland
->
-> phone: +41 52 213 79 79
->
+Ciao, Thorsten
+> Patch 1 fixes two pre-existing bugs found by a Sashiko review of v2.
+> 
+> Tested on the BeagleY-AI on top of v7.4-rc1: the board boots normally.
+> The -ENODEV fallback that patch 1 changes is not reached on this board.
+> 
+> I found this by booting commit 85b4bc79dde7 (net/main during the 7.4
+> merge window) on a BeagleY-AI with BeagleBoard's device tree. A coding
+> agent identified the problem, explained it to me and proposed an initial
+> fix, which was revised numerous times on the basis of comments on v1 and
+> v2, my feedback and local Sashiko reviews. I verified that the series
+> fixes the problem on top of v7.4-rc1.
+> 
+> v3:
+> - Add a patch to fix existing problems, as requested by Alan Stern.
+> - Patch 2: rebased on it, no other change.
+> v2: https://lore.kernel.org/all/20261030151919.3511106-1-jjc@jclark.com/
+> v1: https://lore.kernel.org/all/20261030114705.3159093-1-jjc@jclark.com/
+> 
+> #regzbot introduced: f918e3804498
+> 
+> James Clark (2):
+>   usb: core: clean up before handing a device to the generic driver
+>   usb: core: add a pre_probe callback for device drivers that may defer
+> 
+>  drivers/usb/core/driver.c          | 42 ++++++++++++++++++++++++++----
+>  drivers/usb/misc/onboard_usb_dev.c | 15 ++++++-----
+>  include/linux/usb.h                | 14 ++++++++++
+>  3 files changed, 59 insertions(+), 12 deletions(-)
+> 
+> 
+> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+
