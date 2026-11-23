@@ -1,105 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795435980;
-	b=0FdADWyI/6cYZTM2XM0MdO4FvMUce4Ax+yAihuLrANspsfiOl59I7ZcF7nm+mwsZ7Z/l
-	 fWMHwxroBSw7OTjFYLmXQCaaKfprTXUwR8N1hIiiGK/zUkOldBGilfxGKAvACmEztmffG
-	 LzZ6PXQ8urfo2a35DdZdVwOdq0t09f+lORzQv0so01cwCXv/TDu0lvDFKAphfvuhXcYeu
-	 AyET3jp31YDaqovWApbHHfuiUdKxGVUkK6ioBx2EjsYCMPzBlyUAG0q6nxI0h8qopvEHP
-	 6pfZrVepxDpGhx2jyQ+gfd+52fgbUHynMwbYyU9toA1NBakJvjEfZ5mxWn/mRniSqaw==
+	t=1795436303;
+	b=Yr0lGeJKuv9WuaQmo2ADLVWxEzDtAf8X6FsZgQy0Xb6h/IE/6PL/PTCI1WuE8aWKaZG+
+	 USwkHiaO91WT6Y0brUUdqbPiotcOa5VRfzWTP+cmgVHD1SNzscm2kSb6e/2XPu3tWbNCr
+	 fkvS2u6OXL/7BGu6I8iCdI2okfN52vSHKIUz857SGa3mUaPhd+gwe58JeyWm/i4nKlMy/
+	 q+kfUnZwfG4AT4qTuaNVdm5nNGlh9gy9vThYeH+l+tkl/Ebo4zEUgBJzMGtBnVGpQYKgl
+	 yOGqgMp1DAhKnM+GEMQYWBOgPajm+KktjwtkkisXbG2P2Iw3tioQMGwYTJimgB6qOdg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795435980;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=YXiKSe1b4sqmwhSslNYFvKYiTOVoSzJmWVzJ8m+MYNw=;
-	b=l9/Qked+hhuvvk7cCX563joKMvlPvoMmu2A9AvVLDgUDseolD6xBpdFbMhXXtUyzT3AY
-	 SmnDxGZ2FJulxd9rMv5s1tU2AcGNspFlbG/S2+3lLYFJVXJMtt99vHXRbZuPb2nazovww
-	 BLwMcXV6n8I1XU++jyUw/PyF27U81K8T86RINuo04/tVVD/DXy6c4f5akx78zoEmarSL5
-	 YSbx+6xT3bkjB+YTfvP5ckcMeLC94iwKJP2Y+qCUnrYJIa8xUhdKD2h9uLFLQhUEOnLNN
-	 vcBObSMNQer54HMqsHvXHRf5FMDDGSGvxt/j4DZ3WcwWeaRp1rl/6Xxw6nvcLRoCNyw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795436303;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=pGK0OBvYCJu1N8yu8PM9PisOzbkPNFWd36gKX1yw1zQ=;
+	b=Lg+SWRO304DsjGaA+CpEGZBLox7oSgAvzkTg+HmrQGWaajQ/26aYSkOTnKHDlWTQtXcT
+	 x9S+kW5kBfU6ClfUMSUd4FG1Bz8ZMwYgXUxXAvTehSgvALjiCKA9krthcGkqPo4TES99o
+	 DN8mvuzGt1UD46C9dsgqT+GSOmE0QNbUgkjEDiVoPgMDzCupn4r9PcPGyvaXblayxi0lK
+	 VQcsxv0GFlbRK8fKKKEjtc0Xi+dy1ARlH3+miPpWawAMjHEpXGFZ/QPNW/hWZEwJczFZZ
+	 evFVaX8+HtBfoJWZQC2iutxgVUav7UP8RNlGAYE6BvmnQnKVNpKfkKLJac4zku+FIYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=jclark.com;
-	spf=pass smtp.mailfrom=jclark.com;
-	dkim=pass header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=WTRBxD68;
-	arc=none smtp.remote-ip=209.85.214.173
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V9NAW4ty;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DAF606A31E
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 12:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 75DAF606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jclark.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jclark.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CD2606A31E;
+	Mon, 23 Nov 2026 12:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=jclark-com.20260707.gappssmtp.com header.i=@jclark-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=WTRBxD68
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2f04bea9a93so26603305ad.3
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 04:12:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jclark-com.20260707.gappssmtp.com; s=20260707; t=1795435975; x=1796040775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=YXiKSe1b4sqmwhSslNYFvKYiTOVoSzJmWVzJ8m+MYNw=;
-        b=WTRBxD68mxmBMUDeAcOF2tKZEqSYLCNUPKR85w6u7MFXIi2cEY8cj7JgvwVfUVamf3
-         P3Pzqoy8IB5bJg5Jvw1kPnvb0djMTIY/9w0jM5vY8oNuUqKdI3XLEYS4gpwgxNBfynhg
-         s6mqbd87klkVJZHdWFt+1ocI8nSEQWDirNwAIo63O0wD6JTmO06YpbWx5miMMvVj0ZtG
-         9O7l4vC0eza5ltf6pB7NAQUiisSQ/gpbfSqbv5jhENm7GSI2lP7+ZygOgxOdLIzN8evb
-         GQAzNieO5N6KyvouZSRIDKMLvt//iHVrhPhfu2Szrgk4pGaHElaecKWP9dD0HMS40oKB
-         Vd/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795435975; x=1796040775;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YXiKSe1b4sqmwhSslNYFvKYiTOVoSzJmWVzJ8m+MYNw=;
-        b=BeWC84JR09IdSdqRD0xFKJRlVGfYxJdkbNfVCwjmyt+ABWBSULxWkoJElC7fQ0lCNG
-         wfMzYpso60fVqVhXdItlu7uYi3V9OPy/qjP4JWlaosAxSI+LceLyW4pAkwnV06m+o2Em
-         AYlajU9oE0Eh3cE1mkKejB9WI2csI+VA80E7MHFlrVkocMjUXuC5SdBnbsnRC0bBqmCZ
-         SaQ10lN9CnJUmCKEfetI007jeDYYOnLnTBlxPHOgkUDpzEvui775AyYLAkdj7QXVkcc3
-         vEnmSPQiHt3am2HtfcWEhYulhKRaS+JT9fxc8b5yDTpv8dmsUIE2En1dYRyN1mynjW2K
-         oJig==
-X-Forwarded-Encrypted: i=1; AL+hErFgOE0L21LFpb865IBZIFIBkU6KezKtVESqE8vK4XMSFnLiRWlPPXPiboCDJufkVejX9JmaSCzpmtaj@vger.kernel.org
-X-Gm-Message-State: APuU4Z9wUxAFtMb2rQRR5rz8egsrJ1ClPOoobFniJwjP4StDKc6a1/Nz
-	4aVffcyhZPbURJCQ0gYoeqV1hvu1+zH81DimmZNEnTnteVKBg0i5h4gByxTVN2dIEQ==
-X-Gm-Gg: AZFdTZeWxmsllw4tGYyBEOT+eZf7jmyr7AgRvuxrU3ofPJ6OxfQSakebrOPmVQSX3l/
-	PgWc8F/sb7dtH4wqlgdmYxLC6hr6kfdy8NGkdHn/u9oceOzsovoqwgvuvfJB50TFP3Pzpf7c6mC
-	N525Etr8ATnFOOAIw/fWstM3Ise5bB2fq6Hc/UYfsfIEW4o8HID3TcPapUahPfpgtA2M5/e03R+
-	R0SqhOwTaN9q7Bkse9JAXEj2M9+ekR28kOZyQ+nkGs126rYLBcszJhhVcai8IvhuBgY+Gu+2cyl
-	d+9opnqCKkN+f48ULJc3OsagNg4hgYfn5ctCnJ7xDYN+jP1VCiFOpMiF9/hESFWFO9kk2m0knCJ
-	vFHCiQ9uaR6Us5j4oX7ssheK1JbQhEcGXkTtfETB/bPc3XHConsqVPqGQ/VNH4eIBiMfD3+LyQN
-	u/imnqsr2nwnHlFCmd7YO/eErdHkH4QSCKve+VW9hoND72xB99p6vxCCZKiB7JLRVLJ0rEFJCsZ
-	MiORzHAHELTfDSl3X+Iq6vr/KF63JJ+wSrBqRAxjHUOv0tJYnCCSMsgbejbOwTFSPMMhL8a966E
-	A/zApfws2eDuCyJbO73MB8PHmYShaB8ERxaeU/OCtBlNULc+09DKTrvfzKlAbNy+EdRWOwiUxze
-	fiNJB69/bZ+SeZVDmvQ==
-X-Received: by 2002:a17:903:1ce:b0:2ed:3ca1:848d with SMTP id d9443c01a7336-2f03f1ea636mr110975425ad.25.1795435974723;
-        Mon, 23 Nov 2026 04:12:54 -0800 (PST)
-Received: from cantal.lan ([58.136.72.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f099a4d875sm12731675ad.37.2026.11.23.04.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 04:12:54 -0800 (PST)
-From: James Clark <jjc@jclark.com>
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: Johan Hovold <johan@kernel.org>,
-	Bastien Nocera <hadess@hadess.net>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Robert Nelson <robertcnelson@gmail.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH v3 0/2] usb: core: fix failed device driver probes, add pre_probe
-Date: Mon, 23 Nov 2026 19:12:49 +0700
-Message-ID: <20261123121249.43867-1-jjc@jclark.com>
-X-Mailer: git-send-email 2.56.1
-In-Reply-To: <329cd215-d824-44be-a1dd-3ebbf5c0803a@leemhuis.info>
-References: <cover.1793669297.git.jjc@jclark.com> <329cd215-d824-44be-a1dd-3ebbf5c0803a@leemhuis.info>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V9NAW4ty
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4351F000D0;
+	Mon, 23 Nov 2026 12:18:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795436302;
+	bh=pGK0OBvYCJu1N8yu8PM9PisOzbkPNFWd36gKX1yw1zQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=V9NAW4tyQumdHU1SyR9DOiq0llWoBFUTtQXP60kSigWkq42r8PO68XCY5iiclGcow
+	 ZrmVXXNJ8ENvxSVAypk7u6dD+kSAx1SBK5/cE2FKqFxG9PAy7+wPceL5XdjH9nDok+
+	 T3QPfkXqvvn/+Rk8CD2PhMv8S1pqOeQmWvRmVDhJcUIi7XA8m/mzuiCeN1sMcv/E5+
+	 nM3MfpReM9bxGFuonrlrC9DR18Mq5exDoHDV3VTXr35AQI5wc6tqxqQapbXggZdbDy
+	 5qRv93H0KkVURKGItiB8Ma+jiDjwF5WcD8BNX7U7cBq/v5QLe8RQDSyqT9PMGl2qM6
+	 10XxwgsECfU9w==
+Date: Mon, 23 Nov 2026 13:18:19 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Stanislav Aleksandrov <lightofmysoul@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Halliday Top
+ Level Mode Multiplexer
+Message-ID: <20261123-competent-pragmatic-cougar-4be6b3@quoll>
+References: <20261116-halliday-tlmm-v2-0-b4dd502ca142@gmail.com>
+ <20261116-halliday-tlmm-v2-1-b4dd502ca142@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -109,35 +61,21 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261116-halliday-tlmm-v2-1-b4dd502ca142@gmail.com>
 
-On Mon, Nov 23, 2026 at 12:37:43PM +0100, Thorsten Leemhuis wrote:
-> James, Alan, what happened to this? Looks like it feel through the
-> cracks after Alan's "This is all starting to sound very complicated and
-> fragile.  Isn't there any way to simplify it?" later in the thread,
-> which was more than two weeks ago. Or was this regression fixed and I
-> just missed it?
+On Mon, Nov 16, 2026 at 09:23:58PM +0000, Stanislav Aleksandrov wrote:
+> Document the Top Level Mode Multiplexer on the Qualcomm Halliday SoC
+> (SXR2250P).
+> 
+> Signed-off-by: Stanislav Aleksandrov <lightofmysoul@gmail.com>
+> ---
+>  .../bindings/pinctrl/qcom,halliday-tlmm.yaml       | 146 +++++++++++++++++++++
+>  1 file changed, 146 insertions(+)
 
-It's not fixed yet. After Alan's comment I dropped the pre_probe
-approach. v4 instead had onboard_usb_dev call the generic driver's
-operations itself, so that it can defer before the hub is configured
-(Johan's first suggestion). Alan acked the USB core patch. v5 is the
-current version, sent on 2026-11-07:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-https://lore.kernel.org/all/cover.1794018128.git.jjc@jclark.com/
+Best regards,
+Krzysztof
 
-My understanding is that patch 2 is waiting for a review from Matthias,
-as onboard_usb_dev maintainer.
-
-> Side note: another regression bisected to the above mentioned culprit
-> was reported recently:
->
-> gpio: shared-proxy: open-drain regulators on ODROID-HC4 fail with -EPERM
-> https://lore.kernel.org/all/20261115-hc4-gpio-shared-od-1@iav.lv/
->
-> Doesn't look related from a quick look, but well, at the same time I
-> wonder if there is some subtle connection.
-
-I don't think they're related.
-
-James
