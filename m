@@ -1,87 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.54
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795449577;
-	b=B0Vg4lG+uwdhDtIGdoOSSX6SBevLxpCWl4nrHmcqT41XR2NAPxaWj+1rylp37ppBeH2E
-	 z5b3pgWLC6L5qoMNjE1E1l+ewhh8dwTqP6oNh/cBk9eRxr63gkzH+PMl9JXobT+zVR9it
-	 oVFo7flf/5EWF7l60934mVcYIvXAIOEnpZ4KbeyxepVo96FxCm/rr1B+FZ8brWa/rUmsq
-	 L79uFDJUNCxb0HLJ14ZNuo4UcODuq4eeg7AxgYEtaYT231ufjVoVAFTDzXyAAqTmRzXsB
-	 6m+EYNLMrvIEGs91CiTsuwlBbZl0bvjJJz1ZtmP9paoLnu8R48X/UInBkKTDy1mCiyA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795449577;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=LIu6WsJHKJFRsOsF3GE3b4oKEPTpD1wZCTNjz/N1DdI=;
-	b=pwwarTwepnXah5xf/wDPfKaV0qF69tK9RXJlJnrGIRIbXjCsddONRGrBLGUrENhngjL6
-	 fgehhBUIfuQ5KKGxvmIVEvNXRGuk+oDDnN18zu+1p0vCL9k0JJP889C+PM1uIYPx/Cpxg
-	 /J7HPSTFC8hoVau6gneozKuDXzSaZ141Z3zzC8li0t8xa3h7cYheUPQ4L7+UwayzhipdS
-	 Qwq2G+ldxOO1gxPrCor4QSBUgZBrNLYbJpzDcz7QP2fExaQe6PiBlaSsesbWXRZ3NvFV6
-	 SEUomae/ak8CmOEoWxtxcWS8Sn/w2ocm9eGNHPk/2aRMcE+pDK9z0o6K6RBGp2EIesQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=MX7KZudM;
-	arc=none smtp.remote-ip=209.85.218.54
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795449800;
+	b=VhqXXdzVZQYChuLAgg3kFCGxYvJrZscEhjVXEUIj6iIpxTuOTHavlrLGB/8VGTaC11dQ
+	 uN+ZuDCn6zupYMCVXSVm8fxymRj013UAVwrtkxGkdERHWfnWBsyc0N2ntXAQcvVoxdq4R
+	 McSdDyflfjfxfIokjTl0EsE3IBa9gqd9yz/0gFWJ+AG4Ru+dvYVWW4q7ocnWMRy3629Ex
+	 eAm+Sb/JgbzaUYhTra5qc6PeVzut+Au9HnYx1BWqSuU1Cf9IH1Dt4lJDVALC7/I0iNIK/
+	 jBu8P7UxaB4veZd0aoHkdAppXCRKZPbWO26Ki8jUmUOLQdrxdHhRgX2pSdERALFlSFQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795449800;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=Z2+DMk+CdL2KNNlqQt30fdWXobrMWDKRNra/MGXy9C0=;
+	b=RLsJNZHJtdlAPVlxrDt+gn5l1T+8sKDD0Y0iKwft+wKPcJxLhFbmOIgcCWfYO8e/yoTg
+	 dsE1/fGDzUIlULEDrPnSgSXFXBrMAnUEud91efJJaXLJHSpxZD+u9Wpbb/Whc/0+BtX0t
+	 KQ/23WMzogu+HFRbb/+irJWcRk5iacu2VUmUx8iVI+ITkwS1fvgiirQDYJYXWA1KxlQa0
+	 a2Ijr0i2Z3WXWVJ2k+nqjqaWpSl6K9HXqeYvlebFykkf1F6sesP/B4S66OfiS1+/vP5i/
+	 ytAbrSxTHiwPHc5Fg/QvkjmYFiDEQbJbZsC6RmwxIpMT6d9JIewyxfvBsjIWLB4OpUw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y5vvAieE;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB95606A31A;
+	Mon, 23 Nov 2026 16:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y5vvAieE
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795449799;
+	b=oeREc8bL3leZqojjx63FZ873+Yp0Do75UNCK/ZMN0NDP7OsaGJHEkQv1mxD/hg//I5Pd
+	 3FOjyCLx3KxBIm1fl+CeuwVdQzohIx8j/IluJUuET3x0hVCbkDvMpvs62SumPG1qEp1k7
+	 FItadl54xb7hfDK83f4C49QhhUyhteb5dFdEnegHJyBJibA0tHEXXH3Y0y7IVy2ZypD1u
+	 WvsxuFnpCwtq2Jq2gIWb/nIcpL7wgtJon9hHYgfHIenxH9uozsO5wOA1pD9iVtCY9vTJy
+	 izeK88B/iJ2gNLP6t4KCle3SohC/jBOwQoSNHwljkWaZxROnxlStkiZi8KJ1iJU8NxQ==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795449799;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=Z2+DMk+CdL2KNNlqQt30fdWXobrMWDKRNra/MGXy9C0=;
+	b=e/8ss+TgDyqe8u4SfgqmbCR76PEkQSGV80a8BegimdE0MmVkT3VKJlq4wDFhNUHbmjlX
+	 7pkUoG/bz5MvJLBeMwUpCgBNlxIio8YBpOu61nj1YzanQqOuUBd7hTac05gmB3p2l9BBa
+	 g3BJ0JG8PTFVRUQQsJ2fp5dDOQKdV6In5oOta9t9JF2dj658kVKvO5EriMUszdg7s5GdJ
+	 iC/CJKoWblmLL3nYSC0mm8lnluhM0r7ZSFyVYY7g9Mu5hPngi3RX/qGGfJFjKZbIAGw0R
+	 bdhpTegY5zQJixCbnsitWI7KsIA7NwxNVKS/rEhswaObIGNo1Mi7DyB3TcMnqS0ZdTQ==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7F9606A32A
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 15:59:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B7F9606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=MX7KZudM
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c50cc7540b7so472026266b.0
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 07:59:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795449576; x=1796054376; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=LIu6WsJHKJFRsOsF3GE3b4oKEPTpD1wZCTNjz/N1DdI=;
-        b=MX7KZudMvJFcP1GGGeYf2fzasEXs7b8MiGwyMJHvejNMLEA2z2bLfLblEF5KxdFgIC
-         MRDCRnOVhMW1lz08J/vvXuDyNQ+ZRjRAGu6rw+2SGX1M1UQQpf4Kzt9TW2veWE9ckjdo
-         b4xGFCB6UZ9EZYMkRiPuU2jAzMCmmG50IAvD4ZGfHfT/v7ON5NEb1lakDkHscquYuUBp
-         aCGM09WAzL2Af4CPvi2VnMEsZD3xLWWC/3GnXcmZUi4mYFqTwAwVt48uAZ5WPE4XY61z
-         GxNWQIwfWOPxlR5sqmHbZWdtFs82cGhX3tSDijBoMTP/0ZUVWXo00g/iBOpQlcDSVUPD
-         EOMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795449576; x=1796054376;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=LIu6WsJHKJFRsOsF3GE3b4oKEPTpD1wZCTNjz/N1DdI=;
-        b=MY+Rg7oyuICE8DlWFi8pXiDqLEhYhDUldssYJccLgPtZtjDXQrjBwxvvoPVD7V6Dwn
-         8SwOxgvI6Lz1G+MbuUYB38osleWrZ3xjvpYUG1GOjlNZ9DglrtiedXvBFt7ME1Wnmv3r
-         XlqhF2EV+fDEaMSQkhty+cKjzDxB5PCAW9Dc4+PV9kUbsQZ1fq9fP0iyLiCs7nChrHze
-         V2HS3a6JdRZokThZGAps2Qt0yMunqW7XismDMMEUI3Bg3Y4kk693xJQ5LW2etiNT7vtw
-         THQVgAbCMd+6sNqs0jdmWH5u2NBgeqERRV1F1iEu8bIkZqhIUGY6N1OhjWWdY/OLpnh0
-         4MoA==
-X-Forwarded-Encrypted: i=1; AL+hErEaHCFaN+52PSXfJJfaOfY24QvF6NhFC1nNOq6mOLfakrMPIFd2YwzU4P3i+uhGxecbVDt+vigdzdtb@vger.kernel.org
-X-Gm-Message-State: APuU4Z8JpS2/bhCsdAZkaq1HUAAY1Tjdy6RzxcbmewGLpoUo6uXTTYVp
-	z+DmUvVajTd4v+vbl+9R2mMx5uCDJc8RnNXOUEIps8XNLmBg2tIvgSvKvPhD9vMvC7I=
-X-Gm-Gg: AZFdTZd1Q6sKfMbOmPcDEF890K/GTPklGC9+G2ZQtdfyxuxwZictYgbvrUPplt3nO3n
-	3hSfdMppGPs6UovjfyBBcHKNmYQODEzTJvn033X9qGzgCk+ClGAsiOV6C45PPdL3RMheR8kkSSw
-	s/SLbXnygjBHvBLaAT6IkEeqjovhSiyjLlBNvi9cQx/fMeJheBbGSI3Mqii/fYD4f1k5TxtyAFG
-	ZgEk+9ws6WwGVl+IimKtrypOTnwqBhqsN8efkgZgFa3nSVuffzhhs64Mp5tS1CMcwG6yKzVLpEg
-	IvpTrTHwrDbtjb0771R4y6fRN0dzm3l6i+Pe1/fLoUV+bGWeWnE4M5avOSwo3vYPh2oJ0R+mCYe
-	gD2fzRavhDm9aBxMLedc1kxFV33FYEfpljXeWpiuabM3kEXhpkdWKKP7uRY/EpN+bQCsKH0/1fZ
-	mIC4/HQLDlZ6VykHkwmmfUWOkKu8of02iD0BD9At0uLrCvMQWdX6mVksW9C6s1LXMC2He4avi+4
-	PQYxVwiPWvaGmMc27StFzcPo63l/1+az8EswB34J4XZvqFHFupjd7bqpL4ol9y/Shmvg65tTgtP
-	Sj2dKfLuAutJ1X49aAUgmEzk0XNUNbV4kZzZQ8RNGm0rkTqKhATkWQpkCSbFtQ2t4rJvoydB563
-	Vte0I8eVhQYhKkkyBySZuhe8x4z1b4tLdxOvCS8M=
-X-Received: by 2002:a17:907:4d0:b0:c51:f6:216a with SMTP id a640c23a62f3a-c513aaa8eebmr811622866b.37.1795449575576;
-        Mon, 23 Nov 2026 07:59:35 -0800 (PST)
-Received: from puffmais2.c.googlers.com (226.124.90.34.bc.googleusercontent.com. [34.90.124.226])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513afc5396sm419467766b.58.2026.11.23.07.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 07:59:35 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 23 Nov 2026 15:59:32 +0000
-Subject: [PATCH] pinctrl: samsung: keep bus clock enabled
+	by smtp.kernel.org (Postfix) with ESMTPS id 5E1121F000D0;
+	Mon, 23 Nov 2026 16:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795449799;
+	bh=Z2+DMk+CdL2KNNlqQt30fdWXobrMWDKRNra/MGXy9C0=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=Y5vvAieE34+D7fT7ke1Q7wWUcWFgZeVH3O/mHr2+cuZErmyTBhLuECaDGuPvsO+Fq
+	 8JBleE2RilfAUOxPhuVhUI4QFBx3V77DV6cvGy0TiVPXjLsyC1KPIvVs7Upq3OAJOe
+	 4vhNf9lGUG43YTihb3Ld1RLgurKYg2oBlVfqrE7kGpKEqqmg6GSyvgWdz9PJHFMaSH
+	 3pt7fcKU89bRvwePPFY8seUKWpp9M7vwS7XSrZ5GsQegrGouKFvzdNftX47UQXgs6E
+	 3Q3wYwLtyQMJ0Qz+CkNVNVe0tJTmVSp2q4XgZ2Bwloa8/qvJLuCCkYEG/ZQPMHt0Kc
+	 3dktVcikzCEBw==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id ACF0B4C544;
+	Mon, 23 Nov 2026 16:03:12 +0000 (UTC)
+From: Venkat Yadlapati via B4 Relay <devnull+venkat.yadlapati.yahoo.com@kernel.org>
+Subject: [PATCH v4 0/2] pinctrl: qcom: Add the Molokai TLMM
+Date: Mon, 23 Nov 2026 21:33:11 +0530
+Message-Id: <20261123-molokai-tlmm-v4-0-eed6eeaacc70@yahoo.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -92,609 +84,90 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20261123-samsung-pinctrl-busclk-v1-1-6732c10a7f48@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAORiBGsC/x3MQQqDQAxA0atI1gZMxFa8SnExTjM2qFOZqAji3
- Tt0+Rb/X2CSVAy64oIkh5p+YwaVBfiPi6OgvrOBK34QcY3mFtvjiKtGv6UZh938POGTiQJ7rkL
- TQo7XJEHP//jV3/cPa4YQQmgAAAA=
-X-Change-ID: 20261123-samsung-pinctrl-busclk-7211f2c20f58
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
- Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
- stable@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33NTQ6CMBCG4auYrq3ptOVHV97DuGjLIFVKDUUiI
+ dzdghsl0eWXzPPOSAK2FgM5bEbSYm+D9U0ccrshplLNBakt4iac8RQAUup87W/K0q52jmrFECW
+ kmIAgkdxbLO1zyZ3O7x0e+oqmmxvzRWVD59th+dfDfPcj3QNlVGglc8kY40YfB1V5vzPekTnd8
+ 3+YRyz5vsxNXuSoYY3FB+ZshUXEmJRGZCgyBl94mqYXOU5CPDQBAAA=
+X-Change-ID: 20261116-molokai-tlmm-ba0ee416e513
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ phone-devel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795449791; l=2623;
+ i=venkat.yadlapati@yahoo.com; s=20261023; h=from:subject:message-id;
+ bh=YghJL2tppXpXW7QuBO70OW5/eT9OsVH5AX0MYd/LT58=;
+ b=jdib9YqWUdYP9CmFeEeboeYd4KM6eVAAJj3XnGw3kUbMuhFa8nDtYZnRJMb/8MnMhgJYdrSEQ
+ XIyb8UkC5EiCplPTbxqKr5rmDxxyzFPb7EvL/eayW4eTYVysviml4Rj
+X-Developer-Key: i=venkat.yadlapati@yahoo.com; a=ed25519;
+ pk=e8KStCtEMvUP1Se/riB/KVnDAQFEVR2Dw2PcuA8/eME=
+X-Endpoint-Received: by B4 Relay for venkat.yadlapati@yahoo.com/20261023
+ with auth_id=1303
+X-Original-From: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+Reply-To: venkat.yadlapati@yahoo.com
 
-With CONFIG_PROVE_RAW_LOCK_NESTING=y, lockdep reports:
+Molokai (SM8845) is a Qualcomm SoC derived from Kaanapali (SM8850), found
+for example in the Motorola Signature. Its TLMM has the Kaanapali register
+layout, but 205 GPIOs instead of 217, the Kaanapali pin functions on only
+35 pins and a GPIO to PDC wakeup map with no entry in common. With the
+Kaanapali tables a wake-capable GPIO interrupt is routed to the wrong PDC
+input and never fires, so this adds a binding and a driver of its own.
 
-    [ BUG: Invalid wait context ]
-    irq/130-1-0025/196 is trying to lock:
-    (enable_lock){....}-{3:3}, at: clk_enable_lock+0x68/0x110
-    other info that might help us debug this:
-    context-{5:5}
-    locks held by irq/130-1-0025/196: 1, on CPU#0:
-     #0: (&irq_desc_lock_class){-.-.}-{2:2}, at: irq_finalize_oneshot
-    Call trace:
-     _raw_spin_lock_irqsave+0x60/0x98
-     clk_enable_lock+0x68/0x110
-     clk_disable+0x34/0x68
-     exynos_irq_unmask+0xd8/0x1c0
-     unmask_threaded_irq+0x58/0x80
-     irq_finalize_oneshot.part.0+0x98/0x108
-     irq_thread_fn+0x68/0xc0
-     irq_thread+0xd0/0x1e0
-     kthread+0x118/0x138
-     ret_from_fork+0x10/0x20
+The SoC and board devicetree that use it are sent separately in "Add
+support for the Qualcomm Molokai (SM8845) and the Motorola Signature".
 
-The driver enables the optional bus clock ("pclk") around each register
-access using clk_enable() and clk_disable(). Both acquire the clock
-framework's enable_lock, which is a spinlock_t. On PREEMPT_RT,
-spinlock_t turns into a sleeping lock and must not be acquired in hard
-interrupt context or while holding a raw_spinlock_t. Most register
-accesses happen in such contexts:
+Tested on the Motorola Signature: the UFS reset, the keys and the GPIO
+interrupts that go through the PDC (touchscreen, amplifiers) work.
 
-* The IRQ core invokes the irq_chip callbacks .irq_mask(),
-  .irq_unmask(), .irq_ack() and .irq_set_type() with the raw_spinlock_t
-  irq_desc::lock held.
-* exynos_irq_demux_eint16_31() is a chained interrupt handler and runs
-  in hard interrupt context.
-* The gpio_chip callbacks don't sleep, so GPIO consumers may call them
-  in hard interrupt context or with a raw_spinlock_t held.
-
-Lockdep reports this only when enable_lock is contended, because
-clk_enable_lock() tries spin_trylock_irqsave() first and lockdep
-doesn't check the wait context of trylocks.
-
-Enable the bus clock once during probe instead, keep it enabled for as
-long as the driver is bound, and drop all per-access clk_enable() and
-clk_disable() calls. Also revert samsung_pinmux_setup() back to void
-and drop the now-unused pclk member of struct samsung_pinctrl_drv_data.
-
-This reverts only the per-access clk_enable()/clk_disable() portion of
-commit f9c744747973 ("pinctrl: samsung: support a bus clock"). The
-driver still has to acquire and enable the bus clock: without a
-consumer, the clock framework turns off unused gate clocks on kernels
-or DTs without automatic clock gating, and gs101's alive GPIO clocks
-don't set CLK_IGNORE_UNUSED.
-
-The in-tree DTs provide this clock for Google Tensor gs101 only. Since
-commit 298fac4f4b96 ("clk: samsung: Implement automatic clock gating
-mode for CMUs"), the gs101 clock driver registers this clock as an
-automatically gated clock, for which the enable and disable operations
-are no-ops, so keeping the clock enabled doesn't stop the hardware from
-gating it. Without automatic clock gating (in older kernels, and with
-old DTs whose CMU register range size is not 0x10000), the clock stays
-enabled for as long as the driver is bound.
-
-The DT binding requires this clock for Exynos8890 as well, but the tree
-contains neither a DT nor a clock driver for Exynos8890.
-
-Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
-Cc: stable@vger.kernel.org
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c  |  80 ----------------------
- drivers/pinctrl/samsung/pinctrl-samsung.c | 106 +++---------------------------
- drivers/pinctrl/samsung/pinctrl-samsung.h |   2 -
- 3 files changed, 9 insertions(+), 179 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index c45da9f13411..8adfeae96566 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -13,7 +13,6 @@
- // the Samsung pinctrl/gpiolib driver. It also includes the implementation of
- // external gpio and wakeup interrupt support.
- 
--#include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/irqdomain.h>
-@@ -69,12 +68,6 @@ static void exynos_irq_mask(struct irq_data *irqd)
- 	else
- 		reg_mask = our_chip->eint_mask + bank->eint_offset;
- 
--	if (clk_enable(bank->drvdata->pclk)) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock for masking IRQ\n");
--		return;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = readl(bank->eint_base + reg_mask);
-@@ -82,8 +75,6 @@ static void exynos_irq_mask(struct irq_data *irqd)
- 	writel(mask, bank->eint_base + reg_mask);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
--
--	clk_disable(bank->drvdata->pclk);
- }
- 
- static void exynos_irq_ack(struct irq_data *irqd)
-@@ -98,15 +89,7 @@ static void exynos_irq_ack(struct irq_data *irqd)
- 	else
- 		reg_pend = our_chip->eint_pend + bank->eint_offset;
- 
--	if (clk_enable(bank->drvdata->pclk)) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock to ack IRQ\n");
--		return;
--	}
--
- 	writel(1 << irqd->hwirq, bank->eint_base + reg_pend);
--
--	clk_disable(bank->drvdata->pclk);
- }
- 
- static void exynos_irq_unmask(struct irq_data *irqd)
-@@ -134,12 +117,6 @@ static void exynos_irq_unmask(struct irq_data *irqd)
- 	else
- 		reg_mask = our_chip->eint_mask + bank->eint_offset;
- 
--	if (clk_enable(bank->drvdata->pclk)) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock for unmasking IRQ\n");
--		return;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = readl(bank->eint_base + reg_mask);
-@@ -147,8 +124,6 @@ static void exynos_irq_unmask(struct irq_data *irqd)
- 	writel(mask, bank->eint_base + reg_mask);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
--
--	clk_disable(bank->drvdata->pclk);
- }
- 
- static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
-@@ -159,7 +134,6 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	unsigned int shift = EXYNOS_EINT_CON_LEN * irqd->hwirq;
- 	unsigned int con, trig_type;
- 	unsigned long reg_con;
--	int ret;
- 
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -192,20 +166,11 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	else
- 		reg_con = our_chip->eint_con + bank->eint_offset;
- 
--	ret = clk_enable(bank->drvdata->pclk);
--	if (ret) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock for configuring IRQ type\n");
--		return ret;
--	}
--
- 	con = readl(bank->eint_base + reg_con);
- 	con &= ~(EXYNOS_EINT_CON_MASK << shift);
- 	con |= trig_type << shift;
- 	writel(con, bank->eint_base + reg_con);
- 
--	clk_disable(bank->drvdata->pclk);
--
- 	return 0;
- }
- 
-@@ -242,14 +207,6 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
--	ret = clk_enable(bank->drvdata->pclk);
--	if (ret) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock for configuring pin %s-%lu\n",
--			bank->name, irqd->hwirq);
--		return ret;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	con = readl(bank->pctl_base + reg_con);
-@@ -259,8 +216,6 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(bank->drvdata->pclk);
--
- 	return 0;
- }
- 
-@@ -275,13 +230,6 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
--	if (clk_enable(bank->drvdata->pclk)) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock for deconfiguring pin %s-%lu\n",
--			bank->name, irqd->hwirq);
--		return;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	con = readl(bank->pctl_base + reg_con);
-@@ -291,8 +239,6 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(bank->drvdata->pclk);
--
- 	gpiochip_unlock_as_irq(&bank->gpio_chip, irqd->hwirq);
- }
- 
-@@ -342,19 +288,11 @@ static irqreturn_t exynos_eint_gpio_irq(int irq, void *data)
- 	unsigned int svc, group, pin;
- 	int ret;
- 
--	if (clk_enable(bank->drvdata->pclk)) {
--		dev_err(bank->gpio_chip.parent,
--			"unable to enable clock for handling IRQ\n");
--		return IRQ_NONE;
--	}
--
- 	if (bank->eint_con_offset)
- 		svc = readl(bank->eint_base + EXYNOSAUTO_SVC_OFFSET);
- 	else
- 		svc = readl(bank->eint_base + EXYNOS_SVC_OFFSET);
- 
--	clk_disable(bank->drvdata->pclk);
--
- 	group = EXYNOS_SVC_GROUP(svc);
- 	pin = svc & EXYNOS_SVC_NUM_MASK;
- 
-@@ -729,20 +667,6 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
- 
- 	chained_irq_enter(chip, desc);
- 
--	/*
--	 * just enable the clock once here, to avoid an enable/disable dance for
--	 * each bank.
--	 */
--	if (eintd->nr_banks) {
--		struct samsung_pin_bank *b = eintd->banks[0];
--
--		if (clk_enable(b->drvdata->pclk)) {
--			dev_err(b->gpio_chip.parent,
--				"unable to enable clock for pending IRQs\n");
--			goto out;
--		}
--	}
--
- 	for (i = 0; i < eintd->nr_banks; ++i) {
- 		struct samsung_pin_bank *b = eintd->banks[i];
- 		pend = readl(b->eint_base + b->irq_chip->eint_pend
-@@ -752,10 +676,6 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
- 		exynos_irq_demux_eint(pend & ~mask, b->irq_domain);
- 	}
- 
--	if (eintd->nr_banks)
--		clk_disable(eintd->banks[0]->drvdata->pclk);
--
--out:
- 	chained_irq_exit(chip, desc);
- }
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 0c91e1124a46..16980f4ef3b1 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -370,8 +370,8 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
- }
- 
- /* enable or disable a pinmux function */
--static int samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
--				unsigned group)
-+static void samsung_pinmux_setup(struct pinctrl_dev *pctldev,
-+				 unsigned int selector, unsigned int group)
- {
- 	struct samsung_pinctrl_drv_data *drvdata;
- 	const struct samsung_pin_bank_type *type;
-@@ -381,7 +381,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 	unsigned long flags;
- 	const struct samsung_pmx_func *func;
- 	const struct samsung_pin_group *grp;
--	int ret;
- 
- 	drvdata = pinctrl_dev_get_drvdata(pctldev);
- 	func = &drvdata->pmx_functions[selector];
-@@ -397,12 +396,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 		reg += 4;
- 	}
- 
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(pctldev->dev, "failed to enable clock for setup\n");
--		return ret;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_FUNC]);
-@@ -411,10 +404,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 	writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
--
--	clk_disable(drvdata->pclk);
--
--	return 0;
- }
- 
- /* enable a specified pinmux by writing to registers */
-@@ -422,7 +411,8 @@ static int samsung_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 				  unsigned selector,
- 				  unsigned group)
- {
--	return samsung_pinmux_setup(pctldev, selector, group);
-+	samsung_pinmux_setup(pctldev, selector, group);
-+	return 0;
- }
- 
- /* list of pinmux callbacks for the pinmux vertical in pinctrl core */
-@@ -445,7 +435,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 	u32 data, width, pin_offset, mask, shift;
- 	u32 cfg_value, cfg_reg;
- 	unsigned long flags;
--	int ret;
- 
- 	drvdata = pinctrl_dev_get_drvdata(pctldev);
- 	pin_to_reg_bank(drvdata, pin, &reg_base, &pin_offset, &bank);
-@@ -457,12 +446,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 	width = type->fld_width[cfg_type];
- 	cfg_reg = type->reg_offset[cfg_type];
- 
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev, "failed to enable clock\n");
--		return ret;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = (1 << width) - 1;
-@@ -482,8 +465,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(drvdata->pclk);
--
- 	return 0;
- }
- 
-@@ -574,22 +555,12 @@ static int samsung_gpio_set(struct gpio_chip *gc, unsigned int offset,
- 			    int value)
- {
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
--	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
- 	unsigned long flags;
--	int ret;
--
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev, "failed to enable clock\n");
--		return ret;
--	}
- 
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 	samsung_gpio_set_value(gc, offset, value);
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(drvdata->pclk);
--
- 	return 0;
- }
- 
-@@ -600,23 +571,13 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
- 	u32 data;
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	const struct samsung_pin_bank_type *type = bank->type;
--	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
--	int ret;
- 
- 	reg = bank->pctl_base + bank->pctl_offset;
- 
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev, "failed to enable clock\n");
--		return ret;
--	}
--
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
- 	data >>= offset;
- 	data &= 1;
- 
--	clk_disable(drvdata->pclk);
--
- 	return data;
- }
- 
-@@ -661,22 +622,13 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- static int samsung_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- {
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
--	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
- 	unsigned long flags;
- 	int ret;
- 
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev, "failed to enable clock\n");
--		return ret;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 	ret = samsung_gpio_set_direction(gc, offset, true);
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(drvdata->pclk);
--
- 	return ret;
- }
- 
-@@ -685,23 +637,14 @@ static int samsung_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
- 							int value)
- {
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
--	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
- 	unsigned long flags;
- 	int ret;
- 
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev, "failed to enable clock\n");
--		return ret;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 	samsung_gpio_set_value(gc, offset, value);
- 	ret = samsung_gpio_set_direction(gc, offset, false);
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(drvdata->pclk);
--
- 	return ret;
- }
- 
-@@ -1028,7 +971,6 @@ static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
- 	unsigned int value;
--	int ret = 0;
- 	unsigned long flags;
- 
- 	switch (pinconf_to_config_param(config)) {
-@@ -1045,19 +987,11 @@ static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 		return -ENOTSUPP;
- 	}
- 
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev, "failed to enable clock\n");
--		return ret;
--	}
--
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 	samsung_gpio_set_pud(gc, offset, value);
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
--	clk_disable(drvdata->pclk);
--
--	return ret;
-+	return 0;
- }
- 
- static const struct gpio_chip samsung_gpiolib_chip = {
-@@ -1257,6 +1191,7 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 	struct samsung_pinctrl_drv_data *drvdata;
- 	const struct samsung_pin_ctrl *ctrl;
- 	struct device *dev = &pdev->dev;
-+	struct clk *pclk;
- 	int ret;
- 
- 	drvdata = devm_kzalloc_obj(dev, *drvdata);
-@@ -1285,9 +1220,9 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	drvdata->pclk = devm_clk_get_optional_prepared(dev, "pclk");
--	if (IS_ERR(drvdata->pclk)) {
--		ret = PTR_ERR(drvdata->pclk);
-+	pclk = devm_clk_get_optional_enabled(dev, "pclk");
-+	if (IS_ERR(pclk)) {
-+		ret = PTR_ERR(pclk);
- 		goto err_put_banks;
- 	}
- 
-@@ -1335,13 +1270,6 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
- 	struct samsung_pin_bank *bank;
- 	int i;
- 
--	i = clk_enable(drvdata->pclk);
--	if (i) {
--		dev_err(drvdata->dev,
--			"failed to enable clock for saving state\n");
--		return i;
--	}
--
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		bank = &drvdata->pin_banks[i];
- 		const void __iomem *reg = bank->pctl_base + bank->pctl_offset;
-@@ -1377,8 +1305,6 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
- 			drvdata->suspend(bank);
- 	}
- 
--	clk_disable(drvdata->pclk);
--
- 	if (drvdata->retention_ctrl && drvdata->retention_ctrl->enable)
- 		drvdata->retention_ctrl->enable(drvdata);
- 
-@@ -1397,20 +1323,8 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
- {
- 	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
- 	struct samsung_pin_bank *bank;
--	int ret;
- 	int i;
- 
--	/*
--	 * enable clock before the callback, as we don't want to have to deal
--	 * with callback cleanup on clock failures.
--	 */
--	ret = clk_enable(drvdata->pclk);
--	if (ret) {
--		dev_err(drvdata->dev,
--			"failed to enable clock for restoring state\n");
--		return ret;
--	}
--
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		bank = &drvdata->pin_banks[i];
- 		if (drvdata->resume)
-@@ -1448,8 +1362,6 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
- 				writel(bank->pm_save[type], reg + offs[type]);
- 	}
- 
--	clk_disable(drvdata->pclk);
--
- 	if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
- 		drvdata->retention_ctrl->disable(drvdata);
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 7c60375d5924..5390c6d1d7a5 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -302,7 +302,6 @@ struct samsung_pin_ctrl {
-  *             through samsung_pinctrl_drv_data, not samsung_pin_bank).
-  * @dev: device instance representing the controller.
-  * @irq: interrpt number used by the controller to notify gpio interrupts.
-- * @pclk: optional bus clock if required for accessing registers
-  * @ctrl: pin controller instance managed by the driver.
-  * @pctl: pin controller descriptor registered with the pinctrl subsystem.
-  * @pctl_dev: cookie representing pinctrl device instance.
-@@ -322,7 +321,6 @@ struct samsung_pinctrl_drv_data {
- 	void __iomem			*virt_base;
- 	struct device			*dev;
- 	int				irq;
--	struct clk			*pclk;
- 
- 	struct pinctrl_desc		pctl;
- 	struct pinctrl_dev		*pctl_dev;
+I used an LLM (Claude) to help write these patches and their commit
+messages. I reviewed all of them and tested the result on the device.
 
 ---
-base-commit: 749a4de370409464cf8501ec5b2451df45c84eb4
-change-id: 20261123-samsung-pinctrl-busclk-7211f2c20f58
+Changes in v4:
+- Rebase on next-20261120 instead of the pinctrl for-next branch, no
+  code change (Bartosz).
+- Driver commit message: say that 35 pins share the Kaanapali functions
+  instead of "different on every pin" (Bartosz).
+- Link to v3: https://patch.msgid.link/20261120-molokai-tlmm-v3-0-e5fc37e37011@yahoo.com
+
+Changes in v3:
+- Drop the Assisted-by trailers and the LLM notes from the commit
+  messages, the LLM use is stated in this cover letter (Krzysztof).
+- Rewrap the GPIO to PDC wakeup map so that no entry is split across
+  lines, no change in content.
+- Pick up the Reviewed-by of Krzysztof.
+- Link to v2: https://patch.msgid.link/20261116-molokai-tlmm-v2-0-429f8c8d8eb1@yahoo.com
+
+Changes in v2:
+- Binding: indent the example state node consistently.
+- Driver: mark egpio as a GPIO function (MSM_GPIO_PIN_FUNCTION) so GPIO
+  requests on pins muxed to egpio are not rejected.
+- Kept the default 3-bit interrupt target field: on Molokai INTR_CFG[11]
+  reads 0 out of reset and the target resets to 0x7.
+- Link to v1: https://patch.msgid.link/20261116-molokai-tlmm-v1-0-3ba4840002cb@yahoo.com
+
+---
+Venkat Yadlapati (2):
+      dt-bindings: pinctrl: qcom: Add Molokai TLMM
+      pinctrl: qcom: Add Molokai TLMM driver
+
+ .../bindings/pinctrl/qcom,molokai-tlmm.yaml        |  128 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-molokai.c             | 1681 ++++++++++++++++++++
+ 4 files changed, 1820 insertions(+)
+---
+base-commit: 909ef7a9a30fa139e69e555e3606680f5cca7726
+change-id: 20261116-molokai-tlmm-ba0ee416e513
 
 Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+--  
+Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+
 
