@@ -1,57 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795436303;
-	b=Yr0lGeJKuv9WuaQmo2ADLVWxEzDtAf8X6FsZgQy0Xb6h/IE/6PL/PTCI1WuE8aWKaZG+
-	 USwkHiaO91WT6Y0brUUdqbPiotcOa5VRfzWTP+cmgVHD1SNzscm2kSb6e/2XPu3tWbNCr
-	 fkvS2u6OXL/7BGu6I8iCdI2okfN52vSHKIUz857SGa3mUaPhd+gwe58JeyWm/i4nKlMy/
-	 q+kfUnZwfG4AT4qTuaNVdm5nNGlh9gy9vThYeH+l+tkl/Ebo4zEUgBJzMGtBnVGpQYKgl
-	 yOGqgMp1DAhKnM+GEMQYWBOgPajm+KktjwtkkisXbG2P2Iw3tioQMGwYTJimgB6qOdg==
+	t=1795436999;
+	b=BP+1ZnD/0p5NYsCvu3L5eSPZyMrdxHQbr7lLL9fs/0TtfQVGBMQzEdmDfl53x/bZo0/t
+	 KseiT0P7aKEerzeyD6x3dvf+5riD7u/EvnzRHtZ9C+s2ASlkfOl83vce2m2NOCV2aRdAZ
+	 GC3ESgRzauFI4vFhd+d3A2uWNUWMpeGfA6TFjnp0lTcCkn89iiQgyQSMZn6WGDObIYKGT
+	 MVsEEYnQiUT1I85p1jL5hmIsy1ZGTh0WRaxKZoEn2QyKoaUm7hcrz/o32cGq4o9zh0qAq
+	 GSED0jtO/G2LXnFYH9tarGfaQPT/BsrSjIKDGe8kQxs47Iu6oJCSHvC0T1zXqQ23p5A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795436303;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=pGK0OBvYCJu1N8yu8PM9PisOzbkPNFWd36gKX1yw1zQ=;
-	b=Lg+SWRO304DsjGaA+CpEGZBLox7oSgAvzkTg+HmrQGWaajQ/26aYSkOTnKHDlWTQtXcT
-	 x9S+kW5kBfU6ClfUMSUd4FG1Bz8ZMwYgXUxXAvTehSgvALjiCKA9krthcGkqPo4TES99o
-	 DN8mvuzGt1UD46C9dsgqT+GSOmE0QNbUgkjEDiVoPgMDzCupn4r9PcPGyvaXblayxi0lK
-	 VQcsxv0GFlbRK8fKKKEjtc0Xi+dy1ARlH3+miPpWawAMjHEpXGFZ/QPNW/hWZEwJczFZZ
-	 evFVaX8+HtBfoJWZQC2iutxgVUav7UP8RNlGAYE6BvmnQnKVNpKfkKLJac4zku+FIYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795436999;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer;
+	bh=iiN7DcPSkiAudM715K7PGA4r2cpiHl8VcHMJZAmlc6o=;
+	b=YtDp6y1QVjT5QBXl/xDjZRnw6yOxrnWKaVLQeYF6QpJ6ALizjaH2uYxNJ5di81EutMlY
+	 rhVAQY153GZeXyk23QU4TbcEcNERM+H6jnSkVgJ3r72m7BobsLSn3O64xalLmq+N+iGUs
+	 X0DMncIxWNPTIzfQE5BaAu/YSCxg3CTgV6oLzW7Y3+LI2kfGqF6p2iWm73ajB/vktuPjB
+	 P6cF0yD60yU/ckfNrOeKTOT8Zuwf8CXJwpCpGbaqi3NkuEyhJogd3rwTV6HCw6DUyIOMg
+	 UKbB7dMDjQl9PiWM7gJqgWtKmPhS4UfMukXXN88028OJN4BgC69F4++lmogQFeMbaZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V9NAW4ty;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZHy6mXu+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CD2606A31E;
-	Mon, 23 Nov 2026 12:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6254606A331;
+	Mon, 23 Nov 2026 12:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V9NAW4ty
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4351F000D0;
-	Mon, 23 Nov 2026 12:18:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZHy6mXu+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE921F000D1;
+	Mon, 23 Nov 2026 12:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795436302;
-	bh=pGK0OBvYCJu1N8yu8PM9PisOzbkPNFWd36gKX1yw1zQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V9NAW4tyQumdHU1SyR9DOiq0llWoBFUTtQXP60kSigWkq42r8PO68XCY5iiclGcow
-	 ZrmVXXNJ8ENvxSVAypk7u6dD+kSAx1SBK5/cE2FKqFxG9PAy7+wPceL5XdjH9nDok+
-	 T3QPfkXqvvn/+Rk8CD2PhMv8S1pqOeQmWvRmVDhJcUIi7XA8m/mzuiCeN1sMcv/E5+
-	 nM3MfpReM9bxGFuonrlrC9DR18Mq5exDoHDV3VTXr35AQI5wc6tqxqQapbXggZdbDy
-	 5qRv93H0KkVURKGItiB8Ma+jiDjwF5WcD8BNX7U7cBq/v5QLe8RQDSyqT9PMGl2qM6
-	 10XxwgsECfU9w==
-Date: Mon, 23 Nov 2026 13:18:19 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Stanislav Aleksandrov <lightofmysoul@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Halliday Top
- Level Mode Multiplexer
-Message-ID: <20261123-competent-pragmatic-cougar-4be6b3@quoll>
-References: <20261116-halliday-tlmm-v2-0-b4dd502ca142@gmail.com>
- <20261116-halliday-tlmm-v2-1-b4dd502ca142@gmail.com>
+	s=k20260515; t=1795436999;
+	bh=iiN7DcPSkiAudM715K7PGA4r2cpiHl8VcHMJZAmlc6o=;
+	h=From:Subject:Date:To:Cc;
+	b=ZHy6mXu+LKwzrFh9y/z3uQ9Z330W8dy5p2EXVYUc42G529PX+x3aE9jasPGGVjgrw
+	 uzTATw9K1bnS6xDK/lTW+SEnFiws1BLQpBOvCXch8mQ2NYUZA/aA/SlaG7vTOGHWZV
+	 JxdXJU4x0LN+KBiCvY7bHE9TL4NNIg3VcwlaF8aO6Jaws3TK+E5gddt9uzbRhw2Ccu
+	 sS1U8PERXdVC6rRwY381g/5+0wltg0MGoREEHnlqZ5K3f9l4abYrSkTAXW6CaAJACx
+	 YLORBNNo8+hRhlPyC1pgPWBV42f9FJrWIkI10joKYQzh1uxO8yKCCmSkxmgBstfd3B
+	 JW1EzZq1SKa3w==
+From: Linus Walleij <linusw@kernel.org>
+Subject: [PATCH 0/3] Convert National Semiconductor GPIO drivers to gpiolib
+Date: Mon, 23 Nov 2026 13:29:52 +0100
+Message-Id: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,21 +53,63 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261116-halliday-tlmm-v2-1-b4dd502ca142@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAA/x3MUQqEIBAG4KsM/3MDae4aXiV6SHesebFQiIXo7
+ kHfAb4LTapKQ6ALVU5tuhcEMh0hbUtZhfWHQLC9/RpjB46OS0u8Hrrz6D/O5xizjw4d4aiS9f9
+ u03zfD/h21n5dAAAA
+X-Change-ID: 20261123-b4-nsc-gpio-87547fbbf7b4
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ Christer Weinigel <christer@weinigel.se>, Jim Cromie <jim.cromie@gmail.com>, 
+ x86@kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Griffin Kroah-Hartman <griffin@kroah.com>
+Cc: linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
+X-Mailer: b4 0.16.0
 
-On Mon, Nov 16, 2026 at 09:23:58PM +0000, Stanislav Aleksandrov wrote:
-> Document the Top Level Mode Multiplexer on the Qualcomm Halliday SoC
-> (SXR2250P).
-> 
-> Signed-off-by: Stanislav Aleksandrov <lightofmysoul@gmail.com>
-> ---
->  .../bindings/pinctrl/qcom,halliday-tlmm.yaml       | 146 +++++++++++++++++++++
->  1 file changed, 146 insertions(+)
+This is an obvious attack patch to see if anyone is really using
+the custom API from these deviant drivers/char/* GPIO drivers
+from the early 2000s.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Probe PC8736x through the ISA bus API and create the SCx200 GPIO device
+from its PCI bridge. Register both controllers with gpiolib using port
+I/O. Describe the net48xx and WRAP LED GPIOs with software nodes and
+switch both LED drivers to descriptors.
+
+Remove the private GPIO API and per-pin character devices. We assume
+there are no remaining users of the old NSC GPIO userspace ABI.
+
+An LLM assisted in the implementation and x86-32 build checks.
+
+---
+Linus Walleij (3):
+      gpio: convert PC8736x to gpiolib
+      gpio: convert SCx200 to gpiolib and use descriptors for board LEDs
+      gpio: remove the legacy NSC GPIO API
+
+ MAINTAINERS                          |   6 +-
+ arch/x86/platform/scx200/scx200_32.c |  90 ++++-----
+ drivers/char/Kconfig                 |  33 ----
+ drivers/char/Makefile                |   3 -
+ drivers/char/nsc_gpio.c              | 126 -------------
+ drivers/char/pc8736x_gpio.c          | 352 -----------------------------------
+ drivers/char/scx200_gpio.c           | 138 --------------
+ drivers/gpio/Kconfig                 |  22 +++
+ drivers/gpio/Makefile                |   2 +
+ drivers/gpio/gpio-pc8736x.c          | 264 ++++++++++++++++++++++++++
+ drivers/gpio/gpio-scx200.c           | 245 ++++++++++++++++++++++++
+ drivers/leds/leds-net48xx.c          |  85 +++++----
+ drivers/leds/leds-wrap.c             | 143 +++++++-------
+ include/linux/nsc_gpio.h             |  41 ----
+ include/linux/scx200.h               |   1 +
+ include/linux/scx200_gpio.h          |  89 ---------
+ 16 files changed, 697 insertions(+), 943 deletions(-)
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261123-b4-nsc-gpio-87547fbbf7b4
 
 Best regards,
-Krzysztof
+--  
+Linus Walleij <linusw@kernel.org>
 
