@@ -1,111 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795447536;
-	b=AKrPSaILQb3Wp8PF5ZAX7eVTzfABXKdtKY25SyZiMCejiQF86Ungmrn8kFXf/KEiuVXk
-	 Y0e80dGjDf0+SJEGUC5cpiYgXzGX1qp8WnEElVrWnp7b1r/YMHxXSIox2eX41JRusHwDh
-	 tgU3F7HRZd27dYUdk2yDfMI5dTM/GRVxXy680PHmhhmAE68ok1Jg6muB/FhxeT3kfaWCL
-	 2Fmt00qMo0w69YJKtpKhkI56m3qM6QIm1t9xlYiIspuB854yd5nBxtuy11Nhr3eVV3Z2W
-	 GvnuNffkyNlaliTy4NoFeMbKD0pIytHy4tV7mpNXVhr/scWMBDsyNGnIXdDTF9iLvxw==
+	t=1795447586;
+	b=h7yIzaj3jGFdHQAdZTokPBZWOPNVuN7qQd1+R/2ruebbCB6ZJfKVXIea04AuVxFLLwda
+	 1LXYNVwQnVTFdJ+vZ3MggWELoIcv0OyVBROcuaaBJjyQHTMN8sQIRvlDL7nSHYCbR2RZw
+	 Z9C59K42n0XG/neS1zLNI1vNGjYWzStgf/0feiTEszHwq7iE6L2e+acrWrGJai2EiwYXg
+	 6bGs6K6aEStQzVaJKOKzl800YyKyANHTxPyQIIyhp71YWc1en4lA5gZnhtauxTFOzOl2D
+	 vhE4PqE9KGuYQ/HMpOyLFKAu+0Od1ARXtQjGSQRPGp7iCPqkKwn+bWiGtOl3gkB8K7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795447536;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=0s4p6DQdNQlFaKL/LCIj9wFD1mYw+WEFw17qHB6S1I8=;
-	b=1sMm2N2vrxXW0+o5pTGuG6hiwXgUUobKTItirZzvERY7UhllpVB0K9eREpyGwtn9Zzxx
-	 /gh501vryfEHcLDWhdUmfDTMvZKY8mJsGjEe2PRwprFS6mWDADBczDdsQSSxKDf2s/mdb
-	 rKFcQV89UWArS3BgSNAsdj/Je4AA8FUBd1fncUbQK3YlRx/Ux8U8G2mEi6r/HDyHbm87Q
-	 UvAhluz//c1ZHbnwGHIev/B4tyVxavlsP1CEXd+jl8aWAz1MzC3+cwC2rE6w+lwy1C28h
-	 1unf9bwZ5zumX9DmDCfilQLjH+9aSNF5M/j7RCe50r+JlvCtH+okm1MqUDQaDLgZ5Ig==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795447586;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=HCU19bsdGbAlSUy9UzgkopwU/g02dcIIK5MAL+F2JAI=;
+	b=m677tBZyTqVUclTUBlgl+BFI7Fv5SrXSaOyw+kpNnVSL8x992FX9b7focwn8RTxXJi4Q
+	 xpCuoQkVbVcKihjCQm6W5fpgyECynNFRzJERAWUwBglfn6YjJxrHCbewn0vPjoXoGQHxu
+	 1fXfjKdUCcyO9dHQ/aifGPoSBOEScNzdrYujIh7eEEhY+u2v5knfszQnVktY2he17UkH1
+	 soPIZoWjBRArhDbtfJilKJnQcioPkQBme5ZyvIGdF5uaFf84oHrj2t6dLFjf+WK5ztql3
+	 xBx7hWb+vIuHSB055CyxB7G5GsVB9RDOtAmMakhQRjYr7qRxPwi8by+6bA5TwPE5PwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arndb.de;
-	spf=pass smtp.mailfrom=arndb.de;
-	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=hRatJ6c0;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=tN6NiDhh;
-	arc=none smtp.remote-ip=103.168.172.150
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VdztQVtn;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A333D606A686
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 15:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A333D606A686
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A750606A31E
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 15:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=hRatJ6c0;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=tN6NiDhh
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8A7D6EC0B1E
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 10:25:34 -0500 (EST)
-Received: from ams-imap-03 ([10.64.2.23])
-  by ams-compute-02.internal (MEProxy); Mon, 23 Nov 2026 10:25:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795447530;
-	 x=1795533930; bh=0s4p6DQdNQlFaKL/LCIj9wFD1mYw+WEFw17qHB6S1I8=; b=
-	hRatJ6c0MVwM7NsTQ6x16RX02Rx0p159f6m92t9bjLZojaWHX73t+PpdDLY8IdX0
-	FXtnTt9LaeOgh2GTmMPNoXmywag+DgygFub4WOIB1BBpZviH66e1pabC4Qig3ByD
-	bRzOmUaS1ko+L1WxYflybQZmhGWA5Xtz9freK5VgYwtAZcQm121LTq8dkQz8n3zV
-	Pl6mwgNH49AhmitMsuEt92oMHbyFDP63tbpeoCN92445NmrybNW9xtvDg34rLxyC
-	4Vaem388r75zgSuBHT16buqWx8kRk+QoriWKcCBd2GlCX5+qzG+ZHXhscsVMsOeg
-	R7jWCeTPSGBn/vmRykfuRg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795447530; x=
-	1795533930; bh=0s4p6DQdNQlFaKL/LCIj9wFD1mYw+WEFw17qHB6S1I8=; b=t
-	N6NiDhhcW8AYBmOQdzLi+LWlJ27uIWKTKaGllHVX0omOlAzIg0IwEDBcGcOIkEy8
-	foFbKzc4RjRqXVDBJ5Cfprrilkmo+9o6TN23RpgxhT2tvbyRXIGGHU89RXW+gcAc
-	2FIne5Vb0ktSvTeh0RqBmPfB7D0ZcDbo/P4NdDIf4RGZ/7eqibn4xE+7bziweyTL
-	qcHoca8Y7OOLAVRbn6hlC5oUOU1UUpRaXLFV/we7LNIIwwoYjJy8OtGnJYeRjgdV
-	p89X2TGDG+e4tnOqPoLMFpSkJk3ba7DgPi9yVVtxo1fXP6xWB3ZsQ9+OCfkYue8q
-	bHqliD/G3pcuNOeeILDMw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=arndb.de a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795447530; d=arndb.de;
-	mf=PGFybmRAYXJuZGIuZGU+;
-	rt=PGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:JnCGUCh0tzsddhF+whNmWTxq8Wp/llT4eVmyser1HwgfN2t
-	lOwew2RfcaKEGWe9dUiMJwJQkJQBaWFfiepfnSO8ze22AQsS1UupGdQWzZ9X5e36
-	pYoFBLlmB5oX0A0knCS4usOzqLneOiimYvv6FC5TWY7KD/F4xsYcpWdW2ymFxYZk
-	7mCqRGnAzTOTc2CHm7MdFJVlC4vpoaNbkOltmSmYj8sHFLi524C45SgWdDUhm52O
-	Q5grFSC8ajIfyp2r3ULp9VyEZ7tQHGYmRhtJQboaBRgFopachlp4UFs3wPd9+ETo
-	EdSZkgWVF3t3095wd/3a+Wnti7Mpwf9IKeVNu0A==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:hUqZyAVIjmUUkC/sfGeVEaPi9086gM2/fvLEnQB4K6o=:W7TU2vHc9HvrqqySqenGm1r668UZd7I6KeO/+9zcev4=;
-X-ME-Sender: <xms:5VoEa9OCvxUI_HvsHrm31TiHj4gKDEbteEh3xVXb26WRlwJ-gMNcNg>
-    <xme:5VoEa6wZJ8LvPdcCGi3bInRNSZQx0lPWMMy5fjBEQE1_uSBkfx3FOZbgatTroQGen
-    AblVRlUV8Pw79_GiFqkz6gKoRIFKVjX5qtHeOFlsENECqPlXhZgR8E>
-X-ME-Proxy-Cause: dmFkZTEkA5fYjyH7DoRZ9fSXTSyQM3CMBbgSoOWT7DzEXbdLuI/xu+QbsCUwVDqp6cmeBG
-    rLSJyPAfNtppIjc2n9ISKm44YulXiHowpnhktIfScyFVw4u3iFGUP2/G/4ix+afnWqmBFI
-    GzKvKqe2Gc5DWEBgFP4sFAJA6wGOUu3obgqUrxUPp1/9SLzSrA3NED7r55E6ImKfZNFgK6
-    SbdNEW9MBID+uC34fbT5ngwFi3pkaLfFY9lszhY+r22v/RcSRobM25XjgNjlGeIb3pLrAb
-    FweC00Urn/1ywn3DLW3xzTx8xfHHygJhiPzyve4IRXncArRK+LbMZ7PLowts6/MwaLYHJA
-    1WehYI3RY3kD0LvS920puxloGptanWMjB4xGUhWNtwvah33c7v/VkLW1RhsZ4APfAYZNxe
-    1q8QQUosNdvlBk9bBOBGvLdAFBek4N7yKDbegWn/Slw4wQvFSC7dHkrfSLPbW+VoSPNS6b
-    03uTTkddiBSoDqGipOoT+98HOD4Xpuum1b6IuAUgcOW03bbXbhpiiNEyDdtvjD+zLScoNQ
-    xj5SiuXMpICr3Akn/GPeIRZEXEmlMM9FDFR5eKUlYgdy3WFDZrLYvSJNzubIvrk9OaJZfp
-    on1dYUgKQECyezlkKTPDfG0HzNxE1exvL/dLJ5dODoCg6MHeLI/7jCG2ynNg
-X-ME-Proxy: <xmx:51oEa99lfrDTIMjZgQUJUk604TPbSQm-4RCSYSw9Qa9E8eaaB7YGkQ>
-    <xmx:51oEa8HOIIjKm-knb9jwTcWGXBudJgcuuMDcOnZu8ypTY_vG8cU9NA>
-    <xmx:51oEaxIObBSy_6N3MiU6GEqjqvGnfkv8lDtzMSvZhGbJ4WK3VIJRxg>
-    <xmx:51oEa8lNpXYJ-7Dqd28CPM-ODpLeev6nDd7L6h-wLh3OKdQhZci16g>
-    <xmx:6loEawZKY2QNsiqawwKmBneikxjE7uLuFTqAmZPL0avagYW8BXRslAq6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 2B80E32A009E; Mon, 23 Nov 2026 10:25:25 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VdztQVtn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC611F000E6;
+	Mon, 23 Nov 2026 15:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795447586;
+	bh=HCU19bsdGbAlSUy9UzgkopwU/g02dcIIK5MAL+F2JAI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=VdztQVtnLzHts18CAeM+IhfmiQx4nffQrdWM3vtk+aPULl2q6Qm8R3U7lkO1oiona
+	 Dg/H84WYAi1PFoRPi3x6QbVv0IC0Cm+yaQDcZ2KzX4oMd/8m6o/WEonZoNXrZMPOrw
+	 E6pnTc4YFlbB/Ox8fmHwSRnxGHNve39V4PHEezbRqx/YTeTnsmDrwkiA9PW1GNv6mP
+	 XXWZYVIRdWwd4go4JA3XLOJFJZvOj+OZvTPsgDk/wNjPQQsTtyUlAJlCpaHKfYWw5Z
+	 FIk7Xvdih5Qr+oz3Dm/2PT3LiEpp+kGUfX9wfx10CSPJBA9RqhKbHl9fNNQCyGeKdx
+	 lNajf5cWM7R7w==
+Message-ID: <sashiko-outbox-229555@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
+ GPIO OUT not function mode
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Gary Wang" <is0124@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-4-f2322a91686d@gmail.com>
+References: <20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-0-f2322a91686d@gmail.com>
+ <20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-4-f2322a91686d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 15:26:25 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -114,61 +60,111 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-X-ThreadId: AS3EG-ulzzHR
-Date: Mon, 23 Nov 2026 16:24:49 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Bartosz Golaszewski" <brgl@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Linus Walleij" <linusw@kernel.org>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Kent Gibson" <warthog618@gmail.com>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-sh@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-wireless@vger.kernel.org
-Message-Id: <8296a5c2-0aa2-4fc7-b65b-9d336bc4dff6@app.fastmail.com>
-In-Reply-To: 
- <qvmy7iaxc7cjy2gkajqkr5ma6b4lwxz5ff64a5zsqrgewkxodr@odbjlv5x3hix>
-References: <20261123085723.156933-1-arnd@kernel.org>
- <tdc6h325jthjgyik2ne4oistkm563maoc2cpnffqu7hh34tpl7@oscripzv4dwq>
- <qvmy7iaxc7cjy2gkajqkr5ma6b4lwxz5ff64a5zsqrgewkxodr@odbjlv5x3hix>
-Subject: Re: [PATCH 0/2 v8] gpiolib: finish the legacy cleanup
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 23, 2026, at 16:08, Bartosz Golaszewski wrote:
-> On Mon, Nov 23, 2026 at 03:59:24PM +0100, Bartosz Golaszewski wrote:
->> On Mon, Nov 23, 2026 at 09:57:21AM +0100, Arnd Bergmann wrote:
->> >=20
->> > This was planned for 7.3 originally[1], but kept conflicting with
->> > ongoing cleanups for the broken rsk7203 board. I've skipped the
->> > oneline rsk change now, which will be fixed properly by Dmitry's
->> > patch [2].
->>=20
-> Sashiko is right:
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] pinctrl: upboard: missing Signed-off-by trailer in commit
+  message
+- [High] pinctrl: upboard: NULL modes deref in upboard_pinctrl_set_mux()
+  on mode 0
+--
+
+commit 9be514c1a4ebbf98ef179a29ba2bf1adb01fa558
+Author: Gary Wang <is0124@gmail.com>
+
+> pinctrl: upboard: fix I2C pinmux-select set CPLD GPIO OUT not function mo=
+de
 >
->   CC      arch/sh/boards/mach-rsk/devices-rsk7203.o
-> arch/sh/boards/mach-rsk/devices-rsk7203.c: In function=20
-> =E2=80=98rsk7203_devices_setup=E2=80=99:
-> arch/sh/boards/mach-rsk/devices-rsk7203.c:127:9: error: implicit=20
-> declaration of function =E2=80=98gpio_request=E2=80=99; did you mean =E2=
-=80=98symbol_request=E2=80=99?=20
-> [-Wimplicit-function-declaration]
->   127 |         gpio_request(GPIO_FN_TXD0, NULL);
->       |         ^~~~~~~~~~~~
->       |         symbol_request
+> The CPLD I2C pin mode setting following uart & spi used modes array
+> on device AANT0F04.
+>
+> CC: stable@vger.kernel.org
+> Fixes: dca2f73cf19f ("pinctrl: Add pin controller driver for AAEON UP boa=
+rds")
 
-Yes, this just seemed the easiest way out to avoid clashing with Dmitry's
-patches again. If you want the version that doesn't break the build,
-you can still apply v7 [1], but that likely means his series has go
-through another revision to undo my change and remove the linux/gpio/leg=
-acy.h
-inclusion.
+[Severity: High]
+The commit message is missing a Signed-off-by: trailer from the patch
+author, as required by Documentation/process/submitting-patches.rst.
 
-     Arnd
+> diff --git a/drivers/pinctrl/pinctrl-upboard.c b/drivers/pinctrl/pinctrl-=
+upboard.c
+> index b9af6dd93c343..66c1c3e3bfe08 100644
+> --- a/drivers/pinctrl/pinctrl-upboard.c
+> +++ b/drivers/pinctrl/pinctrl-upboard.c
+> @@ -225,11 +225,21 @@ static const unsigned int upboard_up_i2c0_pins[] =
+=3D {
+>  	UPBOARD_UP_BIT_TO_PIN(I2C0_SDA),
+>  };
+> =20
+> +static const enum upboard_pin_mode upboard_up_i2c0_modes[] =3D {
+> +	UPBOARD_PIN_MODE_FUNCTION,
+> +	UPBOARD_PIN_MODE_FUNCTION,
+> +};
+> +
+>  static const unsigned int upboard_up_i2c1_pins[] =3D {
+>  	UPBOARD_UP_BIT_TO_PIN(I2C1_SCL),
+>  	UPBOARD_UP_BIT_TO_PIN(I2C1_SDA),
+>  };
+> =20
+> +static const enum upboard_pin_mode upboard_up_i2c1_modes[] =3D {
+> +	UPBOARD_PIN_MODE_FUNCTION,
+> +	UPBOARD_PIN_MODE_FUNCTION,
+> +};
+> +
+>  static const unsigned int upboard_up_spi2_pins[] =3D {
+>  	UPBOARD_UP_BIT_TO_PIN(SPI_MOSI),
+>  	UPBOARD_UP_BIT_TO_PIN(SPI_MISO),
+> @@ -289,8 +299,8 @@ static const unsigned int upboard_up_adc0_pins[] =3D {
+> =20
+>  static const struct upboard_pingroup upboard_up_pin_groups[] =3D {
+>  	UPBOARD_PINGROUP("uart1_grp", upboard_up_uart1_pins, &upboard_up_uart1_=
+modes[0]),
+> -	UPBOARD_PINGROUP("i2c0_grp", upboard_up_i2c0_pins, UPBOARD_PIN_MODE_GPI=
+O_OUT),
+> -	UPBOARD_PINGROUP("i2c1_grp", upboard_up_i2c1_pins, UPBOARD_PIN_MODE_GPI=
+O_OUT),
+> +	UPBOARD_PINGROUP("i2c0_grp", upboard_up_i2c0_pins, &upboard_up_i2c0_mod=
+es[0]),
+> +	UPBOARD_PINGROUP("i2c1_grp", upboard_up_i2c1_pins, &upboard_up_i2c1_mod=
+es[0]),
+>  	UPBOARD_PINGROUP("spi2_grp", upboard_up_spi2_pins, &upboard_up_spi2_mod=
+es[0]),
+>  	UPBOARD_PINGROUP("i2s0_grp", upboard_up_i2s0_pins, &upboard_up_i2s0_mod=
+es[0]),
+>  	UPBOARD_PINGROUP("pwm0_grp", upboard_up_pwm0_pins, UPBOARD_PIN_MODE_GPI=
+O_OUT),
 
-[1] https://lore.kernel.org/all/20260907090956.2825703-1-arnd@kernel.org=
-/
+[Severity: High]
+Are upboard_up_i2c0_modes[] and upboard_up_i2c1_modes[] working around a
+NULL pointer dereference in upboard_pinctrl_set_mux() when a pin group uses
+a scalar UPBOARD_PIN_MODE_FUNCTION?
+
+UPBOARD_PIN_MODE_FUNCTION is 0, and UPBOARD_PINGROUP() sets .mode =3D m and
+.modes =3D NULL when passed a scalar enum upboard_pin_mode.  Because
+upboard_pinctrl_set_mux() tests .mode instead of .modes:
+
+drivers/pinctrl/pinctrl-upboard.c:upboard_pinctrl_set_mux() {
+	...
+	for (i =3D 0; i < grp->grp.npins; i++) {
+		mode =3D upgroups[group_selector].mode ?: upgroups[group_selector].modes[=
+i];
+	...
+}
+
+any group configured with scalar UPBOARD_PIN_MODE_FUNCTION has .mode =3D=3D=
+ 0
+and .modes =3D=3D NULL, causing upboard_pinctrl_set_mux() to dereference NU=
+LL
+at .modes[i].  The UP2 table already defines i2c0_grp and i2c1_grp with
+scalar UPBOARD_PIN_MODE_FUNCTION in upboard_up2_pin_groups[], so muxing I2C
+on UP2 still triggers this NULL pointer dereference.
+
+Instead of adding uniform mode arrays (which also lack the static_assert()
+size checks used for the other mode arrays), should
+upboard_pinctrl_set_mux() check upgroups[group_selector].modes ?
+upgroups[group_selector].modes[i] : upgroups[group_selector].mode so
+i2c0_grp and i2c1_grp can pass UPBOARD_PIN_MODE_FUNCTION directly?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-upboard-pi=
+nctrl-add-intc1057-intc105e-support-v1-0-f2322a91686d@gmail.com?part=3D4
