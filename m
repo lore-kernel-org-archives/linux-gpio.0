@@ -1,62 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795437369;
-	b=IDTTNGq7jcwG/Q4f88weaS7lHHzlVV9FRqbxVCDyg65zIhPHVWdcegg/C/hwE0saTmI8
-	 mO4SXA+/natG3cxdEKK6zFCauNuWhQlh8YQpNqGvJkN1HDd2A240RWKuS+IDWjPdHrVpt
-	 +1FZ7a1IuRxqw4WBvxiN/DMpb6tCsUdhpbqDmQKsM8/6lbo2URK5Rvmj9xt+vvR5TaO4C
-	 uNr93TWu9MAeFcMxy8ZPJWcxq3cvqMjfwngdHg604ArkYKKnCxf7CkYTuJhI6Mx37bDRc
-	 15WKN02SZDgMOOMkmDhJM5CgRg72A9gQX0WZ3pyh7T95KlFqLwJ9aGPjnXXoByMa8wA==
+	t=1795438470;
+	b=ybg8y5rsijohJSl0QxTqSkeefaezn4hemAAwdDxn/bXJ3sR1jeMwSvRxC7qbVTAaSA3S
+	 GX9+C6oUx9omocPDW9MRNmJeJGF1uKR0a3+Vjp4A8hDPtEQlbLF0WKA7vVXslAt5Ciojt
+	 xR1BgvnMkuseMu1Z4/iNyyxG63M70se6i30ni9RSxCc8G/0V95ESHBCVymJ+P9YcNvjic
+	 8MPj+fJBHuSHABquMYm7jOphkTUWrqVOss0O5GngiNE8byihz0aD5bi8essyahXGPs8+N
+	 crAKZUWbgjCu01c22rXPjwPTbraEQfnVJlFDfEj1U+sFz6lvleZHFOe4V6hNTL2pVJg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795437369;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795438470;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=u19f3dVud/ZrmYlQFvC8zg1o8rPzMyXEdD9FHodVIm0=;
-	b=t+MjwPLrXzTQsHi5TnPbxEUco9FjLC9dNCLnfcvBZcRZqmbEQOgp0D+fOUozm+V1ViTp
-	 3htUIA8J70H5qh9BlDWMDgIFftvT9Ty5+bwkmSH0L8v+InaLYLaECIIAwkwHYn75RecFd
-	 Xi8n8YafDH+fwva0u+Zogm7gAIvxJA/b52vM1r1NO4lfriid+HZWhDXk3hfScoMwW/BNZ
-	 rg2bC55A8L06wyXE2Xlj/kaYeccSBRPAEN/eBVVlkI64Zn6plKwWsx6bsUgv4kI9b+SC0
-	 pjAxnvg9lOmM5dau8BKcpm6M/4+78aq/aBFvofMBlrFk7ReKBt5bNoLi+MCL08VWFdw==
+	bh=ikrkT4unPcBTp2tgWugemt3WecqbaPqo/nqUTFKC3Es=;
+	b=M4oydKLICFiijmDDHPfdgGLi3ZuCM6l/g12St6zfOL753VAtDootJPOABjAxcU7Y9Ng5
+	 zsVy/YV6gM4c7dIjhSSA09M1wuCeGF5pBGFKHHwZcOe4Hv7saZwxx7GX21bZ5/9sDcNCu
+	 9sNo7LbkHYLAmxxLoM+tktJiykCABQqVTRBNNIO82wXMTjkunfaJQdPq6RUdx/Zd7KfYL
+	 7N8qnE7xHUx2L8a5EpVd+tHAALxd8TLAkVbew2aWg5TTCNywdGJwpSy5UX/VHQv5l+VfB
+	 4vDoq5AYYFnnyGZLz0O0ER9DT2Y4CF40ZG/JXKzgiKAVytcraGMaLZdgHjxsH+5LyiA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T1GjEiDJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=frqtt9rs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF086606A332;
-	Mon, 23 Nov 2026 12:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CFA606A31A;
+	Mon, 23 Nov 2026 12:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T1GjEiDJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F67C1F0093C;
-	Mon, 23 Nov 2026 12:36:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=frqtt9rs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF331F000C4;
+	Mon, 23 Nov 2026 12:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795437369;
-	bh=u19f3dVud/ZrmYlQFvC8zg1o8rPzMyXEdD9FHodVIm0=;
+	s=k20260515; t=1795438469;
+	bh=ikrkT4unPcBTp2tgWugemt3WecqbaPqo/nqUTFKC3Es=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=T1GjEiDJe83q99JcoUyIxhWXwTX34yYk4MW1YMBRVLMsc4OSd62FufMMDYPRJgFkJ
-	 bDkNnuUf87cAVZ1Wht8mswqUy2w4KPsbFhvQabRs9/SwZ3CYMF9yqa0dtXwxnZVJ2N
-	 EMg60X+46+r2yqB50hpXWXjnU3cs1OkLtS/2Bye7DC0/MHLFUc/YRt6izJoNMudZj1
-	 RwIIbuy2N0PksTRamtyt6K99zm945+tRcor5xjrbdP4sN3fGi5Ts1TyqGkQz2FCXLl
-	 vZxxww150qGvcvOr8i4EYv5EyOLugfnfS2jJdyxiMP8Sh028Bzb4g6ZnpamBRaUIpd
-	 Yyvcm3xz1NeVg==
-Date: Mon, 23 Nov 2026 13:36:06 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jingyi Wang <quic_jingyw@quicinc.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Lijuan Gao <quic_lijuang@quicinc.com>, Melody Olvera <quic_molvera@quicinc.com>, 
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Komal Bajaj <komal.bajaj@oss.qualcomm.com>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, netdev@vger.kernel.org, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 17/18] dt-bindings: pinctrl: qcom: nord: add gp_mn
- function
-Message-ID: <20261123-shrewd-boisterous-cheetah-1d5d3f@quoll>
-References: <20261118-gp_mn_tlmm_support-v1-0-703f7badd194@oss.qualcomm.com>
- <20261118-gp_mn_tlmm_support-v1-17-703f7badd194@oss.qualcomm.com>
+	b=frqtt9rsqngqM53eCgPeF+xKKrhBTfsfd2UB6R8Et1Xxpkjp3jY90OguMFWibf4FS
+	 8Pk2ck/WOrzk59vkCuAh/rY66LUBpYUr0wimeYtXjWYv6PUtSeu4FHyyUu5ZVghgLD
+	 sQ2uuezGNrbvvR4zTet2A10LdJDjYJVcRi8RsulqSt4hbSAckIPp4amT/hC5LFFCvg
+	 M/Lj+krM1Ja21tNrnftbGNNuKivIAAqDrkQVUeh0V9cl9tmD6wTHaKFLzR4QLNSIcT
+	 Ccl82+XTNVuczqwcUXdE5ZElKe2s09C7b9bN+rSyM/URyXiwrJ5RWlrxYj6i/zOTkL
+	 +DtW42d5Bu3yQ==
+Date: Mon, 23 Nov 2026 20:34:11 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 06/13] soc: synaptics: add SL2610 system controller
+ support
+Message-ID: <awQyw9fp8qTj3kbU@xhacker>
+References: <20261115102401.3520-1-jszhang@kernel.org>
+ <20261115102401.3520-7-jszhang@kernel.org>
+ <20261123-knowing-eggplant-buffalo-fddfc3@quoll>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,19 +71,44 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261118-gp_mn_tlmm_support-v1-17-703f7badd194@oss.qualcomm.com>
+In-Reply-To: <20261123-knowing-eggplant-buffalo-fddfc3@quoll>
 
-On Wed, Nov 18, 2026 at 11:32:48AM +0530, Taniya Das wrote:
-> Add the gp_mn pin mux function to the Nord TLMM function enum. This
-> exposes the GP M/N divider clock output and is used on gpio35.
+On Mon, Nov 23, 2026 at 11:31:42AM +0100, Krzysztof Kozlowski wrote:
+> On Sun, Nov 15, 2026 at 06:23:45PM +0800, Jisheng Zhang wrote:
 > 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/qcom,nord-tlmm.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> > +static const struct sl2610_syscon_data sl2610_mcu_data = {
+> > +	.cells = sl2610_mcu_cells,
+> > +	.num_cells = ARRAY_SIZE(sl2610_mcu_cells),
+> > +};
+> > +
+> > +static const struct sl2610_syscon_data sl2610_avio_data = {
+> > +	.cells = sl2610_avio_cells,
+> > +	.num_cells = ARRAY_SIZE(sl2610_avio_cells),
+> > +};
+> > +
+> > +static const struct sl2610_syscon_data sl2610_cpu_data = {
+> > +	.cells = sl2610_cpu_cells,
+> > +	.num_cells = ARRAY_SIZE(sl2610_cpu_cells),
+> 
+> That's just MFD driver, so should be in MFD, no? Why placing standard
+> MFD code - nothing soc specific - in the soc directory?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+I'm not sure which is better. But FWICT, sophgo, samsung, microchip put
+mfd drivers in soc directory. So I guess the reason behind this is these
+drivers are soc specific?
 
-Best regards,
-Krzysztof
-
+> 
+> 
+> > +};
+> > +
+> > +static int sl2610_syscon_probe(struct platform_device *pdev)
+> > +{
+> > +	const struct sl2610_syscon_data *data = device_get_match_data(&pdev->dev);
+> > +
+> > +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
+> > +				    data->cells, data->num_cells, NULL, 0, NULL);
+> > +}
+> 
+> Best regards,
+> Krzysztof
+> 
