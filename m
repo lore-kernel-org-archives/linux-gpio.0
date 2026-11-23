@@ -1,82 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795433599;
-	b=Ne7Iew+i80Y5F3jUBEYJbqQWkHdeLEb/FVWw9xMMDusEju1tAlFNxKSr9PHsO1hU4I7u
-	 7xbRfgj5VKX1VJD5uZkXf0jN72JD1LU9F8oBsjcQUQhCYkhCa8ZF7hRBgYnXBC99//bTj
-	 OJ0HFQeJjhX/2F47LycYpawBGIH87hW0ZdQvtEyjNzau12SDyzdlzNYZbV/G0qBQ0cpx2
-	 l8zlMsISv99Sa+2n9n2lyk60EHdNVwE0sgu6YlF+VBsFafQkxb+xWKHOhZg3IMX/yb5/S
-	 stYtW+cXUkK13pSfLUKTf9IigBQB3J+2d43ti4buvk+M/s4U14k3SDnkXQIOIK8mgJg==
+	t=1795433602;
+	b=n5XQJjqh5YuPFDITXma+yfNyV5Gb3iX2Zc2AA4qzwx2d4s1ekd4zPdgJx4oZxuSLeOkd
+	 KeeDsoHsjFfW078ea2E9wLm0tQOImaNf1wpZkJXhKhOyYcHwkvi5kFAm7odGPUbKMzUi5
+	 c/sLkINNTDem2Fd7+tK5G61oVQzPkpAoF5unzTw80AfckNe6EWiGdpt12cFJ97ZLCfXbV
+	 tapiWyi9sqfmuGRQZyXRNuxM71Bpm8i57Mx2YnK+GkNaK57XZ6srNHmhtV71aYHo/MMFd
+	 SNWCKpZXXmFZpG3n9ATVrPjiRwJDHU1zQyt6hbH/u/+9Yn//G+zXnT3MgHGp2pkrsBw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795433599;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795433602;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=5nRCKmjw8s473RAx2JKEdq4M1Q3NyMbXMqfx2Az/4ns=;
-	b=xMRSevd+u27pt9zXEfRKIy7FPLK7+sa7Jph+LpahNbUTtkaOosrIimFNS+HiWqNFWYxC
-	 opeW8T/ljY8QQiLiNqDjF/vZ7hPyIEJ6DBkKZSTZFPzlmU9BLRFcO7a8Y9JIqddm5likG
-	 KPhLxPOQOCFXO+qvLsLi4r73cKGXs/8X8nKCJjxuzZubeFmn0qRZ1jrHz6aUB8ikShVnV
-	 SHDxJlVN+b1sEMdN+vjywghuxxRkd7yIGuvWVNjwlSTnSDXY9v6gNllrq4sfYjxxP+E27
-	 mn0wAzWyg44ToDryporW+06Zk6NgpgnmJZIXBWmHu5RcYnJ+elzNxdUls/TjfMHAh3Q==
+	bh=j8dmhSrkGCES4x7Qt63skZcMI+cXFvorwNPaLXIPs1c=;
+	b=elQFEEWIKVy7aBn3nK5uFVTYYVKKTk323y9ZRlrqj/ganehCJ+z/IvRl1nSNcXik34W2
+	 A2Z7bkkKTjD4j+NUVCr8V4Q0m89HGC7hdIFxWWM3CqAUtgAGkmJwx/42fs7dYSoYL2/Kx
+	 eQ/63ab6PCHgOGI0lkI6PxawHZfuHuB6fm4TA8RdG0Q9J32IUZEHUvhs8Si9/tX8FjcyJ
+	 5AsX2AmfyAZmNZ7MU6WC1XFpeRFfFBEtqxKx2MNcvwRQQMd11atrmpWcYpAdTtocvcGD4
+	 JAr39OTg09wWNwSDibMcCItsOf5XjP5KDef7+u4lzCf8g8kPU7oucZFcXp6lRe0oXlg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=biUKYNCE;
-	arc=none smtp.remote-ip=209.85.218.52
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fmTxrgAi;
+	arc=none smtp.remote-ip=209.85.208.48
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDFF606A31E
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:33:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EBDFF606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973A8606A331
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 973A8606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=biUKYNCE
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-c50ac25cdd4so427096166b.1
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 03:33:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fmTxrgAi
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6b87a1a2babso7815128a12.0
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 03:33:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795433597; x=1796038397; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795433600; x=1796038400; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=5nRCKmjw8s473RAx2JKEdq4M1Q3NyMbXMqfx2Az/4ns=;
-        b=biUKYNCEDSO6ZYbSULcp133TIES6V1dgvHI/IVIY7FWNLyjJ4bHQ5LUQrP/OQ1QBgQ
-         ktn45i/V0kMZbn/0X8cosa8dTNA9Pd2Slc7OLVlL9CSAAFROwkZL0Ldzbb1HxHFGEFPi
-         cQRAL0AnW2VfMRFL3I5Fpyk/xUqSIRRPKzygNWZvQOws6bPpq6ptdKBUptrgLGm+WE7Z
-         XM8wNv4QMbBTbgRzqUHvliKV114GQiNifJ1lpxUpTcWHFa4ruYCLnKGAVXra3wV2dNXX
-         krxxXo0QgOKMeaHYY3+6BbRdpvxl3LScp9p6TPo4bLmncb4BgGbls2rkVyuatTMQU4z8
-         eV5g==
+        bh=j8dmhSrkGCES4x7Qt63skZcMI+cXFvorwNPaLXIPs1c=;
+        b=fmTxrgAi19NlM/nagOSThSEsXx3HQCWjOI3Ino/ZQ/UwhUHpA28uz6ZmnB2pvrWs0o
+         ZSVMRB6+YCfPly7Wo25AeqxpiweUpWEuxZUoWFuE0DjpEnmPGYBH+40DRa2srDlV+tcm
+         C6B+iCXUVS0nP1ymXEoPny6Z53vKStqyDhh4S2QdGa/LwqGcnLXrEoXDksjMe0Cknewt
+         6u9rWqKygaqxm81dWVfR5SAytHLSLCyd64+RVW8yopFYLzEqp+GgznjCoDJHALcy+fQK
+         Em39iz7JBojPDdNICBf3YU+bQbpxZHJ4sUamiqVnPz17ITAQWg0mPxCfYOIKMnWSKl/t
+         tPNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795433597; x=1796038397;
+        d=1e100.net; s=20260707; t=1795433600; x=1796038400;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5nRCKmjw8s473RAx2JKEdq4M1Q3NyMbXMqfx2Az/4ns=;
-        b=RRy2NCr+HJ9DH5pff2VK/ZTTg6+QRHTIV8N1VH77Lrgol0+MXJNT5gWZTHCkNLi7x9
-         6fxCUcJ62MoDkzpbL5vuTP+/Yc1CMsPEniaqZVsZbYDL77+cc2EXcI2JKNBi56VXHIZK
-         mY/OUE0dv5sA67P6kPF/2K2fYZTPYCW5XAJXtaY1+dP049AJo1Ul5DLq8Tu2Q5ViEsvD
-         fHE24bubheMC7d5wKJnD1jeHKMxsI6xkYYtgV7gE93lCMopF65XMNqQCGxdHkA+ACkkO
-         3EfYvwpUWSqGgapMC+QNzSi359Zmzmhy1hgPvD6hQYE6MTOAkpfzSSuyPDByLq+96Asw
-         qF3w==
-X-Gm-Message-State: APuU4Z/e1J1FcyIVA/d+o2EDbw4zwj4kz35FgtMXzjghgqDzDDRB/Sgd
-	2ox5MLYDSoiYHh3renZVATWEsF4RBgmhKRZpfL/JDUDlIMLiDAgv6xXdnshDlG+aGAY=
-X-Gm-Gg: AZFdTZd3K//pVb/qxkVL4IAuFcS1gqdzSxgc5waWjok2bMrSaXWPcxq8dZfLISRCOtB
-	D82AVaxl5YzUxhaumYfS3S8N581OgceWsQBNT/6VvGGGNrE6m5JBK5sWVGTl3uWN0Umahw/6hZK
-	Yy+uCj4yyLwbVQB/m7gXvC5KKWQg9QEQROzn7F0UvU0h3lxzsk45sxPhLKnFz/K66gOjjgWSy3j
-	+n3OQy4TAKCQSmyRmFyYrSP7qkfoIMBZ6/b5QCZnzkfyQHFx6q/cZ/tJ2T+lscrD1Ul3nH7RYeM
-	toh2T0wAYL3iGi3Bb9UhC4W8F3P6Qnm20orWsiruIm08pExX2IeL0Z7RPY6+r43yKZ5DULxLF4s
-	2NBeHqcm7g3086wp71WmsgE/1sqAfsB1lPMBfzMuAFTg8DKus5LumuclKsovN7rs2N/Blv+SkJG
-	RKpla+EeQqRp64Xnc200P3y4BrRwHuYMdA/+gyjRryEpaY8oj1CGr8v45xxYYCYtGS3NSdnYg7A
-	Ngu2w1sADSN1O0WXM+AkwNc+KCHAIpKIUd+TkmD65bQ9e6XlSti2rOuouHIJeQIQvDxFC7V5hF6
-	C5aAv7Hv80i/xwpiPXKeaSMEdUza
-X-Received: by 2002:a17:906:564b:b0:c29:f5d8:9c72 with SMTP id a640c23a62f3a-c513a9a466emr618942666b.33.1795433596901;
-        Mon, 23 Nov 2026 03:33:16 -0800 (PST)
+        bh=j8dmhSrkGCES4x7Qt63skZcMI+cXFvorwNPaLXIPs1c=;
+        b=tXl9YGXVNETsxHCPYj4k6r3VZ2W/uC4jTOOARi5vrcv3RvZSypm5X85aRKHLISrXRh
+         LQ5FS16Mhc0g6Wd7bwXV+nhGDUaD8TyzC0zUhaQmTRkHNDI2AxAp4I7r64VNdthmddt+
+         8oAueBzxylLdtAHWoBzE/wb9vNW/V84BZsu2zdhLSaJb5dn0hoD81KrN4nSttl+6KxbY
+         UScrbE2quQYREUL63zlMI+4wFdww3dydB9bZYTixwQlUeW0LEioWSyWxbctZaCdMkJva
+         R2/PAZjJHirMQAiLNf7DHTb7aum/QXTX7ZGq5KwguOBzsYK2SH3Scc0oMIoIJSMmF3yG
+         6VlA==
+X-Gm-Message-State: APuU4Z9Ks9tdteb69KZTe40dy08dbqFmZ9MTeqPjxEb0CthuaMXNcMkc
+	xNnOarKOgMcin06kUPviOpJIvz6dev1bLr5+c/BVOlMTPam3/ysCtf3/svJIPbO/pCs=
+X-Gm-Gg: AZFdTZexuVOvj/GZAb4WJUVCDBl1sDYqgQAbT+T46SngXPkS+nK/WZo/kWXK+A84f6j
+	pzm0QYSMN67IYme2alWoDTC4+BRzxp5HxgnTMAJXt2/QMU0WcvzR+RCgXS5rYtq37d6wPFhEMFa
+	/Z0IFDMRNMeSDBUoksveCv0NiQyaHYvnoWId1bF+ydf9NXYPccq/laJjzuEZr5mMjsf/ZMe7FLY
+	6ZJYGr8eSdFWQGBEjK1anLJ5QxRboeyvQALWW7xNBRKVckndotAibYvh8L0OYZaepWpEfgPKd8H
+	JyMMfbd/6rOpKJ5HtS6aEHDNfY3dIZDR2qwL1jp8h8AHih+mhGD9p3r86A1aS6fNiD/ULvG76Ju
+	hUfNRZYnOAFwwUJYss9VC0/aT4ymgir4vl8GbVbEcA8as2fcyn7gtopi9ayduBvMKPTpx8kaC1e
+	7o7sHNMKorAHglugIJLzQBgqein/MgzhwMVzOiSThbGmuGUngd9y2HsaGx82TLmUqpuQy0C9vO/
+	+1IYXLfzMoy7MI5JYL4/mAShv0cmsEUthQpo36lATJ7SbK53C6bjY1pPALmzwg8PAx/Moc+Uyb+
+	WMdXSa86PC7iBmqxFExs9H2bIOyN3v03xJ01KKDygiFgLoxi3g==
+X-Received: by 2002:a17:906:ad8:b0:c2e:4397:7c82 with SMTP id a640c23a62f3a-c513a5e6a7fmr686236666b.6.1795433599873;
+        Mon, 23 Nov 2026 03:33:19 -0800 (PST)
 Received: from lin-mg ([178.226.61.229])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513afca58asm382625566b.65.2026.11.23.03.33.16
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513afca58asm382625566b.65.2026.11.23.03.33.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 03:33:16 -0800 (PST)
+        Mon, 23 Nov 2026 03:33:19 -0800 (PST)
 From: Maria Garcia <mariagarcia7293@gmail.com>
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>,
@@ -85,9 +85,9 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	=?UTF-8?q?Theo=20L=C3=A9brun?= <theo.lebrun@bootlin.com>,
 	Maria Garcia <mariagarcia7293@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] gpio: pca953x: Fix TCA6418 bulk transfers and input caching
-Date: Mon, 23 Nov 2026 12:32:33 +0100
-Message-ID: <20261123113234.197852-2-mariagarcia7293@gmail.com>
+Subject: [PATCH 2/2] gpio: pca953x: Fix TCA6418 interrupt handling
+Date: Mon, 23 Nov 2026 12:32:34 +0100
+Message-ID: <20261123113234.197852-3-mariagarcia7293@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20261123113234.197852-1-mariagarcia7293@gmail.com>
 References: <20261123113234.197852-1-mariagarcia7293@gmail.com>
@@ -102,17 +102,17 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TCA6418E does not support PCA-style 0x80 auto-increment on the
-command byte, uses MSB-first bit ordering in Bank 0, and requires
-input registers to be marked volatile so regmap does not return
-stale cached values.
+Unlike standard PCA953x expanders, the TCA6418E has dedicated interrupt
+control and status registers:
+- GPIO_INT_EN (0x1a..0x1c) to enable or mask per-pin interrupts
+- GPIO_INT_LVL (0x26..0x28) to select rising (1) or falling (0) edge
+- GPIO_INT_STAT (0x11..0x13) for clear-on-read per-pin status
+- INT_STAT (0x02), where GPI_INT (BIT(1)) must be cleared via W1C
 
-Disable REG_ADDR_AI for TCA6418_TYPE, apply bitrev8() to Bank 0
-in bulk read/write helpers, and mark TCA6418_INPUT volatile.
-
-Also, add IRQ-related registers to the tca6418_check_register
-function for the sake of completion: GPIO_INT_EN, GPIO_INT_LVL,
-GPIO_INT_STAT, INT_STAT
+Update pca953x_irq_bus_sync_unlock(), pca953x_irq_pending(), and
+pca953x_irq_setup() to program and acknowledge these registers. Also
+reject IRQ_TYPE_EDGE_BOTH as the hardware only supports a single edge
+polarity per pin at a time.
 
 Fixes: 6c99a046edfa ("gpio: pca953x: Add support for TI TCA6418")
 Reported-by: Guy Morand <guy.morand@bytesatwork.ch>
@@ -120,110 +120,121 @@ Closes: https://lore.kernel.org/linux-gpio/CAFOBSkSHt5nwdqsf=V0esBh23oTkOzy--9-v
 Tested-by: Guy Morand <guy.morand@bytesatwork.ch>
 Signed-off-by: Maria Garcia <mariagarcia7293@gmail.com>
 ---
- drivers/gpio/gpio-pca953x.c | 41 +++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 79 +++++++++++++++++++++++++++++++------
+ 1 file changed, 66 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 3b2407690281..10a6fbdcb64d 100644
+index 10a6fbdcb64d..c771ecf65071 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -10,6 +10,7 @@
+@@ -910,6 +910,12 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
  
- #include <linux/atomic.h>
- #include <linux/bitmap.h>
-+#include <linux/bitrev.h>
- #include <linux/cleanup.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -37,9 +38,14 @@
- #define PCA953X_INVERT		0x02
- #define PCA953X_DIRECTION	0x03
- 
-+#define TCA6418_INT_STAT	0x02
-+#define TCA6418_INT_STAT_GPI	BIT(1)
-+#define TCA6418_GPIO_INT_STAT	0x11
- #define TCA6418_INPUT		0x14
- #define TCA6418_OUTPUT		0x17
-+#define TCA6418_GPIO_INT_EN	0x1a
- #define TCA6418_DIRECTION	0x23
-+#define TCA6418_GPIO_INT_LVL	0x26
- 
- #define REG_ADDR_MASK		GENMASK(5, 0)
- #define REG_ADDR_EXT		BIT(6)
-@@ -384,22 +390,37 @@ static bool pcal6534_check_register(struct pca953x_chip *chip, unsigned int reg,
- 	return true;
- }
- 
--/* TCA6418 breaks the PCA953x register order rule */
-+/*
-+ * TCA6418 breaks the PCA953x register order rule
-+ * Access masks: BIT(0) readable, BIT(1) writeable, BIT(2) volatile
-+ */
- static bool tca6418_check_register(struct pca953x_chip *chip, unsigned int reg,
- 				   u32 access_type_mask)
- {
--	/*  Valid Input Registers - BIT(0) for readable access */
-+	if (reg == TCA6418_INT_STAT)
-+		return access_type_mask & (BIT(0) | BIT(1) | BIT(2));
+ 		/* Unmask enabled interrupts */
+ 		pca953x_write_regs(chip, PCAL953X_INT_MASK, irq_mask);
++	} else if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE) {
++		/* 0 = falling edge, 1 = rising edge */
++		pca953x_write_regs(chip, TCA6418_GPIO_INT_LVL, chip->irq_trig_raise);
 +
-+	if (reg >= TCA6418_GPIO_INT_STAT &&
-+	    reg < (TCA6418_GPIO_INT_STAT + NBANK(chip)))
-+		return access_type_mask & (BIT(0) | BIT(2));
-+
- 	if (reg >= TCA6418_INPUT && reg < (TCA6418_INPUT + NBANK(chip)))
--		return (access_type_mask & BIT(0));
-+		return (access_type_mask & (BIT(0) | BIT(2)));
- 
--	/*  Valid Output Registers - BIT(1) for writeable access */
- 	if (reg >= TCA6418_OUTPUT && reg < (TCA6418_OUTPUT + NBANK(chip)))
- 		return (access_type_mask & (BIT(0) | BIT(1)));
- 
--	/*  Valid Direction Registers - BIT(2) for volatile access */
-+	if (reg >= TCA6418_GPIO_INT_EN &&
-+	    reg < (TCA6418_GPIO_INT_EN + NBANK(chip)))
-+		return access_type_mask & (BIT(0) | BIT(1));
-+
- 	if (reg >= TCA6418_DIRECTION && reg < (TCA6418_DIRECTION + NBANK(chip)))
- 		return (access_type_mask & (BIT(0) | BIT(1)));
- 
-+	if (reg >= TCA6418_GPIO_INT_LVL &&
-+	    reg < (TCA6418_GPIO_INT_LVL + NBANK(chip)))
-+		return access_type_mask & (BIT(0) | BIT(1));
-+
- 	return false;
- }
- 
-@@ -577,6 +598,9 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, unsigned long
- 	for (i = 0; i < NBANK(chip); i++)
- 		value[i] = bitmap_get_value8(val, i * BANK_SZ);
- 
-+	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE)
-+		value[0] = bitrev8(value[0]);
-+
- 	ret = regmap_bulk_write(chip->regmap, regaddr, value, NBANK(chip));
- 	if (ret < 0) {
- 		dev_err(&chip->client->dev, "failed writing register: %d\n", ret);
-@@ -598,6 +622,9 @@ static int pca953x_read_regs(struct pca953x_chip *chip, int reg, unsigned long *
- 		return ret;
++		/* Unmask enabled interrupts */
++		pca953x_write_regs(chip, TCA6418_GPIO_INT_EN, chip->irq_mask);
  	}
  
-+	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE)
-+		value[0] = bitrev8(value[0]);
+ 	/* Switch direction to input if needed */
+@@ -936,7 +942,15 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
+ 	struct device *dev = &chip->client->dev;
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 
+-	if (!(type & IRQ_TYPE_SENSE_MASK)) {
++	/* TCA6418 only supports either rising or falling edge at a time (per pin) */
++	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE) {
++		if (type != IRQ_TYPE_EDGE_RISING &&
++		    type != IRQ_TYPE_EDGE_FALLING) {
++			dev_err(dev, "irq %d: unsupported type %d\n", d->irq,
++				type);
++			return -EINVAL;
++		}
++	} else if (!(type & IRQ_TYPE_SENSE_MASK)) {
+ 		dev_err(dev, "irq %d: unsupported type %d\n", d->irq, type);
+ 		return -EINVAL;
+ 	}
+@@ -1002,6 +1016,28 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, unsigned long *pendin
+ 			return false;
+ 	}
+ 
++	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE) {
++		unsigned int stat;
 +
- 	for (i = 0; i < NBANK(chip); i++)
- 		bitmap_set_value8(val, value[i], i * BANK_SZ);
++		ret = regmap_read(chip->regmap, TCA6418_INT_STAT, &stat);
++		if (ret || !(stat & TCA6418_INT_STAT_GPI))
++			return false;
++
++		ret = pca953x_read_regs(chip, TCA6418_GPIO_INT_STAT, pending);
++		if (ret)
++			return false;
++
++		/* Clear GPI_INT in INT_STAT */
++		ret = regmap_write(chip->regmap, TCA6418_INT_STAT,
++				   TCA6418_INT_STAT_GPI);
++
++		if (ret)
++			return false;
++
++		bitmap_and(pending, pending, chip->irq_mask, gc->ngpio);
++		return !bitmap_empty(pending, gc->ngpio);
++	}
++
+ 	ret = pca953x_read_regs(chip, chip->regs->input, cur_stat);
+ 	if (ret)
+ 		return false;
+@@ -1113,19 +1149,36 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ 	if (!(chip->driver_data & PCA_INT))
+ 		return 0;
  
-@@ -1251,7 +1278,9 @@ static int pca953x_probe(struct i2c_client *client)
+-	ret = pca953x_read_regs(chip, chip->regs->input, irq_stat);
+-	if (ret)
+-		return ret;
++	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE) {
++		/* Ensure all interrupts are masked and stale flags cleared */
++		bitmap_zero(irq_stat, gc->ngpio);
++		ret = pca953x_write_regs(chip, TCA6418_GPIO_INT_EN, irq_stat);
++		if (ret)
++			return ret;
++		ret = pca953x_read_regs(chip, TCA6418_GPIO_INT_STAT, irq_stat);
++		if (ret)
++			return ret;
  
- 	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
+-	/*
+-	 * There is no way to know which GPIO line generated the
+-	 * interrupt.  We have to rely on the previous read for
+-	 * this purpose.
+-	 */
+-	ret = pca953x_read_regs(chip, chip->regs->direction, reg_direction);
+-	if (ret)
+-		return ret;
+-	bitmap_and(chip->irq_stat, irq_stat, reg_direction, gc->ngpio);
++		/* Clear TCA6418_INT_STAT */
++		ret = regmap_write(chip->regmap, TCA6418_INT_STAT,
++				   TCA6418_INT_STAT_GPI);
++		if (ret)
++			return ret;
++	} else {
++		ret = pca953x_read_regs(chip, chip->regs->input, irq_stat);
++		if (ret)
++			return ret;
++
++		/*
++		 * There is no way to know which GPIO line generated the
++		 * interrupt.  We have to rely on the previous read for
++		 * this purpose.
++		 */
++		ret = pca953x_read_regs(chip, chip->regs->direction, reg_direction);
++		if (ret)
++			return ret;
++		bitmap_and(chip->irq_stat, irq_stat, reg_direction, gc->ngpio);
++	}
+ 	mutex_init(&chip->irq_lock);
  
--	if (NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
-+	if (PCA_CHIP_TYPE(chip->driver_data) != TCA6418_TYPE &&
-+	    (NBANK(chip) > 2 ||
-+	     PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)) {
- 		dev_info(dev, "using auto increment\n");
- 		regmap_config = &pca953x_ai_i2c_regmap;
- 	} else {
+ 	girq = &chip->gpio_chip.irq;
 -- 
 2.52.0
 
