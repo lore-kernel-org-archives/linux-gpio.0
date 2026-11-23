@@ -1,46 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=218.76.62.146
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795432166;
-	b=llGkyp3XqM7g1iV7vggaF6yglqWgvbliJi7A0RiH8GOzJ12QAVjg61b1oFUCLOIMHNRY
-	 JP1PDSe0aqut8ohoAAlB+lSWKKvO1laj/h8EdJpAZZKQIgAq1E5sVkgb3AmL52UBQmKjZ
-	 oBHhtaqaih6W1QCX7P5VVI451MujhnrFLRBJYyWRfyKZNNRr28WM7pfvyNs2ljbOgxi68
-	 IGSzfomTu06Plz++BHDqxBhSLTXL7vTZh/z3/P2yJeNZpMKyjbQGBtfZ1H8e5tTbxTm5f
-	 pXooG19fewSJ0U6Rgz//uAD3jm6e2CO146jzSwMMe1ctOz4y6rfOfUIlO+0DEAXUv+A==
+	t=1795433596;
+	b=0vyTZFOkQ9WjbIHSUCD/WI1TFkfciLS8tlHfO3vpLmr3gvGb306h/sXgveGlDonyjcyc
+	 g5ZV2dSD+7OzaJx9uaSSCWb0mE0Bplxtjy7+B1wxmLXVDzHMGRoP83EIHEAZHRcRTUhL9
+	 y06FijOmikFyzVZvfu34D4G6l+HbKdn5l0BXVHdU4eN4CZmt1rwvgXe6mGOVziph5BNYp
+	 I4qKqP42HCu7HRSJJ8T7o8PQ2e7qhJMMc9DryCpWP+QwAdDnEHk5bb8RRDA6s9cuVZQR+
+	 Ui/INR0GYJ0z/WeFnU6162GwURWuTCPm9TZ3A660CH7DGQ9BJ1QyKfI6+tAL+k8DR/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795432166;
-	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=+kDopycZnDAP9HA19BBrkkNf4GaSRLyZaHpHCwaxUpc=;
-	b=oVSGEvWGDnTuY2Swcyi6IoPysHnFKd0C8fvwG/tlDpYNA46wtHKVpKMG1CBzUf1XGtwA
-	 nyn4zf/GVwuBw3y7sA5ZtfgPPngewHq3elO9ML0zLtRxBAlZfcJPnDua5OxS+lOfAqAU8
-	 l1anCQzZMi1ek6OjMlKOATmpd9Pi3o4xbrErrEepekd6csHgDPCBMxNRGo0yw0uGXadTf
-	 0ok3H4iLwFmciQfYU0N8sBUz2YQQ+qsf71OpBZxKbup3A1/FGIhmwc+QEY4taYkBcFLFe
-	 CgMWccQkLRXW3F6riimblQC3iR8sA84EL6yJ/o6xMf+xz7y/DqIAN8nTB70Gbc7Wy5w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795433596;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=h8PfSz1Z0HS7aEXYWIN1VEHp2/SQ6XDyiMLgGvjktH0=;
+	b=ncfF11Xv1NYZSP4PZfQSCgchoc4GaMkHu/bioVqDqe8uBvjE11HrpigkK2aJNFO0xec3
+	 QlRU73ZZbM7XHRwX16JRl2BRfO72Y+zZMvDfH7sCA0FhKGOjo8awp0SNgx7Qt4/BAjkdM
+	 bln7dUt5yjXBO0Vg1+Se/kL9bF7mvYkaZdDK4lO2XmNxFxqR1b5hJp5bGMcLRXw8YtDvN
+	 zd28lCTFFnjgskAlM8VwLJHwteeIMFGhx0gc+bJcNHqhkTQ9DQM938eFeN0yj+AZ8p3mh
+	 XvrY2iIb43x1Ap3nnigEa2H8EH+u1+72teVZiLiy0WzuuMRFbxWayfBjVPO9UvMHLVw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ultrarisc.com;
-	spf=pass smtp.mailfrom=ultrarisc.com;
-	dkim=pass header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=R6k8B3wW;
-	arc=none smtp.remote-ip=218.76.62.146
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7129606A31E;
-	Mon, 23 Nov 2026 11:09:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A7129606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NUM4egdS;
+	arc=none smtp.remote-ip=209.85.218.47
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4F7606A31A
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:33:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A4F7606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=R6k8B3wW
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NUM4egdS
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c50ac25cdd4so427087966b.1
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 03:33:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=+kDopycZnDAP9HA19BBrkkNf4GaSRLyZa
-	HpHCwaxUpc=; b=R6k8B3wWpsiObveZeoFHed2EGTGDnFK/0MmJcI8iybAPk3FF0
-	pJQ0EDMJ5VaLgj7thKOpbCuh8pWZSJlpeyZDf6gQuLeL7oUj8L1WPtMvc/97H09n
-	lzYtebxKcWeCSegQDhjBnScZFBSLUxWY4UZRU2J+koaIlXN0oF6ZJY+T3U=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwDHQAexHgRrhEgEAA--.2091S2;
-	Mon, 23 Nov 2026 19:08:33 +0800 (CST)
+        d=gmail.com; s=20260707; t=1795433594; x=1796038394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=h8PfSz1Z0HS7aEXYWIN1VEHp2/SQ6XDyiMLgGvjktH0=;
+        b=NUM4egdSLzip5f7WzayPpgs0/jIlwEePbGxRhIdXnVuVWMrWMtWCpjuWrXaYjB/DIb
+         AHJ9gZHj5bABasHgvU4BC4s1sOgakUGgshPs2Y/httysdk29+jbXdhku/zMC3hYPqsbh
+         n4sXsG6ZV6Lcf9LCtgstJhZ9dOfoT4L+eSktTfar2o5QP1IDcp6l5FrOKFJVUnC2toCd
+         EjvxqGhSOqQUIEAoGQVV63YwkKxQH/X2LhjziyqWs1O/5PIfbsn775NQQc3uOLu+J/3A
+         fKC25UcT3TkuvQZbLuCIKyDQU4Z+pt+IRS+ozZzjXPOS2wBnlGJrASt1UBhsvrJIf9W8
+         T/ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795433594; x=1796038394;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=h8PfSz1Z0HS7aEXYWIN1VEHp2/SQ6XDyiMLgGvjktH0=;
+        b=mh0eAp2NM+QtVbjRUAuZIHq9zorFEC82z6oNPv1CCB+CpR5Nr9vOnsOdnqrW+Lg0AE
+         A6quDeRj08WJuG1q6iWuFyW73DrecaJH70p3wzepCHwv0sig74tMowJeNG2lwSf8xZhl
+         K11bXg4myRH9iGG/Y0f2Set8XQehqfMLVU/MTF14JgPYn5GbEAhP+LBjHkzWU9qebs/w
+         3hnFEo+O+XCP0AslbBtibuyFvqE3pmt37y9473ByLjOuwvChnOtOfr6QP9e5WkVaktZp
+         A6qLI+uICHVIpAo23zE0dp5Tjv1NJR76DHrVc4MlouoDmtdnx4zaQaI6/53qOnv+i1+e
+         CiCA==
+X-Gm-Message-State: APuU4Z8iBWgQc/oBfSDp4Kzs1TZhe0KAECSFpkeWmI9Ojs1YKiI6TbWd
+	0BrPZSwcuFcPW/4siDXMcnvzIXezI+rFGBD3Ui1Tp1jLdw4qnyuwgmOJQRpsg+5Y5HU=
+X-Gm-Gg: AZFdTZew1g5T6Q5R/vUoejdDsJb06D/E1xDjlRGgIlEpkQcMskPLHSxAy6z2m60qMJU
+	+pX3CypvF4QUhwbbzTC8JseY/KIhFHDj6HY2/7OpqSjKyyhGMqg6BtnNtEkqzofw8MA7Y6duXqp
+	YYp0EG927NvuY8YHCHRt+PCwN+sd0Qy9WrxR+bDGU1AdBNz/rJP7GYuG2cDXWgHYgpfv1LE5bZP
+	ex3I1uPDUUI8Y/VWTB4/23c4O92uVJMu1N9xy76wT7oq4LAxfSHrWInJkpGx3Gpqz5Z9ApS4oic
+	9+YA6tPUzndT3Y2UP/0qkCQw2iSrTXghJ9z6BNo2X3AKpBZIX6oLtPC1GyYw+I37s+TjlRL4AOe
+	xiT4gSRh1KeB6N7/FLR3LGv/yypcXXu3hqiFG+6US2DSyHOjPAy/RUvPcCHPSPpS3dhZtFmFAJn
+	cHDZzvoxNDRmLRG8QcUKdF0yEpPAR6xBg/rOCtScYJ+f+mhKg557JYVrtt15jan2qWwsfQpxxwf
+	HHLMSiD8LysuiT1rUAgbkm92P++mDqhieutyhlxyasCy7WfeEGikO7Ddr9RGEM1s4q5ksZ4VvtA
+	MOJxXJomIfMl7cG1vf05TwBrfdyCsMGBb4klB1bGNqctwbaVfg==
+X-Received: by 2002:a17:907:1c9d:b0:c37:8c7c:a840 with SMTP id a640c23a62f3a-c513a80fcb0mr952035266b.18.1795433593843;
+        Mon, 23 Nov 2026 03:33:13 -0800 (PST)
+Received: from lin-mg ([178.226.61.229])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513afca58asm382625566b.65.2026.11.23.03.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 03:33:13 -0800 (PST)
+From: Maria Garcia <mariagarcia7293@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Guy Morand <guy.morand@bytesatwork.ch>,
+	=?UTF-8?q?Theo=20L=C3=A9brun?= <theo.lebrun@bootlin.com>,
+	Maria Garcia <mariagarcia7293@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] gpio: pca953x: Fix TCA6418 multi-bank I/O, caching, and IRQs
+Date: Mon, 23 Nov 2026 12:32:32 +0100
+Message-ID: <20261123113234.197852-1-mariagarcia7293@gmail.com>
+X-Mailer: git-send-email 2.52.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -50,81 +96,33 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] MAINTAINERS: Update UltraRISC driver maintainers
-From: Xincheng Ji <jixincheng@ultrarisc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
- Xincheng Ji <jixincheng@ultrarisc.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Linus Walleij <linusw@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
- linux-pci@vger.kernel.org, linux-clk@vger.kernel.org, 
- netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Fei Chen <chenfei@ultrarisc.com>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261118-unimpeded-swapping-6b1b3e5bebba@spud>
-References: <20261116-ultrarisc-maintainer-v1-1-f58706ae438c@ultrarisc.com>
- <179501112283.639563.5233054429317576626.b4-review@b4>
- <20261118-unimpeded-swapping-6b1b3e5bebba@spud>
-Date: Mon, 23 Nov 2026 19:08:40 +0800
-Message-Id: <179543212034.1604484.9462414929447940252.b4-reply@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795432120; l=658;
- i=jixincheng@ultrarisc.com; s=20260922; h=from:subject:message-id;
- bh=2XLgEq6VwPYO3u9Cdwe+eXzTlcnJKcd6VYZ8ir9zoX4=;
- b=aKUFY1rPQkOEW8tfiUw+ybT22Zp6yoFu8w2dZgnGnPlt9ibfbxWWEE9JKWkooBYH/PP4AKZCr
- UTCWh0XY9DvBDMZKPe01jKMlplaefeGjNl2vREUNTEe+gDv5shPr6X+
-X-Developer-Key: i=jixincheng@ultrarisc.com; a=ed25519;
- pk=n848dcS5D6g0vLad/rjp4Gf/1eedTe1a3pYUrkt2260=
-X-CM-TRANSID:AQAAfwDHQAexHgRrhEgEAA--.2091S2
-X-Coremail-Antispam: 1UD129KBjvdXoW5Kr1fJw13ArWfCr1xWF48Zwb_yoWxXwb_uw
-	nayFyxA3WUCF1xAanF9F45urnF9rW0gw1UZ34Fyr1xCrWvvw4kWws0kr90vr1Sva97tF9I
-	krn5Zr13Kry2vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbT8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRCCJPDUUUU
-X-CM-SenderInfo: pml0x0xfkh0wg6xo325dul2uoofrz/1tbiAQAADmsD4rIADQABs7
+Content-Transfer-Encoding: 8bit
 
-Hi Jerome, Conor,
+This series fixes multi-bank register access, input register caching, and
+interrupt handling for the TI TCA6418E GPIO expander in gpio-pca953x:
 
-Thanks for the feedback and the clock Ack.
+  1. Disable REG_ADDR_AI (0x80) for TCA6418_TYPE so multi-byte reads and
+     writes advance sequentially across all three banks, reverse Bank 0
+     bit order (bitrev8) in bulk read/write paths to match the datasheet's
+     MSB-first layout, and mark the input status registers (0x14..0x16) as
+     volatile so reads do not return stale cached values.
 
-I agree that leaving the company does not necessarily mean stepping
-down as a maintainer. Unfortunately, I am no longer able to contact
-Jia Wang or Xincheng Zhang to ask for their confirmation.
+  2. Support TCA6418 interrupt setup, edge configuration (GPIO_INT_LVL),
+     masking (GPIO_INT_EN), status decoding (GPIO_INT_STAT), and W1C
+     acknowledgment (INT_STAT) by reusing the existing pca953x paths, 
+     while rejecting unsupported IRQ_TYPE_EDGE_BOTH triggers.
 
-Following your suggestion, I will send v2 adding Fei Chen and myself
-as maintainers while retaining the existing entries. We can revisit
-their removal after allowing a reasonable time for them to respond.
+Tested on TI TCA6418E hardware across all three banks (single-pin and
+multi-pin reads/writes, input volatility, interrupts). Also, independently 
+tested by Guy Morand on his hardware.
 
-Conor, thanks for offering to take this through the RISC-V tree if
-the subsystem maintainers do not pick it up.
+Maria Garcia (2):
+  gpio: pca953x: Fix TCA6418 bulk transfers and input caching
+  gpio: pca953x: Fix TCA6418 interrupt handling
 
-Thanks,
-Xincheng
+ drivers/gpio/gpio-pca953x.c | 120 ++++++++++++++++++++++++++++++------
+ 1 file changed, 101 insertions(+), 19 deletions(-)
 
 -- 
-Xincheng Ji <jixincheng@ultrarisc.com>
+2.52.0
 
