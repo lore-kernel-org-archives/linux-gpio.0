@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795430112;
-	b=XxNkywbNjTrmiE1J5OJacWnXDf2Y+Hm5dLZf65EikQK1t8uCqUnCByHObniXgCH0AFyx
-	 AeJ8Sby9UVthtMeFH6q5CD4mI2D8kzYMHDTAvvXG1dgHqJqdpDckL49eizAIN6FT5K6ex
-	 NTBwSNha8VkvNILVX4y+5EOP6WTtIbh/7tS/3w3suJQ94ctjmkjdtBgMl7PFB+F3OHg4i
-	 HAVVNP8Yrg44cPd6jLvgVi+7/BPEqKbbhioNenPJ0LE6DkHF1mVfUh4FWy8OImofKVd1F
-	 /DQ1ykvVbua0DsSIexttCyDG9GWv/gQhqQHiK6Lu+Z4vz/qDtfGi7UHwdjOM+9YaLeg==
+	t=1795430177;
+	b=hCuae8pMP6F6kqwTdL838Qgn6ymJwwszl3Z2W6W8dAdCxAs615jfISaiUx8meDVb/077
+	 K2D+2kzg0dGP7Kadwdl2265oU1ETkw02meQF4eL+Cb94NT75jId5x/JX/WcPF3N1Xhwel
+	 JHYgMmDMNGSqfKgOIlu2SdISxLwLPScYqEby0WllOOWRdc2CdfEzuSdm8xpRX/mCJi6qD
+	 pBCxaSXlTlVksUNxmClR8oA5nTMJRn/6m9RW8DWh6HyAaXmFkQay6mAQvcVpYMIXHhLea
+	 DHLp99bqYprbN0jKamb1Pom8qblJ0Cm/jkW0y280kStaGaHfaBnx+U5BJh3RABhPMJw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795430112;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795430177;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=i3MzbPidfDG/rjrcBIfelpXh/DBIpMthv6i7dnSWlog=;
-	b=W5BRJoP4RX1tyNDzzrzVxOQHy+LvskHgj06JybKfokcmM2lBadAp5c6TtVPSZ8jy6UDy
-	 bPrJrWjonl1wxRsafazQw1rQNbZsx6GMZKak+lbuEHWph64AQ9+XowwCzB6m3H4Z1cGIF
-	 1w7M4tnaj23+G3Xqpz49dlD8R61XDubTlAwAU1p/gVX9grgTUMzZvSeMq7EibczM5Xf+t
-	 ORf2XmnCop1N8SIL+eGr6GxfGrzc3Bp05JmcGN2gG+icE4RkY5tXoshn/uuAqYx4nZGXi
-	 8nK+Ta+q9SQ3QFUECNSpxtSAfc4jLedp1S2y1J+uLzJ/LyuYvjw3hCANcX7AE4nFZaQ==
+	bh=KVAwAmpRSmknIyClKub1M0gfNyqLqu3C1IfFJjeNKqg=;
+	b=4OBkO6PbPghRtemqc25tTb2dCMldBmqYepzSwCydYjstbknh0tfGQ2EqPpiHV1SVlj9m
+	 JAqgdvmGMghtscaBBPqt2lQu8l8LVi0GhrK4n/9pzqUoIlzwE+IIlp7IGKvj+R6zTx6dm
+	 GB5BOOpPOpfZXvj/HGY5jlYZSG4orsRQsf8lnGDSErfP9kGO/tmdkBauuXkflpG5rz2Da
+	 yvVymlDpM47dyjrY2l1nm3Iv9LJmpweHByiLaOiEVXw6Bb9gCDfUoHz3+r20uw0reh2v+
+	 uKcaEjaPC8apNy2OEz8MFy2MsV1LyQdRf6DgD4N2irrtO3wvFoAwYKq2MYoppPF4caA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Va6ZtEvD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NJDj6yV5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827F2606A321;
-	Mon, 23 Nov 2026 10:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37ED606A31A;
+	Mon, 23 Nov 2026 10:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Va6ZtEvD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBC31F000C6;
-	Mon, 23 Nov 2026 10:35:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NJDj6yV5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64CCF1F000CF;
+	Mon, 23 Nov 2026 10:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795430111;
-	bh=i3MzbPidfDG/rjrcBIfelpXh/DBIpMthv6i7dnSWlog=;
+	s=k20260515; t=1795430176;
+	bh=KVAwAmpRSmknIyClKub1M0gfNyqLqu3C1IfFJjeNKqg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Va6ZtEvDlTvYtjj1YNjK7xNoTVJVh0Y/RAsRQEpFFiOZKLvESai/4iNhDf4+R7V9C
-	 ELYYIOeKUslx/uevHFFmUOa+ybosLAf+klOjQN8sm0qH7fwENosPMkhrPRxd0pV430
-	 lUSDBrs4KPK1M5IyXIpxo34u1B+liENE6ktgyHWx8fEdKkSm7rto093fWZF7vE7ZVI
-	 NFA/DIX2Hm1pKuPfXNo5reMBGK8bOkLUqfsZR1GSzQnxZvEpa49TE2CyXUQr6R4oah
-	 GRLbZvHgBKMP2EvVGv1CwqZl22nKepg49hWbuhAvt9b62pptvhFFfKIHiTT9AhetqS
-	 tGewm1yhT/fxw==
-Date: Mon, 23 Nov 2026 11:35:07 +0100
+	b=NJDj6yV5Kqnr0nqj5198k/VbhCfX8/6rBbAUmZDNrc6V1L7pCIsUncqFhtGiUS62T
+	 BO4D9BcDIlgbOF5gPfuC4FShYUISn70oRGgoOVnpdZki7NP6hhcwTu6LogDo+o+/l8
+	 WxLFN2UzSVyYnmsdqaFuM5sHsjxZw4tcQlIV5IJJdjkSg1aWcNpJ5wED7hpnLytwYt
+	 CJvM8LnzKGny2rIjM/pF2Ayt/Zi/nGIUXsaVqU2UjIUXJY4A3TGfdks7cOCKFCOIVc
+	 j9cXvtcjhm7/bkBdej6DHDo6HO5rU8+tXFo5nHg0FZ5koRsaEifAUsOov36Fu2A8e2
+	 qPCm//Z8BABDA==
+Date: Mon, 23 Nov 2026 11:36:13 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jisheng Zhang <jszhang@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -50,10 +50,11 @@ Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
 	Linus Walleij <linusw@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 12/13] arm64: dts: synaptics: add SL2610 family SoCs
-Message-ID: <20261123-petite-oarfish-of-merriment-dd7e79@quoll>
+Subject: Re: [PATCH v2 13/13] arm64: dts: synaptics: add SL2610 family RDK
+ boards
+Message-ID: <20261123-vivid-godlike-hoatzin-3a818d@quoll>
 References: <20261115102401.3520-1-jszhang@kernel.org>
- <20261115102401.3520-13-jszhang@kernel.org>
+ <20261115102401.3520-14-jszhang@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,180 +66,64 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261115102401.3520-13-jszhang@kernel.org>
+In-Reply-To: <20261115102401.3520-14-jszhang@kernel.org>
 
-On Sun, Nov 15, 2026 at 06:23:51PM +0800, Jisheng Zhang wrote:
-> Describe the CPUs, interrupt controller, system controllers and supported
-> serial, I2C, I3C, SPI and GPIO peripherals for the SL2610 family.
-> 
-> Use the SL2610 peripheral compatibles already documented in the upstream
-> bindings and share clock, reset and pin configuration providers through
-> the system controller nodes.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  arch/arm64/boot/dts/synaptics/sl2611.dtsi | 457 ++++++++++++++++++++++
->  arch/arm64/boot/dts/synaptics/sl2613.dtsi |  12 +
->  arch/arm64/boot/dts/synaptics/sl2615.dtsi |  46 +++
->  arch/arm64/boot/dts/synaptics/sl2617.dtsi |  46 +++
->  arch/arm64/boot/dts/synaptics/sl2619.dtsi |  44 +++
->  5 files changed, 605 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
->  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/synaptics/sl2611.dtsi b/arch/arm64/boot/dts/synaptics/sl2611.dtsi
-> new file mode 100644
-> index 000000000000..663fe6034ba0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl2611.dtsi
-> @@ -0,0 +1,457 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2024 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +#include <dt-bindings/clock/syna,sl2610.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/reset/syna,sl2610-reset.h>
-> +
+On Sun, Nov 15, 2026 at 06:23:52PM +0800, Jisheng Zhang wrote:
 > +/ {
-> +	compatible = "syna,sl2611";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	optee {
-> +		compatible = "linaro,optee-tz";
-> +		method = "smc";
+> +	aliases {
+> +		serial0 = &sm_uart0;
+> +		serial1 = &sm_uart1;
+> +		serial2 = &sm_uart2;
+> +		serial3 = &sm_uart3;
+> +		serial4 = &soc_uart0;
+> +		serial5 = &soc_uart1;
+> +		serial6 = &soc_uart2;
+> +		serial7 = &soc_uart3;
+> +		i2c0 = &sm_i2c0;
+> +		i2c1 = &sm_i2c1;
+> +		i2c2 = &soc_i2c0;
+> +		i2c3 = &soc_i2c1;
+> +		spi1 = &sm_spi1;
+> +		spi2 = &soc_spi0;
+> +		spi3 = &soc_spi1;
+> +		spi4 = &soc_spi2;
+> +		spi5 = &soc_spi3;
 > +	};
 > +
 > +	cpus {
-
-Messed order of nodes. Please run dt-check-style.
-
-
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			compatible = "arm,cortex-a55";
-> +			device_type = "cpu";
-> +			reg = <0x0>;
-> +			enable-method = "psci";
-> +			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			i-cache-size = <32768>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <128>;
-> +			d-cache-size = <32768>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			next-level-cache = <&L2_0>;
-> +
-> +			L2_0: l2-cache {
-
-Labels should be lowercase rather.
-
-> +				compatible = "cache";
-> +				cache-size = <65536>;
-> +				cache-line-size = <64>;
-> +				cache-sets = <256>;
-> +				cache-level = <2>;
-> +				cache-unified;
-> +				next-level-cache = <&L3>;
-> +			};
-> +		};
-> +
-> +		L3: l3-cache0 {
-> +			compatible = "cache";
-> +			cache-level = <3>;
-> +			cache-unified;
-> +			cache-size = <262144>;
-> +			cache-line-size = <64>;
-> +			cache-sets = <256>;
-> +		};
-> +
-> +		idle-states {
-> +			entry-method = "psci";
-> +			CPU_SLEEP_0: cpu-sleep-0 {
-> +				compatible = "arm,idle-state";
-> +				local-timer-stop;
-> +				arm,psci-suspend-param = <0x0010000>;
-> +				entry-latency-us = <75>;
-> +				exit-latency-us = <155>;
-> +				min-residency-us = <50000>;
-> +			};
+> +		cpu@0 {
+> +			cpu0-supply = <&vcore>;
 > +		};
 > +	};
 > +
-> +	osc: osc {
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +		bootargs = "earlycon";
 
-Please use name for all fixed clocks which matches current format
-recommendation: 'clock-<freq>' (see also the pattern in the binding for
-any other options).
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+Drop bootargs, that's only for debugging.
 
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
 > +	};
 > +
-
-...
-
-> +		cpuclk: cpu_wrap: syscon@f7e30000 {
-> +			compatible = "syna,sl2610-cpu-syscon", "syscon";
-> +			reg = <0xf7e30000 0x4000>;
-> +			#clock-cells = <1>;
-> +			clocks = <&osc>;
-> +			syna,gbl-syscon = <&chip>;
-> +		};
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x00000000 0x0 0x80000000>;
+> +	};
+> +};
 > +
-> +		gic: interrupt-controller@f7e59000 {
-> +			compatible = "arm,gic-400";
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			reg = <0xf7e59000 0x1000>,
-> +			      <0xf7e5a000 0x2000>,
-> +			      <0xf7e5c000 0x2000>,
-> +			      <0xf7e5e000 0x2000>;
-
-Please follow DTS coding style in ordering properties.
-
-> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-
-...
-
-> +		soc_spi0: spi@f7f04000 {
-> +			compatible = "syna,sl2610-spi", "snps,dw-apb-ssi";
-> +			reg = <0xf7f04000 0x100>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			num-cs = <4>;
-> +			clocks = <&clk CLK_APBSPI0>;
-> +			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-> +			status = "disabled";
-> +		};
+> +&osc {
+> +	clock-frequency = <25000000>;
+> +};
 > +
-> +		soc_i2c0: i2c@f7f05000 {
-> +			compatible = "syna,sl2610-i2c", "snps,designware-i2c";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0xf7f05000 0x100>;
-> +			clocks = <&clk CLK_APBI2C0>;
-> +			i2c-sda-hold-time-ns = <449>;
-> +			i2c-sda-falling-time-ns = <425>;
-> +			i2c-scl-falling-time-ns = <205>;
+> +&pinctrl {
+> +	soc_i2c0_pmux: soc_i2c0-pmux {
 
-If these are here, then they are implied by compatible, no?
+Underscores should not be in node names. Please follow DTS coding style.
+
+> +		groups = "GPIO23", "GPIO24";
+> +		function = "tw2";
+> +		drive-strength = <7>;
+> +	};
+> +};
 
 Best regards,
 Krzysztof
