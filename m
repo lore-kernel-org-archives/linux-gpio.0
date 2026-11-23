@@ -1,101 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795463996;
-	b=itpSwF2mGEjZS/bDzVJP+D4xsDJ01KeHUZ3l+eYCWxtDA84ggkDEWIlUmjI7ElfyPlKV
-	 u38VSV+tfJCjfz1EDPM4bPBDnpES6Ue53RzVxH0jNyEfRbFe8YNmviKP2+xurMzWulY22
-	 Xj9o0iCLswMzKy++r23HAS/uuYxwKnvUMuNCk3zTYeISGa+6eyiSGrSOg3CBY6bP8yuHv
-	 RRLOylzgXtCamcv2i/b8P8iQyi0o5TaVSDTTOtgvXv3MQEiNPmX8T/i95Lz703Sg6yqsk
-	 jlaYTmdCS2r0BOGRNGRVOrITKmmCbUJEK3lbYr8XDBcm1exrbirsLzhEjBmAyqLariw==
+	t=1795464090;
+	b=DgxgwQSYKWNXpKDtnD6FEvLaRumABNYdLDwC+LSSq0mZDECXYG6DCZ9G87Z4pcQCXuPp
+	 jCruQwMW5JKIxEyxdMb5STtGD6TiJMDKEcp+kxX0BoPVOphfxOkGX9m6aQDbbY1o7tqDP
+	 FeoDSpGYLxNmp1pz8t7gusRvOQ/eM8sn412bCCBq1EN9shSC46yvyxv+yLEpFRx9zYiki
+	 hZPFQU3wGHK5SMae6dXCd7nC06leWXwM6eo3iA4Z3calXcOV9C+ZgzGEQ17wcjo6s11sm
+	 r4KW35VdTZr+Ufnh6uaTTsLB9WNme6Ch8LHf+Cz7HEjIJCKVz99WXQ7ZpC04a7i/+XA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795463996;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=g8D7FjHM0xGs0u5fsJgGRY1OLWeFaHEMIdi1LwzAiTk=;
-	b=n70pJ26He4nE28Nzkwp/pbQljNkM2smVWp32cCCCaQlz0E3zTpNiRvxvsqHie/oc2F3/
-	 xzRHmsyEgTXhTko3eCzLJABjDImgDLyciqzT6iuaf9+u9dE3lyZpLVevgHYLpusAT1v7+
-	 8KUD8WBuutwZweGxXqfpDwH7AixfLls/8U4kfcRckY845zkzRnZgYXvIe1LIM6xawrK5C
-	 clU/4e1jEqG5niqFuZ75fEhaZ2QSbLH7IPEW88M/9OLGtnld+gh51CiYCD1qh8eXUKuKK
-	 e+1D45TFls6L7bZ1GTD7LC+IsEYG6ICGtjqhbo54YAga0L0hQ81w7yklQYfVM9KUdjg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795464090;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=b79lk37u0SJ8mJ3I7WmNVa3EmDE+Rjthr4bhnCPqMpQ=;
+	b=LFNiezF1cyGCe51ytCyQHDRalJ6Hx9EsCb6GES4DGEXkbIRwPqQQxC3GIyOS4iAJl4m9
+	 26QZDD0jgySGhoCtaAuf48c+XalF3ZbeF4596JTXUF5PZa48b1KQrOiOvvAURFyjd3C0k
+	 B02zBcrHrEAwC+D/CJB1/HjWMpUH0TOCBPNokcAsGOIB62GCw7mcVQo9rfyOY0m1nI03l
+	 ZGI9EG9UA02rCHXiEEkSBp8KnLtmAP2Vx//xkVmQN+/Ad2pvTtJQZZOPUpnl47s2vKj0W
+	 GQmMzX11GjFHeDRkYgDMnPLfQ4jCek8zw0s0MmdwwUUj2dpqCJ0OBAE2DFY2a0aZ6SQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CFHeGqxX;
-	arc=none smtp.remote-ip=209.85.218.50
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eK70WAKg;
+	arc=none smtp.remote-ip=192.198.163.7
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C59606A32E
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 19:59:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96C59606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA8D606A32E;
+	Mon, 23 Nov 2026 20:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9AA8D606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CFHeGqxX
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-c4d2b741ed9so608372466b.2
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 11:59:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795463994; x=1796068794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=g8D7FjHM0xGs0u5fsJgGRY1OLWeFaHEMIdi1LwzAiTk=;
-        b=CFHeGqxXFkgbioxsx902NP4Q3FgTr+AgI6YI92t5flfnFbdo6XafKRV+quirlSXi+5
-         yD8hVEGvro2b9ofUpHjLTq4sUhcrzTX9tc/OJyK4TPFKYFKr3UlsCMXqGo7lZJiFKKqZ
-         vnqzwnkm/BCMhXu0WB96hjm+88ErR3E1PfbziBDjdTS+rCi/diFkrqxSBPJsN+znXLDY
-         yqJ9vcDfcMNo6UWkiOWDoXDimVIL2I2Lt6bpHvip3j1h/KGqhMvu9/ci7Lz6WBUhSN8p
-         s/MkpBa8/okjzYdWa7jwpUytJxLME15MOUjyBVGpvQQHUiA9nyf6X4v88+9QxVg3yYBN
-         jnfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795463994; x=1796068794;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=g8D7FjHM0xGs0u5fsJgGRY1OLWeFaHEMIdi1LwzAiTk=;
-        b=QWNRVQ+SzcKgr/oHmxn/PI/ZMbCQiitjK853rtW0gK9/WiQdw1RWweJNEudD6WmD5F
-         vN3QhKDjuJpe7h59OeLEVwN98PUf01TnsfiTS+U4sc/9gnqJ6epuJHtaWVwrJCHSPu3q
-         rOHuhyYHmXC+YQXUClmCBjVkVt+CrsnfEhmgMOFTmcaRpFrNYfpbMYzSZnRvebePELGD
-         unIRq3QOULMre1svdGvNnlqLG2K8HnYcMJ/lZsMow06vksqIYmfxPIOz12aQpnBRV27x
-         RRDYd1rmbKylg60JRsXaY8w0gP9hP3d2a4ksF+Z9ud8qKt492MzCCTaGJl4/EZN5VT/E
-         BN5A==
-X-Forwarded-Encrypted: i=1; AL+hErGAiyYT7cO5+WxSw87uU5a0ESc12NZR0W+TYREFYoFjYVLeUEGAPth1ADPmBdFY5roc2eeXJ6WjIfih@vger.kernel.org
-X-Gm-Message-State: APuU4Z954IgMSFQZvdeQSzXVbNUNqfJ9LFqYQztvSMmJFRbGtFAufkSi
-	jC2cZQGhsKvI8TVdDE7VTzXfzFWWxVhVB5t6VgQ2ppPZcvdKbxxu+CfE
-X-Gm-Gg: AZFdTZeVF0u1N3ebjSzLxMi3FOm9km+YsKJb9CYQFJ16dH6xJYMi4qkeCGAhonFPqF1
-	sg7SrvUqEK5zXJ4gVDtmDvmn1xUqOltw7RMVkCp9olTqKjT3dPr70uKFRzUoBASlWN/i99XiOnc
-	1XQQemMRiHgurYv6SH6G4onvCF6dI3KKUf8iWTJfD7Ic4h8PaE90Pvsj674iTaNFI0V83VTZidg
-	bzS+nQyxTP3vBEGCmpi98o281/JIMEe2XnLOpwIOnfa/nxDE4zdOYaWL+I5omYaxrltoNCp1N9N
-	LtPwRAFsDo5PHI4eoFWxPLtUVgploUHbzQJCynunXZgNsfqNnalliD2IuKypU9To/Zj1zFk9ti9
-	cKPIXIhI63rfbz2FCtClWGnWMMxoKmkss2KJDs7DLDYXqjwPHGEkKLUe4WeazIlUePcbUwi49kc
-	2PKSX6tfw6wbF31Vgsad80m3+Ip6Iw07zt3ojupum1KDq9uOkQwGyr8EzO13fhvCjdhq0jztNIm
-	m2V/RxTxL5/pvAoFpn6P2JyuuJZpzrN9grym3xM7Bw6OjrblCPaUWusaHy9CjkWbRSiyW1Iu6vV
-	C+i0JsdhdJC9EdphB5oolpVmHrrU
-X-Received: by 2002:a17:906:e28a:b0:c31:e958:408c with SMTP id a640c23a62f3a-c513aab021fmr708355066b.38.1795463993838;
-        Mon, 23 Nov 2026 11:59:53 -0800 (PST)
-Received: from flare5 ([212.58.121.92])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513acfe3b0sm438660266b.8.2026.11.23.11.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 11:59:53 -0800 (PST)
-From: Stanislav Aleksandrov <lightofmysoul@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eK70WAKg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795464090; x=1827000090;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d4BrmHEXpgt7oMAzMDt8SUlATSq1VlxdwbnTLGIvVfA=;
+  b=eK70WAKgSG6TLw84A1DukT1wW0QyRZHFuQC5viY/XoWuTqrOSLe5V2Kn
+   B3g2EqFsRGvPjSop/QWf/TbkiLkEeIEJN2JbMuNaQBesRGneMaANcBYZY
+   UZAQZgmR02JEuuP9f3MmNUwEE3/vIe/m45o15ErOcG9ViuzxCRqM5rKE/
+   LV3NfksQYNj+I6d6pTgwTh2CTs6CzHAi60ks/KHFatuwEL+wfHWj6IjNd
+   no7tSFOT/mFr2VztjL36BaNHaodT27fjBTJvT/cfi/wbs4qagaHQk0nxq
+   cHeTquUaELJWkJ1Bh+KTyXcyG/8XK4RiOBXycw4UfRnuAqruS23bZWBqQ
+   g==;
+X-CSE-ConnectionGUID: 51mgXu26SYKbY6oN8NH5+w==
+X-CSE-MsgGUID: SewgYZoBTpKM/VPKw1faEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11975"; a="4127378"
+X-IronPort-AV: E=Sophos;i="6.27,229,1787036400"; 
+   d="scan'208";a="4127378"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2026 12:01:27 -0800
+X-CSE-ConnectionGUID: aCErOLmZQLSSlaHc6h+Epw==
+X-CSE-MsgGUID: RxQv2lpfQ8OSiPc/k+2Ckg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,229,1787036400"; 
+   d="scan'208";a="11720551"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.204])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2026 12:01:23 -0800
+Date: Mon, 23 Nov 2026 22:01:20 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gary Wang <is0124@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: Add Halliday pinctrl driver
-Date: Mon, 23 Nov 2026 19:59:34 +0000
-Message-ID: <20261123195935.1046144-1-lightofmysoul@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <su7onpn56wd2dtsn63qwbv5v65kci54rhqjndh6qjpb6gwlwnj@m2kxvcdrpjws>
-References: <20261116-halliday-tlmm-v2-0-b4dd502ca142@gmail.com> <20261116-halliday-tlmm-v2-2-b4dd502ca142@gmail.com> <su7onpn56wd2dtsn63qwbv5v65kci54rhqjndh6qjpb6gwlwnj@m2kxvcdrpjws>
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Daniele Cleri <danielecleri@aaeon.eu>,
+	JunYingLai <junyinglai@aaeon.com.tw>,
+	Louis Chen <louischen@aaeon.com.tw>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, BillyChou <BillyChou@aaeon.com.tw>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
+ GPIO OUT not function mode
+Message-ID: <awSbkAjWErc0ac_n@ashevche-desk.local>
+References: <20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-0-f2322a91686d@gmail.com>
+ <20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-4-f2322a91686d@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -105,42 +87,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-4-f2322a91686d@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 23, 2026 at 05:16:55PM +0100, Bartosz Golaszewski wrote:
-> Can you verify the pdc map against the interrupt map? It looks incomplete to
-> me, there should be more wake GPIOs. Unless you have a reason to not
-> include all of them?
+On Mon, Nov 23, 2026 at 11:16:17PM +0800, Gary Wang wrote:
+> The CPLD I2C pin mode setting following uart & spi used modes array
 
-I do not have the interrupt map. The PDC map is from the pinctrl-anorak
-driver in Samsung's kernel source. There are 93 GPIOs with a wakeup
-enable bit, but its PDC map contains only 76.
+UART
+SPI
 
-I did a test: set an interrupt handler on every unused PDC pin on
-my headset and then I toggled each GPIO to see which pin fires.
+> on device AANT0F04.
 
-1. Out of existing 76 entries 42 PDC pins got triggered. 26 are used
-   by devices on the headset and 8 do not change their level,
-   so these 34 are not tested.
+> CC: stable@vger.kernel.org
 
-2. 17 missing GPIOs: only 14 give a result:
+Should be better Cc: (CC: works, but looks non-standard).
 
-     GPIO 42 -> PDC 105, 48 -> 87, 63 -> 122, 80 -> 42, 97 -> 96,
-     105 -> 55, 143 -> 72, 151 -> 118, 168 -> 94, 205 -> 130,
-     218 -> 124, 219 -> 68, 221 -> 133, 223 -> 134
+> Fixes: dca2f73cf19f ("pinctrl: Add pin controller driver for AAEON UP boards")
 
-   I am not sure about 151 and 168, their lines are not quiet on the
-   headset. GPIOs 114, 125 and 162 do not change their level.
+You need to read the AI slops, test them and add your formal SoB.
 
-I think it is not a good idea to add these pins without documentation.
-If someone can confirm these pins are correct then I will add them in
-the next version.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> There's no egpio function. I assume you copied it from sm8550 but I
-> think you should do something similar to commit a326b0523fc1 ("pinctrl:
-> qcom: sa8775p: Enable egpio function") here.
 
-I'll add this in v3. EGPIO_PRESENT is set on GPIOs 185 to 223.
-
-Best regards,
-Stanislav
