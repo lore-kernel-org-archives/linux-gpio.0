@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795437358;
-	b=Ez+Gz6+PKL8ff7/Tj6P3uoCXZ4hn0NtSHESyti6vh3UB5jtsx1DDQKZ1pnnlXOxICief
-	 g35oVkJFaaXS71nwPL/XuYuX51DoK8/jZRlPOleEbBtNlhpD3Gq1Z5771gaZKUlZrEbMO
-	 uZi2Yk/UHa/N0Alb1pBGBc6mmFqSs5VIhtSwrwYOPLzlfUp/AdW98kwDmjrqroLclhpf5
-	 NiB0mWH/Z+t40q11J9OzJqOd/gRot6B98qa7GQLxxBym6gA4m70dec4DmdlEDkijWTKdf
-	 DCuQsOrDkM7uPCMnHK5rywCbYmOGjXpP7dyvEccU3lWwpg/pQhP5ozYSBL91bbZF4vw==
+	t=1795437363;
+	b=Xb3YY/RBjdGBs/UullGSNryIcp9VqLr1lU8sYePLgjKZD3OANq5P0ji15cPG6m1R6x26
+	 QUKigUW7GQUTgAATavWAqu81QNzT0LhfM0XH0Mn8uRkbgkDjv2gKe2trts0Q057Lt3NEe
+	 xiixNgYiTDkr6uM68CHJfUcDDmxBQvZEZn/lmTcm9fGmHQlNj8Kl/hB1xbFLyYMCKFWDX
+	 x9NO5lD6MVDaGNGPygG8Ib5Ythn41p3jfBltDZrOuNqlc1t3c7TA1fizT0LnhGjfQeLjr
+	 l424Lpo4vk29ESJOMx58jOZRFuIc6iUVzgLNJsPKz5dWaia17vHGejiVspAIIoj019w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795437358;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795437363;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Zy4Hmk1KRDGEYBFZwp5X9e/TViOhqR+ADksK53iFkYY=;
-	b=BU/Kyy8CvoywHJ06eWKrs9BZCNL62ZARZ736UI/Qt+gFDMIti9Hhoi+9gMHE/2C9VYkH
-	 nOZI1laCqAGdOqISqeZNgWKeQc9YYKn7WXAJOQi5+jRJQiGNTUIa4b4WSJlrzVSIKajiU
-	 ++GR/OT66gPSSzc+b2widC57+jIf/UrBIyO6RND+mqu2JoPAh+zvs7PUWFHowqIPaWB33
-	 itQYjHsovpbRzs1NNC388p3kqsQ1DZenvTmRnr/fzweOolxfunvljP6WelsICM1hACoUa
-	 ymHS0uv5bClvGroDLYMs1Y/88BwytNX2arcFuEdczVdaKcRFbIwn/OcTFCYA+nlM1Aw==
+	bh=D4Ckp7Jwjb7Ynveby0nf+DuvHjtldO+xRFFK+nFq8Oo=;
+	b=MTMuf99oiIlOcr/YzJmJH9foSuzPIMWXV14V+fdd/O4IKJ1fmblz1y52e0wsW0H1oD1u
+	 0vknDR3evny3tCHc9xTaT7Fn1bhwHMwxEmHuBuoXvW6gkjKClZQvpqAPLsd9VVtmyxSPF
+	 vHDMkuYSDjDsLkQJ9qrZiNxV5qFWQQTjhNnrnHG/KCIhfJBgi3yCHyeLlLEBh2i5iuX4v
+	 VvRaWr9Gg4CEdN5SnO/9OxnREkNvX1XPIJk5BCiODqLseAHblNfY3iuwbzZrhCpSrbB6F
+	 hlwE4hydLPMQNW9bdtm8BMFrQL+JX/OVJIEKpUCuUXulUwSqRKZyFIvqfOMYJ+qCRKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jPaN9qp1;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EYxGXu2F;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E20C606A31E;
-	Mon, 23 Nov 2026 12:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA36606A681;
+	Mon, 23 Nov 2026 12:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jPaN9qp1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223441F000C4;
-	Mon, 23 Nov 2026 12:35:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EYxGXu2F
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB92E1F0093C;
+	Mon, 23 Nov 2026 12:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795437357;
-	bh=Zy4Hmk1KRDGEYBFZwp5X9e/TViOhqR+ADksK53iFkYY=;
+	s=k20260515; t=1795437363;
+	bh=D4Ckp7Jwjb7Ynveby0nf+DuvHjtldO+xRFFK+nFq8Oo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jPaN9qp1Qrmx0G5M4O9l2lVfMMVJ5abwhWUK35qFMZcDPXwDERMje0EKRNE3/Bukp
-	 gy7u5H716zjjJCbgqRttp6A4q+AiDKuC13NmeR1l04HNtennXs0QFlfVMlGEpaH3br
-	 OkUZgKE+dMIkBHngYIGZ/Zn/d82dufN8t8apkj7BrpBUl/MDMdX79lOBX/c7uKoc2F
-	 IJ1FFXUWy9ZzUgbwVCMomsc+hTLIjMadtLA5N7lnM5ed5Q44e4azoupofcwUCvGGEu
-	 +qsKxxITahpC3dwKhZQNdoUPCoCjQWqsFsRjQpQSR+cyYkBlxjayndUfcsMj+m8R4c
-	 GcxcqKMIzZBYQ==
-Date: Mon, 23 Nov 2026 13:35:55 +0100
+	b=EYxGXu2FcNZSgcn+VFddlCVbHUAZvj68VFisTuWCSuPC1B94jBpwRi5qAZRSv+V6J
+	 u4aQ40rmoMwWqUEK9+I2Hj0w57HuZw4sd4Lqa5jntc4Kz29lWsSpFu8qKsgwdCDuDs
+	 VQD6irniIHy/3jdxbH+G3b10HoR2iy7Y6CuAhJL7ZhNDShNisGUIc2dGQRaXuJqb1b
+	 072s0lP/y1FtMtE9D4IWKePLxiWztwckL/D0rAb4e2m2d5eEW/+oulIDYiJ6F1K2fT
+	 XBE/GCBNP0R0znTs+2IhOmD36CR4DeNN1hKHq09pfjNmXqEz0V913piAGXGpS5gvxj
+	 m6CP6XnuneXdw==
+Date: Mon, 23 Nov 2026 13:36:01 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>, 
@@ -52,11 +52,11 @@ Cc: Bartosz Golaszewski <brgl@kernel.org>,
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
 	devicetree@vger.kernel.org, netdev@vger.kernel.org, 
 	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 13/18] dt-bindings: pinctrl: qcom: glymur: add gp_mn
+Subject: Re: [PATCH 15/18] dt-bindings: pinctrl: qcom: shikra: add gp_mn
  function
-Message-ID: <20261123-optimal-mastodon-of-prestige-17a3ae@quoll>
+Message-ID: <20261123-enigmatic-jumping-lobster-c107da@quoll>
 References: <20261118-gp_mn_tlmm_support-v1-0-703f7badd194@oss.qualcomm.com>
- <20261118-gp_mn_tlmm_support-v1-13-703f7badd194@oss.qualcomm.com>
+ <20261118-gp_mn_tlmm_support-v1-15-703f7badd194@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -68,15 +68,15 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261118-gp_mn_tlmm_support-v1-13-703f7badd194@oss.qualcomm.com>
+In-Reply-To: <20261118-gp_mn_tlmm_support-v1-15-703f7badd194@oss.qualcomm.com>
 
-On Wed, Nov 18, 2026 at 11:32:44AM +0530, Taniya Das wrote:
-> Add the gp_mn pin mux function to the Glymur TLMM function enum. This
-> exposes the GP M/N divider clock output and is used on gpio53.
+On Wed, Nov 18, 2026 at 11:32:46AM +0530, Taniya Das wrote:
+> Add the gp_mn pin mux function to the Shikra TLMM function enum. This
+> exposes the GP M/N divider clock output and is used on gpio87.
 > 
 > Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,shikra-tlmm.yaml | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
