@@ -1,56 +1,46 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=218.76.62.146
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795431956;
-	b=jM9aE2psAuQ8ZYueBDcRiJXCsBUrh36idRriipUNkD/eMA7LADdstf43hz+RMO5zVu8l
-	 GwANxx6ZchlQhcA184BHa35kzxk206ttTHTYexc0E0F2gVA0PWTaiqZoyZMuP7Deeq372
-	 eZp+CQoPklnvfIEj3LJg+tHvPbDtaH0YhZxwjw9y6k/5IYhE8Q2CliTgQ/B3V88+tH9PP
-	 rBVbg9q1g1XPNSoTwSDkOhJMuOIIUTDAjid2SNqvt23y1sEj48NXixLJ3gAZrrB+d6Gu9
-	 VgCJIz9R6ESoRkN3gQk8LmwlorL6rix9rQqFbodaiIxAQ+WpoJktHKIzFfh+JVCCZPA==
+	t=1795432166;
+	b=llGkyp3XqM7g1iV7vggaF6yglqWgvbliJi7A0RiH8GOzJ12QAVjg61b1oFUCLOIMHNRY
+	 JP1PDSe0aqut8ohoAAlB+lSWKKvO1laj/h8EdJpAZZKQIgAq1E5sVkgb3AmL52UBQmKjZ
+	 oBHhtaqaih6W1QCX7P5VVI451MujhnrFLRBJYyWRfyKZNNRr28WM7pfvyNs2ljbOgxi68
+	 IGSzfomTu06Plz++BHDqxBhSLTXL7vTZh/z3/P2yJeNZpMKyjbQGBtfZ1H8e5tTbxTm5f
+	 pXooG19fewSJ0U6Rgz//uAD3jm6e2CO146jzSwMMe1ctOz4y6rfOfUIlO+0DEAXUv+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795431956;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=cuMhs9MxlBL0fy/9YlMvcsamK52UjZ9Dphft59nHtEs=;
-	b=zeTQOHxFVdzBJBz51G7yjaJpi8ZHV8u922QtxUFouPHVqg0YxWc9jyU5Qc2fH/3CxGKk
-	 2YRxiTkPYCOSeG64v1zPhVDXNWfnP0Np0VEV/2degY/Isn2mOEaZTWdgUvuuC52n4U83q
-	 XKu4mL/X68FjPGhsd9jZOjTwDeCDbPVAdSK2RvgxVgQEL2xpxQx8/GpCC7XX3nKqfjmXz
-	 6qcVSHD3lvd0OM0ow6GNSOWiGl3x1QFskhvWcRJXQLXZBRKceqMqFxXQ1KUS5rIx2W4Rn
-	 AclMazHiZ34KUlZpJww7aS/Hze7zaQn5a1sv/BZakhh0yhqw7m2OWJDZ8qsogwkwCEg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795432166;
+	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=+kDopycZnDAP9HA19BBrkkNf4GaSRLyZaHpHCwaxUpc=;
+	b=oVSGEvWGDnTuY2Swcyi6IoPysHnFKd0C8fvwG/tlDpYNA46wtHKVpKMG1CBzUf1XGtwA
+	 nyn4zf/GVwuBw3y7sA5ZtfgPPngewHq3elO9ML0zLtRxBAlZfcJPnDua5OxS+lOfAqAU8
+	 l1anCQzZMi1ek6OjMlKOATmpd9Pi3o4xbrErrEepekd6csHgDPCBMxNRGo0yw0uGXadTf
+	 0ok3H4iLwFmciQfYU0N8sBUz2YQQ+qsf71OpBZxKbup3A1/FGIhmwc+QEY4taYkBcFLFe
+	 CgMWccQkLRXW3F6riimblQC3iR8sA84EL6yJ/o6xMf+xz7y/DqIAN8nTB70Gbc7Wy5w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DHNtcvsw;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606DD606A31A;
-	Mon, 23 Nov 2026 11:05:56 +0000 (UTC)
+	dmarc=pass header.from=ultrarisc.com;
+	spf=pass smtp.mailfrom=ultrarisc.com;
+	dkim=pass header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=R6k8B3wW;
+	arc=none smtp.remote-ip=218.76.62.146
+Received: from ultrarisc.com (unknown [218.76.62.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7129606A31E;
+	Mon, 23 Nov 2026 11:09:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A7129606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DHNtcvsw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD22D1F000D4;
-	Mon, 23 Nov 2026 11:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795431955;
-	bh=cuMhs9MxlBL0fy/9YlMvcsamK52UjZ9Dphft59nHtEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DHNtcvswe64wykBGCeW18mWpGkl5J31TaQlJDSYsljjsQSlAlqW4S1kJd/QUBMQ49
-	 aiAOrYJPmKynqnBJllf8+kYBvp9pvVJ/eSkNDASO1PSRMr8lMkcCi5kvJyWBuZAgTB
-	 wA0NxtWGTm/ouxLscqW655BM+hHYNkEDMACxGTDvGBrPc/KMIAZ1KQ9j5TZNto+ClG
-	 DyjpOOjFVEGD56gpCGnk83vrrTxowHEJiAOTEbG8RqcH3PH6SMroHMmcRZSaEGpMay
-	 NB1gWkMYa/ILJklSlZ930outO6MNL49mTQvHMEm4VzFEpeecafoShWZxNhyVoFPzes
-	 GJFPX6jiLyJIg==
-Date: Mon, 23 Nov 2026 12:05:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: CL Wang <cl634@andestech.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tim609@andestech.com
-Subject: Re: [PATCH 1/3] dt-bindings: gpio: Add support for ATCGPIO100 GPIO
- controller
-Message-ID: <20261123-precise-funny-wildcat-5bbbf8@quoll>
-References: <20261116040914.368298-1-cl634@andestech.com>
- <20261116040914.368298-2-cl634@andestech.com>
+	dkim=pass (1024-bit key, unprotected) header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=R6k8B3wW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	References:Date:Message-Id; bh=+kDopycZnDAP9HA19BBrkkNf4GaSRLyZa
+	HpHCwaxUpc=; b=R6k8B3wWpsiObveZeoFHed2EGTGDnFK/0MmJcI8iybAPk3FF0
+	pJQ0EDMJ5VaLgj7thKOpbCuh8pWZSJlpeyZDf6gQuLeL7oUj8L1WPtMvc/97H09n
+	lzYtebxKcWeCSegQDhjBnScZFBSLUxWY4UZRU2J+koaIlXN0oF6ZJY+T3U=
+Received: from [127.0.0.1] (unknown [192.168.100.1])
+	by localhost.localdomain (Coremail) with SMTP id AQAAfwDHQAexHgRrhEgEAA--.2091S2;
+	Mon, 23 Nov 2026 19:08:33 +0800 (CST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,104 +50,81 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261116040914.368298-2-cl634@andestech.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] MAINTAINERS: Update UltraRISC driver maintainers
+From: Xincheng Ji <jixincheng@ultrarisc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+ Xincheng Ji <jixincheng@ultrarisc.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Linus Walleij <linusw@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
+ linux-pci@vger.kernel.org, linux-clk@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Fei Chen <chenfei@ultrarisc.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20261118-unimpeded-swapping-6b1b3e5bebba@spud>
+References: <20261116-ultrarisc-maintainer-v1-1-f58706ae438c@ultrarisc.com>
+ <179501112283.639563.5233054429317576626.b4-review@b4>
+ <20261118-unimpeded-swapping-6b1b3e5bebba@spud>
+Date: Mon, 23 Nov 2026 19:08:40 +0800
+Message-Id: <179543212034.1604484.9462414929447940252.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795432120; l=658;
+ i=jixincheng@ultrarisc.com; s=20260922; h=from:subject:message-id;
+ bh=2XLgEq6VwPYO3u9Cdwe+eXzTlcnJKcd6VYZ8ir9zoX4=;
+ b=aKUFY1rPQkOEW8tfiUw+ybT22Zp6yoFu8w2dZgnGnPlt9ibfbxWWEE9JKWkooBYH/PP4AKZCr
+ UTCWh0XY9DvBDMZKPe01jKMlplaefeGjNl2vREUNTEe+gDv5shPr6X+
+X-Developer-Key: i=jixincheng@ultrarisc.com; a=ed25519;
+ pk=n848dcS5D6g0vLad/rjp4Gf/1eedTe1a3pYUrkt2260=
+X-CM-TRANSID:AQAAfwDHQAexHgRrhEgEAA--.2091S2
+X-Coremail-Antispam: 1UD129KBjvdXoW5Kr1fJw13ArWfCr1xWF48Zwb_yoWxXwb_uw
+	nayFyxA3WUCF1xAanF9F45urnF9rW0gw1UZ34Fyr1xCrWvvw4kWws0kr90vr1Sva97tF9I
+	krn5Zr13Kry2vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbT8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRCCJPDUUUU
+X-CM-SenderInfo: pml0x0xfkh0wg6xo325dul2uoofrz/1tbiAQAADmsD4rIADQABs7
 
-On Mon, Nov 16, 2026 at 12:09:12PM +0800, CL Wang wrote:
-> Document devicetree bindings for the Andes ATCGPIO100 GPIO controller.
-> 
-> ATCGPIO100 is the name of the IP, which is integrated in the Andes AE350
-> platform and in SoCs such as Qilai. As in the ATCSPI200 SPI controller
-> binding, the compatibles follow the platform and SoC rather than the IP
-> name: andestech,ae350-gpio is the fallback, and an SoC that integrates
-> the IP adds its own compatible, such as andestech,qilai-gpio, in front
-> of it. Drivers can then match on the fallback and still add SoC-specific
-> handling later.
+Hi Jerome, Conor,
 
-Do not paste here LLM. LLM should not be used for writing commit msgs,
-because this is a test if you understood what you did here. You explain
-heer basics of DT and driver, which is exactly what LLM would do.
+Thanks for the feedback and the clock Ack.
 
-> 
-> The controller has up to 32 lines, and ngpios gives the number of lines
-> implemented. The debounce logic can run from either of two clocks: pclk,
+I agree that leaving the company does not necessarily mean stepping
+down as a maintainer. Unfortunately, I am no longer able to contact
+Jia Wang or Xincheng Zhang to ask for their confirmation.
 
-Are you saying that SoC has multiple controllers with different number
-of GPIOs? Where is the DTS, can you link it?
+Following your suggestion, I will send v2 adding Fei Chen and myself
+as maintainers while retaining the existing entries. We can revisit
+their removal after allowing a reasonable time for them to respond.
 
-> the APB bus clock, which is required, or extclk, an optional external
-> clock that allows longer debounce periods. The interrupt is optional, as
-> the controller also works as a plain GPIO controller without it.
+Conor, thanks for offering to take this through the RISC-V tree if
+the subsystem maintainers do not pick it up.
 
-SoC routing is fixed, no?
+Thanks,
+Xincheng
 
-> 
-> Signed-off-by: CL Wang <cl634@andestech.com>
-> ---
->  .../bindings/gpio/andestech,ae350-gpio.yaml   | 92 +++++++++++++++++++
->  1 file changed, 92 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml b/Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml
-> new file mode 100644
-> index 000000000000..01badd2a1342
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/andestech,ae350-gpio.yaml
-> @@ -0,0 +1,92 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/andestech,ae350-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Andes ATCGPIO100 GPIO controller on AE350 platform
-> +
-> +maintainers:
-> +  - CL Wang <cl634@andestech.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - andestech,qilai-gpio
-> +          - const: andestech,ae350-gpio
-> +      - const: andestech,ae350-gpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  ngpios:
-> +    minimum: 1
-> +    maximum: 32
-> +
-> +  gpio-line-names:
-> +    minItems: 1
-> +    maxItems: 32
-> +
-> +  clocks:
-> +    minItems: 1
-
-Why is this flexible?
-
-> +    items:
-> +      - description: APB bus clock
-> +      - description: External clock for debounce
-
-Best regards,
-Krzysztof
+-- 
+Xincheng Ji <jixincheng@ultrarisc.com>
 
