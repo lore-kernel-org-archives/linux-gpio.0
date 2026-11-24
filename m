@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.4.11.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795513278;
-	b=FghqZN9GaoQ9eKLuQfP6cYCu/XGxMfr50uun/eaz7kS9EXCJA1+qP19JjUo8s9lyNzvk
-	 XkcwKPYPA835jv710xS5r+fsuXQaqwFIYnuflo2Ee7SFOZEWlWZ3IZRuyTGy2gcVWEZTV
-	 Q4fu52O3vmjOGvkMglXsPnOv5NBVU61fmICa0Cem1axgPVxS7Ru90QBNDVuw8m1wFict/
-	 Oj9H0McQotZk0O9NUYA/32WOjfyRrXPsQ+Af023MwI72x/rDtcE7cSYTMQjHDDUiz6crg
-	 ONzwUkOCGS2fpJ7gL/3OUQecyhSzh0fvoZ5oV3PzQmsOI9wCeUE8s3+8QcmveCsVIow==
+	t=1795513279;
+	b=cGeAODlFCwxBck98wERx+dtFoY/Hg26vFCaMNeIsyeB5lpqS03NDgg2w5ikKhXNrpx5V
+	 E3xLeVwnlYFlO8iSb06jCWO+NrmVBvb5kQFYzXauh0yKmXNZzewNEoNTK1uwHDR+CM7yv
+	 rLIfZhV9bR/wgw3+2XgBDuElcfaM6tncyN/HmbnSdNE/dbDKjQRoF8GoWoxRRdAz29eEK
+	 YuQZvb6DfJC8eujhMfjNQOES3xkyTHZg0WLIIxcSLegLVYrFFKYMmNZ8Z35/I5e4jdPWC
+	 5RWrjVWoP7lVUqtcnGYOBFs1GOfbwNbAlZzrWzaiVHDPREuZvrQ/bvrsDlcck1oz+TA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795513278;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795513279;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=8VaSaMbZoWGk+/ii61YiLhIWHCLEy76/DK7RhQ+sqYE=;
-	b=WjotA+w0HAW3PvDgI/e2RqpXv1dGxvJJOj2KFBP4lYHsejdJuKzpnmWhUytXZPkcic62
-	 M3LSOtYE6ah5nxh91MrXttBSoJRjj3lqdFzITRSHCfpTWpxWoUviY+Uf4TchNCJyWkh0k
-	 +lR2TJPzjq1S4IxM5Mitw0nH05LT30DiRUzx2Sqzqqeti7DXOWmRDKh4zV+4EWfxC9Tna
-	 Kh56xutqjATiLfL07q2RwiJ9A47ar2lxTZt2oqxV2kug3c4HQSO97FvCG+BQ5LSPxjdof
-	 BriEosrUQT7LtJrVgClMxW60ObGWlAnwBICidg315s/UwyTcFBJFbqRQ/UERYdy0bvw==
+	bh=5Y+EU8L83TEHj4ood5A6BMTvfAl0Hd2iC+y5jCYSZnQ=;
+	b=bWjRi2UaOzjAXm00+Sv982keMe/wnjNZG+1aTDkT8W92fuEvUgKxCVYvtJBqmPlR6oKv
+	 jIT2B5+m+zpvmouX5bE3bhdQGCdMcg95bc1RCsDSIqvn0qtGO5GAGs5xe4+t9f8u+tGud
+	 vhlag2zX3wWML62XkdS2U5ghqgrE+7T36gCYiAbVrVA+1plQgkf6DNb1QipmKixxgPoTt
+	 5HypgifmVGml4hM//btQbWSzYtR7iwkJbtLtI/DoZ21+DK0aSBvKWhqMXhxMnHh7WE6um
+	 JCq5bZ8zbO8JaNV39O+UCPyhH+tW00Aqw1wMjb7amyNnkaaJitFBW4pXy8cuM49vZew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=phrozen.org;
 	spf=pass smtp.mailfrom=phrozen.org;
@@ -24,16 +24,16 @@ Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AB5606A331;
-	Tue, 24 Nov 2026 09:41:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D6AB5606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3509A606A683;
+	Tue, 24 Nov 2026 09:41:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3509A606A683
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phrozen.org
 Received: from [2a04:4540:1403:dffc:4a09:a431:737f:f29f] (helo=bertha10..)
 	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <john@phrozen.org>)
-	id 1xVn1N-007e57-24;
+	id 1xVn1N-007e57-0i;
 	Tue, 24 Nov 2026 10:41:05 +0100
 From: John Crispin <john@phrozen.org>
 To: Lorenzo Bianconi <lorenzo@kernel.org>,
@@ -58,9 +58,9 @@ Cc: Ahmed Naseef <naseefkm@gmail.com>,
 	upstream@airoha.com,
 	Weifeng.xu@airoha.com,
 	zhengping.zhang@airoha.com
-Subject: [PATCH v4 4/9] pinctrl: airoha: mux a requested GPIO through the IOMUX
-Date: Tue, 24 Nov 2026 10:40:54 +0100
-Message-Id: <20261124094059.3882014-5-john@phrozen.org>
+Subject: [PATCH v4 3/9] pinctrl: airoha: make the chip SCU optional
+Date: Tue, 24 Nov 2026 10:40:53 +0100
+Message-Id: <20261124094059.3882014-4-john@phrozen.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261124094059.3882014-1-john@phrozen.org>
 References: <20261124094059.3882014-1-john@phrozen.org>
@@ -75,64 +75,69 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On a SoC with an IOMUX block every pin turns into a GPIO with one mode
-value, mode 0 on the AN7589. Add that value to struct
-airoha_pinctrl_iomux and write it when gpiolib requests a pin, so no
-SoC needs a gpio function with one group per pin.
+A SoC that muxes every pin through the IOMUX block and describes no
+pin configuration has no use for the chip SCU. Skip the lookup when
+the match data names no chip SCU compatible, instead of handing a
+NULL compatible to syscon_regmap_lookup_by_compatible().
 
-Without an IOMUX the callback does nothing, so the existing SoCs keep
-their explicit gpio functions and their behavior.
+No functional change for the existing SoCs, which all name one.
 
+Reviewed-by: Lorenzo Bianconi <lorenzo@kernel.org>
 Signed-off-by: John Crispin <john@phrozen.org>
 ---
- drivers/pinctrl/airoha/airoha-common.h  |  1 +
- drivers/pinctrl/airoha/pinctrl-airoha.c | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+Changes in v3:
+- Add the Reviewed-by of Lorenzo.
 
-diff --git a/drivers/pinctrl/airoha/airoha-common.h b/drivers/pinctrl/airoha/airoha-common.h
-index 7a0cb8924e71..adfce89493f0 100644
---- a/drivers/pinctrl/airoha/airoha-common.h
-+++ b/drivers/pinctrl/airoha/airoha-common.h
-@@ -111,6 +111,7 @@ extern const struct airoha_gpiochip_regs airoha_gpiochip_regs_64;
- 
- struct airoha_pinctrl_iomux {
- 	u8 mode_bits;
-+	u8 gpio_mode;
- };
- 
- struct airoha_pinctrl_confs_info {
+Changes in v2:
+- Look up the airoha,chip-scu phandle before the check for a chip
+  SCU compatible (Lorenzo).
+
+ drivers/pinctrl/airoha/pinctrl-airoha.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
 diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/airoha/pinctrl-airoha.c
-index c879e3009ee8..917fd948a9dc 100644
+index 615b48a056c4..c879e3009ee8 100644
 --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
 +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
-@@ -430,6 +430,19 @@ static int airoha_pinmux_set_pin_modes(struct airoha_pinctrl *pinctrl,
- 	return 0;
- }
+@@ -833,6 +833,22 @@ static const struct pinctrl_ops airoha_pctlops = {
+ 	.dt_free_map = pinconf_generic_dt_free_map,
+ };
  
-+static int airoha_pinmux_gpio_request_enable(struct pinctrl_dev *pctrl_dev,
-+					     struct pinctrl_gpio_range *range,
-+					     unsigned int pin)
++static struct regmap *
++airoha_pinctrl_chip_scu(struct device *dev,
++			const struct airoha_pinctrl_match_data *data)
 +{
-+	struct airoha_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctrl_dev);
++	struct regmap *map;
 +
-+	if (!pinctrl->iomux_info)
-+		return 0;
++	map = syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu");
++	if (!IS_ERR_OR_NULL(map))
++		return map;
 +
-+	return airoha_pinmux_set_pin_mode(pinctrl, pin,
-+					  pinctrl->iomux_info->gpio_mode);
++	if (!data->chip_scu_compatible)
++		return NULL;
++
++	return syscon_regmap_lookup_by_compatible(data->chip_scu_compatible);
 +}
 +
- static int airoha_pinmux_set_mux(struct pinctrl_dev *pctrl_dev,
- 				 unsigned int selector,
- 				 unsigned int group)
-@@ -510,6 +523,7 @@ static const struct pinmux_ops airoha_pmxops = {
- 	.get_functions_count = pinmux_generic_get_function_count,
- 	.get_function_name = pinmux_generic_get_function_name,
- 	.get_function_groups = pinmux_generic_get_function_groups,
-+	.gpio_request_enable = airoha_pinmux_gpio_request_enable,
- 	.gpio_set_direction = airoha_pinmux_set_direction,
- 	.set_mux = airoha_pinmux_set_mux,
- 	.strict = true,
+ int airoha_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	const struct airoha_pinctrl_match_data *data;
+@@ -853,12 +869,9 @@ int airoha_pinctrl_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pinctrl->regmap))
+ 		return PTR_ERR(pinctrl->regmap);
+ 
+-	map = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "airoha,chip-scu");
+-	if (IS_ERR_OR_NULL(map)) {
+-		map = syscon_regmap_lookup_by_compatible(data->chip_scu_compatible);
+-		if (IS_ERR(map))
+-			return PTR_ERR(map);
+-	}
++	map = airoha_pinctrl_chip_scu(dev, data);
++	if (IS_ERR(map))
++		return PTR_ERR(map);
+ 
+ 	pinctrl->chip_scu = map;
+ 
 -- 
 2.34.1
 
