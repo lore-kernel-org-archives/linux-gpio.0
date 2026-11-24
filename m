@@ -1,56 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.224.83.235
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795529036;
-	b=oKheHemO/uA6zz9ArdH2h5uBS8GGzn6+7sFkYC88VWzt49VePMlEUrAlMFcG+fgxkmHI
-	 +H5D/iaqWhOEJgwUz3AH2YA7fcBvc92ZUPjFFLNL2UJBVgQ9wVSQ6t9tOu1MQwB4fgPz1
-	 tC08RmVwDbi7w8S1/ijcD8RmyKUAyglJND616Bq9XYdcd3HJCj2yyavgXzK33emQFZuaO
-	 vQ7liJOkjEs/rlHKuE6ACGuJQybn7sP5yYidzIwX4660O4vwd5soof8dIW9LZDwV/1Bk5
-	 5HqdoDPGfJW2bL/ZMlfiHLYEICSsufUVUJ5QlcNmvI5KWxwMgTgznqO4Nc+KgKK+Nbg==
+	t=1795529051;
+	b=zzUAAi+VZthZRPLMtw1tSF4Arvk93jx4QXrVW4OdG2OKpAIv3UUbNpXek7EMOwxYoNda
+	 H6x8tRhf14ntvQ8sP4Qd86jMme+XaoUBWTa+5rCf+ZdRoiGQjHxAJMlM9i0sC3nv71/vu
+	 QxdmmfdvGYVUt+iy5dHic7z4IN1xkbxhzRgIREDitoAnFwv3Jkh17OddjKQtEhev43Uq8
+	 vV1kHoudUlmf0rVxJVJS9oXx72tRHKKate9KxDT3ntPaHJSko/5Cq75+3O9/gtGz3cnT1
+	 HBjFCy4L+ysjnYpE9RFVQZ6sbPUsYX5oayIM6FBNo+IQYXD9pzeWRghWJcg7mwDCq8Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795529036;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=bkLudn8EEzSHMhO0F01BZTmQZgjW7v0oOiCRElBg6Iw=;
-	b=Ki/34guw79BAWRWz/LAUHhFtMQV9gnbCHlwDpN9w2Z/+R8AKQSl2yk/TxMTUR+84k0Re
-	 QD1NUyT+ShSkepUK/QnzalIdKHf9mO72hLAUQvzO3lUlfpqHehEjm8DKcfKRgnOTSoSUC
-	 RcYwcoKPa+thrlEKMsQ0pmvLUSWFYKwL5bYngTe3l4tpqvIpEeRr6CcFLr0KHQbPzig0a
-	 6xM4tvTgJ/B2crzLOxKYuGaKguWXcfS/scUAm6cnTIYT3ql7FvCrnaNm6EEDxOftVXVIu
-	 84g0nk+1yDc9TuQTj5brDIeVLmzTZRQm7xYrctfp5fZOMqz/hoI+Bi6KXSf7L5GEIuw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795529051;
+	h=DMARC-Filter:Content-Type:Content-Transfer-Encoding:Message-ID:To:Cc:
+	 Subject:X-Priority:X-Mailer:X-Originating-IP:In-Reply-To:References:
+	 MIME-Version:Received:From:Date:X-HM-Tid:X-HM-MType:X-HM-NTES-SC:
+	 X-HM-Spam-Status:DKIM-Signature;
+	bh=zSKRyhmd0FaNVxQea7gNz9sw3xKe3IbUK26AInNTru8=;
+	b=xsP4QTYj7OCh51c07HDuvyYLZ5YhAC7KNPhB4lRgalX09J8y2f9zhXs5hvnjOsAnWBjA
+	 38b/2T764+CoYNf/mEBWCFPvQGmtBC4QQvROqXJXTD3hULqtcWFarNs9ek/W7OvvOGyDk
+	 cOwq3V1MkaylS+JQMUw5sVXfvonogO4EAxPBvfRGg3XVVnGJB4rZfYZ1yTIqCmXZsaF7P
+	 aRULzBeycTEr5ri35zxBoq6N0MPX46sNzG94ewNXVxG+16YVaPvplKAFRJFhuZYZcGXGv
+	 N0FsFI6FCUljyM3tEEYZRTfD66zBQAAkwQBldZG6IyK8IK8ue2bmCpMuAi7AsVMHYvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZpJqzqJY;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mail.sdu.edu.cn;
+	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
+	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=JZqeGIKL;
+	arc=none smtp.remote-ip=156.224.83.235
+Received: from mail-m83235.xmail.ntesmail.com (mail-m83235.xmail.ntesmail.com [156.224.83.235])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 80F2060A260B;
-	Tue, 24 Nov 2026 14:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B56C606A31E;
+	Tue, 24 Nov 2026 14:04:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B56C606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZpJqzqJY
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 69FEC1F01574;
-	Tue, 24 Nov 2026 14:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795529036;
-	bh=bkLudn8EEzSHMhO0F01BZTmQZgjW7v0oOiCRElBg6Iw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZpJqzqJYrizluRKYd/hddZP+5v/ndgracb5FJtSgJVzFcMp7KVd1N7/Jvq1ufUpbw
-	 ld8DegojXpRpEfg5TxlfKdzptlcbJJIVlsEHa6L9Bo3vSQ2qdIZlJHJT73okpJPGXH
-	 fMcKu3dV2PqrD4oIsi3D95o8zNwIw3AdCiOLhHY8/9gIF6HSnKsiINS5WLJJmlliXk
-	 AEcKHitTy6aQt+/i4b/QIuFDHokbZX7CwSTsnOgK2+2+nhb4PnX0XuqceKPJwrq9x5
-	 oe6XKzFWT3zOVORWK2mh+bTyvhOtOn9HdpmYycL3eKDZoiKqqMqhkj2t9A9TgoF6wh
-	 U5FaIjtkePoRw==
-Date: Tue, 24 Nov 2026 15:03:52 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: CL Wang <cl634@andestech.com>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tim609@andestech.com
-Subject: Re: [PATCH 2/3] gpio: atcgpio100: Add ATCGPIO100 GPIO driver
-Message-ID: <ejqigbfjg4kkm7nsp2xuji2u33ccbfxl6na2e6y2n645cub72a@ibivk5sb2dt7>
-References: <20261116040914.368298-3-cl634@andestech.com>
- <22ifazqg6afr6rcybqg6foah3v554xu4px2c4et35y5xzpg74h@kesthgcvnlgk>
- <20261124094127.1988037-1-cl634@andestech.com>
+	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=JZqeGIKL
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <ADEAHADeLNTQDfbncJKL7aqN.3.1795529038798.Hmail.202321181@mail.sdu.edu.cn>
+To: Nicolas.Ferre@microchip.com
+Cc: Ludovic.Desroches@microchip.com, linusw@kernel.org, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gcGluY3RybDogYXQ5MTogRml4IHBvdGVudGlhbCB1c2UtYWZ0ZXItZnJlZSBvbiBtYW51YWwgdW5iaW5k?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com web
+In-Reply-To: <a52a58d4-d452-42e1-be3b-db2df2211549@microchip.com>
+References: <20261120173530.3924083-1-liguangshuo@mail.sdu.edu.cn> <a52a58d4-d452-42e1-be3b-db2df2211549@microchip.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,87 +56,70 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261124094127.1988037-1-cl634@andestech.com>
+Received: from 202321181@mail.sdu.edu.cn( [101.76.249.61] ) by ajax-webmail ( [127.0.0.1] ) ; Tue, 24 Nov 2026 22:03:58 +0800 (GMT+08:00)
+From: =?UTF-8?B?5p2O5bm/56GV?= <liguangshuo@mail.sdu.edu.cn>
+Date: Tue, 24 Nov 2026 22:03:58 +0800 (GMT+08:00)
+X-HM-Tid: 0aa20ddea1d6d0cdkusy30eac201248d0
+X-HM-MType: 1
+X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMVHpP02bZAKsMEiErRSAekjx+ys+KNZNl0PLwl
+	f2MeqR5lbiqKsoq8sm3hZVy9q3VetZ+Wq0Te/EdHEVk+2W3XygE0t2b+veD5v+x2w+urvHcVQ88O
+	KIeU6xc/wtPDRFdmxrBa9NzKTwXOEkgAJVHto=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCHkxPVk9KTkJPTRgeQ0xLTlYVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWU9LSFVCQk
+	lOS1VKS0tVSkJLQlkG
+DKIM-Signature: a=rsa-sha256;
+	b=JZqeGIKLmmWjY8YmW+rNKvRiTa2lICFPDFYWm2NdF502gPuz8US675aAnc2/5E1GMwSgiWSmUeN14e6SlzIECwULSW4QmzlXJ/JrbsgL3VY1LwkuS86gS6ie2J9vYU+tdNMo3xrTB4lK7ix2EAqSDBzacBVUGfZ3jcVGw4YPJok=; c=relaxed/relaxed; s=default; d=mail.sdu.edu.cn; v=1;
+	bh=zSKRyhmd0FaNVxQea7gNz9sw3xKe3IbUK26AInNTru8=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Nov 24, 2026 at 05:41:27PM +0800, CL Wang wrote:
-> Hi Bartosz,
-> 
-> Thanks for the review.
-> 
-> On Tue, Nov 17, 2026 at 02:54:06PM +0100, Bartosz Golaszewski wrote:
-> > > +#include <linux/mod_devicetable.h>
-> >
-> > Uwe would probably say you should only pull in the individual headers
-> > that you require from include/linux/device-id/.
-> 
-> As Uwe pointed out, <linux/platform_device.h> already provides
-> of_device_id, so I will drop <linux/mod_devicetable.h> in v2.
-> 
-> > > +	config = (struct gpio_generic_chip_config) {
-> > > +		.dev = &priv->pdev->dev,
-> > > +		.sz = 4,
-> > > +		.dat = priv->base + REG_DATA_IN,
-> > > +		.set = priv->base + REG_DATA_OUT,
-> > > +		.dirout = priv->base + REG_CHAN_DIR,
-> > > +		.flags = GPIO_GENERIC_READ_OUTPUT_REG_SET,
-> > > +	};
-> >
-> > I think you could save even more code by using the gpio-regmap helper
-> > here instead. Could you see if that's possible here?
-> 
-> I tried it. The conversion is doable, but the driver grows from 641 to
-> 721 lines. The extra code comes from:
-
-Why do I feel like this paragraph is LLM-made? No human ever provides
-the number of lines a driver *potentially* grows in a response...
-
-> 
->  - IRQ handling: gpio-regmap only accepts an external irq_domain, so the
->    driver has to create the domain and duplicate what GPIOLIB_IRQCHIP
->    provides today (map/xlate ops, lockdep classes, resource
->    request/release callbacks, and removing the chained handler and
->    disposing of the mappings on unbind). This accounts for most of the
->    growth. Using regmap-irq instead would turn the chained hardirq
->    handler into a threaded one, and the 3-bit trigger mode fields (one
->    per line, spread across four registers) would still need a custom
->    set_type_config() callback.
-> 
->  - Output readback: the datasheet documents DATA_IN for input lines
->    only, so output lines are read back from DATA_OUT. With gpio-mmio
->    this is handled by GPIO_GENERIC_READ_OUTPUT_REG_SET; with gpio-regmap
->    it requires a reg_mask_xlate() callback that reads the direction
->    register on every get.
-> 
->  - Shared debounce cleanup: the debounce period is shared by all lines,
->    and the driver clears a line's debounce enable bit in .free() so that
->    a released line does not block a different period on another line.
->    gpio-regmap does not let the driver provide .free(), so the enable
->    bit stays set after release and the conflict check has to skip lines
->    that are no longer requested.
-> 
-> Given that, I would prefer to keep gpio-mmio for v2. If you still
-> prefer gpio-regmap, I can send that version instead.
-> 
-Ok, let's keep it gpio-mmio.
-
-> > > +	if (priv->chan_num > ATCGPIO_CHAN_NUM_MAX || !priv->chan_num) {
-> > > +		dev_warn(&priv->pdev->dev,
-> >
-> > Use a local variable to store the adress of dev for better readability.
-> 
-> Will do in v2, both here in atcgpio_init_controller() and in
-> atcgpio_init_resources().
-> 
-> > > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> >
-> > Use devm_kzalloc_obj(). Same elsewhere.
-> 
-> Will do in v2. I will also convert the parents array to
-> devm_kzalloc_objs().
-> 
-> Thanks,
-> CL
-
-Bart
+CkhpIE5pY29sYXMsCgpUaGFua3MgZm9yIHRoZSByZXZpZXcuCgpGcm9tOiBOaWNvbGFzLkZlcnJl
+QG1pY3JvY2hpcC5jb20KRGF0ZTogMjAyNi0xMS0yMiAyMTowMDozNwpUbzogIGxpZ3VhbmdzaHVv
+QG1haWwuc2R1LmVkdS5jbixMdWRvdmljLkRlc3JvY2hlc0BtaWNyb2NoaXAuY29tLGxpbnVzd0Br
+ZXJuZWwub3JnLGFsZXhhbmRyZS5iZWxsb25pQGJvb3RsaW4uY29tLGNsYXVkaXUuYmV6bmVhQHR1
+eG9uLmRldgpDYzogIGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZyxsaW51eC1n
+cGlvQHZnZXIua2VybmVsLm9yZyxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLHN0YWJsZUB2
+Z2VyLmtlcm5lbC5vcmcKU3ViamVjdDogUmU6IFtQQVRDSF0gcGluY3RybDogYXQ5MTogRml4IHBv
+dGVudGlhbCB1c2UtYWZ0ZXItZnJlZSBvbiBtYW51YWwgdW5iaW5kPk9uIDIwLzExLzIwMjYgYXQg
+MTg6MzUsIEd1YW5nc2h1byBMaSB3cm90ZToKPj4gVGhlIGJ1aWx0LWluIEdQSU8gYW5kIHBpbmN0
+cmwgZHJpdmVycyBzaGFyZSBHUElPIHJhbmdlcyBhbmQgZ2xvYmFsIGJhbmsKPj4gcG9pbnRlcnMg
+YnV0IHByb3ZpZGUgbm8gdGVhcmRvd24gZm9yIHRob3NlIHJlbGF0aW9uc2hpcHMuIE1hbnVhbGx5
+Cj4+IHVuYmluZGluZyBhIEdQSU8gYmFuayBmcmVlcyBpdHMgcHJpdmF0ZSBkYXRhIHdoaWxlIHBp
+bmN0cmwgc3RpbGwgaG9sZHMKPj4gaXRzIGVtYmVkZGVkIHJhbmdlLCB3aGljaCBpcyBhY2Nlc3Nl
+ZCBkdXJpbmcgcGluY3RybCBjbGVhbnVwLgo+PiAKPj4gU3VwcHJlc3MgdGhlIGJpbmQgYXR0cmli
+dXRlcyBmb3IgdGhlc2Ugbm9uLXJlbW92YWJsZSBTb0MgY29udHJvbGxlcnMKPj4gc28gdXNlcnNw
+YWNlIGNhbm5vdCB0cmlnZ2VyIHRoaXMgdW5zdXBwb3J0ZWQgdGVhcmRvd24uCj4+IAo+PiBUaGlz
+IGlzc3VlIHdhcyBmb3VuZCBieSBvdXIgc3RhdGljIGFuYWx5c2lzIHRvb2wgdW5kZXIgZGV2ZWxv
+cG1lbnQuCj4KPldlbGwsIHdobyB3aWxsIGV2ZXIgd2FudCB0byByZW1vdmUgZ3BpbyBvciBwaW5j
+dHJsIG9uIHRoZXNlIHBsYXRmb3JtcywgCj5rbm93aW5nIHRoYXQgaXQncyBvbmUgYW5kIG9ubHkg
+SVAgZm9yIHRoZSB0d28/Cj5Eb2VzIGl0IGhhdmUgYSByZWFsIHVzZS1jYXNlPwo+SSBkb24ndCBz
+ZWUgdGhlIHBvaW50Lgo+Cj5SZWdhcmRzLAo+ICAgTmljb2xhcwo+Cj4+IEZpeGVzOiA2NzMyYWU1
+Y2I0N2MgKCJBUk06IGF0OTE6IGFkZCBwaW5jdHJsIHN1cHBvcnQiKQo+PiBDYzogc3RhYmxlQHZn
+ZXIua2VybmVsLm9yZwo+PiBTaWduZWQtb2ZmLWJ5OiBHdWFuZ3NodW8gTGkgPGxpZ3VhbmdzaHVv
+QG1haWwuc2R1LmVkdS5jbj4KPj4gLS0tCj4+ICAgZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5
+MS5jIHwgMiArKwo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykKPj4gCj4+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMgYi9kcml2ZXJzL3BpbmN0
+cmwvcGluY3RybC1hdDkxLmMKPj4gaW5kZXggMGE1N2VkNTFkNGM5Li44MWI1OGE3YTQ0YmUgMTAw
+NjQ0Cj4+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYwo+PiArKysgYi9kcml2
+ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMKPj4gQEAgLTE5MTEsNiArMTkxMSw3IEBAIHN0YXRp
+YyBERUZJTkVfTk9JUlFfREVWX1BNX09QUyhhdDkxX2dwaW9fcG1fb3BzLCBhdDkxX2dwaW9fc3Vz
+cGVuZCwgYXQ5MV9ncGlvX3JlCj4+ICAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgYXQ5
+MV9ncGlvX2RyaXZlciA9IHsKPj4gICAgICAgICAgLmRyaXZlciA9IHsKPj4gICAgICAgICAgICAg
+ICAgICAubmFtZSA9ICJncGlvLWF0OTEiLAo+PiArICAgICAgICAgICAgICAgLnN1cHByZXNzX2Jp
+bmRfYXR0cnMgPSB0cnVlLAo+PiAgICAgICAgICAgICAgICAgIC5vZl9tYXRjaF90YWJsZSA9IGF0
+OTFfZ3Bpb19vZl9tYXRjaCwKPj4gICAgICAgICAgICAgICAgICAucG0gPSBwbV9zbGVlcF9wdHIo
+JmF0OTFfZ3Bpb19wbV9vcHMpLAo+PiAgICAgICAgICB9LAo+PiBAQCAtMTkyMCw2ICsxOTIxLDcg
+QEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgYXQ5MV9ncGlvX2RyaXZlciA9IHsKPj4g
+ICBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBhdDkxX3BpbmN0cmxfZHJpdmVyID0gewo+
+PiAgICAgICAgICAuZHJpdmVyID0gewo+PiAgICAgICAgICAgICAgICAgIC5uYW1lID0gInBpbmN0
+cmwtYXQ5MSIsCj4+ICsgICAgICAgICAgICAgICAuc3VwcHJlc3NfYmluZF9hdHRycyA9IHRydWUs
+Cj4+ICAgICAgICAgICAgICAgICAgLm9mX21hdGNoX3RhYmxlID0gYXQ5MV9waW5jdHJsX29mX21h
+dGNoLAo+PiAgICAgICAgICB9LAo+PiAgICAgICAgICAucHJvYmUgPSBhdDkxX3BpbmN0cmxfcHJv
+YmUsCj4+IAo+PiBiYXNlLWNvbW1pdDogNjYyOGU3ZDRjNmIyNWM4ZDE4ZjEzNDVlM2EyMGQyMTgy
+OWFhZTdlNAo+CgpJIGRvbid0IGhhdmUgYSB1c2UgY2FzZSB0aGF0IG5lZWRzIHRoZXNlIGNvbnRy
+b2xsZXJzIHRvIGJlIHVuYm91bmQuClRoZSBpbnRlbnRpb24gd2FzIHRvIG1ha2UgdGhlIHN5c2Zz
+IGludGVyZmFjZSBtYXRjaCB0aGUgZHJpdmVycycgbGFjawpvZiB0ZWFyZG93biBzdXBwb3J0OiB1
+bmJpbmQgaXMgZXhwb3NlZCwgYnV0IG5laXRoZXIgZHJpdmVyIHJlbW92ZXMgdGhlCnNoYXJlZCBH
+UElPIHJhbmdlcyBhbmQgYmFuayBwb2ludGVycy4KCldvdWxkIHN1cHByZXNzaW5nIHRoYXQgdW5z
+dXBwb3J0ZWQgaW50ZXJmYWNlIGJlIHVzZWZ1bCBoZXJlLCBvciB3b3VsZAp5b3UgcHJlZmVyIHRv
+IGxlYXZlIGl0IHVuY2hhbmdlZD8KClRoYW5rcywKR3VhbmdzaHVvCg==
