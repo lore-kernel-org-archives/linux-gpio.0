@@ -1,67 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.128.198.184
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795513331;
-	b=O4yoIJ1n+5BVkM4b5aGrlqYzVLzBdQOfdKxm74MAv2fEnq/q6qafQ/1AaiPgbCiaWFP5
-	 ylvdoDik8Ag9wY7sLj/JSJNRsG0nkhtRhLCS3KCdOiiYNx0zseRCbcxBoytu9lG/QqwFo
-	 pUCQpW7tPn/qO73Vk915kpNSjvuk34siENdIKUmnAjqDaPyrUn1dlosU/CN27xAxR/Z2u
-	 ZYk0GBA3WaH5i9D8ELN7U24tuZ0gOzpQPnvJIfkXq5GkkIOcCSeJ70NiJ/zzzFC6OHlUG
-	 i6yKplXt5HoTwY6Bvct3JxUORZcN1B9/1xMlG7VzEHmaNrhWyfFkZkLZG73R10AUqgA==
+	t=1795514201;
+	b=j18kDEmGsPUGOUZ6aSZJPXeJS3bg7LCoEi1GbVfKMKtIVWv78dK7Ge2l4ZlmVoI5ClOi
+	 t4CJ08GPlhVk90n+sBzd/2LY0wd9T0rRvViXVCe0Q4PnhCxcTcxhaSXHZ9emm109MpEeP
+	 82AmJbMKbc822EVQZFlymsNlwmdGuctZYX4NWT76hh1ZgPtqMbajE1WHScbO1cYrZLVyV
+	 bV2tyxUy0w6oxkEUNfX55/UuJsgHBOGboSF46jen8gN0qqEqOz+xOD/BFJ+hOr9en6S1x
+	 dQsyxjwACC+BIAqjw1duxIQ+6KIVb3jCetg9p23tVTEhvjW/pgsC8xJ0HmGX4FBjHIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795513331;
-	h=DMARC-Filter:Received:Received:Received:From:To:CC:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy:
-	 X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL;
-	bh=VMBd4xkuw3NSAtFhnVutsYxwqi+FzOy6A3ghZIUQyqw=;
-	b=1W8f+u1cXU7U9JULY5vPhI+iOAgzXmTM8UubcMy6LpF2BQxfjCKswIrGDZR6UQbpJmZC
-	 rNqYUhH0SwjlzfkFpdAD6K/BZswebRKm1R1Uj7BqcvWJdLJ1R/qgOGxBDKPjBGO5clPY6
-	 JZoo/l5ET2UFUK0Ra+OeK8Zb/6EPmuat7BPlCgMql9i9Zdo6bf5zYw0dHUg9W5eXsVZsu
-	 AU+tuoS0IfLznTIlRQKgSA/d2gfLYQUGWzcv05mfvwgi2R8vqTL1H5iPTvfiyei2Pchjp
-	 iFuPY1AeZ7tLvcQP+5yJebD2yD8SXj7Qnh6BGBlXSCtMcy0WKzR5DLaE5jbBS512hFA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795514201;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=6RxDNhcrptkLwm5icpyITA1cARO1T74TvXZeN92Qajg=;
+	b=20vYX54OvHkDwSqOSe3apW9BGb6Ebm8xUmpAbNXJlZSTdqVSZcOjUpsenii5fYLj9OhA
+	 pZyDrUCdTLhCpko911FORF2dCn2T5OlPpwxb0M5R+gH8d90DXBWZu0YF//JJDcxTJN6R0
+	 La/N6+6p5sOg1NNkRqJ3I017eJy8b6ISH5+7649Jyxmaecye1S9wzJpg3tOpZOSBeV7ht
+	 ie5HmSGzUiGF4BfQP7SXA9VCxDqKFYuhFpLREchWLCdouD8tAOpbx5POHOjvJF5ZmeRsx
+	 kFAevDASDzO0PRFIgacnwBf1r2FFRl7o0LOBWiP7US+YxnwcBn074YaXFgMWGC+ekYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=andestech.com;
-	spf=pass smtp.mailfrom=andestech.com;
-	arc=none smtp.remote-ip=220.128.198.184
-Received: from Atcsqr.andestech.com (atcsqr.andestech.com [220.128.198.184])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf2VEmI1;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566BC606A69D;
-	Tue, 24 Nov 2026 09:42:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 566BC606A69D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (atcpcs54.andestech.com [10.0.1.154])
-	by Atcsqr.andestech.com with ESMTPS id 6AO9fYVB049395
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 24 Nov 2026 17:41:34 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from ATCPCS34.andestech.com (10.0.1.134) by atcpcs54.andestech.com
- (10.0.1.154) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.56; Tue, 24 Nov
- 2026 17:41:34 +0800
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Nov
- 2026 17:41:34 +0800
-From: CL Wang <cl634@andestech.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-CC: CL Wang <cl634@andestech.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Linus Walleij <linusw@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tim609@andestech.com>
-Subject: Re: [PATCH 2/3] gpio: atcgpio100: Add ATCGPIO100 GPIO driver
-Date: Tue, 24 Nov 2026 17:41:27 +0800
-Message-ID: <20261124094127.1988037-1-cl634@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <22ifazqg6afr6rcybqg6foah3v554xu4px2c4et35y5xzpg74h@kesthgcvnlgk>
-References: <20261116040914.368298-3-cl634@andestech.com> <22ifazqg6afr6rcybqg6foah3v554xu4px2c4et35y5xzpg74h@kesthgcvnlgk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED34A606A321
+	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 09:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf2VEmI1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A6951F000D3
+	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 09:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795514200;
+	bh=6RxDNhcrptkLwm5icpyITA1cARO1T74TvXZeN92Qajg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=lf2VEmI12JFLEgUGjVFCTv0QjW3DzCel4nyHoZURtSOyTH4f6ATQ1F9160ju0vvcJ
+	 1PxA6UlQXZt13PWLF8DKe4G2fyNtZEfkNquipMkfq4cB4Vyyt9Vb8QLIjeBylBY68V
+	 8fkdXxi2Q/3e9CgZNUHA8x8SIhVN3xZ7Go/+IbWqCEQoBiEztDO1QPeqv+6bOeCBfl
+	 eGtwiPdREEoZEEaGpzvmpTVcOtD31t91A/v5X3KXjPTtvGx+yrS5sJKsvgO+GX4oTb
+	 OlIqX7l7+ISlIVFgCxMWp9ns6b0uSX94naPiT/WMszXh8HjzkH/+81WGhZ75t3GckW
+	 FxW2yjPsT6HCA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5c10dc41270so4644759e87.2
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 01:56:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHT8uuPy5p5RyzxW3xJ6mYTejeyHwEuLlLBPGWhI5l1g2JH6VLd3qGBrF3eeKyV2QMkGK2ER1w1zc8u@vger.kernel.org
+X-Gm-Message-State: APuU4Z90VNMNrgM09Ia515Qap9trDyhLYaUfmbACClMQruYScQQ7EpnQ
+	K/GKyHaWqulDEhR90mYCa/Ple1V13DbDyGFfVVHVVGIeCK4EF2EpqzDMvBaN/SSROsAVRUcrnJh
+	QEZqtzCzlR3PF6Ekz2xZ1q+g32bXZaNg=
+X-Received: by 2002:a05:6512:1048:b0:5bf:6c4c:62ce with SMTP id
+ 2adb3069b0e04-5c1bc81c49bmr3664194e87.55.1795514199208; Tue, 24 Nov 2026
+ 01:56:39 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,83 +59,46 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+References: <20261123-cs7542-syscon-v2-0-1cd74b2522f9@gmail.com> <20261123-cs7542-syscon-v2-4-1cd74b2522f9@gmail.com>
+In-Reply-To: <20261123-cs7542-syscon-v2-4-1cd74b2522f9@gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 24 Nov 2026 10:56:26 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=jLDF1mRBp9mai7hFKU21SG8ud-Wf5ebS89BHiUWM9sg@mail.gmail.com>
+X-Gm-Features: Aa3M54pJBPNtS8HBHNO_8ov-NITzhFzIUmDM0dw5V6Dl7sMdZPPnTtRSJZShNYc
+Message-ID: <CAD++jL=jLDF1mRBp9mai7hFKU21SG8ud-Wf5ebS89BHiUWM9sg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] pinctrl: Add Cortina Systems CS7542 pin multiplexer
+To: filipp.dunsky@gmail.com
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs54.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 6AO9fYVB049395
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bartosz,
+On Mon, Nov 23, 2026 at 9:27=E2=80=AFPM Fil Dunsky via B4 Relay
+<devnull+filipp.dunsky.gmail.com@kernel.org> wrote:
 
-Thanks for the review.
-
-On Tue, Nov 17, 2026 at 02:54:06PM +0100, Bartosz Golaszewski wrote:
-> > +#include <linux/mod_devicetable.h>
+> From: Fil Dunsky <filipp.dunsky@gmail.com>
 >
-> Uwe would probably say you should only pull in the individual headers
-> that you require from include/linux/device-id/.
-
-As Uwe pointed out, <linux/platform_device.h> already provides
-of_device_id, so I will drop <linux/mod_devicetable.h> in v2.
-
-> > +	config = (struct gpio_generic_chip_config) {
-> > +		.dev = &priv->pdev->dev,
-> > +		.sz = 4,
-> > +		.dat = priv->base + REG_DATA_IN,
-> > +		.set = priv->base + REG_DATA_OUT,
-> > +		.dirout = priv->base + REG_CHAN_DIR,
-> > +		.flags = GPIO_GENERIC_READ_OUTPUT_REG_SET,
-> > +	};
+> Use the global syscon regmap for the five GPIO mux registers. Each
+> bit selects GPIO when set and a peripheral signal when clear. Support
+> GPIO on all 160 lines and the six UART pins exercised by the OpenWrt
+> port. Do not guess mux settings for the other peripherals.
 >
-> I think you could save even more code by using the gpio-regmap helper
-> here instead. Could you see if that's possible here?
-
-I tried it. The conversion is doable, but the driver grows from 641 to
-721 lines. The extra code comes from:
-
- - IRQ handling: gpio-regmap only accepts an external irq_domain, so the
-   driver has to create the domain and duplicate what GPIOLIB_IRQCHIP
-   provides today (map/xlate ops, lockdep classes, resource
-   request/release callbacks, and removing the chained handler and
-   disposing of the mappings on unbind). This accounts for most of the
-   growth. Using regmap-irq instead would turn the chained hardirq
-   handler into a threaded one, and the 3-bit trigger mode fields (one
-   per line, spread across four registers) would still need a custom
-   set_type_config() callback.
-
- - Output readback: the datasheet documents DATA_IN for input lines
-   only, so output lines are read back from DATA_OUT. With gpio-mmio
-   this is handled by GPIO_GENERIC_READ_OUTPUT_REG_SET; with gpio-regmap
-   it requires a reg_mask_xlate() callback that reads the direction
-   register on every get.
-
- - Shared debounce cleanup: the debounce period is shared by all lines,
-   and the driver clears a line's debounce enable bit in .free() so that
-   a released line does not block a different period on another line.
-   gpio-regmap does not let the driver provide .free(), so the enable
-   bit stays set after release and the conflict check has to skip lines
-   that are no longer requested.
-
-Given that, I would prefer to keep gpio-mmio for v2. If you still
-prefer gpio-regmap, I can send that version instead.
-
-> > +	if (priv->chan_num > ATCGPIO_CHAN_NUM_MAX || !priv->chan_num) {
-> > +		dev_warn(&priv->pdev->dev,
+> Use masked regmap updates so independent pins and users of the shared
+> block retain their settings. No register changes are made merely by
+> probing; only a selected state or a GPIO request changes a pin.
+> Register and initialize the controller before enabling its own hogs.
 >
-> Use a local variable to store the adress of dev for better readability.
-
-Will do in v2, both here in atcgpio_init_controller() and in
-atcgpio_init_resources().
-
-> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> AI assistance: Codex prepared this change from the existing OpenWrt port
+> and GPL vendor sources.
 >
-> Use devm_kzalloc_obj(). Same elsewhere.
+> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Will do in v2. I will also convert the parents array to
-devm_kzalloc_objs().
+This looks good to me:
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Thanks,
-CL
+Yours,
+Linus Walleij
