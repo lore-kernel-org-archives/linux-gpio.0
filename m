@@ -1,47 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795527319;
-	b=ojLS0grrocbayw7N0WSxOEf3D+QZvbA4O3H8zd0Ew/WQomJLHrQWo1oq0klAY1PPdIpo
-	 Q9ZWT+J8cczk8LAKhyHRWLWM5SL1sPLzA9NEeqVMiPR7x1HAgU52p/nWqg50aP5FIHIIa
-	 qTHslbOtM2VvOy5XPM2mKp3Ve3UxAh/sQ7dDlH1zqjbOcNs1qjyvdlxb1OJOKbEllP/bx
-	 FBr50fHQyKSiUNhhADiy6jDzHdm6x+dll7uvkesj8B7Jj3cFk3ArljUFcMj/C0XxwdVug
-	 aa+yO1T1VHjA9LqDplouJ4iWzkvEzzIBbBcr+9537QiRqzvdveZl21Lo0jqExDprJlQ==
+	t=1795527420;
+	b=VKyJIcWFqYWs04r8RcbhReUxE/Eu7FwRCiY3WEoOyxx7xJNnN/0+mBmkvfxZ1sPM4ccs
+	 C/ujBpAqnFcyz5IauOuAouSdNfu3NSo9SgmHmaMY0GDX1eqxkc6eaOd02HLteLanyk68+
+	 U5eOAENei7mWS+sbUjX2/kbLjNYmZnnfhcPDDFNYOKg37+Ub7r5D3fnxmx9FpEzVc7yqe
+	 MvThx6CQULd5jtdASwJDl0QTNGE1eXbRwHYzAGugx22jrz4vwwoFZLlIzv2gVYH7xu5WB
+	 KiInlCxCVEtED91oVaw51mnc8bm9GJR8xkvk2w6O+724LIbO8N994K3iBL+b/n6f2jQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795527319;
-	h=Received:DKIM-Signature:Date:Content-Type:Content-Transfer-Encoding:
-	 MIME-Version:From:Cc:To:In-Reply-To:References:Message-Id:Subject;
-	bh=brA1TZa4Xw4gj6MGSoKR1QMCPQppauTAeMn4qP0Jvxc=;
-	b=EtxY4gYjBTFwXHw/jg1c67gXLm4/3943WpSnDnHez645HIrzwLwEoZjYEqPkk4ysWRc6
-	 MSVJPgWNi8/VGiXlnrZiehl5ullf28NOaty+qdQ/Ii8/QIwTJETl4qhTzMESy0dUKyEu9
-	 3W2u2MmJGy1t3Q4KU/LBTcbOYeCtyXpkTE6aZogqqQu+GKfcBk0Yud/nA7INbdkyPJa9i
-	 hrOo3w62ijCRkl1M3n/9dFS6QnihO9MyuCVqruXCRZrKFnfJeskfUz2HzTGJlGjI/CI2M
-	 vCeDq5t+BLaXu1bkG9e3sZtp5a5cwy83pVd0Yz4u/IY1BkK0/MaGWIAvkYwBvCxv/Pw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795527420;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=OMWPkn6WhxY4f7wdVsdoOSvoulFg7SWEyNDQ6uY2j0I=;
+	b=Am+vDfNsf1MSaJJrYeZEf9flaDONfl7FaFM+W+9WVFFcehr5G1gjotZoWcr4F44GO9rk
+	 GrKrNhe3y15BZjArA4DyRQMrWoypfj2PFc0SUUqyv9z8Uz5TtrL4enxeQLc9P5z74jZe4
+	 kHJB7GyHwMR8FJbiC246p9Yy/OT1siZwbvljZuoQ7pBP9GtndOdfeORtdVfUuwIxalNMW
+	 YfBq3n/JnzDR0m0p1GVr0eXrvO1JlsdSnY0G+hZ6rZTowFE/dgU50Fc9O5Vp2OFjwU7en
+	 crXnkrcUa2NYCLKB/6er5JAHXws0K9DsCaeifS/LrCzPku0Tr6RKh9OckrschvpoSzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="dSbn8Y/N";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EFXNT3Iz;
+	arc=none smtp.remote-ip=209.85.160.180
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2596D606A326;
-	Tue, 24 Nov 2026 13:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7DE606A31E
+	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 13:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A7DE606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dSbn8Y/N
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521941F000CA;
-	Tue, 24 Nov 2026 13:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795527318;
-	bh=brA1TZa4Xw4gj6MGSoKR1QMCPQppauTAeMn4qP0Jvxc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=dSbn8Y/NI1ECMCHeJz8N3SxMgDZHe+m/bc5KiR6zO3arfCHJFGOb54XmBsHndC0+V
-	 vcjb8SFTRbLoKuKNbV/azVrHe6azEoNKNz/qSTWz1i2JRmUpvuK7w2lEaqoxzv0+Ff
-	 oJBlc/Z+RlgnHkujXGg4c35l9BHhWa3dRHlg/0eRsRdPW4yVxkJr7Bx2/zCHRjYjGV
-	 /AH9oZZONTz0rWgy021OWu/lg2Jp4aqTqXj47Gh3Yrpq1bqgYkNZ40zocELH/IhVSR
-	 6uE6wBHJW47Rm+SU89zd0WmBwbgxzcfhPsDGqSYMV0NAigEXW1T6ZERf8FoGh4RB/u
-	 g+o4oxsJZe+3g==
-Date: Tue, 24 Nov 2026 07:35:16 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EFXNT3Iz
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-55d30c054dfso48471231cf.0
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 05:36:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795527419; x=1796132219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=OMWPkn6WhxY4f7wdVsdoOSvoulFg7SWEyNDQ6uY2j0I=;
+        b=EFXNT3IziQYc+oNGextAk24H0QfXC6KEihJLrB2JugUZbfrRIlrO+UNvE/6og/yDt0
+         8ivVXx8/Qyyk/ma/4Lppgsu29Iqoe8t9hbNGpd++WhWiTl3+Ec9l7dhNI4FEJb5xYW+3
+         4BO2UvKS5HkA5mVNnuZZCcUEdKEHBgar66WnpFbXUh44l6oVKN6WrYpij03jLwpckx94
+         4nlhtsUOHdm0IUyNyDP/ms7sObQ+sAdideuK6Vx6wBsb7CTkTXnJJjDD6YW7rrk/CMwQ
+         GliwBuniIyO5D+ciyFRCNSr0//87yMYH0sETOXbmEcQGoj3IUAegKrg9pdV/ss5bBCkI
+         6BCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795527419; x=1796132219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=OMWPkn6WhxY4f7wdVsdoOSvoulFg7SWEyNDQ6uY2j0I=;
+        b=HZ3gzb5CHr9paNaQuBBAtlkF7hWZfF8yvjWHyVfW93Y2Myh9ueDUO9/HxitDZSaEZG
+         YMppmh3HMfD/QesLdlvAVUOBKTbX7Yg3HLiQEx46zRsWRgAbGLFWTKLeIpMlDe5tzYHj
+         MfMI63DvAzWDdgRD9+7ERcRC/lHb1A6Klk0+Y2sBheYb45+gHwLKKJ8am0qCbqh2SpXK
+         +jaCqXTSQcBqfpH5yVnRHTMG+5Tz1oX7P4EvwI5f4XLr+ygknZPn6raJpLj7CqjmCDgW
+         EIjUhnMr9CRdNlaFeL35kT9BxYX5MhMcqImsAeAw8uQy2behkPlftDMv1Nf0axM0tD3Y
+         ER/w==
+X-Gm-Message-State: APuU4Z+wbHXL9b26umomPq8mWETknaEdyef0sTz4kS1JWdh79Gnui7as
+	+G9nIbkcGuTT2aVrbT6vHLh834PtLUU02oB8YH8HXqOfeQDziQeP5gJE
+X-Gm-Gg: AZFdTZfeIxixXWy74GqGWEWnNkC+Pm+JUwo6i38YbXbVbNq88MVjdDIvshXghGei9Gn
+	IuBZ4x6nNusB/HTuQFgLbJ4rZVGLx64Mm5+c7Yjg1kOKDy8MwHJDYMbKEOBE0bh+F/5qwTJf1wk
+	ZdzWL5AXCu5rHmkEvNmKtQK6/IlJr1aglKqlnecGbM4WU3c7MNHF1bEn/arzz01KsrFt67N/Xej
+	mprq1mCwQ+wTD+5fZja8SHB2XIrmwr/w2Mn/h9T9uhPAO06KP5v30Q/JCzlRBoA+GDKuHV8QykM
+	6tIn5z6YzgZJ3EL9lK1KTxt0VkHWpEczMMb8Bk19fLgK/HGEdIsG3e943tJP8czF5zVX8E40wnH
+	853lhPyY2n4IjtnbU40zjwPC4+CnJL/GZb6p8CGE1R7NWiKaGgtmpYKFhF3MUz0lXVacgrQiApl
+	7TGwhSAuTWLYZvgfCG2waJSPYmeNyFTbXn63rrSAJvPp5hpRccA/x79+fVJGPoS8UFczGo1M6at
+	WtbEnH9wRY3J6Vkl7vTcQfuhrLN5VN0oDMHjAbIjxbg+XODS+OLVhWsy+nzolG1cdgwlM6W2s4b
+	ZGXSE+nEOy0JGfgIrhVWwEEZhOmxs8Ff8sLs7eQL52HQ9TVyqqo5VIfuumBrcOfn
+X-Received: by 2002:a05:622a:a05:b0:555:50da:f038 with SMTP id d75a77b69052e-55d768a3faemr271137861cf.1.1795527418853;
+        Tue, 24 Nov 2026 05:36:58 -0800 (PST)
+Received: from obadmin-Precision-3680.atlascopco.group ([167.103.3.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-921349d383asm133834536d6.22.2026.11.24.05.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2026 05:36:58 -0800 (PST)
+From: Sahaj Chaudhari <sahaj123.sc@gmail.com>
+To: linusw@kernel.org,
+	brgl@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	j-keerthy@ti.com,
+	nsekhar@ti.com,
+	prabhakar.csengg@gmail.com,
+	avinashphilip@ti.com,
+	sujithkv@ti.com
+Subject: [PATCH v2 0/2] gpio: davinci: fix probe-time IRQ setup
+Date: Tue, 24 Nov 2026 19:06:52 +0530
+Message-ID: <20261124121500.2cd5cbf30f89-1-sahaj123.sc@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -51,145 +98,66 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>, Mark Brown <broonie@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Simona Vetter <simona@ffwll.ch>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux-sound@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, 
- Jaroslav Kysela <perex@perex.cz>, linux-omap@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, linux-pwm@vger.kernel.org, 
- Maxime Ripard <mripard@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-fbdev@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Daniel Thompson <danielt@kernel.org>, 
- Jarkko Nikula <jarkko.nikula@bitmer.com>, Roger Quadros <rogerq@kernel.org>, 
- David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
- Jingoo Han <jingoohan1@gmail.com>, letux-kernel@openphoenux.org, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Russell King <linux@armlinux.org.uk>, 
- kernel@pyra-handheld.com, Helge Deller <deller@gmx.de>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
-References: <cover.1795505160.git.hns@goldelico.com>
- <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
-Message-Id: <179552715646.40567.8345105080206889175.robh@kernel.org>
-Subject: Re: [PATCH v2 06/20] dt-bindings: sound: Document OpenPandora
- sound card
+Content-Transfer-Encoding: 8bit
+
+This series fixes two independent probe-time bugs in the DaVinci GPIO
+driver:
+
+1. A file-global MMIO base can be overwritten by overlapping controller
+   probes, causing BINTEN setup to target the wrong controller.
+2. Per-bank IRQ data is allocated as chained handlers are installed. A
+   later allocation failure can leave handlers pointing to devm-managed
+   data freed during probe unwind.
+
+The first patch derives BINTEN from the current controller's mapped bank.
+The second allocates all IRQ data before installing any handlers.
+
+---
+Changes in v2:
+- Rebase on current GPIO gpio/for-next, incorporating the upstream
+  devm_kzalloc_obj() conversion as requested by Bartosz.
+- Use devm_kzalloc_objs() for the upfront bank-data array in patch 2.
+- Add Linus Walleij's Reviewed-by to both patches.
+- Keep the pre-existing GPIO-count bounds issue reported by Sashiko
+  separate, as requested by Linus.
+- Repeat baseline/fixed fault regressions and parent-handler dispatch
+  coverage on AM642.
+
+Previous version:
+https://lore.kernel.org/all/20261109194910.2282454-1-sahaj123.sc@gmail.com/
+
+Testing:
+- ARM64 W=1 driver builds passed for each fix and the series.
+- A local ASan/UBSan harness ran the extracted probe and IRQ setup
+  functions with mocked allocation, IRQ registration and 32-bit MMIO.
+  Nested probes of 87/88-GPIO controllers and bank-allocation failures
+  reproduced wrong targets and stale handlers; each fix passed
+  independently.
+- On AM642, instrumented baseline/fixed kernels reproduced wrong BINTEN
+  targets and a stale chained handler under forced probe interleaving and
+  allocation failure; the fixes passed. A private module also exercised
+  the real parent handler on 12 banks via GIC pending-state injection.
+  No electrical GPIO edges or child IRQ delivery were tested.
+
+The AM642 tests used kernels with extra debug code to force these
+failures; that code is not part of this series. On those 7.4 test
+kernels, with and without the fixes, the mmio-mux driver at a40000
+failed to probe with -22 using the vendor device tree. The board's
+6.12 vendor kernel does not show this error. I have not found the
+cause, so these runs were not a full-board check.
+
+GitHub Copilot CLI was used during bug investigation, review, patch
+preparation and testing, and to draft the emails and commit messages.
+
+Sahaj Chaudhari (2):
+  gpio: davinci: use controller-specific MMIO for BINTEN
+  gpio: davinci: allocate bank IRQ data before installing handlers
+
+ drivers/gpio/gpio-davinci.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
 
-On Tue, 24 Nov 2026 08:25:46 +0100, H. Nikolaus Schaller wrote:
-> The OpenPandora audio subsystem describes the routing links between the
-> OMAP3 McBSP interface, the external PCM1773 DAC, and the TWL4030 audio
-> codec, alongside amplifiers and power supplies.
-> 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
-> 
-> Notes:
->     Changes against V1:
->     - Address Krzysztof Kozlowski's V1 request to run the documented
->       DT schema checks and fix the errors reported by Rob Herring's
->       automated DT validation.
->     - Update the binding example and schema during DT consistency review.
->     - Binding and commit-message review assisted by ChatGPT.
-> 
->  .../sound/openpandora,omap3pandora-sound.yaml | 95 +++++++++++++++++++
->  1 file changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/openpandora,omap3pandora-sound.yaml
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,apq8016-sbc-sndcard): primary-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
-Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,apq8016-sbc-sndcard): quaternary-dai-link:cpu:sound-dai: [[4294967295],[3]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
-Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,apq8016-sbc-sndcard): tertiary-dai-link:cpu:sound-dai: [[4294967295],[2]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
-Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,msm8916-qdsp6-sndcard): mm1-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
-Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,msm8916-qdsp6-sndcard): primary-dai-link:cpu:sound-dai: [[4294967295],[16]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
-Documentation/devicetree/bindings/sound/samsung,snow.example.dtb: sound (google,snow-audio-max98095): codec:sound-dai: [[4294967295],[0],[4294967295]] has more than 2 items
-	from schema $id: http://devicetree.org/schemas/sound/samsung,snow.yaml
-Documentation/devicetree/bindings/sound/samsung,snow.example.dtb: sound (google,snow-audio-max98095): cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/samsung,snow.yaml
-Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@0:cpu:sound-dai: [[1],[16]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu:sound-dai: [[1],[17]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@2:cpu:sound-dai: [[1],[18]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.example.dtb: sound (mediatek,mt8173-rt5650): codec-capture:sound-dai: [[4294967295],[1]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/mediatek,mt8173-rt5650.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,cpu@0:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,cpu@1:sound-dai: [[4294967295],[1]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@0:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:codec:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-0:sound-dai: [[4294967295],[1]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-1:sound-dai: [[4294967295],[2]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-2:sound-dai: [[4294967295],[3]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-3:sound-dai: [[4294967295],[4]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@2:codec:sound-dai: [[4294967295],[1]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@2:cpu:sound-dai: [[4294967295],[5]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): hdmi-dai-link:cpu:sound-dai: [[4294967295],[20]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): mm1-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): mm2-dai-link:cpu:sound-dai: [[4294967295],[1]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): mm3-dai-link:cpu:sound-dai: [[4294967295],[2]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): usb-dai-link:cpu:sound-dai: [[4294967295],[136]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): va-dai-link:cpu:sound-dai: [[4294967295],[110]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): wsa-dai-link:cpu:sound-dai: [[4294967295],[105]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
-Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb: sound (google,sc7180-trogdor): dai-link@0:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
-Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb: sound (google,sc7180-trogdor): dai-link@1:cpu:sound-dai: [[4294967295],[1]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
-Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb: sound (google,sc7180-trogdor): dai-link@2:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
-	from schema $id: http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+base-commit: 0e1941b7d0b0a0405b16567678a9bc3b20be6340
+-- 
+2.43.0
 
