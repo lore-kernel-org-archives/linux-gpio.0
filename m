@@ -1,82 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795544349;
-	b=ypuOriz5/zNZzjXjJIhX4aRVcoRVxMXBgbIf/Cv6PE7YqsRCnqsVM4O+HCLJ99ilV9xo
-	 4PYoewElbhAhr/2DBOUcwgmaDoi3XU29A4zK8vC94ctH3Hjo4ao1pnQ3hSGV+8qaimxot
-	 SduMhPXdwGOeHHH74uvMIdJFPsP8eym6cAXOLqllenduaj64lmTlltpbK7pG6uzXEvwId
-	 7l2nQcDZAhfb3B0B8FKqlgYhzqsgN9417zKHn4EkMjsi8sulnie+uVWMQvEM+nB7ciX7I
-	 RVppfUa9CK2C/7PShW1r4kj8cA7UC2mMk9U+gWAI3h2vWeh7CZWFi8Gn9ys3Ms/38ZQ==
+	t=1795549990;
+	b=0nKuVRrJobGdNChWd8B25CIm8gKOe7mLYZzcUajB4DnFZBR2MHGBhrXhn7n2jPg78WKM
+	 3ZctsVXzONvYdA5SK5fj+FKLw+Tc8TPjci115233jqFjblH5Oyy3GxKg8S52APoPeaWRR
+	 xHdJ9lqYC4lZwRH/YUtT4hwUW5yfp12dBvZiMxVMctq/yqz9zrScIjPYlILMZR5uTR6pN
+	 gIjeehZP3GGD2RrKf6OMxc7l2g/CxZQAin2S402TctYZ8RJY/Y6eaoZknYaMD/44TMTjH
+	 alHgLUA/Av/kr81BrQYcK+l3Tqr6vR8IyKwMWCQ7odFXOlefPl7fV0sjqJp7bwtYI+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795544349;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=AQDvl+X/Rd7CTblufTQQVMUfiWZM3uTTjJQc3OJZx7Q=;
-	b=aXglLryvVZOZ7uUpRD5CTKv5ohmhG4n/LAdSvqujg7lrO1ofVJzs40dFvKvHzORN/+kZ
-	 vlMptk8bu9ehSbqpb5UAUbkuLZWABwQ91HoG1Q74bUJLs9tOrUwcw4Tyea9uw5fZPVqf9
-	 EB8PEtrbhF6W0fHgeW7J+aYMQ7xnSWVtaVd/qhiUuj0OMOdXD7Mqq1PEIAsqPe9Pw6YiB
-	 2G8Szi5qrlQFHK6adTrTVj2OACYd+FLNgxbfDVFDjQscDr5HSPtjK3IEW/58jgiRPYLJN
-	 fi4t/Bz2mSnr5MkEbW3sY9c04NX7RL8cG3yiNsOO/64rQjsSmwIMbRzyhWUpOjimc+g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795549990;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=RumJVU2fyeIBgsPQcKKCaCPpS/w2DrR8cb6jiXDvUqQ=;
+	b=qz4dtjobpty1WDA31hhEJsE973CAi9+Rni+1T3DyZECDzJ5d45Fi/SEHq8LmAEptJgFq
+	 OhVcUkCxgi0INoiiHXcKznUPObCCewaILW7p1+KLYdB10KrW2I5HO45nwnV0O777sxuZi
+	 w67EBytOKanZPKKvCiLj0z6jV7q7liwCUVnNKA/5dXtrEw1PKOQ3W5tCL9kGC/ZYq4Dkj
+	 1FV/j5m1DoUM38sJkadyAUqMhHsf/ljAT+gC6AuoiL2P7B9zzFZEh0gM7bXRoAkozg902
+	 Yjq8YE+chL1mZ00l0WWbWoWazIwPxcrF1bHF2eqN5IkFg//79MJyb68Mo1swXUncqYA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=POzmhQx3;
-	arc=none smtp.remote-ip=198.175.65.15
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpapYsxX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978E3606A693;
-	Tue, 24 Nov 2026 18:19:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 978E3606A693
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C429606A31E;
+	Tue, 24 Nov 2026 19:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=POzmhQx3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795544345; x=1827080345;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cGOOjqPPP9DPkFeOPFRhFkHSbuP38nKReBfH3FUCAbE=;
-  b=POzmhQx3m0OUOjVh/RghjCe1fIigdvb0UIWmOTDuJpCpElEwy1gxPVi8
-   +/zZQa6dno/eOjJ1RiTWHTd5zPxRXdoobQuO8e8Nja8piwpSqf0JqULb8
-   z96501sXbtdulyW+1m7vJmyRfnKR/7TmbrcryWrwqqXX0IgYFla63mRuG
-   m6+D7NLNQRVg3fLxru52gnvRfEgnX9H+bxEaA9vH/jL1wjR26lgqKOltM
-   aZWZEm6irqtjaP3cb9EchMlWxwnwoFwj1X3Osz9Crx6u26DoMgfxgLkqo
-   w+xPafk+68CQc/kABtmk5OGk8g831up+aA7ciwyMUkalwRpbiNTdQfQ9x
-   g==;
-X-CSE-ConnectionGUID: QSzmKrTZSuWGar5qsvLqKw==
-X-CSE-MsgGUID: 9qz8dTvDRtihPm3iwh7P1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11976"; a="4399210"
-X-IronPort-AV: E=Sophos;i="6.27,231,1787036400"; 
-   d="scan'208";a="4399210"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 09:39:21 -0800
-X-CSE-ConnectionGUID: aG2WGNXrRwGhCUHCYttOyg==
-X-CSE-MsgGUID: LB0DQFG1TTGg3XNiumhbnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,231,1787036400"; 
-   d="scan'208";a="11819137"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.125])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 09:29:30 -0800
-Date: Tue, 24 Nov 2026 19:29:27 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gary Wang <is0124@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Daniele Cleri <danielecleri@aaeon.eu>,
-	JunYingLai <junyinglai@aaeon.com.tw>,
-	Louis Chen <louischen@aaeon.com.tw>,
-	BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] upboard pinctrl support for device id INTC1055 &
- INTC1057 & INTC105E
-Message-ID: <awXJd59jTHM2bIlD@ashevche-desk.local>
-References: <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-0-c8079f8f569f@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpapYsxX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9E51F000CA;
+	Tue, 24 Nov 2026 19:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795549989;
+	bh=RumJVU2fyeIBgsPQcKKCaCPpS/w2DrR8cb6jiXDvUqQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=TpapYsxXs0e/Mhxv9ycjbdYGMdhMy+TA8GsFxkKtYoHva2Pk7Z5iql5+Tp6jhEQ/Y
+	 qNpcpD/IXuBD4Jg3KucVvZwgAwkglbqRI9TmX1wAtPCGrTLazhDD7izyOJ+QfFjMiA
+	 nauXAy8HA2TVAJaw7neFNg4vZMosP+XjJSUnbxlY99RsnEVOb6RplIlHDROUU7mA9/
+	 D2cXwNRPoPbXlfZQhVIflB6lBQPppTIvkNARiVD1xL682Njp+i0fDLsOlNSNuWA61N
+	 YP5Y6Pw9E97CxE4r3WEL3SUf8fuxy15iIzgw5fzt8+VAqsw5FrROhlC1Nshup0T81S
+	 x7q4p9XspGodQ==
+Message-ID: <sashiko-outbox-231910@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: clock: qcom: Add bindings for PDM
+ GP_MN clock divider
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Taniya Das" <taniya.das@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261124-b4-pdm_clk_gp_mnd_v2-v3-1-98db26a87500@oss.qualcomm.com>
+References: <20261124-b4-pdm_clk_gp_mnd_v2-v3-0-98db26a87500@oss.qualcomm.com>
+ <20261124-b4-pdm_clk_gp_mnd_v2-v3-1-98db26a87500@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 24 Nov 2026 19:53:08 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -85,40 +60,29 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-0-c8079f8f569f@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 25, 2026 at 01:10:34AM +0800, Gary Wang wrote:
-> Add missing groups and functions in Tigerlake & Alderlake & Meteorlake
-> for INTC1055 & INTC1057 & INTC105E.
-> Add support "UP Xtreme ARL","UP Xtreme i14","UP Squared Pro 7000",
-> "UP Squared i12","UP 7000".
-> Fix pinmux-select set CPLD GPIO OUT not function mode for I2C pins
-> on the AANT0F04.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] dt-bindings: clock: qcom: redundant word bindings in commit
+  subject
+--
 
-Make the above bullet points to be a regular English text which explains
-all this. It sounds like the second sentence should be first to start
-with what is this and why. Also don't blindly copy what AI provides you,
-edit the text that it's correctly split on the paragraphs and in each
-paragraph use full line length (~72 characters). Each paragraph should
-be separated with a blank line.
+commit 014c9445d6141d97936e8971e3c43aff457ee953
+Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
-This comment is related to all commit messages in this series.
+dt-bindings: clock: qcom: Add bindings for PDM GP_MN clock divider
 
-> The pinctrl-upboard is provide additional driving power & pin mux function
-> through native SOC pins->FPGA/CPLD->hat pins for flexable board level
-> applications. it's probe from ACPI device id AANT0F01 & AANT0F04.
+This commit adds the device tree binding schema for the Qualcomm Peripheral
+Web's PDM GP_MN clock divider.
 
-> To: Mika Westerberg <mika.westerberg@linux.intel.com>
+> dt-bindings: clock: qcom: Add bindings for PDM GP_MN clock divider
 
-No need to bother Mika, he is not maintaining this code anymore. :-(
+[Severity: Low]
+This isn't a bug, but the dt-bindings: prefix already indicates that the
+patch adds a binding, so "bindings for" in the subject line is redundant
+and can be dropped (for example, "dt-bindings: clock: qcom: Add PDM GP_MN
+clock divider").
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124-b4-pdm_clk=
+_gp_mnd_v2-v3-0-98db26a87500@oss.qualcomm.com?part=3D1
