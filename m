@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.121
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.103
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795505228;
-	b=tdytHjLJIY0P8nInQX0H5cfE4nB+fN23oUD09NV7pX7JCXXh2Zm7Liay8lEoAzDx1ZpJ
-	 XQN6WuNe9wkO1C4src5k+MEPoNvS9kxZkG6q0TC6k3t6rNzBfU5COeoNxSGjBNsK3Tgi4
-	 zQNaN9PsPo/jQtkKPL4xNq3ACMRFF720V2t9n+cTxQTrZ2sgDzasQQhjq15p+z7aFMa6S
-	 wfCDNoU3/k4o0Th8PXcjVVoKQEh+KlSEQtIAGBQ1F/XR145asjmzKGQ+zytrOuWLtPhlZ
-	 yVwlRBpZiZWezF+GjakMW86i9KZp76U1RpKKmrolXpZBr/NMGdoyZ20ynAE7YfSA8hQ==
+	t=1795505234;
+	b=06A1FMZSzjL6ckZi3wbg/d1fjb3xThCGTxfORbuZO7WJHAB6SlG92adtFe0KIonCsYAJ
+	 NUp2XBp8UKsmfVs1mcUle/oSp4Vw7hVd6YXJJuhopcrMi0ivmzm9m88B08Y4oW1/wY0xB
+	 U78mfTACSNUcJuIgMHbOkVOr0KZ5YaV47hRazho38lp4H3vA4VF1qvJH3PkELACfMtBLO
+	 uIK+piDDwiY1Z/GazRgega7nH0hW7JQewIDJ3wi6TFqc+ZjER0HaD71lJmfxBN7B7mLa0
+	 4MuiTQQGEAamBRla6SxQIpOF94j66EymNAfoVjqCRW7GMe2ond3GbEHLWwt+Uh5DkFQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795505228;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795505234;
 	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
 	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=ICzF0au7+zioXlv3o0PbRF5DUQ/dlcDYCA/hi2iZWyw=;
-	b=aD+JXQBRDFYiEYquCC/IWCmKhGAsBb306oHTs3NwUjrNc5YZgjE01xn+wP74eImpdlYz
-	 62efmH87bLLtFNkjdtZNb2Ov5ABcHHywSDCBxas/fPMQLUU/MIRlM0wVty/ThhCXl9FYG
-	 KtLqpqaGQ4uHMvYkX7NR4IZiltK3VVFrVTagdmkik1ZDZr7jez0UQI0AmAduONbQD+IgV
-	 6UnqrviuBocFsi1DJIOe93e+pl9IpG5buNKee+NYdYUzjIJwBBI2vMmsalSCf2Z05aRLw
-	 ggwbgPmbYJtP1inuWPeQELdh3LApO4GBkKei3YGc+rRWCMv/t5MfvokfXn9uVjTuC8w==
+	bh=gAIN7iE4u/BQ8emUvIO6sNS6XCYcMUaeapeftYIyo6s=;
+	b=ov8aQhf7Epb2rLNmNhyRQksZTXuLL8mc/wUi0kebZdwsp+HTQhUzu2fG8gCMPCKDutZl
+	 4CCIGZli5ENH+xdxnN7RILiYW4G1BWPQQBEEs4brh83/yEoKUtOytQ2b81MWhxMKj6rdX
+	 XSVAdhTbATO03A2CoeOfJhHB9h9CLhCoMe4pLWL55Fe/2AJAp7zs1og6xufmZn29d1bqB
+	 o9LP4YDB/MZZzCArL6Yvzp3QghjnhqqcO5eypILJTboVsmVpycHboHyOYb9DgBPfFa30n
+	 yxm273kfehnT0v6DunPVMcz17FV5grSbdUjFAlrjASM1DRBvgq+0SFEgWGieYmKLsDw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=goldelico.com;
 	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=MKebHGsW;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=F0hIcRQX;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.121
-Received: from mo4-p04-ob.smtp.rzone.de (mo4-p04-ob.smtp.rzone.de [85.215.255.121])
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=a3KaLGJt;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=h3aJvplq;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.103
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.103])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2B260A2622;
-	Tue, 24 Nov 2026 07:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AA2B260A2622
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B77560A6F62;
+	Tue, 24 Nov 2026 07:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9B77560A6F62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=MKebHGsW;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=F0hIcRQX
-ARC-Seal: i=1; a=rsa-sha256; t=1795505187; cv=none;
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=a3KaLGJt;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=h3aJvplq
+ARC-Seal: i=1; a=rsa-sha256; t=1795505166; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=rXj33N5EJ4/upzUon20XjUHjbHzTZ3mB6sBsvZ29crnhq+XAfy2Vs3zfQSYIz4wKnt
-    aKRXOFKeXasshGdtI6dL1r6kgTYMkzgnAfO4ZbPmvygrBZ6SHafK+2BMn8QfG3l0oMab
-    zGGk8ItCc1+OgXgOlQpexihuebvGvpyyfa+kgw/aSFy51k8obYTsN1cyBuio2VbsalW3
-    96B+CSNQe1wOIXpASqc3fGtIg42K6cZUm3VpTWTITrPAgSCumCjK3EMiNbp1tCTQN8pF
-    CJGTFcS0Zyx3dxobXRGliCrGdHBcLJQHYmvjjblpbaXPSUaeotXcj7ixXVbgL9uB90l+
-    +tFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505187;
+    b=Jw1B75AZR9r37pV72wMrabDcm66aq2L5065KPSA7+H3MAYiJokwL8WkpOc9nz+yebw
+    R52KxSfyLCxevdO0Vh8pWaopgVt/J02yGiDaBIB6s78KG8Cw2ECT9wwXtQy/Cs6YFWBP
+    52n6H5Tmf3gt/V4h9LdxzvISaAR3h5L0YUZrrykv4jFZTsERFEVmePoddeefHXt3x8Qi
+    Q6vfLOD7VIcAX+wmBGJ03w2GTeQI7X7EWk4X0hZ1TjO8IIA9us1kXkQ9wJ+sDLZet9v1
+    /fr9JZG3lUVFuwOFPdrTWsPfGYBo97jxKTpKajsmHyBbA62ig030qEZYxeUInLca+gva
+    ghTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505166;
     s=strato-dkim-0002; d=strato.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=ICzF0au7+zioXlv3o0PbRF5DUQ/dlcDYCA/hi2iZWyw=;
-    b=R1sYPNk2RbpZLsD1g1R/2AmEX+lVCiWOXHvSH3dzhEzQOQoSttK0g/d+8S5GaVsiWg
-    PH7QSruXpem6A3hE0yOL98HN02UXSYgg3dwbZZxdfOQfHNd7GJ/syDceCDfIfvU9cfIp
-    lTcLqisSWJB2TJBdXxUhg/aWQyC7i6Xx7glfCtor9sck6PB4+fG2SNHaUxa1Jdj2AO82
-    +b1SnFMam8geQsQ28kyw4tdVVRg671/i+I5KIJtVDrBnbegbjZLT+W+5N3MVzoh3UWb+
-    hjEZweu1YYcLnioRN/vicIgL4ToNy7ph6k76iKUmmGUaUE4rdO2B53OOUQ7vqkzv1zwN
-    lEsQ==
+    bh=gAIN7iE4u/BQ8emUvIO6sNS6XCYcMUaeapeftYIyo6s=;
+    b=jaC9A0CwwPT26qXZECMleSSd86xcXk5Mftx5phl5RznaJES9XY4Oqdo5LBu/C0RFhe
+    rWTsfelWx9RZx9/mXcw1MEII7a8U+91QH9/PgjLwgawrjUooBBBgfVyEExMgSCbMlArI
+    lMg+XWZs3fEyJ4NJeAl0iwqMsaxRnaSc1WA4Qd6g5+cVE3ZZw5affwnQWPx8liomLWHd
+    XIuTDJjF4VCjY1m7deqIvYEtb5alALG/dLXWpsgRlZMeeS93qumVRRadmZwvCVbtlKyr
+    /ikXjkqlBmfRFsI/TMtODweKq6fVI1XrojjSB00/JUfhc8x5SVBu9Sq3JOLlvuyBK3g6
+    0bHQ==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
-X-RZG-CLASS-ID: mo04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505187;
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505166;
     s=strato-dkim-0002; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=ICzF0au7+zioXlv3o0PbRF5DUQ/dlcDYCA/hi2iZWyw=;
-    b=MKebHGsWd20CynMJtycAL1CWMMQPC3Q5ewZInE+iEP7mTgQQRANqLUPhQ87ysiK/wb
-    DWY1sAg3VnGxml//nMgu/4z7YuEvfQaNRh+iVnKUeYckB4jPdENVapR8u4gbgeR6oayk
-    87bKBsUtqf+exCs3W7Fg0O+AxrY/4cHYWrowvsYUvA8DD8GYeZcYZaASHAEcpBf2BcNh
-    5+guMcwsXHojJyrVe2hgVr7QOZHeGaRN5x1KQQBO6f91CBx6WfA8CsFo6HivbYDs0d9G
-    5OFRkQMmq1Tv4Q4J48jIpxn1r0woB7l9RwElIPP5HI7G55SDjf8hRfaARuiHQohbek6i
-    EzsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795505187;
+    bh=gAIN7iE4u/BQ8emUvIO6sNS6XCYcMUaeapeftYIyo6s=;
+    b=a3KaLGJtVvMLsOwdQZUYs+7gK4y5yMMC88fm09lTN7l6NG9gu8eI8W2icosjN3MpA2
+    bj6C07vlxiYwLcPYf5IkR78Iqaoz41qwEoq8WUwjURKL22gWnOuuuLOfP+HjN9KNrTaE
+    Lei5ojY3O7JlF8Hc1MihqnTEvrTrPZzGN5IoK7krNf4CFQvSh+R5yxJUvoaRqaz1Yz9y
+    3xagrdTDB3n0mDS1sZE14Sn+jRVds2NJ3y1yPheBCRhVQt2KRPv+oFiMFrMj/s+zUYTF
+    LHIAzqKyk2qD+bUdyyGEfw1Wkhjx+3NfNr4ib/LP/UazcxgirFOK+s1ooMG1J/EIxaXo
+    BulA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795505166;
     s=strato-dkim-0003; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=ICzF0au7+zioXlv3o0PbRF5DUQ/dlcDYCA/hi2iZWyw=;
-    b=F0hIcRQXfQdsW0YptLj7KSz7SCIza97TyYei6EsyAYtpiSSO8ZlJTtukC77omi6Nyk
-    GMElw1yx0A6UY5wuXeBQ==
+    bh=gAIN7iE4u/BQ8emUvIO6sNS6XCYcMUaeapeftYIyo6s=;
+    b=h3aJvplqETdwNO8kY5RutWsO9gupBKll+2yH2AoQUGLuJZB0vkQ0wtDTAaen7gHL8k
+    5hFyXlXfUyNF6mSyn3Cg==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV3poLlciNVTQoM6kVxzKyrKzkpjcAwdDfiN49"
 Received: from iMac.fritz.box
     by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22AO7QQ1HY
+    with ESMTPSA id Qb56a22AO7Q51HC
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
 	(Client did not present a certificate);
-    Tue, 24 Nov 2026 08:26:26 +0100 (CET)
+    Tue, 24 Nov 2026 08:26:05 +0100 (CET)
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -127,9 +127,9 @@ Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
 	letux-kernel@openphoenux.org,
 	kernel@pyra-handheld.com,
 	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 20/20] ARM: OMAP2+: Remove Pandora platform-data quirks
-Date: Tue, 24 Nov 2026 08:26:00 +0100
-Message-ID: <1cb5bd7216b334e8c4eff21ff3463deeb6109595.1795505160.git.hns@goldelico.com>
+Subject: [PATCH v2 01/20] dt-bindings: gpio: twl4030: Document REGEN GPIO
+Date: Tue, 24 Nov 2026 08:25:41 +0100
+Message-ID: <21030cf6957c49c8114829970cf64c2638050220.1795505160.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1795505160.git.hns@goldelico.com>
 References: <cover.1795505160.git.hns@goldelico.com>
@@ -145,68 +145,44 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="us-ascii"
 
-The Pandora backlight is now described in the device tree and driven by
-pwm-backlight. The sound card also uses device-tree descriptions for its
-codec and amplifier GPIOs instead of legacy GPIO lookup tables.
+Document the optional ti,use-regen property for the TWL4030 GPIO
+controller. It exposes the REGEN power-management output through the
+GPIO controller so that device tree consumers can control it using a
+GPIO specifier.
 
-Remove omap3_pandora_legacy_init(), its backlight platform device and
-audio GPIO lookup table, and the associated board compatibility entries.
-These platform-data quirks are no longer needed.
+The property is opt-in to preserve the existing GPIO numbering for
+systems that do not use REGEN as a GPIO.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
 
 Notes:
     Changes against V1:
-    - Andreas Kemnade raised bisectability and intermediate driver
-      availability concerns for the V1 pdata-quirks removal.
-    - Correct the legacy backlight name and explain removal of both backlight platform data and audio GPIO lookup tables.
+    - Replaces the former REGEN regulator binding following Mark Brown's
+      recommendation to model the control signal as a GPIO and
+      Krzysztof Kozlowski's binding review.
+    - Expand the binding commit message to explain why REGEN exposure is
+      opt-in and how consumers use it.
     - Commit-message review assisted by ChatGPT.
 
- arch/arm/mach-omap2/pdata-quirks.c | 23 -----------------------
- 1 file changed, 23 deletions(-)
+ Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-index b947bacf23a37..aca7097a692ed 100644
---- a/arch/arm/mach-omap2/pdata-quirks.c
-+++ b/arch/arm/mach-omap2/pdata-quirks.c
-@@ -268,27 +268,6 @@ static void __init omap3_logicpd_torpedo_init(void)
- 	omap3_gpio126_127_129();
- }
+diff --git a/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml b/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
+index 96d50d14c0710..25ba4328ac2d0 100644
+--- a/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
+@@ -47,6 +47,10 @@ properties:
+     type: boolean
+     description: Enables LEDA and LEDB outputs if set
  
--/* omap3pandora legacy devices */
--
--static struct platform_device pandora_backlight = {
--	.name	= "pandora-backlight",
--	.id	= -1,
--};
--
--static struct gpiod_lookup_table pandora_soc_audio_gpios = {
--	.dev_id = "soc-audio",
--	.table = {
--		GPIO_LOOKUP("gpio-112-127", 6, "dac", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("gpio-0-15", 14, "amp", GPIO_ACTIVE_HIGH),
--		{ }
--	},
--};
--
--static void __init omap3_pandora_legacy_init(void)
--{
--	platform_device_register(&pandora_backlight);
--	gpiod_add_lookup_table(&pandora_soc_audio_gpios);
--}
- #endif /* CONFIG_ARCH_OMAP3 */
++  ti,use-regen:
++    type: boolean
++    description: Enables the REGEN output as a GPIO if set
++
+ additionalProperties: false
  
- #ifdef CONFIG_SOC_DRA7XX
-@@ -514,8 +493,6 @@ static struct pdata_init pdata_quirks[] __initdata = {
- 	{ "ti,omap3-evm-37xx", omap3_evm_legacy_init, },
- 	{ "ti,am3517-evm", am3517_evm_legacy_init, },
- 	{ "technexion,omap3-tao3530", omap3_tao3530_legacy_init, },
--	{ "openpandora,omap3-pandora-600mhz", omap3_pandora_legacy_init, },
--	{ "openpandora,omap3-pandora-1ghz", omap3_pandora_legacy_init, },
- #endif
- 	{ /* sentinel */ },
- };
+ examples:
 -- 
 2.56.0
 
