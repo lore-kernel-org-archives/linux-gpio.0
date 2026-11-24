@@ -1,53 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795541361;
-	b=WjLCghvt7W1JRkUiiz/uG+NLvppaxEHQSw5V7013ex9LmYKE03M3HMPbaO3iMnFH4Cg7
-	 A8cAArF5lD274EiIk9AOKBCrFolUBaaxDefxeM6PWbSBRWyEnIjtEA3j7wYLIu5OTZLMH
-	 ytobPAloqTAbuRiX/LNsHskr0g6OyN62vato5ghayL2oIE6HHrTO03ucjxneaId1vd52x
-	 bqOwtt6OG3ZEGDmBpyfwytsab5ekL/l9ki3bCA42GbjrLk44Y3nc7nFzUJ38zq9GKfWxs
-	 m+6kzy9oZ7JTkXzShtXBOQNO9GKo7PDwABi2mUKpJizRC2iNRkYyhQPu+Y77zSQMN6w==
+	t=1795541474;
+	b=11NexC6UXqfdLbkC/GYUhVBeTTVecjMj5j4nS8YGn1zOsUk62OyfYIIXRpO6cfhaStu+
+	 kBfPbLAW09J/SC3hg0xFCfGK4Iyv2tw33nPoXI1LrbA1/Jucp2t8cJnOqJJzHJcS7zJNX
+	 HOqYOTQRfZmbLGBaXNqiWrHrjJEYgZlpggKHmFRLSZHkXQuOI4+FmKVXuAmcGSBXKAiRb
+	 imXpJzRTbPOFHYKMfdi6ptXDq56cHlkP3sc8VzM0C4vFNNRmZHUtKMaB2trcgWfqcgmTE
+	 5jxu6B96qSEXFeQta+0JlyAR9ufhlN46Auk/1enPCh/Fw2KBZEw/8o29YJH/zMrbOkw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795541361;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=sluaE+zjyo+Ofk+lfLqfvLWgLU/EpzFxI184omUErDs=;
-	b=00+SUKDnmdvuA+H11GmqoEXrIiwdeeTWl0MVaPZzAKx2yBWFfd2POKlHPLPij7uFMdvA
-	 q+XZKsDA3qxCoTFDiCc6ROdvSrzb9pfazFRn8HhGdGMaE564C2XGEYTY/H15OpgiRBzNv
-	 0lbGSD06G29ICixctd/lSVua/+6O2KTqGaD1Z/xebQuwcxyvvlqMHrtNpSmy1M3UDGX6T
-	 oKFN+Ub+cx+vab715lUAY96UBeWqrRexv52mKIs5E2+gAc32g+a6T5M9LzMNMh9f80DOW
-	 US+V7x/NoEzz9nB2DiZTu6eYUSpuhhDB6emBj6SUKnLqRwO4glYlcvY0FVMJFLd0Arw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795541474;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=KB7C1eMFvEpAkKAm29IzBOF4vvBEZNc+lMvP8sAbtwY=;
+	b=W2mnbHU6ep/MU4RE1mxW1gkcCuzjfFeCqHJJ5L4qGML/kXG9es/DYoR6B66Sma2z2gyN
+	 inANQGPZ+VjSaoDzs3lY11DwL43VE1MdEeETxQ59FttF/cMSJ6Xu0L/Nkn5CvJqpv9feD
+	 OoCyUrKI6efVFB8sRjuPooNPqoz0dmcqB26EbhbtlJaW/DXAK1Za3kvI9Ylt8nTTJEeZr
+	 w+fmEt672VwIIeDVNVeIZzK49z+q4rO8mtXlbXEAQ8hS7ekoa9PGerjJLNqjfBxOhysW6
+	 ogkxGPG28iemudPZkBphX8c/UKOQAAm+hjJlZ1u3r3y9NLlujZhsZhmu0CNcjPSsYlQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NhmRJ12y;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=d273tAsN;
+	arc=none smtp.remote-ip=198.175.65.16
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2198606A31E;
-	Tue, 24 Nov 2026 17:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECDF606A327;
+	Tue, 24 Nov 2026 17:31:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5ECDF606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NhmRJ12y
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517D91F000C6;
-	Tue, 24 Nov 2026 17:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795541361;
-	bh=sluaE+zjyo+Ofk+lfLqfvLWgLU/EpzFxI184omUErDs=;
-	h=From:To:Cc:Subject:Date;
-	b=NhmRJ12yD4CmnLynW2JmtK3arGuYNIiI3+khwmK9mWK+HmdB6Djj9cpVuYyP7vKHq
-	 8kzllFaP4d0pWp251fNKTAadiCyDkdBjpsqRdV3qkmJ/GFziy+yH3XdwvrhejcCpQm
-	 5gexl5BrrwoCdb30nwVn4i3Z1+LwoCbgoUT19x4j2IgW/fZWLf86tjYfJ6+Azeqx0o
-	 zRM2VxokU4aJrVTg4fekhJsU+IKQ/3RgLxFD2N1VFE9Z+InWltZI8RMYnuRVCI+cT7
-	 85RhXpaueJUNYMSZJwVBZCCzIw1A/44flBQqQucMMVJ/vKWxLGNlSmR17JyG8l9yxI
-	 DKfVttW2huA2Q==
-From: Geert Uytterhoeven <geert@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] pinctrl: renesas: Updates for v7.5
-Date: Tue, 24 Nov 2026 18:29:17 +0100
-Message-ID: <cover.1795540869.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=d273tAsN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795541474; x=1827077474;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bIUrMAQbM2kqyk0KcHV9n2AymUp3v+Q2zyPcEJ2YyuM=;
+  b=d273tAsNRzXlhvWL5bt3E+TrEZKCM0FV7ape8ETEDiJS/twpFPYoNhkP
+   oISGhGgTF68nJ63Aeo0DS4WI56+IAu3yZZmXcfnCh12qZBfySYEpRaLOU
+   NOjBQYtcHuL0aJIki4FW4wtZEiqN8lf3bzY2mIzeCmqq1cYJOXtA5nFgu
+   nro0M2ookkEjcStF94NYoxkfV8k3qLGJJzGAW360cB/7v/XEwCHdz1ITh
+   Kp+ZbhxyRZTjyFv41NNuidI8pA6N7fpvS0xMuh0dMTAtW9npCxNyMpPE8
+   oY6PLoI9Vq2TXc6l7N+HSdpSHaHKsFt5srUFksser9CKwiE8X9QMNXvEt
+   Q==;
+X-CSE-ConnectionGUID: 7aC+87jxRI28GKD2nGUUUw==
+X-CSE-MsgGUID: bYdVf6alQD+jqHILgDESXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11976"; a="4334080"
+X-IronPort-AV: E=Sophos;i="6.27,231,1787036400"; 
+   d="scan'208";a="4334080"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 09:31:14 -0800
+X-CSE-ConnectionGUID: eEbY6/VvTL2OBHoiAYYXXA==
+X-CSE-MsgGUID: YOpTlkumQWOuvsCEqAY8CA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,231,1787036400"; 
+   d="scan'208";a="12076339"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.125])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 09:31:11 -0800
+Date: Tue, 24 Nov 2026 19:31:08 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gary Wang <is0124@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Daniele Cleri <danielecleri@aaeon.eu>,
+	JunYingLai <junyinglai@aaeon.com.tw>,
+	Louis Chen <louischen@aaeon.com.tw>,
+	BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
+ GPIO OUT not function mode
+Message-ID: <awXJ3Ki8i9b-Kokp@ashevche-desk.local>
+References: <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-0-c8079f8f569f@gmail.com>
+ <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-4-c8079f8f569f@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -57,49 +87,29 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-4-c8079f8f569f@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Nov 25, 2026 at 01:10:38AM +0800, Gary Wang wrote:
+> The CPLD I2C pin mode setting through pinmux-select is not correct.
+> Should be set UPBOARD_PIN_MODE_FUNCTION on AANT0F04 devices.
 
-	Hi Linus,
+> CC: stable@vger.kernel.org
 
-The following changes since commit 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4:
+I already mentioned that it's better to use 'Cc: ...'.
 
-  Linux 7.4-rc1 (2026-11-01 13:26:31 -0800)
+> Fixes: dca2f73cf19f ("pinctrl: Add pin controller driver for AAEON UP boards")
+> 
 
-are available in the Git repository at:
+No blank lines in the tag block.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v7.5-tag1
+> Signed-off-by: Gary Wang <is0124@gmail.com>
 
-for you to fetch changes up to b2a4ca3e3d4af9a3a1e02acdc934b3702ff8ffde:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-  pinctrl: renesas: rza1: Put fwnode after parsing gpio-ranges (2026-11-16 09:39:17 +0100)
 
-----------------------------------------------------------------
-pinctrl: renesas: Updates for v7.5
-
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Jiale Yao (1):
-      pinctrl: renesas: rzn1: Free maps on DT map failure
-
-Xiangwu Lai (1):
-      pinctrl: renesas: rza1: Put fwnode after parsing gpio-ranges
-
- drivers/pinctrl/renesas/pinctrl-rza1.c | 1 +
- drivers/pinctrl/renesas/pinctrl-rzn1.c | 8 ++++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
