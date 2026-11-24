@@ -1,124 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795531288;
-	b=YyEDzw9UvwgJW5kfLJGsPFaWgGzHLcTGL+/8hSem/VKAiqgFApFgu5mJS5WcWTnZtCMb
-	 iNU98C76YL93KO+cbQWFb/oBD7GqlhcaoOtduUTkhnKsqUTa3nDpE5lw1eMJlzbkzYr86
-	 1SanpoV0iyZTSii5Ms3lld3DCqo+2hUkDc2tmcNV+qmTxI8BzlIL2tuTlEikqxylLPjVr
-	 Krp2mghcjAJsUs+mYzjkpNzpvvANr45iEy76/6Sue1Sj266fRkP+h443L33WPz26qyqlg
-	 uYR8ZFqT7GaFap2zgxk2+iY2lqDpL4SrR4AHyPioW2XF0Dj2YfEdRdqmVWi9MzsdK8w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795531288;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=gMaNu0XBKBvpaweoggrsqRVklH2m30swHb0SwRHlLqU=;
-	b=lCLpdo1OWs7k9hWwju0UTnjWeyIgiuxFCBULDcN2oUlZ4eWtd8KdyH9fVJVEGVUl7AD6
-	 Efh9YSXTXwRh4WiyPpKOvCUzKMboZmLF6pL7c1Muo6h/eBh+az+ioh5XaYhEVyErCv4Te
-	 4sO+JNhUP1uyA0n/okohTPfgp+PlgM+pva7E4xl8yUCuNAqfv3a+bWfUfym0HhyJ7QrzQ
-	 eSNJmQnlhQ9hnsIjE39VSz8puz7IAKFNi8AJK424aE0L2BJAQZ1ePFmh3wZt+Z3BNM21S
-	 2RF+NkTvv/aTkoLIrcrqnVaXOEgyMF0baW3gV2Sa8fGm/SzuQoPzS2KHN/4f8qMfQyw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=U3goSmAI;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A2GEcFeQ;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.103
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795531435;
+	b=BySQbcp04G7Qn45AP0Uwie3O20kTP3BhPSh7ex//4vR7vhcVfEDGqKi85ANm5o1GZG8Q
+	 jHH0Er4boVX20IkgNoegbItNFKO/PqPZ8B4xIcATwkp1vCl6Vq0SixlUbKQVvl/hweLF0
+	 SMSx6nNjlkcTIXG4ww7nMlNsbgKHi20A+zCmwlQRYpSWxTILZobHvkWaGN9Ze5VJ6AVw1
+	 pHHZrNG70kcELTdG7/GWl20hTABa2wa3svKDTHEEyA/Z05FcibfyX43F1mA8r55knoUzW
+	 kkIQLKqDUa27KNsmNmReMLKLzaIPEhi0Ts0IgLA38NS1VthJ7xK1sDGvYpXiS+yZ7Uw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795531435;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
+	bh=wjMPCLTKXUXSTgUWJyqY8hYDFtiorHpsk/A6fPEGtNY=;
+	b=bG5LV1JkaASZfjYDwn64RLInLpCY7BCElO0gF7y+I0TSJStgmQQ1UIHmEmSY0dq2M0uH
+	 3Zd0JkhpkpExdPUHls5b4t6xSzC29Axy4WdivAMP+3FKrrqdxCmM7s5XfAtERMSzJKIQk
+	 uDKF4uPJvJcY6dC62qXRh9fGK3bV8JHQEMpbDSfU2FCNGt4l3tCQLKll7MNheY3QiU4Xb
+	 r8uTrfec7/oSeMPHWQV4+rFv6bT/J4Br3B9FNE6XOHqRlSlQrFG0nS7xML9RTAHlnNfpd
+	 nyQPKuqAP7UE7nlrIr9nalEEN0cE3WIwvJrFTP0FMWTcPmv0C0EjATZOOJC/ISY3K2w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="B/N3NlED";
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b="Gm8rV/jN";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.103
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.103])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF9A606A31E
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 14:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9EF9A606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B654C606A332;
+	Tue, 24 Nov 2026 14:43:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B654C606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=U3goSmAI;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A2GEcFeQ
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AOEbqqX1776793
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 14:41:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gMaNu0XBKBvpaweoggrsqRVklH2m30swHb0SwRHlLqU=; b=U3goSmAI+KeeYxCJ
-	n4yMkRsXUQG4j/6OI//Tl7ryrJI5nb342/sMxyjrZSCwvx4afORm4NgrNXAZzks/
-	RV1Y3i0OtDcEqu8dUC2Q3U2sm7dUkCuU7gTVLfPt8RzrNL/tLNUzSxuROHZm2UVA
-	1lQgHyUShBPgj56i2d8/W4vVKCqkodttNy28NpxmAMkd3ZOFVzl26Z4sjuPlaSH7
-	ZdItJo/xOVODKoLjCFGB6TqVhGzCYtX7P2XGzNHqOBJhhk3ToBisHUQd08qY6mKP
-	sZ+p71cVss8bm0gSNv6tzQSD+ZLoG6aFJI9d0GsCh/E9xAttlyC3qUvU8PGQGntn
-	FbQ1UQ==
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4ukrcad6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 14:41:26 +0000 (GMT)
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-8b4bfc0b441so61253117b3.2
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 06:41:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795531286; x=1796136086; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=gMaNu0XBKBvpaweoggrsqRVklH2m30swHb0SwRHlLqU=;
-        b=A2GEcFeQIajoLnXrKkaSScnWlLkleXW/JTC6BMdxmek9ICYC5VsZcAVNfYwUrETBwx
-         OxEuPnuDidysbPzE8D8oe0cnQ7HCg1ZUnxQThYg5H9MFikJTtUKHpn7lArSnzLUj0lCZ
-         owIBHAB4fqDobn/SN0PiG5AQdSauEBe2RFy9MW7UTKNr538u4zFSNu/OwhJjDQvGRTJS
-         c1sjUIAbP3NtnkGb6FS6vasOkd8N2pjEPMkSPLku2py7boP+TLmpUVhZKQClHAvEH4Qc
-         L7GPGXAvW6QJm4+ZKsgiXp+eHK7a9I/wVql4fSY8baxwAB8T78wv+c1jVGGzfwZ0Nl7l
-         00Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795531286; x=1796136086;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gMaNu0XBKBvpaweoggrsqRVklH2m30swHb0SwRHlLqU=;
-        b=HOCaSasFgqF6SD8TU5dc5YopE1zkJXyQSsHBIwVEdBBWymf1xIkwLnH+O0RARJ0bt7
-         AXaYCENTvyaGxxK0Q39+TuzbYH1J5ZoHn7nv5QQOwRKWQXwdzY4cbTpBDl1jDmqL5np5
-         9DCIgaBBFTqM/gSXuDCGm/KpiyfdbzTJTlqkUl9Y/0F6R/hg/L/QfVpOzwoeA/9LQpGa
-         kSVPCfzV48i9DRC9aRGbkW+29EayfWA23ez+LLw7jV4pfNwbnI9mAKtZ74p4k9byHDBV
-         B84YCV8ylWXkz/Z2Y4Yv8MMe9iQJBJIOiEvpCB4WrnHlKjHLGOWR1OdmqvF0cIrXlgQG
-         Bvsg==
-X-Forwarded-Encrypted: i=1; AL+hErGRM8gyBKEuAxDyys1BlDIqJsvSFrixVl+hMRwOOTbSx+Vaj8xqsfJ/zMzxOKQMovvi2s/qWROcpvCZ@vger.kernel.org
-X-Gm-Message-State: APuU4Z/5vWby1bC8qpqyZW/IYHZ0ZSBY/MDaddTc/+jwhxbqLFgoDDna
-	tNivsW5U1xU8PWI7H5jkYS8K8njykkRnhLjhwtoIhee/6Nj/Jbw53AP6nSGbnKSe1juawQSAxKk
-	Xvb7yTZHGPPMzE6W5omz+JSzQ0PqMR0R7XQ2BKP94SFkVgZmKucxYzMWfiXSrXCCkfagTpZh7
-X-Gm-Gg: AZFdTZeSffqqHqvfJEXAz1dlJ5H1eS1nt+u3BgaIkD9PPhMXvxsbEiamupY0f1SDHBa
-	yECxkvmVln1AaS2w2iSsKtJb7Cgy0iCVwZ1xiRRlU6N0V1SiUkQ2qncgRauT0BSPmW2i3qzEbdN
-	Pm/QvOMoQp+7ShMRpWgzN0YzhLp5FYJOxjgdR6oxHss9+J15DjWJ2cuzBERzi+aXi8KLoP+bh5m
-	dHqjCCD2ajzE7gNSDFcWlq+GA4q5rEeAdI3EwZB0O5dTeKDWPXHY+5rdG0EuLLRTH8S6q3mpmLL
-	ag6VC34EkSznlyIbcqTTcxHCZc1//kNjy7umiYiKWp5Dp8xZQzJt4UHkWEM2LTBm1zeSCZFRCUg
-	kMam2OZwlukX7Q7pNbIMAJeGk5Nt7vFmG/QQI13kkdBQCZOAnwwQ5jNPpeq+PWoWdQxS3eIU2rS
-	MuKEubHMQr6HphthdkOlFwj83yNch9uiodY/RFFAGQ566H9ypllUyaU4R25HWSLw==
-X-Received: by 2002:a05:690c:6887:b0:8b4:f3a1:aa65 with SMTP id 00721157ae682-8b52043ee35mr56155767b3.23.1795531285885;
-        Tue, 24 Nov 2026 06:41:25 -0800 (PST)
-X-Received: by 2002:a05:690c:6887:b0:8b4:f3a1:aa65 with SMTP id 00721157ae682-8b52043ee35mr56155657b3.23.1795531285430;
-        Tue, 24 Nov 2026 06:41:25 -0800 (PST)
-Received: from brgl-qcom.home (2a01cb1d00dc7e0089167b9b97a26c96.ipv6.abo.wanadoo.fr. [2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab65cb4341sm28701571f8f.4.2026.11.24.06.41.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 06:41:24 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Jia Jia <physicalmtea@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/8] gpiolib: fix chip removal with lines still requested from user space
-Date: Tue, 24 Nov 2026 15:41:22 +0100
-Message-ID: <179553128045.30278.93325260808484684.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261124-gpiolib-chip-removal-v8-0-aambrozewicz@nvidia.com>
-References: <20261124-gpiolib-chip-removal-v8-0-aambrozewicz@nvidia.com>
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=B/N3NlED;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Gm8rV/jN
+ARC-Seal: i=1; a=rsa-sha256; t=1795531380; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=eFqapcrDkZWfDBugJ2ET555mbIpYEVehoLLZJ30Ke6V2BQb54yMB8BEb1EfkYX2G/D
+    jxlhSJa5/Ru5wvdhGJ/DDnTAwcQH3PJEDoRPYfDJoINKWc2FBkp35BIX0mnlH0jr6e8C
+    bEw30vBjZ5sIdRoavYNO6vGYsMkI4OhB7P0G5xXiiD37kxALzXphG+jZ3ZFFsufL70W7
+    vKLkFNSKX9JqgJ4rNBaOD2SHMFY3Efi8PTyK8tBmDIBrAK/wzTb5pW3Mm3SAz2WIVtQy
+    xL41sPIMIv8f2OJ6WxHRTn3JQzJRPS2wrfGI5o8ProndNqI7qvrs2ZP7UPmR+RubEvPN
+    pjXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795531380;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=wjMPCLTKXUXSTgUWJyqY8hYDFtiorHpsk/A6fPEGtNY=;
+    b=p7JAC0yyxvb9gDCsU9uNwfI25ok9wg9d0T9WxRcfuVEvA1PqHWzKpWAy9rQCexD/NY
+    jUs8I7Xam22lqpZSyUBFji+V1wtuvOuKYg9RJiuQw6r8o8R2/8KLEr9+Wkn6oy2N196Q
+    hvbGBsjcEka7kxkNgAKhEcZrwzqP8I1ELgrR4jwSnnmzB73cli21CEnowkhk+XeH1ho8
+    6SPHU5hGt4dgMfA6pJPREP2m+iTjgHXeo52qxGVgo/IwhAJHFSw40MgKA1IkYw2H2eu1
+    +gURGDhEzGottigCv8sP1UG6fLhgq6Ftt79D/xophmwwg7Dz3f6nFldeCbgilLJ6ZzQs
+    37Qw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795531380;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=wjMPCLTKXUXSTgUWJyqY8hYDFtiorHpsk/A6fPEGtNY=;
+    b=B/N3NlED62XC53fS3dKlDLGNW+EUx5t5aIC+129AcWVLZgIEvrGsJu8Z/aR5UEgaBQ
+    CGKHh8DOLMSIVtBDm2/JMmhaMT0nTcRTR6lX3ZUsGRjLArp+IFERM8p96rSY5ExI7+4B
+    ROUg9knka+ouN9OUVROEWSMTwpo+0UVg2CtKhCfEqfl5y0uDUn7856HpOa6wr+rhvRaM
+    g6EOP/0ytoBEgOeptjIoi7FL0xswmBfQbJKWiJJ2AOE5kFHdMxEMcuzfTe+kOyet+dN4
+    djVOU6mZQzaC8N7sm+PttNjRvqCEuRJOuKv50ppSxF51gRqnlXgc3BpJaXK7zR0AaRAJ
+    O7nA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795531379;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=wjMPCLTKXUXSTgUWJyqY8hYDFtiorHpsk/A6fPEGtNY=;
+    b=Gm8rV/jN7XY6sL30KeLRzBRmXQeucYP6KypPWqMDt63TNw2QRayySpECkE6kSlHjtq
+    BvCB4jEKrBRkjmFDpEAQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV3poLlciNVWUgMvoVkTTR2P7jtjQyY2AeEP/F"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22AOEgw3dW
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Tue, 24 Nov 2026 15:42:58 +0100 (CET)
+Content-Type: text/plain;
+	charset=us-ascii
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -127,67 +93,275 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI0MDA1NyBTYWx0ZWRfX/L6RvtIqYYbx
- ycpdKUDqGSAf/FVIS+h2OlfGmbgFN4x4UqoMFsBH8rPSgbumDM3Ht8SoJSw4mzceE+Plc1Wq2Lz
- Xqp4any//nWpBldmZHlyz1T+QR1oyNc=
-X-Proofpoint-ORIG-GUID: HBStT9eYCbYUOmJfYk6XSsMDoMhmy5Yg
-X-Authority-Analysis: v=2.4 cv=M+rYuCws c=1 sm=1 tr=0 ts=6b05a216 cx=c_pps
- a=72HoHk1woDtn7btP4rdmlg==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=NrOanRE69mB2D77-yfwA:9 a=QEXdDO2ut3YA:10
- a=kA6IBgd4cpdPkAWqgNAz:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI0MDA1NyBTYWx0ZWRfXwZgSGKGvI0WP
- AlK7LKIppzRPCajgT/ZVOaFv4tQSHfMYO3EELDuWgN7OeA0xVwbQGQaituZooJe42KKcViCJQIE
- kH4PnAdexaSWBLNjonsc5DNQRrzukio2MFNCiewyB0V3zlrGhuZ8RPxbq34lNuojgzVl6HHfjCw
- myWCVP6jh1VTf7iUPSN0e65Z/jiDVZCVcFc/0bxNTsBsUBWDN3qfOzwuVF8nr3kEK9hcx+QTSsu
- GRiUfjb6PMZVfawjZFPA5Mpg+mFBNJfhMiS3qx3ojAGKXiXHmBRPZZePaqKiy2/aeld2M2sKH6q
- 76Rebfto8Vjh6GAXtbkPo0Ne6yf+ZOkVMOW8eMPyiCo+tLlVfuI/76EhCNup6E5nk2zSKwT+S7d
- wrU+LKraV1MOhTSA2FJPxbasUWDKKLZi1+tXihaksl/nvHGYZC8VJejQ/4PrwL+fqZZpKMguLqZ
- r14wJl8Dvx0eAEWcy4w==
-X-Proofpoint-GUID: HBStT9eYCbYUOmJfYk6XSsMDoMhmy5Yg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-24_03,2026-11-23_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611240057
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.11\))
+Subject: Re: [PATCH v2 06/20] dt-bindings: sound: Document OpenPandora sound
+ card
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <179552715646.40567.8345105080206889175.robh@kernel.org>
+Date: Tue, 24 Nov 2026 15:42:27 +0100
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+ Mark Brown <broonie@kernel.org>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Tony Lindgren <tony@atomide.com>,
+ Pavel Machek <pavel@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Lee Jones <lee@kernel.org>,
+ linux-sound@vger.kernel.org,
+ Takashi Iwai <tiwai@suse.com>,
+ Jaroslav Kysela <perex@perex.cz>,
+ linux-omap@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ Kevin Hilman <khilman@baylibre.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ linux-leds@vger.kernel.org,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ linux-pwm@vger.kernel.org,
+ Maxime Ripard <mripard@kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ linux-fbdev@vger.kernel.org,
+ Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Daniel Thompson <danielt@kernel.org>,
+ Jarkko Nikula <jarkko.nikula@bitmer.com>,
+ Roger Quadros <rogerq@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ devicetree@vger.kernel.org,
+ Jingoo Han <jingoohan1@gmail.com>,
+ letux-kernel@openphoenux.org,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ kernel@pyra-handheld.com,
+ Helge Deller <deller@gmx.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DC45A20D-18E7-4D8F-A6F4-9F51FE2022BD@goldelico.com>
+References: <cover.1795505160.git.hns@goldelico.com>
+ <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
+ <179552715646.40567.8345105080206889175.robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81.1.11)
 
+Hi Rob,
 
-On Tue, 24 Nov 2026 11:20:31 +0200, Adrian Ambrozewicz wrote:
-> Removing a GPIO chip while user space holds a line request, as when a
-> hot-pluggable GPIO controller goes away, leaks the line labels (patch 2)
-> and IRQ names (patch 5), frees IRQs twice (patches 3, 7 and 8) and lets
-> a blocked read() stall the removal (patch 4). Patch 1 makes
-> gpiodev_release() wait for pending label frees; without it,
-> cleanup_srcu_struct() can warn, more often with patch 2.
-> 
-> [...]
+> Am 24.11.2026 um 14:35 schrieb Rob Herring (Arm) <robh@kernel.org>:
+>=20
+>=20
+> On Tue, 24 Nov 2026 08:25:46 +0100, H. Nikolaus Schaller wrote:
+>> The OpenPandora audio subsystem describes the routing links between =
+the
+>> OMAP3 McBSP interface, the external PCM1773 DAC, and the TWL4030 =
+audio
+>> codec, alongside amplifiers and power supplies.
+>>=20
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>> ---
+>>=20
+>> Notes:
+>>    Changes against V1:
+>>    - Address Krzysztof Kozlowski's V1 request to run the documented
+>>      DT schema checks and fix the errors reported by Rob Herring's
+>>      automated DT validation.
+>>    - Update the binding example and schema during DT consistency =
+review.
+>>    - Binding and commit-message review assisted by ChatGPT.
+>>=20
+>> .../sound/openpandora,omap3pandora-sound.yaml | 95 =
++++++++++++++++++++
+>> 1 file changed, 95 insertions(+)
+>> create mode 100644 =
+Documentation/devicetree/bindings/sound/openpandora,omap3pandora-sound.yam=
+l
+>>=20
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> =
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.d=
+tb: sound@7702000 (qcom,apq8016-sbc-sndcard): =
+primary-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+> =
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.d=
+tb: sound@7702000 (qcom,apq8016-sbc-sndcard): =
+quaternary-dai-link:cpu:sound-dai: [[4294967295],[3]] has more than 1 =
+item
+> from schema $id: =
+http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+> =
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.d=
+tb: sound@7702000 (qcom,apq8016-sbc-sndcard): =
+tertiary-dai-link:cpu:sound-dai: [[4294967295],[2]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+> =
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.d=
+tb: sound@7702000 (qcom,msm8916-qdsp6-sndcard): =
+mm1-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+> =
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.d=
+tb: sound@7702000 (qcom,msm8916-qdsp6-sndcard): =
+primary-dai-link:cpu:sound-dai: [[4294967295],[16]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+> Documentation/devicetree/bindings/sound/samsung,snow.example.dtb: =
+sound (google,snow-audio-max98095): codec:sound-dai: =
+[[4294967295],[0],[4294967295]] has more than 2 items
+> from schema $id: http://devicetree.org/schemas/sound/samsung,snow.yaml
+> Documentation/devicetree/bindings/sound/samsung,snow.example.dtb: =
+sound (google,snow-audio-max98095): cpu:sound-dai: [[4294967295],[0]] =
+has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/samsung,snow.yaml
+> Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: =
+sound (simple-audio-card): simple-audio-card,dai-link@0:cpu:sound-dai: =
+[[1],[16]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: =
+sound (simple-audio-card): simple-audio-card,dai-link@1:cpu:sound-dai: =
+[[1],[17]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: =
+sound (simple-audio-card): simple-audio-card,dai-link@2:cpu:sound-dai: =
+[[1],[18]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> =
+Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.example.dtb=
+: sound (mediatek,mt8173-rt5650): codec-capture:sound-dai: =
+[[4294967295],[1]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/mediatek,mt8173-rt5650.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,cpu:sound-dai: [[4294967295],[0]] =
+has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,cpu@0:sound-dai: =
+[[4294967295],[0]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,cpu@1:sound-dai: =
+[[4294967295],[1]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@0:cpu:sound-dai: =
+[[4294967295],[0]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@1:codec:sound-dai: =
+[[4294967295],[0]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@1:cpu-0:sound-dai: =
+[[4294967295],[1]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@1:cpu-1:sound-dai: =
+[[4294967295],[2]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@1:cpu-2:sound-dai: =
+[[4294967295],[3]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@1:cpu-3:sound-dai: =
+[[4294967295],[4]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@2:codec:sound-dai: =
+[[4294967295],[1]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound =
+(simple-audio-card): simple-audio-card,dai-link@2:cpu:sound-dai: =
+[[4294967295],[5]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): hdmi-dai-link:cpu:sound-dai: =
+[[4294967295],[20]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): mm1-dai-link:cpu:sound-dai: =
+[[4294967295],[0]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): mm2-dai-link:cpu:sound-dai: =
+[[4294967295],[1]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): mm3-dai-link:cpu:sound-dai: =
+[[4294967295],[2]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): usb-dai-link:cpu:sound-dai: =
+[[4294967295],[136]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): va-dai-link:cpu:sound-dai: =
+[[4294967295],[110]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound =
+(qcom,qrb5165-rb5-sndcard): wsa-dai-link:cpu:sound-dai: =
+[[4294967295],[105]] has more than 1 item
+> from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+> =
+Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb:=
+ sound (google,sc7180-trogdor): dai-link@0:cpu:sound-dai: =
+[[4294967295],[0]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
+> =
+Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb:=
+ sound (google,sc7180-trogdor): dai-link@1:cpu:sound-dai: =
+[[4294967295],[1]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
+> =
+Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb:=
+ sound (google,sc7180-trogdor): dai-link@2:cpu:sound-dai: =
+[[4294967295],[0]] has more than 1 item
+> from schema $id: =
+http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
+>=20
+> doc reference errors (make refcheckdocs):
+>=20
+> See =
+https://patchwork.kernel.org/project/devicetree/patch/5c6f7deca16f70f1f19c=
+b40c57d70e30068d6000.1795505160.git.hns@goldelico.com
+>=20
+> The base for the series is generally the latest rc1. A different =
+dependency
+> should be noted in *this* patch.
+>=20
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up =
+to
+> date:
+>=20
+> pip3 install dtschema --upgrade
+>=20
+> Please check and re-submit after running the above command yourself. =
+Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up =
+checking
+> your schema. However, it must be unset to test all examples with your =
+schema.
 
-Applied, thanks!
+To no unset the file list was the mistake and why I haven't seen these =
+reports.
 
-[1/8] gpiolib: wait for pending label frees before cleaning up desc_srcu
-      https://git.kernel.org/brgl/c/803a7711476580a9ec74dceab90bb3f8ff1b90cd
-[2/8] gpiolib: free the label of lines released after their chip was removed
-      https://git.kernel.org/brgl/c/1e63be74fad7990efd58e3221de9a060f2d6f53b
-[3/8] gpiolib: cdev: do not free line IRQs again after the chip is removed
-      https://git.kernel.org/brgl/c/e275c654269a4372b93b67243135cb2e78ba2afb
-[4/8] gpiolib: cdev: don't sleep in the SRCU read section in read()
-      https://git.kernel.org/brgl/c/1641cbc799d04da692c01d07abc5cae269b62504
-[5/8] gpiolib: cdev: don't leak the IRQ name when the chip is removed
-      https://git.kernel.org/brgl/c/de364634c5a2aa50505c41cea0d27e2209d3a058
-[6/8] gpiolib: cdev: don't report a failed line read as an edge
-      https://git.kernel.org/brgl/c/6a59150a97aa414efca1acf77800647ce9921735
-[7/8] gpiolib: let the character device free its IRQs first on chip removal
-      https://git.kernel.org/brgl/c/8fe46885e513cbf6127694f12a39f3e4ff4a6ea2
-[8/8] gpiolib: remove the shared GPIO proxies before freeing the remaining IRQs
-      https://git.kernel.org/brgl/c/88f18f606f18796851674af74c286e55159618ed
+BR and thanks,
+Nikolaus
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+>=20
+
