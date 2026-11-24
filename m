@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795514344;
-	b=068akNsjelSxAxdF5UnbPizjzti0RjK2V8XYNhTz6d9tR8WSFUcJZ0MvNZsZ7AYJiYxl
-	 U4eogufbnCUkHaq2/RjAxtaXAi4VI+DH2xpqDY2u6aP7omqIT4M+k2D1SPW2i/mvK9De+
-	 ECG6rq8nWORUwOjEHHnqc64sfZH2PzoxdlCw3gEhfmyFqPkHIjNL1hnDm/0RO9Zt3hDtn
-	 DJHzgOAdsWHMGk//4xEI7/W8yWo/4577/BfZxZSB4a7UbhacqWoWnpFdTo/qD/T0e3CQ3
-	 9qtfqqlHPJ0p5yFZkCUooN6PVL4MMQnfrN4tTsBhywVF2cwfiqpYbjos3PWC8S7x9rQ==
+	t=1795514407;
+	b=WuFsCVOXzAyRUtzWwX05Cqb/3G3hvtLwJgK0XOA2cSK2araR0061wAdmKUK7FTW6DVyb
+	 FvdnnxvXVb6ciWgkVHDjn1XTgTjebOMeQNKepzklRFESJ1ZWA6qxSgWYzKq8SeyGPIC3p
+	 bZxBnFW1kxndR+l4+frLm6KQ2jbXE3bhK1ljC8qNx79vfN7mGJe/S33lVyC72TAJVFqj+
+	 QgBGqbgC2HOrGAoZvLTn6O8+7m0QmDD5/IOwd0LENEbnsGAqxVEXB/d0FtPoALcAlYkjn
+	 j7sGapXLgUsK7vCWX7AQciDh+d9K4pux/jlE0p8LN3lirtTt8foygZ/u0hg3r032wfQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795514344;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795514407;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=LM4WQJMgPgmGAQPx49J43+L3+FifhB+APgkJWZ64wOc=;
-	b=0UrU92GC6aYL8gmMABR8LqhjV+J3DL9EaUl/Ra0BuPkQRZCPZoVjDhMSCy1+USd90Oec
-	 oAQ3fLddZskpe5tOoI2RonQjUYq1OTy2dJG/zEmpthXVguPVCxjOToWM1erSTgMHbrMX4
-	 lvCgHX0HGqib55gnnuyteRVn+49uyN/qqv4sPMiUqqUM9RKmjKjNxMmIbxiLainUeW+tt
-	 L7xc1nghSHwmh9gaZkrRBaBJ1UXIKR3Tjfsuvtu07b7o1eKyU1XGDIjt9EAb0Ijhxg1IM
-	 NdGrWWt50p5q/4GA/A5HP0gOHFyBhjlYxyTxHElEtI6yDRJlEOUIBIQHvYSlAAR/EaQ==
+	bh=/MALPDyHKcwgZFxp/XVziOgwlKTT2pL6VjCQjPtdl2A=;
+	b=SElCGHyGv2n1iKJ9l7EWXqbhPyjOcHszm7i1U4pa/kmEdtrzM+4ri8YaUZpaRv3hJcqV
+	 PtMu0VxwciJnIVSpfzbCxgIsseINwtLNdN+Ttv17nsK9pKhzh+mD4K3pJn4FuTZCiS2qQ
+	 bE+161tUykBt9wzRRhkPqBWCrNh2x8KW0I5mBUxuJ/S3Y1+/W6fez4QrMRrjJHYgjTp+H
+	 XaBf68sMyxjjB/bujkiYV1lcQJ/xesRtGCv7UHeirWBdeZhTm/7USj4mMb/o0X6yIIzhh
+	 h32O896CiM8bX2hYJZUi+eQzBT0LdjJX5s0e7VHmF1I5Uc5IOW9+N2OYm5K8KLwSLwg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="X3kXZyp/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=niUPdX5p;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4B3606A32A;
-	Tue, 24 Nov 2026 09:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27875606A322;
+	Tue, 24 Nov 2026 10:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X3kXZyp/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9372D1F000C4;
-	Tue, 24 Nov 2026 09:58:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=niUPdX5p
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C331F000D4;
+	Tue, 24 Nov 2026 10:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795514343;
-	bh=LM4WQJMgPgmGAQPx49J43+L3+FifhB+APgkJWZ64wOc=;
+	s=k20260515; t=1795514406;
+	bh=/MALPDyHKcwgZFxp/XVziOgwlKTT2pL6VjCQjPtdl2A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=X3kXZyp/cmAewdv4SURvUj5FEpk7h3J5q/nGKn39RncyygRymn4LMGBCfC6lTDrS/
-	 ONC1sBd3cTy0jWZlYNPy5dD1MPDRYDPbtJafj4d3YAehOczt/UUHfqspAyh+X8FYjE
-	 MU3RcqajXhrDtNZI1gbRJVjhGVez2aiQJO/kWoE46KnE49/BjjVUx1qjc/VsbPMQO8
-	 Q9Skbbr8yYkUA5/+yMAZazPrtADdc9+/YxngG75yyISY+ExUwAJXiyFgdTh9zzycuo
-	 UXxXGPRTM8I7rfw0hQF+K7o2tDWFZF95IU5b6gxfg+XO+M1jpUsmN3272btTlxsI7W
-	 K1F3XlpgKbyDQ==
-Message-ID: <e2e7f13e-faa1-428b-9691-3e8842054e6f@kernel.org>
-Date: Tue, 24 Nov 2026 10:58:57 +0100
+	b=niUPdX5psNVQ4PCneCpItEYgoYBIBuz9D5sLCdga3f3S21V1pMncmd5LeoHCjw2vo
+	 UQy+MTNm2+kHuRbO8gOnZ2njV1CYQaqWYX8+ZcKN6V17rk18pEFdY+Bl0yOPpcQB3F
+	 qg1XQ7PyhxsjKKVVUD7zSCf7VgdWbmhhe4zhFyZm2CwXA/2CrhqIg6X4qMnmlberWW
+	 CIOLJTgjyOZB0thiSFRuNsDKDGHHAQ+FnbCYxwUraNXaeLUYsLHhk1F9R/aH89567l
+	 H1yVuX/uHdc1hxMzqcRnsniZBQne1yAqIJ6dTXjbJrKTodzL4TdZpSnjkwPTt8gch9
+	 tB+H5cdhuG9TQ==
+Message-ID: <7171e726-60e3-4ee2-8d63-b2decbf74856@kernel.org>
+Date: Tue, 24 Nov 2026 11:00:00 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -52,8 +52,8 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/13] soc: synaptics: add SL2610 system controller
- support
+Subject: Re: [PATCH v2 05/13] dt-bindings: soc: synaptics: add SL2610 system
+ controllers
 To: Jisheng Zhang <jszhang@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -66,8 +66,8 @@ Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <20261115102401.3520-1-jszhang@kernel.org>
- <20261115102401.3520-7-jszhang@kernel.org>
- <20261123-knowing-eggplant-buffalo-fddfc3@quoll> <awQyw9fp8qTj3kbU@xhacker>
+ <20261115102401.3520-6-jszhang@kernel.org>
+ <20261123-bold-neat-albatross-e92a2b@quoll> <awQ2ipCw1mEx-wxu@xhacker>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -113,41 +113,87 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <awQyw9fp8qTj3kbU@xhacker>
+In-Reply-To: <awQ2ipCw1mEx-wxu@xhacker>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/11/2026 13:34, Jisheng Zhang wrote:
-> On Mon, Nov 23, 2026 at 11:31:42AM +0100, Krzysztof Kozlowski wrote:
->> On Sun, Nov 15, 2026 at 06:23:45PM +0800, Jisheng Zhang wrote:
->>
->>> +static const struct sl2610_syscon_data sl2610_mcu_data = {
->>> +	.cells = sl2610_mcu_cells,
->>> +	.num_cells = ARRAY_SIZE(sl2610_mcu_cells),
->>> +};
+On 23/11/2026 13:50, Jisheng Zhang wrote:
+> On Mon, Nov 23, 2026 at 11:28:23AM +0100, Krzysztof Kozlowski wrote:
+>> On Sun, Nov 15, 2026 at 06:23:44PM +0800, Jisheng Zhang wrote:
+>>> Describe the SoC, MCU, AVIO and CPU system control blocks, including their
+>>> clock inputs, clock and reset providers, and pin configuration subnodes.
+>>> The clock and reset providers share each register block node.
+>>>
+>>> Add the clock and reset identifiers used by consumers of these blocks.
+>>>
+>>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+>>> ---
+>>>  .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++++++++++++++++
+>>>  MAINTAINERS                                   |   3 +
+>>>  include/dt-bindings/clock/syna,sl2610.h       | 131 +++++++++++++
+>>>  include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++++++++
+>>>  4 files changed, 392 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
+>>>  create mode 100644 include/dt-bindings/clock/syna,sl2610.h
+>>>  create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml b/Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
+>>> new file mode 100644
+>>> index 000000000000..cdf947cb3e0f
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
+>>> @@ -0,0 +1,178 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/soc/synaptics/syna,sl2610-soc-syscon.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >>> +
->>> +static const struct sl2610_syscon_data sl2610_avio_data = {
->>> +	.cells = sl2610_avio_cells,
->>> +	.num_cells = ARRAY_SIZE(sl2610_avio_cells),
->>> +};
+>>> +title: Synaptics SL2610 system control registers
 >>> +
->>> +static const struct sl2610_syscon_data sl2610_cpu_data = {
->>> +	.cells = sl2610_cpu_cells,
->>> +	.num_cells = ARRAY_SIZE(sl2610_cpu_cells),
+>>> +maintainers:
+>>> +  - Jisheng Zhang <jszhang@kernel.org>
+>>> +
+>>> +description: |
+>>> +  The SL2610 family has separate SoC, MCU, AVIO, and CPU system control
+>>> +  register blocks. The SoC and MCU blocks provide clocks, resets, and pin
+>>> +  control. The CPU block provides clocks. The AVIO block contains audio PLLs.
+>>> +
+>>> +  Clock and reset specifiers refer directly to the system control node.
+>>> +  Pin group configurations are direct children of the SoC or MCU node.
+>>> +  There are no separate clock, reset, or pin controller child nodes.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - syna,sl2610-soc-syscon
+>>> +          - syna,sl2610-mcu-syscon
+>>> +          - syna,sl2610-avio-syscon
+>>> +          - syna,sl2610-cpu-syscon
+>>> +      - const: syscon
 >>
->> That's just MFD driver, so should be in MFD, no? Why placing standard
->> MFD code - nothing soc specific - in the soc directory?
+>> Split the binding file, you combined multiple different devices.
 > 
-> I'm not sure which is better. But FWICT, sophgo, samsung, microchip put
-> mfd drivers in soc directory. So I guess the reason behind this is these
-> drivers are soc specific?
+> sure, will do in next version
+> 
+>>
+>> Also, bindings should be placed in respective directories, not soc.
+> 
+> I try to follow existing examples:
+> Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
+> Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2044-top-syscon.yaml
+> Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+> and so on.
+> 
+> Especially, the 2nd and the last one also document the bindings of a mfd
+> for clk. It seems upstream accepts both soc and mfd. TBH, I have no
+> preference, but these are recent examples, so I follow their style. So if
+> you still prefer putting the bindings in mfd directory, kindly comment.
 
-Samsung has no MFD driver in SoC. Samsung has FULL SoC driver there.
-
-Others, dunno, but just like you they could be making random decisions.
-That's MFD driver. MFD drivers go to mfd.
-
-
+I do not suggest mfd, because there is no such function. Tricky to say,
+binding is a mess, but first glance suggested devices here have specific
+functions.
 
 Best regards,
 Krzysztof
