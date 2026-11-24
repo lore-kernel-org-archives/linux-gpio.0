@@ -1,138 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.120
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795505231;
-	b=IaFdC1JcCNIx9pLBJilO6IccLD1H2XLUUQgRb7UOyra+5gjNK9NKy9b8FQTl+IJ+cgTI
-	 qGIE3pOQ6Txn6+RQ9vge5LW28z2QjG52vE1Q1gQgm2ZVxa6v3UB5oxWmTxTh4YqVa5Iyp
-	 nz96lVgLx/BzCfQLQYBe40gzWAfAPtEGG8uWQfmNkKDJ9OWNujh5rVoGiw9ZJJualsJMk
-	 6ztiUm6fnSZAerouOhvnkzsO2mnQS0B+ihcdmcMK9urb8MYLP/p+EkA2sO9MFwjHndnjQ
-	 tzGDyDtqar3GmXMGyEPSx1hFn3xvKH17nvEhCKKSKcp5gnyVi8XjWBlkHBDf23b/CUQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795505231;
-	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
-	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=a8tT1IHZ/9bnUeOSg8CevW7PO23hEqXdhqumUHaN6cc=;
-	b=RViJiGfpk8R1mOJk67fCgILRXhGtAJggBqxDiNrPRLst46L96TemwlgyGZNeX1DmAFXV
-	 u2t5XGLsWhJf43umcCrQlYPZMiX6V8RYw2RDqooUa8cJomwDhKFAmKMKVfFxh/6CZw3yM
-	 faV8NJYCUOfOlabIzEMW10wCHASUSvDX6YeBErIm9CQsHikkVeq8HCRKAlVWPUA/3C/1w
-	 fa2G8gjZmenMf2ZIpAAT2hQwRUZ02Gu1meUNj4kefejVIp51IvTLdt6YxL0EM3IUt4gKd
-	 GAbCSUVmg0/iCm8hc4/Dr8lDjEICe965ThdMeKxnl9H3MKG18j/ZaypZMXjdMhoLWmQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=goldelico.com;
-	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=Y6g743+R;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=DrtAx6L9;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.120
-Received: from mo4-p04-ob.smtp.rzone.de (mo4-p04-ob.smtp.rzone.de [85.215.255.120])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795505806;
+	b=pGPoObpoY/u0tqtIz2AsBpMVvwi+Gr4JboVba2/9ozfXX17/xA3Hp972Jbk5tITrpKR0
+	 /61nyuIh3s8dbZLalMLsgEQMhXU2OFiGPVuIbQ12kE9DOT/rMBVatklf0jCO8Q+SM1+g5
+	 4fZBQ+EDtKOiEmZJNEx03atmlzft39TtjTnu5fiFSAUAHeBzsZ0j8nHeklikT+3cGBwWh
+	 NHJbBZboao5ihaFgBcvUIxQrwbl8UwHlX+9IqhYXE8Te2PURCQZW/3wsRr6xV/+HKXn3+
+	 s/VgixBU5tPVMBhBUcqG90o6GZVefg0wOm8ATP7e2+4Oz6Q1EaL26K0XXTJJM5dGrXg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795505806;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=UkC6d8LQvYCXp6JvOpSE1KNiAQORA3CVE3wuU2r+r8c=;
+	b=MTRYMU7wHYQTWVT4tRblD5jVs764GxBffK/WllWqwadOEkV5x1dHNLt9B57zmAbZUPQy
+	 6SEePs8TVYkUfSL98dQbKux4eCXpXopRCn1h7RaKp9OHi4KiqrrJtCPzFwYN7koR8zIBI
+	 r2yowWfHNt70gL9k0chbrRcnjOpuD/UZXAIY640A+823/GKJatYHobg+mwDz2Pvutz4xA
+	 1KRg/fh/eaAGxVNJMRGp8IIpipAMlLSBj16Uzhb6mReoae8i9wPe64Q/z2dUasRIIGdMu
+	 2hFyj9+wmxMRxorRfQL5HWYwXaT1VsYAsXCshMPP0uh1pk53OLFP4LZSiYTqnpg7N4Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jgxgwg3W;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F56460A3823;
-	Tue, 24 Nov 2026 07:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F56460A3823
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DF8606A335;
+	Tue, 24 Nov 2026 07:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=Y6g743+R;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=DrtAx6L9
-ARC-Seal: i=1; a=rsa-sha256; t=1795505178; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=q6SJfTzfqprZYrgKsjzLeq49n1EwhAQRgizro9+K5esUxEOx0G43J5fyVJ5d9BjQnr
-    RtP4FrUlFS5Kimgyvq9sASavJlKP3ItH0Crb+UNdsLeIcqeuwuz+dNR5BWchGCIJwVJt
-    2qfGlbSJyGqUcRTshIbAtswZ/xTq6Ub1atO0IlVQbvV+OsJzg08jrIE0gVLgzZcv0ZUS
-    B3YhCi6mywVGyOufXBSz+FGbOK4pBgnEZs8So3Isy6rANvBezYtxrLZCpZrYqF90odJ/
-    v5ax3EqL32kd+ornB3YB4wFDRE/7ZAgSLeWgUvd7i4olQqlpNZ/YF2IufiIE4QbUqhLE
-    yitA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505178;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=a8tT1IHZ/9bnUeOSg8CevW7PO23hEqXdhqumUHaN6cc=;
-    b=KtSl0BSqZ2gateMzLu96RLyWf4L8ofQVX5jOnYmYvAL6NIjmCFqClRmRSHBREH9Bkd
-    MzJ0Gz1PY9Vw6SxMklGR3ROyfIWMoW31FpfT/5r7hRuqz/2uBt/sENDOYteKuOdTD1Dm
-    TOxL+X2uhbJAqInCfpC09WlC7ZDnNFH73XWf5VNfpHZi0K9vtTFKhKYnv5GAn2WMSNHG
-    0SoI6CNliRDF6M+QCEay2lJ3am+3Oc/BZBvK6uwi6DSV637xxdwXMAMLga22DS8T+rPD
-    Idealv/wxhM5yR4leRSGCf/1TUowCsxHkLe+ABy3acDccaKFQNNZ0C4NXvZzU3YutXu2
-    Gb3g==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505178;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=a8tT1IHZ/9bnUeOSg8CevW7PO23hEqXdhqumUHaN6cc=;
-    b=Y6g743+R6atTH1Bs99pXFNWSa3562WXL2uIoA5xO0x2FhxF+zGf+zgObT2TImNfsNT
-    P+4pUKqcVZT/c0Fcg2/jc7aFGTW4MsN8IVQiLG3DzGuIf0MkWilyCo3d6+SxPEN6sN2X
-    MCjOkcVqU3KlE9yzhmqcxHTfbmqTpGbsmf4bEtOORCgYq0iy36UInElx/BY7Nt7w5vZX
-    h2fUwXjFnA0sZi62m04+/6Sf/z8UiHbLOwHY+zXNsnwF2K0LYJgcfUjiUDU0ZBvE4MTI
-    6dmETfoI1D/c+cyg27opmzOwWU0th2mSSWJ8F0Wp9X3sDJobxlFng4YLRQnzpk5OWjMM
-    Rb3g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795505178;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=a8tT1IHZ/9bnUeOSg8CevW7PO23hEqXdhqumUHaN6cc=;
-    b=DrtAx6L9aiM0luEU9dC+6uFoApLVFOJ1cxmTwwLyvyImtCtpXJfWFsN2OfWyoGGSg7
-    atmRqGZWjRV0QGxqGnCw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV3poLlciNVTQoM6kVxzKyrKzkpjcAwdDfiN49"
-Received: from iMac.fritz.box
-    by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22AO7QH1HQ
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 24 Nov 2026 08:26:17 +0100 (CET)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-	Jarkko Nikula <jarkko.nikula@bitmer.com>
-Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	kernel@pyra-handheld.com,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 12/20] drm/panel: td043mtea1: Attach DT backlight
-Date: Tue, 24 Nov 2026 08:25:52 +0100
-Message-ID: <163581590b662ebc7a12ccac3cc191b9a3ed4240.1795505160.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <cover.1795505160.git.hns@goldelico.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jgxgwg3W
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB04C1F000D0;
+	Tue, 24 Nov 2026 07:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795505806;
+	bh=UkC6d8LQvYCXp6JvOpSE1KNiAQORA3CVE3wuU2r+r8c=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=jgxgwg3Wu5m7//WOYuhcwg2+XPfay2l5D2YNixMJofy+oN4XjJMw7IMrCRx0lZdHP
+	 qfaHm+EN5uu74F4/OTuScHePTRzZ0cEUeoFOB3Rq8q4+O4oAlWkwJRJEHU7iTQ6xv8
+	 wwqWjKdLplKfra5JEkODdWFfX7LkshqU+UOPpXF7bbb6ZZKAJ3Kb3oADfW+SVa2c2E
+	 vqhoB3HB8ZMN0USP317bU3RppYCchCMyL86P3UIUGSM52IwoD/78Av/5mQl+e7S4ZQ
+	 8UA92xxVMNKIDUECS4mJ+cSng+XWJp0ZEjJvYYOjCua9Kk7beJ6ZdjN+JWsaorCAym
+	 1N8Gc2+CJqOnQ==
+Message-ID: <sashiko-outbox-230649@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 11/20] backlight: pwm: Support enable guard period
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-sound@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <54477b4e31e35af14677172088f94770ca5b9755.1795505160.git.hns@goldelico.com>
 References: <cover.1795505160.git.hns@goldelico.com>
+ <54477b4e31e35af14677172088f94770ca5b9755.1795505160.git.hns@goldelico.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 24 Nov 2026 07:36:45 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -141,40 +59,135 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
 
-Connect the TPO TD043MTEA1 DRM panel to its backlight described in
-Device Tree by calling drm_panel_of_backlight() during probe. Without
-this association, the panel does not control the DT backlight.
+Thank you for your contribution! Sashiko AI review found 4 potential
+issues to consider:
+- [Medium] backlight: pwm_bl: guard period runs before
+  pwm_backlight_power_on()
+- [Medium] backlight: pwm_bl: guard pulse triggers before
+  compute_duty_cycle()
+- [Medium] backlight: pwm_bl: unchecked post-guard
+  pwm_apply_might_sleep()
+- [Low] backlight: pwm_bl: unused linux/minmax.h include added
+--
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
+commit e05803a769b6dbbf7722b07888a63c3cd2737641
+Author: H. Nikolaus Schaller <hns@goldelico.com>
 
-Notes:
-    Changes against V1:
-    - Explain the DT backlight lookup performed by drm_panel_of_backlight().
-      Commit-message review assisted by ChatGPT; code unchanged.
+backlight: pwm: Support enable guard period
 
- drivers/gpu/drm/panel/panel-tpo-td043mtea1.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This commit adds support for a pwm-enable-guard-period-us device tree
+property to apply a full duty cycle for a guard interval when enabling the
+PWM from a disabled or zero-duty state.
 
-diff --git a/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c b/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c
-index b18af526b54c5..cb2fa393591c8 100644
---- a/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c
-+++ b/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c
-@@ -450,6 +450,10 @@ static int td043mtea1_probe(struct spi_device *spi)
- 		return ret;
- 	}
- 
-+	ret = drm_panel_of_backlight(&lcd->panel);
-+	if (ret)
-+		return ret;
-+
- 	ret = sysfs_create_group(&spi->dev.kobj, &td043mtea1_attr_group);
- 	if (ret < 0) {
- 		dev_err(&spi->dev, "failed to create sysfs files\n");
--- 
-2.56.0
+Link: https://patchwork.kernel.org/project/linux-omap/patch/f897f695c0e1e12=
+8d7ebb41be8dfdce4d634f552.1783749722.git.hns@goldelico.com/#27124981
 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/p=
+wm_bl.c
+> index 3ad71ee3657af..1d0a463710926 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -7,6 +7,7 @@
+> =20
+>  #include <linux/delay.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/minmax.h>
+
+[Severity: Low]
+This isn't a bug, but linux/minmax.h does not appear to be used by anything
+in this change.
+
+[ ... ]
+
+> @@ -93,11 +98,39 @@ static int pwm_backlight_update_status(struct backlig=
+ht_device *bl)
+>  	struct pwm_bl_data *pb =3D bl_get_data(bl);
+>  	int brightness =3D backlight_get_brightness(bl);
+>  	struct pwm_state state;
+> +	int ret;
+> =20
+>  	if (pb->notify)
+>  		brightness =3D pb->notify(pb->dev, brightness);
+> =20
+>  	if (brightness > 0) {
+> +		pwm_get_state(pb->pwm, &state);
+> +
+> +		/*
+> +		 * Some LED drivers detect a one-wire control mode during
+> +		 * a startup window (e.g. TI TPS61160/TPS61161, using
+> +		 * the duration of low intervals on CTRL). Request full
+> +		 * duty for the guard interval before normal dimming.
+> +		 * The PWM provider may approximate full duty.
+> +		 *
+> +		 * Apply the guard if the previous PWM state was disabled
+> +		 * or had zero duty cycle.
+> +		 */
+> +		if (pb->enable_guard_period_us &&
+> +		    (!state.enabled || !state.duty_cycle)) {
+> +			struct pwm_state guard =3D state;
+> +
+> +			guard.duty_cycle =3D guard.period;
+> +			guard.enabled =3D true;
+> +			ret =3D pwm_apply_might_sleep(pb->pwm, &guard);
+> +			if (ret)
+> +				return ret;
+> +
+> +			usleep_range(pb->enable_guard_period_us,
+> +				     pb->enable_guard_period_us +
+> +				     PWM_BL_GUARD_SLACK_US);
+> +		}
+
+[Severity: Medium]
+Does checking brightness > 0 before calling compute_duty_cycle() cause a
+full-brightness flash when a non-zero brightness level maps to a duty cycle
+of 0?
+
+When pb->lth_brightness is 0 and a low non-zero brightness index maps to 0
+in pb->levels[] (or truncates to 0 in compute_duty_cycle()), the guard block
+drives the PWM at 100% duty cycle for pb->enable_guard_period_us before
+programming state.duty_cycle =3D 0.  Because state.duty_cycle remains 0,
+subsequent updates at low brightness repeat the full-duty flash and delay.
+In addition, if the target duty cycle is already equal to state.period,
+the guard block sleeps and then applies the same full duty cycle a second
+time.
+
+> +
+>  		pwm_get_state(pb->pwm, &state);
+>  		state.duty_cycle =3D compute_duty_cycle(pb, brightness, &state);
+>  		state.enabled =3D true;
+
+[Severity: Medium]
+Does running the guard interval before pwm_backlight_power_on(pb) leave the
+LED driver unpowered or disabled while the guard pulse is on the line?
+
+drivers/video/backlight/pwm_bl.c:pwm_backlight_update_status() {
+    ...
+		pwm_get_state(pb->pwm, &state);
+		state.duty_cycle =3D compute_duty_cycle(pb, brightness, &state);
+		state.enabled =3D true;
+		pwm_apply_might_sleep(pb->pwm, &state);
+
+		pwm_backlight_power_on(pb);
+    ...
+}
+
+When a board also uses power-supply or enable-gpios, the full-duty guard
+waveform and its usleep_range() delay finish and the PWM is already switched
+to the dimmed duty cycle before pwm_backlight_power_on() enables
+pb->power_supply or asserts pb->enable_gpio.  The LED driver IC powers up
+only after normal PWM dimming has begun, bypassing the startup guard window.
+
+[Severity: Medium]
+What happens if the guard pwm_apply_might_sleep() succeeds, but the post-gu=
+ard
+pwm_apply_might_sleep() that sets the dimmed duty cycle fails?
+
+Because the second call's return value is ignored, a transient failure on
+that update leaves the PWM hardware running at 100% duty cycle from the
+guard step while pwm_backlight_power_on() turns the backlight on and
+pwm_backlight_update_status() returns 0.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1795505160.gi=
+t.hns@goldelico.com?part=3D11
