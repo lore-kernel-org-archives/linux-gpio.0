@@ -1,56 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795506190;
-	b=KdkY70aw8aDWiMGBcOKLyIfOreAA/jd/el5f3+Ha5DTHN2wVdxKyLYC3Imm30chGzhvt
-	 6QCPBAG8rEc7ufd4DCTXEZLnHJoAHu2K5bS/94oT9B4XvesS9DtTEJ+2MSnDTNWcu+/LY
-	 o+d5mul2MYTD4rXyo9EE48D6XlNGYJN59fwtOAi9dRhy1WOeaOX5W5rsjEqjn4gXDl9QQ
-	 qV1jTE5t0FujahCEslZkQrE2VtIKvonZbvvcij/5Q64IhkV50bWrbgo7+4dB1nPxfRJpA
-	 /CwtR++0TZyF9fEgoSgcvGKchkVWodR4N4YzSJuMD6bj7oOtl30FymfXQxXFnWpK4Xg==
+	t=1795506232;
+	b=l9g7apCHTQVPS7R2sXLdLqD2o8hydY283FayUxA/JMZFHYWzfwt7GfZKvfnNiC4JqC0A
+	 M6ucL29r0WgRQdMdtgubhxxcworyh1RNQuudl5v2196bsuIIeajsAtnvEON1bbolyzG+E
+	 Q2ikP1Jf3Aoo872AJxu1l/CJN1WySmCufpTLQLmdlpLGbBW/kBmWsuMf8pynBy4IEn9DV
+	 Ict+w9MnU4rpp8vmZUZdxsE/Xa/OdxWFvkStajGwdVZ9ANpNt4POX2EOjyHRClVFgbaRe
+	 7HGdwrzaz+o2f528swVPCVge+bnuYT47OmNvNq069pn1zeVieHRx3LOdh8YZ0rASN9Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795506190;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=And74U+ePDRlyflZlf3fB4e3zTWBL9Fyfc+LUbduZfE=;
-	b=JMa7x1nQlRINfoK89QYAIJL5ZYwZ8PYmkIzAGCPxSalYl9TxXyy8csU/IZSwlcyL3akw
-	 eD9E2qk9k0AyRotef6A+GjuWfDnGiYKUzj3h/IkupuJoSQoVJ22AksAzS3pg5A5FMXseZ
-	 Fdt/U+vB/FqYtg5CbZwoSWXwtZZPAIhJCu/uZisG1I8gvdzbQKRdEGGcJTZYYNwO/+Wf7
-	 WsGoSep99EulAKnpRpiqjEdnIANgU7yXh7ALtHw4EbI+RPVHqFkOBr7zQtIq2U+9etfq0
-	 zD3Q6Ty2vbKp8mLNtG9ww63lyTdVpEkDf4L8K7Gnu/RdHZJ6jF66muCAoS2eyE7JLmg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795506232;
+	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:X-Priority:
+	 X-Mailer:In-Reply-To:References:X-NTES-SC:Content-Transfer-Encoding:
+	 Content-Type:MIME-Version:Message-ID:X-Coremail-Locale:X-CM-TRANSID:
+	 X-CM-SenderInfo:X-Coremail-Antispam;
+	bh=egDQpVic8+ZWvGHi/RAoKinxkbY/WeNVCIcjd2qNix8=;
+	b=dEJqLOkLYJU5ohzsyVdLNswQAWntHLCdiZzi8vcZ/DgW056FHtQwLTThcgkIg+t/snV1
+	 KtCP8wV07IzkSymm1cL+lX7RK+BRR49EQDezEFMPg4gXJsfzkUh/iZRtT7kQTEnvZo7c2
+	 mDt+E9XRzZZKJr0+5bwzvF7WjWWM4r/esnSWeCCscov+J7bw0kKTEHREepBqKvCSWS15b
+	 Z6RxAqqLqYbLzHzN2qcFb2um82po2tpgqG2/vt41RDTRgq5d1Fa0hX96h+HemDeW1AeU+
+	 kav5cm73LQTWso0//MfmL/Ry3P9iZmd9+f027wRab2UyFjDpE2DBZguYz64cAKYVI9Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f3LsjDqL;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=163.com;
+	spf=pass smtp.mailfrom=163.com;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Gq1e3p+8;
+	arc=none smtp.remote-ip=117.135.210.4
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F38A606A31E;
-	Tue, 24 Nov 2026 07:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24778606A31E;
+	Tue, 24 Nov 2026 07:43:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 24778606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f3LsjDqL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 762A81F000D3;
-	Tue, 24 Nov 2026 07:43:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795506189;
-	bh=And74U+ePDRlyflZlf3fB4e3zTWBL9Fyfc+LUbduZfE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=f3LsjDqLmkLFgKJ8NOUXJK0VczL4Bdw1JO52vvHtYTu3jdNoD+fEXAukYjFyOWxk9
-	 73nb1vdDMHtYyMAPzFNQNJqB2G7r255p44o3MpyaLjc6wOUdoBxHrjOdWAaSeFJyMA
-	 +Vwho678uPStqQQExoTuMDeKLtgEqQM0KpJQmvLcCLzC+VGPRNLuC4TF9EFJIxYG4E
-	 5KN8kikqv8gB4eaquIaZlzAnMo22Bs2y5+TgPhXo8/Gd3iZaeP0XVIDyK22gqUjuig
-	 fyqZUStfm+PSE9g8AOQtmIKVQfGJJ07EcaKTqLJJzxZ0OfBWKBylVmqeTwHqndPrSp
-	 kJ7pE2CPh8giQ==
-Message-ID: <sashiko-outbox-230662@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 02/20] gpio: twl4030: Support REGEN GPIO
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-sound@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <5fe8b5155067e0b1fc9b34c53e3b89a40e53234c.1795505160.git.hns@goldelico.com>
-References: <cover.1795505160.git.hns@goldelico.com>
- <5fe8b5155067e0b1fc9b34c53e3b89a40e53234c.1795505160.git.hns@goldelico.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 07:43:09 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Gq1e3p+8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=egDQpVic8+ZWvGHi/RAoKinxkbY/WeNVCIcjd2qNix8=; b=G
+	q1e3p+8vLNdoWPWozO30hvSLWG5qnUe/9uxpmXwfiwaM6Bge4hAmyUYlxVsfylF2
+	3lMeyVUGfYMLxk9JNun84LgnAnAU2k9Hg3Vh8xMjFZbL1WdJK8GUHFnhhUwiFJC4
+	JpHJ3+Y+r8sCEZuMheJ+GDHHzR4yQg/96rd8z5ym/s=
+Date: Tue, 24 Nov 2026 15:42:56 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Bartosz Golaszewski" <brgl@kernel.org>
+Cc: longzhao@ambarella.com, linux-gpio@vger.kernel.org,
+	"Linus Walleij" <linusw@kernel.org>,
+	"Michael Walle" <mwalle@kernel.org>,
+	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Mika Westerberg" <westeri@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Conor Dooley" <conor.dooley@microchip.com>
+Subject: Re:Re: [PATCH v14 01/14] dt-bindings: gpio: pl061: add Ambarella
+ CV75 variant
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <rvkdwpnypgxx3smfkqllik6vidzln3yg6nvshed3dtg7rtkq3j@u4pdrleymwrm>
+References: <20261110-cv75-gpio-v14-0-e586aad0467a@ambarella.com>
+ <20261110-cv75-gpio-v14-1-e586aad0467a@ambarella.com>
+ <rvkdwpnypgxx3smfkqllik6vidzln3yg6nvshed3dtg7rtkq3j@u4pdrleymwrm>
+X-NTES-SC: AL_Qu2SB/mbuUks4CCYYekdnUoTj+Y/XMK0uvwk1YdVc/4EnSXq2RASTG1BNnTm3sKdFyWCvRmRUSls8NpHWoJKb2qOrspCRW7Mw2npMoClXg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,118 +75,20 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Message-ID: <15be9ea4.6305.1a20c82000c.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:dSgvCgD3ny0AQAVrT_t0AA--.161W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7gAsnWsFQAAdeAAA3U
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [High] gpio: twl4030: REGEN usage_count corruption breaks
-  REG_GPIO_CTRL power control
-- [Medium] gpio: twl4030: unchecked use_leds in twl_request() exposes
-  disabled LED GPIOs
---
+QXQgMjAyNi0xMS0yMyAyMzo0ODoyOCwgIkJhcnRvc3ogR29sYXN6ZXdza2kiIDxicmdsQGtlcm5l
+bC5vcmc+IHdyb3RlOgo+SGkhIENhbiB5b3UgYWRkcmVzcyBzYXNoaWtvJ3MgY29tbWVudCBhYm91
+dCB0aGUgbWlzc2luZyB2ZW5kb3IgcHJlZml4PwoKSGkgQmFydG9zeiwKClRoZSBhbWJhcmVsbGEg
+cHJlZml4IGlzIGFscmVhZHkgaW4gdGhlIHRyZWUsIFJvYiBhcHBsaWVkIGl0IG9uIDE1IE9jdDoK
+ICBodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjYxMDE0LWN2NzUtcHJlZml4LXYxLTEtZmU5
+NWVkNTY3ODgwQGFtYmFyZWxsYS5jb20KClNhc2hpa28gaXMgcmUtcmFpc2luZyBLcnp5c3p0b2Yn
+cyBjb21tZW50IGZyb20gdjEuCgpCVFcsIHRoZSBzZXJpZXMgd2FzIHJlc3B1biBhcyB2MTUgbGFz
+dCB3ZWVrOgogIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvMjAyNjExMTgtY3Y3NS1ncGlvLXYx
+NS0wLWUzYzU2MzY3M2ZlMUBhbWJhcmVsbGEuY29tCgpCZXN0IHJlZ2FyZHMsCkxvbmcgWmhhbwo=
 
-commit 21b2429c7b13ebb306ae7f98703ac0b013d40ac3
-Author: H. Nikolaus Schaller <hns@goldelico.com>
-
-gpio: twl4030: Support REGEN GPIO
-
-This commit adds optional support for exposing the TWL4030 REGEN control
-signal as an output-only GPIO when the ti,use-regen device tree property
-is present.
-
-> diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-> index 3e06ef9e22336..30ac6f7e0e56a 100644
-> --- a/drivers/gpio/gpio-twl4030.c
-> +++ b/drivers/gpio/gpio-twl4030.c
-[ ... ]
-> @@ -211,8 +301,16 @@ static int twl_request(struct gpio_chip *chip, unsig=
-ned offset)
-> =20
->  	mutex_lock(&priv->mutex);
-> =20
-> +	/*
-> +	 * REGEN is controlled through the power-management registers
-> +	 * and does not require enabling the GPIO module.
-> +	 */
-> +	if (offset =3D=3D TWL4030_GPIO_REGEN)
-> +		goto done;
-> +
->  	/* Support the two LED outputs as output-only GPIOs. */
-> -	if (offset >=3D TWL4030_GPIO_MAX) {
-> +	if (offset >=3D TWL4030_GPIO_LED_A &&
-> +	    offset <=3D TWL4030_GPIO_LED_B) {
->  		u8	ledclr_mask =3D LEDEN_LEDAON | LEDEN_LEDAEXT
->  				| LEDEN_LEDAPWM | LEDEN_PWM_LENGTHA;
->  		u8	reg =3D TWL4030_PWMAON_REG;
-> @@ -249,6 +347,15 @@ static int twl_request(struct gpio_chip *chip, unsig=
-ned offset)
->  		goto done;
->  	}
-> =20
-> +	/*
-> +	 * Offsets 18/19 are reserved for the optional LEDs.  If the LEDs
-> +	 * aren't enabled, they must not be treated as LED GPIOs.
-> +	 */
-> +	if (offset >=3D TWL4030_GPIO_MAX) {
-> +		status =3D -EINVAL;
-> +		goto done;
-> +	}
-
-[Severity: Medium]
-Can this `offset >=3D TWL4030_GPIO_MAX` check ever be reached, or does
-twl_request() still treat offsets 18 and 19 as valid LED GPIOs when
-ti,use-regen is enabled without ti,use-leds?
-
-In gpio_twl4030_probe(), pdata->use_regen extends ngpio to
-TWL4030_GPIO_REGEN + 1 without recording whether pdata->use_leds is set.
-Because TWL4030_GPIO_LED_A and TWL4030_GPIO_LED_B are unconditionally
-matched right above this check (and TWL4030_GPIO_REGEN is handled at the
-top), requesting or driving offset 18 or 19 succeeds and reprograms the
-TWL4030_MODULE_LED registers even when ti,use-leds is not enabled.
-
-> +
->  	/* on first use, turn GPIO module "on" */
->  	if (!priv->usage_count) {
->  		struct twl4030_gpio_platform_data *pdata;
-> @@ -277,8 +384,18 @@ static void twl_free(struct gpio_chip *chip, unsigne=
-d offset)
->  	struct gpio_twl4030_priv *priv =3D gpiochip_get_data(chip);
-> =20
->  	mutex_lock(&priv->mutex);
-> +	if (offset =3D=3D TWL4030_GPIO_REGEN)
-> +		goto out;
-> +
-> +	if (offset >=3D TWL4030_GPIO_LED_A &&
-> +	    offset <=3D TWL4030_GPIO_LED_B) {
-> +		WARN_ON_ONCE(twl4030_led_set_value(offset -
-> +				TWL4030_GPIO_LED_A, 1));
-> +		goto out;
-> +	}
-> +
->  	if (offset >=3D TWL4030_GPIO_MAX) {
-> -		WARN_ON_ONCE(twl4030_led_set_value(offset - TWL4030_GPIO_MAX, 1));
-> +		WARN_ON_ONCE(true);
->  		goto out;
->  	}
-> =20
-
-[Severity: High]
-Does jumping to `done` in twl_request() and `out` in twl_free() for
-TWL4030_GPIO_REGEN break REG_GPIO_CTRL power management via
-priv->usage_count?
-
-In twl_request(), `if (offset =3D=3D TWL4030_GPIO_REGEN) goto done;` skips
-enabling REG_GPIO_CTRL on first use, but `done:` still sets
-BIT(TWL4030_GPIO_REGEN) in priv->usage_count.  If REGEN is requested
-before any regular GPIO (0..17), `!priv->usage_count` is already false
-when the first regular GPIO is requested, so REG_GPIO_CTRL is never
-written and the GPIO module stays powered off.
-
-In twl_free(), `if (offset =3D=3D TWL4030_GPIO_REGEN) goto out;` jumps past
-`priv->usage_count &=3D ~BIT(offset);`, leaving BIT(TWL4030_GPIO_REGEN) set
-forever once REGEN has been requested.  As a result, freeing all regular
-GPIOs can never power down REG_GPIO_CTRL, and twl_get() continues to
-treat REGEN as requested after it is freed.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1795505160.gi=
-t.hns@goldelico.com?part=3D2
