@@ -1,57 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795540940;
-	b=YQ6/cXQdb7JwngReApqP7fi3FvSA7RGL6lskYP1zEGO8kpvpwPs91J0QOCWp6pW1hDmU
-	 MuRtYAsIoowlA4Y65sqtAreWqSRlIuq0wXZ/V8ThZd6V8VN2aOKVb6YKu8SBUPD9sETEO
-	 kAXAMQKXR+qoWQ+SedpMo0VFjBolGGlgNZdc8uw7qZTd5vXxoSliIpYdnjsCqOd8Z3Zat
-	 lPl2fxuJV+NpTNtPHwXsE2aJhcMfUwP8/ujbv24dujHHrdFxmfl79J4CPDhS7oGJjZmFb
-	 Gr6c4lIt+PxNnv82Ls3KtNA2iQ+1sLzzzO+ZBsl1ddM0eRlgF70rQQmNJST4peo/OYg==
+	t=1795541361;
+	b=WjLCghvt7W1JRkUiiz/uG+NLvppaxEHQSw5V7013ex9LmYKE03M3HMPbaO3iMnFH4Cg7
+	 A8cAArF5lD274EiIk9AOKBCrFolUBaaxDefxeM6PWbSBRWyEnIjtEA3j7wYLIu5OTZLMH
+	 ytobPAloqTAbuRiX/LNsHskr0g6OyN62vato5ghayL2oIE6HHrTO03ucjxneaId1vd52x
+	 bqOwtt6OG3ZEGDmBpyfwytsab5ekL/l9ki3bCA42GbjrLk44Y3nc7nFzUJ38zq9GKfWxs
+	 m+6kzy9oZ7JTkXzShtXBOQNO9GKo7PDwABi2mUKpJizRC2iNRkYyhQPu+Y77zSQMN6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795540940;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=5qT02Vd75BhfhSvRr99IZVf+ichnuVFriBUMt1Ydbms=;
-	b=s7lbPeUb9T8P+TvyMjbQj0hpTDWbKMOZWqdiZLRN/x3g08iMgmipM0icBBEpOI5aV8TG
-	 d0VWucoYqoXvUsJTlKxUL9yAYF3fKU5t599eqg2fienRNTBQp+QXNbhITigdv5baEjp4u
-	 9GI0f89Cd9QXG5nX6JSYl0mdDvoxXRwHzj6SXvDSQEqg0nZm4J9gj6SqcLlrwxp+Vgdtv
-	 ec5PltAzQpVLd4jP72XwYgJdmDZknxOjoxNxD6+zWTG8lz7/h2e/zm0ZcF8+ibr/jFl+N
-	 yqQ3qfhAVySgJ7KuWIhfY/XPs8Fgfj5aBxOZTMJbQp+ztnV09JVQ7I1vf2cN1kyeWUg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795541361;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=sluaE+zjyo+Ofk+lfLqfvLWgLU/EpzFxI184omUErDs=;
+	b=00+SUKDnmdvuA+H11GmqoEXrIiwdeeTWl0MVaPZzAKx2yBWFfd2POKlHPLPij7uFMdvA
+	 q+XZKsDA3qxCoTFDiCc6ROdvSrzb9pfazFRn8HhGdGMaE564C2XGEYTY/H15OpgiRBzNv
+	 0lbGSD06G29ICixctd/lSVua/+6O2KTqGaD1Z/xebQuwcxyvvlqMHrtNpSmy1M3UDGX6T
+	 oKFN+Ub+cx+vab715lUAY96UBeWqrRexv52mKIs5E2+gAc32g+a6T5M9LzMNMh9f80DOW
+	 US+V7x/NoEzz9nB2DiZTu6eYUSpuhhDB6emBj6SUKnLqRwO4glYlcvY0FVMJFLd0Arw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ibwf8t59;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NhmRJ12y;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BBD606A31E
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 17:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2198606A31E;
+	Tue, 24 Nov 2026 17:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ibwf8t59
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47FA91F000D0;
-	Tue, 24 Nov 2026 17:22:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NhmRJ12y
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517D91F000C6;
+	Tue, 24 Nov 2026 17:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795540939;
-	bh=5qT02Vd75BhfhSvRr99IZVf+ichnuVFriBUMt1Ydbms=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Ibwf8t59vu9DP+omZhuVXpyZtQm6kv+YhxLK6OL7CapwRKIEbJ7kCLN8GmGQqG4JA
-	 eQamkhpiP349wh6tJgYZQFmhET3S/PrxtuIRiVSYMs5Tg6ygxRqQW4+DWyHHBhmsJa
-	 IBchgWtYTZgoLymysv7FN4vKM3T1Ivg8mDdSKqfrpA35pvByFzWvf6xjkcf92+0E8x
-	 3ScSeUKZ2vZPLfZf4rUHeLBbk0hDFCJUyQFVQRSWOftJ9MiLZN1GBKG7GJyCev0cFx
-	 ZADaVlzNfKMX+Tt5JcRi6i7KYUP2DFTw6plSyLFUycwVOsSuxm/KcON7n0BZBHSZEW
-	 34g+0ugaTeJ2Q==
-Message-ID: <sashiko-outbox-231697@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
- GPIO OUT not function mode
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Gary Wang" <is0124@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-4-c8079f8f569f@gmail.com>
-References: <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-0-c8079f8f569f@gmail.com>
- <20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-4-c8079f8f569f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 17:22:18 +0000
+	s=k20260515; t=1795541361;
+	bh=sluaE+zjyo+Ofk+lfLqfvLWgLU/EpzFxI184omUErDs=;
+	h=From:To:Cc:Subject:Date;
+	b=NhmRJ12yD4CmnLynW2JmtK3arGuYNIiI3+khwmK9mWK+HmdB6Djj9cpVuYyP7vKHq
+	 8kzllFaP4d0pWp251fNKTAadiCyDkdBjpsqRdV3qkmJ/GFziy+yH3XdwvrhejcCpQm
+	 5gexl5BrrwoCdb30nwVn4i3Z1+LwoCbgoUT19x4j2IgW/fZWLf86tjYfJ6+Azeqx0o
+	 zRM2VxokU4aJrVTg4fekhJsU+IKQ/3RgLxFD2N1VFE9Z+InWltZI8RMYnuRVCI+cT7
+	 85RhXpaueJUNYMSZJwVBZCCzIw1A/44flBQqQucMMVJ/vKWxLGNlSmR17JyG8l9yxI
+	 DKfVttW2huA2Q==
+From: Geert Uytterhoeven <geert@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Updates for v7.5
+Date: Tue, 24 Nov 2026 18:29:17 +0100
+Message-ID: <cover.1795540869.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,43 +56,50 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] pinctrl: upboard: changelog omits UPBOARD_PIN_MODE_FUNCTION =3D 1
-  fix
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+	Hi Linus,
+
+The following changes since commit 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4:
+
+  Linux 7.4-rc1 (2026-11-01 13:26:31 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v7.5-tag1
+
+for you to fetch changes up to b2a4ca3e3d4af9a3a1e02acdc934b3702ff8ffde:
+
+  pinctrl: renesas: rza1: Put fwnode after parsing gpio-ranges (2026-11-16 09:39:17 +0100)
+
+----------------------------------------------------------------
+pinctrl: renesas: Updates for v7.5
+
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Jiale Yao (1):
+      pinctrl: renesas: rzn1: Free maps on DT map failure
+
+Xiangwu Lai (1):
+      pinctrl: renesas: rza1: Put fwnode after parsing gpio-ranges
+
+ drivers/pinctrl/renesas/pinctrl-rza1.c | 1 +
+ drivers/pinctrl/renesas/pinctrl-rzn1.c | 8 ++++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-commit 03c95ea6b689b4fbe7c976e4dbf6f9cf5c5f2274
-Author: Gary Wang <is0124@gmail.com>
-
-> pinctrl: upboard: fix I2C pinmux-select set CPLD GPIO OUT not function mo=
-de
->
-> The CPLD I2C pin mode setting through pinmux-select is not correct.
-> Should be set UPBOARD_PIN_MODE_FUNCTION on AANT0F04 devices.
->
-> CC: stable@vger.kernel.org
-> Fixes: dca2f73cf19f ("pinctrl: Add pin controller driver for AAEON UP boa=
-rds")
->
-> Signed-off-by: Gary Wang <is0124@gmail.com>
-
-[Severity: Low]
-This isn't a bug in the code, but the commit message does not explain why
-UPBOARD_PIN_MODE_FUNCTION is changed from 0 to 1.
-
-UPBOARD_PINGROUP() stores 0 in .mode as a sentinel when a per-pin .modes
-array is used, and sets .modes to NULL when a single mode constant is used.
-Because upboard_pinctrl_set_mux() selects the mode with
-
-  mode =3D upgroups[group_selector].mode ?: upgroups[group_selector].modes[=
-i];
-
-having UPBOARD_PIN_MODE_FUNCTION equal to 0 caused a NULL pointer
-dereference of .modes[i] for any pin group using UPBOARD_PIN_MODE_FUNCTION.
-Could the changelog mention this as well?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-upboard-pi=
-nctrl-add-intc1057-intc105e-support-v2-0-c8079f8f569f@gmail.com?part=3D4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
