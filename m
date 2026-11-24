@@ -1,104 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795482660;
-	b=v2IN05g5lNQBMLczp6iFH7zdMkDYkVs4+ouzQ0rH94c6WlYxzAO6foJAkHtzfHweDNeZ
-	 7+IfC4EwhnSy020riHkJH772KaBBY5D0XzTe8PnKwqVHlnEe/N8pmAGIsG0hVtSPF0ACi
-	 87Tshe/iuKfF3dUkp1j1/ppSFvAN6hYrFIS/2hlNVxz3DroqQYlG2QKw4HrHYmtHDkwdu
-	 xRVUwtyk67vahkLaWEQeXfDv6QyajRjywlVbrY/vROWyh5lWAUEzlYgb9z9RB+f/xDD2u
-	 TeTYUAAAcvMSvbZko4jf/K4C8PSZGhw2GS0cWuOBuZUE58Jmu3G8q+lxV+8QPasG7Pw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795482660;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Content-Disposition;
-	bh=CwEMPI7Nv8Y4G/uSjVrKaLXUsD6jBVuvooxioPWLmTc=;
-	b=UUYC1bmhbjBtcwRkyn6T4d6sODAfP4fdZujU05YSdTGBK88k+DWB3IfkYbTuBn7qDSQl
-	 IQpZ8C3iBaOAYSjp6eTm2rNM1bVizM9GHchsgtxmhWBm/ZsmZg8n3RHJIPbH1sS8+MpG8
-	 cqkHf9/MO89H3v/R2v3huE5JGWq1eO6o25beEdQ66RbkEz8rxuZYTATqQBjnrvIx7vFUZ
-	 te72AwiUREM1VU777HqbrQADEcXNRz92X8pKb1qdvOTgnCn/S9iXLebmvL111fYRTtGBg
-	 69W4tWNjP4cINY6f25+vhICp5lYdFvvBK8/9LufV7z7R9HkJ/+SQGucvP3aCzN0F1lw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kKG19Co9;
-	arc=none smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795495336;
+	b=39WMFEFFvRiipB0HFsdJRJFrAEb68wK3lAifHmZt+iawFWkY+9EIRdqsG9C6j7Vz86v2
+	 uihwIbRLTWJ3fx9TMOodkFhaM1lVimWs6JG2rkK3LvbT59vCJfn/o62IobjSFYfhQ5WIv
+	 TUDAYOV9BlG7sZkA8wjvokd6RthOlXd6OiHwQGHfUmaD8Dw76ZHaEzuz7SehHYmmOMiu2
+	 MOGuQFekG5xLCINkv1VQcVn7RHYKYDOJsAeQCfvn5xYpFpYf4NYFWymhM5/rjybRFZjwA
+	 72Q6gSIREvhULT7AraGbTR6kNOFuqoBUO3jQMWHvSwb/htsQRttGZaUNwLyhUZJEQuQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795495336;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=6WY3rcBN95a4Sy46Alx6r/LGWE8dSDCrUzvaMe18Id4=;
+	b=O1K5VdAki79vH71GXCSRcmOvPSj/SG0Cati6/svgjw5eBvnWuQ72LmCczluVkTUr9FkP
+	 gkgy1CAI26HcH98d9Xs8o7Ztyb6CcM/cwGfXRs3qMqAhUX7DKQBMJhu8OKZODDDxX8hL3
+	 Wx+FMUjjd9+vnYv8cbRuROSgnkxXRgZov3dfl+QkZkcPsa8shno4KmbsC81deOqm4m5fY
+	 Q3X3bPEOXOiTM7TeVMZ3g4Lj+WldErafVEQqpT5slBu4c7BSUXR+WexJs469+7ObNPMgw
+	 dQjQuZ7V47pUJwguftfjXlbmsNOqlRD7+UXV3Ljmn/QqRhMmGpXvOuMPrL4tYY4J/Xw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MMFr7a3I;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716A3606A339;
+	Tue, 24 Nov 2026 04:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MMFr7a3I
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795495335;
+	b=0o8q4JWDSKMgXcAiK+jJIHNy93JdkHhroy5VKvZdh2tDTvWk4e8leS1ERsh7iPCKxx/N
+	 UkAmx3Cm6mnmSYRomdzi2ZJG22HDWW4PFq28BU/xVmNspEb5BJLnoGocDrVYhGvCj8IO1
+	 UBUXIZkT4vK0khrpChgB/ShCNDV1+y+hSv7JrU0mkrZJu7PmFonKzAoKQPemcb/wV86JT
+	 /fUH+owZ5hcGitXDhNETgGN1lZG+Dhiy2trHL4kQN+F8T0wEC2ixgyCWUOjDWy7jnJol8
+	 TXApmIIKwNqYYH1Cbp7dN9GgaRoq2NLdVqvJubQpDjE5DCbOpem6NG6YMrDn6wiko6Q==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795495335;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=6WY3rcBN95a4Sy46Alx6r/LGWE8dSDCrUzvaMe18Id4=;
+	b=HaD3uEfu3HT7F+iz5S26Lmy4lj4uDgBO5KavvQpZbAvI5Wqz7jTSmZYPQq3kslqP2cOV
+	 5NwvabFCy6BtTKb2/6HB+zkH/P8EkEeeYkYaL6ZlsIklvwubbuVBhkS+sHNTZubAofkQR
+	 IfJagsZ8+0i617IBv2p2vxGq0Q5+15ZzeyXYZocDH1ZnFTciVs9/7JnfKcDNsZUMTlUi0
+	 j02HLSsbeXiGbxQ8mO4Nan6Bm54Vkt37e/tfc5RB2PhIoZJkE/MwWAI7uJVfVUM4wZQkt
+	 kuiyAawBzAPGfkRDfauZ6FNzweYuLtgDDnskKBIUs5cg6RWIU+POK9T4NdxaG8EjZyQ==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42D5606A32C
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 01:10:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C42D5606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kKG19Co9
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso8475195eec.0
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Nov 2026 17:10:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795482659; x=1796087459; darn=vger.kernel.org;
-        h=content-disposition:content-transfer-encoding:content-type
-         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CwEMPI7Nv8Y4G/uSjVrKaLXUsD6jBVuvooxioPWLmTc=;
-        b=kKG19Co9tDWF2kSXK9dKvmLlvSosMXN5A+fjtmNUuhQN82VGIHKHSt7hl60KkIuTqu
-         OTELZTKud2yzTtGpJ7YssH7XaqMzCZGWMYDkBuT+NcCO6f/J1jqPT0iyZQqXfdWQVo+7
-         NpL+BVzS/nn6KT8iZArKwzuxRvPxz7vHEFH6/T2KHs/4S02PCeK1dyecPiT3ra5J0+fQ
-         /fgxtsqz+bypFUe4822LHXZAKII+1BrHRYFU9BpYbk+8Uqr0d9LvdyqMqVFfzPKr5ne0
-         gjqbIHRdr1UAU+rh9u1Qy9nf2cgwwJCw8nbQvW/s9TlQ/Z33NtjHLWdZggyn3wfRzLHS
-         ZRZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795482659; x=1796087459;
-        h=content-disposition:content-transfer-encoding:content-type
-         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=CwEMPI7Nv8Y4G/uSjVrKaLXUsD6jBVuvooxioPWLmTc=;
-        b=1nYMzdsp66Azt7KMYPZHxF3xETCk9Ya6HoMWVlN5m94cGUi0KQWvu13mSQWXrJqt2j
-         c5h2JnzBIUaSBZCzeWCAptveo/kQlP7ceFUNsqXccYTMyzCfaO1pJAx3UbFQ2p423x6g
-         Vh6YiX6LMl9Zud1T62/AKrq079W6RVeDLPdK4HaI8vfqHwhCD9gIOwJrC4N2WA4yoXUA
-         soX4Uy0pqgGKgAd0uHFOYi7j8k7eHRkrlUlpX7KORf8MFehvtm++JixG14GrmN6CWxyv
-         1BrRnWDUzINmkr7iYPhzy+xq/7Vi92MDKIO3BX3cyZnVDvam+MIJzOX9TaPf64Ce7bhn
-         HrDQ==
-X-Forwarded-Encrypted: i=1; AL+hErGMaViEE8EbxUY2GuBumnKRyqZb5r5Rf8H+QbutNSQ8O//v8Gwt6mjE/hx4uAU3uhIluPm0y39zeda3@vger.kernel.org
-X-Gm-Message-State: APuU4Z+kq3T+yJaP7Bxu9FKEFNqKJysutjbd5ZKNkKznC3t8ErtrZvlM
-	KviEKeacK7VfQUsOuQjzgLERXj7QPIg21W4jYcYHy87h1b0VCpmBqY8U
-X-Gm-Gg: AZFdTZdbPomCevTqvHWCrRAEjC/sAmVkIZFzvvjwXP7/IZ0bhJpn8F7iWqyM7An/PAa
-	UvyALLInYhVIzAqLh5dRe7d/9o1QvudIFlP+unPYy917dhwMf8EL9v8yXFjQnEwTlTSoBiRyKuE
-	JD9PkViZ8IIeagkTDZ1FUSyCX3FvmZx2w5fDOP5kYrz73IIxzsr0SO+w/HNp8a5Z2rIyAT+ZdDS
-	fYN0WiCj+R3xNSzNAWNgrdGi5zEjNw8SpAuJxXmyWoMbU0EQKcOjrr2oyi4MlpzSeFGJRJWB4l4
-	t2NxsCBSaZKsvE2pArRZVlPwGn4NPpz4F1PPjehHqgn2ccIlxv5u66JOEL0q5sxXJRuI3IGYAvT
-	oizYtOgBfzrRrhwMc2nh136WoXwcMKZCAleqMB+28gmpQLEwuXLMw5K6DrB10XcrNg6iKqKCGJz
-	8g3J4qPPTDMJ0khoPtM/b3HaoWSEEWwbreYtYgPI/raZTaqXJ1N5eTKTPlWKDA206H5kofCrhOT
-	PIT1lgBErc6yvC/Kl+dpq/x8jMGaT9CayiyDyHWywkckt28kbYhVuuYmQhr5xFJGstvafvHXTee
-	+Zx4JIekO9UWMCRPzjWdXvnAsndPF4zaNjUABtEuSj0lidp9owV9whRNzLoA1V2AK5+/rw==
-X-Received: by 2002:a05:7300:c695:b0:37f:73f9:aee7 with SMTP id 5a478bee46e88-3856c9a6408mr15050898eec.5.1795482658749;
-        Mon, 23 Nov 2026 17:10:58 -0800 (PST)
-Received: from localhost ([2a00:79e0:2ebe:8:4121:d698:201c:9274])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-386aaae4960sm15816977eec.18.2026.11.23.17.10.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 17:10:57 -0800 (PST)
-Date: Mon, 23 Nov 2026 17:10:56 -0800
-Message-ID: <2f25009cbd67a8ee7b417f12b35374b1@gmail.com>
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Gibson <warthog618@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 0/2 v8] gpiolib: finish the legacy cleanup
-In-Reply-To: <7dpg3x3gkypkznzhuetjsqmk5fhqwuwkc6kupbs52zqh5mibgx@fjow6eodw4pf>
-References: <20261123085723.156933-1-arnd@kernel.org> <tdc6h325jthjgyik2ne4oistkm563maoc2cpnffqu7hh34tpl7@oscripzv4dwq> <qvmy7iaxc7cjy2gkajqkr5ma6b4lwxz5ff64a5zsqrgewkxodr@odbjlv5x3hix> <8296a5c2-0aa2-4fc7-b65b-9d336bc4dff6@app.fastmail.com> <7dpg3x3gkypkznzhuetjsqmk5fhqwuwkc6kupbs52zqh5mibgx@fjow6eodw4pf>
+	by smtp.kernel.org (Postfix) with ESMTPS id DA40A1F000D4;
+	Tue, 24 Nov 2026 04:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795495335;
+	bh=6WY3rcBN95a4Sy46Alx6r/LGWE8dSDCrUzvaMe18Id4=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=MMFr7a3I/1QdOqKSCrJNzURhcWj78/Apors59rlmXsm7rFZkm/HwUPfjz49FiA/n6
+	 zWOazO9RvXTOEGqgVP3JCFXdXt+vgZQ90UAbAGXAhLEj2NXPS9E1tNm3aUPZX1WpYN
+	 MV3B/sp3rwhQtyGw9pLlNKUeQbd49YhZDlZoLbBEJhE0P4zJFEksf/4turLsXtPaeh
+	 dk0WMli+nAEoUmsnqDt1N4UWicunon/iUkapi8jgIyWP/R2pWObQMpd15CdbQ4cv7e
+	 kVclyXaBYOxzAFgRUov8BASCXfStA/QGj5wmA8XRpLBtKRNEyz6MU+GdStH/KHI6pg
+	 Lh9/4rq7ek+jA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 6FAD84C8AE;
+	Tue, 24 Nov 2026 04:42:08 +0000 (UTC)
+From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
+Subject: [PATCH v2 0/2] pinctrl: Add the Siflower SF19A2890 pin controller
+Date: Mon, 23 Nov 2026 23:42:05 -0500
+Message-Id: <20261123-sf19a2890-pinctrl-v2-0-a10af32bc844@telaak.dev>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -108,27 +83,95 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+X-B4-Tracking: v=1; b=H4sIAJ4VBWsC/22Oyw6CMBBFf4V0bU1bEcGV/2FY9DGVUQLYlkZD+
+ HcLaty4PJN775mJeHAInhyziTiI6LHvEohNRnQjuwtQNImJYKLgnAnqLa+kKCtGB+x0cC3VTJq
+ qOBjg+4Kk3uDA4mPdPNdv9qO6gg7L0Cfh4D4mWfjFGvShd8/1k8iX61ea/5FGThnNlSp30holt
+ T0FaKW8bQ1EUs/z/AKXBjQD2gAAAA==
+X-Change-ID: 20261102-sf19a2890-pinctrl-c0ad967de156
+To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Chuanhong Guo <gch981213@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joseph Telaak <joseph@telaak.dev>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795495327; l=2900;
+ i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
+ bh=UI+HFCzlwsuHPDNUiBDjhxu5Nits6H2tsgExW6YLYlA=;
+ b=lBf91TEU2OD9oLixUJ+GxBp5O6s4duspTqvuAyIzenYsZPfXCYGenr+7O5vR+xSVFto02pExG
+ Vs+vIe8r+bfCVxs0I4poRlC59KUDYyfZiXwbhZoEcc1IjiDfwLAdBir
+X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
+ pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
+X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
+ auth_id=1404
+X-Original-From: Joseph Telaak <joseph@telaak.dev>
+Reply-To: joseph@telaak.dev
 
-Hi Bartosz,
+This series adds a binding and a driver for the pin controller of the
+Siflower SF19A2890, a MIPS SoC for home routers. Each of its 49 pins has
+a register pair of its own: one for bias, input enable, Schmitt trigger
+and drive strength, one for the mux.
 
-On Mon, Nov 23, 2026 at 04:41:32PM +0100, Bartosz Golaszewski wrote:
-> Can I apply v7 and provide it to the SH maintainers on an immutable
-> branch?
+The driver is based on Chuanhong Guo's OpenWrt driver, which exposed the
+four mux modes as functions "func0" to "func3". Here the functions are
+named after the peripheral they connect, and each lists the pins it can
+use with the mode that selects it there. The tables cover the functions
+that the vendor firmware and the OpenWrt port use; the other modes are
+not documented.
 
-BTW, I have the soc_button_array rework (converting it to software nodes
-and dropping "select GPIOLIB_LEGACY") on an immutable branch based on
-v7.4-rc2:
+checkpatch warns about -ENOTSUPP twice. That is what pinconf expects
+from pin_config_get() and pin_config_set() for a parameter the hardware
+lacks.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git ib/7.4-rc2-soc-button-array
+The SoC support itself (MACH_SIFLOWER_MIPS) goes through the MIPS tree;
+until then the driver builds with COMPILE_TEST.
 
-I recommend pulling it into the gpio tree before applying Arnd's work so
-that x86 builds with INPUT_SOC_BUTTON_ARRAY enabled no longer pull in
-CONFIG_GPIOLIB_LEGACY either.
+Tested on a GL.iNet GL-SFT1200: pinmux-pins gives every pin its owner:
+SPI, UART0, I2C0, RGMII and MDIO, and the GPIOs for the switch reset, the
+mode switch, the SPI chip select and the reset button. The console, the
+SPI NAND, the ET6326 on I2C and Ethernet work with the mux this driver
+sets. For all 49 pins, the bias, input enable, Schmitt trigger and drive
+strength in debugfs pinconf-pins match the pin configuration registers
+read with devmem; this board uses 6 and 27 mA, the two ends of the drive
+strength field.
 
-Thanks.
+---
+Changes in v2:
+- Order the example's child nodes and properties by name, for
+  dt-check-style --mode=strict.
+- Add a MAINTAINERS entry for the driver and its binding.
+- Include <linux/device-id/of.h> instead of <linux/mod_devicetable.h>
+  (Uwe).
+- Prefix the register macros with SF19A2890_: REG_PC clashed with an SH
+  ptrace header (kernel test robot). Convert the drive strength in one
+  helper, to keep the longer names within 80 columns.
+- Reference pincfg-node.yaml and pinmux-node.yaml the same way, both
+  under allOf (Conor).
+- Keep the named pins and the per-pin groups: the generic
+  dt_node_to_map helpers take pin numbers (Conor).
+- Link to v1: https://patch.msgid.link/20261104-sf19a2890-pinctrl-v1-0-4bb83afdbacf@telaak.dev
 
--- 
-Dmitry
+---
+Joseph Telaak (2):
+      dt-bindings: pinctrl: Add Siflower SF19A2890 pin controller
+      pinctrl: Add Siflower SF19A2890 pin controller driver
+
+ .../pinctrl/siflower,sf19a2890-pinctrl.yaml        | 113 +++++
+ MAINTAINERS                                        |   7 +
+ drivers/pinctrl/Kconfig                            |  14 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-sf19a2890.c                | 549 +++++++++++++++++++++
+ 5 files changed, 684 insertions(+)
+---
+base-commit: f33a24cc012d34f25bb9942681bd478a1757b806
+change-id: 20261102-sf19a2890-pinctrl-c0ad967de156
+
+Best regards,
+--  
+Joseph Telaak <joseph@telaak.dev>
+
+
