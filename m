@@ -1,58 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795526067;
-	b=Sp67pjhm//2mQ42YpuPOh0aczeK687jqXcRY2Dc7zF2A4nNRx0GtRlwGmvKus3cyGuLY
-	 lxzKy4kE6qFwvJI4hy7zg8rCCKsxZNYA1o3VHZzoswB2auvN7hC7S63XZRzQBMbwXGExu
-	 1h+8tDksS4wVvdBdSSDJMjXZckSfG2pcUgNnPRhXvusgwJXftswC20UbEgZvUMVZlOws4
-	 aeSfnvIe4WrjXLtfF5kw3P3fwgL8FIee8LwZrOA6k6yfbU9+JgT1cPQ4fMXJWzKvB68hL
-	 bMROBad9W33xnkc+9a0Matd5sAk0K8PFO4qmEQ6x9cTPK+Wj17TOXSoOt9DTxiLQ17A==
+	t=1795527319;
+	b=ojLS0grrocbayw7N0WSxOEf3D+QZvbA4O3H8zd0Ew/WQomJLHrQWo1oq0klAY1PPdIpo
+	 Q9ZWT+J8cczk8LAKhyHRWLWM5SL1sPLzA9NEeqVMiPR7x1HAgU52p/nWqg50aP5FIHIIa
+	 qTHslbOtM2VvOy5XPM2mKp3Ve3UxAh/sQ7dDlH1zqjbOcNs1qjyvdlxb1OJOKbEllP/bx
+	 FBr50fHQyKSiUNhhADiy6jDzHdm6x+dll7uvkesj8B7Jj3cFk3ArljUFcMj/C0XxwdVug
+	 aa+yO1T1VHjA9LqDplouJ4iWzkvEzzIBbBcr+9537QiRqzvdveZl21Lo0jqExDprJlQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795526067;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=w7BiznOWgHLmpIv+2b3hWA7Y1QIueKgvuwOMsmguZ5E=;
-	b=jdtrxp6KcwrBf9XoR5uUByEsQuk1iROZTflSrDcJkFU13/277lwwe/OMIIMwBfhX5Oa3
-	 HMhCYU9P/eEmXyOX+7mJ5ExnOef9HPWiLADTQrS2wqAUckjb41+tyUgYLmUzHwfGm+ZDx
-	 vxzqWe1gN51pTvwjXUzjtfrVtGpxhIVz8j+kVAYxFD1RQrYEJ5M0jrGTIQgf2NiYuQcfx
-	 O/ym17Y5ghtz0dwgyrUmIBz98dvxGeWBPLoYX1eiwaFZvMi962jAvrC+yt+hocRlkgujZ
-	 0Gher7vWCOeXqHlXxQM6stx5wHGor2531wWkLoBSTimA3DEYnmAYs0plu8jyfWR3eYg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795527319;
+	h=Received:DKIM-Signature:Date:Content-Type:Content-Transfer-Encoding:
+	 MIME-Version:From:Cc:To:In-Reply-To:References:Message-Id:Subject;
+	bh=brA1TZa4Xw4gj6MGSoKR1QMCPQppauTAeMn4qP0Jvxc=;
+	b=EtxY4gYjBTFwXHw/jg1c67gXLm4/3943WpSnDnHez645HIrzwLwEoZjYEqPkk4ysWRc6
+	 MSVJPgWNi8/VGiXlnrZiehl5ullf28NOaty+qdQ/Ii8/QIwTJETl4qhTzMESy0dUKyEu9
+	 3W2u2MmJGy1t3Q4KU/LBTcbOYeCtyXpkTE6aZogqqQu+GKfcBk0Yud/nA7INbdkyPJa9i
+	 hrOo3w62ijCRkl1M3n/9dFS6QnihO9MyuCVqruXCRZrKFnfJeskfUz2HzTGJlGjI/CI2M
+	 vCeDq5t+BLaXu1bkG9e3sZtp5a5cwy83pVd0Yz4u/IY1BkK0/MaGWIAvkYwBvCxv/Pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gOecnZJB;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="dSbn8Y/N";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 0DACB606A31E;
-	Tue, 24 Nov 2026 13:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2596D606A326;
+	Tue, 24 Nov 2026 13:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gOecnZJB
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1B58D1F000C4;
-	Tue, 24 Nov 2026 13:14:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dSbn8Y/N
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521941F000CA;
+	Tue, 24 Nov 2026 13:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795526066;
-	bh=w7BiznOWgHLmpIv+2b3hWA7Y1QIueKgvuwOMsmguZ5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gOecnZJBJuZCWB3gPCLGl1613U0tMxxt6MbXP++9jp6aB4919de/RjWvLNq6vXoGA
-	 klSyLb2CoCoi37h+fGvvOcRtN0H/upkagp/jhQedYB//kDFqMCeSmlCfLfXjpXRIzL
-	 AaYNEQqT8dHcH7Mcf6pNazfAhHK6qKI0cenoD7bxXMS6zAn0d8G74gihFEibWl5dpM
-	 tRnDVET+KYFPH++BJE03On9MbYkEgZNU+9wBnGJe7jgs1ZNy/4alkh74yTrHQ5HOHj
-	 K9E+PPPzDDzL++n45mdQV/GwVkXD803r6g9+TGZbj7vhoCvAc1wg4nzlVmyjJdMwGg
-	 KuueZOoFf0/7Q==
-Date: Tue, 24 Nov 2026 14:14:23 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: longzhao@ambarella.com
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Mika Westerberg <westeri@kernel.org>, devicetree@vger.kernel.org, 
-	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 02/14] gpio: regmap: add
- GPIO_REGMAP_QUIRK_SET_AFTER_DIR
-Message-ID: <rjxlen54cxvhlbiq6uh5ytts6kyoz3v4hczh7bhjoxfsode2se@hesqdhe2vczl>
-References: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
- <20261118-cv75-gpio-v15-2-e3c563673fe1@ambarella.com>
+	s=k20260515; t=1795527318;
+	bh=brA1TZa4Xw4gj6MGSoKR1QMCPQppauTAeMn4qP0Jvxc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject;
+	b=dSbn8Y/NI1ECMCHeJz8N3SxMgDZHe+m/bc5KiR6zO3arfCHJFGOb54XmBsHndC0+V
+	 vcjb8SFTRbLoKuKNbV/azVrHe6azEoNKNz/qSTWz1i2JRmUpvuK7w2lEaqoxzv0+Ff
+	 oJBlc/Z+RlgnHkujXGg4c35l9BHhWa3dRHlg/0eRsRdPW4yVxkJr7Bx2/zCHRjYjGV
+	 /AH9oZZONTz0rWgy021OWu/lg2Jp4aqTqXj47Gh3Yrpq1bqgYkNZ40zocELH/IhVSR
+	 6uE6wBHJW47Rm+SU89zd0WmBwbgxzcfhPsDGqSYMV0NAigEXW1T6ZERf8FoGh4RB/u
+	 g+o4oxsJZe+3g==
+Date: Tue, 24 Nov 2026 07:35:16 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -62,27 +51,145 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261118-cv75-gpio-v15-2-e3c563673fe1@ambarella.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>, Mark Brown <broonie@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Simona Vetter <simona@ffwll.ch>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ linux-sound@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, 
+ Jaroslav Kysela <perex@perex.cz>, linux-omap@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, linux-pwm@vger.kernel.org, 
+ Maxime Ripard <mripard@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-fbdev@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Daniel Thompson <danielt@kernel.org>, 
+ Jarkko Nikula <jarkko.nikula@bitmer.com>, Roger Quadros <rogerq@kernel.org>, 
+ David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
+ Jingoo Han <jingoohan1@gmail.com>, letux-kernel@openphoenux.org, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+ kernel@pyra-handheld.com, Helge Deller <deller@gmx.de>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
+References: <cover.1795505160.git.hns@goldelico.com>
+ <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
+Message-Id: <179552715646.40567.8345105080206889175.robh@kernel.org>
+Subject: Re: [PATCH v2 06/20] dt-bindings: sound: Document OpenPandora
+ sound card
 
-On Wed, Nov 18, 2026 at 03:42:19PM +0800, Long Zhao via B4 Relay wrote:
-> From: Long Zhao <longzhao@ambarella.com>
+
+On Tue, 24 Nov 2026 08:25:46 +0100, H. Nikolaus Schaller wrote:
+> The OpenPandora audio subsystem describes the routing links between the
+> OMAP3 McBSP interface, the external PCM1773 DAC, and the TWL4030 audio
+> codec, alongside amplifiers and power supplies.
 > 
-> Some controllers ignore output writes while a line is still an
-> input. Add a behaviour flag so the output value is written after
-> the direction change. This is a legacy quirk. New hardware must not
-> use it.
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 > ---
+> 
+> Notes:
+>     Changes against V1:
+>     - Address Krzysztof Kozlowski's V1 request to run the documented
+>       DT schema checks and fix the errors reported by Rob Herring's
+>       automated DT validation.
+>     - Update the binding example and schema during DT consistency review.
+>     - Binding and commit-message review assisted by ChatGPT.
+> 
+>  .../sound/openpandora,omap3pandora-sound.yaml | 95 +++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/openpandora,omap3pandora-sound.yaml
+> 
 
-Hi! Sashiko's comment on the return value of gpio_regmap_set() is valid.
-You never know what the underlying regmap actually is, it may not be an
-mmio regmap.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
-Bartosz
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,apq8016-sbc-sndcard): primary-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,apq8016-sbc-sndcard): quaternary-dai-link:cpu:sound-dai: [[4294967295],[3]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,apq8016-sbc-sndcard): tertiary-dai-link:cpu:sound-dai: [[4294967295],[2]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,msm8916-qdsp6-sndcard): mm1-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.example.dtb: sound@7702000 (qcom,msm8916-qdsp6-sndcard): primary-dai-link:cpu:sound-dai: [[4294967295],[16]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml
+Documentation/devicetree/bindings/sound/samsung,snow.example.dtb: sound (google,snow-audio-max98095): codec:sound-dai: [[4294967295],[0],[4294967295]] has more than 2 items
+	from schema $id: http://devicetree.org/schemas/sound/samsung,snow.yaml
+Documentation/devicetree/bindings/sound/samsung,snow.example.dtb: sound (google,snow-audio-max98095): cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/samsung,snow.yaml
+Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@0:cpu:sound-dai: [[1],[16]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu:sound-dai: [[1],[17]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/fsl,qmc-audio.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@2:cpu:sound-dai: [[1],[18]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.example.dtb: sound (mediatek,mt8173-rt5650): codec-capture:sound-dai: [[4294967295],[1]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/mediatek,mt8173-rt5650.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,cpu@0:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,cpu@1:sound-dai: [[4294967295],[1]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@0:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:codec:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-0:sound-dai: [[4294967295],[1]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-1:sound-dai: [[4294967295],[2]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-2:sound-dai: [[4294967295],[3]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@1:cpu-3:sound-dai: [[4294967295],[4]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@2:codec:sound-dai: [[4294967295],[1]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/simple-card.example.dtb: sound (simple-audio-card): simple-audio-card,dai-link@2:cpu:sound-dai: [[4294967295],[5]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): hdmi-dai-link:cpu:sound-dai: [[4294967295],[20]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): mm1-dai-link:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): mm2-dai-link:cpu:sound-dai: [[4294967295],[1]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): mm3-dai-link:cpu:sound-dai: [[4294967295],[2]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): usb-dai-link:cpu:sound-dai: [[4294967295],[136]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): va-dai-link:cpu:sound-dai: [[4294967295],[110]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb: sound (qcom,qrb5165-rb5-sndcard): wsa-dai-link:cpu:sound-dai: [[4294967295],[105]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/qcom,sm8250.yaml
+Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb: sound (google,sc7180-trogdor): dai-link@0:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
+Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb: sound (google,sc7180-trogdor): dai-link@1:cpu:sound-dai: [[4294967295],[1]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
+Documentation/devicetree/bindings/sound/google,sc7180-trogdor.example.dtb: sound (google,sc7180-trogdor): dai-link@2:cpu:sound-dai: [[4294967295],[0]] has more than 1 item
+	from schema $id: http://devicetree.org/schemas/sound/google,sc7180-trogdor.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
