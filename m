@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.121
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.223
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795505231;
-	b=IasRUSiosjUMrzkWYG9FGsc75+NfxOBGl0fmd7jR87AmSoHz94ASHo39xpmpVnjh7Kyi
-	 5LY4eSCT9CpEeq0vXz1CDRW9EuBPD3qwMSaVLRuXD3MXuPpphIXtOKQtzhZmW5mGU/zdU
-	 8I6vRUf39mphNgeeavMT3lc9mKYSRPRw3OOruDDnvfCdOZlUOUBRxgN0WjsBuDUbLvXbR
-	 b8fV1bedLzc/ulyRTeB9l4iN8Lb315aFjoVQ26SrSzj8ZooATw34w8+hrr+QPbReuyO71
-	 cKsP5ix2CuJnMSbttXdFbmoOF7dAlizm4FL94exei5oREvruM+U49YPXjg1ZKHlIRVA==
+	t=1795505232;
+	b=xtHhK0ETZydUne0DDdqtZELSP4iFpWs3Soge9H2DkMCMpSbs/pYENKJcJ3CRthOB4CA9
+	 hfnPqhfYdFok909TF//F0MkUQ+TbFiowzmf+v2zkR9JmvKLK4Hxv2e56WQgSx+pMzLaMY
+	 KieObqDJfFRyDFCehj++VUS9q/E4xMw37TiVN0hvY8GaClx1CjmFkOqlpSGAf0RSXBB8a
+	 WIzvJfAtGGmgjh2zdFl6Mgp0RwaiOOFQMUkGPhwEVVVt6DXmrvh8g9x/NY3PvdcI2wMzB
+	 opnfxrikbfyd4NEuATNMKvvgP+vRyzRmNGkWuA4iqoU/QVMxeXa8UMxcWk1l4ipY86A==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795505231;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795505232;
 	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
 	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-	bh=2BvTOQLxMfY709F9WzRxgyIMCfwQfGC0EhnVtClwW74=;
-	b=IT7Ztp/DeIMo/ZE21o4JwCne4CI0QlmP+ag3hSETOJN03Ab/K87C+Igihmbk6m0wn1cL
-	 iZLT0TUmuOVw1uzpqbC4suHYUoye10MJ4Z0rOad0Mcl20L71CBu7tCl138CtqTafKDqEw
-	 2C2kapBh0c10duoLmrihhjeXInd+pAMbOoblcoX1MmCtA6UGrI+lXBRbK3rHqs5+6VjqD
-	 ewoNCMqceMfC15COMyEX3/FW/nJebx94UH/6mAFJxRzc8e73papEZSmjcBjZ3J72TAii4
-	 a6E/4PmdZ1cf2QWIwwGK421pR1RBC8GaDygDzNEag3JAb8m9V09fpM65OPm9jPeMLcg==
+	bh=i8cGKfwirIdnWIRedml65mOcQqDHKaJXaOcj56+0XVs=;
+	b=ZFUs1tZPg/T9hmjvv70nbecyWrACY0RiGETa9xn0aNxFowHXM5AJblMO1WNZaWf1ZTFu
+	 IcSX4sR0kdigYOaY7UAtXJL8o35JUV4a3rUhAHuO/wYZCwF4cInOiqZvP30l+aO+vy8/u
+	 JKdr4DO2TtFuVN30OQa0sJNwcBFm+0hll8iMGtR323Rr1yXpM1XCSAM07ZGhxdYFePGY0
+	 LbUAXuB2TFHP3odJqybw1SEMXTzUeH2s50Q/BokUUpLVZoaLRwbub+OZa0BYks22kwT0O
+	 XEm+k8c3j+2l8BFf5QizxQ38iEN9HfNwpPj3RatJtJ8/mvRfd/0F8tGjftyVfjGkE5A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=goldelico.com;
 	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=okPRrsYt;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Jo1I4q7Y;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.121
-Received: from mo4-p04-ob.smtp.rzone.de (mo4-p04-ob.smtp.rzone.de [85.215.255.121])
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=L3Niw39x;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=+hiMkp7w;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.223
+Received: from mo4-p04-ob.smtp.rzone.de (mo4-p04-ob.smtp.rzone.de [81.169.146.223])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7962B60A3819;
-	Tue, 24 Nov 2026 07:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7962B60A3819
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB9860A3837;
+	Tue, 24 Nov 2026 07:27:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6AB9860A3837
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=okPRrsYt;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Jo1I4q7Y
-ARC-Seal: i=1; a=rsa-sha256; t=1795505177; cv=none;
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=L3Niw39x;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=+hiMkp7w
+ARC-Seal: i=1; a=rsa-sha256; t=1795505176; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=VXTMjt3g0e11IQFi8lbpnM90kxR8fJPktDpb0lzIhymeW2BaAz/gNLbSt5o9rbKImh
-    N4vLoM7bgxdkRJ48KtCRqdmb2qSGVQ7WVLAs5f1fvjd4b4esb5rGekxJB1OnvSnp5jdG
-    Z89PkrKOjdcJLFvesWXGCwBBv32S3qSBn6V4z7NkoFMmMSeYMLoLkOg3YwWqwZ2rPzFY
-    +6SQz+0iLO5z+KhW6GdFa/2Bb0MxmXzKEwXlBQJ0fxdI0zbDtr/we66me6iARxSH04ZY
-    i3w8qSG4/aV18ul+nou3zFDq+7b3AfWz+Dq/LKfWW/3xIihFKq1Tm46FaKBWMzg74zkw
-    vt7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505177;
+    b=B63WbdFNGCmMJ5fYDIKq4qliWQMpsYyvtu5yuJjR/4bKsyO2CxLncFaEsehECM38on
+    fDKossw+8Twl1iOf6e4Bv+iDGCL5pa3g/UDfGFskNeF85A9vDTVozzw3ByfmsAxctM/y
+    U7XrE8geitJEfY4kjSAgK4XqyU42Gphhk87EOVysT+O7+RUC3fw4orcfwz+56d6UMRSW
+    7IgI1zKwbIIEhpl/GGt3rSjBqP0Km1pL1IE/YrrGYv1ioAJL7GvTJpMw4DYyA3TktcGF
+    4tI74GmwPwqOtlS5jVaGg895zt4V+AycadOqaH3UWIFHfmKmdf0E7sQIPlOFRVAWCu7U
+    JBzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505176;
     s=strato-dkim-0002; d=strato.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=2BvTOQLxMfY709F9WzRxgyIMCfwQfGC0EhnVtClwW74=;
-    b=k6h1H7uHmzk5j6a6wxfaPJQ50FX+NSAAQxYB+0y4nSmRFjj4vLiF4D7Z8PToSi6AzR
-    2LzG1rDW+ic7vPbSs8tVDNZ9kC7ifE54G3neo+1IC5edM0cTxHrA65QntNdi19H1G43g
-    Ljg4D+QZXsdYHAx8JHJ6g72vFl1ekicKajYR2lq/UG2cGjE0ma3N1iFN7WFbmufgklTL
-    UOqff6ImXMiB4A8t28TctVNeK7oxGKI5sChI8BybWz7aKsaj0q+0ktIZzlM+rZ8GyYMp
-    sRowlkNnA0P3hOMm0q0kGbhKgZw31CdjDmXthm09T2oawuhYZ0sAICRdr2hou/HZX6FJ
-    5ZJA==
+    bh=i8cGKfwirIdnWIRedml65mOcQqDHKaJXaOcj56+0XVs=;
+    b=kDlL9Ci3SozMRDpsS1YdbRkyz9AJkqyOKi0XnLxcP/nnUWCYuKrHNXv71/BGDKX9Fc
+    BASCDdmk+pF2cfjNNSIT0Vq5Zu/G4VNkXBn9K6OL8FMisElM4uzKzO5wt5nuUjENW6OL
+    G2df8pCLe0MxiHt+lxRXLC1fm7lCY9QFKdqszDE1Jc+sH2Y7Y7n/Zsg3AK5AcZZg5Q1g
+    K+yabSsSrUjB2CXmioP1ckGJnlKJ0bpTz8+T1CLOLOgb/Fl9S2bzcbFh7fAg7gkqAV5X
+    goh6HkydDA60J8IYW5JrbAPXwUeE5ZuUaA0Pxf/QFfRaLupsTr8cYjFNfVPg1ICPVUgV
+    pEaQ==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505177;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505176;
     s=strato-dkim-0002; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=2BvTOQLxMfY709F9WzRxgyIMCfwQfGC0EhnVtClwW74=;
-    b=okPRrsYtuLzyS1CA5INIv9j+2KYUBs9UvpOeH2Mg+Z/ZOxMXhfQO0ljwX3JR/Z6Xt+
-    xBwrRNwoX7daHnTNXaa+qRB/8KSR2o1Iuc5G8HoYvvhu4ngCFhpxjmcgnUaOo3C9D6Fj
-    iQNkkv5lkvHu9ostpp6y3F58W6BRN3drQc9dIRhjjh/+UJVOnUz91v5afyRyQahoOAjf
-    mdyc/s9hL0pTUHGZuS5LoA1ARQK0iz8zS+IWuu2dexYlJ91tfSkxngCRVLAJJBbxMeKP
-    Pby7aSEGbrAUtt8pGodsFuSGRkgIFQl53sYwCFjD7xwIREMk+BIM9yjaWhV3hlwomlyY
-    OAKA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795505177;
+    bh=i8cGKfwirIdnWIRedml65mOcQqDHKaJXaOcj56+0XVs=;
+    b=L3Niw39x7Hs+bBaEq67DxNoePKZ+gmp8oE//dLuWEpXD3a7+mO/IzBJybpSimE/0AA
+    dHPHZH4kZGsy0OWerw/PEaz0M3oH1S3DTTpcXLbvE1RQMbA87sgG9N90+Q6KiGIiZBzT
+    rXeg6lrfpwldN5a3ze6YwHUSfqnoqT+55SAtl+1FFZeoko3c6WtQHyJgEaDr94JEn07C
+    TJ+T8l02VgpGzHfLyoa81zGf0IshdTXI5DROAcJ2xB7psWfjCHPpzpuuTaRsFQCzRvTN
+    4xj07ZJ1n0z9co9ajwlufo6x9ueGLALmXQN+xlkWNB62z2Tfi9JKhgppvm5vYo47R+8Z
+    QuGQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795505176;
     s=strato-dkim-0003; d=goldelico.com;
     h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=2BvTOQLxMfY709F9WzRxgyIMCfwQfGC0EhnVtClwW74=;
-    b=Jo1I4q7Y9aa80sCc0gqgfLwreoVBRZH14hynKI1rAZcFTcTQIF4olaGpCI1SNad9eO
-    BLgsvKySXrCp4SkBnJDg==
+    bh=i8cGKfwirIdnWIRedml65mOcQqDHKaJXaOcj56+0XVs=;
+    b=+hiMkp7wubEabCTvcsLKLCOYaH2Cak+kIHtjH9k93zcQKYGvyW/kKAIQOAzxPmbm8W
+    f/WrhVZ9g1ZQfjj2BzDA==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV3poLlciNVTQoM6kVxzKyrKzkpjcAwdDfiN49"
 Received: from iMac.fritz.box
     by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22AO7QG1HP
+    with ESMTPSA id Qb56a22AO7QF1HM
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
 	(Client did not present a certificate);
-    Tue, 24 Nov 2026 08:26:16 +0100 (CET)
+    Tue, 24 Nov 2026 08:26:15 +0100 (CET)
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -127,9 +127,9 @@ Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
 	letux-kernel@openphoenux.org,
 	kernel@pyra-handheld.com,
 	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 11/20] backlight: pwm: Support enable guard period
-Date: Tue, 24 Nov 2026 08:25:51 +0100
-Message-ID: <54477b4e31e35af14677172088f94770ca5b9755.1795505160.git.hns@goldelico.com>
+Subject: [PATCH v2 10/20] dt-bindings: backlight: pwm: Document enable guard
+Date: Tue, 24 Nov 2026 08:25:50 +0100
+Message-ID: <9279d3995ae4f81c19afeaa07b32204f16611ac8.1795505160.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1795505160.git.hns@goldelico.com>
 References: <cover.1795505160.git.hns@goldelico.com>
@@ -145,151 +145,61 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="us-ascii"
 
-Some LED drivers distinguish PWM dimming from a one-wire control
-mode during a startup detection window. For example, TI TPS61160/61
-use the duration of low intervals on CTRL to detect EasyScale.
-An initial guard interval can keep the waveform suitable for PWM
-mode detection before normal dimming begins.
-
 Add support for a new device tree property
 "pwm-enable-guard-period-us". If set, the driver applies a full
 duty cycle (duty_cycle == period) for the given duration whenever
-the previous PWM state was disabled or had zero duty cycle.
-This covers the
+the PWM was disabled or had zero duty cycle (e.g. power-up, resume,
+brightness 0). This covers the
 requirements of such devices generically, without introducing a
 chip specific backlight driver.
 
-The requested full duty need not produce an exact constant-high
-output on hardware with limited duty-cycle resolution. The board
-must ensure the resulting waveform meets the LED driver timing.
-
-Suggested-by: Andreas Kemnade <andreas@kemnade.info>
-Link: https://patchwork.kernel.org/project/linux-omap/patch/f897f695c0e1e128d7ebb41be8dfdce4d634f552.1783749722.git.hns@goldelico.com/#27124981
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
 
 Notes:
     Changes against V1:
-    - Andreas Kemnade proposed placing the TPS61161 PWM-mode
-      initialization in backlight support rather than in the PWM
-      controller. The enable guard is the generic V2 implementation.
-    - Add pwm-enable-guard-period-us support to pwm-backlight.
-    - Request full duty during the startup guard when the previously
-      cached PWM state was disabled or had zero duty cycle.
-    - Check the return value of the guard PWM update, while leaving
-      the normal pwm_apply_might_sleep() handling as in upstream.
-    - Retain the hardware-tested guard implementation from the working
-      series; do not incorporate the later review changes to power-on
-      ordering, guard triggering, duty limiting or rollback handling.
-    - Clarify that requesting full duty does not guarantee constant
-      HIGH on every PWM provider; actual waveform depends on hardware.
-    - Keep the existing Suggested-by attribution.
-    - Code and commit-message review assisted by ChatGPT.
+    - Describe the guard trigger using the PWM state actually tested
+      by the implementation (disabled or zero duty cycle).
+    - Remove the requirement that a disabled provider report zero duty-cycle.
+    - Remove the redundant uint32 $ref for the standard -us suffix
+      after dt_binding_check reported a schema error.
+    - Binding semantics and code-consistency review assisted by ChatGPT;
+      clarify that full duty is requested, not guaranteed at the output.
 
- drivers/video/backlight/pwm_bl.c | 37 +++++++++++++++++++++++++++++++-
- include/linux/pwm_backlight.h    |  1 +
- 2 files changed, 37 insertions(+), 1 deletion(-)
+ .../leds/backlight/pwm-backlight.yaml         | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 3ad71ee3657af..1d0a463710926 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -7,6 +7,7 @@
+diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
+index b71f6454a4ac2..9172f14bfb76f 100644
+--- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
++++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
+@@ -49,6 +49,26 @@ properties:
+       having to list out every possible value in the brightness-level array.
+     $ref: /schemas/types.yaml#/definitions/uint32
  
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -18,6 +19,9 @@
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-+/* extra time added above enable_guard_period_us for usleep_range() */
-+#define PWM_BL_GUARD_SLACK_US	2000
++  pwm-enable-guard-period-us:
++    description: >
++      Duration in microseconds for which the PWM consumer requests
++      full duty (duty_cycle == period) before applying the requested
++      brightness. The guard is issued if the previous PWM state was
++      disabled or had zero duty cycle, e.g. after power-up or resume.
 +
- struct pwm_bl_data {
- 	struct pwm_device	*pwm;
- 	struct device		*dev;
-@@ -26,6 +30,7 @@ struct pwm_bl_data {
- 	bool			enabled;
- 	struct regulator	*power_supply;
- 	struct gpio_desc	*enable_gpio;
-+	unsigned int		enable_guard_period_us;
- 	unsigned int		scale;
- 	unsigned int		post_pwm_on_delay;
- 	unsigned int		pwm_off_delay;
-@@ -93,11 +98,39 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
- 	struct pwm_bl_data *pb = bl_get_data(bl);
- 	int brightness = backlight_get_brightness(bl);
- 	struct pwm_state state;
-+	int ret;
- 
- 	if (pb->notify)
- 		brightness = pb->notify(pb->dev, brightness);
- 
- 	if (brightness > 0) {
-+		pwm_get_state(pb->pwm, &state);
++      This can allow LED drivers with startup mode detection to settle
++      before normal PWM dimming begins. For example, TI TPS61160/61
++      distinguish PWM dimming from EasyScale by the duration of low
++      intervals on CTRL during an initial detection window. The guard
++      duration must cover that window according to the LED driver
++      datasheet.
 +
-+		/*
-+		 * Some LED drivers detect a one-wire control mode during
-+		 * a startup window (e.g. TI TPS61160/TPS61161, using
-+		 * the duration of low intervals on CTRL). Request full
-+		 * duty for the guard interval before normal dimming.
-+		 * The PWM provider may approximate full duty.
-+		 *
-+		 * Apply the guard if the previous PWM state was disabled
-+		 * or had zero duty cycle.
-+		 */
-+		if (pb->enable_guard_period_us &&
-+		    (!state.enabled || !state.duty_cycle)) {
-+			struct pwm_state guard = state;
++      The PWM provider may approximate full duty if the hardware
++      cannot represent it exactly. The board must ensure that the
++      resulting waveform meets the LED driver startup requirements
++      and that the input has a defined inactive state while off.
++    default: 0
 +
-+			guard.duty_cycle = guard.period;
-+			guard.enabled = true;
-+			ret = pwm_apply_might_sleep(pb->pwm, &guard);
-+			if (ret)
-+				return ret;
-+
-+			usleep_range(pb->enable_guard_period_us,
-+				     pb->enable_guard_period_us +
-+				     PWM_BL_GUARD_SLACK_US);
-+		}
-+
- 		pwm_get_state(pb->pwm, &state);
- 		state.duty_cycle = compute_duty_cycle(pb, brightness, &state);
- 		state.enabled = true;
-@@ -239,7 +272,8 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 	of_property_read_u32(node, "post-pwm-on-delay-ms",
- 			     &data->post_pwm_on_delay);
- 	of_property_read_u32(node, "pwm-off-delay-ms", &data->pwm_off_delay);
--
-+	of_property_read_u32(node, "pwm-enable-guard-period-us",
-+			     &data->enable_guard_period_us);
- 	/*
- 	 * Determine the number of brightness levels, if this property is not
- 	 * set a default table of brightness levels will be used.
-@@ -467,6 +501,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 		goto err_alloc;
- 	}
- 
-+	pb->enable_guard_period_us = data->enable_guard_period_us;
- 	pb->notify = data->notify;
- 	pb->notify_after = data->notify_after;
- 	pb->exit = data->exit;
-diff --git a/include/linux/pwm_backlight.h b/include/linux/pwm_backlight.h
-index 0bf80e98d5b40..35cf19b1e9768 100644
---- a/include/linux/pwm_backlight.h
-+++ b/include/linux/pwm_backlight.h
-@@ -13,6 +13,7 @@ struct platform_pwm_backlight_data {
- 	unsigned int lth_brightness;
- 	unsigned int pwm_period_ns;
- 	unsigned int *levels;
-+	unsigned int enable_guard_period_us;
- 	unsigned int post_pwm_on_delay;
- 	unsigned int pwm_off_delay;
- 	int (*init)(struct device *dev);
+ dependencies:
+   default-brightness-level: [brightness-levels]
+   num-interpolated-steps: [brightness-levels]
 -- 
 2.56.0
 
