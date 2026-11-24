@@ -1,55 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795514201;
-	b=j18kDEmGsPUGOUZ6aSZJPXeJS3bg7LCoEi1GbVfKMKtIVWv78dK7Ge2l4ZlmVoI5ClOi
-	 t4CJ08GPlhVk90n+sBzd/2LY0wd9T0rRvViXVCe0Q4PnhCxcTcxhaSXHZ9emm109MpEeP
-	 82AmJbMKbc822EVQZFlymsNlwmdGuctZYX4NWT76hh1ZgPtqMbajE1WHScbO1cYrZLVyV
-	 bV2tyxUy0w6oxkEUNfX55/UuJsgHBOGboSF46jen8gN0qqEqOz+xOD/BFJ+hOr9en6S1x
-	 dQsyxjwACC+BIAqjw1duxIQ+6KIVb3jCetg9p23tVTEhvjW/pgsC8xJ0HmGX4FBjHIw==
+	t=1795514233;
+	b=oRKKhwTg+qiDp6oLPMllR2Cd5UxqAVucHWs8UGwhof52nxGrFOKelH1F1QxVeSNaEM8X
+	 GvqsyoqtQAGRmgi06/9EWBZBb0vZt9rrH1s2YMV+2b5ld4V2ZPcKEj8L91mcAuv4wTbJU
+	 P7CxvBPBfOOXb8H4QrQAuAfaERRJFWTluHRPDaITE0TV0NlBLmtiKuF3JV/JsNrKOMASF
+	 vMZfAiULsXbFP+/hnFs8DJ0vDqVRLii+eR4CMB/W9wQujR4dCkNR4MoZQ5xenEM3h7nDr
+	 N2TGe2Rdh7NG4wmSrd7K8R/vdlvqc91XTr2V20skHktwe4DPUNo2ln69KfM7wA+6isg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795514201;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=6RxDNhcrptkLwm5icpyITA1cARO1T74TvXZeN92Qajg=;
-	b=20vYX54OvHkDwSqOSe3apW9BGb6Ebm8xUmpAbNXJlZSTdqVSZcOjUpsenii5fYLj9OhA
-	 pZyDrUCdTLhCpko911FORF2dCn2T5OlPpwxb0M5R+gH8d90DXBWZu0YF//JJDcxTJN6R0
-	 La/N6+6p5sOg1NNkRqJ3I017eJy8b6ISH5+7649Jyxmaecye1S9wzJpg3tOpZOSBeV7ht
-	 ie5HmSGzUiGF4BfQP7SXA9VCxDqKFYuhFpLREchWLCdouD8tAOpbx5POHOjvJF5ZmeRsx
-	 kFAevDASDzO0PRFIgacnwBf1r2FFRl7o0LOBWiP7US+YxnwcBn074YaXFgMWGC+ekYw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795514233;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=48VphuVDqeqN5lD2GcFIyQ7SevY5jaHdnkERpX/nwKA=;
+	b=CvomNxyGv4Q1886eG6XyeeU5rCKpGECXJ5DuaIh7RhIRlLZc+5Mj/Ujsg/g/0pYMXqut
+	 M13eYXtYSamN1Hp5d1ZzkZ2G/ZvTmpRXZ6QmFrkx5sobjS5LaH9oDMi54DFkk1/319khB
+	 yh+S7QaCgOE69JxX67Tvf4YYBMfhfEUneri9if2a1rjE91BT/z3u8o7tKAcJIBmo7Oqu3
+	 npyYsVXYagzCt+grWZy15U2DshA+TyWoiZdUPdTWqWuXw5QJ1jPICvh1rnwEJ9fetEYzj
+	 LTb4N/Es6QW1sRPJzeEFSU8Cd//dm4Uz/2+SToK2DW7o0eBZwTlKPvfsVHa/KwiboXg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf2VEmI1;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QztcFcY7;
+	arc=none smtp.remote-ip=198.175.65.19
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED34A606A321
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 09:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81C7606A31E;
+	Tue, 24 Nov 2026 09:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A81C7606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf2VEmI1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A6951F000D3
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 09:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795514200;
-	bh=6RxDNhcrptkLwm5icpyITA1cARO1T74TvXZeN92Qajg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=lf2VEmI12JFLEgUGjVFCTv0QjW3DzCel4nyHoZURtSOyTH4f6ATQ1F9160ju0vvcJ
-	 1PxA6UlQXZt13PWLF8DKe4G2fyNtZEfkNquipMkfq4cB4Vyyt9Vb8QLIjeBylBY68V
-	 8fkdXxi2Q/3e9CgZNUHA8x8SIhVN3xZ7Go/+IbWqCEQoBiEztDO1QPeqv+6bOeCBfl
-	 eGtwiPdREEoZEEaGpzvmpTVcOtD31t91A/v5X3KXjPTtvGx+yrS5sJKsvgO+GX4oTb
-	 OlIqX7l7+ISlIVFgCxMWp9ns6b0uSX94naPiT/WMszXh8HjzkH/+81WGhZ75t3GckW
-	 FxW2yjPsT6HCA==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5c10dc41270so4644759e87.2
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 01:56:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHT8uuPy5p5RyzxW3xJ6mYTejeyHwEuLlLBPGWhI5l1g2JH6VLd3qGBrF3eeKyV2QMkGK2ER1w1zc8u@vger.kernel.org
-X-Gm-Message-State: APuU4Z90VNMNrgM09Ia515Qap9trDyhLYaUfmbACClMQruYScQQ7EpnQ
-	K/GKyHaWqulDEhR90mYCa/Ple1V13DbDyGFfVVHVVGIeCK4EF2EpqzDMvBaN/SSROsAVRUcrnJh
-	QEZqtzCzlR3PF6Ekz2xZ1q+g32bXZaNg=
-X-Received: by 2002:a05:6512:1048:b0:5bf:6c4c:62ce with SMTP id
- 2adb3069b0e04-5c1bc81c49bmr3664194e87.55.1795514199208; Tue, 24 Nov 2026
- 01:56:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QztcFcY7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795514233; x=1827050233;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NLvt/ppyOkmiGQEP/q8ihUkZ6zx5Ghwkgb3ZoISTKoQ=;
+  b=QztcFcY7l68yYtUL+GUq1exwlVI7qqeoxsDIX5wdwG7obUtttb8qHbZI
+   RHuauIvsz9SbbPSt3rc3UFA9iLFvU+qCvFyMRQkgKJt7pXOdPe8rv6lWo
+   KfDyMiFTurtYjzSy1CzuywI2YDW5zCP1l3593lDUstdoCIJS2YIY5Kuk7
+   duM5NfKw8SOafpXwpozT/uJbbIGXlqIPtJVCDkUhjMufd8fYBbEdvf8gG
+   ryzbh+31ABKkE2ErNATlpLgpkxXQCXzdywP9l1nlghlPMmxbrj1BAZ5xQ
+   teFkzNjpmfISgp7+tXCRLqsi3leFY6kmjhfGNnSJOxXFGQ172PJ1wVt8z
+   Q==;
+X-CSE-ConnectionGUID: ZPUuaxDVTdqJ+/DcrxWCvg==
+X-CSE-MsgGUID: w6IaxRYkQa62I0iiG76rSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11975"; a="4397705"
+X-IronPort-AV: E=Sophos;i="6.27,230,1787036400"; 
+   d="scan'208";a="4397705"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 01:57:12 -0800
+X-CSE-ConnectionGUID: T34wVYxBQTGokWt6aW2Y1g==
+X-CSE-MsgGUID: 5qT1tNnvQOqUrpfVsmAZOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,230,1787036400"; 
+   d="scan'208";a="13206123"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.125])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2026 01:57:10 -0800
+Date: Tue, 24 Nov 2026 11:57:07 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/8] gpiolib: fix chip removal with lines still
+ requested from user space
+Message-ID: <awVfc9xLPXbkAov-@ashevche-desk.local>
+References: <20261124-gpiolib-chip-removal-v8-0-aambrozewicz@nvidia.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,46 +85,46 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261123-cs7542-syscon-v2-0-1cd74b2522f9@gmail.com> <20261123-cs7542-syscon-v2-4-1cd74b2522f9@gmail.com>
-In-Reply-To: <20261123-cs7542-syscon-v2-4-1cd74b2522f9@gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 24 Nov 2026 10:56:26 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=jLDF1mRBp9mai7hFKU21SG8ud-Wf5ebS89BHiUWM9sg@mail.gmail.com>
-X-Gm-Features: Aa3M54pJBPNtS8HBHNO_8ov-NITzhFzIUmDM0dw5V6Dl7sMdZPPnTtRSJZShNYc
-Message-ID: <CAD++jL=jLDF1mRBp9mai7hFKU21SG8ud-Wf5ebS89BHiUWM9sg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] pinctrl: Add Cortina Systems CS7542 pin multiplexer
-To: filipp.dunsky@gmail.com
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261124-gpiolib-chip-removal-v8-0-aambrozewicz@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 23, 2026 at 9:27=E2=80=AFPM Fil Dunsky via B4 Relay
-<devnull+filipp.dunsky.gmail.com@kernel.org> wrote:
+On Tue, Nov 24, 2026 at 11:20:31AM +0200, Adrian Ambrozewicz wrote:
+> Removing a GPIO chip while user space holds a line request, as when a
+> hot-pluggable GPIO controller goes away, leaks the line labels (patch 2)
+> and IRQ names (patch 5), frees IRQs twice (patches 3, 7 and 8) and lets
+> a blocked read() stall the removal (patch 4). Patch 1 makes
+> gpiodev_release() wait for pending label frees; without it,
+> cleanup_srcu_struct() can warn, more often with patch 2.
+> 
+> Patch 7 also affects in-kernel users: their remaining IRQs are freed
+> after the chip pointer is cleared, when gpiod_*() calls fail. Patch 6
+> drops edge events whose line read fails instead of reporting an edge.
+> 
+> User-visible change: a read() blocked when the chip is removed returns
+> the queued events, then fails with -ENODEV.
+> 
+> For stable: patch 2 needs 1, 5 needs 3, 7 needs 3, 5 and 6, and 8
+> needs 7; patches 3, 5 and 7 fix a 6.13 commit also in 6.12.y, patch 8 a
+> 6.19 commit; patch 4 applies to 6.12.y.
+> 
+> Tested under QEMU (x86_64, arm64) with gpio-sim, a shared gpio-sim line
+> and a test chip on the hierarchical irqchip, with lockdep, kmemleak and
+> KASAN.
+> 
+> Prepared with Cursor and Claude Code, using Claude, which helped analyse
+> the bugs, write the reproducers and draft the patches; I reviewed and
+> tested every change.
 
-> From: Fil Dunsky <filipp.dunsky@gmail.com>
->
-> Use the global syscon regmap for the five GPIO mux registers. Each
-> bit selects GPIO when set and a peripheral signal when clear. Support
-> GPIO on all 160 lines and the six UART pins exercised by the OpenWrt
-> port. Do not guess mux settings for the other peripherals.
->
-> Use masked regmap updates so independent pins and users of the shared
-> block retain their settings. No register changes are made merely by
-> probing; only a selected state or a GPIO request changes a pin.
-> Register and initialize the controller before enabling its own hogs.
->
-> AI assistance: Codex prepared this change from the existing OpenWrt port
-> and GPL vendor sources.
->
-> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
+Bart, this series seems contain two parts, core and cdev fixes, the first
+(core) fixes are being reproduced and tested in our lab and they are pretty
+much ready to go. Can we at least have them (patches 1 & 2) pulled rather
+sooner, please?
 
-This looks good to me:
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yours,
-Linus Walleij
+
