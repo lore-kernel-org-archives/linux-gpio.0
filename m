@@ -1,55 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795614368;
-	b=H4hSbfubx2CpMLXst5N8/tA/b9ZAR+MhRzRcKqilcYbCWSaMm29YunJVf1bciuhbr/tE
-	 AlhkPbZBLrZE+3RIj9D6sQlt53Uu3VAldFBSS3gOy6fozgDRAzeDC5Bf64yOP3rQTDB3o
-	 ilTpZOcorlyfO7+4O/mwuWpzASvsMLD8SJAWrq5LJDQ3e7bg/xiJ10DioXW1mvFmvMN/0
-	 upyIjPeB8OC9fxOCV21MQcalPgufK+VEGJJctSUOPel507mtioBWdXbxF+S7S3Eb+ACLa
-	 itYRL1bMfe+DyqW3lsva7r+MBLsx87hY4JtCESqLNuoepcL8Kzz/7+YJCfVcqnq04pA==
+	t=1795614426;
+	b=eLTKB0p3f1AIQ0lCNvzVDDdaZFyKjrhA7CItfr3IV6wGjCZ5wiKOIdu/6MwPcMAU4DMG
+	 b8FEC4/G33N+ee848IadFhVhYmg005KcJrfanyjAtsDJRr1N6psDKgIbhGfUF2Y/pyDoy
+	 R+iyDkjK4yWM+gsXKmQECGJw3zLnnhZU0w9GPvQBCRrFLy8Jqh2Lemzk1n7EGeymJbPda
+	 8BhZ+Nids3OGiKbhiDoipVas3iG/HvN6MLOMxdGXoaCCXASqcAxn1oNSVTFha0wrLck99
+	 D+h1APBziAzyJGNgF6PUw9QP+VC6J3DbIuKjTrwz6+EsqxZv2wPhp7YLIsuntt4ATvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795614368;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=4jZqsZWp4ooYwhfyJ4y0mJBIywKILW2kOFcQL/uGzgM=;
-	b=J+qwsPRrxj6aZnam3JJcTcc76U5GRcaE9zR9C+pysb1ikzt4COMt1EqzE+ySM6XLc8pa
-	 0mik6u/3rxKv7Wm0ZhSViDC5eXXTaSwK4hrvJSWmPAcwrj0PflGzLYAS96bubfUx5uFvb
-	 nE1ouVS1nkmD/O+iqZl6IJyEYtIMR9C0fvgmaUJloL1rh1SrHQkVxxBlmWaLU134Onw03
-	 9+deLi2yo1Q+kPo3fkWYBXoxL83hU8brAmbiWE9UifJKpRqQo93qhha6WnH7FbNVoYtzQ
-	 1r9tvPamWYBB9q7XR102I7MP31wiDW6xIt0Nlk1eShhitxSrJH850x5X55L8oDlkSLg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795614426;
+	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:
+	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=2ekL//nLkvdKCy4gvj7fwkmkzJPcc17yCmiUTnNKDpg=;
+	b=hEtb49cijbrs9DHK/Uo983qhU/aQIdLjnKuGzeemAbGtAfw2AYKI1fUM6wkzU1LNR2rb
+	 WQcX8D3UsHhvSVynyrWzY6otJjRf/wEzMkLXO2hPq7JafY19urdfjNpHZK8FxSLZGyVm1
+	 eFmJhwYbPsZ8l0/TZxsBDGkWxGAuPk08Uxb9Rf14hjk+DVd1iuHX17WDY8+oTDQEIW41d
+	 b680q7tATjVSmvbFHrNUN07/VUfM4z0R7QTC74zWZ8GtrvOwQLMuEasvMptXCK4uzS/co
+	 cGzrSq6UdIqb/Tq2af2ljBAAT4x2qoQkkUb+P3Y6vFWK6/KMv0XwYhGBSgzJazrDKhw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifF3bAuf;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O5i9O420;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83380606A31E
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 13:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3B6606A31E
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 13:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifF3bAuf
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1CA91F000D3
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 13:46:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O5i9O420
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F381F000CF
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 13:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795614367;
-	bh=4jZqsZWp4ooYwhfyJ4y0mJBIywKILW2kOFcQL/uGzgM=;
+	s=k20260515; t=1795614426;
+	bh=2ekL//nLkvdKCy4gvj7fwkmkzJPcc17yCmiUTnNKDpg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ifF3bAufXHV77XVWr2MRCQo63HJHoPyW/kmeN3Wdi+Uvnhw0o0EevcXIraxpZahnt
-	 Tpr50qs9xBUuFTmDSlAUiGUk34SgUbxs+xzVnvTX7pwp4g8EjSuSoueSHv3F6/z3lR
-	 qaq7NSXMVFFWhihtPoPKIdTZlJUFgfNlo6Mo0fwdRRbM/rUC5jMYnpds6+UyMTtaEc
-	 bKwdZsWQEWmocA0bba2B1QGs4Al5L65C1IPVpMMJbRr4D6K6aOIPRehgJsrkMXJnco
-	 RlhlfKvO4ApSKsebt8G1xGjjwszVEOdvuSYe74chzYgoE4o+zd6R8I3LuTfo+aAdmv
-	 TtDHhHNpAiP1w==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5be47aa555cso7243470e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 05:46:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEhWl2TU7Dc/5cxtrHqSRuDxCbfmXMgORIzgX+2x0AWjiwXfZo4Exd/xj/MEZrsq8rB6WmyhDxJXGnl@vger.kernel.org
-X-Gm-Message-State: APuU4Z80vUx7Si1aWK+ZW6SmqYkoRbglsrgJ5AJ/fIhgyJCOnXqqbBJo
-	jQ/NR3cfO+8tcb7PGRHXoEXVaMQZ01pfHr2IcrfX9wWaaN24lQ8qrBYsb/SZuntazfW6/9tiwRX
-	ZLPy/LiBONnBRfvUZA45qS2jw6sbkxHo=
-X-Received: by 2002:a05:6512:3ca9:b0:5c1:4f88:9af6 with SMTP id
- 2adb3069b0e04-5c1bc8198fcmr5837892e87.54.1795614366500; Wed, 25 Nov 2026
- 05:46:06 -0800 (PST)
+	b=O5i9O420RufJvMQedyS4utLY/NiMgFdpv0CHqDyfoI1t0SivlAvcVSEiU98tx4jv1
+	 jvT6UWanD1gv9N7WlFwn4jE/3lqGZSncR/q3XziX2DSL8QC3VcGmtYmFzyO7MKr6Pk
+	 20igUrMxbEmkUglX7jFE/2CuqNABEYoZAKJ7a74nT/plyk17cCMX23EFGRQIYGzCM4
+	 OgvEd3UjpUYqlKyBWAp1WPALzNcV4MWZpxBTwM+P3Bj43r1aYkxLicbMvkPJxw0CuC
+	 bG4Ko5nogSH3VnPZt4IOkfaCzDTpHiPpL2Gz1BsRd9+fuhFE2YMDNSjMrgxzy6rGhc
+	 MJK7CUHg4Zo2w==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3adef977ad9so42949281fa.1
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 05:47:05 -0800 (PST)
+X-Gm-Message-State: APuU4Z88yuhY5m6bzJ5MCPgfc6s2fpwqhLToZMSyqW87sr6J3QjQEBcA
+	lwJwyi+GE32sBQqrYki1P+r/Hf5Vbi8v7x1xn0RaT7WnNpxGrkkVDgWhv/J+LjURYwar449zFXG
+	ahOv5Z3CsESzm7wXtvFMVrE258PXt4bg=
+X-Received: by 2002:a05:6512:12c7:b0:5c1:ac31:b1e6 with SMTP id
+ 2adb3069b0e04-5c1bc8631e0mr4499372e87.49.1795614424812; Wed, 25 Nov 2026
+ 05:47:04 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,27 +58,39 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261120131743.31836-1-bartosz.golaszewski@oss.qualcomm.com>
-In-Reply-To: <20261120131743.31836-1-bartosz.golaszewski@oss.qualcomm.com>
+References: <CAD++jLnrKwRLGqz=F6LDy_9v7rrWnu1d8RjQhbupeZt0H99f+A@mail.gmail.com>
+In-Reply-To: <CAD++jLnrKwRLGqz=F6LDy_9v7rrWnu1d8RjQhbupeZt0H99f+A@mail.gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 25 Nov 2026 14:45:52 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmkSNamcvU49S29HmbbqPZiO_P__-vf2VrUTbiOTYQ5nA@mail.gmail.com>
-X-Gm-Features: Aa3M54r_va3lokUc-LWrlB0jUYgyg2M9NoU1QfnHQvyjmsPDY4Ce4kWCvRRlMHU
-Message-ID: <CAD++jLmkSNamcvU49S29HmbbqPZiO_P__-vf2VrUTbiOTYQ5nA@mail.gmail.com>
-Subject: Re: [GIT PULL] Qualcomm pin control fixes for v7.4-rc4
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, brgl@kernel.org
+Date: Wed, 25 Nov 2026 14:46:52 +0100
+X-Gmail-Original-Message-ID: <CAD++jLk9+3amc07dm2bwHypoePHnc2eq79Du1ynwoX9obUuZdw@mail.gmail.com>
+X-Gm-Features: Aa3M54rUJpADXeXDT3jJQ5rIEz_mZp6GPOoe2X7jImMdZ4GyoyyiknjRfaXS1-0
+Message-ID: <CAD++jLk9+3amc07dm2bwHypoePHnc2eq79Du1ynwoX9obUuZdw@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v7.5
+To: Geert Uytterhoeven <geert@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 20, 2026 at 2:17=E2=80=AFPM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
+On Tue, Nov 24, 2026 at 6:29=E2=80=AFPM Geert Uytterhoeven <geert@kernel.or=
+g> wrote:
 
-> Please pull the following set of fixes for Qualcomm pin control drivers f=
-or the next RC.
+> The following changes since commit 6628e7d4c6b25c8d18f1345e3a20d21829aae7=
+e4:
+>
+>   Linux 7.4-rc1 (2026-11-01 13:26:31 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-pinctrl-for-v7.5-tag1
+>
+> for you to fetch changes up to b2a4ca3e3d4af9a3a1e02acdc934b3702ff8ffde:
+>
+>   pinctrl: renesas: rza1: Put fwnode after parsing gpio-ranges (2026-11-1=
+6 09:39:17 +0100)
 
-Pulled in for fixes, thanks Bartosz!
+Pulled in, thanks Geert!
 
 Yours,
 Linus Walleij
