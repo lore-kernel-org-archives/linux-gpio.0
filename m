@@ -1,72 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.200
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795645635;
-	b=DXmDc9qw+YtudqUTeGtmqOOtn86AomLhBCnJPGCUv4nPOLLwC6W7bUgw/cnZQHPD0uZJ
-	 KP5VoXeyHB3475Gt4liwX7FpWCuuUA1L+qTt6+u1QZjm8Aszra2IgxG2BpBsQY9pw+HJn
-	 tAS7bxI+CSis4ZYdha7YhuM4ZJvJg423p2EBEFfaH2VvJLtcJL9KTtLQoQPJ4YWLM8R8G
-	 UO8h0dwWw/AArVAqjwKm1jFGEwRUumy4J8xFBZYsbB4BHn9sfGvwJLN3cnbtO7PEdqCiV
-	 JVwA/1mGoBWwsXbSh3fdJZ0x87uG+YaOYl8ibi738eDbL0pQNF9pbzutKjx8OBID5CA==
+	t=1795647118;
+	b=njOI1dS0jm3crbc/kFdpUnIToTFwLigRe8KPQH46v/darTOuIF+49I67uQ8yc7AWt8rA
+	 SzWyKhn4pbN3fa4V5uMHE9DNUQG5JWNKP9+NjHTOBj4q84jzGNZAgpgxJsb7HGD2REfYt
+	 QtySQoQBoKiklB/ceHecDR87FoCFIG/jBoK+e7CNFp0J3ppdO870kZyW+ORwH3B1yopvB
+	 /a0i9ZpuoF9HebRt5YY4Br+w5HU8Tek0m5Ahg4sRKCVtRMxgW9Om82LEgl9RXGwMqRYtv
+	 ETm3qmN7EtsjpTA/m3D8yb8AI3iGMSh0NJziJxxDEQYW4+p/0KpyTsMMhq3LQHaM5Yg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795645635;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:Mime-Version:
-	 X-Mailer:Message-ID:Subject:From:To:Cc:Content-Type;
-	bh=0tzFeKCwOoFb6bvhWfk3Oe+1P7rt3PYjl4BuN72k99w=;
-	b=oXuQV/sJaQRY9mIhj/X0mNK+PV6Bg8diPX39kNbIkGiMch+XUXGO/Ix7FTNaprFzWjPi
-	 VwNrN8TmA3Ws2hIsqev6HfdiIV7esULuvTmHJMIF6Yoy78XmZ5TvqmotGDR8Jo7qHL/xA
-	 ih6UgX6au9vLi4uNOpSMLeiAvhSqRguLnQTPyg+ovXe7LnHXKfBn22zSzkSakMr/t154K
-	 Pz7bNNFOe7xRc9OTq0UYWoTPjIiJdFVrgr1H2RJJSmKYKzt0RGQ9xRI2sewKshpIdG5Ae
-	 +KVxPibvbEzRR0q/8VeAIDdKlPWPu4FWpRfbTBeO/Ayn9W42uOK4JtsrQwX0SWvP2Rg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795647118;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=sMc4d4VIN6xE14pOt1WeHFSfB8E1xxqgFduw2lUV6FA=;
+	b=3Cnc6aBxOhdIZoX7ESFyOLnwY2k/WCawpsrM/B1U1ySS8fkHdi0RRH11J8LqnF2m7NEq
+	 E76IvW9ZVRIHSDtsIQb7kWh434CW3YnvURNibaF+QSY8lLaDIy/6aNMyiJjzwJNq/dTWh
+	 Sb063a/rAroM4laYAB4sY5yRF8Ua3trGBkZM6Rn/eYzgIsEhLOFiWs/rRvJU71lfjr1M8
+	 8fVcgRrvxgwhXqXL9+dE88N5va3IBDAB8pdnwK3DW6olJNWPzZq8iSL/5rUQY0326ZGpZ
+	 MKuve4Lg5HBfhH7ktUZu0ZVefxFcdwXx3QPs+ZEFqDS5+G3ukW8ZifhzIHSNZIKeM7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=flex--elkin.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=jaO0HsqW;
-	arc=none smtp.remote-ip=74.125.82.200
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KpamoWAH;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315B5606A327
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 22:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 315B5606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elkin.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C64606A684
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 22:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=jaO0HsqW
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-384c78aa0dbso8371282eec.0
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 14:27:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1795645633; x=1796250433; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0tzFeKCwOoFb6bvhWfk3Oe+1P7rt3PYjl4BuN72k99w=;
-        b=jaO0HsqWvDhXsTL1z+rc8IVo2zErMi5qnH0mxcNXuYgGSIoTvcURxSkEvGyO8BDJJw
-         qV98AOrRAJWrtKb5oLghEpNFo8apBTwVmEmzevW2vcRKRBWcU8gIMAQDn605jljUqWP6
-         FbqroJaQuCM3sliHhtog+jxQu6OAYnhDw6sobLPQi6E3lcis7Rn8bXyHQN6hteCM4AUN
-         I27w1VIQ8mf5gDdYvPVrgCcYWgbFbi7cq+taOdfcEmqOuSPKWlebJFrJm0m1YOs/bUvR
-         3Zk09iO/MZHyWEWTxk6Qamk/eav8FlBPZarvGNAnoqrkXHbAN1aGev9Re/ijSqAFK9zy
-         gbtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795645633; x=1796250433;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0tzFeKCwOoFb6bvhWfk3Oe+1P7rt3PYjl4BuN72k99w=;
-        b=hWtR6kSL4dEhbiQN6nzp93FBjdois3p0MwZJuHk0oydDZaaEvlHBqVueGhoFQLoGNZ
-         PnoxwjmgyyaU0l6RgOHhN53JgslLEAjPBnMw1KLuGl0Nq1t3D4kQ2uR9j9VixAkAaEaM
-         6ngmDB5/uhynEUg4kLHHijCkxbB419P1Y1eQb6nHuKGOyNGYH4dz/AuuJwz2F23HaJ8V
-         dmwvojUjuKcEMs+qf4yaRAzFk9ENo0ojPR3zn9AyMGA2e/LwfD7gnuDnRm4o3tSJRdXG
-         q3CQOv1nQ1KOANHRqMfuUFPUEiEIaE9MsO5iRkp4x4JLYTD0XKtfr7siIio4VTb4ltvh
-         VwSw==
-X-Forwarded-Encrypted: i=1; AL+hErHWGkYbmDv0CmeXBKJG4c/amhcIWAVDA3mQ/d+3HPhAR00w7nl6jXCrU4MCPiUd8STEB3sKf0fT66SU@vger.kernel.org
-X-Gm-Message-State: APuU4Z/AwmFRdnWjBl3R3FhfQa7u6crCqMnuW2bCLXrau8cHx3CUz86t
-	LaJjLPt3jvj4dPAcQFSXo6lPY04R/NJ7NVvjeyvuFpBs0nGBB1jg/ScBYJrAINmoOCRw1A2vsFO
-	m3A==
-X-Received: from dycnb22.prod.google.com ([2002:a05:7301:b16:b0:386:af9c:96b6])
- (user=elkin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7301:d81c:b0:386:b7d2:a279
- with SMTP id 5a478bee46e88-386b7d2aba6mr8835631eec.34.1795645633028; Wed, 25
- Nov 2026 14:27:13 -0800 (PST)
-Date: Wed, 25 Nov 2026 22:26:06 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KpamoWAH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F9D1F000D1;
+	Wed, 25 Nov 2026 22:51:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795647117;
+	bh=sMc4d4VIN6xE14pOt1WeHFSfB8E1xxqgFduw2lUV6FA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=KpamoWAHdV8De8Hw0hDCBCXURdJTmBzKoQSArVxF5meXEmuOVKj3Whzc/XUaHrgeC
+	 ii4t+p/ku4n6Ds7XXEiCmgO8BnpSTK681BZ+dOQfNaSQmdP2loLp2oGQgpLuHYkN25
+	 X2t9cFrDcWp9Gxl43iUO7+tiQGXzqHSejI9Q5ZwqDcpzVdtjfxzQltxjx2CUzoJRsH
+	 PQdW8UjLPZnB0laYdiCMTqWyn5CZI+9clcKO/AXFyqf3NBVKkwwZnLaT4Oere7yYhJ
+	 OI+Ec6HXOUyo2XeZqo6N1sZRJaIFa9Yvl52KX8jVZGDeyP86buFA3CvGJm5c2urQrf
+	 5/p2v8sIzCisA==
+Message-ID: <sashiko-outbox-234296@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add register bank bounds checks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Elkin Cruz" <elkin@google.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261125222549.1447825-3-elkin@google.com>
+References: <20261125222549.1447825-1-elkin@google.com>
+ <20261125222549.1447825-3-elkin@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Nov 2026 22:51:57 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -75,91 +59,63 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
-Message-ID: <20261125222606.1448637-1-elkin@google.com>
-Subject: [PATCH] pinctrl: nomadik: validate DT pin config property read and range
-From: Elkin Cruz <elkin@google.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, irogers@google.com, 
-	Elkin Cruz <elkin@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-In nmk_pinctrl_dt_get_config(), of_property_read_u32() is only checked
-for (ret != -EINVAL), passing an uninitialized val to
-nmk_dt_pin_config() on other error returns. In addition, val is signed
-and nmk_dt_pin_config() returns 0 even when val is out of bounds for
-nmk_cfg_params[index].choice.
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [High] pinctrl: tegra: ZERO_SIZE_PTR dereference in
+  tegra_pinctrl_resume() [1]
+--
 
-Check (!ret) after of_property_read_u32(), make val unsigned (u32), and
-return -EINVAL when val >= nmk_cfg_params[index].size.
+commit 21e28d7f25582cfa017ebe0451bae69737c000a5
+Author: Elkin Cruz <elkin@google.com>
 
-Fixes: e32af8894588 ("pinctrl/nomadik: add device tree support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Elkin Cruz <elkin@google.com>
----
+pinctrl: tegra: Add register bank bounds checks
 
-I am trying out new Clang static analysis checks for kernel bug
-classes, and they flagged this code as possibly buggy. The findings
-were triaged/fixed and commit descriptions were drafted with help of AI,
-then checked against linux-next (not runtime-tested on hardware).
+This commit adds bounds checks against pmx->nbanks in pmx_readl(),
+pmx_writel(), and tegra_pinconf_reg() before indexing pmx->regs.
 
-Thanks,
-Elkin
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
+a/pinctrl-tegra.c
+> index 51684c5dda349..c0b584d37a8e0 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -30,11 +30,17 @@
+> =20
+>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>  {
+> +	if (WARN_ON_ONCE(bank >=3D pmx->nbanks))
+> +		return 0;
+> +
+>  	return readl(pmx->regs[bank] + reg);
+>  }
 
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 24 +++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+[Severity: High]
+This problem wasn't introduced by this patch, but can tegra_pinctrl_resume()
+dereference a ZERO_SIZE_PTR via pmx->regs[0] [1]?
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index 617ad259f62c..400009929dbd 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -693,18 +693,21 @@ static const struct nmk_cfg_param nmk_cfg_params[] = {
- 	NMK_CONFIG_PIN_ARRAY("ste,sleep-pull-disable",	nmk_pin_sleep_pdis_modes),
- };
- 
--static int nmk_dt_pin_config(int index, int val, unsigned long *config)
-+static int nmk_dt_pin_config(int index, u32 val, unsigned long *config)
- {
- 	if (!nmk_cfg_params[index].choice) {
- 		*config = nmk_cfg_params[index].config;
--	} else {
--		/* test if out of range */
--		if  (val < nmk_cfg_params[index].size) {
--			*config = nmk_cfg_params[index].config |
--				nmk_cfg_params[index].choice[val];
--		}
-+		return 0;
- 	}
--	return 0;
-+
-+	/* test if out of range */
-+	if (val < nmk_cfg_params[index].size) {
-+		*config = nmk_cfg_params[index].config |
-+			nmk_cfg_params[index].choice[val];
-+		return 0;
-+	}
-+
-+	return -EINVAL;
- }
- 
- static const char *nmk_find_pin_name(struct pinctrl_dev *pctldev, const char *pin_name)
-@@ -724,11 +727,12 @@ static bool nmk_pinctrl_dt_get_config(struct device_node *np,
- {
- 	bool has_config = 0;
- 	unsigned long cfg = 0;
--	int i, val, ret;
-+	int i, ret;
-+	u32 val;
- 
- 	for (i = 0; i < ARRAY_SIZE(nmk_cfg_params); i++) {
- 		ret = of_property_read_u32(np, nmk_cfg_params[i].property, &val);
--		if (ret != -EINVAL) {
-+		if (!ret) {
- 			if (nmk_dt_pin_config(i, val, &cfg) == 0) {
- 				*configs |= cfg;
- 				has_config = 1;
--- 
-2.56.1.839.g22a8290db9-goog
+If the device tree node omits the reg property, tegra_pinctrl_probe() finds
+no IORESOURCE_MEM resources, sets pmx->nbanks to 0, and allocates pmx->regs
+with devm_kcalloc(..., 0, ...), which returns ZERO_SIZE_PTR and lets probe
+succeed.  On resume, tegra_pinctrl_resume() skips the bank loop when
+pmx->nbanks is 0, but still unconditionally reads from pmx->regs[0]:
 
+drivers/pinctrl/tegra/pinctrl-tegra.c:tegra_pinctrl_resume() {
+	...
+	for (i =3D 0; i < pmx->nbanks; i++) {
+		...
+	}
+
+	/* flush all the prior writes */
+	readl_relaxed(pmx->regs[0]);
+	...
+}
+
+Failing tegra_pinctrl_probe() when pmx->nbanks is 0 (or guarding the dummy
+read in tegra_pinctrl_resume()) would avoid this crash.
+
+[1] https://sashiko.dev/#/bug/linux-dc81d6b3-2c40-4253-b0f9-393c796e6adb
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125222549.1447=
+825-1-elkin@google.com?part=3D2
