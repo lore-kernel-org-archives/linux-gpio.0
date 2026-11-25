@@ -1,56 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795647118;
-	b=njOI1dS0jm3crbc/kFdpUnIToTFwLigRe8KPQH46v/darTOuIF+49I67uQ8yc7AWt8rA
-	 SzWyKhn4pbN3fa4V5uMHE9DNUQG5JWNKP9+NjHTOBj4q84jzGNZAgpgxJsb7HGD2REfYt
-	 QtySQoQBoKiklB/ceHecDR87FoCFIG/jBoK+e7CNFp0J3ppdO870kZyW+ORwH3B1yopvB
-	 /a0i9ZpuoF9HebRt5YY4Br+w5HU8Tek0m5Ahg4sRKCVtRMxgW9Om82LEgl9RXGwMqRYtv
-	 ETm3qmN7EtsjpTA/m3D8yb8AI3iGMSh0NJziJxxDEQYW4+p/0KpyTsMMhq3LQHaM5Yg==
+	t=1795649500;
+	b=YkeKvPxXq6rCfcezw4UgRVRigdeo20xGpAeoNvzj4RkzqBW//FOrbrNpSc8wdic5IFTD
+	 xAkmAI6i3fCMKjiqAs/2E+2QL8TZd3xCdsKu9wVrzpvucKBh7MovsgErVJby/uRZevyiH
+	 PiKlzPoqxcJCQ8CzYZGWIXVV25WyQvdbp16NoNC98uUZzuefRw4bPeNdyPfKUJgImn8Rq
+	 EOwkRCywjoDeEndnijQlK+VbIoMR6fRlmVXD/nPEgsBm/+5cuNadbCx2R1Q7lRP0bUI6q
+	 EW9wLO5HxrdT1FELAYsm7eRFv6DqPC0Gx7BKtqQzNFU8tiHKUyH5jTzV3ShQiBLkiNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795647118;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=sMc4d4VIN6xE14pOt1WeHFSfB8E1xxqgFduw2lUV6FA=;
-	b=3Cnc6aBxOhdIZoX7ESFyOLnwY2k/WCawpsrM/B1U1ySS8fkHdi0RRH11J8LqnF2m7NEq
-	 E76IvW9ZVRIHSDtsIQb7kWh434CW3YnvURNibaF+QSY8lLaDIy/6aNMyiJjzwJNq/dTWh
-	 Sb063a/rAroM4laYAB4sY5yRF8Ua3trGBkZM6Rn/eYzgIsEhLOFiWs/rRvJU71lfjr1M8
-	 8fVcgRrvxgwhXqXL9+dE88N5va3IBDAB8pdnwK3DW6olJNWPzZq8iSL/5rUQY0326ZGpZ
-	 MKuve4Lg5HBfhH7ktUZu0ZVefxFcdwXx3QPs+ZEFqDS5+G3ukW8ZifhzIHSNZIKeM7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795649500;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=FvvNDtfsIabNA/On19BazK/OQL2ez6R5Vi/Cev7mYvk=;
+	b=UhPt3U2bVAelEnMGkJ6986ZvaHkvvYQ69bVTp0cU2mi46T2J5tipsfrT4extHBvXJRZG
+	 FWGm+lRudcBpDTuN6Y26TOp3icbEAGuc6RTInGNFen8Thlx3HRmW6Kxewn1g3G8brZQou
+	 rrY7kFcozjrmJMEviTKoXhFDZ2qBlNVyPnxZeG0dKF0AOmVFELQyrmgbFeaymbwWhgymK
+	 uuFG1XeYF9aSnE6T39x0xD/5oll5ASX2X5TEJYLHC0yhb0BXqSl4NJw+k73gYTgICha5B
+	 8MR64fifPSSAhX8Vmms1XlXEuvsRkY0QFaEatGPaBNQTHbbe3G6LRWgtZ9NeddiH9Og==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KpamoWAH;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C64606A684
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 22:51:58 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=O+8QmB4X;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274E7606A683;
+	Wed, 25 Nov 2026 23:31:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 274E7606A683
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KpamoWAH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F9D1F000D1;
-	Wed, 25 Nov 2026 22:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795647117;
-	bh=sMc4d4VIN6xE14pOt1WeHFSfB8E1xxqgFduw2lUV6FA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KpamoWAHdV8De8Hw0hDCBCXURdJTmBzKoQSArVxF5meXEmuOVKj3Whzc/XUaHrgeC
-	 ii4t+p/ku4n6Ds7XXEiCmgO8BnpSTK681BZ+dOQfNaSQmdP2loLp2oGQgpLuHYkN25
-	 X2t9cFrDcWp9Gxl43iUO7+tiQGXzqHSejI9Q5ZwqDcpzVdtjfxzQltxjx2CUzoJRsH
-	 PQdW8UjLPZnB0laYdiCMTqWyn5CZI+9clcKO/AXFyqf3NBVKkwwZnLaT4Oere7yYhJ
-	 OI+Ec6HXOUyo2XeZqo6N1sZRJaIFa9Yvl52KX8jVZGDeyP86buFA3CvGJm5c2urQrf
-	 5/p2v8sIzCisA==
-Message-ID: <sashiko-outbox-234296@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add register bank bounds checks
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Elkin Cruz" <elkin@google.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261125222549.1447825-3-elkin@google.com>
-References: <20261125222549.1447825-1-elkin@google.com>
- <20261125222549.1447825-3-elkin@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 22:51:57 +0000
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=O+8QmB4X
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1344B1596;
+	Wed, 25 Nov 2026 15:31:35 -0800 (PST)
+Received: from [10.43.3.73] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19F6A3F86F;
+	Wed, 25 Nov 2026 15:31:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1795649497; bh=g4SLH4ntJ/Uj2nuvXWB8FADSkntEV5OWw71EFBWI27c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O+8QmB4X04m2jcI9M7lf3p+aZQGd5zPftioIuuFIPcj3BZHatl8xM9lk3BdvUiu9E
+	 z+TbsQ1kjBzDZCqKqL1lK6RSPzZMdGwT9ACOiJeF5tCv1iLjx3REEREY6m2s/OJ5Vj
+	 G8HlgVQwQTcQ/2tvEAzqVA9VVjpPwGC9RWVIHAQM=
+Message-ID: <b9220cf0-ad6b-4719-aa67-154666c788ea@arm.com>
+Date: Wed, 25 Nov 2026 23:31:30 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,63 +52,89 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] pinctrl: sunxi: add support for the Allwinner A733
+To: Alastair D'Silva <alastair@d-silva.org>, Linus Walleij
+ <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Yixun Lan <dlan@gentoo.org>,
+ Enzo Adriano <enzo.adriano.code@gmail.com>,
+ Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+References: <20260910133519.459011-8-andre.przywara@arm.com>
+ <20261125115703.3724690-1-alastair@d-silva.org>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20261125115703.3724690-1-alastair@d-silva.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] pinctrl: tegra: ZERO_SIZE_PTR dereference in
-  tegra_pinctrl_resume() [1]
---
+Hi Alastair,
 
-commit 21e28d7f25582cfa017ebe0451bae69737c000a5
-Author: Elkin Cruz <elkin@google.com>
+On 11/25/26 12:57, Alastair D'Silva wrote:
+> Hi Andre,
+> 
+> Two issues showed up while testing this A733 pinctrl series on the
+> OrangePi 4 Pro:
 
-pinctrl: tegra: Add register bank bounds checks
+While it's the right idea to reply to the patch that introduces some 
+problematic behaviour, there are other things to consider here:
+> 1. PIO_POW_MOD_SEL (0x0040) on A733 uses 2 bits per bank instead of
 
-This commit adds bounds checks against pmx->nbanks in pmx_readl(),
-pmx_writel(), and tegra_pinconf_reg() before indexing pmx->regs.
+But we know that for a while now...
 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
-a/pinctrl-tegra.c
-> index 51684c5dda349..c0b584d37a8e0 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -30,11 +30,17 @@
-> =20
->  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
->  {
-> +	if (WARN_ON_ONCE(bank >=3D pmx->nbanks))
-> +		return 0;
-> +
->  	return readl(pmx->regs[bank] + reg);
->  }
+>     1 bit. With BIAS_VOLTAGE_PIO_POW_MODE_SEL, banks are written at the
+>     wrong bit offset and left misconfigured (for example, bank H stays in
+>     1.8V mode when supplied at 3.3V, breaking RGMII Gigabit TX).
+>     Adding a 2-bit variant (writing 0b01 per bank with mask
+>     0x3U << (2 * bank)) enables hardware auto-detect from PIO_POW_VAL
+>     and fixes 3.3V RGMII TX (also addressed in Vinicius Pedrosa's
+>     follow-up series).
 
-[Severity: High]
-This problem wasn't introduced by this patch, but can tegra_pinctrl_resume()
-dereference a ZERO_SIZE_PTR via pmx->regs[0] [1]?
+Yes, Vinicius did the right thing, since this patch you reply to here 
+has already been merged. If you want to support his series, please reply 
+to the specific patch *there*, ideally with a Reviewed-by:, or at least 
+with a Tested-by.
+Replying to this old patch here is then not too useful.
 
-If the device tree node omits the reg property, tegra_pinctrl_probe() finds
-no IORESOURCE_MEM resources, sets pmx->nbanks to 0, and allocates pmx->regs
-with devm_kcalloc(..., 0, ...), which returns ZERO_SIZE_PTR and lets probe
-succeed.  On resume, tegra_pinctrl_resume() skips the bank loop when
-pmx->nbanks is 0, but still unconditionally reads from pmx->regs[0]:
+> 
+> 2. PA has 0 pins on A733, so PB..PK are hardware banks 1..10 while
+>     irq_banks = 10 maps logical IRQ banks 0..9. Without .irq_bank_map
+>     and sunxi_irq_hw_bank_num() in sunxi_irq_base_reg(), logical IRQ
+>     bank 0 (PB) accesses PA's IRQ registers (0xc0) instead of PB's
+>     (0x140). Adding:
+>       static const unsigned int a733_irq_bank_map[] = {
+>               1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>       };
+>     and using sunxi_irq_hw_bank_num(pctl->desc, bank) inside
+>     sunxi_irq_base_reg() fixes the bank offset.
 
-drivers/pinctrl/tegra/pinctrl-tegra.c:tegra_pinctrl_resume() {
-	...
-	for (i =3D 0; i < pmx->nbanks; i++) {
-		...
-	}
+Again this is an issue we know about for a while, and for which patches 
+are on the list. Please look at them, they solve this problem in a 
+different way.
+> Also, in patch 4/7, sunxi_grp_config_reg() takes an unused
+> `const struct sunxi_pinctrl *pctl` parameter that can be dropped.
 
-	/* flush all the prior writes */
-	readl_relaxed(pmx->regs[0]);
-	...
-}
+This again is an issue in a patch that is already merged. If you want 
+that fixed, you need to send a patch on top of v7.4-rc1, and send it 
+with a Fixes: tag, so that this can be remedied before the release.
+If you just want to report this issue, do this as a reply to that 
+specific patch, with the original patch text cited, and your report 
+inline, directly after the problematic line. After all we have this well 
+hung email patch submission system, to make this very clear and 
+transparent.
 
-Failing tegra_pinctrl_probe() when pmx->nbanks is 0 (or guarding the dummy
-read in tegra_pinctrl_resume()) would avoid this crash.
+Cheers,
+Andre
 
-[1] https://sashiko.dev/#/bug/linux-dc81d6b3-2c40-4253-b0f9-393c796e6adb
+> 
+> Tested on OrangePi 4 Pro (Allwinner A733).
+> 
+> Thanks,
+> Alastair
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125222549.1447=
-825-1-elkin@google.com?part=3D2
