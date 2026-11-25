@@ -1,60 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795627700;
-	b=M8kqCCK17K2euFA/GWujnYA3C2lsc/lnsD1IV75X2YksKZ54a1IOLEknGJkFgR+8BLJ6
-	 mJ4l/+EDPfI8dpUjcTggj22ELvb7ubtPTWmW+hcyQoWJxKCRqgsuWTgMuBOFBGBLyH9sk
-	 sw/ViEhbvR/Uzqncv8GNIJGerB4fyYh9RnWd3YoNfbhJokQuwnZt6vLlH9BmZz9YN0A1M
-	 5twAF7BESiOS9dVgBzhSaiOyXNOkPOzSjs/DcRmhcnFgGGB9Vp6845D40EUDaZnBWovag
-	 qkZHD03/TLSluz88ZEDRrbeE4xK7A9sDpwqEY7zXjvpOQn6xr45oKSFPzLByG5uke4g==
+	t=1795629370;
+	b=CxLxpj1HUkOPEEzQzpXxXuR9H/djMjOOgDzZb/Xr01u4v/ss9me2lwb7WLugaStsJtMo
+	 g8Pz/UOI2+D0s7lAADgCP8TlsNgkDI+WGkPiqzDTMjTx8frrV2XQu0SqUuwNPXi2nB+jJ
+	 bR22DmDd8KRgBKUt+drk9wIQXfTwxX+hvXxK2T37PrJrOd5ZLuMoolF0qjVSNgEouni3J
+	 ZCkQeTTT6i5DRe2gJCazFTOw6fcP7NYY1oERJscjJEf5Y1kq72GcEWUiCTjV9p6pemKaI
+	 ywPB0Unrm+UJ80B5y6+qEwLboDZ9jP1hGSUHqOpgL7Ie3c/awRK79RK4zks4TnuIybg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795627700;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=8h+5RP3U69j/2zVa78nMDxtSxC8teTp19AawwGi4kIQ=;
-	b=daimkgh8x6HteIzSnxFvpZkmCvPWwmd0OU9yyMzumsnDjLsvut02Z1TXKp3OLe1BwMVx
-	 6TlMdTz7t/+LafOkdDAiDHDSJ/TBIq+k2bL5Ef6S7SN4FJIUim+Q9up5ZCFHp+KTzR8lU
-	 X2wXEijydMbn6+T5rHNNxC5JqnKI3lbfUqimzV+EqMEIJBYY3e4wgzaxQbBhG89jK9jKT
-	 9Ehk1nP8/KpwIhVuux9H2jzaTfLAD/Gp6Is7CHYNEH6pMV7dut3XgZsy0TTiXIyCIJNsJ
-	 S6YawEL3aq1+CdjSVjXnVLcwro+7A2EtXC9NTM7LKCy5lOBo2+b0a/7mtmL33QNvQqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795629370;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=f6MAiA1tU1RJJu+ItJqpHXoF/3Y5pGSsfxpH8J2NIlI=;
+	b=J5jl+WG0H5+ZEehiNLc9AdkFABn7hWlx47MnengBqBODNfh6s2xyjCPLtZZMM9ARExhV
+	 qpV5GKODC7q8cE+bJtS842i3sBovpp/PBVZrDACSwU03+eSTtq69ik1qKlpw6EG8Nz8Rx
+	 LkauC6GEbXBKgdd0djzCcG3ixrUCukOUEWHDuUiWJKb8lQjq8brTu7HlrxI85iUeMtkxl
+	 TsGiwS1HUb1RMxdV/RJIKO0lrtf9J1eJ+2bFVi2rAisrCto/tCWf7Prfg5/lHH3YF6TjT
+	 Qt0xiEcogaFFwuw9vlK0jRNA6s6ND4U4pNV9VwezPQClgZNDVzL7zNAYHJ5ZYULSatw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=proton.me;
-	spf=pass smtp.mailfrom=proton.me;
-	dkim=pass header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=7pkihfhpavb6lakjq6iwx2lajy.protonmail2 header.b=sf1UmTjD;
-	arc=none smtp.remote-ip=79.135.106.28
-Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AdVePdR9;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39E4606A31E
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 17:28:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A39E4606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476A6606A326
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 17:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=7pkihfhpavb6lakjq6iwx2lajy.protonmail2 header.b=sf1UmTjD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=7pkihfhpavb6lakjq6iwx2lajy.protonmail2; t=1795627696;
-	x=1795886896; bh=8h+5RP3U69j/2zVa78nMDxtSxC8teTp19AawwGi4kIQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=sf1UmTjDLv4YsCNMdfqb07AcxEvjQqTnf78UV9m6esbU+KPDbYMpmQ2w8PPS7qQiR
-	 +HkInoSZ0cpDAaE93ACbTVMoHmYTP8PqjeTugss7kLN8+kZSh8IlmlQ3eS3AjL1xmB
-	 PpkGDCexGQDBx91Ky8OfOrvAcLzYJ4Ro70E9dGRjWRSXMyRdHzBLinUxybkbV/Liq/
-	 idR83VE8yUhI76cRQfVBTcJlmI+vn0ctXeCkrKpJSRH/KxrbJX0YM/1O3/U37eoVzy
-	 /lGuwP4lpozc8k3//nMeny7Rcl4zEt6ORR5lRo2N2H2EDS4QyxEIINU72Hl97FsVRp
-	 27IvN+7GA1rYg==
-Date: Wed, 25 Nov 2026 17:28:10 +0000
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-From: Norman Herms <dockseed@proton.me>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Mika Westerberg <westeri@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: use the of_xlate() result when hogging lines
-Message-ID: <BdH-hgvZ3U7zGjPx0kKM-7SsjsgE-wN0wU4lbJykbkgUKvCLypS_PZUJBgCenst9JO7_MNMjyE6bqMmWzIsXfZIVPeoO8BQktyyEsCt1HCY=@proton.me>
-In-Reply-To: <20261125-gpio-three-cell-hog-v1-1-724b15c4f0d8@oss.qualcomm.com>
-References: <20261125-gpio-three-cell-hog-v1-1-724b15c4f0d8@oss.qualcomm.com>
-Feedback-ID: 144388465:user:proton
-X-Pm-Message-ID: 96744d9a3f8539d847b1326d39c57efcaaee3a47
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AdVePdR9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1DC1F000D4
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 17:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795629370;
+	bh=f6MAiA1tU1RJJu+ItJqpHXoF/3Y5pGSsfxpH8J2NIlI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=AdVePdR9Juw+mex6/WfIGFmOG5lH+g7wvLnxsLNNl63ExwWNN/+KTfBWylHaRkbK+
+	 1JD/L16FcBtDMT6o0BriKvlzsyEw5zJeFjgk5t23j3y0SB0OppAyGYBQHQ0IQRo/tu
+	 NkDnmuF4csUTaHNnYgmmBJPuBWaUi/G1h5PL0QSGBxvmzAdRvRFQS6iAkOBTq8SHkw
+	 EqMApbbRhS6XTqy4qdLBP0mZGoYJXTrUU2XeOAhcGFDMabFO5m9hQUJvXYJYjqWbgd
+	 V5ITRTnkVXjGl8sr3ddGqIY6TTxyZuuI4iBZOhL6+YL460J7VHA6ibn0sdhwIlVbaS
+	 JK4ex0kRY89aA==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5c1a3374400so4926189e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 09:56:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEdK8v6VjM7SmDLs+g++TQsEFXI8Jb9df9e/tY19UgBXp6WrOwAMbR2iqh9Pmi46whlxgUsrO07pGKP@vger.kernel.org
+X-Gm-Message-State: APuU4Z/LPDYEUV7h2XNiPmg9bzgGYifGKOF2oPwFeOauhxpDs4PY3tNs
+	iI9w8I/x3v2i6B4HzHGTTn2/Or/gEn5jxo6oaXv8JzdP2XTCvtnThz+6a7r8doRCM+tgdKRFjHU
+	XcFKiol7tuvqOzyTgVlh1MwlxgpxWzoY=
+X-Received: by 2002:a05:6512:31cd:b0:5c0:b5c:4052 with SMTP id
+ 2adb3069b0e04-5c1bc6819c4mr5241312e87.2.1795629368690; Wed, 25 Nov 2026
+ 09:56:08 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,26 +59,47 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20261111-rk805-pinctrl-alias-v1-1-e0c6cdd5b823@iav.lv>
+In-Reply-To: <20261111-rk805-pinctrl-alias-v1-1-e0c6cdd5b823@iav.lv>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 25 Nov 2026 18:55:54 +0100
+X-Gmail-Original-Message-ID: <CAD++jLn=+O55bh46owFdqb_TvQ+9KYfpLp6afsrO07v1JNd9Fw@mail.gmail.com>
+X-Gm-Features: Aa3M54qcfqetMqqeazuNtJAXHuKFVrLAs7ZwHievoGEVbmIindCmaMEjBUdUnhw
+Message-ID: <CAD++jLn=+O55bh46owFdqb_TvQ+9KYfpLp6afsrO07v1JNd9Fw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: rk805: Add the platform module alias
+To: iav@iav.lv
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bartosz,
+On Wed, Nov 11, 2026 at 3:05=E2=80=AFAM Igor Velkov via B4 Relay
+<devnull+iav.iav.lv@kernel.org> wrote:
 
-thanks for the quick fix.
+> From: Igor Velkov <iav@iav.lv>
+>
+> The rk8xx MFD core registers the pin controller of the RK805, RK806 and
+> RK816 as a platform device named "rk805-pinctrl", but the driver has
+> neither a MODULE_ALIAS nor a platform_device_id table. Built as a module
+> it is never loaded on its own, and everything that uses the PMIC GPIOs
+> waits for it: on the Pine64 ROCK64 the gpio-leds device with both
+> LEDs stays in deferred probe.
+>
+> The other rk8xx cell drivers (rk805-pwrkey, rk808-regulator, rtc-rk808,
+> clk-rk808) carry such an alias. Add one here as well.
+>
+> Fixes: ea479996c79b ("pinctrl: Add pinctrl driver for the RK805 PMIC")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Igor Velkov <iav@iav.lv>
+> ---
+> Tested on a Pine64 ROCK64 (RK805) with v7.3.4 and CONFIG_PINCTRL_RK805=3D=
+m:
+> without the alias the module is not loaded and both LEDs stay in
+> deferred probe over three boots; with it the module loads at boot, both
+> LEDs register and the deferred list is empty.
 
-Tested on a Radxa Cubie A7S (Allwinner A733) with v7.3.6 plus our
-out-of-tree A733 support patches (none of them touches gpiolib or the
-sunxi of_xlate()), with this patch backported (context adjusted, the
-+/- lines unchanged). Test DT: a hog on the r_pio with
-gpios =3D <1 4 0> (PM4, input).
+No reaction from the maintainers so patch applied!
 
-With the patch the hog is on line 36 (PM4) in /sys/kernel/debug/gpio
-and PM4's function field reads 0 (input). Without it, same tree and
-config otherwise, the hog is on line 1 (PL1) and PM4 stays at its
-reset value 0xf. In both cases PL1 ends up with the R_I2C0 controller
-and the PMIC on that bus probes.
-
-Tested-by: Norman Herms <dockseed@proton.me>
-
-The kernels were built and the measurements taken by an AI agent
-(Claude) on my board.
+Yours,
+Linus Walleij
