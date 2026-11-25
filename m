@@ -1,100 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795640510;
-	b=p3DwF7vrlwiLxPblsZGqJ8/J1ZVH2KIXe73SnBEyLlXeGA0XUQSVOipIzHYSdYdgAmuy
-	 bjXF4DHDjrQTNRVTeHLtLRgRaTUOtg0gXxebMh8fkHCpuJHw2IqoCv/xGIyoBn/UEnD6Q
-	 jOr5K3iPSIAzx7HqucHSPZ3NhO55HTcECMdWRCFW3oMqcXzxZbPcf6ytF+YPMw6fUamKJ
-	 oqUhpXUWqKx+4lEhWWpx/tRve+bB7UYy11GIQwNsPqYjLQaxy6pcdVlCoBbf7Ao86bxJ4
-	 JZbq368wFEWprr6rSA5Q6bL10S6Sg3JST9X8lJ65ntVd4TYso8ZDATKkHg+0otimvag==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795640510;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
-	b=J9UZhBLPZFx2LmsNXEqPqUukew/SSu2sVL+fU/6SmKQ2yVacli7AcQ80hGtZGEFXIzeo
-	 x09q48Wv4WR0tvtKrIfQ1bJygS8wJThuQZWIQPIgCIE/5itsoH2N3YurY1X+97Fb2/Fnk
-	 Qk7dudPnpgSx5YhIoPbH4x+9oLXtuxMOArAXlQyz8RnDZ3REwwkJkkeSXigIg+UlkK+ds
-	 1+TKnQocM5iFMRWTWTdWWisDT0ljvxku/H48gtN7Go+nxmwmH2mFCBTrsJNpDFSnRWzWc
-	 Ozf6vilVIVqD87WVHQzwotekJ+p8Fz9xosfWdKkMW23jB7VVSOpcREGcC2XSD8h/7Uw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Rh656DFr;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795640609;
+	b=LIcIWkBI0mIfi5XbPp6+NXBYvhPLnNsWwScurKsEdPkGtqJhpg1aviVq49xCoifKirKM
+	 2ujxK+o/6tCG1712OwjxbEt1FRJ4YxYygX3nCH5a1Q8OYzOVOhxqxvMOmrzC7xq+t4891
+	 wWAbizmR9GokIYYnV+74ejOsD6LqOWqtOVeu94qcl4BgFybQTdB5isOCjjlyVLCcEzrhy
+	 k0PQnDClAUdfyCU+La2fOK20577awk02E+IeDOA1YTpXDjTLXZGuw+hxcfOqRCTSPDyQa
+	 7Uhj3Wcjn04lzQh6retJHiCXabKDM7Mw19DJrIr6ZrJq8rZavqKbQMufVNxi+rmHXDQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795640609;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:X-Mailer:
+	 Alx-In-Reply-To:MIME-Version:Content-Type:Content-Disposition;
+	bh=xtHYFrKQoYbCgFBgMvYJmjUyH3AVPT8QsMe8YROz4Bk=;
+	b=pWdp826pBIf/WFQdz56eOTMn/PeyDrIWJLpLywRrBxOEgBnlK2wHTTcl3Qk/AMY1LF6V
+	 A0+f6uZOZJcrzOnkUpe/xozGMTIhIsqt4HpdTTO9LbvWVc7v3+YpY9V8OMHQ32QZHqmu+
+	 1hTfWYaJ6Ln9J3rsCkokwh8jp3luvifLtEN1KHgob62gKB17T6yg8vp3O/41QFYC40acU
+	 c8d2tSejyVYaQ7m6/uYXncRW6XpvJDg/rR0+B5scDCRw6WFYEC3HtfENlusBRC2Q+hfAK
+	 IgHT8E8vUNKUrRZnWIuto68mtIyrhDDED43kvuqdQ1GsVrRviCYQnVy6nZ81OMX+qJA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XhOORMrW;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C15D606A327
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 21:01:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C15D606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA35606A31E;
+	Wed, 25 Nov 2026 21:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Rh656DFr
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b8a1f59d5eso8254945a12.3
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 13:01:49 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795640508; cv=none;
-        d=google.com; s=arc-20260327;
-        b=J1lHtAkhf85pAnFkPznTuWF7VMP8rtgzNjF9JGRNVuNCpbejv3gPTZtG5r4EWd39J9
-         AqPbMGnM1pewkAQ6XEtkVw+qzkIhS4/yFf652Ot3sPWeWc3+zsfMRBOmmPuDVYEp7yHK
-         q/q/WZdOPN76TvQc54xhI3G27OdQw/pSPWxFX12m9HEl1UV2pgRuGsJksyiHpPF6Ej/d
-         AJBMbe6VfDF3/9wO5uIt1/HASeseOA4gfHyCs53rzBB/NTrSTL5D2E/ICiswn8qQK95e
-         41XsZnMkUKG4hhPwEqKipW4cWjJUwRAISNzMXQOcCJbFf9Q35rORaaCnyzhVD1mXCq8y
-         5thA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
-        fh=zcemQV98ZUHGxzROa9S4ddQVBzJG7A0ebG2hXJbHWOQ=;
-        b=ikjlQhNBzKAcT1ZUsFk8IIIwZ+lKHpfGWXgahVAJ313GK1bBD5XuOGw6IVo3s8ovjE
-         mFgverr95zJMBmQ0PXjZJR0JEkYSSo70sOkLhF94l29HJC2E4jScj3dObtSqCbXurUB6
-         K1QePkvmlvDVJXRgCj3ucAYnDhwoaUtJrRPAkq1DUXH5D13V5z3tAWhyxfVqEfFcG/pA
-         NpEu6e6cBhJa0Xer8aY9QTOgQOljk0q78hEbM4qwRgEc1mlxSD6nF9LNp+7YMiJSkK6J
-         cVxcESTqa+qVQkm4knzoNb6zu0c9tKUQhHpuPjjuoU2m0RwYeI5h/PEkNEz/+yNnzxfb
-         ViIw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795640508; x=1796245308; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
-        b=Rh656DFrOJ38tdIvMqsn4aj9AH9Xbgikv38mEHthnHH+r1g04KWtfbAR0zMm6kA/BE
-         lXT+1MAftWmHDaTShS3OvlcMTJ7addo56b1XybMjaDn7z+J5/N/V/UV0vR2fhZUlExrX
-         famy6j5mA+2gQeJYlYsJ3YVDcnj8TYRWr9tARpMcbIpqLUKQRx8lm3ls5HsZYrT3kEJR
-         1ljJKYmiD1fsVJromPArbSc93rIhKFf9jdgnWbf0gG+4Yu+lrQ7cTdt4I4jMTOD+hF7j
-         0t+6S9HnL58sjenkJcnbABRt6sGLHE+87Wa0MFTjGfBiuGdx5hBvc14esLYtqQacXbR4
-         AeHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795640508; x=1796245308;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
-        b=wm1o4V5L3DS1xcoE1vBE2Bq3gebch4mzGMXPzuNN6mLMZwfwmA9unuebrhIOdhTbqZ
-         WB5ahsNdQe9vXrDuC20nTGPYqcb/HjOCCAGmzeKztTUJmCMukTWTL57Oi3tyXO+2lAgm
-         rX3vnUJ7irx2hoelEyFaloHOfE2C+Kby1lV6OYvKvoKprm/+y8HvBVKmlF0yjI/eB995
-         XFBf4q3OCC+jFbzbhKWnrOHsZE54qwLngMy7oYEiBZRtCgDnongnpYg2e9jf+t42puMs
-         yHScIIdDJXWq8GhgtZ/2PdUpEBzqpv2fxgtCvALt8l2T4EOxqK16gn9dm1Mb/6daFNr2
-         lPqQ==
-X-Forwarded-Encrypted: i=1; AL+hErHE9ShgkxErjHjzI6NFPtd6HlLvgWavNgVD61r+W9Mo7OToEH7UHw3WaKwdfp/vPoApZj0KTG+51b9W@vger.kernel.org
-X-Gm-Message-State: APuU4Z9CeJsEyGtS5rXL/tmq8A4COKU66HeAFMrg+nSl5sv7xdXGAqPO
-	QVGyrdGbhaISHNAK5VuxAAj/LIy0X7GTVpE8XNHxIY4hBmo0z3tww1KHsoMgLcw2oT48l4aKZnB
-	WLyWisFLlLkf/yvPct0niWqrZmnyth8SdYks1I/lZHQ==
-X-Gm-Gg: AZFdTZcp9++XvSo5vuFF0HYwzyVaPjjieS9ox2AZp1wTdqDBk9gOxp8i1ogOV0DzlYl
-	EFaTKVhWp+Rx/ZhLGBnQz25byk0hO/5+IVEZQGzEjXZk0iYM+m/EBPIQ+OmSmrdoas9xAPUJeSh
-	rhO3sDh6imGNsQ8i1YO5s2oW6QBYVrZctFfXtgNpcx36w5Xn7FHA9aEhUS1FkMdfzzC7rZ6XavS
-	Gnt9OsKmda2oWX4FUfA9QKWQJ0w+3K8CfPtnYmxTGjjZPkwnBFAPkISBYVnOZPX0ZkDp7eRpPNs
-	wh23/pMycNttxABmNHUlQ+nIQ8MyoJT/7+ZuatcqT9ZaNxPbi5r8sy7ucCi9unrAHtafP06q48Z
-	aIQUEISo3UB8ZePMABPrxh7jyrZXfokqcEEIczTgkM++tBhT5Pa2seLxhehWW0C5l5R39gms=
-X-Received: by 2002:a05:6402:3222:b0:6b2:2339:370d with SMTP id
- 4fb4d7f45d1cf-6ba37ec485cmr16187328a12.39.1795640507528; Wed, 25 Nov 2026
- 13:01:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XhOORMrW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6537C1F000CA;
+	Wed, 25 Nov 2026 21:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795640609;
+	bh=xtHYFrKQoYbCgFBgMvYJmjUyH3AVPT8QsMe8YROz4Bk=;
+	h=Date:From:To:Cc:Subject;
+	b=XhOORMrWmWUb1XWEAo+i3oAQMLb7ZB2Gl3gxclk07ERPGWPs73HOW7+NvZZ7d79My
+	 HN/WMk6oI0/HxtGrrCi1aA19gneI0K3WRxtB7ZqCU+WJ/7BPe1kq9ABi9SmmqGcNOV
+	 PPOXSnFStcJg484+i8wuB6u5u3Kg72mb0IeK7OtEUuSaHzSd+uvSKDh6eFq93TmYcd
+	 RO/GwCg9jaG2MeaLqGWoblKTCgIL09jmYimU0vcYkCJtZLYxq23wVr6dRk30Zz6j+j
+	 Ay8iD4OyCextJ89mYyUSbv1blbdtnY6T+SgyIOAe6gE5SZ3M0E4WFaVeVEisAAnAIC
+	 Mt4aMRlcsyFWQ==
+Date: Wed, 25 Nov 2026 22:03:21 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-hardening@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, alx+linux-hardening@kernel.org
+Subject: [PATCH v7 0/4] Add strprefix() and fix a bug with it
+Message-ID: <cover.1795639368.git.alx@kernel.org>
+X-Mailer: git-send-email 2.55.0
+Alx-In-Reply-To: <cover.1793876837.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -104,663 +70,430 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261123-samsung-pinctrl-busclk-v1-1-6732c10a7f48@linaro.org>
-In-Reply-To: <20261123-samsung-pinctrl-busclk-v1-1-6732c10a7f48@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 25 Nov 2026 21:01:35 +0000
-X-Gm-Features: Aa3M54oXxYlXaOdRYB1cQuxq3Qps4EcCjGoYfXvMRW_bw_T0X2BdIFPg-0Amxy4
-Message-ID: <CADrjBPr9UJ0NzJ1tT2KY=H2ar4vUZBrzQvwfuT_Q_fSUe5x8KQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: keep bus clock enabled
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xhlrb5vu5bjuvz4z"
+Content-Disposition: inline
+
+
+--xhlrb5vu5bjuvz4z
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-hardening@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
+	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, alx+linux-hardening@kernel.org
+Subject: [PATCH v7 0/4] Add strprefix() and fix a bug with it
+Message-ID: <cover.1795639368.git.alx@kernel.org>
+MIME-Version: 1.0
 
-On Mon, 23 Nov 2026 at 15:59, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> With CONFIG_PROVE_RAW_LOCK_NESTING=3Dy, lockdep reports:
->
->     [ BUG: Invalid wait context ]
->     irq/130-1-0025/196 is trying to lock:
->     (enable_lock){....}-{3:3}, at: clk_enable_lock+0x68/0x110
->     other info that might help us debug this:
->     context-{5:5}
->     locks held by irq/130-1-0025/196: 1, on CPU#0:
->      #0: (&irq_desc_lock_class){-.-.}-{2:2}, at: irq_finalize_oneshot
->     Call trace:
->      _raw_spin_lock_irqsave+0x60/0x98
->      clk_enable_lock+0x68/0x110
->      clk_disable+0x34/0x68
->      exynos_irq_unmask+0xd8/0x1c0
->      unmask_threaded_irq+0x58/0x80
->      irq_finalize_oneshot.part.0+0x98/0x108
->      irq_thread_fn+0x68/0xc0
->      irq_thread+0xd0/0x1e0
->      kthread+0x118/0x138
->      ret_from_fork+0x10/0x20
->
-> The driver enables the optional bus clock ("pclk") around each register
-> access using clk_enable() and clk_disable(). Both acquire the clock
-> framework's enable_lock, which is a spinlock_t. On PREEMPT_RT,
-> spinlock_t turns into a sleeping lock and must not be acquired in hard
-> interrupt context or while holding a raw_spinlock_t. Most register
-> accesses happen in such contexts:
->
-> * The IRQ core invokes the irq_chip callbacks .irq_mask(),
->   .irq_unmask(), .irq_ack() and .irq_set_type() with the raw_spinlock_t
->   irq_desc::lock held.
-> * exynos_irq_demux_eint16_31() is a chained interrupt handler and runs
->   in hard interrupt context.
-> * The gpio_chip callbacks don't sleep, so GPIO consumers may call them
->   in hard interrupt context or with a raw_spinlock_t held.
->
-> Lockdep reports this only when enable_lock is contended, because
-> clk_enable_lock() tries spin_trylock_irqsave() first and lockdep
-> doesn't check the wait context of trylocks.
->
-> Enable the bus clock once during probe instead, keep it enabled for as
-> long as the driver is bound, and drop all per-access clk_enable() and
-> clk_disable() calls. Also revert samsung_pinmux_setup() back to void
-> and drop the now-unused pclk member of struct samsung_pinctrl_drv_data.
->
-> This reverts only the per-access clk_enable()/clk_disable() portion of
-> commit f9c744747973 ("pinctrl: samsung: support a bus clock"). The
-> driver still has to acquire and enable the bus clock: without a
-> consumer, the clock framework turns off unused gate clocks on kernels
-> or DTs without automatic clock gating, and gs101's alive GPIO clocks
-> don't set CLK_IGNORE_UNUSED.
->
-> The in-tree DTs provide this clock for Google Tensor gs101 only. Since
-> commit 298fac4f4b96 ("clk: samsung: Implement automatic clock gating
-> mode for CMUs"), the gs101 clock driver registers this clock as an
-> automatically gated clock, for which the enable and disable operations
-> are no-ops, so keeping the clock enabled doesn't stop the hardware from
-> gating it. Without automatic clock gating (in older kernels, and with
-> old DTs whose CMU register range size is not 0x10000), the clock stays
-> enabled for as long as the driver is bound.
->
-> The DT binding requires this clock for Exynos8890 as well, but the tree
-> contains neither a DT nor a clock driver for Exynos8890.
->
-> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Hi!
 
->  drivers/pinctrl/samsung/pinctrl-exynos.c  |  80 ----------------------
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 106 +++---------------------=
-------
->  drivers/pinctrl/samsung/pinctrl-samsung.h |   2 -
->  3 files changed, 9 insertions(+), 179 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
-amsung/pinctrl-exynos.c
-> index c45da9f13411..8adfeae96566 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -13,7 +13,6 @@
->  // the Samsung pinctrl/gpiolib driver. It also includes the implementati=
-on of
->  // external gpio and wakeup interrupt support.
->
-> -#include <linux/clk.h>
->  #include <linux/device.h>
->  #include <linux/interrupt.h>
->  #include <linux/irqdomain.h>
-> @@ -69,12 +68,6 @@ static void exynos_irq_mask(struct irq_data *irqd)
->         else
->                 reg_mask =3D our_chip->eint_mask + bank->eint_offset;
->
-> -       if (clk_enable(bank->drvdata->pclk)) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock for masking IRQ\n");
-> -               return;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->
->         mask =3D readl(bank->eint_base + reg_mask);
-> @@ -82,8 +75,6 @@ static void exynos_irq_mask(struct irq_data *irqd)
->         writel(mask, bank->eint_base + reg_mask);
->
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
-> -
-> -       clk_disable(bank->drvdata->pclk);
->  }
->
->  static void exynos_irq_ack(struct irq_data *irqd)
-> @@ -98,15 +89,7 @@ static void exynos_irq_ack(struct irq_data *irqd)
->         else
->                 reg_pend =3D our_chip->eint_pend + bank->eint_offset;
->
-> -       if (clk_enable(bank->drvdata->pclk)) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock to ack IRQ\n");
-> -               return;
-> -       }
-> -
->         writel(1 << irqd->hwirq, bank->eint_base + reg_pend);
-> -
-> -       clk_disable(bank->drvdata->pclk);
->  }
->
->  static void exynos_irq_unmask(struct irq_data *irqd)
-> @@ -134,12 +117,6 @@ static void exynos_irq_unmask(struct irq_data *irqd)
->         else
->                 reg_mask =3D our_chip->eint_mask + bank->eint_offset;
->
-> -       if (clk_enable(bank->drvdata->pclk)) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock for unmasking IRQ\n");
-> -               return;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->
->         mask =3D readl(bank->eint_base + reg_mask);
-> @@ -147,8 +124,6 @@ static void exynos_irq_unmask(struct irq_data *irqd)
->         writel(mask, bank->eint_base + reg_mask);
->
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
-> -
-> -       clk_disable(bank->drvdata->pclk);
->  }
->
->  static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
-> @@ -159,7 +134,6 @@ static int exynos_irq_set_type(struct irq_data *irqd,=
- unsigned int type)
->         unsigned int shift =3D EXYNOS_EINT_CON_LEN * irqd->hwirq;
->         unsigned int con, trig_type;
->         unsigned long reg_con;
-> -       int ret;
->
->         switch (type) {
->         case IRQ_TYPE_EDGE_RISING:
-> @@ -192,20 +166,11 @@ static int exynos_irq_set_type(struct irq_data *irq=
-d, unsigned int type)
->         else
->                 reg_con =3D our_chip->eint_con + bank->eint_offset;
->
-> -       ret =3D clk_enable(bank->drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock for configuring IRQ type\=
-n");
-> -               return ret;
-> -       }
-> -
->         con =3D readl(bank->eint_base + reg_con);
->         con &=3D ~(EXYNOS_EINT_CON_MASK << shift);
->         con |=3D trig_type << shift;
->         writel(con, bank->eint_base + reg_con);
->
-> -       clk_disable(bank->drvdata->pclk);
-> -
->         return 0;
->  }
->
-> @@ -242,14 +207,6 @@ static int exynos_irq_request_resources(struct irq_d=
-ata *irqd)
->         shift =3D irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
->         mask =3D (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
->
-> -       ret =3D clk_enable(bank->drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock for configuring pin %s-%l=
-u\n",
-> -                       bank->name, irqd->hwirq);
-> -               return ret;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->
->         con =3D readl(bank->pctl_base + reg_con);
-> @@ -259,8 +216,6 @@ static int exynos_irq_request_resources(struct irq_da=
-ta *irqd)
->
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(bank->drvdata->pclk);
-> -
->         return 0;
->  }
->
-> @@ -275,13 +230,6 @@ static void exynos_irq_release_resources(struct irq_=
-data *irqd)
->         shift =3D irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
->         mask =3D (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
->
-> -       if (clk_enable(bank->drvdata->pclk)) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock for deconfiguring pin %s-=
-%lu\n",
-> -                       bank->name, irqd->hwirq);
-> -               return;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->
->         con =3D readl(bank->pctl_base + reg_con);
-> @@ -291,8 +239,6 @@ static void exynos_irq_release_resources(struct irq_d=
-ata *irqd)
->
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(bank->drvdata->pclk);
-> -
->         gpiochip_unlock_as_irq(&bank->gpio_chip, irqd->hwirq);
->  }
->
-> @@ -342,19 +288,11 @@ static irqreturn_t exynos_eint_gpio_irq(int irq, vo=
-id *data)
->         unsigned int svc, group, pin;
->         int ret;
->
-> -       if (clk_enable(bank->drvdata->pclk)) {
-> -               dev_err(bank->gpio_chip.parent,
-> -                       "unable to enable clock for handling IRQ\n");
-> -               return IRQ_NONE;
-> -       }
-> -
->         if (bank->eint_con_offset)
->                 svc =3D readl(bank->eint_base + EXYNOSAUTO_SVC_OFFSET);
->         else
->                 svc =3D readl(bank->eint_base + EXYNOS_SVC_OFFSET);
->
-> -       clk_disable(bank->drvdata->pclk);
-> -
->         group =3D EXYNOS_SVC_GROUP(svc);
->         pin =3D svc & EXYNOS_SVC_NUM_MASK;
->
-> @@ -729,20 +667,6 @@ static void exynos_irq_demux_eint16_31(struct irq_de=
-sc *desc)
->
->         chained_irq_enter(chip, desc);
->
-> -       /*
-> -        * just enable the clock once here, to avoid an enable/disable da=
-nce for
-> -        * each bank.
-> -        */
-> -       if (eintd->nr_banks) {
-> -               struct samsung_pin_bank *b =3D eintd->banks[0];
-> -
-> -               if (clk_enable(b->drvdata->pclk)) {
-> -                       dev_err(b->gpio_chip.parent,
-> -                               "unable to enable clock for pending IRQs\=
-n");
-> -                       goto out;
-> -               }
-> -       }
-> -
->         for (i =3D 0; i < eintd->nr_banks; ++i) {
->                 struct samsung_pin_bank *b =3D eintd->banks[i];
->                 pend =3D readl(b->eint_base + b->irq_chip->eint_pend
-> @@ -752,10 +676,6 @@ static void exynos_irq_demux_eint16_31(struct irq_de=
-sc *desc)
->                 exynos_irq_demux_eint(pend & ~mask, b->irq_domain);
->         }
->
-> -       if (eintd->nr_banks)
-> -               clk_disable(eintd->banks[0]->drvdata->pclk);
-> -
-> -out:
->         chained_irq_exit(chip, desc);
->  }
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
-samsung/pinctrl-samsung.c
-> index 0c91e1124a46..16980f4ef3b1 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -370,8 +370,8 @@ static void pin_to_reg_bank(struct samsung_pinctrl_dr=
-v_data *drvdata,
->  }
->
->  /* enable or disable a pinmux function */
-> -static int samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned se=
-lector,
-> -                               unsigned group)
-> +static void samsung_pinmux_setup(struct pinctrl_dev *pctldev,
-> +                                unsigned int selector, unsigned int grou=
-p)
->  {
->         struct samsung_pinctrl_drv_data *drvdata;
->         const struct samsung_pin_bank_type *type;
-> @@ -381,7 +381,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *p=
-ctldev, unsigned selector,
->         unsigned long flags;
->         const struct samsung_pmx_func *func;
->         const struct samsung_pin_group *grp;
-> -       int ret;
->
->         drvdata =3D pinctrl_dev_get_drvdata(pctldev);
->         func =3D &drvdata->pmx_functions[selector];
-> @@ -397,12 +396,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *=
-pctldev, unsigned selector,
->                 reg +=3D 4;
->         }
->
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(pctldev->dev, "failed to enable clock for setup\n=
-");
-> -               return ret;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->
->         data =3D readl(reg + type->reg_offset[PINCFG_TYPE_FUNC]);
-> @@ -411,10 +404,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *=
-pctldev, unsigned selector,
->         writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
->
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
-> -
-> -       clk_disable(drvdata->pclk);
-> -
-> -       return 0;
->  }
->
->  /* enable a specified pinmux by writing to registers */
-> @@ -422,7 +411,8 @@ static int samsung_pinmux_set_mux(struct pinctrl_dev =
-*pctldev,
->                                   unsigned selector,
->                                   unsigned group)
->  {
-> -       return samsung_pinmux_setup(pctldev, selector, group);
-> +       samsung_pinmux_setup(pctldev, selector, group);
-> +       return 0;
->  }
->
->  /* list of pinmux callbacks for the pinmux vertical in pinctrl core */
-> @@ -445,7 +435,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pct=
-ldev, unsigned int pin,
->         u32 data, width, pin_offset, mask, shift;
->         u32 cfg_value, cfg_reg;
->         unsigned long flags;
-> -       int ret;
->
->         drvdata =3D pinctrl_dev_get_drvdata(pctldev);
->         pin_to_reg_bank(drvdata, pin, &reg_base, &pin_offset, &bank);
-> @@ -457,12 +446,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pc=
-tldev, unsigned int pin,
->         width =3D type->fld_width[cfg_type];
->         cfg_reg =3D type->reg_offset[cfg_type];
->
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev, "failed to enable clock\n");
-> -               return ret;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->
->         mask =3D (1 << width) - 1;
-> @@ -482,8 +465,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pct=
-ldev, unsigned int pin,
->
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(drvdata->pclk);
-> -
->         return 0;
->  }
->
-> @@ -574,22 +555,12 @@ static int samsung_gpio_set(struct gpio_chip *gc, u=
-nsigned int offset,
->                             int value)
->  {
->         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
-> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
->         unsigned long flags;
-> -       int ret;
-> -
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev, "failed to enable clock\n");
-> -               return ret;
-> -       }
->
->         raw_spin_lock_irqsave(&bank->slock, flags);
->         samsung_gpio_set_value(gc, offset, value);
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(drvdata->pclk);
-> -
->         return 0;
->  }
->
-> @@ -600,23 +571,13 @@ static int samsung_gpio_get(struct gpio_chip *gc, u=
-nsigned offset)
->         u32 data;
->         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
->         const struct samsung_pin_bank_type *type =3D bank->type;
-> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
-> -       int ret;
->
->         reg =3D bank->pctl_base + bank->pctl_offset;
->
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev, "failed to enable clock\n");
-> -               return ret;
-> -       }
-> -
->         data =3D readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
->         data >>=3D offset;
->         data &=3D 1;
->
-> -       clk_disable(drvdata->pclk);
-> -
->         return data;
->  }
->
-> @@ -661,22 +622,13 @@ static int samsung_gpio_set_direction(struct gpio_c=
-hip *gc,
->  static int samsung_gpio_direction_input(struct gpio_chip *gc, unsigned o=
-ffset)
->  {
->         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
-> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
->         unsigned long flags;
->         int ret;
->
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev, "failed to enable clock\n");
-> -               return ret;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->         ret =3D samsung_gpio_set_direction(gc, offset, true);
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(drvdata->pclk);
-> -
->         return ret;
->  }
->
-> @@ -685,23 +637,14 @@ static int samsung_gpio_direction_output(struct gpi=
-o_chip *gc, unsigned offset,
->                                                         int value)
->  {
->         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
-> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
->         unsigned long flags;
->         int ret;
->
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev, "failed to enable clock\n");
-> -               return ret;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->         samsung_gpio_set_value(gc, offset, value);
->         ret =3D samsung_gpio_set_direction(gc, offset, false);
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(drvdata->pclk);
-> -
->         return ret;
->  }
->
-> @@ -1028,7 +971,6 @@ static int samsung_gpio_set_config(struct gpio_chip =
-*gc, unsigned int offset,
->         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
->         struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
->         unsigned int value;
-> -       int ret =3D 0;
->         unsigned long flags;
->
->         switch (pinconf_to_config_param(config)) {
-> @@ -1045,19 +987,11 @@ static int samsung_gpio_set_config(struct gpio_chi=
-p *gc, unsigned int offset,
->                 return -ENOTSUPP;
->         }
->
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev, "failed to enable clock\n");
-> -               return ret;
-> -       }
-> -
->         raw_spin_lock_irqsave(&bank->slock, flags);
->         samsung_gpio_set_pud(gc, offset, value);
->         raw_spin_unlock_irqrestore(&bank->slock, flags);
->
-> -       clk_disable(drvdata->pclk);
-> -
-> -       return ret;
-> +       return 0;
->  }
->
->  static const struct gpio_chip samsung_gpiolib_chip =3D {
-> @@ -1257,6 +1191,7 @@ static int samsung_pinctrl_probe(struct platform_de=
-vice *pdev)
->         struct samsung_pinctrl_drv_data *drvdata;
->         const struct samsung_pin_ctrl *ctrl;
->         struct device *dev =3D &pdev->dev;
-> +       struct clk *pclk;
->         int ret;
->
->         drvdata =3D devm_kzalloc_obj(dev, *drvdata);
-> @@ -1285,9 +1220,9 @@ static int samsung_pinctrl_probe(struct platform_de=
-vice *pdev)
->                 }
->         }
->
-> -       drvdata->pclk =3D devm_clk_get_optional_prepared(dev, "pclk");
-> -       if (IS_ERR(drvdata->pclk)) {
-> -               ret =3D PTR_ERR(drvdata->pclk);
-> +       pclk =3D devm_clk_get_optional_enabled(dev, "pclk");
-> +       if (IS_ERR(pclk)) {
-> +               ret =3D PTR_ERR(pclk);
->                 goto err_put_banks;
->         }
->
-> @@ -1335,13 +1270,6 @@ static int __maybe_unused samsung_pinctrl_suspend(=
-struct device *dev)
->         struct samsung_pin_bank *bank;
->         int i;
->
-> -       i =3D clk_enable(drvdata->pclk);
-> -       if (i) {
-> -               dev_err(drvdata->dev,
-> -                       "failed to enable clock for saving state\n");
-> -               return i;
-> -       }
-> -
->         for (i =3D 0; i < drvdata->nr_banks; i++) {
->                 bank =3D &drvdata->pin_banks[i];
->                 const void __iomem *reg =3D bank->pctl_base + bank->pctl_=
-offset;
-> @@ -1377,8 +1305,6 @@ static int __maybe_unused samsung_pinctrl_suspend(s=
-truct device *dev)
->                         drvdata->suspend(bank);
->         }
->
-> -       clk_disable(drvdata->pclk);
-> -
->         if (drvdata->retention_ctrl && drvdata->retention_ctrl->enable)
->                 drvdata->retention_ctrl->enable(drvdata);
->
-> @@ -1397,20 +1323,8 @@ static int __maybe_unused samsung_pinctrl_resume(s=
-truct device *dev)
->  {
->         struct samsung_pinctrl_drv_data *drvdata =3D dev_get_drvdata(dev)=
-;
->         struct samsung_pin_bank *bank;
-> -       int ret;
->         int i;
->
-> -       /*
-> -        * enable clock before the callback, as we don't want to have to =
-deal
-> -        * with callback cleanup on clock failures.
-> -        */
-> -       ret =3D clk_enable(drvdata->pclk);
-> -       if (ret) {
-> -               dev_err(drvdata->dev,
-> -                       "failed to enable clock for restoring state\n");
-> -               return ret;
-> -       }
-> -
->         for (i =3D 0; i < drvdata->nr_banks; i++) {
->                 bank =3D &drvdata->pin_banks[i];
->                 if (drvdata->resume)
-> @@ -1448,8 +1362,6 @@ static int __maybe_unused samsung_pinctrl_resume(st=
-ruct device *dev)
->                                 writel(bank->pm_save[type], reg + offs[ty=
-pe]);
->         }
->
-> -       clk_disable(drvdata->pclk);
-> -
->         if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
->                 drvdata->retention_ctrl->disable(drvdata);
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/=
-samsung/pinctrl-samsung.h
-> index 7c60375d5924..5390c6d1d7a5 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> @@ -302,7 +302,6 @@ struct samsung_pin_ctrl {
->   *             through samsung_pinctrl_drv_data, not samsung_pin_bank).
->   * @dev: device instance representing the controller.
->   * @irq: interrpt number used by the controller to notify gpio interrupt=
-s.
-> - * @pclk: optional bus clock if required for accessing registers
->   * @ctrl: pin controller instance managed by the driver.
->   * @pctl: pin controller descriptor registered with the pinctrl subsyste=
-m.
->   * @pctl_dev: cookie representing pinctrl device instance.
-> @@ -322,7 +321,6 @@ struct samsung_pinctrl_drv_data {
->         void __iomem                    *virt_base;
->         struct device                   *dev;
->         int                             irq;
-> -       struct clk                      *pclk;
->
->         struct pinctrl_desc             pctl;
->         struct pinctrl_dev              *pctl_dev;
->
-> ---
-> base-commit: 749a4de370409464cf8501ec5b2451df45c84eb4
-> change-id: 20261123-samsung-pinctrl-busclk-7211f2c20f58
->
-> Best regards,
-> --
-> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
+str_has_prefix() is based on sizes and lengths, which means it must
+overload the valid length 0 to mean not found.  This is a typical
+consequence of choosing to design an API around sizes and lengths, and
+vanishes when moving to pointer-based similar APIs.
+
+According to its author (Steven R.), str_has_prefix() was never meant to
+accept an empty prefix, but that's not documented, and there's no
+obvious reason why that would be acceptable for a generic string
+function (as opposed to a function very specific to its original use).
+Anyway, as suggested by Steven, I've added a WARN_ON_ONCE() to catch
+such uses, and also added documentation stating this limitation.
+
+If the function had been named something like strprefix_len(), that
+design would have made sense, but being called str_has_prefix(), the
+obvious way to call it will result in bugs, because the name contradicts
+its intended use.
+
+Users of strings need a function whose behavior extends naturally to the
+empty string, and we can do better, by returning a pointer.  And indeed,
+users have ended up using str_has_prefix() with empty prefix, expecting
+it to work (as is natural of a generic string API with that name).
+
+This patch set adds strprefix(), and uses strprefix() in one place to
+fix a bug reported by Bartosz.
+
+It also adds streq(3), just because it simplifies the tests, and is also
+a nice interface.
+
+This patch set doesn't include the sibling strsuffix(), and also doesn't
+replace any other cases which would benefit from strprefix(), to allow
+merging it quickly.  I'll work on a follow-up patch, including the
+patches from v6 that have been dropped in this v7, after this has been
+applied.
+
+
+Have a lovely night!
+Alexo
+
+
+Changes in v7
+~~~~~~~~~~~~~
+
+-  [1/4]
+   -  Add tests for streq(3).
+-  [2/4]
+   -  Use __nonnull_args().  [Joe]
+   -  Rewrite the description entirely, to be descriptive, rather than
+      comparative.  [Joe]
+-  [3/4]
+   -  Remove 'Suggested-by', since the commit changed too much from what
+      he suggested.
+-  [4/4]
+   -  Add 'Reviewed-by' and 'Tested-by' tags, accompanied with the
+      'Message-ID's of the emails in which they were given.
+-  Drop all other commits from v6, to minimize the patch set, and help
+   adopt it quickly.
+
+
+See the range-diff below.
+
+v1: <https://lore.kernel.org/linux-hardening/cover.1793876837.git.alx@kerne=
+l.org/>
+v2: <https://lore.kernel.org/linux-hardening/cover.1793882260.git.alx@kerne=
+l.org/>
+v3: <https://lore.kernel.org/linux-hardening/cover.1794323750.git.alx@kerne=
+l.org/>
+v4: <https://lore.kernel.org/linux-hardening/cover.1794425425.git.alx@kerne=
+l.org/>
+v5: <https://lore.kernel.org/linux-hardening/cover.1794574496.git.alx@kerne=
+l.org/>
+v6: <https://lore.kernel.org/linux-hardening/cover.1794667407.git.alx@kerne=
+l.org/>
+
+Testing
+~~~~~~~
+
+(I've indented the output, to better see the commands.)
+
+$ git log --oneline --graph v7.4-rc1^..strprefix7
+	* 396395e1d02c (HEAD -> strprefix, tag: strprefix7) device property: Fix f=
+wnode_name_eq>
+	* c4131a109098 string: Document corner-case misbehavior in str_has_prefix(=
+) for empty p>
+	* b32d70163fb4 string: Add strprefix()
+	* ad8500a6eb0a string: Add streq()
+	* 6628e7d4c6b2 (tag: v7.4-rc1, master) Linux 7.4-rc1
+$ cp ../kunitconfig .kunitconfig
+$ cat .kunitconfig
+	CONFIG_KUNIT=3Dy
+	CONFIG_STRING_KUNIT_TEST=3Dy
+$ mkdir -p ~/tmp/strprefix7
+$ export TMPDIR=3D$HOME/tmp/strprefix7/
+$ ./tools/testing/kunit/kunit.py run "string*"
+	[21:40:20] Configuring KUnit Kernel ...
+	Generating .config ...
+	Populating config with:
+	$ make ARCH=3Dum O=3D.kunit olddefconfig
+	[21:40:23] Building KUnit Kernel ...
+	Populating config with:
+	$ make ARCH=3Dum O=3D.kunit olddefconfig
+	Building with:
+	$ make all compile_commands.json scripts_gdb ARCH=3Dum O=3D.kunit --jobs=
+=3D24
+	[21:40:39] Starting KUnit Kernel (1/1)...
+	[21:40:39] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	Running tests with:
+	$ .kunit/linux 'kunit.filter_glob=3Dstring*' kunit.enable=3D1 mem=3D1G con=
+sole=3Dtty kunit_shutdown=3Dhalt
+	[21:40:39] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D string-stream-test (12 =
+subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	[21:40:39] [PASSED] string_stream_managed_init_test
+	[21:40:39] [PASSED] string_stream_unmanaged_init_test
+	[21:40:39] [PASSED] string_stream_managed_free_test
+	[21:40:39] [PASSED] string_stream_resource_free_test
+	[21:40:39] [PASSED] string_stream_line_add_test
+	[21:40:39] [PASSED] string_stream_variable_length_line_test
+	[21:40:39] [PASSED] string_stream_append_test
+	[21:40:39] [PASSED] string_stream_append_auto_newline_test
+	[21:40:39] [PASSED] string_stream_append_empty_string_test
+	[21:40:39] [PASSED] string_stream_no_auto_newline_test
+	[21:40:39] [PASSED] string_stream_auto_newline_test
+	[21:40:39] [PASSED] string_stream_performance_test
+	[21:40:39] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] string-s=
+tream-test =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	[21:40:39] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D strin=
+g (30 subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	[21:40:39] [PASSED] string_test_memset16
+	[21:40:40] [PASSED] string_test_memset32
+	[21:40:40] [PASSED] string_test_memset64
+	[21:40:40] [PASSED] string_test_strlen
+	[21:40:40] [PASSED] string_test_strnlen
+	[21:40:40] [PASSED] string_test_strchr
+	[21:40:40] [PASSED] string_test_strnchr
+	[21:40:40] [PASSED] string_test_strrchr
+	[21:40:40] [PASSED] string_test_strspn
+	[21:40:40] [PASSED] string_test_streq
+	[21:40:40] [PASSED] string_test_strprefix
+	[21:40:40] [PASSED] string_test_strcmp
+	[21:40:40] [PASSED] string_test_strcmp_long_strings
+	[21:40:40] [PASSED] string_test_strncmp
+	[21:40:40] [PASSED] string_test_strncmp_long_strings
+	[21:40:40] [PASSED] string_test_strcasecmp
+	[21:40:40] [PASSED] string_test_strcasecmp_long_strings
+	[21:40:40] [PASSED] string_test_strncasecmp
+	[21:40:40] [PASSED] string_test_strncasecmp_long_strings
+	[21:40:40] [PASSED] string_test_strscpy
+	[21:40:40] [PASSED] string_test_strcat
+	[21:40:40] [PASSED] string_test_strncat
+	[21:40:40] [PASSED] string_test_strlcat
+	[21:40:40] [PASSED] string_test_strtomem
+	[21:40:40] [PASSED] string_test_memtostr
+	[21:40:40] [PASSED] string_test_strends
+	[21:40:40] [SKIPPED] string_bench_strlen (not enabled)
+	[21:40:40] [SKIPPED] string_bench_strnlen (not enabled)
+	[21:40:40] [SKIPPED] string_bench_strchr (not enabled)
+	[21:40:40] [SKIPPED] string_bench_strrchr (not enabled)
+	[21:40:40] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+ [PASSED] string =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+	[21:40:40] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D string_helpers (4=
+ subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	[21:40:40] [PASSED] test_get_size
+	[21:40:40] [PASSED] test_upper_lower
+	[21:40:40] [PASSED] test_unescape
+	[21:40:40] [PASSED] test_escape
+	[21:40:40] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] st=
+ring_helpers =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	[21:40:40] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	[21:40:40] Testing complete. Ran 46 tests: passed: 42, skipped: 4
+	[21:40:40] Elapsed time: 19.891s total, 2.881s configuring, 16.793s buildi=
+ng, 0.173s running
+
+$ make allmodconfig
+	  HOSTCC  scripts/basic/fixdep
+	  HOSTCC  scripts/kconfig/conf.o
+	  HOSTCC  scripts/kconfig/confdata.o
+	  HOSTCC  scripts/kconfig/expr.o
+	  LEX     scripts/kconfig/lexer.lex.c
+	  YACC    scripts/kconfig/parser.tab.[ch]
+	  HOSTCC  scripts/kconfig/lexer.lex.o
+	  HOSTCC  scripts/kconfig/menu.o
+	  HOSTCC  scripts/kconfig/parser.tab.o
+	  HOSTCC  scripts/kconfig/preprocess.o
+	  HOSTCC  scripts/kconfig/symbol.o
+	  HOSTCC  scripts/kconfig/util.o
+	  HOSTLD  scripts/kconfig/conf
+	#
+	# configuration written to .config
+	#
+$ time make -j24 | ts -s
+	00:00:01   GEN     arch/x86/include/generated/asm/orc_hash.h
+	00:00:01   UPD     arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+	00:00:01   UPD     arch/x86/include/generated/uapi/asm/errno.h
+=2E..
+	00:21:16   LD [M]  net/qrtr/qrtr-tun.ko
+	00:21:16   LD [M]  net/qrtr/qrtr-mhi.ko
+	00:21:16   LD [M]  virt/lib/irqbypass.ko
+
+	real	21m15.252s
+	user	442m14.443s
+	sys	31m3.323s
+
+
+Alejandro Colomar (4):
+  string: Add streq()
+  string: Add strprefix()
+  string: Document corner-case misbehavior in str_has_prefix() for empty
+    prefix
+  device property: Fix fwnode_name_eq() for empty node names
+
+ drivers/base/property.c            |  5 +---
+ drivers/clk/socfpga/clk-gate-a10.c |  2 --
+ drivers/clk/socfpga/clk.h          |  1 -
+ include/linux/string.h             | 42 +++++++++++++++++++++++++++---
+ lib/tests/string_kunit.c           | 22 ++++++++++++++++
+ 5 files changed, 61 insertions(+), 11 deletions(-)
+
+Range-diff against v6:
+ 1:  cff11fd710fd !  1:  ad8500a6eb0a string: Add streq()
+    @@ include/linux/string.h
+      extern char *strndup_user(const char __user *, long);
+      extern void *memdup_user(const void __user *, size_t) __realloc_size(=
+2);
+      extern void *vmemdup_user(const void __user *, size_t) __realloc_size=
+(2);
+    +
+    + ## lib/tests/string_kunit.c ##
+    +@@ lib/tests/string_kunit.c: static void string_test_strspn(struct kun=
+it *test)
+    +   }
+    + }
+    +=20
+    ++static void string_test_streq(struct kunit *test)
+    ++{
+    ++  KUNIT_ASSERT_TRUE(test,  streq("foo", "foo"));
+    ++  KUNIT_ASSERT_TRUE(test,  streq("", ""));
+    ++
+    ++  KUNIT_ASSERT_FALSE(test, streq("foo", "foobar"));
+    ++  KUNIT_ASSERT_FALSE(test, streq("foobar", "foo"));
+    ++  KUNIT_ASSERT_FALSE(test, streq("foo", "bar"));
+    ++  KUNIT_ASSERT_FALSE(test, streq("foo", ""));
+    ++  KUNIT_ASSERT_FALSE(test, streq("", "bar"));
+    ++}
+    ++
+    + static char strcmp_buffer1[STRCMP_LARGE_BUF_LEN];
+    + static char strcmp_buffer2[STRCMP_LARGE_BUF_LEN];
+    +=20
+    +@@ lib/tests/string_kunit.c: static struct kunit_case string_test_case=
+s[] =3D {
+    +   KUNIT_CASE(string_test_strnchr),
+    +   KUNIT_CASE(string_test_strrchr),
+    +   KUNIT_CASE(string_test_strspn),
+    ++  KUNIT_CASE(string_test_streq),
+    +   KUNIT_CASE(string_test_strcmp),
+    +   KUNIT_CASE(string_test_strcmp_long_strings),
+    +   KUNIT_CASE(string_test_strncmp),
+ 2:  0eaa4ce73a2b !  2:  b32d70163fb4 string: Add strprefix()
+    @@ include/linux/string.h: void memcpy_and_pad(void *dest, size_t dest_=
+len, const v
+     + * @s: The string to be tested
+     + * @prefix: The string to see if @s starts with
+     + *
+    -+ * A common way to test a prefix of a string is to do:
+    -+ *  strncmp(s, prefix, sizeof(prefix) - 1)
+    -+ *
+    -+ * But this can lead to bugs due to typos, or if prefix is a pointer
+    -+ * and not a constant.  Instead use strprefix().
+    ++ * This function determines whether the string pointed to by @s
+    ++ * starts with the sequence of characters
+    ++ * (excluding the terminating null character)
+    ++ * in the string pointed to by @prefix.
+     + *
+     + * Returns:
+     + * *  @s + strlen(@prefix) if @s starts with @prefix
+     + * *  NULL if @s does not start with @prefix
+     + */
+    -+__attribute__((nonnull(1, 2)))
+    ++__nonnull_args(1, 2)
+     +static inline char *strprefix(const char *s, const char *prefix)
+     +{
+     +  size_t len =3D strlen(prefix);
+    @@ include/linux/string.h: void memcpy_and_pad(void *dest, size_t dest_=
+len, const v
+       * * strlen(@prefix) if @str starts with @prefix
+    =20
+      ## lib/tests/string_kunit.c ##
+    -@@ lib/tests/string_kunit.c: static void string_test_strspn(struct kun=
+it *test)
+    -   }
+    +@@ lib/tests/string_kunit.c: static void string_test_streq(struct kuni=
+t *test)
+    +   KUNIT_ASSERT_FALSE(test, streq("", "bar"));
+      }
+     =20
+     +static void string_test_strprefix(struct kunit *test)
+    @@ lib/tests/string_kunit.c: static void string_test_strspn(struct kuni=
+t *test)
+      static char strcmp_buffer2[STRCMP_LARGE_BUF_LEN];
+     =20
+     @@ lib/tests/string_kunit.c: static struct kunit_case string_test_case=
+s[] =3D {
+    -   KUNIT_CASE(string_test_strnchr),
+        KUNIT_CASE(string_test_strrchr),
+        KUNIT_CASE(string_test_strspn),
+    +   KUNIT_CASE(string_test_streq),
+     +  KUNIT_CASE(string_test_strprefix),
+        KUNIT_CASE(string_test_strcmp),
+        KUNIT_CASE(string_test_strcmp_long_strings),
+ 3:  5648bb17b88a !  3:  c4131a109098 string: Document corner-case misbehav=
+ior in str_has_prefix() for empty prefix
+    @@ Commit message
+    =20
+         Closes: https://lore.kernel.org/linux-hardening/20261104-fwnode-fo=
+r-each-prop-v1-1-6e28fe1c72c4@oss.qualcomm.com/
+         Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm=
+=2Ecom>
+    -    Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+         Signed-off-by: Alejandro Colomar <alx@kernel.org>
+    =20
+      ## include/linux/string.h ##
+ 4:  7fc1321995f1 !  4:  396395e1d02c device property: Fix fwnode_name_eq()=
+ for empty node names
+    @@ Commit message
+         Fixes: a9c8c738066b7 ("device property: Add fwnode_name_eq()")
+         Closes: https://lore.kernel.org/linux-hardening/20261104-fwnode-fo=
+r-each-prop-v1-1-6e28fe1c72c4@oss.qualcomm.com/
+         Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm=
+=2Ecom>
+    +    Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+    +    Message-ID: <avrSUUM3HMgxTNpl@kekkonen.localdomain>
+    +    Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm=
+=2Ecom>
+    +    Message-ID: <nat4ilqmzzpuyrjbuahl367ip22tfnmjorydlppuwqiscxaujo@kf=
+63j4lb3flk>
+    +    Tested-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.c=
+om>
+    +    Message-ID: <nat4ilqmzzpuyrjbuahl367ip22tfnmjorydlppuwqiscxaujo@kf=
+63j4lb3flk>
+         Signed-off-by: Alejandro Colomar <alx@kernel.org>
+    =20
+      ## drivers/base/property.c ##
+ 5:  2a26768609bd <  -:  ------------ stddef: Add const_cast()
+ 6:  d9680e101472 <  -:  ------------ string: Add [C]QChar_of() and QVoid_o=
+f()
+ 7:  9def9160f777 <  -:  ------------ string: Make strprefix() const-qualif=
+ier-generic
+ 8:  8a3c50cfe298 <  -:  ------------ perf map: Use bool for return type in=
+stead of int
+ 9:  212e7fc2cb99 <  -:  ------------ string: Make strstarts() a legacy ali=
+as for strprefix()
+10:  ec94f69d2925 <  -:  ------------ platform/x86: hp-bioscfg: Rename loca=
+l variable
+11:  782e2941d0f1 <  -:  ------------ treewide: s/strstarts/strprefix/g
+12:  cabc673b9ac7 <  -:  ------------ string: Remove strstarts()
+13:  024364c695d5 <  -:  ------------ s390/test_unwind: Use bool for boolea=
+ns
+14:  0c0070455de0 <  -:  ------------ treewide: Replace boolean uses of str=
+_has_prefix() by strprefix()
+15:  95bfed420dd9 <  -:  ------------ treewide: Replace some uses of str_ha=
+s_prefix() by strprefix()
+16:  636fe759a4eb <  -:  ------------ string: Add strsuffix()
+17:  8aa3d317d63c <  -:  ------------ string: Make strends() a legacy alias=
+ for strsuffix()
+18:  3cad861d3090 <  -:  ------------ treewide: s/\<strends\>/strsuffix/g
+19:  8d5cac1ac296 <  -:  ------------ string: Remove strends()
+--=20
+2.55.0
+
+
+--xhlrb5vu5bjuvz4z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmsHTRIACgkQ64mZXMKQ
+wqmAXhAAsAiJIPPo+UOOfAVul+my3ZYetfigY31ZZ2nL5TWTUBdMYl8Uapi4QCcL
+yG75gBZ68l46Qk0VVEP86SxzjxvAkjijE5XKy/Cidm++Hrdwey95lvu9JWQe2rTs
+C9S/ShIoiPEUWGaPGzaBssbqw4RKkcbvYpvtbrruyLEhy+br6sgsRx3nXeVtTZbs
+kkJ3BNTMIgLmO1eHzFk+UCKxtEqZ3cwntbp86IzDLceOgKlITqnTS3OUq3Y3dIT6
+jEk7T8QPAa48uygvilxRQobHL0lPvT1rS8Wn9Hl/HglKjGl5lcNcQ8/HCvrf1lpw
+DvLTmH3Vt0HR6Vz2RXHIJ3SxMz0gpqxgR5Fd7UvFnaPgweZOu2EErMfPm4HSQE9G
+AzczBsKCJ/mBhEigC750nW0+a5xKtpX+5zL84/up5j7WYx0IuuQRbLEqMs+OJ8LY
+O3Kz2iWYjeFVT57FtLWTcy4HOK0bSt802DKyo9tNkXs0DBq3Q40N9wmlSIu7fLXo
+IZ5QvzrUdC+yZhcE3/FW8XrKGcckLYFadWBTCZ4WWefH4jOKa8ynAlxsTF53qhrH
+SrTfm1SmAiq/TmrO04CpRz91pOOjgI8zywdV+XSim+SVfr1L/nE5GXQpnWM5x5pG
+3WpIaM7U9S0KTRjqsEGq9Oplq7vq5Xq4PFJIfTbUM2DPfn1I7I8=
+=FdAW
+-----END PGP SIGNATURE-----
+
+--xhlrb5vu5bjuvz4z--
