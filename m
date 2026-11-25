@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795617084;
-	b=LFaoFb2P12YdfVImkT7S1AMHOsd/Pg3A0ALekiqXcDObxgPj/zxkI0tegGbjTdCzLcfo
-	 3xad0tc3oJgNEsAQd/mx+NLlVOpWNdwq0/n87GYrGag2PMg2e1ucHa1tGqPKIoKxTcRsq
-	 ymappADJsOvNyssBKhOPj1O9qVixw3jMbmY5uCuNbVaRmpnPopbCqavJQV7k3C/GOZ0b8
-	 lctNPnO/pGLpIdTGEpvuwwf7VMuSqOCbYIlx5SH+a1/Gf0x9POcRsnq5cT4ukT3EF9Gqm
-	 x4mFGMFJPL8mIq+68f461PVMomTnW/QSuDaqfvZkGUOu+lVCdwaSlnCSVPeQMW67MpQ==
+	t=1795617144;
+	b=mQUiyT97A7j07jrKCf41fGQNnmUZmSVqWYuhUU9ALQg/ONNBOEUF3ZMhaobyAoBcq5tF
+	 E0SzMeSfu59wFXgZgr6y1PAW/sHwAZCexUhDcPl5YTYvHprSALV2Nmay5dh2a3Jotr5XF
+	 BW+Y/7a5RFvELX+8LEIqql9KCycvu7mv7hIHcoou0NNy+HU+4q2EESJaGQF9r31Vletkm
+	 dVJzFCEyIg7tq43NWJI4zIv+4/8qvR1ltEEpAMaMic0Whl0IEkqRjl0GYzt+6PI0IeVs8
+	 q3nVK5g2JS1Mn5Dg9W9B0H88AGsFdn3qbhtD3MF8AbaN0aZXzhA9nyeu08a8ArLWjsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795617084;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795617144;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=punU4N0Xvh75yPULI+zGLL615WVm9MaUQPGC5AWD3Bs=;
-	b=ZLj3OLq7XZCkh+oFjEIekoFzdcD0L9d9wJIwELPQ0oi/qTL4MAy4frDEAyOV4ghxAYa1
-	 zkF8FwLleS3BVHNOA6EiIKK1sfW2ZQSCyOKU4Z4wtecWWB6IynL+bsPHscGwRitAtgZFY
-	 dZI4wsAN3v2/Dr65TCZHMDov1wA6ZD3O1fnzBI5gkVu9obiqY7J0dqses0mf+iOfqa7rQ
-	 v/tK6Mr9jP39r9qum+RjuEl8lfbAtiSoZd0p0ONGSqYZ67VLsTHtXJwutGiGdrYXCdpXx
-	 LBXCtLijIXaD5LfTzgk0s3ZZ02Ju3ESDH0dpY66y/oQBBREfMeGO4O1DCfipi25pnfQ==
+	bh=iqIBYKdAwsyESmO2lR9a06vZxhGrpB8ZFTJay9yz+LU=;
+	b=Ym48Vhvqm5eXXTP6pV6i/3V2bAxiro+pz5zhfvNdv5knR01FEBg6chiDcIHe5Fo0mVwR
+	 +fmmm05fhUBfJts7uQVsZRgKu0xHOHKyB0t7peKhOP4IU+bgRKWqn3vZDfR0V97NOCMMT
+	 aN32/hVdT0XDknaDEdOUTFRkFlOHFSQT1C7JjqdRpImQ3ajG2VFKcra004keIFS+Yua+l
+	 kTTKAiQn1FdACFzxaQ0riy4vD1urBjP0xxiK0Qu1/d0b7lsXfPk+F2Vb6tq8+aghwRkkL
+	 AsYTg/Ggl7nMgdHZyAPtreHXhRcdSDzzAt9aBpM20NzDkmfTAhW8TSWeSv4g9pMiKEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AcSorZb5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nDdCGWcV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFDA606A31E;
-	Wed, 25 Nov 2026 14:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0648B606A33F;
+	Wed, 25 Nov 2026 14:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AcSorZb5
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC3991F000C4;
-	Wed, 25 Nov 2026 14:31:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nDdCGWcV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749081F000C4;
+	Wed, 25 Nov 2026 14:32:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795617083;
-	bh=punU4N0Xvh75yPULI+zGLL615WVm9MaUQPGC5AWD3Bs=;
+	s=k20260515; t=1795617143;
+	bh=iqIBYKdAwsyESmO2lR9a06vZxhGrpB8ZFTJay9yz+LU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=AcSorZb5btrxg3c6DW/NBDfVHqtwjV+yuob8HqKFJBApVAk3YkJCki0W+XDaPYm9n
-	 lL6fhqQocRIYq0GOCB6mVS/TR+CZ0mTgoox/65bI+yKUqVRZC1+u8pNFrKrTJrdMKx
-	 6ln9cxgBpFnrbzeI1Eomj+Aqu1gZudmofacmCZmjiHUETEoRvRHym+z4cbh1Dc47Dn
-	 8fUQhtrDXCj2rKDhATTqUYDrEmzjT51IAOP0VHEdXK+UP4a3s00+YhR+RX6XpBd91O
-	 P/myLyAvhoA++P6x9W4gvEQxODrU1PnPnNd2DbcBGdr9AhE2SABkJx9jbmGedB3PHU
-	 XsnhKifvNVtow==
-Message-ID: <b0e72c22-4de7-40b2-8357-3c8716a5b7d1@kernel.org>
-Date: Wed, 25 Nov 2026 15:31:17 +0100
+	b=nDdCGWcVlg/Qg/5rHJtRVXgh/YB1pU8C/TW2fK8r1CTPgJZeZ6ERDtQfwcRSKvpLD
+	 DIVBETx8i+t5F0Wk9B4rx3J2QSRLIC8MKd93mGOcCitxa3egVjLtIeqaM2DgXshM5c
+	 xKLLXoSVocnalQp45slqlRYL4jGeFPkEARwTvS8xVfqeUIigzv5mNZ1SrKR7BI1cDw
+	 Ii48Gda723bb+S8LsP8m/l05yOPigGFD2rIXTjkOY1LGT5XWTLWFi6mjp8AYkrgOPJ
+	 Zi1RdGAWEpqIybWWdjyr4UqWHOMcDm08+rJ9/RKr/jyA5VEGJgZP6i6RE0Cm5P1ga1
+	 HAF0uECA33fmQ==
+Message-ID: <a2683841-a169-4cba-81fa-823553f37159@kernel.org>
+Date: Wed, 25 Nov 2026 15:32:17 +0100
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -54,20 +54,19 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add qcom,remote-owned for
  ownership update
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
- Linus Walleij <linusw@kernel.org>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prasad Sodagudi <quic_psodagud@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Prasad Sodagudi <quic_psodagud@quicinc.com>,
  Rajendra Nayak <quic_rjendra@quicinc.com>, linux-arm-msm@vger.kernel.org,
  linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20261106-egpio_fix-v1-0-569d220a4748@oss.qualcomm.com>
  <20261106-egpio_fix-v1-1-569d220a4748@oss.qualcomm.com>
  <20261110-modest-significant-ostrich-8dd408@quoll>
- <CAD++jLkpFWWSV55LkhAa4YfckDvzB6PrHWugX0Mth=cQRYkMDg@mail.gmail.com>
- <6493f02a-5880-4245-86f4-1e1bf00da017@oss.qualcomm.com>
+ <396403af-1505-44b7-bf21-8c656c64c936@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -113,38 +112,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <6493f02a-5880-4245-86f4-1e1bf00da017@oss.qualcomm.com>
+In-Reply-To: <396403af-1505-44b7-bf21-8c656c64c936@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/11/2026 12:23, Pankaj Patil wrote:
-> On 11/22/2026 2:16 AM, Linus Walleij wrote:
+On 25/11/2026 12:35, Pankaj Patil wrote:
+> On 11/10/2026 6:58 PM, Krzysztof Kozlowski wrote:
+>> On Fri, Nov 06, 2026 at 01:29:41PM +0530, Pankaj Patil wrote:
+>>> Add "qcom,remote-owned" boolean flag for egpio capable pins since they can
+>>> be owned by remote island io independently of the selected mux function
+>>> even if function is non-egpio.
+>>>
+>>> Presently egpio is treated as a mux function level decision where as
+>>> hardware programming guide(hpg) specifies it as pin conf level decision
+>>> i.e setting egpio bit is independent of selected mux function, the
+>>> driver/apps claims the ownership of the pin if it's egpio capable in
+>>> case of mux function being specified as anything other than egpio.
 >>
->> We have instances of device trees which are maintained in Linux
->> being used by e.g. secure world, U-Boot...
->> So something else is using it perhaps?
+>> I don't understand this. If the pin is not owned by Linux, then simply
+>> do not list it. What is the point of listing a pin configuration which
+>> should be skipped?
 >>
->> But I don't think the device tree should decide system partitioning
->> like that. I think the boot loader should set gpio-reserved-ranges = ...
->> before passing the devicetree to Linux instead, then pass
->> other reserved ranges to other operating systems in the
->> same physical system etc.
+>> Best regards,
+>> Krzysztof
 >>
->> Yours,
->> Linus Walleij
 > 
-> It's being used by a downstream driver which cannot update the pin
+> The pin is not owned by linux but is still being used and driven by
 
-That's an anti-argument :/
+If it is not used and driven by Linux, then it also CANNOT be configured
+by Linux. Otherwise how do you imagine for example that remote island
+operating on unconfigured pin, before Linux boots?
 
-> muxing in any way and starts accessing the gpio's assuming the
-> configuration to be as expected and the property is set in the dt node
-> in overlay. More dt nodes will start using this property as the
-> upstreaming of those drivers begins.
-> 
-> TLMM is a reconfigurable block and the bootloader is common across
-> multiple soc's hence it can't be responsible for platform dependent
-> peripherals enabled in kernel device tree.
+> linux for it's intended function specified via function= property, which
+> would mean the required mux config for the function selection has to be
+> executed in Linux
+> This property simply allows a second driver/peripheral to use the same
+> gpio since it's allowed by hardware
+
 
 Best regards,
 Krzysztof
