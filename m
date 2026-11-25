@@ -1,57 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795607250;
-	b=RJYFJkF/6KkeYzu5VIIYGLzNtynYdmJlwTFjRAfTNT/c3v6izVfOCmFK0z5M8/FUGVib
-	 sS8PEw1uR8HWpfxx8KfWF+TcToQLWuegCAoeD6UQ/C5y+Rca/KyojZFdQ01CvmXuDUhpA
-	 jVzbCnbW12rvZ/Mu3H9WmDmmY5Wrk7yrv/rl3FP3Vhb/PBIr9ji9gU2X+2XNMsMj8Whke
-	 J0ODW5FzX4VXY1XGDmq/lHJw4Q+uoWbBRZ4sBQqYSFPf2L2jTMS8J6YFt+s+jovamfOAV
-	 YjdbMvauhGX3wdRhLaBBIbQ3NmfcclTo+oiNw5efYQQNKvT1yU/+w322em4d8VDVG4Q==
+	t=1795607831;
+	b=wCuSOZt0lFVMHzex+Ui6CaOdxcwRXGXwPTxXkLYEsNn1URjk0/FPKwzMClpGLtFZErE8
+	 M1Nw4KJUAjvZzHodpCEqcj3UcUqLQMR3oYpLnNQU5+PtyhtsPROUmjDhCh0g+gWr6OhG4
+	 aaMspQPBtCuGnWC3VUMyOQj28IgGqgdzETh7Q67PQ0D3It9mLDXoR7eYvsM97mZRxkOdc
+	 5cFrQgtDntP4Bfcr2FnEup7uixk2jwISosIOQd6gZW2Iw0BPIaFW2T9B3JYuHnbHFHXZN
+	 gTf1dFNryOFnjYAE7P9cfjEj/BUouwKrS5sVNolHZ5h1Ei1CbL7wmNVLgzF/QuVilMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795607250;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=YZ6bHi0umed5LM1vKu1/QlN1Ny1fOK0BiX3ksQa46tA=;
-	b=mAzZzYxGYrb82e4V+7Tt1erlNwBKM2aulyFQNTVRJd+w1vYHSy4fw7g65lKm/o2jvlFK
-	 KE01Py/IOdJLPcJYy0zNv/JnGkzjujonMPugmfiy5S0RRjY8Cr2JOM2NADAenlhy/+y8O
-	 jFNc1VCsJ/TFibKZ78J3dr4A6ocmSal5yVM+QFvOiHB48KnJ4wdft8o2hyfBRdTdvdGw0
-	 LU9OU2ebyKSNyS7MTXwTn1p+nIGevgklDl0LMfIRJGyYl7oPafAZKzz+E3MpEC5zr6uDU
-	 HXb8b7OKGE528q3107AFYle6qmwjJ9sxUL2FIk6b4LsZXY++5SzrZk1lFD+L6w/Odzg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795607831;
+	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=mOB01E0SaVOdsSYqJg6oH9KS7UWAxxETewjep/guEMc=;
+	b=ZZJ6zrpYSvBXJe/55NijxP4gibFkIKUwNyQIsWx8fLi9MmOk90RI1nzz3yjNkknlNU9w
+	 zGSBdkVA7GdOMBsDDGWNCTuhwZ9c4JcnYvVph9iBT4t/SQWMB3mzZkQ43TlbqdAB5FTrf
+	 I0ZLzTwhnUWqvJy/ihyr+TcIsLBCwUYERvn8QsbDjRHaZy2O0Rp11Uqb5H5QU9Hy85NRZ
+	 7griXB3yykFDxPn0rlzHJ3bJznjy+VFauIx4Oib+Gcjzll8fs50Z2uyVBNvmS5dQEFswk
+	 s784ZAv7bPzFXTWqo6MNUp5yfr7p8OOGWiRN8s8xlVGKSc0buT3zKXPYgNF2xpbehEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AuwHHUrf;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=d-silva.org;
+	spf=pass smtp.mailfrom=d-silva.org;
+	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=XDmHGAq3;
+	arc=none smtp.remote-ip=119.15.109.137
+Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72A6606A321;
-	Wed, 25 Nov 2026 11:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7076F606A327;
+	Wed, 25 Nov 2026 11:57:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7076F606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AuwHHUrf
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E6C1F000D1;
-	Wed, 25 Nov 2026 11:47:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795607250;
-	bh=YZ6bHi0umed5LM1vKu1/QlN1Ny1fOK0BiX3ksQa46tA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=AuwHHUrfZJ3cKd0JFYPuL8EYvaGVNvPP61IZkK6zzl5Gm+WyXJl8tFwLgbjbnkTYU
-	 qz2MCz8x+GfW3Nm+prVZlEW3i0WDGe724lG8d99AqVeuCfuGe6cfsFckArB3C4PaUm
-	 6fnZSFJPW3NzAbvHTTU9Up1n5lFDf+fPquL7Nunu0T+Co4NYccQKn+mMaqeH1Vv8vC
-	 HIdMtUjwOsxm93c7vevkB2PN5HzagTvX8wEiGHLsFoEaanXYdboOdTiij76/q92I8f
-	 QIlkmNg0BAK16dl4u0G6iO8EDRam20QDAsY0FPskYLQzL0VzGEGPRs/ChfQgQ8Asfp
-	 mFfJB1qQvaHkQ==
-Message-ID: <sashiko-outbox-233283@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: dts: st: stm32mp15xx-dhsom: fix bridge
- reset polarity
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Andreas Kemnade" <andreas@kemnade.info>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261125-tc3-reset-v2-2-32eefcaf1460@kemnade.info>
-References: <20261125-tc3-reset-v2-0-32eefcaf1460@kemnade.info>
- <20261125-tc3-reset-v2-2-32eefcaf1460@kemnade.info>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 11:47:29 +0000
+	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=XDmHGAq3
+Received: from Hawking.lan (hawking.lan [10.0.1.4])
+	by www.nmnhosting.com (Postfix) with ESMTP id 5CA6F4B6C9;
+	Wed, 25 Nov 2026 22:57:03 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
+	t=1795607823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mOB01E0SaVOdsSYqJg6oH9KS7UWAxxETewjep/guEMc=;
+	b=XDmHGAq3c/vEOqeYVFnKVkLyTuUlKSVeGZPR9QDxZSRB69z8OYgGAM0PWDSiI4PiG+4ZG8
+	+mmBJgfWq+Kw6Pgijw/E3YVc6wt4MxrbUuNa2eFxwJUYNUlz294QsgI02gm3q3nm5O1w+I
+	R3Km77NTjzcy/4jrN5rqLh1sOt6xesLWzG0rhUherpPcLUKRhj8T+cYySjAEtBYCjBkN/s
+	ZU7mWdDWVX+/j7j5WvCxj1cdYA/THeU+jlYCFcSXs2Q0BhtMcYUayCGYl/fhPRlckKFUiB
+	ygk9PUm5HCLlia4qx6hW4Ba11o/uwJrz7ETBW5dxu8B/Yz59DkycZGomLfdyvQ==
+X-GPT-Reason: This is a legitimate personal/technical communication
+	regarding Linux kernel development. The content matches a technical
+	discussion on hardware driver patches (pinctrl for Allwinner A733)
+	which is highly relevant to the sender's domain (alastair@d-silva.org).
+	There are no phishing red flags, no marketing elements, and the
+	email contains specific, high-context technical data (register
+	offsets, bit masks, and code snippets) consistent with professional
+	engineering correspondence.
+From: Alastair D'Silva <alastair@d-silva.org>
+To: Andre Przywara <andre.przywara@arm.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Enzo Adriano <enzo.adriano.code@gmail.com>,
+	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	Alastair D'Silva <alastair@d-silva.org>
+Subject: Re: [PATCH 7/7] pinctrl: sunxi: add support for the Allwinner A733
+Date: Wed, 25 Nov 2026 22:57:03 +1100
+Message-ID: <20261125115703.3724690-1-alastair@d-silva.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260910133519.459011-8-andre.przywara@arm.com>
+References: <20260910133519.459011-8-andre.przywara@arm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,31 +88,39 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] ARM: dts: st: missing Fixes: trailer for tc358762 bridge reset
-  GPIO polarity fix
---
+Hi Andre,
 
-commit ed072d08151b8622793e548d3a5ea860d378e59d
-Author: Andreas Kemnade <andreas@kemnade.info>
+Two issues showed up while testing this A733 pinctrl series on the
+OrangePi 4 Pro:
 
-> ARM: dts: st: stm32mp15xx-dhsom: fix bridge reset polarity
->
-> Reset is active low. It is apparently set to active high to work around
-> a driver bug but not to indicate an additional inverter in the signal
-> path. Correcly describe the hardware.
->
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+1. PIO_POW_MOD_SEL (0x0040) on A733 uses 2 bits per bank instead of
+   1 bit. With BIAS_VOLTAGE_PIO_POW_MODE_SEL, banks are written at the
+   wrong bit offset and left misconfigured (for example, bank H stays in
+   1.8V mode when supplied at 3.3V, breaking RGMII Gigabit TX).
+   Adding a 2-bit variant (writing 0b01 per bank with mask
+   0x3U << (2 * bank)) enables hardware auto-detect from PIO_POW_VAL
+   and fixes 3.3V RGMII TX (also addressed in Vinicius Pedrosa's
+   follow-up series).
 
-[Severity: Low]
-Should this include a Fixes: tag for the commit that introduced the DT
-overlay with the active-high reset polarity?
+2. PA has 0 pins on A733, so PB..PK are hardware banks 1..10 while
+   irq_banks = 10 maps logical IRQ banks 0..9. Without .irq_bank_map
+   and sunxi_irq_hw_bank_num() in sunxi_irq_base_reg(), logical IRQ
+   bank 0 (PB) accesses PA's IRQ registers (0xc0) instead of PB's
+   (0x140). Adding:
+     static const unsigned int a733_irq_bank_map[] = {
+             1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+     };
+   and using sunxi_irq_hw_bank_num(pctl->desc, bank) inside
+   sunxi_irq_base_reg() fixes the bank offset.
 
-  Fixes: 77a5fde00b9a ("ARM: dts: stm32: Add DT overlays for DH STM32MP13xx=
-/STM32MP15xx DHSOM")
+Also, in patch 4/7, sunxi_grp_config_reg() takes an unused
+`const struct sunxi_pinctrl *pctl` parameter that can be dropped.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-tc3-reset-=
-v2-0-32eefcaf1460@kemnade.info?part=3D2
+Tested on OrangePi 4 Pro (Allwinner A733).
+
+Thanks,
+Alastair
