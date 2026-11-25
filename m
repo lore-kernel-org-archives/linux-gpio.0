@@ -1,50 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.238.236.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795606716;
-	b=rN0d8ei2fJw2P155Hkg5H2N1Ue62HW8UcOx/cVujPSoHy1d8dm7xl8Btvl9/cpSdTli5
-	 fRC5rrSg8LXoRK0qbvHbbBw697Tuh9YNOoVrZMagFm7RKjf1qlUNttD7gJUAxD0kgncO9
-	 C5oB9tdXdv7Gza5ALJx1hhNKbZ9+fdLhDlUwkigAKEIrH8YHU/lTsXiyK336N7hDDDGPK
-	 D+RB4TEULBBFrL00A+JkEgzavQK1yEDcirqhhk3S07KZTplzUU6zO92dnqPhqoI03uFKA
-	 d3f8/hw4H70KsvuZjj1W6SF8p/VHCuf4amj4k08Qf/EFimkLVqc9KuYdddom0NblDag==
+	t=1795606718;
+	b=TEKPQAv1haG7iEYtOYawX9VDlhi8F0aEs6xL+nrCZimMJYJGO+3eH35wV1GZlWJSMwHo
+	 94J3JvSrFZUrk1By3FZIQkFuBQA45X/xNMlRjxwzdtnaw/nV8VZ+0T5VKTPGdQPivYSo0
+	 yDKhqvRB+6fislPchoDtyTjbJnJkjqGckWJvkN2/zRjrGHfSzmVQFeFlb3FVDBxnJXvbk
+	 i6PlhD1ldSS96EXpklYYUPRvfsu4rp8aBC1WQYWqmuSfw5VO1AcZfNtrLagAKRbzIHXRU
+	 yAp5UgAXBdJkXdENqyTE2j+0T2hFErxC4CJLuCwLzkIj+RaXBrv0L06aQ1HeVja2FXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795606716;
-	h=DMARC-Filter:DKIM-Signature:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=Rc12+Qxfj+pRyznOM+oj0p8w87O3IAgt5AtZYMqUvXY=;
-	b=Wqma8ry3fvxanOxqNyfDpXadyu066qt4U6tK+yW6nn/c1EUwQkbUQNvQD9y9WGKL+Su3
-	 TX80mXYGusl4UGZHy6i02WGy1pJq2/RctZN2Zz0gGQUn50TPGuF513x+WZ7hcbTSR6wAi
-	 EepwpKJLVn6WxKccl+q+mDqi+mrUYRQF1m/KXWqplQKyIrrP6O6kpihfmhk0F4ZN0sG4c
-	 vGXfV/Ll5Mi6pPNgh8Iwb9Wk1jGtRQv7/xSC+JsLjqZd8obHGYXxDxgLgYUj4VeMWHv9N
-	 R0K5W34ZUUSYgDDgqpPNvx7C50LBhWPwcCSye1HKdWWkqMK57hKaRIP1L0yUrYMo4Ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795606718;
+	h=DMARC-Filter:DKIM-Signature:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=a+FoSJK19GndXtAvkhoYAiWjPx5q6h27H22yvjuinKo=;
+	b=Fz5EiZPJLjIjaX01r0EOka+O4R0Di63pnY93Fs68Ustn/OzMrbKHUfR4GbJKW0bbjgkk
+	 /sk0KnnI6ztDGHLUR4wHwiIcFzNdF33Eaa2rp/FRDnrv2gj1icQsjAfrESwKY1TefGzgD
+	 CPSgcBSGUt1KthydxG2kG8NOv2xrF1wlSG8q+jKvXA/sFS7yTTLBd2gqNff9u6uQd+NW2
+	 c3yFQ9T57QamHd7289yi2YVTCtBv0TUt0XOb5K1sYIvkEQQ5hALLmKwCIxPs8gilaVyxm
+	 6b3QwhKqz8osHqSf0DP4Q3wtQi+tvdJTO1S2n6pt7pE0Ve91dj6IllC7AtjCbdJW4Xw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=kemnade.info;
 	spf=pass smtp.mailfrom=kemnade.info;
-	dkim=pass header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=qUDPsnNF;
+	dkim=pass header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=rUghJ8Iv;
 	arc=none smtp.remote-ip=178.238.236.174
 Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCCC606A31E;
-	Wed, 25 Nov 2026 11:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3BCCC606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE77606A31E;
+	Wed, 25 Nov 2026 11:38:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9BE77606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=qUDPsnNF
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=rUghJ8Iv
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:To:In-Reply-To:References:Subject:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=Rc12+Qxfj+pRyznOM+oj0p8w87O3IAgt5AtZYMqUvXY=; t=1795606714; x=1796816314; 
-	b=qUDPsnNF8HRur07XO61C3mi1uStuSFUy6KTMbQjLgkEHZZ6gyREmYQQ9ehUF6vBPuSDrghDjW+L
-	2oTz8pQOiUrcTCMBFnqDhbGcgEqE0BPsQDhPociSOd+qB96V1VXhqcl7dBu2QKsowmkuqkChLg+zy
-	/+5Ulb0NfiMmohKNgX9k29W7LUTPTj2yzHTt3nSqKtT3H57TpmlE4p2KqwQLWWseKVhgUmiEJ08ht
-	d4dHLjgrX7i2uXfyWOpyvObwbYcNmFcr7p3PKKrtuK3/8CTjD7l3qr4nFnvCK8VG7Py9HaTjHvlkV
-	OuXw+rcVTzv4r+1n6jFhDu5r8PIZ+OCWaUnA==;
+	d=kemnade.info; s=20220719; h=Cc:To:Subject:From:Reply-To:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=a+FoSJK19GndXtAvkhoYAiWjPx5q6h27H22yvjuinKo=; t=1795606718; x=1796816318; 
+	b=rUghJ8Iv0WP3kMvmIMofoLuBvxJSffF8soRm4IKPoimloNVhUoQhkclAv/lqvCe+7u6inXjXja1
+	HOqunQadGQhzYd6SUs2fwI1nOoUnyBiP0jzjuz2u3GvivB9nkeElV6oAvudm4wd2Zx1pJbgTPNEmF
+	iLIgeVHPxpU85w9AcJ6xhBLPsXy/kzhnRwySlDWpk/mS4HPfEj/wYxbQACZSj9oZTmesLjr/qyhX5
+	hTocJABcjsExo40CHkrlzF2V+8DyGBvyDD1iQCeoOtP4Wm9j/Zs3EboW5DC83k1oHKRIgdUyaNWsc
+	kKZ7Jf/liRqRvuo8xTXAdVHWdd22cV0PpVbA==;
 From: Andreas Kemnade <andreas@kemnade.info>
-Date: Wed, 25 Nov 2026 12:37:20 +0100
-Subject: [PATCH v2 1/2] gpio: tc358762: fix reset gpio handling
+Subject: [PATCH v2 0/2] drm/bridge: tc358762: fix reset handling
+Date: Wed, 25 Nov 2026 12:37:19 +0100
+Message-Id: <20261125-tc3-reset-v2-0-32eefcaf1460@kemnade.info>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -56,9 +57,11 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-tc3-reset-v2-1-32eefcaf1460@kemnade.info>
-References: <20261125-tc3-reset-v2-0-32eefcaf1460@kemnade.info>
-In-Reply-To: <20261125-tc3-reset-v2-0-32eefcaf1460@kemnade.info>
+X-B4-Tracking: v=1; b=H4sIAHHIBmsC/22NTQ6CMBQGr0Le2hpafkRX3sOwgParPI2taSvRE
+ O4u4NblJJOZiSICI9Ipmyhg5MjeLaB2Gemhc1cINguTylUtpSpF0oUIiEgCdYOj7LWsi4YW/xl
+ g+b21Lu2P46u/Qac1sBoDx+TDZ5uNcvX+dUcpctFVRh0syr4yON/xcJ3Bnp311M7z/AVszK1Pt
+ wAAAA==
+X-Change-ID: 20261124-tc3-reset-e68e91bc1638
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Dmitry Baryshkov <lumag@kernel.org>, Robert Foss <rfoss@kernel.org>, 
  Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
@@ -80,88 +83,63 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
  Andreas Kemnade <andreas@kemnade.info>
 X-Mailer: b4 0.17-dev-1b309
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2575; i=andreas@kemnade.info;
- h=from:subject:message-id; bh=wU4wkOa8ZT1slECgh2Hx2RYzKMa5lDr0TLYh4KH4XO0=;
- b=owEBbQKS/ZANAwAKAYRhRfpAKNzxAcsmYgBrBsiZ0Zp5Dsx1TRnVT3MvvFGzoAD5NqI4NJjAr
- uDB5IrkRFSJAjMEAAEKAB0WIQTY6xCZL0TEE1XHfFiEYUX6QCjc8QUCawbImQAKCRCEYUX6QCjc
- 8dmBD/wPG6HRPZAQmBRZiipwKPZmfCRiEfDq7OCv1qu3yD7Hjf8YmKcKMAhRv4J0eN7pssu6Pbn
- aNUN0slN/3ENo6RD3I7zfrFU7RzZGGuG7XCJGJ9r3SnybWG1MFsWrAuGix1bRTg01Xagi9+g6/Q
- +z1oP1KLYe10sIG8rlKaEqMUvuL1xZK9NMOgxHR3iiSDMIi/sW7iq813+T5s3ZbSwXkhVekDeI+
- jEgyc5GHY8TBe1jfvBcIfTW6qsCHHJMJVZAl1YtCGYTlEQ8red0nZaE6rzv/B7JGxBd0dJdSw51
- Sd9mVEgXrJzVmNqwhZKjPoRNoJC9K12D+4bUfowpn73ebtCoRaj8jcPLn6hNnFdbZmIG7iyK/mQ
- 9VyGQZXgsDw649Nw5TIsI+NVI57j9NQ1mM4d25sZ6j099iEM0PtElpjze5zm3xcww8lqpiVxKPy
- 4uuUPW/Rbcao3XrjoTDFyKnO4Ol4CPbFcD73vHGvAX2KSgFHn+ppfbwFLRSh+3E0XCHHdI+VbS8
- rDQ8mheYL8q8uDz450FlK3vnIEQxvGEaERWI/T4+S2hMzxA8Q7zUY30ej1cj2pX/4VZo23891Ji
- xepHODg/MXZy7EX6sk3Qsw/HDU4p3pJgMe8KGH60CKVHrKI5W2W5cJ7mo14a119vBR9mSvo1Nzq
- qjuOv+Tz3hq7uFw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1687; i=andreas@kemnade.info;
+ h=from:subject:message-id; bh=T/U8AWB5sWFUy24znwFaGmRRqn6YQ5i1SBCRspg3Uwg=;
+ b=owEBbQKS/ZANAwAKAYRhRfpAKNzxAcsmYgBrBsh2xt0uJ0Nbol28KORb220eRtAVNw95ZKHXG
+ lTs9SAfjG2JAjMEAAEKAB0WIQTY6xCZL0TEE1XHfFiEYUX6QCjc8QUCawbIdgAKCRCEYUX6QCjc
+ 8cgmD/9XjTW7cSXqGjxjebT+/XtC176aOB54MXB4lacfSigdFRHzVANP8xRO/+GLlWnkTR94vmp
+ FyLDm1AYkXvNhl6UMyMBwBxzYGY8A5C3jwJO0TCgZnooQo09Owoig8euWqSsGJxgvM+yqJRJL0F
+ EF7jJq6rxfygBjuUSg3EOAzAEHj+TnPSn+1UpyeP8+vjDSjBeoyig6YEcOlBVaredU7MIKAl7bn
+ nTEhA5FhnczNLIojnRetORVAdxR14YNEq3cyAZFYZfmpccxOG/XVoBZ+A7Fo5gXviWdFNL9e3fg
+ CwxmUnkr60rpS5rQs4uO3DoiU/cnOXj+TiXyJ9/IPcpn8Xj9koFxygJHIdtQvY8ntzi2cLjhyDI
+ hI/NCOBl6LAkM2MMtaWCsGZDsLr64cQ6yP7to79VGLIaLnZvXrk75caUpp1KrgNrC9Sc4f5l25Y
+ 2QPewneq6RW2a8yIWgOIefjTFzyb/WsNvTUIOhMNYF0QBh8VaI0Ghs7eVctFd5VSl+qB0wkp/Ww
+ lrTxDLcAqCgbDk+6/fqM+yqMyJdhyiAcPMFlGGYXLfD6RmwhNCxCLdZr6qApPYUrHi9fDfycwOH
+ n67/Nv/yvIN1dR2kXAahbQLRGQsUzTbP68W0ac96w8WRQbdfiQuSFb4wrYor+iwgw27r3t7NTwa
+ 7s3zRCKSJ8egXlQ==
 X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
  fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-Reset gpio is asserted when the chip should be active, deasserted when
-the chip is enabled. That is the wrong way. Apparently users are working
-around this by using GPIO_ACTIVE_HIGH to compensate for that bug but that
-is not correcly describing the hardware.
-Since this chip is used in a RPi Touchscreen hat, apparently with
-devicetree overlays floating around, add a gpio quirk.
-Also prepare for using the reset-gpio driver.
+The bridge driver desserts reset after disable and asserts that 
+upon enbale. That requires users to workaround that by declaring
+the reset gpio wrongfully active high.
 
-Fixes: 3355f4ee561d ("drm/bridge: tc358762: Add reset GPIO support")
+Fix polarity in the one device tree actually declaring
+a reset line. That patch has to go in after the bridge fix.
+
+The issue came to sight during experiments with reset lines on the
+Epson Moverio BT-200. There are two of these chips with a shared reset
+line, so also prepare for future conversion to use a reset controller.
+
+To avoid having GPIO maintainers spammed with a bunch of patches for
+BT200 support, do that fix separately and now, so it can go in more
+fast-track way.
+
+The devicetree change is only compile tested and is more
+a cleanup, not an urgent fix.
+
 Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- drivers/gpio/gpiolib-of.c         | 7 +++++++
- drivers/gpu/drm/bridge/tc358762.c | 6 +++---
- 2 files changed, 10 insertions(+), 3 deletions(-)
+Changes in v2:
+- do not use raw gpios but use the quirk framework fixing also initial
+  state
+- Link to v1: https://patch.msgid.link/20261124-tc3-reset-v1-0-a5d27fe4b5de@kemnade.info
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 8f8454d596046..6519be933db8d 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -241,6 +241,13 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
- 		 */
- 		{ "ti,tsc2005",		"reset-gpios",	false },
- #endif
-+#if IS_ENABLED(CONFIG_DRM_TOSHIBA_TC358762)
-+		/*
-+		 * reset is active low, but RPi touchscreen overlays
-+		 * specify this as active high
-+		 */
-+		{"toshiba,tc358762",	"reset-gpios",	false },
-+#endif
- #if IS_ENABLED(CONFIG_SND_SOC_WSA881X)
- 		/*
- 		 * WSA881 powerdown is always active low, but some device trees
-diff --git a/drivers/gpu/drm/bridge/tc358762.c b/drivers/gpu/drm/bridge/tc358762.c
-index 76564d5e4f69f..63b02693c0b9b 100644
---- a/drivers/gpu/drm/bridge/tc358762.c
-+++ b/drivers/gpu/drm/bridge/tc358762.c
-@@ -164,7 +164,7 @@ static void tc358762_post_disable(struct drm_bridge *bridge,
- 	ctx->pre_enabled = false;
- 
- 	if (ctx->reset_gpio)
--		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
- 
- 	ret = regulator_disable(ctx->regulator);
- 	if (ret < 0)
-@@ -182,7 +182,7 @@ static void tc358762_pre_enable(struct drm_bridge *bridge,
- 		dev_err(ctx->dev, "error enabling regulators (%d)\n", ret);
- 
- 	if (ctx->reset_gpio) {
--		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
- 		usleep_range(5000, 10000);
- 	}
- 
-@@ -242,7 +242,7 @@ static int tc358762_parse_dt(struct tc358762 *ctx)
- 	ctx->panel_bridge = panel_bridge;
- 
- 	/* Reset GPIO is optional */
--	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
- 	if (IS_ERR(ctx->reset_gpio))
- 		return PTR_ERR(ctx->reset_gpio);
- 
+---
+Andreas Kemnade (2):
+      gpio: tc358762: fix reset gpio handling
+      ARM: dts: st: stm32mp15xx-dhsom: fix bridge reset polarity
 
--- 
-2.47.3
+ .../boot/dts/st/stm32mp15xx-dhsom-overlay-panel-dsi-rpi7inch.dtsi  | 2 +-
+ drivers/gpio/gpiolib-of.c                                          | 7 +++++++
+ drivers/gpu/drm/bridge/tc358762.c                                  | 6 +++---
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+---
+base-commit: b6a9fa34ce4187cb69d3c588a4bbffc31ce5db8f
+base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+change-id: 20261124-tc3-reset-e68e91bc1638
+
+Best regards,
+--  
+Andreas Kemnade <andreas@kemnade.info>
 
