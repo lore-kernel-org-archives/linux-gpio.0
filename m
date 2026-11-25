@@ -1,51 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.119.170.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795617281;
-	b=T0M2YzaRV+OHO5jL6Xpc6pt0NC9UsUkNWJ35xUygFwubGGHBi3/PUnTDKWyYu1mvlu7S
-	 yxqwBKLrdfclGje1ie8Gce/YaMQZnToh8UNUSjyNZ/PkqRAaEvDZfA/A15oYuPMcCpSAo
-	 D8hFQcJen+MvR4l5/piEjCHKqveEoLjzkovKaloVXOCTw9baNv77kBiteqyOKurThwquH
-	 2hOyF8Aa2zdlYpcJUheloUbNOxiDzpQTm980AymgmLXxkdh5CIittw5bNE9g5Vx3YI1+E
-	 T6NdY4+yPw6kFxzq8oZdwJ6T7B9rhzoLslgquPm1Xej1VTP3aTAmcPo9iKD6N1O/1ZQ==
+	t=1795617434;
+	b=LYJQtpzI4rSQvqa+TpU5bVgr1iXVghg0zb/AZi3+pcnir45al7G4eZlHu4mbUnkUtIKo
+	 zgS31d+8MdU4y+1NyYf0cL0AX2kHkdBjCCSLPE/Yo4Y1J+xKNbgbjXPnlUEntaoKznCum
+	 6mmJ0WHLmw+Y+a+iS0Hsq3awNMdeGLm7jCrrTl6HaOj+Eb8cJUlaDit80lYU62bxWq7js
+	 NC7ElpQu6xDyRnu8lCC4HSLmyYdEU2jpiEObWCEBFc+6uIzlE75cr598m8nZZBKqzQQUb
+	 yCX0XmjyeLSn5hxu/QWB2VVBAXIKkVqz3P22geou3NOZ9EbPDhRiW79nZDBp9W9aHuw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795617281;
-	h=DMARC-Filter:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=cqCiELa6nbsCUzTTz8YpyoZQ75NYLAQuxQban16hB/w=;
-	b=Rlneb8VYfhtyBU64n1XumUuFU5fs1kBwZCAU8j0FUlDMOBWCTehBTqjr+9r+2XmlVI2L
-	 DxDXkhQ3UG+Hs18s6lcNZcTJLcP8Q7G0HK/y/YfkVPtxlGbPmA+JyVQqk+v6EeYiW2y0E
-	 n/GBqmcoF7Gp2KkvNlpwTUR2pO/o6TVKK7nljUjA8JWlrkGssu4CAZua6VDJR6lQpmOwI
-	 o6nT0/NiCL9ElOgpi0IdiNf07fZGhwIQP45qqOEANo2DcjRI0I6b9TDVHJzL+oiDL3uN+
-	 aYcdodJDQVs0dX/WzpQKQ+u1cEuIEJc6w0HYJtuyMKr14XIXsyEGGuPUNhu16mAiqWQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795617434;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=P8pYOG00MvyDKOpmsR267gVRzNmWDRkPPMEzuqpVknU=;
+	b=rAnh7yPJq/0VZ8P/hq8M/AJrfyNRi848cv1jHE5UoUOqt1WKLXirmMhk7UWCbv4zIGrf
+	 9Mxbie0l1nj9IpCbLlFTXFv1u2u6wbblmsLk6x+aUF9KP+2bE7oibZ2WmJf662ncg40wn
+	 l7kqzkkRzH30mhCYI2OIUhEvtKSHOib/w2wSjbEmv/AGJevUpYv/goTgB5mESGSyimI64
+	 EU/eNigVHzej0dXwJpBLZAYXR7IPfhjSQS8KvrUYeB6zPzKGdgGvOUE7S2iA0IZA0FiLt
+	 I4iO0DRCYwHHinEWyTPPeuyFv34cRlSRq8b1TPUiB6m871A3uGZdiYn48ezmJGqvfrg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=crapouillou.net;
-	spf=pass smtp.mailfrom=crapouillou.net;
-	arc=none smtp.remote-ip=185.119.170.32
-Received: from aposti.net (aposti.net [185.119.170.32])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XnMGynFw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E214606A335;
-	Wed, 25 Nov 2026 14:34:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E214606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-Message-ID: <a61b9a24e0eaf8240933ad2433e6f1c00855b683.camel@crapouillou.net>
-Subject: Re: [PATCH v5 6/7] pinctrl: ingenic: Handle X2600 Port E Schmitt
- trigger
-From: Paul Cercueil <paul@crapouillou.net>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>, Linus Walleij	
- <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
- Golaszewski	 <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	letux-kernel@openphoenux.org
-Date: Wed, 25 Nov 2026 15:34:36 +0100
-In-Reply-To: <ec49e1a7da313c8dfe012c17a04d03dc4167ee2a.1795589383.git.hns@goldelico.com>
-References: <cover.1795589383.git.hns@goldelico.com>
-	 <ec49e1a7da313c8dfe012c17a04d03dc4167ee2a.1795589383.git.hns@goldelico.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E1055606A696
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 14:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XnMGynFw
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8B0F41F000C6;
+	Wed, 25 Nov 2026 14:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795617433;
+	bh=P8pYOG00MvyDKOpmsR267gVRzNmWDRkPPMEzuqpVknU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XnMGynFwYD2OTDw8t2vT1yoesEDFg1DkUH4arIljkgmwnpq9hWHREgjD9vMYngLi+
+	 jPjwz4dPSnFBq9+UTbj3rMUUfNo8gmvtl/wU/KUE1OS34nzO1gDElZSEdICwE2mwI2
+	 Du8g9QsPXKNX1ranB8Jl/2YvPtrqrneRGVyq1jAKFqTwc9bOOgu4nNfgfFhB4XwgMu
+	 lsK+uE/zkA44tmRqXlu8o8PkOVNwxv1J5qef3ssdvZYNicQNilsPuFfS8Xbqs9dovG
+	 xcfmUnolsB5bbjAJWKSL19p4+7Cx/DH+QP1QTl+R3N41OAWPPO4UP0bnfAlMo1PqUf
+	 b+JYdb3S4XX3w==
+Date: Wed, 25 Nov 2026 15:37:09 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Khem Raj <raj.khem@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Khem Raj <khem.raj@oss.qualcomm.com>
+Subject: Re: [PATCH libgpiod 0/2] dbus: client: tests: fix racy gpiocli
+ monitor tests
+Message-ID: <tfzu5v4mtyu7c5ocwxq4icvbktlp4owskpvkspmt5nm44svil2@7k4yry25o7ke>
+References: <20261125080045.2410076-1-raj.khem@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -55,73 +56,35 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261125080045.2410076-1-raj.khem@gmail.com>
 
-Le mercredi 25 novembre 2026 =C3=A0 07:49 +0100, H. Nikolaus Schaller a =C3=
-=A9crit=C2=A0:
-> Port E has two Schmitt trigger configuration bits per pin.
-> Select the lower-hysteresis mode when enabling and read both bits
-> to report firmware-initialized settings.
->=20
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+On Wed, Nov 25, 2026 at 12:00:43AM -0800, Khem Raj wrote:
+> From: Khem Raj <khem.raj@oss.qualcomm.com>
+> 
+> test_monitor_all_lines_on_request and test_monitor_multiple_lines_by_name
+> toggle one line twice, with another line in between, before reading the
+> monitor output. gpio-sim can deliver both changes of the first line as
+> one interrupt, the rising edge is lost and the tests fail intermittently.
+> These two patches make the tests wait for each event before triggering
+> the next one.
+> 
+> Running gpiocli-test.bash in a qemux86-64 guest (kernel 7.2.15) whose
+> vCPUs were pinned to one host CPU and kept busy, it failed in 7 of 10
+> runs without these patches (both tests fail) and passed 10 of 10 runs
+> with them. Without the CPU contention both variants passed 30 of 30 runs.
+> 
+> Khem Raj (2):
+>   dbus: client: tests: wait for each event in
+>     test_monitor_all_lines_on_request
+>   dbus: client: tests: wait for each event in
+>     test_monitor_multiple_lines_by_name
+>
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Hi!
 
-With one question below.
+This looks good but can't we just squash the two into a single commit?
 
-> ---
->=20
-> Notes:
-> =C2=A0=C2=A0=C2=A0 Changes V5:
-> =C2=A0=C2=A0=C2=A0 - Keep the ingenic_get_pin_config() call and the Port =
-E
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 condition on single lines, as suggested by=
- Paul Cercueil.
->=20
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 7 +++++++
-> =C2=A01 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-
-> ingenic.c
-> index 88531d472cd2e..d253674accacd 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -69,6 +69,7 @@
-> =C2=A0#define X2000_GPIO_PEPD				0x90
-> =C2=A0#define X2000_GPIO_SR				0xd0
-> =C2=A0#define X2000_GPIO_SMT				0xe0
-> +#define X2600_GPIO_SMT1				0x100
-> =C2=A0
-> =C2=A0#define X2600_GPIO_SHADOW_OFFSET		0x800
-> =C2=A0#define X2600_GPIO_PAGLD			(X2600_GPIO_SHADOW_OFFSET +
-> 0xf0)
-> @@ -4693,6 +4694,8 @@ static int ingenic_pinconf_get(struct pinctrl_dev
-> *pctldev,
-> =C2=A0			return -EINVAL;
-> =C2=A0
-> =C2=A0		arg =3D !!ingenic_get_pin_config(jzpc, pin, reg);
-> +		if (is_soc(jzpc, ID_X2600) && offt =3D=3D 4)
-> +			arg |=3D !!ingenic_get_pin_config(jzpc, pin,
-> X2600_GPIO_SMT1);
-> =C2=A0		break;
-> =C2=A0
-> =C2=A0	case PIN_CONFIG_SLEW_RATE:
-> @@ -4767,6 +4770,10 @@ static void ingenic_set_bias(struct ingenic_pinctr=
-l
-> *jzpc,
-> =C2=A0static void ingenic_set_schmitt_trigger(struct ingenic_pinctrl *jzp=
-c,
-> =C2=A0		unsigned int pin, bool enable)
-> =C2=A0{
-> +	/* Port E uses two bits; select the lower-hysteresis Schmitt mode. */
-> +	if (is_soc(jzpc, ID_X2600) && pin / PINS_PER_GPIO_CHIP =3D=3D 4)
-> +		ingenic_config_pin(jzpc, pin, X2600_GPIO_SMT1, false);
-
-So on port E it will configure both X2600_GPIO_SMT1 and X2000_GPIO_SMT?
-
-Cheers,
--Paul
-
-> +
-> =C2=A0	if (is_soc_or_above(jzpc, ID_X2000))
-> =C2=A0		ingenic_config_pin(jzpc, pin, X2000_GPIO_SMT, enable);
-> =C2=A0	else
+Thanks,
+Bartosz
