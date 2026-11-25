@@ -1,56 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795641087;
-	b=JXVQyQGTHRFGg059IZ+ucKrZnq3YiGJFSezZhV9PLWnHuU3KzWRmMGB9eQ03gxchA+d+
-	 viugiWJglt0NMwIn+vp4ClXnvQifNxQj83VQd5mVfpw66893NTCQtJqhKPXGWV6cTwOuT
-	 roAyLZUIa4D8n7tCgABD94ZY0BvDa+FGJgbXppehqu1aBRCGDmXMe8tTq6jMgwag5bf1H
-	 s4dLrjEG+wHnOOJo0y8HMQwkX71aH6EjgZRT47ji7jwofZ+G/VzuSIn2+ookUWHN8tOoj
-	 vrXnOGOPkTiK8hHBfNSYa7mIMAAl8C1X+rJaoe3JKCz+x1IVa5FOcU08OD0pVj+rDDg==
+	t=1795644013;
+	b=edhykA/pkt/iAnG7usvEZ7ZaMcOTE2st/aR2QopWwx+o0434J7jVg1LvsMfQsaogkHKM
+	 3wHVKkId2AoVVQXNjCHWEU4FrCgbGYQa7zTCgcybPoOYIOr7goMg8qYO8/yqOhLLkQlsu
+	 CqY9rvCD43EnrQCtI10lvJibl97nlRSUd4jRbQIqO/55kfv61RhrdAm6NbW6KVg1/uB2h
+	 3Bb4U502uo6h+kfQ5G8GdW/zJxEa4e3BvgJ2Po0ZLw5aUpWLBqbObglvkjZrWeS5vYS6X
+	 iiH8bDXse4uEB6clg0ZI9nx6N0fMO8o43S7Te3hzrSNEA9gBlCrBVjO9eXgfARan3Gw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795641087;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=rB+N5Sq9zOKruKzHQCCYevF/57RUJ74rFAesj5ohSyI=;
-	b=G4e0zsxsIFTTzqxW3HG3+hx4uTvGGRTkVRKvnzWoA7Akciuo+6FLi+zsDfJDBpQaFSVm
-	 mQoq3dUNMMG3iTwvW9R58izjvXRMSU+1yKndovdAt+W3jy9nOnFhW0JJJTPSdzMDsBX6f
-	 0EpcvIh+wfjOnK3Ixeh75/gM5SWsWxZY9O93O5PKCXUWT/k2n/Q02Z3XDOyXVw3US0iDH
-	 jgL8cKqpUt4iLQhM2+B9/cu62KjbNgYxaLXAC95FM0XMQvtlJZ0n8vxmRKi+59G79pL8q
-	 70wYqlPcD6kGQrPj3sLpQ8hgkCs51I+gXPrqlSVgyBRaowR1RSwsbxBuz1TYudEE3mA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795644013;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=CZgE/cs8BmHBYJeHeFg0PA4Bg6yL0LsgmHmGpETSEYc=;
+	b=IwfOHAh3hv7Lw34JPwPlcGwIU4lIJf8PJ/GnWLnj6Fx8PnxnYJOcC3bozu3vjwmS3wIZ
+	 5fDYxT3a8FueGSFNO/qf09oIdbL9K8VBQtNUfmtPmQzLKQMyJyiOrJ6Y+/SjcSw5GsBKX
+	 fjt3V0QwOOfsawklr2esflc/xIwx6PBpidmL9D2E3QoOBv74l+Ajfyla9wKHOhczL8lih
+	 fYkQJ4ohA3BJOz4RHegxH+v8k9dYE1FJIHP1piaH+hY7ykbeuPmlCqh2ndd55H7hRKmnp
+	 gi+OqxonPvH8gclHFN7dRthig/d2q/5SM+e5v5VsdeiQXTFdNZ60zt0D+m9GIk9VZJA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="RgY/+s2b";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="MB/J78b9";
+	arc=none smtp.remote-ip=192.198.163.17
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C682606A321;
-	Wed, 25 Nov 2026 21:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409C8606A32D;
+	Wed, 25 Nov 2026 22:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 409C8606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RgY/+s2b
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36181F000C6;
-	Wed, 25 Nov 2026 21:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795641087;
-	bh=rB+N5Sq9zOKruKzHQCCYevF/57RUJ74rFAesj5ohSyI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RgY/+s2b4yWvDxJ3BeAyr9EdrClgP+lmhTSblCT5Rd/s3WlHzCah0MDm/2sXFt2Gl
-	 +xK6EwEZi8w5Ux2X/wyR8PkiUVT/Q2k4DkWeFyjsA/FIpaBmgXlQgRPQ/0WoCzsNvj
-	 ZAXWE+BChNQLSG/8mZYyeRqHAWuuXc3AewKIiB1Qpg5y2ttQqhP2DkhQ1nAIsPRvBm
-	 GWLFD+vwa/7bjNDiDKweHG+xQOYpEWVIFRPq54irnSgUJxMxUw3hGozA30E6OE7v6V
-	 U6FUjOCGPsHwkcVkbqUBlqJoK1TdCRRSs4fDpsf3m3idDLtfUR4ypGxwgqUjV/otJW
-	 yRHK9F0t0ic9Q==
-Message-ID: <sashiko-outbox-234163@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 2/4] string: Add strprefix()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Alejandro Colomar" <alx@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <b32d70163fb454fee2667548c63c4d4d3b19d7bb.1795639368.git.alx@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MB/J78b9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795644013; x=1827180013;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aXp2C8wwC/7e9kBMRv/8D3ChViWKBq02WLPtjgK6+yg=;
+  b=MB/J78b9a4CrGdZkVpe6g3Spy2ift4FhVmdGc6WcfnrIsSmK/NRMJKPQ
+   +pGvF1aPZ+qaDyDeUazhEn2F2e+qFMcW7u4OFgXwXBbULeCR+eQHwvjbx
+   pmapp4T6LXZfLGJ83MHVlBr/NWmk+EAM33zHFKrnBFLw4zBWq607o3HOY
+   MFYpA/E00N98CBH9X4ikK8q5wKhZqaLUP35fAMb+iuriXpmlY0oU6Z1hr
+   jfcGwWHifyjMaYM71O/ZWyg+p0wrnig3vwPYzu1CslcoIKGGyex+WdOHr
+   V/B+44B9zQtWNmeHVhl2+RivRCCvZFyFhrhglNxXCPKF0skufo2qH9yEa
+   A==;
+X-CSE-ConnectionGUID: eQyHSMgLTgmQMn2ERUzEBg==
+X-CSE-MsgGUID: aEl3kZlYQ7OynXlkA14g+A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4532481"
+X-IronPort-AV: E=Sophos;i="6.27,233,1787036400"; 
+   d="scan'208";a="4532481"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 14:00:13 -0800
+X-CSE-ConnectionGUID: WoAZdoOXRN2ut255l05zhQ==
+X-CSE-MsgGUID: aZlfixC7SiiBlZeaOOQE9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,233,1787036400"; 
+   d="scan'208";a="12296235"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.73])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 14:00:05 -0800
+Date: Thu, 26 Nov 2026 00:00:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-hardening@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andreas Schwab <schwab@linux-m68k.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Len Brown <lenb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org,
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	alx+linux-hardening@kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v7 4/4] device property: Fix fwnode_name_eq() for empty
+ node names
+Message-ID: <awdaYz9NNVv5fHv9@ashevche-desk.local>
 References: <cover.1795639368.git.alx@kernel.org>
- <b32d70163fb454fee2667548c63c4d4d3b19d7bb.1795639368.git.alx@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 21:11:26 +0000
+ <396395e1d02ca080da67cfd91a1c49058b2676b6.1795639368.git.alx@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,63 +105,34 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <396395e1d02ca080da67cfd91a1c49058b2676b6.1795639368.git.alx@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] string: kernel-doc parse failure on strprefix() due to
-  __nonnull_args()
---
+On Wed, Nov 25, 2026 at 10:03:55PM +0100, Alejandro Colomar wrote:
+> str_has_prefix() returns the prefix length on match and 0 on mismatch,
+> so the mistmatch case can't be told from "empty prefix matched an empty
+> string".
+> 
+> For instance: the OF root node's name as returned by
+> fwnode_get_name() is "" and will return 0 for any name matched against
+> it and since len is 0 too, fwnode_name_eq() will return true.
+> 
+> Let's use strprefix() instead, which also makes this function simpler.
 
-commit d8e472e1906ee21263f127c3c8452f752cbf8121
-Author: Alejandro Colomar <alx@kernel.org>
+...
 
-string: Add strprefix()
+> Message-ID: <avrSUUM3HMgxTNpl@kekkonen.localdomain>
+> Message-ID: <nat4ilqmzzpuyrjbuahl367ip22tfnmjorydlppuwqiscxaujo@kf63j4lb3flk>
+> Message-ID: <nat4ilqmzzpuyrjbuahl367ip22tfnmjorydlppuwqiscxaujo@kf63j4lb3flk>
 
-This commit introduces strprefix() to return a pointer after a matched
-prefix or NULL on mismatch, and adds KUnit tests for it.
+What is this? Is it documented tag nowadays?
 
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 9b3e578d9aca1..a6a1953c52e35 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_len, co=
-nst void *src, size_t count,
->  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
->  })
-> =20
-> +/**
-> + * strprefix - string prefix
-> + * @s: The string to be tested
-> + * @prefix: The string to see if @s starts with
-> + *
-> + * This function determines whether the string pointed to by @s
-> + * starts with the sequence of characters
-> + * (excluding the terminating null character)
-> + * in the string pointed to by @prefix.
-> + *
-> + * Returns:
-> + * *  @s + strlen(@prefix) if @s starts with @prefix
-> + * *  NULL if @s does not start with @prefix
-> + */
-> +__nonnull_args(1, 2)
-> +static inline char *strprefix(const char *s, const char *prefix)
-> +{
-> +	size_t len =3D strlen(prefix);
-> +	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
-> +}
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[Severity: Low]
-Does __nonnull_args(1, 2) cause kernel-doc to fail when parsing
-strprefix()?
 
-CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py does
-not strip __nonnull_args, so running scripts/kernel-doc on
-include/linux/string.h (included by Documentation/core-api/kernel-api.rst)
-treats __nonnull_args as the function identifier, emits prototype mismatch
-warnings, and omits strprefix() from the generated documentation.  Either
-__nonnull_args could be added to CTransforms.function_xforms or
-__attribute__((nonnull(1, 2))) could be used as in strends() below.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1795639368.gi=
-t.alx@kernel.org?part=3D2
