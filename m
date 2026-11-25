@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795631641;
-	b=yGsY1I5wzDVMMU4FuljzjDb0z8nE2tfRc5BSfuKXw15Anz1qxbMwGpJnjQIB6VUex+CV
-	 T5iMBP3Q7k6O2RQj1wRctRo1TzI1jHbUg8iQrwYg6ESsyL64TNmrkhh/q2sSRYR77uTvK
-	 Dj1VPF0XXeJzYj7xp4wYwbP3xiJUB2edlpEbdc7VwiJUKLyYbJGHoMuL/ZQu9U5RmvtTt
-	 mticyNeyd8KFnBdcPQDHvN12XOlB36kiD5heUHfWlMvW/fIa94ESuznJu6IEnoOZkxEIR
-	 D+vwblrbvalBDf3Uko/ingXfsVRNOYPRcpE3O8aHKMY/VVP9xaMZY1FJBUKUG5ykf6w==
+	t=1795631669;
+	b=JG3EIo0uYt55t1gwLdxfPso5w5FAOzutsikYW+n8+yRbDwBnUhF6vgueu2VZ2tnd+6em
+	 /Z3iJ7xLetfb+5+ilcU3DMby/TcF3S/KxkYs6SGz3OCpwsoN0qj+NYt2ts8tTVak53luP
+	 9o2SLqW6UPn+wiya2Q6wwWV5ATsUyXXNo2GdAbKPPYVn1o8XJKYfnVqGsP16c16sGW2jO
+	 YJNQcixkeu/eZpLP7e3JfNoppCDawdIzuPDmymLR4o6Nzdxp3eYHKKRxkqsggN8Mxy85Q
+	 c3C8SqzGYycPO3Z4Q2hnRHKpoeZoQhj1Zg1y9zMp76J6kzedsDYfLdU6o/8mRYgJuRg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795631641;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795631669;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=MZOn7cbyBZCKner9Io0gV9Z7rV2XG5FimTAg+eegkQw=;
-	b=Zqim0rVc20ze6NCYKClyM/vq5ngoqnI4RFvJSwpzu5N6yAAybEWtaw5B3fkq+++XkwXM
-	 pFnG3UozHytG/BalVdYeA2Jo9LKZvwJiwMp1kWdoXrnC13IQ5a+DdOQuL7p/FI3VCiNoh
-	 l4SLRGkYta2iKAekmaqMW/GfJ36mZHaD2utlhIoqRjKSbTWY8wSXhe6MF9ryVOP8VatcQ
-	 8R7tf2G4ujqsHwidPphFpCtcv8tlT52SxDlBGHT5hLWQkITbFq6LoXKgh9BvvYMn26/Ph
-	 PED5Y4gigFsIPrhk/UX6ZmFS5ifGUYeLlLRlSrABaAD+mN0RwfWSrftgXvYQqQ1iaYw==
+	bh=huzeBJvajrnFnGcmiNNvCrPUFe7LS9oLcis6HMj9a6w=;
+	b=4Osd4aenDVvi7CxsYXzbzFNu8T/92XBnE4MFaWkQjr7FlOlrj/O2CRimpzlrqlXQ8VnX
+	 /8McEqnuyCQtTCCekIchtOu6msNsWnPueWNZOevN2EFlm/cSNT8FyRTmX2/zZ6fSbvCo+
+	 1kHXdD75YKiCw/b8iNdKWntKwDJF0UDQRMC1qySYM9mhOew3QCNRtU4zLY2dLlqSK92G/
+	 Ta5dd90EZ/s8hml07TCNTntrTRkzicuy7gU4mwoT7e7PJyH+tZlnWVRoKKDerBkoRFHR8
+	 mFzwcKriyrAB+wZRw95zO5S82Ls66/Ur+MkTrTMNxslv7Wj7kUl6VO+Iz2tCJKeL1mA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gMR604Vd;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WvV6eomv;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B750606A329
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 18:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E1606A31E
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 18:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gMR604Vd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D8E1F000D2
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 18:34:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WvV6eomv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 586961F00ACF
+	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 18:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795631641;
-	bh=MZOn7cbyBZCKner9Io0gV9Z7rV2XG5FimTAg+eegkQw=;
+	s=k20260515; t=1795631669;
+	bh=huzeBJvajrnFnGcmiNNvCrPUFe7LS9oLcis6HMj9a6w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=gMR604VdeK3XkdaruPCZrrWntH8ZkluWTq1UEz1VzQEDYndulZ2K0orM1LCEeXm8R
-	 Sdg6hQ97QvJsBIZUClF2b9BGXd0m/GCR3m5rsYPmmE/mX+1BK1nyneigOjCdPf4h3+
-	 OfVymgM031W1ZopRBlTAWmOC9mwIa9Yq1KpzvcUBHkqfy5yItIg4lFiW4TpakH27Vi
-	 zArSLBcTb20Mq2UFvT/fkmC0LZ78HTaLbT97cgiu3i/L3cWOfLiR5ej3uUXEQifyIO
-	 qKx+/wwLkj/3jIENXBKu4oVAdMTqfLume0cMIFm+9BsDAGFPgXwXO5QVjz4irZq6r5
-	 7H3CawIi5TT9Q==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5c1465bbbdaso5256218e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 10:34:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHZCMvyEM4XEpYezUpyFbBdQihk3kxVUHWFEmBC+iLMoB+vS/npE8l8zWAy3/FXlj9m0bqWNqs4+Gvm@vger.kernel.org
-X-Gm-Message-State: APuU4Z87wJeTRKcqCtRYOfP9pxRCfEkxDeWNCMPUTIqzsv/LNO7C/mjt
-	aU6iLH5aHZAlopxGs8byi6fhFwW/G6x0aRhm2B33Ul7b+VAyp/c9GqrqUVKAjRDzp5qP+oJoyZN
-	okR5OvjCkg/BIgIHCfspcUgRCB96/YmE=
-X-Received: by 2002:a05:6512:3d23:b0:5bf:f76f:b5ff with SMTP id
- 2adb3069b0e04-5c1bc8c950emr6241358e87.52.1795631639987; Wed, 25 Nov 2026
- 10:33:59 -0800 (PST)
+	b=WvV6eomvshfBYaxVP2E8vJChWGUgUidWuiSAraGC7pphvYd8gXCkxMI4XRKG8I6nC
+	 SoGSAF+WYK5TfdUjHraRd4177HXaJDE13ty/oPYNDruB4ogn7OXoxMoLf1Wy1f7x/j
+	 x+x3S/QOlDNzQpWzsl1Z/KE2dLjdblYlEPTUjv4WdJLrGoXsJ1ftnX59q5xP7rs2/5
+	 r1KP+qYwD4Dp6Vors0XSU9/uH2SRpU+Mr+mMd2kTRlf/3oQUmZ2hETFGmzC1XteJeX
+	 X6eRM6gFQL+WHKJlXficHxuZ47FMdanDt2/0RM6V4wauUzlCOPEtg/NgQ/p0YWgbbl
+	 rkGAgMzgjYNQw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5be47aa555cso7703293e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 10:34:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErG1IWCtS09updz10cXD0MbjMiLSHfNC0U7THvN5YFUqb0+qmvt0Dzj8mjXXMjCqqz+AMAtiLRAUw1MX@vger.kernel.org
+X-Gm-Message-State: APuU4Z9LBguzMXYlAsfSdPF73xRu9yu5L5NTrzQnmYaq6hgFfAfX6Uzg
+	xxHVoJs4Gl2qeOl2uqwiOztfuWai4Z6eOVu7/x3auaZydyPx1+jBSDv7saaur7cm7VOfnTNGyex
+	P/1XaJSSvWXoUGoiu42BKyytZNQp5Yhc=
+X-Received: by 2002:a05:6512:3a89:b0:5bf:a467:32a6 with SMTP id
+ 2adb3069b0e04-5c1bc7fbf45mr5538912e87.39.1795631668071; Wed, 25 Nov 2026
+ 10:34:28 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,39 +59,39 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261119204748.2558209-1-lee@kernel.org> <20261119204748.2558209-2-lee@kernel.org>
-In-Reply-To: <20261119204748.2558209-2-lee@kernel.org>
+References: <20261119204748.2558209-1-lee@kernel.org> <20261119204748.2558209-3-lee@kernel.org>
+In-Reply-To: <20261119204748.2558209-3-lee@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 25 Nov 2026 19:33:46 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=yx_=j3Km32AqKmQ+JqKadcCEOBMBs3R3dVvhS9A2DPg@mail.gmail.com>
-X-Gm-Features: Aa3M54qJrAjbkPP_s3DSmoGNUsm5bkx7wv6GpF9Uaxblh2WXq34zjRLrGUaH3NM
-Message-ID: <CAD++jL=yx_=j3Km32AqKmQ+JqKadcCEOBMBs3R3dVvhS9A2DPg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] pinctrl: tegra186: Fix out-of-bounds register bank
- index for AON drive groups
+Date: Wed, 25 Nov 2026 19:34:16 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmaHrHeApcosC5SXZtTvFCw9+R0of4z9Z1XF2c0R1=f7w@mail.gmail.com>
+X-Gm-Features: Aa3M54rQei-ItW5tY_E33jyA6MyDsSvvBdzkAVwW1NF7MU63WgvrrqmNxIHY0gY
+Message-ID: <CAD++jLmaHrHeApcosC5SXZtTvFCw9+R0of4z9Z1XF2c0R1=f7w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] pinctrl: ingenic: Fix element type of
+ x1600_sfc_funcs array
 To: Lee Jones <lee@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Aaron Kling <webgeek1234@gmail.com>, linux-gpio@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Cc: Paul Cercueil <paul@crapouillou.net>, Olivier Louvignes <olivier@mgcrea.io>, 
+	Paul Boddie <paul@boddie.org.uk>, zhouyanjie@wanyeetech.com, 
+	"H. Nikolaus Schaller" <hns@goldelico.com>, Andreas Kemnade <andreas@kemnade.info>, linux-mips@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Thu, Nov 19, 2026 at 9:48=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
 
-> The Tegra186 AON pinmux controller has only a single register bank
-> (nbanks =3D 1, indexed at 0), and all PINGROUP entries in
-> tegra186_aon_groups accordingly specify bank 0.  However, all 51 AON
-> drive_* macro definitions pass drv_bank =3D 1 as the final argument to
-> DRV_PINGROUP_ENTRY_Y, causing any drive configuration read or write on
-> an AON drive group to index pmx->regs[1] out-of-bounds.
+> ingenic_pinmux_set_mux() treats grp->data as a u8 array of per-pin mux
+> modes (u8 *pin_modes =3D grp->data), and every other *_funcs array in the
+> Ingenic pinctrl driver is declared as u8[].  Because x1600_sfc_funcs[]
+> was declared as int[], indexing pin_modes[0..6] reads the first seven
+> bytes of the int array (0, 0, 0, 0, 0, 0, 0) instead of reading mode 2
+> for the seventh pin.
 >
-> Update the AON drive_* macro definitions to use register bank 0.
+> Change the element type of x1600_sfc_funcs[] from int to u8.
 >
-> Fixes: 542baf77f092 ("pinctrl: tegra: Add Tegra186 pinmux driver")
-> Closes: https://sashiko.dev/#/bug/linux-a9a7165c-c5eb-463a-b7b1-24a30416b=
-33b
+> Fixes: 4da56f9c6f14 ("pinctrl: ingenic: add x1600 support")
+> Closes: https://sashiko.dev/#/bug/linux-5dccd0ae-9450-440a-87d0-44cc86d1a=
+f45
 > Cc: stable@vger.kernel.org
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
 > Signed-off-by: Lee Jones <lee@kernel.org>
 
 Patch applied!
