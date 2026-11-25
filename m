@@ -1,94 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.47
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795586869;
-	b=E4z1dwBLd0U1YnZ5hI9yHB1cRlhNex9zsbp7QI6QaoF7J/Wi4YW8I0oYM6Ikiv690xVw
-	 9r+9T/cHKF5ha8Lj25PyV1PBN4DV8jhgVoHLji8HqgXkhNx8zIsCZMRS/+zDiRZzX13e0
-	 0jq8Rzhf1hXIQZBTxcUEkvL5B20WziMRdSoGNDV80FGBskKbq3XpIkuW07kn95EJw2+sF
-	 +N1hYOGDkCIlHCgzrAoVrk9o7aGH8OctY+x8bIOSH4mCOpQnLj4IfPFYKrP8oU4okS2yL
-	 4ePTa62Qdylme2yuNl9bTVHboh4xxjutwZbeZqA7VGkVMRhb5tyEz+oZT+0wrLqQRhQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795586869;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=uNOvfashgWVnAYYWGzUdcUIW23Wlm/O6cLEys1MSUjM=;
-	b=CMADMi9pDYhOCNOkPIBx37mLUu9Ss+K5ibK+H4nMq5d4h958ZKc9VUj7lLm8oJraxNHF
-	 LnoyqQmIftR5HqZ85UD6aiVt5ROy3O6py48HUVBIufmXrCsJwvKZUg2h1jdRuSHQk4vHc
-	 uEbSYuBhujdn+MW5B+9C21AjCaBz4M+D0IYbXaNPmf8uHjxLn0DRGjG0jSfMes/3tc67r
-	 MSczTVVQNqmjhAp6ydtVu3Fwh2ror11nWmwKg6s7DXQEVFYn8GZ9p/nUaFR1LeodZN4ip
-	 wDl1EW3gV8AHJe0XHK+SyMc1f0yBA0k4/2vvmYzpTqFGNW7e0k6ltwBABPPB/WLXN3w==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tLjBQXr+;
-	arc=none smtp.remote-ip=209.85.216.47
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.169
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795589076;
+	b=K62wSfAX4dydOq9mLA2VkL6aDXhcRw2pDybt7byCKZd7+92SYRa2VZTl8OJYQbTEffOb
+	 n8TF7tHgmj2uaWU5UEeYPLss7USUIdADE4r1nXwVyVTYWkzOJ6xbQ6dgsrq5wTU0X6LXu
+	 9Q6SoTfVK+u6w3oNc8kAJbtI4SmdZpFdKs8O4osFRaMEEX5wM31Z3hmsHTcM/FPz1EMsW
+	 jGUJthIT4rXU6714yufui64ms6RZg9NMlhXqoZeyfxQ51d6nF3lnuZ0mk+mn4GKeCuPf8
+	 eN5AAZ9K5QXLHzZOXeyquwt7+JvK+dCyT8wUPgLyAxlJ7s8Novn7axuNbsJ2Jt9k/qA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795589076;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
+	bh=1gk2zDY+qHFoLpfFOUqPZn9pkTFPLdiycG87z3EJLfY=;
+	b=IW6+Hy3IFnWgTxKZp1jW5jPQAliT+b3VK2CLi8N8dwbZnIx+w0t8rRrMbJtCNGB55g/H
+	 Qh1lfCOApGkaHgivXwV7t4NHRziXYJiy6RzAul44ql4qvkvTOerF3S6mSusPyg06EwZCG
+	 lCQGSo4RwMx2xkBeKhjFpdhj96klB51qq7uwTBmbalQsgjhHwwO5xW7Pb2MNzD8ToM0It
+	 B6OwRj6c/v0U37ivXam932sUG51hbDD69bQTDWriuUAU6mvjsIIqP3YHf1V/ANXJhrcGL
+	 zc2q4whNr8iz1hBc846FZQOzckxKAYvAUc+85v12h1iQtz4t1VT8pC1orL/OabqIBKw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="k/jEVpVv";
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b="I+Y/BRNS";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=81.169.146.169
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.169])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F449606A32D
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 06:07:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9F449606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BE9606A31E;
+	Wed, 25 Nov 2026 06:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B6BE9606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tLjBQXr+
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3b421e8d111so3622396a91.3
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2026 22:07:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795586868; x=1796191668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uNOvfashgWVnAYYWGzUdcUIW23Wlm/O6cLEys1MSUjM=;
-        b=tLjBQXr+F4seW5EPloA/V/zSKMoMqGP/9R+BmO6CE6r3Un76zjlGIHDRPfK3l/xJuf
-         n+hzpq2RwkKQ9vY2v2qOc7dMQvNk39WZsnxTBEGNZzk6h5XLe8oztsPGcnZi6JrdSaEY
-         9oibnG98bD9aw+DELxTQMJ6ocEWGKhmZ27GA8hOb7IQGFPh0LDXgeIxHAQXQR9mVo+m6
-         QtjnokSRmm08XlPig4XEbKDlk98CqNv2jw1/EhqTIL9fHxBhs2WExCDIDf97h1gIZl0d
-         CioPzQclsbcRCnVIJIxcjwuwvLu0AEiT9GIi203j2ciGAquvd/l5DAHhPJLv64ZRAMCT
-         bm5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795586868; x=1796191668;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uNOvfashgWVnAYYWGzUdcUIW23Wlm/O6cLEys1MSUjM=;
-        b=oD8f2IBcVt54CfCXeZPrQ4C/ucAmFk5DmLABi969geHo8Zl7o4rtXHtj/XLmp8B9x3
-         nD6ZfTT3fkLSYrBt93PfJrltEqwRrTKbb/NSGF/lLu0iTblMrjrO6HM4Ax1n3N9OSb1K
-         qf/mS3fa6drQsvi1VYEZoT0231KNNxGf3XFHkbxOICs98knURtLbTpVEjuJqL6lgeh5D
-         UUy5Rf1ZlqxvMwDKWKIC1Kvv57imlh9sEsxmC3EWy65acAcLrEznz5avJZALbWrTJGbS
-         UlFfP18ck5m10wyPP7fUO/6CR+srSNsq4CfdyDFXSapsi/1OFTux7OE9cYZrUjtyd+Wq
-         v1cg==
-X-Forwarded-Encrypted: i=1; AL+hErGk89swptkNWqkiznH03mG7UKzxaUA0rMt2ueLkg2X8tWNdcIoLC/qQfGMf0PhBA5Cdd0CPrULLwsgI@vger.kernel.org
-X-Gm-Message-State: APuU4Z/t3CwEsiPQ9xJ8BmtEQvAnxBBXfr+yPwq2iaIxHXv9Tm82H7+e
-	75DLhyH0f/yTnx4e0ATBZTOIgzTKwVrlM+OtIU7P1eP7A4h3H3srG4AR
-X-Gm-Gg: AZFdTZfDc3IrlwSZPmQl5DVQl+r/Pnt85JSgbFdYoYA7cxLUA8pVG7isHOyUBN1bsXe
-	chvKTPWX3V9499tGkCfmhNBi9LwE4dkWFFGKesoPjusMcCaOCeutWGECajc8JGY7IELvFXqvAKr
-	qz21/tGRbD7+5HQBr1Jdt6ISYiAOGLY7endgxIL9NM3CwxzdZx+9YWhYhL+wWocmyyGFb766HIb
-	NmhPuh4CUixKKB8Cdd+G/tL4jd7sfCMLdOcoEmNCWa0hOxom5Ef+CYdu8FFRamZp+I19Z2WUwV7
-	4pOO276pRp73FjR+clThySVdyvzLljSjBJxUG6dPqqRnuPw4zGFq5ma+PeaGezrqQGPR8xp6vlU
-	hyx1dKKDmr7FBjzWromrqmfnfBR4RCbO4sdsf80lezxUWBuZj1aZySw5EfOdfbud6c4C8IInGrd
-	zwzOPlJ6wxBlJhoiwm/IDLqKIwjETstp153AWk2PQnZdP2tYVxNTkWfqawVLnTxyLV75EDPr5Iv
-	ObHVKhRy8TVVU7JqWIrco962nvsJeApsdgZLh/FkoTvdL1WxG6pxQXLCMbdqpqJxF+QoYXCzp0u
-	+eHREu8HeER8v1AyEukNejy9U4nM83Ts3pJSIn3sHp4eoQmUN3yJmxOcmWN2ZiTtKY/gy6s0gYU
-	WSNNaWUYJoFZPbDLNZwY=
-X-Received: by 2002:a17:90b:1649:b0:3b1:2810:dfd6 with SMTP id 98e67ed59e1d1-3b41cb50c4fmr16950732a91.64.1795586867765;
-        Tue, 24 Nov 2026 22:07:47 -0800 (PST)
-Received: from LDYT9Q2G2M.pvgl.sap.corp ([2a09:bac5:cad3:119::1c:2e7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b41ad46ef5sm25931346a91.8.2026.11.24.22.07.45
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 24 Nov 2026 22:07:47 -0800 (PST)
-From: Zhiqi Zhang <zhiqizhangg@gmail.com>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhiqi Zhang <zhiqizhangg@gmail.com>
-Subject: [PATCH] pinctrl: starfive: jh7100: Reject malformed pin properties
-Date: Wed, 25 Nov 2026 14:07:41 +0800
-Message-ID: <20261125060741.14033-1-zhiqizhangg@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=k/jEVpVv;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=I+Y/BRNS
+ARC-Seal: i=1; a=rsa-sha256; t=1795588973; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=cTnbBPeGovHeLT6q6u9ZQyfIcEbHxmGIT0GrghPBSMc0a8wnvXLtuQfkzrUkZuOig+
+    mjlrb2X9BAMV6Niob3O8lWaPpn0e2SdWNdjNmOniwDiCZzqNRfWlUcROWNXaHY5Ve/NY
+    0VtyS2euhWucTcYnwTYon1YrmlfKfZqLYxa+qOPkv3sBr3ecSeQhrjCD2A5z9j+paM+0
+    rVWwnW9u+e0WtxWUhTDMffhkDAndZfl9WrnAH8ZAPV4eKb9fiwp9k208ODbrRSGsbdsg
+    j3/FNSbgbwldCxxsf4/oW8ZuSQ7/5LhlEuJLh16CY1sXuLGDgGTwZ6sZYN9iz1IICxLH
+    BmLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795588973;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=1gk2zDY+qHFoLpfFOUqPZn9pkTFPLdiycG87z3EJLfY=;
+    b=VnsemKLEMl+3O0YMCi8sFARtWux1a17AXnxlzhRywNWKFcfap3DH7difiJlRoGytYh
+    0lOcJWFo7zxhNwp1yt3/yyQ6N4YsfMUGObwXOKvs4A5PTFMk0fIug+tCVkPz4A//bvId
+    jxdtI+t8tUjP1cM0OjQcUc+7LTkHs2scm9F9oIOZetWaErP1jEVAIELCzO4t4KbALYLi
+    Jw1E1xmzK3Oiz6FwxQ41LBe7+tDd3B01/ZH1FJL1A+y8qC+R7qsqDEMYTgrNAZPhKyf8
+    RLLci93fYIazcGHZ3aHRYdTRVHq/Ax90aMZHWEnskYt5wjVw9tE+H9/kWGZsWXKRGccY
+    5LLg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795588973;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=1gk2zDY+qHFoLpfFOUqPZn9pkTFPLdiycG87z3EJLfY=;
+    b=k/jEVpVvLQkIML9nalg1JpMqB9CTqv/wAXr1zhqxzs/o7JG9ou3ERFGcSh+GlbUNZn
+    3tq85SddEbKil5B7cchZLZTrAwFexsBaMs9qsmh1iCRlQ1k6fHzxw0ptVxAI3mTDKdQL
+    4FxIaWJCkEHW4UASXFZnhxLqQn7CtpEwLzx6WyFXmsohzLa/KHGYS/rke0TQqo4/JxkA
+    jdfdPQTfKFoLe7ntolGx8485ObKLaY/+bpykLMy52JLbu3wYhBttQ1/RFXnt/tLR18T6
+    beJ+5cYvFYqR4grNQ3iFfE1hMjcMvNNuRfSugQ0WE2Fjb766Bf/tfXpjfxJEV5n02c70
+    dlsg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795588973;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=1gk2zDY+qHFoLpfFOUqPZn9pkTFPLdiycG87z3EJLfY=;
+    b=I+Y/BRNSdG/pLdf5zxxzQco0G17o3kqUXrsy6r9rvniFtpueTu2DVpyc8o6OxvGsQI
+    iHXykzGIK8KtXwVBJmDw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrS25oMlMiNMn5e/Npe6SVDIvzG+5uG4p/zkDZq"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22AP6go5ny
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Wed, 25 Nov 2026 07:42:50 +0100 (CET)
+Content-Type: text/plain;
+	charset=us-ascii
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -97,117 +93,120 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.11\))
+Subject: Re: [Letux-kernel] [PATCH v2 00/20] ARM: omap3: pandora: Modernize
+ audio and backlight to use Device Tree to finally remove pdata-quirks
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20261124234143.4f099646@kemnade.info>
+Date: Wed, 25 Nov 2026 07:42:19 +0100
+Cc: linux-fbdev@vger.kernel.org,
+ Lee Jones <lee@kernel.org>,
+ linux-pwm@vger.kernel.org,
+ Tony Lindgren <tony@atomide.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ dri-devel@lists.freedesktop.org,
+ Jaroslav Kysela <perex@perex.cz>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ linux-leds@vger.kernel.org,
+ Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Helge Deller <deller@gmx.de>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+ Daniel Thompson <danielt@kernel.org>,
+ devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Pavel Machek <pavel@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Roger Quadros <rogerq@kernel.org>,
+ linux-gpio@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>,
+ linux-sound@vger.kernel.org,
+ Takashi Iwai <tiwai@suse.com>,
+ linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ kernel@pyra-handheld.com,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Jarkko Nikula <jarkko.nikula@bitmer.com>,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D4A9EE97-468E-4720-8D26-D3B008F8E762@goldelico.com>
+References: <cover.1795505160.git.hns@goldelico.com>
+ <20261124151318.GA536798-robh@kernel.org>
+ <1DCFB59E-E5EA-4470-997E-EAA4ED35D906@goldelico.com>
+ <20261124234143.4f099646@kemnade.info>
+To: Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3826.700.81.1.11)
 
-The JH7100 binding allows each pin group to specify either "pinmux" or
-"pins", but not both. starfive_dt_node_to_map() uses
-of_property_count_u32_elems() to decide which property is present, so a
-negative parser error is handled the same way as an absent property.
+Hi Andreas,
 
-A group that contains a malformed "pinmux" property and a valid "pins"
-property is therefore accepted as a "pins" group. Similarly, a malformed
-"pins" property can be ignored when a valid "pinmux" property is present.
-Both cases silently accept a device tree node that the binding rejects.
+> Am 24.11.2026 um 23:41 schrieb Andreas Kemnade <andreas@kemnade.info>:
+>=20
+> On Tue, 24 Nov 2026 16:27:16 +0100
+> "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
+>=20
+>>> Surely=20
+>>> this can be broken up into smaller series? =20
+>>=20
+>> Yes it (we?) can. It is just a question how to do it and properly =
+describe
+>> the dependencies to avoid bisectability problems and avoid that the =
+final
+>> goal is lost.
+>>=20
+> I think it is indeed tricky, and probably induces delays.
+> You can point to the pandora_bl driver  resp the pandora sound card to =
+show the
+> final goal.=20
+>=20
+> If I understand it correctly,  you have
+>=20
+> 1. preparations/extensions for using the standard pwm backlight.
+> 2. REGEN stuff to wire up the power supply.=20
+> 3. dts changes to wire up backlight and its power supply.=20
+> 4. sound: quirks in twl4030 codec
+> 5. sound: dt conversion of the sound card.
+> 6. dts changes to wire up sound card and its power supply
+> 7. machine quirk cleanup
 
-Check property presence separately from array length. Reject groups that
-specify both or neither property, and require the selected property's u32
-array to contain at least one element before sizing and filling the maps.
+Basically yes.
 
-I found this issue. OpenAI Codex helped draft the fix, and I reviewed the
-result.
+>=20
+> So what brings it all together: the power supply requirments,
+> so both backlight and sound depend on 2.
+>=20
+> Maybe it is an idea to split this into a set of
+>=20
+> One patchset for
+> 7a. machine quirk conditionally depending on available compatible
+> 2.
+> 1.
+> 3.
+> Each can go into their individual trees.
+> 3. might to in the next release cycle after 7a, 2. 1.
+>=20
+> A second patchset sent after 3 is in -next, containg
+> 4.
+> 5.
+> 6.
 
-Fixes: ec648f6b7686 ("pinctrl: starfive: Add pinctrl driver for StarFive SoCs")
-Signed-off-by: Zhiqi Zhang <zhiqizhangg@gmail.com>
----
- .../starfive/pinctrl-starfive-jh7100.c        | 41 ++++++++++++++-----
- 1 file changed, 30 insertions(+), 11 deletions(-)
+>=20
+> A third:
+> 7b: remove quirk + pandora_bl
 
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-index d89f6a4722..97c96c92d3 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-@@ -491,24 +491,34 @@ static int starfive_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	nmaps = 0;
- 	ngroups = 0;
- 	for_each_available_child_of_node_scoped(np, child) {
--		int npinmux = of_property_count_u32_elems(child, "pinmux");
--		int npins   = of_property_count_u32_elems(child, "pins");
-+		bool has_pinmux = of_property_present(child, "pinmux");
-+		bool has_pins = of_property_present(child, "pins");
-+		int npins;
- 
--		if (npinmux > 0 && npins > 0) {
-+		if (has_pinmux && has_pins) {
- 			dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: both pinmux and pins set\n",
- 				np, child);
- 			return -EINVAL;
- 		}
--		if (npinmux == 0 && npins == 0) {
-+		if (!has_pinmux && !has_pins) {
- 			dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: neither pinmux nor pins set\n",
- 				np, child);
- 			return -EINVAL;
- 		}
- 
--		if (npinmux > 0)
-+		if (has_pinmux) {
-+			npins = of_property_count_u32_elems(child, "pinmux");
-+			if (npins < 1)
-+				return npins ?: -EINVAL;
-+
- 			nmaps += 2;
--		else
-+		} else {
-+			npins = of_property_count_u32_elems(child, "pins");
-+			if (npins < 1)
-+				return npins ?: -EINVAL;
-+
- 			nmaps += 1;
-+		}
- 		ngroups += 1;
- 	}
- 
-@@ -535,7 +545,13 @@ static int starfive_dt_node_to_map(struct pinctrl_dev *pctldev,
- 
- 		pgnames[ngroups++] = grpname;
- 
--		if ((npins = of_property_count_u32_elems(child, "pinmux")) > 0) {
-+		if (of_property_present(child, "pinmux")) {
-+			npins = of_property_count_u32_elems(child, "pinmux");
-+			if (npins < 1) {
-+				ret = npins ?: -EINVAL;
-+				goto free_map;
-+			}
-+
- 			pins = devm_kzalloc_objs(dev, *pins, npins);
- 			if (!pins) {
- 				ret = -ENOMEM;
-@@ -562,7 +578,13 @@ static int starfive_dt_node_to_map(struct pinctrl_dev *pctldev,
- 			map[nmaps].data.mux.function = np->name;
- 			map[nmaps].data.mux.group = grpname;
- 			nmaps += 1;
--		} else if ((npins = of_property_count_u32_elems(child, "pins")) > 0) {
-+		} else {
-+			npins = of_property_count_u32_elems(child, "pins");
-+			if (npins < 1) {
-+				ret = npins ?: -EINVAL;
-+				goto free_map;
-+			}
-+
- 			pins = devm_kzalloc_objs(dev, *pins, npins);
- 			if (!pins) {
- 				ret = -ENOMEM;
-@@ -579,9 +601,6 @@ static int starfive_dt_node_to_map(struct pinctrl_dev *pctldev,
- 					goto free_map;
- 				pins[i] = v;
- 			}
--		} else {
--			ret = -EINVAL;
--			goto free_map;
- 		}
- 
- 		ret = pinctrl_generic_add_group(pctldev, grpname, pins, npins, pinmux);
--- 
-2.54.0 (Apple Git-157)
+Yes, this is a good approach. I am currently checking if the =
+series-scheme
+can be simplified even more to help everybody.
 
+BR and thanks,
+Nikolaus=
