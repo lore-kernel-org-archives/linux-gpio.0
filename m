@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795697303;
-	b=QGgVsO1sMuJHNHePGuevhZEfc2VrMjZ1NKlJNgfkAI5xM/be6zEFZ95xHAnGrd6oluWz
-	 3HZscOyYkza6P+3xo7sFLThT/J6+4zyPkYKWrHo7PbKL/D+tuuC25fZzbT5VCCbAotk4N
-	 F0RWJIXA21VK8eX9OBQX1iW058/c3ckHl7bm4UdEL9Rli6VfrIWWsMPeZzb8zYDaj+82l
-	 zNExbHTGovAryCV1ldcNd93++DDsdYE4XPzmXI5ZnKUBs+P/daEXompSfwH8V3QQ9D63F
-	 CXGSkD6tt+V1ahc1Ybez4fDNAIbCKiSgJVBWJ3KifMpkqQCJupNQ0M8RMC8BIkJr89g==
+	t=1795697594;
+	b=2bQ7TkshcPBhwKbW4lUxG7utxPO/Y19fwVTGbAxCWM2GZeiX00V7ExHoUY8H3+dXY8Up
+	 +5iSwRUVfbqsTukH2+nQryG0az5aGgb8t1JtFxTksx/KoilXX4VDwkWhnnad/uwFVgDqr
+	 Y9KwVnAJmmf9SKG7RwFVMbOSUWPa+ZJgQz3wIg4Q8btCWcfoh/rUPZo4DZo5O0jK7VZti
+	 meE1lOUNFa5V/coyYTtdUGRjhNKIH+7Wdhl+FE8LjkJLTJectpw8kQsFxF+A1kkzrWxFy
+	 i4Y7SADfnUkdn174tzRIOwn17NlyEGj/5XW9JYQ8KHCZ6caLqrhZwQGa2rMHTQ8zdjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795697303;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795697594;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=A58UABYtrnEty2sjHiU2WLl/hxy5u3d9ZmR6jr4hXxk=;
-	b=Txxx38cxOI6fER112iBP+CjZkIp/ZXPCPYx1C77CVpaM1YCutRbIUbZSm0yqbL5xnB8I
-	 LoOGSDeR7LE+qB8i5veD77no+wfdAEqny0x/iYGTDDLHEhKRSRwoZ7xPpISYfyevI9CAF
-	 EKjwH12Yw/8ZTG7YiK8t46rhMpK8PtmifpNcIA1VhcADV5/kB/PMGej5byuuBdebvjYfg
-	 YujGbKH05G6Tf2dx0ZJnTe028vYeOjyj2HVlYi22CFINUdwHd7ud5/0i0HhwEMiASzuHX
-	 c5H+9ObifACleQ8x6Ag5ZjYFFakXQuuQyoxG13zJOBl5VkU6EAqIKErAo/1UVy7pLkQ==
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=q3PzFJ3hbYSCea9rHodUJxc+bUxixgVlxzIsC4nrb7w=;
+	b=uLZaACNPwKnzxN41m6CZweFewikFMxgDiXLvhAMEyx0zcwAQOe8ZPiany6s3zBjx8/Qa
+	 1hkdfHoJEDA17vBL0uXUTveMelM1byBPvSsc3Yxj0TjwRaDhqS9E50IGSc5ER+Bv+MOxu
+	 vXWVpaX8dEF70uz30hzWtLK3jfVf+KkOP9gQMYT6lyzOUD3NnGfNW24I0NS5IhZG0hNRw
+	 WRQuPdp5+yGJQyBpchD9MnQoi5Hro8OVKoR10SmfGsojaaqNfQCoZD9R99pdAM7Na5kMt
+	 V76Lw8/gZn2PWElH3YvTtq1GtiGY8GAboBKExRwXM5mfcGY8KQAqcVP4TUS88PL5nuQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VIH3bDTn;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HPpEeEcK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476F0606A326
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 12:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5684F606A32A
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 12:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VIH3bDTn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7CE31F000E0
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 12:48:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HPpEeEcK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27FE1F000EC
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 12:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795697302;
-	bh=A58UABYtrnEty2sjHiU2WLl/hxy5u3d9ZmR6jr4hXxk=;
+	s=k20260515; t=1795697593;
+	bh=q3PzFJ3hbYSCea9rHodUJxc+bUxixgVlxzIsC4nrb7w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=VIH3bDTnvVGM6xc85XONsMwzIZSIMOX/kLGunOVHAV7NWrLxiz6tUtsxiX7X9eRBQ
-	 7HlYscIyT0DeaCqLM7W3dKABi/wiP7ejbaUzNkS2UXlTv+0D98ZsI0bvxuTzEMXgg0
-	 etY7ebPDRFamAe+bQS0Ir+tJryGJ/MEtY0kkO9pz8A428wghm0MzNRG3lApKhP788N
-	 h0i7X9bZG9iNoltIBhFYeNUCD/W9FDi5oQq8Iqxry3Gg2wOn7vUXiR8oehSsQnAEfX
-	 9KY2D8Wi/Y829/dJbIxfUh21+b9siRCy+yWkidhssnSqpASS+2m+QfBYAmHrvk17gf
-	 qiAN3jfkksY6A==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3acc7a0b558so70178051fa.3
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 04:48:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGUncAqxSPFey4PnJbJonfOlwoaw7kANiGuFE2DPIJL+lb7vB25A7EbBT/CyRWo3ZkQE52nY/Jx5gdA@vger.kernel.org
-X-Gm-Message-State: APuU4Z+gBXulCqthfZ4PmNMauu76/H+GiPRW17cZTEwk0WC3XzZe1xcJ
-	QdiKLs5sVm1Hmlt+qP3udOeJD3IzPbQJhBWLVmRY5PLKel8C0OP+sRZLjdYEr204z1KrVL5Xw+h
-	ZKfOsTM7HDcMzOaMQTdIX0g46tAxhQZg=
-X-Received: by 2002:a05:6512:a345:b0:5c3:35fd:125e with SMTP id
- 2adb3069b0e04-5c335fd1700mr31267e87.65.1795697301561; Thu, 26 Nov 2026
- 04:48:21 -0800 (PST)
+	b=HPpEeEcK7Qisws2Yn2HR2QKFv32My5gHCW/8A9zrInx19MWi11iDKK6VrCbEVVOUc
+	 54mk7Xuyy+fUcUxmEcTpFao5KArkGJ4xRfCrwKfLM5YwpcAoW/4INXtsxGtZFZ4G5l
+	 7k+xY6aEuv4JCnKsfHXJzIdh8femk6oi3DkGXYdY7RKArxdfMAZZtDybnpSkB1KIob
+	 g8WDaS1mIGqnajzeLFzav47q/orkl5QZWAdJ62iMw2zuFzo3PAa2p4129pHOKZ1SsK
+	 VikdTI5+VJ0uSbQMro5L3gt5zEm3hrLNyX+p8xOqjOptcU5nutkiVRi/Qq+VH/1iY8
+	 iu7TcIZjKjh6w==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5c126fa1e3aso5148659e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 04:53:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHEuqPGon2lFn0J4vGqElIhhboD2ZLdaid/y59pSU17/ia5uEUNfeemUMlbAfQ/94sJYs3KkqhqyPm9@vger.kernel.org
+X-Gm-Message-State: APuU4Z/B6ksjZCAxPtEyYnknIhsNKRRyFJEUTheYsHkm1s4VOm87a/6h
+	S28RLbkK3t+VA7p69k1LKGbC/etA3JoBdfVz7O0rvvOCDvY5D6+eQ1PT9IwjJxjq4l9nYu+k1XG
+	PgSFgYge8JiJT9ZTDmQqSDEvi+brgQYM=
+X-Received: by 2002:a05:6512:1111:b0:5bf:a172:db47 with SMTP id
+ 2adb3069b0e04-5c1bc7fbf6emr6119152e87.16.1795697592407; Thu, 26 Nov 2026
+ 04:53:12 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,30 +59,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795589383.git.hns@goldelico.com>
-In-Reply-To: <cover.1795589383.git.hns@goldelico.com>
+References: <20261118-for-upstream-lx2160a-rcw-pinmux-v1-v8-0-d01bc837593e@free.fr>
+In-Reply-To: <20261118-for-upstream-lx2160a-rcw-pinmux-v1-v8-0-d01bc837593e@free.fr>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 26 Nov 2026 13:48:09 +0100
-X-Gmail-Original-Message-ID: <CAD++jLn7J7D-gobRYWWOk3Gk9-Ez8YEGT=R0SwYPgGRqWDKQtw@mail.gmail.com>
-X-Gm-Features: Aa3M54reGVx3uHqx-zCudInMGYCYaxYXXbA1fSoBKZP47tBZ4PUO9v6291x42MI
-Message-ID: <CAD++jLn7J7D-gobRYWWOk3Gk9-Ez8YEGT=R0SwYPgGRqWDKQtw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] pinctrl: ingenic: Add X2600 support
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Cercueil <paul@crapouillou.net>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	letux-kernel@openphoenux.org
+Date: Thu, 26 Nov 2026 13:53:00 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnRWZrLfyBGGOikx_eeYXirahuB7E7yuDhB6KoSAQoA5w@mail.gmail.com>
+X-Gm-Features: Aa3M54q-CsXp8NzMnoFlWGAu1EmQEOW5kQyf9eE8X0_RcR3iOaRDqKTNl-NFIlo
+Message-ID: <CAD++jLnRWZrLfyBGGOikx_eeYXirahuB7E7yuDhB6KoSAQoA5w@mail.gmail.com>
+Subject: Re: [PATCH v8 0/6] lx2160a: change the pad muxes through the RCW override
+To: vjardin@free.fr
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+	Ioana Ciornei <ioana.ciornei@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi H. Nikolaus,
+Hi Vincent,
 
-I first put the two fixes on an immutable branch and merged to both
-fixes and devel (for-next), then applied the remaining patches on
-top of the fixes in devel.
+On Wed, Nov 18, 2026 at 12:00=E2=80=AFPM Vincent Jardin via B4 Relay
+<devnull+vjardin.free.fr@kernel.org> wrote:
 
-This should work out the conflicts I would otherwise face from
-fixes vs next.
+> The LX2160A muxes its IIC, XSPI, SDHC, UART, IRQ and EVT pads from
+> fields of the RCW. They are read-only in RCWSR12..14 of DCFG, and are
+> changed at runtime through the override registers in the DCSR view of
+> DCFG, which read 0 until written.
+>
+> Since commit 8a1365c7bbc1 ("arm64: dts: lx2160a: add pinmux and i2c
+> gpio to support bus recovery"), fsl-lx216x.dtsi drives the override
+> registers with pinctrl-single for the I2C bus recovery. Its first pin
+> state clears every other field of the word: a board whose RCW programs
+> a non-zero pad mux loses those pads at the first I2C probe.
+>
+> This series reads the fields in effect from RCWSR and writes RCWCR, as
+> fsl_guts_rcw_rmw() already does for the SerDes protocols:
+
+Once the review is complete, can I merge all patches except the DTSI
+patch through the pin control tree, i.e. does it have the right ACKs?
 
 Yours,
 Linus Walleij
