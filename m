@@ -1,58 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795681014;
-	b=VWPFNYFxN/O0wpLFyn/29vHGNS5N1oadbocOCj0bdUgbuwRcapVo91UjHh4b36QLhGHP
-	 CNxzmFe4PWLpZijzsiWhVF9PlGkc/ePmPJ6fLxAFxSyO9rRROvfMzBeS3UalEzS3H80D6
-	 6G/sgjeJJXmGwbrorO8AHxBvrUcMcm6gfufGdW9QQSa+g4encZDUlkA6pi0lzK+qDtxxj
-	 Wpdamyf5C8RGRdcCXAhUVk/cJAreKXxam/+zBuW9z8cLiCjfPN2w9KkE6m6weuwZBStXt
-	 Q7RV8RLZoHJxNC/KkbmPZYELClZ30xqD4UW+PKqlzqdWlvE5zb8ByEVGv1C3kbzxZTQ==
+	t=1795682561;
+	b=QZGdnn+1CGZ4dzCKUyfFsqw5AQpeCZC1dG61mMcwXFFa/ki4dLR67hm4fLsbtSkuUEul
+	 t/Rd61AKboL+bCtRbIGtR6wsrO782ki6hZijTtQtOeyRdC+MkteOshDgPK6jwEMB3RXRg
+	 gD710kK4uODPdkp5DzquZFQGvWDD+HSR3Ac31tHHs5Pcla24BS2BDgvM8/hzeFTgjSLlG
+	 VrmVqE/uoYvV6bbWoSeXBWdVnCn94+21BDRjx6tsQCufGu180bPLmY1PQLofXfkOAGeGW
+	 /UGRI1Y0ZIVY9xoljr+YVQ/uDqQ9aUOtJo9tRTBkhdRt4jkqjdBTXEYTU0DOjYTcDxA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795681014;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Organization:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
-	bh=N/cEzKcepYsGi3Rr32SGnZ2whiJRMg9YAJGcOs7d3pE=;
-	b=jzZ4TWHPO/CSfV+Y8ydnGY2+qKwp3EbggpM71fCAujHRXC+JoVTylf0zOpho+q7w1IZO
-	 4HtOcSQdo+Vbn+nxvqX3VCdu+HWqyKpQgW0daUKQMf4nDFC3F40nrH1d55Mhu/OEXzPz6
-	 CFawLnI7CFGx+GbtFh6QwXjeB2LDDVYrGHByyffKb48AyxcEgtJyh0rWYuL81iDP6S8uc
-	 ZrDb35HANrfYbnyt/Vm0Aut2waHLdYNzaV3ZRmots2XuYIXhvO0VOHKRGBKDFMhW4FR8M
-	 8Tg71oo5LQnPAWZS5BuwL6gUVtr+DzW8KfR4jSeVLBug67+f3lOiI2uxlS28nWXB7AQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795682561;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-Id:
+	 X-Mailer;
+	bh=Eh8C429NYRB84ph6Okmue8COMMyeDf/G0j10ZZ+41x4=;
+	b=5qSfCf0F4BIjLEsvuYDHKDvW3ZuhCtdp1TdJ0WZ56FfjJgkx84SLyBnbn7IoLDDlbUs8
+	 j4hyq2P9dREQFwu+w/7GWw5D37mmkS6nPDvhPaurF6q+kMbgWZtgdTW1jWiIXCL7JS6lB
+	 quaZAhC+EBMgJdfkbGWdLbnafBoBdcEghEZ3tMElT1+Ety+hLPKvR2GeodLEWX6wUJFAB
+	 O3/+X2EbP7BpJPrVNtrNIL1WuV7keulmzer0CIhFPXHNxlVmqylu0C2ovk8tz3GE299ET
+	 azxW8t+vdicticJgJoL1LVhp7+Oe+0On3FQdwN283k1vCo95dZl0nzmYQd6k4Bx15Ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="JH/+eCCL";
-	arc=none smtp.remote-ip=185.246.85.4
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=XdWn5CL4;
+	arc=none smtp.remote-ip=91.218.175.179
+Received: from mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BBE606A31C;
-	Thu, 26 Nov 2026 08:16:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E0BBE606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F54606A31E
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 08:42:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67F54606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=JH/+eCCL
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 68BCE4E41789;
-	Thu, 26 Nov 2026 08:16:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3441C60237;
-	Thu, 26 Nov 2026 08:16:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D29F111E6835E;
-	Thu, 26 Nov 2026 09:16:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795681011; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=N/cEzKcepYsGi3Rr32SGnZ2whiJRMg9YAJGcOs7d3pE=;
-	b=JH/+eCCLMcYtMAzvglxXXC+fGv/9T9mHlOPKeKUNwFxSdqCzdn78ULd5UpxXkrp4JbZC8l
-	OEKf0NHTs/7KFL4j5HsL3fB5AMLKfg9TeHoEKWr8m/83+F0IP+vHXJGZIDhaiJeopJ78Rn
-	NEsxpoTA1C5SXccCLA55tSlyRvuaK5iuc8alnQlZYJ47hKhobKCSYKYq0YpZRq+mvd0SyV
-	UF7vC6+x/OcRtAitIZEQ7UVMlhatVc7llFU1I+DqKLkKFREOFdmmnF98FCH2J6DlxQMVvt
-	XtHQelZwZbqh/5ZwnsZOTEsC9RUg7s6i1tQtwb/Ma1UFKmPL+ZyoWCayhJzJdg==
-Message-ID: <0828126f-54fd-43af-94ee-35d1047378db@bootlin.com>
-Date: Thu, 26 Nov 2026 09:16:45 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=XdWn5CL4
+X-Envelope-To: linux-gpio@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=UchmUJbpElyPXtiD+OkQfEDCqKbO9cZFRhnY5TgkKns=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795682557; v=1; x=1796287357;
+ b=XdWn5CL43mu5ysFvzloB1u0QsLdoLp2AxmqKW8q0NhQhWlN0gYpNHyDmVY7ohVrl9eJbC9aJ
+ Xp5gW/0GDmfA/uh3zXvtOSgojHaxsy1XFx0YyhDeNV3k27ffjuiweDSV5CVPhuBkLxa4/vWfi+p
+ 5zv1TZsyd3k3zprtRDXGhyVQ=
+X-Envelope-To: linux-gpio@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id cd24665538322744;
+	Thu, 26 Nov 2026 08:42:37 +0000
+X-Mizu-Trace-ID: cd24665538322744
+X-Migadu-Flow: FLOW_OUT
+From: Zqiang <qiang.zhang@linux.dev>
+To: linusw@kernel.org,
+	brgl@kernel.org,
+	paulmck@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qiang.zhang@linux.dev
+Subject: [PATCH] gpiolib: Use srcu_barrier() instead of synchronize_srcu() in gpiodev_release()
+Date: Thu, 26 Nov 2026 16:42:32 +0800
+Message-Id: <20261126084233.17381-1-qiang.zhang@linux.dev>
+X-Mailer: git-send-email 2.17.1
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,327 +65,55 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/13] arm64: dts: synaptics: add SL2610 family RDK
- boards
-To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20261115102401.3520-1-jszhang@kernel.org>
- <20261115102401.3520-14-jszhang@kernel.org>
-Content-Language: en-US, fr
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Organization: Bootlin
-In-Reply-To: <20261115102401.3520-14-jszhang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Le 15/11/2026 à 11:23, Jisheng Zhang a écrit :
-> Add device trees for the SL2611, SL2613, SL2615, SL2617 and SL2619
-> reference development kits. Share their common console, memory, pin
-> configuration and regulator descriptions and enable the populated
-> peripherals.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->   arch/arm64/boot/dts/synaptics/Makefile        |   5 +
->   arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +++
->   arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +++
->   arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +++
->   arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +++
->   arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +++
->   .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++++++++++++++++
->   7 files changed, 220 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
->   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
->   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
->   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
->   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
->   create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/synaptics/Makefile b/arch/arm64/boot/dts/synaptics/Makefile
-> index de71ddda6835..810d0d08c2de 100644
-> --- a/arch/arm64/boot/dts/synaptics/Makefile
-> +++ b/arch/arm64/boot/dts/synaptics/Makefile
-> @@ -2,3 +2,8 @@
->   # Berlin SoC Family
->   dtb-$(CONFIG_ARCH_BERLIN) += berlin4ct-dmp.dtb
->   dtb-$(CONFIG_ARCH_BERLIN) += berlin4ct-stb.dtb
-> +dtb-$(CONFIG_ARCH_BERLIN) += sl2611-rdk.dtb
-> +dtb-$(CONFIG_ARCH_BERLIN) += sl2613-rdk.dtb
-> +dtb-$(CONFIG_ARCH_BERLIN) += sl2615-rdk.dtb
-> +dtb-$(CONFIG_ARCH_BERLIN) += sl2617-rdk.dtb
-> +dtb-$(CONFIG_ARCH_BERLIN) += sl2619-rdk.dtb
-> diff --git a/arch/arm64/boot/dts/synaptics/sl2611-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
-> new file mode 100644
-> index 000000000000..585872307834
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
-> @@ -0,0 +1,16 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sl2611.dtsi"
-> +#include "sl261x-rdk-common.dtsi"
-> +
-> +/ {
-> +	model = "Synaptics SL2611 RDK";
-> +	compatible = "syna,sl2611-rdk", "syna,sl2611";
-> +};
-> diff --git a/arch/arm64/boot/dts/synaptics/sl2613-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
-> new file mode 100644
-> index 000000000000..de75c9fab6a2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
-> @@ -0,0 +1,16 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sl2613.dtsi"
-> +#include "sl261x-rdk-common.dtsi"
-> +
-> +/ {
-> +	model = "Synaptics SL2613 RDK";
-> +	compatible = "syna,sl2613-rdk", "syna,sl2613";
-> +};
-> diff --git a/arch/arm64/boot/dts/synaptics/sl2615-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
-> new file mode 100644
-> index 000000000000..ae03638a3a53
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
-> @@ -0,0 +1,16 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sl2615.dtsi"
-> +#include "sl261x-rdk-common.dtsi"
-> +
-> +/ {
-> +	model = "Synaptics SL2615 RDK";
-> +	compatible = "syna,sl2615-rdk", "syna,sl2615";
-> +};
-> diff --git a/arch/arm64/boot/dts/synaptics/sl2617-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
-> new file mode 100644
-> index 000000000000..ba4ea21ac505
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
-> @@ -0,0 +1,16 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sl2617.dtsi"
-> +#include "sl261x-rdk-common.dtsi"
-> +
-> +/ {
-> +	model = "Synaptics SL2617 RDK";
-> +	compatible = "syna,sl2617-rdk", "syna,sl2617";
-> +};
-> diff --git a/arch/arm64/boot/dts/synaptics/sl2619-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
-> new file mode 100644
-> index 000000000000..58901ac2a050
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
-> @@ -0,0 +1,16 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sl2619.dtsi"
-> +#include "sl261x-rdk-common.dtsi"
-> +
-> +/ {
-> +	model = "Synaptics SL2619 RDK";
-> +	compatible = "syna,sl2619-rdk", "syna,sl2619";
-> +};
-> diff --git a/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi b/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
-> new file mode 100644
-> index 000000000000..78a9b28fdf99
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2025 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/linux-event-codes.h>
-> +
-> +/ {
-> +	aliases {
-> +		serial0 = &sm_uart0;
-> +		serial1 = &sm_uart1;
-> +		serial2 = &sm_uart2;
-> +		serial3 = &sm_uart3;
-> +		serial4 = &soc_uart0;
-> +		serial5 = &soc_uart1;
-> +		serial6 = &soc_uart2;
-> +		serial7 = &soc_uart3;
-> +		i2c0 = &sm_i2c0;
-> +		i2c1 = &sm_i2c1;
-> +		i2c2 = &soc_i2c0;
-> +		i2c3 = &soc_i2c1;
-> +		spi1 = &sm_spi1;
-> +		spi2 = &soc_spi0;
-> +		spi3 = &soc_spi1;
-> +		spi4 = &soc_spi2;
-> +		spi5 = &soc_spi3;
-> +	};
-> +
-> +	cpus {
-> +		cpu@0 {
-> +			cpu0-supply = <&vcore>;
-> +		};
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +		bootargs = "earlycon";
-> +	};
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x00000000 0x0 0x80000000>;
-> +	};
-> +};
-> +
-> +&osc {
-> +	clock-frequency = <25000000>;
-> +};
-> +
-> +&pinctrl {
-> +	soc_i2c0_pmux: soc_i2c0-pmux {
-> +		groups = "GPIO23", "GPIO24";
-> +		function = "tw2";
-> +		drive-strength = <7>;
-> +	};
-> +};
-> +
-> +&sm_pinctrl {
-> +	sm_i2c0_pmux: i2c0-pmux {
-> +		groups = "SM_GPIO12", "SM_GPIO13";
-> +		function = "tw0";
-> +		drive-strength = <7>;
-> +	};
-> +
-> +	sm_i2c1_pmux: i2c1-pmux {
-> +		groups = "SM_GPIO3", "SM_GPIO4";
-> +		function = "tw1";
-> +		drive-strength = <7>;
-> +	};
-> +
-> +	vcore_gpio_pmux: vcore-gpio-pmux {
-> +		groups = "SM_GPIO5";
-> +		function = "gpio";
-> +	};
-> +};
-> +
-> +&sm_uart0 {
-> +	status = "okay";
-This will be needed at early boot, so please add:
-	bootph-all;
+The gpio_desc_label object are freed asynchronously via call_srcu() on
+gdev->desc_srcu (see desc_set_label()). to drain these pending SRCU
+callbacks before cleanup the SRCU structure, gpiodev_release() currently
+calls synchronize_srcu(&gdev->desc_srcu).
 
- > +};
- > +
+However, synchronize_srcu() only waits for a grace period to elapse and
+for its own wakeme_after_rcu callback to be invoked. it does not guarantee
+that callbacks queued on other CPUs have actually been invoked by the time
+it returns. The following race may happen:
 
-And also:
-&sm_clk {
-	bootph-all;
-};
+              CPUA                                        CPUB
+call_srcu(desc_srcu, desc_free_label)
 
-Regards,
-Richard
+                                               gpiodev_release()
+                                               ->synchronize_srcu()
+                                                 ->call_srcu() queue wakeme_after_rcu()
 
-> +&sm_i2c0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sm_i2c0_pmux>;
-> +	clock-frequency = <100000>;
-> +
-> +	expander0: gpio@43 {
-> +		compatible = "fcs,fxl6408";
-> +		reg = <0x43>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +
-> +	expander1: gpio@44 {
-> +		compatible = "fcs,fxl6408";
-> +		reg = <0x44>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +};
-> +
-> +&sm_i2c1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sm_i2c1_pmux>;
-> +	clock-frequency = <100000>;
-> +
-> +	vcore: regulator@60 {
-> +		compatible = "silergy,sy8827n";
-> +		reg = <0x60>;
-> +		regulator-name = "vcore";
-> +		regulator-min-microvolt = <700000>;
-> +		regulator-max-microvolt = <987500>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-active-discharge = <0>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcore_gpio_pmux>;
-> +		enable-gpios = <&portc 5 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
-> +
-> +&soc_i2c0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&soc_i2c0_pmux>;
-> +	clock-frequency = <100000>;
-> +};
-> +
-> +&sm_uart1 {
-> +	status = "okay";
-> +};
+SRCU GP end
+timer_reduce(delay_work)
+
+                                               SRCU GP end
+                                                synchronize_srcu() return
+                                               ->cleanup_srcu_struct()
+/* timer still pending! */                        ->for CPUA timer_delete_sync() return true
+                                                    and cblist not empty. tigger WARN_ON()
+
+This commit therefore use srcu_barrier() instead of synchronize_srcu() on
+gdev->desc_srcu,  it entrains a barrier callback on every CPU that has callbacks
+queued and waits until all of them have been invoked.
+
+Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c09342fc52cb..5dd4d142cf52 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -898,7 +898,7 @@ static void gpiodev_release(struct device *dev)
+ 	struct gpio_device *gdev = to_gpio_device(dev);
+ 
+ 	/* Call pending kfree()s for descriptor labels. */
+-	synchronize_srcu(&gdev->desc_srcu);
++	srcu_barrier(&gdev->desc_srcu);
+ 	cleanup_srcu_struct(&gdev->desc_srcu);
+ 
+ 	if (gdev->line_state_wq)
+-- 
+2.17.1
+
