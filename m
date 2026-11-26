@@ -1,49 +1,44 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795694584;
-	b=q9tUoBgMwMupsH72Q7tTyCWgWfDjOUNW1FuyR/T65HAwoOp0WcWIPSNc8uvMlQ5aneI7
-	 OUXl7APRhy4agNYZedO69oEtkm/+g9rPjoGM2MUfxlJm3PVTfQTGyUPnWzZfFIXEzyqK/
-	 hLZEWc9y5l40DyNKUnvMk0cO/QFJ1cbeWkW2U8oMINo4pbGr4xVih6sCKAjgEN2suWy52
-	 ihV7b8XSROXTy4YUkbLpry0sAbP2O0IEoRAt70pWJVSOIUMoTZOQYVYEDjgQPfHXTX6zD
-	 X+G1m4Ii8ws+vEWtc2Vvn8x0X0F4vBcbUaAjxFRwRgzKPyWvnOozpUYs4T63KsYzQ4A==
+	t=1795694978;
+	b=i4JAoc0hSgJhmU3jpk4L1jnpZ648zo3bIK/vetthBSfCxlPqzNUtFaCxQ/3LzHRxhZ/T
+	 Lj7SxLjZ7yr9zF2MJG/nzZDEpfII1/2WV3eeajZNkPn3rxRrZkA3c03d59U4iYCEEg0Zr
+	 xbXeq22+RcWGQ135BrqYherHhYKL9Ms8DUmJF7U0Ga5ADXwd+qNPCdSDsba+19JiyEN97
+	 LRE3S5UpN6C2gIqFKD5WCNsWLKBjmxFAXxWixJvJQGBb2fvJJQegPbFE4KZYICw0GXMiu
+	 p4ZzMqVHBkUBx3e4vS9EW0oMHyUnj8ozW2jJ4nskeH+iOTUWebAdlvs5HYw2I20XGGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795694584;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=tjY4VMD6ur+YRo7kgQD4h9llvSvso8DB1Z7wgH/PMD0=;
-	b=kf87O+IXY4GGZE8O1BVj9wQSvYaHkFhs6diTnt0BzBb3JjcMkRpbW+zHxBt23fdg2Suy
-	 dNu0Z1gFwbM/+Mm98zcfrHD5fGhY3HkDwSrz9Rfj378DIKO0ktybLDpruuOPwoEYojPoh
-	 6gYLhfrVChs6rgQkmcYIN97li/hWwjLZPjjVbJhiqG4B+7rHgz6SxOrU563e4iDdKRhXe
-	 irULIkSR1S73A8KVBnkHgKh8MGpAbjm3+zw5HZYyS6KUeXnvqWCtoES35eWjG82qhXfpq
-	 epGfCnCK+v+iGmI6pcPgya32+HGKOuZMSUx7m8wH4xn+Y505xBP2lYMbuogiMtFzPMw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795694978;
+	h=Received:DKIM-Signature:Mime-Version:Content-Type:Date:Message-Id:
+	 Subject:Cc:From:To:X-Mailer:References:In-Reply-To;
+	bh=N9loIwXH9l5EcrK/S8zYptofzvfYcswHZZ5CqhN+nq0=;
+	b=gQpFEeMd5yGakaz9Vyjp7j4GmgnUKa7DORpLOV0wAZ0LmJruKH/WcaT6m4Kfgr5qpAGt
+	 sKUZKv3Iy5J7DFS1xK7dHHoRvLmNcYd+/ulrqIq/DgsqMpsMxFaIPFx7GQVpcc2DG4AQs
+	 GfIK9/k4DRVnxUrIVJVUbj3+1jEmAQ2UK3SaBs0YZP7VEbmhvrNMX4xRJUuLQiq3VJTf5
+	 QDBioyELuy4CC+RrcTamqybJtkTFjyNEUfmKRKTrxu917gAH51qfexx/nGsVZ/vR00q5X
+	 Tb1YTAXi+vJtcV/rYW7ECRe1+mo10xYL83eMI1CTmslSy7NauJHhyivOP0MLS4R/hFg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gxFYgeqM;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C69606A31C;
-	Thu, 26 Nov 2026 12:03:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0C69606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vz+FVEyw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D216F606A31C;
+	Thu, 26 Nov 2026 12:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gxFYgeqM
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 430FE1C2B;
-	Thu, 26 Nov 2026 04:03:00 -0800 (PST)
-Received: from [10.33.50.35] (e142021.arm.com [10.33.50.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 477EB3F632;
-	Thu, 26 Nov 2026 04:03:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795694583; bh=wDze3qxmOarI0bATetDdRV05lJwHBeC8KZ+rhYNobCs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gxFYgeqMsEQCEYXUnpXyvqF3H5CqESiwrz1XbWaMwrXgkYEkwx6q2vf42m9fJidEf
-	 zhzN3l0m//JFQ+vACJEA/pAJXjxlz9mItF/RTVvIpxypGdMNgWEnvgpBGZeMv0ZuBo
-	 gW97HbZ7ITAkpXb+YYF/3hgVxAKbNiOMqumd3qP8=
-Message-ID: <0defdc40-a96c-4df3-aadf-3c3db3c48b7d@arm.com>
-Date: Thu, 26 Nov 2026 12:02:59 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vz+FVEyw
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id EF4771F000C0;
+	Thu, 26 Nov 2026 12:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795694978;
+	bh=N9loIwXH9l5EcrK/S8zYptofzvfYcswHZZ5CqhN+nq0=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To;
+	b=Vz+FVEyw3yNvr/Yr8+GzmgrDdA6wmU3FvEfmbvDCTFSItTJDO9Y4WQW+KBI34QVVw
+	 T4UiR128Mt4IGJh2BTJixDcjqnTNlEg3+ih7ZhCurfGuYrSZdEhiQqVJ8ARTZucQOt
+	 l4nPovQytKMhYoDhhsJfAzKDbhSsC56Nu2yECE9r9zyK9eDkbL2jvkuPFzrQbY4rKE
+	 umg7jLdU1CS+Ll6GKWLrWRElIxsEbDwVk5aWJ4Fk3Wpy7Bw86NC8dU2neuyPxco5iL
+	 PEmgFyoYWThst4/CZWyZXKExssJV+E8g8+Z+dQ1QO4/3AdzzhpJ5GxCpYYfQYl+GEY
+	 3Tc/07HTY0U6Q==
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -52,75 +47,73 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: sunxi: Drop unused parameter from
- sunxi_grp_config_reg()
-To: Alastair D'Silva <alastair@d-silva.org>, Linus Walleij
- <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20261126104954.441427-1-alastair@d-silva.org>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261126104954.441427-1-alastair@d-silva.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=4cd3cbc4ee4b059a615363855bafc0767a6031cc0f40e2db82b7cec52dfc;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 26 Nov 2026 13:09:34 +0100
+Message-Id: <DN54QQWONZY2.188GEUWLPOSOS@kernel.org>
+Subject: Re: [PATCH v15 03/14] gpio: regmap: remove gpiochip before tearing
+ down irqchip
+Cc: <longzhao@ambarella.com>, "Bartosz Golaszewski" <brgl@kernel.org>,
+ <linux-gpio@vger.kernel.org>, "Linus Walleij" <linusw@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@oss.qualcomm.com>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Mika Westerberg" <westeri@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "zl020895" <zl020895@163.com>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>
+X-Mailer: aerc 0.20.0
+References: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
+ <20261118-cv75-gpio-v15-3-e3c563673fe1@ambarella.com>
+ <av6n3oNVl2pyeLBK@ashevche-desk.local>
+ <58bc2391.8c7d.1a2178371d0.Coremail.zl020895@163.com>
+In-Reply-To: <58bc2391.8c7d.1a2178371d0.Coremail.zl020895@163.com>
 
-Hi,
+--4cd3cbc4ee4b059a615363855bafc0767a6031cc0f40e2db82b7cec52dfc
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On 11/26/26 11:49, Alastair D'Silva wrote:
-> sunxi_grp_config_reg() takes a pctl parameter that is never used.
-> Drop it to match the original signature.
+On Thu Nov 26, 2026 at 12:00 PM CET, zl020895 wrote:
+> At 2026-11-19 15:40:14, "Andy Shevchenko" <andriy.shevchenko@linux.intel.=
+com> wrote:
+>>So, AFAIR Michael rose the question that this patch makes the unregister =
+flow
+>>not reverse symmetrical to the register one. I took a look at this and I =
+can
+>>say that this is a bit twisted. The pure creation part is independent, bu=
+t
+>>to function it requires GPIO chip to be instantiated. So, yeah, this patc=
+h
+>>is a bit controversial. Let me see what we can do here.
+> Hi Andy,
+>
+> Any conclusion on the unregister ordering in 03/14? I have a v16 ready
+> (Sashiko IRQ-defer fix). OK to send v16 as-is, or should I wait for your =
+proposal
+> on the teardown order?
 
-Ah yeah, looks like a development artefact. It's indeed not needed, so 
-changing it back to where it was makes complete sense.
+FWIW, I'm working on a cleanup and a fix for
+https://lore.kernel.org/r/20261123040142.48880-1-joseph@telaak.dev
 
-> Fixes: 8b367fc08be4 ("pinctrl: sunxi: refactor IRQ register accessors")
-> Assisted-by: LLM
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+This might also help with your case.
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+I hope I'll have something ready later today.
 
-Cheers,
-Andre
+-michael
 
-> ---
->   drivers/pinctrl/sunxi/pinctrl-sunxi.c | 5 ++---
->   drivers/pinctrl/sunxi/pinctrl-sunxi.h | 3 +--
->   2 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index bf4ec4665e2b..d30a562315aa 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -763,10 +763,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
->   		else
->   			val = 0xD; /* 3.3V */
->   
-> -		reg = readl(pctl->membase + sunxi_grp_config_reg(pctl, pin));
-> +		reg = readl(pctl->membase + sunxi_grp_config_reg(pin));
->   		reg &= ~IO_BIAS_MASK;
-> -		writel(reg | val, pctl->membase +
-> -		       sunxi_grp_config_reg(pctl, pin));
-> +		writel(reg | val, pctl->membase + sunxi_grp_config_reg(pin));
->   		return 0;
->   	case BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV:
->   		inverted = true;
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> index 7c2f29e75519..3060cef3705d 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -328,8 +328,7 @@ static inline u32 sunxi_irq_status_offset(u16 irq)
->   	return irq_num * IRQ_STATUS_IRQ_BITS;
->   }
->   
-> -static inline u32 sunxi_grp_config_reg(const struct sunxi_pinctrl *pctl,
-> -				       u16 pin)
-> +static inline u32 sunxi_grp_config_reg(u16 pin)
->   {
->   	u8 bank = pin / PINS_PER_BANK;
->   
+--4cd3cbc4ee4b059a615363855bafc0767a6031cc0f40e2db82b7cec52dfc
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCawghfhIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gh9gGAifZoDLBVTUopK/sm7qAJUDYh1CcCxFYp
+uxKWuNqLO9j4ykbverWkl2AWzFuKWQTWAYDHMsPzPa3+XVRpGYwMHT++yQCfHdDk
+CPhXDtogiF8qR+wcMMjyhDQKZIaFdMcKrPk=
+=KnlW
+-----END PGP SIGNATURE-----
+
+--4cd3cbc4ee4b059a615363855bafc0767a6031cc0f40e2db82b7cec52dfc--
