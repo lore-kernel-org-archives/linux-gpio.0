@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795700487;
-	b=OoTz/sd2JMnVT+pL3w6K1Pxhgkha2knGBIsIsPXPiTRy7LYBgyIDNwFp83fabppVEkmT
-	 I9ViyPicw9nit2+elbJMC3BEa+TPy+10fDziVoNplMTssQX3Kq1HWTMrbemWikd8JTP51
-	 6M++fn/6Ua912OmSKTmhVqwLtRyltZzWTINHj0WgPV/F1wje5TD8IqCnduowwHpm4ZaZW
-	 HYyAoWaxI3MDBPCjMe9w2Rd3IRYmRD85mBAIZfTEBniaBbVUGPul/fwgCdkJdldqlxOoM
-	 iwjnMszSvNntyujslwHMgxqr5LmLJe9o8PwldH1U7kSJhiHDohlj5wOYJzz9GCyYrOA==
+	t=1795700488;
+	b=ZxPmnllozNfPQQ1gkNiT5hNl4Az73DJXOTapZ/fZS+QL2O5b8zRAmL/6ez31jrZ0mzoo
+	 877rmO/uJmui7lLKeMRoViQqXk6LponGJr6zyTJgWVcSNZdmmVDlSseGfl7ROZSqbxgJo
+	 vRwrMITOajJEafUmBL0tL4GqKXCS/KKyWt90Wyxq5AebtE0G7U+IOsy6lNP4vApYjtuko
+	 s3KYDIgOI59ejGfv+RLuSxcZ+BK6OHztylL7HplG6VO9WfqSHjve84mjnUpLTpr6Jraud
+	 DFPnbzfJBFhg54cu8sCXOFia5vpbESG/15MgLMyZJwIa+Vr2zzPU+PphusSFYmUUvtw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795700487;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=GbvnVt1TsjZ5ESCJiZTQraEYaUyZXbI8ncH+x7BkR0Y=;
-	b=dCqM5LGu9bBcngJxHOmIW6pahCHTV+tctL2FesY1PxwoSF7IZrQagjNE0pWyFvHkK5cI
-	 fij9XGJnnTnd+CuJEQAp3Ui1TceGUBBh9pUurQSuCoO+yR5cLR3pyIS9zI34CCbLgozFX
-	 apnXy22MTS4AH0pTXsHPpMSfdssisNoUmrHI16MLq/+6XKX+nf1u7APKie0QOulRwVRBn
-	 dvnk2sh+0/gp12+jK3kJxzsalcm8FnZSAYASOoWbpQMTB+YRf5RoH+IExzR/bjsQMJ7+z
-	 YADnhyHIpKmZ2kpCzCexDD0ROOvkcTIC8BhQtY5COeelmIQS5mhtpLm9co/5CLX9iZQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795700488;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=ExdFVZ6Sn5iSNtZ5KA27dxjqJvnys7ozPUcxSY/0d50=;
+	b=Z17g/DJECrYuKvX21q/Oi8n4V3cj9YOUztIKeCTz9r63y8RRFqaulhcglIyRKIZv8CeC
+	 lzeFg+TWcuIwnEEWv1AyvbA1AbZyD8TwC32uR/TBX2/qXOT06yXUN90QmcxTYxJOdmlK4
+	 q+OzBe3EmLiqdZhwklLxDOrvqMxpH//WENdjloHCAwc2mmypeQhrU3UM6E4I2JWxvwqDC
+	 dinQvN3F+BTvhi58pBQgu0bMnA6T1W/qHxk2MN6e08UH7LaWuQBhSVpZYV7snc1VyJFTE
+	 RuTnlsJVQWOv8mdjvDbg33diMJxOw1lTJLFKOTShr6tFjKLMIIaBPdH9nsRKZ6de6gg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lK1tJe5a;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R0JpB2DJ;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6F8606A32A;
-	Thu, 26 Nov 2026 13:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606A9606A334;
+	Thu, 26 Nov 2026 13:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lK1tJe5a
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R0JpB2DJ
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795700487;
-	b=elYsocxLHj8BJ+MDM6rmgg0K8xsYC83luQUkN2uu6ipxWz7jJsIrBrhE3PtJpbdRsyQC
-	 vPs65G/JzIZ9CEzldo7rnFSP5AZSrD3oASoMG1u9bHF1ruwwPTOG09IrzVMLYPhbMpRux
-	 mkoWGIAuYzEiU/BIa+F0GN49BtjBltZgOZ4Thjpvo8zF2+tXeqoEy1uv0atCaHwBVd6IK
-	 Xxq6L1Yd6mtB759+QCxZP17f6U1qtdowhJ5ojycl3c1G5gbrUgpwfWMWHRedd65UfiLrW
-	 oW2lFAT3Witn1qGLnQorTu3eIeuBQLATcE2jCxJ4ej5Pz6Mds04RRrorPWob+DkLAaw==
+	b=yCWixU4gjY7xRX61s7iWdXv4eOG790XAyRgY9hCpf8ViastqSBdhd3tASYXjpgP0Sguf
+	 mZRCE/TxlPEgUZnczKepUABLbuHAincDIJSFtgQGPzzCux3g3WBfYBGQ08hpSVAOll4BP
+	 C8qy0kDFLSjRD6EXYu8JMi+MXuTjIi3VCJcuNHzbejqwXsvhgiQdObhFpcljlJjM5FqCP
+	 izywVUXO0XZMVm6sLXWK710o+iKNUpq51oUKQj6FZiBxAMcEAUlfrR3KvL4o2WF8P1MEX
+	 ULzV7LIH3dpM75KAE4fBZkA7iPuCt0rw3zkHj/uqJaBsuESrRfNSa5Z89AJnQYVnp5A==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795700487;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=GbvnVt1TsjZ5ESCJiZTQraEYaUyZXbI8ncH+x7BkR0Y=;
-	b=XDZx0SEwefbySww9JhcG5cTM30N1DdslPwgmA9xMBmxtbEj7Ibmp6Vqyx7a5qDLoYwio
-	 hRAU3MsNaMuptzdmFwgrZ1AkN3qjOaXt7CmUcQbFMUN7MuTqK+xOWkqWQkJ3P08yzmJOg
-	 DynKut8upWysEWV5bs2XAMVHMvUzHDGZLS4Xb9+JpZ4tkC8/v61Ju+hChAt9nmgv+09sS
-	 0+IRX5Hi1hmCoFDyWpYKjS/8fMvJbs/kqOFpq0w4CEFUiwwVQuiHi46UXBkT2JggeqBXu
-	 vrVAzDhtAF4OYCKs+kTOTZAZOqwAul1+6zBTL0kWhclZ0A1zf/1p66BlGVcVUKB+eUQ==
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=ExdFVZ6Sn5iSNtZ5KA27dxjqJvnys7ozPUcxSY/0d50=;
+	b=HQ2y0bJcDnjewg5UnGS0oahmjRSIOzow/hKZlwMKXv8PkxBf93xDYtNFyARWzH82Mcum
+	 0edmariyaOcRArApUrManczxDX63cMl/mZH+6jEfAXnVmpi0dxhYeR8Anusfuop2zKPx+
+	 cEnS5nFknIOfnTRMwGHOzrPK+hr7mey7yfWCHBwMPOMLtWVu1xlu/fgGZFHMlaBitfH2j
+	 W89ul6Ya3rO8PNWZXJUHjANswWaZQZH6G+8QheB/G9DT7YPJVo8dIqYv0tjuX5cLnF6op
+	 4gZbpS3Zqwrcm/v2ybC6GflE/mjY5JHSTHWcI3KBWcgosj7C9mdKFxdbEdeRzALMDgQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 99A0F1F000D3;
+	by smtp.kernel.org (Postfix) with ESMTPS id 774B51F000D1;
 	Thu, 26 Nov 2026 13:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1795700487;
-	bh=GbvnVt1TsjZ5ESCJiZTQraEYaUyZXbI8ncH+x7BkR0Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=lK1tJe5ar+JEJA1DAhqrfYZoV+LIcPNz2LbruRxaqOhXJgkWPQ0nLcSO00c05ECRM
-	 dnTr9XPzV1rjhFkJN7YT8ZzKynZq8mvCIC0DYEDwxuMhpx4hlftrH7qTYUPZ7uo/l+
-	 Rq5s7hX8VhjgE8EucBFBSapY3VUZLQukxT8sEA9QFOH5kiz8dO7NtBvZ67fzoov6EL
-	 YLDSG9kktOdhqBtfOVlQzSz/GXFrgHlFGMOQPzheaxT4iNZ6H+W5Za2PczDtKiJhS2
-	 PtRLj7a/4BhKYlHNMuqYaEERWVjM91ILxxCOQBWC+CfmyCbQCZXBPd3c+yHe9/z08N
-	 LByR44txI0Azg==
+	bh=ExdFVZ6Sn5iSNtZ5KA27dxjqJvnys7ozPUcxSY/0d50=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=R0JpB2DJK+MpkdBk5BQMfOMHF//+LR+8KqvbMDR95/Ec0cTvEW0+2ZHVyVOsYzpR5
+	 Msdi7qISH7aNo78ayni7KHrxtFHSEMDCrDAmFAzwK6//N4yvl1X+BNoDMMiCyZPv8C
+	 z+ebg2v978e8ybe4mMy4BchbM7KARpsrw+MmJ09ZR3TLdLbfnq9wD1NVTzYM89Lt6w
+	 ZSGBIZOSYyCHHM29es9xe8w0MQJuckoUkqSxMBRSgV164/0Yijo0v4dfIFmLItdJrx
+	 BKReC/dhA5Azzrt+Dc6NhswuFQqsnoyvxmZq5BcSZ0Oo+/BZ6UywnRCrL7BgsPMrTo
+	 ckI8fuSvDLrVA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 304564D54D;
+	by lkml.kernel.org (Postfix) with ESMTP id 0D3E04D54E;
 	Thu, 26 Nov 2026 13:41:12 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Thu, 26 Nov 2026 21:41:09 +0800
-Subject: [PATCH v2 1/4] dt-bindings: pinctrl: add the Allwinner V861 pin
- controllers
+Subject: [PATCH v2 0/4] pinctrl: sunxi: add support for the Allwinner V861
+Date: Thu, 26 Nov 2026 21:41:08 +0800
+Message-Id: <20261126-v861-pinctrl-v2-0-b1875a6a9bb8@iscas.ac.cn>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,9 +84,11 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261126-v861-pinctrl-v2-1-b1875a6a9bb8@iscas.ac.cn>
-References: <20261126-v861-pinctrl-v2-0-b1875a6a9bb8@iscas.ac.cn>
-In-Reply-To: <20261126-v861-pinctrl-v2-0-b1875a6a9bb8@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQoCIRCA4VeROSc0I7jSq8Qe0sZ2Ikx0dwnEd
+ 8+243f4/waVi3CFi2pQeJcq7zRAJwVhuaUHa7kPA53JIpLVu7Oos6SwlpeOHl0k4yeDDCPJhaN
+ 8jt11/rtu/slh/T2g9y83ktIKcAAAAA==
+X-Change-ID: 20261126-v861-pinctrl-fb18f23b731e
 To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
@@ -98,116 +100,52 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>, 
  Conor Dooley <conor.dooley@microchip.com>, Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795700469; l=2853;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795700469; l=1472;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=+X+OFPTDQ3iXtYAUKsVqLJUtKcjryQ21gQGY0NMVTX0=;
- b=kKjprBu2KIbyopgvjFkBc+pYccd3LmiRde/a/iiQb8DvVj+ZnhEQCbWOaWrIbDSLu52x+EUkF
- 44T1CHQ3agiB/E9/1fv2WXsoi3U+n8/mhH2X10bLaoeOyADARDdEhaw
+ bh=eQg1XPgM2OUF72cwOEwxs7jhBGy/qujAowmthq93fXs=;
+ b=X2szDkYSIx12c7mpXlHG6VMgajFYM7aYhV70XDJf4UwJY+iyEn/kAIFYrjmi9qMV+u5Rq7Kha
+ ZpbZtcqIjuGDRgRfDoJAqejLizBGcpNfcSe/5WNVhCDYyD8ZhkNpRZA
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
  auth_id=1262
 X-Original-From: Han Gao <gaohan@iscas.ac.cn>
 Reply-To: gaohan@iscas.ac.cn
-Content-Transfer-Encoding: 7bit
 
-From: Han Gao <gaohan@iscas.ac.cn>
+Add the pin controller bindings and drivers for the Allwinner V861.
 
-The V861 main and always-on pin controllers follow the A523 binding.
-The always-on one has a single interrupt bank, so lower the top-level
-minimum of interrupts and input-debounce to one. The per-SoC conditions
-keep the previous minimums for the A523 and A733.
+The vendor BSP code used as reference:
+https://github.com/RevySR/linux/commit/bb06380bc2e5a02049cd01e0b10cb3c3c694b750
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- .../pinctrl/allwinner,sun55i-a523-pinctrl.yaml     | 36 ++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 3 deletions(-)
+Changes in v2:
+- Split out of the V861 series (Linus Walleij)
+- Binding: explain the lowered minimums and keep the A523 and A733
+  debounce limits (Conor)
+- Drivers: drop mod_devicetable.h and fix the match table style (Uwe)
+- Link the vendor BSP code (Jernej)
+- Link to v1: https://lore.kernel.org/r/20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-index d7d0ba32ced4..40fd54af871f 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/allwinner,sun55i-a523-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Allwinner A523 & A733 Pin Controller
-+title: Allwinner A523, A733 & V861 Pin Controller
- 
- maintainers:
-   - Andre Przywara <andre.przywara@arm.com>
-@@ -26,6 +26,8 @@ properties:
- 
-   compatible:
-     enum:
-+      - allwinner,sun252i-v861-pinctrl
-+      - allwinner,sun252i-v861-r-pinctrl
-       - allwinner,sun55i-a523-pinctrl
-       - allwinner,sun55i-a523-r-pinctrl
-       - allwinner,sun60i-a733-pinctrl
-@@ -35,7 +37,7 @@ properties:
-     maxItems: 1
- 
-   interrupts:
--    minItems: 2
-+    minItems: 1
-     maxItems: 11
-     description:
-       One interrupt per external interrupt bank supported on the
-@@ -62,7 +64,7 @@ properties:
-       Debouncing periods in microseconds, one period per interrupt
-       bank found in the controller
-     $ref: /schemas/types.yaml#/definitions/uint32-array
--    minItems: 2
-+    minItems: 1
-     maxItems: 11
- 
- patternProperties:
-@@ -135,6 +137,8 @@ allOf:
-         interrupts:
-           minItems: 11
-           maxItems: 11
-+        input-debounce:
-+          minItems: 2
- 
-   - if:
-       properties:
-@@ -148,6 +152,32 @@ allOf:
-         interrupts:
-           minItems: 2
-           maxItems: 2
-+        input-debounce:
-+          minItems: 2
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: allwinner,sun252i-v861-pinctrl
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 7
-+          maxItems: 7
-+        input-debounce:
-+          minItems: 7
-+          maxItems: 7
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: allwinner,sun252i-v861-r-pinctrl
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 1
-+        input-debounce:
-+          maxItems: 1
- 
- additionalProperties: false
- 
+---
+Han Gao (4):
+      dt-bindings: pinctrl: add the Allwinner V861 pin controllers
+      pinctrl: sunxi: allow a per-controller IRQ register base
+      pinctrl: sunxi: add support for the Allwinner V861 PIO
+      pinctrl: sunxi: add support for the Allwinner V861 R-PIO
 
--- 
-2.55.0
+ .../pinctrl/allwinner,sun55i-a523-pinctrl.yaml     | 36 ++++++++++++++--
+ drivers/pinctrl/sunxi/Kconfig                      | 20 +++++++++
+ drivers/pinctrl/sunxi/Makefile                     |  2 +
+ drivers/pinctrl/sunxi/pinctrl-sun252i-v861-r.c     | 47 +++++++++++++++++++++
+ drivers/pinctrl/sunxi/pinctrl-sun252i-v861.c       | 48 ++++++++++++++++++++++
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |  7 +++-
+ 6 files changed, 156 insertions(+), 4 deletions(-)
+---
+base-commit: b6a9fa34ce4187cb69d3c588a4bbffc31ce5db8f
+change-id: 20261126-v861-pinctrl-fb18f23b731e
+
+Best regards,
+--  
+Han Gao <gaohan@iscas.ac.cn>
 
 
