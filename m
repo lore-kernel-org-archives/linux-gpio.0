@@ -1,60 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=79.135.106.120
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795706889;
-	b=excCF2MAOpbNJc2mrRpU9HCEMuSyX/mmoW/H0GBLaIcErUgP1lnMoLXb2rWAEwHPtCid
-	 l8lLQYXc7h0PfQckBd17B16VZKHnxHtI/MEqT/tkGi615EIi1sl0Sc7NlmjeeAiljQGYU
-	 aeHEtw6ysu4lMiRwGdkCAkTFM6yGHtXw1aIHr1FHKVeUGHSU/9xfr4TUmOIr+0aGYS0nY
-	 SYucRHAGxq5RJwWQLDaUAbBY1OuY7NPaPeDIUHEBFKpsXR36KVUVqNYGa8N8XUKGm+f1u
-	 uIE/U+g4HieymoNcRvJjtVFpBD3+t8LZ8m/fmUUZE6zNZzmFNy5CXZiA8pJ3/zAqzlg==
+	t=1795707097;
+	b=s6sbYu/SpdFDMYnKYzIBU2im37Jq//qfy3uWOSbJ9Rg5MWFA2KMRZnXsYShmIqoS6shX
+	 FTCwUyrdjl+bW1X/B7E/NDkY6HXy3yMGnu1j6UCxrVrISXWFHNv4ospBhqE9zS/zVnYNX
+	 50hsSYv3j3mLGGerf9gzEW1xWJ/vIeoFkc9kSFGGARPXsvGWCGQvYJ8xl6K094xWMXkR9
+	 VUPjyo1tP3cIgM4/mFEWwJZnECinr5BGcor/J7EAz81qT50gWEreIgD9LDVlVBq3Dmshb
+	 GGsFTMwqDXRlYFbkR8+VhJZdCHvNgC5ODYA9FfMr09aFaU9RcZqxYe2lg1vg+4v67NA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795706889;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=dQ2pLlHkipA5j/g4e46Tzr27HhC2bIUcguIGENtKDSY=;
-	b=h+sm8fhWeu7EQgmXHJtg69yhaVFIM+zVQ20E4lGmI9oyFyjLLKR9LsiqDrbNjJZgzNgT
-	 KCbtJt/L09cf0YwIOALUXtg7amh9En6KBuFun4A/pLhcC1PRrvayL2/vz28obhykT9AWM
-	 SYZCLZRiNwvJULrZIJ70JcGtiitJdZ/lUIRgoB6VuvL2iFJ6zzQJc0WK1e/AbWcXUes7t
-	 Fp9tLb7Cog98iLUqA5Wi87P23uNS+ijgpR3lHbD/Cfx499uRVuTPhQlsJLETyOTi57cQq
-	 WreiV16xidKmYvoBMbfoXm9dGNPYBhbM13sO6X2pFImY+SX2QuQNy5ZiKrjiL9Nh0dQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795707097;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=tQNqYmCO8U6RJi6uvaLNBKhLSSUT6e27NTsnReOP5Uo=;
+	b=rhXAwNSmxKy6E100zqoNG6SwG545n4GbjUK5dnotj7MwyTOqXufrh6pbzXH6fnsjOKo1
+	 G0wAEKX7+CihgAMJb89+5ldiyD+vT/RiOMXE+CC8RPJEvrNDI2q0IGSEQQljk79O8HJ2r
+	 6rjoWY2fzBBEFKtI0TsGKIj9HaVtLA07c9QjsovMeLOfgiRTyRFrFhxeNGE97SVgy+Ptg
+	 QKGPj1fvo6lNNGWvtlKtzl4T0Q8CiM3sKX+l+qRsdazGgCpRH7dFjFSz4bmvkGQgbwhw8
+	 UKSbU6/951p8WsAumHI978K7yzsldNo7BVWgNY1Im1XwKkKcuvqu7UpTZ9l373yOlbA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=proton.me;
-	spf=pass smtp.mailfrom=proton.me;
-	dkim=pass header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=lQ7Jk51k;
-	arc=none smtp.remote-ip=79.135.106.120
-Received: from mail-106120.protonmail.ch (mail-106120.protonmail.ch [79.135.106.120])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="fU/Go9g1";
+	arc=none smtp.remote-ip=192.198.163.17
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F1F606A31E
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11F1F606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0F1606A31E;
+	Thu, 26 Nov 2026 15:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2D0F1606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=lQ7Jk51k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail2; t=1795706880; x=1795966080;
-	bh=dQ2pLlHkipA5j/g4e46Tzr27HhC2bIUcguIGENtKDSY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=lQ7Jk51k51sJryrt6f93LDAfwohteLVmYmEZRVZHELMQtenvQeZLxHybpXp9ZkOIx
-	 yC8pjLT9PcPtRaif0E/ThjDwai8qK6mfBvmUyqeFR1iZVFqJ3fLpV54KPIlHBpN7RX
-	 OdA0wgTvwK219/BumT4wVASQAJd80Qpp0gbv8/pxAEJ4UgE/T472Ywa3UyUqvjBryx
-	 DeEQ5UPVbC5uv3U6hUZFK2Z+XnHp7+SfVPxlpR1tXLE4sv+hOGPx4/IRimi5/puBz6
-	 FCcGiV7qrBwC3el+604HBQIpnVhhPa4SlOUO8+6jzInkqi1vtQXUPlDNmHLQiiEN89
-	 RLHREO3kZTlAA==
-Date: Thu, 26 Nov 2026 15:27:56 +0000
-To: Pablo Mazzini <pmazzini@gmail.com>
-From: Norman Herms <dockseed@proton.me>
-Cc: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Andre Przywara <andre.przywara@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH RESEND v3 1/3] pinctrl: sunxi: dt: number the IRQ banks from the first one that has IRQs
-Message-ID: <Rr1r6gV_K1pXOchQNOVGHqSsBhPKVvUm6B0ze5_HRKLV9DsfwfdiGcZAC3zB0Eabk2BwSmD9-u8KC_LZQ6U-HG7YrIKcFQ92B-7rZrQXwdQ=@proton.me>
-In-Reply-To: <20261124215048.42074-2-pmazzini@gmail.com>
-References: <20261124215048.42074-1-pmazzini@gmail.com> <20261124215048.42074-2-pmazzini@gmail.com>
-Feedback-ID: 144388465:user:proton
-X-Pm-Message-ID: 6939877897ff4f8c7a0c2e7b39d0cf71bfe5a30c
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fU/Go9g1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795707097; x=1827243097;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WPpUQImv+mfRbVWcaasBa39HKBziPr14wNhR5TVYdI4=;
+  b=fU/Go9g1OFaAdID099iAo1f3CjQJnuHjpzB+gSEZXcgGYK3joXNmjTBF
+   vH6EMDMRf8CwXpSKBHY/qLPMt/x2HtUNlJ10Bpaklk4L15z2SlIe6hmM3
+   OVA0kxHDLLlk2dUSAZpLYjRt2sp4CMzoFdlLOjc2gVZv9149KDZqRhFHb
+   ffwYiOwPvqiQAQDyD4SYjdxV9tN1RDTx0ERLT+YB4RvU3K2XMozjvPsvP
+   8BGCPwhSZrzD9z+PGXKO55Ur5YSU7cQ7ROLRuBqBZzT5v81l5JwBNeXh0
+   IWrMml4nBV+gNvjSqRCwABhQKXDPwU3jnqy7sw3V2haOLlRvCifiDCxZL
+   A==;
+X-CSE-ConnectionGUID: ze0PDmWNRoq3SCUEVEUnCw==
+X-CSE-MsgGUID: tiOYv10HQWC+a+SZ0AwcOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4617975"
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
+   d="scan'208";a="4617975"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 07:31:36 -0800
+X-CSE-ConnectionGUID: HSpzvcUSRaa7pSYZQB7NhQ==
+X-CSE-MsgGUID: z5WCboktQ6OpjR5IViJMlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
+   d="scan'208";a="12528604"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.208])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 07:31:33 -0800
+Date: Thu, 26 Nov 2026 17:31:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gary Wang <is0124@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Daniele Cleri <danielecleri@aaeon.eu>,
+	JunYingLai <junyinglai@aaeon.com.tw>,
+	Louis Chen <louischen@aaeon.com.tw>,
+	BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
+ GPIO OUT not function mode
+Message-ID: <awhQ0mvdzSw9NaVM@ashevche-desk.local>
+References: <20261126-upboard-pinctrl-add-intc1057-intc105e-support-v3-0-81d35c9ba246@gmail.com>
+ <20261126-upboard-pinctrl-add-intc1057-intc105e-support-v3-4-81d35c9ba246@gmail.com>
+ <awhPbIZjDazImfBf@ashevche-desk.local>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,23 +86,27 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awhPbIZjDazImfBf@ashevche-desk.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Pablo,
+On Thu, Nov 26, 2026 at 05:25:37PM +0200, Andy Shevchenko wrote:
+> On Thu, Nov 26, 2026 at 11:09:47PM +0800, Gary Wang wrote:
+> > The CPLD I2C pin mode setting through pinmux-select is not correct.
+> > Should be set UPBOARD_PIN_MODE_FUNCTION on AANT0F04 devices.
+> > 
+> > Set UPBOARD_PIN_MODE_FUNCTION to 1 to prevent a NULL pointer
+> > dereference error on .modes[i] for any pin group using this setting.
 
-Tested on a Radxa Cubie A7S with v7.3.6 plus our A733 patches, with
-this series backported, our own IRQ-bank workaround removed, and the
-PA interrupt dropped from our A733 DT (as 3/3 does for the A523).
+Hmm... bit how the modes[i] can be messed up here? 0 is integer
+and NULL is void *...
 
-With the series, GPIO interrupts on PB0, PJ24 and PK0 are delivered
-(GIC INTIDs 101, 117, 119). Without it the parents are INTIDs 99-117
-and requesting the PK0 interrupt fails.
+Can you provide a compiler warning or traceback of broken kernel with this?
 
-Tested-by: Norman Herms <dockseed@proton.me> # Radxa Cubie A7S (A733)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Not tested on an A523. Built and measured by AI agents (Claude) on my
-board.
 
-Thanks,
-Norman
