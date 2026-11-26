@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795707472;
-	b=2wVYS8ltvvLuJ6ZlagZBoow5K5wSdOi2NGplxpvxFE2h+FvYpRj6XGIpHl0LUE+9BOD/
-	 WmsTzU3waDLMCtSGiX5U3cotupPANG2tWvCegaYjx8gNYHL6VgrQMwMosIK+yZ9GpX2af
-	 9ctnRLytWJrgzneCNOlzpZyql7AYFBn5CI5HMFIDvkh6h0FOkuKbgvKMT0CkkKPYu7e3p
-	 OkCZRHgj5N6/To6bXXtvQCFG7PekscDRYYQ4yec7vUN0aK07XBEp3Lh1hIHDtPHpkQ2lA
-	 F144/EVkAWBp37JsZFr4iwBzFd4ERd7dGXnf5IlQouq41QQb7dOjuJtDlqK70zD/0Dg==
+	t=1795707476;
+	b=OJIWPgfmWZm93aadjyy05/cX1J9bRW5mxtG4KPOvTGtmogtYyLVHwMlJWvuzXUuJ9VmJ
+	 SzluDSbGaCSwHktCgclnIZ0CluP4nYnDwb9ZW1Ny5jk6C/lyPSBlWCHjY7BjmW9Vw+Lv4
+	 Loy4SAtND4FqyUq6gwtjiNbWc4/mpG0PUmu7B4JKKE7TIdRUfAMrL1uyk9lGW7QXnzzI9
+	 YhbJTXbJKuS8YnqZY1KcIM/BhlkQGxIMb8t02Z6fy1yt/btDzFQPCij/V+GBs+z5Uzhgf
+	 ZYDSKfDQNJ2ioj88/ZbVdHRhkplhVMY0foR42WCH9siNPymjfbMBF5ywsKLTs0LTB3w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795707472;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795707476;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=kZlvwI4x8yCnZqFpku5V+ZaseRvPPryREaI5fIWHQCY=;
-	b=zl8IlJ9o2hj806B25Z/3EtkhS0LeurFGA6UM5VR/uNFEtNksXV2mLkwXXu41+IL8di5Y
-	 wOJWfNyhMb5zLNjOj6yS4SmyAdy39+rmtuPtXWWq0fRnFbkyoYGQpSGABCUr5Lk7OXiXr
-	 JsrVpjsST2srN+c0iqo1LJ8XMqZHUMWdtOr6yI9WTXaogUYHBNO4n9H5oaDZkM4hF4qV5
-	 KWZHceeGrjDhhQg5GI2MD/9XWXYWHbtMMXKPXZ/IARvJP9ZK/KBhhD63e6HgEH/n+ymUC
-	 BprG5eluMJWYZPrnRNvTQoOIY3WulW1eGmCnS/8tdQXPe453eB1h6hAqBaejZuRahrA==
+	bh=a0pZ8MLgsjbTuyWCMnVODV3aDptP+sU/wZlDgyiqq+Y=;
+	b=12M9ksJsclZblK/ItHemA4duqvriDGzhd0qasfxe2sC2YUF7vSe12MEw9D3FZLjjp4S/
+	 bq5ToqSWOg+E7zcfhl19k8ShWpP7p+IzMwYWNIC8sLIv57ymNf0XiRnqXzto8MuCNAgx6
+	 MyIQAGmSJo8zeG9Z4xWqZMcYc/GNPADBG0ELVPzrf0lAKzQ418CDe5xeJGOuaEyirTCXM
+	 VK8YgNIuhUW4ZG9KlRPUfFFZhY8AI1xmWiZ4aiMfS8gH6bUWrdZPsnMiXy+Pr+Vwvb+r8
+	 mHJoy8NS4akikCfzxvKg3h41E3fVejpMhwzg3hZCdfbcaIcCFcz65uh0ZBVhoOK0Czw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QaU0LxHi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ACcT9X3E;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEE2606A326
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF1F606A31E
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QaU0LxHi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03531F000C4;
-	Thu, 26 Nov 2026 15:37:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ACcT9X3E
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13A81F000D4;
+	Thu, 26 Nov 2026 15:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795707471;
-	bh=kZlvwI4x8yCnZqFpku5V+ZaseRvPPryREaI5fIWHQCY=;
+	s=k20260515; t=1795707475;
+	bh=a0pZ8MLgsjbTuyWCMnVODV3aDptP+sU/wZlDgyiqq+Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QaU0LxHiYew0XPGyb+A+1K/q4Eef1WD4XEIiAgJcri0cDXLq/EKdYmCWB21vxa0O3
-	 OP//tIYtviizoGDW+eR4h1DpxP2s0S/FcM7h1/PMCf7AqahKZZcprTGNdFA9kPTK1P
-	 Qzix0vue4kl4Xo6ppkAnYXf3mYKiwNJu3FlLLWzIDpWsDIsuZe84PkF+A8sPYQfAQH
-	 LFfB5nCSPKDoCBqjHx0CEagIelyGWfm6INfKHARyYG6UKqAZl6yzPr3CK7qFZ/yzUa
-	 rjvnEqcSjxJ5rMY06p8grfBJDlidG/v7hM4v2WheFludcT72wwmXa4HkMvSlQ/nrJY
-	 dmSwUHEDQmbiA==
+	b=ACcT9X3E0kUo9UuAxZQadmNjPyNNF80bJBTz2KcZ4mj8hEDPjbN2Ng3u7Lcclyuzh
+	 4ElsndiziIyD7Jj5K9sDxIxv4Hlekf4P92p6aN8S1JY4DaR3gBTxkXD5NlQ2p84jBI
+	 7EM8VHkcwseYPFGlCDkFafHQfgebSQD39hGI8DdIOT8K1JG8lN/qCg1VddBsGR655e
+	 oqXCpfHuxuTYLiYrvXx0p50R/Nu4znUgEgNWrCjvHhz8w4irbWueOc1/BJqSKrM15i
+	 1vrgkTWFLnZkDWsF8Ivmhw+Mqzm9Nfp4ShTLeYd4s4TrCKtcmIjPIjLKd6/+VGq0Ns
+	 tFHOWRyDlmqEA==
 From: Michael Walle <mwalle@kernel.org>
 To: William Breathitt Gray <wbg@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
@@ -56,9 +56,9 @@ To: William Breathitt Gray <wbg@kernel.org>,
 	Joseph Telaak <joseph@telaak.dev>
 Cc: linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [RFT PATCH 12/13] gpio: i8255: create the regmap-irq chip from the gpio-regmap callback
-Date: Thu, 26 Nov 2026 16:35:23 +0100
-Message-ID: <20261126153600.299724-13-mwalle@kernel.org>
+Subject: [RFT PATCH 13/13] gpio: regmap: remove irq_domain and the regmap-irq configuration
+Date: Thu, 26 Nov 2026 16:35:24 +0100
+Message-ID: <20261126153600.299724-14-mwalle@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261126153600.299724-1-mwalle@kernel.org>
 References: <20261126153600.299724-1-mwalle@kernel.org>
@@ -73,160 +73,149 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the new gpio_regmap_add_irq_chip() helper to create the regmap-irq
-domain.
+Now that all users have been converted to the new .create_irq_domain()
+callback, remove the old methods.
+
+Also remove the __maybe_unused annotations because the helpers are now
+guarded with CONFIG_REGMAP_IRQ.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- drivers/gpio/gpio-104-dio-48e.c | 31 +++++++++++++++++++++++--------
- drivers/gpio/gpio-i8255.c       |  3 ++-
- drivers/gpio/gpio-i8255.h       |  8 ++++++--
- 3 files changed, 31 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-regmap.c  | 34 ++++------------------------------
+ include/linux/gpio/regmap.h | 17 -----------------
+ 2 files changed, 4 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index 7ddf578ba530..0efaa654274d 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -9,6 +9,7 @@
- #include <linux/bits.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/gpio/regmap.h>
- #include <linux/i8254.h>
- #include <linux/ioport.h>
- #include <linux/irq.h>
-@@ -113,6 +114,8 @@ static const struct regmap_irq dio48e_regmap_irqs[] = {
-  * @regs:	virtual mapping for device registers
-  * @flags:	IRQ flags saved during locking
-  * @irq_mask:	Current IRQ mask state on the device
-+ * @chip:	regmap_irq_chip for the device
-+ * @irq:	Parent IRQ
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 99a86efe8deb..fadc4565bb9d 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -397,17 +397,17 @@ void gpio_regmap_relres_irq(struct gpio_regmap *gpio, unsigned int offset)
+ }
+ EXPORT_SYMBOL_GPL(gpio_regmap_relres_irq);
+ 
+-static int __maybe_unused gpio_regmap_irq_reqres(void *irq_drv_data, irq_hw_number_t hwirq)
++#ifdef CONFIG_REGMAP_IRQ
++static int gpio_regmap_irq_reqres(void *irq_drv_data, irq_hw_number_t hwirq)
+ {
+ 	return gpio_regmap_reqres_irq(irq_drv_data, hwirq);
+ }
+ 
+-static void __maybe_unused gpio_regmap_irq_relres(void *irq_drv_data, irq_hw_number_t hwirq)
++static void gpio_regmap_irq_relres(void *irq_drv_data, irq_hw_number_t hwirq)
+ {
+ 	gpio_regmap_relres_irq(irq_drv_data, hwirq);
+ }
+ 
+-#ifdef CONFIG_REGMAP_IRQ
+ /**
+  * gpio_regmap_add_irq_chip() - Add a regmap-irq chip for the GPIO lines
+  * @gpio: gpio_regmap device
+@@ -476,7 +476,7 @@ EXPORT_SYMBOL_GPL(gpio_regmap_disable_irq);
   */
- struct dio48e_gpio {
- 	raw_spinlock_t lock;
-@@ -120,6 +123,8 @@ struct dio48e_gpio {
- 	void __iomem *regs;
- 	unsigned long flags;
- 	unsigned int irq_mask;
-+	struct regmap_irq_chip *chip;
-+	unsigned int irq;
- };
- 
- static void dio48e_regmap_lock(void *lock_arg) __acquires(&dio48egpio->lock)
-@@ -163,7 +168,7 @@ static int dio48e_handle_mask_sync(const int index,
- 				   const unsigned int mask_buf,
- 				   void *const irq_drv_data)
+ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config)
  {
--	struct dio48e_gpio *const dio48egpio = irq_drv_data;
-+	struct dio48e_gpio *const dio48egpio = gpio_regmap_get_drvdata(irq_drv_data);
- 	const unsigned int prev_mask = dio48egpio->irq_mask;
- 	int err;
- 	unsigned int val;
-@@ -218,6 +223,19 @@ static int dio48e_irq_init_hw(struct regmap *const map)
- 	return regmap_read(map, DIO48E_DISABLE_INTERRUPT, &val);
- }
+-	struct irq_domain *irq_domain;
++	struct irq_domain *irq_domain = NULL;
+ 	struct gpio_regmap *gpio;
+ 	struct gpio_chip *chip;
+ 	int ret;
+@@ -497,14 +497,6 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 	if (config->reg_dir_out_base && config->reg_dir_in_base)
+ 		return ERR_PTR(-EINVAL);
  
-+static struct irq_domain *dio48e_create_irq_domain(struct gpio_regmap *gpio)
-+{
-+	struct dio48e_gpio *const dio48egpio = gpio_regmap_get_drvdata(gpio);
-+	struct irq_domain *domain;
-+
-+	domain = gpio_regmap_add_irq_chip(gpio, dio48egpio->irq, 0, dio48egpio->chip);
-+	if (IS_ERR(domain))
-+		return dev_err_cast_probe(regmap_get_device(dio48egpio->map), domain,
-+					  "IRQ registration failed\n");
-+
-+	return domain;
-+}
-+
- static int dio48e_probe(struct device *dev, unsigned int id)
- {
- 	const char *const name = dev_name(dev);
-@@ -230,7 +248,6 @@ static int dio48e_probe(struct device *dev, unsigned int id)
- 	int err;
- 	struct regmap_irq_chip *chip;
- 	struct dio48e_gpio *dio48egpio;
--	struct regmap_irq_chip_data *chip_data;
- 
- 	if (!devm_request_region(dev, base[id], DIO48E_EXTENT, name)) {
- 		dev_err(dev, "Unable to lock port addresses (0x%X-0x%X)\n",
-@@ -302,17 +319,14 @@ static int dio48e_probe(struct device *dev, unsigned int id)
- 	chip->irqs = dio48e_regmap_irqs;
- 	chip->num_irqs = ARRAY_SIZE(dio48e_regmap_irqs);
- 	chip->handle_mask_sync = dio48e_handle_mask_sync;
--	chip->irq_drv_data = dio48egpio;
-+	dio48egpio->chip = chip;
-+	dio48egpio->irq = irq[id];
- 
- 	/* Initialize to prevent spurious interrupts before we're ready */
- 	err = dio48e_irq_init_hw(map);
- 	if (err)
- 		return err;
- 
--	err = devm_regmap_add_irq_chip(dev, map, irq[id], 0, 0, chip, &chip_data);
--	if (err)
--		return dev_err_probe(dev, err, "IRQ registration failed\n");
+-	/* there is only one way to provide an IRQ domain */
+-	if (config->create_irq_domain && config->irq_domain)
+-		return ERR_PTR(-EINVAL);
+-#ifdef CONFIG_REGMAP_IRQ
+-	if (config->create_irq_domain && config->regmap_irq_chip)
+-		return ERR_PTR(-EINVAL);
+-#endif
 -
- 	pit_config.parent = dev;
+ 	gpio = kzalloc_obj(*gpio);
+ 	if (!gpio)
+ 		return ERR_PTR(-ENOMEM);
+@@ -596,8 +588,6 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 	if (ret < 0)
+ 		goto err_free_bitmap_output;
  
- 	err = devm_i8254_regmap_register(dev, &pit_config);
-@@ -323,7 +337,8 @@ static int dio48e_probe(struct device *dev, unsigned int id)
- 	config.map = map;
- 	config.num_ppi = DIO48E_NUM_PPI;
- 	config.names = dio48e_names;
--	config.domain = regmap_irq_get_domain(chip_data);
-+	config.drvdata = dio48egpio;
-+	config.create_irq_domain = dio48e_create_irq_domain;
+-	irq_domain = config->irq_domain;
+-
+ 	if (config->create_irq_domain) {
+ 		irq_domain = config->create_irq_domain(gpio);
+ 		if (IS_ERR(irq_domain)) {
+@@ -606,22 +596,6 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 		}
+ 	}
  
- 	return devm_i8255_regmap_register(dev, &config);
- }
-diff --git a/drivers/gpio/gpio-i8255.c b/drivers/gpio/gpio-i8255.c
-index 541a348447cd..8ac46bb2c235 100644
---- a/drivers/gpio/gpio-i8255.c
-+++ b/drivers/gpio/gpio-i8255.c
-@@ -129,7 +129,8 @@ int devm_i8255_regmap_register(struct device *const dev,
- 	gpio_config.reg_set_base = GPIO_REGMAP_ADDR(I8255_REG_DAT_BASE);
- 	gpio_config.reg_dir_in_base = GPIO_REGMAP_ADDR(I8255_REG_DIR_IN_BASE);
- 	gpio_config.ngpio_per_reg = I8255_NGPIO_PER_REG;
--	gpio_config.irq_domain = config->domain;
-+	gpio_config.drvdata = config->drvdata;
-+	gpio_config.create_irq_domain = config->create_irq_domain;
- 	gpio_config.reg_mask_xlate = i8255_reg_mask_xlate;
+-#ifdef CONFIG_REGMAP_IRQ
+-	if (config->regmap_irq_chip) {
+-		gpio->regmap_irq_line = config->regmap_irq_line;
+-		config->regmap_irq_chip->irq_reqres = gpio_regmap_irq_reqres;
+-		config->regmap_irq_chip->irq_relres = gpio_regmap_irq_relres;
+-		config->regmap_irq_chip->irq_drv_data = gpio;
+-		ret = regmap_add_irq_chip_fwnode(dev_fwnode(config->parent), config->regmap,
+-						 config->regmap_irq_line, config->regmap_irq_flags,
+-						 0, config->regmap_irq_chip, &gpio->irq_chip_data);
+-		if (ret)
+-			goto err_remove_gpiochip;
+-
+-		irq_domain = regmap_irq_get_domain(gpio->irq_chip_data);
+-	}
+-#endif
+-
+ 	if (irq_domain) {
+ 		ret = gpiochip_irqchip_add_domain(chip, irq_domain);
+ 		if (ret)
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 7f578b9a82e6..fa67a29cecd8 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -63,15 +63,10 @@ enum gpio_regmap_operation {
+  * @reg_stride:		(Optional) May be set if the registers (of the
+  *			same type, dat, set, etc) are not consecutive.
+  * @ngpio_per_reg:	(Optional) Number of GPIOs per register
+- * @irq_domain:		(Optional) IRQ domain if the controller is
+- *			interrupt-capable. Cannot be used together with the
+- *			gpio_regmap_*_irq() callbacks. Use @create_irq_domain
+- *			instead.
+  * @create_irq_domain:	(Optional) Callback to create the IRQ domain in the
+  *			controller driver. Called after the gpio_chip is added
+  *			so the gpio_regmap_*_irq() have a valid gpio_regmap
+  *			pointer.
+- *			Mutually exclusive with @irq_domain and @regmap_irq_chip.
+  * @fixed_direction_mask:
+  *			(Optional) Bitmap representing the GPIO lines that
+  *			make use of the @fixed_direction_output list to
+@@ -82,11 +77,6 @@ enum gpio_regmap_operation {
+  *			(Optional) Bitmap representing the fixed direction of
+  *			the GPIO lines. Useful when there are GPIO lines with a
+  *			fixed direction mixed together in the same register.
+- * @regmap_irq_chip:	(Optional) Pointer on an regmap_irq_chip structure. If
+- *			set, a regmap-irq device will be created and the IRQ
+- *			domain will be set accordingly.
+- * @regmap_irq_line:	(Optional) The IRQ the device uses to signal interrupts.
+- * @regmap_irq_flags:	(Optional) The IRQF_ flags to use for the interrupt.
+  * @reg_mask_xlate:	(Optional) Translates base address and GPIO
+  *			offset to a register/bitmask pair. If not
+  *			given the default gpio_regmap_simple_xlate()
+@@ -141,17 +131,10 @@ struct gpio_regmap_config {
+ 	unsigned int reg_dir_out_base;
+ 	int reg_stride;
+ 	int ngpio_per_reg;
+-	struct irq_domain *irq_domain;
+ 	struct irq_domain *(*create_irq_domain)(struct gpio_regmap *gpio);
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
  
- 	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
-diff --git a/drivers/gpio/gpio-i8255.h b/drivers/gpio/gpio-i8255.h
-index 9dcf639b94df..fa90044c9cd5 100644
---- a/drivers/gpio/gpio-i8255.h
-+++ b/drivers/gpio/gpio-i8255.h
-@@ -4,6 +4,7 @@
- #define _I8255_H_
- 
- struct device;
-+struct gpio_regmap;
- struct irq_domain;
- struct regmap;
- 
-@@ -15,7 +16,9 @@ struct regmap;
-  * @map:	regmap for the i8255
-  * @num_ppi:	number of i8255 Programmable Peripheral Interface
-  * @names:	(optional) array of names for gpios
-- * @domain:	(optional) IRQ domain if the controller is interrupt-capable
-+ * @drvdata:	(optional) driver data, see gpio_regmap_get_drvdata()
-+ * @create_irq_domain:	(optional) create the IRQ domain if the controller is
-+ *			interrupt-capable, see struct gpio_regmap_config
-  *
-  * Note: The regmap is expected to have cache enabled and i8255 control
-  * registers not marked as volatile.
-@@ -25,7 +28,8 @@ struct i8255_regmap_config {
- 	struct regmap *map;
- 	int num_ppi;
- 	const char *const *names;
--	struct irq_domain *domain;
-+	void *drvdata;
-+	struct irq_domain *(*create_irq_domain)(struct gpio_regmap *gpio);
- };
- 
- int devm_i8255_regmap_register(struct device *dev,
+-#ifdef CONFIG_REGMAP_IRQ
+-	struct regmap_irq_chip *regmap_irq_chip;
+-	int regmap_irq_line;
+-	unsigned long regmap_irq_flags;
+-#endif
+-
+ 	int (*reg_mask_xlate)(struct gpio_regmap *gpio, enum gpio_regmap_operation,
+ 			      unsigned int base, unsigned int offset,
+ 			      unsigned int *reg, unsigned int *mask);
 -- 
 2.47.3
 
