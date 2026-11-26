@@ -1,60 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795707145;
-	b=AknMzLaB2NA6wkRl6y4orfg4J5ZB9/juL2nOB8x5z0YIbPzvN7iZijAsWdLZBeR0EPDL
-	 fLvXfuQk9+GKgb4ihsh333sT8nKlRdJWd7sG0pFihjMDc2RupyrIxnkpfsKrMCLVLg8yR
-	 UUYb8r+deEADoY0mk9Z79cH0v6oD+E4EslbsSeLbRoetvrfauE6KVd4OCjHRWrpGd/i67
-	 aKhYN6VFsRR4iEGCU/w1KS8rZ/zsZF6dFUS9IdVHbsKQwLUs1iYqB/9c/esnSU7vbcljv
-	 Xhl7h5pGer4IJl/8cAeXf9tyE9NNrnIPr0EQmHz3G+JzcmK8sg/hPuT8DSbRE7wgNlA==
+	t=1795707334;
+	b=zl6vhbfr0+WxgSdB/AMQu0K+1v0f5ctpjPrQy+e1uYeL4R2enxEx1ZVgLkZLfRfOehHq
+	 I5xzShBuIL1YLvIWFuxw1l2l5EVJEjQP+1l21a4X94qQgL+LmRO1UAJlAkgYBzVhBAjof
+	 Wcs7rZUYtSv3CKqJYoFBsMe+KCEt+bJidd9bBGxwolcUxpcFk6VLUX5br9jaRDmJmjPcq
+	 rUPAlA3M1vO/XFkHvzpeKS9Fu3SRURcQ8YOWuy/pz7QRcw7H1VTf6jHfH1D2lwNuptZ3B
+	 8ORi13PfhCHFgKv2xbAT50EcbZ2jJiioxs8UpljJvkh5TUynaXfMzT0Wz2M9xTTD0Vw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795707145;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=XYSDHZYOz2HcGfIl+aUARLgMG4MFI97vgguT4JgL9tM=;
-	b=zutGr69RQiYxY/6Lei/QyM7UWomBJmT8ZJL19d7eHGG1sLuUMBBHGGoC+da6mYXKZN3G
-	 V7IW84bEHP/Uf70L7qIg95RTFNqFmy1svHIbwoRk0nxUyiB8vl3dZts5808QvFn3+i140
-	 L59CLZoCCvVDuNfF+1ribvYVOYjKnCxy3BpmTswZYAkMhh5Yt811xlyCkE3NtRPkQEWH5
-	 6ipgLm+1BTll0Wl6Tnfrj2qaqgQ1Gc4VonxOg1N4h7hdIo+8rpuAtQLFY8edjviMRKuWF
-	 CreYKK4HsVzT1+mJ444IZvOv9fqR9nqhcRE1yJlCuQejOj+ix4HPVbkA3MJhujyflag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795707334;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=MwA4FYJ46Bvh2A1wTVAqC8aenjVpDEYVSO+CQYzOzSo=;
+	b=n9emfsXvMnfIpZsVKgkLKYM1Ff+mg1e/rEB1554azb+/4Kv+hyRZ5pNe6r1lIJbhbJFa
+	 Ce5uGOGtiQbJcJQsuvKV0PQyRwm2tBGU73ZsFkCgqDQK87I9/MUO7q1Myqb0NEKPTivCd
+	 zPI9Jd1WyO1MdG1S6bR4ifimkA0fTl1+0nSbuzAMwq79iTmhPyJ8iBDjB90gFfOXVrR0e
+	 SSQ6uoqaS1IIoanpPrb+XKQ6/UeatWCfsywsJ+/Wl8krUznSrH58cYswAi8Br+KzmLFNB
+	 WsxUkQDaDd+gkBnBCx3GYAuHf0QWDwN6UOxTgw9BI2y8HAEtrdFcrsUWDi9aFmQsHOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=proton.me;
-	spf=pass smtp.mailfrom=proton.me;
-	dkim=pass header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=Jb4yJYx3;
-	arc=none smtp.remote-ip=185.70.43.22
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q2QOa7+B;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A724B606A32A
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A724B606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A2EF9606A33C;
+	Thu, 26 Nov 2026 15:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=Jb4yJYx3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail2; t=1795707141; x=1795966341;
-	bh=XYSDHZYOz2HcGfIl+aUARLgMG4MFI97vgguT4JgL9tM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Jb4yJYx39VMrBlih8bC71VbKLC01jlwmddrAjmQtCjvgbFgUkTyxEMteQIgBOMtEC
-	 EVbThkMokOZs7YmDldetiV0+eluG8jHJ4STSY3eUQ00FiZ7+EX+tFXPOY1W9DApaHL
-	 sPnribWdfS4aiqmrfilU9yf+8WbmRfskr5C91McrAJ6J7zOxSrPoR205BMC1UDk/1m
-	 anBl+uTjZa19HH+AgglE9/NhCwLvnWLJaan2alA48EDSRc+qohBK/DHQCPwW/Xr8wF
-	 zxyJ9GsfLn40GYqrVM3MElzBeHE/6uaY9OE1nJn2AyfOmT42CJftY7eXKwKdWSbqob
-	 z77+trV6yXzcQ==
-Date: Thu, 26 Nov 2026 15:32:16 +0000
-To: Enzo Adriano <enzo.adriano.code@gmail.com>
-From: Norman Herms <dockseed@proton.me>
-Cc: linusw@kernel.org, wens@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org, Andre Przywara <andre.przywara@arm.com>, Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pinctrl: sunxi: use automatic voltage detection on A733
-Message-ID: <hLr27fLEbAhwAQMkO50HHXP_6CB0avqrmqECAA0v51G-wllHh5gH-430fmoZQ9-H_QG0yeuyKXGHK2rnzXiZPDFELQU-nWdwwpxJqYWT3tY=@proton.me>
-In-Reply-To: <20261109-a733-pinctrl-v3@gmail.com>
-References: <20261109-a733-pinctrl-v3@gmail.com>
-Feedback-ID: 144388465:user:proton
-X-Pm-Message-ID: f179a31c19f8418be2ca57072deb600c19315a8d
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q2QOa7+B
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4995D1F000C6;
+	Thu, 26 Nov 2026 15:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795707334;
+	bh=MwA4FYJ46Bvh2A1wTVAqC8aenjVpDEYVSO+CQYzOzSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Q2QOa7+B+qovfuyD+t5Bi3rriYxE3uXEzuu/SlW0jK8qW/sfXcgsEA0Hdh8C48y4g
+	 1D4nL0bcX12dtdW8IYppHrxgTf5yUNQcOLEYbG0jfjzMrL4l3Nc74POFW1DfHMzNph
+	 Y/g50ZI2C5eJgZAh1lZ4iAuJ7tg7kQbLvN4woQMG2IKAGlznBGlZ/0JOw7deQNj7H6
+	 eAFZcYSSd2CfTMRshOtZWg9GedH7krWlxfMvAnDtv+5xzm1l/XZ8JloBL2NHaeEUMn
+	 0Cq0U/yh8ABWTABLi0ZmQ44f8nPpH2xfhapDuQWjWIS7JU5n9b9aCXjnMkDDpFitBZ
+	 X3X1ZjXSQGv9w==
+Date: Thu, 26 Nov 2026 16:35:30 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Alejandro Colomar <alx+linux-hardening@kernel.org>
+Cc: sashiko-reviews@lists.linux.dev, Alejandro Colomar <alx@kernel.org>, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v8 2/4] string: Add strprefix()
+Message-ID: <abtqjggbxtv5lr3mvfbesxb32l3uwfxpkldp46fcz53vnyaw56@yoyevtktq3vh>
+References: <cover.1795695151.git.alx@kernel.org>
+ <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
+ <sashiko-outbox-235501@kernel.org>
+ <awgmuC_BnyaEpTXD@devuan>
+ <paz72vxna4f5kwp2a7waztsnywzwgbwqtpjxjgy6sm7j256bbs@lsr2jbx5paji>
+ <awhLO8IijdM_tef3@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -64,26 +61,89 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awhLO8IijdM_tef3@devuan>
 
-Hi Enzo,
+On Thu, Nov 26, 2026 at 04:08:15PM +0100, Alejandro Colomar wrote:
+> Hi Bart,
+> 
+> > Date: 2026-11-26 16:06:56+0100
+> > From: Bartosz Golaszewski <brgl@kernel.org>
+> >
+> > On Thu, Nov 26, 2026 at 01:32:17PM +0100, Alejandro Colomar wrote:
+> > > > Date: 2026-11-26 12:27:03+0000
+> > > > From: sashiko-bot@kernel.org
+> > > >
+> > > > Thank you for your contribution! Sashiko AI review found 1 potential
+> > > > issue to consider:
+> > > > - [Low] string: kernel-doc parse failure on strprefix() due to
+> > > >   __nonnull_args()
+> > > > --
+> > > > 
+> > > > commit fa176bccb75ab1dcd9cc8e153bcc5112c790bc7c
+> > > > Author: Alejandro Colomar <alx@kernel.org>
+> > > > 
+> > > > string: Add strprefix()
+> > > > 
+> > > > This commit adds the strprefix() helper to return a pointer after a matched
+> > > > prefix or NULL on mismatch, along with KUnit tests.
+> > > > 
+> > > > > diff --git a/include/linux/string.h b/include/linux/string.h
+> > > > > index 9b3e578d9aca1..a6a1953c52e35 100644
+> > > > > --- a/include/linux/string.h
+> > > > > +++ b/include/linux/string.h
+> > > > > @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_len, const void *src, size_t count,
+> > > > >  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
+> > > > >  })
+> > > > >  
+> > > > > +/**
+> > > > > + * strprefix - string prefix
+> > > > > + * @s: The string to be tested
+> > > > > + * @prefix: The string to see if @s starts with
+> > > > > + *
+> > > > > + * This function determines whether the string pointed to by @s
+> > > > > + * starts with the sequence of characters
+> > > > > + * (excluding the terminating null character)
+> > > > > + * in the string pointed to by @prefix.
+> > > > > + *
+> > > > > + * Returns:
+> > > > > + * *  @s + strlen(@prefix) if @s starts with @prefix
+> > > > > + * *  NULL if @s does not start with @prefix
+> > > > > + */
+> > > > > +__nonnull_args(1, 2)
+> > > > > +static inline char *strprefix(const char *s, const char *prefix)
+> > > > > +{
+> > > > > +	size_t len = strlen(prefix);
+> > > > > +	return strncmp(s, prefix, len) == 0 ? (char *) s + len : NULL;
+> > > > > +}
+> > > > 
+> > > > [Severity: Low]
+> > > > Does __nonnull_args(1, 2) break scripts/kernel-doc parsing for strprefix()?
+> > > > 
+> > > > CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py does not
+> > > > strip __nonnull_args(), so kernel-doc mistakes __nonnull_args for the function
+> > > > identifier when processing include/linux/string.h (included by
+> > > > Documentation/core-api/kernel-api.rst), emitting prototype mismatch warnings
+> > > > and omitting strprefix() from the generated documentation.
+> > > 
+> > > As said in v7, I don't know what to do with this.  Any comments?
+> > >
+> > 
+> > I don't have an answer but my clanker pointed me to commit b6b0adb6c845
+> > ("docs: xforms_lists: support __nonnull_args()") as the right fix. It's
+> > in linux-next so you can add it to b4 deps and sashiko will pick it up
+> > and should stop complaining.
+> 
+> What if I don't use b4(1)?  :)
+> I guess I can just safely ignore it, right?
+>
 
-Tested on a Radxa Cubie A7S (1.8 V banks: PC, PE, PK) with v7.3.6 plus
-our A733 patches, with this patch and Pablo's IRQ-bank series
-backported and our own voltage-mode patches removed.
+You may but then you can run into maintainers that won't touch a patch
+until sashiko issues are not addressed one way or another (fixed or
+commented on). I prefer to include dependencies and b4 does it nicely.
 
-The firmware leaves GPIO_POW_MOD_SEL at 0x01155550 and
-SGPIO_POW_MOD_SEL at 0x000AAAAA. After the probe they read 0x05555555
-and 0x00055555. GPIO_POW_VAL shows 1.8 V on PC, PE and PK and 3.3 V on
-the other banks, matching the schematic. The SD card works at 3.3 V
-High Speed, and GPIO interrupts on PK0, PB0 and PJ24 follow pull edges.
-Without both patches GPIO_POW_MOD_SEL reads 0x01155514.
+Your call I guess but b4 just *is* the better alternative to manual
+git send-email.
 
-Tested-by: Norman Herms <dockseed@proton.me> # Radxa Cubie A7S (A733)
-
-Not tested: 1.8 V switching of the SD card, the A523, pad voltages.
-Built and measured by AI agents (Claude) on my board.
-
-Thanks,
-Norman
+Bart
