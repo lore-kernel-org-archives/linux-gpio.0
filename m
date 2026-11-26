@@ -1,68 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795695477;
-	b=li+tMUikE8IXjA00nbFyWMAcMEL/gTtu1hHjyWAUvMfZPoPMdhAJGurNYpPLlN2wiXf+
-	 7//55vQAEZ1+W6jZkp+S8LIl2+tznDpsvEt0OHhW7OBTbvoGuV5r+rPaw86fwWxUW/iDR
-	 d2rkVcITi2k35ZxZOy1Gy2/VqtsRycgF3ApUkfVb28qSsc/+JiCRYRwDA3OJsmyfOjl4k
-	 VONojpMyrLqCUCBDNONAXrZ1+n9zYzz4jbegswfUm0q5d39ALDYVvFyIK7ypgNT8Lbc9/
-	 9MohNmYBUZTQRmujyL0Zx873GYX42fMNxxCe2YwvvzX2eGjJbuS5Wi8IIzrcsezSHZg==
+	t=1795696024;
+	b=O8pN2lNTP1R63TMC61e/plsFflLbJDS5+locXn2bbn1WEIgmbuNzjyyAM2SsvzRqJoFl
+	 lXKohjM1LCDIhUxHmGeMY48RbGeIPfJxxAK3Hg++Qe5eG3Lq5dehk3H0oq7D76wf4lQTv
+	 SxympJ9Mbr8xO7iybMPXdTPl7M689xqOAGcrbb4aU3A5PXxK2xc/Zq4b61Ac3KGpq5m8+
+	 VTSlHdWKOVhmoTcdytGAPPVPZRXyuHyXRX6aado6BXWoYAwLpksLtbquC+RNNz7b7lXjX
+	 G6qMWqec1t7ZPAZikOmCtr6Cp9BSCMv6fojVlgJk0/TB3VAKgCMh4IuQerFLz93n3Hw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795695477;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:X-Mailer:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=GnAg1L+ydpIyuTi1m5RI3tEoPVDFRXuqUhAIOsX8UQY=;
-	b=se7JWdDDHlfFQ+okQwABacZvklvlfu/rMN/EWcxGvsFXeqGv+qvWvludrbtTh2Bh4Nzj
-	 iAvlXxOM9h9vTpGmlPcCTiWl261tdNrlmopPQYuAJKYP6HX1OhhRHDYeHMX6/f4xEQQtW
-	 QO3kCSR09NMjVKGfmNkaM2XTP1bQosp4H3q3rRdSUhs4+mYzsd65uMqs7vYbH0XyPkML5
-	 EIkFJiIOJFhRqgWvIo3Jrbq74jMCaJY7o0H3MKB5d5j09SQma7UFxJTjK3gauX2k/EYhC
-	 7/2lQblMfKordGI4a12xobA4pZrVV36DAwZXoTXQg5lBAvd/dwaFH2MotvYN4lkjDLg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795696024;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=buL1FiulKeK1iwhQPIEYkRhya5tcSTIzBwY4LNs6UxY=;
+	b=VrVmvQzVabpMFYlkWt7WikqW+trBxW6S7yD5XFDwZouG9nj569qK71BgFr6TY6M0oSXu
+	 hEy/hZw5Z5lHBFAMS+TH7a4WlK1++1p+q8cEjI55uIhB4sTszLHhdSgFN24ioMBVFyV5d
+	 25qAPWcUnjvBCSTQ0XcxY/aS3twNHlqLnKCKpaYdf1ilDAQBm9CaAB2AlY0amCDvDfd+a
+	 BSkk7tE0i8H6y7g+wBdMQyEKZxtz+MX2ukcnywirq04r7GDmBQmumyDadlExe0FhcGm8J
+	 4GA9igpt5LGEoN2ywQDbN0eS6tn9eJJ7RaE5WHZbYj2pmj3wCl+FnZI54m6goPHdljA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c2wAPxYa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LpB4evE8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57C7606A31E;
-	Thu, 26 Nov 2026 12:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8269E606A326;
+	Thu, 26 Nov 2026 12:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c2wAPxYa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DF51F000CA;
-	Thu, 26 Nov 2026 12:17:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LpB4evE8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F701F000C6;
+	Thu, 26 Nov 2026 12:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795695477;
-	bh=GnAg1L+ydpIyuTi1m5RI3tEoPVDFRXuqUhAIOsX8UQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=c2wAPxYa3NMibqBlkLQJwnyQyxSjza+cRgDjyzS04FORe11CqOyF0SbP0XYR6qYB8
-	 JdN5mUHxSW8+KA3EH0rmEhp/9p1aVPrjuIQq3WWAQVbhsIbNKHjmcL74IcOG9ve/Sw
-	 DRgYG+7npVqBeDOoBO713j5eXBf5ZLlHvgU4/kf1yx/vaNHxFSkscFcYJ/kEarPGvY
-	 LGJSgzJyZ/zKrNmdap7mmTudfeDynXwzD+ogwHRFNugZWDnB0/ba4GYeET4XQDpH7O
-	 Udzy3f7duURYaZr0CQDbQJtR0rE7ks7bfbRHi8jGRVJUyKocqwxaPhQjD/ahBNxmC7
-	 bm89o4ikWDcpg==
-Date: Thu, 26 Nov 2026 13:17:49 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-hardening@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, alx+linux-hardening@kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH v8 4/4] device property: Fix fwnode_name_eq() for empty node
- names
-Message-ID: <5c23d229235adbd447c16d544bfc0feb27c7524b.1795695151.git.alx@kernel.org>
-X-Mailer: git-send-email 2.55.0
+	s=k20260515; t=1795696024;
+	bh=buL1FiulKeK1iwhQPIEYkRhya5tcSTIzBwY4LNs6UxY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=LpB4evE8aDeAE7OKTSNXGdJWHWSovVSKX+b0BLQfZjUofIqbw48o34TxUOzkZfRJ9
+	 DtwtTrZCGeaHMRwi3NMAlAPyujXO1YzyWbyQp88SgI8ltu/eN9meQgQ/rL958JnfaW
+	 kQjGn7dsXrFwGqoWyP4RFsfTalN5J0CsYlBGKJZBQnB6kVNDFXcq86KCWb3F6kqeh7
+	 jWNQB3yRZXPd8DUiViUIgzdT4iVc4skkD8IMURld7zFxjRVTbDB8zBU0xOAUb5NFem
+	 gkT9vzgv0+JB8rZox+hoGClb4NVnGCrw8U/KCWAWDpE7zMWzpEqVWPlMb7om+20VKk
+	 mj6xNpD8GhzzQ==
+Message-ID: <sashiko-outbox-235501@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v8 2/4] string: Add strprefix()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Alejandro Colomar" <alx@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
 References: <cover.1795695151.git.alx@kernel.org>
+ <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 12:27:03 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -71,108 +59,62 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ktiyemgvkt6rcag7"
-Content-Disposition: inline
-In-Reply-To: <cover.1795695151.git.alx@kernel.org>
 
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] string: kernel-doc parse failure on strprefix() due to
+  __nonnull_args()
+--
 
---ktiyemgvkt6rcag7
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-hardening@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Schwab <schwab@linux-m68k.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Len Brown <lenb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linus Walleij <linusw@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <zanussi@kernel.org>, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, alx+linux-hardening@kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH v8 4/4] device property: Fix fwnode_name_eq() for empty node
- names
-Message-ID: <5c23d229235adbd447c16d544bfc0feb27c7524b.1795695151.git.alx@kernel.org>
-References: <cover.1795695151.git.alx@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <cover.1795695151.git.alx@kernel.org>
+commit fa176bccb75ab1dcd9cc8e153bcc5112c790bc7c
+Author: Alejandro Colomar <alx@kernel.org>
 
-str_has_prefix() returns the prefix length on match and 0 on mismatch,
-so the mistmatch case can't be told from "empty prefix matched an empty
-string".
+string: Add strprefix()
 
-For instance: the OF root node's name as returned by
-fwnode_get_name() is "" and will return 0 for any name matched against
-it and since len is 0 too, fwnode_name_eq() will return true.
+This commit adds the strprefix() helper to return a pointer after a matched
+prefix or NULL on mismatch, along with KUnit tests.
 
-Let's use strprefix() instead, which also makes this function simpler.
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 9b3e578d9aca1..a6a1953c52e35 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_len, co=
+nst void *src, size_t count,
+>  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
+>  })
+> =20
+> +/**
+> + * strprefix - string prefix
+> + * @s: The string to be tested
+> + * @prefix: The string to see if @s starts with
+> + *
+> + * This function determines whether the string pointed to by @s
+> + * starts with the sequence of characters
+> + * (excluding the terminating null character)
+> + * in the string pointed to by @prefix.
+> + *
+> + * Returns:
+> + * *  @s + strlen(@prefix) if @s starts with @prefix
+> + * *  NULL if @s does not start with @prefix
+> + */
+> +__nonnull_args(1, 2)
+> +static inline char *strprefix(const char *s, const char *prefix)
+> +{
+> +	size_t len =3D strlen(prefix);
+> +	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
+> +}
 
-Fixes: a9c8c738066b7 ("device property: Add fwnode_name_eq()")
-Closes: https://lore.kernel.org/linux-hardening/20261104-fwnode-for-each-pr=
-op-v1-1-6e28fe1c72c4@oss.qualcomm.com/
-Reported-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- drivers/base/property.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+[Severity: Low]
+Does __nonnull_args(1, 2) break scripts/kernel-doc parsing for strprefix()?
 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 51109794d727..7728116e2968 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -692,15 +692,12 @@ const char *fwnode_get_name_prefix(const struct fwnod=
-e_handle *fwnode)
- bool fwnode_name_eq(const struct fwnode_handle *fwnode, const char *name)
- {
- 	const char *node_name;
--	ptrdiff_t len;
-=20
- 	node_name =3D fwnode_get_name(fwnode);
- 	if (!node_name)
- 		return false;
-=20
--	len =3D strchrnul(node_name, '@') - node_name;
--
--	return str_has_prefix(node_name, name) =3D=3D len;
-+	return strprefix(node_name, name) =3D=3D strchrnul(node_name, '@');
- }
- EXPORT_SYMBOL_GPL(fwnode_name_eq);
-=20
+CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py does n=
+ot
+strip __nonnull_args(), so kernel-doc mistakes __nonnull_args for the funct=
+ion
+identifier when processing include/linux/string.h (included by
+Documentation/core-api/kernel-api.rst), emitting prototype mismatch warnings
+and omitting strprefix() from the generated documentation.
+
 --=20
-2.55.0
-
-
---ktiyemgvkt6rcag7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmsII20ACgkQ64mZXMKQ
-wqlScw//V+5iU8A1ZOhNKsJDwVkiBghPhzHnkD6nj9redIkRIbLW9CA3ZpSallwK
-wXUAhO/tIkqcGZyzCsHod6rG9t8CJ+5UcFZhv03gGLCGIKtkNnaxqguLtDZrkFYA
-LN1o+B1FPNRcF32PCaPqEvqbjzCMSM+ODlbZKjsAF7vXBhX2luQ0Y6SObApmVNGU
-b1GzXw+7UFE66et5gPKtDxVEhLrGh7W85H365g0s3Uzdz0ArT6YTAG62uvZnqzJy
-vOIXagFT8ZxiACzwScgMc76jwrX3jGxrzWjrXCwuAi0FyiQY4pBlMXeyJQHk713J
-RlUHp9cYBggEAhhoLXOk1g1xEa+8Far0WXV3DVDnfJttgDhveeDwt7Mdx6V3+Qy7
-aL6IaUxnbqnnMotCL0NYnMMM4HO5YLD3sP5kUmFFfHPQ/cPA1794FRhrHMrcKWWG
-pK7hcKgjmh/6N1ddkGVPiYd7TTlQhgaf1Qi9pBsrCBkb1fUjQeeHhkol8HpDYAuS
-6jC9u9hmXBKIFHwJMPhIf4bmve7q1t+NmXKlcaqcJFFjr5+cYCpd+KCYXNVB5XNe
-ba4eNyC1Z6zEvrd90dKnxKnWvPMJMpjI2z2nT//hGuYjWrrKLsZP3AFeroCRiivn
-0ZSeCviyIvxwmjvbGKm9LP/qd19qClsIJlZ+aLw2U0Ju7Z0njn4=
-=8hnQ
------END PGP SIGNATURE-----
-
---ktiyemgvkt6rcag7--
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1795695151.gi=
+t.alx@kernel.org?part=3D2
