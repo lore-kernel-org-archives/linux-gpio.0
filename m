@@ -1,64 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795682881;
-	b=W/WWOxRu8BXucvZEFmyNWdxvlbvwRKjH7j0Sw3hFk9tLQmIsZe7f4zKmbt/LBgk5herH
-	 pvg+FAlENLebVhgtYY+2rZAH5M1vMBiRG9Bb6lvfP8Evtn67cTrWYlGkH1nle7OvWWoSB
-	 O4luZQpunWbWWVatyWzYnrHGpBrjdw95pLieCF9696Usk3t+dPDuairNh1h3kkq7o3rP/
-	 blKeNjvwgVTo00L1LM9T/iXf8BnkPBCznvEdcI4bski8y8tEetv3DJdtd+EAFm+vkYHwS
-	 34OU8HTOjDAfmMY16hF02RyK4M3fCLBYLHlfGyf9gYlrneg+Lt5Yfjhl6neJiuXvCYQ==
+	t=1795683136;
+	b=gX7Ut6Pf7hN/x4yClh7zyfGbzFamfDjZdp/BCcgIc9/iHXpvqbGbo6R+GCBT/qN3OfGT
+	 vSMk/7VA2ytOz3xr8lSdut9eZaVNITXL24brHIYqQ5ZFt8medP/g8/+K8hgr7xFYNJofc
+	 Ae/ny9e9wNvNUge0Qtz24FeNaRzf4dubl0UpDKA6DE+aY+K6raiyZK9CsxkUlUcm1Y7yA
+	 2sbRvToMV84vNcqS7cnCimkCXKCFe2ypr+ZopO26Y+mjbCeNyv3SEBF/39R+V2LWGp8ak
+	 C+6rXU/r9bpd1bi87i5R41MO9S8TI95TafCVvVj1b2lBakY2ogpn0Isp1cTePwbmXfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795682881;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=YOi4GzTgYmlG+CkzQlU/MUQSDPryjc1Ii3+0qKzW5Dw=;
-	b=EYWqEwACoMM7T8VH0+jBXC3aSe4LP9KvX10wLZVJ4ryRM4L2AiLM3K46Eal7OL6dVJM1
-	 0pQe9YOdPhML5/AHwrjPmuxG6hAkfPeSMyZiSs7fVs3AFleLE/NGtJV0LCrWNmUJMnc5H
-	 sg806HbhkwERWIhj58PrRSeRdWCKFG5bPag0eiz1eBeSPaSeY0VjaTgTqZhTwcaz6CBHx
-	 V6/2rR6bG2XZPk8Y6sfxaBnWxLfm3Z39IulDZe6dxKiqmWvysMezPgbQ1F8bIA+DB6Wyl
-	 DrJypVXba5A1vtgDFbamUkVcKfeQfI8w6VMHKgeGMQVa6h38vYt2936s65pVDl5vKdw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795683136;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=pwDPmB+TeRoAPoy5WgrWyYUyHVTyS1wc/i7oLyN7up8=;
+	b=b/0FnFNa0iHFNptDDW9fviWrGPjKgz19IVPmkPfPzXLO58pS/GL5nDZ/t4orFHw/a8bm
+	 sgZNYW0vTTuam9UEGvEdVXkAJcZnqdLdCSfTB+ywi306L/ePKU34ZrwVCUPfwzhjX7EMe
+	 /zy8JDOmha8jHVy/Dgvfi3pwWMNA4P3zoaPV/N3l2mNlOVd+61/m9f2qLMkXidk3nofWM
+	 aJ2NpLq5mcGfqQJX9NswwCGwqq4MYZhVV+71cvOC5uO83FQ6apSXGHfNGV1yhT4iCQ2WB
+	 tBDinzPcGon+hXv/TrAFPNnwKbguM5TZmziekx/96v+p9QYUqF4MjP+uE+r4rTgdOBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FfJI8IBq;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G+ca9aWR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02E9606A31E;
-	Thu, 26 Nov 2026 08:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CF6606A31C
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 08:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FfJI8IBq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73781F000C0;
-	Thu, 26 Nov 2026 08:47:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G+ca9aWR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DC81F000CA;
+	Thu, 26 Nov 2026 08:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795682881;
-	bh=YOi4GzTgYmlG+CkzQlU/MUQSDPryjc1Ii3+0qKzW5Dw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=FfJI8IBqSregsGEd8fZV1aPuGW74z4bW6L/u+WXgbzs24MC3b5ds+5tTwKdDVX06/
-	 xVeTiCBVjTULz/y/tP7cSWGEgeZ3qY6tQCieQt4gUznP9ONkiXIw77djTHZpDGpd05
-	 TzkNlcHy5RKXX/gDeD+IIy52Liuj+1E3/47sL9a4RQRIuyGCcXaiuHWw44FSTHIOuu
-	 MSuNe0MmflhltbEb+33S3iQ7CWSeJyUMzFsVQsrguB7fj5uxXacdIeFuTekoLNsvjX
-	 22lWwiTbO6keu2aMChR5gRJwvyQcH8N/TwM7QHHNwlP5hvVcrR2T4aiRWmXxbBsy8W
-	 eqkVFmxehCgfw==
-From: Lee Jones <lee@kernel.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, John Crispin <john@phrozen.org>
-Cc: Ahmed Naseef <naseefkm@gmail.com>, 
- Benjamin Larsson <benjamin.larsson@genexis.eu>, 
- Christian Marangi <ansuelsmth@gmail.com>, devicetree@vger.kernel.org, 
- lei.dong@airoha.com, Linqi.zhang@airoha.com, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- mfd@lists.linux.dev, Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, 
- Rajeev.kumar@airoha.com, upstream@airoha.com, Weifeng.xu@airoha.com, 
- zhengping.zhang@airoha.com, Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20261124094059.3882014-6-john@phrozen.org>
-References: <20261124094059.3882014-6-john@phrozen.org>
-Subject: Re: (subset) [PATCH v4 5/9] dt-bindings: mfd: syscon: add
- airoha,an7589-iomux
-Message-Id: <179568287744.25464.2687461126897937244.b4-ty@b4>
-Date: Thu, 26 Nov 2026 08:47:57 +0000
+	s=k20260515; t=1795683135;
+	bh=pwDPmB+TeRoAPoy5WgrWyYUyHVTyS1wc/i7oLyN7up8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=G+ca9aWRI8B+aulUnZMESeIS0LLC+57+LhVESmDopjEsrWkrR38zTEwE7P7TFBL/s
+	 7l4AhZzD/0uL0zH/e+vfYK+da7G/39UCTiq1V3OtVGjibyF/8gBBQr8hiCr6ZNRoqF
+	 PnnGaUq0uELHOxWmfYQXxjY5CYK8/wegiQxoJBt6yX5X/eQE/cCxsub9gq8xz7ev2j
+	 dhVsbw6kJhk8bscEGueDHbvHegaWtGs6/zoqebNzjYETD7glEF9om1b6cC5VNiVEGO
+	 gSAl83yq1mlxKQ+Y0jcEo2qrXd5wzXEpVD89Yz5WVnQyL5YBG9EWAi0h4uvAzJ6Spk
+	 LIAbDM60Cnvxw==
+Message-ID: <sashiko-outbox-235059@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] gpiolib: Use srcu_barrier() instead of
+ synchronize_srcu() in gpiodev_release()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: Zqiang <qiang.zhang@linux.dev>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261126084233.17381-1-qiang.zhang@linux.dev>
+References: <20261126084233.17381-1-qiang.zhang@linux.dev>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 08:52:15 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -67,21 +59,65 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
 
-On Tue, 24 Nov 2026 10:40:55 +0100, John Crispin wrote:
-> The Airoha AN7589 IOMUX block holds the 4 bit mode field of each pin.
-> The pin controller reaches it through the airoha,iomux phandle. Add it
-> to the syscon compatibles.
-
-Applied, thanks!
-
-[5/9] dt-bindings: mfd: syscon: add airoha,an7589-iomux
-      commit: 635c680b2ea58b3bb75464f464a23eb4bacbb0fd
-
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] gpiolib: missing Fixes trailer for srcu_barrier() fix in
+  gpiodev_release()
 --
-Lee Jones [李琼斯]
 
+commit a9a1a00addf42a3f612e043479c9501ad1c6053c
+Author: Zqiang <qiang.zhang@linux.dev>
+
+> gpiolib: Use srcu_barrier() instead of synchronize_srcu() in gpiodev_rele=
+ase()
+>
+> The gpio_desc_label object are freed asynchronously via call_srcu() on
+> gdev->desc_srcu (see desc_set_label()). to drain these pending SRCU
+> callbacks before cleanup the SRCU structure, gpiodev_release() currently
+> calls synchronize_srcu(&gdev->desc_srcu).
+>
+> However, synchronize_srcu() only waits for a grace period to elapse and
+> for its own wakeme_after_rcu callback to be invoked. it does not guarantee
+> that callbacks queued on other CPUs have actually been invoked by the time
+> it returns. The following race may happen:
+>
+>               CPUA                                        CPUB
+> call_srcu(desc_srcu, desc_free_label)
+>
+>                                                gpiodev_release()
+>                                                ->synchronize_srcu()
+>                                                  ->call_srcu() queue wake=
+me_after_rcu()
+>
+> SRCU GP end
+> timer_reduce(delay_work)
+>
+>                                                SRCU GP end
+>                                                 synchronize_srcu() return
+>                                                ->cleanup_srcu_struct()
+> /* timer still pending! */                        ->for CPUA timer_delete=
+_sync() return true
+>                                                     and cblist not empty.=
+ tigger WARN_ON()
+>
+> This commit therefore use srcu_barrier() instead of synchronize_srcu() on
+> gdev->desc_srcu,  it entrains a barrier callback on every CPU that has ca=
+llbacks
+> queued and waits until all of them have been invoked.
+>
+> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+
+[Severity: Low]
+Since this fixes the use of synchronize_srcu() to drain call_srcu()
+callbacks before cleanup_srcu_struct() in gpiodev_release(), should this
+include:
+
+  Fixes: a86d27693066 ("gpiolib: fix the speed of descriptor label setting =
+with SRCU")
+  Fixes: 7765ffed533d ("gpiolib: use a single SRCU struct for all GPIO desc=
+riptors")
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126084233.1738=
+1-1-qiang.zhang@linux.dev?part=3D1
