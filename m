@@ -1,38 +1,39 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.197
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795665275;
-	b=CaiV+J5ZUunN/+b2t4vI4cP25V/TO7HJ2kKC4UWz+RaAaISnQ5wZJhYkgDZ+JcjvZhAH
-	 QFjFfPs9f7TyNbNdz3vmQ/oP7EInJ90rZhORsFMvXcBi/31LGUQsOLT7vOBA1zPOSoWUf
-	 4IDtDnbWN3JuRDWth7KN+MPlUCB+qh6luDqqBEBJ8KKqjO0eZxzytMgZ/KPq0tG38zIdt
-	 fvVVk0zshUOgELa0SY108q7Op768FvBM052YqBxX/0DAQ80EbBXgclNxIJ80r/u2gRFvl
-	 QYaXdbFFfy/TPkt8YsI/mCEqIaRn16yaIW/0XNLF0JeEgCTFlEBhyl73rTSVHQu1reA==
+	t=1795665277;
+	b=q77ARpmEXb7LOb0zMOL45PbFXg9PR4FgIyGucFbAQH3SANiYnSyEdnIAMiVegAnOBLzg
+	 b+YDldaIfpYZ0DAYaFTzYFdTHpv+/vmYbev2wIDSIbCjEeuqKFRVvD+vDR9EUZIJzE9yW
+	 I6olux+OZx7LLvc6elzKVCvm3jPLhKE2fwP5EqlwRTplkCH2VfW4yS+/7NeClQdiWRfB+
+	 AYTNJQ1eMsZCXFZ6OefrNIHnSUqZJrEdstTB0GNAIMH0SoGlRoV+Pi5/nw2x20hQaCBiM
+	 Q0aPfcEr/bjaXizGheeOSaUiqt9XXQhEHFbnxae7DtLWM1vHQlWvEtapnQnablReCIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795665275;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795665277;
 	h=DMARC-Filter:X-Alimail-AntiSpam:Received:From:To:Cc:Subject:Date:
-	 Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=KlUZ8iOXpvQJNsc9I3ifS0i47syyb6w4JS8lphnBwTU=;
-	b=UB3ro1IQw+u7x7S0pG7amKBp7puvF8T2s0DNNgrD7oyzoI+fcXbylU1g0xrBq+26mY/b
-	 CnUSWdQhja2JdBvcFRnhIiP/1uMWzifm9ckCB3Z93ceKvTM6hxRQPoZBeRquVnbSy1maJ
-	 LMQwjrejtpCrgywjEa8Ll/J4hbWD1/YeY2vpigzgd7KGpIM74D6iy3rwKAs0ktC496CTh
-	 1xY1iUojc58am6Gez0wvDedwkcFtxHrlGmmbV6bJT+snSSBfPAEPbUob0aDvuiSxDLE8V
-	 rf/YOu+XN7sviB7fTEEA6+LVgDy+bbpI0sLR4hmJpHu2DwkV9h7KLnqh6pdxsu978sw==
+	 Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=UYnHuD95jjTU7bUbz610BGDINyKJ2tUuvBJYRsnN3iQ=;
+	b=GK9/VF5uKdNzKW1p8oc6i9jbC63rdu5tAwVG9OJ6nXMtn3Ri5ZKPg6GhXwezIme23EwG
+	 ezmOk6Ja2GpDnLzR/E6I5FUOZuWdD5f1rceC2MXZmSu85vrKF/a3Aljg6zCRn6PGDvtSa
+	 bYA/QurAc+1o7ASVCUEmGmf9aNa4SE8ahpW4P9mtng4ZbLdFQKiAm85wVvLCcXNjkQu7C
+	 knaBoHFyG72X1EERCeIT66c30WOj8oIgBmEKuiR6qdp8xOm8M1PfH2+7quiq7HOrpzbS5
+	 XEd/Na6hK+5Hkiyvp3DVupCahxHBZgkl85bMsOPtResLbAXhyfITG6DUEID1h6yXUPA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=kaihong.com;
 	spf=pass smtp.mailfrom=kaihong.com;
-	arc=none smtp.remote-ip=115.124.28.49
-Received: from out28-49.mail.aliyun.com (out28-49.mail.aliyun.com [115.124.28.49])
+	arc=none smtp.remote-ip=115.124.28.197
+Received: from out28-197.mail.aliyun.com (out28-197.mail.aliyun.com [115.124.28.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C04606A31C;
-	Thu, 26 Nov 2026 03:54:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 50C04606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B49606A329;
+	Thu, 26 Nov 2026 03:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8B49606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaihong.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaihong.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.1034225|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00381075-0.000424786-0.995764;FP=17238604813167455461|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033065158064;MF=wangxiaolei01@kaihong.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.kASpfN5_1795665263;
-Received: from nj-vm-261.pxvirt.local(mailfrom:wangxiaolei01@kaihong.com fp:SMTPD_---.kASpfN5_1795665263 cluster:ay29)
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.1369101|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.00221578-0.000296395-0.997488;FP=14794307250485396133|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033025068124;MF=wangxiaolei01@kaihong.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.kASpfSd_1795665269;
+Received: from nj-vm-261.pxvirt.local(mailfrom:wangxiaolei01@kaihong.com fp:SMTPD_---.kASpfSd_1795665269 cluster:ay29)
           by smtp.aliyun-inc.com;
-          Thu, 26 Nov 2026 11:54:24 +0800
+          Thu, 26 Nov 2026 11:54:31 +0800
 From: Xiaolei Wang <wangxiaolei01@kaihong.com>
 To: linusw@kernel.org,
 	florian.fainelli@broadcom.com,
@@ -46,10 +47,12 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] pinctrl: rp1: fix RT sleep and clean up map freeing
-Date: Thu, 26 Nov 2026 03:54:18 +0000
-Message-Id: <20261126035420.1836760-1-wangxiaolei01@kaihong.com>
+Subject: [PATCH 2/2] pinctrl: rp1: use pinctrl_utils_free_map() for map cleanup
+Date: Thu, 26 Nov 2026 03:54:20 +0000
+Message-Id: <20261126035420.1836760-3-wangxiaolei01@kaihong.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261126035420.1836760-1-wangxiaolei01@kaihong.com>
+References: <20261126035420.1836760-1-wangxiaolei01@kaihong.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,43 +64,63 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series contains two independent changes to the RP1 pinctrl driver:
-a fix for a real PREEMPT_RT bug, and a cleanup that removes duplicated
-code and a small leak.  They do not depend on each other.
+The rp1 driver open-codes a dt_free_map callback that frees the config
+arrays of pinctrl maps and the map array itself.  This duplicates
+pinctrl_utils_free_map(), which the pinctrl core already provides for
+exactly this purpose.
 
-Patch 1 makes the gpio regmap use a raw spinlock.  The gpio irq_chip
-callbacks run in atomic context -- irq_set_type() is called with the irq
-descriptor's raw spinlock held, and the driver itself disables
-preemption and interrupts while touching the registers.  On PREEMPT_RT
-the gpio regmap uses the default spinlock_t, which becomes a sleepable
-rt_spin_lock, so writing a register field from that context sleeps and
-triggers "sleeping function called from invalid context".  This is
-reachable from ordinary userspace: requesting a GPIO line with an edge
-trigger through the GPIO cdev ioctl ends up in irq_set_type(), so any
-application using edge-detected GPIO lines hits it.  Other pinctrl
-drivers have already adopted the same fix, e.g. armada-37xx.
+The local copy only handles CONFIGS_PIN maps.  Because the driver can
+delegate map creation to the generic pinconf DT parser, CONFIGS_GROUP
+maps may also be produced, and their config arrays would be leaked by
+the open-coded version.  The core helper handles both types, so using
+it removes the duplicate code and closes that leak at the same time.
 
-Patch 2 replaces the open-coded dt_free_map callback with the core
-pinctrl_utils_free_map() helper.  The local copy only frees config
-arrays of CONFIGS_PIN maps, but the driver may also produce CONFIGS_GROUP
-maps through the generic pinconf DT parser; their config arrays would be
-leaked.  The core helper handles both types and removes the duplicate
-code.
+Signed-off-by: Xiaolei Wang <wangxiaolei01@kaihong.com>
+---
+ drivers/pinctrl/pinctrl-rp1.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-The RT bug was reproduced on a Raspberry Pi 5 with a PREEMPT_RT kernel
-by requesting an edge-triggered GPIO line from userspace.  A full read
-of the pinctrl debugfs "pins" file (all 54 pins) produces no warnings.
-
-This patch was initially drafted with AI assistance and has been
-reviewed and modified by me.
-
-Xiaolei Wang (2):
-  pinctrl: rp1: use raw spinlock for gpio regmap
-  pinctrl: rp1: use pinctrl_utils_free_map() for map cleanup
-
- drivers/pinctrl/pinctrl-rp1.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+index 99566a25ecb4..bf2c300eef29 100644
+--- a/drivers/pinctrl/pinctrl-rp1.c
++++ b/drivers/pinctrl/pinctrl-rp1.c
+@@ -1089,18 +1089,6 @@ static void rp1_pctl_pin_dbg_show(struct pinctrl_dev *pctldev,
+ 		   irq, irq_type_names[pin->irq_type]);
+ }
+ 
+-static void rp1_pctl_dt_free_map(struct pinctrl_dev *pctldev,
+-				 struct pinctrl_map *maps, unsigned int num_maps)
+-{
+-	int i;
+-
+-	for (i = 0; i < num_maps; i++)
+-		if (maps[i].type == PIN_MAP_TYPE_CONFIGS_PIN)
+-			kfree(maps[i].data.configs.configs);
+-
+-	kfree(maps);
+-}
+-
+ static int rp1_pctl_legacy_map_func(struct rp1_pinctrl *pc,
+ 				    struct device_node *np, u32 pin, u32 fnum,
+ 				    struct pinctrl_map *maps,
+@@ -1286,7 +1274,7 @@ static int rp1_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	return 0;
+ 
+ out:
+-	rp1_pctl_dt_free_map(pctldev, maps, reserved_maps);
++	pinctrl_utils_free_map(pctldev, maps, reserved_maps);
+ 	return err;
+ }
+ 
+@@ -1296,7 +1284,7 @@ static const struct pinctrl_ops rp1_pctl_ops = {
+ 	.get_group_pins = rp1_pctl_get_group_pins,
+ 	.pin_dbg_show = rp1_pctl_pin_dbg_show,
+ 	.dt_node_to_map = rp1_pctl_dt_node_to_map,
+-	.dt_free_map = rp1_pctl_dt_free_map,
++	.dt_free_map = pinctrl_utils_free_map,
+ };
+ 
+ static int rp1_pmx_free(struct pinctrl_dev *pctldev, unsigned int offset)
 -- 
 2.34.1
 
