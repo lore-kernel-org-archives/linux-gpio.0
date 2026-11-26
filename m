@@ -1,84 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795716204;
-	b=XYWPY6izjLSWn7RQ7JzJCXgA8/NFPWxXP1wXUSFc7RGbCOU188T6W/Jq+jMhj2yw1z5E
-	 00GTV6Dq5Hfhhq6+h0icJxQhF4Cy47qOCUklTOIv7jUgnKaam7ev1Qyro2yV8RzhKcW0x
-	 qcEwb3BCnRXP6fYg2gnGH4GzVilUgCA6JRA+8y8G3PSwzKDpigm0woaQa8AUHunxWt3MH
-	 ITxYhWFmOknny3ewzgN9itfjMxDD31X+syyD4rhmBlw2cjbJOFpiffQl9OGTm/VHhk3sa
-	 i2zzLAsyJq8qQvmCFwdsjEdP/b3iTpPtZl3Yz8Yf/JBlsZq06YgJb/CDILe0FEofRwA==
+	t=1795716205;
+	b=N6zHK+GA5oarJd4Nqc4Mq/fyXjfZDnhv78ST/GuhE5OhJ+4VEazkvMVm8UFxUmckFRVt
+	 x3QJJTFTJDQbaafStxwcnY0kOvjwLyOLw4r7nmXKEALsGYIYjh79TZyY7Y8X1iOsZxau+
+	 gnsLuR1xvT9PKHt3ytb+o44P823tNSd/BWdInuwLA3qjv3ew7FXpKkb0VpVauA+ohZ0OE
+	 yAXq0K+/z+VTKMkvhD+0RpWOwsjfQTplhw9RtsMrU4KG6N3m/7ORjR7jbXZBzIHTW3peo
+	 MUT3LXlh4309GMCu6FfLA1vETlHJUWFp1W8aq6tNj7EGDxfgF5pdLCYaz2r3NWtpQjw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795716204;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795716205;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=MWjWbCDRLzNbOgaM4N+L9AIS4oA7KwmKeVxKr/CyST4=;
-	b=y36nN0NQ+rGcxuHAFAxY9G/FfVV0ZRfyxVP5sLoy7KT/yWJwg9hJhvLZ96YfY7EZUIXR
-	 pYAh32Ue7E1U/q/KI4wCIiQv8W/wQ7lt6QqtEFmnjlUl7V7vZiSZrZ/ZeVajoRbI0d+pj
-	 KEHZ1VZftvjNuOoifIYpky16/BT+YVkJgd30Qz3nodVZ4c8/UCJSD5syMSCd8Ufj3FCsQ
-	 2XfK9M2DmI5XioITFb17CY+bnWRpqfSAFAG5dO5Rr8Rx4MZ7y1g94RhzUBe0biC/MVKdw
-	 FFp0HwuIy6tuMB7n8nzcsMB+JCh7YRFbjwFDva1c53tXCLmlC9/W2L00zoE01tWh/Sg==
+	bh=WuHE4xVuwPbHoJJDUazvRjThuTJ3/8xHzVYiIGey9/0=;
+	b=VuNpe2L/iYPRqr8fUNoS02A7O3fKcXyl3KRvwuAFmAA0HvGMSkUWoiWfm8rdb2j+1zir
+	 +ZVfN5q4rqh2kBw3INyM4H4FwQzZMrYSIDEDR/SYx1c/JQynTXE6MqkyAXM3Xr8fbKhP4
+	 8pxtMZZp5AGPSfkgAbmB4yW7srsw1jUxHt4t3vsENr3ml2vfXfs8JO+kWCWH0cDIdyBib
+	 fDt8xDGxqY+zYSv5D9+fklIm0EfFlMLKNplMa5igeL+obogGRymC25ZZYyDP9MMOd4vf+
+	 6jqviRhrb88Gtxv+Djiciq+FZPzdFgttxkEJ5piWtTJGKICAa+d/8yKBbz15t1vphsw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EutVzTX3;
-	arc=none smtp.remote-ip=209.85.128.44
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jGbETmZr;
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B02606A337
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 18:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 05B02606A337
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF27606A69B
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 18:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECF27606A69B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EutVzTX3
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4bb606491faso38793485e9.3
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 10:03:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jGbETmZr
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-491f34b4e0fso3348904f8f.2
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 10:03:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795716202; x=1796321002; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795716203; x=1796321003; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=MWjWbCDRLzNbOgaM4N+L9AIS4oA7KwmKeVxKr/CyST4=;
-        b=EutVzTX3ArqMEdzUKgVA0SrklEJXHUsiIpN1waVURscx28BvUx3z8sAp9ydSH4/bpG
-         PewpjvUbCiHYmIP3/gXCHvjYrS0NPN+UV48LwLURrP7HI/SrsONSl4Ct9UfHwdlPKP3l
-         oQjCPbepKJCx3RTw2p5JamEVZk3tg9UY8o7MJgaMYrpkyeGFRhIOWcnYxUJxQhbXqPaS
-         2meW3DPMROeMTIBy/G4TEDyew9ULHyUK3bw5YaQ5j4j5AVroBTsiPLiWtsG5EUfRmsZ4
-         RIj7PmxZyT1wxj5UVP1iq4xGvd12OL2ittQZuLc5Lc5sUdfEYpi5p5RNt3tTKhZu8RCk
-         ILtA==
+        bh=WuHE4xVuwPbHoJJDUazvRjThuTJ3/8xHzVYiIGey9/0=;
+        b=jGbETmZrNFtM3pjEYK+LBOFQJe1WmjF008+9gjsGBzCLSb0JE/OYF+KYRWj1XcMROt
+         3POEgILHWdzhVjbHNhZLx+2qTXqB6AdFRMTAgLf6IeIsndzkbmliAz2Ox1OcRtJrcIrd
+         xk1rzlUiATS/MXYMRgvXBjzmkhPLYZNV28tifShqgYNcFNYHp2Z2UMK+mtxYNURFtZAY
+         wd4+KGbt38dvG9wPr3nfLvdc5H6OW1KTUq2AvktbP6deXZPTpjh/zMv0ZrJrQEA0Knlk
+         n0ksfpVkIm4x+C+dmpiQVbycwSe11RMfq13C0DtflN+aQjMu9N849pnEo8d8/U+jU38d
+         01Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795716202; x=1796321002;
+        d=1e100.net; s=20260707; t=1795716203; x=1796321003;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=MWjWbCDRLzNbOgaM4N+L9AIS4oA7KwmKeVxKr/CyST4=;
-        b=K4A8Wy6SM4AHav21m7Bd/9IVS+0JA56gUBRMuQ2PrXcsWbl/LX84vfPE2KpT7eMDJC
-         r0ZmulvYARlLrqPlkiIgneWsphrRlsQIqXnEBoBIxsAcidvz+Ycf4A1ckxh21iYwaHEt
-         zBCnSy6RQl26QoKN61QXZ7foJ5SDtlo7PczAipNfo3rkgsqeSte+w/1szfMEgzcrz9Zv
-         qgyOWCC8ubucxy1CpqasYexjv3mmhlKMV9dx7x8YoY3XqCQ3H8wJKGGJXrDJqlVqM6WU
-         1F9DTkkazXuqTN/1K5Pru447eelvE/hDA0Mh/1y+q4HskMVrI8NZHyJ2aH9yKnsOJlGE
-         G25g==
-X-Forwarded-Encrypted: i=1; AL+hErG2jbCOixipME/zUy0dU9rkOb0aOofa/D1v6V4VZwvRv34AtXzB5B+BgDFMgQUZY+L1apB70lhWVLhq@vger.kernel.org
-X-Gm-Message-State: APuU4Z/bA5vwxSvZtTYmApjjS0QPqDxDE/hxtGYdV9Ted9+Baq21AYK5
-	FGDXWa72C+/nefXXfg7c421jqNY4vgQPiOENm8FNvr/OKya+gN/Lxf8=
-X-Gm-Gg: AZFdTZfFB/CH46gBhj978ZHaoerWP3RMPmMs+uxCJjHi+hSeAnHf4x8kZNjjx9Ite3p
-	kM/3g+a/N3pESRLAGXVwBzit0cniYMICMxl2CUAr2b/T76Uu3Yhblob3IjrwOVHw1NlZtSxgkCJ
-	Cc7OW4AT9Pk3SlmVD8p76lkrokLECia+CFVzn4BZyJqRsD1xo5seJ70fco7cpGovHU8pj/6RWff
-	KbP3fRhTA/OR2bWDgeMjvM57vPjS7Rwd4N1NB/+l5lPP4L+dhjYXgYGzRyvaab2lqjzpEPtlYho
-	2+bWledwhQPIXtJqGQhaaiw9j/BhRrgNAg/yyRNi2Ob6vmmwtEIZ2Cs6ZvG87E+SPQC74g/hNd3
-	nlVvFQVjZBET+n5c+H+mef7m12ZQPdt9Z+90Ae2JQGaeFcZGxI1Y5RJZyjAwpECsW6mg34YlXwG
-	sk/YD5c+M9PmSUeEq1yE0xf8TZonREXuACx6HVrN92G71fHigEBL6cOpu0BqJjpJLbxlTDTRV6M
-	24LCfPtaThY228tr5x1QmF6uFZmcWg3ZtjhGy+D7YJZi0Si9eqxF6Kwdov0AEegazHJfDsTWiGa
-	EBI6paFssESw5jW1025VMhwavZ5GNks6kqQHE3sLntjOp5RIH59RdExaHHdi3B+coKY/ng1NFhx
-	k7trMQ4leHoRrqJRe8yp3pozhniSVQLETmInX2C4fJBH3DH89spl8kQCsYd0=
-X-Received: by 2002:a05:600c:37c6:b0:4bb:7033:c938 with SMTP id 5b1f17b1804b1-4bb888147b7mr437653295e9.14.1795716202272;
-        Thu, 26 Nov 2026 10:03:22 -0800 (PST)
+        bh=WuHE4xVuwPbHoJJDUazvRjThuTJ3/8xHzVYiIGey9/0=;
+        b=YG59HFprdBEFvzKeyEhJ0qFy6eXcuLWcygP2P28phpRttPfTTY03d3LLq59Pucgi6/
+         IRcLAttFK64UY1bvplkGWnmEaU/1qBEgPxfWsSnyIv9Ddk256qxx8zdXhnof5RTXvkP7
+         laJ3d42Lvbjy0tyg5RByShpH+COWY5d2XaQNYYRbB9NNn+SpDdFY9slOOwDcjUao83cv
+         pS3tYAMaffc0Ua1rrT3ruJ1FVnEIkE07/xoVtBUhHXi+Xbb1NB81MG0o+CUpJ8ssQOrN
+         506+cSTFQN24ukqxE5lU/y61k2zXZ8Q9bdtwTEy+Um25H4Tpq1hoaEc48k7YPxVJz1EH
+         a3gA==
+X-Forwarded-Encrypted: i=1; AL+hErFsxafUvC7SQzU7uojtsajHBEWwyHr1TueBr1bojFMQd/vysHtG3SYj5zUUFy1wO7cMCcnn52bMK574@vger.kernel.org
+X-Gm-Message-State: APuU4Z/6J5pSxOi5ch0k0xCJ9FKpRpOiZjyFfweyr2bkb0rKJobqYNL4
+	Cr3mtdcGKcAxbEBGb6TMKFbdb/CQu0KBVzsYG37FV8i9STueWh5ha8c=
+X-Gm-Gg: AZFdTZddHCqgDxq3voPdiDRcBpIOOs3eD1rTk/vsZ+2xLQ4p3ndft4Zp1EB7uTFCIRj
+	ulDfzDL1j5I6HDPpCexaJylB+OW/AJO81Yzde/lpbrF/hFx2qBEUkqGax13zYWpG5b6rS5s+nyy
+	Q3TI8sw45Z/QewK1AqOWdZ5o0wN692TVBV4ygOiOYFK7ucR3pWbvM0d8L/C+RcuK9qdhlUs3l1M
+	I4GxTZ8iL4Cn62BVaXN+APCygnqny/nAq42jwITRHpTnKUoEB96nMyiIWfxu/GXF9vXx0/FxJPn
+	pTWl+S5IYy+2GG6xAvM5Sh7Aazwr3/tIkdrBua9UOb8i4B2RJ9U4lgzcyKB8g/JM1xXyGapqZQO
+	RUChVZyFWRxQoFnrf1NxA1KPjUI2F0yw/mt7xat/IIx1qo7WASqFVCk+Gre6RcMWBsp8td4hHv/
+	ZWuowHmUVfr4QVkL+5nhMR6ay0aMzDTIYciTtITP3x9ZEUkMoKfbY3F9qLFg+x63++VOkC30dfA
+	IxzX/SWUFQwayezbDGj15QnxotadiTOhDP52+ye6oREgqarR36CdcqguiDnFYKylOJCHoFOl6JT
+	tn3hP1Bja+7w0tRmLL0jBz3pL/j37Y4vCzhGip/+GzsCw6pyyXLaL0JsAaiqWMOZ2B3BCIcRFpB
+	HcvYP0/qXFceOBVADqYg77uUa1GQGcVMoklfJSD9xxsXSqP/MdahXz5ZEZlFtIoqRwUK5Etkccu
+	9rEjww
+X-Received: by 2002:adf:e008:0:20b0:48f:bba5:732e with SMTP id ffacd0b85a97d-4abb560e1c7mr30064709f8f.57.1795716203246;
+        Thu, 26 Nov 2026 10:03:23 -0800 (PST)
 Received: from localhost.localdomain (host-94-89-17-99.business.telecomitalia.it. [94.89.17.99])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b2052c8sm42265115f8f.41.2026.11.26.10.03.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b2052c8sm42265115f8f.41.2026.11.26.10.03.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 10:03:21 -0800 (PST)
+        Thu, 26 Nov 2026 10:03:22 -0800 (PST)
 From: Gianfranco Mariotti <gianfranco.mariotti94@gmail.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -92,9 +93,9 @@ Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Gianfranco Mariotti <gianfranco.mariotti94@gmail.com>
-Subject: [PATCH 3/5] gpio: fxl6408: Support optional power supplies and reset GPIO
-Date: Thu, 26 Nov 2026 19:03:13 +0100
-Message-Id: <20261126180315.98034-4-gianfranco.mariotti94@gmail.com>
+Subject: [PATCH 4/5] gpio: fxl6408: Add pull-up and pull-down bias configuration
+Date: Thu, 26 Nov 2026 19:03:14 +0100
+Message-Id: <20261126180315.98034-5-gianfranco.mariotti94@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261126180315.98034-1-gianfranco.mariotti94@gmail.com>
 References: <20261126180315.98034-1-gianfranco.mariotti94@gmail.com>
@@ -109,74 +110,126 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the optional vcc and vddio power supplies and pulse the optional
-reset GPIO (minimum pulse width and recovery time of 150 ns according to
-the FXL6408 / PI4IOE5V6408 datasheets) prior to initializing the I2C
-regmap and reading the device ID.
+The FXL6408 and PI4IOE5V6408 GPIO expanders provide per-pin programmable
+pull-up / pull-down resistor selection (register 0x0d) and enable
+control (register 0x0b).
+
+Expose both registers in the regmap access tables and wire up the
+gpio-regmap .set_config callback to support PIN_CONFIG_BIAS_DISABLE,
+PIN_CONFIG_BIAS_PULL_UP, and PIN_CONFIG_BIAS_PULL_DOWN.
 
 Signed-off-by: Gianfranco Mariotti <gianfranco.mariotti94@gmail.com>
 ---
- drivers/gpio/gpio-fxl6408.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/gpio/gpio-fxl6408.c | 47 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
 diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
-index 9f80ea1214e03..5132177ab2837 100644
+index 5132177ab2837..ae9003fc513a1 100644
 --- a/drivers/gpio/gpio-fxl6408.c
 +++ b/drivers/gpio/gpio-fxl6408.c
-@@ -7,12 +7,15 @@
+@@ -7,6 +7,7 @@
   * Author: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
   */
  
-+#include <linux/delay.h>
++#include <linux/bits.h>
+ #include <linux/delay.h>
  #include <linux/err.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/gpio/regmap.h>
+ #include <linux/gpio/consumer.h>
+@@ -14,6 +15,7 @@
  #include <linux/i2c.h>
  #include <linux/kernel.h>
  #include <linux/module.h>
++#include <linux/pinctrl/pinconf-generic.h>
  #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
+ #include <linux/regulator/consumer.h>
  
- #define FXL6408_REG_DEVICE_ID		0x01
- #define FXL6408_MF_FAIRCHILD		0b101
-@@ -106,9 +109,15 @@ static int fxl6408_identify(struct device *dev, struct regmap *regmap)
- 	return 0;
- }
+@@ -33,6 +35,12 @@
+ /* Bits here make the output High-Z, instead of the OUTPUT value. */
+ #define FXL6408_REG_OUTPUT_HIGH_Z	0x07
  
-+static const char * const fxl6408_supplies[] = {
-+	"vcc",
-+	"vddio",
-+};
++/* Bits here enable either pull-up or pull-down according to FXL6408_REG_PULL_UP. */
++#define FXL6408_REG_PULL_ENABLE		0x0b
 +
- static int fxl6408_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-+	struct gpio_desc *reset_gpio;
- 	int ret;
- 	struct gpio_regmap_config gpio_config = {
- 		.parent = dev,
-@@ -119,6 +128,21 @@ static int fxl6408_probe(struct i2c_client *client)
- 		.ngpio_per_reg = FXL6408_NGPIO,
- 	};
- 
-+	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(fxl6408_supplies),
-+					     fxl6408_supplies);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to enable supplies\n");
++/* Bits set here (when PULL_ENABLE is set) select pull-up instead of pull-down. */
++#define FXL6408_REG_PULL_UP		0x0d
 +
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-+				     "failed to get reset GPIO\n");
-+	if (reset_gpio) {
-+		fsleep(1);
-+		gpiod_set_value_cansleep(reset_gpio, 0);
-+		fsleep(1);
+ /* Returns the current status (1 = HIGH) of the input pins. */
+ #define FXL6408_REG_INPUT_STATUS	0x0f
+ 
+@@ -51,6 +59,8 @@ static const struct regmap_range rd_range[] = {
+ 	{ FXL6408_REG_IO_DIR, FXL6408_REG_IO_DIR },
+ 	{ FXL6408_REG_OUTPUT, FXL6408_REG_OUTPUT },
+ 	{ FXL6408_REG_OUTPUT_HIGH_Z, FXL6408_REG_OUTPUT_HIGH_Z },
++	{ FXL6408_REG_PULL_ENABLE, FXL6408_REG_PULL_ENABLE },
++	{ FXL6408_REG_PULL_UP, FXL6408_REG_PULL_UP },
+ 	{ FXL6408_REG_INPUT_STATUS, FXL6408_REG_INPUT_STATUS },
+ };
+ 
+@@ -59,6 +69,8 @@ static const struct regmap_range wr_range[] = {
+ 	{ FXL6408_REG_IO_DIR, FXL6408_REG_IO_DIR },
+ 	{ FXL6408_REG_OUTPUT, FXL6408_REG_OUTPUT },
+ 	{ FXL6408_REG_OUTPUT_HIGH_Z, FXL6408_REG_OUTPUT_HIGH_Z },
++	{ FXL6408_REG_PULL_ENABLE, FXL6408_REG_PULL_ENABLE },
++	{ FXL6408_REG_PULL_UP, FXL6408_REG_PULL_UP },
+ };
+ 
+ static const struct regmap_range volatile_range[] = {
+@@ -96,6 +108,38 @@ static const struct regmap_config regmap = {
+ 	.num_reg_defaults_raw = FXL6408_REG_INT_STS + 1,
+ };
+ 
++static int fxl6408_gpio_set_config(struct gpio_regmap *gpio,
++				   struct gpio_chip *chip,
++				   unsigned int offset, unsigned long config)
++{
++	struct regmap *regmap = gpio_regmap_get_drvdata(gpio);
++	unsigned int mask = BIT(offset);
++	unsigned int enable = 0, pullup = 0;
++	int ret;
++
++	switch (pinconf_to_config_param(config)) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		enable = mask;
++		pullup = mask;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		enable = mask;
++		break;
++	default:
++		return -ENOTSUPP;
 +	}
 +
- 	gpio_config.regmap = devm_regmap_init_i2c(client, &regmap);
- 	if (IS_ERR(gpio_config.regmap))
++	if (enable) {
++		ret = regmap_update_bits(regmap, FXL6408_REG_PULL_UP, mask, pullup);
++		if (ret)
++			return ret;
++	}
++
++	return regmap_update_bits(regmap, FXL6408_REG_PULL_ENABLE, mask, enable);
++}
++
+ static int fxl6408_identify(struct device *dev, struct regmap *regmap)
+ {
+ 	int val, ret;
+@@ -126,6 +170,7 @@ static int fxl6408_probe(struct i2c_client *client)
+ 		.reg_set_base = GPIO_REGMAP_ADDR(FXL6408_REG_OUTPUT),
+ 		.reg_dir_out_base = GPIO_REGMAP_ADDR(FXL6408_REG_IO_DIR),
+ 		.ngpio_per_reg = FXL6408_NGPIO,
++		.set_config = fxl6408_gpio_set_config,
+ 	};
+ 
+ 	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(fxl6408_supplies),
+@@ -148,6 +193,8 @@ static int fxl6408_probe(struct i2c_client *client)
  		return dev_err_probe(dev, PTR_ERR(gpio_config.regmap),
+ 				     "failed to allocate register map\n");
+ 
++	gpio_config.drvdata = gpio_config.regmap;
++
+ 	ret = fxl6408_identify(dev, gpio_config.regmap);
+ 	if (ret)
+ 		return ret;
 -- 
 2.25.1
 
