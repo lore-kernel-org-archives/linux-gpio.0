@@ -1,56 +1,120 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795703863;
-	b=ui14ws0GjnTZ3c+Ax0WGoXYUxf1RTPfcWXp3r1V2XEBY2wAdpvO5DHISGSA4r4AYItYp
-	 obAtkNMi8GooA6YBspB/rjajvUVUYPC/+Sa7Ct9pV9P1TdYXG9wTuvOIbB31WqNTSxwc1
-	 vI/5ei+G5eSqHI6DwgSfXkz0lsu9gNrEA2P02pNhdk2ae8pZddF47wb6fZo291r7ztz3D
-	 +tqy7pzOnU5oF+/bX5xkajcwRSGKKEw9Or+3VqbrGDPwOq5Y5KTESNR34VGSgFgCpYOIT
-	 VhvZ2ncpS7sbRxUWulp4+xzzJoli+bPDhUSvP4F4oJjI+l1tviq9B5YDKavaTKPjwmA==
+	t=1795704398;
+	b=QFQaeXlHrq5obOwbN+j+agDRxAIJVYF9tgeIWU6luUvbOiIYr70Vhig69gHJIjXyTCGp
+	 +uvCYNHMcDRjLc7BkMwGJym0oxmfkL3tNb5k2LmpVig8Mir25jMpXCgb12ABmUinAFv/Z
+	 eZKd5p6y+POhJpYaAfIFKBWoexqKr0q0jH+bz7MSKKlojIhlrzCb0tFD1upUeZdIbP8C+
+	 yBEZLlRL5vOcF2HcAqK0EEvOGGxFX9qUqTnuq3rLobhwSc45KRDtafFDrt9JIYTW9/xpS
+	 i39J6otAQPatgi7FbXL37Mk21msPtpKKUyN2zmNaOi/SlcyGfM6wld31weECuriSFiw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795703863;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=raxDnfRsb1wb27xhRaX2DQ4tnujeCdMJ/Eut1gP5YJs=;
-	b=DnwB1N5yzWvwchSkOSKVFgNJwX8EdnL6ljost7k159oDOugRcS5BpBZ8DdnU+QzXe7XN
-	 ZXnA93WLU8p8xYjtutHldJhV1nRNyEwG2vkUBFvPoeC9qpVsCArFybyxXqfUhJlmVbQp+
-	 2FqQMG0ykSMe7gkqjk7Hg+ZDWiQijoNpZKb8eN6XzBUUrmDNnY4ogh1DRaxM1zsHHLNuC
-	 HOcpvxHSPAUjR6cJNC4zujVHEGQz5/c7ESCcgcodHNxiSRO+VJrEqQO12KsyG7v+GYqnT
-	 yBQksbyWPMANLlzvKRSEGAxIKkVyiOu4hn9HNd3V0WQTlQ4iyyRUHEaCmhmbi96lMMQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795704398;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
+	 X-Received:X-Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=wFLdnzViVQExQFveC2QeccdnDcgniYhvPZabrU5FjTw=;
+	b=0iUIxi1PiB8vaqlawuTjSj6xhy8SAAHgNGXgM1oAKHLhzOPe4qSF5YFGQmDOj37mH4Q8
+	 UxpM66nbZ6n65Bs+erf4p+ncVM99WBZCMHm5DQgGK+9L4b4ky/lLBh5iq7tieNofr7vi8
+	 ewZNM6OOnKIh3igQ8ndP2h34jeVWI/Rcx/bn2j/rItc7+OsMbbXqRCdFBSt0jaUmnbf5z
+	 cl9ZwzBd+dqpG6nj5h1bMlSXNWsT0XYTcl77WmlJelspqPVvY6TnzY4ljejAiKy6UV4u1
+	 LxrAaRNpyb9u/tLqw2u9oF+LhTmW116zUvQkeDHMnOi3JA4wfuDJnN/wZiAOeE977Sw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fm4Lbi0J;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=J1c4C159;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=AZ9nBuI8;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7225C606A31E;
-	Thu, 26 Nov 2026 14:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F0606A329
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 14:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 952F0606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fm4Lbi0J
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id DB0F21F000D8;
-	Thu, 26 Nov 2026 14:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795703862;
-	bh=raxDnfRsb1wb27xhRaX2DQ4tnujeCdMJ/Eut1gP5YJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fm4Lbi0JF86dDB3d7wYxeAB1FUd/gyyA+ZhVYyuRTTHTvoKjT7n+OAYwHrS64gEBP
-	 fWsCzVOB1EFirkCWnBeixvPq+8Lyrfs8jOaaeQ9UkhJS+rUenCR/HR6n1uC3sv9cJT
-	 SR4wulja1wH9tJS04kFC7P4H7XwZfZeCH3A9A3b6eh58lTGVT8/9Ojm6cEZ5MaBG5a
-	 IlvSAucych/GdDR3R/Ppg8w8itSWC8m48L4Swayy3vhoIE/426+ABxupfRM0yT0VDl
-	 v88ZX7JUn9YbbFwPz+OWRF2x6rOKDZiIKgu2lmC92kc9wyp6bYwtDKNuPqSRo1GPZp
-	 YJvskvKa/UYiA==
-Date: Thu, 26 Nov 2026 15:37:39 +0100
-From: Bartosz Golaszewski <brgl@kernel.org>
-To: SignKirigami <prcups@krgm.moe>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: Add Netrani TLMM support
-Message-ID: <trnv55pophj76vyltw4bqg4scax2mjxg74guvnz35y4ik5yrdo@6co34tei5ihp>
-References: <20261126-netrani-tlmm-v1-v2-0-3426fca870c1@krgm.moe>
- <20261126-netrani-tlmm-v1-v2-2-3426fca870c1@krgm.moe>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=J1c4C159;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=AZ9nBuI8
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AQEV3Z71882502
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 14:46:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wFLdnzViVQExQFveC2QeccdnDcgniYhvPZabrU5FjTw=; b=J1c4C159zdogg8z7
+	itHe1ocGpwoXxtZHGRjFWNIjM4YW/cpOUUQckuH8dpzWcJCmkTp6LcUlbpni27y+
+	Xr0YIaIDRbzbFhlYhw0Yo0/oCJMJdCcHYZbAZTwSt9+DrgY7mZll3OO68ea/ZD9x
+	c3iPoukVK4L8rah4qyQaA5TT/XM+fERmQ/8YSdAef9uQkpJtljflK/lcnX0Vq92k
+	kk036Op8cj450bYrx9XfTNgitnnFmJtYoFiyWZ06msYsNuTQj1rcT5KCZjwKkgqf
+	15uI1PpGSfhYKvqyHH8uBuoFaHhBueHQWNBAwu7879foAn/5CRRg47VlVVsJ5wmH
+	FPG8og==
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j662y3ga7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 14:46:36 +0000 (GMT)
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8b35b88aa94so87150017b3.3
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 06:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795704396; x=1796309196; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wFLdnzViVQExQFveC2QeccdnDcgniYhvPZabrU5FjTw=;
+        b=AZ9nBuI8JDkxCrRiiWRj7e0Mact1tWbaV8VwqfYPF67E7Efd+4JRZm//DUKUjlfZCj
+         lDJ2FmSKttL2LvP6hKQPrxUVm1XMtM23X2rk6feJqlYxVCfMTCb8Jxl9UUIp+8NAlSrO
+         gT+E+8bkWS9ZLAaw1w+68Brsak2d3z36tydL9aNt2K799JE9HNazrHCSzVxVAt9cqA4V
+         te9EKmQ+X1b0FOmjQNRlf+7d7PEEAVbdSIoVJvph6dp7pt3TmspYfQwAcjc3FbT4GO5h
+         4LPDpWutfa1XSKjYKEFvxYep/1DcYtEsvXkrA7ijp3InEDgteyK8ydjZIHYLEZCEBXQX
+         H54w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795704396; x=1796309196;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wFLdnzViVQExQFveC2QeccdnDcgniYhvPZabrU5FjTw=;
+        b=0y8prjrmUp6SYeOeQbkvccPD1v/hFYUeUfoZfUvlLhdHrUKy+VPuscQZTS3qXjMvF2
+         q8PZvXdC6+8LtYRy3sHTOwc/TugZYaImr+uM2NXXWfBJLBBa+eASEWKVNE1RoGKPnzj+
+         QZ7+V6fbD6sLv9yU/aCmkG5sYYDV2/yXLpmF4vb+VkKvHXkFMRER4dVt8R7fWqRxUvg/
+         PCOjeMzpxicCiiqbofbxpvRP/mUrtlC7qqhiojRmJclz6Fqz568/DZLFpdY2tCi9+UWh
+         sNS01TpZEfdBOVE8EV3mA4tkyHZ82Q7MaXFE7zV3vrdzgOdNBbu1QeLl8ZDmQB2TB1jy
+         u1vQ==
+X-Gm-Message-State: APuU4Z9KnyzylTTBFaIUh9nHm+vlccGZbxrQ7M27TQUtSH2y8F1DHnWO
+	jenIbwRo8X9X0WFgzKBqC3TCQ7Zc4NjXGbi5hKVyXsjuR5Kz0zowfx1nA5rakIZ+p8SyP/M8bnH
+	OFdgtrLU3r8jL0eUUK/BICmJ+SkOnBht+ghnEYVa7pUFtxPRb+7VJpXTdhlUJOO6GwVg+8Dz8
+X-Gm-Gg: AZFdTZfK7j40TCS6zB54x0eC+UGTna2+3kPMtvcn+6xf/1MdgixPQX1ps3ZQe7qB2X1
+	gty1H4KzdYToG8rhx7ROpmwinC9/ndwDaLffLmDZQ12AczNdWxvIwfRGv+c6YM3rvIScMY8L/m+
+	opAg0aY4Fg/sEzxVvpDEjjszqObpZsDCsdDMYphy5Feu8fThAp2/BH7HQV0EVugVRh5FIod4Ldl
+	aiwX/juVX4EhRm9iw5wVyvRSUpjFuy4biNQzni7CbWnTF6T6jP6e/r3sm8nOzSp8XtLWWuKc+R/
+	WJ2k2TxmlzQgeSteUv7huGT70HvuC7vkjU6jmJVhotcrAjkgJpY2wF9bXLHsbzGP+eUeTcfZhui
+	nFe2XRWRWJ5GeDJldaYxAwC4OKyRbAVbL7y2NUKiS1k0LvmhLJsgaEezle2easFm1iEDuJZjWfb
+	qgW/2yYN0A0JqCQvU1YWzxMh+BkoU/sEs2wSmIMtZPUjeDHMI4X5DxNaH1JdEj/w==
+X-Received: by 2002:a05:690c:10:b0:8b4:c3e4:9c4f with SMTP id 00721157ae682-8b5204356c5mr76922247b3.30.1795704395723;
+        Thu, 26 Nov 2026 06:46:35 -0800 (PST)
+X-Received: by 2002:a05:690c:10:b0:8b4:c3e4:9c4f with SMTP id 00721157ae682-8b5204356c5mr76921927b3.30.1795704395086;
+        Thu, 26 Nov 2026 06:46:35 -0800 (PST)
+Received: from brgl-qcom.home (2a01cb1d00dc7e0089167b9b97a26c96.ipv6.abo.wanadoo.fr. [2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b110ba3sm33618249f8f.35.2026.11.26.06.46.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 06:46:34 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: linux-gpio@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Alexandre Courbot <acourbot@nvidia.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v5] gpio: mvebu: fix Armada XP per-CPU mask register save/restore
+Date: Thu, 26 Nov 2026 15:46:32 +0100
+Message-ID: <179570439030.25582.7595361557378134716.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261126001323.583722-1-rosenp@gmail.com>
+References: <20261126001323.583722-1-rosenp@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,54 +124,55 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261126-netrani-tlmm-v1-v2-2-3426fca870c1@krgm.moe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI2MDA1NyBTYWx0ZWRfX0/GMwbKStL99
+ gPRKnGyPDHNtqRPTLqSNXMTZUfHuZqZX1kA/eSfwJrr0BqqPQNaBt+MqINHZhxedf8+9+rhUWLa
+ 4yNlVnM1WboiZYoKLMQSqm985GUmjOZfuJ1gbPCD0oCAEZamI/kPxcU4rvmI1xfxEv6lCCWS4s3
+ KdW+NxLjZ1IpoCpZnIDhvkM0qpaO+eg8tAXsIKRrvFQNry2+qBERdId+GnvNw0kIDY5RHdNSrk6
+ 3vBH9187pj1vekvceFMa3LC9/E0k2XFkrHdzQQdkPlyh0V/9ANfIJcDDdhNZg4ikmmUb2FeyMFv
+ 3Ago/AIo3r6qXcDdY3PRoWAgDekbHDfDDc1vZADwMftfelcTOcnyUfRN8muPx5QS+4PZZ0U1pXe
+ A1uYMocTzft0WD7C6+c1Xy+ZgyHhXtj3agBl5kslMPt9ICeexBtU2azMlBoI1j/zYEI947etNai
+ yK1tHEcyiESLNjSu/dg==
+X-Proofpoint-GUID: sbrm_fkp4LViPk4nO2jNXDez5dSLVbG0
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI2MDA1NyBTYWx0ZWRfX4fK5AMCjhXaG
+ A3xW096Hgl0Sgjh6iDr9X5ahUkejp2ZcpqACjyeovgPDrc1W1cIoMXDH7vfLK3C3jYNQIorQrK7
+ rM01W/gAEwrKd8w9paLtfiiRkG4dReM=
+X-Proofpoint-ORIG-GUID: sbrm_fkp4LViPk4nO2jNXDez5dSLVbG0
+X-Authority-Analysis: v=2.4 cv=W/KtxhWk c=1 sm=1 tr=0 ts=6b08464c cx=c_pps
+ a=0mLRTIufkjop4KoA/9S1MA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=l9ZZRpswVw4obxJKafQA:9 a=QEXdDO2ut3YA:10
+ a=WgItmB6HBUc_1uVUp3mg:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-26_03,2026-11-26_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 phishscore=0 malwarescore=0 adultscore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611260057
 
-On Thu, Nov 26, 2026 at 04:53:38PM +0800, SignKirigami wrote:
-> Add the Netrani TLMM pin groups, mux functions and PDC wake interrupt
-> mapping. Register eGPIO for GPIO114 through GPIO140; selecting it hands
-> ownership away from the TLMM instead of programming a TLMM mux value.
-> Also expose the dedicated UFS reset and SDC1/SDC2 groups through their
-> separate control registers. The GPIO register bank starts one megabyte
-> into the TLMM window.
+
+On Wed, 25 Nov 2026 16:13:23 -0800, Rosen Penev wrote:
+> The Armada XP variant keeps the per-CPU edge/level mask registers in a
+> second I/O window (percpu_regs) rather than in the main GPIO window.
+> The suspend and resume paths however read and wrote them through
+> mvchip->regs with the per-CPU offsets, which hits unrelated registers
+> in the main window (including the global GPIO_EDGE_MASK /
+> GPIO_LEVEL_MASK registers) instead. The per-CPU mask state was
+> therefore never saved or restored, so interrupts the kernel had
+> unmasked could stay masked after resume, while the main window was
+> written with per-CPU mask values.
 > 
-> Signed-off-by: SignKirigami <prcups@krgm.moe>
-> ---
+> [...]
 
-...
+Applied, thanks!
 
-> +
-> +static const struct msm_pingroup netrani_groups[] = {
-> +	[0] = PINGROUP(0, qup0_se1, ibi_i3c_qup0, cmu_rng, qdss_cti_trig0, _, _, _, _,
-> +		       _, _, _),
-> +	[1] = PINGROUP(1, qup0_se1, ibi_i3c_qup0, cmu_rng, _, _, _, _, _, _, _, _),
-> +	[2] = PINGROUP(2, qup0_se1, _, _, _, _, _, _, _, _, _, _),
-> +	[3] = PINGROUP(3, qup0_se1, gcc_gp3_clk, cmu_rng, qdss_cti_trig1,
-> +		       wlan1_adc_dtest0, atest_usb0, _, _, _, _, _),
-> +	[4] = PINGROUP(4, qup1_se0, ibi_i3c_qup1, _, phase_flag, qdss_gpio,
-> +		       _, _, _, _, _, _),
-> +	[5] = PINGROUP(5, qup1_se0, ibi_i3c_qup1, _, phase_flag, qdss_gpio,
-> +		       _, _, _, _, _, _),
-> +	[6] = PINGROUP(6, qup1_se0, qup1_se1, _, _, _, _, _, _, _, _, _),
-> +	[7] = PINGROUP(7, qup1_se0, qup1_se1, _, phase_flag, qdss_gpio,
-> +		       _, _, _, _, _, _),
-> +	[8] = PINGROUP(8, qup1_se1, ibi_i3c_qup1, qdss_gpio, _, _, _, _, _, _, _, _),
-> +	[9] = PINGROUP(9, qup1_se1, ibi_i3c_qup1, _, phase_flag, qdss_gpio,
-> +		       _, _, _, _, _, _),
-> +	[10] = PINGROUP(10, qup1_se3, _, phase_flag, _, _, _, _, _, _, _, _),
-> +	[11] = PINGROUP(11, qup1_se3, _, phase_flag, _, _, _, _, _, _, _, _),
-> +	[12] = PINGROUP(12, qup1_se3, _, _, _, _, _, _, _, _, _, _),
-> +	[13] = PINGROUP(13, qup1_se3, _, phase_flag, _, _, _, _, _, _, _, _),
-> +	[14] = PINGROUP(14, qup1_se5, _, phase_flag, _, _, _, _, _, _, _, _),
-> +	[15] = PINGROUP(15, qup1_se5, _, _, _, ddr_pxi0_test, _, _, _, _, _, _),
-> +	[16] = PINGROUP(16, qup1_se5, _, _, _, _, _, _, _, _, _, _),
-> +	[17] = PINGROUP(17, qup1_se5, _, _, _, ddr_pxi0_test, _, _, _, _, _, _),
-> +	[18] = PINGROUP(18, qup1_se2, _, phase_flag, _, _, _, _, _, _, _, _),
+[1/1] gpio: mvebu: fix Armada XP per-CPU mask register save/restore
+      https://git.kernel.org/brgl/c/d8e27d04274746093f8d5a4e909efd9885262166
 
-Same issue as Molokai, please look at the series[1] from Taniya.
-
-Thanks,
-Bartosz
-
-[1] https://lore.kernel.org/all/20261118-gp_mn_tlmm_support-v1-0-703f7badd194@oss.qualcomm.com/
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
