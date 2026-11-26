@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795698988;
-	b=StLJ8DYKo5TwKat9aOs38KT2r09+AAB6iISja64u9I1hs1yTsrwsdimD1PD9BySZXL1w
-	 we4AKjB6kvFApCSQO1rpcO2mvHcBwfcWf0m9UXPpGV0FV1uUPM+a8ZIhQYlUvGQ/LzXWx
-	 zlBERBdjsU4WGSscylnlI9g0f8RC3vuU5nwbP3mpQgZ2ngajONnWgqAARE9wwh3keqthY
-	 qAAuBDsr0TSgEjb357uFBovF39DACPn046Pvw02F8ciZcgPtVSteucDKK17gl4zBNkzUC
-	 Rc0VVCqbNB7am1E2S77dp7jZO9pFNiOwQOS1plk6XfqgQ7pjDb0Io7x0u7EZTv4OubQ==
+	t=1795699525;
+	b=0dZXHSYhuWmWvy9um8HLTR84ZprASWcd60AAMEih4vOW1ImjEF4CtovAyeFWnatExQ5n
+	 aSXXbZguG+g4vcmLsZCIy/lMx/juzWIIB4iYdWUExlLSCDdeuPbLvw9kHzdpCJZbTGl8B
+	 09FTGz3QQt8A6tBMmEBKf3Va868ljqGaVOxNASmq+FF/ZowsR2MbYGnv4dKDU5uvoKMA7
+	 rFG68KEd+jiA1ASjo6wswJdoERROFqK26nwjj1hFDYVzjs/XGFkxxPcegorDmOGVkaF/x
+	 zlpwp2a+so6ZgppdFJ4To11QMGzNh0rPGC2szPr1xjSpGZwfUH6Pdprjr1pP0EcHNSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795698988;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795699525;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=eAIs0oUI+YPmPLZo54ZycZGgVU2dXBDMzLaTztAAp7o=;
-	b=fmL1WcHgUnrQPBJQf8aEA6Svbg57InARzLPlzptD9k9mqOukjD8wf/LeHnKyc5oOPZc5
-	 6bOOxMr847E24Mpxa6sixFmdr6yFMGSNuXG5moTGiacUi44UMN/LJMNoQZFYzqgDdPhJw
-	 2UABONZdLXcBhr4sQx3234QO4HXwRVXzXe+PXWwzKzOq4bgYCzUa7i11e5oMY5NLZNAU8
-	 48Ecdk+XxouXFbgDxxDL8uPOuIhq99hrNgKclO4aXIRbEc01qLXIhpp8lpPk38yMH8v/R
-	 ACFtBZOzS2L25n/qNUhmAwGB3vP1x+oyQULLAe8griP/cb+xyHqWOaEiQGNvEUz029A==
+	bh=iECrdmtxVCEOEDzVZ7vxIbL2vsIcsAtR5y2etdhZVu0=;
+	b=OBsWGjWDV0fZ3qaie54tEWsz/QISaiQ0cSzCc8+2o7RtvQYDXVyrlZOF8UItrIOLvHbp
+	 uxjoIrHE8EzFrlmOjQMdhEkmhJhU231B427UrKgVECzJiI61eZnnPHsjWrD9pu6hDV9vO
+	 CrAsEVJCbY560xgx3iLDb2UdoWLb3fhlvP4ApFiBs5nPGyYanpxva23yDCkcpz/z6oRme
+	 F+Yft6NEIur7FbOJuIo1Xl/WCVYypsQSEXd2n28DY2Pes072Ar0iyC49f4nnLX5unSA3O
+	 FoWXUyAjlvhdg78kRP4mBEo8OMFet8wX+cdsw3QMdd1NYGvgnZ9mt57uiDNIou6bzIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AKKE9f5t;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bDh+Ut2O;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFE3606A338
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 13:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CA0606A321
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 13:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AKKE9f5t
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B89B91F000D1
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 13:16:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bDh+Ut2O
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5615B1F000D4
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 13:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795698987;
-	bh=eAIs0oUI+YPmPLZo54ZycZGgVU2dXBDMzLaTztAAp7o=;
+	s=k20260515; t=1795699524;
+	bh=iECrdmtxVCEOEDzVZ7vxIbL2vsIcsAtR5y2etdhZVu0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=AKKE9f5tar8k8WvuoypakZvL26D8s0k6EGpd3UqOtdzqxSDYv29gJS4bAfsh9R4W5
-	 ErxpPkY7zEBlSd/GLqsPtCqn/dxtk25UEKb+9Af/B7NHye9g/MHeL4M0YHdCjIpiaw
-	 eUmOkmo2W8n/1VZCKlbxUR/mjEz0zkvNGSEPcZq3l01ZDA7oMq8s4+bpv9+1cgcald
-	 dsSivPuqoQlCXTt9a9VyuCPSyg7Snl6AQhNEpb2HVzOHjCbYScfm7yeUXRRSlZWEsB
-	 g8wRDS+RYxz0XsB4nWLuw0LtKeOpLjfTZx6nEviLq+T8SVk2YNJgRTiSuz5MPqzinU
-	 mmoJj8s3UJ8kQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5c0a520df2eso7099333e87.0
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 05:16:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErED4K9THvY19ydrq3vrFpHRGEHoNDDTKpEKbwjuhWIWeVNdsiX3nA9XpnZpIEPT3naSQvdoVVIjbu9n@vger.kernel.org
-X-Gm-Message-State: APuU4Z84wu6nHJ/AGeGa7+rf/6K6F4tPc63nGXnTZ50jCmKlHMCmUco9
-	VzME1IPwz0+i79Qlb4Z3+t/LRk0dJjZ91gnLH80+mpWpcMRsnBR7CCbGWvgxQhW0dN1K5uDghtJ
-	8t/xX0VQ/gm+GVU+ADAk0ZeZf7HyWdkE=
-X-Received: by 2002:a05:6512:3d1b:b0:5c1:ac75:6604 with SMTP id
- 2adb3069b0e04-5c1bc847d12mr5899749e87.19.1795698986523; Thu, 26 Nov 2026
- 05:16:26 -0800 (PST)
+	b=bDh+Ut2OMge4agv91hnty9kRPSuKqqYCaeh/TrFOco6KlcvoTwHRAOtOyg3S01nQC
+	 skD11sOkFjrFkxIiCz42k24+uO9ZojSzigH2BDYVvezZQ2M66eY7jfJ4Y/Uwdn3zPn
+	 tRl2o8vw1Ilc/M0cvh2TlBoTbnfcNCI+yMsN73C0z2/Rzb3rtuPSvK4QysuFlcnzSH
+	 hyEtxcV3udmvFwvNEx4kpj7FLlF3SuaBT9PrnFTrlfyX1nm50JfyDM//nVjrvDtx46
+	 IeBfiaVMeMMvh5MrSj1UpYSqoc3jWzI9O97wWFXMSj/go6kmid7q3feuvfPtzIdU0F
+	 t1dqQdyUsCcmg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c08539c827so5526976e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 05:25:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErGQJVxVfyXW66iGYG6TpvL4ZY/bX9uCj4LeuoG9RJ/82ZaX1C9tr90ttT+8RVLIJ92Bi+WVsRQ1UIgi@vger.kernel.org
+X-Gm-Message-State: APuU4Z8PyY0iKSMw+PT/dQcf1gt0VgbeNwO/lqvbPOCa8ImQc+iuUOdY
+	31rGUhsxFm1F61GQR9iMyfVvjiv7KtRUk199AZmN42UQocHpv1DzDvbuQZO0luolA8Tadx0Bdpi
+	DpA7NVo1CuvZgHpqqHeTUyZJkrv8RYMc=
+X-Received: by 2002:a05:6512:669b:10b0:5c3:2330:d723 with SMTP id
+ 2adb3069b0e04-5c32330d761mr1376713e87.15.1795699523098; Thu, 26 Nov 2026
+ 05:25:23 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,32 +59,77 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261115224136.818305-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20261115224136.818305-1-martin.blumenstingl@googlemail.com>
+References: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
+In-Reply-To: <20261116075510.5722-1-Chloe_Chen@asmedia.com.tw>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 26 Nov 2026 14:16:14 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkzm0qTMJsusBd9m+gidwaBPgBbqMEeJFE1t_0ZDMf6NA@mail.gmail.com>
-X-Gm-Features: Aa3M54oPi_3zOy_RBrvdi6FjyccKcrCZDV_Tb3Dpo-BA-Pbh5aQfsxCi44RP1zY
-Message-ID: <CAD++jLkzm0qTMJsusBd9m+gidwaBPgBbqMEeJFE1t_0ZDMf6NA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson: meson8: fix I2S pin group names
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Thu, 26 Nov 2026 14:25:10 +0100
+X-Gmail-Original-Message-ID: <CAD++jLniqoXQUGb+rS0aff0h6evF4cwGYoF0XgPU8D0g_e0guQ@mail.gmail.com>
+X-Gm-Features: Aa3M54q_CQm2u_mi7VkGLDQQbPkytJcsCPgPa1sEYHQLrYg0uS_KzxlCxCYnaI8
+Message-ID: <CAD++jLniqoXQUGb+rS0aff0h6evF4cwGYoF0XgPU8D0g_e0guQ@mail.gmail.com>
+Subject: Re: [PATCH v4] gpio: amdptpci: add support for AMD PT PCI controller
+To: Szuying Chen <Chloe_Chen@asmedia.com.tw>
+Cc: Markus.Elfring@web.de, linux-gpio@vger.kernel.org, brgl@kernel.org, 
+	linux-kernel@vger.kernel.org, Yd_Tseng@asmedia.com.tw, 
+	Jesse1_Chang@asmedia.com.tw, Richard_Hsu@asmedia.com.tw
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 15, 2026 at 11:41=E2=80=AFPM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+Hio Szuying,
 
-> The I2S pin groups are registered without the _pins suffix, but the
-> i2s_groups array still references them with the _pins suffix.
-> Update the group names so that the I2S pin groups can be referenced.
+thanks for your patch!
+
+On Mon, Nov 16, 2026 at 8:55=E2=80=AFAM Szuying Chen <Chloe_Chen@asmedia.co=
+m.tw> wrote:
+
+> The GPIO controller on AMD PT PCI platforms currently has no in-tree
+> driver, so its pins cannot be used from Linux.
 >
-> Fixes: 64f6d07ba74c ("pinctrl: meson: meson8: add support for the I2S and=
- SPDIF pins")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> The existing gpio-amdpt driver cannot be reused. Setting aside ACPI
+> vs. PCI probing, the hardware differs significantly:
+>
+>  - Register semantics conflict: offset 0x0C controls the clock rate
+>    in gpio-amdpt but enables interrupts in this controller.
+>  - Interrupt controller: gpio-amdpt has no interrupt support, while
+>    this controller has its own INT_LVL, INT_STAT and INT_MASK
+>    registers that require a full irq_chip implementation.
+>  - Wakeup: this controller can wake the system from GPIO interrupts,
+>    which gpio-amdpt does not support.
+>
+> Only the basic data registers are common, and they are handled
+> through gpio-generic, so little code is left to share.
+>
+> Add the gpio-amdptpci driver to support the GPIO functionality on
+> AMD PT PCI platforms.
+>
+> Co-developed-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
+> Signed-off-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
+> Signed-off-by: Szuying Chen <Chloe_Chen@asmedia.com.tw>
 
-Patch applied for fixes!
+(...)
+> +config GPIO_AMDPTPCI
+> +       tristate "AMD Promontory PCI GPIO support"
+> +       depends on X86
+> +       select GPIO_GENERIC
+
+Neat!
+
+> +#include <linux/bits.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/gpio/generic.h>
+
+> +static void pt27_irq_ack(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc   =3D irq_data_get_irq_chip_data(d);
+> +       struct pt27_gpio *chip =3D gpiochip_get_data(gc);
+> +
+> +       iowrite32(BIT(irqd_to_hwirq(d)), chip->base + PT27_REG_INT_STAT);
+> +}
+
+No need to use the lock here? I think this should probably take a lock
+and use read-modify-write, think about what happens if two interrupts
+arrive at the same time.
+
+Other than that it looks good, but look into Sashiko's comments too.
 
 Yours,
 Linus Walleij
