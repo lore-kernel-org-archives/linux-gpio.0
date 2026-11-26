@@ -1,75 +1,75 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795692387;
-	b=xx9+kKQG+88C5FXC43kARhzzomVXzTsEFs1JYIkN72YV+ptZqgJ8dsYYc/RFS+sD1vGO
-	 s3rNCUxEDpqgtmLg8H+tozvmkJo7A6vJbgr4C6owV8ptlzOfgLpEahwFvL9loa1Ti7Jtj
-	 Bmk1odIyxQLfyOx0J1CjW6GRby4rVP9N2G4xo/YPfrH1vrQd/mdnmR4bT5K5UPEkpWSvF
-	 ldcLRU6Cq1XKZl4MEoNC6lQ9JdemEnPEbd5PizMm4Htpfis3pTDbDNZVJoZwgmdX8Sak3
-	 ysr7gSkPpxW/2dFciHx1g+MVtwxeSJu2MzRpFIyFUv8b9C9Yk+5waoHFUHxT6e7oXGg==
+	b=ZQU65DTfQACxHordLKPWyWkrpVyXKy9pH3/0fnB3kWvLDRn7dd1Gj0jg3ROeGnE+wCId
+	 RsOCeUL1l0F/cnCFCUPUkl9XapfD/H3hQPCrw8VxiH1rgwhVMa1vIs/rzc3XgH2IF78HE
+	 XqVUY3dP2Hc5iTsfwHLN/YbSnNqcUSSIdioKbCHYDrtffuAygphUl20yuGiEG5yPr2R/j
+	 KR4t34qvzwZdU3UNpLc5cJCInN3gZzLmlxoD9zORdhZ6nrqNG5pLERWNEfYoAtVCXQNOw
+	 ftz+zJZGH85pekxGJc7Pml8KuHuZe8rxlXxqOmeAXVGoBd4E9/EIp7Ghmy7JBU/iNvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795692387;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
 	 Cc:Subject:Message-ID:User-Agent;
-	bh=zrAdLyJWB7ZYJXjbssS+5/CeD7hLTxmHcYYCGIcfJ+o=;
-	b=GfeVNuj53sjajW/0wB9WAFnOOdH3NDJic7CAIbzMna97sCmOJdHH608JZgtUEquf+kcG
-	 +RhA9SMeZAD3u5OztMnynPZmXS7sRwfu8uMvd/0afP+vVgx6083t/4yZQNbl+eg1AtK9h
-	 ZtljdHnqSIA/ewARj2a4OnK1BcVL9KoC+h5qnoClCmSWqUwdHs4/02SX0PE22ivIq/QV8
-	 VQfjwRxUOdj5I5Jmaf6ByPgvR4a3hLPoNGvzhKeg04LfHvVLaO6p1z8shGE3UXkyS/hOc
-	 nHepZ+OCeNDbqKsXw7lpW4wkc7KzAw2ciHWZLo/4mI7yy6+ZwN9geDphxdLD9m4AVVg==
+	bh=cVq7BSHEmTsbgTYUQHADRahEz4LQ0Cfk3PILfObH/IY=;
+	b=Ut+qPv/pvB42dtrrFItow1nfCGvuCcY/BD6Snhr4Y42q/4WkhCmBf9OnidUd+XvWBwif
+	 xFHUPdo9p7GrimXMG+zJWqc71F4/JF/yoezvOMcdostuN0kbjmlSPN0I9p2oO/gbdvl4o
+	 WARcb9PJKrufq24qhLPPq3d01nFD5FDrAOb80GAg/lcMguqBTQuGOl5v5Xk/3H8ghcRcp
+	 x3RARKz1qNflt/UcQgy8MyDbrymXxsOH7KYL5+NWDkA+hpMBChWgDCgv38BVt7jihaqLB
+	 cnEi4KacXsWA5Mt0oJMGWd6lRLgJQsf5k7s76NJniye7LQDOlyvXrk5Ng6RMozb3Naw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hL3ocRoJ;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=m7le6RVC;
 	arc=none smtp.remote-ip=192.198.163.12
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B64606A32E
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 11:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 38B64606A32E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D9606A323
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 11:26:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 291D9606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hL3ocRoJ
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=m7le6RVC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795692386; x=1827228386;
+  t=1795692387; x=1827228387;
   h=date:from:to:cc:subject:message-id;
-  bh=CuesZbYbxWzIlRvGELBh/DTDLrbfGSkSQcw90qt4kZI=;
-  b=hL3ocRoJD7Y4sWqECELuSKKVIm2YvCPAsm2XRKAeJwu2BbeIhv44Nk+4
-   hnDuXOZLIIolpcIIUAXtHAqmec/V1Fa4WV5m5ZtCZfuUTT88w9sVotKh3
-   t1N4SIfU+eRTNKWXOXDKvBas58OFyMRG8izdrcf3Cnpy03JWKi9TVkeIK
-   oXpJTJg+wdjTGv1aiAw/tlNYORpjAhn4wQU0F1kQCXoP9wRolYzd5OE8h
-   9P1A4YjIW1L+HFAuv7k0ZUxzROm40ti+V9XEfRTKj+h7vOLPBJWn8ntsp
-   CAirPwEYqzr1o0aGPE4StjnY53BqcuLqm5ogQiiO5cKOdIM3LybR/ez6e
-   A==;
-X-CSE-ConnectionGUID: nunG+0v4SqKmrCKzJTOOsQ==
-X-CSE-MsgGUID: PMaIUQK0RfW9RCJh2XzLkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4501333"
+  bh=yPEIUVVi5OA0JsfnANFZ9UgROm8hxvpXEROcIW3M6cg=;
+  b=m7le6RVC3yCk1ox5Wj1+oyhZEJDXwuExaLZ0juAzCKkw0gN33/1Tu0R/
+   FkzRfDDLWGRja3lAaRRZtQgQpkFwMlaOWTVV+qvw63//VCkruoumP2Myb
+   /plprzl4HcOBQ5K4bz1zzCP/Kk9r4LCS1tdpFSG8WxbN+Ces/QySve/lb
+   aPbqcOjgVpdvF51kKqNrkOINTFVPo0AWzfkk8EdpLnwAMT6VFX9pZSxY3
+   IPsJ0hoFxApn7csm7huZ9C9IDNM26FjJgcgv25F+UGn4ntN5txlgWErHf
+   WR35b3WZZ7bAzCN/PFBX6oxCd1tl34IQtJGRF+pxBl30nfGnIDPk45EgE
+   g==;
+X-CSE-ConnectionGUID: FzjOwQjpTh+bcpyU/2GtoA==
+X-CSE-MsgGUID: IHF8XmJATLW/fqMbHiYX/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4501336"
 X-IronPort-AV: E=Sophos;i="6.27,234,1787036400"; 
-   d="scan'208";a="4501333"
+   d="scan'208";a="4501336"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 03:26:25 -0800
-X-CSE-ConnectionGUID: lqfmykIeRryx6tErSK6VRA==
-X-CSE-MsgGUID: BdA/fBXoRJ233Gfn9UuxsA==
+X-CSE-ConnectionGUID: E+5UXE6/RB6/r/SKk6o0qQ==
+X-CSE-MsgGUID: rzaak+0wSMC3fRr10O1m0g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,234,1787036400"; 
-   d="scan'208";a="12639267"
+   d="scan'208";a="12639270"
 Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 03:26:23 -0800
+  by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 03:26:24 -0800
 Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1xWXcK-00000001Twu-40Pi;
-	Thu, 26 Nov 2026 11:26:20 +0000
-Date: Thu, 26 Nov 2026 19:25:31 +0800
+	id 1xWXcL-00000001Tx0-0JNE;
+	Thu, 26 Nov 2026 11:26:21 +0000
+Date: Thu, 26 Nov 2026 19:26:18 +0800
 From: kernel test robot <lkp@intel.com>
 To: Linus Walleij <linusw@kernel.org>
 Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- f5239d07f7c1d8685f6fef15064d62239075f1e3
-Message-ID: <20261126192531.ZOsVvTWF-lkp@intel.com>
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 8061bc0b699a7a875aa48ce011ccd489ce840fd7
+Message-ID: <20261126192618.qzvJaW0F-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,12 +80,12 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: f5239d07f7c1d8685f6fef15064d62239075f1e3  pinctrl: amd: Steer GPIO interrupt to low power/efficiency cores
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 8061bc0b699a7a875aa48ce011ccd489ce840fd7  Merge branch 'devel' into for-next
 
-elapsed time: 980m
+elapsed time: 981m
 
-configs tested: 604
+configs tested: 610
 configs skipped: 12
 
 The following configs have been built successfully.
@@ -209,6 +209,7 @@ csky                 randconfig-r2103-20261126    clang-18   cocci
 csky                 randconfig-r2103-20261126    gcc-8.5.0  cocci
 csky                 randconfig-r2105-20261125    gcc-11.5.0 cocci
 csky                 randconfig-r2108-20261125    gcc-9.5.0  cocci
+csky                 randconfig-r2109-20261125    gcc-11.5.0 cocci
 csky                 randconfig-r2305-20261125    gcc-12     sparse
 hexagon                           allmodconfig    gcc-16.2.0
 hexagon                            allnoconfig    gcc-16.2.0
@@ -302,6 +303,7 @@ loongarch             randconfig-2200-20261126    gcc-14.4.0 smatch
 loongarch            randconfig-r2101-20261126    clang-24   cocci
 loongarch            randconfig-r2102-20261126    clang-24   cocci
 loongarch            randconfig-r2106-20261125    gcc-9.5.0  cocci
+loongarch            randconfig-r2108-20261125    clang-24   cocci
 loongarch            randconfig-r2300-20261126    clang-22   sparse
 loongarch            randconfig-r2307-20261126    gcc-10.5.0 sparse
 m68k                              alldefconfig    gcc-16.2.0
@@ -333,6 +335,7 @@ microblaze            randconfig-2200-20261126    gcc-9.5.0  smatch
 microblaze           randconfig-r2100-20261126    clang-24   cocci
 microblaze           randconfig-r2107-20261126    clang-24   cocci
 microblaze           randconfig-r2109-20261125    gcc-9.5.0  cocci
+microblaze           randconfig-r2110-20261125    gcc-8.5.0  cocci
 mips                              allmodconfig    gcc-16.2.0
 mips                               allnoconfig    gcc-16.2.0
 mips                              allyesconfig    gcc-16.2.0
@@ -371,6 +374,7 @@ nios2                randconfig-r2100-20261125    gcc-8.5.0  cocci
 nios2                randconfig-r2104-20261126    clang-18   cocci
 nios2                randconfig-r2106-20261126    clang-24   cocci
 nios2                randconfig-r2108-20261126    gcc-14.4.0 cocci
+nios2                randconfig-r2111-20261125    gcc-11.5.0 cocci
 nios2                randconfig-r2111-20261126    clang-22   cocci
 nios2                randconfig-r2300-20261125    gcc-11.5.0 sparse
 nios2                randconfig-r2300-20261126    gcc-11.5.0 sparse
@@ -466,6 +470,7 @@ powerpc64             randconfig-2200-20261125    gcc-13.5.0 smatch
 powerpc64             randconfig-2200-20261126    clang-24   smatch
 powerpc64            randconfig-r2101-20261126    clang-18   cocci
 powerpc64            randconfig-r2104-20261126    clang-24   cocci
+powerpc64            randconfig-r2107-20261125    gcc-11.5.0 cocci
 powerpc64            randconfig-r2108-20261125    gcc-14     cocci
 powerpc64            randconfig-r2306-20261126    clang-24   sparse
 powerpc64            randconfig-r2308-20261126    clang-18   sparse
@@ -691,6 +696,7 @@ xtensa                randconfig-2200-20261125    gcc-16.2.0 smatch
 xtensa                randconfig-2200-20261126    gcc-11.5.0 smatch
 xtensa               randconfig-r2100-20261126    clang-18   cocci
 xtensa               randconfig-r2101-20261125    gcc-8.5.0  cocci
+xtensa               randconfig-r2106-20261125    gcc-8.5.0  cocci
 xtensa               randconfig-r2107-20261126    clang-24   cocci
 xtensa               randconfig-r2111-20261126    clang-24   cocci
 xtensa               randconfig-r2306-20261126    gcc-10.5.0 sparse
