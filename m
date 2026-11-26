@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795708095;
-	b=fILDpCFe+ADxg5K51PAUjpmcgp9Ibqk3VRzdCT4ltxaMPRBtDnbd9k272Xn3IvTYZtWM
-	 rkdxlh3wssfLl9Jc3/au6bq0j9N0np1WBodr9wD3p3DEg6ArFwZXZuFvVEKAE9wYO6UML
-	 hNKRVhRVx86YWhb3u5daTMc8c0peZbBxuIhLotvqIQfWXffqiYVZ6wq3aFa1zxf0v1QNu
-	 H8kupaquFilfPe4ivuFxah61SQeu0GdgfI7S5VbRbUcmYaNRMiusqcW9O9xZwG8EqMVB+
-	 cGhvnygwicMl6vCm+Mi6ZpIRPveLdG3ElP22CmR2nmE0PaJwGWhkxihQj7Ycejc4/iw==
+	t=1795708126;
+	b=Y5zcKftgk7JeUepitW4tNZMNsZxzY9LO96UnyHazh5prIEM1VlkjfeAzNfpkL7rsJk1F
+	 Xc+7ExcMlyDgxAlCfwrS5LwEd9IWHlAXbw4jZWPzRaQWUsd2e98OHGleGdLVAdqgMxf4q
+	 tLEz7RYKJWGwkgWVu/0bDLHxA1W16TtDWr09MXMuG3Vimm/cadsJKY/tQPvAhlEM2WlJ/
+	 PfnJ/dZ7ewSBJDW6HoXcYEo6R1Y4FH6MP4B4xIbOEaL7SspOCY77AOy7ixTmuW7+TysFk
+	 2kFgP7c7kvQncue6I/yQBIdh+JpZU13G++gUgxwj6b+Pd5oO2guGmaQfOl97zN5R+0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795708095;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795708126;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=M3W4vsJGw0SNCDBVrrS6TMzZ/xlwfmQ7Tz2OBLXn6UM=;
-	b=CMO444lqNpPOdx1ZWmejqZmRgcluJG30vOsdNVI3YDbfs87uDiW+u1YRDvxH/+NNwYD1
-	 14uS+12a1wmpl2gfunRzy4P8tG+7EfnK0lLtxijGbTKLoW9TC6gAtg84zwGRaRPtgYkwm
-	 L5cNDSYQFLy8yS/ErIHk/0jIHbXTYG4ec8lek3/0mFDvDI8uAT/Iprr0C9OK6+I8bglxF
-	 QMEofERndYklpZya43LN/YU+nvzIizBp/Uc3oVwLXNENnjMr0hwv+i+T5a4T8+m8pbweG
-	 6LDuz8+F5Lq1WtSvoRshxE4CIl1fslCppiE1247CA5biv/VCF4Z9R6AwUTic33+7zvA==
+	bh=0XUweKibchPQ8gV8cWD/CQnNi3P8/ZzJbasU7I5GO/4=;
+	b=llRwJolpUKFd61AeeoshL/mU6c7jfou+dSzm98my+H3KQy2dK5s7ZqZ58m9oWU6mvW7u
+	 x1QbPCj5L7djwg3xVPnsYROlHnHJFknok+pKbJqnM7wsFqVumyTqjfX1LoDvo2ONO3H52
+	 lhYqbuT55aJRpPudmwYwD7P1QsVTMHDDNBew2i7IDssKUElC26cMsftPo/il+lt7Y20Ux
+	 UJGbDDgFgpqbJgXzLSscmpt1NX00OQbpjogYlMfFTAPoftoa83j6r+W14LGxuTBXR+Ivk
+	 K40vif6vHvRz5XQmAKSp2cpzKKTB7gemtcTTVuAMuKyNjH0b41MkE4CeXuavjlLCFZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b81n8Ha6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RArIs3p0;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA7D606A32D
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADA6606A31C
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b81n8Ha6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A653D1F000C6;
-	Thu, 26 Nov 2026 15:48:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RArIs3p0
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AC01F000C6;
+	Thu, 26 Nov 2026 15:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795708094;
-	bh=M3W4vsJGw0SNCDBVrrS6TMzZ/xlwfmQ7Tz2OBLXn6UM=;
+	s=k20260515; t=1795708126;
+	bh=0XUweKibchPQ8gV8cWD/CQnNi3P8/ZzJbasU7I5GO/4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=b81n8Ha6V2fcX5sFbQXUA7NR5lyXJtzoEfn6n7apBBvufn6vI2q2ymySk9VKU5f6r
-	 1vsBRayJOwbauqIu6tepk5DTW8z6eR4Ox90HSj2vtb+IbqQorFbwPg5vdZAWqoonsY
-	 c35Kso6B9c3y9z5FzpYudjJcjL7mskNp31SZ07h+XoVltGDIzdF3bUJIEvV9HR47f9
-	 5LGFsNmptEsdP3STUpebpylQZAVxVmNHqw2ZmPkfuoBqGPS+9qIl4ZbWPcsd2qwMte
-	 OSfshG+5dxH8GeWzfwg+7zBJi6PG4wHEqIa/ZYkPDr+K89NVG/MyJwKn/vkbqCN2ua
-	 61Qreyq5qzJmg==
-Message-ID: <sashiko-outbox-235845@kernel.org>
+	b=RArIs3p0W8tLlmJNea6kuZlclfOpiXHBpOGYvs0/30TXdU1qRplwv/Da6zW9yCKDs
+	 0KWby90VuXFhT1+hhQGj4qc+LsucADrZVAST5XWMtTbrq73h/QnUEOLLm7OONPm290
+	 4GsSLjQugM13XvFToVwqWqrutMQDGBKywERuGh7kGKP+Z2tIJqudEMg3l4rbrSIfSF
+	 LNa6yBzYUUUT9AYyyIL9h/wtHMTN9TgblK9+a8YuRhA1ek+ABF5txD83GHZG/RxqRX
+	 9aJZiQJKeL2M3RqLFNST0eMC96pvC+NbIP9ADnnOyMMxv7TzJy8KMcIKqAayqXsgah
+	 AEh+4iQ3oMhoA==
+Message-ID: <sashiko-outbox-235846@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFT PATCH 11/13] gpio: 104-idi-48: create the regmap-irq chip
- from the gpio-regmap callback
+Subject: Re: [RFT PATCH 09/13] gpio: pcie-idio-24: create the regmap-irq
+ chip from the gpio-regmap callback
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michael Walle" <mwalle@kernel.org>
 Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261126153600.299724-12-mwalle@kernel.org>
+In-Reply-To: <20261126153600.299724-10-mwalle@kernel.org>
 References: <20261126153600.299724-1-mwalle@kernel.org>
- <20261126153600.299724-12-mwalle@kernel.org>
+ <20261126153600.299724-10-mwalle@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 26 Nov 2026 15:48:14 +0000
+Date: Thu, 26 Nov 2026 15:48:45 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -61,67 +61,77 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] gpio: 104-idi-48: skipped IRQ mask write and status clear in
-  idi_48_probe() [1]
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] gpio: pcie-idio-24: gpio_regmap_add_irq_chip() breaks IIN0..23
+  IRQ requests
 --
 
-commit 36940f74396bbd63f657b4578ebd69175712902d
+commit c95318f918a77c064e6fbf9f0881933abda168a3
 Author: Michael Walle <mwalle@kernel.org>
 
-gpio: 104-idi-48: create the regmap-irq chip from the gpio-regmap callback
+gpio: pcie-idio-24: create the regmap-irq chip from the gpio-regmap callback
 
-This commit converts the 104-idi-48 driver to create its regmap-irq domain
-via the gpio_regmap_config.create_irq_domain callback using
+This commit converts the pcie-idio-24 GPIO driver to register its regmap
+IRQ chip through the gpio_regmap_config.create_irq_domain callback using
 gpio_regmap_add_irq_chip().
 
-> diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-4=
-8.c
-> index 93d7ccaded83e..434704c06d7ef 100644
-> --- a/drivers/gpio/gpio-104-idi-48.c
-> +++ b/drivers/gpio/gpio-104-idi-48.c
+> diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-id=
+io-24.c
+> index 8fb34398053dc..3be7aad266e0d 100644
+> --- a/drivers/gpio/gpio-pcie-idio-24.c
+> +++ b/drivers/gpio/gpio-pcie-idio-24.c
 
 [ ... ]
 
-> @@ -148,10 +166,14 @@ static int idi_48_probe(struct device *dev, unsigne=
-d int id)
->  		return dev_err_probe(dev, PTR_ERR(map),
->  				     "Unable to initialize register map\n");
+> @@ -225,13 +229,27 @@ static int idio_24_set_type_config(unsigned int **c=
+onst buf, const unsigned int
+>  	return ret;
+>  }
 > =20
-> -	chip =3D devm_kzalloc_obj(dev, *chip);
-> -	if (!chip)
-> +	idi48gpio =3D devm_kzalloc_obj(dev, *idi48gpio);
-> +	if (!idi48gpio)
->  		return -ENOMEM;
-> =20
-> +	idi48gpio->dev =3D dev;
-> +	idi48gpio->irq =3D irq[id];
-> +	chip =3D &idi48gpio->chip;
+> +static struct irq_domain *idio_24_create_irq_domain(struct gpio_regmap *=
+gpio)
+> +{
+> +	struct idio_24_gpio *const idio24gpio =3D gpio_regmap_get_drvdata(gpio);
+> +	struct irq_domain *domain;
 > +
->  	chip->name =3D name;
->  	chip->status_base =3D IDI48_IRQ_STATUS;
->  	chip->unmask_base =3D IDI48_IRQ_ENABLE;
+> +	domain =3D gpio_regmap_add_irq_chip(gpio, idio24gpio->irq, 0, idio24gpi=
+o->chip);
+> +	if (IS_ERR(domain))
+> +		return dev_err_cast_probe(regmap_get_device(idio24gpio->map), domain,
+> +					  "IRQ registration failed\n");
+> +
+> +	return domain;
+> +}
 
 [Severity: High]
-This problem wasn't introduced by this patch, but configuring
-chip->unmask_base on offset 0x7 without a register cache or
-handle_mask_sync callback causes regmap_update_bits() to perform a physical
-read-modify-write on offset 0x7 [1].
+Does switching to gpio_regmap_add_irq_chip() cause IRQ requests on the
+Isolated Input lines (IIN0..IIN23, offsets 24..47) to fail with
+-ENOTSUPP?
 
-On the 104-idi-48, reading offset 0x7 returns and clears pending interrupt
-status bits rather than the active enable mask, while writing it programs
-the interrupt enable register.  The read in _regmap_update_bits() clears
-pending interrupts before regmap_irq_thread() can service them, and when
-all banks are masked (~mask_buf[0] & 0x3f =3D=3D 0) while no status bits are
-pending (orig & 0x3f =3D=3D 0), _regmap_update_bits() sees no change and sk=
-ips
-the write, leaving device interrupts enabled during probe and after masking
-all banks.
+Unlike devm_regmap_add_irq_chip(), gpio_regmap_add_irq_chip() installs
+gpio_regmap_irq_reqres(), which calls gpiochip_reqres_irq() ->
+gpiochip_lock_as_irq().  Because gc->can_sleep is false and
+gc->get_direction is set, gpiochip_lock_as_irq() queries
+gpiod_get_direction().  Without fixed_direction_mask configured in
+gpio_config, gpio_regmap_get_direction() calls idio_24_reg_mask_xlate()
+with IDIO_24_CONTROL_REG, which rejects offsets below 48:
 
-[1] https://sashiko.dev/#/bug/linux-84cdae6c-00ca-4070-8100-3b16d7660350
+drivers/gpio/gpio-pcie-idio-24.c:idio_24_reg_mask_xlate() {
+    ...
+	case IDIO_24_CONTROL_REG:
+		/* We can only set direction for TTL/CMOS lines */
+		if (offset < 48)
+			return -ENOTSUPP;
+    ...
+}
+
+As a result, requesting an interrupt on any of the 24 Isolated Input
+lines fails.  Setting gpio_config.fixed_direction_mask (and
+fixed_direction_output for the FET outputs at offsets 0..23) or returning
+the fixed directions in idio_24_reg_mask_xlate() would allow
+gpiod_get_direction() to succeed.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126153600.2997=
-24-1-mwalle@kernel.org?part=3D11
+24-1-mwalle@kernel.org?part=3D9
