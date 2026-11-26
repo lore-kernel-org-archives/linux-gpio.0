@@ -1,83 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795708395;
-	b=Jryb5zUuPDGVS7JoEpdRpB8rIsRkb+PK/XcdXI6gIOYvQ7O2oiXizsF7O3wrOedaGDnr
-	 lsUigjLf3VLfGwv488UpTcftFpHb1Uf7BoQQR+7iQhH6bg6MI5xm9bVn7IYjubpJ3dh0R
-	 2bG2XwyEnhERU2HxXSdD0WAIC5pm9eC6TcxO+NGU3zDNPf2IE78C4st6sKr8IBFjAzuBS
-	 JmHWEoYEtYc4Snuvpy73q0LIbNArK4oyOinacTXLvyBECrwM3eVa67C8APoG7/k9LXvVQ
-	 5gL+4TklkYNF5/mez0TBO8vFy2eOuqONYxqBM4/4mMu7nMe3Uiv44eOnS9sMVloH+KA==
+	t=1795708457;
+	b=jzrqEkbLqEQRxHb8DJSYlvxfY7tEPgAszWrYe2A/uB4xzK1DKdEsuy0SlaBD0Cds62h3
+	 iqUhL8xVmgppl7/osBn1IgzWaqQDIAgerE5tbszClDiP428axeVAezjMFx+p4335GJyF6
+	 Defp8tnJOO0EfN3Km8bjayicbMxH+DhlhxSSFwlSGAtX/TOBglo7v/ziHdDVsHlPIOx/8
+	 P1NoNj3Tjz80/C73Kv/Ssmv2t2aM9x4KgGCQeaC4y6LiEf1QuGAxAH19c644LtUilg5UD
+	 VqIIuBUv8F3kvVDQfUkES5CexQWdeq2IBUA+dKyTzDdhEj+jOwRSzigzunQwfAOtVsA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795708395;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=Kry3Z9RUQstwZhg75tn4ymi/tsst+B1XBTvLmOJUn5w=;
-	b=07VXW+pahxj+6ZvC4Eliv/EY4wQtyTuLmXIV2vdtorfBFeyKL/M9rV4Rskc3pX/IZVje
-	 CYqmFYeFudOXB9CP7gNOtEh8R+S75id/JYth9CTrUkgg2BZVMobY3TCXLvWou046R9l3c
-	 wn3iCSEudV+JPqI0X5xclfiQPBVQ1yH8w/309XpasqXFeWeP+ankDualE1F6w5eowtEZb
-	 uoXSFMSe1kvECGPvl47Y8M0Ngy3qp81L3lHC2u+Jigc3Xc2yq32pRYPavwthcDYi3HdKO
-	 JKtiKErhSUwXytcLNnbWBa3g1ssjArs7sZ7o5zjqbHMpx1s+OFzQP+pAzbNGHBlsTlQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795708457;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=9X13xyRyCFYva+zbw3K/3bQdpIGioez3xJvxNvPsRwk=;
+	b=GreyRJBhfWoBzJDot0JOggFNcvAvjZxglzfSoJz8xRJUhQFgHkomQNiPpwToEXn3zPOj
+	 qiZFjz/Ph+Gzkwj0wdg07GQzPlRA9JpL/A67po7XI9NOueYrMT5LZpQl1208/ckXb0IvM
+	 YEhwSWJw5GuGg9AbU/5nonebXnriUvL7m+GmFYMyfu2j7WLnkwfB7C73d4V4iiEk95+p1
+	 nz1G/qJOyuWJp1GqpjhbrmgIbubLaDn8sZY4NRGEgsL9BT57wUeXnoZbl1XcNrhWRYIKc
+	 XG8rm/fnRKyIQi9qQmTcNc6z2WrdNfQfw0SYsdLsXCsAIvnBemd6ewO5Pik15MtnlKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=czgfANIX;
-	arc=none smtp.remote-ip=192.198.163.17
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i8G92IW2;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689DE606A31C;
-	Thu, 26 Nov 2026 15:53:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 689DE606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A35606A31C
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=czgfANIX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795708394; x=1827244394;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TxKr8O26zsBT1nq6mdPFpy0AfZIag+YE7HUI/Oq56N4=;
-  b=czgfANIXwxEFnX7kO+xg72F/nMIjjbSOm0uHCWTtjPpDxu1VYyJmBUzc
-   Kx7d6pC5bxQGNOBZslx7XMerROVjkTy+EjsPB2mwfUBnTI/dy4zLd2ZMl
-   IT5M0ettJhwIIP6IXqT1MRsj6Mydu61gjiM+NZZ4JWQHxM4ee8KL64Ieu
-   8DL6jDjPL8MPDq9BFd6DHiwfPcB69dAIN1iJNAUUP9RXQ3zmyTeCjWEEq
-   0fxdouIZmdiY1tFDvhHoVPfER79kIOuUlhc5QpzuqKnY+jp9jPuslYctb
-   ecSLEBIzDvs+H9ILajjxyTClDpXmrKR0MNAjvnq7TzI1ufluoZ5hBpUo2
-   w==;
-X-CSE-ConnectionGUID: b+Vx18zsR5WXFXcniWywKg==
-X-CSE-MsgGUID: 0LcvlZ3ZTD2qcAKs1xSDtQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4620013"
-X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
-   d="scan'208";a="4620013"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 07:53:13 -0800
-X-CSE-ConnectionGUID: OjVfJP5SSrOKg1lk63KPxw==
-X-CSE-MsgGUID: 4sYHL9iyQMiEb8XBWy8opw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
-   d="scan'208";a="11981224"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.208])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 07:53:11 -0800
-Date: Thu, 26 Nov 2026 17:53:08 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: GaryWang <is0124@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Daniele Cleri <danielecleri@aaeon.eu>,
-	JunYingLai <junyinglai@aaeon.com.tw>,
-	Louis Chen <louischen@aaeon.com.tw>,
-	BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] upboard pinctrl support for device id INTC1055 &
- INTC1057 & INTC105E
-Message-ID: <awhV5OkehBYETKAd@ashevche-desk.local>
-References: <20261126-upboard-pinctrl-add-intc1057-intc105e-support-v3-0-81d35c9ba246@gmail.com>
- <awhPAzKefJVW2meb@ashevche-desk.local>
- <CANYHO6o-eNMV1YkRfP=W7XxmefBW=U_CALRMyWSixkXzk1uBtw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i8G92IW2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8281F000D0;
+	Thu, 26 Nov 2026 15:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795708456;
+	bh=9X13xyRyCFYva+zbw3K/3bQdpIGioez3xJvxNvPsRwk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=i8G92IW22iUBpj7nYzYThPRtKnQlu4E/eEBgb7lMdKUjEg74nOshztnYximrqZDs7
+	 qORXZudtVT/CbA/X/48q5iNS3/6kwcp/CfRftv/IvQ5/amQA3oyIlAR0F7Zm3fzTNw
+	 80rOx4Xsj30NeLl9O4ukEB/5D/7oUtQhmjxht96easX6BdRz6i5ENxcCMbjoA4xRU5
+	 J09QizidICOFoWpksjud36v5haFpv3C0rC3wFXGW6/tT9ocKPDbYk2mBbP54viOOC6
+	 uq4lafExyzVWsH6zsV1wbttFnUf0C5I5kJRcF3mcpFkh+6ZZYAEFreaPwlC1PhZuic
+	 k20o+bKe7rQMg==
+Message-ID: <sashiko-outbox-235857@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFT PATCH 03/13] gpio: rtd1625: create the IRQ domain from the
+ gpio-regmap callback
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Michael Walle" <mwalle@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261126153600.299724-4-mwalle@kernel.org>
+References: <20261126153600.299724-1-mwalle@kernel.org>
+ <20261126153600.299724-4-mwalle@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 15:54:15 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -86,44 +60,116 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANYHO6o-eNMV1YkRfP=W7XxmefBW=U_CALRMyWSixkXzk1uBtw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Nov 26, 2026 at 11:36:48PM +0800, GaryWang wrote:
-> On Thu, Nov 26, 2026 at 11:23 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > On Thu, Nov 26, 2026 at 11:09:43PM +0800, Gary Wang wrote:
-> > > Add support for "UP Xtreme ARL","UP Xtreme i14","UP Squared Pro 7000",
-> > > "UP Squared i12","UP 7000" and missing groups and functions data for
-> > > INTC1055 & INTC1057 & INTC105E.
-> > >
-> > > Fix pinmux-select set CPLD GPIO OUT not function mode for I2C pins
-> > > on the AANT0F04.
-> > >
-> > > There are no compile-time dependencies for each file, all pin groups
-> > > functions data will forward to set default when pinctrl upboard probe.
-> > > It shows an error when run-time dependencies are not mapping to right
-> > > groups and functions.
-> > >
-> > > The pinctrl-upboard is provide additional driving power and pin mux
-> > > function through native SOC pins->FPGA/CPLD->hat pins for flexible board
-> > > level applications. it's probe from ACPI device id AANT0F01 & AANT0F04.
-> >
-> > Thanks for update! Looks much better now. I'm about to apply, but I want to
-> > make one thing clear before that, id est is it indeed ISH has only a single
-> > UART? Or do we need to add an index there?
-> ISH has 2 UART ports, we can add an index to identify.
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] gpio: rtd1625: use-after-free of gpio_reg due to devres
+  lifetime mismatch
+- [Low] gpio: rtd1625: missing Fixes trailer for probe NULL dereference
+  fix
+--
 
-Yes, please do in v4.
+commit 836b597a055624fd11d643d1081b9d412a5134af
+Author: Michael Walle <mwalle@kernel.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
+> gpio: rtd1625: create the IRQ domain from the gpio-regmap callback
+>
+> Use the new .create_irq_domain() to actually create the domain. This
+> way, there is no window where a NULL pointer could be dereferenced.
+>
+> Switch the irq host_data to the gpio_regmap pointer because it will
+> already be needed in the irq domain callbacks. Otherwise the
+> .create_irq_domain() callback would have to set the data->gpio_reg
+> pointer which looks odd.
+>
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
 
+[Severity: Low]
+Since this fixes a probe NULL pointer dereference window, should it carry:
 
+  Fixes: 6435d21cbd42 ("gpio: realtek: Add driver for Realtek DHC RTD1625 S=
+oC")
+
+> diff --git a/drivers/gpio/gpio-rtd1625.c b/drivers/gpio/gpio-rtd1625.c
+> index cf4f61603dfbf..0713692804e21 100644
+> --- a/drivers/gpio/gpio-rtd1625.c
+> +++ b/drivers/gpio/gpio-rtd1625.c
+[ ... ]
+> @@ -505,9 +506,9 @@ static int rtd1625_gpio_setup_irq(struct platform_dev=
+ice *pdev, struct rtd1625_g
+>  static int rtd1625_gpio_irq_map(struct irq_domain *domain, unsigned int =
+irq,
+>  				irq_hw_number_t hwirq)
+>  {
+> -	struct rtd1625_gpio *data =3D domain->host_data;
+> +	struct gpio_regmap *gpio_reg =3D domain->host_data;
+> =20
+> -	irq_set_chip_data(irq, data);
+> +	irq_set_chip_data(irq, gpio_reg);
+> =20
+>  	irq_set_chip_and_handler(irq, &rtd1625_iso_gpio_irq_chip, handle_bad_ir=
+q);
+[ ... ]
+> @@ -524,6 +525,31 @@ static const struct irq_domain_ops rtd1625_gpio_irq_=
+domain_ops =3D {
+>  	.xlate =3D irq_domain_xlate_twocell,
+>  };
+> =20
+> +static struct irq_domain *rtd1625_gpio_create_irq_domain(struct gpio_reg=
+map *gpio_reg)
+> +{
+> +	struct rtd1625_gpio *data =3D gpio_regmap_get_drvdata(gpio_reg);
+> +	struct device *dev =3D regmap_get_device(data->regmap);
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	struct irq_domain_info d_info =3D {};
+> +	int ret;
+> +
+> +	d_info.fwnode =3D dev_fwnode(&pdev->dev);
+> +	d_info.size =3D data->info->num_gpios;
+> +	d_info.hwirq_max =3D data->info->num_gpios;
+> +	d_info.ops =3D &rtd1625_gpio_irq_domain_ops;
+> +	d_info.host_data =3D gpio_reg;
+> +
+> +	data->domain =3D devm_irq_domain_instantiate(dev, &d_info);
+> +	if (IS_ERR(data->domain))
+> +		return data->domain;
+> +
+> +	ret =3D rtd1625_gpio_setup_irq(pdev, data);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return data->domain;
+> +}
+
+[Severity: Medium]
+Can storing gpio_reg in domain->host_data and irq_data->chip_data cause a
+use-after-free of gpio_reg on probe failure or driver unbind?
+
+rtd1625_gpio_create_irq_domain() runs inside gpio_regmap_register(), so
+devm_irq_domain_instantiate() queues devm_irq_domain_remove() on dev's
+devres list before devm_gpio_regmap_register() queues
+devm_gpio_regmap_unregister():
+
+drivers/gpio/gpio-regmap.c:devm_gpio_regmap_register() {
+	gpio =3D gpio_regmap_register(config);
+	if (IS_ERR(gpio))
+		return gpio;
+
+	ret =3D devm_add_action_or_reset(dev, devm_gpio_regmap_unregister, gpio);
+...
+}
+
+Because gpio_reg is allocated with kzalloc_obj() rather than devm and
+freed in gpio_regmap_unregister(), devres teardown on unbind runs
+devm_gpio_regmap_unregister() first and calls kfree(gpio) while
+data->domain is still published with host_data and mapped chip_data
+pointing to freed gpio_reg until devm_irq_domain_remove() runs.
+
+The same mismatch occurs if rtd1625_gpio_setup_irq() fails after
+devm_irq_domain_instantiate() succeeds: gpio_regmap_register() immediately
+calls kfree(gpio) in its error path while data->domain remains live until
+rtd1625_gpio_probe() returns and devres cleans up.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126153600.2997=
+24-1-mwalle@kernel.org?part=3D3
