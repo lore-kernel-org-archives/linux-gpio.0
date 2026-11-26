@@ -1,56 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795705699;
-	b=y5rYad9uxGu2jL0j5DfLRmK/+6BGr3c3VQ4e2eog29pzyqsnqBJcBQ2M9wjnhm+d5j1p
-	 DzeeDYe9DBCzd7SWcp0lZNWIrgxaap9ClaDJQQfpidANy7wOwkBMQM9DNdehDjLQSE6en
-	 J+A8b9stCgxDRegakM7jFZBu1/n2ihhs9lWKMMdC0rkJGtV1O4wW2xkapNR5OlaeL4crT
-	 dyWa0NzUDPjDwo7HH0ELKS2mOoHpMMw89NkXe4JlKhfGvFPpZHRbFybFh/3Qr8qlXQOex
-	 mAMjJAOPewYp1ijTiNnQjwxS9ggFAPoiFcom4CF2bHmRxRfRke5OrfLgrDWi4oiPa+Q==
+	t=1795705808;
+	b=Wee1KEiyvJ3G5dSALQDhdf7VRI0hskyl5FOsfskm6wRoX2+kFUZqEQRT6m4CB+AMJ4Bn
+	 KQbzpWHUCXF61UY+Vkmg1x2/Cqa1BjjgNgrp/qogIvBoIZ1sEf2L1rCJi5VtO7Fw9DtYl
+	 ggtLcrusulda4taRJhTP8tzujcAWTLDGJ53aGaLxQfnbj9xgLLd1TRVURUZPZjprZwKH2
+	 LIc3wVdjgmD84Og51Y2agn5AlJJRysCd2c+H1aVz9rrzN+IieZGadjw8UkpSYFuQBH5pG
+	 iRbwnpOaeLHn9ltLQzh1fzRvNCnplce5we6vyELWjk0mOhLy/j/rAfdUq58uaA+TmBQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795705699;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=+8mHhuyRGBienp5Z4jF5cURV7IVfUw0cOGcAu0AzJuw=;
-	b=fTkcJtoixJFDI7rTLwyJzNlikP/o6LyfEV/R4VFaeHASlGRLk663pKD3WbJKaFVIO7VP
-	 u1t3vOfCV42WQxW7Mt1UQIdNzUYFB9onnOiaLwQ3CYBJZwvH8za3rsNzN441nzngU+qGM
-	 Ck1Vmf88E0CqYPrufx2NcSaFoK9plqKnVZImQZRCeGqrSYsr2ZuQYjKbid908++t/zf5V
-	 K0oeBb09aIIE0JQBUkD5mXnHxRE5MiMr8SN0iTGMiSaATDpV5S4kxUJ0IOGQSs7SDYMDA
-	 0yM9EaC4nY8Q0HYN+lW8jbyiZKvG5eBtDqOkiyZKMHB2bUJYM6pGGm+oeGJQ0WRcquQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795705808;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer;
+	bh=qF8Gq3/DvfR9bgvTJhpHtUh60h1rATqchUrrPkWfF34=;
+	b=xQkbmk4i/nFqi1bOIzwGB+R6b2hTkKIZ8oHjlpNi7q8nck/nQLmjYx7/lUP9afWlXKkE
+	 ROgE4UWnTOtRGZMXb0kr53O4Pxmi7TTijPkAP5zpior9GVUO/bx+pm5uA6UOodTo7nrBj
+	 FNrqTmn8megg8f0EcGGFgswbLQR203ZigLjMRmC/DuJnRX7cQX/aOojO2+T799zDVhkL0
+	 m5ZE6FPy8G9zeJvRjyTtiQd9lEGONKEhR+2xGprqMjvRCnLd3ItXLwTeNak+Dssic2WaU
+	 62HUqNdDgvRrmNndL9wfu9MFa4Cx0KV6+z8Yxco4m1RsK87i0dnytLmliIxC3J/IauQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iG2FJGI4;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=sVWrWfsL;
+	arc=none smtp.remote-ip=209.85.215.171
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B571A606A329;
-	Thu, 26 Nov 2026 15:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55BB606A323
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D55BB606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iG2FJGI4
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1871F000D8;
-	Thu, 26 Nov 2026 15:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795705699;
-	bh=+8mHhuyRGBienp5Z4jF5cURV7IVfUw0cOGcAu0AzJuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iG2FJGI4fYfCoJIL6Xs1q1wbMpl9HN1qqDU4CdkQ2uVrTwxCbelY46rs3Sg/W7h8Y
-	 nu1a+W1wkLeiGudZr1oaiXt0bST518RKtphG0FOgD3iGc5bGZ1A7YlDZDMdz0D5/jK
-	 j1slTRZIvxMR+2MkysS9g1HQjROiNx0b05UEXQ/B+sBl11Q8NZa7RpMNdSUZb13xq8
-	 JiWXIqHOcdNt7v7/Y45OSslo8Gd/NQuukuYAFY22Vqu1WdnMHXcAFkofAfNBoYyDVE
-	 8H6mTlAssVHjaAV40rjaszsX2g4WKnI+pJsRwbQZqLJ39HmPI4wvDPJa4AhbysQFyS
-	 eATclc8tf7zTw==
-Date: Thu, 26 Nov 2026 16:08:15 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: sashiko-reviews@lists.linux.dev, Alejandro Colomar <alx@kernel.org>, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v8 2/4] string: Add strprefix()
-Message-ID: <awhLO8IijdM_tef3@devuan>
-References: <cover.1795695151.git.alx@kernel.org>
- <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
- <sashiko-outbox-235501@kernel.org>
- <awgmuC_BnyaEpTXD@devuan>
- <paz72vxna4f5kwp2a7waztsnywzwgbwqtpjxjgy6sm7j256bbs@lsr2jbx5paji>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=sVWrWfsL
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cdddc79a4afso2995894a12.1
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 07:10:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795705807; x=1796310607; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=qF8Gq3/DvfR9bgvTJhpHtUh60h1rATqchUrrPkWfF34=;
+        b=sVWrWfsLGRp0Isn5pPucJMuYuU5jEAa9H0Jd6Y8Aq6x1hJ2zyQri+N0tmaqKNDZtlE
+         yaZN0C69i/lUA7Gpbf7QDqoUun0daKC6C4cd2qgAH9hxTpG2bXIM4ciVwDh+CqB9ikEF
+         eSK+mF4mZErFJtJTULr0JCYSLe6e2dwIw8cxgG9Zr86tWy4vjBt8IrEY/NPbPf97xcY9
+         /M5VhyD7npJdqdvWvZTi2c9SG76qdq5mUb3aWCFXwSK4V3bRJ4JWP7z0lUNc6dsXmRC4
+         wDiUgdNxJaZrN+VtIqhVE2pigKCphnr2mqS9jrENXl1p+WNsI2tt3Re4OvkhAsXNsYgt
+         RTsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795705807; x=1796310607;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=qF8Gq3/DvfR9bgvTJhpHtUh60h1rATqchUrrPkWfF34=;
+        b=OpuajfYik9TR8v6sqlWprxnsmH4ZRfoflhPJKipGMRX/CWGcFXrOQhTEtL9FJRePDd
+         HSyFP7mFgIluPJ7/TNw2oJEeNQ9sqvom+Ts1sVPKjn5RbwVUUX1vom+OWtDQb1mwcRLr
+         JXiZsX0vWFdPX43feEw/XCpIS5LTvEbbx+FKYv8RA+q5Edbfs56CFWM0NRtLzVx2889j
+         nCSkPQDdzdc/22j9P9KEyghxnmggORLcaexFhEl9HJ6WECx6Pl8YO9JdYmPJCpPoR5rh
+         7vPR2b9n5lt1hj9/6KqWlWpo3VPuCKCC16Khlocrh3pIhSjTgLTt9BCeLpQ2JUefKt0t
+         GwHg==
+X-Forwarded-Encrypted: i=1; AL+hErHRMel+2Or6txIDMINHM3icLGb9ixvRkGiHqQXgHBw0LWdQaPOVPtY8vpMRRDPEB3z4MLObPabUZHGK@vger.kernel.org
+X-Gm-Message-State: APuU4Z9sObdicNbYUcn2fDjp9ExYQHwYJWOcgyaOUae5Sg8XoS8SiMvi
+	zPsJTv4EqF7cjDsmxlWBd23Gp6vT0Xd0UXR8/D2r8ttO5OwW2P/Cvonv
+X-Gm-Gg: AZFdTZdXej97E/gV9XtYdQDfQak6kbpGb6PiuDhlES2mQlqdOfZjf+dwtXMQnChryT1
+	2qsDHdeM2teNptVLXp9xuOuTT3XPaa910gdbKo3la1KQin/2BSf+g3Q6oFHxdGx22GTgVjckmNL
+	N0IBr2V89+/QTB9glOQYBhHusuluFuLooJydRMs7m5LZ+7CzeqjDJjki3DpcGq/a+DQZdnBuQsh
+	BSx4DMvzHpR4qhyaYZubWfPbKINUh2mxBIAeOjGCL4qpNsKbrf0GE+IFLaRvw9zALkx31cDGMv2
+	W2gcPejUYSI8i9A4JTSD4DYk0f1DiH927NNDTMywNQLF6sHnHORPQuhSAvtGuwScWsy/ZuhsmFT
+	zg50qSioc2OHAyt47sZZCly+Es+3a2BxfDiksmFVCBzlesSOO2nqorv5x1A517JKxXvtO2bp4Jc
+	RyalDeHYv4yhPvK9VhWTvaEOGFUhTb+09hthgCMp0ROd37vagOgJ+zUZnUttYd2Xzh1q2PvpFSD
+	HWNF3V8vppZ78llSNqCDXKlWnbuSwfdHgDUqzVXw/PqqhxGCyNSJjSeaMW8bt3VUUWbfnH8XIHx
+	KZZf8SYTND4Uedv3DnLnH+YdVsWquNvvDFkmU8y5ODK5bXtNkQ==
+X-Received: by 2002:a05:6a20:3d1a:b0:3eb:37a7:12a2 with SMTP id adf61e73a8af0-4014cf57a08mr21001490637.33.1795705807164;
+        Thu, 26 Nov 2026 07:10:07 -0800 (PST)
+Received: from [127.0.1.1] ([150.117.174.129])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde6cfc8829sm11099923a12.8.2026.11.26.07.10.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 07:10:06 -0800 (PST)
+From: Gary Wang <is0124@gmail.com>
+Subject: [PATCH v3 0/5] upboard pinctrl support for device id INTC1055 &
+ INTC1057 & INTC105E
+Date: Thu, 26 Nov 2026 23:09:43 +0800
+Message-Id: <20261126-upboard-pinctrl-add-intc1057-intc105e-support-v3-0-81d35c9ba246@gmail.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,136 +92,69 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jsyxl2au357i7gym"
-Content-Disposition: inline
-In-Reply-To: <paz72vxna4f5kwp2a7waztsnywzwgbwqtpjxjgy6sm7j256bbs@lsr2jbx5paji>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALdLCGsC/5WNyw6CMBBFf8V07Zh2gAKu/A/jovYBkwBtWiAaw
+ r+LJiZs2d1zF+csLNlINrHraWHRzpTIDxtk5xPTrRoaC2Q2ZshRCoE5TOHpVTQQaNBj7EAZAzS
+ MWvCi/A8LaQrBxxFsVT5zbkUmi5xtzhCto9evd39s3FIafXz/8rP4vv9SdrA0C0BwmCGqWshKm
+ lvTK+ou2vfsW5pxby+O2hE46IqXtatcIWu3t6/r+gGAY3p8SAEAAA==
+To: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Thomas Richard <thomas.richard@bootlin.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Daniele Cleri <danielecleri@aaeon.eu>, 
+ JunYingLai <junyinglai@aaeon.com.tw>, Louis Chen <louischen@aaeon.com.tw>, 
+ BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gary Wang <is0124@gmail.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
+Add support for "UP Xtreme ARL","UP Xtreme i14","UP Squared Pro 7000",
+"UP Squared i12","UP 7000" and missing groups and functions data for 
+INTC1055 & INTC1057 & INTC105E.
 
---jsyxl2au357i7gym
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: sashiko-reviews@lists.linux.dev, Alejandro Colomar <alx@kernel.org>, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v8 2/4] string: Add strprefix()
-Message-ID: <awhLO8IijdM_tef3@devuan>
-References: <cover.1795695151.git.alx@kernel.org>
- <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
- <sashiko-outbox-235501@kernel.org>
- <awgmuC_BnyaEpTXD@devuan>
- <paz72vxna4f5kwp2a7waztsnywzwgbwqtpjxjgy6sm7j256bbs@lsr2jbx5paji>
-MIME-Version: 1.0
-In-Reply-To: <paz72vxna4f5kwp2a7waztsnywzwgbwqtpjxjgy6sm7j256bbs@lsr2jbx5paji>
+Fix pinmux-select set CPLD GPIO OUT not function mode for I2C pins
+on the AANT0F04.
 
-Hi Bart,
+There are no compile-time dependencies for each file, all pin groups 
+functions data will forward to set default when pinctrl upboard probe.
+It shows an error when run-time dependencies are not mapping to right
+groups and functions.
 
-> Date: 2026-11-26 16:06:56+0100
-> From: Bartosz Golaszewski <brgl@kernel.org>
->
-> On Thu, Nov 26, 2026 at 01:32:17PM +0100, Alejandro Colomar wrote:
-> > > Date: 2026-11-26 12:27:03+0000
-> > > From: sashiko-bot@kernel.org
-> > >
-> > > Thank you for your contribution! Sashiko AI review found 1 potential
-> > > issue to consider:
-> > > - [Low] string: kernel-doc parse failure on strprefix() due to
-> > >   __nonnull_args()
-> > > --
-> > >=20
-> > > commit fa176bccb75ab1dcd9cc8e153bcc5112c790bc7c
-> > > Author: Alejandro Colomar <alx@kernel.org>
-> > >=20
-> > > string: Add strprefix()
-> > >=20
-> > > This commit adds the strprefix() helper to return a pointer after a m=
-atched
-> > > prefix or NULL on mismatch, along with KUnit tests.
-> > >=20
-> > > > diff --git a/include/linux/string.h b/include/linux/string.h
-> > > > index 9b3e578d9aca1..a6a1953c52e35 100644
-> > > > --- a/include/linux/string.h
-> > > > +++ b/include/linux/string.h
-> > > > @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_l=
-en, const void *src, size_t count,
-> > > >  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
-> > > >  })
-> > > > =20
-> > > > +/**
-> > > > + * strprefix - string prefix
-> > > > + * @s: The string to be tested
-> > > > + * @prefix: The string to see if @s starts with
-> > > > + *
-> > > > + * This function determines whether the string pointed to by @s
-> > > > + * starts with the sequence of characters
-> > > > + * (excluding the terminating null character)
-> > > > + * in the string pointed to by @prefix.
-> > > > + *
-> > > > + * Returns:
-> > > > + * *  @s + strlen(@prefix) if @s starts with @prefix
-> > > > + * *  NULL if @s does not start with @prefix
-> > > > + */
-> > > > +__nonnull_args(1, 2)
-> > > > +static inline char *strprefix(const char *s, const char *prefix)
-> > > > +{
-> > > > +	size_t len =3D strlen(prefix);
-> > > > +	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
-> > > > +}
-> > >=20
-> > > [Severity: Low]
-> > > Does __nonnull_args(1, 2) break scripts/kernel-doc parsing for strpre=
-fix()?
-> > >=20
-> > > CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py =
-does not
-> > > strip __nonnull_args(), so kernel-doc mistakes __nonnull_args for the=
- function
-> > > identifier when processing include/linux/string.h (included by
-> > > Documentation/core-api/kernel-api.rst), emitting prototype mismatch w=
-arnings
-> > > and omitting strprefix() from the generated documentation.
-> >=20
-> > As said in v7, I don't know what to do with this.  Any comments?
-> >
->=20
-> I don't have an answer but my clanker pointed me to commit b6b0adb6c845
-> ("docs: xforms_lists: support __nonnull_args()") as the right fix. It's
-> in linux-next so you can add it to b4 deps and sashiko will pick it up
-> and should stop complaining.
+The pinctrl-upboard is provide additional driving power and pin mux 
+function through native SOC pins->FPGA/CPLD->hat pins for flexible board
+level applications. it's probe from ACPI device id AANT0F01 & AANT0F04.
 
-What if I don't use b4(1)?  :)
-I guess I can just safely ignore it, right?
+Signed-off-by: Gary Wang <is0124@gmail.com>
+---
+Changes in v3:
+- Update detailed description in the cover letter.
+- Update fixes patch detailed commit messgae.
+- Correct the I2C group mapping names for the UP Squared Pro 7000.
+- Link to v2: https://lore.kernel.org/r/20261125-upboard-pinctrl-add-intc1057-intc105e-support-v2-0-c8079f8f569f@gmail.com
 
+Changes in v2:
+- Add missing SoB.
+- Fix CPLD I2C pinmux-select by good method and update commit message.
+- Link to v1: https://lore.kernel.org/r/20261123-upboard-pinctrl-add-intc1057-intc105e-support-v1-2-f2322a91686d@gmail.com
 
-Cheers,
-Alex
+---
+Gary Wang (5):
+      pinctrl: tigerlake: add ish_uart groups and functions for INTC1055
+      pinctrl: alderlake: add some groups and functions for INTC1057
+      pinctrl: meteorlake: add some groups and functions for INTC105E
+      pinctrl: upboard: fix I2C pinmux-select set CPLD GPIO OUT not function mode
+      pinctrl: upboard: add device id INTC1055 & INTC1057 & INTC105E based UP boards support
 
->=20
-> Bart
+ drivers/pinctrl/intel/pinctrl-alderlake.c  |  40 +++++++++++
+ drivers/pinctrl/intel/pinctrl-meteorlake.c |  32 +++++++++
+ drivers/pinctrl/intel/pinctrl-tigerlake.c  |   4 ++
+ drivers/pinctrl/pinctrl-upboard.c          | 108 ++++++++++++++++++++++++++---
+ 4 files changed, 176 insertions(+), 8 deletions(-)
+---
+base-commit: 7475ea8b58616b33c04afb976cf0fbaad9dd63fb
+change-id: 20261124-upboard-pinctrl-add-intc1057-intc105e-support-e87b40e13654
 
---=20
-<https://www.alejandro-colomar.es>
+Best regards,
+-- 
+Gary Wang <is0124@gmail.com>
 
---jsyxl2au357i7gym
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmsIS18ACgkQ64mZXMKQ
-wqnRJxAAvdeECMbp2/k4PK3DL14ICbg0Og0fHEvvzglAUWB9PFH2eSuSm3Ln5brp
-yTZCE3whFZ/o/Rx8ehg++6tX408xQMbZowqp0eNnZy2ledN5mECUw5At2EN5v3gZ
-RpycJSpn0KtwEnRV9vdnf8Q2mRY2gx85igzODaZOCmx0k1pUT8rI6H9p9n7O/xjV
-zEtU9AW6lDhNqoMVLGYpy1hKNpjG/UXVV7APDCtDRFftNN2DlUnQUesmOFmEmjQg
-3rqpULRFCOtRcYEcLucQvOBu+NsVA9jL2WyasW88ahdZDILJjYjWKtuwEtsEU0OL
-SEmMerLtztgNhlUM2Pn2AqDixyT3q2cKeX0zzBxzf9ya6hyxJKQNpRhk6oRhEYZK
-Ic6fEVB3IX8dChYVqQHFX+/5l9nkt0i28q4yx4ezKV9RuevqCmNTJY3vgWiTFDjM
-bh+0bAsSQ5VkIqd3YZ3cOOmeESup+tf2DedpIvdENkrzItGsg/bAfsvPSWe4evZ+
-nmOjs3g21JF7HX6wouj6RkxYWVh9WvJb8oHJ8lCiWrb3ZB3WssQUjR3qUY5REgYu
-YN3WsF/KELSndyfwit5Xr1hThCzCd3H+unERpyQTNDJcZiaCL/2j0Zv2ilxvDSCc
-h7q6X1+m7trpLf5UgRlZSlPaTXoSwSW+RGUE/rWFM/OY+xi5xa0=
-=jpT8
------END PGP SIGNATURE-----
-
---jsyxl2au357i7gym--
