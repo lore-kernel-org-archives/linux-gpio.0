@@ -1,53 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795705168;
-	b=EH4Hkl35b241SEqFxykvjMXsHWeX1yCeB1KJ7cWDQk8qeojVI4lpZpBvTDV2VTBjaBXU
-	 eW28VNkIiFGHC9WchpWgSSrWJaTJFhApx/lECgm536Rv8wndPmGL7hRDUzVgYSTeoi8aQ
-	 tapO6A4PjLKvgJZ85/8yBapS+w41eRGsw6oCOC3ivkLcZau1cCmILyZ/i4802W3spZw19
-	 DyE8O5bJm2IUGeUrkZViZdy5PYUIHVi6RDULhOmb0bv+rHGGL3UaQOxWC1aI59vnaAucD
-	 IfCVRqJW4W9/nY/VS4N86ekpf3oZTXwS3KphslK1nr6mRl+CIrX4k2+TjL0ptTcsVkw==
+	t=1795705620;
+	b=IDtjRja1Zi/ZHxWBRtu82w+yw/+DaDPu2rdZWabJ23zofX6uYxeM7/r0jW4sDFOh1Laf
+	 Bx8dnYAJ97svIQpSgQgs+f1ZwjG/Sg/HSRoRy11QsHmSQdXMAQwnROhRJSPxq/uPhrkZ8
+	 ueKyVxqgYGYxZflwwqbx0I6zs0/K+bD79m37wNb2yMbJx0JFS9OxjwmE6MX1mnp8epRiw
+	 JeoxuVtHFBrUVIFvXEVd9kz6IWieNR+doDBQyM1mbX/RgCX6BXYP87Roiz8/VVCKuFS6P
+	 hE0g7Nwb9xd56Zdgh5eVe2fVzblswRx8uswImOIf87jEyQoVUi1pgx7Op3M7cpYfDvA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795705168;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795705620;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=dbft8haI/Mye7BgK+H8nW1NXfgOE0ftSkpSJ8dBb/4s=;
-	b=SUqGf8k+m97/XjBdsIUJxyEP3StsqJ8LMZBU2e9n1M0g+XD0irbF1n0ahTLkOEQH1zAz
-	 xq3xJALobR08ixJDPpnwh4O0dH33tH8/Ld+jboVvFEhyNAMMbeDzmGZBqX4vhvPRjFuEx
-	 +Qh0qQXQQVp3aMxU4WcL/Ktl641er4U5kBNLDgGntaDfytQU8+eKHmVOG4F+QRmNKAUjo
-	 MigMAUCfBjAdLxIRXQAAYCZn2hgMkwD0287dAZ18OhgN4hqamvQotlueEjzA5EBMqaci7
-	 ET2C6djBBZW3RGllv50mXGdYH/qWS+g8B3+DCIbOL8Q51H7mUeUMgGULeYlmdEALH8Q==
+	bh=bxM5VILBAKX+kc9GUgzJ731d9LxHWM8/8rHJEkvAc+0=;
+	b=1oeDhxtqJzd/xffTIXUAY56dubLA6QJOon2tX//D4IYctfFO/AGYKtOsSUy6OvpbInXZ
+	 Ye//yyKnjj55DDp/hwCL/E/2gt7DR7704JkIDscbMEB0qobS6O+43kymPesS9bvQb2ZN+
+	 mLIZeOqoyxQxdlWaNvgigp/VPRu/vDEDRA4DqRPN4faLkqwWkEAhWDhGun+GHe8vLyzrF
+	 LF3ATub14ulUfusCQcS5lRBHA/PSsaOR0Pt7CkT9pU3iLnWCQ2golPOI2fgvUyzxfQRO/
+	 sTxJQkLjHR+IrtsJUy5VwV2bMOEmdMs5LvL11zGhvcFc42u3cYS/mO29BX2DSn1zBfw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VDEaQYzA;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cQhamSem;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 67FA1606A31C;
-	Thu, 26 Nov 2026 14:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7462F606A321;
+	Thu, 26 Nov 2026 15:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VDEaQYzA
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7CA5B1F000C6;
-	Thu, 26 Nov 2026 14:59:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cQhamSem
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0CE2A1F000C0;
+	Thu, 26 Nov 2026 15:06:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795705168;
-	bh=dbft8haI/Mye7BgK+H8nW1NXfgOE0ftSkpSJ8dBb/4s=;
+	s=k20260515; t=1795705620;
+	bh=bxM5VILBAKX+kc9GUgzJ731d9LxHWM8/8rHJEkvAc+0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VDEaQYzAspNrHwCT+VDEhtgtlsGpzS5B20SeKDFBDsUtaUyYG3FEKOpubCoVP9k+w
-	 3IBpqS3JmNmAEYBwaPbcKNwH7hRHLQmMEzxdBpkm8O6as6GTgj2Jz/tZY8/t2m8DlY
-	 /q91c6Vp0Vi15uyQ+1Q55pF64eItyk16f/7dAigbGY/No73pe5a6aRfeq30ovf86+Z
-	 oFVf4OsWQsr+UEr1vreMi3j2DGk6Ubx0L9jpHLr1sHVFME3k6EjoWw3+ownATxzeoN
-	 /XKUrYTTfan/15cgtSlwJ2R9wS8QZsGJcZVWnXKPwu2POWF2DXoJN92VL8l4UokngN
-	 tE00EiJjYvb+w==
-Date: Thu, 26 Nov 2026 15:59:24 +0100
+	b=cQhamSemz+rQWa3ZnZZg4FbnUyMUCqT3iFKeZVQCoQI0C+AxysdNh9mn+sRDQ0mXP
+	 e7EsHAYsMRT3qMqYSa498FC/gzc+fy/qGZiS63KOziRCJVZjpKou7Q4RnisaPvyUP3
+	 XDmgRKoMKV0zqUwdFIGeUy1GF2tc91INf1yBdWl3Ul4PpIqWw6jGgGi+jj4Jgu30jV
+	 KlYTCgbcVQM0BsjOHRBIr03Q23ymYlC9SDwjIk5vJ31/aSe2bl6EB96EhvYhjUepu5
+	 5Lv/MLKUnlQkbNUlbPnGUDWMQflWnYDlKiQgVp/8v+0fC2F5DZpX3TKHCBLeqQiyEa
+	 HSY3U2LGiOXKg==
+Date: Thu, 26 Nov 2026 16:06:56 +0100
 From: Bartosz Golaszewski <brgl@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: linusw@kernel.org, paulmck@kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: Use srcu_dereference() in gpiod_get_label()
-Message-ID: <ybhhwqv2xgg4g3ormfcc7lncbo75irefvdk7yn2vsctjydefyz@n65bjszpepbm>
-References: <20261126084233.17381-1-qiang.zhang@linux.dev>
- <20261126084233.17381-2-qiang.zhang@linux.dev>
+To: Alejandro Colomar <alx+linux-hardening@kernel.org>
+Cc: sashiko-reviews@lists.linux.dev, Alejandro Colomar <alx@kernel.org>, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v8 2/4] string: Add strprefix()
+Message-ID: <paz72vxna4f5kwp2a7waztsnywzwgbwqtpjxjgy6sm7j256bbs@lsr2jbx5paji>
+References: <cover.1795695151.git.alx@kernel.org>
+ <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
+ <sashiko-outbox-235501@kernel.org>
+ <awgmuC_BnyaEpTXD@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -59,43 +61,70 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261126084233.17381-2-qiang.zhang@linux.dev>
+In-Reply-To: <awgmuC_BnyaEpTXD@devuan>
 
-On Thu, Nov 26, 2026 at 04:42:33PM +0800, Zqiang wrote:
-> The srcu_dereference_check() already evaluates 'srcu_read_lock_held(ssp)'
-> internally, so passing srcu_read_lock_held() as the extra condition is
-> redundant. all callers of gpiod_get_label() hold the desc_srcu read lock,
-> so replace it with srcu_dereference(), which provides identical lockdep
-> coverage.
+On Thu, Nov 26, 2026 at 01:32:17PM +0100, Alejandro Colomar wrote:
+> > Date: 2026-11-26 12:27:03+0000
+> > From: sashiko-bot@kernel.org
+> >
+> > Thank you for your contribution! Sashiko AI review found 1 potential
+> > issue to consider:
+> > - [Low] string: kernel-doc parse failure on strprefix() due to
+> >   __nonnull_args()
+> > --
+> > 
+> > commit fa176bccb75ab1dcd9cc8e153bcc5112c790bc7c
+> > Author: Alejandro Colomar <alx@kernel.org>
+> > 
+> > string: Add strprefix()
+> > 
+> > This commit adds the strprefix() helper to return a pointer after a matched
+> > prefix or NULL on mismatch, along with KUnit tests.
+> > 
+> > > diff --git a/include/linux/string.h b/include/linux/string.h
+> > > index 9b3e578d9aca1..a6a1953c52e35 100644
+> > > --- a/include/linux/string.h
+> > > +++ b/include/linux/string.h
+> > > @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_len, const void *src, size_t count,
+> > >  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
+> > >  })
+> > >  
+> > > +/**
+> > > + * strprefix - string prefix
+> > > + * @s: The string to be tested
+> > > + * @prefix: The string to see if @s starts with
+> > > + *
+> > > + * This function determines whether the string pointed to by @s
+> > > + * starts with the sequence of characters
+> > > + * (excluding the terminating null character)
+> > > + * in the string pointed to by @prefix.
+> > > + *
+> > > + * Returns:
+> > > + * *  @s + strlen(@prefix) if @s starts with @prefix
+> > > + * *  NULL if @s does not start with @prefix
+> > > + */
+> > > +__nonnull_args(1, 2)
+> > > +static inline char *strprefix(const char *s, const char *prefix)
+> > > +{
+> > > +	size_t len = strlen(prefix);
+> > > +	return strncmp(s, prefix, len) == 0 ? (char *) s + len : NULL;
+> > > +}
+> > 
+> > [Severity: Low]
+> > Does __nonnull_args(1, 2) break scripts/kernel-doc parsing for strprefix()?
+> > 
+> > CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py does not
+> > strip __nonnull_args(), so kernel-doc mistakes __nonnull_args for the function
+> > identifier when processing include/linux/string.h (included by
+> > Documentation/core-api/kernel-api.rst), emitting prototype mismatch warnings
+> > and omitting strprefix() from the generated documentation.
 > 
-> No functional changes.
-> 
-> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
-> ---
->  drivers/gpio/gpiolib.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 5dd4d142cf52..47ce89bfb578 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -124,8 +124,7 @@ const char *gpiod_get_label(struct gpio_desc *desc)
->  
->  	flags = READ_ONCE(desc->flags);
->  
-> -	label = srcu_dereference_check(desc->label, &desc->gdev->desc_srcu,
-> -				srcu_read_lock_held(&desc->gdev->desc_srcu));
-> +	label = srcu_dereference(desc->label, &desc->gdev->desc_srcu);
->  
->  	if (test_bit(GPIOD_FLAG_USED_AS_IRQ, &flags))
->  		return label ? label->str : "interrupt";
-> -- 
-> 2.17.1
+> As said in v7, I don't know what to do with this.  Any comments?
 >
 
-What is this patch? A v2 to the one it's replying to? A separate change
-(in which case it should be a new thread, not a reply)?
-
-I'm confused by this thread.
+I don't have an answer but my clanker pointed me to commit b6b0adb6c845
+("docs: xforms_lists: support __nonnull_args()") as the right fix. It's
+in linux-next so you can add it to b4 deps and sashiko will pick it up
+and should stop complaining.
 
 Bart
