@@ -1,73 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795690203;
-	b=LmqiTUxz/JpYqFukPAe7fJ0p54/ImInSef/hMfZdx2IoCkegzLMekcRKTkIDxDlmDfxG
-	 LQnfUN0QLf2hIUNdCzKIFjh0LDYMy/2W7/f5/vEU1QnOzQxA3LyIKXxcBe0VzU3QbgrBW
-	 ZGnbqARmay7y4RK8Pjo0RYI3PTzLRJQcJhrm678e1+qaL9CT/mgdqBnub3RCYSjH8ElgK
-	 QSIRZddxtjdoK0Eq5m9wtpxXn+O0msqRSHpbr3Jp4BYD4mUnnYdwXnkoAvA1KZUZmKapt
-	 dj4wLXYaTtfvWZYZYf+tvkBMNemy6oTiIqEl4gB16e+ABY/2JdYutnJsBpR8r5cjVYQ==
+	t=1795690871;
+	b=IdpILMX3a6fISCt8Y4gESoLaQGGYHchXMc6W1MPVVumfrnx2W7GEfT223pZ7zv9JX/E4
+	 nxJ/kDAF2VUFZXFxZoSNQ0ucN3w0sCmY955KWkjcfMv/ArsTfCvh9b9YKh1/t+JVm1mvX
+	 zfshbswiaonUiqoXtMztmni3bSW6K74dRQaVja6gS8W7ZI5m0tASR6T2qCNm2PFRWYsID
+	 ncGSZPG8HZC83LfPGaeM/aE+/ptcr1oKzelQ2VAfNpE+4oCl7d1FJxD3S+bt+2I7iaO6L
+	 0VjCb7NZ3l9+bJO90YPCt72FHibA9n83Mm/jKkDVuYkLtfMCrJmgs6GPDkcvdpd705Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795690203;
-	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=jMsdtwCbV5v0zb6ZC86ZF2reRzr1NvmCVm7BDIN6O6s=;
-	b=ivn7vf25koVah1IJag9GfRo/BEsubguL7wfY1c7ctN2YYTqXsU2g6eF6+CPuCQdO7Ciq
-	 9L+X+j+09FW6/JiXBhNSaC2WoHEWDDPBDrTYTnv5CFdmMq+fDvn5wSaj8gzgFgjfuW6HB
-	 xLr1t95NwEkQSuzi8XyRC9awS+FA27HFSqzyRL2Fp9QH30E7HZt7EICafo0Tl8BpoFtNx
-	 2rAeQrrBYBLU39uJATtFzqRx2FZVpSmbPHrCn0A0t7z5iDwaWuNTDM0WOkcuO+oN6Oki5
-	 ONxKHpTNLzJx1JGQr/a/K+agOhQ638QVy7SfShvARZwgQd+5e1NrCSklUpTpXSZJz5A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795690871;
+	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:X-Priority:
+	 X-Mailer:In-Reply-To:References:X-NTES-SC:Content-Transfer-Encoding:
+	 Content-Type:MIME-Version:Message-ID:X-Coremail-Locale:X-CM-TRANSID:
+	 X-CM-SenderInfo:X-Coremail-Antispam;
+	bh=U8H2aecc49XjNXoZYCGoat5dqHjwUPyU50NiRAmq9e4=;
+	b=Rkyjl2w5IwF7kk72Z3W/UYhPF6N7/Lud9TQ41hWgODpzm8JYuB8pvlLlMoUUgn3qyAW8
+	 9/knm+qHDBeRsqyRiDOVPef6pq6lwxPBnL9WWnzTdLFXvwLqlB67kO9fz67PqNL/H6PcX
+	 SntDkEI9uy87l7iXI3Acs6XkYYYSmDIjEplRf1nuq0JbBu5rZbcs+3O9OKdxaFHIuO6Cs
+	 qaU23dn7D9vF//mRzbjosFDjK8sijm0xhUeTja0dm/u6/s1uuYSmEYktvrOD0hX5Oyl4g
+	 kK6Z05cze4+XnGCzoCNsKDIUQENAYZqvSaAvmkNHUy+xKC4dknSvn1PBfDKH2aQGkQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=d-silva.org;
-	spf=pass smtp.mailfrom=d-silva.org;
-	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=F2R2bmyu;
-	arc=none smtp.remote-ip=119.15.109.137
-Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
+	dmarc=pass header.from=163.com;
+	spf=pass smtp.mailfrom=163.com;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=gjKgQltO;
+	arc=none smtp.remote-ip=117.135.210.4
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B9A606A323;
-	Thu, 26 Nov 2026 10:50:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77B9A606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BA4606A31C;
+	Thu, 26 Nov 2026 11:01:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D7BA4606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=F2R2bmyu
-Received: from Hawking.lan (hawking.lan [10.0.1.4])
-	by www.nmnhosting.com (Postfix) with ESMTP id 43655403EF;
-	Thu, 26 Nov 2026 21:49:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
-	t=1795690194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jMsdtwCbV5v0zb6ZC86ZF2reRzr1NvmCVm7BDIN6O6s=;
-	b=F2R2bmyugO9Wik6VrsqtltgrnjxLDfBrWB/7KeEYHci7kKRs960fMakOamSRLjTb+YRp7F
-	o8UKPVpts3PBiISm9oiH8ehslTKZIHOxEqJmCZtoRMkD9fTonvyW3gPp8pm2GN9hUNeyoW
-	j3YTDZVaUPqPZf4n+2yJjZ1xW+bNfXJwkwlE+L6Dh6Ya5MpknNmF0ICebUeU921rt5lvxw
-	QlX6i8l0aLluiTF3sirVhu1UlADxVtQit9bXYTwl8H5DKp7Vr24W/WCWPi/ZfAb4X5NkoJ
-	vfHy+E48UgO5W9o/ylVVHtl86g3D5sGBd7847oLJ7zjvbcCFun3RFDwa08ViPA==
-X-GPT-Reason: legitimate_personal_technical_content: The email
-	is a standard Linux kernel patch submission containing a functional
-	code diff regarding pinctrl driver refactoring. The sender
-	(alastair@d-silva.org) matches the intended recipient domain
-	(alastair@d-silva.org), the subject line follows standard developer
-	conventions ([PATCH]), and there are no indicators of marketing,
-	phishing, or urgency.
-From: Alastair D'Silva <alastair@d-silva.org>
-To: Linus Walleij <linusw@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alastair D'Silva <alastair@d-silva.org>
-Subject: [PATCH] pinctrl: sunxi: Drop unused parameter from sunxi_grp_config_reg()
-Date: Thu, 26 Nov 2026 21:49:54 +1100
-Message-ID: <20261126104954.441427-1-alastair@d-silva.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=gjKgQltO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=U8H2aecc49XjNXoZYCGoat5dqHjwUPyU50NiRAmq9e4=; b=g
+	jKgQltOPCmnpIb9/x4OOtqzeC2kwbpu93CT2bhPQi0XrrydD1aP5tY8txbXHmofN
+	zcXHp3ANbVbxpCA2d3DriavnjUhQYRIqctN/6jsESEFNY8KRmgvLFg1ZIaTVWcFp
+	MmdxL077LGSb40iYs+pDtn7V41VqXg24ncRtEhHV6E=
+Date: Thu, 26 Nov 2026 19:00:20 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: longzhao@ambarella.com, "Bartosz Golaszewski" <brgl@kernel.org>,
+	linux-gpio@vger.kernel.org, "Linus Walleij" <linusw@kernel.org>,
+	"Michael Walle" <mwalle@kernel.org>, "Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Mika Westerberg" <westeri@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v15 03/14] gpio: regmap: remove gpiochip before
+ tearing down irqchip
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <av6n3oNVl2pyeLBK@ashevche-desk.local>
+References: <20261118-cv75-gpio-v15-0-e3c563673fe1@ambarella.com>
+ <20261118-cv75-gpio-v15-3-e3c563673fe1@ambarella.com>
+ <av6n3oNVl2pyeLBK@ashevche-desk.local>
+X-NTES-SC: AL_Qu2SB/qSv0Ap5iCcZOkdnUoTj+Y/XMK0uvwk1YdVc/MEkifv/wIGZm5NPWTN9f+eISWCghu2SxtW7+p4VrR6I6RwpZ+lUdQD0+jxaPLqQw==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -77,50 +73,21 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <58bc2391.8c7d.1a2178371d0.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eCgvCgDXv+hFEQhrB8Z2AA--.1666W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7gQyo2sIEUQsGAAA35
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-sunxi_grp_config_reg() takes a pctl parameter that is never used.
-Drop it to match the original signature.
-
-Fixes: 8b367fc08be4 ("pinctrl: sunxi: refactor IRQ register accessors")
-Assisted-by: LLM
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 5 ++---
- drivers/pinctrl/sunxi/pinctrl-sunxi.h | 3 +--
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index bf4ec4665e2b..d30a562315aa 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -763,10 +763,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
- 		else
- 			val = 0xD; /* 3.3V */
- 
--		reg = readl(pctl->membase + sunxi_grp_config_reg(pctl, pin));
-+		reg = readl(pctl->membase + sunxi_grp_config_reg(pin));
- 		reg &= ~IO_BIAS_MASK;
--		writel(reg | val, pctl->membase +
--		       sunxi_grp_config_reg(pctl, pin));
-+		writel(reg | val, pctl->membase + sunxi_grp_config_reg(pin));
- 		return 0;
- 	case BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV:
- 		inverted = true;
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 7c2f29e75519..3060cef3705d 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -328,8 +328,7 @@ static inline u32 sunxi_irq_status_offset(u16 irq)
- 	return irq_num * IRQ_STATUS_IRQ_BITS;
- }
- 
--static inline u32 sunxi_grp_config_reg(const struct sunxi_pinctrl *pctl,
--				       u16 pin)
-+static inline u32 sunxi_grp_config_reg(u16 pin)
- {
- 	u8 bank = pin / PINS_PER_BANK;
- 
--- 
-2.53.0
-
+QXQgMjAyNi0xMS0xOSAxNTo0MDoxNCwgIkFuZHkgU2hldmNoZW5rbyIgPGFuZHJpeS5zaGV2Y2hl
+bmtvQGxpbnV4LmludGVsLmNvbT4gd3JvdGU6Cj5TbywgQUZBSVIgTWljaGFlbCByb3NlIHRoZSBx
+dWVzdGlvbiB0aGF0IHRoaXMgcGF0Y2ggbWFrZXMgdGhlIHVucmVnaXN0ZXIgZmxvdwo+bm90IHJl
+dmVyc2Ugc3ltbWV0cmljYWwgdG8gdGhlIHJlZ2lzdGVyIG9uZS4gSSB0b29rIGEgbG9vayBhdCB0
+aGlzIGFuZCBJIGNhbgo+c2F5IHRoYXQgdGhpcyBpcyBhIGJpdCB0d2lzdGVkLiBUaGUgcHVyZSBj
+cmVhdGlvbiBwYXJ0IGlzIGluZGVwZW5kZW50LCBidXQKPnRvIGZ1bmN0aW9uIGl0IHJlcXVpcmVz
+IEdQSU8gY2hpcCB0byBiZSBpbnN0YW50aWF0ZWQuIFNvLCB5ZWFoLCB0aGlzIHBhdGNoCj5pcyBh
+IGJpdCBjb250cm92ZXJzaWFsLiBMZXQgbWUgc2VlIHdoYXQgd2UgY2FuIGRvIGhlcmUuCkhpIEFu
+ZHksCgpBbnkgY29uY2x1c2lvbiBvbiB0aGUgdW5yZWdpc3RlciBvcmRlcmluZyBpbiAwMy8xND8g
+SSBoYXZlIGEgdjE2IHJlYWR5CihTYXNoaWtvIElSUS1kZWZlciBmaXgpLiBPSyB0byBzZW5kIHYx
+NiBhcy1pcywgb3Igc2hvdWxkIEkgd2FpdCBmb3IgeW91ciBwcm9wb3NhbApvbiB0aGUgdGVhcmRv
+d24gb3JkZXI/CgpCZXN0IHJlZ2FyZHMsCkxvbmcgWmhhbwo=
