@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795707457;
-	b=OPc84UrjvWLs0qtMq97hauLGKn+sQpB0HE2DGa2UxbYp6Dh+umJabGQ4+Dm4iNyx7vfZ
-	 /0qfbFbopE4RWQEAYf6nzFi09viP60etzvZ5mOx76KJqRzD5PVD+oaQhhXNcEW8+BTudJ
-	 KFcWuzN0qIvteocTJ9rjLfeUGP6xFlJBihaydz1V80DLBnSCsodG3sMj/I+KJEztHsY8Z
-	 Z6KOisQ5xEenptk1KWfPQ5yp9IvtU4YYLoNk7YZKImdE5lQeYyCRIWTsSvvSMXewcxeL9
-	 +3P6/xbkMrJ+NOjKTh7lzWEH0T5YqCdQAWI6NABlZwHRT+IO5TybxSz8aJQGKChNiSg==
+	t=1795707461;
+	b=n51kuAq0viJkIO7HWqXCrQBDWTGtR1D10iPAbtfbCI/CFWBweoUuTArG9/e0LJui9Ho6
+	 v+6S7rNEHiH5/jxmHsTQYdoTLnfbDBMlhIOFjOiktlSddwrIToDQ0KV7iZpMCAxdpRHw3
+	 PKACyX9V7LD11H47gmxmtlcnZIFEwEOUQHxFWbPJ/tbGLx43aXFNsFCA3uVqee3CY2tcu
+	 waDbM05wOS9LmO3T6Gg8AzpjhYRMMs/T5D5fovP92MwCYuz4lgo3hGx/dnTVUtCpHIxvs
+	 DcmBgKhCiE8TQTI9/AAFJAagdbV4XEr17YhB502Nu6m2Jfep3XEhYcjN0cD8HDj7Adw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795707457;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795707461;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=GaLTj93pvkB8arZtY8AllAvOkP3MCAuGLwNjxmh+tMM=;
-	b=Ey/m3Ly5oEwy2XfPVMWfdUQFCfeSZPLQgc6WtggjozhSMFVI8Ye1W/rhAABT0FpZ0t2J
-	 hB9rsLEJa8vjwzg5/OuUDgN3KlLhp9xfz4MSVNNPfLMuheAU+K5mwXk+Nqzq85Z4kkqBJ
-	 uHTE9sGmrBCbVNv8sCSunt7LWqFNHlXuF5Vae88LjiIDgPWOfOGxOzqeu51ayfpivUQx+
-	 D3V54mfbPzxdSk3s0nlznxYqqmAlTvR51AXDYNRcNpfaY3bVC3gyuCwVzYyPtKNGt4xa7
-	 bc7x9N45Ybt+n++P+ezwmMkpCIzQ5MPmM26LzKB6ccUCXx3VvvrV8EDSFS7RncJ5H3Q==
+	bh=Tsbt+DTLYEVcstYstnP1hdZwz4BCikq3eEBiW69wILE=;
+	b=ZsdrV/xI9fy5PmXrwk9nuwOGV/A6UOJuP1M2Yc9qL1xwtxoPu0Ia2pkmEMmeUpAhBn6J
+	 cDtvSofNnwkkEwLzOOZmkRdxV+cZw/fJTn9yKlyhc9Vodr5GqWr+xXcajEc3zG3DNTW2v
+	 qnFafAUIDPOIYe0A+SzOe1E78cMqMrdpryqQvPcSlSrNorzSyIUgNnMmLikvD93rX4jgj
+	 O0ynfBatpbus/JszJwsa+CXepQhRLNFurZoD9avFSNxy+YFnEWM9DdriQF8MZVbExmVsC
+	 m+qFj0hRVT1vY/L+l2spsKzNYSZJ7N23uTZ+FxrhBQGL993RzEb902hAqcV/wp+2jXg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d1rcHgpV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ho/N4KnK";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E7B606A31C
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F5B606A31C
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 15:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d1rcHgpV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FAB91F000C4;
-	Thu, 26 Nov 2026 15:37:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ho/N4KnK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B6FA1F000F0;
+	Thu, 26 Nov 2026 15:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795707456;
-	bh=GaLTj93pvkB8arZtY8AllAvOkP3MCAuGLwNjxmh+tMM=;
+	s=k20260515; t=1795707460;
+	bh=Tsbt+DTLYEVcstYstnP1hdZwz4BCikq3eEBiW69wILE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=d1rcHgpVw9bq9qSkvqt6BFaqVmpzKwEl0tTD3n06weQdwkX4bedTI/vbMqMywWH6j
-	 m1mtWbkcTTK6TAxBrnBhmQrc2sGQUySEUueO90OBwEJZWe57u3ZoWMs6g8eQiJM5hr
-	 f7cxZ1zFwt2A2M4fvMuDLESwmDN1f8hj4BeVq/B6xLM8UsbJUwr4gOqhdItDGVlib/
-	 appq97K8q57JPrGkeOvit7T2J98xgaurDr8JfGtfk/m8KkCnU44A3qfLqaNlg2oCeG
-	 xAyT/sJ5Eyjed3bubEtP5B5Pnrg55GlwUzQh3LAAeddmkGPTnOSOqqzVaEd8maQ5sv
-	 odkLW68tvrAWQ==
+	b=ho/N4KnKeky92McgdmtIb+ZVlBEY7gCodbzDfifwrbJ83Eoy4WHIpLy9SpQo/ivIN
+	 tDDW5PCsHxxNRcA2wV0JT7FmTHZPWuvGfiN6fT9s0JhtCXhsY6PqS+ASn06kaDlcm8
+	 VzPLxA36FtBz1be9A+mpCuj2xQ27NkXkoge8hR8wHyLnwXkR7ojx32ZaB0qdXzx7IB
+	 7p1/bkCr1fB/jbV3ADatdrf7LbREeqgnZuMmP39EshL3WuCrE9svOUj/bv/DGyfoaE
+	 b7xRnpGjF0JttT6djYp+uwoGS4TWtN2b+3P7+REcj0K0XfPm+EybiPBFk71GdFUGvG
+	 jPZiqU+syBG0w==
 From: Michael Walle <mwalle@kernel.org>
 To: William Breathitt Gray <wbg@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
@@ -56,9 +56,9 @@ To: William Breathitt Gray <wbg@kernel.org>,
 	Joseph Telaak <joseph@telaak.dev>
 Cc: linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [RFT PATCH 08/13] gpio: idio-16: create the regmap-irq chip from the gpio-regmap callback
-Date: Thu, 26 Nov 2026 16:35:19 +0100
-Message-ID: <20261126153600.299724-9-mwalle@kernel.org>
+Subject: [RFT PATCH 09/13] gpio: pcie-idio-24: create the regmap-irq chip from the gpio-regmap callback
+Date: Thu, 26 Nov 2026 16:35:20 +0100
+Message-ID: <20261126153600.299724-10-mwalle@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261126153600.299724-1-mwalle@kernel.org>
 References: <20261126153600.299724-1-mwalle@kernel.org>
@@ -78,87 +78,116 @@ domain.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- drivers/gpio/gpio-idio-16.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-pcie-idio-24.c | 36 ++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-idio-16.c b/drivers/gpio/gpio-idio-16.c
-index b9aa8bb9347a..b8ea1c0aa2a5 100644
---- a/drivers/gpio/gpio-idio-16.c
-+++ b/drivers/gpio/gpio-idio-16.c
-@@ -34,12 +34,14 @@
- struct idio_16_data {
+diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
+index 8fb34398053d..3be7aad266e0 100644
+--- a/drivers/gpio/gpio-pcie-idio-24.c
++++ b/drivers/gpio/gpio-pcie-idio-24.c
+@@ -148,18 +148,22 @@ static const struct regmap_irq idio_24_regmap_irqs[] = {
+  * @map:	regmap for the device
+  * @lock:	synchronization lock to prevent I/O race conditions
+  * @irq_type:	type configuration for IRQs
++ * @chip:	regmap_irq_chip for the device
++ * @irq:	parent IRQ
+  */
+ struct idio_24_gpio {
  	struct regmap *map;
- 	unsigned int irq_mask;
+ 	raw_spinlock_t lock;
+ 	u8 irq_type;
 +	struct regmap_irq_chip *chip;
-+	unsigned int irq;
++	int irq;
  };
  
- static int idio_16_handle_mask_sync(const int index, const unsigned int mask_buf_def,
+ static int idio_24_handle_mask_sync(const int index, const unsigned int mask_buf_def,
  				    const unsigned int mask_buf, void *const irq_drv_data)
  {
--	struct idio_16_data *const data = irq_drv_data;
-+	struct idio_16_data *const data = gpio_regmap_get_drvdata(irq_drv_data);
- 	const unsigned int prev_mask = data->irq_mask;
- 	int err;
- 	unsigned int val;
-@@ -66,6 +68,19 @@ static int idio_16_handle_mask_sync(const int index, const unsigned int mask_buf
- 	return 0;
+ 	const unsigned int type_mask = COS_ENABLE_BOTH << index;
+-	struct idio_24_gpio *const idio24gpio = irq_drv_data;
++	struct idio_24_gpio *const idio24gpio = gpio_regmap_get_drvdata(irq_drv_data);
+ 	u8 type;
+ 	int ret;
+ 
+@@ -183,7 +187,7 @@ static int idio_24_set_type_config(unsigned int **const buf, const unsigned int
+ 	const unsigned int rising = COS_ENABLE_RISING << offset;
+ 	const unsigned int falling = COS_ENABLE_FALLING << offset;
+ 	const unsigned int mask = COS_ENABLE_BOTH << offset;
+-	struct idio_24_gpio *const idio24gpio = irq_drv_data;
++	struct idio_24_gpio *const idio24gpio = gpio_regmap_get_drvdata(irq_drv_data);
+ 	unsigned int new;
+ 	unsigned int cos_enable;
+ 	int ret;
+@@ -225,13 +229,27 @@ static int idio_24_set_type_config(unsigned int **const buf, const unsigned int
+ 	return ret;
  }
  
-+static struct irq_domain *idio_16_create_irq_domain(struct gpio_regmap *gpio)
++static struct irq_domain *idio_24_create_irq_domain(struct gpio_regmap *gpio)
 +{
-+	struct idio_16_data *data = gpio_regmap_get_drvdata(gpio);
++	struct idio_24_gpio *const idio24gpio = gpio_regmap_get_drvdata(gpio);
 +	struct irq_domain *domain;
 +
-+	domain = gpio_regmap_add_irq_chip(gpio, data->irq, 0, data->chip);
++	domain = gpio_regmap_add_irq_chip(gpio, idio24gpio->irq, 0, idio24gpio->chip);
 +	if (IS_ERR(domain))
-+		return dev_err_cast_probe(regmap_get_device(data->map), domain,
++		return dev_err_cast_probe(regmap_get_device(idio24gpio->map), domain,
 +					  "IRQ registration failed\n");
 +
 +	return domain;
 +}
 +
- static int idio_16_reg_mask_xlate(struct gpio_regmap *const gpio, enum gpio_regmap_operation op,
+ static int idio_24_reg_mask_xlate(struct gpio_regmap *const gpio, enum gpio_regmap_operation op,
  				  const unsigned int base, const unsigned int offset,
  				  unsigned int *const reg, unsigned int *const mask)
-@@ -107,7 +122,6 @@ int devm_idio_16_regmap_register(struct device *const dev,
+ {
+ 	const unsigned int out_stride = offset / IDIO_24_NGPIO_PER_REG;
+ 	const unsigned int in_stride = (offset - 24) / IDIO_24_NGPIO_PER_REG;
+-	struct regmap *const map = gpio_regmap_get_drvdata(gpio);
++	struct idio_24_gpio *const idio24gpio = gpio_regmap_get_drvdata(gpio);
++	struct regmap *const map = idio24gpio->map;
  	int err;
- 	struct idio_16_data *data;
+ 	unsigned int ctrl_reg;
+ 
+@@ -302,7 +320,6 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	void __iomem *idio_24_regs;
+ 	struct regmap *intcsr_map;
  	struct regmap_irq_chip *chip;
 -	struct regmap_irq_chip_data *chip_data;
- 	DECLARE_BITMAP(fixed_direction_output, IDIO_16_NGPIO);
  
- 	if (!config->parent)
-@@ -137,17 +151,14 @@ int devm_idio_16_regmap_register(struct device *const dev,
- 	chip->irqs = config->regmap_irqs;
- 	chip->num_irqs = config->num_regmap_irqs;
- 	chip->handle_mask_sync = idio_16_handle_mask_sync;
--	chip->irq_drv_data = data;
-+	data->chip = chip;
-+	data->irq = config->irq;
+ 	err = pcim_enable_device(pdev);
+ 	if (err)
+@@ -348,7 +365,8 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	chip->num_irqs = ARRAY_SIZE(idio_24_regmap_irqs);
+ 	chip->handle_mask_sync = idio_24_handle_mask_sync;
+ 	chip->set_type_config = idio_24_set_type_config;
+-	chip->irq_drv_data = idio24gpio;
++	idio24gpio->chip = chip;
++	idio24gpio->irq = pdev->irq;
  
- 	/* Disable IRQ to prevent spurious interrupts before we're ready */
- 	err = regmap_write(data->map, IDIO_16_DISABLE_IRQ, 0x00);
+ 	/* Software board reset */
+ 	err = regmap_write(idio24gpio->map, IDIO_24_SOFT_RESET, 0);
+@@ -362,10 +380,6 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  	if (err)
  		return err;
  
--	err = devm_regmap_add_irq_chip(dev, data->map, config->irq, 0, 0, chip, &chip_data);
+-	err = devm_regmap_add_irq_chip(dev, idio24gpio->map, pdev->irq, 0, 0, chip, &chip_data);
 -	if (err)
 -		return dev_err_probe(dev, err, "IRQ registration failed\n");
 -
- 	if (config->filters) {
- 		/* Deactivate input filters */
- 		err = regmap_write(data->map, IDIO_16_DEACTIVATE_INPUT_FILTERS, 0x00);
-@@ -163,7 +174,8 @@ int devm_idio_16_regmap_register(struct device *const dev,
- 	gpio_config.reg_set_base = GPIO_REGMAP_ADDR(IDIO_16_DAT_BASE);
- 	gpio_config.ngpio_per_reg = IDIO_16_NGPIO_PER_REG;
- 	gpio_config.reg_stride = IDIO_16_REG_STRIDE;
+ 	gpio_config.parent = dev;
+ 	gpio_config.regmap = idio24gpio->map;
+ 	gpio_config.ngpio = IDIO_24_NGPIO;
+@@ -374,9 +388,9 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	gpio_config.reg_set_base = GPIO_REGMAP_ADDR(IDIO_24_OUT_BASE);
+ 	gpio_config.reg_dir_out_base = GPIO_REGMAP_ADDR(IDIO_24_CONTROL_REG);
+ 	gpio_config.ngpio_per_reg = IDIO_24_NGPIO_PER_REG;
 -	gpio_config.irq_domain = regmap_irq_get_domain(chip_data);
-+	gpio_config.drvdata = data;
-+	gpio_config.create_irq_domain = idio_16_create_irq_domain;
- 	gpio_config.reg_mask_xlate = idio_16_reg_mask_xlate;
+ 	gpio_config.reg_mask_xlate = idio_24_reg_mask_xlate;
+-	gpio_config.drvdata = idio24gpio->map;
++	gpio_config.drvdata = idio24gpio;
++	gpio_config.create_irq_domain = idio_24_create_irq_domain;
  
- 	bitmap_from_u64(fixed_direction_output, GENMASK_U64(15, 0));
+ 	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
+ }
 -- 
 2.47.3
 
