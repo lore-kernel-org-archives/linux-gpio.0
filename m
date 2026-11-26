@@ -1,54 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.227.135
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795696341;
-	b=PvATM1mZgVAr/GLb96FyJdzyrGjUk59rsq2jqKx0H9BtR+o90bU2m2kIprDE6vtxqtzt
-	 opwODmyK35VT03f/wJsB25O3BCGvHffxYWCV/TuOjms0RyEdQChljPsJxOD4h6DhEEWR3
-	 ou0WN35nLSS6KsXSAyYW8AidKf+zfa6p4v5g9srLGvHUgZ+iqU7HWV7oYe1sxqTbLL3ru
-	 qluRoIB/7O01ze23d/ddyhoRtV0EMFckncuVLvn7DdNNQvBzi2yTd3ofuE7OtM2fkjMPO
-	 EGDcTTi2OtK+ttcHYdEtGiFkuxtALR0Lb9qwjyR8PeWWJVNTbNzDr2JQzwVAYXwFQVg==
+	t=1795697293;
+	b=mg4s3Uq7DeZeIAGAEva25KNYQ8elxWWCYPMAQMBJ0PYdvEdaER4OIG2oJlbwolwYXNBW
+	 Dl0+zyYJqThFXXOWJ3chrLjfTbRJJJiRpQsfIWMGZoD62TrUelIL/nvkeJnYd5yYDaiiI
+	 TZySubZ/M8PzGwsxOqWN/CUT6Cx4tOskBtKQVM9Z+ATmVblZVUHf3nboFj6hBQXZ3eWBo
+	 GZf3gyeIC2T+UP/S5jjkmyLhlWEgZLhNK5ql2zA90z4MVQZoU9aq8GNfH0ZJDwdneq/3l
+	 4Enn7aWP4+CYae7fOsJaVSjFxASXAUZxDYj6LEIs904AJlpATo8GNp0FstYk/BCWDMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795696341;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=rJWhzNIL+tj4n4QlY+VSkAlQ6BFrtzxrqxx3lX6uxZE=;
-	b=oBQoAQd+8Damykk6WkPyIqBrlzz/Lj/4HaVxgK5Lqvu62PYdpP3c+LVPW8teAdbcez6K
-	 ZD8EgkELPyV/pXcr5EH8eAq0rYk0GshlDBEk9xzOWKQO6XifLjL391hf7h0GvWEpKtbxZ
-	 7Q8/lFIv6yqPALy1MdwyU1zPSaRiYZ4XlkRryygQjsAQDL6gH4g/EGPmsriW6S6qmghwc
-	 nBBSPGAWktOymGG9FYnjMlKhIODkdYYYp8JtJBe37MPLFyOrjzBs3bNJXu5jndJbqmKE/
-	 yR2CdaG4tCpQu+pA5NVTKbO6JSSWqebgloO2sdsP5Ly6ynEGYrbcPvqdPjtoedd6v9Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795697293;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=8UXmhjzmrSz9c7UGZC3PvW2Va1zzLFwfvXp87xtgrDI=;
+	b=tHLROuhDjJX9m/OXCF8H6Vzxdqqm167FBeqWSDwxRO2C9JjkUyEQOSJQB+54shPkHFm1
+	 rZdCuVh2dNYJmmqerjDlAXudNFZXCXBlRjXCkEaWZRhwYh3rc0BCJQKEZGqXzVouw2LMn
+	 VP62jRyq2nmWj6zGcNxvLFAhxhDbQLJYRW+n7PPYBtG805tJTRe4APhcK7OxVB/2HkrGs
+	 Ip0se4PEB0MmHu/4T6GV/hQMZSbFzvg+69mhn0H7v+c1icRmN218EO/mLOAtGzNqwPrdy
+	 2ri9h/J/3a9iywzLm20PpXxiZLyk284cdThGnMFNm0IYW428s4Gyf1XPT8dwGVRXF8w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ahnzqFHT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NRd6IM2n;
+	arc=none smtp.remote-ip=74.125.227.135
+Received: from mail-pj2-f7.google.com (mail-pj2-f7.google.com [74.125.227.135])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76735606A33E;
-	Thu, 26 Nov 2026 12:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF18606A321
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 12:48:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BFF18606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ahnzqFHT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B101F1F00A00;
-	Thu, 26 Nov 2026 12:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795696341;
-	bh=rJWhzNIL+tj4n4QlY+VSkAlQ6BFrtzxrqxx3lX6uxZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ahnzqFHTmEvucVPYWzQfnc3/0HCWUKj30w0c0Ihyyiajyalbo4u4UUV+J9QbezIPX
-	 aOQZgNf1TPTEveLLFF9Z/bqq9yKL0ltBydbZWb28Frr2K4vTbDnldFkWyABLmQt6ZK
-	 VGlFhjmBikHZZBFYQKQyYkVLxV9YB3av1jM+VoZsAbTpGz/E61MEc4JHa8Bzab7mSS
-	 idF1O5xTHtVyJ2KmPrXQ+T8+6owfEnLZ0MxBRQIBz8I9nFfdJ4TvkFg7+gRq5bXPFk
-	 3DlPINVqcGlUGAMZwzX5K+C4gKKDmLg4WACyODTIh48vi0ObWIq0ohBZhEV+unJA2a
-	 FaYuaDUNvOqWg==
-Date: Thu, 26 Nov 2026 13:32:17 +0100
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Alejandro Colomar <alx@kernel.org>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v8 2/4] string: Add strprefix()
-Message-ID: <awgmuC_BnyaEpTXD@devuan>
-References: <cover.1795695151.git.alx@kernel.org>
- <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
- <sashiko-outbox-235501@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NRd6IM2n
+Received: by mail-pj2-f7.google.com with SMTP id 98e67ed59e1d1-3b4be95e0afso1880056a91.1
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 04:48:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795697292; x=1796302092; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=8UXmhjzmrSz9c7UGZC3PvW2Va1zzLFwfvXp87xtgrDI=;
+        b=NRd6IM2nMKDbRQaG0Ara5j45MRa5HNcGGGOv9QmXi88i3V4kx9O1RUtaft1LqiJHKU
+         oRzc7zM5wNS0f1gbek0tsZZu857dTzMgDfwsr9x99nsBtV5aZvZ2yZR3bM6mcy/S490z
+         EgGm87JPBxho7Asm2iGgyZCcpq94GXlUnNbXcGqdXzxTj/VkouXfSbPdcPCTk6YkHvSy
+         NDqDNMcI9GQfNqCl0PwwiD92MgpBkhlPav0oJbv3dVOf4WuW/NSctBO+YSYpD/TXqW72
+         hk9qomN8IK5prBkHJWqNbdK9er0jKAMf4uJLmdJmFktcYM2qmVvPyy0yN92tw1PQFhP+
+         BgUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795697292; x=1796302092;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=8UXmhjzmrSz9c7UGZC3PvW2Va1zzLFwfvXp87xtgrDI=;
+        b=aqFsRLpA91B72P35YKujGKBQqi5Ul7aLWQxYBr7wLS5a8GUdwavXuFVQykExtKDh0V
+         jnk7LOKratFVQY9rOnEXb3Q2mx8+kmDAoCJXZTrp+bMsyii9H5z0J41b2uBJPCz4zHSH
+         3XZCJKlCm8Z8POoDmNXbqaNdO0HNfhn691nZnClu333D0QWfEb4UAR6w7zZb5Kq7FqrG
+         oH5ONYjyRB8giNCymuxB5HuzV4aN1V/plhHMwekDLR5mmGIS+iSg0uMsre5GoId9ux5O
+         TzT88UXpVxpKS/nJw+X5zQKJTL7nuF1flQPl4Jh1r4a0iBD70ywAV3aAN3O1o1Hnc2KQ
+         /KwQ==
+X-Gm-Message-State: APuU4Z/r3G5Lu5dv4kyeTLCn0J2Qk++zOjBzuv7kB6P9D4ooYj4M+cPz
+	BUQDaPYa+IFQfNNkf4VGwCftvni1DSXxHYx72oyV68u8ITHzt8AuFLfv
+X-Gm-Gg: AZFdTZfxQMOLCEHkRG/19kJBEKbv0PykOFy1cw8ddO3sRc8INhbGJNey6//0pEPkQqt
+	h7DkscNyOKcJuZ7iBLLvi7wx7avuj7cvY8mcpo6zJOs5khtk9JcZtXFWLryQ5GKQjl1HkVlUFAw
+	uGxP3EPoMQBRjQpuzAXme+K/qsrFmANjDq3jE0D0Z8CsoYenvKOZeDTHC241IIH8SQCrcmpLDsW
+	1a9cx5acNyrc0q0ni94rvIiAZVmv6EwZWeiiW3jt6Cn6dm1mCfClha0TqfVI1M6FJ62L2a09858
+	ZNABRp0zqn3/zpm2WpvFlRdBiQhkiqiDbM5L/x675NgLeZHRyafHt82MIGIti+7DZVDaVHACI7k
+	T/SjKf/QAsw2hNMCGEPaVWcXZVQy0j/wNapqhWGVZyHik8pkZaoRiJ0wSFm0UHL3blWrk6n+FnP
+	surw3B4ocljnv4hNqVoZzP18q5FxL4cuA8Z5tYDgz0GK9fh9sHsfx1GEeNw3VTSyQ2/5VMeQaxc
+	aboNQYDuXbUQGCjB89LtmnGLyDb/TGBvyyqvkVciGECZSnZF6T7rZP2U1TTik1FhVYRoWfKOapM
+	5OPVdbjJSVN4gLWto4aqah7sC9HjIeWuXcEVHrzCBZ4fmqVRdf1mMyCZeX4=
+X-Received: by 2002:a17:90a:e705:b0:3ad:aa1a:312e with SMTP id 98e67ed59e1d1-3b41c7e127cmr20237965a91.3.1795697292077;
+        Thu, 26 Nov 2026 04:48:12 -0800 (PST)
+Received: from amax.cluster.local ([115.233.223.43])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b405d1361fsm35201528a91.6.2026.11.26.04.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 04:48:11 -0800 (PST)
+From: l1za0.sec@gmail.com
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haocheng Yu <l1za0.sec@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: cdev: fix memory leak in lineinfo_changed_notify
+Date: Thu, 26 Nov 2026 20:47:51 +0800
+Message-Id: <20261126124751.3184158-1-l1za0.sec@gmail.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20260922-gpio-cdev-stack-leak-fixes-v3-1-7a0c7a4299d5@oss.qualcomm.com>
+References: <20260922-gpio-cdev-stack-leak-fixes-v3-1-7a0c7a4299d5@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,112 +100,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k7ucbsxvgidvmt7j"
-Content-Disposition: inline
-In-Reply-To: <sashiko-outbox-235501@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+From: Haocheng Yu <l1za0.sec@gmail.com>
 
---k7ucbsxvgidvmt7j
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx+linux-hardening@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Alejandro Colomar <alx@kernel.org>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v8 2/4] string: Add strprefix()
-Message-ID: <awgmuC_BnyaEpTXD@devuan>
-References: <cover.1795695151.git.alx@kernel.org>
- <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
- <sashiko-outbox-235501@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <sashiko-outbox-235501@kernel.org>
+Commit 1feb5d39b05a ("gpio: cdev: fix kernel stack leak to
+user-space in error path") made gpio_desc_to_lineinfo() return an error
+when the GPIO chip guard cannot be acquired, introducing a new error
+path in lineinfo_changed_notify().
 
-> Date: 2026-11-26 12:27:03+0000
-> From: sashiko-bot@kernel.org
->
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue to consider:
-> - [Low] string: kernel-doc parse failure on strprefix() due to
->   __nonnull_args()
-> --
->=20
-> commit fa176bccb75ab1dcd9cc8e153bcc5112c790bc7c
-> Author: Alejandro Colomar <alx@kernel.org>
->=20
-> string: Add strprefix()
->=20
-> This commit adds the strprefix() helper to return a pointer after a match=
-ed
-> prefix or NULL on mismatch, along with KUnit tests.
->=20
-> > diff --git a/include/linux/string.h b/include/linux/string.h
-> > index 9b3e578d9aca1..a6a1953c52e35 100644
-> > --- a/include/linux/string.h
-> > +++ b/include/linux/string.h
-> > @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_len, =
-const void *src, size_t count,
-> >  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
-> >  })
-> > =20
-> > +/**
-> > + * strprefix - string prefix
-> > + * @s: The string to be tested
-> > + * @prefix: The string to see if @s starts with
-> > + *
-> > + * This function determines whether the string pointed to by @s
-> > + * starts with the sequence of characters
-> > + * (excluding the terminating null character)
-> > + * in the string pointed to by @prefix.
-> > + *
-> > + * Returns:
-> > + * *  @s + strlen(@prefix) if @s starts with @prefix
-> > + * *  NULL if @s does not start with @prefix
-> > + */
-> > +__nonnull_args(1, 2)
-> > +static inline char *strprefix(const char *s, const char *prefix)
-> > +{
-> > +	size_t len =3D strlen(prefix);
-> > +	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
-> > +}
->=20
-> [Severity: Low]
-> Does __nonnull_args(1, 2) break scripts/kernel-doc parsing for strprefix(=
-)?
->=20
-> CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py does=
- not
-> strip __nonnull_args(), so kernel-doc mistakes __nonnull_args for the fun=
-ction
-> identifier when processing include/linux/string.h (included by
-> Documentation/core-api/kernel-api.rst), emitting prototype mismatch warni=
-ngs
-> and omitting strprefix() from the generated documentation.
+This error path can be reached when a watched line changes state while
+its GPIO chip is being removed. The state-change path may decide to
+emit a notification while the chip is still present, but before
+gpio_desc_to_lineinfo() enters its own SRCU read-side critical section,
+gpiochip_remove() may clear gdev->chip. The newly acquired chip guard
+then observes a NULL chip and gpio_desc_to_lineinfo() returns -ENODEV.
+Driver unbind, hot-unplug, or device-tree overlay removal can create
+this race with line request, release, or configuration changes.
 
-As said in v7, I don't know what to do with this.  Any comments?
+At this point lineinfo_changed_notify() drops the file reference and
+returns, but it neither frees the newly allocated notification context
+nor queues the work that normally takes ownership of and frees it.
 
---=20
-<https://www.alejandro-colomar.es>
+Free the context before returning to avoid leaking it whenever the race 
+is hit.
 
---k7ucbsxvgidvmt7j
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes: 1feb5d39b05a ("gpio: cdev: fix kernel stack leak to user-space in error path")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haocheng Yu <l1za0.sec@gmail.com>
+---
+ drivers/gpio/gpiolib-cdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmsIJssACgkQ64mZXMKQ
-wqm8nhAAlDnI2SX/pzG4A5z92tvcaAP3Zkh01E7VF+Swtfsdb0Us3udPKvbbH1i3
-+GPzfdlZRVsZ/if/5Z+e2mNcouGDacMYtgE+i3umcBjYFNBN1byZrH7Cuth8R6wM
-OVLMmbncQ/Q5xFyhlLDn2mqFbrtq4Iwx9E+LO9hpwPoi7w08KPZz5WCOG8lRxOM4
-a9CoiUchqO+l+MU1mIqd2w0wbXwLgZQshB3RvV5ZKXQyah9VXHHqP8LjUj34/L3x
-dLAyY+ngK6QgejrmbiyMomMM5H1Jx0mA++w3dY/+wu2OPwQeiKHkCd50c3rCJfVw
-yjo6/nQs3rBMSzuhlUFWQxWpx47mMmsVaM5Oo1+G/YtqfoJBGr2VgvokXCN8hTqr
-o5lUJ7baHSBX39LxnlBYtoZonjnUzooM49Z2011QkU6h58JYbOFNAftTvN1O0CxY
-ibstTfTP1Q3YJAWsmtwDBeyCUsGwaCYXIJC7P0Bi9IOUXpdakHeOrHxAB6idoAj6
-eveJyCfEhA8U4xTx8ZYiioB9KluSkv20YhRsPjaoneB74F8BB6hxIHmhQqfFhzWq
-L2FwBwsCmVVUqwLFi2CcNc+qsMNAqfNYS0cUeQER/A4QoX92ExgCaLKasfoqC/g/
-9Bh+Tx32AFIyRQCGMfNYosjEheSeo85yqANoJuIObArN31RvGek=
-=ZLY0
------END PGP SIGNATURE-----
-
---k7ucbsxvgidvmt7j--
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 5d53bfcdf726..1146198415f8 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -2535,6 +2535,7 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+ 	ret = gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
+ 	if (ret) {
+ 		fput(fp);
++		kfree(ctx);
+ 		return NOTIFY_DONE;
+ 	}
+ 
+-- 
+2.43.0
