@@ -1,62 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795701825;
-	b=N0TeZ5PhMvJaF6rxnuju/ZyMC3wOyvnOx3yub9mjXuKc4iPMjpKfW/XzP7NgeFgHSWM1
-	 aDxB7uiy9H5RGDMNVfKj5i8x3hPgMSSdGQ+/Ybayafx0CF4x1n4zPL804FoSHd0+ntoYO
-	 llgXGpOS0PWYnXJWX/PYWP6v1zWkYFhh8vbuWXkaD8v8nFy3Maklk0ZTjnZIIcdSbOPoD
-	 Ap5RQxHUOtXHfuWPlkuJHWMonxy9Bgu2k8r8949xxXyCPOVCux7ffb6Bn/D+DCI5TM4b4
-	 UifGYJt1vRXii0JI+uRCQmAb8Nxeae2LylxmzdKuxLkeMf++2ZfOYDTLH+kC/3I+UaQ==
+	t=1795701843;
+	b=rKXcwN1mHA91532bT2rQ/sUgLkeEadp+dZcGdOc0boEUij3Tl3kk4aLKzJi/M/FilKfh
+	 3zf8WHtZydJnOFCOEUvwcw9+xz+1zIXsPwHZxWxUn6ZNhpjB3XmWQaym/ghwBS9Ow0033
+	 dXEs31mMIGQJ+KOGhnjtgnvD5WdQJEgoovD2AZFsoLKISPDtSiEv/Awab4jwbkDqfJK9N
+	 mWlxEslswFeHg/mWFr1BpRprPdIycxAtR96aWV1gw6LoMjAFrhONzhcZoyNOsiy7QYOky
+	 1Uc+UMcdvfdVXoxI7mstZMs3qFkX5vYbutmqm3gbY8hQZAB6uA4i4CXe8GD0kvS+gSQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795701825;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795701843;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=CQmJN+K2DWg1ta3Pd0qSDV/I7eFiKregSRjAIlFg0LA=;
-	b=RQ50SOjmUIzaHy/BaLE6gdlNeA52pK+TAxN+g1kTr2/78DC7/azjABl9UM0pvMwnaqdf
-	 NbLbDvEnTcTnXO/wL7/iV17P2y0twzJluQWlG6GU2mDuMFetqVWGMdJzazwIpkoyHr9m4
-	 KhCP7bCgrD7Vk/Kd723UT0FAPb4YI4C1DExRcmv6Ofp3c8lv2lqicyG42lV5Zr1afWDe0
-	 Lw2nP8+kanw6JZgJZ4sTeNSCvifE6qnEJwPlsMZwaJkBppOU8g8Qu/CUajnFBkFQ0iKj4
-	 6px2EkcNc73ne3cCvs1G4v2AgO50yPFV9mhTYXo17tq1P5rwpoqgFNX0d4UuIxBLjTQ==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=lNRC/IvzvGYbEJ7+971mhuu+DwvLQq8IqCI2WqjDZhw=;
+	b=WzARscbWZuQXvHq4LzDLdbt613T8EOyvWwro2cQxYpcKi3r3H2uhwQKeFWpHHhw4F6vY
+	 5qrrKyKAr1DXXg48KVfK4R/V4BsvpDzdXAVEFh7yMw5sX7yusvx0fAmv3PEc//mGDtx2r
+	 7NIIVdyaRrJzYd3VpOQo/EPZzdT8S+mxw0sEcmC0dbvQI3iLXR6YX8mSgBkgNW3SV3L3h
+	 87Qlo5ALZyCQlRdl8IhAnIAPGU5wibRZLSCOfn6rME5s0t+aIlHlZ/PxjrMIiVjhKTrrq
+	 nGtdKYbVuaozrtkDsbaMYJEoKbOQgQF8V9AwCerJvFzath9EBlFnmeTy/pGG3wSdUFQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6wEKaGX;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EKDksiTh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B16B606A31E;
-	Thu, 26 Nov 2026 14:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 0C5B3606A31C;
+	Thu, 26 Nov 2026 14:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6wEKaGX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B6DA1F000C6;
-	Thu, 26 Nov 2026 14:03:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EKDksiTh
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 06A2D1F000C4;
+	Thu, 26 Nov 2026 14:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795701824;
-	bh=CQmJN+K2DWg1ta3Pd0qSDV/I7eFiKregSRjAIlFg0LA=;
+	s=k20260515; t=1795701842;
+	bh=lNRC/IvzvGYbEJ7+971mhuu+DwvLQq8IqCI2WqjDZhw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=m6wEKaGXyRERWQgso8SRd+SHGpfz4XUnCQIx0dqN5yKwrc1IetWft3BvIDEN6qJTV
-	 1S7YeI9WIcLBE7GG9xSL3M497DBa9aQ/8yeB+cVY7zDGFGQ4C54RpM1GhzU4S8OlPk
-	 CJliW0TK7rNy/rnrfRQ1X3dknlVbbrFd8T6pwId/l631V4DO0vowGZycZXRV9MDNtu
-	 2jeowLoCM/dcNGgIzz7Zf91MYOEGO+rTin6lbLY+tW8BeVuUm3WA75UFT503L6ivrc
-	 3ZitzUKjj6kuPeO04VhkxivZJz8POcUwUuoGrZoK7o5fFaxOtigLH2LuyK05PxtOw4
-	 SPMcXVJeIaZGg==
-Date: Thu, 26 Nov 2026 14:03:40 +0000
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Oleksii Moisieiev <oleksii_moisieiev@epam.com>,
-	Andy Shevchenko <andy@kernel.org>, Dhruva Gole <d-gole@ti.com>,
-	Bartosz Golaszewski <brgl@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v3 00/10] pinctrl: scmi: fixes and GPIO function support
-Message-ID: <20261126-maroon-bettong-of-energy-455a9b@sudeepholla>
-References: <20261123-clegoffic-pinctrl-scmi-gpio-v3-0-d61f039be008@baylibre.com>
- <CAD++jL=GRrzWy9p43FqK4WXDiTVpP_0n8sxj698csiCaA6mJ+g@mail.gmail.com>
+	b=EKDksiThdKQs3ZTM/mzJJ1quIxbzbdwA+ynz577jNodfaoWAxUnxDBwFQWjPIHjQ5
+	 Dci0YfJe+acbQ6qk/i00dBuEJDdnVmCbycV9CpMsj+QXyfUTALrUYKZbaVLSoDz4JI
+	 d7O09jBok4HV/o9NBM/vt86LClYp6ihMfHQOyB0x0qomama9+mu3sAA5rPQdvt1c1F
+	 FsJ1QD1DELS4c0LSnNZKq75X4ELieYoaO6pmfTBOBJPevZAtoV7eg8Q9a5SyYPz4W2
+	 /MX1X26jLhKAZtcQEL8HCLu4NZ8kux6j1ukbZH6rkCsJR3VhUWKEMlEqQH4JGvR6ng
+	 g61l6E4GXzAWg==
+Date: Thu, 26 Nov 2026 15:03:58 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] pinctrl: qcom: Add Molokai TLMM driver
+Message-ID: <tzeo5wt6luwupkzzdg6eem4c4up7iguvckowsbcngqwymevef5@2k5btdnpgcfo>
+References: <20261123-molokai-tlmm-v4-0-eed6eeaacc70@yahoo.com>
+ <20261123-molokai-tlmm-v4-2-eed6eeaacc70@yahoo.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -66,37 +60,38 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jL=GRrzWy9p43FqK4WXDiTVpP_0n8sxj698csiCaA6mJ+g@mail.gmail.com>
+In-Reply-To: <20261123-molokai-tlmm-v4-2-eed6eeaacc70@yahoo.com>
 
-On Wed, Nov 25, 2026 at 07:52:31PM +0100, Linus Walleij wrote:
-> Hi Clément,
+On Mon, Nov 23, 2026 at 09:33:13PM +0530, Venkat Yadlapati wrote:
+> Add the pin controller driver for the TLMM block of the Qualcomm Molokai
+> (SM8845) SoC.
 > 
-> On Mon, Nov 23, 2026 at 4:21 PM Clément Le Goffic
-> <clegoffic@baylibre.com> wrote:
+> The register layout is the one of Kaanapali, but only 35 of the 205 pins
+> have the Kaanapali pin functions and the GPIO to PDC wakeup interrupt map
+> has no entry in common with Kaanapali, so the Kaanapali driver cannot be
+> reused: with its tables, a wake-capable GPIO interrupt on Molokai is
+> routed to the wrong PDC input and never fires.
 > 
-> 
-> > Clément Le Goffic (10):
-> >       pinctrl: scmi: report an off setting as not set
-> >       pinctrl: scmi: refuse an inexact drive strength in milliamperes
-> 
-> I applied these two as fixes, waiting for someone else to pick
-> the firmware patches (or ACK them).
-> 
+> Signed-off-by: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+> ---
 
-I have moved the all Arm generic firmware drivers under drivers/firmware/arm
-(as you can see in -next). I can pick up 3,4 and 9. If 10 is the only
-dependent change:
+...
 
-1. Can it wait for v7.6 ?
-   or
-2. Would be prefer to have a branch with the code moved shared as baseline ?
-   (so that you can take all the changes together for v7.5)
-   or
-3. Would you want me to pick up 3-10 and send it via arm-soc ?
+> +	[119] = PINGROUP(119, qdss_cti, _, _, _, _, _, _, _, _, _, egpio),
+> +	[120] = PINGROUP(120, _, _, _, _, _, _, _, _, _, _, egpio),
+> +	[121] = PINGROUP(121, i2s1_sck, sdc2_data, tsense_pwm4, _, _, _, _, _, _, _, _),
+> +	[122] = PINGROUP(122, i2s1_data0, sdc2_data, tsense_pwm5, _, _, _, _, _, _, _, _),
+> +	[123] = PINGROUP(123, i2s1_ws, sdc2_data, tsense_pwm6, _, _, _, _, _, _, _, _),
+> +	[124] = PINGROUP(124, i2s1_data1, sdc2_data, audio_ext_mclk1, _, _, _, _, _, _, _, _),
+> +	[125] = PINGROUP(125, audio_ext_mclk0, sd_write_protect, audio_ref_clk, gcc_gp3, _,
+> +			atest_usb, _, _, _, _, _),
+> +	[126] = PINGROUP(126, i2s0_sck, _, _, _, _, _, _, _, _, _, _),
+> +	[127] = PINGROUP(127, i2s0_data0, _, ddr_pxi2, _, _, _, _, _, _, _, _),
 
--- 
-Regards,
-Sudeep
+I think this needs gp_mn at slot 2, look at commit dd9ecba27b98 ("pinctrl:
+qcom: kaanapali: Add gp_mn mux function") in linux-next.
+
+Thanks,
+Bartosz
