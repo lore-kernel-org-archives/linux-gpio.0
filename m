@@ -1,57 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795665768;
-	b=a1gmAXxLW61VW+Xmyh+r19NRE512jwOe8cThNsQJQNekI8ywak43JdPAcaBcqPx562Gc
-	 dPr748iKScz+rddXdBD2J2O0csr/BqLisnJ40T//nzxhw5mxYtUNxyGoMYy4rl8VcuvXh
-	 HxguiBO7Kz78xWeLl6922Z2M3nWtHwRdqyUJjigcOQL3nj1slbIduPYzHZSo0Ryh9BHg5
-	 RGAOk/oVAutmHbc0oovMfsqTepjWy73I8vQ3S4D3XIyhXIa43nE8ZCVyQEREO1CsrrgXo
-	 TdAFm90EF+pvdFpuuelEipEdVRYyZqAPL5IMF0lxprcM6CGQa7zD7PXKifEI0hErTbQ==
+	t=1795669765;
+	b=qD0vTfEksAUY6OQxkVNOFNbHVYEwWUMRW5YILJ6XcaZMtQ0EKubbhik5T9aaAU3YsB/J
+	 8sTnIWAchOusqrCxs1aY/KVgl8E3WjIInXkEEIwQuknCcqv2mpd3LUpCZIOf3BKG5d8zH
+	 SGeXhv70ereKBcQLSBwyg9bZuZwTvrNeoyPCDrqF/Y2AcHTUN2q5d8lmGgQtv5eCn7Ppx
+	 upHelnSbjAHLoXBFxtbglbBnN5+N7p36qlZkAsRxj6Z9o91sQUjPUqibeYB+niAkIxg3B
+	 8fQNlWP1GHvv4mLrd1Du7kITHL/4cpnviZ8lk26h4Qmckxc1kyoTSeD/9NlrFCgLCUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795665768;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=FdyFo9aP0aBOWLnx/K2osSKErmcqOp6vsfZYxARQvmM=;
-	b=dZ3lOBaa7+SFkOMtHifTOhS6ulM5WXQAl20oj/GVCci2QhcjUyrtWhZwmXDrA99uFBmv
-	 b8pm3U+WYekTP6nB8/BdRyh8FUHqdXcurhDxZkJwhc1ieCN9bRZTOUPO+WC3tBqhftNRG
-	 qa3zvbF+Z75R3xQyGR1vP3FNwgvYotUkIm3Vf08PZ0cvq54X+K1wKrAW1ZQHisKYHGzPa
-	 DDCGTHCRsG6IAud8Q/RlbRK+z7og8Dltzkdxn0UHt8VAsjyvj7qwwWry+OBUqOEavzTF8
-	 0G7Fk1gbk29Ge1eogS7Df2oVAmQ32fooif3tmUGc3r4MHi5TdArYkZAPbEz3ZjFfXaA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795669765;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=Wd3WkYSBVTZqn9lUFbAv0tJhQxpzlY3zFJFj4VoS+2U=;
+	b=YBGQg666BFkWdAw5nSaYz68BQoz17xRMN4rwBryEXYDQ2c3O95HpSOjp4CgJah8wYfA3
+	 jkhlpnzIR0ld18NXIMpEohbRKxWN2rS9GU3KxRjNFaOICg0mf0yjp5nQ3hAGpXwWHVs1y
+	 nAy+w620q5vqVQa+yZCiG6Ij0V//sbH7rx0gLak7oTAROLybUkVqCu+AppavVEBuS11OE
+	 zVYHtUJcW9yoC/f0F1csZKO9afKygeNRXsPV6Q0dUXE1fbp7TxlvORTQDWu7u2UzkaxT1
+	 stpk9VIKmC+2qXDd2KU5uFtV+WYvyZkCQDH5wiiDZzDrhoOVHHFc5Ozlz/LP+aiLjog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UwqSlzfQ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EVVVCBxb;
+	arc=none smtp.remote-ip=198.175.65.11
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E31606A31C
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 04:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D616606A32A;
+	Thu, 26 Nov 2026 05:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D616606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UwqSlzfQ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F1631F000C0;
-	Thu, 26 Nov 2026 04:02:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795665767;
-	bh=FdyFo9aP0aBOWLnx/K2osSKErmcqOp6vsfZYxARQvmM=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=UwqSlzfQ9DC5WdP95seVl542pvWo7NlJmIi2s0p1M3oC5x0yMUIKtbIXZqTQWELWL
-	 EnfYew9f50MZEPO+jfvbu5lWq9+4MIHey/Un8GcquHmzmZS4UGxHhTZh6SgNVqVeJ0
-	 YukVZZ5o6QCjVPY8mY+uvI+ZgiyTrVICrEV44aZ+YexdktUeM3tYjZdT9RW7J/7C1J
-	 6yYZQ1IxGHHSxSpRxQ2S8ZCsgOVdLz8H+VyCy04lp7USJJ8oGPdU/eL2PrsudYG4L9
-	 NF/n/TKgZ/BZY9aQncy4ckySRjCNPTJHEVvpTy2S6iisX+rdfDY1zcRvSey1UotsAT
-	 rH1XegaWfAZDA==
-Message-ID: <sashiko-outbox-234717@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] pinctrl: rp1: use pinctrl_utils_free_map() for map
- cleanup
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Xiaolei Wang" <wangxiaolei01@kaihong.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261126035420.1836760-3-wangxiaolei01@kaihong.com>
-References: <20261126035420.1836760-1-wangxiaolei01@kaihong.com>
- <20261126035420.1836760-3-wangxiaolei01@kaihong.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 26 Nov 2026 04:02:47 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EVVVCBxb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795669765; x=1827205765;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=m5vwEA1O/E7I5dldo8TjfqXH6ZiDa3r2M1nFsbFMI94=;
+  b=EVVVCBxbinvnS3opccW8o4d1T7P5Iw4bOt9hZmZ6cDqVrnms0gJ0dgGz
+   jys+isvl6uj1YbdPk5n0TXXyNwiTKYZA97bZgQVmH4YpvXMf2v9g2TQ6B
+   +E+kUiajnCufK5W4wgdqL7MM1VDm8VrBrI8eQ7O7/nJHXLvlsIJ0AEUjE
+   E8Gy1kBdEph0Onj7CzoKnT4Byz/YdZr2+uk7r2cOEM9lp8hVxjkTOizuG
+   gTPUka9ZF6xfBPHMIuWochgVjVMeYt0h2Lt/cII50wLrFv0hCLOXiYtqh
+   cz3/cpb8fGutFUn6uZSHIESrUqi2waymJAveysB3eVF2KKEYt9WMtbk9F
+   Q==;
+X-CSE-ConnectionGUID: g7JgmQDxTj24k/MNUy0Mrg==
+X-CSE-MsgGUID: 4hVjPefsRVKMhsS0vI1UNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4458008"
+X-IronPort-AV: E=Sophos;i="6.27,234,1787036400"; 
+   d="scan'208";a="4458008"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 21:09:24 -0800
+X-CSE-ConnectionGUID: iTnN2f5eRZyVbdEV0Pif5w==
+X-CSE-MsgGUID: uSGWSdNvRU2HirscstXH0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,234,1787036400"; 
+   d="scan'208";a="12670923"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Nov 2026 21:09:22 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id CEA3098; Thu, 26 Nov 2026 06:09:20 +0100 (CET)
+Date: Thu, 26 Nov 2026 06:09:20 +0100
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, stable@vger.kernel.org,
+	Norman Herms <dockseed@proton.me>
+Subject: Re: [PATCH] gpiolib: use the of_xlate() result when hogging lines
+Message-ID: <20261126050920.GJ191152@black.igk.intel.com>
+References: <20261125-gpio-three-cell-hog-v1-1-724b15c4f0d8@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,38 +83,25 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261125-gpio-three-cell-hog-v1-1-724b15c4f0d8@oss.qualcomm.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] pinctrl: rp1: missing Fixes trailer for CONFIGS_GROUP map config
-  leak
---
+On Wed, Nov 25, 2026 at 04:03:41PM +0100, Bartosz Golaszewski wrote:
+> Since commit d1d564ec4992 ("gpio: move hogs into GPIO core"),
+> gpiochip_add_hog() takes the hogged line from the first cell of the
+> "gpios" property. The of_xlate() callback is still called for OF nodes
+> but only to get the flags so on controllers that compute the offset in
+> of_xlate() (sunxi, Qualcomm PMIC GPIOs, tegra186, ...) the wrong line is
+> hogged.
+> 
+> Use the descriptor returned by of_xlate() for OF nodes.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: d1d564ec4992 ("gpio: move hogs into GPIO core")
+> Reported-by: Norman Herms <dockseed@proton.me>
+> Closes: https://lore.kernel.org/all/qh4LV99kGaQYdQuGbsPX4b9Fm6Cip_Ow7ImY4icfwI8IsbMQy_09FovZY82b-_HVkDmR2ELMlKe8bzCuBB5NpaZizoO-s4tc11zAX30FDhw=@proton.me/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-commit 1a3cbb21b3f3fd0731c811def787e2db607e8aeb
-Author: Xiaolei Wang <wangxiaolei01@kaihong.com>
-
-> pinctrl: rp1: use pinctrl_utils_free_map() for map cleanup
->
-> The rp1 driver open-codes a dt_free_map callback that frees the config
-> arrays of pinctrl maps and the map array itself.  This duplicates
-> pinctrl_utils_free_map(), which the pinctrl core already provides for
-> exactly this purpose.
->
-> The local copy only handles CONFIGS_PIN maps.  Because the driver can
-> delegate map creation to the generic pinconf DT parser, CONFIGS_GROUP
-> maps may also be produced, and their config arrays would be leaked by
-> the open-coded version.  The core helper handles both types, so using
-> it removes the duplicate code and closes that leak at the same time.
->
-> Signed-off-by: Xiaolei Wang <wangxiaolei01@kaihong.com>
-
-[Severity: Low]
-Since this fixes a memory leak of PIN_MAP_TYPE_CONFIGS_GROUP config
-arrays, should it include a Fixes tag?
-
-  Fixes: e3ce7b897388 ("pinctrl: rp1: Implement RaspberryPi RP1 pinmux/pinc=
-onf support")
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126035420.1836=
-760-1-wangxiaolei01@kaihong.com?part=3D2
+Reviewed-by: Mika Westerberg <westeri@kernel.org>
