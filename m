@@ -1,55 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795721930;
-	b=iULnVV9D50byGgXiibRmFN41JzLctFF4sBa2cAmuNEO4FNfV7mjsauQQxsbqzrtdha8O
-	 k06N3alzqW0XxsyWJfASLXtfOBs7vNWUVb83sGx2RP4zLuoNYsOvUXw7rJjWdSpfuJFBV
-	 wG9eWOAw02htBZzXAqY4iWyqmDsB0eOg62Gp1aemz46zmACPLx1jGDQFr4pO1QcY3pwt2
-	 v6p/wMJI5rq3CXi1rkOYq3kuaCvB5J5Gh6Gt8otGfllDWW/jvrpdBwfO2Cys0TW2nTnnI
-	 JURmkmUiB7S4tuXpu5R6Fo8ynzWHRDTePz4sGbxR9zURPy3LLtNEjmk2RGq9Mpl/Pvg==
+	t=1795724638;
+	b=lkUMIUiDc8/lS4Mgcjad3HKhHOyzai0AU5xo7tKdNMmoKB6qL6sGn5tkhwB2JXVGrKt5
+	 Y1Iie9IPAJ1k/2QVu2qiIFJug0gffcjiSgMYYoRARMPXwCxunxkmlyP92UDWPLwELKAIS
+	 OeUbpFq/1QbvXv/rWq8BZQFYgxpIu9asbhA4TFi9QoVi0dd6TXhq7G9GB9UB6XAu/UlGS
+	 qThZifrluRHMunB+pj6yC7qyzVYnnEhHMsmOO0hpcPamPcABYQc1kys/buDDFIyPKEj+z
+	 li/zXZOabdqq0G4THgVes2+W6CcUx7OaDfuybxzpDK9mg2o+2Iow1kKXD10Pb74Im3Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795721930;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Mime-Version:
-	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:From:Subject:
-	 Cc:To:X-Mailer:References:In-Reply-To:X-Last-TLS-Session-Version;
-	bh=MrwdyrGCigoLs5sakLPRHPJFywstvadxadEtt5B8ORo=;
-	b=t0b6ssUJ2M5BSXnvWEDJ+aLLfKTz9BsDcnHE+gfllUPmcQibqtG5CrUackLpACuyOcpr
-	 DEHFscHXW1aaUZ1SiGpF4gHjWXBYuTlCPYhq2qSpV5vBaza4y6QCPi0lm3iEaL2bMt9TB
-	 8QXm4mPRy+wRDCdgw0ptF9kU6OcDVroMEoPVA5lmxO3lpYa1HKstrx3J6SEL9e3VcUVVI
-	 x9jv5wQxc1VvSB0uPoh2ns5+QgYOsR+0bkqpPlKhYp1wKRmSDmfpEL8QgSf8uRMCNZWsS
-	 8+HDo2npPttDJanNpMbLnevCvCd05ayxYNYNWKCtZScz4C0p3YJokkWN2UGrItt04XA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795724638;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=yzpk6VNzLkbdccrx6tz6Pvz7oZb/B/kBaeEMJzrRmQ0=;
+	b=lKO16ZZV3P0clT+mboxTAgz52yBstMGLsbcEsmF1oG4TIvT8tqbB0ehikbFbX0NPijPL
+	 gjtN+6iFmprBYFGrncY4b7fPtX++dSCxbUAI2IQyCqlOksSdFbID9oYIh7HmOZ40/IEl5
+	 ALGY8dM/DqjexXLyIjR+wCsDq7hOFSd1hBtF8Fp6I3npQIGDrQ+eynLmdzuN7k9aG1p2N
+	 yHWvcKHSoSs7W/KkAuJBdQmGUVhUpgGQsFIPQ5RN/4ykKIUwNacyFw176hgS/BJtxXEGh
+	 i4Oe1Son84kyQMPpqvQ8wkz3JCripQaygLYHFfbyJFQPKowTH7qV625rTW2akyTRK8Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=EQDaEarX;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=M6dIAKJr;
+	arc=none smtp.remote-ip=192.198.163.7
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C27606A31E
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 19:38:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 39C27606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94984606A31C;
+	Thu, 26 Nov 2026 20:23:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94984606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=EQDaEarX
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 9FC38C2B9EF;
-	Thu, 26 Nov 2026 19:38:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 351CC60558;
-	Thu, 26 Nov 2026 19:38:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EDF5511E68361;
-	Thu, 26 Nov 2026 20:38:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795721922; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=MrwdyrGCigoLs5sakLPRHPJFywstvadxadEtt5B8ORo=;
-	b=EQDaEarX5ZZKUUatlj8XX6GwcMfEJAdXz0zX+hexJjwp4uUbs1XfV6d/bUYPRmRwv2Dg+j
-	20BIq9QfQG4q7a5JWbrLkoPoAC0dddqbX+2IJM+duoput4oR1N09a5uo0MM0okhhW759uJ
-	T4sQ1Vz+e0BfRWFpJhIXfLjVGLXwzuDr9Gu9ozrCw6l2Mda2rvzNl1V9YMNLr40KEn6AHC
-	T+KO9TJ4bOO5eE93b1IgxmQWtTTHsrXHg3G2yg6ThJS6ptYtSt6yeuZwuE24z3oWBufppp
-	uWXxhc5GzwNpWGgJUkMY4lE998ePX5S2z4YS2adtUFu/3ipxvt3LhSI8IX3Cow==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=M6dIAKJr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795724638; x=1827260638;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WOXL6O59LdMbGTGemwzZEjIOHymjEDmtjogzgCmH8Ys=;
+  b=M6dIAKJrC1EhOwydrjDMMGzFQmvAsvGxJOYJE/zNPRA9yi+Ns2QPgbCu
+   ly236hs2s9zVoyYbm+80uUo+j7CoStEYYBWuEbuD40yEigfEezOnIgh+f
+   6bg/HJGWhJ9lfD+uPaSLLewVF2CIInCKW9G4EWZa/4eBR4CwNB1dxzxFV
+   p+6+2fK3fAI3fWn7TiUe7nDcndHbKpwcgITPUhxRg2fBvv3JCV843y0ad
+   4oRm4Dx910r2NnLFqmD9Hy7NAwUUR7H5COzc6skU8afOXJhdgmbcW0xSV
+   4+7x4dsSrrgT7AgaaQBwEu22MdYtswhcejQ0gsIVC6XammRMdwDokFtr5
+   g==;
+X-CSE-ConnectionGUID: UnBCbpiOT1W9W3XC8JHfWA==
+X-CSE-MsgGUID: ANliMafYTou+ipluDJqAhg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4483385"
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
+   d="scan'208";a="4483385"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 12:23:57 -0800
+X-CSE-ConnectionGUID: LXHBBSfrS1WYegUxgJOYcQ==
+X-CSE-MsgGUID: GsgCpKKZQvu2Sa2XAiLQaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
+   d="scan'208";a="14014422"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.208])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2026 12:23:54 -0800
+Date: Thu, 26 Nov 2026 22:23:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Gary Wang <is0124@gmail.com>, Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Daniele Cleri <danielecleri@aaeon.eu>,
+	JunYingLai <junyinglai@aaeon.com.tw>,
+	Louis Chen <louischen@aaeon.com.tw>,
+	BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
+ GPIO OUT not function mode
+Message-ID: <awiVWP3CN4Jc3L1_@ashevche-desk.local>
+References: <20261126-upboard-pinctrl-add-intc1057-intc105e-support-v3-0-81d35c9ba246@gmail.com>
+ <20261126-upboard-pinctrl-add-intc1057-intc105e-support-v3-4-81d35c9ba246@gmail.com>
+ <awhPbIZjDazImfBf@ashevche-desk.local>
+ <awhQ0mvdzSw9NaVM@ashevche-desk.local>
+ <42cbe8ff-cfe9-4720-8d5f-685e7ff1c560@bootlin.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -58,52 +87,54 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 26 Nov 2026 20:38:36 +0100
-Message-Id: <DN5EAJWRZSFX.3GP1W2FARX6K7@bootlin.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v2 1/2] gpio: tc358762: fix reset gpio handling
-Cc: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
- <kernel@dh-electronics.com>, <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-To: "Andreas Kemnade" <andreas@kemnade.info>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Dmitry Baryshkov" <lumag@kernel.org>, "Robert
- Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Christoph Niedermaier"
- <cniedermaier@dh-electronics.com>, "Marek Vasut" <marex@nabladev.com>,
- "Maxime Coquelin" <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
- <alexandre.torgue@foss.st.com>, "Tomi Valkeinen"
- <tomi.valkeinen@ideasonboard.com>, "Linus Walleij" <linusw@kernel.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>
-X-Mailer: aerc 0.22.0
-References: <20261125-tc3-reset-v2-0-32eefcaf1460@kemnade.info>
- <20261125-tc3-reset-v2-1-32eefcaf1460@kemnade.info>
-In-Reply-To: <20261125-tc3-reset-v2-1-32eefcaf1460@kemnade.info>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42cbe8ff-cfe9-4720-8d5f-685e7ff1c560@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed Nov 25, 2026 at 12:37 PM CET, Andreas Kemnade wrote:
-> Reset gpio is asserted when the chip should be active, deasserted when
-> the chip is enabled. That is the wrong way. Apparently users are working
-> around this by using GPIO_ACTIVE_HIGH to compensate for that bug but that
-> is not correcly describing the hardware.
-> Since this chip is used in a RPi Touchscreen hat, apparently with
-> devicetree overlays floating around, add a gpio quirk.
-> Also prepare for using the reset-gpio driver.
->
-> Fixes: 3355f4ee561d ("drm/bridge: tc358762: Add reset GPIO support")
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+On Thu, Nov 26, 2026 at 06:43:20PM +0100, Thomas Richard wrote:
+> On 11/26/26 4:31 PM, Andy Shevchenko wrote:
+> > On Thu, Nov 26, 2026 at 05:25:37PM +0200, Andy Shevchenko wrote:
+> >> On Thu, Nov 26, 2026 at 11:09:47PM +0800, Gary Wang wrote:
+> >>> The CPLD I2C pin mode setting through pinmux-select is not correct.
+> >>> Should be set UPBOARD_PIN_MODE_FUNCTION on AANT0F04 devices.
+> >>>
+> >>> Set UPBOARD_PIN_MODE_FUNCTION to 1 to prevent a NULL pointer
+> >>> dereference error on .modes[i] for any pin group using this setting.
+> > 
+> > Hmm... bit how the modes[i] can be messed up here? 0 is integer
+> > and NULL is void *...
+> > 
+> > Can you provide a compiler warning or traceback of broken kernel with this?
+> > 
+> 
+> I guess the problem is here [1]. It should triggers a NULL pointer error
+> when you select the I2C0/1 functions.
+> 
+> His patch fixes 2 issues:
+> - The first one is the wrong pin mode for I2C0/1 functions
+> (UPBOARD_PIN_MODE_FUNCTION instead of UPBOARD_PIN_MODE_GPIO_OUT) which
+> makes the second one visible.
+> - The second one is having UPBOARD_PIN_MODE_FUNCTION=0 because of [1].
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Ah, I see, but why not fix the [1] before this patch?
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+		mode = upgroups[group_selector].mode ?: upgroups[group_selector].modes[i];
+
+Shouldn't it be
+
+		if (upgroups[group_selector].modes)
+			mode = upgroups[group_selector].modes[i];
+		else
+			mode = upgroups[group_selector].mode;
+
+> [1]
+> https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/pinctrl/pinctrl-upboard.c#L713
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
