@@ -1,104 +1,38 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.38
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795709448;
-	b=mqH4HknuqdGKlX3PdDWRMRokPrSZfw8Z8T2/3AJ7l2N9r4UH2rJVtx9pozX24veRr/47
-	 OH7JIPJ/lEUUoZWYyv+Ug6GpQPJevmgO09Fj+SI/uEz6IOqKRzlyQ2DPx7KSXF+8quNWK
-	 TcDG0tTPRWUHnZaD9RilAbD9DfAckuCS6DWuclsTulfU6wP4kD/7ifhbhv8D3xsBQseCm
-	 kg5rtGL+thX1aG9wDsSG8L6IX32N6vf4WQR4gIQBs8S7FdgUotWZHKls/URahH8GO+YAv
-	 YzqLx0WfkexE6Wq6GfjSFM7jXq01pXWPC/IB15nPh13K7TgjhVwgWV0TvjcQ4OdKqmQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795709448;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-LD-Processed:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=B9+EBnT/mu2LHNd46nsmLx9yGac2o6F/b7Q4WrzfGn4=;
-	b=hJmBfMjQl3m5P5Y0Fuv7bhnwDw7DjFUjh8wQ/544hJKVke45j6k3i0D07AU6IvHEpgDJ
-	 leW1LHM7ndjry1C23YQgWj6luvMszMvqzQsREcMWg5GfgG8Xfb6HgMjoATXr5QJcLnbHj
-	 h3z0xCrR3f9wauvkyMWvZ2vAh94iXUwBlyccuXKVEVZBPJ+VQJPu1yGWo4B1LiXzm2KL7
-	 seyMXFQ7sUXR8be1d9Ctzrvf29L0p//PU4kL3s+tXY/o+CGHxVFPTD86tTq6OnTm/VGOF
-	 JSI4V86Qe2trDCJdTB0j7aMCvRSkNY2lkXfxVbVXTgUGiLbQbmlUSKc3RxZ+O18xaAg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=kUKfjxJ4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.38
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010038.outbound.protection.outlook.com [52.101.228.38])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447E6606A31C;
-	Thu, 26 Nov 2026 16:10:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 447E6606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=kUKfjxJ4
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YDVyK2Xjusz3kb+MFqIPGVQ5/E60L92kXHMOecpRO/n0Mc968XoRJeNYm5tAhbfzqodOtVcPLChQorK6S96L61YgB6E/JuZVYfpVe3n/uAJDZ+LDHdbJCqJvBwj3W0S0X1nkL8Kmi5JIf4L1PRGdHGyvQSPYygOeApgGIdOcoJ0iCwOhjwsw+VJNdhl8WLwb0sbJlusMZ6HH8IDlfiHMtcoqmTyxJvdMTzX9vsrvvwYZMdPdUysvxcYhGzJQjjiTU+Z4FJZIx+DhVM1sS6Wp1S0PGVVqdG9msi84CYBBXiwAhMV1N+wERYxdZubjdtwS14WpMhOc8BanmsoZaTFs2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B9+EBnT/mu2LHNd46nsmLx9yGac2o6F/b7Q4WrzfGn4=;
- b=pLlGdSDU+BLz7PwA8RKXUaDQqzFKtnFtr2je1ZwB/9z8lMV2Z1vVeRn3e23Kbgy0Aht8coC5AmgTU2iJil0FXb9vy1dyNmeOhHSm4YCRnuWujswEvJOYqJBcE9o3mhIwJG6HhTRUGJCxxMIgA+upXYxKRfriVfnuS5tdeQ/VO/vfA2jOLoOsRyEKO863q7seh+mfHTBpe7OfI2HfN9o47KlModriJLlatFIZcjkYyMziekpcS1hxQbZpeL6RkZLTTrO7LSyjcMGy+EW7xbuOsRH0SNz0VvWN3jUX0VUAjYMzB53oiR/hjyCKSjOLQG51JRGzVEUOi9aeyE2MGpj33w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B9+EBnT/mu2LHNd46nsmLx9yGac2o6F/b7Q4WrzfGn4=;
- b=kUKfjxJ4F8aWtUXiucSzo8+m2wyl7zPTcUB3szqHN/CVBJ9bbRAFC1GyrDQprgKDbWjCmNbyvHUZNUQgKYe2zdquOHnjocM3v2tmG2irGYUpT8MVCo5YoY0ziZni10H+o5jNK6aT8reJv+MQ/kk1VNMR6mirRysXT5WJ7o7V2/E=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15) by TYWPR01MB7306.jpnprd01.prod.outlook.com
- (2603:1096:400:e8::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Thu, 26 Nov
- 2026 16:10:45 +0000
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0662.004; Thu, 26 Nov 2026
- 16:10:45 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Date: Thu, 26 Nov 2026 17:10:25 +0100
-Subject: [PATCH] pinctrl: renesas: rzg2l: Add suspend/resume support for
- OSCBYPS registers
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261126-tm-oscbyps-v1-1-c9eb905c83a7@bp.renesas.com>
-X-B4-Tracking: v=1; b=H4sIAPBZCGsC/yXMTQ5AMBBA4avIrDXRSpvUVcSiajASP+kgRNxds
- fwW713AGAgZiuSCgDsxzVOETBPwvZs6FNREg8qUkVIZsY5iZl+fC4vMaudU3mjUFmKwBGzp+GZ
- l9Zu3ekC/vge47wdeqDq6bgAAAA==
-X-Change-ID: 20261126-tm-oscbyps-095aa23d5e59
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Linus Walleij <linusw@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- biju.das.jz@bp.renesas.com, tomm.merciai@gmail.com, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795709442; l=2622;
- i=tommaso.merciai.xr@bp.renesas.com; s=20251006; h=from:subject:message-id;
- bh=74ABKku7QFfEaNoKyAb2PHyDTR5HVU26q4ouDbAsb1Q=;
- b=2X5RNShz0DIjem0GpOm7r/VHuusuOn6F2FoFCoJrn5Voo1m93MMo3YUCcTL4RaqPwZC21zjs7
- AGXWIZQkPF2BKuF/1+mNFC+Oi+Lzxjav6vN9mVNCJrPOV/YEXEHY28A
-X-Developer-Key: i=tommaso.merciai.xr@bp.renesas.com; a=ed25519;
- pk=J15CiW2gJfhl906eXCszPfqo+ddBW7v9wVMkAFyVDys=
-X-ClientProxiedBy: FRYP281CA0009.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::19)
- To OSOPR01MB295138.jpnprd01.prod.outlook.com (2603:1096:604:521::15)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.47.186.116
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795709998;
+	b=G3BdKRMOE9eQ38nU9zift44lZ7k7zDasweiD7zkkS6+0NfX2LNuourIKhRIDUl4TFqss
+	 afARDAVy8+R5kouddbNt+SNM63HU6xgrn0xp3JXU/N33SgeP2q8kbp3i4F5HHbN8JLqLh
+	 07dWBslZnQeOViNxhHOYvYcwYOc4ZyMIZm4bIvPHugK2O9Gac0AELTS2GHKjGLW1Mz/9e
+	 wOKkFi2QhYxZwsfSkHNiLw8Orr2HfU4BODvgRdY+VTptfabiuYWnavLsc9xeADRUc98GD
+	 RD5+krUoIHzFGbVCG+iyP3s7X6A2ZpZw3NsKunzhl97akHflgsLm+DgokpBEtlEelog==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795709998;
+	h=DMARC-Filter:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=GJy1Mn0Tj9/F+VGeIN9uLYACJ0K5Eoq8rvCXuzIczJs=;
+	b=M4N8AgC5HG91Wv96C9uHT+TFqvcSfvetlS0+SNiTNG6rsnAcg7MSgi1AE+Bv9yjYroTr
+	 E2RZ2+rZmVR3h7+BMLzAndop3SdJx0bdkysHm4GyVbezyDbnhZdhHG1KyYhFs41ceAIUo
+	 ThzywMmJPPzCmKQRNuoDlq11OH6Maq271Y+BuZ7JdLge/ArfECynaiUf1iY3N9s20naqp
+	 a4YwKS3aI9dEKLokWwCxzkjW1sNmKeyp0c0IDESE6GmWsRsqCJ1vrmJrOC83lrhTbK43p
+	 Gtx0eg20WjHyH7N84X9Fp/2LGi07iU6SKMj1/aBf9mosGMioJSv83KBF7ubTgrJaVIQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=krgm.moe;
+	spf=pass smtp.mailfrom=krgm.moe;
+	arc=none smtp.remote-ip=103.47.186.116
+Received: from krgm.moe (krgm.moe [103.47.186.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D45D606A339;
+	Thu, 26 Nov 2026 16:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9D45D606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=krgm.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krgm.moe
+Received: from yuno-laptop.local (unknown [103.47.186.116])
+	by krgm.moe (Postfix) with ESMTPSA id 4DAF083B;
+	Thu, 26 Nov 2026 21:49:53 +0530 (IST)
+From: SignKirigami <prcups@krgm.moe>
+Date: Fri, 27 Nov 2026 00:19:27 +0800
+Subject: [PATCH v3 1/2] dt-bindings: pinctrl: Add Qualcomm Netrani TLMM
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -108,150 +42,238 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|TYWPR01MB7306:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45ebcf96-a48b-493c-182c-08df4bd7d3a5
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|52116014|376014|38350700014|261102123227099003|10067099003|261026140227099003|56012099006|11063799006|261028144727099003|261022105027099003|261021121427099003|261009223027099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	A7Kw/QDhNNJOGhmEEZUmFO8nMBdXmXKLCeC2/cdB4oopE2ia9Li+RGputyQ4kxiv8GlPqSeqFx3uo2hkU4dEcqIQ4x66jr5IKEPQuHLB7OtPNqwcq51VMQjRMOR7ZYpslCO4dyObIACd44IUYtQt2t+r26nQ/wxppLfURJvew/J/U5+AFFb0/mXpxiiK0QyF4NkouvxQy+oRSRp9Bbe52BeDTbXjxv+hQzdR/e5Na8alzEsY3oOq9i9wTph9KcSlDwmcpyE2AOI4Gfly2Ot89jY3LXoSVfiqvlOZkJAWOT3ryYt86mL1Nle0Fw4T8VstJxKk/4IFuGVLU4BNcPSWSXmfnMT1FzYOZpTWX6rdJqAiD/92p/2P0UInJD/G8SFc7E4MTCQFpTaCgPAhIp/qR7R65JWpThNg/880VLT+QGIIzUsmgziQ70gqaiWvYkpdZ8xzRg/VT0ymviBZarid8zZDWRPzmaVQsMTLWqetChmhlcCACVjOSopptSogqOPKppsdFZfE/vlyNVq/xSPKRg49oHlX/BroeH+5GeUjiKgB6XlHK+wJJa7OL07s0gw7F/qVspLMGQ3i/uF7SdMj0ssjCGs9XVGPSxVMXOb4yKeHyj82tIjo8yorMWhyPNNM8o8xBfajwWoOQKmo9F9sIdXLfHeBNsaMoVhoUdzIAxUVOEeZg5ULr1rdLLcC7Ec8gYNBg0fkWUpEz+42JwF0zB4FAh21CA6R5MA64dmAckY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(52116014)(376014)(38350700014)(261102123227099003)(10067099003)(261026140227099003)(56012099006)(11063799006)(261028144727099003)(261022105027099003)(261021121427099003)(261009223027099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUtxR0RxR3d0bTlCa1ZDb1ByZFh1RzhHdzlFS1F2NUlBbWhNWnZEV1lycW03?=
- =?utf-8?B?b0tPa0tmRmdXMkw1ZTEvcC9vWlA1QlRwTS81N2c0ZTB0dG04RGI3T1dKT21j?=
- =?utf-8?B?WW1PcTRyNWhGNkNNVG93bk9uS1VxTWZteDB4cHpBaUdxY0FMeFBNcHRUY1c2?=
- =?utf-8?B?bXI0RVAxOXZmc3JHUTNPd2dLSkRXS25MMlB0dHZHYnE4dGFzSTVrZVNCMEVh?=
- =?utf-8?B?Uk9PTmltUlk3WjY4MnBoU3ZTclhvZTk5TXM0WFhRdzl2MXlNcFRDN1dFdlBq?=
- =?utf-8?B?RGl0QVp1MFBzYUo4VWJ2S0dkSVAxQXUxL2Z2aStGWXY4d2J1UkVtMW02TG94?=
- =?utf-8?B?UG5pTG84cit5Q0Q1NE9QMWVDQ25Jb1Z3MFBwbCtjU09jeUdDWktBU0Zma3VK?=
- =?utf-8?B?aGpGSEdsSm1ONVVwa1psVHJ2QjVGNGh6L1BtREUrbmxmbCs0cERjRi9Zd2dw?=
- =?utf-8?B?RDlaS1Y5M2hhZnBmSS91VHlvak9lZFNxRXBiVDJaaFlQTHZ3UWszcXVNT3d4?=
- =?utf-8?B?aDMwNEpMS0EwajFOWTRHMHJBMW9iVDdjQ1Q2Zm8rWE84T3hxdGxGczJueTZ0?=
- =?utf-8?B?a3ZoaXFHRVN5MXFZNVFtbmt3OStpYUVZdFlJNEppRzFmMzUvWGVCYVM4Zmw3?=
- =?utf-8?B?U1p0S1dNd01oV0xOY0JuRkdPU05ISlE2cXFmQlRwY2xjM3RBU0F0NVlKWm9p?=
- =?utf-8?B?UzZqak1ETGlTNXRza1k1WTRHVjZaT3hIMW0yNkRKNDFjeUI5Vms2aXJsMS8x?=
- =?utf-8?B?MXdCMEdwbHY0VUhkdVZTYkdNMndDcHNSM25pOEtsNkIybGdCVVpUQ1YxTlNZ?=
- =?utf-8?B?WmE0cE5wbU5qcDJ4cVZlQVNSYzJPK0lLK0ZrdWtNb3UrYkJhTTRacjBpeTNx?=
- =?utf-8?B?RkhaZUIxWmlESkpadTBYV2hjeEgvc3FzdEVaZEMrcXNxQUZxeVJpUmh0TU1x?=
- =?utf-8?B?T1k1b2JDREhIZFV6ZGN4K3oxUzBiUkp6N0VrNjR2NkZjcUNlN2hkTGhwcEtv?=
- =?utf-8?B?Z3l3dHljbGZxUHovUTI5RjlmSjhDc2ZpK08xWTVPakpNNHNoeEN4NUFOb0tm?=
- =?utf-8?B?RTBRazVwMjF0eTd6MTRtTEx3NU1sclFIcURqNWlaVnBvSmk0L0p3OWxGeE16?=
- =?utf-8?B?U1RYQzhuVmJ2Y1FsQ0NLWG1pcHZJdlVuK0tCVysxUlpUZmd1M3hMdjVvTUQv?=
- =?utf-8?B?UTEvdmFUcUxpM0xvem5NeE5zUFo0eGpZc29YN3RPUk9nR0VGK2pRd3FWdkJY?=
- =?utf-8?B?azVEbHpSeHFRVkUraGdDOTR1N2s1WGRjZHdVVVNqRkQvMzQxWDdzUWc2S21t?=
- =?utf-8?B?cGtETThMaUE3WlZEVkZuS2NRbHhlYlRYd3VWYlVaeUxpMzBlVDBrWmkyMHlM?=
- =?utf-8?B?Z2gyMTBzZXJQK29SbzNQMEdhaGM5RndtL0cvWXdRdXNYKzhpRStTS2FpcGlI?=
- =?utf-8?B?Z2hRZmw0bDZkVmI3Nnd6V0JrbjAyaWFlMlJoV055T2twL3AwbGIvR1JTVjEr?=
- =?utf-8?B?NDUwOFV5RXozT0dscUhSckl4N0RKck5RWHpQVEt0MHZmK0U5SFRqWnVCcGg0?=
- =?utf-8?B?ZHgrZDRhdzlHcG5jVW1uRlFXc0Q5dzlQUGNDK05aaXJ1Z1N3dXBxWEhxN0Rv?=
- =?utf-8?B?QTFjQlJtVFdsMnZjVlFtU0gxZXYxTlQxKzJmaTdnTjdsSVNzL2E3U3FtQkpJ?=
- =?utf-8?B?RDVKOERCVmd5YTZFZWF6RHMrWVZoSUhFajBWRHcwYkVzc1ZmRnJieHpUZ1lu?=
- =?utf-8?B?V2FSd2tDYi9HUTl5YmMydE4zVFZnKzduZUlERWJ1YkIvK1p3VmxBcG41cnBa?=
- =?utf-8?B?dXU3blgydWpOUGRGSnVWREl1SFZtdDlRcmY3MXNzNDN4WDdzUS9YaTBESU9T?=
- =?utf-8?B?YnVtbndtcTFtSk9kNUlvV2NiVmlHOC95RmpuRGZXL00wR1BpeExBYzYxaENH?=
- =?utf-8?B?cHE0L3Q4N3ZPeCtkUngzYWE1U0htSFdpV0lpeFRNcTBqOWtJUVpDRmsra1d6?=
- =?utf-8?B?Ly9JNmo5NWk3ZnozMVpiN2VHOHBqQTA0MFE3TElKUlowZmgvMHl1WHpLdHRl?=
- =?utf-8?B?Wm44SytqYXFOL3FUUUpYU3U0MjdBUEFpQ1A2dnVyU1l3QXc0VzlIaS9ldnZn?=
- =?utf-8?B?WVB3RHp6U3J2QVVmNG9YVE9tYWlQMlIyS3JwRlJvT3hUTW9aSFNZTTlFY0ND?=
- =?utf-8?B?cE9uMGFJYXBjdE5HUHg5dHRHcmQ3Q2w3VGoyb2svcHNuZU1iejV1UXp1b2lC?=
- =?utf-8?B?LzQ1NzFyNERsTE9mRFY2TDNDZmlxWDJXdXA1eUtGSTNob2dTQW9ieEdiMklq?=
- =?utf-8?B?Q0k0MmE5dnFOZS9HczFMbHJhQ09qZWttVUJUQ21CaWkraDY1WTg1WHFKSXdm?=
- =?utf-8?Q?EbL+pslq59DTo/+zhoGwd9ebmSbWpBr+LWMzB?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45ebcf96-a48b-493c-182c-08df4bd7d3a5
-X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 16:10:45.1272
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WxNBXsurUaQff06/t+pwOM1ZmqlrcVvZOszGG7SrvGPDXKOsZcpz6m34iC63L/j533hVVQk00LNjrNmxYtJUjWNUx5kJOJk1SMN42aEi29kMngURRTIM5QUYscSejv7v
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB7306
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261127-netrani-tlmm-v3-v3-1-3bf3f0bbe5df@krgm.moe>
+References: <20261127-netrani-tlmm-v3-v3-0-3bf3f0bbe5df@krgm.moe>
+In-Reply-To: <20261127-netrani-tlmm-v3-v3-0-3bf3f0bbe5df@krgm.moe>
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, SignKirigami <prcups@krgm.moe>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.15.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8378; i=prcups@krgm.moe;
+ h=from:subject:message-id; bh=/M5UpUXfrpyh7qRAcGoM7FKNF850LQTy6VSkc1Iw/eU=;
+ b=owEBCQL2/ZANAwAIAUNLJdlxtMKiAcsmYgBrCFwkZpz/Lgvdn3l1RFUpMDX/0HOMJlrmUaGfR
+ o4JtjlNZQGJAc8EAAEIADkWIQQKI/ZJLAWGn9r1JLZDSyXZcbTCogUCawhcJBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQQ0sl2XG0wqLxIwwAtfWIbwc4CaxbXnJKGEyfPwXhqidytEu
+ CFPh7ZK23kKD/X9cKVaXTKx5HHJxjIS6j0LEi9SZ7bev1CvtzLnjaLHYWUF9aQUNedPeFwGLoZX
+ e/Wl+MDcZkIOrM07qmV7RZyQ4h7XDarRyOt5c1RmEm/wJCD2ga8iPzMmzuLc8j5bREg6TQInhOz
+ 18vWAFv0KIoel9SN2cSUpYn0UITRN2rvTerHWfaGdsXUMf7LHMpacoQCuQGv6HBO+zK8OAkBYfp
+ LXipa4nLidWaXOcYWCy2/yQZVHYQelfIOR7mAGyS2TWeVjK9UhPqWArWcPEz+YRignKGPUG0tEu
+ KyoLKTC6/nKMz072Yd9hP93zHfkq0jpHp1R1XOvi+XBn7KPv3b334UojEtBSuj6py9uOLiOsIlx
+ KGD5fQv5cjzVxB7LtUj4fOlCfQV/Kyx+06hxgD35EsmsdZ3OF1/10riH+hrXljb+C6jnicr2/Qy
+ UbwAjMhpqknzwQ/F1bZtlnh+0bfhdT8
+X-Developer-Key: i=prcups@krgm.moe; a=openpgp;
+ fpr=0A23F6492C05869FDAF524B6434B25D971B4C2A2
 
-Renesas RZ/G3E supports a power-saving mode where power to most of the
-SoC components is lost, including the PIN controller. Save and restore
-the OSC Bypass Mode Switching Register contents to ensure the
-functionality is preserved after a suspend/resume cycle.
+Describe the Netrani top-level pin controller, including GPIO,
+peripheral mux functions, eGPIO selection and dedicated SD/UFS pins.
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Signed-off-by: SignKirigami <prcups@krgm.moe>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../bindings/pinctrl/qcom,netrani-tlmm.yaml        | 190 +++++++++++++++++++++
+ 1 file changed, 190 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index ca2f36c46c39..3b58f55da76f 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -258,6 +258,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
-  * @qspi: QSPI register offset
-  * @other_poc: OTHER_POC register offset
-  * @i3c_set: I3C_SET register offset
-+ * @oscbyps: OSCBYPS register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
-@@ -268,6 +269,7 @@ struct rzg2l_register_offsets {
- 	u16 qspi;
- 	u16 other_poc;
- 	u16 i3c_set;
-+	u16 oscbyps;
- };
- 
- /**
-@@ -404,6 +406,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @other_poc: OTHER_POC register cache
-  * @qspi: QSPI registers cache
-  * @i3c_set: I3C_SET register cache
-+ * @oscbyps: OSCBYPS register cache
-  */
- struct rzg2l_pinctrl_reg_cache {
- 	u8	*p;
-@@ -424,6 +427,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u8	other_poc;
- 	u8	qspi;
- 	u8	i3c_set;
-+	u32	oscbyps;
- };
- 
- struct rzg2l_pinctrl {
-@@ -3814,6 +3818,8 @@ static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
- 		cache->other_poc = readb(pctrl->base + regs->other_poc);
- 	if (regs->i3c_set)
- 		cache->i3c_set = readb(pctrl->base + regs->i3c_set);
-+	if (regs->oscbyps)
-+		cache->oscbyps = readl(pctrl->base + regs->oscbyps);
- 
- 	if (pctrl->syscon) {
- 		int ret;
-@@ -3858,6 +3864,8 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 		writeb(cache->other_poc, pctrl->base + regs->other_poc);
- 	if (regs->i3c_set)
- 		writeb(cache->i3c_set, pctrl->base + regs->i3c_set);
-+	if (regs->oscbyps)
-+		writel(cache->oscbyps, pctrl->base + regs->oscbyps);
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
-@@ -4009,6 +4017,7 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg = {
- 
- static const struct rzg2l_hwcfg rzv2h_hwcfg = {
- 	.regs = {
-+		.oscbyps = 0x3c00,
- 		.pwpr = 0x3c04,
- 		.oen = 0x3c40,
- 	},
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,netrani-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,netrani-tlmm.yaml
+new file mode 100644
+index 000000000..c8f9d15fa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,netrani-tlmm.yaml
+@@ -0,0 +1,190 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,netrani-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. Netrani TLMM block
++
++maintainers:
++  - SignKirigami <prcups@krgm.moe>
++
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm Netrani SoC.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,netrani-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  "#interrupt-cells": true
++  gpio-controller: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 71
++
++  gpio-line-names:
++    maxItems: 141
++
++  "#gpio-cells": true
++  gpio-ranges: true
++  wakeup-parent: true
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-netrani-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-netrani-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-netrani-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-3][0-9]|140)$"
++            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk, sdc2_clk, sdc2_cmd, sdc2_data, ufs_reset ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++        enum: [ gpio, egpio,
++                atest_char_start, atest_char_status0, atest_char_status1,
++                atest_char_status2, atest_char_status3, atest_usb0_atereset,
++                atest_usb0_testdataout00, atest_usb0_testdataout01, atest_usb0_testdataout02,
++                atest_usb0_testdataout03, audio_ref_clk, cam_mclk,
++                cci_async_in0, cci_i2c_scl0, cci_i2c_scl1,
++                cci_i2c_scl2, cci_i2c_scl3, cci_i2c_sda0,
++                cci_i2c_sda1, cci_i2c_sda2, cci_i2c_sda3,
++                cci_timer0, cci_timer1, cci_timer2,
++                cci_timer3, cmu_rng_entropy0, cmu_rng_entropy1,
++                cmu_rng_entropy2, cmu_rng_entropy3, coex_uart1_rx,
++                coex_uart1_tx, cri_trng_rosc, cri_trng_rosc0,
++                cri_trng_rosc1, dbg_out_clk, ddr_bist_complete,
++                ddr_bist_fail, ddr_bist_start, ddr_bist_stop,
++                ddr_pxi0_test, ddr_pxi1_test, dp0_hot_plug,
++                gcc_gp1_clk, gcc_gp2_clk, gcc_gp3_clk, gp_mn,
++                host2wlan_sol_mira, host2wlan_sol_mirb, i2s0_data0,
++                i2s0_data1, i2s0_sck, i2s0_ws,
++                ibi_i3c_qup0, ibi_i3c_qup1, jitter_bist_ref,
++                mdp_vsync0_out, mdp_vsync1_out, mdp_vsync2_out,
++                mdp_vsync3_out, mdp_vsync_e, mdp_vsync_p,
++                mdp_vsync_s, nav_gpio0, nav_gpio1,
++                nav_gpio2, pcie0_clk_req, phase_flag_status0,
++                phase_flag_status1, phase_flag_status10, phase_flag_status11,
++                phase_flag_status12, phase_flag_status13, phase_flag_status14,
++                phase_flag_status15, phase_flag_status16, phase_flag_status17,
++                phase_flag_status18, phase_flag_status19, phase_flag_status2,
++                phase_flag_status20, phase_flag_status21, phase_flag_status22,
++                phase_flag_status23, phase_flag_status24, phase_flag_status25,
++                phase_flag_status26, phase_flag_status27, phase_flag_status28,
++                phase_flag_status29, phase_flag_status3, phase_flag_status30,
++                phase_flag_status31, phase_flag_status4, phase_flag_status5,
++                phase_flag_status6, phase_flag_status7, phase_flag_status8,
++                phase_flag_status9, pll_bist_sync, pll_clk_aux,
++                prng_rosc_test0, prng_rosc_test1, prng_rosc_test2,
++                prng_rosc_test3, qdss_cti_trig0, qdss_cti_trig1,
++                qdss_gpio_traceclk, qdss_gpio_tracectl, qdss_gpio_tracedata0,
++                qdss_gpio_tracedata1, qdss_gpio_tracedata10, qdss_gpio_tracedata11,
++                qdss_gpio_tracedata12, qdss_gpio_tracedata13, qdss_gpio_tracedata14,
++                qdss_gpio_tracedata15, qdss_gpio_tracedata2, qdss_gpio_tracedata3,
++                qdss_gpio_tracedata4, qdss_gpio_tracedata5, qdss_gpio_tracedata6,
++                qdss_gpio_tracedata7, qdss_gpio_tracedata8, qdss_gpio_tracedata9,
++                qlink0_enable, qlink0_request, qlink0_wmss_reset,
++                qlink1_enable, qlink1_request, qlink1_wmss_reset,
++                qspi0, qspi1, qspi2,
++                qspi3, qspi_clk, qspi_cs_n,
++                qup0_se0_l0, qup0_se0_l1, qup0_se0_l2,
++                qup0_se0_l3, qup0_se1_l0, qup0_se1_l1,
++                qup0_se1_l2, qup0_se1_l3, qup0_se1_l4,
++                qup0_se2_l0, qup0_se2_l1, qup0_se2_l2,
++                qup0_se2_l3, qup0_se3_l0, qup0_se3_l1,
++                qup0_se3_l2, qup0_se3_l3, qup0_se4_l0,
++                qup0_se4_l1, qup0_se4_l2, qup0_se4_l3,
++                qup0_se5_l0, qup0_se5_l1, qup0_se5_l2,
++                qup0_se5_l3, qup0_se5_l4, qup0_se5_l5,
++                qup0_se5_l6, qup1_se0_l0, qup1_se0_l1,
++                qup1_se0_l2, qup1_se0_l3, qup1_se1_l0,
++                qup1_se1_l1, qup1_se1_l2, qup1_se1_l3,
++                qup1_se2_l0, qup1_se2_l1, qup1_se2_l2,
++                qup1_se2_l3, qup1_se2_l4, qup1_se3_l0,
++                qup1_se3_l1, qup1_se3_l2, qup1_se3_l3,
++                qup1_se5_l0, qup1_se5_l1, qup1_se5_l2,
++                qup1_se5_l3, sd_write_protect, tb_trig_sdc1,
++                tb_trig_sdc2, tgu_ch0_trigout, tgu_ch1_trigout,
++                tgu_ch2_trigout, tgu_ch3_trigout, tmess_prng_rosc0,
++                tmess_prng_rosc1, tmess_prng_rosc2, tmess_prng_rosc3,
++                tsense_pwm1_out, tsense_pwm2_out, uim0_clk,
++                uim0_data, uim0_present, uim0_reset,
++                uim1_clk, uim1_data, uim1_present,
++                uim1_reset, usb0_hs_ac, usb0_phy_ps,
++                vfr_0_mira, vfr_0_mirb, vfr_1,
++                vsense_trigger_mirnat, wlan1_adc_dtest0, wlan1_adc_dtest1,
++                wlan2_adc_dtest0, wlan2_adc_dtest1 ]
++
++    required:
++      - pins
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    tlmm: pinctrl@f000000 {
++        compatible = "qcom,netrani-tlmm";
++        reg = <0x0f000000 0x1000000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 142>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++
++        gpio-wo-state {
++            pins = "gpio1";
++            function = "gpio";
++        };
++
++        uart-w-state {
++            rx-pins {
++                pins = "gpio23";
++                function = "qup0_se3_l2";
++                bias-pull-up;
++            };
++
++            tx-pins {
++                pins = "gpio22";
++                function = "qup0_se3_l3";
++                bias-disable;
++            };
++        };
++    };
++...
 
----
-base-commit: c88442c97d6fd84b86eb1e29f006b9c71cba2528
-change-id: 20261126-tm-oscbyps-095aa23d5e59
-
-Best regards,
---  
-Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+-- 
+2.56.0
 
