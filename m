@@ -1,90 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.52
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795697977;
-	b=afwhtqCycSmtKAuF4mlTZGMWUshwbGGOrYPF9aeN/JEjoPcoEejnaHGwl+i3XTzhjMnS
-	 pP53macCtb9ki/hFYwd5teecf7X/e08FDAvM8xjwH7DEvSYmknsY5qCsvOG1KDGMDUgP/
-	 rUMt/ZTGxVGtlDzDVwFQksHcCkDeH4PRAmNGQqnrR+WoHONB3zPLuW9QHnA155EgvO0ba
-	 OadhMiMTI14BBglhkTyKdl2CH0GaAoZ8Q8Hy372M+jxIza04FfjZECuLLgB6yBbTb14Mf
-	 202BsR2lP/taGHc60R8g+rObH7I40+Hku+kEbERWFswxtk1WeUGY3g3id3/ERVrAGAw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795697977;
-	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
-	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
-	bh=CbuFNKwzCBwTANyN4xscAbrXRJqN0hUMcarfFYnwKyw=;
-	b=IYUiRGslpk8kRwOjJGkKp9l7zUaU4ZzhY9YnyWmpMwJk3nupySZXO69AeGW3mr90z9WP
-	 CbEH/Wn+wGGJyf2w1h4WMSdoB/g90yRRw01Vum28LlHkDUVXZDO2zvO1FP9S3EVXLLvvS
-	 GIYOsgg9axnkebZkvFiRT2bl0ujnaWFTVMqIYzgVWCO5FLOFTwEo76DRG+357rcX6J+Pq
-	 QscA0TFhRB8EKdw13MXxb3KKa3ACDuw1SRSH90spF/ILHr0QntOdu/LG2f56Bh6xd4U7o
-	 WUkc8x9G8rKh1HLAiW+82zKkoGgAOhVT3nt87quXAxzbm6AZ/HPBLXmRb6Fk4nHCW5w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=goldelico.com;
-	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=WGFeEmG+;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=WkgTE83h;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.52
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795698439;
+	b=BZ7u+I9EOpWqj0G5tNlcxMYPZMTchXOHu+I62S6UwIAwmf660ZHwsFi7n7Ii/amQeLgT
+	 aMvRpKk55oUGqKlBwwwoTSJhX2vsRlujT17ZI5t2auAkv+7NC7QzBgqWoKPBW7fOCquKI
+	 qLxzd6td9l1MrG3lhYfLdKFqZFZymMBlFJzdpzqcUBInEW4lXSUs0wHkHA75gSdMBmVkQ
+	 /PyFhj+Y3mFEJqT3aycE5TsgmrdaVzaz7y0Yxy8TalXSgytkYEpKmCabp2P20s4Ogk1uv
+	 xwW/z0L9Jjj1Aq8Ri78EsCWh62o7c8lnb0OJAA6wLPRrMufO1q/dcLP2U8oPIDhYICg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795698439;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=k6MLydfrU5dN1iQDZDbtilSOMTOBZOStE4iUqdVk/Q4=;
+	b=b+Y7HwrVgC8PEORLtzVTUYPJS40Ew/SFU2s8u7mTASNageQAN4GW+dzBSVv9t5Ngj6sX
+	 Ebgri7PJMzA0ksnVcYRyLb93ZNfmrFKbGKWbKUau2eLO9RAk3FyRO897PBbu+mcUUDTVU
+	 vH/01k8JHO5Wp/vnbhNYwugmybNj2jbYhataOnlenwgEDlZhbSAVefub2V1PAu6j7fAzc
+	 hflr2Z5R9n6JfpKLroDhIIGhkkLBzKkguOZzR6GltOfYnazVLgyMhD4HvsNBJopycHiG4
+	 rTsGikFPcIRe3+nZu7OB0cXK/GUJ1Q/YK8vBKjSxTwasOYbkCRqmm9dqvbwYdbB3GqQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jkwy0Pw6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6753606A31E;
-	Thu, 26 Nov 2026 12:59:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6753606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1750606A323
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 13:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=WGFeEmG+;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=WkgTE83h
-ARC-Seal: i=1; a=rsa-sha256; t=1795697956; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=oRTFhrcTc3zm6Y5GtvY6Rb2Q0kRcSIPlON2Y4clsb+u1wE9/eK5y7vums89g7TnbD9
-    AmKh37BmEJ8AiLTM3GXdDLsj9SOaLAmSgrr5PqOMbfV27Q7rTmRShTWwD5gkHVkua4Fi
-    ICTWjgKXAkAL0kHl2EnW4BVnK/mhwRp/vtswVBvJKbjzxTjjAS9VSt2shpI1dk3QCTRI
-    MiWQ7RwJvGT4S2SZNLFkB9uGJJoupE5QiIUsSqbFSBZz3DAgGHybZevxT7WREOrQ98/+
-    RuzsPQHsKDmsP7usgd5tZr/W6G2ykzls8XXMdbgDk0yCVHj7xeKi6bGYJQ05POFAItC+
-    djzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795697956;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=CbuFNKwzCBwTANyN4xscAbrXRJqN0hUMcarfFYnwKyw=;
-    b=ST8cOM4LOGOwTSmadD+2kAY212BbXl/2d5PrqFpJb8jHJryj+vp5gKRD7qBQ2cqiNz
-    QxXN0EC3PxTqtCabikHtF9lF7Rsfn7GAPWrwgyFECgQ+r5eVDnx/YOMA5nthYMruHSWy
-    SSkTBx0bQS1KLjspF1RaEgPO0b4DI09rTP3x29aHGCFT2VjQHqjAlqYY4STNPEnU5FfD
-    NGvPYestkSceOiTN6UK6xWR5C3gIcclZxTY+1L3+3SU1HCmwci9yBBj/8P0KOyaB9Hfj
-    gS03KPGruX6JKAc6nGG6jTEfPIzGMZpdiRpnKsNJOJRXXZEuH6gAJmgFv9JImZ3KF7XL
-    s7jA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795697956;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=CbuFNKwzCBwTANyN4xscAbrXRJqN0hUMcarfFYnwKyw=;
-    b=WGFeEmG+g7d4f1vvjJf6N6S1PDh0jpN293l6PlmBGF/rfuBZ9L8w39MJvDtDMCk8wS
-    JrYkNgfoeRYC2Plq2b5HRiaYyziQ3hyhqV/2roJU0jc5G3F5/KTakpWIxf1wjw+kT6/F
-    WMwNpnAAAO178GvdYpfBO5U5JLZuRrtmvQeyqww74AWbzbi9Uxbf5SaPVd0ImwU0E+yq
-    bfTLOLuZnjfob54atCGUCyCcUrDKI5txjoeZXFPbX8KgYG8TCEtitI7WAEC42HuZ/AO+
-    dQ0ygMuJvCHNP8S25icX0WZATdXNaXP0JGAesNl7BrwMf2saWvQq2wCtjDbfJjfC27R0
-    AzSA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795697956;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=CbuFNKwzCBwTANyN4xscAbrXRJqN0hUMcarfFYnwKyw=;
-    b=WkgTE83hgVzMogDcVGO3QYLaT5cLpGgXNr8HKFcdQsufJv+UaA6+BBve3LCBTfYN6I
-    4oLafTj3FkL9aNvzdBDw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrSippbmsiNApfaCH7DkazZx9mjmd7hFF4/bx7E"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22AQCxFDdE
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Thu, 26 Nov 2026 13:59:15 +0100 (CET)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jkwy0Pw6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D431F000C6
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 13:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795698438;
+	bh=k6MLydfrU5dN1iQDZDbtilSOMTOBZOStE4iUqdVk/Q4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=jkwy0Pw6kheEy3Bf54lDMZfIwZbTP0UhNeq6TrUDmAwiib+pNkpMEpSZMLBkMFpk0
+	 9QxxnryKn7D4iRJQunPjHgv0MQcyA4WveEXdsAh4Om4HwcNHnppuzXiYMAVG/nBxfM
+	 N451kxiOk4jDmJMI4fXYIqZP8XMVWFZ9R1NFLO8BHJhZYp9ryFtXWPMXRf3Qk/Nlt1
+	 7uRpvWq3GVmLQcMoyat6UoUTOwsrACZdsRoz89k8wxpNUi6OMcStndOvPUP+whZgSK
+	 2ls2p8yhJSgYsHw2e5RZZYqbZu1YhAaobwvMmyRZwQJ98xWNZqwM9j82olirp2/kv4
+	 YR8u2DQqYHCeA==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5c126f80426so6725966e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 05:07:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFeYVmrknvTupHIOgasNnbH2W1Nz7BAB5m62qILKMLsibH5f0Ym20hd+J3IzbqfBGNsq2yYNylhbmw5@vger.kernel.org
+X-Gm-Message-State: APuU4Z9WZIVNjIIQ4nRlOIjO6DhKupciaXfN5260kDmqGMg9lZuhXc2m
+	H7mTYiH5J62+yAzyZCBdzyxGLS5T8/NF/9kbT709Ogp0NY3MGzwUGcMe8bCfg9oa6zL8zAgjVCy
+	9G9z1iP3eeZKp524/xsqE9EKA/AT5nk0=
+X-Received: by 2002:a05:6512:3b14:b0:5c0:465:3fb5 with SMTP id
+ 2adb3069b0e04-5c1bc806862mr6763468e87.10.1795698436999; Thu, 26 Nov 2026
+ 05:07:16 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -93,43 +58,52 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.700.51.1.4\))
-Subject: Re: [PATCH v5 0/7] pinctrl: ingenic: Add X2600 support
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CAD++jLn7J7D-gobRYWWOk3Gk9-Ez8YEGT=R0SwYPgGRqWDKQtw@mail.gmail.com>
-Date: Thu, 26 Nov 2026 13:59:05 +0100
-Cc: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Paul Cercueil <paul@crapouillou.net>,
- Bartosz Golaszewski <brgl@kernel.org>,
- linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org,
- letux-kernel@openphoenux.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <53510EF3-D9E6-4148-AF41-8BFDC96E589D@goldelico.com>
-References: <cover.1795589383.git.hns@goldelico.com>
- <CAD++jLn7J7D-gobRYWWOk3Gk9-Ez8YEGT=R0SwYPgGRqWDKQtw@mail.gmail.com>
-To: Linus Walleij <linusw@kernel.org>
-X-Mailer: Apple Mail (2.3864.700.51.1.4)
+MIME-Version: 1.0
+References: <20261116031043.502-1-laixiangwu@cmss.chinamobile.com>
+In-Reply-To: <20261116031043.502-1-laixiangwu@cmss.chinamobile.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 26 Nov 2026 14:07:04 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmJt8+Yz3hWPwA7wo63crAj6E+qD2b83h9pPLSV4ktu_A@mail.gmail.com>
+X-Gm-Features: Aa3M54oOpmRcJWcEY0wb-eeul9G7QcTYb_X8Hc7Y0lyAIc5DHSEcaFmVlL8EIqk
+Message-ID: <CAD++jLmJt8+Yz3hWPwA7wo63crAj6E+qD2b83h9pPLSV4ktu_A@mail.gmail.com>
+Subject: Re: [PATCH v3] pinctrl: stm32: Fix reset control leak in
+ stm32_pctl_probe() error paths
+To: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
+Cc: antonio.borneo@foss.st.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, linux-gpio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Nov 16, 2026 at 4:10=E2=80=AFAM Xiangwu Lai
+<laixiangwu@cmss.chinamobile.com> wrote:
 
-> Am 26.11.2026 um 13:48 schrieb Linus Walleij <linusw@kernel.org>:
-> 
-> Hi H. Nikolaus,
-> 
-> I first put the two fixes on an immutable branch and merged to both
-> fixes and devel (for-next), then applied the remaining patches on
-> top of the fixes in devel.
-> 
-> This should work out the conflicts I would otherwise face from
-> fixes vs next.
+> stm32_pctl_probe() acquires an exclusive reset control for every GPIO
+> bank with of_reset_control_get_exclusive(), but none of the error
+> paths release them again: the bank loop returns directly on
+> -EPROBE_DEFER and on a failed clock lookup, and the
+> clk_bulk_prepare_enable() failure and the err_register path also
+> leave the already acquired reset controls behind.
+>
+> On success the reset controls are kept for the lifetime of the device
+> and are never released either (the driver has no .remove), but that
+> is harmless.  On a failed probe, and in particular when the probe is
+> retried after -EPROBE_DEFER, every attempt leaks another set of
+> reset control references.
+>
+> Release the acquired reset controls on all error paths.
+>
+> Also release the clocks of the already processed banks on the
+> -EPROBE_DEFER path, which was missed by the earlier clock leak fix
+> dfd8259507c5 ("pinctrl: stm32: Fix clock reference leak in
+> stm32_pctl_probe()").
+>
+> Fixes: 2254e77665d5 ("pinctrl: stm32: defer probe if reset resource is no=
+t yet ready")
+> Signed-off-by: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
 
-That should prevent the stumbling block.
+Patch applied for fixes.
 
-Best regards and thanks,
-NIkolaus
-
+Yours,
+Linus Walleij
