@@ -1,93 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795652813;
-	b=wRPL/o31HwJfoGJ5wJ8v/9LXgsScACEdfAWQ3MvCnXN7BiaoRVwGG2oiGx3C+8OtvfEO
-	 MneIy3RvHxNFJbnmmW9i/g6I8Accc5uXXM+TUt9eDb3RsAW/CFEtGnkvcmVQ/9D4UCnyv
-	 CDbDxOI7qJVdxfyoLHChY3IiX31RXEAYAdM6I0b1wr/9JQ2oYuXc+yE0CEhWjNwQPWywO
-	 5aZSPDDdm2F+JaBqom3cj4oBRRDnx8W7HtS5qFMXKCNmSonqGip9Rx0bXnOAQDCroEUw5
-	 ayYo/kSEbZZEVYRF8DxrL5rVW1WjOKR+MKjynVoeERqmuDXiG5AFbbfCJdghX9blj+Q==
+	t=1795654972;
+	b=f7qAepylOhUM83jeEyKnNfjXSnGpbobBV+c7mc2qA80pyf7DUNFwekZzRlkp8hnG/YML
+	 zYv3K2M5R75VgCaN7hlO9ufVm3H5USWWddwMrjpx4UXPg7ZZ1zXiI+mBtZx/LxqPhtxEA
+	 lmdWIoPyu3hRfRe9AWd3DzzCiNj43xNrGzqCly8SbAHpQarLhtInmaVtezOybsp/vhCf0
+	 am4fRiqOUHaOy1RmaCBC0HhIPsDRIYhpW1iPKnV9vA7PN9Txf/f4k7cv14UDX6iG8eefM
+	 p3KoW0QrQ2CmQJP4+pZzSbbYc4Hzt8Rt4M9GIVgyYJIFUnXTP/m7wb0egoMT7P0VUlw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795652813;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=jtugGYj2KzKIiuUiozL5YVvfgMaZajhHVat+B+fErZQ=;
-	b=EkS6P5zDo1d+SM6ldIReqN1fAhzP+9P7LscVDKEYe75JNoi5ZLdoEi6FZ0m22ilo7YyY
-	 IifMU21+O1ADxlrqgOfoM3t6YLcqVpYKUjW+ISjK5bQgcgmegctRnbvp1QQjcILQwhkPZ
-	 WScpMUFesAHxbAaFhIb9aTnl89S/9Rtc0ToEoHtEIb+B2m667r62WxhRdmfoqtr0Ydvcu
-	 /mc3bvO29OC7a63Fg33xyKkTEK0CCAl9Pm2pbRbeaDt4JudcAtfDU0J4wwcH5wdmyTLkp
-	 uS4Ezl9wLw2b8Y5Awwr8zz/Cri5fcM4xAaFpz6jNyhZE7P3HAMpAPBW+hR7xIaGZD6g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795654972;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=szOvPNyxohILp8ypzy0QBe0wsGgv+77VvcXMFL1pBiI=;
+	b=nctrFrGfaJW/mZj8+IjBceHSDsdGPFFhQcMwxV4p0s5wWz2dAVvVrTDShD9DQOXdqiIo
+	 Brx9DkAE+ohZbsWqi0IRhyglME9MLioQxo4qky6byGFh37aPpQhPFtrDR1vkvBs43mL4M
+	 6u3yaEfMb9GuhtFcpelnGbK4MvdiTcdmMYsRatWuPE9kK1OiFrwrTOlbKhEQGbfagbEF0
+	 jYHKWU0Qc2wLy8CUcd9VSjOgWz0mM19AowDAh6NaHBYAgD4zeb/qcv/mBcEmjT5Dy5umA
+	 ICU3iFtBYErkzkaRLlNgkJhVDVHyepTFW8Q9GEC5d6Y8l5CA7Bz70NEIvKdtXQLnGAA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gjHA+sAm;
-	arc=none smtp.remote-ip=209.85.216.49
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GxivgSKK;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4DC606A31E
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 00:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D4DC606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9C7606A323
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 01:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gjHA+sAm
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3b0ae87069dso2740802a91.2
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 16:26:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795652813; x=1796257613; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jtugGYj2KzKIiuUiozL5YVvfgMaZajhHVat+B+fErZQ=;
-        b=gjHA+sAmDSrXBo7slcTEhMIL6BhlInqaqLOOsZjcpyyjAm3e/c21MR7xRkeyv1/Wno
-         nUWNodF1xi9VDVVSLJF5ISYoy16kWiCqpmyQQ1uI+qeG8bgjnrAVRvMpjgF2p24T8esZ
-         2G5gqM8d1KpRq4yNRTWsfC06ul99DF0rR+G6MUTRF7Ud/gMwsOJYQdccz2MSLt7yCu8T
-         xnuxGU0HEfHy52RluYyfslrX6G7IawGSec+b4BOoSatP3YqCBtTZTHl392L+uVmnWD+a
-         n/Az7mDVSIFCbcoIX4QFwPgFFO8ZzeTHnPei4XQsGpQoo6JbMGVx2Jx1uo7KxUgHGijL
-         x+aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795652813; x=1796257613;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jtugGYj2KzKIiuUiozL5YVvfgMaZajhHVat+B+fErZQ=;
-        b=vCd4tkx0QHIwbN+X0W3Va+z/5bZdHpqs25L3spbftwk4Bd+1vlRp+uDES6Y8Edre3O
-         kSC3n8c+TZpCLYXtXl6Ac2eEVMS5jrEy9VlsBzkixSiTUvw5oKe9otzP5hDST4yLR6As
-         yAv2S3Av+WYR6IAqLjIQA4+0bAPBZ2CoJr9hhtSaOp1JNkb+/3trlM/cXv2Gak6DAfmi
-         4PL7LoQebe1OqpQ7c71EFjBf/mYpL94xZElaOAnPCOai85s6aWG6jNCLsBBbj24pb85d
-         lxVCNZkl4CZM6ove0oouj06CC5qwfMTzj6zcBDDjY5D8yVedb1aI0jOoesQr0EKmOjGG
-         RW+A==
-X-Gm-Message-State: APuU4Z8yjhmAXsUCJlLpCx15IKSmPgrIwvLxvruxslfqBAEobiJOLFcC
-	V2V0DUAZ8OiucqIa7MI0V4kvPLDVtxEb2GXACR9JkRg6Qcj0oOR15++Zl1jGCw==
-X-Gm-Gg: AZFdTZfL8/mXdO22CwwFcKjPfF2GH2pfZd/X48lfpYQxny85aAgfd37suXyEWoQqsTF
-	lZ2Bf8yBrDTjCpc8v6Lpc94+aDuUNmJ7jZDqGroz+OSet9FRQdZkft4a4sZYYPocA3vcQ9/kElf
-	nJVclcvBihK6krba3oLGpmZgjB+6qnjxB5mmYPXHKv+wmLMDx7Nr+xqN8VYsCFk8cqDk35ArkSh
-	W0k9IKvzth5xE/CUMV8GoWq4syYIyzTT1j/sRQW7/FAcZu5pR1WcORYX2d1ecRnA1+MYCMOoo8A
-	nPT24jxFy3H6ZPFE9l7IIccXFFoYCovL2jAQvHcvtYV0R/ph2IdpFVBd92o8+fVPf2eTHqDg05H
-	3PoOqKlqd6kUQTvSN8vWUq8KnfQXV2SZc1nppmXVdU2zHx24QEF2B8Az/Rhgk3FRHo6hPrtzS/s
-	xdy1LpBzfrchOXJ0VOsfuSx49GTL0HGeXVCBmGVKRvArGkUfkGCdQOPaZNHP+lrjbrTEabkPBze
-	3gSc+m3CgnFMtEogvZnNDSf681r5y+CgE6LVw9QBc1UQ68WD2KlpeljrDGZKLnz2aUS8KYfy5am
-	T1sX3Bkh7CxnxEQUvta4LXqXmG0KOCC54A00UMxkIbo8PGzXm40AD8R2GBkbYdlMN7XzmBr7KfL
-	Iur/6ULmXTYcdMcevBUL+sPedWg3LVYQJWxL+9xi6NKWneYgITX1zMUN4k1ZCYWxvwuBUNVanPD
-	n/bA==
-X-Received: by 2002:a17:90b:4cd0:b0:3ab:36c4:b4ff with SMTP id 98e67ed59e1d1-3b41c925a85mr19219602a91.24.1795652812641;
-        Wed, 25 Nov 2026 16:26:52 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8000:37f::e34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b405d639fdsm33013866a91.10.2026.11.25.16.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 16:26:52 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v4] gpio: mvebu: validate ngpios before use
-Date: Wed, 25 Nov 2026 16:26:50 -0800
-Message-ID: <20261126002650.603321-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.56.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GxivgSKK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1161F000D2
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2026 01:02:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795654972;
+	bh=szOvPNyxohILp8ypzy0QBe0wsGgv+77VvcXMFL1pBiI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=GxivgSKKpMAbosqUk66Yg4iqBddCw16F7dBmuZ/OIP0+CNyedhqtebgAKbjN+lZA2
+	 XzrsTS5KEpJLSeD7i+R2egKS22N6blaIWVzB/WxRu41zP6lA0V7+QCkPZvpkqw7h5Q
+	 DcOPg02AYjxyC9fGtPeZRjn5JjC4cMvQzgeZQxsOnejhZh008h9JVM8EDPJVQul17m
+	 7Q/84bX6YEho/gL8wI/w9xIbCWrZKQ6eQ6loBY+e89YwfZc5xTsc96jiVKhMtbisPC
+	 5IYou1zn8i7X+GbyR/XnCH4jYewJzSOCfd0jwZdQwc4RUmVL5gRGW+fKTKoc70yQ3j
+	 Fom+4k4F7afMA==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c31cdbeec9so1867577e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2026 17:02:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHRHiPLmHQp0HIRU/LdFS4WlXr+qzksdND9/IUaEQ10EVSDq4IeKK16djk0JsbUo38sSNbb8c1XNX5y@vger.kernel.org
+X-Gm-Message-State: APuU4Z85Ac7yu5wg+vUe9ik8XWIBRK1i3u+i9VEI7jws+whyVDK+M8L9
+	7pzxaJQtwvtpy3nlNeqTzPCvCXywb/XKdZAwRVpl/bP/1paXyA4CdkVoUkOMgPPQlijI9Lkt9gx
+	h72Qpnh20WdQMp16g8ojmVQ9zkIATghE=
+X-Received: by 2002:a05:6512:b9d:b0:5c1:5975:a6d0 with SMTP id
+ 2adb3069b0e04-5c1bc813d73mr5576689e87.49.1795654970525; Wed, 25 Nov 2026
+ 17:02:50 -0800 (PST)
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -97,38 +59,37 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v6-0-fbdce4565a5c@free.fr>
+ <20261115-for-upstream-lx2160a-rcw-pinmux-v1-v6-3-fbdce4565a5c@free.fr>
+ <avs4l1otw6ACW5P4@SMW015318> <avs9fmJqYShOIPMK@l3017729.home>
+In-Reply-To: <avs9fmJqYShOIPMK@l3017729.home>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 26 Nov 2026 02:02:38 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnF07h3Ng5O=xcgKhTEkV9ij2ptzktAfi2Kt45smdEjpw@mail.gmail.com>
+X-Gm-Features: Aa3M54pY2u0gcwGTwDEHxrFaQf4DHIpe5Fj8K7AAC6iAolS08Y7XLFFoVNzoAr8
+Message-ID: <CAD++jLnF07h3Ng5O=xcgKhTEkV9ij2ptzktAfi2Kt45smdEjpw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] soc: fsl: guts: add the RCW override of the pad muxes
+To: Vincent Jardin <vjardin@free.fr>
+Cc: Frank Li <Frank.li@oss.nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+	Ioana Ciornei <ioana.ciornei@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If ngpios is read as 0 from device tree, it is passed via
-irq_alloc_domain_generic_chips() as irqs_per_chip, which leads to a
-division by zero in DIV_ROUND_UP(d->revmap_size, irqs_per_chip).
-Reject ngpios == 0 early.
+On Mon, Nov 16, 2026 at 6:30=E2=80=AFPM Vincent Jardin <vjardin@free.fr> wr=
+ote:
 
-Also reject higher than 32, which is the limit.
+> Then, since it was unclear for me if the patch 1..4 are through
+> pinctrl and 5 thru imx (please, Linus Walleij) ?
 
-Fixes: fefe7b0923459 ("gpio: introduce gpio-mvebu driver for Marvell SoCs")
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v4: resend
- v3: use dev_err_probe
- v2: reject higher than 32.
- drivers/gpio/gpio-mvebu.c | 3 +++
- 1 file changed, 3 insertions(+)
+I could do that as long as I have the proper ACKs.
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 46604093a01e..f0e8ae657d7f 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -1214,6 +1214,9 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	if (ngpios == 0 || ngpios > MVEBU_MAX_GPIO_PER_BANK)
-+		return dev_err_probe(&pdev->dev, -EINVAL, "ngpios must be between 1 and 32\n");
-+
- 	id = of_alias_get_id(pdev->dev.of_node, "gpio");
- 	if (id < 0) {
- 		dev_err(&pdev->dev, "Couldn't get OF id\n");
--- 
-2.56.1
-
+Yours,
+Linus Walleij
