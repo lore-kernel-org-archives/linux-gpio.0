@@ -1,88 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795770731;
-	b=nsP5Z2w3OSSr9a7FGqynrzFkyyWvTzrmE6UFl1G7ewuHT/CRNqLAbzkvu4VOmbN4D/Yy
-	 3QbAjrdmDY7KCQfiNA/c926nXN5Eznfs4Of1NcwZIpJJhqVKKydshHkOEGkWKtBNAUnQt
-	 sTzLf7SZzoO/3H1VCl8J+LLy5/785sDIQwOvawU/1JbeTr2DoCrYyXWXGBzc263h3foxt
-	 k9AgF4qkunSlQpN7Vh00uB8+b6g4EuP/LXG88cr0Ih4lSCPVwggCNZN3rExyc/WJPoQRC
-	 FN6Y9ilKKtjjTb6uLLE0kUm7ort/ucuSN9B2YlB2NMMOD8Pj7jfb/22kX15/7IlK4Ug==
+	t=1795771015;
+	b=BS9XEVhgNu04ObGl4W1j5hiYDlycK8fjt+BLQ+FShctzY7OLo6JpLhyt3OzLDUEAu2jK
+	 ZkDagOUCNDgXqhKakH10Hu+ka1d3fhMoHHpDHyRVe1ehJNYHFXAoQ65KJGH+k30CTRaGR
+	 fjsWuJQeFj9ehs9vTJAUXXh8MZ81ng/XMacudU0jX6t4cZSYrZTVSOvCJ6YcOaT3WnzlT
+	 HKkvKDZdcIcuKAlUyfDjBlOSvEtedDKXyITiZyoE09Eg/orxKqJBsh2I/wvOt4V3QCYdp
+	 7B+cSOI/8uCVJ5CwqkWTfAB84j51a3EGwGtba0GUdnTy5c1PgC5RPoigZ8z13Nt1P6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795770731;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795771015;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=7BmBlqkLTRWPnM/PyPREkTVAoRCehz9jfOuEcWz3kOo=;
-	b=sgaq/A/4ClKvINbWNwXRXLcXYZV2q+EOC2R03mfyyQY4IrPtmCD41aD20Zg/5QBqx2Ge
-	 3u2LWkXIaC/1HDEtYGZQkyfRfIWoynSrjV8uYgh+PCu/vs5HFe7d5utJJ+et4o6haa7RM
-	 ihNlrLccC7UchGFPI+QIErnqkZ9gn1LNlrQH0HftzucYSOPZgRs8TgOldJj4pXkdoiGs2
-	 I1yME8JTdnJOXM3NzBRDvmlcMx7Wrb8Ahjee+5+8woYRpxsFrE7oLvi3/vhXZ+hhtLJMn
-	 Iqi78WIQRNBVbcjYZ0MUkxYwx9pxzynG8PDllhc9qrDzrAWnGMUO8CyPgPqAjyfmikA==
+	bh=FthDJgeAJmR+CsDyiqI3a3aJL/56y9FuIeVs2tpiliI=;
+	b=k+NRBUNYbz2QDqxQGTli2V/dg2LgAOO+GOks4hmCwCkd6wqGirPRMWJU9ZLjjC+a5zub
+	 EWbvV81pdzZq+CVy8QLnwIJgwcvJquPsrwnUzyVspxPTntK9FdymAcZ1p85mo569DV6qM
+	 zdF4ZbTGcAz2bhrTmJ11DpFI4Rd122lSU3q9JjXhop8h9Ste8KJsV6Smm8i5/8hnqrfij
+	 K6XijscjJj295HzlUlRgl6j4/0JmxP3ViT9m9OlldFlG85Z1P5YStvyeuPjeXDFjjqrKW
+	 HbLFJJmFLtEVdJa4aNwbhVsBDnE1cVlqaORhQPuTWFbbyH8yhzprjKgaD1LIr0ib0dQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=tuxon.dev;
 	spf=pass smtp.mailfrom=tuxon.dev;
-	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=oUQtFPfH;
-	arc=none smtp.remote-ip=209.85.208.50
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b="VZl/IlJW";
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DAA606A331
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 09:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C8DAA606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C074B606A327
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 09:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C074B606A327
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=oUQtFPfH
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6b596afb4c5so9179573a12.1
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 01:12:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=VZl/IlJW
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4bb6057b333so37978455e9.3
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 01:16:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1795770729; x=1796375529; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1795771013; x=1796375813; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7BmBlqkLTRWPnM/PyPREkTVAoRCehz9jfOuEcWz3kOo=;
-        b=oUQtFPfHi1S6G+Lki3MzTQU86GQHUmr/a7X4kCX27BKxweK2JCwd1auoyJbq2h0HbQ
-         3X39h5pwxHW+tWps2o0RFgepURXxk1OguFJljOt010jDjXDrOO1KYqKijW6maJ4sEbev
-         tUnLjv2oaxOPj3/4XJIxCN0BsmJHLBj3y498UFTgEG+GUR1NLsWSZv1YE2jdesVVwF2X
-         tcMiitjnx+V+w25x/IEB2KldSyjntkjyw5NTnEXwkCcJzqLKfdDj+NAhE7Drx6lWOcw3
-         ySVBQGUMXO/Ai3k88g/5bXwZVH8M+9vRrj+4D6Ai4t+p1be1gvN2P7nhEJebNOBW/HX0
-         0cbg==
+        bh=FthDJgeAJmR+CsDyiqI3a3aJL/56y9FuIeVs2tpiliI=;
+        b=VZl/IlJWSTPQEx3kzZixxBHdoo7HxTaWIlhn7M84mCtSRGyLmzMnOwbhKMFpYJVCId
+         emKq5axdQzhT02uh1q9SxLotymBikjKdtjKqWXm/qh8EimPtNhmowWfDThbdF/nr9nqu
+         WIZthNzQfusgbHf8Xg2y13RainI+sV0raFlp4r1PKwA9JDPTpAnoSjXjvL5HMTc3mU66
+         iTsvbv7qpYAkmD5OFlxkBEygevhq63D2NC7Avc2pgYvG4nLLGoDl0kpqhnt9rCaWPAWG
+         9MHXNRCwu9vbkGeyoKOrBUM0zuKqj3f465SBdlaVdOEr51hHCnBeDIGT9Dk6v8ZHSGEf
+         AXvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795770729; x=1796375529;
+        d=1e100.net; s=20260707; t=1795771013; x=1796375813;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=7BmBlqkLTRWPnM/PyPREkTVAoRCehz9jfOuEcWz3kOo=;
-        b=lo4vESbfoHve7mWRgqDxPkChXOJXPfounCKz8w2wmq4TpALXFS4UExJ6MoqSvB/IuG
-         QeHMKPrepex7X1PBQTRWU/PYMkp1FVM3xWsn+XvZc4Qia7xxg5h6BCCYj7KsSWqjpnCp
-         SKnc6vzbMReTUoNgAtsrMP/Ux7ooZ+xMfyF4hVHJdfcHwSbqeVH1teLcHB4T+rV2unhF
-         BU3iLZbWboYhfmb+a2a5LyWhCv5aL58Nv1+H7PBUbRITMNFKMSpkLMtPqi86W4kwV0gt
-         4fztliQlKSNiXnnh/cUf9NECc2L0iQ/QLUqyqrsek2lDCPCEg4WpuWEifCKL/w5DYAM9
-         NqHA==
-X-Forwarded-Encrypted: i=1; AL+hErEd+lTdPYmyPrX8cgMeujBQsU+giOYghF28nhopsTDHo0G83bVPZyz6swo532qJeTReGe1S1c/shKR2@vger.kernel.org
-X-Gm-Message-State: APuU4Z8002kQa99gQDBJC7qygydH7KOdYyUNfAitMIRqmvqvO0wk7mKp
-	Fv0HMbz8+SfzHjVdGfZqP5w7Oqmg+QnOpaUo0DHxfPYfn+1Hc0BylRNDWxwYfOovagk=
-X-Gm-Gg: AZFdTZfRBcAqojxI2cteEobm9v1ljrcqRa0/1qkG48XsxPGw3+qgIzUtI9tr42gZJ9+
-	CmZA2CrEIOUqGyeHmQ7TTyi0n4OXB8RVx2udCpuUOQJx4pkjvT4H6bj6jFQfk7Finw9MSb6iOh9
-	u5Zxe94iDAcv/UfkKvQnG4IuWgH+2ziNF4OYcGTCThmVDtuWYO8H/s4pkllvMtGP0VtTJzR2dXQ
-	ChrHRBmoc8BykGQQqrqUr3lvmtiHZKIi2CnuRJIUz8CNoSOFrvslmnuXnLK9xXPIaRPz/YM5nn3
-	LA2EXUVJk8pxcLe/Ue4aRFidKropbho8cyvnx+AsA7eenVZ3zhqKNnv4CnBVg+7HgURp0nPUJhb
-	cOnPOQWH3ol3+nbEz2vh4Hv8T1YRL67XjP4oekoPjAYbvX3SGQJ3T031lUHSmY2LkXN/XwD8PZ7
-	Ix/LmBhsu477CmvWGzpB5foAybD1Thnos3DmzzOiiaQvt+2O+AFEkrh8hAYHuemy2e/Kq0GCT8N
-	veIqQc7yCbwHmXxzmhJouWu84d8GK9nQ+g4xhJnjy/Wy2Q6UBEOety15oxBhaQJi0pDS/DbRk5a
-	JhVzvBgOlfG7GH3C2cL/nViHtVsuQOD2ZRuU
-X-Received: by 2002:a05:6402:13cb:b0:6ba:4bf3:4a2 with SMTP id 4fb4d7f45d1cf-6ba4bf305c0mr15740801a12.17.1795770728948;
-        Fri, 27 Nov 2026 01:12:08 -0800 (PST)
+        bh=FthDJgeAJmR+CsDyiqI3a3aJL/56y9FuIeVs2tpiliI=;
+        b=mBnXPeavBfGuQ3PQ1a8swuVNkgs0wcwfnkav7QrHclB7YrC/Jt5g0L+L9O8YFZbpSN
+         nTI0G76zDsGskBTiKle/x/0DB96NK7x7n4xZhjehd69EHfxbLdqFoZJgkX1Yopb580Zd
+         Dd3RVpWoA944JE1gIoWQxYF8Egc6oy7gPOGKwkDyTPiCpWE1/5lv39wcKywzoQC5vJZk
+         Y9wwgEd3zWWoMA3AWvilBzTNMdqbOLQnHypbNwbdjJg1Np27rjobJNGjmtmVd2D89b6K
+         TRz1XeED9Vg5NDiEfPKoyYbYBhT9bUTGesSbtWhcmkavkf1aKQ9KtkV0dy/OWB8ebI74
+         CH7Q==
+X-Forwarded-Encrypted: i=1; AL+hErHMtSGqmzDPsiQca7J/FsIj++4VtXAam9NGyzNUxOcJ4lZ5cff/zy28LTfTkRRm75F9BLqx/3uM0b6P@vger.kernel.org
+X-Gm-Message-State: APuU4Z/gdz+4kh/lc9mrvzp2g2QRcuGInSTwr0SDTmUIfwfDrudzyler
+	kAR19O5qZWrLX2HHzgK9+LtWEsuUtyc9spAmRvm3oqAOBLhXtaJGeB7HvdQHA9p6xATPvyj6HCk
+	sNAzL
+X-Gm-Gg: AZFdTZe5BTQFtY4cIhtqOA/AyU3iL+TRBRfXXLak5UAcgFI0Xt4hCWxKYDtbuWa4rOD
+	/MkFXAb3vBjwvyeaAPUzujKi+7tPe3XmU0Ukexs390S6jv3YgseOAnha4klad2dYwQD9Fe7P96J
+	Ik8y1ZB2cb+t4H0waRWNmkbccUGesAkwJsKwfYrm9Yrf8pmVLnVzg1/eMGEPrl69Aa5VdpNoWfW
+	v95AEDoJr09OcZfE15CQQwT6tE48hj4PTRkA8Z3VswGgUWJULXfQmGzUmw9SGDg416fzMR3BbbL
+	zj5TsW/jqpAsLEH7kXwL9YX3WbvkWwUpvGREV9d5UP7YpsSNnCEfHaQCCQbkSs+puER2P9MAGuv
+	Q8BL8sxBFEIGcTXGO4f9Lw/bKM1d4vZ6oodcw4wBIpwGAJAYtndXX8YXJVy8MT8QhSUe9/XRKdy
+	jRUrGV6drUP+yi8b3CcyncIE+tsMCtcF1vCp4STJLtcYqzGDtyC5A4sX6YqahLRXYqlIo7QGaYr
+	A6B4bOA97XeLNjf5BeFuEW8QI5UboMEz8owH4WJIR89MHWiFrAAGHlmSGwZBvgL/PWLR/XI4V3G
+	4geMAaJZ+AoH5v8e9t9cxT6k8osfOglDRWuP
+X-Received: by 2002:a05:600c:3b8a:b0:4bb:76d9:f81a with SMTP id 5b1f17b1804b1-4bb88824fc8mr506682605e9.34.1795771013014;
+        Fri, 27 Nov 2026 01:16:53 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4abbd84e661sm43017556f8f.18.2026.11.27.01.12.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8538b09bsm1231003765e9.4.2026.11.27.01.16.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Nov 2026 01:12:08 -0800 (PST)
-Message-ID: <bd8014fe-6a77-445d-b73d-e87404638593@tuxon.dev>
-Date: Fri, 27 Nov 2026 11:12:06 +0200
+        Fri, 27 Nov 2026 01:16:52 -0800 (PST)
+Message-ID: <121cc552-86b6-40de-ba9d-0ae40f8a1ed2@tuxon.dev>
+Date: Fri, 27 Nov 2026 11:16:50 +0200
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -93,8 +94,8 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] i3c: renesas: Fix zero I2C SCL rate on pure I3C
- buses
+Subject: Re: [PATCH v2 5/7] pinctrl: renesas: rzg2l: Split SoC-specific masks
+ in struct rzg2l_register_masks
 To: Diogo Ivo <diogo.ivo.sx@renesas.com>,
  Wolfram Sang <wsa+renesas@sang-engineering.com>,
  Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
@@ -107,69 +108,94 @@ To: Diogo Ivo <diogo.ivo.sx@renesas.com>,
  Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>
 Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
- <20261026-divo-ssgrlpcsrc-2966-i3c-v2-1-2e76b87209bb@renesas.com>
+ <20261026-divo-ssgrlpcsrc-2966-i3c-v2-5-2e76b87209bb@renesas.com>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-1-2e76b87209bb@renesas.com>
+In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-5-2e76b87209bb@renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Hi, Diogo,
 
 On 10/26/26 13:35, Diogo Ivo wrote:
-> On a pure I3C bus there are no I2C devices, so the I3C core leaves
-> bus->scl_rate.i2c at zero if i2c-scl-hz is not specified in DT.
-> Deriving i2c_total_ticks from that zero rate programs a zero-width
-> open-drain SCL into the STDBR open-drain fields, which are still used
-> in pure I3C mode for example in DAA.
+> struct rzg2l_register_masks declares the masks of the OTHER_POC register
+> of RZ/G3L and of the I3C_SET_POC register of RZ/G3S in two branches of an
+> anonymous union. As both branches share the same storage, initializing both
+> other_poc_pvdd1833_oth_awo_poc and i3c_set_poc on RZ/G3L would have the
+> designated initializers override each other, ending up with the I3C_SET_POC
+> value in the PVDD1833_OTH_AWO_POC mask.
 > 
-> Fall back to the 1 MHz FM+ limit instead, the fastest rate an I2C
-> device could have, so that a sane open-drain timing is programmed.
+> Split the union into a common area, for masks shared by multiple SoCs, and
+> per-SoC areas: the RZ/G3S and RZ/G3L I3C_SET_POC mask moves to the common
+> area, and the RZ/G3L OTHER_POC masks stay in a dedicated RZ/G3L area. This
+> way every mask gets its own member,
+
+ > and new SoCs can be described by> adding their own struct
+> (possibly inside a union).
+
+That may be missed by the next person adding it...
+
 > 
-> Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> The existing RZ/G3S data only initializes i3c_set_poc, so it is not
+> affected by this change.
+> 
 > Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
 > ---
 > Changes in v2:
->   - Substituted if/else with ternary operator
->   - Picked up R-b from Wolfram Sang
+>   - No changes
 > ---
->   drivers/i3c/master/renesas-i3c.c | 10 +++++++++-
->   1 file changed, 9 insertions(+), 1 deletion(-)
+>   drivers/pinctrl/renesas/pinctrl-rzg2l.c | 20 ++++++++------------
+>   1 file changed, 8 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
-> index 8b264f72e55c..78d0a2c4a19e 100644
-> --- a/drivers/i3c/master/renesas-i3c.c
-> +++ b/drivers/i3c/master/renesas-i3c.c
-> @@ -579,7 +579,15 @@ static int renesas_i3c_bus_init(struct i3c_master_controller *m)
->   	if (!i3c->rate)
->   		return -EINVAL;
->   
-> -	i2c_total_ticks = DIV_ROUND_UP(i3c->rate, bus->scl_rate.i2c);
-> +	/*
-> +	 * A pure I3C bus has no I2C devices, so the I3C core leaves
-> +	 * scl_rate.i2c at zero if not explicitly defined in DT. The
-> +	 * open-drain SCL fields of STDBR, which are used for the DAA
-> +	 * pending read, are derived from it though, so fall back to
-> +	 * the 1 MHz FM+ limit instead of programming a zero-width clock.
-> +	 */
-> +	i2c_total_ticks = DIV_ROUND_UP(i3c->rate,
-> +				       bus->scl_rate.i2c ?: I3C_BUS_I2C_FM_PLUS_SCL_MAX_RATE);
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> index 9bf3743dc1ce..f73d273df362 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -278,18 +278,14 @@ struct rzg2l_register_offsets {
+>    * @i3c_set_poc: I3C_SET_POC mask
+>    */
+>   struct rzg2l_register_masks {
+> -	union {
+> -		/* RZ/G3L masks */
+> -		struct {
+> -			u8 other_poc_pvdd1833_oth_awo_poc;
+> -			u8 other_poc_pvdd1833_oth_iso_poc;
+> -			u8 other_poc_wdtovf_n_poc;
+> -		};
+> -
+> -		/* RZ/G3S masks */
+> -		struct {
+> -			u8 i3c_set_poc;
+> -		};
+> +	/* Masks common to multiple SoCs */
+> +	u8 i3c_set_poc; /* RZ/G3S, RZ/G3L */
 
-The manual (at lest the RZ/G3S, Rev.1.30) mentions on the documentation of 
-BFCTL.FMPE bit:
+I would drop the names of the SoCs close to the i3c_set_poc. That have the 
+opportunity to grow over time. As Geert considers better.
 
-Set this bit to 1 when using the transmission rate within a range up to 1 Mbps 
-(Fast-mode Plus [Fm+]) of the I3C-bus specification. Set this bit to 0 when 
-using the transmission rate at other rates (up to 100 kbps [Sm], up to 400 kbps
-[Fm]).
+> +
+> +	/* RZ/G3L masks */
+> +	struct {
+> +		u8 other_poc_pvdd1833_oth_awo_poc;
+> +		u8 other_poc_pvdd1833_oth_iso_poc;
+> +		u8 other_poc_wdtovf_n_poc;
+>   	};
 
-In case the i2c_total_ticks = I3C_BUS_I2C_FM_PLUS_SCL_MAX_RATE should the 
-BFCTL.FMPE bit also be set for the operation you mentioned? If so, maybe set the 
-default to I3C_BUS_I2C_FM_SCL_MAX_RATE to avoid any further changes?
+OK, we can drop the union but the next SoC addition may be:
+
+/* New SoC masks */
+struct {
+	u8 x;
+	u8 y;
+};
+
+If we want to keep the initial form we may need to pay attention.
+
+Patch is OK for me, just with the mention that we need to pay attention if we 
+want to keep, for the future, the approach before this patch.
+
 
 Thank you,
 Claudiu
