@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795735026;
-	b=hlJZOthDBZuuIXOHd+YqOeBcfVQf6MSi5/lrSbaN9YubVZcglSkuVk2S+oT20+eOYDEz
-	 +NCvOllPttXomvKdTJFynYNl45+dzMi0+yetQ1mGxpcgkx3GNBms2cPKB2yjFi1ErMxuu
-	 HqNwBAIX/kNcbN1zKmx4ETF/9yKEClGPAVM53aGezC9Te9huIWS5riJJrg6zygWpLXdLT
-	 c6fKUV9kWQEOUc/HOaDdWfG0SRbPmdk5qnzKvd4ye/IZvOIjBqueFbe+zmHHYp5EvDVw6
-	 oDH6esChobzQ+3UP7n6zPTAoZMYVQjNQL3Hq1ynk1Hpxv+wTLj0xprZdHDDWHg9PvOQ==
+	t=1795740720;
+	b=RMcRYWX1CGaJm7KAFCsZJQLzq8pn+jPoIITw4OwrsGW1DUtvrg3wbUG9GaBhpWfCm4A4
+	 kHVf789pCRi2VN3IClFB/4NN8Dv9aZid5tgnCnTZaDmc3TbIkusuCE4voxyKhWJjyBe8N
+	 N6ewbB7QGXYwnnVPb8VoapOLBYNpFCJh9uFX4P4ifwhJ85nocgP6wrGkFkL7ZTqH7q2do
+	 FIGSs9WwWETnvmep0TP0dEHyNRczJTHcMeObleoo1yiWk0EtgX2izZWnmR9ZOfinfnmC+
+	 hr/5aaJNuvJF1GBIoZtBlbekgmRBHNCn0iyNqB33PTZR3/wPullgUWIEOBsjNJrThKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795735026;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=fPaYYz2xYxvoDkUsKrMbXMBJUPqVTod8eYBtQmhIkAM=;
-	b=gJrA5QbzIH5GsP12NXGo2zTnmYfWaYRK7T2ANpmCrBqmOuzyt7Eg+isgdQ8iud6c3hM7
-	 LoTtdLfXenMIoPDLSNdkztLAApwqw+Px46VApFj/fHXXLXKujlG+6A+7JY9ok+FUVcITs
-	 q8381H7Xkj/yaWUbZgedoWLtwyAt8yhvVnG7WDZicdoZ7ggJ8pZGA84iIwuRHdn3ETv/t
-	 NfX7UoGHGWlBpScbYT6zTdo9EcHCA76FwxjiBHOL/vIX8+nJavGXEMKugVtm5XlW1dk81
-	 D84vEaE0jm3Aqmh7vrEJSuagfYpux31bubc03UIkS+OhhVrAYw/YeMdLynxOTP9/MbQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795740720;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=2mXKxVp3q1BXtyC7GEBY2jXhHxkGBgswcQNGlms/6J8=;
+	b=tkiP22xZ1SUkyNXuCc+N7qTOiaf52hUZjn3KeD7pBvQvZ/Rfh65BEBCzQvzDx95nUbac
+	 G8O23MXG6iLjemifcHp+EmA+kKZfjVFlmn9dCWRMqL92/jMipfr4pIFVs0k/LTK73+5vv
+	 KqDfNi8I5puxf3IJZnGVhCOKsBPTh2gGtz+l8tkopc2EqgpAM7Q2hygCcwu3mTVS9hgv3
+	 Fasz5WVxv9KFiy+E+1Qw/G5HQkm364EgR7pzTBl4MNVX2jSowVZk+VPAwr3mfEj1LomLB
+	 dleK5fFOVqPrJPBAlJGhb5bWKKmmUzqDoppIPpGDMJ4Cy6jGGlQJGRH7IdzzrMTZMLw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="je/RhZZm";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dPt3oJjw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE976606A31E;
-	Thu, 26 Nov 2026 23:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77931606A31C;
+	Fri, 27 Nov 2026 00:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=je/RhZZm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931DB1F00896;
-	Thu, 26 Nov 2026 23:17:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dPt3oJjw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8539A1F00893;
+	Fri, 27 Nov 2026 00:51:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795735026;
-	bh=fPaYYz2xYxvoDkUsKrMbXMBJUPqVTod8eYBtQmhIkAM=;
-	h=From:To:Cc:Subject:Date;
-	b=je/RhZZmQTwR3KMITsSUgI8U0ROIAOE410R9bgQg0vvh7cL+roDSvBIGjH0LuQOB9
-	 Qzz9nxyBiN6a65piWkMBV+xOAt7N42zephvnd9ZBev9cYv3VNtz/cp+2NbP6FOmQRP
-	 1+C09UtuMUDADT0YWqIGRrfs1+48UjMfznCghWJLl6dIdP43O85aWpmN5JmaZQafbs
-	 qYLBruRGH/gMwKO+A22N0EY4lsNZmSmkGA16n31hx5C8MZmOtbMRtNXQTWMNE9A3af
-	 dfGPC9Yx2QuFNPSgqFJMTpDNmrNjMvNatpYZMFKcyDiwk8De04ARKrJEWQl6ZFKE6q
-	 +x8Uuht69ODiw==
-From: Sasha Levin <sashal@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Kent Gibson <warthog618@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: shared: restore the atomic set_bit() lost in a merge
-Date: Thu, 26 Nov 2026 18:17:04 -0500
-Message-ID: <20261126231704.1303448-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20260515; t=1795740720;
+	bh=2mXKxVp3q1BXtyC7GEBY2jXhHxkGBgswcQNGlms/6J8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dPt3oJjw0A/ME05Dmt3Pm3WQghXy1GbsgMVVikokYqaNbSDLM2cduRiK17JLrVxQR
+	 k9oU1VjR5qLpn9eLpOu3kihE952FK8rEgd9M0UcFs7UXZvcZaagtOw3iU3iL9x0lFr
+	 1AIFgPAxeMYlSlubxOlV4VBMVc1FlyGfFgVqT1hrvk2CxpxmtxbJwfMkM15mXpQIHJ
+	 juENld81TGIUo6umFXou3prRpxSGlatICxMCQWPLmfTeNT55fvUdZGr9StjrBVeNPV
+	 9+r2jf6OJfujGxqy7m7nFA8KIHzdttqpyOeTNt5Dz7lHtKfOIMXF0g3bgers6B/Xpw
+	 SZPgX422lEHCA==
+Date: Fri, 27 Nov 2026 01:51:56 +0100
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Alejandro Colomar <alx@kernel.org>, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v8 2/4] string: Add strprefix()
+Message-ID: <awjTa1qL5c1L9pnj@devuan>
+References: <cover.1795695151.git.alx@kernel.org>
+ <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
+ <sashiko-outbox-235501@kernel.org>
+ <awgmuC_BnyaEpTXD@devuan>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,43 +60,122 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ztitlnbzcvr2amzm"
+Content-Disposition: inline
+In-Reply-To: <awgmuC_BnyaEpTXD@devuan>
 
-The v7.4-rc4 merge into gpio/for-next took the for-next version of
-gpio_shared_setup_entry(), which commit cda42ff53c4b ("gpio: shared:
-factor out per-entry setup helper") had moved out of
-gpiochip_setup_shared(). That dropped the change from
-commit 7d1d799d6251 ("gpio: shared: use atomic set_bit() for descriptor
-flags"), so GPIOD_FLAG_SHARED is set with __set_bit() again, and merging
-gpio/for-next into mainline would undo it.
 
-Use set_bit() as mainline does. linux-next has the same change as a
-fixup in its gpio-brgl merge.
+--ztitlnbzcvr2amzm
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Alejandro Colomar <alx@kernel.org>, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v8 2/4] string: Add strprefix()
+Message-ID: <awjTa1qL5c1L9pnj@devuan>
+References: <cover.1795695151.git.alx@kernel.org>
+ <a688f0a1c20afadeed42ec4645b44de75874c223.1795695151.git.alx@kernel.org>
+ <sashiko-outbox-235501@kernel.org>
+ <awgmuC_BnyaEpTXD@devuan>
+MIME-Version: 1.0
+In-Reply-To: <awgmuC_BnyaEpTXD@devuan>
 
-Fixes: 45b9f0f3fcb3 ("Merge tag 'v7.4-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-On top of gpio/for-next 0a74985977e8. Built gpiolib-shared.o with an
-arm64 defconfig and W=1.
+> Date: 2026-11-26 13:32:21+0100
+> From: Alejandro Colomar <alx+linux-hardening@kernel.org>
+>
+> > Date: 2026-11-26 12:27:03+0000
+> > From: sashiko-bot@kernel.org
+> >
+> > Thank you for your contribution! Sashiko AI review found 1 potential
+> > issue to consider:
+> > - [Low] string: kernel-doc parse failure on strprefix() due to
+> >   __nonnull_args()
+> > --
+> >=20
+> > commit fa176bccb75ab1dcd9cc8e153bcc5112c790bc7c
+> > Author: Alejandro Colomar <alx@kernel.org>
+> >=20
+> > string: Add strprefix()
+> >=20
+> > This commit adds the strprefix() helper to return a pointer after a mat=
+ched
+> > prefix or NULL on mismatch, along with KUnit tests.
+> >=20
+> > > diff --git a/include/linux/string.h b/include/linux/string.h
+> > > index 9b3e578d9aca1..a6a1953c52e35 100644
+> > > --- a/include/linux/string.h
+> > > +++ b/include/linux/string.h
+> > > @@ -557,16 +557,34 @@ void memcpy_and_pad(void *dest, size_t dest_len=
+, const void *src, size_t count,
+> > >  	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
+> > >  })
+> > > =20
+> > > +/**
+> > > + * strprefix - string prefix
+> > > + * @s: The string to be tested
+> > > + * @prefix: The string to see if @s starts with
+> > > + *
+> > > + * This function determines whether the string pointed to by @s
+> > > + * starts with the sequence of characters
+> > > + * (excluding the terminating null character)
+> > > + * in the string pointed to by @prefix.
+> > > + *
+> > > + * Returns:
+> > > + * *  @s + strlen(@prefix) if @s starts with @prefix
+> > > + * *  NULL if @s does not start with @prefix
+> > > + */
+> > > +__nonnull_args(1, 2)
+> > > +static inline char *strprefix(const char *s, const char *prefix)
+> > > +{
+> > > +	size_t len =3D strlen(prefix);
+> > > +	return strncmp(s, prefix, len) =3D=3D 0 ? (char *) s + len : NULL;
+> > > +}
+> >=20
+> > [Severity: Low]
+> > Does __nonnull_args(1, 2) break scripts/kernel-doc parsing for strprefi=
+x()?
+> >=20
+> > CTransforms.function_xforms in tools/lib/python/kdoc/xforms_lists.py do=
+es not
+> > strip __nonnull_args(), so kernel-doc mistakes __nonnull_args for the f=
+unction
+> > identifier when processing include/linux/string.h (included by
+> > Documentation/core-api/kernel-api.rst), emitting prototype mismatch war=
+nings
+> > and omitting strprefix() from the generated documentation.
+>=20
+> As said in v7, I don't know what to do with this.  Any comments?
 
- drivers/gpio/gpiolib-shared.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Bartosz reported that this is solved in linux-next by the following
+patch:
+<https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit=
+/?id=3Db6b0adb6c845>
 
-diff --git a/drivers/gpio/gpiolib-shared.c b/drivers/gpio/gpiolib-shared.c
-index 62c3d8a6abdcf..7f8b31ce4b9ec 100644
---- a/drivers/gpio/gpiolib-shared.c
-+++ b/drivers/gpio/gpiolib-shared.c
-@@ -588,7 +588,7 @@ static int gpio_shared_setup_entry(struct gpio_chip *gc,
- 
- 		desc = &gdev->descs[entry->offset];
- 
--		__set_bit(GPIOD_FLAG_SHARED, &desc->flags);
-+		set_bit(GPIOD_FLAG_SHARED, &desc->flags);
- 		/*
- 		 * Shared GPIOs are not requested via the normal path. Make
- 		 * them inaccessible to anyone even before we register the
+--=20
+<https://www.alejandro-colomar.es>
 
-base-commit: 0a74985977e851196d69e5364f4787adb03a5fb5
--- 
-2.53.0
+--ztitlnbzcvr2amzm
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmsI1CwACgkQ64mZXMKQ
+wqmf6A/+M9qVTeSuF7m1sBGEx8AURawJb9yFeTyLIGEhBslR1kxB6ek+Ov7xTc5b
+EeHQ4BoOnBtAytdwvAQ5cwcEmEoCfSJY7QXd51HSxx8TmReKqNUBRjzZykvEeD9g
+O5erP31Km6v3ovdP3TWHe8XZqYuOrIlt/RcpRYXn/X+N3TqHz/CMXKvsBih3Mz2M
+s3sWX97ZzplbBNrJlm5fW13bNrGY5eSLA3V7D65i7kQXqeIDbKpwD/RQDIyLlrUn
+TY0JXFPYHQPrVUCpRJZhFR5QI+xkGxNafKIaNcaT9RtebuIlnhtutHNSnZwELG4R
+qeA1bz6NhqWXERaEAYTR9VAk9BsiGOcgC50EoqV0JG9hGYVq9e5KapXbQgM93AYy
+QLWkPGJm2pcGPtqmQE2EbcdjQq1lAzzBE+3WlAN6K7vo61qwLr+gDBZIR2ikkPkN
+haoP4UnrygxptSWEkJjWuATBTSKHT8vUJnkeSwKmwnAKLISgz6a7pwdePbGOAziP
+9mpeLJNJOkqVtCi/hTbPa786SDD4zOG9cLk2+jZr5L6ns7OpsUzxx8UrL6ihVdg6
+qC8nmBIdcqioE89ipQzcEyKfgPskuPcHpCcbYuyDfsDSMONOvJ7HUX865QxmPiN9
+XqEFHt+ergxZbbmcAn1EXauNNu4/UQgl0iuczsP++sJP0uH1O78=
+=RbQI
+-----END PGP SIGNATURE-----
+
+--ztitlnbzcvr2amzm--
