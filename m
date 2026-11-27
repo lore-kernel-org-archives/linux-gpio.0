@@ -1,86 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795805288;
-	b=Sq4YveM9Zgt7a6AEpvTrWHbgebSVKK2+U5CPVTM2Z7NN+P0hMcHgGf6DrWK0D3Bxdapv
-	 O/5pPUHNBd/0Vr5oaec7tkE414Cfk+hzeWUbwNXSPo2GI+hALV9cEJjSra43V9Pc9U0lB
-	 IDn1l7BYpP5SWhQnSWeo5P0JWz8GA4ZMF99hSxGkU/mvKoSDuXKhmMzl80OaoiPscwapd
-	 jsKyDs3NR3YRHTeh8tQlxjPwvXdbetOLsYtgVTev8BXtCanb4gzr5v/dwBcItYTdEiSgs
-	 cTjPjhZy9y7zcwlHLEc7ZCWIPuehIGdF2UtDSAnjswZdRY8o0brsYYYMQrZnlHxuSkw==
+	t=1795809501;
+	b=RXNznvgFIocuVSRpWujZLSoE4xlfVl1a9dl1dHYDI19lYLQqCd9YckOxurOsGEWLYctz
+	 jRVjJFFN092TBANrky0Zo51blwB6PhVYCOXFwpEiryZC34KRsANrK5WUMdYRnKnarquu7
+	 Lx5S32WPHcaoRO3XjnlBy1078Cx5ksPgk4JSqlqxlHYN7v78Aiyi3ARsecvPYI3S4u8BL
+	 EzfdRuda5Tekt4ellOBl1oRX8YTRHw5ogZXyBtwMYFNCeoBLCL3ysCjgbBxxXs3w5tTL2
+	 cPThG5yIxNSF5iLPL+zoydSCiIKyVPq8/TcIPky0b9EflWauLq1RKysKgeXXxlwn/5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795805288;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=Fp1sHHE8iensX+W04GwS2LW1iq02KpUrNL8xdDO6Vq8=;
-	b=OmskVieI+4pznzX4FQyet6y8g8FXbNg1Be8KNjIvBZaqVuUawlvgc0AFgyMyMhhdesiX
-	 PaAe8OoidprPL3N/A80fBvpngF5QWLqkFL1QUGOj47VEzRQuaG48rRyOOTlx+cIKlmVNB
-	 oQmKaSKoXVU1USNUI7i6ndoYJQf/FBV818je9FYjoKgeh4On7BZyA4MsOaqZl67fQm1uj
-	 1qvqFS5TAW3gmI9X3JsZXbmY/XcM7DCZ4ohczraLKN5Ek+LPMUeVSqXRvndYPe1pQELtn
-	 maFc3Ura64G/DgqzfirwmgmVF+Yt22FzT7plQA271lernebj59dyynltmhkKr+R+mvQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795809501;
+	h=Received:DKIM-Signature:Received:Subject:From:In-Reply-To:References:
+	 X-PR-Tracked-List-Id:X-PR-Tracked-Message-Id:X-PR-Tracked-Remote:
+	 X-PR-Tracked-Commit-Id:X-PR-Merge-Tree:X-PR-Merge-Refname:
+	 X-PR-Merge-Commit-Id:Message-Id:Date:To:Cc;
+	bh=ZDRnQ+NwPc9rh4R0F6/UdLWkcLhl/FO1upQfLcHJdYo=;
+	b=FCsYb8a5J0azrit1xWYTFZqxPMLnz1d8xOA82286I0RYe+Vg+xR2h6ZdkD1MKjaFeBnw
+	 CFaZzTOEYrsWpYag2xfqtRjkqYEtAW9OCPf22NoDFu1daAwgX8wVQECR6ouiHtlrRHJD0
+	 E415nY2yXXTpQuTOcMwFaG3mnBDvmHRs+7+t7yLOIS4pK2+Ze/8xUpYv9pvqieU5ZZFky
+	 oZivillsJSjUASo7IKWfuiovPvlG3VWI877gUZeLLJ/X8txGtuwDZ1Ef8QpkiVLbR0bMf
+	 iMptUAl4o+LMx15P3ISJWiICb90EPAA3U7GIfoh2VvMVbXUYJ6r5pUa2WpwpsHANO+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EmOl1sTF;
-	arc=none smtp.remote-ip=192.198.163.18
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EHlSsJkS;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4395F606A31E
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 18:48:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4395F606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A626606A31C;
+	Fri, 27 Nov 2026 19:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EmOl1sTF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795805289; x=1827341289;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D0w9BNt9qEC8lOg2vB9ybt46qq5voBtFztIYXjCX1Ew=;
-  b=EmOl1sTFbxqBBQDFfbKFj0c4tJeW2/jZnC0ivkLy2CBYGxtmYjVAh8ri
-   fLexlV48YfLRgNAjkbKAX+aaOxcbWLTpL+H4VkN+cUPgqi9ToT9fJTj+7
-   GWHbBk3etSlqGzA878C1FwhXf5HNykFYKb9d7F2oibCGmfBOT/stw6m5G
-   ZNUrHWgvfld9bzhmNt/jECc0mCbhdIgqX80VE8Lrryk/rqvUc6BGi5nkv
-   lXKKwxbeMhkZwEd0pF0TXC4DGeNjKZRDSYTL5VqycpeyOfnoqq7YSM2zt
-   bUGsAiqS4GUua7Pk/KgMZsWCO8k42NHsPgvPOP3JVUbQjaA3ghoZ8Mw8/
-   A==;
-X-CSE-ConnectionGUID: 2fhooRkWST+v2qQ2lnLYMA==
-X-CSE-MsgGUID: VDJay+iURgOqbnXsX4LYiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4733146"
-X-IronPort-AV: E=Sophos;i="6.27,237,1787036400"; 
-   d="scan'208";a="4733146"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 10:48:08 -0800
-X-CSE-ConnectionGUID: KPdO2dfRSViq8TznPb/Row==
-X-CSE-MsgGUID: 95pHJ8OVRcGrGGvV0AKTLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,237,1787036400"; 
-   d="scan'208";a="12770637"
-Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.115])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 10:48:04 -0800
-Date: Fri, 27 Nov 2026 20:48:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Petar Stepanovic <pstepanovic@axiado.com>,
-	SriNavmani A <srinavmani@axiado.com>,
-	Prasad Bolisetty <pbolisetty@axiado.com>,
-	Tzu-Hao Wei <twei@axiado.com>,
-	Karthikeyan Mitran <kmitran@axiado.com>,
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-	Lee Jones <lee@kernel.org>, Long Zhao <longzhao@ambarella.com>,
-	Joseph Telaak <joseph@telaak.dev>, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFT PATCH v2 07/14] gpio: max7360: create the regmap-irq chip
- from the gpio-regmap callback
-Message-ID: <awnQYsv3oAHWr2ht@ashevche-desk.local>
-References: <20261127145232.814492-1-mwalle@kernel.org>
- <20261127145232.814492-8-mwalle@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EHlSsJkS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B67781F00897;
+	Fri, 27 Nov 2026 19:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795809500;
+	bh=ZDRnQ+NwPc9rh4R0F6/UdLWkcLhl/FO1upQfLcHJdYo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc;
+	b=EHlSsJkS1cScPSuMAj09nx7/Fow/rjIsHWB4rcLcbmfdP+GckgaRgG/2oRgkXoJzM
+	 aSatusdWklthuiPZ5PcppRxi9aVYa15V3JeDD4AFh+aWLcImI/1mOfphZYytJ6zv0O
+	 SkotleY/FhQbIr680km3mfoUMsbCiWUS2tpVMwj3F3ZXGNG7bdPyIol1nn+9tYOByO
+	 zUgGTW+LKoLaCYH1ajGOkbpbJcAhcU6FJx+YayIwpD34c1eDjxO4UG1s/t+yNHBvqA
+	 s+4fgJEk/yEyOPjharL1Ze5Gpd5MTuk9PAJQSNAzJyhnm6oHj/44UbvWP4Jh9E60hb
+	 p/xQ2TOAJdmPw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE80D392705F;
+	Fri, 27 Nov 2026 19:58:20 +0000 (UTC)
+Subject: Re: [GIT PULL] gpio fixes for v7.4-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20261127085000.18053-1-bartosz.golaszewski@oss.qualcomm.com>
+References: <20261127085000.18053-1-bartosz.golaszewski@oss.qualcomm.com>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20261127085000.18053-1-bartosz.golaszewski@oss.qualcomm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v7.4-rc5
+X-PR-Tracked-Commit-Id: d8e27d04274746093f8d5a4e909efd9885262166
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3852adbb01116275eadf41c67af5ef68abe9755a
+Message-Id: <179580949931.1663999.8785666347017372053.pr-tracker-bot@kernel.org>
+Date: Fri, 27 Nov 2026 19:58:19 +0000
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, brgl@kernel.org, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -89,22 +67,16 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261127145232.814492-8-mwalle@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Nov 27, 2026 at 03:52:24PM +0100, Michael Walle wrote:
-> Use the new gpio_regmap_add_irq_chip() helper to create the regmap-irq
-> domain.
+The pull request you sent on Fri, 27 Nov 2026 09:49:59 +0100:
 
-Okay, but now it makes me think why we don't call regmap_del_irq_chip()...
-Missing part?
+> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v7.4-rc5
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3852adbb01116275eadf41c67af5ef68abe9755a
+
+Thank you!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
