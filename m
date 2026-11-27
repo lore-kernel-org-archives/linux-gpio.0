@@ -1,56 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.157
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795779215;
-	b=JKdU9+wXLKeCoWozd/+b7DMEidiHn16uC0q9bcqjXM6bDB3qUMP/3ORIfkygUX4vkx/d
-	 NGvn054KxKgN6ylyqeTZCSet8tugDr4TNgRCN8Yjd2F/vBMtFct2HhnP0jEQBfkJpG0V+
-	 uyUAUnNPUhE9CqTns16C/wwb5jyZBoSytyWc8oqd0On+S2+mXs6VKrM7Oh04T/nFDfO+0
-	 m1IqCuZ221QtB74nZb+PdELnmnGbLjEax0bLIVFbTRqJ06yc0KFDhR5DGiXAT5AaexHMR
-	 aLBxMc5hWm7xA/Pg6J5BaKWuAKVUbrcN9NBITTKH86fmzoRKodoHnoVc6nEGVM0CSjQ==
+	t=1795779587;
+	b=ETUNLVnO4TxiGST3RHlNaB42kLd9dCAx46VCLWagCX4q1s0M86+yds/mTausz6jltMYw
+	 prkJK49W555xFAGAsgPh2DbVg71GzaXIwvScK2cdL13MIMueScN4mjSUb8NmGOQ7QHejH
+	 UNNEzkqi8NNmW3Hh+ZOrpi9zj3H9TiJo9rC4gnHd4RPXnLkBL+7Gfe4StDncuuFQvyyxl
+	 urecAMP05fZa/LxhhIwcey6fVFYnXPzgk2YWMEeQT/vjagTkNDoJ13XsD29ComqWk7wVp
+	 MxpN8kKz11YJuDkGjGB7pxqBBNi60fiiuwRDFCzHyV5S2SYPuNUDuVfAIg9MOL5cnsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795779215;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:
-	 X-HM-Spam-Status:DKIM-Signature;
-	bh=nceqd0TOBeVuB+r1NM/sieYkJrmVjiu9YO8R74BAOow=;
-	b=UGIL5Er4S6x9LrUFFsGnVyoE3BJ01pMUAjnsJ/YBB6UQHVPBOrbDwSeY+ScXs8Vuo3jT
-	 uUMXbMvVFyQJ07F5v/tc4jkXATzASHb6SjErZh/TquW7dmAciAyNPQMVd4Ex2u0fBeaia
-	 x30YszTVLzcO+mVUeelSoIvau6DtQf4zFbfJafyeG/V7B3JLazmhnCTLCaTpSQMDbaP5u
-	 yuLK7JpgOvqkKXjn/UAV6XA4Xg07JskUItx2IAbj6Pdbh6zMRBXyTp4EkM/mI0jMgdMUC
-	 5WhFma8yedd6sPiVy5oEeeoH7Is8H+jd5NPJmk50R/obQtzlIrmJd8C70/Nds7ADnHA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795779587;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:MIME-Version:Date:Content-Type:
+	 Content-Transfer-Encoding:From:Message-ID:TLS-Required:Subject:To:Cc:
+	 In-Reply-To:References;
+	bh=6Vw5MFQSiCnoTbhpDTIOOLYANinJV+q+O8Y5w+EMfCU=;
+	b=4wiGIosIUWkJDpZDDl46qGkRb1giNFE6Ep2GGDZ87FG+L6qBnHLtPpgQscNiLSQrrAXZ
+	 sjyIwd+f39iu/Suk+KrMVyRU/ZT/5EjUo1xMkEmz0Ynhb8qKhtMhwSfX01hKSGal2bsec
+	 GhYcPjorsZCkc6J5hHtR/0u9pCk/5wXKxudeVvwXGCI5UkgbjgScLe8CyTY3xNcjuZ3NC
+	 4atX4uJr8/6SNRRAqQnH6ltjYvvEcs+H0y6F4haGMflI/cQRMzaB+pxKyVs4Mqu673Nbf
+	 Agq1shlRv1w1YXYYSx6jlJOrVZNR8kOBUOsb4TigRygh4LcDsrAVsJWDY0qK7WoL7mQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.sdu.edu.cn;
-	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=cehcGGpt;
-	arc=none smtp.remote-ip=45.254.49.197
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=eTDzyLd4;
+	arc=none smtp.remote-ip=95.215.58.157
+Received: from mta1.migadu.com (out-157.mta1.migadu.com [95.215.58.157])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A63606A32E
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 11:33:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F3A63606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF82606A31E
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 11:39:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9BF82606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=cehcGGpt
-Received: from user.localdomain (unknown [223.80.110.101])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 564299832;
-	Fri, 27 Nov 2026 19:33:31 +0800 (GMT+08:00)
-From: Tian Xuechen <202300460064@mail.sdu.edu.cn>
-To: linusw@kernel.org,
-	brgl@kernel.org,
-	Frank.Li@nxp.com,
-	s.hauer@pengutronix.de,
-	anson.huang@nxp.com
-Cc: kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] gpio: mxc: Register syscore callbacks after the platform driver
-Date: Fri, 27 Nov 2026 19:33:31 +0800
-Message-Id: <20261127113331.390479-1-202300460064@mail.sdu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=eTDzyLd4
+X-Envelope-To: linux-gpio@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=6/HpsLY2JkuqSqhjUbLwsS5eaX4PS5DHlmROlk971Qo=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795779583; v=1; x=1796384383;
+ b=eTDzyLd4A/Gf8huHVODKAimMBgUGy5krpiD8t3JNxUTrlt9M5oRPYJHjx56WiwCAfTWxiVxZ
+ aE1O0m5RTKPEyt5M3p989N96LBnhkGUDMQUCNgyPSLoNbHXOFPhl61ymQfBDY3y6Yk8PARgEEFT
+ qhWSUTCF0MiLCOs2Ze4mKjio=
+X-Envelope-To: linux-gpio@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id d5875fcf3bc412c3;
+	Fri, 27 Nov 2026 11:39:43 +0000
+X-Mizu-Trace-ID: d5875fcf3bc412c3
+X-Migadu-Flow: FLOW_OUT
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -60,55 +56,61 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa21cc8323703a2kunm52c51fe4395df4
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaHksZVkoaHR8eSU4eQxgaGVYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUhVQ0tVSkpLVUpLSllXWRYaDxIVHRRZQVlPS0hVSktJQk
-	NDTFVKS0tVS1kG
-DKIM-Signature: a=rsa-sha256;
-	b=cehcGGptb2b5SNz7ywjGGKHtrOzKN6+BFSYiauFNCgmlCDoBZqIN+QNOZXLwXAWYrvGXX16xstqS77Aa1fooncCn0NgK7B3Hz3Cov7VcdZG7ISvH4TCLjc7QEt6IB+HpSF+N0qRoEgvNvN1DsG1vN/ggXaVutB3cO6MguatQv2s=; s=default; c=relaxed/relaxed; d=mail.sdu.edu.cn; v=1;
-	bh=nceqd0TOBeVuB+r1NM/sieYkJrmVjiu9YO8R74BAOow=;
-	h=date:mime-version:subject:message-id:from;
+Date: Fri, 27 Nov 2026 11:39:43 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+From: "Zqiang" <qiang.zhang@linux.dev>
+Message-ID: <41bf3d5c801ea9fca972e07318819a9185a4109f@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] gpiolib: Use srcu_barrier() instead of
+ synchronize_srcu() in gpiodev_release()
+To: "Adrian Ambrozewicz" <aambrozewicz@nvidia.com>
+Cc: "Linus Walleij" <linusw@kernel.org>, "Bartosz Golaszewski"
+ <brgl@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261127070910.668333-2-aambrozewicz@nvidia.com>
+References: <20261127023101.27568-1-qiang.zhang@linux.dev>
+ <20261127070910.668333-2-aambrozewicz@nvidia.com>
 
-From: Tian Xuechen <202300460064@mail.sdu.edu.cn>
+>=20
+>=20On Fri, Nov 27, 2026 at 10:31:01AM +0800, Zqiang wrote:
+>=20
+>=20>=20
+>=20> The gpio_desc_label object are freed asynchronously via call_srcu()=
+ on
+> >  gdev->desc_srcu (see desc_set_label()). to drain these pending SRCU
+> >  callbacks before cleanup the SRCU structure, gpiodev_release() curre=
+ntly
+> >  calls synchronize_srcu(&gdev->desc_srcu).
+> >=20
+>=20[...]
+>=20
+>=20>=20
+>=20> /* Call pending kfree()s for descriptor labels. */
+> >  - synchronize_srcu(&gdev->desc_srcu);
+> >  + srcu_barrier(&gdev->desc_srcu);
+> >  cleanup_srcu_struct(&gdev->desc_srcu);
+> >=20
+>=20Hi Zqiang,
+>=20
+>=20Bartosz already has this exact change in gpio/for-current, applied on
+> 2026-11-24 as commit c901e8fddd3a ("gpiolib: wait for pending label
+> frees before cleaning up desc_srcu"):
+>=20
+>=20https://git.kernel.org/brgl/c/c901e8fddd3a23353bb12c9d93b9a5fc482ac8f=
+5
+>=20
+>=20It carries Fixes: a86d27693066 and Cc: stable.
 
-If platform driver registration fails, module initialization returns an
-error with the syscore callbacks still registered. Register the
-callbacks only after the driver has been registered successfully.
+Hi Adrian,
 
-This issue was found by our static analysis tool under development.
+I didn't keep eye with the latest tree, Thank you very much for pointing =
+it.
 
-Fixes: 1a5287a3dbc3 ("gpio: mxc: move gpio noirq suspend/resume to syscore phase")
-Signed-off-by: Tian Xuechen <202300460064@mail.sdu.edu.cn>
----
- drivers/gpio/gpio-mxc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Thanks
+Zqiang
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 7dabe8073dc6..ed79ce76dcf3 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -738,9 +738,14 @@ static struct platform_driver mxc_gpio_driver = {
- 
- static int __init gpio_mxc_init(void)
- {
--	register_syscore(&mxc_gpio_syscore);
-+	int ret;
- 
--	return platform_driver_register(&mxc_gpio_driver);
-+	ret = platform_driver_register(&mxc_gpio_driver);
-+	if (ret)
-+		return ret;
-+
-+	register_syscore(&mxc_gpio_syscore);
-+	return 0;
- }
- subsys_initcall(gpio_mxc_init);
- 
-
-base-commit: 4dce97c6c265544342e716e62fd24bbb232590c5
--- 
-2.43.0
-
+>=20
+>=20Thanks,
+> Adrian
+>
