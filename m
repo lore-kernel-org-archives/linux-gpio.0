@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1795812641;
-	b=mDFuWLGcvNWzVDoG8Att+ISl83OcujJbQddV4yikjgRkuI2u0fCCAv9AAdGRTlNIhDC5
-	 5JR2sA+UY4x6FpyKBzLM1KoikCgHsFX17izzjUKie/d1pmhbf6jBhMgBad9yPCM93a2Yq
-	 MyRx6Q64ihz+4Z6aCl13V9vqGRFew4j2AFa3xQjCbX5l7WFNp+jRIMVEYamjZ86YyrRkX
-	 U0N6wXUw2pQMMrmx7hiEYTBE9FRBrPnZh3jHe+n5dYxqn+Ipg5fItiwveiMNokFE//6rc
-	 yCwI6dXMsmxCtGiRnnGIqIu8m1t9zV9kA87SggSPtNQCgZ2RbKBTQB8/LE5VnUJdsjg==
+	b=WjFXN26CG2fN6WaM8oywT5zrobe7kGjRibezJFvl/2iBx/dK2DiZL5da4FXEXzmYUAAr
+	 gKbS6Euxy9Y2ItCFq9wZCJGaimctPn/hY0+HfB/EdFnc2v+k8ZxvYcgMmg5E28DvosMuw
+	 C8ndto0nwLyjl2UG+iwXGtCPZmrH+MWyIYphlRFFOLez0lTg8w308tJy25AMip1RLfM8Q
+	 tMYEbegU8JrVzBq68OTUr/yLM1xzUMmv0lVB+dGXi/ku6DeRnPIQ4oZsoSQWqSmyyrKxY
+	 pXHvS+5MzJJIed69KNY2W3TXP+d9u545b7A77kZz0j+WFfwrZ2xLNHTI+LZoM/ob4Gg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795812641;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=v0Bgz1EHTknoJx8oeNdoRh3CgliIR7tsH8ZHa/1EmAg=;
-	b=ZUFH35MW0Jn8jr1YHt9VtMDoM20MgBp6nUJy1fhgAcPxZln6yzD+JyhJec3gtorFf4QN
-	 UoXkdq6kzjz2oB1sxbytpiOPQinW6rToFayT7cVnd06b3D6rKrQ71tTBQInwDoFUhV077
-	 IYGhOo1jNXW6pFCryXVI1N0AB4zZTHv8u7GhmcXCOjN0LCtZ9SIZ2mt0lIrZhCNa8sNFg
-	 j+XYF4KnG4xHOFfObULnVcmwY4GPpumO2Zv1o6exnDhKQBKN4O18jy82sDb26NRbMHxz4
-	 G8qpq2XfB7+5Yd/7VnZGwMQILLbrYECwK3FqS6EwaYzS0UTK6hUzPYM64spK/0VkspQ==
+	bh=9jjys1NwSJjbk8KnYHOCkvlegt17jtVNL7dVvrptlBU=;
+	b=XlDexxYCFnT6JVPdfK7uywzXtQA9Gg6UX9vHFeCJIxzfO62+fUHyRX3t3gmE1HtLErE6
+	 trqdoYeAF5+Atn5UPrNXySf4by9aZcZrcawEn0CPPacZBqKb2FOhQnGUFa6uPYbrBAF+Q
+	 2bmD5vFo7Ji24/GyVyhyaKRO8SSCEG3O6updmMB7knl7PhtEr/7iMFzzny77JNZEUAfJp
+	 593RUI7fbYKi+s6nHLHVEzj3KtvMApFlq0+vjidlegDJ0NtI2QjfM362n0o2a9BHfCRgE
+	 EEXBd7d2zRuDGx9i73BOKUZWVmwcSynOwNfyczy/NX1499pnZA495uqiayXoqAPrnNA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k6xKnT2G;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=egNWZpK2;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDEB606A68C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDB2606A68B;
 	Fri, 27 Nov 2026 20:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k6xKnT2G
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=egNWZpK2
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795812641;
-	b=YAoxr8KfGz6q8ndRc+OWwnp5djkLlpPsG+6HHk2P3yhKeNGerDF8vRWzsKzHze3WHHIN
-	 fw+c6lz2S1KA4HkICYSlnpwN9i0X7Fj5O0+F30+umv0S/MgQVfc9iuRkryecs9CkA8uwO
-	 N1+dRvYVVy8ZSLJtR12VMjCgONILcg6DqRXZH0CnFLIs0lbDucwmQD3aeoR+bHAfKS3eD
-	 La6SCrtEhISsTwEQZzOnLI5mY+wJbSuLTtQGwU9DzifCoW6M2pHucO9Ixnq+Mgfw/thRG
-	 3Mpkx/X7SDpkNcbR08o5u8g1rJZlvjI9qomSB7tCE3h8uonEV0y6dqf/ivYjlzYE/Mw==
+	b=HLtfUXCMUUfyHqK+6xvJncg9iWPZDafjaS6Dw5esZNAgZAMPIlfgrWzY3WHem3B2AXkV
+	 EPwi+3K2n8JIGQugUuZJ4Kpd+229/anLEpXqfpIbad4TNSvuouR2DKLBXP3L71LaHscp1
+	 pIdod84yqTTupCb4WWw0t1a2zPlf598I/tSND4jJsf9xy+QrUJ3nh1tzGyy7Xg6k1rp/G
+	 UAT9PoaIF/bYBxHdxchM5ivRJHv5v9O9dUEDAHVNCiOHLRlJWxlkT/zemu42evje+6hGI
+	 T7v5fjjtr3S4ooFoQPVck4fUEphEh1L4czwDpFrPU7meyI+oMgea9LtthfBBcK2QVcw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795812641;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=v0Bgz1EHTknoJx8oeNdoRh3CgliIR7tsH8ZHa/1EmAg=;
-	b=X2b/PgujOop2ugryfiNGP/JTbJ5gtJkIeWTFS647GApGJxwOefLzpNWJc8AVNhiE+WWJ
-	 6S40Q7L+YT4DibtypONGJUNRsVKyxvlooCRfXOb9EFvqu4nqaV1Oe0mKNHlriitVoYeNk
-	 GkzXJyhXxiFPCIOmjAadyoAsUe0p5Vfefu7HWGg1odp8jc19KMVVqdHeSWw+Y9Zx12hnq
-	 ZvYLNrJ0lBv2NCgJEvMzLDkBKaBcZlQTL06lsEquyyGcMJzfQwZrkjV8ZqTiq4MWNxpxc
-	 +WUklO9lEZHgxyFsYIcGlboOwrIuXLv6yNmcK0WBJjth+ZfJqzvzA4zaR/joAkDT9ww==
+	bh=9jjys1NwSJjbk8KnYHOCkvlegt17jtVNL7dVvrptlBU=;
+	b=yvadVRCTDvMbnT/b/i8/8vlaGu678WXq3NBDZap+J5/uSJAvSIgqV9wbTQRi92yvMBZK
+	 ZTwo8EmUHEE0/xb3uXYQ1ohran02xfooqDz6+nu1pvoeTwaLjxRWt08YAU3F/L+muHjxU
+	 je2jEdJSAWauIv7AZo3vA8+nvAeQhSmPaEkmx8dEeodIP+2abqSvYFQtfvLeovVLd3uxU
+	 70phUaCpQZbu76A5sPpM3Pz8AjiPWczxMz+AC7kA/0HvYsBgbGra59tvULc/y3kR1GbOL
+	 +CKNGHlR+3jPnMRsYuDObV9yOUHtzeaAMNd+72fRET/I6stN4JnzteSUsljDCH3+MyQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 81DA71F00898;
+	by smtp.kernel.org (Postfix) with ESMTPS id C41E01F00899;
 	Fri, 27 Nov 2026 20:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1795812641;
-	bh=v0Bgz1EHTknoJx8oeNdoRh3CgliIR7tsH8ZHa/1EmAg=;
+	bh=9jjys1NwSJjbk8KnYHOCkvlegt17jtVNL7dVvrptlBU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=k6xKnT2GVqpfs/o4bHqhPmpTvlbhgx0y24BGc9e/pj30L3il2zCV03Kqbi14JNICf
-	 c5Cg8hTT7K7TFGVuDLURl9f156iW9KRDZjFWwLz4rWwioImfFcT7coUn7t1yiFczFZ
-	 yahj4KDfNAZbZScQ1nZNMzRBGrAbJU+YcKgHJ3udXALVApoln6HzsjjCU82Ael3rSe
-	 6WcJaYem7ZlPiYNykRT66eFmpoMknyz8+hvLf6cShfhmwwR1pb7Lf34eHaCjeXnfuU
-	 OYptMXn+lRyIXYLMg1aNL92Dp3Ok3z+AoCulJgWw0yZiGdtST+sBh3fnAO1DYnOVEC
-	 2vlYt+sTQFUQA==
+	b=egNWZpK2VyWtOo1uHJQLI4l0YMYzUcivT38XAze+sHS6gLetY7vpyk/nLpKnKcExj
+	 6ngwSTGxXR8yj/sB0iv2vrojWXFXx1+7r2mU8WlVP/H0wFqzmV3FsFLG9+h+cJhD+2
+	 G+tfLzjhFRChsP4uOSo8WGRLkJkDq24W2Hj+VIwLf5FQyb3f2dSro0JNgpRDLSOjST
+	 FALW0Ls/C1IqzkoMpLYllH6UcyrdU2FBeGgCk+bVosDi+TkYDQrat7a9sh82uGV/nH
+	 eHhEqK7wChuedxcwB5FlFP8EAIbAyp/FYIoQXyb+Bv8HNbSSSI92jJkGB9X2AttnvC
+	 P0lKik6Q8TTTg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 0E2834DDCF;
+	by lkml.kernel.org (Postfix) with ESMTP id 51F694DDDF;
 	Fri, 27 Nov 2026 20:50:27 +0000 (UTC)
 From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Fri, 27 Nov 2026 23:50:26 +0300
-Subject: [PATCH v5 1/6] dt-bindings: soc: Add Cortina Systems CS7542 global
- controls
+Date: Fri, 27 Nov 2026 23:50:28 +0300
+Subject: [PATCH v5 3/6] clk: Add Cortina Systems CS7542 clocks
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261127-cs7542-syscon-v5-1-d5a373c72b05@gmail.com>
+Message-Id: <20261127-cs7542-syscon-v5-3-d5a373c72b05@gmail.com>
 References: <20261127-cs7542-syscon-v5-0-d5a373c72b05@gmail.com>
 In-Reply-To: <20261127-cs7542-syscon-v5-0-d5a373c72b05@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -96,11 +95,11 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795812625; l=4089;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795812625; l=6562;
  i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=LqNLTAcu72EDE3AcsaBdidyY70NNKo0WkG3SoF8q1Nw=;
- b=djRcgSWO+zkDwMw7wDWzAQirZzaOzurj7yO9pZ01NSw+4gGR/mx7A6DzYkhFRjnTVU7SpfsyR
- ZRk27Py5e30DdRR3hyBPOsg5F62R96zbA8lUlGKD9TEhRdpegoiyA1/
+ bh=zO7JbACrM9uYJ7gzn3nVwA9o6Uh0BovScf7z3en9G34=;
+ b=UlFwtDdf2Y0Q2EFLZPqcbaL48hLVTPQgG8aw1TUUFL/WfpGpVhcTK6jLOWOl1xsWNjb/9dO5e
+ 390uF/fq7c7DYMYnOdleByWJ3Jmv2zwoUgcQnlThitq07q1zvWxRLHv
 X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
  pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
 X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
@@ -111,124 +110,216 @@ Content-Transfer-Encoding: 7bit
 
 From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Describe the shared syscon, its strap-selected clocks, three PCIe
-gates and level resets. Reserve the former group reset ID and assign
-individual IDs to the seven network reset signals.
+Register the APB, CPU and AXI clocks from the boot strap and the three
+PCIe gates through one provider on the global syscon. Timers require
+the APB rate before platform device registration.
 
 Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 ---
- .../soc/cortina/cortina,cs7542-syscon.yaml         | 56 ++++++++++++++++++++++
- include/dt-bindings/clock/cortina,cs7542-clock.h   | 13 +++++
- include/dt-bindings/reset/cortina,cs7542-reset.h   | 20 ++++++++
- 3 files changed, 89 insertions(+)
+ drivers/clk/Kconfig      |   9 +++
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-cs7542.c | 161 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 171 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 37a8e35d4..acf16b40c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -58,6 +58,15 @@ config LMK04832
+ 	  Say yes here to build support for Texas Instruments' LMK04832 Ultra
+ 	  Low-Noise JESD204B Compliant Clock Jitter Cleaner With Dual Loop PLLs
+ 
++config COMMON_CLK_CS7542
++	bool "Cortina Systems CS7542 clocks"
++	depends on OF && HAS_IOMEM
++	select MFD_SYSCON
++	help
++	  Read the boot straps to provide the APB, CPU and AXI clocks.
++	  Also provide the three PCIe clock gates. The APB clock is needed
++	  by the timers before platform devices probe.
++
+ config COMMON_CLK_APPLE_NCO
+ 	tristate "Clock driver for Apple SoC NCOs"
+ 	depends on ARCH_APPLE || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 52d138d4f..16b1168c8 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -63,6 +63,7 @@ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+ obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
+ obj-$(CONFIG_COMMON_CLK_BM1880)		+= clk-bm1880.o
+ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
++obj-$(CONFIG_COMMON_CLK_CS7542)		+= clk-cs7542.o
+ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
+diff --git a/drivers/clk/clk-cs7542.c b/drivers/clk/clk-cs7542.c
 new file mode 100644
-index 000000000..59bd1cfe3
+index 000000000..643bfaf84
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/cortina/cortina,cs7542-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/clk-cs7542.c
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Cortina Systems CS7542 global clocks. */
 +
-+title: Cortina Systems CS7542 global control block
++#include <linux/bitfield.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/printk.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
 +
-+maintainers:
-+  - Fil Dunsky <filipp.dunsky@gmail.com>
++#include <dt-bindings/clock/cortina,cs7542-clock.h>
 +
-+description:
-+  The global control block contains the boot strap status, GPIO/peripheral
-+  mux registers, reset controls and the secondary CPU release register.
-+  It provides the APB, CPU and AXI clock rates selected by the boot straps,
-+  and the three PCIe clock gates and controller reset lines. Individual
-+  reset lines control NI, FE, TM, scheduler, QM, NI XRAM and the entire DMA
-+  block (LSO and SSP). The network engine consumer must acquire all seven
-+  lines exclusively; it cannot run concurrently with a separate SSP DMA
-+  user. The flash controller has a separate reset. SDRAM is excluded.
-+  Reset identifier 3 is reserved.
-+  Clock specifiers are defined in dt-bindings/clock/cortina,cs7542-clock.h;
-+  reset specifiers are defined in dt-bindings/reset/cortina,cs7542-reset.h.
-+  The pin controller uses the same register map through its parent syscon.
++#define CS7542_GLOBAL_STRAP	0x0c
++#define CS7542_STRAP_SPEED	GENMASK(3, 1)
++#define CS7542_NUM_FIXED_CLKS	3
++#define CS7542_NUM_CLKS		6
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: cortina,cs7542-syscon
-+      - const: syscon
-+      - const: simple-mfd
++/* Rates from the GPL vendor kernel's get_platform_clk(). */
++static const unsigned long cs7542_rates[][CS7542_NUM_FIXED_CLKS] = {
++	/* APB, CPU, AXI */
++	{ 100000000, 400000000, 133333333 },
++	{ 100000000, 600000000, 150000000 },
++	{ 100000000, 700000000, 140000000 },
++	{ 100000000, 800000000, 160000000 },
++	{ 100000000, 900000000, 150000000 },
++	{ 150000000, 750000000, 150000000 },
++	{ 170000000, 850000000, 141666667 },
++};
 +
-+  reg:
-+    maxItems: 1
++static const char * const cs7542_clock_names[] = {
++	[CS7542_CLK_APB] = "cs7542-apb",
++	[CS7542_CLK_CPU] = "cs7542-cpu",
++	[CS7542_CLK_AXI] = "cs7542-axi",
++	[CS7542_CLK_PCIE0] = "cs7542-pcie0",
++	[CS7542_CLK_PCIE1] = "cs7542-pcie1",
++	[CS7542_CLK_PCIE2] = "cs7542-pcie2",
++};
 +
-+  "#clock-cells":
-+    const: 1
++#define CS7542_PORTS	3
++#define GLOBAL_CONFIG	0x10
 +
-+  "#reset-cells":
-+    const: 1
++struct cs7542_gate {
++	struct clk_hw hw;
++	struct regmap *map;
++	u32 mask;
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
++struct cs7542_clocks {
++	struct cs7542_gate gates[CS7542_PORTS];
++	struct clk_hw_onecell_data *clks;
++};
 +
-+additionalProperties: false
++static int cs7542_gate_prepare(struct clk_hw *hw)
++{
++	struct cs7542_gate *gate = container_of(hw, struct cs7542_gate, hw);
 +
-+examples:
-+  - |
-+    syscon@f0000000 {
-+        compatible = "cortina,cs7542-syscon", "syscon", "simple-mfd";
-+        reg = <0xf0000000 0x100>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/cortina,cs7542-clock.h b/include/dt-bindings/clock/cortina,cs7542-clock.h
-new file mode 100644
-index 000000000..c68c6ba20
---- /dev/null
-+++ b/include/dt-bindings/clock/cortina,cs7542-clock.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef _DT_BINDINGS_CLOCK_CORTINA_CS7542_H
-+#define _DT_BINDINGS_CLOCK_CORTINA_CS7542_H
++	return regmap_update_bits(gate->map, GLOBAL_CONFIG, gate->mask, gate->mask);
++}
 +
-+#define CS7542_CLK_APB	0
-+#define CS7542_CLK_CPU	1
-+#define CS7542_CLK_AXI	2
++static void cs7542_gate_unprepare(struct clk_hw *hw)
++{
++	struct cs7542_gate *gate = container_of(hw, struct cs7542_gate, hw);
 +
-+#define CS7542_CLK_PCIE0	3
-+#define CS7542_CLK_PCIE1	4
-+#define CS7542_CLK_PCIE2	5
++	regmap_update_bits(gate->map, GLOBAL_CONFIG, gate->mask, 0);
++}
 +
-+#endif
-diff --git a/include/dt-bindings/reset/cortina,cs7542-reset.h b/include/dt-bindings/reset/cortina,cs7542-reset.h
-new file mode 100644
-index 000000000..136d21432
---- /dev/null
-+++ b/include/dt-bindings/reset/cortina,cs7542-reset.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef _DT_BINDINGS_RESET_CORTINA_CS7542_H
-+#define _DT_BINDINGS_RESET_CORTINA_CS7542_H
++static int cs7542_gate_is_prepared(struct clk_hw *hw)
++{
++	struct cs7542_gate *gate = container_of(hw, struct cs7542_gate, hw);
 +
-+#define CS7542_RESET_PCIE0	0
-+#define CS7542_RESET_PCIE1	1
-+#define CS7542_RESET_PCIE2	2
++	return regmap_test_bits(gate->map, GLOBAL_CONFIG, gate->mask) > 0;
++}
 +
-+/* Reserved legacy composite ID; never reinterpret it as an individual line. */
-+#define CS7542_RESET_NE		3
-+#define CS7542_RESET_NI		4
-+#define CS7542_RESET_FE		5
-+#define CS7542_RESET_TM		6
-+#define CS7542_RESET_SCH		7
-+#define CS7542_RESET_QM		8
-+#define CS7542_RESET_DMA		9
-+#define CS7542_RESET_NI_XRAM	10
-+#define CS7542_RESET_FLASH	11
++static const struct clk_ops cs7542_gate_ops = {
++	.prepare = cs7542_gate_prepare,
++	.unprepare = cs7542_gate_unprepare,
++	.is_prepared = cs7542_gate_is_prepared,
++};
 +
-+#endif
++static void __init cs7542_clk_init(struct device_node *np)
++{
++	struct cs7542_clocks *ctl;
++	struct regmap *map;
++	unsigned int strap, speed;
++	int i, j, ret;
++
++	map = syscon_node_to_regmap(np);
++	if (IS_ERR(map)) {
++		pr_err("%pOF: cannot get global regmap: %ld\n", np, PTR_ERR(map));
++		return;
++	}
++
++	ret = regmap_read(map, CS7542_GLOBAL_STRAP, &strap);
++	if (ret) {
++		pr_err("%pOF: cannot read clock strap: %d\n", np, ret);
++		return;
++	}
++
++	speed = FIELD_GET(CS7542_STRAP_SPEED, strap);
++	if (speed >= ARRAY_SIZE(cs7542_rates)) {
++		pr_err("%pOF: unsupported clock strap %u\n", np, speed);
++		return;
++	}
++
++	ctl = kzalloc(sizeof(*ctl), GFP_KERNEL);
++	if (!ctl)
++		return;
++	ctl->clks = kzalloc_flex(*ctl->clks, hws, CS7542_NUM_CLKS);
++	if (!ctl->clks) {
++		kfree(ctl);
++		return;
++	}
++	ctl->clks->num = CS7542_NUM_CLKS;
++
++	for (i = 0; i < CS7542_NUM_FIXED_CLKS; i++) {
++		ctl->clks->hws[i] = clk_hw_register_fixed_rate(NULL,
++							       cs7542_clock_names[i], NULL,
++							       0, cs7542_rates[speed][i]);
++		if (IS_ERR(ctl->clks->hws[i])) {
++			ret = PTR_ERR(ctl->clks->hws[i]);
++			goto err_unregister_fixed;
++		}
++	}
++
++	for (j = 0; j < CS7542_PORTS; j++) {
++		struct cs7542_gate *gate = &ctl->gates[j];
++		struct clk_init_data init = {
++			.name = cs7542_clock_names[CS7542_CLK_PCIE0 + j],
++			.ops = &cs7542_gate_ops,
++		};
++
++		/* Gate-only controls: no source frequency is assumed. */
++		gate->map = map;
++		gate->mask = BIT(10 + 2 * j);
++		gate->hw.init = &init;
++		ret = clk_hw_register(NULL, &gate->hw);
++		if (ret)
++			goto err_unregister_gates;
++		ctl->clks->hws[CS7542_CLK_PCIE0 + j] = &gate->hw;
++	}
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, ctl->clks);
++	if (!ret)
++		return;
++
++err_unregister_gates:
++	while (j--)
++		clk_hw_unregister(&ctl->gates[j].hw);
++err_unregister_fixed:
++	while (i--)
++		clk_hw_unregister_fixed_rate(ctl->clks->hws[i]);
++	kfree(ctl->clks);
++	kfree(ctl);
++	pr_err("%pOF: cannot register clocks: %d\n", np, ret);
++}
++
++/* Timers need APB before platform devices, but the pinctrl child must probe. */
++CLK_OF_DECLARE_DRIVER(cs7542_clk, "cortina,cs7542-syscon", cs7542_clk_init);
 
 -- 
 2.53.0
