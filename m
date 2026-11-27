@@ -1,67 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795800475;
-	b=yKwKWvQUg7BocpQVLBnQB22aJAWmN5p9Ml2FxjpU2iGcsVDjeupGdaeill56TVxobiQI
-	 R8b78eOsxKXG0bLiMk5UY6mcI1ltyznkXG8Y5K4ArEPgHCbZDxCG5yyTWmNJagzSCBwcA
-	 XWnAxKITYtLhVlQ6lnN7rpoaGKTgKQ8gim5GM3RY5cHxe4EuFqt4RKF9tVWSLRigTP0UG
-	 5PeihZfZ0dwEXiQCMd5yn2SwX+nA88EmoXgW0Xl3cFlMy+s6B2aeEbNsMoDHo79FeA+P6
-	 bsXhi1HOGl3CZeo0gMK/M44vparWRI0/wzkgDuIdbfLQvG+jjUBM0725LkiIyFwV7Mw==
+	t=1795804265;
+	b=RGiQwCrgyQeYL7M5KOj5TK/GBAWsJqrulhNCbjCswjDkwiY5KcmDuWY345Ysz2Kw5Wal
+	 v3f8PRuQSc7ucp2A5d/kRpws0rn6ruBA5hWbuZ57ri+tojSfdZptFsLYGfmCkL3aJTThD
+	 Agrcyn6wpk7c2PkLF1e1sM/IG7ixB3xnrPD+YMfPbgR/89YasxagdUOZWjP28ZZvoEdcH
+	 XskwcxRkGCUBEea4a9LQjoNumG1i+qGo2b+gBxVRSu0hlrj4UZR0fKr3jxa2u5P/FdNAs
+	 Fvm8rHaioEaYC31JYYCMo8g+6gzxscRNGAWxTQZB4yBlsY16UwIZ8uZMWMCY5sMBDBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795800475;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795804265;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To:Organization;
-	bh=W3eKtzyeFAx9k3SdIScJomTE4HlGQvDUwsp4irgjcmQ=;
-	b=G8SL23eOnkBk7cn/Wta8FDGEoKNaMCSb1FmaG3Agox93Onjlt/oB+yjBeFCZ5mAxdbUs
-	 989NnypcOJ6I8rnSu4J/j93IO78wmxxC7ilkDYzkTqMkpxrqgBco1QngK+mHrllrz02th
-	 htecBTfZ1XcUe7p4UJEojB9OAHn3CMeKuBRAZ1OsNLOwF2kCdoant9tiLvHzMQDSuSTeb
-	 fCnJHDEJdupRHtE23jDDEp7Hmz7IhYnFgdPHQAHaZrZ/mrTmqi5+XX/qWvfX1VnHZVc5j
-	 6Z24IaLjH4//iT72hw+zzM0SQTA3WU6+wEKnH4PpmIiCQwn1qWv9ifCid3Ste8P8XYA==
+	bh=yU2nYKrDNlFNsbHHIkXsJcnjvDyggWyC1jVuTdrtc4g=;
+	b=HzlB/Kn8+r1oZnIUXDU6Mt2zU1WOxRl2aTT8KqIyH/3atD6rxBjtzVsQ1S+zr/VzNJve
+	 tQeNXUWgiZydNA7yRMf8bmRVJbGBvsYDmlKcN1FmATsoUbUc4D9DtR7UzFSp7SbEQSFGc
+	 5HAgiaCQGvzJ9jAEfIaVVxN8UQ9c/SZPjA/RsmcaCP0oRg6M6J2wV7QZODw3g5iVlllcw
+	 RxHaiyWiARKzJmCyvDtSQYtO74kOTSxrktmwhgXUPEytITJYyKMAKxuIEzUhjRADAUDVw
+	 HzwK1HXGvUZMsAboZzko/KTC+mrdeCWoMHn/j2LekbjHTc3iIXvIU42qkQIjkf/C8mg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kgxuIDop;
-	arc=none smtp.remote-ip=198.175.65.17
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="W6+/O2LX";
+	arc=none smtp.remote-ip=192.198.163.8
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038D5606A31C
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 17:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 038D5606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89606606A31C
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 18:31:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 89606606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kgxuIDop
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=W6+/O2LX
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795800474; x=1827336474;
+  t=1795804265; x=1827340265;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=W6Q61lmnMfckv9+BDm568lRdNWM7pHAMlkSfDSGy6tU=;
-  b=kgxuIDopW8UyNv8EjEYKCZbaygvmllUdrV3Z3brmwJHkUSjOANefqbvH
-   5/cE4/VKuW7vECQ7Cw8+k/Of47epP06I5Oet2QO1Qy0HwV9rQhWmKXPEE
-   ZDMhSH6QFUbtlHLxEdyzFGhcsFsLR6gcyN/LPa5U1q8ZlPrSwus82hqV1
-   BW/oCx+yPTgZOLG6Wcx6v4/nx8yRw5awUlS/ZZvh+hRyGckXBnoYyimAF
-   msySpiVD2NYiEGKwxkaaArHucZ1tWe9qYrUv193pYTBhFvJi+evbXXNQr
-   J/Ouj6rssLzRpNLUmwrwcjIaJUqzeZnyV010X68THTBmih4Zy0x3ATBmp
-   Q==;
-X-CSE-ConnectionGUID: XM5f7F4+TR2A6MFxqhjh1A==
-X-CSE-MsgGUID: YISzjK99Qvq/hmK3Pbu7CQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4714137"
+  bh=TBFJ66+LtWaiW+TPpfa+OeTpRDo6xWfqGRmmzWRu4C8=;
+  b=W6+/O2LXuu+zi7vSqnYbhw9Fwsslv7vU8l6f+hjwJsBScLeO8g3EE7hu
+   DdW+nuZQSIWK2D39MOMDbjh8RWG82br923QTvNeiFOamqLaI+V5864zyO
+   bBenNT0hsHzEJ99YQLRHQ+hA/ADYXPj0y7aEuQpotiWZiQmatW5r26KId
+   8cvPq4IKjE+sqZ/3dD7l5qSi6Z4Y2QQnQZZBbleDZhSJER0GFOoPb1T/w
+   TxHFORCifUAzGn/6g0OScwebRHXvDZ568Fgxd+8zWwGk4QaVPNeXf9QNa
+   FFmXMDMg9/MNpOHY6HEJADvDIoNpIn6rOPLRgkViEbpGQZNP4gbJek/lx
+   w==;
+X-CSE-ConnectionGUID: SM4lqmwtSIuXMn17Jhru5A==
+X-CSE-MsgGUID: 685TL8d7TDyn+0B0qRgBmA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4603982"
 X-IronPort-AV: E=Sophos;i="6.27,237,1787036400"; 
-   d="scan'208";a="4714137"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 09:27:53 -0800
-X-CSE-ConnectionGUID: epC9rlWhQqeupkvh//V8aA==
-X-CSE-MsgGUID: p0Kq4xR1Tl24ziID7xm57g==
+   d="scan'208";a="4603982"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 10:31:04 -0800
+X-CSE-ConnectionGUID: IGB1DSF6TyORstOwI95YdQ==
+X-CSE-MsgGUID: QZTLcboxQsenkF3792mAwg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,237,1787036400"; 
-   d="scan'208";a="14109299"
+   d="scan'208";a="14211216"
 Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.115])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 09:27:50 -0800
-Date: Fri, 27 Nov 2026 19:27:47 +0200
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 10:31:00 -0800
+Date: Fri, 27 Nov 2026 20:30:58 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Michael Walle <mwalle@kernel.org>
 Cc: William Breathitt Gray <wbg@kernel.org>,
@@ -76,11 +76,11 @@ Cc: William Breathitt Gray <wbg@kernel.org>,
 	Lee Jones <lee@kernel.org>, Long Zhao <longzhao@ambarella.com>,
 	Joseph Telaak <joseph@telaak.dev>, linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFT PATCH v2 03/14] gpio: regmap: add callbacks to handle IRQ
- domains
-Message-ID: <awm9k-jTlhBWIi2x@ashevche-desk.local>
+Subject: Re: [RFT PATCH v2 04/14] gpio: rtd1625: create the IRQ domain from
+ the gpio-regmap callback
+Message-ID: <awnMYpXTtH7scMet@ashevche-desk.local>
 References: <20261127145232.814492-1-mwalle@kernel.org>
- <20261127145232.814492-4-mwalle@kernel.org>
+ <20261127145232.814492-5-mwalle@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -92,56 +92,84 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261127145232.814492-4-mwalle@kernel.org>
+In-Reply-To: <20261127145232.814492-5-mwalle@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Nov 27, 2026 at 03:52:20PM +0100, Michael Walle wrote:
-> At the moment, an IRQ domain is attached via config->irq_domain.
-> This means, that it has to be created before the gpio_regmap_register()
-> call. The callbacks of the IRQ domain might use the gpio_regmap_*_irq()
-> functions. Consumers can already use the domain as soon as it is
-> created and this creates a small window where the callbacks dereference
-> a NULL pointer.
+On Fri, Nov 27, 2026 at 03:52:21PM +0100, Michael Walle wrote:
+> Use the new .create_irq_domain() to actually create the domain. This
+> way, there is no window where a NULL pointer could be dereferenced.
 > 
-> To fix this, create a new create_irq_domain() callback, that is called
-> after the gpio_chip is added.
+> Switch the irq host_data to the gpio_regmap pointer because it will
+> already be needed in the irq domain callbacks. Otherwise the
+> .create_irq_domain() callback would have to set the data->gpio_reg
+> pointer which looks odd.
 > 
-> Also add a remove_irq_domain() callback, which is called after the
-> gpio_chip is removed and before the gpio_regmap is freed. It is supposed
-> to dispose the IRQ mappings and remove the domain.
+> Split the interrupt handling into two steps: first fill in the
+> interrupts and in the callback attach the handler.
 > 
-> Also ordering of the resources matter, so we forbid any device managed
-> resource handling. Any resources allocated in the create_irq_domain()
-> callback has to be freed manually in the remove_irq_domain() callback.
+> Don't use device managed resources anymore. Instead use the new
+> .remove_irq_domain() callback. The driver didn't dispose any of the IRQ
+> mappings before, although irq_domain_remove() mandates that. Thus add
+> that to this callback, too.
 
 ...
 
->  	unsigned long *fixed_direction_mask;
->  	unsigned long *fixed_direction_output;
-
-Perhaps a short comment why create_irq_domain is not here?
-
-> +	void (*remove_irq_domain)(struct gpio_regmap *gpio);
-
-...
-
-> +	irq_domain = config->irq_domain;
+> +static struct irq_domain *rtd1625_gpio_create_irq_domain(struct gpio_regmap *gpio_reg)
+> +{
+> +	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio_reg);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	struct irq_domain_info d_info = {};
 > +
-> +	if (config->create_irq_domain) {
-> +		irq_domain = config->create_irq_domain(gpio);
+> +	d_info.fwnode = dev_fwnode(dev);
+> +	d_info.size = data->info->num_gpios;
+> +	d_info.hwirq_max = data->info->num_gpios;
+> +	d_info.ops = &rtd1625_gpio_irq_domain_ops;
+> +	d_info.host_data = gpio_reg;
+> +
+> +	data->domain = irq_domain_instantiate(&d_info);
+> +	if (IS_ERR(data->domain))
+> +		return data->domain;
 
-> +		if (IS_ERR(irq_domain)) {
-> +			ret = PTR_ERR(irq_domain);
-> +			goto err_remove_gpiochip;
-> +		}
+This is open coded irq_domain_create_linear(). The only difference is that we
+propagate the underneath error code instead of decoding NULL as ENOMEM or
+EINVAL or something like that. If this is the case, add a comment explaining
+why, otherwise somebody will change that in the future w/o much thinking.
 
-		ret = PTR_ERR_OR_ZERO(...);
-		if (ret)
-			goto ...;
+Note, it was open coded since there is no devm_*() helper for that.
 
-> +		gpio->remove_irq_domain = config->remove_irq_domain;
+> +	for (unsigned int i = 0; i < RTD1625_MAX_IRQS; i++) {
+> +		if (data->irqs[i])
+> +			irq_set_chained_handler_and_data(data->irqs[i],
+> +							 rtd1625_gpio_irq_handle,
+> +							 data);
 > +	}
+> +
+> +	return data->domain;
+> +}
+
+...
+
+> +static void rtd1625_gpio_remove_irq_domain(struct gpio_regmap *gpio_reg)
+> +{
+> +	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio_reg);
+> +
+> +	for (unsigned int i = 0; i < RTD1625_MAX_IRQS; i++) {
+
+> +		if (data->irqs[i])
+
+Do you need this? It seems to me that irq_to_desc() returns NULL
+and scoped_irqdesc_get_and_buslock() does nothing. Yes, I know
+it's a tricky code.
+
+> +			irq_set_chained_handler_and_data(data->irqs[i], NULL, NULL);
+> +	}
+> +
+> +	for (irq_hw_number_t hwirq = 0; hwirq < data->info->num_gpios; hwirq++)
+> +		irq_dispose_mapping(irq_find_mapping(data->domain, hwirq));
+> +
+> +	irq_domain_remove(data->domain);
+> +}
 
 -- 
 With Best Regards,
