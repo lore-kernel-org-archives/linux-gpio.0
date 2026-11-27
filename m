@@ -1,101 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.175
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795794740;
-	b=aqd5nnxI6fZF/YgZaUHQU984BPikROajGOAPBwJNlClY1xY1VaBLKoUhE1kC6skmuWCr
-	 /B8sy9S+FJOyvp+hQE0SVP4XF7Nn1vaJaJW182feMlUdHFQlaIP7Y0pjlqsOkQTLmjoFW
-	 ew+TJ2KbD5LQfVBH4n+R0jy7YTUbhigUnIFytIxuPfbpVcV3GDxCPaxQVASEFfouh1OfT
-	 mUxoeTK4rLxMVrglKHP7E+VSv+rBO2Qh11W5mg5x97Ldl0EpvjMgFzEqCompmsqP0wnO6
-	 ES7KBNNjVrc6CttIF7sVAMYxdfGPNapJrmvT2sgj6ICQe9dteEQFCOFwq6EnmjBBpYg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795794740;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Bn519PC2mGI84FvdY3LE3CWcTtP+TtO03ylXAMsjaGk=;
-	b=gj062u57Y9tvGkVuTyW9xWxoxxMzCNdTmcbR1ZgGprRmpxv2pQz9Mplwxmzvjzz3dsHv
-	 NE3ekJbNSyFOfc++AIapc19lERPuW9FM68ufAGQPGyRohXwq97YmYbnhOdzA3vYzyo8RR
-	 PROrypmBc9HGxhIl5c9oD7Ymel+koIlkoQyntogmEPBpP2STx6/vGjHjVRQotUmeRAxuy
-	 Dl9HRu77EozMj6aDw1U406/bT3bKVSX7n62ObnWMzZfSh07/wDMaZBr69/PPktjB2jenq
-	 FDjsea39WdYLpSB1xE9O62qbAUulH0V8hvH65se66J045AIu6iGT9XeW84aNDF5lA5A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=G68bOQ7g;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.175
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.11
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795799984;
+	b=Amn9NERiXumKz7pWEn2ptbbPrydLTfv3TDH2nZHIk922zgrKyDEs0z2DNDu7z2BAqa7n
+	 5thU/1EYMV164SQZjPVPLc7A54R9VeY+0h4BamaNk4CLHqaZcR/kbBvEW3e/axAK/KWQG
+	 Ms9h1b9Uq5IVDmLNdUFwHHZkFGlnaM/8AKHlGqO5V53WH07l0c5Sg28aH1318iJFDO3SG
+	 PuzJCSTiznALZXpWG2Oxt3N56tIhbBEKRb4XGCvbYdoKJRMF9pn+nfJRMgwKorswHaQQJ
+	 WVhsV37XPTuTiF2mOhDGcEcg4F+MKwssvsAdOY6ekFb//0/qGsCgK9kRFSxq79QCpTg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795799984;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=xM+++gh9lEX42BhN1B3t2ZJ0fmEd/nt0wFnMQxSaQZs=;
+	b=1SxFiVGTAeSu2BN8o4nJegJ76XE5HOBpj8CMABitxHTz3UXqs/+hgiQbaT6sfof1ZRQE
+	 wtd2ipwtezxXHfEzW90BkBAHJgSgFcyQ377S6MbF1iOtj7wEE0VNOdHHSOnhSJ80dIHMc
+	 ROgKReGSl2LYVRQPmlNcVDLFDxb3S19SDI2I8vBj/d37bYo6xsdnQXrN9R8RaJRrXGEVv
+	 suyzHWePYoaPpGIvj2ZjNq5hzUBEBtmTyQUiZbNQkT65CYROehydsmAgr65bijyRzGQKd
+	 nv9QfLljk9ox8BsenKf/XAS7tPrJOZe86EFJvJktDyiOUmmpS1Zfkq9LGFNGGm4bHFg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=REgtil3Y;
+	arc=none smtp.remote-ip=192.198.163.11
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E35606A31F
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 15:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 38E35606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE50606A31C
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 17:19:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EEE50606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=G68bOQ7g
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-8b0ca1ebc8bso72036907b3.2
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 07:52:20 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795794739; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UJpj/oyIChGwYSGU71DasY9RKEZhuspyWkwq518zWTQhASCRnQ0wMo6xHyc+OCwRPu
-         2T97bf+eJXVq8v+wOBFPbzWk3QhJqNcivRNGc9I/mEiiojXM6v/BGpQwfPod2z/KmFrL
-         iodPpINpAXVUmudPkY3bkvuQEVHAINOwi/hXHI9AY2ysA2YH5el5UyVkgBdT9G9UHgKN
-         7PLbzKhcErLBGao9b/n2dYjXoHbrg5PiHnYdRioX9gh3dGZqI3fu39PRLh0hxZeP+LR1
-         y5PfOJHl2GyLNXwFx1uu8cVbSUWUcwSmqnbaQDzrM40SqLE5h5PGrdN8UqmiOgPGGEqd
-         Q71A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Bn519PC2mGI84FvdY3LE3CWcTtP+TtO03ylXAMsjaGk=;
-        fh=1l4LFu3T2ry1jqCRJsLmrZqTgrQHuJ9S1pJ9MxJCzk4=;
-        b=lYXXnY1NrydXfEm34t7BDddQwWIvcGIC2cj0Z0yJj9k+J7a+UheARM6Pmihr3ZWYPC
-         5qoAGvPfqWjCHhlL21CbNhQS9A0YjIuqYiZAoRhCnV8IC8cbch0QGasQ9aGGjbgjgQuw
-         jUwf7zeMhA7lJGF4t+aPshlozN6YsTU+Zr2lAe2uVB2p7/Acz0gu+ARdAl32/dO5dZnq
-         b1Qm7y9SIxA8ZhmXqMnbVXFqNap9El4JYIoavpl/inhFkA3XDMAocz0H/dhZQjrh63Ie
-         McCxl5JnvTlVUtQ8ZOE0kzjt4Rj+3j+fQJGbQ3Yfma9a0WL8zZ2rP23d8RRfzCGprfcs
-         5INg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795794739; x=1796399539; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Bn519PC2mGI84FvdY3LE3CWcTtP+TtO03ylXAMsjaGk=;
-        b=G68bOQ7gd9fYWPs4vpitzktdodXkfO4IvTrwfu+V5dAlrLLn2uoo8t2lRb/yzgDlY5
-         8cpPB1aymtLQVMlEeKvgLiiMRoft0rT/3tEX/XFmyzXvcqrG84KRnXZsjQQjcdPNnmJK
-         x/ZS7oaEHm7uAp4NfSTZ3C25iUKc/+rI+TzV43zvtjsdh72tY3bC02mZhdHbu4KE/zNy
-         rObHq7sQNICtIwbLA5ioZsO3UaIkq8MgW7+lpa0iG6FU7+NO8meSRyvMsUMKckcilW+7
-         ezynRg9NfyhSgeLgLGLDQWYwZK4kzQ38bXEgtHrHnrPOHntMm5m0HoSXgg6YLllHn3KP
-         T+Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795794739; x=1796399539;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Bn519PC2mGI84FvdY3LE3CWcTtP+TtO03ylXAMsjaGk=;
-        b=mUd3JPHDIwR945zj0pDW4mmm3aJWpoY7SYpGpxVSEk3f91EkooDVgMdz4hxkBHVVWb
-         AD64/VKVRDvFGowH0cVSb0otX2RAIh5029thKvBwbRaRxaPzszn8YJ7MBVFE3jFUsJnn
-         uPjgpF06F4D63bmb21XP5Stak+pvHvWyu241qplMB6+J6BPPMDxCoqer+tlY34s48xz+
-         Nk20VXkh3p+Mmj8I1OkFfP4faqN89jTw3s+MI9H8PUeLk9HENopH9wTAZ51nQKyDkInt
-         nd9mlnzRedJOiYHBcWwDRwxHWECLw6eJrr9G9FxDdOuQtwG/xtkyCvZdeVmjM5u9+O75
-         RYVA==
-X-Forwarded-Encrypted: i=1; AL+hErGYwOQojSLyM18sPCDx4DxXfXxQoas5HEcwgUmPCQkQUW6XuvTCzHOW8aLn42XroN4QMDfheZUnW/He@vger.kernel.org
-X-Gm-Message-State: APuU4Z8eQ4fl3lQ7AU93nLdNBfN+WfXL4trPfCyc7DrOt2uSlwh7Pg56
-	NjifzNxzkTm4rTRfxbfjwsaBNu/Pko0/ORHgdPdrZ/kHMCpl25O+A894cADwwnwP7V+HmH3rH4U
-	3RSZcu3ErxRXGNcYL2vE5/aA3zByAtFE=
-X-Gm-Gg: AZFdTZdwnFENwTwJUDjXiUPqNfYKVigjYx/8tP16pML0yPkJWIqMIbxcI/Z/22UfLIq
-	AO27UWQYGbCVI/RZDrWrTTd3VbMzYlYXcyFqJbAIKhmvSKkUjOOFG3Bd0GcR/JAuThH0b6LvEUI
-	zPi7YlwiOp5BI+ZCfCNPsdhH/VEHUaMlkSHs+QS1ufEq0pL/7MJ+ZqtiIVSBMabVMzRTOYrLx1t
-	nh3HZzSqQMAg8ZmWxHJ+zbb3Viax5X+ERc+uWUzIxZ7+EnyhGIl3G4wO8OtgUTkIqB4jTZfYQ6v
-	xghDYGOBtxx3jGylWZp38kDJLASgOoChJe2ZQP5Doy2fIZRI+bcKGMw3f6/96XS4v8LOd5sCcUE
-	+b/H4ekRpBTNwI8/hNpUlt1MrZDf9cAK1p53Xq9Va33Ynv3txgmiYn4LeddxEzHD0hYt9+xynyd
-	XXo9ncRp2y5sFp7Qs=
-X-Received: by 2002:a05:690c:d0f:b0:8b3:5f41:3c1e with SMTP id
- 00721157ae682-8b520456e2cmr101773017b3.15.1795794738916; Fri, 27 Nov 2026
- 07:52:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=REgtil3Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795799983; x=1827335983;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bHhhJa33EMSuLHof5NWbr5J4Gnw3fnFnAMrrEdH8PE0=;
+  b=REgtil3YujOidQtwRfDeWMm3XNKOVIsGw06aUfIQ0eggzh9JAOp7jD34
+   NqTG1E4C8IkwSBXARNqM9ahB7HAnwJ2fe9NC0kjtofAfH0F+pnWp6AXNf
+   sD11bZdUypNTcNcf23m8c0WTOy7U7KJbO4QjsbeGPGEEauqTWKkZP2Ukh
+   iAw4rTgUB1H75LGeMl7tnedv0FlXOEXrpRQWe1diFbpqHmeYwW6hYmRPg
+   9JARxxI2sgvi0+Bsa+ypciPpkbcrb/fizDxFwVBy2FeNhWGA/H5xYzckP
+   0Xyi9b0sIKv5fbF9WfCjviBJgAmMrtxDOJXDQkdMtdXkL+Awu6A7K6B9S
+   Q==;
+X-CSE-ConnectionGUID: NMEIg18SQFyrKpPvN/rg3w==
+X-CSE-MsgGUID: ATLndY6tTHeMwHzrYhunGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4625880"
+X-IronPort-AV: E=Sophos;i="6.27,237,1787036400"; 
+   d="scan'208";a="4625880"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 09:19:42 -0800
+X-CSE-ConnectionGUID: O6Ce+IGDSk6VlDcgLtmblw==
+X-CSE-MsgGUID: v0hwtTnbTfiQPFaBEUrbDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,237,1787036400"; 
+   d="scan'208";a="12571123"
+Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.115])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 09:19:38 -0800
+Date: Fri, 27 Nov 2026 19:19:36 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Walle <mwalle@kernel.org>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Petar Stepanovic <pstepanovic@axiado.com>,
+	SriNavmani A <srinavmani@axiado.com>,
+	Prasad Bolisetty <pbolisetty@axiado.com>,
+	Tzu-Hao Wei <twei@axiado.com>,
+	Karthikeyan Mitran <kmitran@axiado.com>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Lee Jones <lee@kernel.org>, Long Zhao <longzhao@ambarella.com>,
+	Joseph Telaak <joseph@telaak.dev>, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sashiko <sashiko-bot@kernel.org>
+Subject: Re: [RFT PATCH v2 01/14] gpio: regmap: use the correct number for
+ .ngpio_per_reg
+Message-ID: <awm7qL5J02ivp_XC@ashevche-desk.local>
+References: <20261127145232.814492-1-mwalle@kernel.org>
+ <20261127145232.814492-2-mwalle@kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -105,56 +91,41 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261123004501.1771603-1-rdunlap@infradead.org> <179544374364.72405.3233920081843026528.b4-ty@oss.qualcomm.com>
-In-Reply-To: <179544374364.72405.3233920081843026528.b4-ty@oss.qualcomm.com>
-From: jim.cromie@gmail.com
-Date: Fri, 27 Nov 2026 08:51:52 -0700
-X-Gm-Features: Aa3M54rm3kLJSfQuoGS-kB6ubBWCryZ8gHwyhIHj60l5I6g3JB7jIkv7hQ15H_w
-Message-ID: <CAJfuBxw0ZC7=935bE0PRf9Xy5d+y-wA=5YMRJm0JmwHF7qq_dw@mail.gmail.com>
-Subject: Re: [PATCH v2] chardev: GPIO common access methods: repair
- non-kernel-doc comment
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-gpio@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261127145232.814492-2-mwalle@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 23, 2026 at 7:23=E2=80=AFAM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
->
->
-> On Sun, 22 Nov 2026 16:45:01 -0800, Randy Dunlap wrote:
-> > Change a "/**" non-kernel-doc comment to a plain C comment "/*"
-> > to avoid 21 warnings like these:
-> >
-> > Warning: ./include/linux/nsc_gpio.h:2 Cannot find identifier on line:
-> >    nsc_gpio.c
-> > Warning: ./include/linux/nsc_gpio.h:4 Cannot find identifier on line:
-> >    National Semiconductor GPIO common access methods.
-> > Warning: ./include/linux/nsc_gpio.h:6 Cannot find identifier on line:
-> >    struct nsc_gpio_ops abstracts the low-level access
-> >
-> > [...]
->
-> So this isn't really a header for a GPIOLIB-based driver and technically
-> outside of my jurisdiction but it's also not seen any changes for 20 year=
-s so
-> let me take it and see if anyone yells.
->
+On Fri, Nov 27, 2026 at 03:52:18PM +0100, Michael Walle wrote:
+> Setting .ngpio_per_reg to 0 means that gpio-regmap assumes there is only
+> one register. If the number of GPIOs comes from gpiochip_get_ngpios()
+> config->ngpio is still 0 and it's taking over the wrong number.
+> 
+> Fix it by using chip->ngpio, which uses either config->ngpio or
+> gpiochip_get_ngpios().
 
-Acked-by: Jim Cromie <jim.cromie@gmail.com>
+...
 
-as to your GPIOLIB rewrite, I have the board buried somewhere,
-I'll try to get it back together and running, and test your rewrite.
-just not real soon.
+> Fixes: db305161880a ("gpio: regmap: Allow ngpio to be read from the property")
+
+Not sure, before that commit the assumed configuration never worked.
+But not objecting it, up to Bart.
+
+...
+
+>  	/* if not set, assume there is only one register */
+
+^^^ Seems like the comment lacks of an adjustment.
+
+>  	gpio->ngpio_per_reg = config->ngpio_per_reg;
+>  	if (!gpio->ngpio_per_reg)
+> -		gpio->ngpio_per_reg = config->ngpio;
+> +		gpio->ngpio_per_reg = chip->ngpio;
 
 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> [1/1] chardev: GPIO common access methods: repair non-kernel-doc comment
->       https://git.kernel.org/brgl/c/d4dc896fa2bdfd7d1a78911598a0fa3e3c831=
-d92
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+
