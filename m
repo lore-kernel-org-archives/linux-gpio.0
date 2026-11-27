@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795791183;
-	b=NXZdqEPUcJlfygKzCyKlRIE02QFaq5pjvhZFoNsMRPNsABoa17Bw9ehrQjK0cL8GkhvN
-	 avkaR6PKd3iXfHAAbvzDcW24HPw/zKSsn6F8Wj4yuLOaFpWMBFaaKKvRvrt26B482HG9Y
-	 jXpjKTX1rXhtAiLkITQrinEF/bxdiQN4dGOepbSDTo8YXH3ypkJuMDF8r0haSPj5V/SEN
-	 C7tA2jkGopmAYdSFJiNxROE61RC2+tYAsH/q3OWdudjROsPsF9QB226B6EtEYiIagqcVg
-	 VgSC62k6y08ph8EZvMxx4HveSRoc0hI24MB1J/RD/a4KNINm9g1HaW5JQLAcWJHzcBg==
+	t=1795791187;
+	b=2UB7Zk7k2rE5eni3WHxrWJwfjJb45rG8f48bJGKHi3EVThuxs4JiShiXVdJlCntaMnw0
+	 eLFFO979o3lO5fbCyN5CY5H8cxTa7UR9+a6GMmWWTijFQAo7ZEFk4LFzMWx2ZMviLMGuA
+	 oCSzgU+fqchfgDcKR0Jdal04rTPaPNUVkxuPT8qdBahjg7CCSB5kIjt+Gb5hBBY+jlwMD
+	 NFF5qD8yDigyyxcx6Q5ZzdjPR/QDvzXaG4U1NYfBeD4bsODoCy89jprnRJCqfcAAnwj4/
+	 LwhJXjswSntm7dnUMqZqAeIHycZX5rmKf7gm9nbbbf0zWS2hnYj7yvYrKXtx+mwbKpA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795791183;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795791187;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=MM8PVVoC4d19tt8XwrIgM0xlnQmL5aNn/vzM2tzL2OU=;
-	b=bXJLDIzwicqFVfzQD4G9dioFBQFkDJXeJ5qtaTnmjOcDwNRxF6JItaFtadO4LDUrqI1l
-	 2vQBhJgWTGFRkM2Qjoz1HDyHQaqISNiFAb1nDyVPPK7jqZZn/nWeQv4kyhJz+BohJlrPy
-	 xib7UaMqKgqR/KdKnhh1twZWoXXOo0gOTzlqUWk8MArpk+SZl9mlX/OVWyxRtFP89I95f
-	 EXR/O5Oqee/IGPJz6qgz6o5Eh7qf7cyiK+iczPdN7qRMaWGyyjeaNEX3Qy2wrAdEziGlu
-	 hBi0MDqFeyEc7OQEhY0gp725lcLjFV8aIho3WUevN1jS+4TGLK/I39pfslxhqBEXQkw==
+	bh=QE0oVtI/py717JnDeulrVx+SoFxs8JDa1YElE+ziiL4=;
+	b=359HVvyCVfV3MKU+XgAW7964aRGY1T1rjzjQlcXtaHg5HCxccB92T30NzajC+yLAoPSR
+	 SvGkErkHSlfJNiCc/EJGQQZJQwsDZajQfGLn7k4gzgM23jsdaBPww0efpx4qYFzWJ6yWf
+	 jsd/EWjz4DzRyqXjDEkWgPErUFZZxw6j9uyYZpf1H/N2V1XZTl5iSSWt/mPV3SB50/8Au
+	 D6ur63s4AAMJX0VkXq5FhlPmofI5MkyQBbLwIplB9Tmqe5IDRsW2Gf/MZQtrhn3I3r+GC
+	 PW0gFDPDAG3A3PbqV8aYjfnT+RzDwmqqjyFJybUOhlX251UUXvMP7oaTWYfoll8z8GQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VAsAF1Dg;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gwdp0ACL;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5E1606A321
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 14:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D91606A31C
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 14:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VAsAF1Dg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65DC1F00893;
-	Fri, 27 Nov 2026 14:52:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gwdp0ACL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB3B1F00899;
+	Fri, 27 Nov 2026 14:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795791182;
-	bh=MM8PVVoC4d19tt8XwrIgM0xlnQmL5aNn/vzM2tzL2OU=;
+	s=k20260515; t=1795791186;
+	bh=QE0oVtI/py717JnDeulrVx+SoFxs8JDa1YElE+ziiL4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VAsAF1Dgo1fCdGDUPdUB8aj+LkNBlG28NAdfJrYuOjIhcIDRNTLALE0mKwSIXuEW5
-	 NRmdsnAZzlwtXcaFcLtjhTE4h1dhu5VUAMsO9IvV3Ar2lg9jX2ySI6emBMgkzXmBKz
-	 W1kmJNcku8FmF7ANRDdvqC6x3YkAppfN68dJzmkxcheGNEY+Uf+9nRBS6EumK0uoUX
-	 eoAjAT6lpbfUHdNS+60o+NMAqe1WycoRfO1igw4Y6qZtKhOEQNdIozbbIGY7TgcblR
-	 BqBbg6AjH0aQ+AGeL3U0C/7g/1nuEA7Op/sZ+dnJrDZ16dUyoHRd5TJmLJO5XbFGYk
-	 TA153ZpTVM7Jg==
+	b=Gwdp0ACLicil+yett1rWOD2nXWT0ysoBacGVga3uTmE1SHP6rDcq0LuKKUGoFY7Nb
+	 h7B+9qnua2pFdN+PuCr0n3phIkLoRbaddeNQKVyjiyO3c2dQWTPVWKOECtWAswV+pb
+	 tLi3OpEloavev8atfn1gm3eveIrHLwOTCh33byXNpwkP9jubSmQhuVmb/YP4O5xwoL
+	 CeuSnAg3y6KL/kw9weF9zin2QvycZ+hyfUEiS3NWKOhpcFCyb5uPn4PBBZlgpSvikc
+	 8NS5x5G1gOk02UYDKdgCMoC2CVwycISm9zt2upUCpUp9k9U1sZyVkg08UVnJVMfInr
+	 Yu87VJBONAVlg==
 From: Michael Walle <mwalle@kernel.org>
 To: William Breathitt Gray <wbg@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
@@ -56,9 +56,9 @@ To: William Breathitt Gray <wbg@kernel.org>,
 	Joseph Telaak <joseph@telaak.dev>
 Cc: linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [RFT PATCH v2 06/14] gpio: regmap: add helpers to add a regmap-irq chip
-Date: Fri, 27 Nov 2026 15:52:23 +0100
-Message-ID: <20261127145232.814492-7-mwalle@kernel.org>
+Subject: [RFT PATCH v2 07/14] gpio: max7360: create the regmap-irq chip from the gpio-regmap callback
+Date: Fri, 27 Nov 2026 15:52:24 +0100
+Message-ID: <20261127145232.814492-8-mwalle@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261127145232.814492-1-mwalle@kernel.org>
 References: <20261127145232.814492-1-mwalle@kernel.org>
@@ -73,155 +73,94 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The most common use-case is to use regmap-irq together with gpio-regmap.
-To make life easier for that and to avoid code duplication, add helpers
-to create and attach a regmap-irq domain. These helpers are intended to
-be called by the new .create_irq_domain() callback.
-
-gpio_regmap_add_irq_chip() locks the GPIO line while its interrupt is
-requested. This assumes that the hwirq numbers match the GPIO offsets.
-If a driver doesn't follow that, there is one without the locking called
-gpio_regmap_add_irq_chip_nolock().
+Use the new gpio_regmap_add_irq_chip() helper to create the regmap-irq
+domain.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- drivers/gpio/gpio-regmap.c  | 74 +++++++++++++++++++++++++++++++++++++
- include/linux/gpio/regmap.h | 25 +++++++++++++
- 2 files changed, 99 insertions(+)
+ drivers/gpio/gpio-max7360.c | 35 ++++++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index 061d2800d0a0..a0d99710dc4f 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -409,6 +409,80 @@ static void __maybe_unused gpio_regmap_irq_relres(void *irq_drv_data, irq_hw_num
- 	gpio_regmap_relres_irq(irq_drv_data, hwirq);
+diff --git a/drivers/gpio/gpio-max7360.c b/drivers/gpio/gpio-max7360.c
+index b77a51092dcb..372659edc8fb 100644
+--- a/drivers/gpio/gpio-max7360.c
++++ b/drivers/gpio/gpio-max7360.c
+@@ -27,6 +27,12 @@ struct max7360_gpio_plat_data {
+ 	unsigned int function;
+ };
+ 
++struct max7360_gpio {
++	struct regmap *regmap;
++	struct regmap_irq_chip *irq_chip;
++	int irq;
++};
++
+ static struct max7360_gpio_plat_data max7360_gpio_port_plat = { .function = MAX7360_GPIO_PORT };
+ static struct max7360_gpio_plat_data max7360_gpio_col_plat = { .function = MAX7360_GPIO_COL };
+ 
+@@ -128,7 +134,8 @@ static int max7360_handle_mask_sync(const int index,
+ 				    const unsigned int mask_buf,
+ 				    void *const irq_drv_data)
+ {
+-	struct regmap *regmap = gpio_regmap_get_drvdata(irq_drv_data);
++	struct max7360_gpio *max7360_gpio = gpio_regmap_get_drvdata(irq_drv_data);
++	struct regmap *regmap = max7360_gpio->regmap;
+ 	int ret;
+ 
+ 	for (unsigned int i = 0; i < MAX7360_MAX_GPIO; i++) {
+@@ -141,10 +148,19 @@ static int max7360_handle_mask_sync(const int index,
+ 	return 0;
  }
  
-+#ifdef CONFIG_REGMAP_IRQ
-+/**
-+ * gpio_regmap_add_irq_chip_nolock() - Add a regmap-irq chip without line locking
-+ * @gpio: gpio_regmap device
-+ * @irq: the parent interrupt
-+ * @irq_flags: the IRQF_ flags to use for @irq
-+ * @chip: the regmap-irq chip description
-+ *
-+ * Same as gpio_regmap_add_irq_chip() but doesn't lock the GPIO lines.
-+ * Can be used if the hwirq numbers of the regmap-irq chip don't match
-+ * the GPIO offsets.
-+ *
-+ * Return: irq_domain or an ERR_PTR() error value.
-+ */
-+struct irq_domain *gpio_regmap_add_irq_chip_nolock(struct gpio_regmap *gpio, int irq,
-+						   int irq_flags,
-+						   struct regmap_irq_chip *chip)
++static struct irq_domain *max7360_gpio_create_irq_domain(struct gpio_regmap *gpio)
 +{
-+	int ret;
++	struct max7360_gpio *max7360_gpio = gpio_regmap_get_drvdata(gpio);
 +
-+	/* shouldn't be called more than once */
-+	if (WARN_ON(gpio->irq_chip_data))
-+		return ERR_PTR(-EBUSY);
-+
-+	chip->irq_drv_data = gpio;
-+
-+	ret = regmap_add_irq_chip_fwnode(dev_fwnode(gpio->parent), gpio->regmap,
-+					 irq, irq_flags, 0, chip,
-+					 &gpio->irq_chip_data);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	gpio->regmap_irq_line = irq;
-+
-+	return regmap_irq_get_domain(gpio->irq_chip_data);
++	return gpio_regmap_add_irq_chip(gpio, max7360_gpio->irq, IRQF_ONESHOT | IRQF_SHARED,
++					max7360_gpio->irq_chip);
 +}
-+EXPORT_SYMBOL_GPL(gpio_regmap_add_irq_chip_nolock);
 +
-+/**
-+ * gpio_regmap_add_irq_chip() - Add a regmap-irq chip for the GPIO lines
-+ * @gpio: gpio_regmap device
-+ * @irq: the parent interrupt
-+ * @irq_flags: the IRQF_ flags to use for @irq
-+ * @chip: the regmap-irq chip description
-+ *
-+ * Add a regmap-irq chip on the regmap of @gpio. Must be called from the
-+ * .create_irq_domain() callback and only once per gpio_regmap.
-+ *
-+ * The GPIO line of an interrupt is locked as long as the interrupt is
-+ * requested and can't be switched to an output. This assumes that the
-+ * hwirq number of each interrupt is the same as the offset of the
-+ * corresponding GPIO line. If that isn't the case, use
-+ * gpio_regmap_add_irq_chip_nolock() instead.
-+ *
-+ * You can use gpio_regmap_get_drvdata() to get the driver data in the
-+ * regmap-irq callbacks.
-+ *
-+ * The regmap-irq chip is automatically removed when the gpio_regmap is
-+ * unregistered.
-+ *
-+ * Return: irq_domain or an ERR_PTR() error value.
-+ */
-+struct irq_domain *gpio_regmap_add_irq_chip(struct gpio_regmap *gpio, int irq,
-+					    int irq_flags,
-+					    struct regmap_irq_chip *chip)
-+{
-+	chip->irq_reqres = gpio_regmap_irq_reqres;
-+	chip->irq_relres = gpio_regmap_irq_relres;
-+
-+	return gpio_regmap_add_irq_chip_nolock(gpio, irq, irq_flags, chip);
-+}
-+EXPORT_SYMBOL_GPL(gpio_regmap_add_irq_chip);
-+#endif
-+
- void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
+ static int max7360_gpio_probe(struct platform_device *pdev)
  {
- 	return gpio->driver_data;
-diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-index dee5f8d2c48c..ff2732f909d9 100644
---- a/include/linux/gpio/regmap.h
-+++ b/include/linux/gpio/regmap.h
-@@ -3,6 +3,7 @@
- #ifndef _LINUX_GPIO_REGMAP_H
- #define _LINUX_GPIO_REGMAP_H
- 
-+#include <linux/err.h>
- #include <linux/types.h>
- 
- struct device;
-@@ -11,6 +12,7 @@ struct gpio_regmap;
- struct gpio_chip;
- struct irq_domain;
- struct regmap;
-+struct regmap_irq_chip;
- 
- #define GPIO_REGMAP_ADDR_ZERO ((unsigned int)(-1))
- #define GPIO_REGMAP_ADDR(addr) ((addr) ? : GPIO_REGMAP_ADDR_ZERO)
-@@ -185,4 +187,27 @@ void gpio_regmap_relres_irq(struct gpio_regmap *gpio, unsigned int offset);
- void gpio_regmap_enable_irq(struct gpio_regmap *gpio, irq_hw_number_t hwirq);
- void gpio_regmap_disable_irq(struct gpio_regmap *gpio, irq_hw_number_t hwirq);
- 
-+#ifdef CONFIG_REGMAP_IRQ
-+struct irq_domain *gpio_regmap_add_irq_chip(struct gpio_regmap *gpio, int irq,
-+					    int irq_flags,
-+					    struct regmap_irq_chip *chip);
-+struct irq_domain *gpio_regmap_add_irq_chip_nolock(struct gpio_regmap *gpio, int irq,
-+						   int irq_flags,
-+						   struct regmap_irq_chip *chip);
-+#else
-+static inline struct irq_domain *
-+gpio_regmap_add_irq_chip(struct gpio_regmap *gpio, int irq, int irq_flags,
-+			 struct regmap_irq_chip *chip)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
+ 	const struct max7360_gpio_plat_data *plat_data;
+ 	struct gpio_regmap_config gpio_config = { };
++	struct max7360_gpio *max7360_gpio;
+ 	struct regmap_irq_chip *irq_chip;
+ 	struct device *dev = &pdev->dev;
+ 	struct regmap *regmap;
+@@ -162,11 +178,15 @@ static int max7360_gpio_probe(struct platform_device *pdev)
+ 			 * Port GPIOs with interrupt-controller property: add IRQ
+ 			 * controller.
+ 			 */
+-			gpio_config.regmap_irq_flags = IRQF_ONESHOT | IRQF_SHARED;
+-			gpio_config.regmap_irq_line =
++			max7360_gpio = devm_kzalloc_obj(dev, *max7360_gpio);
++			if (!max7360_gpio)
++				return -ENOMEM;
 +
-+static inline struct irq_domain *
-+gpio_regmap_add_irq_chip_nolock(struct gpio_regmap *gpio, int irq, int irq_flags,
-+				struct regmap_irq_chip *chip)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+#endif
-+
- #endif /* _LINUX_GPIO_REGMAP_H */
++			max7360_gpio->regmap = regmap;
++			max7360_gpio->irq =
+ 				fwnode_irq_get_byname(dev_fwnode(dev->parent), "inti");
+-			if (gpio_config.regmap_irq_line < 0)
+-				return dev_err_probe(dev, gpio_config.regmap_irq_line,
++			if (max7360_gpio->irq < 0)
++				return dev_err_probe(dev, max7360_gpio->irq,
+ 						     "Failed to get IRQ\n");
+ 
+ 			/* Create custom IRQ configuration. */
+@@ -181,9 +201,10 @@ static int max7360_gpio_probe(struct platform_device *pdev)
+ 			irq_chip->num_irqs = MAX7360_MAX_GPIO;
+ 			irq_chip->irqs = max7360_regmap_irqs;
+ 			irq_chip->handle_mask_sync = max7360_handle_mask_sync;
++			max7360_gpio->irq_chip = irq_chip;
+ 
+-			gpio_config.regmap_irq_chip = irq_chip;
+-			gpio_config.drvdata = regmap;
++			gpio_config.drvdata = max7360_gpio;
++			gpio_config.create_irq_domain = max7360_gpio_create_irq_domain;
+ 
+ 			for (unsigned int i = 0; i < MAX7360_MAX_GPIO; i++) {
+ 				ret = regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
 -- 
 2.47.3
 
