@@ -1,52 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.157
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795779587;
-	b=ETUNLVnO4TxiGST3RHlNaB42kLd9dCAx46VCLWagCX4q1s0M86+yds/mTausz6jltMYw
-	 prkJK49W555xFAGAsgPh2DbVg71GzaXIwvScK2cdL13MIMueScN4mjSUb8NmGOQ7QHejH
-	 UNNEzkqi8NNmW3Hh+ZOrpi9zj3H9TiJo9rC4gnHd4RPXnLkBL+7Gfe4StDncuuFQvyyxl
-	 urecAMP05fZa/LxhhIwcey6fVFYnXPzgk2YWMEeQT/vjagTkNDoJ13XsD29ComqWk7wVp
-	 MxpN8kKz11YJuDkGjGB7pxqBBNi60fiiuwRDFCzHyV5S2SYPuNUDuVfAIg9MOL5cnsw==
+	t=1795779996;
+	b=xeNChHr5Zw/+POB7oPMVh+x/U1sJwZRJw1B07n4njrtozahUClomGd4eg7SagpXZexli
+	 UmhiJnqQ5EyOeeOUgJZsX2twoXtMrsMhozfV9+XcApxM7+oF4p60V6U6P+dG3PKDx2C9A
+	 jE0BepfJcRGIhsUR4Kk9Jc+P+gwOFqfuJm+3PE5LfrzTEJPHBWb64ofymWfASfw9Vr67u
+	 ieefIi+YE+IYVwGtyXp7jwgTXGvR0UcQPxim7nedpUzKF48N3PVVQJ4u8kNp9Xz2KWVYg
+	 d3mr1N0tla64mcXptC0sT9j00t1jmum6bF+RlhrL9ZpuD4EoU9xnouKDX4khTeRUx+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795779587;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:MIME-Version:Date:Content-Type:
-	 Content-Transfer-Encoding:From:Message-ID:TLS-Required:Subject:To:Cc:
-	 In-Reply-To:References;
-	bh=6Vw5MFQSiCnoTbhpDTIOOLYANinJV+q+O8Y5w+EMfCU=;
-	b=4wiGIosIUWkJDpZDDl46qGkRb1giNFE6Ep2GGDZ87FG+L6qBnHLtPpgQscNiLSQrrAXZ
-	 sjyIwd+f39iu/Suk+KrMVyRU/ZT/5EjUo1xMkEmz0Ynhb8qKhtMhwSfX01hKSGal2bsec
-	 GhYcPjorsZCkc6J5hHtR/0u9pCk/5wXKxudeVvwXGCI5UkgbjgScLe8CyTY3xNcjuZ3NC
-	 4atX4uJr8/6SNRRAqQnH6ltjYvvEcs+H0y6F4haGMflI/cQRMzaB+pxKyVs4Mqu673Nbf
-	 Agq1shlRv1w1YXYYSx6jlJOrVZNR8kOBUOsb4TigRygh4LcDsrAVsJWDY0qK7WoL7mQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795779996;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=VSJSZYFCIg5xzcQK5N1FpOOz2dqwieADpLYnMs+55W0=;
+	b=Cvsu8CS8Dld8aGxVBgr5kgZdjvtZE8+8rY+2YAXdbbo4on5Z0woEFBM+35w432584SKE
+	 4n/2WIgGyVtZDZW9d9i04LQLebIHTW+beymnIEcKg0kEmyMgIpyUOIq8t5wEIr6tCX+bL
+	 CIaCMNt2zZQFzjOLri8GoGwsJz+P/hmH1lyAvakVOIw/t8TTJyCKSm6LTABWrYi3/+0jo
+	 81e7dq8vd3r0Ehh8Hzhu3s9bHPM/w/RHVOhlWRMn2XTU3NQkZiuS0YoRxoA3a/2L3FsYc
+	 nG6QuUDeWIcBaYqgjS4CLfZUA8259gpv+KXvwSY0fKPL7t7hATJU7DrYNCrWbhMR6Mg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.dev;
-	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=eTDzyLd4;
-	arc=none smtp.remote-ip=95.215.58.157
-Received: from mta1.migadu.com (out-157.mta1.migadu.com [95.215.58.157])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Uh440XR3;
+	arc=none smtp.remote-ip=192.198.163.19
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF82606A31E
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 11:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9BF82606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A78606A33F;
+	Fri, 27 Nov 2026 11:46:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20A78606A33F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=eTDzyLd4
-X-Envelope-To: linux-gpio@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=6/HpsLY2JkuqSqhjUbLwsS5eaX4PS5DHlmROlk971Qo=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1795779583; v=1; x=1796384383;
- b=eTDzyLd4A/Gf8huHVODKAimMBgUGy5krpiD8t3JNxUTrlt9M5oRPYJHjx56WiwCAfTWxiVxZ
- aE1O0m5RTKPEyt5M3p989N96LBnhkGUDMQUCNgyPSLoNbHXOFPhl61ymQfBDY3y6Yk8PARgEEFT
- qhWSUTCF0MiLCOs2Ze4mKjio=
-X-Envelope-To: linux-gpio@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id d5875fcf3bc412c3;
-	Fri, 27 Nov 2026 11:39:43 +0000
-X-Mizu-Trace-ID: d5875fcf3bc412c3
-X-Migadu-Flow: FLOW_OUT
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Uh440XR3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795779995; x=1827315995;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LVYcptX2xDr9+GNz7qsLrHcJURHUKzzQUseuFFgmkmk=;
+  b=Uh440XR3xnig1nn8lCz/6oXRqYvIXVDLwRSkDDlAKAhizQvWyoAI5CvA
+   c+Me2+A7Q4GQYk/use+0RpwYXmmLd/BYgAaNvt0T9ivpw67XQ8aN5duC2
+   VFf0UVkMvcHYFahRL1Bn8t+2aRFKdcjEioPtY2U3hyby8mKqH1kc1wsIx
+   pi8nKJJTtItvXxgRnmGq37DejCWRrVNAimSREWeFYykxvcPkE9a9VR2Gw
+   MwGD4A7dySyNRrEpaFjqgz0d0/I8/1xYKr1bMqZd+85IJ2QhzkdbbIoqr
+   hGZVXSgYtkqGYo2wSFf5TiRnHsxipW6v9SPsfLwr7KZB89EcIkF4+IFvy
+   Q==;
+X-CSE-ConnectionGUID: aZEIMlPaT72aRBfw1U+PJg==
+X-CSE-MsgGUID: e+zsrgEMSd6t5IWSTJHZPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4708986"
+X-IronPort-AV: E=Sophos;i="6.27,236,1787036400"; 
+   d="scan'208";a="4708986"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 03:46:34 -0800
+X-CSE-ConnectionGUID: io3XVtZqRMGNyPi/7TGBXQ==
+X-CSE-MsgGUID: qqaE1NGWRqmRrkocRjk/DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,236,1787036400"; 
+   d="scan'208";a="12639678"
+Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.115])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2026 03:46:32 -0800
+Date: Fri, 27 Nov 2026 13:46:29 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] gpiolib: release the chip's own lines before
+ numbing it on removal
+Message-ID: <awltlfkwFWv8O4pG@ashevche-desk.local>
+References: <20261127-gpiolib-ownlines-v2-0-aambrozewicz@nvidia.com>
+ <20261127-gpiolib-ownlines-v2-2-aambrozewicz@nvidia.com>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -56,61 +85,58 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Fri, 27 Nov 2026 11:39:43 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-From: "Zqiang" <qiang.zhang@linux.dev>
-Message-ID: <41bf3d5c801ea9fca972e07318819a9185a4109f@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] gpiolib: Use srcu_barrier() instead of
- synchronize_srcu() in gpiodev_release()
-To: "Adrian Ambrozewicz" <aambrozewicz@nvidia.com>
-Cc: "Linus Walleij" <linusw@kernel.org>, "Bartosz Golaszewski"
- <brgl@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261127070910.668333-2-aambrozewicz@nvidia.com>
-References: <20261127023101.27568-1-qiang.zhang@linux.dev>
- <20261127070910.668333-2-aambrozewicz@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261127-gpiolib-ownlines-v2-2-aambrozewicz@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
->=20
->=20On Fri, Nov 27, 2026 at 10:31:01AM +0800, Zqiang wrote:
->=20
->=20>=20
->=20> The gpio_desc_label object are freed asynchronously via call_srcu()=
- on
-> >  gdev->desc_srcu (see desc_set_label()). to drain these pending SRCU
-> >  callbacks before cleanup the SRCU structure, gpiodev_release() curre=
-ntly
-> >  calls synchronize_srcu(&gdev->desc_srcu).
-> >=20
->=20[...]
->=20
->=20>=20
->=20> /* Call pending kfree()s for descriptor labels. */
-> >  - synchronize_srcu(&gdev->desc_srcu);
-> >  + srcu_barrier(&gdev->desc_srcu);
-> >  cleanup_srcu_struct(&gdev->desc_srcu);
-> >=20
->=20Hi Zqiang,
->=20
->=20Bartosz already has this exact change in gpio/for-current, applied on
-> 2026-11-24 as commit c901e8fddd3a ("gpiolib: wait for pending label
-> frees before cleaning up desc_srcu"):
->=20
->=20https://git.kernel.org/brgl/c/c901e8fddd3a23353bb12c9d93b9a5fc482ac8f=
-5
->=20
->=20It carries Fixes: a86d27693066 and Cc: stable.
+On Fri, Nov 27, 2026 at 09:49:26AM +0200, Adrian Ambrozewicz wrote:
+> Commit 5018ada69a04 ("gpio: Move freeing of GPIO hogs before numbing of
+> the device") made gpiochip_remove() free the hogs before it clears
+> gdev->chip, so that gpiod_free_commit() still calls ->free() for them.
+> ACPI event lines, ACPI OpRegion connections and shared lines are still
+> released after that: ->free() is skipped for them, and the ACPI event
+> IRQs, already freed by gpiochip_free_remaining_irqs(), are freed again.
+> 
+> Release all lines the chip requested for itself, the hogs included,
+> after the chip has left the device list, so no new lookup finds the
+> chip, and before the numbing. Move the numbing into a helper for the
+> next patch.
+> 
+> Reproduced with a test-only ACPI-style event on gpio-sim ("Trying to
+> free already-free IRQ" on removal) and a shared gpio-sim line on arm64
+> (->free() skipped); with this change, neither.
+> 
+> This depends on "gpiolib: shared: remove the proxies before releasing
+> the shared line".
 
-Hi Adrian,
+...
 
-I didn't keep eye with the latest tree, Thank you very much for pointing =
-it.
+>  	gpiochip_irqchip_remove(gc);
+> -	acpi_gpiochip_remove(gc);
+>  	of_gpiochip_remove(gc);
 
-Thanks
-Zqiang
+I need to look closer for ACPI bits, but above doesn't sound right. Why
+of_gpiochip_remove() is not associated with ACPI counterpart? Wouldn't it bring
+a completely different experience on the same platform depending on the
+firmware in use (DT or ACPI)?
 
->=20
->=20Thanks,
-> Adrian
->
+...
+
+>   * gpiochip_irqchip_remove() - removes an irqchip added to a gpiochip
+>   * @gc: the gpiochip to remove the irqchip from
+>   *
+> - * This is called only from gpiochip_remove()
+> + * acpi_gpiochip_free_interrupts() below finds nothing once
+> + * gpiochip_free_own_lines() has run; it is for the error paths before that.
+
+This doesn't sound right either. Why the common method of freeing ACPI event
+interrupts can't be shut down here and this one called when we need to remove
+the IRQ chip altogether?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
