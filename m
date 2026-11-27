@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795771015;
-	b=BS9XEVhgNu04ObGl4W1j5hiYDlycK8fjt+BLQ+FShctzY7OLo6JpLhyt3OzLDUEAu2jK
-	 ZkDagOUCNDgXqhKakH10Hu+ka1d3fhMoHHpDHyRVe1ehJNYHFXAoQ65KJGH+k30CTRaGR
-	 fjsWuJQeFj9ehs9vTJAUXXh8MZ81ng/XMacudU0jX6t4cZSYrZTVSOvCJ6YcOaT3WnzlT
-	 HKkvKDZdcIcuKAlUyfDjBlOSvEtedDKXyITiZyoE09Eg/orxKqJBsh2I/wvOt4V3QCYdp
-	 7B+cSOI/8uCVJ5CwqkWTfAB84j51a3EGwGtba0GUdnTy5c1PgC5RPoigZ8z13Nt1P6w==
+	t=1795771035;
+	b=I4KQYU9ajV9cn4NV+F337D9F4WVYBtoKezk9dlBAbZxQqjoImXLHkm72V1GlhL3TLTdN
+	 dDIce/yLW8Mbl12CKD+zWPpzftCX5OMiNxXkT/Iu6MyCvez/wTUNYX0Nq5Tslv9hYhKA0
+	 NhL/LWPCVP8b8GIGvB2myVCptYB9BCGzJoZegBYevPxrzxEIvbLyHTkm7tO6ap6k9aq2f
+	 n8FOoT3TGA0tQ15X5Rq5JH7DQ3t0+PfCaRnEsMC9RQFZwz45xoKehSLsPNcEFw9x6bbnZ
+	 DVrdahGFgrESgFcmNnAxi1X+AaY2nwIoMK1kGa2OfCReAdwWohqDfiHAKt2rCweFlfQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795771015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795771035;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=FthDJgeAJmR+CsDyiqI3a3aJL/56y9FuIeVs2tpiliI=;
-	b=k+NRBUNYbz2QDqxQGTli2V/dg2LgAOO+GOks4hmCwCkd6wqGirPRMWJU9ZLjjC+a5zub
-	 EWbvV81pdzZq+CVy8QLnwIJgwcvJquPsrwnUzyVspxPTntK9FdymAcZ1p85mo569DV6qM
-	 zdF4ZbTGcAz2bhrTmJ11DpFI4Rd122lSU3q9JjXhop8h9Ste8KJsV6Smm8i5/8hnqrfij
-	 K6XijscjJj295HzlUlRgl6j4/0JmxP3ViT9m9OlldFlG85Z1P5YStvyeuPjeXDFjjqrKW
-	 HbLFJJmFLtEVdJa4aNwbhVsBDnE1cVlqaORhQPuTWFbbyH8yhzprjKgaD1LIr0ib0dQ==
+	bh=F15I2fevZFaSQ3g9iMuUelugyCWRoLXcJodfxUxh7tw=;
+	b=o8l+AbmvJ72sdxgLOGrwaI0+t2u8LBJ8bjyApO9nPt5/V4QZTQloHkDySTZT+OCn7yi5
+	 MqzNR/+SCpovrteKoxyiH3nBJuOJZ41MhYATXP97Y0+trXYm+qAotdN4zqzm8RBLmUI29
+	 WSFka3XeIBh5YFFkQ2e1NGOm1ThUq42yLIUB2p1cAUBTdJxELeZO+WRZ7SaEQGueXRbSE
+	 s3Zm2jkKDW3EK0KTs75zCMD4sQT+WqSaxBg7NG2Z2QHf7+M/h3Au13EBkfuxk/0f83j13
+	 smpTbg8QhrOxmK0TsUPllayd2T8SWjF8wwUdZhrIrCj78A946kAhqfRCkZS7EUDomoQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=tuxon.dev;
 	spf=pass smtp.mailfrom=tuxon.dev;
-	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b="VZl/IlJW";
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=iBRw+JF7;
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C074B606A327
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 09:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C074B606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515B8606A329
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 09:17:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 515B8606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=VZl/IlJW
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4bb6057b333so37978455e9.3
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 01:16:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=iBRw+JF7
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4a3e706b5dfso4936811f8f.2
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 01:17:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1795771013; x=1796375813; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1795771034; x=1796375834; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=FthDJgeAJmR+CsDyiqI3a3aJL/56y9FuIeVs2tpiliI=;
-        b=VZl/IlJWSTPQEx3kzZixxBHdoo7HxTaWIlhn7M84mCtSRGyLmzMnOwbhKMFpYJVCId
-         emKq5axdQzhT02uh1q9SxLotymBikjKdtjKqWXm/qh8EimPtNhmowWfDThbdF/nr9nqu
-         WIZthNzQfusgbHf8Xg2y13RainI+sV0raFlp4r1PKwA9JDPTpAnoSjXjvL5HMTc3mU66
-         iTsvbv7qpYAkmD5OFlxkBEygevhq63D2NC7Avc2pgYvG4nLLGoDl0kpqhnt9rCaWPAWG
-         9MHXNRCwu9vbkGeyoKOrBUM0zuKqj3f465SBdlaVdOEr51hHCnBeDIGT9Dk6v8ZHSGEf
-         AXvA==
+        bh=F15I2fevZFaSQ3g9iMuUelugyCWRoLXcJodfxUxh7tw=;
+        b=iBRw+JF7XI+FsbMljrWUMpxaiKKpfOzx9BNFr1VLGWhsoqp2VSaP5SWnYO8z1hBxgi
+         IQNbBMdeJhsysl+DyR6W0NanRt2DWD8sIglYpY/x5UY1LoWAgPv5ZUnnBfND0YLbUSfl
+         Itsk0XaTbtlowa3WI5Gxl3k5nAWrW+1EmwyyX02Xxa/mHvv+dh/iykowrav92nNUb9uO
+         Bj83vjke6GeDzVChb/+X4O5URXYdSZf9UGvHEF7bClbXmYZAtIIFShgddgG0GM0/SIrH
+         tcAyTh1+lo13Kmdf0MVGZ9iMoPoBNW3igWAXE0c5LOGBN4lH4dIidyqeIIR4bXjt1rJi
+         qmcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795771013; x=1796375813;
+        d=1e100.net; s=20260707; t=1795771034; x=1796375834;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=FthDJgeAJmR+CsDyiqI3a3aJL/56y9FuIeVs2tpiliI=;
-        b=mBnXPeavBfGuQ3PQ1a8swuVNkgs0wcwfnkav7QrHclB7YrC/Jt5g0L+L9O8YFZbpSN
-         nTI0G76zDsGskBTiKle/x/0DB96NK7x7n4xZhjehd69EHfxbLdqFoZJgkX1Yopb580Zd
-         Dd3RVpWoA944JE1gIoWQxYF8Egc6oy7gPOGKwkDyTPiCpWE1/5lv39wcKywzoQC5vJZk
-         Y9wwgEd3zWWoMA3AWvilBzTNMdqbOLQnHypbNwbdjJg1Np27rjobJNGjmtmVd2D89b6K
-         TRz1XeED9Vg5NDiEfPKoyYbYBhT9bUTGesSbtWhcmkavkf1aKQ9KtkV0dy/OWB8ebI74
-         CH7Q==
-X-Forwarded-Encrypted: i=1; AL+hErHMtSGqmzDPsiQca7J/FsIj++4VtXAam9NGyzNUxOcJ4lZ5cff/zy28LTfTkRRm75F9BLqx/3uM0b6P@vger.kernel.org
-X-Gm-Message-State: APuU4Z/gdz+4kh/lc9mrvzp2g2QRcuGInSTwr0SDTmUIfwfDrudzyler
-	kAR19O5qZWrLX2HHzgK9+LtWEsuUtyc9spAmRvm3oqAOBLhXtaJGeB7HvdQHA9p6xATPvyj6HCk
-	sNAzL
-X-Gm-Gg: AZFdTZe5BTQFtY4cIhtqOA/AyU3iL+TRBRfXXLak5UAcgFI0Xt4hCWxKYDtbuWa4rOD
-	/MkFXAb3vBjwvyeaAPUzujKi+7tPe3XmU0Ukexs390S6jv3YgseOAnha4klad2dYwQD9Fe7P96J
-	Ik8y1ZB2cb+t4H0waRWNmkbccUGesAkwJsKwfYrm9Yrf8pmVLnVzg1/eMGEPrl69Aa5VdpNoWfW
-	v95AEDoJr09OcZfE15CQQwT6tE48hj4PTRkA8Z3VswGgUWJULXfQmGzUmw9SGDg416fzMR3BbbL
-	zj5TsW/jqpAsLEH7kXwL9YX3WbvkWwUpvGREV9d5UP7YpsSNnCEfHaQCCQbkSs+puER2P9MAGuv
-	Q8BL8sxBFEIGcTXGO4f9Lw/bKM1d4vZ6oodcw4wBIpwGAJAYtndXX8YXJVy8MT8QhSUe9/XRKdy
-	jRUrGV6drUP+yi8b3CcyncIE+tsMCtcF1vCp4STJLtcYqzGDtyC5A4sX6YqahLRXYqlIo7QGaYr
-	A6B4bOA97XeLNjf5BeFuEW8QI5UboMEz8owH4WJIR89MHWiFrAAGHlmSGwZBvgL/PWLR/XI4V3G
-	4geMAaJZ+AoH5v8e9t9cxT6k8osfOglDRWuP
-X-Received: by 2002:a05:600c:3b8a:b0:4bb:76d9:f81a with SMTP id 5b1f17b1804b1-4bb88824fc8mr506682605e9.34.1795771013014;
-        Fri, 27 Nov 2026 01:16:53 -0800 (PST)
+        bh=F15I2fevZFaSQ3g9iMuUelugyCWRoLXcJodfxUxh7tw=;
+        b=lERBwlygCclhboZsBhpHcU+UxwJpnHdmME7gMWHYZb0MxfuSE65aiPE4qHt7Y2TVZD
+         Q6cZ4EOVop66EMMybwdLqSKp5yb2wNcPQKCfyn062ggUzHe/AB8LqqyWcpC0LMPsw7Do
+         x+ZvPoJEvIUNF7QB9gY8/4RWKyyG8abYVkJ2gJwwUdD9131tr7huTM+Ylt3Xj8Hc5w4y
+         Lp+VxhoJQNnuOFjcgVobYjKXNyllLUWmaQBswmFitFREzFujCK5FKd1QDoby6DuNJqbn
+         zyCU63OlGg7/51j54+JkfQ4Z+IYeG7XtyI0TKSI7ybC0u089GCNZ+c2MRjAnII4l/Bdc
+         QAmQ==
+X-Forwarded-Encrypted: i=1; AL+hErGRnThVUgAnvR1bU3Uxw5V0Ru25gcaKKo4exqIJH1VfM8dPdOdI27JEdjAvAub3ub0FEDw8ImcWVqwr@vger.kernel.org
+X-Gm-Message-State: APuU4Z/vqON6ILhTO0fswPsHUrpfl3jLDE7S0a8CIEqUdIlhj8kLzz8x
+	xM6+ek4XWfmP1uUQx3mXVH6EqdC4GcZx7hXm/3slG8YWnUmIHdJBSZh8C5KJ0IKGpP0=
+X-Gm-Gg: AZFdTZevznPm8zSbhYPdMCdA5Zq/67e66a+RpLKnjn+wLVkcmNa9A4wu45XBQRV48Zr
+	VIH45k8mWDVTmN7uP6e+zqw6dnf9gfVs6TZ1MZ0IISG5LUHF2U1RdWAW9AeQcl8myUXrwJ0yjOQ
+	3DAGJ1kpDfdnnsclBClWh6sGXvUDMwdxk26gi4Hvk8qT4VkMKGNdx7XTp/igsLDH7YrMmiUzM+j
+	eLtYZQMTF+J/K4T1kX4gMwWEjUoY3GYXXHQWy3ss/3MnkAus7hzBE324KCuEnlxyqy+xMZ5VNa1
+	cY3o74XM7K9XX3tDvSVUJ//VVRlGFPZ2cpsDu23Arbds67UzO/59FqLMNqmbgC1myJG3zKbK7Fl
+	YQM+Hk3JBQ6qvv6F02d1SCsgfn4l8FBze6jvBWBrGj1z+0mgb+ZoUGXc3mlx4mZsu5kaMFazkyf
+	xTH1i936BHkfqXKEjCc6HLuxuM6sEPz+HmYMIT1b4C31HcGbN6kdbAA6Y5n/fnu6jLdRVFwm+SD
+	KIBFDs5VJ5SDp3MIXTNYLz7fqWdxYDqxOMihGL+jhkdTVVRPWRSzY9aUY8bYF0JZAygeUogfndK
+	7hnCkxPSiEBps85ptqz85lb9q0WYLXTA9hbq
+X-Received: by 2002:a05:6000:2f87:b0:4a6:bc53:246b with SMTP id ffacd0b85a97d-4abb5144ebdmr45324253f8f.30.1795771033589;
+        Fri, 27 Nov 2026 01:17:13 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.114])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8538b09bsm1231003765e9.4.2026.11.27.01.16.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b8b7888sm45914055f8f.42.2026.11.27.01.17.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Nov 2026 01:16:52 -0800 (PST)
-Message-ID: <121cc552-86b6-40de-ba9d-0ae40f8a1ed2@tuxon.dev>
-Date: Fri, 27 Nov 2026 11:16:50 +0200
+        Fri, 27 Nov 2026 01:17:13 -0800 (PST)
+Message-ID: <bc1ac983-16ba-4165-9827-a7cde032c988@tuxon.dev>
+Date: Fri, 27 Nov 2026 11:17:11 +0200
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -94,8 +93,8 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] pinctrl: renesas: rzg2l: Split SoC-specific masks
- in struct rzg2l_register_masks
+Subject: Re: [PATCH v2 6/7] pinctrl: renesas: rzg2l: Add RZ/G3L support for
+ selecting I3C power source
 To: Diogo Ivo <diogo.ivo.sx@renesas.com>,
  Wolfram Sang <wsa+renesas@sang-engineering.com>,
  Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
@@ -110,92 +109,22 @@ Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
- <20261026-divo-ssgrlpcsrc-2966-i3c-v2-5-2e76b87209bb@renesas.com>
+ <20261026-divo-ssgrlpcsrc-2966-i3c-v2-6-2e76b87209bb@renesas.com>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-5-2e76b87209bb@renesas.com>
+In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-6-2e76b87209bb@renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Diogo,
+
 
 On 10/26/26 13:35, Diogo Ivo wrote:
-> struct rzg2l_register_masks declares the masks of the OTHER_POC register
-> of RZ/G3L and of the I3C_SET_POC register of RZ/G3S in two branches of an
-> anonymous union. As both branches share the same storage, initializing both
-> other_poc_pvdd1833_oth_awo_poc and i3c_set_poc on RZ/G3L would have the
-> designated initializers override each other, ending up with the I3C_SET_POC
-> value in the PVDD1833_OTH_AWO_POC mask.
+> The Renesas RZ/G3L I3C pins can be powered at either 1.8V or 1.2V.  The
+> pin controller provides a register to select between these two options.
+> On RZ/G3L the I3C signals are multiplexed on the P2 port pins.  Update
+> the Renesas RZ/G2L pin controller driver to allow selecting the I3C
+> power source on RZ/G3L SoC.
 > 
-> Split the union into a common area, for masks shared by multiple SoCs, and
-> per-SoC areas: the RZ/G3S and RZ/G3L I3C_SET_POC mask moves to the common
-> area, and the RZ/G3L OTHER_POC masks stay in a dedicated RZ/G3L area. This
-> way every mask gets its own member,
+> Signed-off-by: Diogo Ivo<diogo.ivo.sx@renesas.com>
 
- > and new SoCs can be described by> adding their own struct
-> (possibly inside a union).
-
-That may be missed by the next person adding it...
-
-> 
-> The existing RZ/G3S data only initializes i3c_set_poc, so it is not
-> affected by this change.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
-> ---
-> Changes in v2:
->   - No changes
-> ---
->   drivers/pinctrl/renesas/pinctrl-rzg2l.c | 20 ++++++++------------
->   1 file changed, 8 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> index 9bf3743dc1ce..f73d273df362 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -278,18 +278,14 @@ struct rzg2l_register_offsets {
->    * @i3c_set_poc: I3C_SET_POC mask
->    */
->   struct rzg2l_register_masks {
-> -	union {
-> -		/* RZ/G3L masks */
-> -		struct {
-> -			u8 other_poc_pvdd1833_oth_awo_poc;
-> -			u8 other_poc_pvdd1833_oth_iso_poc;
-> -			u8 other_poc_wdtovf_n_poc;
-> -		};
-> -
-> -		/* RZ/G3S masks */
-> -		struct {
-> -			u8 i3c_set_poc;
-> -		};
-> +	/* Masks common to multiple SoCs */
-> +	u8 i3c_set_poc; /* RZ/G3S, RZ/G3L */
-
-I would drop the names of the SoCs close to the i3c_set_poc. That have the 
-opportunity to grow over time. As Geert considers better.
-
-> +
-> +	/* RZ/G3L masks */
-> +	struct {
-> +		u8 other_poc_pvdd1833_oth_awo_poc;
-> +		u8 other_poc_pvdd1833_oth_iso_poc;
-> +		u8 other_poc_wdtovf_n_poc;
->   	};
-
-OK, we can drop the union but the next SoC addition may be:
-
-/* New SoC masks */
-struct {
-	u8 x;
-	u8 y;
-};
-
-If we want to keep the initial form we may need to pay attention.
-
-Patch is OK for me, just with the mention that we need to pay attention if we 
-want to keep, for the future, the approach before this patch.
-
-
-Thank you,
-Claudiu
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
