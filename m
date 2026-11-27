@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795810189;
-	b=boz/jeHNoTVqozMBxnLjaWlvkWxUNG2JKhlRrx8ycfb9Eo81jspydazIfHDc6l69wiV5
-	 cCOubdtswcNZeT4a6qTOdsnC7jhOpcGJr+cvHIMrRszX+aJdJouuK4XUE5HahBpTddIL+
-	 m30PE1zK6Cjh67TPztkuzUuV1qg2VHAw8rb9ekuDfD/lfQtMGTPShzHaLbRP2xfxxLNaf
-	 oXaH6/VzhK0MHGMkL+uui2W1gg5/T0siAQ7+buqY2+dNJ9c4DEBd47L0SFu7xR5xIp46f
-	 kLzHUCuJBlJ3Labl2gY2elRWb+fQkipb98XgAmjaOh3THlCncuZAeS8DG9NzAkTvjxA==
+	t=1795810196;
+	b=kvzT1Lbb4/HvmRWMHOF4wgf+NphPbLp26eIW8nQNo9oteD54C726X9MRJkSJJs0tzdCb
+	 GY+qEb+2QxPxf9reGKh1EBsh4EGR7M81dDy4ZejRcnlQvwJn38pVPWz5IpyGP2XKZ/GDX
+	 6dEJ+7wbWHhXiCBHbO6iOtLPykkD492uVN9fHRJaGsAL5jbxHN2MT+jbdfQQ/HP00tIGQ
+	 aD4XLTIOA2hzfHLMI4dByQeT7A2sdZ4wWYPbSohMKtDIQlVWD3D40KQGGiOR1yp2FOMvw
+	 oqJftk3gQHYVxAxUNEhXyIZtOGDVuhVJIphXlXveRStqnx9qOud1MhkDNVR6jFvWMIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795810189;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795810196;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=kzzWI9nlajm9/4d7lGpIikgLMcmnAL+4uE2Ldwk7Ho0=;
-	b=VPh7wduU8EQqecbAl5fgaJIbV0l77pnyfMkohMyjfkDqdoVD8xTG/d5aiUuCEvnapSYb
-	 SofVwKDdkm6eQcbmixFUf88cTCr7iwlIrUwtKICkoQgdT49V9juCiyGYZBw6qIhmsddjk
-	 qa/5UR2omi1WRgoDB0JgUMQeggGdrVQFRwkPDErO8jN9OcmzAUCMlUZInazRjWyVqmG/v
-	 H9gZy/7FHIW5YW4/6whjmRtk4IYxZTHq+SCnTNeK8K8qxI4DXWgGDofetmo2UYUC69TD2
-	 /3mcssjvgP1Qko1VR2dM8C6fiE+KfeFOX3OL1P6wwyTPZX2u3Iw08N7t7ZL+X8gfvMw==
+	bh=JIsYAG/w26E6FxvUJAJzo1Ty0QYQDvImmexX9oITg8g=;
+	b=bZkO1skr7EKERPM3JWbkC4t0JiFIHbtbgGINyRPSlZ+K/f2AdNpsLj9MOestLhbFBNiu
+	 9NaQu7u1zmSKbZnXwAFjC/kik/KdHvVuLho0Z5+h4u44Rd76+48m045o3glbIcINOHfP2
+	 0+Mv1rJD04pUtS/BOPqA3o+PYKoL4ewW1oIFC5g49DLLioCHdIo7hXfpSq+DYcmv2L3Ay
+	 h6JxWx44MeVz2EGhC68fFBOw/p8CPmK2lU2iFpwikqVZv3384oz1AoHbuAZYvt157nKRu
+	 vwyMYlaeLbQ6jCh3LCcQ6zXCa/h4rOiyw0G8mrQbff1UvshyBuQIsjNYHRDFIO9M1Fw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=bav15pNP;
-	arc=none smtp.remote-ip=209.85.161.49
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QU81oq6f;
+	arc=none smtp.remote-ip=209.85.161.54
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE232606A31C
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 20:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE232606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D0F606A31C
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 20:09:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67D0F606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=bav15pNP
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-71ab5e64742so5154867eaf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 12:09:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QU81oq6f
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6b1afdf5196so3282248eaf.2
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Nov 2026 12:09:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795810187; x=1796414987; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795810195; x=1796414995; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=kzzWI9nlajm9/4d7lGpIikgLMcmnAL+4uE2Ldwk7Ho0=;
-        b=bav15pNPTVvs4SPHiDibV7UqH7ca4sMJsZewlxgt+npTw6W9z5KKtI0KtJAlr1jCE1
-         uIvR2eLkUxjE8p961znrW6v0vWIjNxc6sFXVucm7ze1Q4TSFkTnvzbHAwLDyFFJowCTw
-         NbL9a2a+cgOWwXOPdsbE9Xx2fTThYC2iX0mviGY+4nhH5B1Mt9TSh2G3ifS1ZeDS9eTn
-         f7ZZL3/5NHLOzuMStjvKVEosC759bdGVgeeH/pM+x3+qgzI9eQwnzuUBi/XlASiFNscJ
-         C9g8YJ8HbRxJljeHWhca+K358bXTYjccQBmh5qEkm7BaZUvcFaxwcmI00pm1OYs8sEsr
-         YGlw==
+        bh=JIsYAG/w26E6FxvUJAJzo1Ty0QYQDvImmexX9oITg8g=;
+        b=QU81oq6fTlpFdk3vUjuTftMB0IYJFT5KFeOmyR+gqnr7I+8ZRuMtV8mAft0y+pqHb+
+         x9vUCYwZqszqFmfc6/QW/3xExMCe4qZtn3kU6B+bLzNvREYf+F+vHJrB0y4kEf3MHYA9
+         OHSO6qkLLm7BS2vG3/eVJoBTKVgNMSNObZGQ6lNiUs4wVwRiBTksIDSzODEhEBKRUlgN
+         mAtX03HCjDZFUeIIr22sE5p9CbD+t/EmouZ9qf9iBPrBWXGaAkAYY9nj+nrQx1NP0KE2
+         WHzpHvxYspLKPIZFg5biPJxHaoMzOrW8uZBtjH6Qr+xxM5eXyy1DTeza4+M215KD+C4D
+         iyOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795810187; x=1796414987;
+        d=1e100.net; s=20260707; t=1795810195; x=1796414995;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=kzzWI9nlajm9/4d7lGpIikgLMcmnAL+4uE2Ldwk7Ho0=;
-        b=PQz9vCAJdot8khlP+Q/bKQu2s1LpSWEO6fV1KxBg8+TJgFeWQZBnpyO1e7nfDpMwLT
-         htSGuXa9gUNhfj8ypt9JkzPscBiT8RnLYC0izxrWrU2drHEG6Y8yPTRHpqspoeesase8
-         TmumqFlwORbEG5DxApDN/C8NrJz72P5t5F3DOmWEBoIe5lG8EqmC2sheQKVW5WiEnMpw
-         W6P9Rtluap+q/uuBJrhEb4vZkLzgF6AGMde5rzJ/amL6q4MqeSYoF5YxvSMBxJUyahZj
-         Vun4UeFDND16Aig1Kc95LE0oFFafSKqFJhfQHMVpOZbIJZ1lvZJJ+WosoREV9pxG4Cw8
-         mkxA==
-X-Forwarded-Encrypted: i=1; AL+hErFPaGn/EyDGADKs8/mmRl8uqC9oZ133Y3tICC6YDUOtjQdSRLzck7gndwfY2LTRxmtPXnXQ6RwHaYZK@vger.kernel.org
-X-Gm-Message-State: APuU4Z+JVXu+FWIhnrshNFkReHUUrSNQyP+x3EMmUs9zG9a99cmPWl51
-	wOIbNo6cxIRRCeFefgyymCS2cjSMzUAeUd7Oy43JFWgwOCtc18DjzsTb
-X-Gm-Gg: AZFdTZeH5vrMfEgA7PWGwqSJrSkiYrLX70h+FQ2fhvLguzreYii0TVzVO75otCnvZFg
-	CVN1Aa32RiiyN7U0xR/kzP+HCwBFP9EWhCCQU68WzSlKMF4c1FzfaPK5EtgfvtAmzIrQNhWaNth
-	urZQkjf4b8MOJDUz2BItJfRtNSTHy30YD4l0GvShIRQz5sjevhDdX0Pnp0fPIkqwY948RwSDkd0
-	NNTcmgSR5/gHFeL2C+XqqEi6N9lWnKWOEbEpAc1ZYlnNM2P4x3o7ucqLXxhNrgYUQTAMU7B0xqh
-	G7Fia5zdw+GLbmuvgIt3+KqVAWIMgHt6g+Cjoi6IrXenPJ5eUwCFNxTY6BPwoICy8buh7ndTrlO
-	aEmaCczYYxfPp/zpmput8UXEOD2gCgf8b6Lu5+f7vXg7u4vag0yLW5lA90Nh4xj+cqSCIA6Obvm
-	jQOv22fthsUi0bNnAnjMr4G8CmP5Sk//xx6FXJSsZseENT0OgfS2h5idDWjGg7yMRkBfJBkyXng
-	/GEkErd7ptG5DMJbvjrzvsIQJnB2sM/oQYbwo5RmgtwYnxslqW2Q9pmOUG5Q12wh5fou23rnYwZ
-	yA16Hp38lxD95zRxsG619wTFQva3/w==
-X-Received: by 2002:a05:6820:a508:20b0:713:da3b:8b2d with SMTP id 006d021491bc7-71b39521f03mr14151731eaf.29.1795810187567;
-        Fri, 27 Nov 2026 12:09:47 -0800 (PST)
+        bh=JIsYAG/w26E6FxvUJAJzo1Ty0QYQDvImmexX9oITg8g=;
+        b=LCBKXT2S5w0TQAu5ZrnF+Fio5sEU+FK5x+Y+1Dpy1CtXUfa6nR8l/FtlW1TaQt3y2/
+         GMyP4vNUYrmZtQqWf0WDOaWJsL+momGwLBqKff+P6cA0yjM/thm7v+iJca7p8eUo6y6Z
+         0Cw3FOsIxG3rhBy3IgEJQL41ZKUYob2yEAjkvmNrglAZHVAg2VBUTS1kArQV0azUfvvM
+         Iyc61EU7jfFBZDCGXb9HcPu4sQA1TyrWieldZ+VK+jOhD6jY5/bkR7kgfGHmr8Qhxpl6
+         bnWl3mfIctPVb6IkiKW2waO8drqTc1VVKv9vHS4W00x7Hxdhz8xZnlUv8I4lnqZYjf/e
+         q3Kw==
+X-Forwarded-Encrypted: i=1; AL+hErFotzQ6UTQvVhqtW4wPy3AmXyYidPVDOW7leL7Af0sQpGS0GZxTeTzrskgcu4M7EUquLKBp4/hUJEZ9@vger.kernel.org
+X-Gm-Message-State: APuU4Z8CknbGgeVqqhExvXYTPSoArf9LAi7Jy+8+ma4wIKQGF6J4WDS4
+	yxIJ8cbSsrwcMw100Z0lQKQjmiSNXt6VgxkSJIb3cocEudBnMFsHPRiG
+X-Gm-Gg: AZFdTZeYgjVm/uj1ftZzdUqqJYtvJHQ/7C01oTmPBL+eiDaWLTclV6a032RDm35Joio
+	+chVmnoogocEOten+Vv49zWm2ujG9WQbjScfGs+Ik5G1gx00sIB3E77v2dZwBfmjD9pgz6y2m4t
+	6waXEWqmXAWjan7+PuEMnrmGMYxxcwN2rD0MSusFDVJBjepJoncZi6TKRWQ/HT2eU6yiJ5rcLq5
+	NmmyrQHKbBrKBWhEGjT+Psi1C6h8tfdOeQwsqLUe1BPKGB0i7izJHB1WGyvsda7KLgv5dMj6Rn4
+	+eNtg/bp1vR41E4G9lMlWw6E4xO+6q1A5VycRAW3k64DCyEEib6U3xVL8AJb4SVaK0xLdSRZ5UK
+	MFMlXrZw/VlY+HBP9Yd/7NBm9nvj7Q0GnTSXn56YrS9u1eBr1CBW1CwGLku7Tr1lXQXGza/M7Hp
+	OHtZrwWxpKXbRLwITg5qrd7H8AfLw0YUcYA5mg9h0ZIxmR4yJBQ5RoCA9/Cnu7DqSVlI/NlO58k
+	+DxJnZj5rxyxPdodI7hL004nVy90N4P+ySZoqzsHWdTSxIl27WAK/mS/xZ9BS4xl8wE6ufs4zX+
+	LVuDp7mO/39HJvR+Ox3apicQnzYM5w==
+X-Received: by 2002:a05:6820:c30f:b0:71a:ecfc:442c with SMTP id 006d021491bc7-71b3955e035mr16217300eaf.71.1795810195459;
+        Fri, 27 Nov 2026 12:09:55 -0800 (PST)
 Received: from [127.0.1.1] ([150.117.174.129])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71b8590ba0fsm4834662eaf.2.2026.11.27.12.09.38
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71b8590ba0fsm4834662eaf.2.2026.11.27.12.09.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 12:09:46 -0800 (PST)
+        Fri, 27 Nov 2026 12:09:54 -0800 (PST)
 From: Gary Wang <is0124@gmail.com>
-Date: Sat, 28 Nov 2026 04:08:32 +0800
-Subject: [PATCH v4 3/5] pinctrl: meteorlake: add some groups and functions
- for INTC105E
+Date: Sat, 28 Nov 2026 04:08:33 +0800
+Subject: [PATCH v4 4/5] pinctrl: upboard: fix I2C pinmux-select set CPLD
+ GPIO OUT not function mode
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -94,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261128-upboard-pinctrl-add-intc1057-intc105e-support-v4-3-029071f417d5@gmail.com>
+Message-Id: <20261128-upboard-pinctrl-add-intc1057-intc105e-support-v4-4-029071f417d5@gmail.com>
 References: <20261128-upboard-pinctrl-add-intc1057-intc105e-support-v4-0-029071f417d5@gmail.com>
 In-Reply-To: <20261128-upboard-pinctrl-add-intc1057-intc105e-support-v4-0-029071f417d5@gmail.com>
 To: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, 
@@ -103,68 +103,49 @@ To: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
 Cc: Daniele Cleri <danielecleri@aaeon.eu>, 
  JunYingLai <junyinglai@aaeon.com.tw>, Louis Chen <louischen@aaeon.com.tw>, 
  BillyChou <BillyChou@aaeon.com.tw>, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gary Wang <is0124@gmail.com>
+ linux-kernel@vger.kernel.org, Gary Wang <is0124@gmail.com>, 
+ stable@vger.kernel.org
 X-Mailer: b4 0.13.0
 
-Add i2c0,i2c1,pwm0,uart0,spi0 pin groups & functions in mtlp_soc_data for
-device id INTC105E. The pinctrl-upboard driver set the correct pin
-function corresponding to these data.
+The CPLD I2C pin mode setting through pinmux-select is not correct.
+Should be set UPBOARD_PIN_MODE_FUNCTION on AANT0F04 devices.
 
+Change UPBOARD_PIN_MODE_GPIO_OUT to UPBOARD_PIN_MODE_FUNCTION for both
+i2c0_grp and i2c1_grp. Additionally, replace the check variable `mode`
+with `modes` to prevent the value of `mode` from being 0.
+
+Cc: stable@vger.kernel.org
+Fixes: dca2f73cf19f ("pinctrl: Add pin controller driver for AAEON UP boards")
 Signed-off-by: Gary Wang <is0124@gmail.com>
 ---
- drivers/pinctrl/intel/pinctrl-meteorlake.c | 32 ++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/pinctrl/pinctrl-upboard.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-meteorlake.c b/drivers/pinctrl/intel/pinctrl-meteorlake.c
-index 6fefee7827ed..870658eac91d 100644
---- a/drivers/pinctrl/intel/pinctrl-meteorlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-meteorlake.c
-@@ -339,6 +339,34 @@ static const struct pinctrl_pin_desc mtlp_pins[] = {
- 	PINCTRL_PIN(288, "vI2S2_RXD_2"),
- };
+diff --git a/drivers/pinctrl/pinctrl-upboard.c b/drivers/pinctrl/pinctrl-upboard.c
+index b9af6dd93c34..bcd2dae9969f 100644
+--- a/drivers/pinctrl/pinctrl-upboard.c
++++ b/drivers/pinctrl/pinctrl-upboard.c
+@@ -289,8 +289,8 @@ static const unsigned int upboard_up_adc0_pins[] = {
  
-+static const unsigned int mtlp_i2c0_pins[] = { 122, 123 };
-+static const unsigned int mtlp_i2c1_pins[] = { 124, 125 };
-+static const unsigned int mtlp_pwm0_pins[] = { 208 };
-+static const unsigned int mtlp_uart0_pins[] = { 111, 112, 113, 114 };
-+static const unsigned int mtlp_spi0_pins[] = { 88, 89, 90, 91 };
-+
-+static const struct intel_pingroup mtlp_groups[] = {
-+	PIN_GROUP("i2c0_grp", mtlp_i2c0_pins, 1),
-+	PIN_GROUP("i2c1_grp", mtlp_i2c1_pins, 1),
-+	PIN_GROUP("pwm0_grp", mtlp_pwm0_pins, 2),
-+	PIN_GROUP("uart0_grp", mtlp_uart0_pins, 1),
-+	PIN_GROUP("spi0_grp", mtlp_spi0_pins, 5),
-+};
-+
-+static const char * const mtlp_i2c0_groups[] = { "i2c0_grp" };
-+static const char * const mtlp_i2c1_groups[] = { "i2c1_grp" };
-+static const char * const mtlp_pwm0_groups[] = { "pwm0_grp" };
-+static const char * const mtlp_uart0_groups[] = { "uart0_grp" };
-+static const char * const mtlp_spi0_groups[] = { "spi0_grp" };
-+
-+static const struct intel_function mtlp_functions[] = {
-+	FUNCTION("i2c0", mtlp_i2c0_groups),
-+	FUNCTION("i2c1", mtlp_i2c1_groups),
-+	FUNCTION("pwm0", mtlp_pwm0_groups),
-+	FUNCTION("uart0", mtlp_uart0_groups),
-+	FUNCTION("spi0", mtlp_spi0_groups),
-+};
-+
- static const struct intel_padgroup mtlp_community0_gpps[] = {
- 	INTEL_GPP(0, 0, 4, 0),		/* CPU */
- 	INTEL_GPP(1, 5, 28, 32),	/* GPP_V */
-@@ -380,6 +408,10 @@ static const struct intel_community mtlp_communities[] = {
- static const struct intel_pinctrl_soc_data mtlp_soc_data = {
- 	.pins = mtlp_pins,
- 	.npins = ARRAY_SIZE(mtlp_pins),
-+	.groups = mtlp_groups,
-+	.ngroups = ARRAY_SIZE(mtlp_groups),
-+	.functions = mtlp_functions,
-+	.nfunctions = ARRAY_SIZE(mtlp_functions),
- 	.communities = mtlp_communities,
- 	.ncommunities = ARRAY_SIZE(mtlp_communities),
- };
+ static const struct upboard_pingroup upboard_up_pin_groups[] = {
+ 	UPBOARD_PINGROUP("uart1_grp", upboard_up_uart1_pins, &upboard_up_uart1_modes[0]),
+-	UPBOARD_PINGROUP("i2c0_grp", upboard_up_i2c0_pins, UPBOARD_PIN_MODE_GPIO_OUT),
+-	UPBOARD_PINGROUP("i2c1_grp", upboard_up_i2c1_pins, UPBOARD_PIN_MODE_GPIO_OUT),
++	UPBOARD_PINGROUP("i2c0_grp", upboard_up_i2c0_pins, UPBOARD_PIN_MODE_FUNCTION),
++	UPBOARD_PINGROUP("i2c1_grp", upboard_up_i2c1_pins, UPBOARD_PIN_MODE_FUNCTION),
+ 	UPBOARD_PINGROUP("spi2_grp", upboard_up_spi2_pins, &upboard_up_spi2_modes[0]),
+ 	UPBOARD_PINGROUP("i2s0_grp", upboard_up_i2s0_pins, &upboard_up_i2s0_modes[0]),
+ 	UPBOARD_PINGROUP("pwm0_grp", upboard_up_pwm0_pins, UPBOARD_PIN_MODE_GPIO_OUT),
+@@ -710,7 +710,8 @@ static int upboard_pinctrl_set_mux(struct pinctrl_dev *pctldev, unsigned int fun
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < grp->grp.npins; i++) {
+-		mode = upgroups[group_selector].mode ?: upgroups[group_selector].modes[i];
++		mode = upgroups[group_selector].modes ? upgroups[group_selector].modes[i] :
++		upgroups[group_selector].mode;
+ 		if (mode == UPBOARD_PIN_MODE_FUNCTION) {
+ 			ret = upboard_pinctrl_set_function(pctldev, grp->grp.pins[i]);
+ 			if (ret)
 
 -- 
 2.43.0
