@@ -1,60 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.197
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795863756;
-	b=KsGWxSVNNkEL3MQCnEMToypJEAZ7wOn/OjtcxeHVrxutJfulwCXlG03/p1HUFcYglFAn
-	 QK+FTXDeVUzxBTPwQdy6xIXKmen0Vb6bm++dM2wwMXvrFbUJcJ2IpZvov66THQs8NCIWq
-	 AtlLAAObV5M+NPPnqS6qSoGqoGyBXHBoA/JF4O0r6aQkp2+0Nj5rnEYZLWJUq5oBrA35w
-	 AtXG041m9whhoT5ToN19Ewkt9uIdX04v0lSrd3Qu2WzEP2wuXgzjb24QwxtHL7R6tenj4
-	 Pzo/VIYJOLVHG79YPhpa+APU6Ph/1eyGh5wbotQKgKUKd0zwSjyLwfDzh0jvI9xQ33A==
+	t=1795863757;
+	b=fAcMkLPA+DfwmY25Z89Qwjl/m0BHrdPjF12+j0fnRE71p6NYQ9XcLOkd2UNJD/HBdBUm
+	 XPDfZyE/oa4r3RNCy4yjum90ya8wRBu4m9vhbDgeNyW4EtCLZxYlRVVyza5hj/0tivmb5
+	 B7BW+BckGoVIgnV/pS8LYhPRVL0R8CqjEkdldxEpWwl2dKDPDN5UzY+uKKy5UhSUcb2yB
+	 rYQzdzsEhA45gx8M/amHRqpjWEf3AF6vcTxcja7i0mnNTNrG/ez9b/bazZ3JeAL6D1Fr9
+	 RQ89R0t+lzFHlS9ZUlrxUHzFe7lysRC5PoiI+TsjnNFRBA4CPDusSkKxA2t2D1nYzag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795863756;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795863757;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=bvsCi811ICl989Zhp9gIItL7LZeR3KrMd+e1Qib+C28=;
-	b=vxBQOf6L0xOrnLE2HE/s3LFB3uYjYYFDCTtFoyFhfR+i9d8xJxCXo+IPAFJ7xLOP4o9V
-	 89vOVya911QlsGgbJ0cCA4rbiQqZnDM6xZIMOgeVAt3tbwXjYBrW84SuhRe8LNF9/gs2e
-	 jSmNOP0rPkm7/uVfwfGalIngFaY2+W/OnnUDhk/eoSi0174/8EEr1mZqNtI9qSdVjx4Gp
-	 lxqSJFFAxbTqO3PtQEJpFTPC5VtCowxV+fl7KEGpEOvbJO66EnGqQ4GdQQuM6YY9oNphV
-	 P6nqmvzgdIwq3rteN8VmFfCHVnz7wnkABw/I+YuPeG+Qz0O/dZtbf4OVybKVEpeWD1Q==
+	 MIME-Version:Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:
+	 X-HM-Spam-Status:DKIM-Signature;
+	bh=HZJ8HDe/Tt74RwLwlmWCp8vNubY28nvyro8T5zfrfHQ=;
+	b=FARjUeQd20RT3lX4B4TBXIsa980SN+97hKVOXpSCvVe4Nr/2/DBI8CbcYmbNwsWi/9df
+	 cQYjQBogK23ag6hJzCCe0yX0Ttwh87TL8TKQHWpNMGNguugyVQH/rnJVsF2CwaLHISDK7
+	 FFHVaslc6EsTVKkJfaOJVH/0pc+DSSxtZKstjAZPe5G+weN/KTXFzSfYh0nzT3k1WRKKY
+	 iuVwgWzjFHehRb+1DgJhII++dxI2OFIWS8FyLuZyZkD/st/C3MhBCJ2zzhX5f051h59IJ
+	 idx2lXyubpMjpVlGqhRqCHffYRtwTexO8WRH6PgcRQr+67P62VXxhQFnpRBL/bjUHLg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=mail.sdu.edu.cn;
 	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=GO+tAk1w;
-	arc=none smtp.remote-ip=45.254.49.198
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=N3CgIE+s;
+	arc=none smtp.remote-ip=45.254.49.197
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D41606A324
-	for <linux-gpio@vger.kernel.org>; Sat, 28 Nov 2026 11:02:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 71D41606A324
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA24606A323
+	for <linux-gpio@vger.kernel.org>; Sat, 28 Nov 2026 11:02:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7BA24606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=GO+tAk1w
+	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=N3CgIE+s
 Received: from user.localdomain (unknown [223.80.110.101])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5656652b1;
-	Sat, 28 Nov 2026 19:02:31 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5656652b2;
+	Sat, 28 Nov 2026 19:02:33 +0800 (GMT+08:00)
 From: Tian Xuechen <202300460064@mail.sdu.edu.cn>
-To: linusw@kernel.org,
-	brgl@kernel.org,
-	pjw@kernel.org,
-	samuel.holland@sifive.com,
-	maz@kernel.org,
-	atish.patra@linux.dev,
-	wesley@sifive.com,
-	yash.shah@sifive.com,
-	kamlakant.patel@broadcom.com
-Cc: linux-gpio@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
+To: vireshk@kernel.org,
+	linusw@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	soc@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
 	liguangshuo@mail.sdu.edu.cn
-Subject: [PATCH 2/2] gpio: xlp: Unregister the GPIO chip on unbind
-Date: Sat, 28 Nov 2026 19:02:29 +0800
-Message-Id: <20261128110229.875394-3-202300460064@mail.sdu.edu.cn>
+Subject: [PATCH] pinctrl: spear: plgpio: Unregister the GPIO chip on removal
+Date: Sat, 28 Nov 2026 19:02:32 +0800
+Message-Id: <20261128110232.875407-1-202300460064@mail.sdu.edu.cn>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261128110229.875394-1-202300460064@mail.sdu.edu.cn>
-References: <20261128110229.875394-1-202300460064@mail.sdu.edu.cn>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -65,46 +57,46 @@ List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa221d22c4503a2kunmfbc41f2a3cbc87
+X-HM-Tid: 0aa221d232f503a2kunmd47070a13cbc8c
 X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDTUwaVhpMGR1JH0lNSklJHVYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUhVQ0tVSkpLVUpLSllXWRYaDxIVHRRZQVlPS0hVSktJQk
-	NDTFVKS0tVS1kG
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaGExIVk5OTR4YHR9PQxgYT1YeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUhVQ0tVSkpLVUpLSllXWRYaDxIVHRRZQVlLVUtVS1VLWQ
+	Y+
 DKIM-Signature: a=rsa-sha256;
-	b=GO+tAk1weVKYr8bx1pxZ5eTAGkxbZ1Esx1w9X3ZH4sfGSerk5jLFn4U7/K0jFqBv3q7Jf0qYnw7u3H/xJWCgbdCg0brXfYEfXQSjzV9PgiQB3N8Laz1St5wRwqrrch5i8d6F0in03WT+2SRA0sATflvIOe8FfSbB3XaVXkdwT1M=; s=default; c=relaxed/relaxed; d=mail.sdu.edu.cn; v=1;
-	bh=bvsCi811ICl989Zhp9gIItL7LZeR3KrMd+e1Qib+C28=;
+	b=N3CgIE+sSOu5JRIuR0qN2ssftzeuc3/WnBUm/V3zWv4tWiDOyG7QQQCVmBfJwZaWOE1FHks/ki1SSop2nnjscdkMtt1AD/9fJEtC6Z+pDBN8+C+Fd9ykdsii3LveXuQv6MLDq6nrSvEk2+J/Wa9mz88yHnNysbDjQKD9h3fhccs=; s=default; c=relaxed/relaxed; d=mail.sdu.edu.cn; v=1;
+	bh=HZJ8HDe/Tt74RwLwlmWCp8vNubY28nvyro8T5zfrfHQ=;
 	h=date:mime-version:subject:message-id:from;
 
 From: Tian Xuechen <202300460064@mail.sdu.edu.cn>
 
-The XLP driver registers its GPIO chip without removing it on unbind.
-The GPIO chip and its IRQ parent array are both managed allocations.
-
-Use managed GPIO registration so the chip is removed before its
-backing storage is freed.
+Device removal frees the PLGPIO state while its embedded GPIO chip
+remains registered. Use managed registration so gpiolib drops the
+chip first.
 
 This issue was found by our static analysis tool under development.
 
-Fixes: ff7188000679 ("gpio: xlp: GPIO controller for Netlogic XLP SoCs")
+Fixes: 604bb7da7780 ("pinctrl: SPEAr: Add plgpio driver")
 Signed-off-by: Tian Xuechen <202300460064@mail.sdu.edu.cn>
 ---
- drivers/gpio/gpio-xlp.c | 2 +-
+ drivers/pinctrl/spear/pinctrl-plgpio.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-index e9618608f2a0..89aab2663d62 100644
---- a/drivers/gpio/gpio-xlp.c
-+++ b/drivers/gpio/gpio-xlp.c
-@@ -291,7 +291,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_level_irq;
+diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
+index b5fc76e114be..b17df26c82b1 100644
+--- a/drivers/pinctrl/spear/pinctrl-plgpio.c
++++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
+@@ -612,7 +612,7 @@ static int plgpio_probe(struct platform_device *pdev)
+ 		dev_info(&pdev->dev, "PLGPIO registering without IRQs\n");
+ 	}
  
--	err = gpiochip_add_data(gc, priv);
-+	err = devm_gpiochip_add_data(&pdev->dev, gc, priv);
- 	if (err < 0)
- 		return err;
- 
+-	ret = gpiochip_add_data(&plgpio->chip, plgpio);
++	ret = devm_gpiochip_add_data(&pdev->dev, &plgpio->chip, plgpio);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "unable to add gpio chip\n");
+ 		goto unprepare_clk;
+
+base-commit: 4dce97c6c265544342e716e62fd24bbb232590c5
 -- 
 2.43.0
 
