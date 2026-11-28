@@ -1,78 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795862605;
-	b=eTfUVSfGiV3ARw6u4D9kEfW6kNsGg/zRC4XjukX/Mge39nMRoK/gnUnX72AW7T+tYszS
-	 h7rPNTln2Kyn1rFzDChtWnW3E7LChafCThxkWtuFn1g4zT/Mx6EEWKv1L4PmZ4oxGj6Yn
-	 pRnp2WbuXKKIe5KV4NFOd+o3gSBwDCAqfZCjLDtd16TqFcAh8m9AQyIDfJrqf6ag6lC2Z
-	 p4dVWem85j5h/iUAty2g0698Z3OWvtI+CpSMKlPnMJ2SFqY6N6d9pcxnQr3a3jV8z7Yn8
-	 iSOjhtjk8oWdTxa7/2UqYGvTTKivg8ryxokUxu5LQbDRUCK5ta0x73ZxTQecqoboRyQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795862605;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ROqy/GBHOvvDEvTSnF7fDI3jtw1M3W2yLXOSclf1iS8=;
-	b=yaysn/SHjdWg5IYQhQWld077vOwJL/1n3suYjxoDLo+rer5bn3bbv3ngzadNnLxE/JKF
-	 OqOmA2wfq2FdVUPe2ajg3px3L/ULI34pyPbeJF90IMRPYmgMkUSBhRH5RWR/y+ymqqAIQ
-	 JdvtAAe4j3Ab320jjpXowJoHKj+yCVx/qPwZZBiTM3eC2LlE4TEEX4pPNQi+WiaLa6+l5
-	 daAn1N9kxKDw1OfK2BneOvYs6HtnxGuqJMMq5eNOXk/VPRJrjofDjKk81SILzVv0NFH8R
-	 FZMsZ5k9n6ckvAF2JZPAUfQFkg7aVsiJeRWVO+5MihzQFP9Lc0iW1ZXp4AYqzoys/RQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dEx5Cleg;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795863233;
+	b=gPtn1aIqZRFs59Jc7Z1OzoKoyLO4TvExtmcbCSZd8k14tAiqk3m6gMxM/AEqDal3tcv+
+	 zIL+epZuSFrXFmTP63c6hDQbFnjjIOuDkLp2Z2tc1UXLcWqUexL0co9eNHl78rOXTGtH2
+	 W1jDe1eD+DUy0gr5mazSaDg6w5R8bm1S9XO5jLI+FrUjNQUhA4jVng40/tISPNgOHNjrP
+	 xyGKpuR82Aexgfj18qVEjzycwqAPbxBaPRqD9lRqxxVyTrUXiKNvAG/Hq9Hhk15O+SvRQ
+	 GZ5uQUXVDWTaxncUtXVk2HODm/t0EV3I3l06xxqLedgrB0VvM4ge2YxVZm+xjFxeeEA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795863233;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=D0DNL51U0n9mxUhb3hB0S6V69hcquNmMsqfP6uOJ89A=;
+	b=H6wyshPOnuRhPDjk2jojVW3shWA/EisihGSwl/kRjuD+hp34OMuMmkKLZSt7haROKu3P
+	 Jq7Z53YEmJTrWSwoCPdH+mWRirVKQh/LZtEbOoPLJJ3XCwSQ37oNxUQaMExt575a6uKS5
+	 dQ89HR6aZOCQoFgAA9kJgwLU0DajH+ATkfiIX2wHl8vDCANLUr0BzkNfFH0lecRSreVk7
+	 vJHNdwAKdWS9eVHTVIfnPpamCyOiYfuBn6YMy89bl6gI5Rmms5mlX2T7/lp8zneGi7sH5
+	 PemryIZIsKQUDu3XFKy+AyDFx1WUIA2Vq+XAWawrbCEE0rHJBfND60GBbnn1s0i34EA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h3KbW6eN;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEAF606A323;
-	Sat, 28 Nov 2026 10:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5D7606A31F
+	for <linux-gpio@vger.kernel.org>; Sat, 28 Nov 2026 10:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dEx5Cleg
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795862605;
-	b=D9XxfRsrCXXERsrpbiwHRFj3TLlv52JIFm1CbqI3NxNiQT+OldYIzPBthfuU+Dl4RYpc
-	 ugvH5LBjz0GyLsBOM7fbg+RC6e2gwB965qScB5AGXhaJA6Hza9z8YBlo8Qrka0hm0Hg3j
-	 iXYPoc5aTLPJ3vobYvTtiCNRnAH5xQ+5AKcGa4XKjze6pdmtp9ODUjUIrdEF3kgQrQJV8
-	 78KHCwnw6CnfugZvV2KPsXqLyB60T11WyYDIxaygYWbaWYGT9jtFY2binoDpIuL0zNz5x
-	 H3pPP2YGO8eb5DZExlsf/OWyQIbhAJijMaPxwPGVaKzXv9WdkSaacuEQRofmia8UGlQ==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795862605;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ROqy/GBHOvvDEvTSnF7fDI3jtw1M3W2yLXOSclf1iS8=;
-	b=kEtQoeD/P9EvkNtjcA4BYc3tLTmRfi/u4fHML2rlH45jyBpxvrUwkeMTHzVjKSYAv6aD
-	 xKd1270+Bbas18sTq/mXlotPtouui2qljcxopM/qM2IhzwlgDUmRJl1H1ocopSJj45E+r
-	 m7GK59mJC5zPqNqhe7yyypuUGKTSx2WedhnRC6DCaPjEkhYGNz+PyH9yHPhfIUswVKJ34
-	 FYWnjbTT2Fr8VRcPiy6BGsJju9FbDvJVfwZjGXmlEY6P0GiJWqu8V3HpKr9ShCIFC+Foj
-	 y5H+DZWFL7VgrPN5GAilh2WgMSHBHzPB03pO9qJvutQ+cOxL8bYovYmM/wV2SgKZW3w==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 956251F00897;
-	Sat, 28 Nov 2026 10:43:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h3KbW6eN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E801F00893;
+	Sat, 28 Nov 2026 10:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795862605;
-	bh=ROqy/GBHOvvDEvTSnF7fDI3jtw1M3W2yLXOSclf1iS8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=dEx5Cleg4fF+xzJBpaXYuWCuQyYow4qhhCS4RjXIzgZ1VAexu77zn5y0I649RHlIX
-	 3d9lz0dFgDDMhu/rt61kkSw3j5mnMkKa9kWG7WVxkGGmJFD+PHsY8TuHLjP+Ka1Ej9
-	 7cV5MasbbvUeIGqMEkSV3qePUEXTIIDM7OcOZBrRj506DoA+YsvIejMn0/v8updQAI
-	 FvNXYJUpr/qfvTCCv0PbNMsoz91pSEQWoWp2kCa7flsUR7TnLAEjnaS5ZO6tg57OtD
-	 5zcytC/qkcJ+GV4qyas0qyNE+oZ+Jih3uhE2HSmVFuJybUsPqJWwEvjpA8VrVP58Vm
-	 ecuY+zxVPAMVw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 269A44E095;
-	Sat, 28 Nov 2026 10:43:14 +0000 (UTC)
-From: Fabio Forni via B4 Relay <devnull+development.redaril.me@kernel.org>
-Date: Sat, 28 Nov 2026 11:43:12 +0100
-Subject: [PATCH v5 3/3] mux: Document mux_chip_find_by_fwnode()
+	s=k20260515; t=1795863232;
+	bh=D0DNL51U0n9mxUhb3hB0S6V69hcquNmMsqfP6uOJ89A=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=h3KbW6eNwH4OaLIcTQtSb5h9EIlaC9SEGuD1QmMisZkSjZoajvBwlEPB6MBJhFFlh
+	 GzB12JSDHu70epr00H+upGqMSHE1gMTtkiJgzJp2Nvs0L46IC6wHcorRoxm7p0TJ3O
+	 C9/Zz9SB5oJka7KP1eSZmcjxsWhpsoniRzV3er/G2Gh4tbyHK9Xb7iZlN/RqOocL8K
+	 gyUomv/2l9sjyWWg0UEG0L6RSJ5FDY/v4WzGpFwV+Bnf3WBr+HOKD7AC0OzfL5iTXO
+	 AjUnqWy5emmEs97T9n7Rb/3pLJVO7/BlNQcCZ/4bjHsVH838w3oe5qrakNcClUOVUC
+	 YQyA6ez3JlYZw==
+Message-ID: <sashiko-outbox-238637@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v5 2/3] mux: convert to use fwnode interface
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Fabio Forni" <development@redaril.me>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261128-mux_fwnode-v5-2-6689b52f3800@redaril.me>
+References: <20261128-mux_fwnode-v5-0-6689b52f3800@redaril.me>
+ <20261128-mux_fwnode-v5-2-6689b52f3800@redaril.me>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 28 Nov 2026 10:53:52 +0000
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -81,70 +59,66 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261128-mux_fwnode-v5-3-6689b52f3800@redaril.me>
-References: <20261128-mux_fwnode-v5-0-6689b52f3800@redaril.me>
-In-Reply-To: <20261128-mux_fwnode-v5-0-6689b52f3800@redaril.me>
-To: Peter Rosin <peda@lysator.liu.se>, Linus Walleij <linusw@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jonathan Cameron <jic23@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- xu.yang_2@nxp.com, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin.sipraga@analog.com>, 
- Fabio Forni <development@redaril.me>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1190;
- i=development@redaril.me; h=from:subject:message-id;
- bh=WsfKOTl/y0DS2QwMlaBJvQeQ9+YnIj+MD9uZdj7LBrA=;
- b=owGbwMvMwCXWeKho1tqFWemMp9WSGLK5NjjW/dzuccDozMd+8evcHl4aLhuk1x62OsT2qWtZ3
- +W4Y14CHaUsDGJcDLJiiiz/nYw2dZuZGN3ql6iFmcPKBDKEgYtTACZS+JKR4ca2/9Jik2p26fpm
- fXG8yzX9YXZVcKqKeeKLvglXr5p+ymJk6C488S57tXHfXwauthleVUe/d0rIL5XZ0OSau++LxkZ
- DLgA=
-X-Developer-Key: i=development@redaril.me; a=openpgp;
- fpr=FF4232B28B363432DA8F187D81C2729AADA16A67
-X-Endpoint-Received: by B4 Relay for development@redaril.me/default with
- auth_id=1033
-X-Original-From: Fabio Forni <development@redaril.me>
-Reply-To: development@redaril.me
-Content-Transfer-Encoding: 7bit
 
-From: Fabio Forni <development@redaril.me>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] mux: missing !CONFIG_MULTIPLEXER stub for
+  devm_mux_state_get_from_fwnode()
+--
 
-What mux_chip_find_by_fwnode() does it pretty obvious. What's
-not-so-obvious is that the reference count of mux_chip->dev must be
-decreased when done working with it. This commit clarifies the
-requirement.
+commit 85df2293bc5cfb5c47da8e60c377e0e2a2ce0040
+Author: Fabio Forni <development@redaril.me>
 
-Signed-off-by: Fabio Forni <development@redaril.me>
----
- drivers/mux/core.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+mux: convert to use fwnode interface
 
-diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-index d5095905b02e..6289cc98f49e 100644
---- a/drivers/mux/core.c
-+++ b/drivers/mux/core.c
-@@ -517,7 +517,16 @@ int mux_state_deselect(struct mux_state *mstate)
- }
- EXPORT_SYMBOL_GPL(mux_state_deselect);
- 
--/* Note this function returns a reference to the mux_chip dev. */
-+/**
-+ * mux_chip_find_by_fwnode() - Find a mux-chip by its fwnode.
-+ * @fwnode: The fwnode representing the mux-chip.
-+ *
-+ * When a mux-chip is found, the mux-chip increases the reference count of
-+ * the underlying &struct device. The caller is responsible for calling
-+ * put_device() on it.
-+ *
-+ * Return: Pointer to the mux-chip, or NULL if not found.
-+ */
- static struct mux_chip *mux_chip_find_by_fwnode(struct fwnode_handle *fwnode)
- {
- 	struct device *dev;
+This commit converts the multiplexer core and consumer lookup interface from
+Device Tree device_node APIs to fwnode APIs.
 
--- 
-2.56.1
+> diff --git a/include/linux/mux/consumer.h b/include/linux/mux/consumer.h
+> index 449e38e6e2c51..7d121217ca961 100644
+> --- a/include/linux/mux/consumer.h
+> +++ b/include/linux/mux/consumer.h
+> @@ -11,6 +11,7 @@
+>  #define _LINUX_MUX_CONSUMER_H
+> =20
+>  #include <linux/compiler.h>
+> +#include <linux/device.h>
+> =20
+>  struct device;
+>  struct mux_control;
+> @@ -62,7 +63,8 @@ void mux_control_put(struct mux_control *mux);
+>  struct mux_control *devm_mux_control_get(struct device *dev, const char =
+*mux_name);
+> =20
+>  struct mux_state *
+> -devm_mux_state_get_from_np(struct device *dev, const char *mux_name, str=
+uct device_node *np);
+> +devm_mux_state_get_from_fwnode(struct device *dev, const char *mux_name,
+> +			       struct fwnode_handle *node);
+> =20
+>  struct mux_state *devm_mux_state_get_optional(struct device *dev, const =
+char *mux_name);
+>  struct mux_state *devm_mux_state_get_selected(struct device *dev, const =
+char *mux_name);
+> @@ -165,6 +167,6 @@ static inline struct mux_state *devm_mux_state_get_op=
+tional_selected(struct devi
+>  #endif /* CONFIG_MULTIPLEXER */
+> =20
+>  #define devm_mux_state_get(dev, mux_name)		\
+> -	devm_mux_state_get_from_np(dev, mux_name, NULL)
+> +	devm_mux_state_get_from_fwnode(dev, mux_name, NULL)
+> =20
+>  #endif /* _LINUX_MUX_CONSUMER_H */
 
+[Severity: Medium]
+Should the !CONFIG_MULTIPLEXER branch in include/linux/mux/consumer.h define
+a stub for devm_mux_state_get_from_fwnode() instead of devm_mux_state_get()?
 
+The #else block still defines a static inline stub for devm_mux_state_get(),
+which is shadowed by the unconditional macro below it, leaving
+devm_mux_state_get_from_fwnode() undeclared when CONFIG_MULTIPLEXER is
+disabled.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261128-mux_fwnode=
+-v5-0-6689b52f3800@redaril.me?part=3D2
