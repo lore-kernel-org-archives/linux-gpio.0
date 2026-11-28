@@ -1,53 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795863761;
-	b=hvHaOg7uIonStp/zhlPM8aAAjlwbtap8u7Z7PVWX8IeYn2BLZWYqx0WI7m6IvoBvwkVw
-	 /BGhJ7zSVHCE29fBKDs+vbiSAw3MuBaVjIiI4dRu9d6fY7Jmx+hs6OvsYl3EsKc/+htHG
-	 GKHoLkXwk6fO/uEyxnveSLrNv5EE0uIPfeOzKEAQjjVg26n+bp8pSX0hUeahr6C/nA8Wr
-	 UJfrigA6SmKcEAaeMrSj+q3h8898qZo42orK8SMLFG3Fwc13nX2XpAa4RpU44kTJkqtta
-	 wE68HnenXwjammoHUbrzUf0dAMSBVWBmWb1Pwb3F1FWgmdGSFFzKjy3MYxH117Aq59A==
+	t=1795868047;
+	b=f2GzFbF4sf2ptnpGFza2xwE3E618zqC78960PGRgbnmJs+PAJcT2+G3eyaCbJlUYzy/y
+	 w6mpTXbXXS8cFHGtMPI/y+bYYy9Y1+2qMIcMGEa50hUA1uXx3HIw+bsVEJRYFY23gZSUT
+	 1/3Vjm4V//HizDPOkqKDJ83YmoNOx/Bw7O+jWytAWYf2ti7YZXr8P+htaXbWjcvQBvfRZ
+	 +o//A8YeaSqiIOoJd+Dk5+P1S6Ew8Mf0s3iomw5DdrCnrAY3MtLW83OaBEsF94dzVmuBr
+	 lV41YVFwWHg+lzesM8PFP9boehoedAxOwght45Q8lHvjern+XXcQJZutQ8eS0fEIQ5w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795863761;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:
-	 X-HM-Spam-Status:DKIM-Signature;
-	bh=dEoOM0479ecXXUtpNia9MRKD7yUw0KNkdzZ0olJu7ko=;
-	b=Yih/Vd8wHyYxNgqrcmKXJrugigt6KMpNS9h0I7vE3Icfj06zT1szVI5r1/YtUicuGLJb
-	 bRzZYtzrvHQQ0retABSYIGRe/4yOCOqePcqdqB/nvKYULPvMXdWavCYmRyyRmDPHOTPfp
-	 lyemDDmRQJ85PALyoLFSXrgnvw16YN+EHDXYoFRonHUFaB4JVMMhYq/HF1APuIPmTEvE9
-	 r8nSfimffmZUAIsK0ZxBF8kVMzkQ7dJ3btgO8IOb9ayDpX8WFWN+G3fMsbi7kKiUPilyZ
-	 ucIsy0IlDjHB+0dRh7uqTy12YCaaBsvO4ldKRQVswy7Ez3btpcgvSCA6uwCQYNoK7Cg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795868047;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=HBTpZV+qjSb6XbBgWR6yIkg/MnR4dVdFCuL2rBP9/7w=;
+	b=FqNokXA9KTuMGnqBT8NpLwBJF6g1EqcRDW4Chu1MPsq5NmLxyfMBRS4CA5ipKFARz3JZ
+	 YwMI8+M1hT48+3fiEHu5krL4WcSeE0JBKIVRwFXgKXLpw3/gOsEUGULRMow+dX19+KItS
+	 Uw8NaM/UOTMXo1A+VGQLbHIJfE+Fphsa7gckd7RiVYzFTn2V/4BWUt6JmJD+IgNWBcSzV
+	 otCoUje3tpK1ST+eZA14gLh3b3twxx44GEfLLjI2IcmBbwlOrq/DaqhIESM2hZKgAs0Bk
+	 QjkG/vSsLZzmb9LlJ2yPACI0ZE3e63SMCfb6FPVYjxCvNP+pSsVPn67floSfgq4LjBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.sdu.edu.cn;
-	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=UIPVxrDA;
-	arc=none smtp.remote-ip=45.254.49.197
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wt9nOIia;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E98606A330;
-	Sat, 28 Nov 2026 11:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36E98606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBFC606A31C;
+	Sat, 28 Nov 2026 12:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=UIPVxrDA
-Received: from user.localdomain (unknown [223.80.110.101])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5656652b4;
-	Sat, 28 Nov 2026 19:02:36 +0800 (GMT+08:00)
-From: Tian Xuechen <202300460064@mail.sdu.edu.cn>
-To: andersson@kernel.org,
-	brgl@kernel.org,
-	linusw@kernel.org,
-	sboyd@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	liguangshuo@mail.sdu.edu.cn
-Subject: [PATCH] pinctrl: qcom: Release the PS_HOLD power-off handler on teardown
-Date: Sat, 28 Nov 2026 19:02:35 +0800
-Message-Id: <20261128110235.875432-1-202300460064@mail.sdu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wt9nOIia
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D2631F000C1;
+	Sat, 28 Nov 2026 12:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795868046;
+	bh=HBTpZV+qjSb6XbBgWR6yIkg/MnR4dVdFCuL2rBP9/7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Wt9nOIiaKhjwYZLG+0W7HSF7jUClvvctnhaEyBZJa6x0EgGL9U9l2miqA2mHOvS+S
+	 9auwZJUqxN37ygshplHMbWD1jRNBNItz/Z0F0SHwDroCH1nZS4XXJ2W8Q1/wVwl0Rq
+	 QfnVimhRwVrvfTD+iCv0IqHS1ASL6OvnU0qvU2C2534gi0ChKLEnVddNckiRUOmmIf
+	 sjZDPOlpbiv/gJ5YhZZvCZSVdKsO2b/Y2UU0JL9Al0i0yzsuTWT0tQ5hLhJHFGYAei
+	 yQBANFNVHKbTPVhVoEY1fDSXAAOml3HvMCeF48IAfSXwFey0tYUWrOJ6hPA1faNDZD
+	 NlVwrmEX/Z6mg==
+Date: Sat, 28 Nov 2026 04:14:04 -0800
+From: Drew Fustini <fustini@kernel.org>
+To: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-usb@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH 00/12] Add TH1520 USB support
+Message-ID: <awrFjAIE96hw0VNV@x1>
+References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Post: <mailto:linux-gpio@vger.kernel.org>
@@ -57,67 +70,63 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-gpio+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa221d23eaa03a2kunm28f6d0fc3cbc92
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZQxpOVkNOQ0geS0pNGB5LGFYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUhVQ0tVSkpLVUpLSllXWRYaDxIVHRRZQVlPS0hVSktJQk
-	NDTFVKS0tVS1kG
-DKIM-Signature: a=rsa-sha256;
-	b=UIPVxrDAKVxWwrzF4E9obzAJvVwJ33DXEH1s/ZVU61xR0tdQyDzhJHdBYWmHWPanfZu4DNRfRbUqOixr07aLSViopJ/ORt/LpwxqGmj3eeZ2HdZhe02ONEdOKviLW69dCBfTaEPTDVrGHd2pGdvQn9oUhj3Vdnh7iKGNiTzmhEs=; s=default; c=relaxed/relaxed; d=mail.sdu.edu.cn; v=1;
-	bh=dEoOM0479ecXXUtpNia9MRKD7yUw0KNkdzZ0olJu7ko=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
 
-From: Tian Xuechen <202300460064@mail.sdu.edu.cn>
+On Thu, May 07, 2026 at 04:16:58PM +0800, Icenowy Zheng wrote:
+> This patchset adds support for T-Head TH1520's USB functionality, and
+> enabled it on the Lichee Pi 4A board.
+> 
+> The first 3 patches add support for the MISC subsystem clock
+> contrtoller, which contains some USB clocks.
+> 
+> The next 2 patches add support for the USB PHY of T-Head TH1520, which
+> is a wrapped Synopsys USB3.0 FemtoPHY with a little integration quirk;
+> the controller itself is a properly configured DWC3 controller with sane
+> default register values set.
+> 
+> Then one patch adds the USB PHY and controller nodes to the TH1520 DTSI
+> file.
+> 
+> The remaining half of this patchset dedicates to enablement of USB on
+> TH1520, because of the onboard hub of that board -- its USB2 signals are
+> behind a switch that needs to be toggled on, and Vbus supplies for both
+> the hub itself and downstream ports are managed via I2C-expanded GPIOs
+> (because the SoC does not have enough GPIO pins).
+> 
+> Emil Renner Berthing (1):
+>   riscv: dts: thead: Add Lichee Pi 4A IO expansions
+> 
+> Icenowy Zheng (10):
+>   dt-bindings: clock: thead: add TH1520 MISC subsys clock controller
+>   clk: thead: th1520-ap: add support for MISC subsys clocks
+>   riscv: dts: thead: add device tree node for MISC clock controller
+>   dt-bindings: phy: add binding for T-Head TH1520 USB PHY
+>   phy: add a driver for T-Head TH1520 USB PHY
+>   riscv: dts: thead: add device nodes for USB
+>   dt-bindings: gpio: dwapb: allow GPIO hogs
+>   dt-bindings: usb: vialab,vl817: allow ports property
+>   riscv: dts: thead: lpi4a: sort nodes
+>   riscv: dts: thead: enable USB3 ports on Lichee Pi 4A
+> 
+> Thomas Bonnefille (1):
+>   riscv: dts: thead: Add TH1520 I2C nodes
 
-The power-off callback keeps a global pointer to the TLMM instance
-after its device is removed. Register it with devres and pass the
-instance as the callback argument, as the restart handler already does.
+I have applied patches 1 and 2 to thead-clk-for-next:
 
-This issue was found by our static analysis tool under development.
+  [01/12] dt-bindings: clock: thead: add TH1520 MISC subsys clock controller
+          https://git.kernel.org/fustini/c/c9240a577b73
+  [02/12] clk: thead: th1520-ap: add support for MISC subsys clocks
+          https://git.kernel.org/fustini/c/4f38d7bdaef4
 
-Fixes: ad64498762dd ("pinctrl: qcom: Hook pm_power_down for shutdown support")
-Signed-off-by: Tian Xuechen <202300460064@mail.sdu.edu.cn>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+and patch 3 to thead-dt-for-next:
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 657ecdaec425..dde94e547010 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1537,17 +1537,6 @@ static int msm_ps_hold_restart(struct sys_off_data *data)
- 	return NOTIFY_DONE;
- }
- 
--static struct msm_pinctrl *poweroff_pctrl;
--
--static void msm_ps_hold_poweroff(void)
--{
--	struct sys_off_data data = {
--		.cb_data = poweroff_pctrl,
--	};
--
--	msm_ps_hold_restart(&data);
--}
--
- static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- {
- 	int i;
-@@ -1562,8 +1551,8 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- 							  pctrl))
- 				dev_err(pctrl->dev,
- 					"failed to setup restart handler.\n");
--			poweroff_pctrl = pctrl;
--			pm_power_off = msm_ps_hold_poweroff;
-+			if (devm_register_power_off_handler(pctrl->dev, msm_ps_hold_restart, pctrl))
-+				dev_err(pctrl->dev, "failed to set up power-off handler\n");
- 			break;
- 		}
- }
+  [03/12] riscv: dts: thead: add device tree node for MISC clock controller
+          https://git.kernel.org/fustini/c/8d80d268b429
 
-base-commit: 4dce97c6c265544342e716e62fd24bbb232590c5
--- 
-2.43.0
+I fixed the platform data check for usb_suspend_div_clk in patch 2 when
+applying.
 
+Thanks,
+Drew
